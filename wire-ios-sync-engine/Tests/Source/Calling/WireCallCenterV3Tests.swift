@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -100,7 +100,12 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         clientID = "foo"
         flowManager = FlowManagerMock()
-        mockAVSWrapper = MockAVSWrapper(userId: selfUserID, clientId: clientID, observer: nil)
+        mockAVSWrapper = MockAVSWrapper(
+            userId: selfUserID,
+            clientId: clientID,
+            observer: nil,
+            isFederationEnabled: false
+        )
         mockTransport = WireCallCenterTransportMock()
         sut = WireCallCenterV3(
             userId: selfUserID,
@@ -109,7 +114,9 @@ final class WireCallCenterV3Tests: MessagingTest {
             uiMOC: uiMOC,
             flowManager: flowManager,
             transport: mockTransport,
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         // set conferenceCalling feature flag
         conferenceCalling = Feature.fetch(name: .conferenceCalling, context: uiMOC)
@@ -180,9 +187,10 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         // WHEN
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: true,
             shouldRing: false,
             conversationType: avsConversationType
@@ -202,9 +210,10 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedConversationId: oneOnOneConversationID
         ) {
             sut.handleIncomingCall(
-                conversationId: oneOnOneConversationID,
+                conversationId: oneOnOneConversationID.serialized,
                 messageTime: Date(),
-                client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+                userId: otherUserID.serialized,
+                clientId: otherUserClientID,
                 isVideoCall: true,
                 shouldRing: false,
                 conversationType: .oneToOne
@@ -219,9 +228,10 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedConversationId: oneOnOneConversationID
         ) {
             sut.handleIncomingCall(
-                conversationId: oneOnOneConversationID,
+                conversationId: oneOnOneConversationID.serialized,
                 messageTime: Date(),
-                client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+                userId: otherUserID.serialized,
+                clientId: otherUserClientID,
                 isVideoCall: false,
                 shouldRing: false,
                 conversationType: .oneToOne
@@ -236,9 +246,10 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedConversationId: oneOnOneConversationID
         ) {
             sut.handleIncomingCall(
-                conversationId: oneOnOneConversationID,
+                conversationId: oneOnOneConversationID.serialized,
                 messageTime: Date(),
-                client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+                userId: otherUserID.serialized,
+                clientId: otherUserClientID,
                 isVideoCall: true,
                 shouldRing: true,
                 conversationType: .oneToOne
@@ -253,9 +264,10 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedConversationId: oneOnOneConversationID
         ) {
             sut.handleIncomingCall(
-                conversationId: oneOnOneConversationID,
+                conversationId: oneOnOneConversationID.serialized,
                 messageTime: Date(),
-                client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+                userId: otherUserID.serialized,
+                clientId: otherUserClientID,
                 isVideoCall: false,
                 shouldRing: true,
                 conversationType: .oneToOne
@@ -286,7 +298,12 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
 
         // when
-        sut.handleMissedCall(conversationId: conversationId, messageTime: timestamp, userId: userId, isVideoCall: false)
+        sut.handleMissedCall(
+            conversationId: conversationId.serialized,
+            messageTime: timestamp,
+            userId: userId.serialized,
+            isVideoCall: false
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -296,9 +313,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatTheAnsweredCallHandlerPostsTheRightNotification() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -311,16 +329,17 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedCallerId: otherUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
-            sut.handleAnsweredCall(conversationId: oneOnOneConversationID)
+            sut.handleAnsweredCall(conversationId: oneOnOneConversationID.serialized)
         }
     }
 
     func testThatTheEstablishedHandlerPostsTheRightNotification() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -333,16 +352,17 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedCallerId: otherUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
-            sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+            sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         }
     }
 
     func testThatTheEstablishedHandlerSetsTheStartTime() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -357,7 +377,7 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedCallerId: otherUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
-            sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+            sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         }
 
         // then
@@ -367,9 +387,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatTheEstablishedHandlerDoesntSetTheStartTimeIfCallIsAlreadyEstablished() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -379,14 +400,14 @@ final class WireCallCenterV3Tests: MessagingTest {
         XCTAssertNil(sut.establishedDate)
 
         // call is established
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(sut.establishedDate)
         let previousEstablishedDate = sut.establishedDate
         spinMainQueue(withTimeout: 0.1)
 
         // when
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -396,9 +417,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatTheClosedCallHandlerPostsTheRightNotification() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -413,9 +435,9 @@ final class WireCallCenterV3Tests: MessagingTest {
         ) {
             sut.handleCallEnd(
                 reason: .canceled,
-                conversationId: oneOnOneConversationID,
+                conversationId: oneOnOneConversationID.serialized,
                 messageTime: Date(),
-                userId: otherUserID
+                userId: otherUserID.serialized
             )
         }
     }
@@ -423,9 +445,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatTheMediaStopppedCallHandlerPostsTheRightNotification() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -438,25 +461,27 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedCallerId: otherUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
-            self.sut.handleMediaStopped(conversationId: oneOnOneConversationID)
+            self.sut.handleMediaStopped(conversationId: oneOnOneConversationID.serialized)
         }
     }
 
     func testThatOtherIncomingCallsAreRejectedWhenWeAnswerCall() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
         )
 
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .group
@@ -476,9 +501,10 @@ final class WireCallCenterV3Tests: MessagingTest {
         try sut.startCall(in: groupConversation, isVideo: false)
 
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -496,9 +522,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatOtherIncomingCallsAreRejectedWhenWeStartCall() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -516,9 +543,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItRejectsACall_Group() {
         // given
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .group
@@ -544,9 +572,9 @@ final class WireCallCenterV3Tests: MessagingTest {
         sut.rejectCall(conversationId: oneOnOneConversationID)
         sut.handleCallEnd(
             reason: .stillOngoing,
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            userId: otherUserID
+            userId: otherUserID.serialized
         )
 
         // then
@@ -557,9 +585,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItRejectsACall_1on1() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -585,9 +614,9 @@ final class WireCallCenterV3Tests: MessagingTest {
         sut.rejectCall(conversationId: oneOnOneConversationID)
         sut.handleCallEnd(
             reason: .stillOngoing,
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            userId: otherUserID
+            userId: otherUserID.serialized
         )
 
         // then
@@ -598,9 +627,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_oneToOne() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -657,7 +687,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         let selfUser = ZMUser.selfUser(in: uiMOC)
         let selfClient = setupSelfClient(inMoc: uiMOC)
         selfClient.user = selfUser
-        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient, localDomain: "wire.com"))
 
         let mlsService = MockMLSServiceInterface()
         syncMOC.performAndWait {
@@ -676,12 +706,10 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         // When
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(
-                userId: otherUserID,
-                clientId: otherUserClientID
-            ),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: false,
             conversationType: .mlsConference
@@ -699,7 +727,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         let selfUser = ZMUser.selfUser(in: uiMOC)
         let selfClient = setupSelfClient(inMoc: uiMOC)
         selfClient.user = selfUser
-        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient, localDomain: "wire.com"))
 
         let mlsService = MockMLSServiceInterface()
         syncMOC.performAndWait {
@@ -719,9 +747,9 @@ final class WireCallCenterV3Tests: MessagingTest {
         // When
         sut.handleCallEnd(
             reason: .normal,
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: nil,
-            userId: otherUserID
+            userId: otherUserID.serialized
         )
 
         // Then
@@ -736,7 +764,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         let selfUser = ZMUser.selfUser(in: uiMOC)
         let selfClient = setupSelfClient(inMoc: uiMOC)
         selfClient.user = selfUser
-        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient, localDomain: "wire.com"))
 
         let mlsService = MockMLSServiceInterface()
         syncMOC.performAndWait {
@@ -755,9 +783,9 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         // When
         sut.handleMissedCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            userId: otherUserID,
+            userId: otherUserID.serialized,
             isVideoCall: false
         )
 
@@ -768,9 +796,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_oneToOne_normal() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: true,
             shouldRing: true,
             conversationType: .oneToOne
@@ -800,9 +829,10 @@ final class WireCallCenterV3Tests: MessagingTest {
         oneOnOneConversation.mlsGroupID = .random()
         syncMOC.performAndWait { syncMOC.mlsService = nil }
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: true,
             shouldRing: true,
             conversationType: .oneToOne
@@ -827,9 +857,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_oneToOne_video() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: true,
             shouldRing: true,
             conversationType: .oneToOne
@@ -861,9 +892,10 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
 
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .group
@@ -887,9 +919,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_legacy_smallGroup_normal() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .group
@@ -913,9 +946,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_legacy_smallGroup_video() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: true,
             shouldRing: true,
             conversationType: .group
@@ -939,9 +973,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_conference_normal() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .conference
@@ -965,9 +1000,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_conference_mls() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .mlsConference
@@ -996,9 +1032,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_conference_video() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: true,
             shouldRing: true,
             conversationType: .conference
@@ -1157,9 +1194,11 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
 
         // So we can inform of new conference infos
+        let listentingOnConferenceInfoChange = expectation(description: "listenting to onConferenceInfoChange")
         let conferenceInfoChangeSubject = PassthroughSubject<MLSConferenceInfo, Never>()
         mlsService.onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod = { _, _ in
             var iterator = conferenceInfoChangeSubject.values.makeAsyncIterator()
+            listentingOnConferenceInfoChange.fulfill()
             return AsyncThrowingStream {
                 await iterator.next()
             }
@@ -1173,6 +1212,8 @@ final class WireCallCenterV3Tests: MessagingTest {
             // when
             try block()
         }
+
+        wait(for: [listentingOnConferenceInfoChange])
 
         let didSetConferenceInfo2 = customExpectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
@@ -1260,9 +1301,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItSetsTheCallStartTimeBeforePostingTheNotification() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -1278,7 +1320,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
 
         // when
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
 
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
@@ -1513,16 +1555,17 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatCBRIsEnabledOnAudioCBRChangeHandler_whenCallIsEstablished() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
         )
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -1536,16 +1579,17 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatCBRIsEnabledOnAudioCBRChangeHandler_whenDataChannelIsEstablished() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
         )
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sut.handleDataChannelEstablishement(conversationId: oneOnOneConversationID)
+        sut.handleDataChannelEstablishement(conversationId: oneOnOneConversationID.serialized)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -1559,16 +1603,17 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatCBRIsDisabledOnAudioCBRChangeHandler() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
         )
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         sut.handleConstantBitRateChange(enabled: true)
@@ -1586,9 +1631,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatCBRIsNotEnabledOnAudioCBRChangeHandlerWhenCallIsNotEstablished() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -1607,16 +1653,17 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatCBRIsNotEnabledAfterCallIsTerminated() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
         )
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         sut.handleConstantBitRateChange(enabled: true)
@@ -1625,9 +1672,9 @@ final class WireCallCenterV3Tests: MessagingTest {
         // when
         sut.handleCallEnd(
             reason: .normal,
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            userId: otherUserID
+            userId: otherUserID.serialized
         )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -1640,9 +1687,10 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatNetworkQualityIsNormalInitially() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -1657,22 +1705,23 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatNetworkQualityHandlerUpdatesTheQuality() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
         )
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let quality = NetworkQuality.poor
 
         // when
         sut.handleNetworkQualityChange(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             userId: otherUserID.identifier.transportString(),
             clientId: otherUserClientID,
             quality: quality
@@ -1696,16 +1745,17 @@ extension WireCallCenterV3Tests {
 
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
         )
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID)
+        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let observer = MuteObserver()
         let token = WireCallCenterV3.addMuteStateObserver(observer: observer, context: uiMOC)
@@ -1724,9 +1774,10 @@ extension WireCallCenterV3Tests {
     func testThat_ItMutesUser_When_AnsweringCall_InGroupConversation() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .conference
@@ -1744,9 +1795,10 @@ extension WireCallCenterV3Tests {
     func testThat_ItDoesntMuteUser_When_AnsweringCall_InOneToOneConversation() throws {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -1766,9 +1818,10 @@ extension WireCallCenterV3Tests {
     func testThatItWhenIgnoringACallItWillSetsTheCallStateToIncomingInactive() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -1789,9 +1842,10 @@ extension WireCallCenterV3Tests {
     func testThatItWhenRejectingAOneOnOneCallItWilltSetTheCallStateToIncomingInactive() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -1812,9 +1866,10 @@ extension WireCallCenterV3Tests {
     func testThatItWhenClosingAGroupCallItWillSetsTheCallStateToIncomingInactive() {
         // given
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .group
@@ -1832,12 +1887,59 @@ extension WireCallCenterV3Tests {
         )
     }
 
+    func testThatClosingAGroupCallResetsVideoState() {
+        // given
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: true,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        sut.setVideoState(conversationId: groupConversationID, videoState: .started)
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .started)
+
+        // when
+        sut.closeCall(conversationId: groupConversationID)
+
+        // then
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .stopped)
+    }
+
+    func testThatRejoiningGroupCallAfterEnablingVideoStartsWithVideoDisabled() {
+        // given
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: true,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        sut.setVideoState(conversationId: groupConversationID, videoState: .started)
+        sut.closeCall(conversationId: groupConversationID)
+
+        // when
+        sut.handleEstablishedCall(conversationId: groupConversationID.serialized)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .stopped)
+    }
+
     func testThatItWhenClosingAOneOnOneCallItDoesNotSetTheCallStateToIncomingInactive() {
         // given
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -1860,9 +1962,10 @@ extension WireCallCenterV3Tests {
     func testThatItCreatesAParticipantSnapshotForAnIncomingCall() {
         // when
         sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID,
+            conversationId: oneOnOneConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .oneToOne
@@ -1902,7 +2005,7 @@ extension WireCallCenterV3Tests {
         let encoded = try! JSONEncoder().encode(change)
         let string = String(decoding: encoded, as: UTF8.self)
 
-        sut.handleParticipantChange(conversationId: conversationId, data: string)
+        sut.handleParticipantChange(conversationId: conversationId.serialized, data: string)
     }
 
     func testThatItDoesNotIgnore_WhenGroupHandlerIsCalledForOneToOne() throws {
@@ -1952,9 +2055,10 @@ extension WireCallCenterV3Tests {
     func testThatItUpdatesTheStateForParticipant() {
         // when
         sut.handleIncomingCall(
-            conversationId: groupConversationID,
+            conversationId: groupConversationID.serialized,
             messageTime: Date(),
-            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
             isVideoCall: false,
             shouldRing: true,
             conversationType: .group
@@ -2115,12 +2219,17 @@ extension WireCallCenterV3Tests {
         return AVSActiveSpeakersChange(activeSpeakers: activeSpeakers)
     }
 
-    private func callSnapshot(conversationId: AVSIdentifier, clients: [AVSClient]) -> [AVSIdentifier: CallSnapshot] {
+    private func callSnapshot(
+        conversationId: AVSIdentifier,
+        clients: [AVSClient],
+        messageProtocol: WireDataModel.MessageProtocol = .mls
+    ) -> [AVSIdentifier: CallSnapshot] {
         [
             conversationId: CallSnapshotTestFixture.callSnapshot(
                 conversationId: conversationId,
                 callCenter: sut,
-                clients: clients
+                clients: clients,
+                messageProtocol: messageProtocol
             )
         ]
     }
@@ -2135,7 +2244,7 @@ extension WireCallCenterV3Tests {
         let activeSpeaker = try XCTUnwrap(change.activeSpeakers.first)
 
         // WHEN
-        sut.handleActiveSpeakersChange(conversationId: conversationId, data: change.data)
+        sut.handleActiveSpeakersChange(conversationId: conversationId.serialized, data: change.data)
 
         // THEN
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -2184,7 +2293,7 @@ extension WireCallCenterV3Tests {
         let expectation = XCTNSNotificationExpectation(name: WireCallCenterActiveSpeakersNotification.notificationName)
 
         // WHEN
-        sut.handleActiveSpeakersChange(conversationId: conversationId, data: change.data)
+        sut.handleActiveSpeakersChange(conversationId: conversationId.serialized, data: change.data)
 
         // THEN
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -2257,7 +2366,7 @@ extension WireCallCenterV3Tests {
         expectation.isInverted = true
 
         // WHEN
-        sut.handleActiveSpeakersChange(conversationId: conversationId, data: change.data)
+        sut.handleActiveSpeakersChange(conversationId: conversationId.serialized, data: change.data)
 
         // THEN
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -2283,7 +2392,7 @@ extension WireCallCenterV3Tests {
         let data = activeSpeakersChange(for: conversationId, clients: clients, activeSpeakerKind: activeSpeakerKind)
             .data
 
-        sut.handleActiveSpeakersChange(conversationId: conversationId, data: data)
+        sut.handleActiveSpeakersChange(conversationId: conversationId.serialized, data: data)
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -2358,7 +2467,9 @@ extension WireCallCenterV3Tests {
         let clients = [
             AVSClient(userId: selfUserID, clientId: clientId1),
             AVSClient(userId: otherUserID, clientId: clientId2)
-        ]
+        ].map { client in
+            AVSClientVideoStream(client: client, quality: .low)
+        }
 
         let expectedResult = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
 
@@ -2379,6 +2490,7 @@ extension WireCallCenterV3Tests {
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
+        let conferenceInfo = MLSConferenceInfo.random()
 
         createsMLSConferenceSnapshot(
             conversationID: conversationID,
@@ -2392,17 +2504,89 @@ extension WireCallCenterV3Tests {
             uiMOC.zm_sync.mlsService = mlsService
         }
 
-        let didGenereateNewEpoch = customExpectation(description: "didGenerateNewEpoch")
-        mlsService.generateNewEpochGroupID_MockMethod = {
-            XCTAssertEqual($0, subconversationGroupID)
-            didGenereateNewEpoch.fulfill()
+        let didGenerateConferenceInfo = customExpectation(description: "didGenerateConferenceInfo")
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = {
+            defer { didGenerateConferenceInfo.fulfill() }
+            XCTAssertEqual($0, parentGroupID)
+            XCTAssertEqual($1, subconversationGroupID)
+            return conferenceInfo
+        }
+
+        let didSetConferenceInfo = customExpectation(description: "didSetConferenceInfo")
+        mockAVSWrapper.mockSetMLSConferenceInfo = {
+            defer { didSetConferenceInfo.fulfill() }
+            XCTAssertEqual($0, conversationID)
+            XCTAssertEqual($1, conferenceInfo)
         }
 
         // When
-        sut.handleNewEpochRequest(conversationID: conversationID)
+        sut.handleNewEpochRequest(conversationID: conversationID.serialized)
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func test_HandleNewEpochRequest_DoesNothing_WhenSnapshotIsMissing() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        // No snapshot added for conversationID
+
+        let mlsService = MockMLSServiceInterface()
+        uiMOC.zm_sync.performAndWait {
+            uiMOC.zm_sync.mlsService = mlsService
+        }
+
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = { _, _ in
+            XCTFail("generateConferenceInfo should not be called when snapshot is missing")
+            return .random()
+        }
+
+        // When
+        sut.handleNewEpochRequest(conversationID: conversationID.serialized)
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func test_HandleNewEpochRequest_DoesNotSetConferenceInfo_WhenGenerateFails() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+
+        createsMLSConferenceSnapshot(
+            conversationID: conversationID,
+            qualifiedID: qualifiedID,
+            parentGroupID: parentGroupID,
+            subconversationGroupID: subconversationGroupID
+        )
+
+        let mlsService = MockMLSServiceInterface()
+        uiMOC.zm_sync.performAndWait {
+            uiMOC.zm_sync.mlsService = mlsService
+        }
+
+        struct FakeError: Error {}
+        let didAttemptGenerate = customExpectation(description: "didAttemptGenerate")
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = { _, _ in
+            didAttemptGenerate.fulfill()
+            throw FakeError()
+        }
+
+        mockAVSWrapper.mockSetMLSConferenceInfo = { _, _ in
+            XCTFail("setMLSConferenceInfo should not be called when generateConferenceInfo throws")
+        }
+
+        // When
+        sut.handleNewEpochRequest(conversationID: conversationID.serialized)
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(
+            mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_Invocations.count,
+            1
+        )
     }
 
     private func createsMLSConferenceSnapshot(
@@ -2414,6 +2598,7 @@ extension WireCallCenterV3Tests {
         sut.callSnapshots[conversationID] = CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: (parentGroupID, subconversationGroupID),
+            messageProtocol: .mls,
             callParticipants: CallParticipantsSnapshot(
                 conversationId: conversationID,
                 members: [],
@@ -2480,7 +2665,11 @@ extension WireCallCenterV3Tests {
 
     func test_SystemMessageIsAppended_WhenProtocolChangesToMLS() throws {
         // Given
-        sut.callSnapshots = callSnapshot(conversationId: groupConversation.avsIdentifier!, clients: [])
+        sut.callSnapshots = callSnapshot(
+            conversationId: groupConversation.avsIdentifier!,
+            clients: [],
+            messageProtocol: .proteus
+        )
         groupConversation.messageProtocol = .mls
         let changeInfo = ConversationChangeInfo(object: groupConversation)
         changeInfo.changedKeys = [ZMConversation.messageProtocolKey]
@@ -2493,6 +2682,24 @@ extension WireCallCenterV3Tests {
         XCTAssertTrue(lastMessage.isSystem)
         let systemMessageData = try XCTUnwrap(lastMessage.systemMessageData)
         XCTAssertEqual(systemMessageData.systemMessageType, .mlsMigrationOngoingCall)
+    }
+
+    func test_SystemMessageIsNotAppended_WhenMessageProtocolKeyIsUpdated_ButProtocolDidNotChange() throws {
+        // Given
+        sut.callSnapshots = callSnapshot(
+            conversationId: groupConversation.avsIdentifier!,
+            clients: [],
+            messageProtocol: .mls
+        )
+        groupConversation.messageProtocol = .mls
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [ZMConversation.messageProtocolKey]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssertNil(groupConversation.lastMessage)
     }
 
     func test_CallIsClosed_WhenConversationIsDeleted() throws {
@@ -2548,7 +2755,7 @@ extension WireCallCenterV3Tests {
 private extension AVSClient {
     static var mockClient: AVSClient {
         AVSClient(
-            userId: AVSIdentifier(identifier: UUID(), domain: "wire.com"),
+            userId: AVSIdentifier(identifier: UUID(), domain: "wire.com", isFederationEnabled: false),
             clientId: UUID().transportString()
         )
     }

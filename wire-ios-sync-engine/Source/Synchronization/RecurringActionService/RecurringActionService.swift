@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireFoundation
 import WireUtilities
 
 final class RecurringActionService: RecurringActionServiceInterface {
@@ -42,7 +42,7 @@ final class RecurringActionService: RecurringActionServiceInterface {
         actionsByID[action.id] = action
     }
 
-    public func performActionsIfNeeded() {
+    public func performActionsIfNeeded() async {
         let now = dateProvider.now
 
         for (id, action) in actionsByID {
@@ -50,15 +50,15 @@ final class RecurringActionService: RecurringActionServiceInterface {
             let lastActionDate = lastCheckDate(for: action.id) ?? .distantPast
 
             if (lastActionDate + action.interval) <= now {
-                action()
+                await action()
                 persistLastCheckDate(for: id)
             }
         }
     }
 
-    public func forcePerformAction(id: String) {
+    public func forcePerformAction(id: String) async {
         guard let action = actionsByID[id] else { return }
-        action()
+        await action()
         persistLastCheckDate(for: id)
     }
 

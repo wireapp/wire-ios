@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 import SwiftUI
 
 struct PreferredSizeKey: PreferenceKey, Sendable {
-    static var defaultValue: CGSize?
+    static let defaultValue: CGSize? = .none
 
     static func reduce(value: inout CGSize?, nextValue: () -> CGSize?) {
         let next = nextValue()
@@ -49,8 +49,10 @@ struct PreferredSizeModifier: ViewModifier {
     private func setSize(value: CGSize?) {
         if let value {
             DispatchQueue.main.async {
-                size.height = min(value.height, maxSize.height)
-                size.width = min(value.width, maxSize.width)
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    size.height = min(value.height, maxSize.height)
+                    size.width = min(value.width, maxSize.width)
+                }
             }
         }
     }

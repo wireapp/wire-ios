@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,9 +51,9 @@ public final class WireAuthenticationBridge {
 
     public enum OutboundEvent {
 
-        case userAuthenticated(AuthenticationResult)
-        case accountRegistrationRequested(email: String, WireAuthenticationBackendEnvironment)
+        case userAuthenticated(AuthenticationResult, RegistrationAnalyticsTrackingConsent)
         case exitFlowRequested
+        case logoutRequested(deleteData: Bool)
 
     }
 
@@ -63,8 +63,6 @@ public final class WireAuthenticationBridge {
     public enum InboundEvent {
 
         case didRewindToThisView
-        case ssoAuthenticationSuccess(userID: UUID, cookies: [HTTPCookie])
-        case ssoAutheticationFailure
         case backendSwitchRequested(configURL: URL)
         case updateAnotherAccountExistence(newValue: Bool)
 

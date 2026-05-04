@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@
 "share_extension.logged_out.message" = "Veuillez choisir un autre compte.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Conversation de groupe vide";
+"share_extension.conversation.displayname.emptygroup" = "Empty conversation";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ utilise un nouvel appareil.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ utilisent de nouveaux appareils.";
 "share_extension.meta.degraded.dialog_message" = "Voulez-vous quand même envoyer votre message ?";
@@ -77,3 +77,11 @@
 "share_extension.voiceover.conversation_under_legal_hold" = "Soumis à la conservation à des fins juridiques.";
 "share_extension.voiceover.conversation_secure" = "Tous les clients ont été vérifiés.";
 "share_extension.voiceover.conversation_secure_with_ignored" = "Tous les clients n'ont pas été vérifiés.";
+
+// Update required
+"share_extension.error.update_required.title" = "Update required";
+"share_extension.error.update_required.obsolete_client" = "You are missing out on new features. Get the latest version of Wire to continue using the app with this account.";
+"share_extension.error.update_required.obsolete_backend" = "Your Wire server needs to be updated. Please notify your system administrator.";
+
+"share_extension.error.open_app.title" = "Open app";
+"share_extension.error.open_app.message" = "Open this account in the Wire app then try again.";

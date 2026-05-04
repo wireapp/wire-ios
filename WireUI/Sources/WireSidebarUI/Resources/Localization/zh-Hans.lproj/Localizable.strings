@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,20 @@
 "sidebar.conversation_filter.all.title" = "所有";
 "sidebar.conversation_filter.favorites.title" = "收藏夾";
 "sidebar.conversation_filter.groups.title" = "群组";
+"sidebar.conversation_filter.channels.title" = "频道";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "一对一对话";
+"sidebar.conversation_filter.unread.title" = "未读";
+"sidebar.conversation_filter.mentions.title" = "提及";
+"sidebar.conversation_filter.replies.title" = "回复";
+"sidebar.conversation_filter.drafts.title" = "草稿";
 "sidebar.conversation_filter.folders.title" = "文件夹";
 "sidebar.conversation_filter.archived.title" = "归档";
+
+"sidebar.meetings.title" = "Meetings";
+"sidebar.meetings.all_meetings.title" = "All Meetings";
+
+"sidebar.files.title" = "文件";
+"sidebar.files.all_files.title" = "所有";
 
 "sidebar.contacts.title" = "联络人";
 "sidebar.contacts.connect.title" = "新增好友";

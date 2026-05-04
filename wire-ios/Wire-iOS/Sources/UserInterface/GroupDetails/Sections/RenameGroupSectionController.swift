@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
 
     var isHidden: Bool {
         false
+    }
+
+    var titleFooter: String {
+        L10n.Localizable.Participants.Section.Name
+            .footer(ZMConversation.getMaxParticipants(isChannel: conversation.isChannel).formatted(.number))
     }
 
     init(conversation: GroupDetailsConversationType, userSession: UserSession) {
@@ -88,8 +93,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
             withReuseIdentifier: "SectionFooter",
             for: indexPath
         )
-        (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.Participants.Section.Name
-            .footer(ZMConversation.maxParticipants)
+        (view as? SectionFooter)?.titleLabel.text = titleFooter
         return view
     }
 
@@ -111,7 +115,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
             user.hasTeam
         else { return .zero }
 
-        sizingFooter.titleLabel.text = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+        sizingFooter.titleLabel.text = titleFooter
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
         return sizingFooter.bounds.size
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 /// Email credentials for a user.
 
-public struct EmailCredentials: Equatable, Hashable {
+public struct EmailCredentials: Equatable, Hashable, Sendable {
 
     /// The user's email address.
 

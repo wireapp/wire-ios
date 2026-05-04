@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
+import WireSyncEngine
 
 protocol ShareDestination: Hashable {
     var displayNameWithFallback: String { get }
@@ -30,14 +32,19 @@ protocol ShareDestination: Hashable {
 
 protocol Shareable {
     associatedtype I: ShareDestination
-    func share<I>(to: [I])
-    func previewView() -> UIView?
+    func share(to: [some Any], userSession: UserSession)
+    func previewView(userSession: UserSession) -> UIView?
 }
 
 final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,
     UITableViewDelegate, UITableViewDataSource {
+
+    typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
+
     let destinations: [D]
     let shareable: S
+    let userSession: UserSession
+    private let mainCoordinator: any MainCoordinatorProtocol
     private(set) var selectedDestinations: Set<D> = Set() {
         didSet {
             sendButton.isEnabled = selectedDestinations.count > 0
@@ -72,12 +79,21 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     var onDismiss: ((ShareViewController, Bool) -> Void)?
     var bottomConstraint: NSLayoutConstraint?
 
-    init(shareable: S, destinations: [D], showPreview: Bool = true, allowsMultipleSelection: Bool = true) {
+    init(
+        shareable: S,
+        destinations: [D],
+        showPreview: Bool = true,
+        allowsMultipleSelection: Bool = true,
+        userSession: UserSession,
+        mainCoordinator: any MainCoordinatorProtocol
+    ) {
         self.destinations = destinations
         self.filteredDestinations = destinations
         self.shareable = shareable
         self.showPreview = showPreview
         self.allowsMultipleSelection = allowsMultipleSelection
+        self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
         super.init(nibName: nil, bundle: nil)
 
         NotificationCenter.default.addObserver(
@@ -141,8 +157,16 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     @objc
     func onSendButtonPressed(sender: AnyObject?) {
         if !selectedDestinations.isEmpty {
-            shareable.share(to: Array(selectedDestinations))
-            onDismiss?(self, true)
+            shareable.share(to: Array(selectedDestinations), userSession: userSession)
+            if let conversation = selectedDestinations.first as? ZMConversation,
+               let mainCoordinator = mainCoordinator as? MainCoordinator {
+                Task {
+                    await mainCoordinator.showConversationList(conversationFilter: nil)
+                    mainCoordinator.showConversation(conversation: conversation, message: nil)
+                }
+            } else {
+                onDismiss?(self, true)
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@
 "general.decline" = "Tänan, ei";
 "general.failure" = "Midagi läks valesti";
 "general.failure.try_again" = "Palun proovi uuesti.";
-"general.service" = "Teenus";
 "general.off" = "Väljas";
 "general.on" = "Sees";
 "general.loading" = "Laadimine…";
@@ -48,6 +47,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // People picker/start UI
+"peoplepicker.navigation_header.title" = "New conversation";
 "peoplepicker.search_placeholder" = "Otsi nime või kasutajanime järgi";
 "peoplepicker.header.top_people" = "Aktiivsed vestlused";
 "peoplepicker.button.create_conversation" = "Create Group";
@@ -60,6 +60,10 @@
 "peoplepicker.header.directory" = "Lisa kontakt";
 "peoplepicker.header.federation" = "Connect with other domain";
 
+"peoplepicker.upgrade_banner.headline" = "Channels are available for team members.";
+"peoplepicker.upgrade_banner.subheadline" = "Create a team and start collaborating for free!";
+"peoplepicker.upgrade_banner.button.title" = "Create Wire Team";
+
 "peoplepicker.group.title.singular" = "Select Participants";
 "peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Jäta vahele";
@@ -67,15 +71,12 @@
 "peoplepicker.group.create" = "Loo";
 
 "peoplepicker.header.people" = "Inimesed";
-"peoplepicker.header.services" = "Teenused";
-"peoplepicker.services.open_conversation.item" = "Ava vestlus";
-"peoplepicker.services.add_service.button" = "Lisa teenus";
-"peoplepicker.services.add_service.error.title" = "Teenust ei saa lisada";
-"peoplepicker.services.add_service.error.default" = "Teenus pole hetkel saadaval";
-"peoplepicker.services.add_service.error.full" = "Vestlus on täis";
-
-"peoplepicker.title.create_conversation" = "Loo grupp";
-"peoplepicker.title.add_to_conversation" = "Lisa osalejaid";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "Ava vestlus";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "Ei ole kontakte.";
 
@@ -84,14 +85,19 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Saada kutse";
 "peoplepicker.no_matching_results.action.share_contacts" = "Jaga kontakte";
 "peoplepicker.no_matching_results.action.learn_more" = "Loe lähemalt";
-"peoplepicker.no_matching_results.action.manage_services" = "Halda teenuseid";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Kõik on siin.";
-"peoplepicker.no_matching_results.message.services" = "Tulemusi ei leitud.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Teenused on abistajad, mis võivad aidata sul töid teha.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Teenused on abistajad, mis võivad aidata sul töid teha. Nende lubamiseks pöördu oma administraatori poole.";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
+"peoplepicker.no_apps_added.title" = "Your team hasn’t added apps yet";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps are helpers that can improve your workflow. To use them, ask your team admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.";
+"peoplepicker.app_details.created_by" = "Created by %@";
+"peoplepicker.app_details.description" = "Description";
 
 "peoplepicker.send_invitation.dialog.title" = "Kutse saadetud";
 "peoplepicker.send_invitation.dialog.message" = "See kehtib 2 nädalat. Saada kehtivuse lõppedes uus.";
@@ -99,13 +105,18 @@
 
 "peoplepicker.invite_team_members" = "Kutsu inimesi meeskonnaga liituma";
 "peoplepicker.quick-action.open-conversation" = "Ava";
-"peoplepicker.quick-action.admin-services" = "Halda teenuseid";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "Grupp on täis";
-"add_participants.alert.message.new_conversation" = "Vestlusega saab liituda kuni %d inimest.";
-"add_participants.alert.message.existing_conversation" = "Vestlusega saab liituda kuni %1$d inimest. Hetkel on siin ruumi veel %2$d inimesele.";
+"add_participants.alert.title" = "The conversation is full";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
+
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "Tagasi";
+"conversation.create.channel.next" = "Järgmine";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "Otsi nime järgi";
@@ -127,7 +138,12 @@
 "conversation_list.search_bar.placeholder" = "Search conversations";
 "conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.unreadPlaceholder" = "Search unread conversations";
+"conversation_list.search_bar.mentionsPlaceholder" = "Search conversations with mentions";
+"conversation_list.search_bar.repliesPlaceholder" = "Search conversations with replies";
+"conversation_list.search_bar.draftsPlaceholder" = "Search conversations with drafts";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
 
@@ -135,10 +151,15 @@
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Lemmikud";
 "conversation_list.filter.groups.title" = "Grupid";
+"conversation_list.filter.channels.title" = "Channels";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
 "conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Eemalda";
+"conversation_list.filter.unread.title" = "Unread";
+"conversation_list.filter.mentions.title" = "Mentions";
+"conversation_list.filter.replies.title" = "Replies";
+"conversation_list.filter.drafts.title" = "Drafts";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Liitu";
@@ -150,6 +171,8 @@
 // Conversation List - Empty states
 "conversation_list.empty_placeholder.all.headline" = "Welcome";
 "conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.channels.subheadline" = "Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.";
+"conversation_list.empty_placeholder.channels.link" = "Learn more about channels";
 "conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
 "conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
@@ -162,6 +185,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
 "conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
 "conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
+"conversation_list.empty_state.unread.title" = "No unread conversations";
+"conversation_list.empty_state.mentions.title" = "No mentions";
+"conversation_list.empty_state.replies.title" = "No replies";
+"conversation_list.empty_state.drafts.title" = "No drafts";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "seadme kontaktides";
@@ -229,11 +257,6 @@
 "list.archived_conversations" = "ARHIIV";
 "list.archived_conversations_close" = "Sulge arhiiv";
 
-"list.section.groups" = "Grupid";
-"list.section.contacts" = "Inimesed";
-"list.section.requests" = "Requests";
-"list.section.favorites" = "Lemmikud";
-
 "conversation.voiceover.value.active" = "active";
 "conversation.voiceover.value.disabled" = "disabled";
 
@@ -290,7 +313,6 @@
 "conversation.invite_more_people.button_title" = "Lisa inimesi";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Tühi grupivestlus";
 
 "conversation.input_bar.verified" = "Kontrollitud";
 "conversation.input_bar.placeholder" = "Kirjuta sõnum";
@@ -315,7 +337,15 @@
 
 "conversation.connection_view.in_address_book" = "seadme kontaktides";
 "conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_channel" = "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_group" = "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "Loe lähemalt";
 
 "conversation.input_bar.shortcut.send" = "Saada teade";
 "conversation.input_bar.shortcut.newline" = "Insert Line Break";
@@ -334,23 +364,28 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "Luba külalisi";
 "conversation.create.guests.subtitle" = "Ava see vestlus meeskonnast väljas olevatele inimestele.";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "Lugemiskinnitused";
 "conversation.create.receipts.subtitle" = "Kui see on sees, saavad inimesed näha, kas nende vestluse sõnumid on loetud.";
 "conversation.create.mls.title" = "Protocol";
 "conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Tühista";
-"conversation.create.non_federating_domains_error.title" = "Group can't be created";
-"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.title" = "Conversation can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "Loe lähemalt";
-"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "Loe lähemalt";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiivne kõne";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Sa ei saa salvestada audiosõnumit kõne ajal.";
@@ -360,16 +395,25 @@
 "conversation.alert.message_deleted" = "The message is deleted.";
 
 // Conversation banner
-"conversation.banner.guests" = "Külalised";
-"conversation.banner.services" = "Teenused";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ are present";
-"conversation.banner.are_active" = "%@ are active";
-"conversation.banner.separator" = " and ";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "Otsing";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
@@ -454,9 +498,12 @@
 "content.system.other_removed_you" = "%@ eemaldas sind";
 "content.system.you_removed_other" = "Sa eemaldasid kasutaja %@";
 
-"content.system.services.warning" = "Teenustel on ligipääs selle vestluse sisule";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -529,10 +576,6 @@
 
 "content.system.other_renamed_conv_to_nothing" = "%@ eemaldas vestluselt nime";
 "content.system.you_renamed_conv_to_nothing" = "Eemaldasid vestluse nime";
-"content.system.pending_message_timestamp" = "Saadab…";
-"content.system.message_sent_timestamp" = "Saadetud";
-"content.system.message_delivered_timestamp" = "Kohale toimetatud";
-"content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
 "content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
@@ -577,8 +620,21 @@
 "content.system.message_timer_off" = "%@ lülitas sõnumi taimeri välja";
 "content.system.message_timer_off-you" = "%@ lülitas sõnumi taimeri välja";
 
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
+
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
+
+"content.system.channel.with_name.title" = "%@ started the channel";
+"content.system.channel.with_name.title-you" = "%@ started the channel";
+
+"content.system.channel.invite.title" = "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:";
+"content.system.channel.invite.button" = "Copy Channel link";
+
+"content.system.channel.guest.joined" = "%@ joined the channel";
+"content.system.channel.guest.you_joined" = "You joined the channel";
+
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
 
 // read receipt
 
@@ -589,6 +645,13 @@
 "content.system.message_read_receipt_off-you" = "%@ turned read receipts off for everyone";
 
 "content.system.message_read_receipt_on_add_to_group" = "Lugemiskinnitused on sees";
+
+// history depth
+"content.system.message_history_depth_initially_set_days" = "New participants can see messages from the last %@ days";
+"content.system.message_history_depth_initially_set_weeks" = "New participants can see messages from the last %@ weeks";
+"content.system.message_history_depth_modified_days" = "%@ set conversation history to %@ days";
+"content.system.message_history_depth_modified_weeks" = "%@ set conversation history to %@ weeks";
+"content.system.message_history_depth_modified_disabled" = "%@ disabled conversation history";
 
 // legal hold
 
@@ -610,7 +673,6 @@
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
-"content.system.cannot_decrypt.reset_session" = "Fix future messages";
 "content.system.cannot_decrypt.error_details" = "(Fixed error: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.";
@@ -623,6 +685,10 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "Sõnumit pole võimalik näidata. Võimalik, et kasutad mõnd Wire vanemat versiooni.";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "This user is no longer available";
 
 "content.file.uploading" = "Üleslaadimine…";
 "content.file.downloading" = "Allalaadimine…";
@@ -639,6 +705,7 @@
 "content.message.delete" = "Kustuta";
 "content.message.save" = "Salvesta";
 "content.message.resend" = "Saada uuesti";
+"content.message.edited" = "Muudetud";
 
 "content.message.delete_ellipsis" = "Kustuta…";
 
@@ -647,6 +714,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "Meeldib";
 "content.message.unlike" = "Ei meeldi";
@@ -677,6 +745,15 @@
 "content.reactions_list.likers" = "Neile meeldib";
 
 "content.file.too_big" = "Saad saata faile suurusega %@";
+
+"content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "File not available";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Replace incompatible characters";
+"content.uploaded_file_needs_rename.message" = "You can't use the characters %@ and %@.\n\\Replace them automatically or rename the file manually.";
+"content.uploaded_file_needs_rename.confirmButton" = "Replace";
+"content.uploaded_file_needs_rename.cancelButton" = "Tühista";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
@@ -849,22 +926,22 @@
 "participants.title" = "Üksikasjad";
 "participants.all.title" = "Inimesed";
 "participants.section.participants" = "Inimesed (%d)";
-"participants.section.services" = "Teenused (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "Valikud";
 "participants.footer.add_title" = "Lisa osalejaid";
-"participants.section.name.footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Adminid puuduvad.";
 "participants.section.members.footer" = "There are no members.";
 
-"profile.profile.group_admin_options.title" = "Grupi admin";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Veel toiminguid";
 "meta.menu.rename" = "Nimeta ümber";
-"meta.menu.leave" = "Lahku grupist…";
+"meta.menu.leave" = "Leave Conversation…";
 "meta.menu.archive" = "Arhiveeri";
 "meta.menu.unarchive" = "Arhiivist tagasi";
-"meta.menu.delete" = "Delete Group…";
+"meta.menu.delete" = "Delete Conversation…";
 "meta.menu.clear_content" = "Clear Content…";
 "meta.menu.move_to_folder" = "Liiguta…";
 "meta.menu.remove_from_folder" = "Remove from \"%@\"";
@@ -919,8 +996,8 @@
 "profile.remove_dialog_title" = "Eemalda?";
 "profile.remove_dialog_message" = "%@ ei saa siin vestluses sõnumeid saata ega neid vastu võtta.";
 "profile.remove_dialog_button_cancel" = "Tühista";
-"profile.remove_dialog_button_remove" = "Remove From Group…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Group";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Blokeeri?";
@@ -975,14 +1052,14 @@
 "profile.read_receipts_disabled_memo.header" = "SA KEELASID LUGEMISKINNITUSED";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Information";
 
 // User Details
 "profile.details.title" = "Üksikasjad";
 "profile.details.guest" = "Külaline";
-"profile.details.group_admin" = "Grupi admin";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1017,27 +1094,37 @@
 "device.type.unknown" = "Teadmata";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "Külalised";
 "group_details.guest_options_cell.enabled" = "Sees";
 "group_details.guest_options_cell.disabled" = "Väljas";
-"group_details.services_options_cell.title" = "Teenused";
-"group_details.services_options_cell.enabled" = "Sees";
-"group_details.services_options_cell.disabled" = "Väljas";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "Sees";
+"group_details.apps_options_cell.disabled" = "Väljas";
 "group_details.timeout_options_cell.title" = "Self-deleting messages";
 "group_details.notification_options_cell.title" = "Teavitused";
 "group_details.notification_options_cell.description" = "Sind teavitatakse kõigest (s.h. hääl- ja videokõned) või ainult siis, kui sind mainitakse või su sõnumitele vastatakse.";
 "group_details.receipt_options_cell.title" = "Lugemiskinnitused";
 "group_details.receipt_options_cell.description" = "Kui see on sees, saavad inimesed näha, kas nende vestluse sõnumid on loetud.";
+"group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
+"group_details.file_collaboration_cell.subtitle" = "Sees";
+"group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
-"group_details.conversation_admins_header.title" = "Group admins";
-"group_details.conversation_members_header.title" = "Group members";
+"group_details.conversation_admins_header.title" = "Conversation admins";
+"group_details.conversation_members_header.title" = "Conversation members";
+
+// Channel Access level
+"channel_access_level.public" = "Public";
+"channel_access_level.private" = "Private";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";
@@ -1110,8 +1197,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Loo uus tiim";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Tiimi haldus";
-"self.settings.add_team_or_account.title" = "Lisa konto";
 "self.settings.add_account.title" = "Lisa konto";
 
 "self.settings.add_account.error.title" = "Kolm aktiivset kontot";
@@ -1146,6 +1233,7 @@
 "self.settings.account_details.remove_device.password.error" = "Vale parool";
 
 "self.settings.account_appearance_group.title" = "Välimus";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Privaatsus";
 "self.settings.enable_read_receipts.title" = "Saada lugemiskinnitusi";
@@ -1164,6 +1252,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
 "self.settings.account_picture_group.accent_color.purple" = "Purple";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Isikuandmed";
 
@@ -1184,6 +1273,10 @@
 "self.settings.account_details.log_out.alert.title" = "Logi välja";
 "self.settings.account_details.log_out.alert.message" = "Kogu vestluste ajalugu kustutatakse.";
 "self.settings.account_details.log_out.alert.password" = "Parool";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Logi välja";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Delete all your personal information and conversations on this device?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Log out and clear data";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Log out and keep data";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Kasutus- ja krahhiaruanded";
@@ -1268,13 +1361,8 @@
 // Open in
 "self.settings.external_apps.header" = "Ava rakendusega";
 
-"self.settings.link_options.twitter.title" = "Säutsud";
 "self.settings.link_options.maps.title" = "Kaardirakendus";
 "self.settings.link_options.browser.title" = "Veebilehitseja";
-
-"open_link.twitter.option.default" = "Browser / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Maps";
 "open_link.maps.option.google" = "Google Maps";
@@ -1296,7 +1384,6 @@
 "self.settings.developer_options.title" = "Arendaja Valikud";
 "self.settings.developer_options.loggin.title" = "Seaded";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "APNS logimine";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Seaded";
@@ -1321,7 +1408,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Eelvaateid võidakse siiski näidata teiste saadetud linkide puhul.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Seadmed";
 
@@ -1368,7 +1455,6 @@
 
 "self.settings.conversations.title" = "Ajalugu";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "Viga";
 "self.settings.history_backup.set_email.title" = "Määra e-posti aadress ja parool.";
 "self.settings.history_backup.set_email.message" = "Vajad e-posti aadressi ja parooli, et oma vestluste ajalugu varundada. Saad seda teha konto seadete lehel.";
 
@@ -1477,12 +1563,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Allow services";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "Eemalda";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "Eemalda";
 
 
 // Registration
@@ -1585,6 +1671,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";
@@ -1658,6 +1745,7 @@
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "See konto ei ole enam sisse logimiseks autoriseeritud.";
 "error.user.account_limit_reached" = "Sa ei saa lisada rohkem kui 3 kontot.";
+"error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Vestluses on liiga palju inimesi, et kõnet alustada";
 "error.group_call.too_many_members_in_conversation" = "Kõnede tegemiseks on maksimaalne inimeste arv vestluses %d.";
@@ -1726,8 +1814,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
@@ -1773,10 +1861,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Jätka";
 "databaseloadingfailure.alert.retry" = "Retry";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Server version not supported";
-"backend_not_supported.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
@@ -1802,6 +1886,10 @@
 
 "collections.search.field.placeholder" = "Tekstiotsing";
 "collections.search.no_items" = "Tulemusi ei leitud.";
+
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 
@@ -1859,6 +1947,7 @@
 "url_action.confirm" = "Kinnita";
 "url_action.title" = "Kinnita see toiming";
 "url_action.connect_to_bot.message" = "Kas soovid teenusega ühenduda?";
+"url_action.user_profile_qr_feature_flag.message" = "Using profile links or QR codes is not allowed in your team. Contact your admin";
 
 "url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -2092,3 +2181,11 @@
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";
 "device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";
+
+"account_blocked.network_error.alert.title" = "Network issue";
+"account_blocked.network_error.alert.message" = "Please check your internet connection and try again.";
+"account_blocked.generic_error.alert.title" = "Midagi läks valesti";
+"account_blocked.generic_error.alert.message" = "Please contact support if the error persists.";
+"account_blocked.generic_error.alert.switch_accounts" = "Switch accounts";
+"account_blocked.generic_error.alert.send_logs" = "Send Debug Report";
+"account_blocked.generic_error.alert.retry" = "Retry";

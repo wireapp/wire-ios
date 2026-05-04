@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
-extension WireAPI.SelfUserClient {
+extension WireNetwork.SelfUserClient {
 
     func toDomainModel() -> UserClientInfo {
         .init(
@@ -31,11 +31,11 @@ extension WireAPI.SelfUserClient {
             lastActiveDate: lastActiveDate,
             mlsPublicKeys: .init(
                 ed25519: mlsPublicKeys?.ed25519,
-                ed448: mlsPublicKeys?.ed448,
+                ed448: nil,
                 p256: mlsPublicKeys?.p256,
                 p384: mlsPublicKeys?.p384,
-                p512: mlsPublicKeys?.p512
-            )
+                p521: mlsPublicKeys?.p521
+            ), capabilities: capabilities
         )
     }
 

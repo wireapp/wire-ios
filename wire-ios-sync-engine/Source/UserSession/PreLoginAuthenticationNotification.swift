@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ public extension ZMUser {
     @objc var loginCredentials: LoginCredentials {
         LoginCredentials(
             emailAddress: emailAddress,
-            hasPassword: emailAddress != nil,
             usesCompanyLogin: usesCompanyLogin
         )
     }
@@ -37,7 +36,6 @@ public extension LoginCredentials {
     var dictionaryRepresentation: [String: Any] {
         var userInfo: [String: Any] = [:]
         userInfo[ZMUserLoginCredentialsKey] = self
-        userInfo[ZMUserHasPasswordKey] = hasPassword
         userInfo[ZMUserUsesCompanyLoginCredentialKey] = usesCompanyLogin
 
         if let emailAddress, !emailAddress.isEmpty {

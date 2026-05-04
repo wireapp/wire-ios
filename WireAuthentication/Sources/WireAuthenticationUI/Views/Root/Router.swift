@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,29 @@
 import Combine
 import Foundation
 import SwiftUI
+import WireLogging
 
 @MainActor
 package protocol Router {
 
+    func pop()
     func popToRoot()
 
-    func navigate<Destination: Hashable>(to destination: Destination)
+    func navigate(to destination: some Hashable)
 
-    func presentSheet(_ modalDestination: RootView.ModalDestination)
+    func presentSheet(_ modalDestination: RootViewSheet)
 
     func dismissSheet()
 
     func presentAlert(_ alert: Alert)
+
+}
+
+package extension Router {
+
+    func presentAlert(for error: any Error) {
+        WireLogger.authentication.error("router received unhandled error: \(String(describing: error))")
+        presentAlert(.general(for: error))
+    }
 
 }

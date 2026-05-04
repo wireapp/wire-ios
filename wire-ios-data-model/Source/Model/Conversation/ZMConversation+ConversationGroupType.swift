@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,46 +19,36 @@
 import Foundation
 
 @objc
-public enum ConversationGroupType: Int {
+public enum ConversationGroupType: Int16 {
+
+    /// No group type set
+
+    case none = 0
 
     /// A group conversation
 
-    case group = 0
+    case group = 1
 
     /// A channel conversation
 
-    case channel = 1
+    case channel = 2
 
 }
 
-extension ZMConversation: HasConversationGroupType {
-
-    /// The underlying group conversation type string value.
-
-    @NSManaged private var groupTypeValue: NSNumber?
+public extension ZMConversation {
 
     /// The group conversation type.
+
+    @NSManaged var groupType: ConversationGroupType
+
+    /// Whether the conversation is a channel.
     ///
-    /// - note: `nil` if the conversation is not a group conversation. Defaults to `.group` if not set.
+    /// Returns `true` if the conversation type is `group` **and** the group type is `channel`, otherwise false.
 
-    public var groupType: ConversationGroupType? {
-        get {
-            guard conversationType == .group else { return nil }
+    var isChannel: Bool {
+        guard conversationType == .group else { return false }
 
-            // Default to `group` type if not set.
-            guard let value = groupTypeValue?.intValue else { return .group }
-
-            return ConversationGroupType(rawValue: value)
-        }
-        set {
-            groupTypeValue = newValue.map { NSNumber(value: $0.rawValue) }
-        }
+        return groupType == .channel
     }
-
-}
-
-public protocol HasConversationGroupType {
-
-    var groupType: ConversationGroupType? { get }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,12 +50,12 @@ public extension Feature {
                 case allowedToOpenChannels = "allowed_to_open_channels"
             }
 
-            public let allowedToCreateChannels: ChannelsPermision
-            public let allowedToOpenChannels: ChannelsPermision
+            public let allowedToCreateChannels: ChannelsPermission
+            public let allowedToOpenChannels: ChannelsPermission
 
             public init(
-                allowedToCreateChannels: ChannelsPermision = .teamMembers,
-                allowedToOpenChannels: ChannelsPermision = .teamMembers
+                allowedToCreateChannels: ChannelsPermission = .teamMembers,
+                allowedToOpenChannels: ChannelsPermission = .teamMembers
             ) {
                 self.allowedToCreateChannels = allowedToCreateChannels
                 self.allowedToOpenChannels = allowedToOpenChannels
@@ -66,23 +66,26 @@ public extension Feature {
                     .container(keyedBy: Feature.Channels.Config.CodingKeys.self)
 
                 self.allowedToCreateChannels = try container.decode(
-                    ChannelsPermision.self,
+                    ChannelsPermission.self,
                     forKey: .allowedToCreateChannels
                 )
                 self.allowedToOpenChannels = try container.decode(
-                    ChannelsPermision.self,
+                    ChannelsPermission.self,
                     forKey: .allowedToOpenChannels
                 )
             }
 
-            public enum ChannelsPermision: String, Codable {
+            public enum ChannelsPermission: String, Codable {
 
                 /// Member, Admin, Owner
                 case teamMembers = "team-members"
+
                 /// Partner (a.k.a. external), Member, Admin, Owner
                 case everyone
+
                 /// Admin, Owner
                 case admins
+
             }
         }
 
@@ -94,6 +97,29 @@ public extension Feature.Channels {
 
     var isEnabled: Bool {
         status == .enabled
+    }
+
+    func canCreateChannels(role: TeamRole) -> Bool {
+        isEnabled && config.allowedToCreateChannels.contains(role)
+    }
+
+    func canOpenChannels(role: TeamRole) -> Bool {
+        isEnabled && config.allowedToOpenChannels.contains(role)
+    }
+
+}
+
+private extension Feature.Channels.Config.ChannelsPermission {
+
+    func contains(_ role: TeamRole) -> Bool {
+        switch self {
+        case .everyone:
+            role.isOne(of: .partner, .member, .admin, .owner)
+        case .teamMembers:
+            role.isOne(of: .member, .admin, .owner)
+        case .admins:
+            role.isOne(of: .admin, .owner)
+        }
     }
 
 }

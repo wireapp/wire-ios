@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthentication
+import WireDomain
 import WireLogging
 import WireSyncEngine
 
@@ -28,7 +29,7 @@ import WireSyncEngine
 final class AuthenticationHostingController<Content: View>: UIHostingController<Content>,
     AuthenticationCoordinatedViewController {
 
-    var authenticationCoordinator: AuthenticationCoordinator?
+    weak var authenticationCoordinator: AuthenticationCoordinator?
     private let bridge: WireAuthenticationBridge
     private var cancellables = Set<AnyCancellable>()
 
@@ -41,56 +42,51 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         self.bridge = bridge
         super.init(rootView: rootView)
 
-        bridge.outboundEvents.sink { event in
+        bridge.outboundEvents.sink { [weak authenticationCoordinator, weak self] event in
             switch event {
-            case let .userAuthenticated(authenticationResult):
+            case let .userAuthenticated(context):
                 authenticationCoordinator?.eventResponderChain.handleEvent(
-                    ofType: .wireAuthenticationModuleComplete(authenticationResult)
-                )
-            case let .accountRegistrationRequested(
-                email,
-                backendEnvironment
-            ):
-                authenticationCoordinator?.wireAuthenticationDidRequestAccountRegistration(
-                    email: email,
-                    backendEnvironment: backendEnvironment
+                    ofType: .wireAuthenticationModuleComplete(context)
                 )
             case .exitFlowRequested:
-                guard
-                    let sessionManager = SessionManager.shared,
-                    let account = sessionManager.firstAuthenticatedAccount
-                else {
-                    WireLogger.authentication.error("WireAuthentication requested exit but no account to go back to")
-                    return
-                }
-
-                sessionManager.select(account)
+                self?.selectAccount()
+            case let .logoutRequested(deleteData):
+                authenticationCoordinator?.eventResponderChain.handleEvent(
+                    ofType: .logoutRequested(deleteData: deleteData)
+                )
             }
         }
         .store(in: &cancellables)
 
         authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(
-            handleSSOLoginSuccess: { userID, cookies in
-                bridge.sendInboundEvent(.ssoAuthenticationSuccess(userID: userID, cookies: cookies))
-            },
             handleBackendSwitch: { url in
                 bridge.sendInboundEvent(.backendSwitchRequested(configURL: url))
             }
         )
 
-        authenticationCoordinator?.unauthenticatedSession.setErrorHandler {
-            bridge.sendInboundEvent(.ssoAutheticationFailure)
-        }
-
         NotificationCenter.default
             .publisher(for: AccountManagerDidUpdateAccountsNotificationName)
             .compactMap { $0.object as? AccountManager }
             .sink { accountManager in
-                let numberOfAccounts = accountManager.accounts.count
+                let numberOfAccounts = accountManager.numberOfAccounts
                 bridge.sendInboundEvent(.updateAnotherAccountExistence(newValue: numberOfAccounts > 0))
 
             }
             .store(in: &cancellables)
+    }
+
+    private func selectAccount(completion: (() -> Void)? = nil) {
+        guard
+            let sessionManager = SessionManager.shared,
+            let account = sessionManager.firstAuthenticatedAccount
+        else {
+            WireLogger.authentication.error("WireAuthentication requested exit but no account to go back to")
+            return
+        }
+
+        sessionManager.select(account, completion: { _ in
+            completion?()
+        })
     }
 
     @available(*, unavailable)

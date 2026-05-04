@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 //
 
 import Combine
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
-final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
+public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Properties
 
@@ -42,88 +42,77 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Public
 
-    func pullFeatureConfigs() async throws {
+    public func pullFeatureConfigs() async throws {
         let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
 
         for featureConfig in featureConfigs {
-            if let featureConfigInfo = getFeatureConfigInfo(featureConfig) {
-                await featureConfigLocalStore.storeFeature(
-                    name: featureConfigInfo.name,
-                    isEnabled: featureConfigInfo.isEnabled,
-                    config: featureConfigInfo.config
-                )
-
-                await sendFeatureState(for: featureConfig)
-            }
+            await featureConfigLocalStore.storeFeatureConfig(featureConfig)
+            await sendFeatureState(for: featureConfig)
         }
     }
 
-    func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
+    public func isFeatureEnabled(
+        _ feature: Feature.Name
+    ) async -> Bool {
+
+        do {
+            let feature = try await featureConfigLocalStore.fetchFeature(
+                name: feature
+            )
+            return await featureConfigLocalStore.isFeatureEnabled(
+                feature: feature
+            )
+        } catch FeatureConfigLocalStore.Error.failedToFetchFeatureLocally(.simplifiedUserConnectionRequestQRCode) {
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    public func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
         featureStateSubject.eraseToAnyPublisher()
     }
 
-    func fetchFeatureConfig<T: Decodable>(
-        name: Feature.Name,
-        type: T.Type
-    ) async throws -> LocalFeature<T> {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        let featureConfig = await featureConfigLocalStore.featureConfig(feature: feature)
-
-        if let config = featureConfig.config {
-            let decoder = JSONDecoder()
-            let config = try decoder.decode(type, from: config)
-
-            return LocalFeature(status: featureConfig.status, config: config)
-        }
-
-        return LocalFeature(status: featureConfig.status, config: nil)
-    }
-
-    func needsToNotifyUser(
-        name: Feature.Name
-    ) async throws -> Bool {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        return await featureConfigLocalStore.featureNeedsNotifyUser(
-            feature: feature
-        )
-    }
-
-    func storeFeatureNeedsToNotifyUser(
-        _ notifyUser: Bool,
-        name: Feature.Name
-    ) async throws {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        await featureConfigLocalStore.storeFeature(
-            needsNotifyUser: notifyUser,
-            feature: feature
-        )
-    }
-
-    func updateFeatureConfig(
+    public func updateFeatureConfig(
         _ featureConfig: FeatureConfig
-    ) async throws {
-        guard let featureConfigInfo = getFeatureConfigInfo(
-            featureConfig
-        ) else {
-            return
-        }
-
-        await featureConfigLocalStore.storeFeature(
-            name: featureConfigInfo.name,
-            isEnabled: featureConfigInfo.isEnabled,
-            config: featureConfigInfo.config
-        )
-
+    ) async {
+        await featureConfigLocalStore.storeFeatureConfig(featureConfig)
         await sendFeatureState(for: featureConfig)
+    }
+
+    public func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
+        try await fetchFeatureConfig(
+            name: .allowedGlobalOperations,
+            type: Feature.AllowedGlobalOperations.Config.self
+        )
+    }
+
+    public func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
+        try await fetchFeatureConfig(
+            name: .mls,
+            type: Feature.MLS.Config.self
+        )
+    }
+
+    public func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
+        try await fetchFeatureConfig(
+            name: .mlsMigration,
+            type: Feature.MLSMigration.Config.self
+        )
+    }
+
+    public func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
+        try await fetchFeatureConfig(
+            name: .appLock,
+            type: Feature.AppLock.Config.self
+        )
+    }
+
+    public func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config> {
+        try await fetchFeatureConfig(
+            name: .cellsInternal,
+            type: Feature.CellsInternal.Config.self
+        )
     }
 
     // MARK: - Private
@@ -139,96 +128,121 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     private func getFeatureState(forFeatureConfig config: FeatureConfig) async throws -> FeatureState? {
         switch config {
         case let .appLock(appLockFeatureConfig):
-
             return FeatureState(
                 name: .appLock,
-                isEnabled: appLockFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: appLockFeatureConfig.status == .enabled
+            )
+
+        case let .apps(appsConfig):
+            return FeatureState(
+                name: .apps,
+                isEnabled: appsConfig.status == .enabled
+            )
+
+        case let .assetAuditLog(config):
+            return FeatureState(
+                name: .assetAuditLog,
+                isEnabled: config.status == .enabled
             )
 
         case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
             return FeatureState(
                 name: .classifiedDomains,
-                isEnabled: classifiedDomainsFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: classifiedDomainsFeatureConfig.status == .enabled
             )
 
         case let .conferenceCalling(conferenceCallingFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .conferenceCalling)
             return FeatureState(
                 name: .conferenceCalling,
-                isEnabled: conferenceCallingFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: conferenceCallingFeatureConfig.status == .enabled
             )
 
         case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .conversationGuestLinks)
             return FeatureState(
                 name: .conversationGuestLinks,
-                isEnabled: conversationGuestLinksFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: conversationGuestLinksFeatureConfig.status == .enabled
             )
 
         case let .digitalSignature(digitalSignatureFeatureConfig):
 
             return FeatureState(
                 name: .digitalSignature,
-                isEnabled: digitalSignatureFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: digitalSignatureFeatureConfig.status == .enabled
             )
 
         case let .endToEndIdentity(endToEndIdentityFeatureConfig):
 
             return FeatureState(
                 name: .e2ei,
-                isEnabled: endToEndIdentityFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: endToEndIdentityFeatureConfig.status == .enabled
             )
 
         case let .fileSharing(fileSharingFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .fileSharing)
             return FeatureState(
                 name: .fileSharing,
-                isEnabled: fileSharingFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: fileSharingFeatureConfig.status == .enabled
             )
 
         case let .mls(mlsFeatureConfig):
 
             return FeatureState(
                 name: .mls,
-                isEnabled: mlsFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: mlsFeatureConfig.status == .enabled
             )
 
         case let .mlsMigration(mLSMigrationFeatureConfig):
 
             return FeatureState(
                 name: .mlsMigration,
-                isEnabled: mLSMigrationFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: mLSMigrationFeatureConfig.status == .enabled
             )
 
         case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .selfDeletingMessages)
             return FeatureState(
                 name: .selfDeletingMessages,
-                isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled
             )
 
         case let .channels(channelsFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .channels)
             return FeatureState(
-                name: .selfDeletingMessages,
-                isEnabled: channelsFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                name: .channels,
+                isEnabled: channelsFeatureConfig.status == .enabled
+            )
+
+        case let .allowedGlobalOperations(config):
+            return FeatureState(
+                name: .allowedGlobalOperations,
+                isEnabled: config.status == .enabled
+            )
+
+        case let .consumableNotifications(config):
+            return FeatureState(
+                name: .consumableNotifications,
+                isEnabled: config.status == .enabled
+            )
+
+        case let .simplifiedUserConnectionRequestQRCode(config):
+            return FeatureState(
+                name: .simplifiedUserConnectionRequestQRCode,
+                isEnabled: config.status == .enabled
+            )
+
+        case let .cells(cellsConfig):
+            return FeatureState(
+                name: .cells,
+                isEnabled: cellsConfig.status == .enabled
+            )
+
+        case let .cellsInternal(cellsInternalConfig):
+            return FeatureState(
+                name: .cellsInternal,
+                isEnabled: cellsInternalConfig.status == .enabled
             )
 
         case let .unknown(featureName):
@@ -240,105 +254,23 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
-    private func getFeatureConfigInfo(
-        _ featureConfig: FeatureConfig
-    ) -> (name: Feature.Name, isEnabled: Bool, config: (any Codable)?)? {
-        switch featureConfig {
-        case let .appLock(appLockFeatureConfig):
+    private func fetchFeatureConfig<T: Decodable>(
+        name: Feature.Name,
+        type: T.Type?
+    ) async throws -> LocalFeature<T> {
+        let feature = try await featureConfigLocalStore.fetchFeature(
+            name: name
+        )
 
-            return (
-                .appLock,
-                appLockFeatureConfig.status == .enabled,
-                appLockFeatureConfig.toDomainModel()
-            )
+        let featureConfig = await featureConfigLocalStore.featureConfig(feature: feature)
 
-        case let .classifiedDomains(classifiedDomainsFeatureConfig):
+        if let type, let config = featureConfig.config {
+            let decoder = JSONDecoder()
+            let config = try decoder.decode(type, from: config)
 
-            return (
-                .classifiedDomains,
-                classifiedDomainsFeatureConfig.status == .enabled,
-                classifiedDomainsFeatureConfig.toDomainModel()
-            )
-
-        case let .conferenceCalling(conferenceCallingFeatureConfig):
-
-            return (
-                .conferenceCalling,
-                conferenceCallingFeatureConfig.status == .enabled,
-                conferenceCallingFeatureConfig.toDomainModel()
-            )
-
-        case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
-
-            return (
-                .conversationGuestLinks,
-                conversationGuestLinksFeatureConfig.status == .enabled,
-                nil
-            )
-
-        case let .digitalSignature(digitalSignatureFeatureConfig):
-
-            return (
-                .digitalSignature,
-                digitalSignatureFeatureConfig.status == .enabled,
-                nil
-            )
-
-        case let .endToEndIdentity(endToEndIdentityFeatureConfig):
-
-            return (
-                .e2ei,
-                endToEndIdentityFeatureConfig.status == .enabled,
-                nil
-            )
-
-        case let .fileSharing(fileSharingFeatureConfig):
-
-            return (
-                .fileSharing,
-                fileSharingFeatureConfig.status == .enabled,
-                nil
-            )
-
-        case let .mls(mlsFeatureConfig):
-
-            return (
-                .mls,
-                mlsFeatureConfig.status == .enabled,
-                mlsFeatureConfig.toDomainModel()
-            )
-
-        case let .mlsMigration(mLSMigrationFeatureConfig):
-
-            return (
-                .mlsMigration,
-                mLSMigrationFeatureConfig.status == .enabled,
-                mLSMigrationFeatureConfig.toDomainModel()
-            )
-
-        case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
-
-            return (
-                .selfDeletingMessages,
-                selfDeletingMessagesFeatureConfig.status == .enabled,
-                selfDeletingMessagesFeatureConfig.toDomainModel()
-            )
-
-        case let .channels(channelsFeatureConfig):
-
-            return (
-                .channels,
-                channelsFeatureConfig.status == .enabled,
-                channelsFeatureConfig.toDomainModel()
-            )
-
-        case let .unknown(featureName):
-            logger.warn(
-                "Unknown feature name: \(featureName)"
-            )
-
-            return nil
+            return LocalFeature(status: featureConfig.status, config: config)
         }
-    }
 
+        return LocalFeature(status: featureConfig.status, config: nil)
+    }
 }

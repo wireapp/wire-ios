@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
@@ -27,127 +27,135 @@ import WireReusableUIComponents
 protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var passwordValidator: any PasswordValidator { get }
-    var networkService: NetworkService { get }
-    var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
-    var minTLSVersion: TLSVersion { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
+    var preferredAPIVersion: APIVersion? { get }
+    var environment: BackendEnvironment2 { get }
+    var minTLSVersion: TLSVersion { get }
 
 }
 
-class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
+final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
-    private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
-    private let backendMetadata: BackendMetadata
+    public let email: String?
+    private let canCreateAccount: Bool
+    public let didDetectDomainConflict: Bool
+    public let networkStack: NetworkStack
 
     init(
         parent: any Scope,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        networkStack: NetworkStack
     ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
-        self.backendMetadata = backendMetadata
+        self.email = email
+        self.canCreateAccount = canCreateAccount
+        self.didDetectDomainConflict = didDetectDomainConflict
+        self.networkStack = networkStack
         super.init(parent: parent)
-    }
-
-    public var authenticationAPI: any AuthenticationAPI {
-        AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(backendMetadata.apiVersion)
-        )
-    }
-
-    public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
-    }
-
-    private var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: BackendEnvironment(backendConfig),
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
-    }
-
-    // MARK: - View
-
-    @MainActor
-    func view(
-        email: String,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
-    ) -> LoginViaEmailView {
-        LoginViaEmailView(
-            viewModel: viewModel(
-                email: email,
-                canCreateAccount: canCreateAccount,
-                didDetectDomainConflict: didDetectDomainConflict
-            ),
-            factory: self
-        )
-    }
-
-    @MainActor
-    private func viewModel(
-        email: String,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
-    ) -> LoginViaEmailViewModel {
-        LoginViaEmailViewModel(
-            router: dependency.router,
-            loginViaEmailUseCase: loginViaEmailUseCase,
-            backendEnvironment: backendEnvironment,
-            email: email,
-            passwordValidator: dependency.passwordValidator,
-            canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency, backendEnvironment] in
-                guard let dependency else { return }
-                dependency.router.dismissSheet()
-                dependency.bridge.sendOutboundEvent(
-                    .accountRegistrationRequested(
-                        email: email,
-                        backendEnvironment
-                    )
-                )
-            }
-        )
-    }
-
-    public var backendEnvironment: WireAuthenticationBackendEnvironment {
-        shared {
-            WireAuthenticationBackendEnvironment(
-                environmentType: environmentType,
-                config: backendConfig,
-                metadata: backendMetadata
-            )
-        }
     }
 
     // MARK: - Children
 
-    var verificationCodeComponent: VerificationCodeComponent {
-        VerificationCodeComponent(parent: self)
+    private func personalAccountCreationComponent(teamAccountCreationLink: URL?) -> PersonalAccountCreationComponent {
+        PersonalAccountCreationComponent(
+            parent: self,
+            email: email ?? "",
+            environment: networkStack.backendEnvironment,
+            teamAccountCreationLink: teamAccountCreationLink
+        )
     }
 
 }
 
-extension LoginViaEmailComponent: LoginViaEmailView.Factory {
+extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
-    func verificationCodeView(
+    // MARK: - Factory
+
+    @MainActor
+    func verifyLoginView(
         email: String,
         password: String,
-        didDetectDomainConflict: Bool
+        proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView {
-        verificationCodeComponent.view(
+        let factory = verificationCodeFactory(
             email: email,
             password: password,
+            proxyCredentials: proxyCredentials
+        )
+        return VerificationCodeView(factory: factory)
+    }
+
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        let factory = noHistoryFactory(result: result)
+        return NoHistoryView(factory: factory)
+    }
+
+    @MainActor
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
+        let factory = personalAccountCreationFactory(
+            teamAccountCreationLink: teamAccountCreationLink
+        )
+        return PersonalAccountCreationView(factory: factory)
+    }
+
+    @MainActor var viewModel: LoginViaEmailViewModel {
+        LoginViaEmailViewModel(
+            factory: self,
+            router: dependency.router,
+            email: email,
+            environment: networkStack.backendEnvironment,
+            canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict
         )
     }
 
+    // MARK: - Use cases
+
+    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
+        SubmitProxyCredentialsUseCase(networkStack: networkStack)
+    }
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+    }
+
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        CreateAuthenticationResultUseCase(networkStack: networkStack)
+    }
+
+    func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
+        ValidateEmailUseCase()
+    }
+
+    // MARK: - private
+
+    private func noHistoryFactory(result: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: result,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
+    }
+
+    private func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> any VerificationCodeFactory {
+        VerificationCodeComponent(
+            parent: self,
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials
+        )
+    }
+
+    private func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent(
+            teamAccountCreationLink: teamAccountCreationLink
+        )
+    }
 }

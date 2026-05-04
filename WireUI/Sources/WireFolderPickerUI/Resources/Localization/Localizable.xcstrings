@@ -30,8 +30,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
+            "state" : "translated",
+            "value" : "Añade tus conversaciones a carpetas para mantenerte organizado."
           }
         },
         "et" : {
@@ -84,8 +84,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
+            "state" : "translated",
+            "value" : "Adicione suas conversas às pastas para ficar organizado."
           }
         },
         "ru" : {
@@ -280,8 +280,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
+            "state" : "translated",
+            "value" : "Carpetas"
           }
         },
         "et" : {
@@ -304,8 +304,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
+            "state" : "translated",
+            "value" : "Cartelle"
           }
         },
         "ja" : {
@@ -334,8 +334,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
+            "state" : "translated",
+            "value" : "Pastas"
           }
         },
         "ru" : {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 
 final class UserClientsLocalStoreTests: XCTestCase {
@@ -42,8 +43,7 @@ final class UserClientsLocalStoreTests: XCTestCase {
         userLocalStore = MockUserLocalStoreProtocol()
 
         sut = UserClientsLocalStore(
-            context: context,
-            userLocalStore: userLocalStore
+            context: context
         )
     }
 
@@ -83,22 +83,26 @@ final class UserClientsLocalStoreTests: XCTestCase {
         }
     }
 
-    func testUpdateClient_It_Updates_Client_Info() async throws {
+    func testUpdateClient_It_Inserts_New_Client_Info() async throws {
         // Given
+
+        let selfClient = await context.perform { [context] in
+            ModelHelper().createSelfClient(in: context)
+        }
 
         let createdClient = await sut.fetchOrCreateClient(
             id: Scaffolding.userClientID
-        )
+        ).client
 
         let clientID = await context.perform {
-            createdClient.client.remoteIdentifier!
+            createdClient.remoteIdentifier!
         }
 
         // When
 
         await sut.updateClient(
             id: clientID,
-            isNewClient: createdClient.isNew,
+            isNewClient: true,
             userClientInfo: Scaffolding.selfUserClientInfo
         )
 
@@ -115,6 +119,52 @@ final class UserClientsLocalStoreTests: XCTestCase {
             XCTAssertEqual(updatedClient.label, Scaffolding.selfUserClientInfo.label)
             XCTAssertEqual(updatedClient.model, Scaffolding.selfUserClientInfo.model)
             XCTAssertEqual(updatedClient.deviceClass, .phone)
+            XCTAssertTrue(updatedClient.needsSessionMigration)
+
+            XCTAssertTrue(selfClient.ignoredClients.contains(updatedClient))
+            XCTAssertFalse(selfClient.trustedClients.contains(updatedClient))
+        }
+    }
+
+    func testUpdateClient_It_Updates_Existing_Client_Info() async throws {
+        // Given
+
+        let selfClient = await context.perform { [context] in
+            ModelHelper().createSelfClient(in: context)
+        }
+
+        let createdClient = await sut.fetchOrCreateClient(
+            id: Scaffolding.userClientID
+        ).client
+
+        let clientID = await context.perform {
+            createdClient.remoteIdentifier!
+        }
+
+        // When
+
+        await sut.updateClient(
+            id: clientID,
+            isNewClient: false,
+            userClientInfo: Scaffolding.selfUserClientInfo
+        )
+
+        // Then
+
+        try await context.perform { [context] in
+            let updatedClient = try XCTUnwrap(UserClient.fetchExistingUserClient(
+                with: Scaffolding.userClientID,
+                in: context
+            ))
+
+            XCTAssertEqual(updatedClient.remoteIdentifier, Scaffolding.userClientID)
+            XCTAssertEqual(updatedClient.type, .permanent)
+            XCTAssertEqual(updatedClient.label, Scaffolding.selfUserClientInfo.label)
+            XCTAssertEqual(updatedClient.model, Scaffolding.selfUserClientInfo.model)
+            XCTAssertEqual(updatedClient.deviceClass, .phone)
+
+            XCTAssertFalse(selfClient.ignoredClients.contains(updatedClient))
+            XCTAssertFalse(selfClient.trustedClients.contains(updatedClient))
         }
     }
 
@@ -148,6 +198,47 @@ final class UserClientsLocalStoreTests: XCTestCase {
         XCTAssertEqual(deletedClient, nil)
     }
 
+    func testInvalidateSelfClient_It_Resets_Self_Client_Locally() async throws {
+        // Given
+
+        let selfClient = await context.perform { [self] in
+            let selfClient = modelHelper.createSelfClient(in: context)
+            selfClient.remoteIdentifier = UUID.mockID1.uuidString
+            selfClient.mlsPublicKeys = .init(ed25519: "key")
+            selfClient.setLocallyModifiedKeys(Set(["missingClients"]))
+            context.setPersistentStoreMetadata(
+                selfClient.remoteIdentifier!,
+                key: ZMPersistedClientIdKey
+            )
+
+            XCTAssertEqual(selfClient.remoteIdentifier, UUID.mockID1.uuidString)
+            XCTAssertTrue(selfClient.hasLocalModifications(forKey: "missingClients"))
+            XCTAssertEqual(
+                context.userInfo["ZMMetadataKey"] as! NSMutableDictionary,
+                ["PersistedClientId": selfClient.remoteIdentifier!]
+            )
+            XCTAssertEqual(selfClient.mlsPublicKeys, .init(ed25519: "key"))
+
+            return selfClient
+        }
+
+        // When
+
+        await sut.invalidateSelfClient()
+
+        // Then
+
+        await context.perform { [context] in
+            XCTAssertEqual(selfClient.remoteIdentifier, nil)
+            XCTAssertFalse(selfClient.hasLocalModifications(forKey: "missingClients"))
+            XCTAssertEqual(
+                context.userInfo["ZMMetadataKey"] as? NSMutableDictionary,
+                nil
+            )
+            XCTAssertEqual(selfClient.mlsPublicKeys, .init())
+        }
+    }
+
     private enum Scaffolding {
         static let userClientID = UUID.mockID1.uuidString
         static let otherUserClientID = UUID.mockID2.uuidString
@@ -160,7 +251,8 @@ final class UserClientsLocalStoreTests: XCTestCase {
             model: "test",
             deviceClass: .phone,
             lastActiveDate: nil,
-            mlsPublicKeys: nil
+            mlsPublicKeys: nil,
+            capabilities: [.legalholdConsent]
         )
 
     }

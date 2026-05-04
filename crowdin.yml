@@ -59,14 +59,24 @@ files: [
     "translation" : "/WireAuthentication/Sources/WireAuthenticationUI/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
-    "source" : "/WireConversations/Sources/WireConversationsResources/Localization/en.lproj/Accessibility.strings",
-    "dest" : "/App/WireConversationsResources/Accessibility.strings",
-    "translation" : "/WireConversations/Sources/WireConversationsResources/Localization/%osx_code%/%original_file_name%",
+    "source" : "/WireMessaging/Sources/WireMessagingUI/Resources/Localization/en.lproj/Accessibility.strings",
+    "dest" : "/App/WireMessagingUI/Resources/Accessibility.strings",
+    "translation" : "/WireMessaging/Sources/WireMessagingUI/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
-    "source" : "/WireConversations/Sources/WireConversationsResources/Localization/en.lproj/Localizable.strings",
-    "dest" : "/App/WireConversationsResources/Localizable.strings",
-    "translation" : "/WireConversations/Sources/WireConversationsResources/Localization/%osx_code%/%original_file_name%",
+    "source" : "/WireMessaging/Sources/WireMessagingUI/Resources/Localization/en.lproj/Localizable.strings",
+    "dest" : "/App/WireMessagingUI/Resources/Localizable.strings",
+    "translation" : "/WireMessaging/Sources/WireMessagingUI/Resources/Localization/%osx_code%/%original_file_name%",
+  },
+    {
+    "source" : "/WireCalling/Sources/WireCallingUI/Resources/Localization/en.lproj/Accessibility.strings",
+    "dest" : "/App/WireCallingUI/Resources/Accessibility.strings",
+    "translation" : "/WireCalling/Sources/WireCallingUI/Resources/Localization/%osx_code%/%original_file_name%",
+  },
+  {
+    "source" : "/WireCalling/Sources/WireCallingUI/Resources/Localization/en.lproj/Localizable.strings",
+    "dest" : "/App/WireCallingUI/Resources/Localizable.strings",
+    "translation" : "/WireCalling/Sources/WireCallingUI/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
     "source" : "/WireUI/Sources/WireMainNavigationUI/Resources/Localization/Localizable.xcstrings",
@@ -130,5 +140,11 @@ files: [
     "source" : "/WireUI/Sources/WireSettingsUI/Resources/Localization/en.lproj/Localizable.strings",
     "dest" : "/App/WireSettingsUI/Resources/Localizable.strings",
     "translation" : "/WireUI/Sources/WireSettingsUI/Resources/Localization/%osx_code%/%original_file_name%",
-  }
+  },
+  {
+      "source" : "/WireDomain/Sources/WireDomain/Resources/Localization/Localizable.xcstrings",
+      "dest" : "/App/WireDomain/Resources/Localizable.xcstrings",
+      "translation" : "%original_path%/%original_file_name%",
+      "multilingual": true,
+  },
 ]

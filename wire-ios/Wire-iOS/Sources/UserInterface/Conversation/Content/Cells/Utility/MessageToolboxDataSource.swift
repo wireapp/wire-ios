@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -141,7 +141,8 @@ final class MessageToolboxDataSource {
     ) {
         let countdownStatus = makeEphemeralCountdown()
         let deliveryState = message.shouldShowDeliveryState ? selfMessageState(for: message) : nil
-        let timestampString = message.isSent ? message.formattedReceivedDate() ?? "" : ""
+        let isTimestampVisible = message.isSent && message.deliveryState != .failedToSend
+        let timestampString = isTimestampVisible ? message.formattedReceivedTime() ?? "" : ""
         return (timestampString, deliveryState, countdownStatus)
     }
 
@@ -213,7 +214,7 @@ final class MessageToolboxDataSource {
     private func makeCallList() -> String {
         guard let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
               let timestamp = timestampString(message) else {
-            return timestampString(message) ?? "-"
+            return timestampString(message) ?? ""
         }
 
         let childrenTimestamps = childMessages
@@ -232,7 +233,7 @@ final class MessageToolboxDataSource {
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if let dateTimeString = message.formattedReceivedDate(),
+        } else if let dateTimeString = message.formattedReceivedDateTime(),
                   let systemMessage = message as? ZMSystemMessage,
                   systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)

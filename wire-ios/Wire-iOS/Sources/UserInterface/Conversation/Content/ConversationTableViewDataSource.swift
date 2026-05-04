@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,21 @@
 
 import DifferenceKit
 import WireDataModel
+import WireFoundation
+import WireLogging
+import WireMessagingUI
 import WireSyncEngine
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
+extension UUID: Differentiable {}
+
 extension AnyConversationMessageCellDescription: Differentiable {
 
     typealias DifferenceIdentifier = String
 
     var differenceIdentifier: String {
-        message!.objectIdentifier + String(describing: baseType)
+        String(describing: (message as! ZMMessage).objectID) + String(describing: baseType)
     }
 
     override var debugDescription: String {
@@ -40,36 +45,30 @@ extension AnyConversationMessageCellDescription: Differentiable {
 
 }
 
-extension ZMConversationMessage {
-
-    var isSentFromThisDevice: Bool {
-        guard let sender = senderUser else { return false }
-        return sender.isSelfUser && deliveryState == .pending
-    }
-
-}
-
 final class ConversationTableViewDataSource: NSObject {
 
     static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
 
+    private lazy var backgroundContext = userSession.contextProvider.newBackgroundContext()
     private var fetchController: NSFetchedResultsController<ZMMessage>?
     private var lastFetchedObjectCount: Int = 0
 
     var registeredCells: [AnyClass] = []
-    var sectionControllers: [String: ConversationMessageSectionController] = [:]
+
+    /// Cache for section controllers, keyed by message identifier
+    ///
+    /// The identifier includes both nonce and deliveryState to ensure proper cache invalidation
+    /// when a message's delivery state changes (e.g., from `.pending` to `.sent`).
+    ///
+    /// See `MessageCacheIdentifier` for implementation details.
+    var sectionControllers = ThreadSafeDictionary<MessageCacheIdentifier, ConversationMessageSectionController>()
 
     private(set) var hasOlderMessagesToLoad = false
     private(set) var hasNewerMessagesToLoad = false
 
     let userSession: UserSession
 
-    func resetSectionControllers() {
-        sectionControllers = [:]
-        calculateSections()
-    }
-
-    var actionControllers: [String: ConversationMessageActionController] = [:]
+    var actionControllers = ThreadSafeDictionary<UUID, ConversationMessageActionController>()
 
     let conversation: ZMConversation
     let tableView: UpsideDownTableView
@@ -80,25 +79,26 @@ final class ConversationTableViewDataSource: NSObject {
 
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
+    private let getUserByIDUseCase: GetUserByIDUseCaseProtocol
+
+    let debouncer = LeadingTrailingDebouncer(cooldownTime: 0.3)
 
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
             guard UIDevice.current.userInterfaceIdiom == .pad else { return }
             resetSectionControllers()
-            reloadSections(newSections: postProcessedSections(calculateSections()))
-            tableView.reloadData()
         }
     }
 
     var searchQueries: [String] = [] {
         didSet {
-            let currentSections = calculateSections()
-            self.currentSections = postProcessedSections(currentSections)
-            tableView.reloadData()
+            calculateSections { [weak self] sections in
+                self?.reloadSections(newSections: sections, animated: true)
+            }
         }
     }
 
-    var messages: [ZMMessage] {
+    var allMessages: [ZMMessage] {
         // NOTE: We limit the number of messages to the `lastFetchedObjectCount` since the
         // NSFetchResultsController will add objects to `fetchObjects` if they are modified after
         // the initial fetch, which results in unwanted table view updates. This is normally what
@@ -113,51 +113,166 @@ final class ConversationTableViewDataSource: NSObject {
 
     private(set) var currentSections: [Section] = []
 
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
+
+    private let cellProvider: ConversationCellProviderProtocol
+
     /// calculate cell sections
     ///
     /// - Parameter forceRecalculate: true if force recreate cell with context check
     /// - Returns: arraySection of cell descriptions
-    @discardableResult
     func calculateSections(
-        forceRecalculate: Bool = false
-    ) -> [Section] {
-        messages.enumerated().map { offset, element in
-            let sectionIdentifier = element.objectIdentifier
-            let context = context(
-                for: element,
-                at: offset,
-                firstUnreadMessage: firstUnreadMessage,
-                searchQueries: searchQueries
-            )
-            let sectionController = sectionController(for: element, at: offset)
+        forceRecalculate: Bool = false,
+        completion: @escaping ([Section]) -> Void
+    ) {
+        let mainThreadContext = userSession.contextProvider.viewContext
+        let messagesOnMainThread = allMessages
+        let messageIds = messagesOnMainThread.map(\.objectID)
+        let selfUserOnMainThread = userSession.selfUser
+        let selfUserObjectID = selfUserOnMainThread.objectId
+        let firstUnreadMessageNonce = firstUnreadMessage?.nonce
 
-            // Re-create cell description if the context has changed (message has been moved around or received new
-            // neighbors).
-            if sectionController.context != context || forceRecalculate {
-                sectionController.recreateCellDescriptions(in: context)
+        // Dispatching to background thread to offload sections calculation
+
+        backgroundContext = userSession.contextProvider.newBackgroundContext()
+        backgroundContext.perform { [weak self, backgroundContext] in
+            guard let self else { return }
+
+            var messages: [ZMMessage] = messageIds.compactMap { objectID in
+                try? backgroundContext.existingObject(with: objectID) as? ZMMessage
             }
 
-            return ArraySection(model: sectionIdentifier, elements: sectionController.tableViewCellDescriptions)
+            // sort if needed
+            messages = messages.sorted {
+                ($0.serverTimestamp ?? .distantPast) > ($1.serverTimestamp ?? .distantPast)
+            }
+
+            guard let selfUserOnBackgroundThread = getUserByIDUseCase.getUserByID(
+                id: selfUserObjectID,
+                context: backgroundContext
+            ) else {
+                DispatchQueue.main.async {
+                    completion(self.currentSections)
+                }
+                return
+            }
+
+            // Go through messages and calculate sections
+            let result: [(
+                MessageCacheIdentifier,
+                ConversationMessageSectionController,
+                ConversationMessageContext
+            )] = messages.enumerated().compactMap { offset, element in
+
+                // Create a cache identifier that includes deliveryState to invalidate the cache on state change
+                guard let identifier = MessageCacheIdentifier(message: element) else {
+                    return nil
+                }
+
+                let context = self.context(
+                    for: element,
+                    at: offset,
+                    firstUnreadMessageNonce: firstUnreadMessageNonce,
+                    searchQueries: self.searchQueries,
+                    messages: messages
+                )
+
+                let sectionController = if let cachedSectionController = self.sectionControllers.get(for: identifier) {
+                    // Cache hit - reuse existing section controller
+                    cachedSectionController
+                } else {
+                    // Cache miss - create new section controller with fresh cell descriptions
+                    self.makeSectionController(
+                        message: element,
+                        index: offset,
+                        messages: messages,
+                        selfUser: selfUserOnBackgroundThread,
+                        firstUnreadMessageNonce: firstUnreadMessageNonce
+                    )
+                }
+
+                // Re-create cell description if the context has changed (message has been moved around
+                // or received new neighbours).
+                return (identifier, sectionController, context)
+            }
+
+            // Return back to main thread
+            DispatchQueue.main.async {
+                var sections = [Section]()
+
+                for (identifier, sectionController, context) in result {
+
+                    // saving calculations result in local cache
+                    self.sectionControllers.set(value: sectionController, for: identifier)
+                    self.actionControllers.set(value: sectionController.actionController, for: identifier.nonce)
+
+                    // Re-set messages from Main thread to section controller to not have crash with later interactions
+                    // with data
+
+                    // Fix for tapping composite message buttons [WPB-19793]:
+                    // This workaround forces replacing `message` instance in `CompositeMessageItem` with an instance
+                    // originating from the main context.
+                    var recreateCellDescriptions = false
+
+                    if let managedID = (sectionController.message as? ZMMessage)?.objectID,
+                       let mainThreadMessage = try? mainThreadContext.existingObject(with: managedID) as? ZMMessage {
+                        sectionController.updateMessage(mainThreadMessage)
+                        recreateCellDescriptions = mainThreadMessage.isComposite
+                    } else {
+                        WireLogger.conversation
+                            .debug(
+                                "No message found to reset from background to main thread, nonce: \(String(describing: sectionController.message.nonce))"
+                            )
+                    }
+
+                    sectionController.selfUser = selfUserOnMainThread
+
+                    if sectionController.context != context || forceRecalculate || recreateCellDescriptions {
+                        sectionController.recreateCellDescriptions(in: context)
+                    }
+
+                    // Section model uses nonce for DifferenceKit identity (not cache identifier)
+                    // This ensures the same message is recognized as the same section across delivery state changes.
+                    sections.append(ArraySection(
+                        model: identifier.nonce,
+                        elements: sectionController.tableViewCellDescriptions
+                    ))
+                }
+
+                completion(
+                    self.postProcessedSections(
+                        sections,
+                        selfUser: selfUserOnMainThread,
+                        allMessages: messagesOnMainThread
+                    )
+                )
+            }
         }
+
     }
 
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
     ) -> [Section] {
-        let sectionIdentifier = sectionController.message.objectIdentifier
-
-        guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
+        guard let sectionIdentifier = sectionController.message.nonce,
+              let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
         else { return currentSections }
+
+        let messages = allMessages
+
+        let context = context(
+            for: sectionController.message,
+            at: section,
+            firstUnreadMessageNonce: firstUnreadMessage?.nonce,
+            searchQueries: searchQueries,
+            messages: messages
+        )
+
+        sectionController.recreateCellDescriptions(in: context)
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
             // workaround: this loop might add a status view to a message, which is removed again later, so skip
             if description.instance is ConversationMessageToolboxCellDescription {
-                continue
-            }
-            // same workaround for stacked cells
-            if
-                let stack = description.instance as? StackViewCellDescription,
-                stack.cellDescriptions.contains(where: { $0.instance is ConversationMessageToolboxCellDescription }) {
                 continue
             }
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
@@ -166,20 +281,16 @@ final class ConversationTableViewDataSource: NSObject {
             }
         }
 
-        let context = context(
-            for: sectionController.message,
-            at: section,
-            firstUnreadMessage: firstUnreadMessage,
-            searchQueries: searchQueries
-        )
-        sectionController.recreateCellDescriptions(in: context)
-
         var updatedSections = currentSections
         updatedSections[section] = ArraySection(
             model: sectionIdentifier,
             elements: sectionController.tableViewCellDescriptions
         )
-        updatedSections = postProcessedSections(updatedSections)
+        updatedSections = postProcessedSections(
+            updatedSections,
+            selfUser: userSession.selfUser,
+            allMessages: messages
+        )
 
         return updatedSections
     }
@@ -189,78 +300,147 @@ final class ConversationTableViewDataSource: NSObject {
         tableView: UpsideDownTableView,
         actionResponder: MessageActionResponder,
         cellDelegate: ConversationMessageCellDelegate,
-        userSession: UserSession
+        userSession: UserSession,
+        getUserByIDUseCase: GetUserByIDUseCaseProtocol,
+        wireMessagingFactory: any WireMessagingFactoryProtocol,
+        conversationCellProvider: any ConversationCellProviderProtocol
     ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
         self.conversation = conversation
         self.tableView = tableView
         self.userSession = userSession
+        self.getUserByIDUseCase = getUserByIDUseCase
+        self.wireMessagingFactory = wireMessagingFactory
+        self.cellProvider = conversationCellProvider
 
         super.init()
 
         tableView.dataSource = self
     }
 
-    func section(for message: ZMConversationMessage) -> Int? {
-        currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
+    func resetSectionControllers() {
+        debouncer.call(id: nil) { [weak self] in
+            self?.sectionControllers.reset()
+            self?.calculateSections { [weak self] sections in
+                guard let self else { return }
+                currentSections = sections
+                tableView.reloadData()
+            }
+        }
     }
 
-    func actionController(
-        for message: ZMConversationMessage,
-        sectionController: ConversationMessageSectionController
+    func section(for message: ZMConversationMessage) -> Int? {
+        currentSections.firstIndex(where: { $0.model == message.nonce })
+    }
+
+    func getOrCreateActionController(
+        for message: ZMMessage,
+        sectionController: ConversationMessageSectionController,
+        selfUser: any UserType
     ) -> ConversationMessageActionController {
-        if let cachedEntry = actionControllers[message.objectIdentifier] {
+        if let nonce = message.nonce,
+           let cachedEntry = actionControllers.get(for: nonce) {
             return cachedEntry
         }
 
-        let actionController = ConversationMessageActionController(
+        return makeActionController(
+            for: message,
+            sectionController: sectionController,
+            selfUser: selfUser
+        )
+    }
+
+    func makeActionController(
+        for message: ZMConversationMessage,
+        sectionController: ConversationMessageSectionController,
+        selfUser: any UserType
+    ) -> ConversationMessageActionController {
+        ConversationMessageActionController(
             responder: messageActionResponder,
             message: message,
             context: .content,
             view: tableView,
             isCollapsed: sectionController.isCollapsed,
-            selfUserId: userSession.selfUser.remoteIdentifier
+            selfUserId: selfUser.remoteIdentifier
         )
-
-        actionControllers[message.objectIdentifier] = actionController
-
-        return actionController
     }
 
-    func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
-        if let cachedEntry = sectionControllers[message.objectIdentifier] {
-            cachedEntry.contentWidth = contentWidth
-            return cachedEntry
-        }
-
+    private func makeSectionController(
+        message: ZMMessage,
+        index: Int,
+        messages: [ZMMessage],
+        selfUser: any UserType,
+        firstUnreadMessageNonce: UUID?
+    ) -> ConversationMessageSectionController {
         let context = context(
             for: message,
             at: index,
-            firstUnreadMessage: firstUnreadMessage,
-            searchQueries: searchQueries
+            firstUnreadMessageNonce: firstUnreadMessageNonce,
+            searchQueries: searchQueries,
+            messages: messages
         )
         let sectionController = ConversationMessageSectionController(
             message: message,
             context: context,
+            selfUser: selfUser,
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
             useInvertedIndices: true,
             contentWidth: contentWidth,
-            shouldShowAuthor: conversation.conversationType != .oneOnOne
+            wireMessagingFactory: wireMessagingFactory
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
-        sectionController.actionController = actionController(for: message, sectionController: sectionController)
-
-        sectionControllers[message.objectIdentifier] = sectionController
+        sectionController.actionController = getOrCreateActionController(
+            for: message,
+            sectionController: sectionController,
+            selfUser: selfUser
+        )
 
         return sectionController
     }
 
-    func sectionController(at sectionIndex: Int) -> ConversationMessageSectionController {
+    func getOrCreateSectionController(
+        for message: ZMMessage,
+        at index: Int,
+        selfUser: any UserType,
+        messages: [ZMMessage]
+    ) -> ConversationMessageSectionController {
+        let identifier = MessageCacheIdentifier(message: message)
+
+        if let identifier, let cachedEntry = sectionControllers.get(for: identifier) {
+            cachedEntry.contentWidth = contentWidth
+            return cachedEntry
+        }
+
+        let sectionController = makeSectionController(
+            message: message,
+            index: index,
+            messages: messages,
+            selfUser: selfUser,
+            firstUnreadMessageNonce: firstUnreadMessage?.nonce
+        )
+
+        if let identifier {
+            sectionControllers.set(value: sectionController, for: identifier)
+        }
+
+        return sectionController
+    }
+
+    func sectionController(
+        at sectionIndex: Int,
+        selfUser: any UserType,
+        messages: [ZMMessage]
+    ) -> ConversationMessageSectionController {
         let message = messages[sectionIndex]
-        return sectionController(for: message, at: sectionIndex)
+        return getOrCreateSectionController(
+            for: message,
+            at: sectionIndex,
+            selfUser: selfUser,
+            messages: messages
+        )
     }
 
     func loadMessages(
@@ -291,16 +471,18 @@ final class ConversationTableViewDataSource: NSObject {
         let offset = max(0, index - ConversationTableViewDataSource.defaultBatchSize)
         let limit = ConversationTableViewDataSource.defaultBatchSize * 2
 
-        loadMessages(offset: offset, limit: limit, forceRecalculate: forceRecalculate)
-
-        let indexPath = topIndexPath(for: message)
-        completion?(indexPath)
+        loadMessages(offset: offset, limit: limit, forceRecalculate: forceRecalculate) { [weak self] in
+            guard let self else { return }
+            let indexPath = topIndexPath(for: message)
+            completion?(indexPath)
+        }
     }
 
     func loadMessages(
         offset: Int = 0,
         limit: Int = ConversationTableViewDataSource.defaultBatchSize,
-        forceRecalculate: Bool = false
+        forceRecalculate: Bool = false,
+        completion: (() -> Void)? = nil
     ) {
         let fetchRequest = fetchRequest()
         fetchRequest
@@ -321,30 +503,47 @@ final class ConversationTableViewDataSource: NSObject {
         try! fetchController?.performFetch()
 
         lastFetchedObjectCount = fetchController?.fetchedObjects?.count ?? 0
-        hasOlderMessagesToLoad = messages.count == fetchRequest.fetchLimit
+        hasOlderMessagesToLoad = allMessages.count == fetchRequest.fetchLimit
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
-        let currentSections = calculateSections(forceRecalculate: forceRecalculate)
-        self.currentSections = postProcessedSections(currentSections)
-        tableView.reloadData()
+
+        debouncer.call(id: nil) { [weak self] in
+            self?.calculateSections(forceRecalculate: forceRecalculate) { [weak self] sections in
+                self?.currentSections = sections
+                self?.tableView.reloadData()
+                completion?()
+            }
+        }
     }
 
+    var loadingMessages = false
+
     private func loadOlderMessages() {
+        guard !loadingMessages else {
+            return
+        }
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
               let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
 
         let newLimit = currentLimit + ConversationTableViewDataSource.defaultBatchSize
+        loadingMessages = true
 
-        loadMessages(offset: currentOffset, limit: newLimit)
+        loadMessages(offset: currentOffset, limit: newLimit) { [weak self] in
+            self?.loadingMessages = false
+        }
     }
 
     func loadNewerMessages() {
+        guard !loadingMessages else { return }
+
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
               let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
 
         let newOffset = max(0, currentOffset - ConversationTableViewDataSource.defaultBatchSize)
 
-        loadMessages(offset: newOffset, limit: currentLimit)
+        loadMessages(offset: newOffset, limit: currentLimit) { [weak self] in
+            self?.loadingMessages = false
+        }
     }
 
     func indexOfMessage(_ message: ZMConversationMessage) -> Int {
@@ -394,13 +593,14 @@ final class ConversationTableViewDataSource: NSObject {
 
         // To avoid loosing scroll position:
         // 1. Remember the newest message now
-        let newestMessageBeforeReload = messages.first
+        let newestMessageBeforeReload = allMessages.first
         // 2. Load more messages
         loadNewerMessages()
 
         // 3. Get the index path of the message that should stay displayed
         if let newestMessageBeforeReload,
-           let sectionIndex = index(of: newestMessageBeforeReload) {
+           let sectionIndex = index(of: newestMessageBeforeReload),
+           sectionIndex < tableView.numberOfSections {
 
             // 4. Get the frame of that message
             let indexPathRect = tableView.rect(forSection: sectionIndex)
@@ -448,12 +648,16 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        reloadSections(newSections: postProcessedSections(calculateSections()))
+        debouncer.call(id: nil) { [weak self] in
+            self?.calculateSections { sections in
+                self?.reloadSections(newSections: sections, animated: true)
+            }
+        }
     }
 
-    func reloadSections(newSections: [Section]) {
+    func reloadSections(newSections: [Section], animated: Bool) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
-        tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
+        tableView.reload(using: stagedChangeset, with: animated ? .fade : .none) { currentSections = $0 }
     }
 
 }
@@ -465,15 +669,23 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func select(indexPath: IndexPath) {
-        let sectionController = sectionController(at: indexPath.section)
+        let sectionController = sectionController(
+            at: indexPath.section,
+            selfUser: userSession.selfUser,
+            messages: allMessages
+        )
         sectionController.didSelect()
-        reloadSections(newSections: postProcessedSections(calculateSections(updating: sectionController)))
+        reloadSections(newSections: calculateSections(updating: sectionController), animated: true)
     }
 
     func deselect(indexPath: IndexPath) {
-        let sectionController = sectionController(at: indexPath.section)
+        let sectionController = sectionController(
+            at: indexPath.section,
+            selfUser: userSession.selfUser,
+            messages: allMessages
+        )
         sectionController.didDeselect()
-        reloadSections(newSections: postProcessedSections(calculateSections(updating: sectionController)))
+        reloadSections(newSections: calculateSections(updating: sectionController), animated: true)
     }
 
     func highlight(message: ZMConversationMessage) {
@@ -481,12 +693,19 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
             return
         }
 
-        let sectionController = sectionController(at: section)
+        let sectionController = sectionController(
+            at: section,
+            selfUser: userSession.selfUser,
+            messages: allMessages
+        )
         sectionController.highlight(in: tableView, sectionIndex: section)
     }
 
     func collapse(message: ZMConversationMessage) {
-        guard let section = sectionControllers[message.objectIdentifier] else {
+        guard
+            let identifier = MessageCacheIdentifier(message: message),
+            let section = sectionControllers.get(for: identifier)
+        else {
             return
         }
         section.collapse()
@@ -524,11 +743,24 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let cellDescription = section.elements[indexPath.row]
         if let model = cellDescription.conversationCellModel {
+            return cellProvider.provideCell(
+                for: model,
+                tableView: tableView,
+                indexPath: indexPath,
+                onLongPress: { [weak self] cell in
+                    guard let actionController = cellDescription.actionController else { return }
 
-            model.registerIfNeeded(in: tableView)
-            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-            model.configureCell(cell)
-            return cell
+                    let messageActionController = MessageActionsViewController.controller(
+                        withActions: MessageAction.allCases,
+                        actionController: actionController
+                    )
+
+                    self?.conversationCellDelegate?.conversationMessageCell(
+                        cell,
+                        present: messageActionController
+                    )
+                }
+            )
 
         } else {
 
@@ -543,27 +775,36 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
 
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
-        didRequestRefreshForMessage message: ZMConversationMessage
+        didRequestRefreshForMessage message: ZMConversationMessage,
+        animated: Bool
     ) {
-        reloadSections(newSections: postProcessedSections(calculateSections(updating: controller)))
+        guard let nonce = message.nonce else { return }
+        debouncer.call(id: nonce) { [weak self] in
+            guard let self else { return }
+            reloadSections(newSections: calculateSections(updating: controller), animated: animated)
+        }
     }
 
 }
 
 extension ConversationTableViewDataSource {
 
-    func messageBeforeMessage(at index: Int) -> ZMConversationMessage? {
+    func messageBeforeMessage(at index: Int, messages: [ZMConversationMessage]) -> ZMConversationMessage? {
         let previousIndex = index + 1
         guard messages.indices.contains(previousIndex) else { return nil }
         return messages[previousIndex]
     }
 
-    func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int) -> Bool {
+    func isPreviousSenderSame(
+        forMessage message: ZMConversationMessage?,
+        at index: Int,
+        messages: [ZMMessage]
+    ) -> Bool {
         guard let message,
               Message.isNormal(message),
               !Message.isKnock(message) else { return false }
 
-        guard let previousMessage = messageBeforeMessage(at: index),
+        guard let previousMessage = messageBeforeMessage(at: index, messages: messages),
               previousMessage.senderUser === message.senderUser,
               Message.isNormal(previousMessage) else { return false }
 
@@ -573,13 +814,14 @@ extension ConversationTableViewDataSource {
     func context(
         for message: ZMConversationMessage,
         at index: Int,
-        firstUnreadMessage: ZMConversationMessage?,
-        searchQueries: [String]
+        firstUnreadMessageNonce: UUID?,
+        searchQueries: [String],
+        messages: [ZMMessage]
     ) -> ConversationMessageContext {
 
         let isTimestampInSameMinuteAsPreviousMessage: Bool
 
-        let previousMessage = messageBeforeMessage(at: index)
+        let previousMessage = messageBeforeMessage(at: index, messages: messages)
 
         if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
             isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
@@ -589,66 +831,103 @@ extension ConversationTableViewDataSource {
 
         let isLastMessage = (index == 0) && !hasNewerMessagesToLoad
         return ConversationMessageContext(
-            isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
+            isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index, messages: messages),
             isTimestampInSameMinuteAsPreviousMessage: isTimestampInSameMinuteAsPreviousMessage,
-            isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
-            isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
+            isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index, messages: messages),
+            isFirstUnreadMessage: message.nonce == firstUnreadMessageNonce,
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
             previousMessageIsKnock: previousMessage?.isKnock == true
         )
     }
 
-    private func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
-        guard let previous = messageBeforeMessage(at: index)?.serverTimestamp,
+    private func isFirstMessageOfTheDay(
+        for message: ZMConversationMessage,
+        at index: Int,
+        messages: [ZMConversationMessage]
+    ) -> Bool {
+        guard let previous = messageBeforeMessage(at: index, messages: messages)?.serverTimestamp,
               let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 
-    typealias Section = ArraySection<String, AnyConversationMessageCellDescription>
+    typealias Section = ArraySection<UUID, AnyConversationMessageCellDescription>
 
-    private func postProcessedSections(_ sections: [Section]) -> [Section] {
+    /// Iterates over the sections (messages) and compares two subsequent messages. Based on that some minor
+    /// modifications are applied.
+    ///
+    /// - If a message doesn't show the sender (because it was sent just a moment after the previous one), the space
+    /// between the messages is reduced.
+    /// - If a message's status does not provide relevant info over a subsequent message's status, it is hidden.
+    private func postProcessedSections(
+        _ sections: [Section],
+        selfUser: any UserType,
+        allMessages: [ZMMessage]
+    ) -> [Section] {
 
         var sections = sections
 
+        let messages = allMessages
+
         // find subsequent messages and collapse space if needed
         for currentSectionIndex in sections.indices.reversed() {
-            guard let currentSectionLastElement = sections[currentSectionIndex].elements.last?.instance else {
+            // The lowest index refers to the latest message.
+            let previousSectionIndex = currentSectionIndex + 1
+
+            // Calling `elements.last` because the indices are reversed.
+            guard let currentSectionFirstElement = sections[currentSectionIndex].elements.last?.instance else {
                 continue
             }
 
-            let previousSectionIndex = currentSectionIndex + 1
             guard
                 sections.indices.contains(previousSectionIndex),
-                var previousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance
+                var previousSectionLastElement = sections[previousSectionIndex].elements.first?.instance
             else {
-                // no previous message, reset margins
-                currentSectionLastElement.topMargin = 8
-                currentSectionLastElement.bottomMargin = 8
+                // no previous message, so reset the margins
+                currentSectionFirstElement.topMargin = 8
+                currentSectionFirstElement.bottomMargin = 8
                 continue
             }
 
             // filter redundant status cells
-            let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
-            let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
-            if
-                isMessageStatus(of: previousSectionIndex, redundantTo: currentSectionIndex, in: sections),
+            if isMessageStatus(
+                of: previousSectionIndex,
+                redundantTo: currentSectionIndex,
+                in: sections,
+                selfUser: selfUser,
+                messages: messages
+            ),
                 messages.indices.contains(previousSectionIndex) {
+
+                // collapse the status view's height
                 let previousMessage = messages[previousSectionIndex]
-                let new = ConversationMessageToolboxCellDescription(message: previousMessage, isRedundant: true)
-                previousStatus?.replace(new, &sections)
-                if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
-                    previousSectionFirstElement = newPreviousSectionFirstElement
+                let newCellDescription = ConversationMessageToolboxCellDescription(
+                    message: previousMessage,
+                    isRedundant: true
+                )
+                newCellDescription.topMargin = 0
+                newCellDescription.bottomMargin = 0
+
+                // we notify the table view by creating a new cell description
+                let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
+                newCellDescription.delegate = previousStatus?.cellDescription.delegate
+                previousStatus?.replace(newCellDescription, &sections)
+
+                // for collapsing the space we will refer to the cell description before the previous message's status
+                if let newPreviousSectionLastElement = sections[previousSectionIndex].elements.first?.instance {
+                    previousSectionLastElement = newPreviousSectionLastElement
                 }
             }
 
             // collapse space between subsequent messages
-            if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) {
-                previousSectionFirstElement.bottomMargin = -6
-                currentSectionLastElement.topMargin = -6
+            if isSpaceCollapsedBefore(currentSectionFirstElement: currentSectionFirstElement) {
+                if !(previousSectionLastElement is ConversationMessageToolboxCellDescription) {
+                    previousSectionLastElement.bottomMargin = 2
+                }
+                currentSectionFirstElement.topMargin = 2
             } else {
-                previousSectionFirstElement.bottomMargin = 0
-                currentSectionLastElement.topMargin = 0
+                previousSectionLastElement.bottomMargin = 8
+                currentSectionFirstElement.topMargin = 8
             }
 
         }
@@ -668,29 +947,7 @@ extension ConversationTableViewDataSource {
         for elementIndex in sections[sectionIndex].elements.indices {
             let cellDescription = sections[sectionIndex].elements[elementIndex].instance
 
-            if let stack = cellDescription as? StackViewCellDescription {
-                for cellDescriptionIndex in stack.cellDescriptions.indices {
-                    let cellDescription = stack.cellDescriptions[cellDescriptionIndex].instance
-                    if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
-
-                        func replace(
-                            by newCellDescription: ConversationMessageToolboxCellDescription,
-                            in sections: inout [Section]
-                        ) {
-                            var cellDescriptions = stack.cellDescriptions
-                            cellDescriptions[cellDescriptionIndex] =
-                                AnyConversationMessageCellDescription(newCellDescription)
-                            sections[sectionIndex]
-                                .elements[elementIndex] = AnyConversationMessageCellDescription(
-                                    StackViewCellDescription(cellDescriptions: cellDescriptions)
-                                )
-                        }
-
-                        return (cellDescription, replace)
-                    }
-                }
-
-            } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
+            if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
                 func replace(
                     by newCellDescription: ConversationMessageToolboxCellDescription,
@@ -711,7 +968,9 @@ extension ConversationTableViewDataSource {
     private func isMessageStatus(
         of previousIndex: Int,
         redundantTo currentIndex: Int,
-        in sections: [Section]
+        in sections: [Section],
+        selfUser: any UserType,
+        messages: [ZMMessage]
     ) -> Bool {
         guard messages.indices.contains(previousIndex), messages.indices.contains(currentIndex) else {
             return false
@@ -730,7 +989,17 @@ extension ConversationTableViewDataSource {
             return false
         }
 
-        // current message shows sender without stacking
+        // always show if the message was edited {
+        if previousMessage.updatedAt != nil {
+            return false
+        }
+
+        // if the current message is collapsed, show status for the previous
+        if sectionController(at: currentIndex, selfUser: selfUser, messages: messages).isCollapsed {
+            return false
+        }
+
+        // current message shows sender
         if sections[currentIndex].elements.last?.instance is ConversationSenderMessageCellDescription {
             return false
         }
@@ -740,17 +1009,11 @@ extension ConversationTableViewDataSource {
             return false
         }
 
-        // current message shows sender with stacking
-        if let stack = sections[currentIndex].elements.last?.instance as? StackViewCellDescription,
-           stack.cellDescriptions.first?.instance is ConversationSenderMessageCellDescription {
-            return false
-        }
-
         return previousMessage.deliveryState == currentMessage.deliveryState
     }
 
-    private func collapseSpaceBefore(
-        currentSectionLastElement cellDescription: any ConversationMessageCellDescription
+    private func isSpaceCollapsedBefore(
+        currentSectionFirstElement cellDescription: any ConversationMessageCellDescription
     ) -> Bool {
         if cellDescription is ConversationTextMessageCellDescription ||
             cellDescription is ConversationFileMessageCellDescription ||
@@ -760,12 +1023,6 @@ extension ConversationTableViewDataSource {
             cellDescription is ConversationCollapsedMessageCellDescription {
             // no stack cell description and no sender is shown, so collapse the space if needed
             true
-        } else if let firstStacked = (cellDescription as? StackViewCellDescription)?.cellDescriptions.first?.instance {
-            firstStacked is ConversationTextMessageCellDescription ||
-                firstStacked is ConversationFileMessageCellDescription ||
-                firstStacked is ConversationImageMessageCellDescription ||
-                firstStacked is ConversationVideoMessageCellDescription ||
-                firstStacked is ConversationReplyCellDescription
         } else {
             false
         }
@@ -789,4 +1046,13 @@ extension ZMConversationMessage {
     var text: String? {
         textMessageData?.messageText
     }
+}
+
+extension ZMConversationMessage {
+
+    var isSentFromThisDevice: Bool {
+        guard let sender = senderUser else { return false }
+        return sender.isSelfUser && deliveryState == .pending
+    }
+
 }

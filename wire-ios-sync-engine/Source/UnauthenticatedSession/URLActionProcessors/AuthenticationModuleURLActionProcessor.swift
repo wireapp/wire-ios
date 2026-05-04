@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,21 +20,16 @@ import Foundation
 
 class AuthenticationModuleURLActionProcessor: URLActionProcessor {
 
-    let handleSSOLoginSuccess: (UUID, [HTTPCookie]) -> Void
     let handleBackendSwitch: (URL) -> Void
 
     init(
-        handleSSOLoginSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
         handleBackendSwitch: @escaping (URL) -> Void
     ) {
-        self.handleSSOLoginSuccess = handleSSOLoginSuccess
         self.handleBackendSwitch = handleBackendSwitch
     }
 
     func process(urlAction: URLAction, delegate: (any PresentationDelegate)?) {
         switch urlAction {
-        case let .companyLoginSuccess(userInfo):
-            handleSSOLoginSuccess(userInfo.identifier, userInfo.cookies)
         case let .accessBackend(configurationURL):
             handleBackendSwitch(configurationURL)
         default:

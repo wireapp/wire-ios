@@ -1,0 +1,2 @@
+curl \
+	"/v15/notifications?client=abcd1234&since=2eeeb5e4-df85-4aef-9eb2-289981f086ab&size=500"

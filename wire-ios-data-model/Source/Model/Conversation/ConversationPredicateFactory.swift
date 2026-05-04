@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,10 +22,12 @@ import Foundation
 public final class ConversationPredicateFactory: NSObject {
 
     private let selfTeam: Team?
+    private let selfUser: ZMUser
 
     @objc
-    init(selfTeam: Team? = nil) {
+    init(selfUser: ZMUser, selfTeam: Team? = nil) {
         self.selfTeam = selfTeam
+        self.selfUser = selfUser
     }
 
     @objc(predicateForConversationsExcludingArchived)
@@ -83,10 +85,11 @@ public final class ConversationPredicateFactory: NSObject {
     @objc(predicateForOneToOneConversations)
     public func predicateForOneToOneConversations() -> NSPredicate {
         // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing
-        // connection request.
+        // connection request, or is a team group conversation whose other participant was deleted.
         let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             predicateForOneToOneConversation(),
-            predicateForUnconnectedConversations()
+            predicateForUnconnectedConversations(),
+            ZMConversation.predicateForTeamOneToOneDeletedUserConversation(selfUser: selfUser)
         ])
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
@@ -97,12 +100,34 @@ public final class ConversationPredicateFactory: NSObject {
 
     @objc(predicateForGroupConversations)
     public func predicateForGroupConversations() -> NSPredicate {
-        let groupConversationPredicate =
+        let isGroupConversationType =
             NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        let isNotChannelGroupType =
+            NSPredicate(format: "\(ZMConversationGroupTypeKey) != \(ConversationGroupType.channel.rawValue)")
+        let isNotDeletedUserTeamOneOnOne = NSCompoundPredicate(
+            notPredicateWithSubpredicate: ZMConversation
+                .predicateForTeamOneToOneDeletedUserConversation(selfUser: selfUser)
+        )
 
         return .all(of: [
             predicateForConversationsExcludingArchived(),
-            groupConversationPredicate
+            isGroupConversationType,
+            isNotChannelGroupType,
+            isNotDeletedUserTeamOneOnOne
+        ])
+    }
+
+    @objc(predicateForChannelConversations)
+    public func predicateForChannelConversations() -> NSPredicate {
+        let isGroupConversationType =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        let isChannelGroupType =
+            NSPredicate(format: "\(ZMConversationGroupTypeKey) == \(ConversationGroupType.channel.rawValue)")
+
+        return .all(of: [
+            predicateForConversationsExcludingArchived(),
+            isGroupConversationType,
+            isChannelGroupType
         ])
     }
 
@@ -113,6 +138,46 @@ public final class ConversationPredicateFactory: NSObject {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
             predicateForConversationsExcludingArchived(),
             labelPredicate
+        ])
+    }
+
+    @objc(predicateForUnreadConversations)
+    public func predicateForUnreadConversations() -> NSPredicate {
+        let hasUnreadMessages = NSPredicate(format: "internalEstimatedUnreadCount > 0")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            hasUnreadMessages
+        ])
+    }
+
+    @objc(predicateForMentionedConversations)
+    public func predicateForMentionedConversations() -> NSPredicate {
+        let hasMentions = NSPredicate(format: "internalEstimatedUnreadSelfMentionCount > 0")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            hasMentions
+        ])
+    }
+
+    @objc(predicateForRepliedConversations)
+    public func predicateForRepliedConversations() -> NSPredicate {
+        let hasReplies = NSPredicate(format: "internalEstimatedUnreadSelfReplyCount > 0")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            hasReplies
+        ])
+    }
+
+    @objc(predicateForDraftConversations)
+    public func predicateForDraftConversations() -> NSPredicate {
+        let hasDraft = NSPredicate(format: "draftMessageData != nil")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            hasDraft
         ])
     }
 
@@ -131,10 +196,8 @@ public final class ConversationPredicateFactory: NSObject {
 
         // MLS
         let isMLS = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
-        let isMLSStatusReady = NSPredicate(format: "\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
-        let isMLSAndReady = NSPredicate.all(of: [isMLS, isMLSStatusReady])
 
-        return .any(of: [isProteus, isMixed, isMLSAndReady])
+        return .any(of: [isProteus, isMixed, isMLS])
     }
 
     private func isValidConversation() -> NSPredicate {
@@ -171,7 +234,18 @@ public final class ConversationPredicateFactory: NSObject {
 
         let isOtherUserBot = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.serviceIdentifier)) != NULL")
 
-        return isOneOnOne.and(hasOneOnOneUser).and(isConnectionAccepted.or(isOtherUserInSameTeam).or(isOtherUserBot))
+        let otherUserDeleted = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.isAccountDeleted)) == YES")
+
+        let userDeletedProteusOneOnOne = isOneOnOne
+            .and(ZMConversation.predicateForTeamOneToOneDeletedUserConversation(selfUser: selfUser))
+
+        return (isOneOnOne.and(otherUserDeleted))
+            .or(userDeletedProteusOneOnOne)
+            .or(
+                isOneOnOne.and(hasOneOnOneUser).and(isConnectionAccepted
+                    .or(isOtherUserInSameTeam)
+                    .or(isOtherUserBot))
+            )
     }
 
     private func isValidGroup() -> NSPredicate {

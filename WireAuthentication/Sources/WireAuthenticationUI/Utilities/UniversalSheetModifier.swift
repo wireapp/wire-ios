@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 import SwiftUI
 import SwiftUIIntrospect
+import WireDesign
 
 /// This ViewModifier creates a custom overlay for iPad and fallback to .sheet on iPhone
 /// - Note: On iPad, `sheet` modifier is presented as a page. PresentationDetents have no effect
@@ -28,19 +29,29 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            content
-                .overlay {
-                    if let item {
-                        self.content(item)
-                            .applyPreferredSize()
-                    }
-                }
+        if #available(iOS 18.0, *) {
+            if UIDevice.current.userInterfaceIdiom == .pad {
 
+                content
+                    .overlay {
+                        if let item {
+                            self.content(item)
+                                .applyPreferredSize()
+                        }
+                    }
+
+            } else {
+                content.sheet(item: $item, onDismiss: onDismiss) { item in
+                    self.content(item)
+                        .applyPreferredSize()
+                }
+            }
         } else {
+            // on iOS 17, we can't customize properly the sheet
+            // so it will show as a page taking full space
             content.sheet(item: $item, onDismiss: onDismiss) { item in
                 self.content(item)
-                    .applyPreferredSize()
+                    .presentationDetents([.medium, .large])
             }
         }
     }
@@ -77,15 +88,15 @@ private struct SheetCornerRadiusModifier: ViewModifier {
         if inNavigationStack {
             content
                 .introspect(.navigationStack, on: .iOS(.v16, .v17, .v18)) { stack in
-                    stack.topViewController?.view.backgroundColor = .white
+                    stack.topViewController?.view.backgroundColor = ColorTheme.Backgrounds.surface
                     // .cornerRadius from SwiftUI will mess with touch area with NavigationStack,
                     // when keyboard is active and after it's dismissed
-                    stack.view?.layer.cornerRadius = 10
+                    stack.view?.layer.cornerRadius = radius
                 }
         } else {
             content
-                .background(Color.white)
-                .cornerRadius(10)
+                .background(ColorTheme.Backgrounds.surface.color)
+                .cornerRadius(radius)
         }
     }
 }

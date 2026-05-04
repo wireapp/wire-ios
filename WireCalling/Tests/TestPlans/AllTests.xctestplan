@@ -1,0 +1,33 @@
+{
+  "configurations" : [
+    {
+      "id" : "7B1D3515-CEB5-4BD8-88AB-29FD9147D92B",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireCalling",
+        "identifier" : "WireCallingUITests",
+        "name" : "WireCallingUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireCalling",
+        "identifier" : "WireCallingTests",
+        "name" : "WireCallingTests"
+      }
+    }
+  ],
+  "version" : 1
+}

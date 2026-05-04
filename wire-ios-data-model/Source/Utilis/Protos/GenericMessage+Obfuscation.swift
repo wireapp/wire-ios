@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public extension String {
 
@@ -85,7 +86,7 @@ public extension GenericMessage {
 
 extension ImageAsset {
     func obfuscated() -> ImageAsset {
-        WireProtos.ImageAsset.with {
+        GenericMessageProtocol.ImageAsset.with {
             $0.tag = tag
             $0.width = width
             $0.height = height
@@ -136,15 +137,15 @@ extension Tweet {
     }
 }
 
-extension WireProtos.Asset {
-    func obfuscated() -> WireProtos.Asset {
-        var assetOriginal: WireProtos.Asset.Original?
-        var assetPreview: WireProtos.Asset.Preview?
+extension GenericMessageProtocol.Asset {
+    func obfuscated() -> GenericMessageProtocol.Asset {
+        var assetOriginal: GenericMessageProtocol.Asset.Original?
+        var assetPreview: GenericMessageProtocol.Asset.Preview?
 
         if hasOriginal {
-            assetOriginal = WireProtos.Asset.Original()
+            assetOriginal = GenericMessageProtocol.Asset.Original()
             if original.hasRasterImage {
-                let imageMetaData = WireProtos.Asset.ImageMetaData.with {
+                let imageMetaData = GenericMessageProtocol.Asset.ImageMetaData.with {
                     $0.tag = original.image.tag
                     $0.width = original.image.width
                     $0.height = original.image.height
@@ -160,9 +161,9 @@ extension WireProtos.Asset {
             let metaData = original.metaData
             switch metaData {
             case .audio?:
-                assetOriginal?.audio = WireProtos.Asset.AudioMetaData()
+                assetOriginal?.audio = GenericMessageProtocol.Asset.AudioMetaData()
             case .video?:
-                assetOriginal?.video = WireProtos.Asset.VideoMetaData()
+                assetOriginal?.video = GenericMessageProtocol.Asset.VideoMetaData()
             default:
                 break
             }
@@ -171,8 +172,8 @@ extension WireProtos.Asset {
         }
 
         if hasPreview {
-            assetPreview = WireProtos.Asset.Preview()
-            let imageMetaData = WireProtos.Asset.ImageMetaData.with {
+            assetPreview = GenericMessageProtocol.Asset.Preview()
+            let imageMetaData = GenericMessageProtocol.Asset.ImageMetaData.with {
                 $0.tag = preview.image.tag
                 $0.width = preview.image.width
                 $0.height = preview.image.height
@@ -181,6 +182,6 @@ extension WireProtos.Asset {
             assetPreview?.size = 10
             assetPreview?.mimeType = preview.mimeType
         }
-        return WireProtos.Asset(original: assetOriginal, preview: assetPreview)
+        return GenericMessageProtocol.Asset(original: assetOriginal, preview: assetPreview)
     }
 }

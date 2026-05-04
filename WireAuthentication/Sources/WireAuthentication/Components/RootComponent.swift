@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,70 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import NeedleFoundation
 import SwiftUI
-import WireAPI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+import WireMultiBackendUI
 internal import WireAuthenticationLogic
+import WireFoundation
 
-class RootComponent: BootstrapComponent {
+final class RootComponent: BootstrapComponent {
 
-    public let environmentType: BackendEnvironmentType
-    public let backendConfig: BackendConfig
+    public let environment: BackendEnvironment2
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
     public let howToChangeEmailURL: URL
     public let howToDeleteAccountURL: URL
+    public let privacyPolicyURL: URL
+    public let termsOfUseURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
-    public let userDefaults: UserDefaults
     public let appStoreURL: URL
-    public let existsAnotherAccount: Bool
-
-    init(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        preferredAPIVersion: APIVersion?,
-        minTLSVersion: TLSVersion,
-        howToChangeEmailURL: URL,
-        howToDeleteAccountURL: URL,
-        passwordValidator: any PasswordValidator,
-        ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults,
-        appStoreURL: URL,
-        existsAnotherAccount: Bool
-    ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
-        self.preferredAPIVersion = preferredAPIVersion
-        self.productionVersions = APIVersion.productionVersions
-        self.minTLSVersion = minTLSVersion
-        self.howToChangeEmailURL = howToChangeEmailURL
-        self.howToDeleteAccountURL = howToDeleteAccountURL
-        self.passwordValidator = passwordValidator
-        self.ssoCallbackURLScheme = ssoCallbackURLScheme
-        self.userDefaults = userDefaults
-        self.appStoreURL = appStoreURL
-        self.existsAnotherAccount = existsAnotherAccount
-    }
-
-    // MARK: - View
-
-    @MainActor var view: some View {
-        RootView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
-
-    @MainActor private var viewModel: RootViewModel {
-        shared {
-            RootViewModel(bridge: bridge)
-        }
-    }
+    public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
+    public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -87,125 +49,123 @@ class RootComponent: BootstrapComponent {
         }
     }
 
-    // MARK: - Public dependencies
-
     @MainActor public var router: any Router {
         viewModel
     }
 
+    private let authenticationType: AuthenticationType
+
+    init(
+        authenticationType: AuthenticationType,
+        environment: BackendEnvironment2,
+        preferredAPIVersion: APIVersion?,
+        minTLSVersion: TLSVersion,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
+        privacyPolicyURL: URL,
+        termsOfUseURL: URL,
+        passwordValidator: any PasswordValidator,
+        ssoCallbackURLScheme: String,
+        appStoreURL: URL,
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    ) {
+        self.authenticationType = authenticationType
+        self.environment = environment
+        self.preferredAPIVersion = preferredAPIVersion
+        self.productionVersions = APIVersion.productionVersions
+        self.minTLSVersion = minTLSVersion
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
+        self.privacyPolicyURL = privacyPolicyURL
+        self.termsOfUseURL = termsOfUseURL
+        self.passwordValidator = passwordValidator
+        self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.appStoreURL = appStoreURL
+        self.accountsPublisher = accountsPublisher
+        self.registrationAnalyticsTracker = registrationAnalyticsTracker
+    }
+
     // MARK: - Children
 
-    func determineAuthMethodOnPremComponent(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> DetermineAuthMethodOnPremComponent {
-        DetermineAuthMethodOnPremComponent(
-            parent: self,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+    func determineAuthMethodComponent(environment: BackendEnvironment2) -> DetermineAuthMethodComponent {
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
         )
-    }
 
-    var determineAuthMethodComponent: DetermineAuthMethodComponent {
-        DetermineAuthMethodComponent(parent: self)
-    }
-
-    @MainActor
-    func noHistoryComponent(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryComponent {
-        NoHistoryComponent(
+        return DetermineAuthMethodComponent(
             parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
-    }
-
-    func loginViaEmailOnPremComponent(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> LoginViaEmailOnPremComponent {
-        LoginViaEmailOnPremComponent(
-            parent: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
-        )
-    }
-
-    func loginViaSSOComponent(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOComponent {
-        LoginViaSSOComponent(
-            parent: self,
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
         )
     }
 
 }
 
-extension RootComponent: RootView.Factory {
+extension RootComponent: RootViewModel.Factory {
 
-    @MainActor
-    func determineAuthMethodView(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    ) -> DetermineAuthMethodView {
-        determineAuthMethodOnPremComponent(
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
-        ).view
+    // MARK: - Factory
+
+    @MainActor var viewModel: RootViewModel {
+        shared {
+            RootViewModel(
+                factory: self,
+                bridge: bridge,
+                environment: environment,
+                authenticationType: authenticationType,
+                hasOtherAccountsProvider: { [accountsPublisher] in
+                    !accountsPublisher.value.isEmpty
+                }
+            )
+        }
     }
 
-    @MainActor
-    func determineAuthMethodView() -> DetermineAuthMethodView {
-        determineAuthMethodComponent.view
+    func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory {
+        determineAuthMethodComponent(environment: environment)
     }
 
-    @MainActor
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView {
-        noHistoryComponent(
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
-        ).view
-    }
+    func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory {
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
+        )
 
-    @MainActor
-    func loginViaEmailOnPremView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    ) -> LoginViaEmailOnPremView {
-        loginViaEmailOnPremComponent(
+        return ReloginViaEmailComponent(
+            parent: self,
             email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
-        ).view
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
+        )
     }
 
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
-        ).view
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory {
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
+        )
+
+        return ReloginViaSSOComponent(
+            parent: self,
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
+        )
+    }
+
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
+        AccountSwitcherComponent(parent: self)
+    }
+
+    // MARK: - Use cases
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: appStoreURL)
     }
 
 }

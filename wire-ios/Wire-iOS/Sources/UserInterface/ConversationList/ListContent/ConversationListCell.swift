@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import WireSyncEngine
 typealias MatcherConversation = Conversation & ConversationStatusProvider & TypingStatusProvider & VoiceChannelProvider
 
 typealias ConversationListCellConversation
-    = HasConversationGroupType & HasQualifiedID & MatcherConversation & StableRandomParticipantsProvider
+    = HasQualifiedID & MatcherConversation & StableRandomParticipantsProvider
 
 final class ConversationListCell: SwipeMenuCollectionCell,
     SectionListCellType {

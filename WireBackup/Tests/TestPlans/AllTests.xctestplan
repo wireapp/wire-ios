@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "3456A64C-F93E-43C8-BDDB-FB022C91D84A",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:WireBackup",
+        "identifier" : "WireBackupTests",
+        "name" : "WireBackupTests"
+      }
+    }
+  ],
+  "version" : 1
+}

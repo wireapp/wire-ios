@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,6 +55,6 @@ public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
 
 public protocol DetermineAuthMethodUseCaseFactory {
 
-    func determineAuthMethodUseCase(apiVersion: BackendMetadata.APIVersion) -> any DetermineAuthMethodUseCaseProtocol
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol
 
 }

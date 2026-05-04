@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
 
-    var configuration: View.Configuration
+    let configuration: View.Configuration
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)

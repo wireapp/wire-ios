@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ final class ConversationMessageActionController {
         case collection
     }
 
-    let message: ZMConversationMessage
+    var message: ZMConversationMessage
     let context: Context
 
     /// whether message collapsed or normal | expanded
@@ -41,12 +41,9 @@ final class ConversationMessageActionController {
 
     private var isCollapsedWasUpdated: Bool = false
 
-    /// used to get collapse own messages settings for a specific user
-    /// nil if not applicable
-    var selfUserId: UUID?
-
     weak var responder: MessageActionResponder?
     weak var view: UIView!
+    private var privateDefaults: PrivateUserDefaults<CollapseKey>?
 
     init(
         responder: MessageActionResponder?,
@@ -54,14 +51,17 @@ final class ConversationMessageActionController {
         context: Context,
         view: UIView,
         isCollapsed: Bool? = nil,
-        selfUserId: UUID? = nil
+        selfUserId: UUID? = nil,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.responder = responder
         self.message = message
         self.context = context
         self.view = view
         self.isCollapsed = isCollapsed
-        self.selfUserId = selfUserId
+        if let selfUserId {
+            self.privateDefaults = PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
+        }
     }
 
     // MARK: - List of Actions
@@ -69,11 +69,6 @@ final class ConversationMessageActionController {
     private var allPerformableMessageAction: [MessageAction] {
         MessageAction.allCases
             .filter(canPerformAction)
-    }
-
-    private var collapseOwnMessagesEnabled: Bool {
-        guard let selfUserId else { return false }
-        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
     }
 
     func allMessageMenuElements() -> [UIAction] {
@@ -143,18 +138,24 @@ final class ConversationMessageActionController {
             return message.canVisitLink
         case .collapse:
             guard let isCollapsed,
-                  collapseOwnMessagesEnabled,
                   !isCollapsed,
-                  isCollapsedWasUpdated else {
+                  isCollapsedWasUpdated || (
+                      message.isCollapsingSupported && wasUncollapsedBefore()
+                  )
+            else {
                 return false
             }
 
             return message.isSentBySelfUser && message.isCollapsingSupported
         case .present,
-             .openQuote,
-             .resetSession:
+             .openQuote:
             return false
         }
+    }
+
+    private func wasUncollapsedBefore() -> Bool {
+        privateDefaults?
+            .wasMessagedUncollapsedBefore(message) ?? false
     }
 
     func canPerformAction(_ selector: Selector) -> Bool {

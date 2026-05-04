@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,86 +16,170 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"authentication.identity.input.body" = "Simply enter your email address to start!";
-"authentication.identity.input.field.placeholder" = "Email or SSO code";
-"authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.body" = "Simplesmente digite seu endereço de e-mail para começar!";
+"authentication.identity.input.field.placeholder" = "Email ou código SSO";
+"authentication.identity.input.field.title" = "Email ou código SSO";
 "authentication.identity.input.submit" = "Próximo";
 
-"cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.title" = "Digite sua senha para fazer login";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "E-mail";
+"cloud_user_login.input_email.placeholder" = "Digite o email";
 "cloud_user_login.input_password.title" = "Senha";
-"cloud_user_login.input_password.placeholder" = "Enter password";
+"cloud_user_login.input_password.placeholder" = "Insira a senha";
 "cloud_user_login.submit" = "Próximo";
 "cloud_user_login.forgot_password" = "Esqueceu a senha?";
-"create_personal_account.title" = "Don’t have a Wire account?";
-"create_personal_account.button" = "Create Personal Account";
 
-"on_prem_user_login.title" = "Welcome to Wire Enterprise for %@!";
-"on_prem_user_login.message" = "Enter your password to log in";
-"on_prem_user_login.alert.title" = "On-premises Backend";
-"on_prem_user_login.alert.message.backend-name" = "Backend name:";
-"on_prem_user_login.alert.message.backend-url" = "Backend URL:";
+"login.sso.title" = "Iniciar sessão";
+"login.sso.expiration_message" = "Sua sessão expirou. Faça login com a conta corporativa para continuar.";
+"login.sso.input_code.title" = "código de acesso SSO";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Iniciar sessão empresarial";
+
+"logout.button.title" = "Sair";
+"logout.alert.title" = "Sair";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Cancelar";
+
+"create_account_or_team.title" = "Don’t have a Wire account?";
+"create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
+
+"account_type_selector.title" = "How will you use Wire?";
+"account_type_selector.option_team.title" = "For collaboration";
+"account_type_selector.option_team.subtitle" = "Work securely with your team.";
+"account_type_selector.option_team.feature0" = "Communicate with your colleagues and share documents via a single app";
+"account_type_selector.option_team.feature1" = "Start for free, upgrade anytime";
+"account_type_selector.option_team.button" = "Create Team";
+"account_type_selector.option_personal.title" = "For private use";
+"account_type_selector.option_personal.subtitle" = "Chat with friends and family.";
+"account_type_selector.option_personal.feature0" = "Send messages and share pictures";
+"account_type_selector.option_personal.feature1" = "Always free";
+"account_type_selector.option_personal.button" = "Create Personal Account";
+
+"on_prem_user_login.title" = "Bem-vindo ao Wire Enterprise para %@!";
+"on_prem_user_login.message" = "Digite sua senha para fazer login";
+"on_prem_user_login.alert.title" = "Backend local";
+"on_prem_user_login.alert.message.backend-name" = "Nome do Backend:";
+"on_prem_user_login.alert.message.backend-url" = "URL do Backend:";
 "on_prem_user_login.alert.button" = "OK";
 
-"proxy_credentials.title" = "Proxy Credentials";
-"proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy email or username";
+"proxy_credentials.title" = "Credenciais de Proxy";
+"proxy_credentials.message" = "Este backend está configurado para usar o seguinte servidor proxy: %@.";
+"proxy_credentials.input_email.title" = "E-mail ou nome de usuário do proxy";
 "proxy_credentials.input_password.title" = "Senha";
-"proxy_credentials.input_password.placeholder" = "Enter password";
+"proxy_credentials.input_password.placeholder" = "Insira a senha";
 
-"switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
-"switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
-"switch_backend_confirmation.backend_name" = "Backend name:";
-"switch_backend_confirmation.backend_url" = "Backend URL:";
-"switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
-"switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
-"switch_backend_confirmation.teams_url" = "Teams URL:";
-"switch_backend_confirmation.accounts_url" = "Accounts URL:";
-"switch_backend_confirmation.website_url" = "Website URL:";
-"switch_backend_confirmation.countly_url" = "Countly URL:";
-"switch_backend_confirmation.proceed" = "Proceed";
+"switch_backend_confirmation.title" = "Redirecionar para um backend local?";
+"switch_backend_confirmation.message" = "Se você continuar, você será redirecionado para o seguinte backend local para iniciar a sessão:";
+"switch_backend_confirmation.backend_name" = "Nome do Backend:";
+"switch_backend_confirmation.backend_url" = "URL do Backend:";
+"switch_backend_confirmation.backend_wsurl" = "URL do soquete web do backend:";
+"switch_backend_confirmation.blacklist_url" = "URL da lista negra:";
+"switch_backend_confirmation.teams_url" = "URL das Equipes:";
+"switch_backend_confirmation.accounts_url" = "URL das Contas:";
+"switch_backend_confirmation.website_url" = "URL do website:";
+"switch_backend_confirmation.countly_url" = "URL Countly";
+"switch_backend_confirmation.proceed" = "Continuar";
 "switch_backend_confirmation.cancel" = "Cancelar";
-"switch_backend_confirmation.show_details" = "Show details";
+"switch_backend_confirmation.show_details" = "Mostrar detalhes";
 "switch_backend.error.title.logged_in" = "Não é possível mudar os servidores";
 "switch_backend.error.message.logged_in" = "Você já está logado. Para mudar para este servidor, saia de todas as contas e tente novamente.";
 
 "verification_code.title" = "Você tem um e-mail";
 "verification_code.message" = "Digite o código de verificação que enviamos para %@.";
 "verification_code.confirm" = "Confirmar";
-"verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code" = "Reenviar código";
 
 "authentication.no_history.title" = "É a primeira vez que você está usando o Wire nesse dispositivo.";
 "authentication.no_history.message" = "Por questões de privacidade, o seu histórico de conversa não aparecerá aqui.";
+"authentication.missing_history.title" = "Você não usou o Wire nesse dispositivo antes.";
+"authentication.missing_history.message" = "Mensagens enviadas nesse meio tempo não irão aparecer.";
 "authentication.no_history.confirm" = "OK";
 
-"authentication.error.title.no_internet" = "No internet connection";
+"authentication.error.title.no_internet" = "Sem conexão à Internet";
 "authentication.error.title.general" = "Algo deu errado";
-"authentication.error.title.sso_login_failed" = "Login with SSO failed";
-"authentication.error.title.invalid_credentials" = "Invalid Information";
-"authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
-"authentication.error.title.account_pending_activation" = "Pending activation";
-"authentication.error.title.account_suspended" = "Unauthorized";
-"authentication.error.title.incorrect_sso_code" = "Invalid SSO code";
+"authentication.error.title.sso_login_failed" = "Login com SSO falhou";
+"authentication.error.title.invalid_credentials" = "Informação Inválida";
+"authentication.error.title.invalid_invalid_2FA_code" = "Código de Verificação Incorreto";
+"authentication.error.title.account_pending_activation" = "Pendente de ativação";
+"authentication.error.title.account_suspended" = "Não autorizado";
+"authentication.error.title.incorrect_sso_code" = "Código SSO inválido";
 
 "authentication.error.message.no_internet" = "Parece que há um problema com a sua rede. Por favor, tente novamente mais tarde.";
-"authentication.error.message.general" = "Please retry later.";
-"authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
-"authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
-"authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
-"authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
+"authentication.error.message.general" = "Tente novamente mais tarde.";
+"authentication.error.message.sso_login_failed" = "Entre em contato com o administrador da equipe para mais detalhes.";
+"authentication.error.message.invalid_credentials" = "Estas credenciais de conta estão incorretas. Verifique seus detalhes e tente novamente.";
+"authentication.error.message.invalid_invalid_2FA_code" = "Introduza um código de verificação válido.";
+"authentication.error.message.account_pending_activation" = "Sceite o convite para sua equipe primeiro e siga os passos para criar sua conta.";
 "authentication.error.message.account_suspended" = "Esta conta não está mais autorizada a entrar.";
 "authentication.error.message.incorrect_sso_code" = "Por favor, verifique se o seu código de acesso SSO da empresa e tente novamente.";
 
 "authentication.error.confirm" = "OK";
 
-"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
-"authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
-"authentication.error.how_to_change_email" = "How to change email address";
-"authentication.error.how_to_delete_account" = "How to delete a private account";
+"authentication.error.title.email_already_in_use" = "Email recebido por um backend local";
+"authentication.error.message.email_already_in_use" = "O domínio deste e-mail pertence a um backend local. Altere seu e-mail nas configurações da conta ou exclua sua conta. Se você faz parte de uma equipe, Entre em contato com a administração da sua equipe.";
+"authentication.error.how_to_change_email" = "Como alterar o endereço de e-mail";
+"authentication.error.how_to_delete_account" = "Como excluir uma conta privada";
 
 "obsolete_client.alert.title" = "Atualização necessária";
-"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
+"obsolete_client.alert.message" = "Você está perdendo novas funcionalidades. \nObtenha a versão mais recente do Wire na App Store.";
 "obsolete_client.alert.ok_button" = "Vá para a App Store";
+"obsolete_client.alert.switch_accounts" = "Switch Accounts";
+
+"obsolete_client_multibackend.alert.title" = "Update required";
+"obsolete_client_multibackend.alert.message" = "You are missing out on new features.\nGet the latest version of Wire to continue using the app with this account.";
+
+"obsolete.alert.update_button" = "Update";
+"obsolete.alert.switch_accounts" = "Switch Accounts";
+"obsolete.alert.logout" = "Sair";
+"obsolete.alert.cancel" = "Cancelar";
+"obsolete.alert.ok" = "OK";
 
 "obsolete_backend.alert.title" = "Versão do servidor não suportada";
 "obsolete_backend.alert.message" = "A versão do servidor não é suportada por este aplicativo. Por favor, entre em contato com o administrador do sistema.";
+"obsolete_backend_multibackend.alert.message" = "Your Wire server needs to be updated. Please notify your system administrator.";
+
+// Registration
+
+"create_personal_account.title" = "Create personal account";
+"create_personal_account.continue" = "Continuar";
+"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@) (optional)";
+"create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
+"create_personal_account.create_team" = "Criar uma equipe";
+"create_personal_account.input_name.title" = "Nome";
+"create_personal_account.input_name.placeholder" = "Enter your name";
+"create_personal_account.input_email.title" = "E-mail";
+"create_personal_account.input_email.placeholder" = "Enter your email";
+"create_personal_account.input_password.title" = "Senha";
+"create_personal_account.input_password.placeholder" = "Enter a password";
+"create_personal_account.input_confirm_password.placeholder" = "Confirme a senha";
+"create_personal_account.input_confirm_password.error" = "Passwords don’t match";
+"create_personal_account.confirmation_alert.title" = "Terms of use";
+"create_personal_account.confirmation_alert.message" = "Por favor, aceite os termos de uso para continuar.";
+"create_personal_account.confirmation_alert.accept" = "Aceitar";
+"create_personal_account.confirmation_alert.view" = "Vizualizar";
+"create_personal_account.confirmation_alert.cancel" = "Cancelar";
+"create_personal_account.verification_code.resend_code" = "Reenviar código";
+"create_personal_account.verification_code.confirm" = "Confirmar";
+"create_personal_account.verification_code.message" = "Digite o código de verificação que enviamos para %@.";
+
+"create_personal_account.error.title.email-exists" = "Conta Existe";
+"create_personal_account.error.message.email-exists" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
+"create_personal_account.error.title.invalid-email" = "Invalid information";
+"create_personal_account.error.message.invalid-email" = "Please enter a valid format for your email.";
+"create_personal_account.error.title.blacklisted-email" = "Invalid information";
+"create_personal_account.error.message.blacklisted-email" = "Your email has been identified as not trusted, for example, due to a rejection by a spam filter.";
+"create_personal_account.error.title.domain-blocked" = "Invalid information";
+"create_personal_account.error.message.domain-blocked" = "You can't create this account as your email domain is intentionally blocked.";
+"create_personal_account.error.title.invalid-code" = "Invalid information";
+"create_personal_account.error.message.invalid-code" = "Invalid code, or maximum attempts exceeded. Please retry, or request another code";
+"create_personal_account.error.title.too-many-team-members" = "Invalid information";
+"create_personal_account.error.message.too-many-team-members" = "This team has reached its membership limit.";
+"create_personal_account.error.title.user-creation-restricted" = "Invalid information";
+"create_personal_account.error.message.user-creation-restricted" = "This application version does not allow creation of personal accounts.";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";

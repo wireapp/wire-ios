@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,13 +25,14 @@ import WireReusableUIComponents
 
 protocol NoHistoryComponentDependency: Dependency {
 
+    var didReauthenticate: Bool { get }
     var howToChangeEmailURL: URL { get }
     var howToDeleteAccountURL: URL { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
-class NoHistoryComponent: Component<NoHistoryComponentDependency> {
+final class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     private let authenticationResult: AuthenticationResult
     private let didDetectDomainConflict: Bool
@@ -46,19 +47,24 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
         super.init(parent: parent)
     }
 
-    @MainActor private var viewModel: NoHistoryViewModel {
+}
+
+extension NoHistoryComponent: NoHistoryFactory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
+            didReauthenticate: dependency.didReauthenticate,
             didDetectDomainConflict: didDetectDomainConflict,
             howToChangeEmailURL: dependency.howToChangeEmailURL,
             howToDeleteAccountURL: dependency.howToDeleteAccountURL,
             onFlowCompletion: { [dependency, authenticationResult] in
-                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
+                dependency?.bridge.sendOutboundEvent(
+                    .userAuthenticated(authenticationResult, .unknown)
+                )
             }
         )
-    }
-
-    @MainActor var view: NoHistoryView {
-        NoHistoryView(viewModel: viewModel)
     }
 
 }

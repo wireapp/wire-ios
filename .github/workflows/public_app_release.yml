@@ -11,4 +11,5 @@ jobs:
     with:
       countly_enabled: true
       fastlane_action: appstore_public
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit

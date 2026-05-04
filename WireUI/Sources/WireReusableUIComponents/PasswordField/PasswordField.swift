@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,9 @@ public struct PasswordField: View {
     private let title: String
     private let isValidPassword: (String) -> Bool
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
+
     public init(
         password: Binding<String>,
         placeholder: String,
@@ -53,19 +56,31 @@ public struct PasswordField: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .wireTextStyle(.h4)
+                .font(for: .h4)
                 .foregroundColor(titleColor)
 
             HStack {
                 if isPasswordVisible {
-                    TextField(placeholder, text: $password)
-                        .wireTextStyle(.body1)
-                        .frame(height: fieldHeight)
-                        .focused($isFocused)
+                    ContextMenuControllableTextField(
+                        text: $password,
+                        placeholder: placeholder,
+                        isSecureTextEntry: false,
+                        isContextMenuAllowed: isClipboardEnabled,
+                        textContentType: .password
+                    )
+                    .font(for: .body1)
+                    .frame(height: fieldHeight)
+                    .focused($isFocused)
                 } else {
-                    SecureField(placeholder, text: $password)
-                        .frame(height: fieldHeight)
-                        .focused($isFocused)
+                    ContextMenuControllableTextField(
+                        text: $password,
+                        placeholder: placeholder,
+                        isSecureTextEntry: true,
+                        isContextMenuAllowed: isClipboardEnabled,
+                        textContentType: .password
+                    )
+                    .frame(height: fieldHeight)
+                    .focused($isFocused)
                 }
                 Spacer()
                 Button(action: {
@@ -105,7 +120,7 @@ public struct PasswordField: View {
         if password.isEmpty {
             ColorTheme.Base.labelTitle.color
         } else {
-            isValidPassword(password) ? ColorTheme.Base.primary.color : ColorTheme.Base.error.color
+            isValidPassword(password) ? ColorTheme.Base.primary(wireAccentColor).color : ColorTheme.Base.error.color
         }
     }
 
@@ -113,7 +128,7 @@ public struct PasswordField: View {
         if password.isEmpty {
             ColorTheme.Strokes.outline.color
         } else {
-            isValidPassword(password) ? ColorTheme.Base.primary.color : ColorTheme.Base.error.color
+            isValidPassword(password) ? ColorTheme.Base.primary(wireAccentColor).color : ColorTheme.Base.error.color
         }
     }
 

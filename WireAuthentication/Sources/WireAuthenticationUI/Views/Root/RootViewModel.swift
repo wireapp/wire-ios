@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,18 +20,47 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
 
 @MainActor
 package final class RootViewModel: ObservableObject, Router {
 
+    package typealias Factory =
+        OpenAppStoreUseCaseFactory &
+        RootFactory
+
+    // MARK: - View state
+
     @Published var path = NavigationPath()
-    @Published var modalDestination: RootView.ModalDestination? = .authFlow
+    @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
 
-    private var cancellable: AnyCancellable?
-    private var lastModalDestination: RootView.ModalDestination?
+    let hasOtherAccountsProvider: () -> Bool
 
-    package init(bridge: WireAuthenticationBridge) {
+    var shouldShowSwitchAccountsAlertButton: Bool {
+        hasOtherAccountsProvider()
+    }
+
+    // MARK: - Dependencies
+
+    package let factory: any Factory
+    private var cancellable: AnyCancellable?
+    private var lastModalDestination: RootViewSheet?
+    private var bridge: WireAuthenticationBridge
+
+    // MARK: - Life cycle
+
+    package init(
+        factory: any Factory,
+        bridge: WireAuthenticationBridge,
+        environment: BackendEnvironment2,
+        authenticationType: AuthenticationType,
+        hasOtherAccountsProvider: @escaping () -> Bool
+    ) {
+        self.factory = factory
+        self.hasOtherAccountsProvider = hasOtherAccountsProvider
+        self.bridge = bridge
+
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:
@@ -40,17 +69,32 @@ package final class RootViewModel: ObservableObject, Router {
                 break
             }
         }
+
+        switch authenticationType {
+        case .new:
+            self.modalDestination = .authFlow(environment: environment)
+        case let .reauthEmail(email):
+            self.modalDestination = .reauthFlow(email: email)
+        case .reauthSSO:
+            self.modalDestination = .reauthSSO
+        }
     }
+
+    // MARK: - Actions
 
     package func popToRoot() {
         path.removeLast(path.count)
+    }
+
+    package func pop() {
+        path.removeLast()
     }
 
     package func navigate(to destination: some Hashable) {
         path.append(destination)
     }
 
-    package func presentSheet(_ modalDestination: RootView.ModalDestination) {
+    package func presentSheet(_ modalDestination: RootViewSheet) {
         self.modalDestination = modalDestination
     }
 
@@ -58,10 +102,28 @@ package final class RootViewModel: ObservableObject, Router {
         self.alert = alert
     }
 
+    public func dismissAlert() {
+        alert = nil
+    }
+
     public func dismissSheet() {
         lastModalDestination = modalDestination
         modalDestination = nil
     }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+    }
+
+    func switchAccounts() {
+        modalDestination = .accountSwitcher
+    }
+
+    func logout(deleteData: Bool) {
+        bridge.sendOutboundEvent(.logoutRequested(deleteData: deleteData))
+    }
+
+    // MARK: - Private
 
     private func restoreSheet() {
         if let lastModalDestination, modalDestination == nil {

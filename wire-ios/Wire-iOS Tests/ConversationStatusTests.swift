@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,13 +82,11 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
     func testThatItReturnsStatusForConversationWithUnreadOneImage() {
         // GIVEN
         let sut = otherUserConversation!
-        (
-            try! sut
-                .appendImage(
-                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
-                        .jpegData(compressionQuality: 1.0)!
-                ) as! ZMMessage
-        ).sender = otherUser
+        let imageData = image(inTestBundleNamed: "unsplash_burger.jpg")
+            .jpegData(compressionQuality: 1.0)!
+        let image = SendableImage(name: "burger.jpg", utType: .jpeg, data: imageData)
+        let message = try! sut.appendImage(image, nonce: UUID()) as! ZMMessage
+        message.sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -106,13 +104,12 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
         let sut = otherUserConversation!
         try (sut.appendKnock() as! ZMMessage).sender = otherUser
         (try! sut.appendText(content: "test") as! ZMMessage).sender = otherUser
-        (
-            try! sut
-                .appendImage(
-                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
-                        .jpegData(compressionQuality: 1.0)!
-                ) as! ZMMessage
-        ).sender = otherUser
+
+        let imageData = image(inTestBundleNamed: "unsplash_burger.jpg")
+            .jpegData(compressionQuality: 1.0)!
+        let image = SendableImage(name: "burger.jpg", utType: .jpeg, data: imageData)
+        let imageMessage = try! sut.appendImage(image, nonce: UUID()) as! ZMMessage
+        imageMessage.sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -167,27 +164,19 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
     func testThatItReturnsStatusForConversationWithUnreadManyImages() {
         // GIVEN
         let sut = otherUserConversation!
-        (
-            try! sut
-                .appendImage(
-                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
-                        .jpegData(compressionQuality: 1.0)!
-                ) as! ZMMessage
-        ).sender = otherUser
-        (
-            try! sut
-                .appendImage(
-                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
-                        .jpegData(compressionQuality: 1.0)!
-                ) as! ZMMessage
-        ).sender = otherUser
-        (
-            try! sut
-                .appendImage(
-                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
-                        .jpegData(compressionQuality: 1.0)!
-                ) as! ZMMessage
-        ).sender = otherUser
+        let imageData = image(inTestBundleNamed: "unsplash_burger.jpg")
+            .jpegData(compressionQuality: 1.0)!
+        let image = SendableImage(name: "burger.jpg", utType: .jpeg, data: imageData)
+
+        let message1 = try! sut.appendImage(image, nonce: UUID()) as! ZMMessage
+        message1.sender = otherUser
+
+        let message2 = try! sut.appendImage(image, nonce: UUID()) as! ZMMessage
+        message2.sender = otherUser
+
+        let message3 = try! sut.appendImage(image, nonce: UUID()) as! ZMMessage
+        message3.sender = otherUser
+
         markAllMessagesAsUnread(in: sut)
 
         // WHEN

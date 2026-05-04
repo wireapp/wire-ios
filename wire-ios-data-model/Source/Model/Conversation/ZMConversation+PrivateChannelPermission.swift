@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,27 @@
 
 import Foundation
 
-extension ZMConversation {
+@objc
+public enum PrivateChannelPermission: Int16 {
+
+    /// No group type set
+
+    case unset = 0
+
+    /// A group conversation
+
+    case admins = 1
+
+    /// A channel conversation
+
+    case everyone = 2
+
+}
+
+public extension ZMConversation {
 
     /// The underlying string value of the private channel permission.
 
-    @NSManaged private var privateChannelPermissionValue: String?
+    @NSManaged var privateChannelPermission: PrivateChannelPermission
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireNetwork
 
 /// The result of an authentication flow.
 
-public struct AuthenticationResult: Equatable, Hashable {
+public struct AuthenticationResult: Equatable, Hashable, Sendable {
 
     /// The user id of whom the token belongs.
 
@@ -40,20 +41,32 @@ public struct AuthenticationResult: Equatable, Hashable {
 
     /// The connected backend.
 
-    public let backendEnvironment: WireAuthenticationBackendEnvironment
+    public let backendEnvironment: BackendEnvironment2
+
+    /// The resolved backend metadata.
+
+    public let backendMetadata: ResolvedBackendMetadata
+
+    /// The user submitted proxy credentials.
+
+    public let proxyCredentials: ProxyCredentials?
 
     public init(
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
         emailCredentials: EmailCredentials?,
-        backendEnvironment: WireAuthenticationBackendEnvironment
+        backendEnvironment: BackendEnvironment2,
+        backendMetadata: ResolvedBackendMetadata,
+        proxyCredentials: ProxyCredentials?
     ) {
         self.userID = userID
         self.cookies = cookies
         self.accessToken = accessToken
         self.emailCredentials = emailCredentials
         self.backendEnvironment = backendEnvironment
+        self.backendMetadata = backendMetadata
+        self.proxyCredentials = proxyCredentials
     }
 
 }

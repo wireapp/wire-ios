@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,115 +18,167 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
+import WireReusableUIComponents
+
+package protocol RootFactory {
+
+    @MainActor var viewModel: RootViewModel { get }
+
+    @MainActor
+    func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory
+
+    @MainActor
+    func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory
+
+    @MainActor
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory
+
+    @MainActor
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory
+}
 
 package struct RootView: View {
 
-    package typealias Factory =
-        DetermineAuthMethodBuilder &
-        LoginViaEmailOnPremBuilder &
-        LoginViaSSOBuilder &
-        NoHistoryViewBuilder
+    @StateObject private var viewModel: RootViewModel
 
-    @StateObject var viewModel: RootViewModel
-    let factory: any Factory
     private let cornerRadius: CGFloat = 10
 
+    private typealias Strings = L10n.Localizable
+
     package init(
-        viewModel: RootViewModel,
-        factory: any Factory
+        factory: @autoclosure @escaping () -> any RootFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
         BackgroundView()
             .universalSheet(item: $viewModel.modalDestination) { item in
                 sheetContent(for: item)
+                    .sheetCornerRadius(cornerRadius, inNavigationStack: true)
+                    // The alert should be shown on the navigation stack, otherwise
+                    // it will dismiss the sheet.
+                    .alert(
+                        item: $viewModel.alert,
+                        title: { alert in
+                            switch alert {
+                            case .obsoleteClient:
+                                Text(
+                                    L10n.Localizable.ObsoleteClientMultibackend.Alert
+                                        .title
+                                )
+                            default:
+                                Text(alert.title)
+                            }
+                        },
+                        message: { alert in
+                            switch alert {
+                            case .obsoleteBackend:
+                                Text(L10n.Localizable.ObsoleteBackendMultibackend.Alert.message)
+                            case .obsoleteClient:
+                                Text(L10n.Localizable.ObsoleteClientMultibackend
+                                    .Alert.message)
+                            default:
+                                Text(alert.message)
+                            }
+                        },
+                        actions: { alert in
+                            switch alert {
+                            case .obsoleteClient:
+                                obsoleteClientAlertActions()
+                            case .obsoleteBackend:
+                                obsoleteBackendAlertActions()
+                            case .logoutConfirmation:
+                                logoutConfirmationButtons
+                            default:
+                                Button(Strings.Authentication.Error.confirm, action: {})
+                            }
+                        }
+                    )
             }
     }
 
     @ViewBuilder
-    private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
+    private func sheetContent(for sheet: RootViewSheet) -> some View {
         switch sheet {
-        case .authFlow:
+        case let .authFlow(environment):
+            // The navigation stack needs to wrap the view otherwise we may
+            // run into issues finding the right navigation path.
+            // See [WPB-20414]
             NavigationStack(path: $viewModel.path) {
-                factory.determineAuthMethodView()
-            }
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
+                DetermineAuthMethodView(
+                    factory: viewModel.factory.determineAuthMethodFactory(
+                        environment: environment
+                    )
+                )
 
-        case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
+            }
+            // We must provide an explicit id so it knows to create a new
+            // view when the backend environment changes.
+            .id(environment)
+        case let .reauthFlow(email):
             NavigationStack(path: $viewModel.path) {
-                factory.determineAuthMethodView(
-                    environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
+                ReloginViaEmailView(
+                    factory: viewModel.factory.reloginViaEmailFactory(
+                        email: email
+                    )
                 )
             }
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-
-        case let .noHistory(
-            authenticationResult,
-            didDetectDomainConflict
-        ):
-            factory.noHistoryView(
-                authenticationResult: authenticationResult,
-                didDetectDomainConflict: didDetectDomainConflict
+        case .reauthSSO:
+            NavigationStack(path: $viewModel.path) {
+                ReloginViaSSOView(
+                    factory: viewModel.factory.reloginViaSSOFactory()
+                )
+            }
+        case .accountSwitcher:
+            AccountSwitcherModalView(
+                factory: viewModel.factory.accountsSwitcherFactory()
             )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
-
-        case let .onPremiseLogin(
-            email,
-            environmentType,
-            backendConfig,
-            backendMetadata
-        ):
-            factory.loginViaEmailOnPremView(
-                email: email,
-                environmentType: environmentType,
-                backendConfig: backendConfig,
-                backendMetadata: backendMetadata
-            )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
-
-        case let .ssoLogin(
-            ssoURL,
-            backendEnvironment
-        ):
-            factory.loginViaSSOView(
-                ssoURL: ssoURL,
-                backendEnvironment: backendEnvironment
-            )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
         }
     }
 
-    package enum ModalDestination: Identifiable, Hashable {
-        public var id: Self { self }
+    @ViewBuilder
+    fileprivate func switchAccountsAlertButtonIfNeeded() -> some View {
+        if viewModel.shouldShowSwitchAccountsAlertButton {
+            Button(
+                Strings.Obsolete.Alert.switchAccounts,
+                action: viewModel.switchAccounts
+            )
+        }
+    }
 
-        case authFlow
-        case onPremiseAuthFlow(
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
+    @ViewBuilder
+    private func obsoleteBackendAlertActions() -> some View {
+        Button(
+            Strings.Obsolete.Alert.ok,
+            action: viewModel.dismissAlert
         )
-        case noHistory(
-            authenticationResult: AuthenticationResult,
-            didDetectDomainConflict: Bool
+        switchAccountsAlertButtonIfNeeded()
+    }
+
+    @ViewBuilder
+    private func obsoleteClientAlertActions() -> some View {
+        Button(
+            Strings.Obsolete.Alert.updateButton,
+            action: viewModel.goToAppStore
         )
-        case onPremiseLogin(
-            email: String?,
-            environmentType: BackendEnvironmentType,
-            environment: BackendConfig,
-            backendMetadata: BackendMetadata?
-        )
-        case ssoLogin(
-            url: URL,
-            backendEnvironment: WireAuthenticationBackendEnvironment
+        switchAccountsAlertButtonIfNeeded()
+
+        Button(
+            Strings.Obsolete.Alert.cancel,
+            action: viewModel.dismissAlert
         )
     }
-}
 
-#Preview {
-    MockDependencies().rootView
+    @ViewBuilder private var logoutConfirmationButtons: some View {
+        Button(Strings.Logout.Alert.cancel, role: .cancel) {}
+        Button(Strings.Logout.Alert.keepDataButton) {
+            viewModel.logout(deleteData: false)
+        }
+        Button(Strings.Logout.Alert.deleteDataButton, role: .destructive) {
+            viewModel.logout(deleteData: true)
+        }
+    }
+
 }

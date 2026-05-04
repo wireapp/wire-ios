@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,39 +17,38 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
+import WireReusableUIComponents
 
-package protocol VerificationCodeBuilder {
+package protocol VerificationCodeFactory {
+
+    @MainActor var viewModel: VerificationCodeViewModel { get }
 
     @MainActor
-    func verificationCodeView(
-        email: String,
-        password: String,
-        didDetectDomainConflict: Bool
-    ) -> VerificationCodeView
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
 
 }
 
 package struct VerificationCodeView: View {
 
-    // MARK: - Constants
-
-    private enum Constants {
-        static let backgroundCornerRadius: CGFloat = 16
-    }
-
     @StateObject private var viewModel: VerificationCodeViewModel
 
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @FocusState private var focusedIndex: Int?
 
-    package init(viewModel: VerificationCodeViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+    private typealias Strings = L10n.Localizable
+
+    package init(
+        factory: @autoclosure @escaping () -> VerificationCodeFactory
+    ) {
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.VerificationCode.message(viewModel.email))
-                .wireTextStyle(.body1)
+            Text(Strings.VerificationCode.message(viewModel.email))
+                .font(for: .body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
 
@@ -63,7 +62,7 @@ package struct VerificationCodeView: View {
                         ProgressView()
                     }
 
-                    Text(L10n.VerificationCode.confirm)
+                    Text(Strings.VerificationCode.confirm)
                 }
             })
             .wireButtonStyle(.primary)
@@ -71,21 +70,16 @@ package struct VerificationCodeView: View {
             .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
-                Task.detached { await viewModel.resend() }
+                Task.detached { await viewModel.requestVerificationCode() }
             }, label: {
-                Text(L10n.VerificationCode.resendCode)
+                Text(Strings.VerificationCode.resendCode)
             })
             .wireButtonStyle(.link)
             .disabled(viewModel.isResending)
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
-        .cornerRadius(Constants.backgroundCornerRadius)
-        .overlay(
-            RoundedRectangle(cornerRadius: Constants.backgroundCornerRadius)
-                .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
-        )
-        .navigationTitle(L10n.VerificationCode.title)
+        .navigationTitle(Strings.VerificationCode.title)
         .navigationBarTitleDisplayMode(.inline)
         .setPreferredSize(navigationBarHidden: false)
         .customBackButton()
@@ -94,31 +88,46 @@ package struct VerificationCodeView: View {
             title: { Text($0.title) },
             message: { Text($0.message) },
             actions: { _ in
-                Button(L10n.Authentication.Error.confirm, action: {})
+                Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
+        .navigationDestination(for: VerificationCodeDestination.self) {
+            switch $0 {
+            case let .noHistory(authenticationResult):
+                viewModel.factory.noHistoryView(result: authenticationResult)
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.requestVerificationCode()
+            }
+        }
     }
 
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
             ForEach(0 ..< viewModel.numberOfDigits, id: \.self) { index in
-                TextField("", text: $viewModel.code[index])
-                    .frame(width: 50, height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(
-                                focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
-                                lineWidth: 1
-                            )
-                    )
-                    .multilineTextAlignment(.center)
-                    .font(.textStyle(.h2))
-                    .keyboardType(.numberPad)
-                    .foregroundColor(.primary)
-                    .focused($focusedIndex, equals: index)
-                    .onChange(of: viewModel.code[index]) { newValue in
-                        focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
-                    }
+                ContextMenuControllableTextField(
+                    text: $viewModel.code[index],
+                    placeholder: "",
+                    isContextMenuAllowed: isClipboardEnabled,
+                    textAlignment: .center,
+                    keyboardType: .numberPad
+                )
+                .frame(width: 50, height: 50)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(
+                            focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
+                            lineWidth: 1
+                        )
+                )
+                .font(for: .h2)
+                .foregroundColor(.primary)
+                .focused($focusedIndex, equals: index)
+                .onChange(of: viewModel.code[index]) { newValue in
+                    focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
+                }
             }
         }
         .onAppear {
@@ -126,33 +135,4 @@ package struct VerificationCodeView: View {
         }
     }
 
-}
-
-#Preview("Empty code") {
-    MockDependencies().previewVerificationCodeView(
-        email: "name.name@mail.com",
-        password: "pasword"
-    )
-}
-
-#Preview("Not empty code") {
-    MockDependencies().previewVerificationCodeView(
-        email: "name.name@mail.com",
-        password: "pasword",
-        code: ["1", "2", "3", "4", "5", ""]
-    )
-}
-
-#Preview {
-    BackgroundView()
-        .overlay {
-            VStack(spacing: 0) {
-                Spacer()
-                    .frame(maxHeight: .infinity)
-                MockDependencies().previewVerificationCodeView(
-                    email: "name.name@mail.com",
-                    password: "pasword"
-                )
-            }
-        }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,14 @@
 //
 
 import UIKit
-import WireAPI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireDomain
+import WireFoundation
+import WireLocators
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
@@ -33,6 +35,11 @@ protocol ConversationCreationControllerDelegate: AnyObject {
         didCreateConversation conversation: ZMConversation
     )
 
+    @MainActor
+    func conversationCreationController(
+        _ controller: WireConversationChannelCreationFormViewController,
+        didCreateConversation conversation: ZMConversation
+    )
 }
 
 final class ConversationCreationController: UIViewController {
@@ -42,6 +49,8 @@ final class ConversationCreationController: UIViewController {
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
     private let userSession: UserSession
+    private let isAppsFeatureEnabled: Bool
+    private let areLegacyBotsAvailable: Bool
 
     private let collectionViewController = SectionCollectionViewController()
 
@@ -54,6 +63,7 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var nameSection = ConversationCreateNameSectionController(
         selfUser: userSession.selfUser,
+        isChannel: values.isChannel,
         delegate: self
     )
     private lazy var errorSection = ConversationCreateErrorSectionController()
@@ -61,10 +71,12 @@ final class ConversationCreationController: UIViewController {
     private var optionsSections: [ConversationCreateSectionController] {
         let sections = [
             guestsSection,
-            values.shouldIncludeServices ? servicesSection : nil,
-            receiptsSection,
-            shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
-        ].compactMap { $0 }
+            (values.encryptionProtocol == .mls || areLegacyBotsAvailable) ? appsSection : nil,
+            // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
+            values.encryptionProtocol != .mls ? receiptsSection : nil,
+            shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
+            userSession.isWireDriveEnabled ? fileManagementSection : nil
+        ].compactMap(\.self)
 
         if let firstSection = sections.first {
             firstSection.headerTitle = L10n.Localizable.Conversation.Create.Options.title
@@ -82,7 +94,7 @@ final class ConversationCreationController: UIViewController {
             return true
         }
 
-        return userSession.selfUser.canCreateMLSGroups
+        return userSession.isBackendMLSEnabled && userSession.selfUser.canCreateMLSGroups
     }
 
     private lazy var guestsSection: ConversationCreateGuestsSectionController = {
@@ -96,11 +108,12 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var servicesSection: ConversationCreateServicesSectionController = {
-        let section = ConversationCreateServicesSectionController(values: values)
+    private lazy var appsSection: ConversationCreateAllowAppsSectionController = {
+        let section = ConversationCreateAllowAppsSectionController(values: values)
 
-        section.toggleAction = { [unowned self] allowServices in
-            values.allowServices = allowServices
+        section.wireAccentColor = WireAccentColor(rawValue: userSession.selfUser.accentColorValue) ?? .default
+        section.toggleAction = { [unowned self] allowApps in
+            values.allowApps = allowApps
             updateOptions()
         }
         return section
@@ -133,6 +146,17 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
+    private lazy var fileManagementSection = {
+        let section = ConversationCreateFileManagementSectionController(values: values)
+
+        section.toggleAction = { [unowned self] enableFileManagement in
+            values.enableFileManagement = enableFileManagement
+            updateOptions()
+        }
+
+        return section
+    }()
+
     private func reloadOptionsSections() {
         guard let collectionView = collectionViewController.collectionView else { return }
         updateSections()
@@ -151,11 +175,18 @@ final class ConversationCreationController: UIViewController {
 
     init(
         preSelectedParticipants: UserSet?,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.values = ConversationCreationValues(
+            isChannel: false,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -215,7 +246,6 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func updateSections() {
-        servicesSection.isHidden = !values.shouldIncludeServices
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
@@ -239,9 +269,9 @@ final class ConversationCreationController: UIViewController {
             }
         )
 
-        nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
+        nextButtonItem.accessibilityIdentifier = Locators.CreateGroupPage.newGroupNextButton.rawValue
         nextButtonItem.tintColor = UIColor.accent()
-        nextButtonItem.isEnabled = false
+        nextButtonItem.isEnabled = isGroupNameValid()
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
@@ -261,11 +291,16 @@ final class ConversationCreationController: UIViewController {
 
             let participantsController = AddParticipantsViewController(
                 context: .create(values),
-                userSession: userSession
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
-
-            participantsController.conversationCreationDelegate = self
-            navigationController?.pushViewController(participantsController, animated: true)
+            if let participantsController {
+                participantsController.conversationCreationDelegate = self
+                navigationController?.pushViewController(participantsController, animated: true)
+            } else {
+                WireLogger.ui.error("failed to present participants VC, it is nil", attributes: .safePublic)
+            }
         }
     }
 
@@ -274,10 +309,20 @@ final class ConversationCreationController: UIViewController {
         proceedWith(value: value)
     }
 
+    private func isGroupNameValid() -> Bool {
+        switch nameSection.value {
+        case let .valid(name)? where !name.isEmpty:
+            true
+        default:
+            false
+        }
+    }
+
     private func updateOptions() {
         guestsSection.configure(with: values)
-        servicesSection.configure(with: values)
+        appsSection.configure(with: values)
         encryptionProtocolSection.configure(with: values)
+        fileManagementSection.configure(with: values)
     }
 }
 
@@ -319,113 +364,14 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             }
 
             Task { @MainActor in
-                if canCreateChannel(for: team) {
-                    await createChannel(
-                        teamID: team!, // safe force unwrapped, we already checked team is not null
-                        session: userSession,
-                        users: syncedUsers
-                    )
-
-                } else {
-                    await createGroupConversation(
-                        teamID: team,
-                        session: userSession,
-                        users: syncedUsers
-                    )
-                }
+                await createGroupConversation(
+                    teamID: team,
+                    session: userSession,
+                    users: syncedUsers
+                )
 
                 addParticipantsViewController.setLoadingView(isVisible: false)
             }
-        }
-    }
-
-    /// Checks whether a channel can be created, conditions are:
-    /// - conversation message protocol is MLS
-    /// - conversation belongs to a team
-    /// - MLS is enabled
-    /// - API >= v8
-    /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
-
-    private func canCreateChannel(for teamID: UUID?) -> Bool {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion else {
-            return false
-        }
-
-        let isMLSConversation = values.encryptionProtocol == .mls
-        let isMLSEnabled = BackendInfo.isMLSEnabled
-        let isAPIVersionValid = backendInfoApiVersion >= .v8
-        let isTeam = teamID != nil
-
-        return isMLSConversation && isMLSEnabled && isAPIVersionValid && isTeam
-    }
-
-    private func createChannel(
-        teamID: UUID,
-        session: ZMUserSession,
-        users: [ZMUser]
-    ) async {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else { return }
-
-        let context = session.syncContext
-
-        let channelUseCase = makeCreateChannelUseCase(
-            apiService: apiService,
-            apiVersion: apiVersion,
-            context: context
-        )
-
-        let accessMode: [WireAPI.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
-        let accessRoles = ConversationAccessRoleV2.from(
-            allowGuests: values.allowGuests,
-            allowServices: values.shouldIncludeServices ? values.allowServices : false
-        ).compactMap {
-            WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
-        }
-
-        do {
-            let conversation = try await channelUseCase.invoke(
-                teamID: teamID,
-                name: values.name,
-                users: Set(users),
-                accessMode: Set(accessMode),
-                accessRoles: Set(accessRoles),
-                enableReceipts: values.enableReceipts
-            )
-
-            // Switching back to UI context
-            let syncedConversation = try session.viewContext.performAndWait {
-                try session.viewContext.existingObject(with: conversation.objectID) as? ZMConversation
-            }
-
-            guard let syncedConversation else { return }
-
-            delegate?.conversationCreationController(
-                self,
-                didCreateConversation: syncedConversation
-            )
-
-        } catch let error as CreateChannelUseCase.Failure {
-
-            switch error {
-            case .missingLegalholdConsent:
-                showMissingLegalholdConsentAlert()
-
-            case let .nonFederatingDomains(domains):
-                showNonFederatingDomainsAlert(domains: Set(domains))
-
-            default:
-                WireLogger.conversation.error(
-                    "failed to create conversation: \(String(describing: error))"
-                )
-                showGenericErrorAlert()
-            }
-        } catch {
-            WireLogger.conversation.error(
-                "failed to create conversation: \(String(describing: error))"
-            )
-            showGenericErrorAlert()
         }
     }
 
@@ -434,27 +380,19 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         session: ZMUserSession,
         users: [ZMUser]
     ) async {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else { return }
-
-        let context = session.syncContext
-
-        let groupConversationUseCase = makeCreateGroupConversationUseCase(
-            apiService: apiService,
-            apiVersion: apiVersion,
-            context: context
-        )
-
-        let accessMode: [WireAPI.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
-        let accessRoles = ConversationAccessRoleV2.from(
-            allowGuests: values.allowGuests,
-            allowServices: values.shouldIncludeServices ? values.allowServices : false
-        ).compactMap {
-            WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
+        guard let groupConversationUseCase = session.createGroupConversationUseCase else {
+            return
         }
 
-        let conversationMessageProtocol: WireAPI.ConversationMessageProtocol = switch values.encryptionProtocol {
+        let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
+        let accessRoles = ConversationAccessRoleV2.from(
+            allowGuests: values.allowGuests,
+            allowApps: (values.isAppsFeatureEnabled || values.areLegacyBotsAvailable) ? values.allowApps : false
+        ).compactMap {
+            $0.toNetworkModel()
+        }
+
+        let conversationMessageProtocol: WireNetwork.ConversationMessageProtocol = switch values.encryptionProtocol {
         case .mls:
             .mls
         case .proteus:
@@ -472,7 +410,8 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                isMLSEnabled: BackendInfo.isMLSEnabled
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
+                isMLSEnabled: session.isBackendMLSEnabled
             )
 
             // Switching back to UI context
@@ -508,77 +447,6 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             )
             showGenericErrorAlert()
         }
-    }
-
-    private func makeCreateChannelUseCase(
-        apiService: any APIServiceProtocol,
-        apiVersion: WireAPI.APIVersion,
-        context: NSManagedObjectContext
-    ) -> any CreateChannelUseCaseProtocol {
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let userLocalStore = UserLocalStore(context: context)
-        let messageLocalStore = MessageLocalStore(
-            context: context,
-            userLocalStore: userLocalStore
-        )
-
-        let store = ConversationLocalStore(
-            context: context,
-            mlsService: nil,
-            userLocalStore: userLocalStore,
-            messageLocalStore: messageLocalStore
-        )
-
-        let mlsService = context.performAndWait {
-            context.mlsService
-        }
-
-        return CreateChannelUseCase(
-            api: conversationsAPI,
-            store: store,
-            mlsService: mlsService,
-            context: context,
-            isFederationEnabled: BackendInfo.isFederationEnabled
-        )
-    }
-
-    private func makeCreateGroupConversationUseCase(
-        apiService: any APIServiceProtocol,
-        apiVersion: WireAPI.APIVersion,
-        context: NSManagedObjectContext
-    ) -> any CreateGroupConversationUseCaseProtocol {
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let userLocalStore = UserLocalStore(context: context)
-        let messageLocalStore = MessageLocalStore(
-            context: context,
-            userLocalStore: userLocalStore
-        )
-
-        let store = ConversationLocalStore(
-            context: context,
-            mlsService: nil,
-            userLocalStore: userLocalStore,
-            messageLocalStore: messageLocalStore
-        )
-
-        let mlsService = context.performAndWait {
-            context.mlsService
-        }
-
-        return CreateGroupConversationUseCase(
-            api: conversationsAPI,
-            store: store,
-            mlsService: mlsService,
-            context: context,
-            isFederationEnabled: BackendInfo.isFederationEnabled,
-            isMLSEnabled: BackendInfo.isMLSEnabled
-        )
     }
 
     private func showGenericErrorAlert() {
@@ -734,5 +602,20 @@ extension ConversationCreationController {
         ]
 
         return alert
+    }
+}
+
+extension ConversationAccessRoleV2 {
+    func toNetworkModel() -> WireNetwork.ConversationAccessRole {
+        switch self {
+        case .teamMember:
+            .teamMember
+        case .nonTeamMember:
+            .nonTeamMember
+        case .guest:
+            .guest
+        case .app:
+            .app
+        }
     }
 }

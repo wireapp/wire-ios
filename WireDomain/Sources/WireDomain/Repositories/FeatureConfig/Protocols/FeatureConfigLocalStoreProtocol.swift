@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-protocol FeatureConfigLocalStoreProtocol {
+public protocol FeatureConfigLocalStoreProtocol {
 
     /// Fetches a feature locally.
     /// - parameter name: The name of the feature.
@@ -27,24 +27,6 @@ protocol FeatureConfigLocalStoreProtocol {
     func fetchFeature(
         name: Feature.Name
     ) async throws -> Feature
-
-    /// Stores a flag indicating whether the user needs to be notified of the feature.
-    /// - parameters:
-    ///     - needsNotifyUser: The flag to update.
-    ///     - feature: The feature to update the flag for.
-
-    func storeFeature(
-        needsNotifyUser: Bool,
-        feature: Feature
-    ) async
-
-    /// Fetches a flag whether the user needs to be notified for the feature.
-    /// - parameter feature: A given feature.
-    /// - returns: Whether the user needs to be notified.
-
-    func featureNeedsNotifyUser(
-        feature: Feature
-    ) async -> Bool
 
     /// Stores a feature locally.
     /// - parameters:
@@ -65,5 +47,12 @@ protocol FeatureConfigLocalStoreProtocol {
     func featureConfig(
         feature: Feature
     ) async -> (status: Feature.Status, config: Data?)
+
+    /// Checks whether a feature is enabled.
+    /// - parameter feature: The feature to check the status for.
+
+    func isFeatureEnabled(
+        feature: Feature
+    ) async -> Bool
 
 }

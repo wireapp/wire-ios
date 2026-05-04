@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,9 +36,10 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var mockContextProvider: MockContextProvider!
     var mockEnrollE2eICertificateUseCase: EnrollE2EICertificateUseCaseProtocol!
 
-    override func setUp() {
-        super.setUp()
-        coreDataFixture = CoreDataFixture()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        coreDataFixture = try await CoreDataFixture()
         client = mockUserClient()
         mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")

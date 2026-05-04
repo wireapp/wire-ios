@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,21 @@ import SwiftUI
 
 public struct VerificationCodeView_Previews: View {
 
+    var email: String = ""
+    var password: String = ""
     var code: [String]
 
-    public init(code: [String]) {
+    public init(code: [String], email: String = "", password: String = "") {
         self.code = code
     }
 
     public var body: some View {
-        MockDependencies().previewVerificationCodeView(
-            email: "name.name@mail.com",
-            password: "password"
-        )
+        NavigationStack {
+            VerificationCodeView(factory: FakeVerificationCodeFactory(
+                email: "name.name@mail.com",
+                password: "password"
+            ))
+        }
     }
 
 }

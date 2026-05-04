@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireFoundationSupport
+import WireMessagingDomainSupport
 import XCTest
 @testable import Wire
 
@@ -47,10 +49,13 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     var userSession: UserSessionMock!
     var forceRecord: Bool = false
+    var mockUserDefaults = UserDefaultsProtocolMock()
 
     override func setUp() {
         super.setUp()
         userSession = UserSessionMock()
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
     }
 
     override func tearDown() {
@@ -174,15 +179,22 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     ) -> UIStackView {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
+        let factory = MockWireMessagingFactoryProtocol()
+        factory.makeFetchCachedNodeUseCase_MockValue = MockWireDriveFetchCachedNodeUseCaseProtocol()
+        factory.makeFetchNodeUseCase_MockValue = MockWireDriveFetchNodeUseCaseProtocol()
+
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             useInvertedIndices: false,
             contentWidth: width,
-            shouldShowAuthor: true
+            userDefaults: mockUserDefaults,
+            wireMessagingFactory: factory
         )
-        let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
+
+        let views = section.cellDescriptionsForTesting.map { $0.instance.makeView(message) }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
         stackView.spacing = 2
@@ -205,9 +217,9 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
 }
 
-private extension ConversationMessageCellDescription {
+extension ConversationMessageCellDescription {
 
-    func makeView() -> UIView {
+    func makeView(_ message: ZMConversationMessage? = nil) -> UIView {
         let view = View()
         let container = UIView()
 
@@ -222,6 +234,9 @@ private extension ConversationMessageCellDescription {
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
 
         view.configure(with: configuration, animated: false)
+        if let message {
+            view.message = message
+        }
 
         return container
     }

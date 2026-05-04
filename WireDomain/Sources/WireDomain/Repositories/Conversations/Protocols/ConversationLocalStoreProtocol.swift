@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 
 // sourcery: AutoMockable
@@ -31,6 +32,8 @@ import WireDataModel
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
+    func qualifiedID(for conversation: ZMConversation) async -> QualifiedID?
+
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
@@ -40,6 +43,12 @@ public protocol ConversationLocalStoreProtocol {
     func fetchOrCreateConversation(
         id: UUID,
         domain: String?
+    ) async -> ZMConversation
+
+    func fetchOrCreateConversation(
+        id: UUID,
+        domain: String?,
+        setNeedsToBeUpdatedFromBackend: Bool
     ) async -> ZMConversation
 
     /// Stores a given conversation locally.
@@ -75,6 +84,27 @@ public protocol ConversationLocalStoreProtocol {
         conversationDomain: String
     ) async
 
+    func createMLSConversation(
+        conversationID: UUID,
+        conversationDomain: String?,
+        mlsGroupID: MLSGroupID
+    ) async
+
+    /// Fetches all MLS conversations that are ready.
+    ///
+    /// This method retrieves all conversations that have MLS group IDs and are in a ready state,
+    /// optionally filtered by domain.
+    ///
+    /// - Parameter domain: The domain to filter conversations by. If `nil`, fetches conversations
+    ///   from all domains.
+    ///
+    /// - Returns: An array of `ZMConversation` objects that are MLS-ready. Returns an empty array
+    ///   if no conversations match the criteria.
+    ///
+    /// - Throws: An error if the fetch operation fails.
+
+    func fetchAllMLSConversations(domain: String?) async throws -> [ZMConversation]
+
     /// Fetches a MLS conversation locally.
     ///
     /// - parameters:
@@ -97,12 +127,10 @@ public protocol ConversationLocalStoreProtocol {
         domain: String?
     ) async -> ZMConversation?
 
-    /// Wipes MLS group conversation.
-    /// - parameter id: The MLS group ID.
+    /// Clears the MLS group ID for a conversation, preventing it from being wiped again.
+    /// - parameter mlsGroupID: The mls group ID of the conversation.
 
-    func wipeMLSGroup(
-        groupID: WireDataModel.MLSGroupID
-    ) async throws
+    func clearMLSGroupID(mlsGroupID: MLSGroupID) async
 
     /// Removes a given user from all group conversations.
     ///
@@ -255,6 +283,10 @@ public protocol ConversationLocalStoreProtocol {
         _ conversation: ZMConversation
     ) async -> Bool
 
+    func isSelfConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
     /// Deletes a conversation locally.
     /// - Parameters:
     ///     - conversation: The conversation to delete.
@@ -329,17 +361,6 @@ public protocol ConversationLocalStoreProtocol {
         in conversation: ZMConversation
     ) async
 
-    /// Sends a notification using the main context informing typing users
-    /// have been updated for a given conversation.
-    /// - Parameters:
-    ///     - conversationID: The conversation managed object ID.
-    ///     - usersID: The updated typing users managed object IDs.
-
-    func updateTypingUsers(
-        conversationID: NSManagedObjectID,
-        usersID: Set<NSManagedObjectID>
-    ) async
-
     /// Obtain permanent stored object IDs.
     /// - Parameters:
     ///     - user: The user to get the permanent managed object ID for.
@@ -348,7 +369,7 @@ public protocol ConversationLocalStoreProtocol {
     func obtainPermanentIDs(
         user: ZMUser,
         conversation: ZMConversation
-    )
+    ) async
 
     /// Fetches the current conversation name
     /// - parameter conversation: The conversation to fetch the name for.
@@ -379,10 +400,21 @@ public protocol ConversationLocalStoreProtocol {
     /// Stores the conversation MLS group ID and marks the mls status as ready.
     /// - Parameters:
     ///     - mlsGroupID: The MLS group ID related to the conversation.
+    ///     - epoch: The epoch for the new MLS group
     ///     - conversation: The conversation to update the properties for.
 
     func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
+        epoch: UInt64,
+        conversation: ZMConversation
+    ) async
+
+    /// Stores new conversation MLS group ID and marks it as 'pendingJoin'
+    /// - Parameters:
+    ///   - newMLSGroupID: The new generated MLS group ID
+    ///   - conversation: The conversation to update the properties for.
+    func storeMLSConversationPendingJoinAfterReset(
+        newMLSGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async
 
@@ -394,5 +426,78 @@ public protocol ConversationLocalStoreProtocol {
     func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
+
+    func name(
+        for conversation: ZMConversation
+    ) async -> String?
+
+    func shouldHideNotification() async -> Bool
+
+    func isMessageSilenced(
+        _ message: GenericMessage,
+        senderID: UUID?,
+        conversation: ZMConversation
+    ) async -> Bool
+
+    func conversationMutedMessageTypesIncludingAvailability(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes
+
+    func lastReadServerTimestamp(
+        _ conversation: ZMConversation
+    ) async -> Date?
+
+    func conversationNeedsBackendUpdate(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
+    func increaseUnreadCount(
+        for conversation: ZMConversation
+    ) async
+
+    func decreaseUnreadCount(
+        for conversation: ZMConversation
+    ) async
+
+    func increaseUnreadSelfMentionCount(
+        for conversation: ZMConversation
+    ) async
+
+    func increaseUnreadSelfReplyCount(
+        for conversation: ZMConversation
+    ) async
+
+    func unreadConversationCount() async -> UInt
+
+    /// Stores the private conversation (aka channel) permission locally.
+    /// - Parameters
+    ///     - permission: The new permission value (`admins` or `everyone`)
+
+    func storeConversation(
+        permission: WireDomain.Conversation.ChannelPermission,
+        conversation: ZMConversation
+    ) async
+
+    /// Stores the conversation history depth (for channels only) locally.
+    /// - Parameters
+    ///     - historyDepth: The history depth (one day, one week, four weeks..)
+
+    func storeConversation(
+        historyDepth: String,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async throws
+
+    func fetchServerTimeDelta() async -> TimeInterval
+
+    /// Fetches the conversation matching the given qualified ID and executes a block,
+    /// providing the conversation (if found) and the context.
+    /// - Parameters:
+    ///   - conversationID: The qualified conversation ID used to look up the conversation.
+    ///   - block: Some code that should be invoked with the fetched conversation and the managed object context.
+    func execute(
+        conversationID: QualifiedID,
+        block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
+    ) async
 
 }

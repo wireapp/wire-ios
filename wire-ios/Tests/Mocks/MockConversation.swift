@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,13 +24,15 @@ import WireRequestStrategy
 // TODO: rename to MockConversation after objc MockConversation is retired
 class SwiftMockConversation: NSObject, Conversation {
 
+    var objectId: Any = UUID()
+
     var isMLSConversationDegraded: Bool = false
     var isProteusConversationDegraded: Bool = false
 
     var relatedConnectionState: ZMConnectionStatus = .invalid
 
     var sortedOtherParticipants: [UserType] = []
-    var sortedServiceUsers: [UserType] = []
+    var sortedApps: [UserType] = []
 
     func verifyLegalHoldSubjects() {
         // no-op
@@ -43,6 +45,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var conversationType: ZMConversationType = .group
 
     var groupType: ConversationGroupType?
+
+    var isChannel: Bool = false
 
     var teamRemoteIdentifier: UUID?
 
@@ -57,7 +61,7 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var allowGuests: Bool = false
 
-    var allowServices: Bool = false
+    var allowApps = false
 
     var teamType: TeamType?
 
@@ -77,11 +81,21 @@ class SwiftMockConversation: NSObject, Conversation {
     var lastMessage: ZMConversationMessage?
     var firstUnreadMessage: ZMConversationMessage?
 
-    var areServicesPresent: Bool = false
+    var areAppsPresent = false
 
     var domain: String?
 
     var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+
+    var privateChannelPermission: WireDataModel.PrivateChannelPermission = .unset
+
+    var channelHistoryDepth: String? = ""
+
+    var hasMoreHistory: Bool = false
+
+    var wireDriveCellName: String = ""
+
+    var isWireDriveEnabled: Bool = false
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
@@ -99,7 +113,6 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
     var mlsGroupID: MLSGroupID?
 
     var mlsVerificationStatus: MLSVerificationStatus?
-
 }
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {
