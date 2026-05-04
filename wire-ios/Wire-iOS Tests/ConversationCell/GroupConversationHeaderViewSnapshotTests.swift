@@ -168,7 +168,9 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
         ])
 
         let size = container.systemLayoutSizeFitting(
-            CGSize(width: containerWidth, height: UIView.layoutFittingCompressedSize.height)
+            CGSize(width: containerWidth, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
         )
         container.frame = CGRect(origin: .zero, size: CGSize(width: containerWidth, height: size.height))
         return container
