@@ -143,6 +143,7 @@ public final class AVSWrapper: AVSWrapperType {
         conversationType: AVSConversationType,
         useCBR: Bool
     ) -> Bool {
+        // TODO: [WPB-18511] This is currently just a hardcoded value and will be replaced when we start working on the Meetings.
         let isMeeting = false
         let didStart = wcall_start(
             handle,
@@ -223,6 +224,7 @@ public final class AVSWrapper: AVSWrapperType {
             guard let bytes = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return }
             let currentTime = UInt32(callEvent.currentTimestamp.timeIntervalSince1970)
             let serverTime = UInt32(callEvent.serverTimestamp.timeIntervalSince1970)
+            // TODO: [WPB-18511] This is currently just a hardcoded value and will be replaced when we start working on the Meetings.
             let isMeeting = false
             zmLog.debug("wcall_recv_msg: currentTime = \(currentTime), serverTime = \(serverTime)")
             // An OTR call-type message has been received,
