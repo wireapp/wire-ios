@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -161,6 +161,8 @@ extension WireNetwork.User {
             isDeleted: deleted ?? false,
             email: email,
             expiresAt: expiresAt,
+            appDescription: app?.description,
+            appCategory: app?.category,
             serviceID: service?.id,
             serviceProvider: service?.provider,
             supportedProtocols: supportedProtocols?.toDomainModel()
@@ -189,6 +191,8 @@ extension WireNetwork.SelfUser {
             isDeleted: deleted ?? false,
             email: email,
             expiresAt: expiresAt,
+            appDescription: app?.description,
+            appCategory: app?.category,
             serviceID: service?.id,
             serviceProvider: service?.provider,
             supportedProtocols: supportedProtocols?.toDomainModel()

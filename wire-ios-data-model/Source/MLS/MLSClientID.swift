@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 import WireTransport
 
 /// An ID representing a identifying a single user client.
-public struct MLSClientID: Equatable, Hashable {
+public struct MLSClientID: Equatable, Hashable, Sendable {
 
     // MARK: - Properties
 

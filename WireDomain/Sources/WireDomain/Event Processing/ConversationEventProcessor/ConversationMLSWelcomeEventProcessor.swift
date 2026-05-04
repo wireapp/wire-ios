@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
         // This conversation is now a MLS one so we need to update its group ID and set MLS status to ready..
         await conversationLocalStore.storeMLSConversationEstablished(
             mlsGroupID: groupID,
+            epoch: try await mlsService.epoch(for: groupID),
             conversation: conversation
         )
 

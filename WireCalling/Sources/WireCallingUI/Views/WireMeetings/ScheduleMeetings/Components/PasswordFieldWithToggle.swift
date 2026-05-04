@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,10 +59,9 @@ struct PasswordFieldWithToggle: View {
             placeholder: placeholder,
             isSecureTextEntry: false,
             placeholderColor: ColorTheme.Base.secondaryText.color,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
         )
-        .textContentType(.password)
-        .autocapitalization(.none)
         .accessibilityIdentifier("passwordInput")
     }
 
@@ -72,9 +71,9 @@ struct PasswordFieldWithToggle: View {
             placeholder: placeholder,
             isSecureTextEntry: true,
             placeholderColor: ColorTheme.Base.secondaryText.color,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
         )
-        .textContentType(.password)
         .accessibilityIdentifier("confirmPasswordInput")
     }
 

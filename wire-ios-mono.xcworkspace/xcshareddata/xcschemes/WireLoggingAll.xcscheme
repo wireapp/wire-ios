@@ -15,34 +15,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireLegacyLogging"
-               BuildableName = "WireLegacyLogging"
-               BlueprintName = "WireLegacyLogging"
-               ReferencedContainer = "container:WireLogging">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireLegacyLoggingSupport"
-               BuildableName = "WireLegacyLoggingSupport"
-               BlueprintName = "WireLegacyLoggingSupport"
-               ReferencedContainer = "container:WireLogging">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WireLogging"
                BuildableName = "WireLogging"
                BlueprintName = "WireLogging"
@@ -81,16 +53,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireLegacyLoggingTests"
-               BuildableName = "WireLegacyLoggingTests"
-               BlueprintName = "WireLegacyLoggingTests"
-               ReferencedContainer = "container:WireLogging">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WireLoggingTests"
                BuildableName = "WireLoggingTests"
                BlueprintName = "WireLoggingTests"
@@ -119,9 +81,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireLegacyLogging"
-            BuildableName = "WireLegacyLogging"
-            BlueprintName = "WireLegacyLogging"
+            BlueprintIdentifier = "WireLogging"
+            BuildableName = "WireLogging"
+            BlueprintName = "WireLogging"
             ReferencedContainer = "container:WireLogging">
          </BuildableReference>
       </MacroExpansion>

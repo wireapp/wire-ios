@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
-        let error = CoreCryptoError.Other("conversation not found")
+        let error = CoreCryptoError.Other(msg: "conversation not found")
 
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             throw error
@@ -103,9 +103,9 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             throw CoreCryptoError
                 .Mls(
-                    MlsError
+                    mlsError: MlsError
                         .Other(
-                            "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
+                            msg: "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
                         )
                 )
         }

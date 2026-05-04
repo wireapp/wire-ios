@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,11 +23,15 @@ import XCTest
 class UserProfilePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        qrCodeButton
+        userProfilePicture
     }
 
     var qrCodeButton: XCUIElement {
         app.buttons[Locators.UserProfilePage.qrCodeButton.rawValue]
+    }
+
+    var userProfilePicture: XCUIElement {
+        app.buttons[Locators.UserProfilePage.userProfilePicture.rawValue]
     }
 
     var createTeamButton: XCUIElement {
@@ -39,15 +43,15 @@ class UserProfilePage: PageModel {
     }
 
     var manageTeamButton: XCUIElement {
-        app.buttons[Locators.UserProfilePage.addAcccountOrTeamButton.rawValue].firstMatch
+        app.buttons[Locators.UserProfilePage.addAccountOrTeamButton.rawValue].firstMatch
     }
 
     var closeButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.ConversationDetailsPage.close.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.UserProfilePage.close.rawValue].firstMatch
     }
 
     var addAccountOrTeamButton: XCUIElement {
-        app.descendants(matching: .button)[Locators.UserProfilePage.addAcccountOrTeamButton.rawValue].firstMatch
+        app.descendants(matching: .button)[Locators.UserProfilePage.addAccountOrTeamButton.rawValue].firstMatch
     }
 
     func tapCreateTeamButton() throws -> TeamSetupStepsPage {

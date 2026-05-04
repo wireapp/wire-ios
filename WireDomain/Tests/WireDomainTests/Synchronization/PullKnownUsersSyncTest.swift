@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ private enum Scaffolding {
         deleted: false,
         email: "john.doe@wire.com",
         expiresAt: nil,
+        app: nil,
         service: nil,
         supportedProtocols: [.mls],
         legalholdStatus: .disabled
@@ -100,6 +101,7 @@ private enum Scaffolding {
         deleted: false,
         email: "jane.doe@wire.com",
         expiresAt: nil,
+        app: nil,
         service: nil,
         supportedProtocols: [.mls],
         legalholdStatus: .disabled

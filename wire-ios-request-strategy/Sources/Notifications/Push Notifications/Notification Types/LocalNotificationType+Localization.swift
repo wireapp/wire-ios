@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -205,11 +205,6 @@ extension LocalNotificationType {
         }
 
         return nil
-    }
-
-    func bundledMessagesBodyText(messageCount: Int) -> String {
-        guard case .bundledMessages = self else { return "" }
-        return .localizedStringWithFormat(baseKey.pushFormatString, arguments: [messageCount])
     }
 
     func messageBodyText(senderName: String?) -> String {

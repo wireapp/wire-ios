@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,6 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
     // this is added in v11
     let apps: FeatureWithoutConfig
     let consumableNotifications: FeatureWithoutConfig
-    let chatBubbles: FeatureWithoutConfig
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -140,9 +139,6 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
                 .toAPIModel()
         )
         featureConfigs.append(.consumableNotifications(consumableNotifications))
-
-        let chatBubblesSimpleConfig = ChatBubblesSimpleFeatureConfig(status: chatBubbles.status.toAPIModel())
-        featureConfigs.append(.chatBubblesSimple(chatBubblesSimpleConfig))
 
         let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
         featureConfigs.append(.cells(cellsFeatureConfig))

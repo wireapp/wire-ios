@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,11 @@ import XCTest
 class ConversationDetailsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        addParticipantsButton
+        navigationTitleView
+    }
+
+    var navigationTitleView: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.title.rawValue].firstMatch
     }
 
     var addParticipantsButton: XCUIElement {
@@ -31,6 +35,23 @@ class ConversationDetailsPage: PageModel {
 
     var closeConversationDetailsButton: XCUIElement {
         app.buttons[Locators.ConversationDetailsPage.close.rawValue]
+    }
+
+    var moreOptionsConversationDetailsButton: XCUIElement {
+        app.buttons[Locators.ConversationDetailsPage.moreOptionsButton.rawValue]
+    }
+
+    var archiveOptionConversationDetailsButton: XCUIElement {
+        app.buttons.matching(identifier: Locators.ConversationDetailsActions.archive.rawValue).element(boundBy: 0)
+    }
+
+    var clearContentOptionConversationDetailsButton: XCUIElement {
+        app.buttons.matching(identifier: Locators.ConversationDetailsActions.clearContent.rawValue).element(boundBy: 0)
+    }
+
+    var leaveConversationOptionConversationDetailsButton: XCUIElement {
+        app.buttons.matching(identifier: Locators.ConversationDetailsActions.leaveConversation.rawValue)
+            .element(boundBy: 0)
     }
 
     var userCells: XCUIElementQuery {
@@ -43,14 +64,66 @@ class ConversationDetailsPage: PageModel {
         return try UserDetailsPage()
     }
 
+    @discardableResult
     func closeConversationDetails() throws -> ActiveConversationPage {
         closeConversationDetailsButton.tap()
         return try ActiveConversationPage()
     }
 
+    func moreOptionsConversationDetails() throws -> ConversationDetailsPage {
+        moreOptionsConversationDetailsButton.tap()
+        return try ConversationDetailsPage()
+    }
+
+    func archiveOptionsConversationDetails() throws -> ConversationsPage {
+        archiveOptionConversationDetailsButton.tap()
+        return try ConversationsPage()
+    }
+
+    func clearContentOptionsConversationDetails() throws -> Self {
+        clearContentOptionConversationDetailsButton.tap()
+        return self
+    }
+
+    func leaveOptionsConversationDetails() throws -> Self {
+        leaveConversationOptionConversationDetailsButton.tap()
+        return self
+    }
+
     func appParticipantToConversation() throws -> SelectParticipantsPage {
         addParticipantsButton.tap()
         return try SelectParticipantsPage()
+    }
+
+    @discardableResult
+    func clearContent() throws -> ConversationDetailsPage {
+        clearButtonOnBottomSheet.tap()
+        clearButtonOnBottomSheet.waitToDisappear()
+        return try ConversationDetailsPage()
+    }
+
+    @discardableResult
+    func leaveConversation() throws -> ConversationDetailsPage {
+        leaveConversationButtonOnBottomSheet.waitAndTap()
+        return try ConversationDetailsPage()
+    }
+
+    @discardableResult
+    func leaveAndClearConversation() throws -> ConversationDetailsPage {
+        leaveAndClearConversationButtonOnBottomSheet.waitAndTap()
+        return try ConversationDetailsPage()
+    }
+
+    var clearButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue].firstMatch
+    }
+
+    var leaveConversationButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.leaveButtonOnBottomSheet.rawValue].firstMatch
+    }
+
+    var leaveAndClearConversationButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue].firstMatch
     }
 
 }

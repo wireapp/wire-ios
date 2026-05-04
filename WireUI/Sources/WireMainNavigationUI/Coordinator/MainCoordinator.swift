@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -531,6 +531,14 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .expanded:
             splitViewController.conversationUI != nil
         }
+    }
+
+    public func splitViewController(
+        _ svc: UISplitViewController,
+        willChangeTo displayMode: UISplitViewController.DisplayMode
+    ) {
+        guard displayMode == .oneOverSecondary else { return }
+        splitViewController.view.endEditing(true)
     }
 }
 

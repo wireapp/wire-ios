@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
@@ -70,8 +69,6 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         sut = nil
         userSession = nil
         mockSelfUser = nil
-
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
@@ -80,6 +77,7 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         let newValues = ConversationCreationValues(
             isChannel: false,
             isAppsFeatureEnabled: true,
+            areLegacyBotsAvailable: false,
             name: "",
             participants: [],
             allowGuests: true,
@@ -87,13 +85,23 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
             selfUser: mockSelfUser
         )
 
-        sut = AddParticipantsViewController(context: .create(newValues), userSession: userSession)
+        sut = AddParticipantsViewController(
+            context: .create(newValues),
+            userSession: userSession,
+            isAppsFeatureEnabled: true,
+            areLegacyBotsAvailable: true
+        )
         snapshotHelper.verify(matching: sut)
     }
 
     func testForAddParticipantsButtonIsShown() {
         let conversation = MockGroupDetailsConversation()
-        sut = AddParticipantsViewController(context: .add(conversation), userSession: userSession)
+        sut = AddParticipantsViewController(
+            context: .add(conversation),
+            userSession: userSession,
+            isAppsFeatureEnabled: true,
+            areLegacyBotsAvailable: true
+        )
         let user = MockUserType.createUser(name: "Bill")
         sut.userSelection.add(user)
         sut.userSelection(UserSelection(), didAddUser: user)
@@ -111,7 +119,12 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         mockConversation.allowApps = true
         mockConversation.messageProtocol = .proteus
 
-        sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
+        sut = AddParticipantsViewController(
+            context: .add(mockConversation),
+            userSession: userSession,
+            isAppsFeatureEnabled: true,
+            areLegacyBotsAvailable: true
+        )
 
         // THEN
         XCTAssertTrue(mockConversation.botCanBeAdded)

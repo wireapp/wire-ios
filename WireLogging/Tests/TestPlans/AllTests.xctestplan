@@ -1,19 +1,15 @@
 {
   "configurations" : [
     {
-      "id" : "5D82ECB3-F716-4EAB-8FE5-C380EE8B8618",
-      "name" : "Configuration 1",
+      "id" : "8DA8C849-71C0-4072-92BA-9AF39BAA1039",
+      "name" : "Test Scheme Action",
       "options" : {
 
       }
     }
   ],
   "defaultOptions" : {
-    "language" : "en",
-    "region" : "DE",
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "performanceAntipatternCheckerEnabled" : true
   },
   "testTargets" : [
     {
@@ -21,14 +17,6 @@
         "containerPath" : "container:WireLogging",
         "identifier" : "WireLoggingTests",
         "name" : "WireLoggingTests"
-      }
-    },
-    {
-      "parallelizable" : false,
-      "target" : {
-        "containerPath" : "container:WireLogging",
-        "identifier" : "WireLegacyLoggingTests",
-        "name" : "WireLegacyLoggingTests"
       }
     }
   ],

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,22 +45,13 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-
         // be sure to call this before initializing sut
         uiMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
         mockCookieStorage = MockCookieStorage()
         mockCookieStorage.isAuthenticated = true
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockClientRegistationDelegate = MockClientRegistrationStatusDelegate()
-        sut = ZMClientRegistrationStatus(
-            context: syncMOC,
-            cookieProvider: mockCookieStorage,
-            coreCryptoProvider: mockCoreCryptoProvider,
-            localDomain: "wire.com",
-            isBackendMLSEnabled: false
-        )
-        sut.registrationStatusDelegate = mockClientRegistationDelegate
+        createSut(mlsEnabled: false)
 
         syncMOC.performAndWait {
             syncMOC.proteusService = MockProteusServiceInterface()
@@ -73,6 +64,17 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         sut = nil
 
         super.tearDown()
+    }
+
+    private func createSut(mlsEnabled: Bool) {
+        sut = ZMClientRegistrationStatus(
+            context: syncMOC,
+            cookieProvider: mockCookieStorage,
+            coreCryptoProvider: mockCoreCryptoProvider,
+            localDomain: "wire.com",
+            isBackendMLSEnabled: mlsEnabled
+        )
+        sut.registrationStatusDelegate = mockClientRegistationDelegate
     }
 
     // MARK: Initialisation
@@ -232,7 +234,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         }
     }
 
-    func testThatItInvalidatesSelfClientAndDeletesAndRecreatesCryptoBoxOnDidDetectCurrentClientDeletion() {
+    func testThatItInvalidatesSelfClient_OnDidDetectCurrentClientDeletion() {
         syncMOC.performAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -794,8 +796,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     @objc
     private func enableMLS() {
         LegacyFeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
-        BackendInfo.apiVersion = .v5
-        BackendInfo.isMLSEnabled = true
+        createSut(mlsEnabled: true)
     }
 
     @objc

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -151,6 +151,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
+            app: nil, // introduced with API v15
             service: service?.toAPIModel(),
             supportedProtocols: [.proteus] /// default to Proteus for api versions < v5
         )

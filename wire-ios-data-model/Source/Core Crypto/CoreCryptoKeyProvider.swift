@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -102,10 +102,13 @@ public class CoreCryptoKeyProvider {
 
     private func migrateToScopedDatabaseKey(path: String) throws {
 
-        guard
-            coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded,
-            let unscopedKey = try fetchCoreCryptoKey(scoped: false)
-        else { return }
+        guard coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded else { return }
+
+        guard let unscopedKey = try fetchCoreCryptoKey(scoped: false) else {
+            // No unscoped key was found, we can mark this as done
+            coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
+            return
+        }
 
         if (try fetchCoreCryptoKey(scoped: true)) != nil {
             coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()

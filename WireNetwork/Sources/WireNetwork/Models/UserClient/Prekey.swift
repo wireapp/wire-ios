@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,14 +40,20 @@ public struct Prekey: Equatable, Sendable {
 
 }
 
-struct PrekeyV0: Equatable, Sendable, Encodable {
+struct PrekeyV0: Equatable, Sendable, Codable {
 
     let id: Int
-    let base64EncodedKey: String
+    let key: String
+
 }
 
 extension Prekey: ToNetworkConvertible {
+
     func toNetworkModel() -> PrekeyV0 {
-        .init(id: id, base64EncodedKey: base64EncodedKey)
+        .init(
+            id: id,
+            key: base64EncodedKey
+        )
     }
+
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 import CoreData
 import GenericMessageProtocol
-import WireCryptobox
 import WireDataModel
 import WireLogging
 
@@ -204,6 +203,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     try clientMessage.setUnderlyingMessage(genericMessage)
                     clientMessage.updateNormalizedText()
                 } catch {
+                    WireLogger.messaging.error("Failed to set generic message: \(error.localizedDescription)")
                     assertionFailure("Failed to set generic message: \(error.localizedDescription)")
                 }
             } else {
@@ -360,12 +360,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         buttonID: String?,
         referenceMessageID: String,
         in conversation: ZMConversation,
-        senderID: UUID
+        senderID: UUID,
+        ensureSenderIsSelfUser: Bool
     ) async {
         await context.perform { [context] in
 
-            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
-            guard senderID == selfUserID else { return }
+            if ensureSenderIsSelfUser {
+                let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
+                guard senderID == selfUserID else { return }
+            }
 
             ZMClientMessage.updateButtonStates(
                 buttonID: buttonID,
@@ -680,7 +683,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
                 let members = selfUserTeam.members.compactMap(\.user)
                 let guests = localParticipants.filter {
-                    !$0.isApp && $0.membership == nil
+                    !$0.isAppOrBot && $0.membership == nil
                 }
 
                 newConversationMessage.allTeamUsersAdded = localParticipants.isSuperset(of: members)
@@ -957,6 +960,21 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
+
+        case let .userDeleted(sender: (id, domain)):
+            guard let sender = await fetchUser(
+                id: id,
+                domain: domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .userRemovedFromTeam,
+                sender: sender,
+            )
+
+            return [systemMessage]
         }
     }
 
@@ -1057,6 +1075,12 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             guard clientMessage.underlyingMessage?.compositeData != nil else { return false }
             genericMessage = GenericMessage(
                 content: newComposite,
+                nonce: messageNonce
+            )
+
+        case let .multipart(multipart):
+            genericMessage = GenericMessage(
+                content: multipart,
                 nonce: messageNonce
             )
         }

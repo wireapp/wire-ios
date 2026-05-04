@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,4 +28,10 @@ public protocol IncrementalSyncProtocol {
     /// - Returns: A token to retain to keep the push channel open.
 
     func perform() async throws -> IncrementalSync.Token
+
+    /// Perform the incremental sync in the background, only for calling events
+    ///
+    /// - Returns: A token to retain to keep the push channel open.
+
+    func performForCallingEventsOnly() async throws -> IncrementalSync.Token
 }

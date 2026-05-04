@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,13 @@
 //
 
 import SwiftUI
-import UIKit
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFolderPickerUI
 import WireLocators
+import WireLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -46,7 +46,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     ) {
 
         accountImageView?.source = accountImage
-        accountImageView?.accessibilityIdentifier = "account_profile_image_view"
+        accountImageView?.accessibilityIdentifier = Locators.ConversationsPage.accountProfileImageView.rawValue
 
         if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
@@ -79,6 +79,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
         accountImageView.isAccessibilityElement = true
+        accountImageView.accessibilityIdentifier = Locators.ConversationsPage.accountProfileImageView.rawValue
         accountImageView.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
             .accessibilityValue(viewModel.userSession.selfUser.name ?? "")
         accountImageView.accessibilityTraits = .button
@@ -413,7 +414,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentConnectUI() {
         Task {
-            let rootViewController = await connectViewControllerBuilder.build()
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present connect UI, VC is nil", attributes: .safePublic)
+                return
+            }
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
@@ -442,7 +446,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     func presentCreateConversationUI() {
         Task {
-            let rootViewController = await connectViewControllerBuilder.build()
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present conversation creation ui, VC is nil", attributes: .safePublic)
+                return
+            }
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
@@ -513,7 +520,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             user: selfUser,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileViewControllerBuilder
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 

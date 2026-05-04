@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,20 +22,22 @@ package import WireMessagingDomain
 package struct ConversationGroupIcon: View {
     let groupIcon: ConversationGroupIconAsset
 
-    package init(asset: ConversationGroupIconAsset) {
+    @ScaledMetric private var iconSize: CGFloat
+
+    package init(asset: ConversationGroupIconAsset, size: CGFloat = 34) {
         self.groupIcon = asset
+        self._iconSize = .init(wrappedValue: size)
     }
 
     package var body: some View {
         groupIcon.image
             .resizable()
             .aspectRatio(contentMode: .fit)
+            .frame(width: iconSize, height: iconSize)
     }
 }
 
 #Preview {
     ConversationGroupIcon(asset: ConversationGroupIconAsset._1)
-        .frame(width: 40, height: 40)
     ConversationGroupIcon(asset: ConversationGroupIconAsset._2)
-        .frame(width: 40, height: 40)
 }

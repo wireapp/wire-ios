@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,12 +53,10 @@ NSString * const ZMPushChannelResponseStatusKey = @"responseStatus";
 
 static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
-@interface MockTransportSession () <ZMPushChannel>
+@interface MockTransportSession ()
 
 @property (nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) MockUser *selfUser;
-@property (atomic, weak) id<ZMPushChannelConsumer> pushChannelConsumer;
-@property (atomic, weak) id<ZMSGroupQueue> pushChannelGroupQueue;
 @property (nonatomic, readonly) ZMSDispatchGroup *requestGroup;
 @property (nonatomic, readonly) NSMutableArray* generatedTransportRequests;
 @property (nonatomic, readonly) NSMutableArray* generatedPushEvents;
@@ -164,30 +162,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
 }
 
-- (void)setKeepOpen:(BOOL)keepOpen
-{
-    self.shouldKeepPushChannelOpen = keepOpen;
-    
-    if (self.shouldKeepPushChannelOpen) {
-        [self simulatePushChannelOpened];
-    }
-}
-
-- (BOOL)keepOpen
-{
-    return self.shouldKeepPushChannelOpen;
-}
-
-- (id<ZMPushChannel>)pushChannel
-{
-    return self;
-}
-
-- (void)registerPushEvent:(MockPushEvent *)mockPushEvent
-{
-    [self.generatedPushEvents addObject:mockPushEvent];
-}
-
 - (void)addPushToken:(NSString *)token payload:(NSDictionary *)payload
 {
     NSMutableDictionary *dict = (NSMutableDictionary *)self.pushTokens;
@@ -230,10 +204,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     self.managedObjectContext = nil;
     [self expireAllBlockedRequests];
-    [self.generatedPushEvents removeAllObjects];
     [self.generatedTransportRequests removeAllObjects];
-    self.shouldSendPushChannelEvents = NO;
-    self.shouldKeepPushChannelOpen = NO;
 }
 
 - (void)generateEmailVerificationCode
@@ -285,11 +256,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return requests;
 }
 
-- (NSArray *)updateEvents
-{
-    return self.generatedPushEvents;
-}
-
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(APIVersion)apiVersion;
 {
     NSDictionary *payload = @{
@@ -311,10 +277,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         }
     }
     return didComplete;
-}
-
--(BOOL)isPushChannelActive {
-    return self.shouldSendPushChannelEvents;
 }
 
 - (void)completePreviouslySuspendendRequest:(ZMTransportRequest *)request;
@@ -363,14 +325,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     RequireString(connections.count <= 1, "Too many connections with one identifier");
     
     return [connections firstObject];
-}
-
-- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
-{
-    LogNetwork(@"---> Request: (fake) /access");
-    
-    self.pushChannelConsumer = consumer;
-    self.pushChannelGroupQueue = groupQueue;
 }
 
 - (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler
@@ -518,9 +472,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             CFRetain((CFTypeRef) response);
         }
     }
-    
-    [self saveAndCreatePushChannelEvents];
-    
+        
     if (response != nil) {
         LogNetwork(@"<--- Response to %@: %@", request.path, response);
         if(completionHandler) {
@@ -607,8 +559,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     NSSet *updatedObjects = self.managedObjectContext.updatedObjects;
     NSSet *deletedObjects = self.managedObjectContext.deletedObjects;
     
-    [self managedObjectContextPropagateChangesWithInsertedObjects:insertedObjects updatedObjects:updatedObjects deletedObjects:deletedObjects shouldSendEventsToSelfUser:shouldSendEventsToSelfUser];
-
     BOOL result = [self.managedObjectContext save:&error];
     (void)result;
     NSAssert(result, @"Failed to save: %@", error);
@@ -743,31 +693,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return asset;
 }
 
-- (void)simulatePushChannelClosed;
-{
-    [self.pushChannelGroupQueue performGroupedBlock:^{
-        self.shouldSendPushChannelEvents = NO;
-        [self.pushChannelConsumer pushChannelDidClose];
-        [[NSNotificationCenter defaultCenter] postNotificationName:ZMPushChannelStateChangeNotificationName
-                                                            object:self
-                                                          userInfo:@{ZMPushChannelIsOpenKey: @(NO)}];
-    }];
-}
-
-- (void)simulatePushChannelOpened;
-{
-    [self.pushChannelGroupQueue performGroupedBlock:^{
-        if(self.clientCompletedLogin && self.shouldKeepPushChannelOpen) {
-            self.shouldSendPushChannelEvents = YES;
-            [self.pushChannelConsumer pushChannelDidOpen];
-            [[NSNotificationCenter defaultCenter] postNotificationName:ZMPushChannelStateChangeNotificationName
-                                                                object:self
-                                                              userInfo:@{ZMPushChannelIsOpenKey: @(YES)}];
-        }
-    }];
-}
-
-
 - (void)whiteListEmail:(NSString *)email;
 {
     [self.whitelistedEmails addObject:email];
@@ -846,11 +771,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     }
 }
 
-- (void)clearNotifications
-{
-    [self.generatedPushEvents removeAllObjects];
-}
-
 - (MockUser *)userWithRemoteIdentifier:(NSString *)remoteIdentifier
 {
     NSFetchRequest *userFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"User"];
@@ -927,199 +847,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 }
 
 @end
-
-@implementation MockTransportSession (PushEvents)
-
-- (void)managedObjectContextPropagateChangesWithInsertedObjects:(NSSet *)inserted
-                                                 updatedObjects:(NSSet *)updated
-                                                 deletedObjects:(NSSet *)deleted
-                                     shouldSendEventsToSelfUser:(BOOL)shouldSendEventsToSelfUser
-{
-    NSMutableArray *pushEvents = [NSMutableArray array];
-    [pushEvents addObjectsFromArray:[self pushEventsForInsertedConversations:inserted updated:updated shouldSendEventsToSelfUser:shouldSendEventsToSelfUser]];
-    [pushEvents addObjectsFromArray:[self pushEventsForInsertedEvents:inserted includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
-    [pushEvents addObjectsFromArray:[self pushEventsForUpdatedUsers:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
-    [pushEvents addObjectsFromArray:[self pushEventsForInsertedConnections:inserted updated:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
-    [pushEvents addObjectsFromArray:[self pushEventsForUserClients:inserted deleted:deleted includeEventsForTheUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
-    [pushEvents addObjectsFromArray:[self pushEventsForTeamsWithInserted:inserted updated:updated deleted:deleted shouldSendEventsToSelfUser:shouldSendEventsToSelfUser]];
-    [pushEvents addObjectsFromArray:[self pushEventsForLegalHoldWithInserted:inserted updated:updated deleted:deleted shouldSendEventsToSelfUser:shouldSendEventsToSelfUser]];
-    [self firePushEvents:pushEvents];
-}
-
-- (NSArray *)pushEventsForUserClients:(NSSet *)inserted deleted:(NSSet *)deleted includeEventsForTheUserThatInitiatedChanges:(BOOL)includeEventsForUserThatInitiatedChanges
-{
-    if(!includeEventsForUserThatInitiatedChanges) {
-        return @[];
-    }
-    NSMutableArray *pushEvents = [NSMutableArray array];
-    for(NSManagedObject* mo in inserted) {
-        if([mo isKindOfClass:MockUserClient.class]) {
-            MockUserClient *userClient = (MockUserClient *)mo;
-            if (userClient.user != self.selfUser) {
-                continue;
-            }
-            
-            NSDictionary *payload = @{
-                                      @"client" : userClient.transportData,
-                                      @"type" : @"user.client-add"
-                                      };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
-        }
-    }
-    
-    for(NSManagedObject* mo in deleted) {
-        if([mo isKindOfClass:MockUserClient.class]) {
-            MockUserClient *userClient = (MockUserClient *)mo;
-            if(userClient.user != self.selfUser) {
-                continue;
-            }
-            
-            NSDictionary *payload = @{
-                                      @"client" : @{ @"id" : userClient.identifier },
-                                      @"type" : @"user.client-remove"
-                                      };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
-        }
-    }
-    return pushEvents;
-}
-
-- (NSArray *)pushEventsForInsertedEvents:(NSSet *)inserted includeEventsForUserThatInitiatedChanges:(BOOL)includeEventsForUserThatInitiatedChanges
-{
-    NOT_USED(includeEventsForUserThatInitiatedChanges);
-    NSMutableArray *pushEvents = [NSMutableArray array];
-    for (MockEvent *event in inserted) {
-        if (! [event isKindOfClass:MockEvent.class]) {
-            continue;
-        }
-        
-        if (event.conversation.selfIdentifier == nil) {
-            NSDictionary *dict = [event.transportData asDictionary];
-            // If user_ids (joined users) contains self user identifier, but self identifier of conversation is nil then it is a conversation to which the self user was invited,
-            // we need to set its self identifier to self user, so that transport session can build payload for this conversation with selfInfo
-            if ([event.type isEqualToString:@"conversation.member-join"] &&
-                [[dict valueForKeyPath:@"data.user_ids"] containsObject:self.selfUser.identifier])
-            {
-                event.conversation.selfIdentifier = self.selfUser.identifier;
-            }
-            else {
-                continue;
-            }
-        }
-        
-        // Member join/leave doesn't generate push events for the change initiator but are still present in the notification stream.
-        BOOL silentPush = !includeEventsForUserThatInitiatedChanges && ([event.type isEqualToString:@"conversation.member-join"] || [event.type isEqualToString:@"conversation.member-leave"]);
-        id pushEvent = [MockPushEvent eventWithPayload:event.transportData
-                                                  uuid:[NSUUID timeBasedUUID]
-                                           isTransient:NO
-                                              isSilent:silentPush];
-        [pushEvents addObject:pushEvent];
-    }
-    return pushEvents;
-}
-
-- (NSArray *)pushEventsForUpdatedUsers:(NSSet *)updated includeEventsForUserThatInitiatedChanges:(BOOL)includeEventsForUserThatInitiatedChanges
-{
-    if (!includeEventsForUserThatInitiatedChanges) {
-        return @[];
-    }
-
-    NSMutableArray *pushEvents = [NSMutableArray array];
-    
-    for (NSManagedObject* mo in updated) {
-        if ([mo isKindOfClass:MockUser.class]) {
-            MockUser *user = (MockUser *)mo;
-            MockPushEvent *event = user.mockPushEventForChangedValues;
-            if (event != nil) {
-                [pushEvents addObject:event];
-            }
-        }
-    }
-    
-    return pushEvents;
-}
-
-- (NSArray *)pushEventsForInsertedConnections:(NSSet *)inserted updated:(NSSet *)updated includeEventsForUserThatInitiatedChanges:(BOOL)includeEventsForUserThatInitiatedChanges
-{
-    if(!includeEventsForUserThatInitiatedChanges) {
-        return @[];
-    }
-
-    NSMutableArray *pushEvents = [NSMutableArray array];
-    
-    for(NSManagedObject* mo in [updated setByAddingObjectsFromSet:inserted]) {
-        if([mo isKindOfClass:MockConnection.class]) {
-            MockConnection *connection = (MockConnection *)mo;
-            
-            if (connection.to != self.selfUser && connection.from != self.selfUser) {
-                continue;
-            }
-            
-            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
-        }
-    }
-    return pushEvents;
-}
-
-- (void)firePushEvents:(NSArray<MockPushEvent *>*)events
-{
-    events = [events sortedArrayUsingComparator:^NSComparisonResult(MockPushEvent *event1, MockPushEvent *event2) {
-        return [event1.timestamp compare:event2.timestamp];
-    }];
-    
-    NSArray<MockPushEvent *> *regularEvents = [events filterWithBlock:^BOOL(MockPushEvent *event) {
-        return !event.isSilent;
-    }];
-    
-    NSArray<MockPushEvent *> *silentEvents = [events filterWithBlock:^BOOL(MockPushEvent *event) {
-        return event.isSilent;
-    }];
-    
-    [self.generatedPushEvents addObjectsFromArray:regularEvents];
-    [self.generatedPushEvents addObjectsFromArray:silentEvents];
-    
-    if (self.shouldSendPushChannelEvents) {
-        for (MockPushEvent *event in events) {
-            
-            if (event.isSilent) {
-                continue;
-            }
-            
-            LogNetwork(@"<<<--- Push channel event(%@): %@", event.uuid, event.payload);
-
-            NSData *data = [NSJSONSerialization dataWithJSONObject:event.transportData
-                                                           options:0
-                                                             error:nil];
-
-            [self.pushChannelGroupQueue performGroupedBlock:^{
-                [self.pushChannelConsumer pushChannelDidReceiveData:data];
-            }];
-        }
-    }
-}
-
-@end
-
-
-
-@implementation MockTransportSession (IsTyping)
-
-- (void)sendIsTypingEventForConversation:(MockConversation *)conversation user:(MockUser *)user started:(BOOL)started;
-{
-    ZM_WEAK(self);
-    [self.managedObjectContext performGroupedBlock:^{
-        ZM_STRONG(self);
-        NSDictionary *payload = @{@"conversation": conversation.identifier,
-                                  @"from": user.identifier,
-                                  @"data": @{@"status": started ? @"started" : @"stopped"},
-                                  @"type": @"conversation.typing"};
-        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES isSilent:NO];
-        [self firePushEvents:@[event]];
-    }];
-}
-
-@end
-
 
 
 @implementation MockTransportSession (PhoneVerification)

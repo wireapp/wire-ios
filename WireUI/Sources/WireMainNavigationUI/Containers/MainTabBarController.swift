@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireLocators
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
@@ -83,7 +84,7 @@ public final class MainTabBarController<
     private weak var archiveNavigationController: UINavigationController!
     private weak var meetingsNavigationController: UINavigationController?
     private weak var settingsNavigationController: UINavigationController!
-    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire cells is
+    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire drive is
     // enabled.
 
     private weak var _conversationListUI: ConversationListUI?
@@ -181,7 +182,7 @@ public final class MainTabBarController<
                     image: .init(systemName: "archivebox"),
                     selectedImage: .init(systemName: "archivebox.fill")
                 )
-                tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
+                tabBarItem.accessibilityIdentifier = Locators.ConversationsPage.bottomBarArchivedButton.rawValue
                 tabBarItem.accessibilityLabel = String(
                     localized: "tabBar.archived.description",
                     table: "Accessibility",
@@ -344,6 +345,7 @@ public final class MainTabBarController<
         }
 
         _filesUI = filesUI
+        filesNavigationController?.view.backgroundColor = ColorTheme.Backgrounds.surface
 
         let viewControllers = [filesUI].compactMap(\.self)
         filesNavigationController?.setViewControllers(viewControllers, animated: animated)

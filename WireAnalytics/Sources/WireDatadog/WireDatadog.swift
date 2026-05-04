@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,7 @@ public import WireLogging
 
 import CryptoKit
 import DatadogCore
-import DatadogCrashReporting
 import DatadogLogs
-import DatadogRUM
 import DatadogTrace
 import UIKit
 
@@ -32,7 +30,7 @@ public final class WireDatadog {
     private let applicationID: String
     private let buildVersion: String
     private let buildNumber: String
-    private let logLevel: WireLogType = .debug
+    private let logLevel: WireLogLevel = .debug
 
     public private(set) var userIdentifier: String
     private(set) var logger: (any DatadogLogs.LoggerProtocol)?
@@ -67,8 +65,6 @@ public final class WireDatadog {
             trackingConsent: .granted
         )
 
-        CrashReporting.enable()
-
         let logsConfiguration = Logs.Configuration()
         Logs.enable(with: logsConfiguration)
 
@@ -87,15 +83,6 @@ public final class WireDatadog {
         )
         Trace.enable(with: traceConfiguration)
 
-        let rumConfiguration = RUM.Configuration(
-            applicationID: applicationID,
-            sessionSampleRate: 100,
-            uiKitViewsPredicate: DefaultUIKitRUMViewsPredicate(),
-            uiKitActionsPredicate: DefaultUIKitRUMActionsPredicate(),
-            trackBackgroundEvents: true
-        )
-        RUM.enable(with: rumConfiguration)
-
         Datadog.setUserInfo(id: userIdentifier)
 
         logger?.log(
@@ -107,7 +94,7 @@ public final class WireDatadog {
     }
 
     public func log(
-        level: WireLogType,
+        level: WireLogLevel,
         message: String,
         error: (any Error)? = nil,
         attributes: [String: any Encodable]
@@ -153,7 +140,7 @@ public final class WireDatadog {
     }
 }
 
-extension WireLogType {
+extension WireLogLevel {
     func mapToDatadogLogLevel() -> LogLevel {
         switch self {
         case .debug:

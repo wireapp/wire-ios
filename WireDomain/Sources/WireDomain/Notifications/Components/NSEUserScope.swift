@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,8 +90,6 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         }
     }
 
-    public let cryptoboxMigrationManager: CryptoboxMigrationManager = .init()
-
     init(
         parent: any Scope,
         account: Account
@@ -143,11 +141,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.userNotAuthenticated
         }
 
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
-            throw Failure.mainAppRequired(message: "cryptobox migration required")
-        }
-
-        guard coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
+        guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
             throw Failure.mainAppRequired(message: "core crypto key migration required")
         }
 
@@ -161,6 +155,13 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.mainAppRequired(message: "no self client id")
         }
 
+        let earService = await EARServiceFactory.createEARService(
+            accountID: accountID,
+            coreDataStack: coreDataStack,
+            sharedUserDefaults: dependency.sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: LAContextStorage())
+        )
+
         // Continue with client.
         let clientScope = clientScope(
             clientID: clientID,
@@ -169,7 +170,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             apiVersion: metadata.apiVersion,
             localDomain: metadata.domain,
             isFederationEnabled: metadata.isFederationEnabled,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            earService: earService
         )
 
         try await clientScope.processPayload(
@@ -249,7 +251,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             api: api
         )
 
-        return await useCase.invoke()
+        return await useCase.invoke().isBuildBlacklisted
     }
 
     // TODO: [WPB-19777] deduplicate
@@ -310,7 +312,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
-        coreDataStack: CoreDataStack
+        coreDataStack: CoreDataStack,
+        earService: EARServiceInterface
     ) -> NSEClientScope {
         NSEClientScope(
             parent: self,
@@ -320,7 +323,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             apiVersion: apiVersion,
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            earService: earService
         )
     }
 

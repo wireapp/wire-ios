@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,8 +46,13 @@ final class CameraController {
     init?(camera: SettingsCamera) {
         guard !UIDevice.isSimulator else { return nil }
         self.currentCamera = camera
-        setupSession()
         self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
+
+        // `setupSession()` performs session configuration on a dedicated serial queue. This needs to happen after the
+        // `previewLayer` is created to avoid simultaneous session configuration across different threads as
+        // `AVCaptureVideoPreviewLayer` appears to configure the session internally on the main thread during init.
+        // Configuring the `AVCaptureSession` from multiple threads can lead to a deadlock.
+        setupSession()
     }
 
     // MARK: - Session Management

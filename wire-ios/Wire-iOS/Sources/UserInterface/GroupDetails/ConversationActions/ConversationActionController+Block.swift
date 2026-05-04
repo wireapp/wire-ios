@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,6 +72,12 @@ extension ConversationActionController {
             preferredStyle: .actionSheet
         )
         BlockResult.all(isBlocked: user.isBlocked).map { $0.action(handler) }.forEach(controller.addAction)
+
+        if let sourceView, let superView = sourceView.superview,
+           let popover = controller.popoverPresentationController {
+            currentContext = .sourceView(superView, sourceView.frame)
+            popover.permittedArrowDirections = .left
+        }
         present(controller)
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         "\(pathPrefix)/list-connections"
     }
 
-    func getConnections() async throws -> PayloadPager<[Connection]> {
+    func getConnections() throws -> PayloadPager<[Connection]> {
         PayloadPager<[Connection]> { start in
 
             // body Params
@@ -59,6 +59,39 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
                 .success(code: .ok, type: PaginatedConnectionListV0.self)
                 .failure(code: .badRequest, error: ConnectionsAPIError.invalidBody)
                 .parse(code: response.statusCode, data: data)
+        }
+    }
+
+    func sendConnectionRequest(
+        domain: String,
+        userId: String
+    ) async throws {
+
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/connections/\(domain)/\(userId)")
+            .withMethod(.post)
+            .build()
+
+        let (_, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        guard response.statusCode == HTTPStatusCode.created.rawValue else {
+            throw ConnectionsAPIError.invalidBody
+        }
+    }
+
+    func acceptConnectionRequest(
+        domain: String,
+        userId: String
+    ) async throws {
+
+        let body = try JSONEncoder.defaultEncoder.encode(RequestBodyAcceptConnectionRequestV0.accepted)
+
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/connections/\(domain)/\(userId)")
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (_, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        guard response.statusCode == HTTPStatusCode.ok.rawValue else {
+            throw ConnectionsAPIError.invalidBody
         }
     }
 }
@@ -119,4 +152,9 @@ private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
             status: status.toAPIModel()
         )
     }
+}
+
+private struct RequestBodyAcceptConnectionRequestV0: Encodable {
+    static let accepted = Self()
+    let status: String = "accepted"
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,10 +57,10 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
     let cells: FeatureWithoutConfig
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
     let consumableNotifications: FeatureWithoutConfig
-    let chatBubbles: FeatureWithoutConfig
 
     // Added in v12
     let assetAuditLog: FeatureWithoutConfig
+    let simplifiedUserConnectionRequestQRCode: FeatureWithoutConfig
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -144,10 +144,13 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
         )
         featureConfigs.append(.consumableNotifications(consumableNotifications))
 
-        let chatBubblesSimpleConfig = ChatBubblesSimpleFeatureConfig(status: chatBubbles.status.toAPIModel())
-        featureConfigs.append(.chatBubblesSimple(chatBubblesSimpleConfig))
-
         // added in v12
+        let simplifiedUserConnectionRequestQRCode = SimplifiedUserConnectionRequestQRCodeConfig(
+            status: simplifiedUserConnectionRequestQRCode.status
+                .toAPIModel()
+        )
+        featureConfigs.append(.simplifiedUserConnectionRequestQRCode(simplifiedUserConnectionRequestQRCode))
+
         featureConfigs.append(.assetAuditLog(AssetAuditLogFeatureConfig(
             status: assetAuditLog.status.toAPIModel()
         )))

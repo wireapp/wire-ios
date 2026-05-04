@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
     }
 
     // Note: add new versions here in first position!
+    case v07 = "ZMEventModel7.0"
     case v06 = "ZMEventModel6.0"
     case v05 = "ZMEventModel5.0"
     case v04 = "ZMEventModel4.0"
@@ -37,8 +38,10 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
 
     var nextVersion: Self? {
         switch self {
-        case .v06:
+        case .v07:
             nil
+        case .v06:
+            .v07
         case .v05:
             .v06
         case .v04:

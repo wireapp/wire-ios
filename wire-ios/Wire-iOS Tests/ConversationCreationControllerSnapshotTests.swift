@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,10 +86,13 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper Method
 
-    private func createSut(isTeamMember: Bool, messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus) async {
+    private func createSut(
+        isTeamMember: Bool,
+        messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus
+    ) async {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
-        mockUserSession.isWireCellsEnabled = true
+        mockUserSession.isWireDriveEnabled = true
         mockUserSession.mlsFeature = .init(
             status: .enabled,
             config: .init(
@@ -98,9 +101,11 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             )
         )
 
-        sut = await ConversationCreationController(
+        sut = ConversationCreationController(
             preSelectedParticipants: nil,
-            userSession: mockUserSession
+            userSession: mockUserSession,
+            isAppsFeatureEnabled: false,
+            areLegacyBotsAvailable: false
         )
     }
 }

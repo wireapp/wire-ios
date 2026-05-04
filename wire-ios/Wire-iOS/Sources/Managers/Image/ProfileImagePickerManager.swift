@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ import WireSyncEngine
 final class ProfileImagePickerManager: ImagePickerManager {
 
     func selectProfileImage(popoverConfiguration: PopoverPresentationControllerConfiguration) -> UIAlertController {
-        showActionSheet(popoverConfiguration: popoverConfiguration) { image in
-            guard let jpegData = image.jpegData, let session = ZMUserSession.shared() else { return }
+        showActionSheet(popoverConfiguration: popoverConfiguration) { [weak userSession] image in
+            guard let jpegData = image.jpegData, let session = userSession as? ZMUserSession else { return }
             do {
                 let imageDataWithoutMetadata = try jpegData.wr_removingImageMetadata()
 

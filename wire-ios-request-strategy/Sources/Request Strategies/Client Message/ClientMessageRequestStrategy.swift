@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             // which may no longer make sense after such as delay, we will
             // expire it so the user can retry.
             WireLogger.messaging.info(
-                "expiring statle client message",
+                "expiring stale client message",
                 attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
                 .safePublic
             )
@@ -191,61 +191,5 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             context.delete(message)
         }
     }
-
-}
-
-// MARK: - Event processing
-
-extension ClientMessageRequestStrategy: ZMEventConsumer {
-
-    public func processEvents(
-        _ events: [ZMUpdateEvent],
-        liveEvents: Bool,
-        prefetchResult: ZMFetchRequestBatchResult?
-    ) {
-        events.forEach {
-            self.insertMessage(from: $0, prefetchResult: prefetchResult)
-        }
-    }
-
-    public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
-        Set(events.compactMap {
-            switch $0.type {
-            case .conversationClientMessageAdd,
-                 .conversationOtrMessageAdd,
-                 .conversationOtrAssetAdd,
-                 .conversationMLSMessageAdd:
-                $0.messageNonce
-
-            default:
-                nil
-            }
-        })
-    }
-
-    func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
-        switch event.type {
-        case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd,
-             .conversationMLSMessageAdd:
-            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult)
-            else {
-                return
-            }
-            message.markAsSent()
-
-        default:
-            break
-        }
-
-        context.processPendingChanges()
-    }
-}
-
-// MARK: - Helpers
-
-private struct UpdateEventWithNonce {
-
-    let event: ZMUpdateEvent
-    let nonce: UUID
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -367,17 +367,21 @@ final class ConversationGuestOptionsViewModel {
             }
 
             configuration.setAllowGuests(allowGuests) { [weak self] result in
-                guard let self else { return }
-                item.cancel()
-                state.isLoading = false
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
 
-                switch result {
-                case .success:
-                    updateRows()
-                    if link == nil, securedLink == nil, allowGuests {
-                        fetchLink()
+                    item.cancel()
+                    state.isLoading = false
+
+                    switch result {
+                    case .success:
+                        updateRows()
+                        if link == nil, securedLink == nil, allowGuests {
+                            fetchLink()
+                        }
+                    case let .failure(error):
+                        delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                     }
-                case let .failure(error): delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                 }
             }
         }

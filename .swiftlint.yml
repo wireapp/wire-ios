@@ -53,7 +53,7 @@ file_header:
   required_pattern: |
                     \/\/
                     \/\/ Wire
-                    \/\/ Copyright \(C\) 2025 Wire Swiss GmbH
+                    \/\/ Copyright \(C\) 2026 Wire Swiss GmbH
                     \/\/
                     \/\/ This program is free software\: you can redistribute it and\/or modify
                     \/\/ it under the terms of the GNU General Public License as published by
@@ -76,6 +76,14 @@ custom_rules:
     match_kinds: [comment]
     message: "Add JIRA reference to TODOs and FIX MEs like [WPB-680]."
     severity: warning
+
+  xcuitest_requires_testiny_tc_id:
+    name: "XCUITest requires Testiny TC ID"
+    included:
+      - "WireUITests"
+    regex: '^\s*func\s+test(?![A-Za-z0-9_]*_TC_\d+(?:_\d+)*)[A-Za-z0-9_]*\s*\('
+    message: "WireUITests test methods must include a Testiny TC ID suffix, for example: testLogin_TC_1234"
+    severity: error
 
 excluded:
   - "**/.build"

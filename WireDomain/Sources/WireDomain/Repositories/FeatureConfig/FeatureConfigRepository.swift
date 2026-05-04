@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     public func isFeatureEnabled(
         _ feature: Feature.Name
     ) async -> Bool {
+
         do {
             let feature = try await featureConfigLocalStore.fetchFeature(
                 name: feature
@@ -61,6 +62,8 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             return await featureConfigLocalStore.isFeatureEnabled(
                 feature: feature
             )
+        } catch FeatureConfigLocalStore.Error.failedToFetchFeatureLocally(.simplifiedUserConnectionRequestQRCode) {
+            return true
         } catch {
             return false
         }
@@ -102,6 +105,13 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         try await fetchFeatureConfig(
             name: .appLock,
             type: Feature.AppLock.Config.self
+        )
+    }
+
+    public func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config> {
+        try await fetchFeatureConfig(
+            name: .cellsInternal,
+            type: Feature.CellsInternal.Config.self
         )
     }
 
@@ -217,16 +227,22 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: config.status == .enabled
             )
 
-        case let .chatBubblesSimple(chatBubblesSimpleFeatureConfig):
+        case let .simplifiedUserConnectionRequestQRCode(config):
             return FeatureState(
-                name: .chatBubblesSimple,
-                isEnabled: chatBubblesSimpleFeatureConfig.status == .enabled
+                name: .simplifiedUserConnectionRequestQRCode,
+                isEnabled: config.status == .enabled
             )
 
         case let .cells(cellsConfig):
             return FeatureState(
                 name: .cells,
                 isEnabled: cellsConfig.status == .enabled
+            )
+
+        case let .cellsInternal(cellsInternalConfig):
+            return FeatureState(
+                name: .cellsInternal,
+                isEnabled: cellsInternalConfig.status == .enabled
             )
 
         case let .unknown(featureName):

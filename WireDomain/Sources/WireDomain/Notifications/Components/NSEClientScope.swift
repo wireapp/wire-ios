@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import NeedleFoundation
 import WireDataModel
 import WireLogging
 import WireNetwork
+import WireUtilitiesPackage
 
 protocol NSEClientScopeDependency: Dependency {
 
@@ -32,7 +33,6 @@ protocol NSEClientScopeDependency: Dependency {
     var journal: Journal { get }
     var sharedUserDefaults: UserDefaults { get }
     var cookieStorage: CookieStorage { get }
-    var cryptoboxMigrationManager: CryptoboxMigrationManager { get }
 
 }
 
@@ -56,6 +56,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let localDomain: String
     private let isFederationEnabled: Bool
     private let coreDataStack: CoreDataStack
+    private let earService: EARServiceInterface
 
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
     private var currentTask: Task<Void, any Error>?
@@ -69,7 +70,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
-        coreDataStack: CoreDataStack
+        coreDataStack: CoreDataStack,
+        earService: EARServiceInterface
     ) {
         self.clientID = clientID
         self.restNetworkService = restNetworkService
@@ -79,6 +81,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         self.isFederationEnabled = isFederationEnabled
         self.coreDataStack = coreDataStack
         self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: clientID)
+        self.earService = earService
 
         super.init(parent: parent)
     }
@@ -89,6 +92,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     ) async throws {
         // Pull pending update events.
         let eventStream: AsyncStream<[UpdateEvent]>
+        let publicKeys = try earService.fetchPublicKeys()
 
         if dependency.journal[.isConsumableNotificationsEnabled] {
             let (useCase, stream) = syncEventsUseCase()
@@ -145,7 +149,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             }
 
         } else {
-            eventStream = try await pullEventsUseCase.invoke()
+            eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
         }
 
         // Generate notifications from events.
@@ -253,7 +257,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 accountDirectory: dependency.userAccountDataURL,
                 sharedUserDefaults: dependency.sharedUserDefaults,
                 syncContext: coreDataStack.syncContext,
-                cryptoboxMigrationManager: dependency.cryptoboxMigrationManager,
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
                 localDomain: localDomain
@@ -418,7 +421,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             conversationLocationMessageNotificationBuilder: conversationLocationMessageNotificationBuilder,
             conversationPingMessageNotificationBuilder: conversationPingMessageNotificationBuilder,
             conversationVideoMessageNotificationBuilder: conversationVideoMessageNotificationBuilder,
-            conversationTextMessageNotificationBuilder: conversationTextMessageNotificationBuilder
+            conversationTextMessageNotificationBuilder: conversationTextMessageNotificationBuilder,
+            protobufMessageDecoder: ProtobufMessageDecoder()
         )
     }
 
@@ -547,7 +551,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         )
 
         let validator = ConversationMemberJoinEventNotificationBuilder.Validator(
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            conversationLocalStore: conversationLocalStore
         )
 
         return ConversationMemberJoinEventNotificationBuilder(

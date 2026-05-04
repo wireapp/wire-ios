@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,11 +35,12 @@ public class Feature: ZMManagedObject {
         case apps
         case assetAuditLog
         case cells
+        case cellsInternal
         case channels
-        case chatBubblesSimple
         case classifiedDomains
         case conferenceCalling
         case consumableNotifications
+        case simplifiedUserConnectionRequestQRCode
         case conversationGuestLinks
         case digitalSignature
         case e2ei = "mlsE2EId"
@@ -231,11 +232,12 @@ public class Feature: ZMManagedObject {
              .apps,
              .assetAuditLog,
              .cells,
+             .cellsInternal,
              .channels,
-             .chatBubblesSimple,
              .classifiedDomains,
              .conferenceCalling,
              .consumableNotifications,
+             .simplifiedUserConnectionRequestQRCode,
              .conversationGuestLinks,
              .digitalSignature,
              .e2ei,

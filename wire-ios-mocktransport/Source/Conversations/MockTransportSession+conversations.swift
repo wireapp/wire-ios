@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -525,9 +525,9 @@ public extension MockTransportSession {
                 toConversation: conversation,
                 recipients: otrMetaData.recipients,
                 senderClient: senderClient,
-                createEventBlock: { recipient, messageData, decryptedData in
+                createEventBlock: { recipient, messageData in
                     let event = conversation.insertOTRMessage(from: senderClient, to: recipient, data: messageData)
-                    event.decryptedOTRData = decryptedData
+                    event.decryptedOTRData = messageData
                     return event
                 }
             )

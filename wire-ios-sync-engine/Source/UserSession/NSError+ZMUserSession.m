@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 NSString * const ZMClientsKey = @"clients";
 NSString * const ZMPhoneCredentialKey = @"phone";
 NSString * const ZMEmailCredentialKey = @"email";
-NSString * const ZMUserHasPasswordKey = @"has-password";
 NSString * const ZMUserUsesCompanyLoginCredentialKey = @"uses-company-login";
 NSString * const ZMUserLoginCredentialsKey = @"login-credentials";
 NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";

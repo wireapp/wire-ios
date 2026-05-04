@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -635,16 +635,26 @@ struct ConversationEventPayloadProcessor {
         return conversation
     }
 
-    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
-        guard
-            conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first,
-            otherUser.oneOnOneConversation == nil
-        else {
+    private func linkOneOnOneUserIfNeeded(
+        for localConversation: ZMConversation
+    ) {
+        guard localConversation.conversationType == .oneOnOne else {
             return
         }
 
-        conversation.oneOnOneUser = otherUser
+        guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
+            localConversation.isForcedReadOnly = true
+            if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
+                localConversation.mlsStatus = .invalid
+            }
+            return
+        }
+
+        guard otherUser.oneOnOneConversation == nil else {
+            return
+        }
+
+        localConversation.oneOnOneUser = otherUser
     }
 
     @discardableResult
@@ -774,7 +784,10 @@ struct ConversationEventPayloadProcessor {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context
+                in: context,
+                setNeedsToBeUpdatedFromBackend: false  // for 1:1 we don't want to trigger a sync with backend since it
+                // only returns the 1:1 conversations once the first commit bundle is processed (MLS) which would lead
+                // on the conversation being deleted.
             )
 
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)

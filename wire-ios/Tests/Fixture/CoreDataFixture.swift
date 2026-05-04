@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -236,7 +236,8 @@ final class CoreDataFixture {
 // MARK: - mock service user
 
 extension CoreDataFixture {
-    func createServiceUser() -> ZMUser {
+
+    func createBot() -> ZMUser {
         let serviceUser = ZMUser.insertNewObject(in: uiMOC)
         serviceUser.remoteIdentifier = UUID()
         serviceUser.name = "ServiceUser"
@@ -245,9 +246,9 @@ extension CoreDataFixture {
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()
-
         return serviceUser
     }
+
 }
 
 protocol CoreDataFixtureTestHelper {

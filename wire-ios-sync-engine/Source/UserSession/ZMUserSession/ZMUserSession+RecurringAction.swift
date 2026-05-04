@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,18 +109,6 @@ extension ZMUserSession {
                 try await e2eiRepository.fetchFederationCertificates()
             } catch {
                 WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
-            }
-        }
-    }
-
-    var checkBuildBlacklistAction: RecurringAction {
-        .init(id: #function, interval: .oneHour * 6) { [weak self] in
-            guard let self else { return }
-            let useCase = userSessionComponent.makeIsBuildBlacklistedUseCase()
-            let isBuildBlacklisted = (try? await useCase.invoke()) ?? false
-            if isBuildBlacklisted {
-                self.isBuildBlacklisted = true
-                delegate?.userSessionDidDiscoverBuildIsBlacklisted()
             }
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,24 +38,20 @@ class OptionsOnSettingsPage: PageModel {
         return try SetPasscodePage()
     }
 
-    @discardableResult
-    func backgroundAndResume(
-        app: XCUIApplication,
-        forDelay duration: TimeInterval
-    ) async throws -> OptionsOnSettingsPage {
-        await XCUIDevice.shared.press(.home)
-        try await Task.sleep(for: .seconds(duration))
-        await app.activate()
-        return self
-    }
-
-    func enterPasscode(_ pass: String) throws -> ConversationsPage {
+    func enterPasscode(_ passcode: String) throws -> ConversationsPage {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        try springboard.secureTextFields["Passcode field"].tapIfKeyboardNotFocused().typeText(pass)
+        let passcodeField = springboard.secureTextFields["Passcode field"].firstMatch
+
+        guard passcodeField.waitAndTap(timeout: 10)
+        else {
+            XCTFail("Passcode SecureTextField did not appear")
+            throw XCTSkip("Passcode field not available")
+        }
+        try passcodeField.tapIfKeyboardNotFocused().typeText(passcode)
 
         let doneButton = springboard.keyboards.buttons["Done"].firstMatch
-        if doneButton.waitForExistence(timeout: 2.0), doneButton.isHittable {
-            doneButton.tap()
+        if doneButton.waitAndTap() {
+            // Tapped successfully
         } else {
             springboard.typeText(XCUIKeyboardKey.return.rawValue)
         }

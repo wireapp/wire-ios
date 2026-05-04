@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,10 +35,6 @@ import {{ import }}
 
 {% for import in argument.autoMockablePackageImports %}
 package import {{ import }}
-{% endfor %}
-
-{% for import in argument.autoMockableTestablePublicImports %}
-@testable public import {{ import }}
 {% endfor %}
 
 {# A macro is like a function, it can be passed input and be reused #}

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -199,8 +199,10 @@ private struct DateTimeRow: View {
 // MARK: - Preview
 
 #Preview {
-    ScheduleMeetingView(viewModel: ScheduleMeetingViewModel(
-        passwordValidator: MockPasswordValidator(), isContextMenuAllowed: true
-    )
+    ScheduleMeetingView(
+        viewModel: ScheduleMeetingViewModel(
+            passwordValidator: MockPasswordValidator(),
+            isContextMenuAllowed: true
+        )
     )
 }

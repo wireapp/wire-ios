@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class ConversationConnectAvatarViewModeTests: XCTestCase {
@@ -43,10 +44,9 @@ final class ConversationConnectAvatarViewModeTests: XCTestCase {
 
     func testThatModeIsOneWhenGroupConversationWithOneServiceUser() {
         // GIVEN
-        let mockServiceUser = MockServiceUserType()
-        mockServiceUser.serviceIdentifier = "serviceIdentifier"
-        mockServiceUser.providerIdentifier = "providerIdentifier"
-        XCTAssert(mockServiceUser.isApp)
+        let mockServiceUser = MockUserType()
+        mockServiceUser.mockedIsBot = true
+        XCTAssert(mockServiceUser.isAppOrBot)
 
         users = [mockServiceUser]
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ final class ClientListViewController: UIViewController,
 
     private let clientSorter: (UserClient, UserClient) -> Bool
     private let clientFilter: (UserClient) -> Bool
-    private let userSession: UserSession?
+    private let userSession: UserSession
     private let contextProvider: ContextProvider?
     private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
@@ -88,10 +88,10 @@ final class ClientListViewController: UIViewController,
 
     required init(
         clientsList: [UserClient]?,
-        selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
-        userSession: UserSession? = ZMUserSession.shared(),
+        selfClient: UserClient?,
+        userSession: UserSession,
         credentials: UserEmailCredentials? = .none,
-        contextProvider: ContextProvider? = ZMUserSession.shared(),
+        contextProvider: ContextProvider?,
         detailedView: Bool = false,
         showTemporary: Bool = true,
         showLegalHold: Bool = true
@@ -114,14 +114,14 @@ final class ClientListViewController: UIViewController,
         super.init(nibName: nil, bundle: nil)
 
         initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
-        self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
+        self.clientsObserverToken = (userSession as? ZMUserSession)?.addClientUpdateObserver(self)
         if let user = ZMUser.selfUser(), let session = userSession as? ZMUserSession {
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
         }
 
         if clients.isEmpty {
             activityIndicator.start()
-            userSession?.fetchAllClients()
+            userSession.fetchAllClients()
         }
     }
 
@@ -181,8 +181,7 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession,
-              let contextProvider,
+        guard let contextProvider,
               let navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
@@ -291,10 +290,10 @@ final class ClientListViewController: UIViewController,
         _ userClient: UserClient,
         credentials: UserEmailCredentials?
     ) {
-
         removalObserver = ClientRemovalObserver(
             userClientToDelete: userClient,
             delegate: self,
+            userSession: userSession,
             credentials: credentials
         )
         removalObserver?.startRemoval()
@@ -518,7 +517,6 @@ final class ClientListViewController: UIViewController,
     private func updateCertificates(for userClients: [UserClient]) async {
         activityIndicator.start()
         guard
-            let userSession,
             let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID()
         else {
             activityIndicator.stop()

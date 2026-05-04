@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import WireSyncEngine
 final class UserConnectionView: UIView, Copyable {
 
     convenience init(instance: UserConnectionView) {
-        self.init(user: instance.user)
+        self.init(user: instance.user, userSession: instance.userSession)
     }
 
     private static var correlationFormatter: AddressBookCorrelationFormatter = .init(
@@ -40,6 +40,8 @@ final class UserConnectionView: UIView, Copyable {
     private let userImageView = UserImageView()
     private let guestIndicator = LabelIndicator(context: .guest)
     private let guestWarningView = GuestAccountWarningView()
+    private let guestWarningContainer = UIView()
+    private let userSession: UserSession
 
     var user: UserType {
         didSet {
@@ -48,10 +50,11 @@ final class UserConnectionView: UIView, Copyable {
         }
     }
 
-    init(user: UserType) {
+    init(user: UserType, userSession: UserSession) {
         self.user = user
+        self.userSession = userSession
         super.init(frame: .zero)
-        userImageView.userSession = ZMUserSession.shared()
+        userImageView.userSession = userSession
         setup()
         createConstraints()
     }
@@ -73,8 +76,15 @@ final class UserConnectionView: UIView, Copyable {
         userImageView.size = .big
         userImageView.user = user
 
-        [labelContainer, userImageView, guestIndicator, guestWarningView].forEach(addSubview)
+        [labelContainer, userImageView, guestIndicator, guestWarningContainer].forEach(addSubview)
+
+        guestWarningContainer.addSubview(guestWarningView)
+        guestWarningContainer.backgroundColor = SemanticColors.View.backgroundGreen
+
         [firstLabel, secondLabel].forEach(labelContainer.addArrangedSubview)
+
+        guestIndicator.isHidden = true
+
         updateLabels()
         updateGuestAccountViews()
     }
@@ -87,7 +97,7 @@ final class UserConnectionView: UIView, Copyable {
     private func updateFirstLabel() {
         if let handleText = handleLabelText {
             firstLabel.attributedText = handleText
-            firstLabel.accessibilityIdentifier = Locators.ConnectionRequestsPage.username.rawValue
+            firstLabel.accessibilityIdentifier = "username"
         } else {
             firstLabel.attributedText = correlationLabelText
             firstLabel.accessibilityIdentifier = "correlation"
@@ -121,7 +131,8 @@ final class UserConnectionView: UIView, Copyable {
             userImageView,
             labelContainer,
             guestIndicator,
-            guestWarningView
+            guestWarningView,
+            guestWarningContainer
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -129,7 +140,7 @@ final class UserConnectionView: UIView, Copyable {
             labelContainer.topAnchor.constraint(equalTo: topAnchor, constant: 16.0),
             labelContainer.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor),
 
-            userImageView.topAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: 30.0),
+            userImageView.topAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: 16.0),
             userImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             userImageView.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 54),
             userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
@@ -138,20 +149,27 @@ final class UserConnectionView: UIView, Copyable {
             guestIndicator.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 8.0),
             guestIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
 
-            guestWarningView.topAnchor.constraint(equalTo: guestIndicator.bottomAnchor, constant: 30.0),
-            guestWarningView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18.0),
-            guestWarningView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -23.0),
-            guestWarningView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
+            guestWarningContainer.topAnchor.constraint(equalTo: guestIndicator.bottomAnchor, constant: 0),
+            guestWarningContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
+            guestWarningContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
+            guestWarningContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
         ])
+
+        guestWarningView.fitIn(view: guestWarningContainer, insets: .init(top: 12, left: 16, bottom: 12, right: 16))
     }
 
     private func updateGuestAccountViews() {
         if let viewer = SelfUser.provider?.providedSelfUser {
-            let isGuest = !viewer.isTeamMember || !viewer.canAccessCompanyInformation(of: user)
-            guestIndicator.isHidden = !isGuest
-        } else {
-            // show guest indicator
-            guestIndicator.isHidden = false
+            if viewer.hasTeam {
+                if user.hasTeam {
+                    let isSameTeam = user.isOnSameTeam(otherUser: viewer)
+                    guestIndicator.isHidden = isSameTeam
+                } else {
+                    guestIndicator.isHidden = false
+                }
+            } else {
+                guestIndicator.isHidden = true
+            }
         }
     }
 }

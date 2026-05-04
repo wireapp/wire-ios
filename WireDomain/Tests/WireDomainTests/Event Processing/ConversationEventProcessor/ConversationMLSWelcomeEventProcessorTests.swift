@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
         mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
         conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
-        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDEpochConversation_MockMethod = { _, _, _ in }
         conversationLocalStore.updateOrCreateMLSGroupGroupID_MockMethod = { _ in }
         mlsService.uploadKeyPackagesIfNeeded_MockMethod = {}
         conversationLocalStore.fetchOtherUserIDInOneOnOneConversationConversation_MockValue = Scaffolding.qualifiedID
@@ -98,6 +98,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
             .resolveOneOnOneConversationWith_MockMethod = { _ in
                 .migratedToMLSGroup(identifier: Scaffolding.mlsGroupID)
             }
+        mlsService.epochFor_MockValue = 0
 
         // When
 
@@ -108,7 +109,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
         XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,
+            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDEpochConversation_Invocations.count,
             1
         )
         XCTAssertEqual(conversationLocalStore.updateOrCreateMLSGroupGroupID_Invocations.count, 1)

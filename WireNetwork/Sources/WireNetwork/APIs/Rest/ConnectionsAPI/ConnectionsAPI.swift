@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,5 +24,23 @@ public protocol ConnectionsAPI {
 
     /// Fetch all connections .
 
-    func getConnections() async throws -> PayloadPager<[Connection]>
+    func getConnections() throws -> PayloadPager<[Connection]>
+
+    /// Send connection request to user
+    /// - Parameters:
+    ///   - domain: domain info
+    ///   - userID: userID
+
+    #if DEBUG
+        func sendConnectionRequest(domain: String, userId: String) async throws
+    #endif
+
+    /// Accept connection request from user
+    /// - Parameters:
+    ///   - domain: domain info
+    ///   - userID: userID
+
+    #if DEBUG
+        func acceptConnectionRequest(domain: String, userId: String) async throws
+    #endif
 }

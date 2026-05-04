@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
@@ -42,14 +43,29 @@ final class SelfUserAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetSelfUserRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetSelfUserSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getSelfUser()
         }
     }
 
     func testPushSupportedProtocolsRequest() async throws {
         let supportedVersions = APIVersion.v5.andNextVersions
-        try await apiSnapshotHelper.verifyRequest(for: supportedVersions) { sut in
+
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             _ = try await sut.pushSupportedProtocols([.mls])
         }
     }
@@ -177,12 +193,16 @@ final class SelfUserAPITests: XCTestCase {
     // MARK: - V5
 
     func testPushSupportedProtocols_SuccessResponse_200_V5_And_Next_Versions_Verify_Requests() async throws {
-        // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, nil)
-        ])
 
         let supportedVersions = APIVersion.v5.andNextVersions
+
+        // Given
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
@@ -249,6 +269,7 @@ extension SelfUserAPITests {
             deleted: true,
             email: "string",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
                 provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
@@ -273,6 +294,7 @@ extension SelfUserAPITests {
             deleted: true,
             email: "string",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
                 provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
@@ -298,6 +320,7 @@ extension SelfUserAPITests {
             deleted: true,
             email: "string",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
                 provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
@@ -323,6 +346,7 @@ extension SelfUserAPITests {
             deleted: true,
             email: "string",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
                 provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!

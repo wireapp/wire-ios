@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireDesign
 
 final class RequestPasswordController {
 
@@ -36,6 +38,7 @@ final class RequestPasswordController {
     private let callback: Callback
     private let inputValidation: InputValidation?
     private weak var okAction: UIAlertAction?
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
     weak var passwordTextField: UITextField?
 
     init(
@@ -104,6 +107,12 @@ final class RequestPasswordController {
             )
 
             self.passwordTextField = textField
+
+            let delegate = ClipboardRestrictedTextFieldDelegate(
+                isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+            )
+            textField.delegate = delegate
+            self.clipboardDelegate = delegate
         }
 
         let okAction = UIAlertAction(title: okTitle, style: okActionStyle) { [weak self] _ in

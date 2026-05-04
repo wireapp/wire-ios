@@ -1,8 +1,9 @@
 class Framework
-    attr_accessor :name, :dependencies, :relations
-    
-    def self.all 
+    attr_accessor :name, :dependencies, :relations, :needs_lfs
+
+    def self.all
         all_folders = [
+            "wire-ios", # tested first so its build output warms DerivedData for all other schemes
             "WireNetwork",
             "WireAnalytics",
             "WireAuthentication",
@@ -14,14 +15,11 @@ class Framework
             "WireCalling",
             "WireLogging",
             "WireUI",
-            "wire-ios",
             "wire-ios-canvas",
-            "wire-ios-cryptobox",
             "wire-ios-data-model",
             "wire-ios-images",
             "wire-ios-link-preview",
             "wire-ios-mocktransport",
-            "wire-ios-notification-engine",
             "wire-ios-request-strategy",
             "wire-ios-share-engine",
             "wire-ios-sync-engine",
@@ -37,7 +35,6 @@ class Framework
             hash
         end
 
-        frameworks["wire-ios"].add_dependency(frameworks["wire-ios-notification-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-share-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["WireBackup"])
@@ -49,8 +46,6 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-testing"]) # included in WireiOSTests
         frameworks["wire-ios"].add_dependency(frameworks["WireLogging"])
 
-        frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
-        frameworks["wire-ios-notification-engine"].add_dependency(frameworks["WireLogging"])
 
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireNetwork"])
@@ -65,7 +60,14 @@ class Framework
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireNetwork"])
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireLogging"])
         
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-cryptobox"])
+        # Frameworks with LFS snapshot reference images — all others can skip LFS on checkout
+        frameworks["wire-ios"].needs_lfs = true
+        frameworks["WireAuthentication"].needs_lfs = true
+        frameworks["WireCalling"].needs_lfs = true
+        frameworks["WireFoundation"].needs_lfs = true
+        frameworks["WireMessaging"].needs_lfs = true
+        frameworks["WireUI"].needs_lfs = true
+
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-images"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-link-preview"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
@@ -75,9 +77,6 @@ class Framework
         frameworks["wire-ios-data-model"].add_dependency(frameworks["WireLogging"])
         
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-testing"])
-        frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-cryptobox"])
-
-        frameworks["wire-ios-cryptobox"].add_dependency(frameworks["wire-ios-utilities"])
 
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-utilities"])
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-testing"]) # included in WireTransportTests
@@ -130,6 +129,7 @@ class Framework
       @name = name
       @dependencies = []
       @relations = []
+      @needs_lfs = false
     end
   
     def add_dependency(dependency)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let featureRepository: LegacyFeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -85,7 +85,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidIdentity
         }
 
-        let crlNewDistributionPoints = try await coreCrypto.perform { context in
+        let crlNewDistributionPoints = try await coreCrypto.transaction { context in
             try await context.saveX509Credential(
                 enrollment: enrollment,
                 certificateChain: certificateChain
@@ -117,7 +117,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             return mlsGroupIDs
         }
 
-        try await coreCrypto.perform { context in
+        try await coreCrypto.transaction { context in
             for groupID in mlsConversationsToMigrate {
                 do {
                     try await context.e2eiRotate(conversationId: groupID.conversationId)
@@ -144,7 +144,11 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidCiphersuite
         }
 
-        try await coreCrypto.perform { coreCryptoContext in
+        try await coreCrypto.transaction { coreCryptoContext in
+            try await coreCryptoContext.deleteStaleKeyPackages(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite
+            )
+
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
                 ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 credentialType: .x509,
@@ -157,9 +161,6 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
                 ciphersuite: ciphersuite
             )
             try await action.perform(in: self.context.notificationContext)
-            try await coreCryptoContext.deleteStaleKeyPackages(
-                ciphersuite: ciphersuite.coreCryptoCipherSuite
-            )
         }
     }
 

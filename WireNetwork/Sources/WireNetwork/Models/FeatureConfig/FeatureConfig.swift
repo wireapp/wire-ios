@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /// Configurations for various app features.
 
-public enum FeatureConfig: Equatable, Sendable {
+public enum FeatureConfig: Equatable, Sendable, Hashable {
 
     /// Config for the *App Lock* feature.
     ///
@@ -55,6 +55,8 @@ public enum FeatureConfig: Equatable, Sendable {
     /// the app is up to date.
 
     case consumableNotifications(ConsumableNotificationsFeatureConfig)
+
+    case simplifiedUserConnectionRequestQRCode(SimplifiedUserConnectionRequestQRCodeConfig)
 
     /// Config for the *Conversation Guest Links* feature.`
     ///
@@ -118,12 +120,13 @@ public enum FeatureConfig: Equatable, Sendable {
     /// **Cells** allow users to send and receive messages with multiple attachments (video, image, files..)
     case cells(CellsFeatureConfig)
 
+    /// Config for **Cells** (internal) feature
+    /// Provides the proper cells backend URL.
+    case cellsInternal(CellsInternalFeatureConfig)
+
     /// Global config, that contains other config inside, e.g. 'reset broken mls'
 
     case allowedGlobalOperations(AllowedGlobalOperationsFeatureConfig)
-
-    /// Enable or Disable chat bubbles
-    case chatBubblesSimple(ChatBubblesSimpleFeatureConfig)
 
     /// Config for "Asset Audit Log" feature.
     ///

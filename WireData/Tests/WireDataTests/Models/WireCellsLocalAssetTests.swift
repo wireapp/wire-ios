@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ struct WireCellsLocalAssetTests {
     }
 
     @Test
-    func initialization() async throws {
+    func initialization() throws {
         // given
         let context = container.viewContext
         let nodeID = UUID()
@@ -57,29 +57,6 @@ struct WireCellsLocalAssetTests {
         #expect(persisted.contentType == "image/png")
         #expect(persisted.size == 1024)
         #expect(persisted.isDownloaded == true)
-    }
-
-}
-
-// MARK: - Helpers
-
-private extension NSPersistentContainer {
-
-    static func inMemoryContainer() throws -> NSPersistentContainer {
-        let model = NSManagedObjectModel.mergedModel(from: [WireDataBundle.bundle])
-
-        let description = NSPersistentStoreDescription()
-        description.type = NSInMemoryStoreType
-        let container = NSPersistentContainer(name: "zmessaging", managedObjectModel: model!)
-        container.persistentStoreDescriptions = [description]
-        var loadError: Error?
-        container.loadPersistentStores { _, error in
-            loadError = error
-        }
-        if let loadError {
-            throw loadError
-        }
-        return container
     }
 
 }

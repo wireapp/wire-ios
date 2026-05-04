@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,20 +24,6 @@ import XCTest
 final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase {
 
     private let record: Bool? = nil
-
-    // MARK: - setUp
-
-    override func setUp() {
-        super.setUp()
-        DeveloperFlag.chatBubblesSimple.enable(true, storage: .temporary())
-    }
-
-    // MARK: - tearDown
-
-    override func tearDown() {
-        DeveloperFlag.chatBubblesSimple.enable(false, storage: .temporary())
-        super.tearDown()
-    }
 
     // MARK: - Snapshot Tests
 

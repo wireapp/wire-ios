@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDesign
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireSyncEngine
 
 final class ConversationRootViewController: UIViewController {
@@ -36,7 +37,7 @@ final class ConversationRootViewController: UIViewController {
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
-    fileprivate let networkStatusViewController: NetworkStatusViewController = .init()
+    fileprivate let networkStatusViewController: NetworkStatusViewController
     fileprivate(set) weak var conversationViewController: ConversationViewController?
 
     // MARK: - Init
@@ -47,10 +48,12 @@ final class ConversationRootViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
+        self.networkStatusViewController = NetworkStatusViewController(userSession: userSession)
 
         let conversationController = ConversationViewController(
             conversation: conversation,
@@ -58,8 +61,9 @@ final class ConversationRootViewController: UIViewController {
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             mediaPlaybackManager: mediaPlaybackManager,
-            classificationProvider: ZMUserSession.shared(),
+            classificationProvider: userSession as? ZMUserSession,
             networkStatusObservable: NetworkStatus.shared,
             getParticipantImageSourceUseCase: GetParticipantImageSourceUseCase(
                 repository: GetParticipantImageSourceRepository(

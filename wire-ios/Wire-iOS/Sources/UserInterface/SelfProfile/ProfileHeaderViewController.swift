@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ final class ProfileHeaderViewController: UIViewController {
     override func viewDidLoad() {
         imageView.isAccessibilityElement = true
         imageView.accessibilityElementsHidden = false
-        imageView.accessibilityIdentifier = "user image"
+        imageView.accessibilityIdentifier = Locators.UserProfilePage.userProfilePicture.rawValue
         imageView.setImageConstraint(resistance: 249, hugging: 750)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
@@ -391,8 +391,19 @@ final class ProfileHeaderViewController: UIViewController {
             self?.qrCodeButtonTapped()
         }
         qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
-        qrCodeButton.isHidden = !user.isSelfUser
+        updateQRCodeButtonIsHidden()
         updateColors()
+    }
+
+    private func updateQRCodeButtonIsHidden() {
+        qrCodeButton.isHidden = !user.isSelfUser
+        guard user.isSelfUser else { return }
+        Task {
+            let hasToShow = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
+            await MainActor.run { [hasToShow] in
+                qrCodeButton.isHidden = !hasToShow
+            }
+        }
     }
 
     private func updateColors() {

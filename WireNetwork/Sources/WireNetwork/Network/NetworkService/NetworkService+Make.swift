@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,51 +58,30 @@ extension NetworkService {
 
         let restService = NetworkService(
             baseURL: backendConfig.endpoints.restAPIURL,
+            urlSessionConfiguration: configFactory.makeRESTAPISessionConfiguration(),
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
             )
         )
-
-        let restSession = URLSession(
-            configuration: configFactory.makeRESTAPISessionConfiguration(),
-            delegate: restService,
-            delegateQueue: nil
-        )
-
-        restService.configure(with: restSession)
 
         let webSocketService = NetworkService(
             baseURL: backendConfig.endpoints.websocketURL,
+            urlSessionConfiguration: configFactory.makeWebSocketSessionConfiguration(),
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
             )
         )
-
-        let webSocketSession = URLSession(
-            configuration: configFactory.makeWebSocketSessionConfiguration(),
-            delegate: webSocketService,
-            delegateQueue: nil
-        )
-
-        webSocketService.configure(with: webSocketSession)
 
         let blacklistService = NetworkService(
             baseURL: backendConfig.endpoints.blacklistURL,
+            urlSessionConfiguration: configFactory.makeBlacklistSessionConfiguration(),
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
             )
         )
-
-        let blacklistSession = URLSession(
-            configuration: configFactory.makeBlacklistSessionConfiguration(),
-            delegate: blacklistService,
-            delegateQueue: nil
-        )
-
-        blacklistService.configure(with: blacklistSession)
 
         return (
             rest: restService,

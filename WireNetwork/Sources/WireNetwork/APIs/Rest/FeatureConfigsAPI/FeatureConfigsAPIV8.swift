@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -137,18 +137,18 @@ extension FeatureConfigResponse {
             case allowedToOpenChannels = "allowed_to_open_channels"
         }
 
-        let allowedToCreateChannels: ChannelsPermisionV0
-        let allowedToOpenChannels: ChannelsPermisionV0
+        let allowedToCreateChannels: ChannelsPermissionV0
+        let allowedToOpenChannels: ChannelsPermissionV0
 
         init(from decoder: any Decoder) throws {
             let container: KeyedDecodingContainer<CodingKeys> = try decoder
                 .container(keyedBy: CodingKeys.self)
 
             self.allowedToCreateChannels = try container.decode(
-                ChannelsPermisionV0.self,
+                ChannelsPermissionV0.self,
                 forKey: .allowedToCreateChannels
             )
-            self.allowedToOpenChannels = try container.decode(ChannelsPermisionV0.self, forKey: .allowedToOpenChannels)
+            self.allowedToOpenChannels = try container.decode(ChannelsPermissionV0.self, forKey: .allowedToOpenChannels)
         }
     }
 }

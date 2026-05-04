@@ -10,7 +10,7 @@ let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"]),
@@ -30,7 +30,6 @@ let package = Package(
             dependencies: [
                 .product(name: "WireFoundation", package: "WireFoundation"),
                 .product(name: "WireLogging", package: "WireLogging"),
-                .product(name: "WireLegacyLogging", package: "WireLogging")
             ]
         ),
         .target(
@@ -51,10 +50,7 @@ let package = Package(
 
         .target(
             name: "WireDatadog",
-            dependencies: datadogDependencies() + [
-                "WireLogging",
-                .product(name: "WireLegacyLogging", package: "WireLogging")
-            ],
+            dependencies: datadogDependencies() + ["WireLogging"],
             sources: datadogFiles()
         ),
 
@@ -105,9 +101,9 @@ func datadogDependencies() -> [Target.Dependency] {
 
 func datadogFiles() -> [String] {
     if isDatadogEnabled {
-        ["WireDatadog.swift", "WireLegacyLogging.swift"]
+        ["WireDatadog.swift"]
     } else {
-        ["WireFakeDatadog.swift", "WireLegacyLogging.swift"]
+        ["WireFakeDatadog.swift"]
     }
 }
 

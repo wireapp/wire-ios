@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -471,6 +471,62 @@ final class AuthenticationAPITests: XCTestCase {
             // Then
         } catch {
             XCTFail("unexpected error: " + String(reflecting: error))
+        }
+    }
+
+    // MARK: - getSSOCode(forEmail:)
+
+    func testGetSSOCodeByEmail_V0_To_V14() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol()
+        let builder = AuthenticationAPIBuilder(networkService: networkService)
+
+        for apiVersion in APIVersion.allCasesUpTo(.v15) {
+            let sut = builder.makeAPI(for: apiVersion)
+
+            // Then
+            await XCTAssertThrowsErrorAsync(AuthenticationAPIError.unsupportedEndpointForAPIVersion) {
+                try await sut.getSSOCode(forEmail: Scaffolding.email)
+            }
+        }
+    }
+
+    func testGetSSOCodeByEmail_Request_Generation_V15() async throws {
+        // Given
+        let apiVersions = APIVersion.v15.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.getSSOCode(forEmail: Scaffolding.email)
+        }
+    }
+
+    func testGetSSOCodeByEmail_Response_Handling_V15_Success() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.ok, "GetSSOCodeByEmailSuccessResponseV15")
+        ])
+
+        let sut = AuthenticationAPIV15(networkService: networkService)
+
+        // When
+        let ssoCode = try await sut.getSSOCode(forEmail: Scaffolding.email)
+
+        // Then
+        XCTAssertEqual(ssoCode, UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!)
+    }
+
+    func testGetSSOCodeByEmail_Response_Handling_V15_NotFound() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withError(statusCode: .notFound)
+
+        let sut = AuthenticationAPIV15(networkService: networkService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.ssoCodeNotFound) {
+            // When
+            try await sut.getSSOCode(forEmail: Scaffolding.email)
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 @import WireImages;
 @import WireUtilities;
-@import WireCryptobox;
 @import WireTransport;
 @import Foundation;
 
@@ -64,6 +63,7 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
 static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
 static NSString *const TypeKey = @"typeValue";
+static NSString *const AppInfoKey = @"appInfo";
 static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
@@ -163,6 +163,16 @@ static NSString *const PrimaryKey = @"primaryKey";
     return [NSSet setWithObjects:TypeKey, nil];
 }
 
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsBot
+{
+    return [NSSet setWithObjects:TypeKey, nil];
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsAppOrBot
+{
+    return [NSSet setWithObjects:TypeKey, nil];
+}
+
 - (BOOL)isSelfUser
 {
     if ([self isZombieObject]) {
@@ -239,7 +249,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isApp || self.isWirelessUser) {
+    if (self.isAppOrBot || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
@@ -333,6 +343,7 @@ static NSString *const PrimaryKey = @"primaryKey";
                                            HandleKey, // this is not set on the user directly
                                            MembershipKey,
                                            CreatedTeamsKey,
+                                           AppInfoKey,
                                            ServiceIdentifierKey,
                                            ProviderIdentifierKey,
                                            ExpiresAtKey,
@@ -703,17 +714,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     [self boxSelfUser:selfUser inContextUserInfo:moc];
     
     return selfUser;
-}
-
-@end
-
-
-@implementation ZMUser (Utilities)
-
-+ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ContextProvider>)session
-{
-    VerifyReturnNil(session != nil);
-    return [self selfUserInContext:session.viewContext];
 }
 
 @end

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     struct Configuration: Equatable {
         var message: ZMConversationMessage
         let accentColor: AccentColor
+        let userSession: UserSession
         let collapseExpandAction: () -> Void
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
@@ -38,7 +39,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     weak var message: ZMConversationMessage? {
         didSet {
-            guard let message, isChatBubbleSimpleEnabled else { return }
+            guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.accentColor ?? .clear
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
@@ -56,7 +57,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
-        view.userSession = ZMUserSession.shared()
         view.initialsFont = .avatarInitial
         view.size = .badge
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -157,11 +157,12 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         messageTextView.textColor = SemanticColors.Label.textDefault
 
         let user = object.message.senderUser
+        avatar.userSession = object.userSession
         avatar.user = user
         availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
 
-        if let session = ZMUserSession.shared(), let user {
-            userObservation = UserChangeInfo.add(observer: self, for: user, in: session)
+        if let userSession = object.userSession as? ZMUserSession, let user {
+            userObservation = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
         let message = object.message
@@ -207,7 +208,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         }
         wholeViewTapButton.addAction(action, for: .touchUpInside)
 
-        container?.isBubble = isChatBubbleSimpleEnabled
+        container?.isBubble = true
         configureTextColor(forOwnMessage: message.isSentBySelfUser)
     }
 
@@ -285,7 +286,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        guard isChatBubbleSimpleEnabled else { return }
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
         messageTextView.textColor = ownMessage ? ownColor : otherColor
@@ -311,11 +311,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         // Otherwise, let normal hit testing occur
         return super.hitTest(point, with: event)
-    }
-
-    private var isChatBubbleSimpleEnabled: Bool {
-        // the additional DeveloperFlag check is needed for the snapshot test
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false || DeveloperFlag.chatBubblesSimple.isOn
     }
 }
 
@@ -348,11 +343,13 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
     init(
         message: ConversationMessage,
         accentColor: AccentColor,
+        userSession: UserSession,
         collapseExpandAction: @escaping () -> Void
     ) {
         self.configuration = View.Configuration(
             message: message,
             accentColor: accentColor,
+            userSession: userSession,
             collapseExpandAction: collapseExpandAction
         )
     }

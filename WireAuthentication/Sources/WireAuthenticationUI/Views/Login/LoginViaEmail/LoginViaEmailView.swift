@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -129,12 +129,11 @@ package struct LoginViaEmailView: View {
         LabeledTextField(
             placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
             title: Strings.CloudUserLogin.InputEmail.title,
-            string: $viewModel.email
+            string: $viewModel.email,
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
         .disabled(viewModel.isEmailPrefilled)
     }
 
@@ -146,7 +145,7 @@ package struct LoginViaEmailView: View {
             passwordRules: "",
             isValidPassword: viewModel.isPasswordValid
         )
-        .accessibilityIdentifier(String(describing: Locators.LoginPage.passwordSecureTextField))
+        .accessibilityIdentifier(Locators.LoginPage.passwordSecureTextField.rawValue)
     }
 
     @ViewBuilder private var submitButton: some View {
@@ -161,7 +160,7 @@ package struct LoginViaEmailView: View {
         .wireButtonStyle(.primary)
         .bold()
         .disabled(!viewModel.canSubmitCredentials)
-        .accessibilityIdentifier(String(describing: Locators.LoginPage.nextButton))
+        .accessibilityIdentifier(Locators.LoginPage.nextButton.rawValue)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -198,18 +197,11 @@ package struct LoginViaEmailView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background {
-            if #available(iOS 17.0, *) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    .background(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .cornerRadius(12)
-            }
+            RoundedRectangle(cornerRadius: 10)
+                .fill(ColorTheme.Backgrounds.backgroundVariant.color)
+                .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
         }
-        .accessibilityIdentifier(String(describing: Locators.LoginPage.createAccountLink.rawValue))
+        .accessibilityIdentifier(Locators.LoginPage.createAccountLink.rawValue)
     }
 
     @ViewBuilder private var proxyCredentials: some View {
@@ -232,12 +224,11 @@ package struct LoginViaEmailView: View {
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: Strings.ProxyCredentials.InputEmail.title,
-                string: $viewModel.proxyUsername
+                string: $viewModel.proxyUsername,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
-            .autocapitalization(.none)
             .autocorrectionDisabled()
-            .textContentType(.username)
-            .keyboardType(.emailAddress)
 
             PasswordField(
                 password: $viewModel.proxyPassword,

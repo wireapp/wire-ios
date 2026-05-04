@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ package struct VerificationEmailCodeView: View {
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
                     .accessibilityIdentifier(Locators.VerificationCodePage.verificationCodeTextField.rawValue)
-                    .onChange(of: viewModel.code[index]) { newValue in
+                    .onChange(of: viewModel.code[index]) { _, newValue in
                         focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
                     }
             }

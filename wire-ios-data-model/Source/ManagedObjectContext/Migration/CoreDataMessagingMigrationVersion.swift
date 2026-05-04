@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
     // MARK: -
 
     // Note: add new versions here in first position!
+    case v134 = "zmessaging2.134.0"
     case v133 = "zmessaging2.133.0"
     case v132 = "zmessaging2.132.0"
     case v131 = "zmessaging2.131.0"
@@ -87,8 +88,10 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
     var nextVersion: Self? {
         switch self {
-        case .v133:
+        case .v134:
             nil
+        case .v133:
+            .v134
         case .v131, .v132:
             .v133
         case .v130:

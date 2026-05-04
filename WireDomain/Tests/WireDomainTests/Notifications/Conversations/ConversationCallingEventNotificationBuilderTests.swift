@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -266,6 +266,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
@@ -309,6 +310,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
@@ -353,6 +355,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
@@ -690,7 +693,6 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         defaults.set(true, forKey: "isAVSReady")
         defaults.set(true, forKey: "isCallKitAvailable")
-        defaults.set([Scaffolding.accountID.uuidString], forKey: "loadedUserSessions")
 
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)

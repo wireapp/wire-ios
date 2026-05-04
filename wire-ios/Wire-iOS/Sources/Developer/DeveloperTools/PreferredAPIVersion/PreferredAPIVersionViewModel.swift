@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 import WireTransport
 
@@ -43,16 +44,24 @@ final class PreferredAPIVersionViewModel: ObservableObject {
     enum Value: Equatable {
 
         case noPreference
-        case apiVersion(APIVersion)
+        case apiVersion(WireTransport.APIVersion)
 
-        init(apiVersion: APIVersion?) {
-            if let apiVersion {
-                self = .apiVersion(apiVersion)
+        init(apiVersion: WireNetwork.APIVersion?) {
+            if let apiVersion, let version = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue)) {
+                self = .apiVersion(version)
             } else {
                 self = .noPreference
             }
         }
 
+        var apiVersion: WireTransport.APIVersion? {
+            switch self {
+            case .noPreference:
+                nil
+            case let .apiVersion(version):
+                version
+            }
+        }
     }
 
     enum Event {
@@ -72,17 +81,17 @@ final class PreferredAPIVersionViewModel: ObservableObject {
     init() {
         self.sections = [
             Section(header: "", items: [Item(title: "No preference", value: .noPreference)]),
-            Section(header: "Production versions", items: APIVersion.productionVersions.sorted().map {
+            Section(header: "Production versions", items: WireNetwork.APIVersion.productionVersions.sorted().map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
             }),
-            Section(header: "Development versions", items: APIVersion.developmentVersions.sorted().map {
+            Section(header: "Development versions", items: WireNetwork.APIVersion.developmentVersions.sorted().map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
             })
         ]
 
         // Initial selection
         let selectedItem = sections.flatMap(\.items).first { item in
-            item.value == Value(apiVersion: BackendInfo.preferredAPIVersion)
+            item.value.apiVersion == BackendInfo.preferredAPIVersion
         }!
 
         self.selectedItemID = selectedItem.id
@@ -99,7 +108,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             case .noPreference:
                 BackendInfo.preferredAPIVersion = nil
             case let .apiVersion(version):
-                BackendInfo.preferredAPIVersion = version
+                BackendInfo.preferredAPIVersion = WireTransport.APIVersion(rawValue: Int32(version.rawValue))
             }
             // as the WireAuthentication module might have been loaded with wrong preferredAPIVersion
             // we force exit

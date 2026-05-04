@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -243,6 +243,17 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // create scoped key
         let scopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(scopedItem, value: scopedKey)
+
+        // WHEN
+        _ = try? await sut.coreCryptoKey(allowCreation: true, path: "")
+
+        // THEN
+        XCTAssertEqual(mockMigrationManager.markMigrationToScopedKeyDone_Invocations.count, 1)
+    }
+
+    func test_itMarksScopedKeyMigrationAsDone_WhenAllowed_AndThereIsNoUnscopedKey() async throws {
+        // GIVEN
+        mockMigrationManager.isMigrationToScopedKeyNeeded = true
 
         // WHEN
         _ = try? await sut.coreCryptoKey(allowCreation: true, path: "")
