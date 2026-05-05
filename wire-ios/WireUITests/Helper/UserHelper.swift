@@ -299,6 +299,10 @@ final class UserHelper {
             email: teamOwner.email,
             password: teamOwner.password
         )
+
+        // Set username
+        try await selfUserAPI.updateHandle(handle: teamOwner.username)
+
         createdUsers.append(teamOwner)
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }
