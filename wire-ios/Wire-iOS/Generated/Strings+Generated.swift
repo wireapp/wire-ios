@@ -2717,17 +2717,17 @@ internal enum L10n {
         }
       }
       internal enum DeleteRequestDialog {
-        /// This will delete the group and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.
-        internal static let message = L10n.tr("Localizable", "conversation.delete_request_dialog.message", fallback: "This will delete the group and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.")
-        /// Delete group conversation?
-        internal static let title = L10n.tr("Localizable", "conversation.delete_request_dialog.title", fallback: "Delete group conversation?")
+        /// This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.
+        internal static let message = L10n.tr("Localizable", "conversation.delete_request_dialog.message", fallback: "This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.")
+        /// Delete conversation?
+        internal static let title = L10n.tr("Localizable", "conversation.delete_request_dialog.title", fallback: "Delete conversation?")
       }
       internal enum DeleteRequestErrorDialog {
-        /// Delete Group
-        internal static let buttonDeleteGroup = L10n.tr("Localizable", "conversation.delete_request_error_dialog.button_delete_group", fallback: "Delete Group")
-        /// An error occurred while trying to delete the group %@. Please try again.
+        /// Delete Conversation
+        internal static let buttonDeleteGroup = L10n.tr("Localizable", "conversation.delete_request_error_dialog.button_delete_group", fallback: "Delete Conversation")
+        /// An error occurred while trying to delete the conversation %@. Please try again.
         internal static func title(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "conversation.delete_request_error_dialog.title", String(describing: p1), fallback: "An error occurred while trying to delete the group %@. Please try again.")
+          return L10n.tr("Localizable", "conversation.delete_request_error_dialog.title", String(describing: p1), fallback: "An error occurred while trying to delete the conversation %@. Please try again.")
         }
       }
       internal enum InputBar {
@@ -5066,8 +5066,8 @@ internal enum L10n {
         internal static let header = L10n.tr("Localizable", "profile.extended_metadata.header", fallback: "Information")
       }
       internal enum GroupAdminStatusMemo {
-        /// When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.
-        internal static let body = L10n.tr("Localizable", "profile.group_admin_status_memo.body", fallback: "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.")
+        /// When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.
+        internal static let body = L10n.tr("Localizable", "profile.group_admin_status_memo.body", fallback: "When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.")
       }
       internal enum Profile {
         internal enum GroupAdminOptions {

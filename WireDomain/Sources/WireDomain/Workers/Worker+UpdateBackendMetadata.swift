@@ -18,11 +18,24 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol BackendMetadataAPI: Sendable {
+public extension Worker {
 
-    /// Fetch the info of the local backend.
-
-    func getBackendMetadata() async throws -> BackendMetadata
+    /// Creates a `Worker` that periodically fetches and stores the backend metadata.
+    static func updateBackendMetadata(
+        useCase: any UpdateBackendMetadataUseCaseProtocol
+    ) -> Worker {
+        Worker(
+            work: {
+                do {
+                    _ = try await useCase.invoke()
+                    return true
+                } catch {
+                    return false
+                }
+            },
+            interval: .oneHour * 12,
+            trigger: Worker.defaultTrigger()
+        )
+    }
 
 }
