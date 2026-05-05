@@ -27,17 +27,16 @@ final class ShareDebugReportViewModelTests: XCTestCase {
 
     private var sut: ShareDebugReportViewModel!
     private var mockCreateReport: MockCreateDebugReportUseCaseProtocol!
-    private var mockShareReport: MockShareDebugReportUseCaseProtocol!
-    private var viewController: UIViewController!
 
     // MARK: - setUp
 
     override func setUp() async throws {
         mockCreateReport = MockCreateDebugReportUseCaseProtocol()
-        mockShareReport = MockShareDebugReportUseCaseProtocol()
-        sut = ShareDebugReportViewModel(createReport: mockCreateReport, shareReport: mockShareReport)
-        viewController = UIViewController()
-        viewController.view.frame = UIScreen.main.bounds
+        sut = ShareDebugReportViewModel(
+            userSession: nil,
+            mainCoordinator: nil,
+            createReport: mockCreateReport
+        )
     }
 
     // MARK: - tearDown
@@ -45,37 +44,38 @@ final class ShareDebugReportViewModelTests: XCTestCase {
     override func tearDown() {
         sut = nil
         mockCreateReport = nil
-        mockShareReport = nil
-        viewController = nil
     }
 
     // MARK: - Tests
 
-    func testShareCallsCreateThenShare() async throws {
-        // GIVEN
-        let expectedURL = URL(fileURLWithPath: "/tmp/logs.zip")
-        mockCreateReport.invokeReturnValue = expectedURL
-        mockShareReport.invokeCalled = false
-
+    func testShowOptions_setsIsShowingOptionsTrue() {
         // WHEN
-        await sut.share(from: viewController)
+        sut.showOptions()
 
         // THEN
-        XCTAssertTrue(mockCreateReport.invokeCallsCount == 1)
-        XCTAssertEqual(mockShareReport.invokeLogFileURLFromCallsCount, 1)
-        XCTAssertEqual(mockShareReport.invokeLogFileURLFromReceivedArguments?.logFileURL, expectedURL)
+        XCTAssertTrue(sut.isShowingOptions)
     }
 
-    func testShareDoesNotCallShareOnCreateFailure() async throws {
+    func testShareViaActivitySheet_invokesCreateReport() async {
+        // GIVEN
+        mockCreateReport.invokeReturnValue = URL(fileURLWithPath: "/tmp/logs.zip")
+
+        // WHEN
+        await sut.shareViaActivitySheet()
+
+        // THEN
+        XCTAssertEqual(mockCreateReport.invokeCallsCount, 1)
+    }
+
+    func testShareViaActivitySheet_doesNotThrowOnCreateFailure() async {
         // GIVEN
         mockCreateReport.invokeThrowableError = NSError(domain: "test", code: 42)
 
-        // WHEN
-        await sut.share(from: viewController)
+        // WHEN — should not crash
+        await sut.shareViaActivitySheet()
 
         // THEN
-        XCTAssertTrue(mockCreateReport.invokeCallsCount == 1)
-        XCTAssertEqual(mockShareReport.invokeLogFileURLFromCallsCount, 0)
+        XCTAssertEqual(mockCreateReport.invokeCallsCount, 1)
     }
 }
 
@@ -91,19 +91,5 @@ final class MockCreateDebugReportUseCaseProtocol: CreateDebugReportUseCaseProtoc
         invokeCallsCount += 1
         if let error = invokeThrowableError { throw error }
         return invokeReturnValue
-    }
-}
-
-@MainActor
-final class MockShareDebugReportUseCaseProtocol: ShareDebugReportUseCaseProtocol {
-
-    var invokeLogFileURLFromCallsCount = 0
-    var invokeCalled = false
-    var invokeLogFileURLFromReceivedArguments: (logFileURL: URL, viewController: UIViewController)?
-
-    func invoke(logFileURL: URL, from viewController: UIViewController) async {
-        invokeCalled = true
-        invokeLogFileURLFromCallsCount += 1
-        invokeLogFileURLFromReceivedArguments = (logFileURL: logFileURL, viewController: viewController)
     }
 }

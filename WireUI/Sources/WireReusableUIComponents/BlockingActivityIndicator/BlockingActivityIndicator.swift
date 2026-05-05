@@ -22,19 +22,29 @@ import WireFoundation
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 public final class BlockingActivityIndicator {
 
+    public enum Style {
+        /// Full-screen dimmed overlay with a white spinner centered on it.
+        case fullScreen
+        /// Full-screen dimmed overlay with a centered white card containing a dark spinner and text.
+        case card
+    }
+
     // MARK: - Private Properties
 
     private weak var view: UIView?
     private let accessibilityAnnouncement: String?
+    private let style: Style
 
     // MARK: - Life Cycle
 
     public init(
         view: UIView,
-        accessibilityAnnouncement: String?
+        accessibilityAnnouncement: String?,
+        style: Style = .fullScreen
     ) {
         self.view = view
         self.accessibilityAnnouncement = accessibilityAnnouncement
+        self.style = style
     }
 
     deinit {
@@ -62,7 +72,7 @@ public final class BlockingActivityIndicator {
         if let accessibilityAnnouncement {
             UIAccessibility.post(notification: .announcement, argument: accessibilityAnnouncement)
         }
-        view?.blockAndStartAnimating(blockingActivityIndicator: self, text: text)
+        view?.blockAndStartAnimating(blockingActivityIndicator: self, text: text, style: style)
     }
 
     @MainActor
@@ -84,7 +94,8 @@ private extension UIView {
 
     func blockAndStartAnimating(
         blockingActivityIndicator reference: BlockingActivityIndicator,
-        text: String
+        text: String,
+        style: BlockingActivityIndicator.Style
     ) {
         var state: BlockingActivityIndicatorState! = blockingActivityIndicatorState
 
@@ -92,29 +103,59 @@ private extension UIView {
         if state == nil {
             state = .init()
 
-            // view with dimmed background which swallows touch events
+            // dim overlay which swallows touch events
             let blockingView = UIView()
             blockingView.backgroundColor = .black.withAlphaComponent(0.5)
             blockingView.isUserInteractionEnabled = true
             blockingView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(blockingView)
 
-            // activity indicator view
-            state.activityIndicatorView.color = .white
-            state.activityIndicatorView.text = text
-            state.activityIndicatorView.isAnimating = true
-            state.activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-            blockingView.addSubview(state.activityIndicatorView)
-
             NSLayoutConstraint.activate([
                 blockingView.leadingAnchor.constraint(equalTo: leadingAnchor),
                 blockingView.topAnchor.constraint(equalTo: topAnchor),
                 trailingAnchor.constraint(equalTo: blockingView.trailingAnchor),
-                bottomAnchor.constraint(equalTo: blockingView.bottomAnchor),
-
-                state.activityIndicatorView.centerXAnchor.constraint(equalTo: blockingView.centerXAnchor),
-                state.activityIndicatorView.centerYAnchor.constraint(equalTo: blockingView.centerYAnchor)
+                bottomAnchor.constraint(equalTo: blockingView.bottomAnchor)
             ])
+
+            state.activityIndicatorView.text = text
+            state.activityIndicatorView.isAnimating = true
+            state.activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+
+            switch style {
+            case .fullScreen:
+                state.activityIndicatorView.color = .white
+                blockingView.addSubview(state.activityIndicatorView)
+                NSLayoutConstraint.activate([
+                    state.activityIndicatorView.centerXAnchor.constraint(equalTo: blockingView.centerXAnchor),
+                    state.activityIndicatorView.centerYAnchor.constraint(equalTo: blockingView.centerYAnchor)
+                ])
+
+            case .card:
+                state.activityIndicatorView.color = .label
+                state.activityIndicatorView.textColor = .label
+
+                let card = UIView()
+                card.backgroundColor = .systemBackground
+                card.layer.cornerRadius = 16
+                card.layer.masksToBounds = true
+                card.translatesAutoresizingMaskIntoConstraints = false
+                blockingView.addSubview(card)
+                card.addSubview(state.activityIndicatorView)
+
+                // Card is 65% of the overlay width so it's wide enough for the label text.
+                // Spinner uses equalTo horizontal margins so it fills the card — this overrides
+                // ProgressSpinner.intrinsicContentSize (32pt) which ignores the label width.
+                NSLayoutConstraint.activate([
+                    card.centerXAnchor.constraint(equalTo: blockingView.centerXAnchor),
+                    card.centerYAnchor.constraint(equalTo: blockingView.centerYAnchor),
+                    card.widthAnchor.constraint(equalTo: blockingView.widthAnchor, multiplier: 0.65),
+
+                    state.activityIndicatorView.topAnchor.constraint(equalTo: card.topAnchor, constant: 24),
+                    state.activityIndicatorView.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 24),
+                    card.trailingAnchor.constraint(equalTo: state.activityIndicatorView.trailingAnchor, constant: 24),
+                    card.bottomAnchor.constraint(equalTo: state.activityIndicatorView.bottomAnchor, constant: 24)
+                ])
+            }
         }
 
         // add the reference into the `weakReferences` array

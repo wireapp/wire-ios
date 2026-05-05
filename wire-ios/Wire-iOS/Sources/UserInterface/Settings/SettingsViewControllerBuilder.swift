@@ -85,17 +85,11 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
     }
 
     private func makeShareDebugBannerVC(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
-        let shareUseCase = ShareDebugReportUseCase(
+        let viewModel = ShareDebugReportViewModel(
             userSession: userSession,
             mainCoordinator: mainCoordinator
         )
-        let viewModel = ShareDebugReportViewModel(shareReport: shareUseCase)
-        let bannerVC = UIHostingController(
-            rootView: ShareDebugBannerView {
-                guard let topVC = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
-                Task { @MainActor in await viewModel.share(from: topVC) }
-            }
-        )
+        let bannerVC = UIHostingController(rootView: ShareDebugBannerView(viewModel: viewModel))
         bannerVC.view.backgroundColor = .clear
         return bannerVC
     }

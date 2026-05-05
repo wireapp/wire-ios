@@ -25,20 +25,42 @@ final class ShareDebugReportPresenter {
     private var isPresenting = false
 
     @MainActor
-    func present(from topMostViewController: UIViewController?) async {
+    func present(from topMostViewController: UIViewController?) {
         guard !isPresenting, let viewController = topMostViewController else { return }
         isPresenting = true
 
         let userSession = SessionManager.shared?.activeUserSession
         let mainCoordinator = ZClientViewController.shared?.mainCoordinator
 
-        let shareUseCase = ShareDebugReportUseCase(
+        let viewModel = ShareDebugReportViewModel(
             userSession: userSession,
             mainCoordinator: mainCoordinator
         )
-        let viewModel = ShareDebugReportViewModel(shareReport: shareUseCase)
-        await viewModel.share(from: viewController)
 
-        isPresenting = false
+        typealias l10n = L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet
+        let actionSheet = UIAlertController(
+            title: l10n.title,
+            message: l10n.message,
+            preferredStyle: .actionSheet
+        )
+
+        if viewModel.canShareViaWire {
+            actionSheet.addAction(UIAlertAction(title: l10n.shareViaWire, style: .default) { _ in
+                Task { await viewModel.shareViaWire() }
+            })
+        }
+        if viewModel.canSendEmail {
+            actionSheet.addAction(UIAlertAction(title: l10n.sendEmail, style: .default) { _ in
+                Task { await viewModel.sendEmail() }
+            })
+        }
+        actionSheet.addAction(UIAlertAction(title: l10n.share, style: .default) { _ in
+            Task { await viewModel.shareViaActivitySheet() }
+        })
+        actionSheet.addAction(UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { [weak self] _ in
+            self?.isPresenting = false
+        })
+
+        viewController.present(actionSheet, animated: true)
     }
 }

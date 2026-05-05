@@ -16,38 +16,132 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import MessageUI
 import UIKit
+import WireCommonComponents
+import WireDataModel
 import WireLogging
+import WireMainNavigationUI
 import WireReusableUIComponents
+import WireSyncEngine
 
 @MainActor
-final class ShareDebugReportViewModel {
+final class ShareDebugReportViewModel: ObservableObject {
 
+    @Published var isShowingOptions = false
+
+    let canShareViaWire: Bool
+    let canSendEmail: Bool
+
+    private let userSession: UserSession?
+    private let mainCoordinator: (any MainCoordinatorProtocol)?
+    private let mailRecipient: String
     private let createReport: CreateDebugReportUseCaseProtocol
-    private let shareReport: ShareDebugReportUseCaseProtocol
 
     init(
-        createReport: CreateDebugReportUseCaseProtocol = CreateDebugReportUseCase(),
-        shareReport: ShareDebugReportUseCaseProtocol
+        userSession: UserSession?,
+        mainCoordinator: (any MainCoordinatorProtocol)?,
+        mailRecipient: String = WireEmail.shared.supportEmail,
+        createReport: CreateDebugReportUseCaseProtocol = CreateDebugReportUseCase()
     ) {
+        self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+        self.mailRecipient = mailRecipient
         self.createReport = createReport
-        self.shareReport = shareReport
+        canShareViaWire = userSession != nil && mainCoordinator != nil
+        canSendEmail = MFMailComposeViewController.canSendMail()
     }
 
-    func share(from viewController: UIViewController) async {
-        let indicator = BlockingActivityIndicator(
-            view: viewController.view,
-            accessibilityAnnouncement: nil
-        )
+    func showOptions() {
+        isShowingOptions = true
+    }
+
+    func shareViaWire() async {
+        guard let userSession, let mainCoordinator else { return }
+        guard let viewController = topViewController() else { return }
+        await withReport(from: viewController) { url in
+            let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
+            let fetchConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
+            let conversations = fetchConversations.invoke()
+            let metadata = await FileMetaDataGenerator().metadataForFile(at: url)
+            let report = ShareableDebugReport(logFileMetadata: metadata, shareFile: shareFile)
+            let shareVC = ShareViewController<ZMConversation, ShareableDebugReport>(
+                shareable: report,
+                destinations: conversations,
+                showPreview: true,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator
+            )
+            shareVC.onDismiss = { vc, _ in vc.dismiss(animated: true) }
+            viewController.present(shareVC, animated: true)
+        }
+    }
+
+    func shareViaActivitySheet() async {
+        guard let viewController = topViewController() else { return }
+        await withReport(from: viewController) { url in
+            let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            viewController.present(activityVC, animated: true)
+        }
+    }
+
+    func sendEmail() async {
+        guard let viewController = topViewController() else { return }
+        let mailVC = MFMailComposeViewController()
+        let delegate = MailDelegate()
+        mailVC.mailComposeDelegate = delegate
+        objc_setAssociatedObject(mailVC, &mailDelegateKey, delegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        mailVC.setToRecipients([mailRecipient])
+        mailVC.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
+        mailVC.setMessageBody(mailVC.prefilledBody(), isHTML: false)
+
+        let indicator = BlockingActivityIndicator(view: viewController.view, accessibilityAnnouncement: nil, style: .card)
         indicator.start(text: L10n.Localizable.Self.Settings.ShareDebugReport.creatingReport)
 
+        Task.detached(priority: .userInitiated) {
+            await mailVC.attachLogs()
+            await MainActor.run {
+                indicator.stop()
+                viewController.present(mailVC, animated: true)
+            }
+        }
+    }
+
+    // MARK: - Private
+
+    private func withReport(
+        from viewController: UIViewController,
+        then action: @escaping @MainActor (URL) async -> Void
+    ) async {
+        let indicator = BlockingActivityIndicator(view: viewController.view, accessibilityAnnouncement: nil, style: .card)
+        indicator.start(text: L10n.Localizable.Self.Settings.ShareDebugReport.creatingReport)
         do {
             let url = try await createReport.invoke()
             indicator.stop()
-            await shareReport.invoke(logFileURL: url, from: viewController)
+            await action(url)
         } catch {
             indicator.stop()
             WireLogger.system.error("failed to create debug report: \(error)")
         }
     }
+
+    private func topViewController() -> UIViewController? {
+        UIApplication.shared.topmostViewController(onlyFullScreen: false)
+    }
 }
+
+// MARK: - MailDelegate
+
+private final class MailDelegate: NSObject, MFMailComposeViewControllerDelegate {
+
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
+        objc_setAssociatedObject(controller, &mailDelegateKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        controller.dismiss(animated: true)
+    }
+}
+
+private nonisolated(unsafe) var mailDelegateKey: Void?

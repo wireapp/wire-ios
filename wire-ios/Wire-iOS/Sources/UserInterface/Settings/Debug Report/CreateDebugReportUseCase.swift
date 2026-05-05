@@ -33,8 +33,14 @@ final class CreateDebugReportUseCase: CreateDebugReportUseCaseProtocol {
     }
 
     func invoke() async throws -> URL {
-        try await Task.detached(priority: .userInitiated) { [logsProvider] in
-            try logsProvider.generateLogFilesZip()
-        }.value
+        try await withCheckedThrowingContinuation { [logsProvider] continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    continuation.resume(returning: try logsProvider.generateLogFilesZip())
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
     }
 }

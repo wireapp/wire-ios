@@ -29,11 +29,7 @@ final class WireApplication: UIApplication {
         guard motion == .motionShake else { return }
 
         if DeveloperFlag.shakeToReport.isOn {
-            Task { @MainActor in
-                await self.shareDebugPresenter.present(
-                    from: self.topmostViewController(onlyFullScreen: false)
-                )
-            }
+            shareDebugPresenter.present(from: topmostViewController(onlyFullScreen: false))
         } else if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             developerToolsPresenter.presentIfNotDisplayed(
                 with: appDelegate.appRootRouter,

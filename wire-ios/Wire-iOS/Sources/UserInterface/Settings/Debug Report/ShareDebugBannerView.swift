@@ -22,10 +22,10 @@ import WireLocators
 
 struct ShareDebugBannerView: View {
 
-    let action: () -> Void
+    @ObservedObject var viewModel: ShareDebugReportViewModel
 
     var body: some View {
-        Button(action: action) {
+        Button { viewModel.showOptions() } label: {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "bubble.left")
                     .font(for: .h3)
@@ -60,11 +60,33 @@ struct ShareDebugBannerView: View {
         .buttonStyle(.plain)
         .accessibilityLabel(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
         .accessibilityIdentifier(Locators.SettingsPage.shareDebugBanner.rawValue)
+        .confirmationDialog(
+            L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.title,
+            isPresented: $viewModel.isShowingOptions,
+            titleVisibility: .visible
+        ) {
+            if viewModel.canShareViaWire {
+                Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.shareViaWire) {
+                    Task { await viewModel.shareViaWire() }
+                }
+            }
+            if viewModel.canSendEmail {
+                Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.sendEmail) {
+                    Task { await viewModel.sendEmail() }
+                }
+            }
+            Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.share) {
+                Task { await viewModel.shareViaActivitySheet() }
+            }
+            Button(L10n.Localizable.General.cancel, role: .cancel) {}
+        } message: {
+            Text(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.message)
+        }
     }
 }
 
 #Preview {
-    ShareDebugBannerView {}
+    ShareDebugBannerView(viewModel: .init(userSession: nil, mainCoordinator: nil))
         .padding()
         .background(Color(.systemGroupedBackground))
 }
