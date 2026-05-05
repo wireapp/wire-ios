@@ -56,15 +56,22 @@ final class ConversationCallController: NSObject {
     }
 
     func joinCall() {
-        guard conversation.canJoinCall else { return }
+        print("🔵 [JOIN] ConversationCallController.joinCall() called for conversation: \(conversation.remoteIdentifier?.uuidString ?? "unknown")")
+        guard conversation.canJoinCall else {
+            print("🔵 [JOIN] Cannot join call - canJoinCall returned false")
+            return
+        }
 
         let checker = PrivacyWarningChecker(
             conversation: conversation,
             alertType: .incomingCall,
             continueAction: { [conversation] in
+                print("🔵 [JOIN] PrivacyWarningChecker - continueAction executing")
                 conversation.acknowledgePrivacyChanges()
                 conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
+                    print("🔵 [JOIN] confirmJoiningCallIfNeeded completion - about to call conversation.joinCall()")
                     conversation.joinCall() // This will result in joining an ongoing call.
+                    print("🔵 [JOIN] conversation.joinCall() returned")
                 }
             },
             cancelAction: { [weak self] in

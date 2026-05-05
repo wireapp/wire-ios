@@ -42,6 +42,7 @@ extension ZMConversation {
     }
 
     func joinCall() {
+        print("🔵 [JOINVCHANNEL] ZMConversation.joinCall() called for: \(remoteIdentifier?.uuidString ?? "unknown")")
         if conversationType == .group {
             voiceChannel?.muted = true
         }
@@ -49,17 +50,27 @@ extension ZMConversation {
     }
 
     func joinVoiceChannel(video: Bool) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        print("🔵 [JOINVCHANNEL] joinVoiceChannel called with video: \(video)")
+        guard let userSession = ZMUserSession.shared() else {
+            print("🔵 [JOINVCHANNEL] No user session")
+            return
+        }
 
         let onGranted: (_ granted: Bool) -> Void = { granted in
+            print("🔵 [JOINVCHANNEL] Permissions granted: \(granted)")
             if granted {
-                _ = self.voiceChannel?.join(video: video, userSession: userSession)
+                print("🔵 [JOINVCHANNEL] Calling voiceChannel.join()")
+                let result = self.voiceChannel?.join(video: video, userSession: userSession)
+                print("🔵 [JOINVCHANNEL] voiceChannel.join() returned: \(result ?? false)")
             } else {
+                print("🔵 [JOINVCHANNEL] Permission denied - leaving")
                 self.voiceChannel?.leave(userSession: userSession, completion: nil)
             }
         }
 
+        print("🔵 [JOINVCHANNEL] Requesting microphone access")
         UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
+            print("🔵 [JOINVCHANNEL] Microphone access response: \(granted)")
             if video {
                 UIApplication.wr_requestOrWarnAboutVideoAccess { _ in
                     // We still allow starting the call, even if the video permissions were not granted.
@@ -102,26 +113,67 @@ extension ZMConversation {
         forceAlertModal: Bool = false,
         completion: @escaping () -> Void
     ) {
+        print("🔵 [CONFIRM] confirmJoiningCallIfNeeded called")
+        print("🔵 [CONFIRM] isCallOngoing: \(ZMUserSession.shared()?.isCallOngoing ?? false)")
+
         guard ZMUserSession.shared()?.isCallOngoing == true else {
+            print("🔵 [CONFIRM] No ongoing call, calling completion immediately")
             return completion()
         }
 
+        print("🔵 [CONFIRM] Ongoing call detected, showing alert")
         let controller = UIAlertController
             .ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
+                print("🔵 [CONFIRM] Alert response received - confirmed: \(confirmed)")
                 guard confirmed else { return }
-                self.endAllCallsExceptIncoming(completion: completion)
+               // self.endAllCallsExceptIncoming(completion: completion)
+                self.endAllCallsExceptIncoming {
+                    completion()  // Explicitly call the completion after ending calls
+                    print("🔵 [CONFIRM] completion() called")
+                }
             }
 
         alertPresenter.present(controller, animated: true)
     }
 
     /// Ends all the active calls, except the conversation's incoming call, if any.
+//    func endAllCallsExceptIncoming(completion: @escaping () -> Void) {
+//        guard let sharedSession = ZMUserSession.shared() else { return }
+//        sharedSession.callCenter?.activeCallConversations(in: sharedSession)
+//            .filter { $0.remoteIdentifier != self.remoteIdentifier }
+//            // The completion handler could potentially be called multiple times
+//            // This however should not happen because there can only be one active call at a time
+//            .forEach { $0.voiceChannel?.leave(userSession: sharedSession, completion: completion) }
+//    }
+
     func endAllCallsExceptIncoming(completion: @escaping () -> Void) {
-        guard let sharedSession = ZMUserSession.shared() else { return }
-        sharedSession.callCenter?.activeCallConversations(in: sharedSession)
-            .filter { $0.remoteIdentifier != self.remoteIdentifier }
-            // The completion handler could potentially be called multiple times
-            // This however should not happen because there can only be one active call at a time
-            .forEach { $0.voiceChannel?.leave(userSession: sharedSession, completion: completion) }
+        print("🔵 [END] endAllCallsExceptIncoming called for conversation: \(self.remoteIdentifier?.uuidString ?? "unknown")")
+
+        guard let sharedSession = ZMUserSession.shared() else {
+            print("🔵 [END] No shared session - returning without calling completion")
+            return
+        }
+
+        let activeConversations = sharedSession.callCenter?
+            .activeCallConversations(in: sharedSession)
+            .filter { $0.remoteIdentifier != self.remoteIdentifier } ?? []
+
+        print("🔵 [END] Found \(activeConversations.count) active conversations to end")
+        activeConversations.forEach { conv in
+            print("🔵 [END] - Conversation ID: \(conv.remoteIdentifier?.uuidString ?? "unknown")")
+        }
+
+        if activeConversations.isEmpty {
+            print("🔵 [END] No active calls to end - but completion is NOT called in current implementation!")
+        }
+
+        activeConversations.forEach { conv in
+            print("🔵 [END] Calling leave() on conversation: \(conv.remoteIdentifier?.uuidString ?? "unknown")")
+            conv.voiceChannel?.leave(userSession: sharedSession, completion: {
+                print("🔵 [END] Leave completion called for conversation: \(conv.remoteIdentifier?.uuidString ?? "unknown")")
+                completion()
+                print("🔵 [END] Completion executed")
+            })
+        }
     }
 }

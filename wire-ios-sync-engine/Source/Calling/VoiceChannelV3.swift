@@ -202,11 +202,16 @@ extension VoiceChannelV3: CallActions {
     }
 
     public func leave(userSession: ZMUserSession, completion: (() -> Void)?) {
+        print("🔵 [LEAVE] VoiceChannelV3.leave called")
+        print("🔵 [LEAVE] CallKit enabled: \(userSession.callNotificationStyle == .callKit)")
         if userSession.callNotificationStyle == .callKit {
+            print("🔵 [LEAVE] Using CallKit path - calling requestEndCall")
             userSession.callKitManager?.requestEndCall(in: conversation!, completion: completion)
         } else {
+            print("🔵 [LEAVE] Using non-CallKit path")
             leave()
             completion?()
+            print("🔵 [LEAVE] Non-CallKit completion called")
         }
     }
 
@@ -219,24 +224,33 @@ extension VoiceChannelV3: CallActions {
 extension VoiceChannelV3: CallActionsInternal {
 
     public func join(video: Bool) -> Bool {
+        print("🔵 [VCJOIN] VoiceChannelV3.join called with video: \(video)")
+           print("🔵 [VCJOIN] Conversation: \(conversation?.remoteIdentifier?.uuidString ?? "unknown")")
+           print("🔵 [VCJOIN] Current state: \(state)")
         guard
             let conversation,
             let callCenter
         else {
+            print("🔵 [VCJOIN] Missing conversation or callCenter")
             return false
         }
 
         do {
             switch state {
             case .incoming:
+                print("🔵 [VCJOIN] State is incoming - calling answerCall")
                 try callCenter.answerCall(conversation: conversation, video: video)
+                print("🔵 [VCJOIN] answerCall succeeded")
                 return true
 
             default:
+                print("🔵 [VCJOIN] State is \(state) - calling startCall")
                 try callCenter.startCall(in: conversation, isVideo: video)
+                print("🔵 [VCJOIN] startCall succeeded")
                 return true
             }
         } catch {
+            print("🔵 [VCJOIN] Exception caught: \(error)")
             return false
         }
     }

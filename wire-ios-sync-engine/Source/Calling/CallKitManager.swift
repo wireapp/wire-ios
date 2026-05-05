@@ -346,22 +346,31 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         completion: (() -> Void)? = nil
     ) {
         logger.info("request end call", attributes: .safePublic)
+        print("🔵 [CALLKIT] requestEndCall called for conversation: \(conversation.remoteIdentifier?.uuidString ?? "unknown")")
 
         guard let call = callRegister.lookupCall(by: conversation) else {
             logger.warn("fail: request end call: call doesn't exist", attributes: .safePublic)
+            print("🔵 [CALLKIT] Call not found in register - calling completion anyway")
+            completion?()
             return
         }
 
+        print("🔵 [CALLKIT] Call found in register, requesting CXEndCallAction")
         let action = CXEndCallAction(call: call.id)
         let transaction = CXTransaction(action: action)
 
         callController.request(transaction) { [weak self] error in
             if let error {
                 self?.logger.error("fail: request end call: \(error)", attributes: .safePublic)
+                print("🔵 [CALLKIT] CXEndCallAction failed with error: \(error)")
                 conversation.voiceChannel?.leave()
+            } else {
+                print("🔵 [CALLKIT] CXEndCallAction succeeded")
             }
 
+            print("🔵 [CALLKIT] Calling completion")
             completion?()
+            print("🔵 [CALLKIT] Completion called")
         }
     }
 

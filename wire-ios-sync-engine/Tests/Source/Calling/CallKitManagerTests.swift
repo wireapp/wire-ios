@@ -746,6 +746,21 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(action.callUUID, callUUID)
     }
 
+    func testThatRequestEndCallInvokesCompletionWhenCallDoesNotExist() {
+        // given
+        let conversation = conversation(type: .oneOnOne)
+        var completionWasCalled = false
+
+        // when
+        sut.requestEndCall(in: conversation) {
+            completionWasCalled = true
+        }
+
+        // then
+        XCTAssertTrue(completionWasCalled)
+        XCTAssertEqual(callKitController.timesRequestTransactionCalled, 0)
+    }
+
     func testThatReportsMutingOfCall() {
         // given
         let conversation = conversation(type: .group)
