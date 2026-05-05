@@ -24,13 +24,14 @@ import WireDesign
 /// the conversation-started summary plus optional invite and Wire Drive status cells.
 final class GroupConversationHeaderView: UIView {
 
+    /// Shared leading inset for text content across all rows in the header.
+    /// Matches the GuestAccountWarningView grid: 16 pt icon leading + 18 pt icon width + 12 pt gap.
+    static let textInset: CGFloat = 46
+
     private let stackView = UIStackView()
 
     weak var delegate: ConversationMessageCellDelegate? {
         didSet {
-            stackView.arrangedSubviews.compactMap { $0 as? GuestsAllowedCell }.forEach {
-                $0.delegate = delegate
-            }
             stackView.arrangedSubviews
                 .compactMap {
                     $0 as? ConversationStartedSystemMessageCell<ConversationStartedSystemMessageCellDescription>
@@ -86,9 +87,12 @@ final class GroupConversationHeaderView: UIView {
            selfUser.canAddUser(to: conversation),
            conversation.conversationType == .group,
            conversation.allowGuests {
-            let guestsCell = GuestsAllowedCell()
-            guestsCell.configure(with: .init(isChannel: conversation.isChannel), animated: false)
-            stackView.addArrangedSubview(guestsCell)
+            let guestsView = GuestsAllowedView(isChannel: conversation.isChannel)
+            guestsView.onInviteTapped = { [weak self] in
+                guard let self else { return }
+                self.delegate?.conversationMessageWantsToOpenGuestOptionsFromView(self, sourceView: guestsView)
+            }
+            stackView.addArrangedSubview(guestsView)
         }
 
         // TODO: [WPB-18464] the sender might need to be changed to reflect the user

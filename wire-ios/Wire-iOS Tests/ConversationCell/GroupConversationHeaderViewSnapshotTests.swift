@@ -73,7 +73,7 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
             .verify(matching: makeView(conversation: conversation))
     }
 
-    /// Group with guests allowed — shows the GuestsAllowedCell beneath the started cell.
+    /// Group with guests allowed — shows the GuestsAllowedView beneath the started cell.
     func testGroup_guestsAllowed() {
         let conversation = makeConversation(displayName: "Open Group", participantNames: ["Alice"])
         conversation.allowGuests = true
