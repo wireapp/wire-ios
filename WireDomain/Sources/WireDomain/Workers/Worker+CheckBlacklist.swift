@@ -18,16 +18,27 @@
 
 import Foundation
 
-struct ExpiringActivityProcessInfoWrapper: ExpiringActivityPerformerProtocol {
+public extension Worker {
 
-    var processInfo: ProcessInfo
+    /// Creates a `Worker` that checks if the current build is blacklisted and executes `onIsBuildBlacklisted` callback
+    /// if it is.
+    static func checkBlacklist(
+        useCase: any IsBuildBlacklistedUseCase,
+        onIsBuildBlacklisted: @escaping @Sendable () -> Void
+    ) -> Worker {
+        Worker(
+            work: {
+                let (isBuildBlacklisted, error) = await useCase.invoke()
 
-    init(processInfo: ProcessInfo = .processInfo) {
-        self.processInfo = processInfo
-    }
+                if isBuildBlacklisted {
+                    onIsBuildBlacklisted()
+                }
 
-    func performExpiringActivity(reason: String, using block: @escaping @Sendable (Bool) -> Void) {
-        processInfo.performExpiringActivity(withReason: reason, using: block)
+                return error == nil
+            },
+            interval: .oneHour * 6,
+            trigger: Worker.defaultTrigger()
+        )
     }
 
 }

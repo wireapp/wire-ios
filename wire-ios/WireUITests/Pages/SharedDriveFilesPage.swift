@@ -58,6 +58,10 @@ class SharedDriveFilesPage: PageModel {
         app.buttons[Locators.WireDrive.FilesPage.recycleBin.rawValue]
     }
 
+    var createFolderButton: XCUIElement {
+        app.buttons[Locators.WireDrive.FilesPage.createFolder.rawValue]
+    }
+
     var moreButton: XCUIElement {
         app.buttons
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
@@ -96,6 +100,18 @@ class SharedDriveFilesPage: PageModel {
 
     func verifyFileMovedToSharedDrive(fileName: String) -> Bool {
         fileMetadataText.label.contains(fileName)
+    }
 
+    func createFolder() throws -> FolderPage {
+        moreOptionOnSharedDrive.tap()
+        createFolderButton.tap()
+        return try FolderPage()
+    }
+
+    func verifyFolderIsCreated(folderName: String) -> Bool {
+        app.staticTexts
+            .matching(identifier: folderName)
+            .element
+            .exists
     }
 }
