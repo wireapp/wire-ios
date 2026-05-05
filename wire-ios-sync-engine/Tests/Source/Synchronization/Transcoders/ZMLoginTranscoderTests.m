@@ -254,9 +254,31 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 {
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     XCTAssertNil(request);
+}
+
+- (void)testThatItDoesNotGenerateADuplicateLoginRequestInTheRaceWindowWhileFirstIsInFlight
+{
+    // given
+    [self.authenticationStatus prepareForLoginWithCredentials:self.testEmailCredentials];
+    ZMTransportRequest *firstRequest = [self.sut nextRequestForAPIVersion:APIVersionV0];
+    XCTAssertNotNil(firstRequest);
+
+    // Simulate the race window in ZMSingleRequestSync.processResponse: where currentRequest
+    // is set to nil before status transitions to Completed. On a concurrent thread,
+    // nextRequestForAPIVersion: can be called in this window. Without the fix, the former
+    // readyForNextRequestIfNotBusy call would see currentRequest == nil, force status back
+    // to Ready, and generate a second login request — causing the first response to be
+    // dropped via the requestUniqueCounter mismatch and the access token to be lost.
+    [self.sut.timedDownstreamSync setValue:nil forKey:@"currentRequest"];
+
+    // when
+    ZMTransportRequest *secondRequest = [self.sut nextRequestForAPIVersion:APIVersionV0];
+
+    // then
+    XCTAssertNil(secondRequest);
 }
 
 - (void)testThatItDoesNotGenerateALoginRequestWhenTheUserSessionIsLoggedIn
