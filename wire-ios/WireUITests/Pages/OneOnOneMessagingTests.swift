@@ -22,21 +22,38 @@ import XCTest
 final class OneOnOneMessagingTests: WireUITestCase {
 
     @MainActor
-    func testSendTextAndAudioInOneOnOneConversation_TC_8819_8821() async throws {
-
-        // GIVEN
-        let message = UserGenerator.generateRandomMessage()
-        let (_, teamMembers, _, _) = try await userHelper
-            .registerTeam(
-                withMemberCount: 1
-            )
-
-        // WHEN
+    private func openOneOnOneConversation() async throws -> (teamOwner: UserInfo, activeConversationPage: ActiveConversationPage) {
+        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 1)
         let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
         let activeConversationPage = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
             .openUserDetailsInContactList()
             .tapStartConversationButton()
+
+        return (teamOwner, activeConversationPage)
+    }
+
+    private func assertSenderName(
+        on activeConversationPage: ActiveConversationPage,
+        equals expectedName: String
+    ) {
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            expectedName,
+            "Sender info didn't match expected value \(expectedName)"
+        )
+    }
+
+    @MainActor
+    func testSendTextAndAudioInOneOnOneConversation_TC_8819_8821() async throws {
+
+        // GIVEN
+        let message = UserGenerator.generateRandomMessage()
+        let (_, activeConversationPage) = try await openOneOnOneConversation()
+
+        // WHEN
+        try activeConversationPage
             .sendMessage(message)
             .recordAudioAndSend()
 
@@ -58,16 +75,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
 
         // GIVEN
         let message = UserGenerator.generateRandomMessage()
-        let (teamOwner, teamMembers, _, _) = try await userHelper
-            .registerTeam(
-                withMemberCount: 1
-            )
-
-        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
-        let activeConversationPage = try firstTimePage.acceptPopup()
-            .tapPlusButtonToCreateGroup()
-            .openUserDetailsInContactList()
-            .tapStartConversationButton()
+        let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
 
         let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
@@ -108,28 +116,14 @@ final class OneOnOneMessagingTests: WireUITestCase {
             "Expected audio attachment not found"
         )
 
-        let senderName = activeConversationPage.getSenderName()
-        XCTAssertEqual(
-            senderName,
-            teamOwner.name,
-            "Sender info didn't match expected value \(teamOwner.name)"
-        )
+        assertSenderName(on: activeConversationPage, equals: teamOwner.name)
     }
 
     @MainActor
     func testReceiveImageAndVideoInOneOnOneConversation_TC_8827_8829() async throws {
 
         // GIVEN
-        let (teamOwner, teamMembers, _, _) = try await userHelper
-            .registerTeam(
-                withMemberCount: 1
-            )
-
-        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
-        let activeConversationPage = try firstTimePage.acceptPopup()
-            .tapPlusButtonToCreateGroup()
-            .openUserDetailsInContactList()
-            .tapStartConversationButton()
+        let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
 
         let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
@@ -170,12 +164,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
             "Expected image attachment not found"
         )
 
-        let senderName = activeConversationPage.getSenderName()
-        XCTAssertEqual(
-            senderName,
-            teamOwner.name,
-            "Sender info didn't match expected value \(teamOwner.name)"
-        )
+        assertSenderName(on: activeConversationPage, equals: teamOwner.name)
 
         XCTAssertTrue(
             activeConversationPage.fileAttachment(name: "TESTVIDEO", type: "MP4").waitForExistence(timeout: 5),

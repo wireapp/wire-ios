@@ -301,6 +301,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
     func recordAudioAndSend() throws -> ActiveConversationPage {
         audioButton.tap()
         app.dismissAllowIfPresent()
