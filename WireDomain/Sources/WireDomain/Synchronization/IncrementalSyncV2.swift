@@ -22,7 +22,6 @@ import WireCoreCrypto
 import WireDataModel
 import WireLogging
 import WireNetwork
-import WireUtilitiesPackage
 
 public typealias CreatePushChannelStateClosure = () -> PushChannelStateProtocol
 
@@ -157,16 +156,26 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             logger.debug("handling live event stream", attributes: logAttributes)
             syncStateSubject.send(.liveSyncing(.ongoing))
 
-            // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
-            // cancel the task (not keeping any file lock in suspend mode)
-            await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
-                await processLiveStream(
-                    liveEventStream,
-                    pushChannel: pushChannel,
-                    syncMarker: syncMarker
-                )
+            do {
+                // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
+                // cancel the task (not keeping any file lock in suspend mode)
+                try await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
+                    await processLiveStream(
+                        liveEventStream,
+                        pushChannel: pushChannel,
+                        syncMarker: syncMarker
+                    )
 
-                WireLogger.sync.debug("Live stream ended, close push channel", attributes: logAttributes)
+                    WireLogger.sync.debug("Live stream ended, close push channel", attributes: logAttributes)
+                    await pushChannel.close()
+                    await pushChannelState.markAsClosed()
+                }
+            } catch {
+                // if we expire, close everything
+                WireLogger.sync.debug(
+                    "Error while processing live stream, close push channel",
+                    attributes: logAttributes
+                )
                 await pushChannel.close()
                 await pushChannelState.markAsClosed()
             }
@@ -251,14 +260,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         do {
             for try await element in liveEventStream {
-
-                guard !Task.isCancelled else {
-                    return logger.debug(
-                        "returning from processLiveStream early, task cancelled",
-                        attributes: logAttributes
-                    )
-                }
-
                 switch element {
                 case let .syncMarker(id, deliveryTag):
 
