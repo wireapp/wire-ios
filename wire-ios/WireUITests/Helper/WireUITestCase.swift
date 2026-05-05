@@ -26,7 +26,6 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    var userHelper: UserHelper!
     var ssoHelper: SSOHelper!
     let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
@@ -46,9 +45,7 @@ class WireUITestCase: XCTestCase {
             "--useEnvStaging"
         ]
 
-        userHelper = UserHelper()
         ssoHelper = SSOHelper()
-
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
@@ -65,9 +62,10 @@ class WireUITestCase: XCTestCase {
 
     @MainActor
     override func tearDown() async throws {
+        app?.terminate()
+        app = nil
         await callingServiceClient.destroyCreatedInstances()
-        await userHelper.deleteCreatedUsers()
-        userHelper = nil
+        await UserHelper.deleteCreatedUsers()
         await ssoHelper.cleanUpOktaResources()
     }
 
@@ -111,8 +109,6 @@ class WireUITestCase: XCTestCase {
 
         let deeplink = try EnvironmentVariables().deepLinkURL(for: target)
         setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
-        // need to change for Inbucket
-        BackendContext.current = target
     }
 
     func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
