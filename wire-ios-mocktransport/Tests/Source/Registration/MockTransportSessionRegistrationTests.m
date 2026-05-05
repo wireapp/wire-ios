@@ -351,16 +351,16 @@
                               @"phone_code" : self.sut.phoneVerificationCodeForRegistration,
                               };
     [self requestVerificationCodeForPhone:phone];
-    
+
     // expect
     [[(id) self.sut.cookieStorage expect] storeCookies:OCMOCK_ANY error:[OCMArg anyObjectRef]];
-    
+
     // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
-    
+
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
-//    XCTAssertNotNil(cookieData);
+    [(id)self.sut.cookieStorage verify];
 }
 
 - (void)testThatRegistrationWithPhoneNumberReturns409ItThereIsAlreadyAUserWithThatPhone
