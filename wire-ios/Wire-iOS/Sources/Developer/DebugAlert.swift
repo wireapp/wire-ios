@@ -113,29 +113,29 @@ enum DebugAlert {
         popoverPresentationConfiguration: PopoverPresentationControllerConfiguration
     ) -> UIAlertAction {
         UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { _ in
-            let logFilesProvider = LogFilesProvider()
-            let logsFileURL: URL
-            do {
-                logsFileURL = try logFilesProvider.generateLogFilesZip()
-            } catch {
-                WireLogger.system.error("Failed to generate log files zip: \(error)")
-                return
-            }
-
-            let activityViewController = UIActivityViewController(
-                activityItems: [logsFileURL],
-                applicationActivities: nil
-            )
-            activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
-            activityViewController.completionWithItemsHandler = { _, _, _, _ in
+            Task { @MainActor in
+                let useCase = CreateDebugReportUseCase(selfUserID: nil)
+                let logsFileURL: URL
                 do {
-                    try logFilesProvider.clearLogsDirectory(fileManager: .default)
+                    logsFileURL = try await useCase.invoke()
                 } catch {
-                    WireLogger.system.warn("Unable to clear temporary directory: \(error)")
+                    WireLogger.system.error("Failed to generate log files zip: \(error)")
+                    return
                 }
-            }
 
-            controller.present(activityViewController, animated: true, completion: nil)
+                let activityViewController = UIActivityViewController(
+                    activityItems: [logsFileURL],
+                    applicationActivities: nil
+                )
+                activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
+                activityViewController.completionWithItemsHandler = { _, _, _, _ in
+                    Task {
+                        try? LogFilesProvider().clearLogsDirectory(fileManager: .default)
+                    }
+                }
+
+                controller.present(activityViewController, animated: true, completion: nil)
+            }
         }
     }
 }
@@ -184,8 +184,14 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         senderInstance = alert
 
         Task {
-            await mailVC.attachLogs()
-            // as UIViewController is marked @MainActor, this will be executed on mainThread automatically
+            do {
+                let zipURL = try await CreateDebugReportUseCase(selfUserID: nil).invoke()
+                if let data = try? Data(contentsOf: zipURL) {
+                    mailVC.addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
+                }
+            } catch {
+                WireLogger.system.debug("no logs to attach: \(error)")
+            }
             await presentingViewController.present(mailVC, animated: true, completion: nil)
         }
     }

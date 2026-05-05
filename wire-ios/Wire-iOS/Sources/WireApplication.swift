@@ -25,18 +25,45 @@ final class WireApplication: UIApplication {
     private let shareDebugPresenter = ShareDebugReportPresenter()
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        guard Bundle.developerModeEnabled else { return }
         guard motion == .motionShake else { return }
+        
+        guard Bundle.developerModeEnabled else {
+            // default behaviour
+            presentDebugShareSheet()
+            return
+        }
 
-        if DeveloperFlag.shakeToReport.isOn {
-            shareDebugPresenter.present(from: topmostViewController(onlyFullScreen: false))
-        } else if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            developerToolsPresenter.presentIfNotDisplayed(
-                with: appDelegate.appRootRouter,
-                from: self.topmostViewController(onlyFullScreen: false)
-            )
+        guard DeveloperFlag.shakeToReport.isOn else {
+            // default internal builds behaviour
+            presentDeveloperTools()
+            return
+        }
+
+        guard shareDebugPresenter.isPresenting else {
+            presentDebugShareSheet()
+            return
+        }
+
+        // second gesture, go back to DeveloperTools
+        shareDebugPresenter.dismiss { [weak self] in
+            self?.presentDeveloperTools()
         }
     }
+    
+    private func presentDeveloperTools() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+        self.developerToolsPresenter.presentIfNotDisplayed(
+            with: appDelegate.appRootRouter,
+            from: self.topmostViewController(onlyFullScreen: false)
+        )
+    }
+    
+    private func presentDebugShareSheet() {
+        shareDebugPresenter.present(from: self.topmostViewController(onlyFullScreen: false))
+    }
+
 }
 
 extension WireApplication: NotificationSettingsRegistrable {

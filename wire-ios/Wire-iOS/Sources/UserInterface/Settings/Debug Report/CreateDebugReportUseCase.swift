@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLogging
+import ZIPFoundation
 
 // sourcery: AutoMockable
 protocol CreateDebugReportUseCaseProtocol {
@@ -26,21 +27,62 @@ protocol CreateDebugReportUseCaseProtocol {
 
 final class CreateDebugReportUseCase: CreateDebugReportUseCaseProtocol {
 
-    private let logsProvider: LogFilesProviding
+    enum UseCaseError: Error {
+        case noLogs(description: String)
+    }
 
-    init(logsProvider: LogFilesProviding = LogFilesProvider()) {
+    private let logsProvider: LogFilesProviding
+    private let selfUserID: UUID?
+
+    init(logsProvider: LogFilesProviding = LogFilesProvider(), selfUserID: UUID?) {
         self.logsProvider = logsProvider
+        self.selfUserID = selfUserID
     }
 
     func invoke() async throws -> URL {
-        try await withCheckedThrowingContinuation { [logsProvider] continuation in
+        try await withCheckedThrowingContinuation { [logsProvider, selfUserID] continuation in
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
-                    continuation.resume(returning: try logsProvider.generateLogFilesZip())
+                    continuation.resume(returning: try Self.createZip(logsProvider: logsProvider, selfUserID: selfUserID))
                 } catch {
                     continuation.resume(throwing: error)
                 }
             }
         }
+    }
+
+    // MARK: - Private
+
+    private static func createZip(logsProvider: LogFilesProviding, selfUserID: UUID?) throws -> URL {
+        let fileManager = FileManager.default
+        let logsDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("logs", isDirectory: true)
+
+        try? fileManager.removeItem(at: logsDirectory)
+
+        let logFileURLs = logsProvider.logFileURLs
+        guard !logFileURLs.isEmpty else {
+            throw UseCaseError.noLogs(description: logFileURLs.description)
+        }
+
+        try fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
+
+        let archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
+        try fileManager.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
+
+        let info = logsProvider.info(selfUserID: selfUserID)
+        let infoFileURL = archiveFolder.appendingPathComponent("info.txt")
+        try info.write(to: infoFileURL, atomically: true, encoding: .utf8)
+
+        for url in logFileURLs {
+            let copy = archiveFolder.appending(path: url.lastPathComponent, directoryHint: .notDirectory)
+            try fileManager.copyItem(at: url, to: copy)
+        }
+
+        let zipURL = logsDirectory.appendingPathComponent("logs.zip")
+        try fileManager.zipItem(at: archiveFolder, to: zipURL, shouldKeepParent: false, compressionMethod: .deflate)
+        try fileManager.removeItem(at: archiveFolder)
+
+        return zipURL
     }
 }

@@ -19,7 +19,6 @@
 import Foundation
 import MessageUI
 import WireCommonComponents
-import WireLogging
 import WireSystem
 
 extension MFMailComposeViewController {
@@ -40,16 +39,7 @@ extension MFMailComposeViewController {
 
 
         --DO NOT EDIT BELOW--
-        \(LogFilesProvider().info())
+        \(LogFilesProvider().info(selfUserID: nil))
         """
-    }
-
-    func attachLogs() {
-        do {
-            let data = try LogFilesProvider().generateLogFilesData()
-            addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
-        } catch {
-            WireLogger.system.debug("no logs for WireLogger to send: \(String(describing: error))")
-        }
     }
 }

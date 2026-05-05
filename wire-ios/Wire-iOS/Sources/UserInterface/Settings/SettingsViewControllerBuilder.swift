@@ -87,7 +87,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
     private func makeShareDebugBannerVC(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let viewModel = ShareDebugReportViewModel(
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfUserID: userSession.selfUser.remoteIdentifier
         )
         let bannerVC = UIHostingController(rootView: ShareDebugBannerView(viewModel: viewModel))
         bannerVC.view.backgroundColor = .clear

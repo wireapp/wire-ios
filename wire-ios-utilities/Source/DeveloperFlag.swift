@@ -99,7 +99,7 @@ public enum DeveloperFlag: String, CaseIterable {
             "Turn on to enable Core Crypto debug logs"
 
         case .shakeToReport:
-            "When on, shaking the device presents the debug report share sheet instead of developer tools."
+            "Turn on to enable default shake gesture to present debug report share sheet. Shake again to present DeveloperTools once debug report share sheet presented"
         }
     }
 
@@ -114,7 +114,6 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     private var defaultValue: Bool {
-        if self == .shakeToReport { return true }
         guard let bundleKey else {
             return false
         }

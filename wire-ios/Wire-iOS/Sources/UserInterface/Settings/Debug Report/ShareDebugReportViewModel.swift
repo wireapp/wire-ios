@@ -41,13 +41,14 @@ final class ShareDebugReportViewModel: ObservableObject {
     init(
         userSession: UserSession?,
         mainCoordinator: (any MainCoordinatorProtocol)?,
+        selfUserID: UUID? = nil,
         mailRecipient: String = WireEmail.shared.supportEmail,
-        createReport: CreateDebugReportUseCaseProtocol = CreateDebugReportUseCase()
+        createReport: CreateDebugReportUseCaseProtocol? = nil
     ) {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.mailRecipient = mailRecipient
-        self.createReport = createReport
+        self.createReport = createReport ?? CreateDebugReportUseCase(selfUserID: selfUserID)
         canShareViaWire = userSession != nil && mainCoordinator != nil
         canSendEmail = MFMailComposeViewController.canSendMail()
     }
@@ -87,23 +88,18 @@ final class ShareDebugReportViewModel: ObservableObject {
 
     func sendEmail() async {
         guard let viewController = topViewController() else { return }
-        let mailVC = MFMailComposeViewController()
-        let delegate = MailDelegate()
-        mailVC.mailComposeDelegate = delegate
-        objc_setAssociatedObject(mailVC, &mailDelegateKey, delegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        mailVC.setToRecipients([mailRecipient])
-        mailVC.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
-        mailVC.setMessageBody(mailVC.prefilledBody(), isHTML: false)
-
-        let indicator = BlockingActivityIndicator(view: viewController.view, accessibilityAnnouncement: nil, style: .card)
-        indicator.start(text: L10n.Localizable.Self.Settings.ShareDebugReport.creatingReport)
-
-        Task.detached(priority: .userInitiated) {
-            await mailVC.attachLogs()
-            await MainActor.run {
-                indicator.stop()
-                viewController.present(mailVC, animated: true)
+        await withReport(from: viewController) { url in
+            let mailVC = MFMailComposeViewController()
+            let delegate = MailDelegate()
+            mailVC.mailComposeDelegate = delegate
+            objc_setAssociatedObject(mailVC, &mailDelegateKey, delegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            mailVC.setToRecipients([self.mailRecipient])
+            mailVC.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
+            mailVC.setMessageBody(mailVC.prefilledBody(), isHTML: false)
+            if let data = try? Data(contentsOf: url) {
+                mailVC.addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
             }
+            viewController.present(mailVC, animated: true)
         }
     }
 

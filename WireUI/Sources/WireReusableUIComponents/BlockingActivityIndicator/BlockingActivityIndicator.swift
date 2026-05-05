@@ -86,6 +86,7 @@ public final class BlockingActivityIndicator {
 private struct BlockingActivityIndicatorState {
     var weakReferences = [WeakReference<BlockingActivityIndicator>]()
     private(set) var activityIndicatorView = ProgressSpinner()
+    var blockingView: UIView?
 }
 
 // MARK: - UIView + BlockingActivityIndicators
@@ -105,6 +106,7 @@ private extension UIView {
 
             // dim overlay which swallows touch events
             let blockingView = UIView()
+            state.blockingView = blockingView
             blockingView.backgroundColor = .black.withAlphaComponent(0.5)
             blockingView.isUserInteractionEnabled = true
             blockingView.translatesAutoresizingMaskIntoConstraints = false
@@ -168,7 +170,7 @@ private extension UIView {
 
         state.weakReferences = state.weakReferences.filter { $0.reference != nil && $0.reference !== reference }
         if state.weakReferences.isEmpty {
-            state.activityIndicatorView.superview!.removeFromSuperview()
+            state.blockingView?.removeFromSuperview()
             blockingActivityIndicatorState = nil
         }
     }

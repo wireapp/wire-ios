@@ -18,6 +18,8 @@
 
 import MessageUI
 import UIKit
+import WireCommonComponents
+import WireLogging
 import WireReusableUIComponents
 import WireSystem
 
@@ -53,13 +55,17 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         let activityIndicator = BlockingActivityIndicator(view: topMostViewController!.view)
         activityIndicator.start()
 
-        Task.detached(priority: .userInitiated) {
-            await mailComposeViewController.attachLogs()
-
-            await self.present(mailComposeViewController, animated: true, completion: nil)
-            await MainActor.run {
-                activityIndicator.stop()
+        Task {
+            do {
+                let zipURL = try await CreateDebugReportUseCase(selfUserID: nil).invoke()
+                if let data = try? Data(contentsOf: zipURL) {
+                    mailComposeViewController.addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
+                }
+            } catch {
+                WireLogger.system.debug("no logs to attach: \(error)")
             }
+            await self.present(mailComposeViewController, animated: true, completion: nil)
+            activityIndicator.stop()
         }
     }
 }

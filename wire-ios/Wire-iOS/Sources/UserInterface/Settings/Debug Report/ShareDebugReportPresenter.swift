@@ -22,7 +22,21 @@ import WireSyncEngine
 /// Presents the share debug report flow from the shake gesture.
 final class ShareDebugReportPresenter {
 
-    private var isPresenting = false
+    private(set) var isPresenting = false
+    private weak var presentedSheet: UIAlertController?
+
+    @MainActor
+    func dismiss(completion: @escaping @MainActor () -> Void) {
+        guard isPresenting, let sheet = presentedSheet else {
+            completion()
+            return
+        }
+        sheet.dismiss(animated: true) { [weak self] in
+            self?.isPresenting = false
+            self?.presentedSheet = nil
+            completion()
+        }
+    }
 
     @MainActor
     func present(from topMostViewController: UIViewController?) {
@@ -31,10 +45,12 @@ final class ShareDebugReportPresenter {
 
         let userSession = SessionManager.shared?.activeUserSession
         let mainCoordinator = ZClientViewController.shared?.mainCoordinator
+        let selfUserID = (userSession as? ZMUserSession)?.selfUser.remoteIdentifier
 
         let viewModel = ShareDebugReportViewModel(
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfUserID: selfUserID
         )
 
         typealias l10n = L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet
@@ -45,22 +61,26 @@ final class ShareDebugReportPresenter {
         )
 
         if viewModel.canShareViaWire {
-            actionSheet.addAction(UIAlertAction(title: l10n.shareViaWire, style: .default) { _ in
+            actionSheet.addAction(UIAlertAction(title: l10n.shareViaWire, style: .default) { [weak self] _ in
+                self?.isPresenting = false
                 Task { await viewModel.shareViaWire() }
             })
         }
         if viewModel.canSendEmail {
-            actionSheet.addAction(UIAlertAction(title: l10n.sendEmail, style: .default) { _ in
+            actionSheet.addAction(UIAlertAction(title: l10n.sendEmail, style: .default) { [weak self] _ in
+                self?.isPresenting = false
                 Task { await viewModel.sendEmail() }
             })
         }
-        actionSheet.addAction(UIAlertAction(title: l10n.share, style: .default) { _ in
+        actionSheet.addAction(UIAlertAction(title: l10n.share, style: .default) { [weak self] _ in
+            self?.isPresenting = false
             Task { await viewModel.shareViaActivitySheet() }
         })
         actionSheet.addAction(UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { [weak self] _ in
             self?.isPresenting = false
         })
 
+        presentedSheet = actionSheet
         viewController.present(actionSheet, animated: true)
     }
 }

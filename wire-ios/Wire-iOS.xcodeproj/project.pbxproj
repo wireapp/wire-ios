@@ -787,8 +787,6 @@
 				SecurityLevel/SecurityLevelViewTests.swift,
 				SelfProfileViewControllerTests.swift,
 				"Settings/Debug Report/LogFilesProviderTests.swift",
-				"Settings/Debug Report/SettingsDebugReportViewControllerSnapshotTests.swift",
-				"Settings/Debug Report/SettingsDebugReportViewModelTests.swift",
 				Settings/SettingsTests.swift,
 				"Settings+Reset.swift",
 				SettingsTableViewControllerSnapshotTests.swift,
