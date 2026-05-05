@@ -19,6 +19,7 @@
 import Combine
 import WireDataModelSupport
 import WireDomain
+import WireDomainSupport
 import WireLoggingSupport
 import WireNetwork
 import WireRequestStrategySupport
@@ -169,6 +170,13 @@ class ZMUserSessionTestsBase: MessagingTest {
         )
         let logFilesProvider = LogFilesProvidingMock()
 
+        let updateBackendMetadataUseCase = MockUpdateBackendMetadataUseCaseProtocol()
+        updateBackendMetadataUseCase.invoke_MockValue = ResolvedBackendMetadata(
+            apiVersion: .v15,
+            domain: "example.com",
+            isFederationEnabled: true
+        )
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             backendEnvironment: backendEnvironment,
@@ -193,7 +201,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             minTLSVersion: nil,
             journal: journal,
             logFilesProvider: logFilesProvider,
-            faultyMLSRemovalKeysByDomain: [:]
+            faultyMLSRemovalKeysByDomain: [:],
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase
         )
 
         let userSession = builder.build()

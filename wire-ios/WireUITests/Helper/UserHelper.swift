@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireNetwork
 
 struct Member {
@@ -26,9 +27,17 @@ struct Member {
     var id: String?
 }
 
-class UserHelper {
+final class UserHelper {
+    private struct InstanceKey: Hashable {
+        let apiVersion: APIVersion
+        let backend: BackendTarget
+    }
+
+    private static var instances = OSAllocatedUnfairLock<[InstanceKey: UserHelper]>(uncheckedState: [:])
+
     private let httpClient = HttpClient()
 
+    let backend: BackendTarget
     let backendURL: URL
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
@@ -44,11 +53,46 @@ class UserHelper {
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
+    private let environment: BackendEnvironment
 
-    init(
+    static func instance(
         apiVersion: APIVersion = APIVersion.productionVersions.max()!,
-        environment: BackendEnvironment = BackendContext.backendEnvironment
+        backend: BackendTarget = .staging
+    ) -> UserHelper {
+        let key = InstanceKey(apiVersion: apiVersion, backend: backend)
+
+        if let instance = instances.withLock({ $0[key] }) {
+            return instance
+        }
+
+        let instance = UserHelper(apiVersion: apiVersion, backend: backend)
+        instances.withLock { $0[key] = instance }
+        return instance
+    }
+
+    static var `default`: UserHelper {
+        instance(
+            apiVersion: APIVersion.productionVersions.max()!,
+            backend: .staging
+        )
+    }
+
+    /// Deletes users created by all instances of UserHelper.
+    static func deleteCreatedUsers() async {
+        let instances = instances.withLock { $0 }.values
+
+        for instance in instances {
+            await instance.deleteCreatedUsers()
+        }
+    }
+
+    private init(
+        apiVersion: APIVersion,
+        backend: BackendTarget
     ) {
+        let environment = backend.environment
+
+        self.backend = backend
         self.apiVersion = apiVersion
         self.backendURL = environment.url
         self.createdUsers = []
@@ -67,12 +111,12 @@ class UserHelper {
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.environment = environment
     }
 
     /// Fetch basicAuth Info from Env variable
-    /// - Parameter backend: backend
     /// - Returns: basicAuth String
-    func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
+    func basicAuth() -> String {
         switch backend {
         case .staging:
             guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"] else {
@@ -190,17 +234,25 @@ class UserHelper {
     }
 
     func getVerificationCode(user: UserInfo) async throws -> String {
-        try await InbucketClient.getVerificationCode(email: user.email)
+        try await InbucketClient.getVerificationCode(email: user.email, backend: backend)
     }
 
-    /// Delete  created test users
-    func deleteCreatedUsers() async {
-        for user in createdUsers {
+    /// Delete created test users for this helper instance.
+    private func deleteCreatedUsers() async {
+        let users = createdUsers
+        createdUsers.removeAll()
+
+        defer {
+            cookieStorage.cookies = []
+            authenticationManager.accessToken = nil
+        }
+
+        for user in users {
             do {
                 if let teamID = try await selfUserAPI.getSelfUser().teamID {
                     // If team exists, try deleting the team
                     try await authenticationAPI.requestVerificationCode(for: user.email)
-                    let code = try await InbucketClient.getVerificationCode(email: user.email)
+                    let code = try await InbucketClient.getVerificationCode(email: user.email, backend: backend)
                     try await deleteTeam(teamID: teamID, password: user.password, code: code)
                 } else {
                     // If no team, delete user
@@ -271,7 +323,7 @@ class UserHelper {
     /// - Parameter user: userInfo
     func disableConsentPopup(for user: UserInfo) async throws {
 
-        let baseURL = BackendContext.backendEnvironment.url
+        let baseURL = environment.url
         let versionedURL = baseURL
             .appendingPathComponent(String(describing: apiVersion))
             .appendingPathComponent("properties")
@@ -693,6 +745,19 @@ extension BackendEnvironment {
         pinnedKeys: [],
         proxySettings: nil
     )
+}
+
+extension BackendTarget {
+    var environment: BackendEnvironment {
+        switch self {
+        case .staging:
+            .staging
+        case .anta:
+            .anta
+        case .bella:
+            .bella
+        }
+    }
 }
 
 enum CreateConversationOption {

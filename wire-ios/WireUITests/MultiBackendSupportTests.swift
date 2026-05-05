@@ -25,8 +25,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         _ backend: BackendTarget
     ) async throws -> (AccountSettingsPage, UserInfo) {
 
-        let userHelper = UserHelper()
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.instance(backend: backend).createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
 
@@ -46,9 +45,6 @@ final class MultiBackendSupportTests: WireUITestCase {
 
     @MainActor
     func testAddMultiBackendAccounts_TC_8940() async throws {
-
-        defer { BackendContext.current = .staging }
-
         var (accountPageBackend1, userBackend1) = try await testLoginToBackend(.staging)
 
         _ = try accountPageBackend1
@@ -59,7 +55,7 @@ final class MultiBackendSupportTests: WireUITestCase {
 
         try switchBackend(target: .anta)
 
-        let (accountPageBackend2, userBackend2) = try await testLoginToBackend(.anta)
+        let (accountPageBackend2, _) = try await testLoginToBackend(.anta)
 
         accountPageBackend1 = try accountPageBackend2
             .backToSettings()
@@ -75,6 +71,74 @@ final class MultiBackendSupportTests: WireUITestCase {
             expectedUser: userBackend1,
             expectedDomain: BackendTarget.staging.domainInfo
         )
+    }
+
+    @MainActor
+    func testSwitchingAccounts_TC_8941() async throws {
+        // Create user A on staging with a single conversation
+        let userA = try await UserHelper.default.createPersonalUser()
+        let conversationA = "Conversation A"
+        try await UserHelper.default.createGroupConversations(qualifiedIds: [], owner: userA, groupName: conversationA)
+
+        // Create user B on staging with a single conversation
+        let userB = try await UserHelper.default.createPersonalUser()
+        let conversationB = "Conversation B"
+        try await UserHelper.default.createGroupConversations(qualifiedIds: [], owner: userB, groupName: conversationB)
+
+        // Create user C on anta with a single conversation
+        let userC = try await UserHelper.instance(backend: .anta).createPersonalUser()
+        let conversationC = "Conversation C"
+        try await UserHelper.instance(backend: .anta).createGroupConversations(
+            qualifiedIds: [],
+            owner: userC,
+            groupName: conversationC
+        )
+
+        // Login to user A
+        _ = try app
+            .loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+
+        // Login to user B
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app
+            .loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
+
+        // Login to user C
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        try switchBackend(target: .anta)
+
+        _ = try app
+            .loginUser(email: userC.email, password: userC.password)
+            .acceptPopup()
+
+        // Switch account to user A and verify the correct conversation is shown
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: userA.name)
+
+        XCTAssert(try ConversationsPage().conversationCell(named: conversationA).waitForExistence(timeout: 2.0))
+
+        // Switch account to user B and verify the correct conversation is shown
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: userB.name)
+
+        XCTAssert(try ConversationsPage().conversationCell(named: conversationB).waitForExistence(timeout: 2.0))
+
+        // Switch account to user C and verify the correct conversation is shown
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: userC.name)
+
+        XCTAssert(try ConversationsPage().conversationCell(named: conversationC).waitForExistence(timeout: 2.0))
     }
 
     private func verifySwitchingAccount(
