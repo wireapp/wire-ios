@@ -22,7 +22,7 @@ final class ConversationTests: WireUITestCase {
 
     @MainActor
     func testClearContent_TC_9488() async throws {
-        let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
+        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
 
@@ -52,7 +52,7 @@ final class ConversationTests: WireUITestCase {
 
     @MainActor
     func testLeaveGroup_TC_8861() async throws {
-        let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
+        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamOwner)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
 
@@ -81,7 +81,7 @@ final class ConversationTests: WireUITestCase {
 
     @MainActor
     func testLeaveAndClearGroup_TC_10525() async throws {
-        let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
+        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamOwner)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
 
