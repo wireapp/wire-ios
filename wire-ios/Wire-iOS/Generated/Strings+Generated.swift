@@ -6133,14 +6133,14 @@ internal enum L10n {
           /// Share Report Via Wire
           internal static let shareReport = L10n.tr("Localizable", "self.settings.technical_report.share_report", fallback: "Share Report Via Wire")
           internal enum Mail {
-            /// Wire Debug Report
-            internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Wire Debug Report")
+            /// Issue report
+            internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Issue report")
           }
           internal enum MailBody {
-            /// Please fill in the following
-            internal static let firstline = L10n.tr("Localizable", "self.settings.technical_report.mail_body.firstline", fallback: "Please fill in the following")
-            /// Date and Time of the issue occured:
-            internal static let section1 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section1", fallback: "Date and Time of the issue occured:")
+            /// Please describe what happened below, so that we can understand and reproduce the problem:
+            internal static let firstline = L10n.tr("Localizable", "self.settings.technical_report.mail_body.firstline", fallback: "Please describe what happened below, so that we can understand and reproduce the problem:")
+            /// Date and Time of the issue occurred:
+            internal static let section1 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section1", fallback: "Date and Time of the issue occurred:")
             /// What Happened:
             internal static let section2 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section2", fallback: "What Happened:")
             /// Steps to reproduce (if relevant):

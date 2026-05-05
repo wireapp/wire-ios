@@ -37,9 +37,6 @@ extension MFMailComposeViewController {
 
         - \(l10n.section3)
 
-
-        --DO NOT EDIT BELOW--
-        \(LogFilesProvider().info(selfUserID: nil))
         """
     }
 }
