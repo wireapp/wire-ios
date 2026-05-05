@@ -49,8 +49,8 @@ final class ShareDebugReportViewModel: ObservableObject {
         self.mainCoordinator = mainCoordinator
         self.mailRecipient = mailRecipient
         self.createReport = createReport ?? CreateDebugReportUseCase(selfUserID: selfUserID)
-        canShareViaWire = userSession != nil && mainCoordinator != nil
-        canSendEmail = MFMailComposeViewController.canSendMail()
+        self.canShareViaWire = userSession != nil && mainCoordinator != nil
+        self.canSendEmail = MFMailComposeViewController.canSendMail()
     }
 
     func showOptions() {
@@ -109,7 +109,11 @@ final class ShareDebugReportViewModel: ObservableObject {
         from viewController: UIViewController,
         then action: @escaping @MainActor (URL) async -> Void
     ) async {
-        let indicator = BlockingActivityIndicator(view: viewController.view, accessibilityAnnouncement: nil, style: .card)
+        let indicator = BlockingActivityIndicator(
+            view: viewController.view,
+            accessibilityAnnouncement: nil,
+            style: .card
+        )
         indicator.start(text: L10n.Localizable.Self.Settings.ShareDebugReport.creatingReport)
         do {
             let url = try await createReport.invoke()

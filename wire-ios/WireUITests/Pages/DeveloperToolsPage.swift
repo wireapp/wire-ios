@@ -16,18 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import XCTest
 
 class DeveloperToolsPage: PageModel {
-    
+
     override var pageMainElement: XCUIElement {
         app.navigationBars["Developer tools"]
     }
-    
+
     func hide() {
         app.buttons["Close"].firstMatch.tap()
     }
-    
-}
 
+}

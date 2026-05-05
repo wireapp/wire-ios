@@ -39,7 +39,10 @@ final class ShareDebugReportTests: WireUITestCase {
         // THEN
         XCTAssertTrue(shareDebugPage.shareButton.exists, "Share button should be present")
         XCTAssertTrue(shareDebugPage.cancelButton.exists, "Cancel button should be present")
-        XCTAssertFalse(shareDebugPage.shareViaWireButton.exists, "Share via Wire should not be available without a session")
+        XCTAssertFalse(
+            shareDebugPage.shareViaWireButton.exists,
+            "Share via Wire should not be available without a session"
+        )
         XCTAssertFalse(shareDebugPage.sendEmailButton.exists, "Send email should not be available on simulator")
 
         shareDebugPage.selectShare()
@@ -90,8 +93,10 @@ final class ShareDebugReportTests: WireUITestCase {
 
         let conversationsPage = try await loginToBackend(user: owner)
         let settingsPage = try conversationsPage.openSettings()
-        XCTAssertTrue(settingsPage.shareDebugBanner.waitForExistence(timeout: 10),
-                      "Share debug banner should be visible on Settings page")
+        XCTAssertTrue(
+            settingsPage.shareDebugBanner.waitForExistence(timeout: 10),
+            "Share debug banner should be visible on Settings page"
+        )
 
         // WHEN
         try settingsPage.tapShareDebugBanner()

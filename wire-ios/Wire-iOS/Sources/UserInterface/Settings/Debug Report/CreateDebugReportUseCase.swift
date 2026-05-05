@@ -43,7 +43,10 @@ final class CreateDebugReportUseCase: CreateDebugReportUseCaseProtocol {
         try await withCheckedThrowingContinuation { [logsProvider, selfUserID] continuation in
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
-                    continuation.resume(returning: try Self.createZip(logsProvider: logsProvider, selfUserID: selfUserID))
+                    continuation.resume(returning: try Self.createZip(
+                        logsProvider: logsProvider,
+                        selfUserID: selfUserID
+                    ))
                 } catch {
                     continuation.resume(throwing: error)
                 }

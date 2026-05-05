@@ -47,10 +47,10 @@ final class DeveloperFlagOperation: LaunchSequenceOperation {
             flag.enable(isOn)
         }
         #if DEBUG
-        for (key, value) in UITestConfig.environment.developerFlags {
-            guard let flag = DeveloperFlag(rawValue: key) else { continue }
-            flag.enable(value)
-        }
+            for (key, value) in UITestConfig.environment.developerFlags {
+                guard let flag = DeveloperFlag(rawValue: key) else { continue }
+                flag.enable(value)
+            }
         #endif
     }
 }
