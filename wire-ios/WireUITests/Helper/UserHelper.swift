@@ -215,8 +215,17 @@ class UserHelper {
     /// Register a team owner
     /// - Returns: qualifiedId of the owner and ownerInfo
     func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+        let generated = UserGenerator.generateUniqueUserInfo()
+        return try await registerUserAsTeamOwner(teamName: generated.teamName)
+    }
+
+    /// Register a team owner with a provided team name.
+    /// - Parameter teamName: team name to create.
+    /// - Returns: qualifiedId of the owner and ownerInfo
+    func registerUserAsTeamOwner(teamName: String) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
 
         let teamOwner = UserGenerator.generateUniqueUserInfo()
+        teamOwner.teamName = teamName
 
         let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
             email: teamOwner.email,
@@ -227,23 +236,17 @@ class UserHelper {
 
         teamOwner.teamID = teamID
 
-        // Get activation code
         let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
             forEmail: teamOwner.email,
             basicAuth: basicAuth()
         )
 
-        // Activate user
         try await authenticationAPI.activateUser(email: teamOwner.email, key: activationKey, code: activationCode)
 
         authenticationManager.accessToken = try await fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
-
-        // Set username
-        try await selfUserAPI.updateHandle(handle: teamOwner.username)
-
         createdUsers.append(teamOwner)
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }
@@ -738,6 +741,9 @@ class MockAuthManager: AuthenticationManagerProtocol {
     }
 
     func refreshAccessToken() async throws -> WireNetwork.AccessToken {
-        throw AccessTokenError.notImplemented
+        guard let accessToken else {
+            throw AccessTokenError.notImplemented
+        }
+        return accessToken
     }
 }
