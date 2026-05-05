@@ -145,6 +145,8 @@ public enum Locators {
         case sendAudio = "Send"
         case playAudioFile
         case recordingTime
+        case showOtherRowButton
+        case pingButton
 
     }
 

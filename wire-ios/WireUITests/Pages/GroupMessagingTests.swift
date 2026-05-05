@@ -231,6 +231,46 @@ final class GroupMessagingTests: WireUITestCase {
         )
     }
 
+    @MainActor
+    func testSendPingInGroupConversation_TC_8838() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+
+        // WHEN
+        let activeConversationPage = try login(user: groupTeam.teamMember)
+            .openConversation()
+            .sendPing()
+
+        // THEN
+        try activeConversationPage.verifyPingSent()
+    }
+
+    @MainActor
+    func testReceivePingInGroupConversation_TC_8845() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+        let conversationsPage = try login(user: groupTeam.teamOwner)
+
+        // WHEN
+        try await testServicesClient.sendPing(
+            user: groupTeam.teamMember,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage
+                .receivedPing(for: groupTeam.teamMember.name)
+                .waitForExistence(timeout: 2),
+            "Expected ping message from \(groupTeam.teamMember.name) not found"
+        )
+    }
+
     private func verifyMessageReceivedAndSenderInfo(
         attachment: XCUIElement,
         on activeConversationPage: ActiveConversationPage,

@@ -179,6 +179,14 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.recordingTime.rawValue]
     }
 
+    var showOtherRowButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.showOtherRowButton.rawValue]
+    }
+
+    var pingButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.pingButton.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -319,6 +327,33 @@ class ActiveConversationPage: PageModel {
         }
         heliumButton.tap()
         sendAudioButton.tap()
+        return self
+    }
+
+    func receivedPing(for sender: String) -> XCUIElement {
+        let predicate = NSPredicate(
+            format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+            sender,
+            "pinged"
+        )
+        return app.otherElements.containing(predicate).firstMatch
+    }
+
+    @discardableResult
+    func sendPing() throws -> ActiveConversationPage {
+        showOtherRowButton.tap()
+        pingButton.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func verifyPingSent() throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.otherElements.containing(
+                NSPredicate(format: "label CONTAINS %@", "You pinged")
+            ).firstMatch.waitForExistence(timeout: 2),
+            "Expected ping message not found"
+        )
         return self
     }
 }
