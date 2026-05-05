@@ -102,14 +102,15 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
         // Heading (only for named conversations)
         let heading: NSAttributedString?
         if let name = conversation.displayName, !name.isEmpty {
-            let headingText: String = if isChannel {
-                creator.isSelfUser
-                    ? L10n.Localizable.Content.System.Channel.WithName.titleYou(senderName)
-                    : L10n.Localizable.Content.System.Channel.WithName.title(senderName)
-            } else {
-                creator.isSelfUser
-                    ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName)
-                    : L10n.Localizable.Content.System.Conversation.WithName.title(senderName)
+            let headingText = switch (isChannel, creator.isSelfUser) {
+            case (true, true):
+                L10n.Localizable.Content.System.Channel.WithName.titleYou(senderName)
+            case (true, false):
+                L10n.Localizable.Content.System.Channel.WithName.title(senderName)
+            case (false, true):
+                L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName)
+            case (false, false):
+                L10n.Localizable.Content.System.Conversation.WithName.title(senderName)
             }
             let capitalizedHeading = headingText.prefix(1).uppercased() + headingText.dropFirst()
             let text = capitalizedHeading.attributedString && font
