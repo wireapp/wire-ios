@@ -20,62 +20,92 @@ import XCTest
 
 final class ShareDebugReportTests: WireUITestCase {
 
-    // MARK: - Tests
-
-    /// TC: Navigate to Settings, tap the debug banner, then share via the share sheet.
     @MainActor
-    func testShareDebugReport_viaNativeShare() async throws {
-        let user = try await userHelper.createPersonalUser()
-
-        let conversationsPage = try await loginToBackend(user: user)
-        let settingsPage = try conversationsPage.openSettings()
-
-        XCTAssertTrue(settingsPage.shareDebugBanner.waitForExistence(timeout: 10),
-                      "Share debug banner should be visible on Settings page")
-
-        settingsPage.tapShareDebugBanner()
-
-        // Loading overlay appears, then action sheet
-        let shareButton = app.buttons["Share"].firstMatch
-        XCTAssertTrue(shareButton.waitForExistence(timeout: 15),
-                      "Share action sheet should appear after tapping banner")
-
-        shareButton.tap()
-
-        // Native share sheet should appear
-        let shareSheet = app.otherElements["ActivityListView"].firstMatch
-        XCTAssertTrue(shareSheet.waitForExistence(timeout: 10),
-                      "Native share sheet should be presented")
-
-        // Dismiss
-        app.buttons["Close"].firstMatch.tap()
+    override func setUpWithError() throws {
+        uiTestConfig[.shakeToReport] = true
+        try super.setUpWithError()
     }
 
-    /// TC: Navigate to Settings, tap the debug banner, then share via Wire.
+    /// On the login screen there is no user session and no mail client (simulator),
+    /// so only "Share" and "Cancel" should appear — 2 options total.
+    func testShakeGesture_onLoginScreen_presentsShareDebugActionSheet() throws {
+        // GIVEN
+        _ = try WelcomePage()
+
+        // WHEN
+        simulateShakeGesture()
+        let shareDebugPage = try ShareDebugReportPage()
+
+        // THEN
+        XCTAssertTrue(shareDebugPage.shareButton.exists, "Share button should be present")
+        XCTAssertTrue(shareDebugPage.cancelButton.exists, "Cancel button should be present")
+        XCTAssertFalse(shareDebugPage.shareViaWireButton.exists, "Share via Wire should not be available without a session")
+        XCTAssertFalse(shareDebugPage.sendEmailButton.exists, "Send email should not be available on simulator")
+
+        shareDebugPage.selectShare()
+
+        // Save the report to Files via the native share sheet
+        try ActivitySheetPage()
+            .selectSaveToFiles()
+            .save()
+    }
+
+    /// Once logged in, "Share via Wire" is also available — 3 options total.
+    /// "Send email to Support" is still absent because the simulator has no mail client.
     @MainActor
-    func testShareDebugReport_viaWire() async throws {
-        let user = try await userHelper.createPersonalUser()
+    func testShakeGesture_onConversationScreen_presentsShareDebugActionSheet() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+        _ = try await loginToBackend(user: user)
 
-        let conversationsPage = try await loginToBackend(user: user)
+        // WHEN
+        simulateShakeGesture()
+        let shareDebugPage = try ShareDebugReportPage()
+
+        // THEN
+        XCTAssertTrue(shareDebugPage.shareViaWireButton.exists, "Share via Wire should be available when logged in")
+        XCTAssertTrue(shareDebugPage.shareButton.exists, "Share button should be present")
+        XCTAssertTrue(shareDebugPage.cancelButton.exists, "Cancel button should be present")
+        XCTAssertFalse(shareDebugPage.sendEmailButton.exists, "Send email should not be available on simulator")
+    }
+
+    /// The debug report banner in Settings should also trigger the action sheet,
+    /// and the report can be shared to a group conversation via Wire.
+    @MainActor
+    func testShareDebugReportBanner() async throws {
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (_, owner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let ownerToken = try await UserHelper.default.fetchAccessToken(email: owner.email, password: owner.password)
+        let teamID = try XCTUnwrap(owner.teamID)
+        let (memberQualifiedID, _) = try await UserHelper.default.registerUsersAsTeamMember(
+            ownerAccessToken: ownerToken.token,
+            teamID: teamID
+        )
+        try await UserHelper.default.createGroupConversations(
+            qualifiedIds: [memberQualifiedID],
+            owner: owner,
+            groupName: groupName
+        )
+
+        let conversationsPage = try await loginToBackend(user: owner)
         let settingsPage = try conversationsPage.openSettings()
-
         XCTAssertTrue(settingsPage.shareDebugBanner.waitForExistence(timeout: 10),
                       "Share debug banner should be visible on Settings page")
 
-        settingsPage.tapShareDebugBanner()
+        // WHEN
+        try settingsPage.tapShareDebugBanner()
+            .selectShareViaWire()
 
-        let shareViaWireButton = app.buttons["Share via Wire"].firstMatch
-        XCTAssertTrue(shareViaWireButton.waitForExistence(timeout: 15),
-                      "Share via Wire action should appear in action sheet")
+        try ShareViaWirePage()
+            .selectConversation(name: groupName)
+            .send()
 
-        shareViaWireButton.tap()
-
-        // Share via Wire sheet should appear
-        let shareViaWireSheet = app.navigationBars["Share"].firstMatch
-        XCTAssertTrue(shareViaWireSheet.waitForExistence(timeout: 10),
-                      "Share via Wire sheet should be presented")
-
-        // Dismiss
-        app.buttons["Cancel"].firstMatch.tap()
+        // THEN
+        let activeConversation = try ActiveConversationPage()
+        XCTAssertTrue(
+            activeConversation.fileLabels.firstMatch.waitForExistence(timeout: 30),
+            "File message should appear in '\(groupName)' after sharing the debug report"
+        )
     }
 }

@@ -53,10 +53,10 @@ class SettingsPage: PageModel {
     }
 
     @discardableResult
-    func tapShareDebugBanner() -> SettingsPage {
+    func tapShareDebugBanner() throws -> ShareDebugReportPage {
         XCTAssertTrue(shareDebugBanner.waitForExistence(timeout: 5))
         shareDebugBanner.tap()
-        return self
+        return try ShareDebugReportPage()
     }
 
     func switchToConversationsTab() throws -> ConversationsPage {

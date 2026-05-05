@@ -23,7 +23,7 @@ class ShareViaWirePage: PageModel {
     private typealias ids = Locators.ShareViaWirePage
 
     override var pageMainElement: XCUIElement {
-        app.navigationBars["Share"].firstMatch
+        closeButton
     }
 
     var sendButton: XCUIElement {

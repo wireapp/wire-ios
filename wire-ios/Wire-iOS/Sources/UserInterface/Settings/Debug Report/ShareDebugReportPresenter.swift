@@ -68,7 +68,7 @@ final class ShareDebugReportPresenter {
                 self?.isPresenting = false
                 Task { await viewModel.shareViaWire() }
             }
-            action.accessibilityIdentifier = ids.shareViaWireButton.rawValue
+            action.setValue(ids.shareViaWireButton.rawValue, forKey: "accessibilityIdentifier")
             actionSheet.addAction(action)
         }
         if viewModel.canSendEmail {
@@ -76,20 +76,20 @@ final class ShareDebugReportPresenter {
                 self?.isPresenting = false
                 Task { await viewModel.sendEmail() }
             }
-            action.accessibilityIdentifier = ids.sendEmailButton.rawValue
+            action.setValue(ids.sendEmailButton.rawValue, forKey: "accessibilityIdentifier")
             actionSheet.addAction(action)
         }
         let shareAction = UIAlertAction(title: l10n.share, style: .default) { [weak self] _ in
             self?.isPresenting = false
             Task { await viewModel.shareViaActivitySheet() }
         }
-        shareAction.accessibilityIdentifier = ids.shareButton.rawValue
+        shareAction.setValue(ids.shareButton.rawValue, forKey: "accessibilityIdentifier")
         actionSheet.addAction(shareAction)
 
         let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { [weak self] _ in
             self?.isPresenting = false
         }
-        cancelAction.accessibilityIdentifier = ids.cancelButton.rawValue
+        cancelAction.setValue(ids.cancelButton.rawValue, forKey: "accessibilityIdentifier")
         actionSheet.addAction(cancelAction)
 
         presentedSheet = actionSheet

@@ -49,9 +49,9 @@ class ShareDebugReportPage: PageModel {
     }
 
     @discardableResult
-    func selectShareViaWire() -> Self {
+    func selectShareViaWire() throws -> ShareViaWirePage {
         shareViaWireButton.tap()
-        return self
+        return try ShareViaWirePage()
     }
 
     @discardableResult

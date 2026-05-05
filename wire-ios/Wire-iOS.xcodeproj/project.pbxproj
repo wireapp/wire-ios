@@ -859,6 +859,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				DeviceManagement/MockContextProvider.swift,
+				"Settings/Debug Report/CreateDebugReportUseCaseTests.swift",
 				Settings/SettingsPropertyTests.swift,
 			);
 			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;

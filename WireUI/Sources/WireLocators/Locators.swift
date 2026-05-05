@@ -107,6 +107,12 @@ public enum Locators {
         case closeButton
     }
 
+    public enum ActivitySheetPage: String {
+
+        case sheet = "ActivityListView"
+        case saveToFiles = "Save to Files"
+    }
+
     public enum AccountSettingsPage: String {
 
         // TODO: [WPB-21952] Improve these identifiers later.

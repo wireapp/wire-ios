@@ -69,16 +69,20 @@ struct ShareDebugBannerView: View {
                 Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.shareViaWire) {
                     Task { await viewModel.shareViaWire() }
                 }
+                .accessibilityIdentifier(Locators.ShareDebugReportPage.shareViaWireButton.rawValue)
             }
             if viewModel.canSendEmail {
                 Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.sendEmail) {
                     Task { await viewModel.sendEmail() }
                 }
+                .accessibilityIdentifier(Locators.ShareDebugReportPage.sendEmailButton.rawValue)
             }
             Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.share) {
                 Task { await viewModel.shareViaActivitySheet() }
             }
+            .accessibilityIdentifier(Locators.ShareDebugReportPage.shareButton.rawValue)
             Button(L10n.Localizable.General.cancel, role: .cancel) {}
+                .accessibilityIdentifier(Locators.ShareDebugReportPage.cancelButton.rawValue)
         } message: {
             Text(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.message)
         }
