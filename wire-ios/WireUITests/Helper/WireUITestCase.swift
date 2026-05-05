@@ -62,7 +62,8 @@ class WireUITestCase: XCTestCase {
 
     @MainActor
     override func tearDown() async throws {
-        await app.terminate()
+        app?.terminate()
+        app = nil
         await callingServiceClient.destroyCreatedInstances()
         await UserHelper.deleteCreatedUsers()
         await ssoHelper.cleanUpOktaResources()
