@@ -25,8 +25,8 @@ final class BackupRestoreHistoryTests: WireUITestCase {
     func testCreateBackupAndRestoreHistory_TC_8928_TC_8930_TC_8805() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
@@ -37,7 +37,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         var teamMembers: [UserInfo] = []
 
         for _ in 0 ..< countOfMembers {
-            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+            let (qualifiedId, teamMember) = try await UserHelper.default.registerUsersAsTeamMember(
                 ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
@@ -45,7 +45,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             teamMembers.append(teamMember)
         }
 
-        try await userHelper.createGroupConversations(
+        try await UserHelper.default.createGroupConversations(
             qualifiedIds: qualifiedIds,
             owner: teamOwner,
             groupName: groupName
