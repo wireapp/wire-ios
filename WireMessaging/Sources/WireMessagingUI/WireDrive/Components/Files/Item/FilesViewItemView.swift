@@ -116,14 +116,17 @@ struct FilesItemView: View {
             .padding(.vertical, 8)
 
             Divider()
-        }
-        .contentShape(Rectangle()) // Tap area
+
+        }.contentShape(Rectangle()) // Tap area
     }
 
     @ViewBuilder
     private func icon() -> some View {
         switch viewModel.fileTracker.state {
-        case .notLoaded, .loaded(showReadyToOpen: false), .failed:
+        case .notLoaded,
+             .loaded(showReadyToOpen: false),
+             .loaded(showReadyToOpen: true) where viewModel.isAvailableOffline,
+             .failed:
             fileTypeIcon()
         case .loaded(showReadyToOpen: true):
             progressIcon(progress: 1, readyToOpen: true)
@@ -156,12 +159,23 @@ struct FilesItemView: View {
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight + 3)
             .overlay {
-                if readyToOpen {
+                if viewModel.isDownloadingForOfflineUse {
+                    Image(systemName: "arrow.down")
+                        .foregroundStyle(wireAccentColor)
+                } else if readyToOpen {
                     Image(systemName: "checkmark")
                         .fontWeight(.medium)
                 }
             }
             .foregroundStyle(wireAccentColor)
+    }
+
+    @ViewBuilder
+    private func availableOfflineIcon() -> some View {
+        Image(systemName: "arrow.down.circle.fill")
+            .resizable()
+            .frame(width: 10, height: 10)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color)
     }
 
     @ViewBuilder
@@ -206,18 +220,33 @@ struct FilesItemView: View {
     @ViewBuilder
     private func infoRow() -> some View {
         switch viewModel.fileTracker.state {
-        case .notLoaded, .loaded(showReadyToOpen: false):
+        case .notLoaded,
+             .loaded(showReadyToOpen: false),
+             .loaded(showReadyToOpen: true) where viewModel.isAvailableOffline:
             HStack(spacing: 5) {
+                if viewModel.isAvailableOffline { availableOfflineIcon() }
                 tagsInfo()
                 infoRowTextLine(viewModel.subtitle ?? "")
             }
         case .loaded(showReadyToOpen: true):
             infoRowTextLine(Strings.Files.readyToOpenAfterDownload)
         case .loading:
-            infoRowTextLine(Strings.Files.tapToCancelDownload)
+            if viewModel.isDownloadingForOfflineUse {
+                downloadingInfoRowTextLine()
+            } else {
+                infoRowTextLine(Strings.Files.tapToCancelDownload)
+            }
         case .failed:
             infoRowTextLine(Strings.Files.downloadFailed, error: true)
         }
+    }
+
+    @ViewBuilder
+    private func downloadingInfoRowTextLine() -> some View {
+        Text(Strings.Files.downloadingFile)
+            .font(for: .subline1)
+            .lineLimit(1)
+            .foregroundStyle(wireAccentColor)
     }
 
     @ViewBuilder
@@ -241,6 +270,28 @@ struct FilesItemView: View {
                 Label(
                     Strings.Files.Item.Menu.shareLink,
                     systemImage: "square.and.arrow.up"
+                )
+            }
+        }
+
+        menuItem(.makeAvailableOffline) { item in
+            Button {
+                viewModel.performAction(item)
+            } label: {
+                Label(
+                    Strings.Files.Item.Menu.makeAvailableOffline,
+                    systemImage: "arrow.down.circle"
+                )
+            }
+        }
+
+        menuItem(.removeAvailableOffline) { item in
+            Button {
+                viewModel.performAction(item)
+            } label: {
+                Label(
+                    Strings.Files.Item.Menu.removeAvailableOffline,
+                    systemImage: "xmark.circle"
                 )
             }
         }
@@ -313,6 +364,7 @@ struct FilesItemView: View {
                 label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
             )
         }
+
     }
 
     @ViewBuilder
