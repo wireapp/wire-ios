@@ -22,7 +22,7 @@ final class SSOTests: WireUITestCase {
 
     @MainActor
     func testSSOLoginWithSSOCode_TC_8966() async throws {
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
         guard let teamID = teamOwner.teamID else {
             throw RuntimeError("teamOwner.teamID is nil")
         }
