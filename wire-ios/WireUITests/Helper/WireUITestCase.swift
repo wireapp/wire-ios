@@ -26,11 +26,13 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    var ssoHelper: SSOHelper!
     let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
     var uiTestConfig = UITestConfig()
     private var notificationPermissionMonitor: NSObjectProtocol?
 
+    @MainActor
     override func setUpWithError() throws {
         // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
         dismissAllowIfPresent()
@@ -43,6 +45,7 @@ class WireUITestCase: XCTestCase {
             "--useEnvStaging"
         ]
 
+        ssoHelper = SSOHelper()
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
@@ -57,10 +60,12 @@ class WireUITestCase: XCTestCase {
         continueAfterFailure = false
     }
 
+    @MainActor
     override func tearDown() async throws {
         await app.terminate()
         await callingServiceClient.destroyCreatedInstances()
         await UserHelper.deleteCreatedUsers()
+        await ssoHelper.cleanUpOktaResources()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {

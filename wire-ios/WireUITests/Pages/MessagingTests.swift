@@ -22,7 +22,7 @@ import XCTest
 final class MessagingTests: WireUITestCase {
 
     @MainActor
-    func testSendAndReceiveTextInGroupConversation_TC_8833_8840() async throws {
+    func testSendAndReceiveTextAndAudioInGroupConversation_TC_8833_8840_8835_8842() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
@@ -35,18 +35,33 @@ final class MessagingTests: WireUITestCase {
             )
 
         let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
-
         let conversationDomain = UserHelper.default.backend.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup()
 
-        // WHEN member send text
+        let durationInMillis = 5000
+        let normalizedLoudness = (0 ..< 10).map { _ in Int.random(in: 0 ... 255) }
+
+        // WHEN member sends text and audio file
         try await testServicesClient.sendText(
             user: teamMembers[0],
             text: messageFromMember1,
             conversationId: conversationId,
             domain: conversationDomain
+        )
+
+        try await testServicesClient.sendFile(
+            type: "audio",
+            user: teamMembers[0],
+            fileName: "audio-message",
+            filepath: nil,
+            convoId: conversationId,
+            domain: conversationDomain,
+            audio: [
+                "durationInMillis": durationInMillis,
+                "normalizedLoudness": normalizedLoudness
+            ]
         )
 
         XCTAssertTrue(
@@ -63,16 +78,16 @@ final class MessagingTests: WireUITestCase {
             "Expected message '\(messageFromMember1)' not found in sent messages: \(receivedMessages)"
         )
 
-        let senderName = activeConversationPage.getSenderName()
-        XCTAssertEqual(
-            senderName,
-            teamMembers[0].name,
-            "Sender info didn't match expected value \(teamMembers[0].name)"
+        verifyMessageReceivedAndSenderInfo(
+            attachment: activeConversationPage.fileTypeIcons.firstMatch,
+            on: activeConversationPage,
+            expectedSenderName: teamMembers[0].name,
+            failureMessage: "Expected audio attachment not found"
         )
     }
 
     @MainActor
-    func testSendAndReceiveImageInGroupConversation_TC_8834_8841() async throws {
+    func testSendAndReceiveImageAndVideoInGroupConversation_TC_8834_8841_8836_8843() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
@@ -83,23 +98,38 @@ final class MessagingTests: WireUITestCase {
             )
 
         let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
-
         let conversationDomain = UserHelper.default.backend.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup()
+
         let imageURL = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .appendingPathComponent("TestServicesData/Img/testImage.jpg")
         let imageExtension = imageURL.pathExtension
 
-        // WHEN member send image
+        let videoURL = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("TestServicesData/Video/testVideo.mp4")
+        let videoExtension = videoURL.pathExtension
+
+        // WHEN member sends image and video files
         try await testServicesClient.sendImage(
             user: teamMembers[0],
             fileURL: imageURL,
             type: imageExtension,
             conversationId: conversationId,
+            domain: conversationDomain
+        )
+
+        try await testServicesClient.sendFile(
+            type: videoExtension,
+            user: teamMembers[0],
+            fileName: "testVideo.mp4",
+            filepath: videoURL.path,
+            convoId: conversationId,
             domain: conversationDomain
         )
 
@@ -112,15 +142,41 @@ final class MessagingTests: WireUITestCase {
 
         // THEN
         XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.firstMatch.exists,
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
             "Expected image attachment not found"
+        )
+
+        verifyMessageReceivedAndSenderInfo(
+            attachment: activeConversationPage.fileAttachment(name: "TESTVIDEO", type: "MP4"),
+            on: activeConversationPage,
+            expectedSenderName: teamMembers[0].name,
+            failureMessage: "Expected MP4 video attachment not found"
+        )
+    }
+
+    private func verifyMessageReceivedAndSenderInfo(
+        attachment: XCUIElement,
+        on activeConversationPage: ActiveConversationPage,
+        expectedSenderName: String,
+        timeout: TimeInterval = 5,
+        failureMessage: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertTrue(
+            attachment.waitForExistence(timeout: timeout),
+            "\(failureMessage) Debug: \(attachment.debugDescription)",
+            file: file,
+            line: line
         )
 
         let senderName = activeConversationPage.getSenderName()
         XCTAssertEqual(
             senderName,
-            teamMembers[0].name,
-            "Sender info didn't match expected value \(teamMembers[0].name)"
+            expectedSenderName,
+            "Sender info didn't match expected value \(expectedSenderName)",
+            file: file,
+            line: line
         )
     }
 }
