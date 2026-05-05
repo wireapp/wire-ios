@@ -93,7 +93,7 @@ class SettingsBaseTableViewController: UIViewController {
             footer.view.topAnchor.constraint(equalTo: footerContainer.topAnchor, constant: 12),
             footer.view.leadingAnchor.constraint(equalTo: footerContainer.leadingAnchor, constant: 16),
             footer.view.trailingAnchor.constraint(equalTo: footerContainer.trailingAnchor, constant: -16),
-            footer.view.bottomAnchor.constraint(equalTo: footerContainer.bottomAnchor, constant: -12)
+            footer.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12)
         ])
         footer.didMove(toParent: self)
     }
@@ -114,6 +114,7 @@ class SettingsBaseTableViewController: UIViewController {
         tableView.estimatedRowHeight = 56
         view.addSubview(tableView)
         view.addSubview(footerContainer)
+        footerContainer.backgroundColor = SemanticColors.View.backgroundDefault
         footerContainer.addSubview(footerSeparator)
         footerSeparator.inverse = true
     }

@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireDesign
 import WireTestingPackage
 import XCTest
 
@@ -35,9 +34,7 @@ final class ShareDebugBannerViewSnapshotTests: XCTestCase {
     @MainActor
     override func setUp() async throws {
         snapshotHelper = SnapshotHelper()
-        accentColor = .blue
         let view = ShareDebugBannerView {}
-            .environment(\.wireAccentColor, .blue)
             .padding()
         sut = UIHostingController(rootView: AnyView(view))
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 120)

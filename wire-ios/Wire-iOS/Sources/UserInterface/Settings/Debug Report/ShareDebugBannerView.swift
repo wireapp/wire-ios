@@ -24,12 +24,10 @@ struct ShareDebugBannerView: View {
 
     let action: () -> Void
 
-    @Environment(\.wireAccentColor) private var wireAccentColor
-
     var body: some View {
         Button(action: action) {
             HStack(alignment: .top, spacing: 12) {
-                Image(systemName: "questionmark.circle")
+                Image(systemName: "bubble.left")
                     .font(for: .h3)
                     .accessibilityHidden(true)
 
@@ -52,11 +50,11 @@ struct ShareDebugBannerView: View {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color(ColorTheme.Base.primaryVariant(wireAccentColor)))
+                    .fill(Color(ColorTheme.Backgrounds.surface))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .stroke(Color(ColorTheme.Base.primary(wireAccentColor)))
+                    .stroke(Color(.separator))
             )
         }
         .buttonStyle(.plain)
@@ -68,5 +66,5 @@ struct ShareDebugBannerView: View {
 #Preview {
     ShareDebugBannerView {}
         .padding()
-        .environment(\.wireAccentColor, .blue)
+        .background(Color(.systemGroupedBackground))
 }

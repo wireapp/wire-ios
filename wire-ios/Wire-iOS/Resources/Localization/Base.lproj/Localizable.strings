@@ -1450,6 +1450,8 @@
 "self.settings.share_debug_report.banner.title" = "Having trouble?";
 "self.settings.share_debug_report.banner.message" = "To improve Wire's quality, please send us your feedback and let us know about any problems.";
 "self.settings.share_debug_report.creating_report" = "Creating debug report...";
+"self.settings.share_debug_report.action_sheet.title" = "Having trouble?";
+"self.settings.share_debug_report.action_sheet.message" = "You can send your report to Wire support, share it with your administrator directly via Wire or any other app.";
 "self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
 "self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
 "self.settings.share_debug_report.action_sheet.share" = "Share";

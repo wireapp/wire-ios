@@ -6046,12 +6046,16 @@ internal enum L10n {
           /// Creating debug report...
           internal static let creatingReport = L10n.tr("Localizable", "self.settings.share_debug_report.creating_report", fallback: "Creating debug report...")
           internal enum ActionSheet {
+            /// You can send your report to Wire support, share it with your administrator directly via Wire or any other app.
+            internal static let message = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.message", fallback: "You can send your report to Wire support, share it with your administrator directly via Wire or any other app.")
             /// Send email to Support
             internal static let sendEmail = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.send_email", fallback: "Send email to Support")
             /// Share
             internal static let share = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.share", fallback: "Share")
             /// Share via Wire
             internal static let shareViaWire = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.share_via_wire", fallback: "Share via Wire")
+            /// Having trouble?
+            internal static let title = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.title", fallback: "Having trouble?")
           }
           internal enum Banner {
             /// To improve Wire's quality, please send us your feedback and let us know about any problems.

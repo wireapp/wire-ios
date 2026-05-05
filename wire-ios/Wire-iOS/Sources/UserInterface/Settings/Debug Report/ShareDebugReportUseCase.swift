@@ -49,7 +49,11 @@ final class ShareDebugReportUseCase: ShareDebugReportUseCaseProtocol {
     func invoke(logFileURL: URL, from viewController: UIViewController) async {
         typealias l10n = L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet
 
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(
+            title: l10n.title,
+            message: l10n.message,
+            preferredStyle: .actionSheet
+        )
 
         if let userSession, let mainCoordinator {
             actionSheet.addAction(UIAlertAction(title: l10n.shareViaWire, style: .default) { [weak self, weak viewController] _ in
