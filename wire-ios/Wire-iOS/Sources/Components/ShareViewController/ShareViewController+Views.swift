@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 
 extension ShareViewController {
 
@@ -75,6 +76,7 @@ extension ShareViewController {
         destinationsTableView.dataSource = self
 
         closeButton.accessibilityLabel = "close"
+        closeButton.accessibilityIdentifier = Locators.ShareViaWirePage.closeButton.rawValue
         closeButton.setIcon(.cross, size: .tiny, for: .normal)
         closeButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
         closeButton.addTarget(
@@ -86,6 +88,7 @@ extension ShareViewController {
         let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
 
         sendButton.accessibilityLabel = "send"
+        sendButton.accessibilityIdentifier = Locators.ShareViaWirePage.sendButton.rawValue
         sendButton.isEnabled = false
         sendButton.setIcon(.send, size: .tiny, for: .normal)
         sendButton.setBackgroundImageColor(UIColor.accent(), for: .normal)

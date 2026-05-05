@@ -146,4 +146,8 @@ class WireUITestCase: XCTestCase {
                 return true
             }
     }
+    
+    func simulateShakeGesture() {
+        app.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+    }
 }

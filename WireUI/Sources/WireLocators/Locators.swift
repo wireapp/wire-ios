@@ -92,6 +92,21 @@ public enum Locators {
         case shareDebugBanner
     }
 
+    public enum ShareDebugReportPage: String {
+
+        case actionSheet = "Having trouble?"
+        case shareViaWireButton = "ShareDebugReportPage.shareViaWireButton"
+        case sendEmailButton = "ShareDebugReportPage.sendEmailButton"
+        case shareButton = "ShareDebugReportPage.shareButton"
+        case cancelButton = "ShareDebugReportPage.cancelButton"
+    }
+
+    public enum ShareViaWirePage: AutoPrefixedEnum {
+
+        case sendButton
+        case closeButton
+    }
+
     public enum AccountSettingsPage: String {
 
         // TODO: [WPB-21952] Improve these identifiers later.
