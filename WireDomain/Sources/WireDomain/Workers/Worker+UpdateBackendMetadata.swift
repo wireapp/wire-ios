@@ -16,12 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-protocol ExpiringActivityPerformerProtocol: Sendable {
+import Foundation
 
-    func performExpiringActivity(
-        reason: String,
-        using block: @escaping @Sendable (_ isExpiring: Bool) -> Void
-    )
+public extension Worker {
+
+    /// Creates a `Worker` that periodically fetches and stores the backend metadata.
+    static func updateBackendMetadata(
+        useCase: any UpdateBackendMetadataUseCaseProtocol
+    ) -> Worker {
+        Worker(
+            work: {
+                do {
+                    _ = try await useCase.invoke()
+                    return true
+                } catch {
+                    return false
+                }
+            },
+            interval: .oneHour * 12,
+            trigger: Worker.defaultTrigger()
+        )
+    }
 
 }

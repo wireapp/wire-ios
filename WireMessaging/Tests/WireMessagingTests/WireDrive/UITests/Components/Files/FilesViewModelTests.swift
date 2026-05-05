@@ -90,6 +90,7 @@ final class FilesViewModelTests {
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
                 getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi),
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(repository: nodesRepository),
                 makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                     localAssetRepository: localAssetRepository
                 ),
@@ -103,9 +104,7 @@ final class FilesViewModelTests {
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             nodesRepository: nodesRepository,
-            fileCache: fileCache,
             isBrowsing: false,
-            accentColorProvider: { .default },
             networkMonitor: networkMonitor
         )
 
@@ -114,7 +113,7 @@ final class FilesViewModelTests {
             .refreshAssetMetadataNodeID_MockValue = (WireDriveNode.fixture(), WireDriveLocalAsset.fixture())
         localAssetRepository.downloadAssetNodeIDIsAvailableOffline_MockMethod = { _, _ in }
 
-        sut.$state.dropFirst().sink { [weak self] state in
+        sut.filesListLoader.loader.$state.dropFirst().sink { [weak self] state in
             self?.itemsUpdates.append(state.items)
         }.store(in: &cancellables)
     }
@@ -127,19 +126,19 @@ final class FilesViewModelTests {
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
-        #expect(sut.hasMore == true)
+        #expect(sut.filesListLoader.loader.hasMore == true)
 
         // when
         await sut.reload()
 
         // then
-        #expect(sut.hasMore == true)
+        #expect(sut.filesListLoader.loader.hasMore == true)
 
         // when
         await sut.loadMoreIfNeeded(index: 0)
 
         // then
-        #expect(sut.hasMore == false)
+        #expect(sut.filesListLoader.loader.hasMore == false)
     }
 
     @Test
@@ -147,25 +146,25 @@ final class FilesViewModelTests {
         // given
         nodesRepository.getNodes_MockMethod = { [sut] request in
             // Here we assert that loading is true when the methods under test are called.
-            #expect(sut.isLoading == true)
+            #expect(sut.filesListLoader.loader.isLoading == true)
 
             let page1 = (nodes: [WireDriveNode.fixture()], nextOffset: 1)
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
-        #expect(sut.isLoading == false)
+        #expect(sut.filesListLoader.loader.isLoading == false)
 
         // when
         await sut.reload()
 
         // then
-        #expect(sut.isLoading == false)
+        #expect(sut.filesListLoader.loader.isLoading == false)
 
         // when
         await sut.loadMoreIfNeeded(index: 0)
 
         // then
-        #expect(sut.isLoading == false)
+        #expect(sut.filesListLoader.loader.isLoading == false)
     }
 
     @Test
@@ -223,7 +222,7 @@ final class FilesViewModelTests {
         }
 
         await sut.reload()
-        #expect(sut.hasMore == true)
+        #expect(sut.filesListLoader.loader.hasMore == true)
 
         // when
         await sut.reload()
@@ -437,7 +436,7 @@ final class FilesViewModelTests {
         // then
         let isConnectionError = error.isURLError(.notConnectedToInternet) || error.isURLError(.networkConnectionLost)
         #expect(sut.state == .error(isConnectionError: isConnectionError))
-        #expect(sut.isLoading == false)
+        #expect(sut.filesListLoader.loader.isLoading == false)
     }
 
     @Test
@@ -589,8 +588,8 @@ final class FilesViewModelTests {
 
     @Test
     func testOfflineBarIsHiddenWhenItemsAreEmpty() {
-        NetworkMonitor.shared.currentStatus = .disconnected
-        sut.state = .received(items: [])
+        networkMonitor.currentStatus = .disconnected
+        sut.filesListLoader.loader.state = .received(items: [])
 
         #expect(sut.shouldShowOfflineBar == false)
     }
@@ -602,7 +601,7 @@ final class FilesViewModelTests {
 
         networkMonitor.currentStatus = .disconnected
 
-        sut.state = .received(items: [
+        sut.filesListLoader.loader.state = .received(items: [
             FilesViewItem(
                 id: nodeA.id,
                 eTag: "eTag",

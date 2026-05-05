@@ -18,7 +18,7 @@
 
 import Combine
 import SwiftUI
-package import WireFoundation
+import WireFoundation
 package import WireMessagingDomain
 package import WireMessagingData
 

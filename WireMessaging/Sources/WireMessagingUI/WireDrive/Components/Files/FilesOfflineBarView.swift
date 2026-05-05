@@ -36,18 +36,10 @@ struct FilesOfflineBarView: View {
         Text(L10n.Localizable.General.NoInternet.title.uppercased())
             .font(for: .subline2)
             .multilineTextAlignment(.center)
-            .foregroundColor(.white) // TODO: [WPB-24475] use proper color
+            .foregroundColor(ColorTheme.Base.onWarning.color)
             .frame(maxWidth: .infinity)
             .padding(4)
-            .background {
-                // TODO: [WPB-24475] use proper color
-                Color(
-                    red: 254.0 / 255.0,
-                    green: 191.0 / 255.0,
-                    blue: 2.0 / 255.0,
-                    opacity: 1
-                )
-            }
+            .background(ColorTheme.Base.warning.color)
             .cornerRadius(6 * scale)
     }
 

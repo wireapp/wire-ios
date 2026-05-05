@@ -23,7 +23,7 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func testMigratePersonalUserToTeam_TC_9452() async throws {
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let conversationPage = try app.loginUser(email: user.email, password: user.password)
             .acceptPopup()
@@ -43,17 +43,17 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func testPersonalUserInvitedToTeam_TC_9453() async throws {
-        let teamOwner = try await userHelper.createPersonalUser()
-        let teamID = try await userHelper.upgradePersonalToTeam(
+        let teamOwner = try await UserHelper.default.createPersonalUser()
+        let teamID = try await UserHelper.default.upgradePersonalToTeam(
             teamName: teamOwner.teamName
         )
 
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
 
-        let (_, memberUser) = try await userHelper.registerUsersAsTeamMember(
+        let (_, memberUser) = try await UserHelper.default.registerUsersAsTeamMember(
             ownerAccessToken: ownerAccessToken.token,
             teamID: teamID
         )
@@ -79,9 +79,9 @@ final class TeamManageTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
 
-        let teamMemberNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
+        let teamMemberNames = try await UserHelper.default.registerTeamWith2Members(teamOwner: teamOwner)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup()
@@ -106,8 +106,8 @@ final class TeamManageTests: WireUITestCase {
     func testGroupAdminRemoveAndAddParticipantFromGroup_TC_9455() async throws {
 
         let groupName = UserGenerator.generateRandomConversationName()
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
@@ -118,7 +118,7 @@ final class TeamManageTests: WireUITestCase {
         var teamMembers: [UserInfo] = []
 
         for _ in 0 ..< countOfMembers {
-            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+            let (qualifiedId, teamMember) = try await UserHelper.default.registerUsersAsTeamMember(
                 ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
@@ -126,7 +126,7 @@ final class TeamManageTests: WireUITestCase {
             teamMembers.append(teamMember)
         }
 
-        try await userHelper.createGroupConversations(
+        try await UserHelper.default.createGroupConversations(
             qualifiedIds: qualifiedIds,
             owner: teamOwner,
             groupName: groupName
@@ -165,9 +165,9 @@ final class TeamManageTests: WireUITestCase {
     func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
 
-        let teamNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
+        let teamNames = try await UserHelper.default.registerTeamWith2Members(teamOwner: teamOwner)
 
         let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup()
@@ -190,7 +190,7 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func testMentionUserInGroup_TC_8865() async throws {
 
-        let (teamOwner, teamMembers, _, _) = try await userHelper
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 4,
                 conversation: .group(UserGenerator.generateRandomConversationName())
