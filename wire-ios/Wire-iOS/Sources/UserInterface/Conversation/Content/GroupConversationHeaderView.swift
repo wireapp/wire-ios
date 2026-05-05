@@ -90,7 +90,7 @@ final class GroupConversationHeaderView: UIView {
             let guestsView = GuestsAllowedView(isChannel: conversation.isChannel)
             guestsView.onInviteTapped = { [weak self] in
                 guard let self else { return }
-                self.delegate?.conversationMessageWantsToOpenGuestOptionsFromView(self, sourceView: guestsView)
+                delegate?.conversationMessageWantsToOpenGuestOptionsFromView(self, sourceView: guestsView)
             }
             stackView.addArrangedSubview(guestsView)
         }

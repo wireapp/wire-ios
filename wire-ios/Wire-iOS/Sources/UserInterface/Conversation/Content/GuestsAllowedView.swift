@@ -66,7 +66,8 @@ final class GuestsAllowedView: UIView {
         ])
     }
 
-    @objc private func handleInviteTapped() {
+    @objc
+    private func handleInviteTapped() {
         onInviteTapped?()
     }
 }
