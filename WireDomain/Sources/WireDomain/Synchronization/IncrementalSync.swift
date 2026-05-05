@@ -23,7 +23,6 @@ import WireLogging
 import WireNetwork
 import WireSystem
 import WireUtilities
-import WireUtilitiesPackage
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -166,14 +165,23 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 logger.info("handling live event stream", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.liveSyncing(.ongoing))
 
-                // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
-                // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
-                await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
-                    await processLiveEvents(
-                        liveEventStream: liveEventStream,
-                        processedEnvelopeIDs: processedEnvelopeIDs,
-                        publicKeys: publicKeys
+                do {
+                    // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
+                    // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
+                    try await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
+                        await processLiveEvents(
+                            liveEventStream: liveEventStream,
+                            processedEnvelopeIDs: processedEnvelopeIDs,
+                            publicKeys: publicKeys
+                        )
+                    }
+                } catch {
+                    // if we expire, close everything
+                    WireLogger.sync.debug(
+                        "Error while processing live stream, close push channel",
+                        attributes: .incrementalSyncV2
                     )
+                    await pushChannel.close()
                 }
 
                 logger.debug("live event stream did finish", attributes: .incrementalSyncV2)
@@ -193,14 +201,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     ) async {
         do {
             for try await var envelope in liveEventStream {
-
-                guard !Task.isCancelled else {
-                    return logger.debug(
-                        "processLiveEvents has been cancelled, returning",
-                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
-                    )
-                }
-
                 logger.debug(
                     "received live event envelope",
                     attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]

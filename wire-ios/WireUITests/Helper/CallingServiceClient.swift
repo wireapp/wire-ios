@@ -21,7 +21,7 @@ import WireNetwork
 
 final class CallingServiceClient {
 
-    private let userHelper = UserHelper()
+    private let userHelper = UserHelper.default
 
     private let callingServiceURL: URL
     private let callingServiceUsername: String

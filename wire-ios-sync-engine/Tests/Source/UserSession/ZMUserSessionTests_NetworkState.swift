@@ -18,7 +18,9 @@
 
 import WireDataModelSupport
 import WireDomain
+import WireDomainSupport
 import WireLoggingSupport
+import WireNetwork
 import XCTest
 
 @testable import WireLogging
@@ -58,6 +60,13 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         )
         let logFilesProvider = LogFilesProvidingMock()
 
+        let updateBackendMetadataUseCase = MockUpdateBackendMetadataUseCaseProtocol()
+        updateBackendMetadataUseCase.invoke_MockValue = ResolvedBackendMetadata(
+            apiVersion: .v15,
+            domain: "example.com",
+            isFederationEnabled: true
+        )
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             backendEnvironment: backendEnvironment,
@@ -82,7 +91,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             minTLSVersion: nil,
             journal: journal,
             logFilesProvider: logFilesProvider,
-            faultyMLSRemovalKeysByDomain: [:]
+            faultyMLSRemovalKeysByDomain: [:],
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase
         )
         let testSession = builder.build()
         testSession.setup(

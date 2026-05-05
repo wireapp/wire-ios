@@ -21,11 +21,11 @@ import WireNetwork
 
 enum InbucketClient {
 
-    static func getVerificationCode(email: String) async throws -> String {
+    static func getVerificationCode(email: String, backend: BackendTarget) async throws -> String {
         let envVariables = try EnvironmentVariables()
 
         var verificationCode = ""
-        let baseURL: URL = envVariables.inbucketURL
+        let baseURL: URL = envVariables.inbucketURL(for: backend)
         let requestUrl = baseURL.appending(path: "api/v1/mailbox/\(email)/latest")
 
         var request = URLRequest(url: requestUrl)

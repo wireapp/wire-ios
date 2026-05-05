@@ -44,6 +44,16 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    func conversationCell(named name: String) -> XCUIElement {
+        app.buttons.matching(
+            NSPredicate(
+                format: "identifier == %@ AND label == %@",
+                Locators.ConversationsPage.conversationCell.rawValue,
+                name
+            )
+        ).firstMatch
+    }
+
     var unreadMessagesCount: XCUIElement {
         app.staticTexts[Locators.ConversationsPage.unreadMessageCount.rawValue]
     }
@@ -113,7 +123,7 @@ class ConversationsPage: PageModel {
     }
 
     func getGroupName() -> String? {
-        conversationCell.label as? String
+        conversationCell.label
     }
 
     func openSettings() throws -> SettingsPage {

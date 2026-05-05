@@ -88,7 +88,7 @@ extension CreateMLSGroupUseCase {
         // the external senders is the same as the parent, otherwise we
         // won't be able to decrypt external remove proposals from the
         // owning domain.
-        let externalSenders = try await coreCrypto.extendedTransaction {
+        let externalSenders = try await coreCrypto.transaction {
             [try await $0.getExternalSender(conversationId: parentGroupID.conversationId)]
         }
 
@@ -136,7 +136,7 @@ extension CreateMLSGroupUseCase {
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
-            try await coreCrypto.extendedTransaction {
+            try await coreCrypto.transaction {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite.coreCryptoCipherSuite)
                 try await $0.createConversation(
                     conversationId: groupID.conversationId,
