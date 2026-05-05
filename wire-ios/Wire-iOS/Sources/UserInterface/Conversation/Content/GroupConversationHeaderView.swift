@@ -47,7 +47,7 @@ final class GroupConversationHeaderView: UIView {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError() }
+    required init?(coder _: NSCoder) { fatalError() }
 
     private func setupStackView() {
         stackView.axis = .vertical

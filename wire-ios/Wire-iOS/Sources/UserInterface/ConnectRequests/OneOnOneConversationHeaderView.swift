@@ -58,7 +58,7 @@ final class OneOnOneConversationHeaderView: UIView, Copyable {
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

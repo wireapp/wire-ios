@@ -35,7 +35,7 @@ final class GuestsAllowedView: UIView {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError() }
+    required init?(coder _: NSCoder) { fatalError() }
 
     private func setupViews(isChannel: Bool) {
         typealias System = L10n.Localizable.Content.System
