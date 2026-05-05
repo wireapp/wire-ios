@@ -26,7 +26,6 @@ on:
         required: true
       produce_debug_builds:
         type: boolean
-        required: true
         default: false
 
     secrets:
