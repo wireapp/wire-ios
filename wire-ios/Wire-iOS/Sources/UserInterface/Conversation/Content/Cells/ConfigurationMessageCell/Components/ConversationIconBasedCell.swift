@@ -37,6 +37,13 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
         false
     }
 
+    var imageContainerWidth: CGFloat = 46 {
+        didSet {
+            guard !shouldRemoveInnerPaddingForBubbles, containerWidthConstraint != nil else { return }
+            containerWidthConstraint.constant = imageContainerWidth
+        }
+    }
+
     private var containerWidthConstraint: NSLayoutConstraint!
     private var imageContainerLeadingConstraint: NSLayoutConstraint!
     var imageContainerHeightConstraint: NSLayoutConstraint!
@@ -147,7 +154,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
         } else {
             imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor)
             containerWidthConstraint = imageContainer.widthAnchor
-                .constraint(equalToConstant: conversationHorizontalMargins.left)
+                .constraint(equalToConstant: imageContainerWidth)
             textLabelLeadingConstraint = textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor)
             textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
                 lessThanOrEqualTo: trailingAnchor,
@@ -206,7 +213,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             containerWidthConstraint.constant = 32.0
             textLabelTrailingConstraint.constant = 0
         } else {
-            containerWidthConstraint.constant = conversationHorizontalMargins.left
+            containerWidthConstraint.constant = imageContainerWidth
             textLabelTrailingConstraint.constant = trailingTextMargin
         }
     }
