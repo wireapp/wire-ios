@@ -19,7 +19,7 @@
 import WireFoundation
 import XCTest
 
-final class GroupMessagingTests: WireUITestCase {
+final class MessagingTests: WireUITestCase {
 
     @MainActor
     func testSendTextAndAudioInGroupConversation_TC_8833_8835() async throws {
