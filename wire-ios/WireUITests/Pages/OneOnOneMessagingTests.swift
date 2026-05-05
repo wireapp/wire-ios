@@ -22,8 +22,9 @@ import XCTest
 final class OneOnOneMessagingTests: WireUITestCase {
 
     @MainActor
-    private func openOneOnOneConversation() async throws -> (teamOwner: UserInfo, activeConversationPage: ActiveConversationPage) {
-        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 1)
+    private func openOneOnOneConversation() async throws
+        -> (teamOwner: UserInfo, activeConversationPage: ActiveConversationPage) {
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
         let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
         let activeConversationPage = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
@@ -77,7 +78,8 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let message = UserGenerator.generateRandomMessage()
         let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
 
-        let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
+        let (conversationId, domain) = try await UserHelper.default
+            .getConversationId(matching: .conversationType(.group))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
 
         let durationInMillis = 5000
@@ -125,7 +127,8 @@ final class OneOnOneMessagingTests: WireUITestCase {
         // GIVEN
         let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
 
-        let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
+        let (conversationId, domain) = try await UserHelper.default
+            .getConversationId(matching: .conversationType(.group))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
 
         let imageURL = URL(fileURLWithPath: #filePath)

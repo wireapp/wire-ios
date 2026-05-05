@@ -21,22 +21,68 @@ import XCTest
 
 final class GroupMessagingTests: WireUITestCase {
 
+    private typealias ReturnedTeam = (
+        teamOwner: UserInfo,
+        teamMember: UserInfo,
+        conversationId: UUID,
+        conversationDomain: String
+    )
+
+    private struct MediaURLs {
+        let imageURL: URL
+        let imageExtension: String
+        let videoURL: URL
+        let videoExtension: String
+    }
+
+    @MainActor
+    private func registerGroupTeam() async throws -> ReturnedTeam {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, teamMembers, _, conversationID) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+
+        return (
+            teamOwner,
+            teamMembers[0],
+            try XCTUnwrap(conversationID, "conversationId is nil"),
+            UserHelper.default.backend.domainInfo
+        )
+    }
+
+    @MainActor
+    private func login(user: UserInfo) throws -> ConversationsPage {
+        try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+    }
+
+    private func testMediaURLs() -> MediaURLs {
+        let testDataDirectory = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("TestServicesData")
+
+        let imageURL = testDataDirectory.appendingPathComponent("Img/testImage.jpg")
+        let videoURL = testDataDirectory.appendingPathComponent("Video/testVideo.mp4")
+
+        return MediaURLs(
+            imageURL: imageURL,
+            imageExtension: imageURL.pathExtension,
+            videoURL: videoURL,
+            videoExtension: videoURL.pathExtension
+        )
+    }
+
     @MainActor
     func testSendTextAndAudioInGroupConversation_TC_8833_8835() async throws {
 
         // GIVEN
-        let groupName = UserGenerator.generateRandomConversationName()
         let message = UserGenerator.generateRandomMessage()
-
-        let (teamOwner, _, _, _) = try await userHelper
-            .registerTeam(
-                withMemberCount: 1,
-                conversation: .group(groupName)
-            )
+        let groupTeam = try await registerGroupTeam()
 
         // WHEN
-        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let activeConversationPage = try firstTimePage.acceptPopup()
+        let activeConversationPage = try login(user: groupTeam.teamOwner)
             .openConversation()
             .sendMessage(message)
             .recordAudioAndSend()
@@ -57,39 +103,28 @@ final class GroupMessagingTests: WireUITestCase {
     func testReceiveTextAndAudioInGroupConversation_TC_8840_8842() async throws {
 
         // GIVEN
-        let groupName = UserGenerator.generateRandomConversationName()
         let message = UserGenerator.generateRandomMessage()
-
-        let (teamOwner, teamMembers, _, conversationID) = try await UserHelper.default
-            .registerTeam(
-                withMemberCount: 1,
-                conversation: .group(groupName)
-            )
-
-        let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
-        let conversationDomain = UserHelper.default.backend.domainInfo
-
-        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationsPage = try firstTimePage.acceptPopup()
+        let groupTeam = try await registerGroupTeam()
+        let conversationsPage = try login(user: groupTeam.teamOwner)
 
         let durationInMillis = 5000
         let normalizedLoudness = (0 ..< 10).map { _ in Int.random(in: 0 ... 255) }
 
         // WHEN member sends text and audio file
         try await testServicesClient.sendText(
-            user: teamMembers[0],
+            user: groupTeam.teamMember,
             text: message,
-            conversationId: conversationId,
-            domain: conversationDomain
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
         )
 
         try await testServicesClient.sendFile(
             type: "audio",
-            user: teamMembers[0],
+            user: groupTeam.teamMember,
             fileName: "audio-message",
             filepath: nil,
-            convoId: conversationId,
-            domain: conversationDomain,
+            convoId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain,
             audio: [
                 "durationInMillis": durationInMillis,
                 "normalizedLoudness": normalizedLoudness
@@ -113,7 +148,7 @@ final class GroupMessagingTests: WireUITestCase {
         verifyMessageReceivedAndSenderInfo(
             attachment: activeConversationPage.fileTypeIcons.firstMatch,
             on: activeConversationPage,
-            expectedSenderName: teamMembers[0].name,
+            expectedSenderName: groupTeam.teamMember.name,
             failureMessage: "Expected audio attachment not found"
         )
     }
@@ -122,16 +157,10 @@ final class GroupMessagingTests: WireUITestCase {
     func testSendImageAndVideoInGroupConversation_TC_8834_8836() async throws {
 
         // GIVEN
-        let groupName = UserGenerator.generateRandomConversationName()
-        let (_, teamMembers, _, _) = try await userHelper
-            .registerTeam(
-                withMemberCount: 1,
-                conversation: .group(groupName)
-            )
+        let groupTeam = try await registerGroupTeam()
 
         // WHEN
-        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
-        let activeConversationPage = try firstTimePage.acceptPopup()
+        let activeConversationPage = try login(user: groupTeam.teamMember)
             .openConversation()
             .openPhotosAndGrantPermission()
             .selectImageAndSend()
@@ -156,47 +185,26 @@ final class GroupMessagingTests: WireUITestCase {
     func testReceiveImageAndVideoInGroupConversation_TC_8841_8843() async throws {
 
         // GIVEN
-        let groupName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, teamMembers, _, conversationID) = try await UserHelper.default
-            .registerTeam(
-                withMemberCount: 1,
-                conversation: .group(groupName)
-            )
-
-        let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
-        let conversationDomain = UserHelper.default.backend.domainInfo
-
-        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationsPage = try firstTimePage.acceptPopup()
-
-        let imageURL = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .appendingPathComponent("TestServicesData/Img/testImage.jpg")
-        let imageExtension = imageURL.pathExtension
-
-        let videoURL = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .appendingPathComponent("TestServicesData/Video/testVideo.mp4")
-        let videoExtension = videoURL.pathExtension
+        let groupTeam = try await registerGroupTeam()
+        let conversationsPage = try login(user: groupTeam.teamOwner)
+        let mediaURLs = testMediaURLs()
 
         // WHEN
         try await testServicesClient.sendImage(
-            user: teamMembers[0],
-            fileURL: imageURL,
-            type: imageExtension,
-            conversationId: conversationId,
-            domain: conversationDomain
+            user: groupTeam.teamMember,
+            fileURL: mediaURLs.imageURL,
+            type: mediaURLs.imageExtension,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
         )
 
         try await testServicesClient.sendFile(
-            type: videoExtension,
-            user: teamMembers[0],
+            type: mediaURLs.videoExtension,
+            user: groupTeam.teamMember,
             fileName: "testVideo.mp4",
-            filepath: videoURL.path,
-            convoId: conversationId,
-            domain: conversationDomain
+            filepath: mediaURLs.videoURL.path,
+            convoId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
         )
 
         XCTAssertTrue(
@@ -218,7 +226,7 @@ final class GroupMessagingTests: WireUITestCase {
         verifyMessageReceivedAndSenderInfo(
             attachment: activeConversationPage.fileAttachment(name: "TESTVIDEO", type: "MP4"),
             on: activeConversationPage,
-            expectedSenderName: teamMembers[0].name,
+            expectedSenderName: groupTeam.teamMember.name,
             failureMessage: "Expected MP4 video attachment not found"
         )
     }
