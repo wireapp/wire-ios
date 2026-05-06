@@ -218,7 +218,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
                     if self.useWireDrive() {
                         if isFromCamera || editedImage != nil {
-                            self.uploadDraft(data: dataToSend, type: utType, nodeID: isFromCamera ? nil : image.id)
+                            self.uploadDraft(
+                                data: dataToSend,
+                                type: utType,
+                                existingNodeID: isFromCamera ? nil : image.id
+                            )
                         }
                     } else {
                         let image = SendableImage(
@@ -365,7 +369,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
         }
     }
 
-    func uploadDraft(data: Data, type: UTType, localIdentifier: String? = nil, nodeID: UUID? = nil) {
+    func uploadDraft(data: Data, type: UTType, localIdentifier: String? = nil, existingNodeID: UUID? = nil) {
         Task.detached { [uploadDraftUseCase] in
             // We don't care about the result of the operation here as we will be observing changes.
             do {
@@ -373,7 +377,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
                     data: data,
                     type: type,
                     localIdentifier: localIdentifier,
-                    nodeID: nodeID
+                    existingNodeID: existingNodeID
                 )
             } catch {
                 WireLogger.conversation.error("Failed to upload file: \(error)")

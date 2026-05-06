@@ -109,7 +109,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         }
     }
 
-    package func invoke(data: Data, type: UTType, localIdentifier: String?, nodeID: UUID?) async throws {
+    package func invoke(data: Data, type: UTType, localIdentifier: String?, existingNodeID: UUID?) async throws {
         let filename = await filenameGenerator.generateFilename(type: type)
 
         let container = intermediaryFilesDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -122,7 +122,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
             fileURL: url,
             data: data,
             localIdentifier: localIdentifier,
-            nodeID: nodeID,
+            existingNodeID: existingNodeID,
             requiresCleanup: true
         )
     }
@@ -133,7 +133,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         fileURL: URL,
         data: Data? = nil,
         localIdentifier: String? = nil,
-        nodeID: UUID? = nil,
+        existingNodeID: UUID? = nil,
         requiresCleanup: Bool
     ) async throws {
         let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
@@ -148,7 +148,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         }
 
         let draft = WireDriveDraft(
-            nodeID: nodeID ?? UUID(),
+            nodeID: existingNodeID ?? UUID(),
             versionID: UUID(),
             assetURL: fileURL,
             fileType: resourceValues.contentType,
@@ -162,9 +162,9 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
             localIdentifier: localIdentifier
         )
 
-        if let nodeID {
+        if let existingNodeID {
             await draftRepository.updateDraft(draft, for: cellName)
-            try await nodesAPI.deleteFile(nodeID: nodeID)
+            try await nodesAPI.deleteFile(nodeID: existingNodeID)
         } else {
             await draftRepository.addDraft(draft, for: cellName)
         }

@@ -54,8 +54,7 @@ extension ConversationInputBarViewController: PHPickerViewControllerDelegate {
                     self.uploadDraft(
                         data: data,
                         type: .jpeg,
-                        localIdentifier: localIdentifier,
-                        nodeID: nil
+                        localIdentifier: localIdentifier
                     )
                 }
 
