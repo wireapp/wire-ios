@@ -21,6 +21,7 @@ import NeedleFoundation
 import WireDataModel
 import WireLogging
 import WireNetwork
+import WireUtilitiesPackage
 
 protocol NSEClientScopeDependency: Dependency {
 
@@ -258,7 +259,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 syncContext: coreDataStack.syncContext,
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
-                localDomain: localDomain
+                localDomain: localDomain,
+                backgroundTaskManager: NoOpBackgroundTaskManager()
             )
         }
     }

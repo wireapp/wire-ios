@@ -20,6 +20,7 @@ import Foundation
 import WireCoreCrypto
 import WireFoundation
 import WireLogging
+import WireUtilitiesPackage
 
 // sourcery: AutoMockable
 public protocol CoreCryptoProviderProtocol {
@@ -28,6 +29,11 @@ public protocol CoreCryptoProviderProtocol {
     ///
     /// This function is safe to be called concurrently from multiple Tasks
     func coreCrypto() async throws -> CoreCryptoProtocol
+
+    /// A object that can be used to run Core Crypto operations within background
+    /// tasks to ensure that they have enough time to complete while the app
+    /// transitions to a suspended state.
+    var backgroundTaskManager: any BackgroundTaskManager { get }
 
     /// Initialise a new MLS client with basic credentials
     ///
@@ -75,6 +81,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
     private let localDomain: String?
 
+    public let backgroundTaskManager: any BackgroundTaskManager
+
     public init(
         selfUserID: UUID,
         sharedContainerURL: URL,
@@ -83,7 +91,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         syncContext: NSManagedObjectContext,
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         allowCreation: Bool = true,
-        localDomain: String?
+        localDomain: String?,
+        backgroundTaskManager: any BackgroundTaskManager
     ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
@@ -94,6 +103,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
         self.localDomain = localDomain
+        self.backgroundTaskManager = backgroundTaskManager
     }
 
     public func coreCrypto() async throws -> CoreCryptoProtocol {
@@ -406,6 +416,31 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             ZMUser.selfUser(in: self.syncContext).selfClient()?.mlsPublicKeys = keys
             self.syncContext.saveOrRollback()
         }
+    }
+
+}
+
+public extension CoreCryptoProtocol {
+
+    /// Perform a transaction within the context of a background task to
+    /// ensure the transaction has additional time to complete while the
+    /// app transitions to a suspended state.
+    ///
+    /// This is particularly important when running in the main app because
+    /// if the app is suspended during a transaction, then core crypto will
+    /// hold on to a file lock used to coordinate cross-process concurrency
+    /// and effectively block app extensions from being able to start their
+    /// own transactions. This can lead to the Notification Service Extension
+    /// being blocked and not process any notifications until the main app
+    /// is resumed and the transaction is completed and the file lock released.
+    func transaction<Result>(
+        backgroundTaskManager: any BackgroundTaskManager,
+        block: @escaping (any CoreCryptoContextProtocol) async throws -> Result
+    ) async throws -> Result {
+        let taskID = backgroundTaskManager.beginBackgroundTask(withName: "core crypto transaction")
+        let result = try await transaction(block)
+        backgroundTaskManager.endBackgroundTask(taskID)
+        return result
     }
 
 }

@@ -22,6 +22,7 @@ import WireDomain
 import WireFoundation
 import WireNetwork
 import WireRequestStrategy
+import WireUtilitiesPackage
 
 public struct SharingSessionLoader {
 
@@ -336,7 +337,8 @@ public struct SharingSessionLoader {
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskManager: NoOpBackgroundTaskManager()
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(

@@ -21,6 +21,7 @@ import WireDomain
 import WireFoundation
 import WireLogging
 import WireNetwork
+import WireUtilitiesPackage
 
 protocol UserSessionLoaderDelegate: AnyObject {
 
@@ -439,7 +440,8 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskManager: UIApplication.shared
         )
 
         let lastEventIDRepository = LastEventIDRepository(

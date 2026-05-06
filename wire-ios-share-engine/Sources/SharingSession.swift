@@ -24,6 +24,7 @@ import WireLinkPreview
 import WireNetwork
 import WireRequestStrategy
 import WireTransport
+import WireUtilitiesPackage
 
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of
@@ -236,7 +237,8 @@ public final class SharingSession {
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
-            localDomain: localDomain
+            localDomain: localDomain,
+            backgroundTaskManager: NoOpBackgroundTaskManager()
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
