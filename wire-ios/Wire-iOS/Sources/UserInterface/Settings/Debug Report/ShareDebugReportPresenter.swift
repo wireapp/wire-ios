@@ -117,7 +117,7 @@ final class ShareDebugReportPresenter: NSObject {
         viewController.present(actionSheet, animated: true)
 
         mailCancellable = viewModel.$mailComposeItem
-            .compactMap { $0 }
+            .compactMap(\.self)
             .receive(on: RunLoop.main)
             .sink { [weak self, weak viewController] item in
                 guard MFMailComposeViewController.canSendMail() else { return }

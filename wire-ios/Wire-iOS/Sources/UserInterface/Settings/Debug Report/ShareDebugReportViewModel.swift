@@ -152,4 +152,3 @@ final class ShareDebugReportViewModel: ObservableObject {
         UIApplication.shared.topmostViewController(onlyFullScreen: false)
     }
 }
-

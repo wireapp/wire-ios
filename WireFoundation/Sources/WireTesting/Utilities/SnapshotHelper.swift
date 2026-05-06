@@ -37,7 +37,7 @@ public struct SnapshotHelper {
         if let value = ProcessInfo.processInfo.environment["SNAPSHOT_TESTING_RECORD"],
            let record = SnapshotTestingConfiguration.Record(rawValue: value) {
             return record
-        } else if (ci == nil || ci?.isEmpty == true) {
+        } else if ci == nil || ci?.isEmpty == true {
             return .missing
         } else {
             return .never

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireFoundation
+import WireDesign
 
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 public final class BlockingActivityIndicator {
@@ -137,7 +138,7 @@ private extension UIView {
                 state.activityIndicatorView.textColor = .label
 
                 let card = UIView()
-                card.backgroundColor = .systemBackground
+                card.backgroundColor = ColorTheme.Backgrounds.surface
                 card.layer.cornerRadius = 16
                 card.layer.masksToBounds = true
                 card.translatesAutoresizingMaskIntoConstraints = false

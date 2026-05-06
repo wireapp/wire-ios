@@ -37,25 +37,25 @@ public enum WireTextStyle: String, CaseIterable, Sendable {
 
     /// Style iOS & Figma: Footnote
     case h5
-    
+
     /// Style iOS & Figma: Body
     case body1
-    
+
     /// Style iOS & Figma: Body 2 (custom)
     case body2
-    
+
     /// Figma: Callout (bold) - Emphasized
     case body3
-    
+
     /// Style iOS & Figma: Caption 1
     case subline1
-    
+
     /// Style iOS & Figma: Caption 1 (bold) - Emphasized
     case subline2
-    
+
     /// Style iOS & Figma: Button Small (custom)
     case buttonSmall
-    
+
     /// Style iOS & Figma: Button Big (custom)
     case buttonBig
 
