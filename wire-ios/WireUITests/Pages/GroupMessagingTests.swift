@@ -57,7 +57,7 @@ final class GroupMessagingTests: WireUITestCase {
             .acceptPopup()
     }
 
-    private func testMediaURLs() -> MediaURLs {
+    private func fixtureMediaURLs() -> MediaURLs {
         let testDataDirectory = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
@@ -164,7 +164,7 @@ final class GroupMessagingTests: WireUITestCase {
             .openConversation()
             .openPhotosAndGrantPermission()
             .selectImageAndSend()
-            .openPhotosAgain()
+            .openPhotos()
             .selectVideoAndSend()
 
         // THEN
@@ -187,7 +187,7 @@ final class GroupMessagingTests: WireUITestCase {
         // GIVEN
         let groupTeam = try await registerGroupTeam()
         let conversationsPage = try login(user: groupTeam.teamOwner)
-        let mediaURLs = testMediaURLs()
+        let mediaURLs = fixtureMediaURLs()
 
         // WHEN
         try await testServicesClient.sendImage(

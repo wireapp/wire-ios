@@ -276,7 +276,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func openPhotosAgain() throws -> ActiveConversationPage {
+    func openPhotos() throws -> ActiveConversationPage {
         photoButton.waitAndTap()
         return self
     }
