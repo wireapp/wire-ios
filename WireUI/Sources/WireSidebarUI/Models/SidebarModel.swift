@@ -41,6 +41,7 @@ final class SidebarModel: ObservableObject {
     }
 
     @Published var showUnreadFilters: Bool = false
+    @Published var showChannels: Bool = false
     @Published var showMeetings: Bool = false
     @Published var showFiles: Bool = false
 
