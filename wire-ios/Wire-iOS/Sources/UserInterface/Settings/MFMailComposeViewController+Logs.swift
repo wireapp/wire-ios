@@ -24,6 +24,7 @@ import WireSystem
 extension MFMailComposeViewController {
 
     static func prefilledBody(withMessage message: String = "") -> String {
+        // swiftformat:disable:next redundantStaticSelf
         typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
 
         return """

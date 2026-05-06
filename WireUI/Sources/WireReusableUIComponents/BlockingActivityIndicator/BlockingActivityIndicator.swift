@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireFoundation
 import WireDesign
+import WireFoundation
 
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 public final class BlockingActivityIndicator {
