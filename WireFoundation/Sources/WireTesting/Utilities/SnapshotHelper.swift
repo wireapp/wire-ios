@@ -367,7 +367,7 @@ public struct SnapshotHelper {
         matching value: UIViewController,
         size: CGSize? = nil,
         named name: String? = nil,
-        record recording: Bool = false,
+        record recording: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         safeArea: UIEdgeInsets = .zero,
