@@ -85,6 +85,12 @@ class ActiveConversationPage: PageModel {
         app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
 
+    func fileAttachment(name: String, type: String) -> XCUIElement {
+        app.buttons.containing(
+            NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
+        ).firstMatch
+    }
+
     var labelSharedDriveIsOn: XCUIElement {
         app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
     }

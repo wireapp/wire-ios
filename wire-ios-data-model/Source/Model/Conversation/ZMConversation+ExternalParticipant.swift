@@ -56,17 +56,12 @@ public extension ZMConversation {
 
     /// The state of external participants in the conversation.
     var externalParticipantsState: ExternalParticipantsState {
-        // Exception 1) We don't consider guests/apps as external participants in 1:1 conversations
+        // External-participant states are only reported for group conversations.
         guard conversationType == .group else { return [] }
 
-        // Exception 2) If there is only one user in the group and it's an app, we don't consider it as external
         let participants = Set(localParticipants)
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         let otherUsers = participants.subtracting([selfUser])
-
-        if otherUsers.count == 1, otherUsers.first!.isAppOrBot {
-            return []
-        }
 
         // Calculate the external participants state
         let canDisplayGuests = selfUser.isTeamMember
