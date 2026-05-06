@@ -64,7 +64,8 @@ extension ZMUserSession {
         do {
             try transportSession.cookieStorage.removeCookies()
         } catch {
-            WireLogger.authentication.error("Failed to remove cookies: \(error)")
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.error("Failed to remove cookies: \(errorDescription)", attributes: .safePublic)
         }
     }
 

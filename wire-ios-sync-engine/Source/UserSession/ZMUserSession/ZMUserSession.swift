@@ -1552,7 +1552,11 @@ extension ZMUserSession {
             do {
                 try clientRegistrationStatus.cookieProvider.removeCookies()
             } catch {
-                WireLogger.authentication.error("Failed to remove cookies: \(error)")
+                let errorDescription = (error as NSError).safeForLoggingDescription
+                WireLogger.authentication.error(
+                    "Failed to remove cookies: \(errorDescription)",
+                    attributes: .safePublic
+                )
             }
 
             let selfUser = ZMUser.selfUser(in: syncContext)

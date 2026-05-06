@@ -86,7 +86,8 @@ public class LegacyCookieStorage: NSObject {
         do {
             try storeCookies(cookies)
         } catch {
-            WireLogger.authentication.error("Failed to store cookies: \(error)")
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.error("Failed to store cookies: \(errorDescription)", attributes: .safePublic)
         }
     }
 
@@ -104,7 +105,8 @@ public class LegacyCookieStorage: NSObject {
         do {
             return try cookieStorage.fetchCookies(userID: userIdentifier)
         } catch {
-            WireLogger.authentication.error("Failed to fetch cookies: \(error)")
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.error("Failed to fetch cookies: \(errorDescription)", attributes: .safePublic)
             return []
         }
 
