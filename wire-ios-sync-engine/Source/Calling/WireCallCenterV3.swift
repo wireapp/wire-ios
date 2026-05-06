@@ -704,7 +704,7 @@ public extension WireCallCenterV3 {
     /// See documentation:
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/692027483/Use+case+Join+conference+sub-conversation+MLS
 
-    private static let mlsConferenceSetupTimeout: Duration = .seconds(7)
+    private static let mlsConferenceSetupTimeout: Duration = .seconds(4)
 
     private func setUpMLSConference(
         in conversation: ZMConversation,
@@ -743,27 +743,28 @@ public extension WireCallCenterV3 {
             Task {
                 do {
                     // Join the subgroup or create it if it doesn't exist
-//                    let subgroupID = try await mlsService.createOrJoinSubgroup(
-//                        parentQualifiedID: parentQualifiedID,
-//                        parentID: parentGroupID
-//                    )
-                    let subgroupID = try await withThrowingTaskGroup(of: MLSGroupID.self) { group in
-                        group.addTask {
-                            try await mlsService.createOrJoinSubgroup(
-                                parentQualifiedID: parentQualifiedID,
-                                parentID: parentGroupID
-                            )
-                        }
-                        group.addTask {
-                            try await Task.sleep(for: Self.mlsConferenceSetupTimeout)
-                            throw Failure.mlsConferenceSetupTimeout
-                        }
-                        guard let result = try await group.next() else {
-                            throw Failure.mlsConferenceSetupTimeout
-                        }
-                        group.cancelAll()
-                        return result
-                    }
+                    let subgroupID = try await mlsService.createOrJoinSubgroup(
+                        parentQualifiedID: parentQualifiedID,
+                        parentID: parentGroupID
+                    )
+                    print("⏰ MLS conference: subgroup joined successfully")
+//                    let subgroupID = try await withThrowingTaskGroup(of: MLSGroupID.self) { group in
+//                        group.addTask {
+//                            try await mlsService.createOrJoinSubgroup(
+//                                parentQualifiedID: parentQualifiedID,
+//                                parentID: parentGroupID
+//                            )
+//                        }
+//                        group.addTask {
+//                            try await Task.sleep(for: Self.mlsConferenceSetupTimeout)
+//                            throw Failure.mlsConferenceSetupTimeout
+//                        }
+//                        guard let result = try await group.next() else {
+//                            throw Failure.mlsConferenceSetupTimeout
+//                        }
+//                        group.cancelAll()
+//                        return result
+//                    }
                     WireLogger.calling.info(
                         "MLS conference: subgroup joined successfully",
                         attributes: .safePublic
@@ -860,6 +861,7 @@ public extension WireCallCenterV3 {
 
     func closeCall(conversationId: AVSIdentifier, reason: CallClosedReason = .normal) {
         Self.logger.info("closing call")
+        print("⏰ closing call")
         avsWrapper.endCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
@@ -888,7 +890,7 @@ public extension WireCallCenterV3 {
                 parentGroupID: mlsParentIDs.1
             )
         }
-
+        
     }
 
     /// Rejects an incoming call in the conversation.
