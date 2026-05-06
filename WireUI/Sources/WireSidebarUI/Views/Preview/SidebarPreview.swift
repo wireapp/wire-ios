@@ -49,6 +49,7 @@ struct SidebarPreview: View {
                     accountInfo: accountInfo,
                     selectedMenuItem: $selectedMenuItem,
                     showUnreadFilters: false,
+                    showChannels: false,
                     showMeetings: false,
                     showFiles: false,
                     accountImageAction: {},
