@@ -34,7 +34,14 @@ public struct SnapshotHelper {
 
     private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
         let ci = ProcessInfo.processInfo.environment["CI"]
-        return (ci == nil || ci?.isEmpty == true) ? .missing : .never
+        if let value = ProcessInfo.processInfo.environment["SNAPSHOT_TESTING_RECORD"],
+           let record = SnapshotTestingConfiguration.Record(rawValue: value) {
+            return record
+        } else if (ci == nil || ci?.isEmpty == true) {
+            return .missing
+        } else {
+            return .never
+        }
     }
 
     public init() {}
@@ -522,7 +529,7 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIImage,
         named name: String? = nil,
-        record recording: Bool = false,
+        record recording: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
