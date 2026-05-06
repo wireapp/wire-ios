@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MessageUI
-import SwiftUI
+import Foundation
 
 struct MailComposeItem: Identifiable {
     let id = UUID()
@@ -25,53 +24,4 @@ struct MailComposeItem: Identifiable {
     let subject: String
     let messageBody: String
     let attachmentData: Data
-}
-
-private struct MailComposeView: UIViewControllerRepresentable {
-
-    let item: MailComposeItem
-    let onDismiss: () -> Void
-
-    func makeUIViewController(context: Context) -> MFMailComposeViewController {
-        let vc = MFMailComposeViewController()
-        vc.mailComposeDelegate = context.coordinator
-        vc.setToRecipients([item.recipient])
-        vc.setSubject(item.subject)
-        vc.setMessageBody(item.messageBody, isHTML: false)
-        vc.addAttachmentData(item.attachmentData, mimeType: "application/zip", fileName: "logs.zip")
-        return vc
-    }
-
-    func updateUIViewController(_ uiViewController: MFMailComposeViewController, context: Context) {}
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(onDismiss: onDismiss)
-    }
-
-    final class Coordinator: NSObject, MFMailComposeViewControllerDelegate {
-        let onDismiss: () -> Void
-
-        init(onDismiss: @escaping () -> Void) {
-            self.onDismiss = onDismiss
-        }
-
-        func mailComposeController(
-            _ controller: MFMailComposeViewController,
-            didFinishWith result: MFMailComposeResult,
-            error: Error?
-        ) {
-            onDismiss()
-        }
-    }
-}
-
-extension View {
-
-    func mailCompose(item: Binding<MailComposeItem?>) -> some View {
-        sheet(item: item) { mailItem in
-            MailComposeView(item: mailItem) {
-                item.wrappedValue = nil
-            }
-        }
-    }
 }

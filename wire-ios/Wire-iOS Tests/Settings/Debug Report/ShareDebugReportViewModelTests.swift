@@ -48,14 +48,6 @@ final class ShareDebugReportViewModelTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testShowOptions_setsIsShowingOptionsTrue() {
-        // WHEN
-        sut.showOptions()
-
-        // THEN
-        XCTAssertTrue(sut.isShowingOptions)
-    }
-
     func testShareViaActivitySheet_invokesCreateReport() async {
         // GIVEN
         mockCreateReport.invokeReturnValue = URL(fileURLWithPath: "/tmp/logs.zip")

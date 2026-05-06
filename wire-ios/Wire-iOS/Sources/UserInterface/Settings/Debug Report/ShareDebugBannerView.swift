@@ -22,23 +22,23 @@ import WireLocators
 
 struct ShareDebugBannerView: View {
 
-    @ObservedObject var viewModel: ShareDebugReportViewModel
+    let onTap: () -> Void
 
     var body: some View {
-        Button { viewModel.showOptions() } label: {
+        Button { onTap() } label: {
             HStack(alignment: .center) {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Image(systemName: "exclamationmark.bubble")
                         .font(for: .body3)
                         .accessibilityHidden(true)
                         .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
                             .font(for: .body3)
                             .multilineTextAlignment(.leading)
                             .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                        
+
                         Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.message)
                             .font(for: .h4)
                             .multilineTextAlignment(.leading)
@@ -50,7 +50,6 @@ struct ShareDebugBannerView: View {
                     .font(for: .h3)
                     .accessibilityHidden(true)
             }
-
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -64,38 +63,11 @@ struct ShareDebugBannerView: View {
         .buttonStyle(.plain)
         .accessibilityLabel(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
         .accessibilityIdentifier(Locators.SettingsPage.shareDebugBanner.rawValue)
-        .confirmationDialog(
-            L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.title,
-            isPresented: $viewModel.isShowingOptions,
-            titleVisibility: .visible
-        ) {
-            if viewModel.canShareViaWire {
-                Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.shareViaWire) {
-                    Task { await viewModel.shareViaWire() }
-                }
-                .accessibilityIdentifier(Locators.ShareDebugReportPage.shareViaWireButton.rawValue)
-            }
-            if viewModel.canSendEmail {
-                Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.sendEmail) {
-                    Task { await viewModel.sendEmail() }
-                }
-                .accessibilityIdentifier(Locators.ShareDebugReportPage.sendEmailButton.rawValue)
-            }
-            Button(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.share) {
-                Task { await viewModel.shareViaActivitySheet() }
-            }
-            .accessibilityIdentifier(Locators.ShareDebugReportPage.shareButton.rawValue)
-            Button(L10n.Localizable.General.cancel, role: .cancel) {}
-                .accessibilityIdentifier(Locators.ShareDebugReportPage.cancelButton.rawValue)
-        } message: {
-            Text(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.message)
-        }
-        .mailCompose(item: $viewModel.mailComposeItem)
     }
 }
 
 #Preview {
-    ShareDebugBannerView(viewModel: .init(userSession: nil, mainCoordinator: nil))
+    ShareDebugBannerView(onTap: {})
         .padding()
         .background(Color(.systemGroupedBackground))
 }

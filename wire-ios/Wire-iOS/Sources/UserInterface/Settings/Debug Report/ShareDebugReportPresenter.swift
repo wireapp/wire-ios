@@ -49,7 +49,7 @@ final class ShareDebugReportPresenter: NSObject {
 
         let userSession = SessionManager.shared?.activeUserSession
         let mainCoordinator = ZClientViewController.shared?.mainCoordinator
-        let selfUserID = (userSession as? ZMUserSession)?.selfUser.remoteIdentifier
+        let selfUserID = userSession?.selfUser.remoteIdentifier
 
         let viewModel = ShareDebugReportViewModel(
             userSession: userSession,
@@ -102,6 +102,17 @@ final class ShareDebugReportPresenter: NSObject {
             self?.isPresenting = false
         })
 
+        if let popover = actionSheet.popoverPresentationController {
+            popover.sourceView = viewController.view
+            popover.sourceRect = CGRect(
+                x: viewController.view.bounds.midX,
+                y: viewController.view.bounds.midY,
+                width: 0,
+                height: 0
+            )
+            popover.permittedArrowDirections = []
+        }
+
         presentedSheet = actionSheet
         viewController.present(actionSheet, animated: true)
 
@@ -121,6 +132,11 @@ final class ShareDebugReportPresenter: NSObject {
                 mailVC.setSubject(item.subject)
                 mailVC.setMessageBody(item.messageBody, isHTML: false)
                 mailVC.addAttachmentData(item.attachmentData, mimeType: "application/zip", fileName: "logs.zip")
+                if let popover = mailVC.popoverPresentationController, let view = viewController?.view {
+                    popover.sourceView = view
+                    popover.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                    popover.permittedArrowDirections = []
+                }
                 viewController?.present(mailVC, animated: true)
             }
     }

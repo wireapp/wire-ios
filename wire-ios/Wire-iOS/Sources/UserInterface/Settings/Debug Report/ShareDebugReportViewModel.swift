@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import MessageUI
-import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDataModel
@@ -29,7 +29,6 @@ import WireSyncEngine
 @MainActor
 final class ShareDebugReportViewModel: ObservableObject {
 
-    @Published var isShowingOptions = false
     @Published var mailComposeItem: MailComposeItem?
 
     let canShareViaWire: Bool
@@ -55,10 +54,6 @@ final class ShareDebugReportViewModel: ObservableObject {
         self.canSendEmail = MFMailComposeViewController.canSendMail()
     }
 
-    func showOptions() {
-        isShowingOptions = true
-    }
-
     func shareViaWire() async {
         guard let userSession, let mainCoordinator else { return }
         guard let viewController = topViewController() else { return }
@@ -76,6 +71,16 @@ final class ShareDebugReportViewModel: ObservableObject {
                 mainCoordinator: mainCoordinator
             )
             shareVC.onDismiss = { vc, _ in vc.dismiss(animated: true) }
+            if let popover = shareVC.popoverPresentationController {
+                popover.sourceView = viewController.view
+                popover.sourceRect = CGRect(
+                    x: viewController.view.bounds.midX,
+                    y: viewController.view.bounds.midY,
+                    width: 0,
+                    height: 0
+                )
+                popover.permittedArrowDirections = []
+            }
             viewController.present(shareVC, animated: true)
         }
     }
@@ -84,6 +89,16 @@ final class ShareDebugReportViewModel: ObservableObject {
         guard let viewController = topViewController() else { return }
         await withReport(from: viewController) { url in
             let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            if let popover = activityVC.popoverPresentationController {
+                popover.sourceView = viewController.view
+                popover.sourceRect = CGRect(
+                    x: viewController.view.bounds.midX,
+                    y: viewController.view.bounds.midY,
+                    width: 0,
+                    height: 0
+                )
+                popover.permittedArrowDirections = []
+            }
             viewController.present(activityVC, animated: true)
         }
     }
