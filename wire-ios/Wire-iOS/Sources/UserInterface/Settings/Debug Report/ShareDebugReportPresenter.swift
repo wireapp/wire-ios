@@ -20,7 +20,6 @@ import UIKit
 import WireLocators
 import WireSyncEngine
 
-/// Presents the share debug report flow from the shake gesture.
 final class ShareDebugReportPresenter {
 
     private(set) var isPresenting = false
@@ -64,33 +63,40 @@ final class ShareDebugReportPresenter {
         actionSheet.view.accessibilityIdentifier = ids.actionSheet.rawValue
 
         if viewModel.canShareViaWire {
-            let action = UIAlertAction(title: l10n.shareViaWire, style: .default) { [weak self] _ in
+            actionSheet.addAction(UIAlertAction(
+                title: l10n.shareViaWire,
+                style: .default,
+                accessibilityIdentifier: ids.shareViaWireButton.rawValue
+            ) { [weak self] _ in
                 self?.isPresenting = false
                 Task { await viewModel.shareViaWire() }
-            }
-            action.setValue(ids.shareViaWireButton.rawValue, forKey: "accessibilityIdentifier")
-            actionSheet.addAction(action)
+            })
         }
         if viewModel.canSendEmail {
-            let action = UIAlertAction(title: l10n.sendEmail, style: .default) { [weak self] _ in
+            actionSheet.addAction(UIAlertAction(
+                title: l10n.sendEmail,
+                style: .default,
+                accessibilityIdentifier: ids.sendEmailButton.rawValue
+            ) { [weak self] _ in
                 self?.isPresenting = false
                 Task { await viewModel.sendEmail() }
-            }
-            action.setValue(ids.sendEmailButton.rawValue, forKey: "accessibilityIdentifier")
-            actionSheet.addAction(action)
+            })
         }
-        let shareAction = UIAlertAction(title: l10n.share, style: .default) { [weak self] _ in
+        actionSheet.addAction(UIAlertAction(
+            title: l10n.share,
+            style: .default,
+            accessibilityIdentifier: ids.shareButton.rawValue
+        ) { [weak self] _ in
             self?.isPresenting = false
             Task { await viewModel.shareViaActivitySheet() }
-        }
-        shareAction.setValue(ids.shareButton.rawValue, forKey: "accessibilityIdentifier")
-        actionSheet.addAction(shareAction)
-
-        let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { [weak self] _ in
+        })
+        actionSheet.addAction(UIAlertAction(
+            title: L10n.Localizable.General.cancel,
+            style: .cancel,
+            accessibilityIdentifier: ids.cancelButton.rawValue
+        ) { [weak self] _ in
             self?.isPresenting = false
-        }
-        cancelAction.setValue(ids.cancelButton.rawValue, forKey: "accessibilityIdentifier")
-        actionSheet.addAction(cancelAction)
+        })
 
         presentedSheet = actionSheet
         viewController.present(actionSheet, animated: true)
