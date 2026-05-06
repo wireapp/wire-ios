@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
@@ -163,7 +164,7 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedVideoCell" : "VideoCell"
+        configuration.isObfuscated ? "ObfuscatedVideoCell" : Locators.ActiveConversationPage.videoCell.rawValue
     }
 
     let accessibilityLabel: String?
