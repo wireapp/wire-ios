@@ -504,6 +504,29 @@ class MockCreateDebugReportUseCaseProtocol: CreateDebugReportUseCaseProtocol {
         }
     }
 
+    // MARK: - invokeData
+
+    var invokeData_Invocations: [Void] = []
+    var invokeData_MockError: Error?
+    var invokeData_MockMethod: (() async throws -> Data)?
+    var invokeData_MockValue: Data?
+
+    func invokeData() async throws -> Data {
+        invokeData_Invocations.append(())
+
+        if let error = invokeData_MockError {
+            throw error
+        }
+
+        if let mock = invokeData_MockMethod {
+            return try await mock()
+        } else if let mock = invokeData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeData`")
+        }
+    }
+
 }
 
 class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConversationViewControllerBuilderProtocol {

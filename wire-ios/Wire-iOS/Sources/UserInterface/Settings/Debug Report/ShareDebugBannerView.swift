@@ -26,30 +26,35 @@ struct ShareDebugBannerView: View {
 
     var body: some View {
         Button { viewModel.showOptions() } label: {
-            HStack(alignment: .center, spacing: 8) {
-                Image(systemName: "exclamationmark.bubble")
-                    .font(for: .body2)
-                    .accessibilityHidden(true)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
-                        .font(for: .body2)
-                        .multilineTextAlignment(.leading)
-                    Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.message)
-                        .font(for: .subline1)
-                        .multilineTextAlignment(.leading)
+            HStack(alignment: .center) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "exclamationmark.bubble")
+                        .font(for: .body3)
+                        .accessibilityHidden(true)
+                        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
+                            .font(for: .body3)
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                        
+                        Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.message)
+                            .font(for: .h4)
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
                 Image(systemName: "chevron.right")
-                    .font(for: .subline2)
+                    .font(for: .h3)
                     .accessibilityHidden(true)
             }
-            .foregroundColor(Color(ColorTheme.Backgrounds.onBackground))
+
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color(ColorTheme.Backgrounds.surface))
+                    .fill(ColorTheme.Backgrounds.surface.color)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -85,6 +90,7 @@ struct ShareDebugBannerView: View {
         } message: {
             Text(L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet.message)
         }
+        .mailCompose(item: $viewModel.mailComposeItem)
     }
 }
 

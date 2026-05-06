@@ -16,14 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
+import MessageUI
 import UIKit
 import WireLocators
 import WireSyncEngine
 
-final class ShareDebugReportPresenter {
+final class ShareDebugReportPresenter: NSObject {
 
     private(set) var isPresenting = false
     private weak var presentedSheet: UIAlertController?
+    private var mailCancellable: AnyCancellable?
+    private var mailDelegate: MailComposeDelegate?
 
     @MainActor
     func dismiss(completion: @escaping @MainActor () -> Void) {
@@ -100,5 +104,42 @@ final class ShareDebugReportPresenter {
 
         presentedSheet = actionSheet
         viewController.present(actionSheet, animated: true)
+
+        mailCancellable = viewModel.$mailComposeItem
+            .compactMap { $0 }
+            .receive(on: RunLoop.main)
+            .sink { [weak self, weak viewController] item in
+                guard MFMailComposeViewController.canSendMail() else { return }
+                let mailVC = MFMailComposeViewController()
+                let delegate = MailComposeDelegate { [weak self] in
+                    self?.mailDelegate = nil
+                    viewModel.mailComposeItem = nil
+                }
+                self?.mailDelegate = delegate
+                mailVC.mailComposeDelegate = delegate
+                mailVC.setToRecipients([item.recipient])
+                mailVC.setSubject(item.subject)
+                mailVC.setMessageBody(item.messageBody, isHTML: false)
+                mailVC.addAttachmentData(item.attachmentData, mimeType: "application/zip", fileName: "logs.zip")
+                viewController?.present(mailVC, animated: true)
+            }
+    }
+}
+
+private final class MailComposeDelegate: NSObject, MFMailComposeViewControllerDelegate {
+
+    private let onDismiss: () -> Void
+
+    init(onDismiss: @escaping () -> Void) {
+        self.onDismiss = onDismiss
+    }
+
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
+        controller.dismiss(animated: true)
+        onDismiss()
     }
 }

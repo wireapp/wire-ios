@@ -175,7 +175,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mailVC = MFMailComposeViewController()
         mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
-        let body = mailVC.prefilledBody(withMessage: message)
+        let body = MFMailComposeViewController.prefilledBody(withMessage: message)
         mailVC.setMessageBody(body, isHTML: false)
 
         mailVC.mailComposeDelegate = alert

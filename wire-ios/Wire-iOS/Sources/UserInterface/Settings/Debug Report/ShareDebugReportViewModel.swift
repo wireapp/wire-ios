@@ -17,6 +17,7 @@
 //
 
 import MessageUI
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDataModel
@@ -29,6 +30,7 @@ import WireSyncEngine
 final class ShareDebugReportViewModel: ObservableObject {
 
     @Published var isShowingOptions = false
+    @Published var mailComposeItem: MailComposeItem?
 
     let canShareViaWire: Bool
     let canSendEmail: Bool
@@ -88,18 +90,24 @@ final class ShareDebugReportViewModel: ObservableObject {
 
     func sendEmail() async {
         guard let viewController = topViewController() else { return }
-        await withReport(from: viewController) { url in
-            let mailVC = MFMailComposeViewController()
-            let delegate = MailDelegate()
-            mailVC.mailComposeDelegate = delegate
-            objc_setAssociatedObject(mailVC, &mailDelegateKey, delegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            mailVC.setToRecipients([self.mailRecipient])
-            mailVC.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
-            mailVC.setMessageBody(mailVC.prefilledBody(), isHTML: false)
-            if let data = try? Data(contentsOf: url) {
-                mailVC.addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
-            }
-            viewController.present(mailVC, animated: true)
+        let indicator = BlockingActivityIndicator(
+            view: viewController.view,
+            accessibilityAnnouncement: nil,
+            style: .card
+        )
+        indicator.start(text: L10n.Localizable.Self.Settings.ShareDebugReport.creatingReport)
+        do {
+            let data = try await createReport.invokeData()
+            indicator.stop()
+            mailComposeItem = MailComposeItem(
+                recipient: mailRecipient,
+                subject: L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject,
+                messageBody: MFMailComposeViewController.prefilledBody(),
+                attachmentData: data
+            )
+        } catch {
+            indicator.stop()
+            WireLogger.system.error("failed to create debug report: \(error)")
         }
     }
 
@@ -130,18 +138,3 @@ final class ShareDebugReportViewModel: ObservableObject {
     }
 }
 
-// MARK: - MailDelegate
-
-private final class MailDelegate: NSObject, MFMailComposeViewControllerDelegate {
-
-    func mailComposeController(
-        _ controller: MFMailComposeViewController,
-        didFinishWith result: MFMailComposeResult,
-        error: Error?
-    ) {
-        objc_setAssociatedObject(controller, &mailDelegateKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        controller.dismiss(animated: true)
-    }
-}
-
-private nonisolated(unsafe) var mailDelegateKey: Void?

@@ -48,7 +48,7 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         mailComposeViewController.mailComposeDelegate = self
         mailComposeViewController.setToRecipients([mailRecipient])
         mailComposeViewController.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
-        let body = mailComposeViewController.prefilledBody()
+        let body = MFMailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
