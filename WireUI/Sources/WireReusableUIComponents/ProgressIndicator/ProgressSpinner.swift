@@ -87,6 +87,7 @@ public final class ProgressSpinner: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
 
+        spinner.accessibilityElementsHidden = true
         spinner.contentMode = .center
         updateSpinnerIcon()
         stackView.addArrangedSubview(spinner)

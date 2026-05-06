@@ -23,7 +23,7 @@ import WireLocators
 struct ShareDebugBannerView: View {
 
     let onTap: () -> Void
-
+   
     var body: some View {
         Button { onTap() } label: {
             HStack(alignment: .center) {
@@ -34,21 +34,14 @@ struct ShareDebugBannerView: View {
                         .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
-                            .font(for: .body3)
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-
-                        Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.message)
-                            .font(for: .h4)
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(ColorTheme.Content.Base.secondary.color)
+                        title
+                        message
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Image(systemName: "chevron.right")
                     .font(for: .h3)
-                    .accessibilityHidden(true)
+                    .accessibilityLabel(Text(L10n.Accessibility.Settings.ShareDebugInfoBanner.arrow))
             }
             .padding(12)
             .background(
@@ -64,6 +57,23 @@ struct ShareDebugBannerView: View {
         .accessibilityLabel(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
         .accessibilityIdentifier(Locators.SettingsPage.shareDebugBanner.rawValue)
     }
+    
+    @ViewBuilder
+    var title: some View {
+        Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
+            .font(for: .body3)
+            .multilineTextAlignment(.leading)
+            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+    }
+
+    @ViewBuilder
+    var message: some View {
+        Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.message)
+            .font(for: .h4)
+            .multilineTextAlignment(.leading)
+            .foregroundColor(ColorTheme.Content.Base.secondary.color)
+    }
+
 }
 
 #Preview {

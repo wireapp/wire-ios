@@ -34,7 +34,7 @@ final class ShareDebugBannerViewSnapshotTests: XCTestCase {
     @MainActor
     override func setUp() async throws {
         snapshotHelper = SnapshotHelper()
-        let view = ShareDebugBannerView(onTap: {})
+        let view = ShareDebugBannerView(onTap: { /* not relevant for snapshot */ })
             .padding()
         sut = UIHostingController(rootView: AnyView(view))
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 120)

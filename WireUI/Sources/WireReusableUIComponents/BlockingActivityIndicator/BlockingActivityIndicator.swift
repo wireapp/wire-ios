@@ -144,13 +144,17 @@ private extension UIView {
                 blockingView.addSubview(card)
                 card.addSubview(state.activityIndicatorView)
 
-                // Card is 65% of the overlay width so it's wide enough for the label text.
+                // Card prefers 65% of the overlay width (wide enough for label text on iPhone)
+                // but is capped at 300pt so it stays compact on iPad.
                 // Spinner uses equalTo horizontal margins so it fills the card — this overrides
                 // ProgressSpinner.intrinsicContentSize (32pt) which ignores the label width.
+                let preferredWidth = card.widthAnchor.constraint(equalTo: blockingView.widthAnchor, multiplier: 0.65)
+                preferredWidth.priority = .defaultHigh
                 NSLayoutConstraint.activate([
                     card.centerXAnchor.constraint(equalTo: blockingView.centerXAnchor),
                     card.centerYAnchor.constraint(equalTo: blockingView.centerYAnchor),
-                    card.widthAnchor.constraint(equalTo: blockingView.widthAnchor, multiplier: 0.65),
+                    preferredWidth,
+                    card.widthAnchor.constraint(lessThanOrEqualToConstant: 300),
 
                     state.activityIndicatorView.topAnchor.constraint(equalTo: card.topAnchor, constant: 24),
                     state.activityIndicatorView.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 24),

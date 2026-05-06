@@ -1070,6 +1070,10 @@ internal enum L10n {
           return L10n.tr("Accessibility", "settings.deviceCount.hint", String(describing: p1), fallback: "%@ devices in use")
         }
       }
+      internal enum ShareDebugInfoBanner {
+        /// Double tap to open more options
+        internal static let arrow = L10n.tr("Accessibility", "settings.shareDebugInfoBanner.arrow", fallback: "Double tap to open more options")
+      }
     }
     internal enum ShareProfile {
       internal enum BackButton {
