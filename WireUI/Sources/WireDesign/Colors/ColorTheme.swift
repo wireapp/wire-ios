@@ -201,6 +201,16 @@ public enum ColorTheme {
     public enum NotificationBadge {
         public static let fill = ColorTheme.Base.error
     }
+    
+    // MARK - Wire Design System
+    
+    // TODO: implement the new color system
+    public enum Content {
+        public enum Base {
+            public static let secondary = UIColor(light: .gray70, dark: .gray60)
+        }
+    }
+    
 }
 
 private extension UIColor {

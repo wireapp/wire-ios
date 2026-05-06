@@ -42,7 +42,7 @@ struct ShareDebugBannerView: View {
                         Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.message)
                             .font(for: .h4)
                             .multilineTextAlignment(.leading)
-                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                            .foregroundColor(ColorTheme.Content.Base.secondary.color)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
