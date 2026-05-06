@@ -211,7 +211,7 @@ final class UploadDraftUseCaseTests {
         // When, Then
         let sut = sut
         await #expect(throws: (any Error).self) {
-            try await sut.invoke(fileURL: url)
+            try await sut.invoke(fileURL: url, localIdentifier: nil)
         }
     }
 
@@ -223,7 +223,7 @@ final class UploadDraftUseCaseTests {
         try data.write(to: fileURL)
 
         // When
-        try await sut.invoke(fileURL: fileURL)
+        try await sut.invoke(fileURL: fileURL, localIdentifier: nil)
 
         // Then
         let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
@@ -254,7 +254,7 @@ final class UploadDraftUseCaseTests {
         metadataRepository.videoMetadataFileURL_MockValue = .video(width: 10, height: 10, duration: 10)
 
         // When
-        try await sut.invoke(fileURL: fileURL)
+        try await sut.invoke(fileURL: fileURL, localIdentifier: nil)
 
         // Then
         let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
@@ -268,7 +268,7 @@ final class UploadDraftUseCaseTests {
         metadataRepository.imageMetadataFileURL_MockError = NSError(domain: "something", code: 10)
 
         // When
-        try await sut.invoke(fileURL: fileURL)
+        try await sut.invoke(fileURL: fileURL, localIdentifier: nil)
 
         // Then
         #expect(draftsRepository.addDraftFor_Invocations.count == 1)
@@ -285,7 +285,7 @@ final class UploadDraftUseCaseTests {
         let data = Data("This is a test file content.".utf8)
 
         // When
-        try await sut.invoke(data: data, type: type, nodeID: nil)
+        try await sut.invoke(data: data, type: type, localIdentifier: nil, existingNodeID: nil)
 
         // Then
         let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
@@ -305,7 +305,7 @@ final class UploadDraftUseCaseTests {
         let data = Data("This is a test file content.".utf8)
 
         // When
-        try await sut.invoke(data: data, type: .plainText, nodeID: nil)
+        try await sut.invoke(data: data, type: .plainText, localIdentifier: nil, existingNodeID: nil)
 
         // Then
         let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
