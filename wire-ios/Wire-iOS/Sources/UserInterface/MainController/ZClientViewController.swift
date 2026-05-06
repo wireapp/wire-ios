@@ -75,7 +75,8 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
-        isWireDriveEnabled: userSession.isWireDriveEnabled
+        isWireDriveEnabled: userSession.isWireDriveEnabled,
+        isChannelsEnabled: userSession.channelsFeature.isEnabled
     )
 
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
