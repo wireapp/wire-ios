@@ -196,6 +196,13 @@ jobs:
             --run-name "$TESTINY_RUN_NAME" \
             --require-existing-run
 
+      - name: Extract UI test summary
+        if: ${{ always() && inputs.run_critical_flows }}
+        id: ui-test-summary
+        uses: ./.github/actions/generate-uitest-summary
+        with:
+          xcresult_search_path: artifacts
+
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
@@ -268,11 +275,32 @@ jobs:
           comment_title: "Test Results"
 
       - name: Publish test results + Allure report
+        id: allure-report
         if: always()
         uses: ./.github/actions/allure-reporting
         with:
           allure_artifact_name: "html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}"
           xcresult_search_path: "artifacts"
+
+      - name: Resolve HTML report link
+        id: html-report-link
+        if: ${{ always() && env.ALLURE_REPORT_AVAILABLE == 'true' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ALLURE_ARTIFACT_NAME: html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}
+        run: |
+          set -euo pipefail
+
+          ARTIFACT_ID="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
+            --jq ".artifacts[] | select(.name == \"${ALLURE_ARTIFACT_NAME}\") | .id" \
+            | head -n 1 || true)"
+
+          if [ -n "${ARTIFACT_ID}" ] && [ "${ARTIFACT_ID}" != "null" ]; then
+            echo "html_report_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts/${ARTIFACT_ID}" >> "$GITHUB_OUTPUT"
+          else
+            echo "html_report_url=" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Add Allure Report to Job Summary
         if: ${{ always() && env.ALLURE_REPORT_AVAILABLE == 'true' }}
@@ -329,12 +357,18 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **Tests for ${{ env.SANITIZED_BRANCH }}**
+            This is a demo notification, please ignore it.
+            📋 **XCUITest Run Summary**
 
+            **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
+            **Build URL:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            ${{ steps.ui-test-summary.outputs.report_message }}
 
       - name: Only Notify on Wire failures
         uses: 8398a7/action-slack@v3
@@ -343,12 +377,18 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **🚨 Tests for ${{ env.SANITIZED_BRANCH }} failed 🆘**
+            This is a demo notification, please ignore it.
+            📋 **XCUITest Run Summary**
 
+            **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
-            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
+            **Build URL:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            ${{ steps.ui-test-summary.outputs.report_message }}
 
   analyze-xcresults:
     needs: run-tests
