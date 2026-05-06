@@ -10,6 +10,10 @@
             "value" : "$(INBUCKET_USERNAME)"
           },
           {
+            "key" : "OKTA_API_KEY_IOS",
+            "value" : "$(OKTA_API_KEY_IOS)"
+          },
+          {
             "key" : "BELLA_INBUCKET_URL",
             "value" : "$(BELLA_INBUCKET_URL)"
           },

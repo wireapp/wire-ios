@@ -195,20 +195,14 @@ extension AVSWrapper {
         /// typedef void (wcall_network_quality_h)(const char *convid,
         ///                                        const char *userid,
         ///                                        const char *clientid,
-        ///                                        int quality, /*  WCALL_QUALITY_ */
-        ///                                        int rtt, /* round trip time in ms */
-        ///                                        int uploss, /* upstream pkt loss % */
-        ///                                        int downloss, /* dnstream pkt loss % */
+        ///                                        const char *quality_info,
         ///                                        void *arg);
 
         typealias NetworkQualityChange = @convention(c) (
             StringPtr,
             StringPtr,
             StringPtr,
-            Int32,
-            Int32,
-            Int32,
-            Int32,
+            StringPtr,
             ContextRef
         ) -> Void
 

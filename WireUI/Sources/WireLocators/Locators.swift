@@ -120,7 +120,9 @@ public enum Locators {
         case sharedDriveButton
         case ephemeralTimeSelectionButton
         case message
-        case imageCell = "ImageCell"
+        case imageCell
+        case videoCell
+        case videoPlayButton
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
@@ -134,6 +136,17 @@ public enum Locators {
         case attachmentImagePreview
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
+        case photoButton
+        case allowFullAccess = "Allow Full Access"
+        case ok = "OK"
+        case audioButton
+        case startRecording = "Start recording"
+        case stopRecording = "Stop recording"
+        case helium = "Helium"
+        case sendAudio = "Send"
+        case playAudioFile
+        case recordingTime
+
     }
 
     public enum BackupOrRestorePage: String {
@@ -224,6 +237,7 @@ public enum Locators {
         case cancel
         case usernameCell
         case createNewChannelButton
+        case userCellInContactList
     }
 
     public enum OnMyiPhonePage: String {
@@ -424,7 +438,9 @@ public enum Locators {
             case close
         }
 
+        /// UI elements for both file or folder creation.
         public enum CreateFilePage: String {
+            case createFolderPageHeader = "Create folder"
             case cancelButton
             case createButton
         }
@@ -470,6 +486,10 @@ public enum Locators {
         public enum FilesItemPage: String {
             case confirmDeleteButton
             case confirmRestoreButton
+        }
+
+        public enum RecycleBinPage: String {
+            case deletePermanently = "Delete Permanently"
         }
     }
 

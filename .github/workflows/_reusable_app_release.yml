@@ -24,7 +24,9 @@ on:
       notify_secret:
         type: string
         required: true
-
+      produce_debug_builds:
+        type: boolean
+        default: false
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -118,6 +120,7 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+      DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
 
     steps:
       - name: Add Masks
