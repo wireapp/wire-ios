@@ -28,7 +28,7 @@ final class ShareDebugReportTests: WireUITestCase {
 
     /// On the login screen there is no user session and no mail client (simulator),
     /// so only "Share" and "Cancel" should appear — 2 options total.
-    func testShakeGesture_onLoginScreen_presentsShareDebugActionSheet() throws {
+    func testShakeGesture_onLoginScreen_presentsShareDebugActionSheet_TC_10853() throws {
         // GIVEN
         _ = try WelcomePage()
 
@@ -56,7 +56,7 @@ final class ShareDebugReportTests: WireUITestCase {
     /// Once logged in, "Share via Wire" is also available — 3 options total.
     /// "Send email to Support" is still absent because the simulator has no mail client.
     @MainActor
-    func testShakeGesture_onConversationScreen_presentsShareDebugActionSheet() async throws {
+    func testShakeGesture_onConversationScreen_presentsShareDebugActionSheet_TC_10854() async throws {
         // GIVEN
         let user = try await UserHelper.default.createPersonalUser()
         _ = try await loginToBackend(user: user)
@@ -75,7 +75,7 @@ final class ShareDebugReportTests: WireUITestCase {
     /// The debug report banner in Settings should also trigger the action sheet,
     /// and the report can be shared to a group conversation via Wire.
     @MainActor
-    func testShareDebugReportBanner() async throws {
+    func testShareDebugReportBanner_TC_10855() async throws {
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
         let (_, owner) = try await UserHelper.default.registerUserAsTeamOwner()
