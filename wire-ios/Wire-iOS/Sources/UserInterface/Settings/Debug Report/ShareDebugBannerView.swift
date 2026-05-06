@@ -26,25 +26,27 @@ struct ShareDebugBannerView: View {
 
     var body: some View {
         Button { viewModel.showOptions() } label: {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: "bubble.left")
-                    .font(for: .h3)
-                    .accessibilityHidden(true)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
-                        .font(for: .h5)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.leading)
-                    Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.message)
-                        .font(for: .subline1)
-                        .multilineTextAlignment(.leading)
+            HStack(alignment: .center, spacing: 0) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "exclamationmark.bubble")
+                        .font(for: .body2)
+                        .accessibilityHidden(true)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
+                            .font(for: .body2)
+                            .multilineTextAlignment(.leading)
+                        Text(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.message)
+                            .font(for: .subline1)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 Image(systemName: "chevron.right")
                     .font(for: .subline2)
                     .accessibilityHidden(true)
+
             }
             .foregroundColor(Color(ColorTheme.Backgrounds.onBackground))
             .padding(12)
