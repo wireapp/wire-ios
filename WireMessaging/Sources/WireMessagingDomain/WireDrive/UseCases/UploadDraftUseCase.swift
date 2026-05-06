@@ -58,8 +58,8 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         self.filenameGenerator = filenameGenerator
     }
 
-    package func invoke(fileURL: URL) async throws {
-        try await invoke(fileURL: fileURL, requiresCleanup: false)
+    package func invoke(fileURL: URL, localIdentifier: String?) async throws {
+        try await invoke(fileURL: fileURL, localIdentifier: localIdentifier, requiresCleanup: false)
     }
 
     /// Uploads a file using an existing draft's nodeID.
@@ -109,7 +109,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         }
     }
 
-    package func invoke(data: Data, type: UTType, nodeID: UUID?) async throws {
+    package func invoke(data: Data, type: UTType, localIdentifier: String?, nodeID: UUID?) async throws {
         let filename = await filenameGenerator.generateFilename(type: type)
 
         let container = intermediaryFilesDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -118,7 +118,13 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         try FileManager.default.createDirectory(at: container, withIntermediateDirectories: true)
 
         try data.write(to: url)
-        try await invoke(fileURL: url, data: data, nodeID: nodeID, requiresCleanup: true)
+        try await invoke(
+            fileURL: url,
+            data: data,
+            localIdentifier: localIdentifier,
+            nodeID: nodeID,
+            requiresCleanup: true
+        )
     }
 
     // MARK: - Private Methods
@@ -126,6 +132,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
     private func invoke(
         fileURL: URL,
         data: Data? = nil,
+        localIdentifier: String? = nil,
         nodeID: UUID? = nil,
         requiresCleanup: Bool
     ) async throws {
@@ -151,7 +158,8 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
             mimeType: nil,
             requiresCleanup: requiresCleanup,
             metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType),
-            data: data
+            data: data,
+            localIdentifier: localIdentifier
         )
 
         if let nodeID {

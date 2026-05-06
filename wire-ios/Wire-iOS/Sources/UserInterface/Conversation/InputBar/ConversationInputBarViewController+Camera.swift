@@ -39,6 +39,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         let splitLayoutObserver = SplitLayoutObserver(zClientViewController: zClientViewController)
         let cameraKeyboardViewController = CameraKeyboardViewController(
             splitLayoutObservable: splitLayoutObserver,
+            attachmentsCarouselViewModel: attachmentsCarouselViewModel,
+            isWireDriveEnabled: useWireDrive(),
             userSession: userSession
         )
         cameraKeyboardViewController.delegate = self
@@ -49,6 +51,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
         didSelectVideo videoURL: URL,
+        withLocalIdentifier id: String?,
         duration: TimeInterval
     ) {
         // Video can be longer than allowed to be uploaded. Then we need to add user the possibility to trim it.
@@ -83,7 +86,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             }
         } else {
             if useWireDrive() {
-                uploadFiles(at: [videoURL])
+                uploadVideoFile(.init(url: videoURL, localIdentifier: id))
             } else {
                 showConfirmationForVideo(url: videoURL)
             }
@@ -95,15 +98,27 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         didSelectImage image: SendableImage,
         isFromCamera: Bool
     ) {
-        if useWireDrive() {
+        if useWireDrive(), !isFromCamera {
             let dataToSend = image.data
             let utType: UTType = image.utType ?? .image
-            uploadDraft(data: dataToSend, type: utType)
+            uploadDraft(data: dataToSend, type: utType, localIdentifier: image.localIdentifier)
         } else {
             showConfirmationForImage(
                 image,
                 isFromCamera: isFromCamera
             )
+        }
+    }
+
+    func cameraKeyboardViewController(_ controller: CameraKeyboardViewController, didDeselectImage image: PHAsset) {
+        let draft = attachmentsCarouselViewModel.draft(withLocalIdentifier: image.localIdentifier)
+
+        guard let draft else {
+            return WireLogger.wireDrive.error("Draft with localIdentifier: \(image.localIdentifier) not found")
+        }
+
+        Task.detached { [deleteDraftUseCase] in
+            try? await deleteDraftUseCase.invoke(nodeID: draft.nodeID)
         }
     }
 
@@ -202,8 +217,9 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     }
 
                     if self.useWireDrive() {
-                        guard editedImage != nil else { return }
-                        self.uploadDraft(data: dataToSend, type: utType, nodeID: image.id)
+                        if isFromCamera || editedImage != nil {
+                            self.uploadDraft(data: dataToSend, type: utType, nodeID: isFromCamera ? nil : image.id)
+                        }
                     } else {
                         let image = SendableImage(
                             name: nil,
@@ -226,7 +242,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             }
         )
 
-        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
+        let confirmImageViewController = ConfirmAssetViewController(
+            context: context,
+            userSession: userSession,
+            isWireDriveEnabled: useWireDrive()
+        )
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         view.window?.endEditing(true)
@@ -345,11 +365,16 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
         }
     }
 
-    func uploadDraft(data: Data, type: UTType, nodeID: UUID? = nil) {
+    func uploadDraft(data: Data, type: UTType, localIdentifier: String? = nil, nodeID: UUID? = nil) {
         Task.detached { [uploadDraftUseCase] in
             // We don't care about the result of the operation here as we will be observing changes.
             do {
-                try await uploadDraftUseCase.invoke(data: data, type: type, nodeID: nodeID)
+                try await uploadDraftUseCase.invoke(
+                    data: data,
+                    type: type,
+                    localIdentifier: localIdentifier,
+                    nodeID: nodeID
+                )
             } catch {
                 WireLogger.conversation.error("Failed to upload file: \(error)")
             }

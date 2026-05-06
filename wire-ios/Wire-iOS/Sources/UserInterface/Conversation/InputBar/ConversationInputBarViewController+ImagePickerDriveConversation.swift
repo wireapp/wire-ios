@@ -27,25 +27,36 @@ extension ConversationInputBarViewController: PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
 
         for result in results {
+            let localIdentifier = result.assetIdentifier
             let provider = result.itemProvider
             let isImage = provider.canLoadObject(ofClass: UIImage.self)
             let isVideo = provider.hasItemConformingToTypeIdentifier(UTType.movie.identifier)
 
+            // filters out already previously selected assets.
+            if let localIdentifier, attachmentsCarouselViewModel.draftsLocalIdentifiers.contains(localIdentifier) {
+                continue
+            }
+
             if isImage {
-                processWireDriveImage(provider: provider)
+                processWireDriveImage(provider: provider, localIdentifier: localIdentifier)
             } else if isVideo {
-                processWireDriveVideo(provider: provider)
+                processWireDriveVideo(provider: provider, localIdentifier: localIdentifier)
             }
         }
     }
 
-    private func processWireDriveImage(provider: NSItemProvider) {
+    private func processWireDriveImage(provider: NSItemProvider, localIdentifier: String?) {
         provider.loadObject(ofClass: UIImage.self) { image, _ in
             guard let image = image as? UIImage, let data = image.jpegData(compressionQuality: 0.9) else { return }
 
             DispatchQueue.main.async {
                 let checker = PrivacyWarningChecker(conversation: self.conversation) {
-                    self.uploadDraft(data: data, type: .jpeg, nodeID: nil)
+                    self.uploadDraft(
+                        data: data,
+                        type: .jpeg,
+                        localIdentifier: localIdentifier,
+                        nodeID: nil
+                    )
                 }
 
                 checker.performAction()
@@ -53,7 +64,7 @@ extension ConversationInputBarViewController: PHPickerViewControllerDelegate {
         }
     }
 
-    private func processWireDriveVideo(provider: NSItemProvider) {
+    private func processWireDriveVideo(provider: NSItemProvider, localIdentifier: String?) {
         let filename = String.filename(for: userSession.selfUser)
         let fileLengthLimit = Int64(userSession.maxUploadFileSize)
 
@@ -74,7 +85,7 @@ extension ConversationInputBarViewController: PHPickerViewControllerDelegate {
 
             AVURLAsset.convertVideoToUploadFormat(at: videoTempURL, fileLengthLimit: fileLengthLimit) { url, _, error in
                 guard error == nil, let url else { return }
-                self.uploadFiles(at: [url])
+                self.uploadVideoFile(.init(url: url, localIdentifier: localIdentifier))
             }
 
         }

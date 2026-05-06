@@ -36,6 +36,10 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
     private var thumbnails: [UUID: UIImage] = [:]
     private var generatingThumbnailIDs: Set<UUID> = []
 
+    public var draftsLocalIdentifiers: [String] {
+        drafts.compactMap(\.localIdentifier)
+    }
+
     @Published private(set) var items: [AttachmentsCarouselItem]
 
     public convenience init() {
@@ -64,8 +68,16 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
     }
 
     public func draft(for item: AttachmentsCarouselItem) -> WireDriveDraft? {
-        guard let index = items.firstIndex(of: item) else { return nil }
-        return drafts[safeIndex: index]
+        guard let index = items.firstIndex(of: item),
+              drafts.indices.contains(index) else {
+            return nil
+        }
+
+        return drafts[index]
+    }
+
+    public func draft(withLocalIdentifier localIdentifier: String) -> WireDriveDraft? {
+        drafts.first(where: { $0.localIdentifier == localIdentifier })
     }
 
     private func refreshItems() {

@@ -44,11 +44,11 @@ extension ConversationInputBarViewController {
         }
 
         let presentController = { [self] in
-
+            // Allows multiple media selection on Wire drive conversations.
             if useWireDrive(), sourceType != .camera {
-                // Allows multiple media selection on Wire drive conversations.
-                // Non-drive conversations use the (legacy) `UIImagePickerController` API.
-                var config = PHPickerConfiguration()
+                // As per Apple's doc, we shouldn't use the empty initializer if we need the asset identifiers to be
+                // non-nil.
+                var config = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
                 config.selectionLimit = 0
                 config.filter = .any(of: [.images, .videos])
 

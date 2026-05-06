@@ -21,12 +21,11 @@ import UniformTypeIdentifiers
 import WireMessagingDomain
 
 final class WireDriveUploadDraftUseCaseProtocolMock: WireDriveUploadDraftUseCaseProtocol {
-
-    func invoke(fileURL: URL) async throws {
+    func invoke(fileURL: URL, localIdentifier: String?) async throws {
         fatalError("Implement")
     }
 
-    func invoke(data: Data, type: UTType, nodeID: UUID?) async throws {
+    func invoke(data: Data, type: UTType, localIdentifier: String?, nodeID: UUID?) async throws {
         fatalError("Implement")
     }
 
