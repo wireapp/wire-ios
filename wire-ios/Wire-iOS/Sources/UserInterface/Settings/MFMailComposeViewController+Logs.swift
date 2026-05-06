@@ -24,7 +24,7 @@ import WireSystem
 extension MFMailComposeViewController {
 
     static func prefilledBody(withMessage message: String = "") -> String {
-        typealias l10n = L10n.Localizable.Settings.TechnicalReport.MailBody
+        typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
 
         return """
         \(l10n.firstline)
