@@ -85,6 +85,11 @@ public final class SidebarViewController: UIViewController {
         set { model.showUnreadFilters = newValue }
     }
 
+    public var showChannels: Bool {
+        get { model.showChannels }
+        set { model.showChannels = newValue }
+    }
+
     public var showMeetings: Bool {
         get { model.showMeetings }
         set { model.showMeetings = newValue }
@@ -177,6 +182,7 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
             showUnreadFilters: model.showUnreadFilters,
+            showChannels: model.showChannels,
             showMeetings: model.showMeetings,
             showFiles: model.showFiles,
             accountImageAction: model.accountImageAction,

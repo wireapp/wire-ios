@@ -60,6 +60,17 @@ export PATH="$JAVA_HOME/bin:$PATH"
 echo "JAVA_HOME=$JAVA_HOME"
 java -version
 
+echo "== Seeding simulator media =="
+VIDEO_PATH="$REPO_ROOT/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
+if [[ -f "$VIDEO_PATH" ]]; then
+  if xcrun simctl addmedia booted "$VIDEO_PATH"; then
+    echo "✅ Simulator media seeded successfully"
+  else
+    echo "WARNING: Failed to seed simulator media with $VIDEO_PATH. Continuing local testservice setup."
+  fi
+else
+  echo "WARNING: Test video not found at $VIDEO_PATH. Skipping simulator media seeding."
+fi
 
 echo "== Cleaning previous local state =="
 if [[ -f "$PID_FILE" ]]; then

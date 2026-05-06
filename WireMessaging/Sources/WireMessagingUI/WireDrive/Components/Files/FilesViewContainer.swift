@@ -115,7 +115,7 @@ package struct FilesViewContainer: View {
             useCases: .init(
                 fetchNodes: WireDriveFetchNodesPageUseCase(
                     configuration: .conversationFileView(
-                        root: path.last.map { .id($0.id) } ?? .path(cellName),
+                        root: path.last.map { .path($0.filePath) } ?? .path(cellName),
                     ),
                     repository: nodesRepository
                 ),
@@ -137,7 +137,7 @@ package struct FilesViewContainer: View {
                 ),
                 updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
+                createFile: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
                 restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesAPI,
@@ -145,7 +145,7 @@ package struct FilesViewContainer: View {
                     nodeCache: nodeCache
                 ),
                 getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
                 ),
@@ -154,7 +154,16 @@ package struct FilesViewContainer: View {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
+                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
+                    localAssetRepository: localAssetRepository
+                )
             ),
             title: path.last?.name,
             navigationPath: path,

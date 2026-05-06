@@ -16,12 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-protocol ExpiringActivityPerformerProtocol: Sendable {
+package import Foundation
 
-    func performExpiringActivity(
-        reason: String,
-        using block: @escaping @Sendable (_ isExpiring: Bool) -> Void
-    )
+@MainActor
+package struct WireDriveRemoveAssetAvailableOfflineUseCase {
 
+    enum Failure: Error {
+        case assetNotFound
+    }
+
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+
+    package init(localAssetRepository: any WireDriveLocalAssetRepositoryProtocol) {
+        self.localAssetRepository = localAssetRepository
+    }
+
+    package func invoke(nodeID: UUID) async throws {
+        guard var asset = try localAssetRepository.asset(nodeID: nodeID) else {
+            throw Failure.assetNotFound
+        }
+
+        asset.isAvailableOffline = false
+        try await localAssetRepository.updateAssetAsync(asset)
+    }
 }

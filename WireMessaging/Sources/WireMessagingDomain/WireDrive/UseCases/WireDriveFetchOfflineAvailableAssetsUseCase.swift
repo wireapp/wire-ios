@@ -18,16 +18,16 @@
 
 import Foundation
 
-struct ExpiringActivityProcessInfoWrapper: ExpiringActivityPerformerProtocol {
+@MainActor
+package struct WireDriveFetchOfflineAvailableAssetsUseCase {
 
-    var processInfo: ProcessInfo
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
 
-    init(processInfo: ProcessInfo = .processInfo) {
-        self.processInfo = processInfo
+    package init(localAssetRepository: any WireDriveLocalAssetRepositoryProtocol) {
+        self.localAssetRepository = localAssetRepository
     }
 
-    func performExpiringActivity(reason: String, using block: @escaping @Sendable (Bool) -> Void) {
-        processInfo.performExpiringActivity(withReason: reason, using: block)
+    package func invoke(conversationName: String?, assetsPath: String?) async throws -> [WireDriveLocalAsset] {
+        try await localAssetRepository.offlineAssets(conversationName: conversationName, assetsPath: assetsPath)
     }
-
 }
