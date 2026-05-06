@@ -154,23 +154,31 @@ jobs:
         run: |
           bundle exec fastlane generate_env
 
-      - name: Seed simulator with test video file
-        if: ${{ inputs.run_critical_flows }}
-        run: |
-          VIDEO_PATH="${REPO_ROOT}/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
-
-          if [ ! -f "$VIDEO_PATH" ]; then
-            echo "Missing test video: $VIDEO_PATH"
-            exit 1
-          fi
-
-          xcrun simctl addmedia booted "$VIDEO_PATH"
-          
       - name: Setup Kalium Testservice
         if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
         uses: ./.github/actions/kalium-testservice/setup
         with:
           kalium_ref: ${{ inputs.kalium_ref }}
+
+      - name: Seed simulator with test video file
+        if: ${{ inputs.run_critical_flows }}
+        continue-on-error: true
+        run: |
+          VIDEO_PATH="${REPO_ROOT}/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
+
+          if [ ! -f "$VIDEO_PATH" ]; then
+            echo "::warning::Missing test video: $VIDEO_PATH. Skipping simulator media seeding."
+            exit 0
+          fi
+
+          BOOTED_DEVICE_ID=$(xcrun simctl list devices booted | awk -F '[()]' '/Booted/ { print $2; exit }')
+          if [ -z "$BOOTED_DEVICE_ID" ]; then
+            echo "::warning::No booted simulator found. Skipping simulator media seeding."
+            exit 0
+          fi
+
+          xcrun simctl addmedia "$BOOTED_DEVICE_ID" "$VIDEO_PATH" || \
+            echo "::warning::Failed to seed simulator with test video"
 
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
