@@ -79,7 +79,7 @@ private struct AttachmentsCarouselItemView: View {
         ZStack {
             ZStack {
                 content
-                    .contentShape(Rectangle())
+                    .contentShape(Rectangle()) // Constrains the tappable content area of the view.
                     .onTapGesture(perform: onTap)
             }
             .aspectRatio(item.aspectRatio, contentMode: .fill)
