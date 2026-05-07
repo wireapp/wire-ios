@@ -60,13 +60,16 @@ private extension NSMutableAttributedString {
     /// empty line rather than relying on `paragraphSpacing`, which can be too subtle.
     func insertEmptyLinesAtParagraphBreaks() {
         // Collect the indices of paragraph-break newlines in a first pass.
+        // List-item terminators also carry paragraphSpacing > 0, but Down sets headIndent > 0
+        // on them (for the list rule), which lets us exclude them here.
         var breakIndices = [Int]()
         let nsString = string as NSString
         var i = 0
         while i < length {
             if nsString.character(at: i) == 0x0A,
                let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
-               ps.paragraphSpacing > 0 {
+               ps.paragraphSpacing > 0,
+               ps.headIndent == 0 {
                 breakIndices.append(i)
             }
             i += 1
