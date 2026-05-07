@@ -499,7 +499,7 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func showEmptyAppsSearchResultView() {
-        let emptyAppsSearchResultView = EmptyAppsSearchResultView()
+        let emptyAppsSearchResultView = EmptyAppsSearchResultView(canManageTeam: userSession.selfUser.canManageTeam)
         searchResultsViewController.searchResultsView.emptyResultView = emptyAppsSearchResultView
     }
 

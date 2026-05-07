@@ -121,6 +121,7 @@
 "conversation.wireCells.allFiles.item.subtitle" = "%@ в %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.item.menu.open" = "Открыть";
+"conversation.wireCells.files.item.menu.cancelDownload" = "Отменить загрузку...";
 "conversation.wireCells.files.item.menu.shareLink" = "Поделится";
 "conversation.wireCells.files.item.menu.download" = "Скачать";
 "conversation.wireCells.files.item.menu.editFile" = "Изменить файл";
@@ -160,7 +161,10 @@
 "conversation.wireCells.files.newFolder.title" = "Название папки";
 "conversation.wireCells.files.newFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Создать папку";
-"conversation.wireCells.files.newFile.navigationTitle" = "Создать файл %@";
+"conversation.wireCells.files.newFile.navigationTitle" = "Создать %@ (%@)";
+"conversation.wireCells.files.newFile.presentation" = "презентация";
+"conversation.wireCells.files.newFile.spreadsheet" = "таблица";
+"conversation.wireCells.files.newFile.document" = "документ";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
 "conversation.wireCells.files.fileName.title" = "Название файла";
@@ -175,6 +179,11 @@
 "conversation.wireCells.files.renameFile.placeholder" = "Введите название файла";
 "conversation.wireCells.files.renameFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.openRecycleBin" = "Открыть корзину";
+"conversation.wireCells.files.readyToOpenAfterDownload" = "Готов к открытию";
+"conversation.wireCells.files.tapToCancelDownload" = "Нажмите, чтобы отменить загрузку";
+"conversation.wireCells.files.downloadFailed" = "Не удалось загрузить, повторите попытку";
+
+// MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Подробнее о корзине";
 "conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
@@ -189,30 +198,6 @@
 "conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "Эта папка \"%@\" будет восстановлена со всеми файлами и подпапками и снова станет доступной для всех участников этой беседы.";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Восстановить родительскую папку";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Вы не можете восстановить папки или файлы из удаленной папки. Чтобы восстановить нужный элемент, вы должны восстановить его родительскую папку.\n\n Папка \"%@\" будет восстановлена со всеми файлами и подпапками и станет доступной всем участникам этой беседы.";
-"conversation.wireCells.filter.clearAll" = "Очистить все";
-"conversation.wireCells.filter.tags.navigationTitle" = "Фильтровать по тегам";
-"conversation.wireCells.filter.tags.emptyTitle" = "Теги еще не созданы.";
-"conversation.wireCells.filter.tags.notFoundBySearch" = "Теги не найдены.";
-"conversation.wireCells.filter.tags.searchPrompt" = "Поиск тегов";
-"conversation.wireCells.filter.conversation.navigationTitle" = "Фильтровать по беседе";
-"conversation.wireCells.filter.owner.navigationTitle" = "Фильтровать по владельцу";
-"conversation.wireCells.filter.sharedLink.navigationTitle" = "Фильтровать по ссылке";
-"conversation.wireCells.filter.sharedLink.option.withLink" = "С публичной ссылкой";
-"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Опубликовано мной за пределами Wire";
-"conversation.wireCells.filter.sharedLink.option.withoutLink" = "Нет публичной ссылки";
-"conversation.wireCells.filter.fileType.navigationTitle" = "Фильтровать по типу файла";
-"conversation.wireCells.filter.fileType.typeName.pdf" = "PDF-файлы";
-"conversation.wireCells.filter.fileType.typeName.doc" = "Документы";
-"conversation.wireCells.filter.fileType.typeName.image" = "Изображения";
-"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Таблицы";
-"conversation.wireCells.filter.fileType.typeName.presentation" = "Презентации";
-"conversation.wireCells.filter.fileType.typeName.video" = "Видео";
-"conversation.wireCells.filter.fileType.typeName.audio" = "Аудиофайлы";
-"conversation.wireCells.filter.fileType.typeName.folder" = "Папки";
-"conversation.wireCells.filter.fileType.typeName.other" = "Прочие";
-"conversation.wireCells.filter.fileType.typeName.code" = "Код";
-"conversation.wireCells.filter.fileType.typeName.archive" = "Архивы";
-"conversation.wireCells.filter.fileType.typeName.text" = "Текстовые файлы";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Добавить или удалить теги";
@@ -313,3 +298,28 @@
 "conversation.wireCells.filtering.owner" = "Создано";
 "conversation.wireCells.filtering.sharedLink" = "Поделились по ссылке";
 "conversation.wireCells.filtering.removeAllFilters" = "Убрать все фильтры";
+
+"conversation.wireCells.filter.clearAll" = "Очистить все";
+"conversation.wireCells.filter.tags.navigationTitle" = "Фильтровать по тегам";
+"conversation.wireCells.filter.tags.emptyTitle" = "Теги еще не созданы.";
+"conversation.wireCells.filter.tags.notFoundBySearch" = "Теги не найдены.";
+"conversation.wireCells.filter.tags.searchPrompt" = "Поиск тегов";
+"conversation.wireCells.filter.conversation.navigationTitle" = "Фильтровать по беседе";
+"conversation.wireCells.filter.owner.navigationTitle" = "Фильтровать по владельцу";
+"conversation.wireCells.filter.sharedLink.navigationTitle" = "Фильтровать по ссылке";
+"conversation.wireCells.filter.sharedLink.option.withLink" = "С публичной ссылкой";
+"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Опубликовано мной за пределами Wire";
+"conversation.wireCells.filter.sharedLink.option.withoutLink" = "Нет публичной ссылки";
+"conversation.wireCells.filter.fileType.navigationTitle" = "Фильтровать по типу файла";
+"conversation.wireCells.filter.fileType.typeName.pdf" = "PDF-файлы";
+"conversation.wireCells.filter.fileType.typeName.doc" = "Документы";
+"conversation.wireCells.filter.fileType.typeName.image" = "Изображения";
+"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Таблицы";
+"conversation.wireCells.filter.fileType.typeName.presentation" = "Презентации";
+"conversation.wireCells.filter.fileType.typeName.video" = "Видео";
+"conversation.wireCells.filter.fileType.typeName.audio" = "Аудиофайлы";
+"conversation.wireCells.filter.fileType.typeName.folder" = "Папки";
+"conversation.wireCells.filter.fileType.typeName.other" = "Прочие";
+"conversation.wireCells.filter.fileType.typeName.code" = "Код";
+"conversation.wireCells.filter.fileType.typeName.archive" = "Архивы";
+"conversation.wireCells.filter.fileType.typeName.text" = "Текстовые файлы";

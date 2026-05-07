@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+import WireLocators
 import WireLogging
 import WireMultiBackendUI
 import WireSyncEngine
@@ -54,6 +55,7 @@ final class BlockerViewController: LaunchImageViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.accessibilityIdentifier = Locators.BlockerPage.mainContent.rawValue
         setupApplicationNotifications()
     }
 
@@ -162,9 +164,7 @@ final class BlockerViewController: LaunchImageViewController {
                     title: Strings.retry,
                     style: .cancel,
                     handler: { _ in
-                        Task {
-                            _ = await sessionManager.select(account)
-                        }
+                        sessionManager.select(account)
                     }
                 )
             )
@@ -451,9 +451,7 @@ extension BlockerViewController {
     }
 
     private func handleSwitch(to account: Account) {
-        Task {
-            await sessionManager?.switchTo(account: account)
-        }
+        sessionManager?.switchTo(account: account)
     }
 
     private func handleLogout() {

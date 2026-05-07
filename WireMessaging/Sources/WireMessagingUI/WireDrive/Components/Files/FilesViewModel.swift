@@ -163,17 +163,20 @@ package final class FilesViewModel: ObservableObject {
             renameNode: any WireDriveRenameNodeUseCaseProtocol,
             updateTags: any WireDriveUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol,
-            createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
+            createFile: any WireDriveCreateFileUseCaseProtocol,
             fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol,
             restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol,
             getEditingURL: WireDriveGetEditingURLUseCase,
-            getAssetUseCase: WireDriveGetAssetUseCase,
+            getAsset: WireDriveGetAssetUseCase,
             getPublicLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol,
             createPublicLink: WireDriveCreatePublicLinkUseCase,
             deletePublicLink: WireDriveDeletePublicLinkUseCase,
             updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
             updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase,
-            getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
+            getDriveConversations: any WireDriveGetConversationsUseCaseProtocol,
+            makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase,
+            removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase,
+            getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -182,17 +185,20 @@ package final class FilesViewModel: ObservableObject {
             self.renameNode = renameNode
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
-            self.createFileUseCase = createFileUseCase
+            self.createFile = createFile
             self.fetchNodeVersions = fetchNodeVersions
             self.restoreNodeVersion = restoreNodeVersion
             self.getEditingURL = getEditingURL
-            self.getAssetUseCase = getAssetUseCase
+            self.getAsset = getAsset
             self.getPublicLinkData = getPublicLinkData
             self.createPublicLink = createPublicLink
             self.deletePublicLink = deletePublicLink
             self.updatePublicLinkExpiration = updatePublicLinkExpiration
             self.updatePublicLinkPassword = updatePublicLinkPassword
             self.getDriveConversations = getDriveConversations
+            self.makeAssetAvailableOffline = makeAssetAvailableOffline
+            self.removeAssetAvailableOffline = removeAssetAvailableOffline
+            self.getOfflineAvailableAssets = getOfflineAvailableAssets
         }
 
         let fetchNodes: WireDriveFetchNodesPageUseCase
@@ -201,17 +207,20 @@ package final class FilesViewModel: ObservableObject {
         let renameNode: any WireDriveRenameNodeUseCaseProtocol
         let updateTags: any WireDriveUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol
-        let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
+        let createFile: any WireDriveCreateFileUseCaseProtocol
         let fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol
         let restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol
         let getEditingURL: WireDriveGetEditingURLUseCase
-        let getAssetUseCase: WireDriveGetAssetUseCase
+        let getAsset: WireDriveGetAssetUseCase
         let getPublicLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol
         let createPublicLink: WireDriveCreatePublicLinkUseCase
         let deletePublicLink: WireDriveDeletePublicLinkUseCase
         let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
         let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
         let getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
+        let makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase
+        let removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase
+        let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
     }
 
     private let setNavigation: ([FilesViewItem]) -> Void
@@ -223,6 +232,7 @@ package final class FilesViewModel: ObservableObject {
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
     private var sortingSelection: FilesSortingViewModel.SortingSelection = .default
+    private var failedItemActions: [FilesViewItem.ID: FilesItemViewModel.ItemAction] = [:]
 
     let useCases: UseCases
     let isBrowsing: Bool
@@ -231,7 +241,11 @@ package final class FilesViewModel: ObservableObject {
     var shouldReload: Bool = false
     let title: String?
     var showSearchBar: Bool {
-        switch state {
+        guard !isOffline else {
+            return false
+        }
+
+        return switch state {
         case .loading, .received:
             true
         case .pending, .error:
@@ -256,13 +270,16 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask != nil
     }
 
-    var shouldShowOfflineBar: Bool {
-        connectionState == .offline && !state.items.isEmpty
+    var networkStatus: NetworkMonitor.NetworkStatus? {
+        networkMonitor.currentStatus
     }
 
-    enum ConnectionState {
-        case offline
-        case online
+    var isOffline: Bool {
+        networkMonitor.currentStatus == .disconnected
+    }
+
+    var shouldShowOfflineBar: Bool {
+        isOffline && !state.items.isEmpty
     }
 
     @Published var hasMore = true
@@ -277,8 +294,9 @@ package final class FilesViewModel: ObservableObject {
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
-    @Published var connectionState: ConnectionState = .online
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
+
+    @Published private var networkMonitor: NetworkMonitor
 
     private var selfUserID: String? {
         conversations
@@ -299,7 +317,8 @@ package final class FilesViewModel: ObservableObject {
         isBrowsing: Bool,
         isRecycleBin: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
-        accentColorProvider: @escaping () -> WireAccentColor
+        accentColorProvider: @escaping () -> WireAccentColor,
+        networkMonitor: NetworkMonitor = .shared
     ) {
         self.useCases = useCases
         self.title = title
@@ -314,79 +333,14 @@ package final class FilesViewModel: ObservableObject {
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
+        self.networkMonitor = networkMonitor
+    }
 
+    func setup() async {
+        await fetchConversations()
         bindSearch()
-        bindNetworkConnection()
         fetchTemplates()
-        fetchConversations()
-    }
-
-    private func fetchTemplates() {
-        Task {
-            // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
-            // Do `templates = try await WireDriveFetchFileTemplatesUseCase.invoke()`
-            templates = [
-                .init(
-                    kind: .document,
-                    editable: true,
-                    label: "Microsoft Word",
-                    id: "01-Microsoft Word.docx"
-                ),
-                .init(
-                    kind: .spreadsheet,
-                    editable: true,
-                    label: "Microsoft Excel",
-                    id: "02-Microsoft Excel.xlsx"
-                ),
-                .init(
-                    kind: .presentation,
-                    editable: true,
-                    label: "Microsoft PowerPoint",
-                    id: "03-Microsoft PowerPoint.pptx"
-                )
-            ]
-        }
-    }
-
-    private func fetchConversations() {
-        Task {
-            let allDriveConversations = await useCases.getDriveConversations.invoke()
-
-            if let cellName {
-                self.conversations = allDriveConversations.filter { $0.id == cellName }
-            } else {
-                self.conversations = allDriveConversations
-            }
-        }
-    }
-
-    private func bindNetworkConnection() {
-        NetworkMonitor.shared.statusPublisher
-            .removeDuplicates()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                guard let self else { return }
-
-                switch status {
-                case .connected:
-                    guard connectionState == .offline else { return }
-                    connectionState = .online
-                case .disconnected:
-                    connectionState = .offline
-                }
-            }
-            .store(in: &subscriptions)
-    }
-
-    private func bindSearch() {
-        $searchText
-            .removeDuplicates()
-            .dropFirst()
-            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in
-                Task { await self?.reload() }
-            }
-            .store(in: &subscriptions)
+        Task { await reload() }
     }
 
     /// Reloads the items, clearing any previously loaded items.
@@ -397,6 +351,8 @@ package final class FilesViewModel: ObservableObject {
     /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
 
     func reload(refreshing: Bool = false) async {
+        guard networkMonitor.currentStatus != nil else { return }
+
         cancelLoad()
         state = refreshing ? state : .loading
         hasMore = !refreshing
@@ -448,6 +404,10 @@ package final class FilesViewModel: ObservableObject {
                     sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
                 case .edit:
                     isEditing = item
+                case .makeAvailableOffline:
+                    makeAssetAvailableOffline(item: item)
+                case .removeAvailableOffline:
+                    removeAssetAvailableOffline(item: item)
                 }
             },
             isBrowsing: isBrowsing,
@@ -471,8 +431,11 @@ package final class FilesViewModel: ObservableObject {
                 },
                 nodesRepository: nodesRepository,
                 localAssetRepository: assetRepository,
-                moveNodeUseCase: WireDriveMoveNodeUseCase(nodesRepository: nodesRepository),
-                createFileUseCase: useCases.createFileUseCase
+                moveNodeUseCase: WireDriveMoveNodeUseCase(
+                    nodesRepository: nodesRepository,
+                    localAssetRepository: assetRepository
+                ),
+                createFileUseCase: useCases.createFile
             )
         )
     }
@@ -493,7 +456,11 @@ package final class FilesViewModel: ObservableObject {
     func performPrimaryAction(item: FilesViewItem) async {
         switch item.kind {
         case .file:
-            await viewAsset(item: item)
+            if failedItemActions[item.id] == .makeAvailableOffline {
+                makeAssetAvailableOffline(item: item)
+            } else {
+                await viewAsset(item: item)
+            }
         case .folder:
             openFolder(item: item)
         }
@@ -528,7 +495,59 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
+    var isInFolder: Bool {
+        !navigationPath.isEmpty
+    }
+
     // MARK: - Private
+
+    private func fetchTemplates() {
+        Task {
+            // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
+            // Do `templates = try await WireDriveFetchFileTemplatesUseCase.invoke()`
+            templates = [
+                .init(
+                    kind: .document,
+                    editable: true,
+                    label: "Microsoft Word",
+                    id: "01-Microsoft Word.docx"
+                ),
+                .init(
+                    kind: .spreadsheet,
+                    editable: true,
+                    label: "Microsoft Excel",
+                    id: "02-Microsoft Excel.xlsx"
+                ),
+                .init(
+                    kind: .presentation,
+                    editable: true,
+                    label: "Microsoft PowerPoint",
+                    id: "03-Microsoft PowerPoint.pptx"
+                )
+            ]
+        }
+    }
+
+    private func fetchConversations() async {
+        let allDriveConversations = await useCases.getDriveConversations.invoke()
+
+        if let cellName {
+            conversations = allDriveConversations.filter { $0.id == cellName }
+        } else {
+            conversations = allDriveConversations
+        }
+    }
+
+    private func bindSearch() {
+        $searchText
+            .removeDuplicates()
+            .dropFirst()
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { await self?.reload() }
+            }
+            .store(in: &subscriptions)
+    }
 
     /// Navigates to the folder represented by the given item.
     private func openFolder(item: FilesViewItem) {
@@ -559,15 +578,16 @@ package final class FilesViewModel: ObservableObject {
         precondition(item.kind == .file)
 
         do {
-            let downloadState = try await useCases.getAssetUseCase.downloadState(nodeID: item.id) ?? .pending
+            let downloadState = try await useCases.getAsset.downloadState(nodeID: item.id) ?? .pending
             switch downloadState {
             case .pending, .failed:
-                _ = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+                _ = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
             case .downloaded:
-                let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+                viewingURL = nil
+                let url = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
                 viewingURL = url
             case .downloading:
-                await useCases.getAssetUseCase.cancelDownload(nodeID: item.id)
+                await useCases.getAsset.cancelDownload(nodeID: item.id)
             }
         } catch is CancellationError {
             // Cancelled by the user, ignore.
@@ -587,7 +607,7 @@ package final class FilesViewModel: ObservableObject {
         let viewModel = CreateFileViewModel(
             creationTarget: target,
             path: path,
-            createFileUseCase: useCases.createFileUseCase
+            createFileUseCase: useCases.createFile
         )
 
         // to know whether we need to reload nodes.
@@ -618,6 +638,14 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private func loadMore(refreshing: Bool = false) async {
+        if isOffline {
+            await loadOfflineFiles()
+        } else {
+            await loadOnlineFiles(refreshing: refreshing)
+        }
+    }
+
+    private func loadOnlineFiles(refreshing: Bool) async {
         guard loadMoreTask == nil else { return }
 
         let offset = refreshing ? 0 : state.items.count
@@ -632,13 +660,10 @@ package final class FilesViewModel: ObservableObject {
         } catch is CancellationError {
             return // developer-driven error, discard
         } catch {
-            let urlError = (error as? URLError)?.code
-            let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
-
             if state.items.isEmpty {
-                state = .error(isConnectionError: isNoInternetError)
+                state = .error(isConnectionError: error.isNoInternetError)
             } else {
-                if isNoInternetError {
+                if error.isNoInternetError {
                     // no-op, offline bar is dynamically shown/hidden on top of the list (see `bindNetworkConnection()`)
                 } else {
                     alert = .unknownError
@@ -647,6 +672,98 @@ package final class FilesViewModel: ObservableObject {
             hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil
+    }
+
+    private func loadOfflineFiles() async {
+        guard !isRecycleBin else {
+            return state = .received(items: [])
+        }
+
+        do {
+            let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke(
+                conversationName: cellName != nil ? conversations.first?.name : nil,
+                assetsPath: navigationPath.last?.filePath
+            )
+
+            let items: [FilesViewItem] = offlineAssets.map { asset in
+                let fileUrl = URL(fileURLWithPath: asset.path)
+                let fileExtension = fileUrl.pathExtension
+                let fileType = UTType(filenameExtension: fileExtension)
+
+                func nextFolderPath(from fullPath: String, basePath: String) -> String? {
+                    let baseComponents = basePath.split(separator: "/")
+                    let fullComponents = fullPath.split(separator: "/")
+
+                    let noMoreFolders = fullComponents.count == baseComponents.count + 1
+
+                    if noMoreFolders {
+                        return nil
+                    }
+
+                    guard fullComponents.starts(with: baseComponents) else {
+                        return nil
+                    }
+
+                    let nextCount = baseComponents.count + 1
+                    let nextComponents = fullComponents.prefix(nextCount)
+                    return nextComponents.joined(separator: "/") + "/"
+                }
+
+                let basePath = navigationPath.last?.filePath ?? asset.path.split(separator: "/").prefix(1).joined()
+                let nextFolderPath = isBrowsing ? nil : nextFolderPath(from: asset.path, basePath: basePath)
+
+                let filekind: FilesViewItem.Kind = if nextFolderPath != nil {
+                    .folder
+                } else {
+                    .file
+                }
+                let filepath: String = if let nextFolderPath {
+                    nextFolderPath
+                } else {
+                    asset.path
+                }
+
+                return .init(
+                    id: asset.nodeID,
+                    eTag: asset.eTag,
+                    kind: filekind,
+                    name: URL(fileURLWithPath: filepath).lastPathComponent,
+                    filePath: filepath,
+                    ownedBy: asset.ownerName,
+                    modifiedAt: asset.modified,
+                    icon: filekind == .folder ? .folder : .make(type: fileType, fileExtension: fileExtension),
+                    tags: [], // change later if we want to show tags in offline mode.
+                    isEditable: false, // change later if we want to edit files in offline mode.
+                    publicLinkID: nil, // change later if we want to be able to share a public link in offline mode.
+                    conversationName: asset.conversationName,
+                    size: asset.size
+                )
+            }
+
+            let itemsWithCreationDates: [(item: FilesViewItem, creationDate: Date)] = await items.asyncMap { item in
+                let url = try? await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
+                let creationDate = (try? url?.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? Date()
+                return (item: item, creationDate: creationDate)
+            }
+
+            let sortedItems = itemsWithCreationDates.sorted { lhs, rhs in
+                lhs.creationDate.compare(rhs.creationDate) == .orderedDescending
+            }
+            .map(\.item)
+            .reduce(into: [FilesViewItem]()) { result, item in
+                let isDuplicate = result.map(\.filePath).contains(item.filePath) // removes duplicated folders
+
+                if !isDuplicate {
+                    result.append(item)
+                }
+            }
+
+            state = .received(items: sortedItems)
+        } catch {
+            alert = .unknownError
+            WireLogger.wireDrive.error("Error fetching offline assets:\n\(error)")
+        }
+        hasMore = false
     }
 
     private nonisolated func fetchItems(
@@ -826,7 +943,7 @@ package final class FilesViewModel: ObservableObject {
             eTag: item.eTag,
             fetchNodeVersionsUseCase: useCases.fetchNodeVersions,
             restoreNodeVersionUseCase: useCases.restoreNodeVersion,
-            getAssetUseCase: useCases.getAssetUseCase,
+            getAssetUseCase: useCases.getAsset,
             accentColorProvider: accentColorProvider
         )
 
@@ -854,6 +971,39 @@ package final class FilesViewModel: ObservableObject {
         guard filters != filtersSelection else { return }
         filtersSelection = filters
         Task { await reload() }
+    }
+
+    // MARK: - Offline mode
+
+    private func makeAssetAvailableOffline(item: FilesViewItem) {
+        Task {
+            do {
+                try await useCases.makeAssetAvailableOffline.invoke(nodeID: item.id)
+                failedItemActions[item.id] = nil
+            } catch {
+                if error is CancellationError {
+                    WireLogger.wireDrive.error("Cancelled make asset available offline")
+                } else {
+                    failedItemActions[item.id] = .makeAvailableOffline
+                    WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
+                }
+            }
+        }
+    }
+
+    private func removeAssetAvailableOffline(item: FilesViewItem) {
+        Task {
+            do {
+                try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
+
+                if isOffline {
+                    await reload()
+                }
+            } catch {
+                WireLogger.wireDrive
+                    .error("Failed to remove asset from available offline: \(String(describing: error))")
+            }
+        }
     }
 }
 
@@ -891,5 +1041,16 @@ extension WireDriveFileTemplate.Kind {
         case .presentation:
             "sparkles.tv"
         }
+    }
+}
+
+private extension Sequence {
+    @MainActor
+    func asyncMap<T>(_ transform: @MainActor (Element) async throws -> T) async rethrows -> [T] {
+        var values = [T]()
+        for element in self {
+            try await values.append(transform(element))
+        }
+        return values
     }
 }

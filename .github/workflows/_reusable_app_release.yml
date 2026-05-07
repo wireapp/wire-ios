@@ -24,7 +24,9 @@ on:
       notify_secret:
         type: string
         required: true
-
+      produce_debug_builds:
+        type: boolean
+        default: false
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -36,8 +38,6 @@ on:
       WIRE_INTERNAL_GITHUB_USER:
         required: true
       WIRE_INTERNAL_GITHUB_TOKEN:
-        required: true
-      APPCENTER_API_TOKEN:
         required: true
       AWS_ACCESS_KEY_ID:
         required: true
@@ -96,8 +96,6 @@ jobs:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
       WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
-      APPCENTER_OWNER_NAME: "Wire"
       S3_BUCKET: "z-lohika"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
@@ -122,6 +120,7 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+      DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
 
     steps:
       - name: Add Masks

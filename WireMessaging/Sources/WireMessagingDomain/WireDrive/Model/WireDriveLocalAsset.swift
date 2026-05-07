@@ -89,6 +89,22 @@ public struct WireDriveLocalAsset: Equatable, Sendable {
 
     public var size: UInt64?
 
+    /// The conversation where this asset is shared.
+
+    public var conversationName: String?
+
+    /// The name of the user who shared the asset.
+
+    public var ownerName: String?
+
+    /// The date the asset was created / last modified.
+
+    public var modified: Date?
+
+    /// Whether the asset is available offline for the user.
+
+    public var isAvailableOffline: Bool
+
     /// The download state of the asset.
 
     public var downloadState: DownloadState
@@ -103,6 +119,10 @@ public struct WireDriveLocalAsset: Equatable, Sendable {
         path: String,
         contentType: String?,
         size: UInt64?,
+        conversationName: String?,
+        ownerName: String?,
+        modified: Date?,
+        isAvailableOffline: Bool,
         downloadState: DownloadState
     ) {
         self.nodeID = nodeID
@@ -111,6 +131,10 @@ public struct WireDriveLocalAsset: Equatable, Sendable {
         self.contentType = contentType
         self.size = size
         self.downloadState = downloadState
+        self.conversationName = conversationName
+        self.ownerName = ownerName
+        self.modified = modified
+        self.isAvailableOffline = isAvailableOffline
     }
 }
 

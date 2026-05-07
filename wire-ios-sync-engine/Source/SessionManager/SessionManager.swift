@@ -76,6 +76,11 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     )
+    func sessionManagerWillOpenAccount(
+        _ account: Account,
+        from selectedAccount: Account?,
+        userSessionCanBeTornDown: @escaping () -> Void
+    )
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
 
     func sessionManagerDidFailToLoadSession(
@@ -331,8 +336,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
-    private let authenticatedSessionFactory: AuthenticatedSessionFactory
-    private let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
@@ -344,10 +348,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         didSet {
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
-            authenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.reachability = reachability
-            authenticatedSessionFactory.reachability = reachability
         }
     }
 
@@ -397,6 +399,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// for the same account concurrently.
     private let withSessionTaskManager = NonReentrantTaskManager<ZMUserSession, any Error>()
 
+    private let mediaManager: MediaManagerType
+    private let flowManager: FlowManager
+
     // MARK: - Life cycle
 
     public override init() {
@@ -427,7 +432,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         countlyProvider: @escaping () -> CountlyProtocol,
         logFilesProvider: LogFilesProviding
     ) throws {
-        let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
 
         var proxyCredentials: WireTransport.ProxyCredentials?
@@ -446,24 +450,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             reachability: reachability
         )
 
-        let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            currentAppVersion: currentAppVersion,
-            currentBuildNumber: currentBuildNumber,
-            application: application,
-            mediaManager: mediaManager,
-            flowManager: flowManager,
-            environment: environment,
-            proxyUsername: proxyCredentials?.username,
-            proxyPassword: proxyCredentials?.password,
-            reachability: reachability,
-            minTLSVersion: minTLSVersion
-        )
-
         try self.init(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
-            authenticatedSessionFactory: authenticatedSessionFactory,
+            mediaManager: mediaManager,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
             delegate: delegate,
@@ -527,7 +518,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
-        authenticatedSessionFactory: AuthenticatedSessionFactory,
+        mediaManager: MediaManagerType,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
         delegate: SessionManagerDelegate?,
@@ -565,6 +556,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.minTLSVersion = minTLSVersion
         self.deleteUserLogs = deleteUserLogs
         self.logFilesProvider = logFilesProvider
+        self.mediaManager = mediaManager
+        self.flowManager = FlowManager(mediaManager: mediaManager)
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -594,7 +587,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.sessionManager.debug("No known accounts.")
         }
 
-        self.authenticatedSessionFactory = authenticatedSessionFactory
         self.unauthenticatedSessionFactory = unauthenticatedSessionFactory
         self.reachability = reachability
         self.maxNumberAccounts = maxNumberAccounts
@@ -679,7 +671,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         let proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
             try proxyCredentials.persist()
-            authenticatedSessionFactory.updateProxy(username: username, password: password)
             unauthenticatedSessionFactory.updateProxy(username: username, password: password)
         } catch {
             Logging.network.error("proxy credentials could not be saved - \(error.localizedDescription)")
@@ -706,40 +697,71 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     /// Select the account to be the active account.
-    @MainActor
-    public func select(_ account: Account) async -> ZMUserSession? {
+    /// - completion: runs when the user session was loaded
+    /// - tearDownCompletion: runs when the UI no longer holds any references to the previous user session.
+    public func select(
+        _ account: Account,
+        completion: ((ZMUserSession?) -> Void)? = nil,
+        tearDownCompletion: (() -> Void)? = nil
+    ) {
         guard !isSelectingAccount else {
-            return nil
+            completion?(nil)
+            return
         }
 
-        let isConfirmed = await confirmSwitchingAccount()
-        guard isConfirmed else {
-            return nil
+        confirmSwitchingAccount { [weak self] isConfirmed in
+
+            guard isConfirmed else {
+                completion?(nil)
+                return
+            }
+
+            self?.isSelectingAccount = true
+            let selectedAccount = self?.accountManager.selectedAccount
+
+            guard let delegate = self?.delegate else {
+                completion?(nil)
+                return
+            }
+            delegate.sessionManagerWillOpenAccount(
+                account,
+                from: selectedAccount,
+                userSessionCanBeTornDown: { [weak self] in
+                    self?.setActiveUserSession(nil)
+                    tearDownCompletion?()
+
+                    Task { @MainActor [weak self] in
+                        guard let self else {
+                            completion?(nil)
+                            return
+                        }
+
+                        accountManager.select(account)
+                        let session = await loadSession(for: account)
+                        isSelectingAccount = false
+
+                        if let session {
+                            completion?(session)
+                        } else {
+                            completion?(nil)
+                        }
+                    }
+                }
+            )
         }
-
-        isSelectingAccount = true
-        setActiveUserSession(nil)
-        accountManager.select(account)
-        let session = await loadSession(for: account)
-        isSelectingAccount = false
-
-        return session
     }
 
-    @MainActor
-    public func addAccount(userInfo: [String: Any]? = nil) async {
-        let isConfirmed = await confirmSwitchingAccount()
-        guard isConfirmed, let delegate else { return }
-
-        let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
-        await withCheckedContinuation { continuation in
-            delegate.sessionManagerWillLogout(
+    public func addAccount(userInfo: [String: Any]? = nil, completion: (() -> Void)? = nil) {
+        confirmSwitchingAccount { [weak self] isConfirmed in
+            guard isConfirmed else { return }
+            let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
+            self?.delegate?.sessionManagerWillLogout(
                 accountID: nil,
                 environment: nil,
                 error: error
             ) { [weak self] in
                 self?.setActiveUserSession(nil)
-                continuation.resume()
+                completion?()
             }
         }
     }
@@ -766,10 +788,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
         if let secondAccount = accountManager.inactiveAccounts.first {
             // Deleted an account but we can switch to another account
-            Task {
-                _ = await select(secondAccount)
-                tearDownSessionAndDelete(account: account, eraseData: eraseData)
-            }
+            select(secondAccount, tearDownCompletion: { [weak self] in
+                self?.tearDownSessionAndDelete(account: account, eraseData: eraseData)
+            })
         } else if accountManager.selectedAccount != account {
             // Deleted an inactive account, there's no need notify the UI
             tearDownSessionAndDelete(account: account, eraseData: eraseData)
@@ -784,10 +805,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func tearDownSessionAndDelete(account: Account, eraseData: Bool) {
-        Task {
-            await tearDownBackgroundSession(for: account.userIdentifier)
+        tearDownBackgroundSession(for: account.userIdentifier) {
             if eraseData {
-                deleteAccountData(for: account)
+                self.deleteAccountData(for: account)
             }
         }
     }
@@ -803,9 +823,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             if accountSession == activeSession {
                 logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
             } else {
-                Task {
-                    await tearDownBackgroundSession(for: account.userIdentifier)
-                }
+                tearDownBackgroundSession(for: account.userIdentifier)
             }
         }
     }
@@ -996,8 +1014,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                     application: application,
                     appVersion: currentAppVersion,
                     buildNumber: currentBuildNumber,
-                    mediaManager: authenticatedSessionFactory.mediaManager,
-                    flowManager: authenticatedSessionFactory.flowManager,
+                    mediaManager: mediaManager,
+                    flowManager: flowManager,
                     logFilesProvider: logFilesProvider,
                     isDeveloperModeEnabled: isDeveloperModeEnabled,
                     faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
@@ -1091,24 +1109,27 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     /// The active user session will be torn down and the app goes into migration state.
-    @MainActor
-    public func prepareForRestoreWithMigration() async {
+    public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
         guard let delegate else {
             WireLogger.sessionManager.debug("SessionManager.delegate is nil, aborting migration preparation")
-            return
+            return completion()
         }
 
         WireLogger.sessionManager.debug("SessionManager.delegate.sessionManagerWillMigrateAccount ...")
-        await delegate.sessionManagerWillMigrateAccount()
+        delegate.sessionManagerWillMigrateAccount { [self] in
 
-        WireLogger.sessionManager.debug("... userSessionCanBeTornDown { ... }")
+            WireLogger.sessionManager.debug("... userSessionCanBeTornDown { ... }")
 
-        if let accountID = activeUserSession?.account.userIdentifier {
-            await tearDownBackgroundSession(for: accountID)
-            setActiveUserSession(nil)
-            accountTokens.removeValue(forKey: accountID)
-        } else {
-            setActiveUserSession(nil)
+            if let accountID = activeUserSession?.account.userIdentifier {
+                tearDownBackgroundSession(for: accountID) { [self] in
+                    setActiveUserSession(nil)
+                    accountTokens.removeValue(forKey: accountID)
+                    completion()
+                }
+            } else {
+                setActiveUserSession(nil)
+                completion()
+            }
         }
     }
 
@@ -1236,29 +1257,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @MainActor
-    private func createUserSession(
-        for account: Account,
-        with coreDataStack: CoreDataStack,
-        journal: Journal,
-        logFilesProvider: LogFilesProviding
-    ) async -> ZMUserSession? {
-        let sessionConfig = ZMUserSession.Configuration(
-            appLockConfig: configuration.legacyAppLockConfig
-        )
-
-        return await authenticatedSessionFactory.session(
-            for: account,
-            coreDataStack: coreDataStack,
-            configuration: sessionConfig,
-            sharedUserDefaults: sharedUserDefaults,
-            isDeveloperModeEnabled: isDeveloperModeEnabled,
-            journal: journal,
-            logFilesProvider: logFilesProvider,
-            faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
-        )
-    }
-
-    @MainActor
     private func finishSettingUpUserSession(
         account: Account,
         newSession: ZMUserSession,
@@ -1275,24 +1273,23 @@ public final class SessionManager: NSObject, SessionManagerType {
         notifyNewUserSessionCreated(newSession)
     }
 
-    @MainActor
-    func tearDownBackgroundSession(for accountId: UUID) async {
+    func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
         guard let userSession = backgroundUserSessions[accountId] else {
             WireLogger.sessionManager
                 .error("No session to tear down for \(accountId), known sessions: \(backgroundUserSessions)")
+            completion?()
             return
         }
         tearDownObservers(account: accountId)
         state.withLockUnchecked { $0.backgroundUserSessions[accountId] = nil }
 
         dispatchGroup.enter()
-        await withCheckedContinuation { continuation in
-            userSession.close(deleteCookie: false) { [weak self] in
-                self?.notifyUserSessionDestroyed(accountId)
-                continuation.resume()
-                self?.dispatchGroup.leave()
-            }
+        userSession.close(deleteCookie: false) { [weak self] in
+            self?.notifyUserSessionDestroyed(accountId)
+            completion?()
+            self?.dispatchGroup.leave()
         }
+
     }
 
     // Tears down and releases all background user sessions.
@@ -1303,10 +1300,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
         }
 
-        Task {
-            for key in backgroundSessions.keys {
-                await tearDownBackgroundSession(for: key)
-            }
+        backgroundSessions.keys.forEach {
+            tearDownBackgroundSession(for: $0)
         }
     }
 
@@ -1348,13 +1343,13 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func updateCallNotificationStyle() {
         switch callNotificationStyle {
         case .pushNotifications:
-            authenticatedSessionFactory.mediaManager.setUiStartsAudio(false)
+            mediaManager.setUiStartsAudio(false)
             callKitManager.isEnabled = false
 
         case .callKit:
             // Should be set to true when CallKit is used. Then AVS will not start
             // the audio before the audio session is active
-            authenticatedSessionFactory.mediaManager.setUiStartsAudio(true)
+            mediaManager.setUiStartsAudio(true)
             callKitManager.isEnabled = true
         }
     }
@@ -1841,28 +1836,22 @@ extension SessionManager: NotificationContext {
 
 public extension SessionManager {
 
-    @MainActor
-    func confirmSwitchingAccount() async -> Bool {
+    func confirmSwitchingAccount(completion: @escaping (_ isConfirmed: Bool) -> Void) {
         guard
             let switchingDelegate,
             let activeUserSession,
             activeUserSession.isCallOngoing
         else {
             // no confirmation to show if no call is ongoing
-            return true
+            return completion(true)
         }
 
-        let confirmed = await withCheckedContinuation { continuation in
-            switchingDelegate.confirmSwitchingAccount { confirmed in
-                continuation.resume(returning: confirmed)
+        switchingDelegate.confirmSwitchingAccount { confirmed in
+            if confirmed {
+                activeUserSession.callCenter?.endAllCalls()
             }
+            completion(confirmed)
         }
-
-        if confirmed {
-            activeUserSession.callCenter?.endAllCalls()
-        }
-
-        return confirmed
     }
 }
 

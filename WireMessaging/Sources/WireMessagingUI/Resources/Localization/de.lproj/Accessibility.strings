@@ -28,7 +28,7 @@
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Upgrade-Banner schließen";
 
 // MARK: Conversation Files View
-"conversation.wireCells.files.close" = "Dateien schließen";
+"conversation.wireCells.files.close" = "Schließen";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
@@ -54,3 +54,18 @@
 // MARK: - Share Link View
 "conversation.wireCells.shareLink.hidePassword" = "Passwort ausblenden";
 "conversation.wireCells.shareLink.showPassword" = "Passwort anzeigen";
+
+// MARK: - Accessibility File Icon Labels
+"conversation.wireCells.files.filetype" = "Dateityp, {0}";
+"conversation.wireCells.files.archive" = "Archiv";
+"conversation.wireCells.files.audio" = "Audio";
+"conversation.wireCells.files.code" = "Code";
+"conversation.wireCells.files.document" = "Dokument";
+"conversation.wireCells.files.image" = "Bild";
+"conversation.wireCells.files.other" = "Andere";
+"conversation.wireCells.files.pdf" = "PDF";
+"conversation.wireCells.files.presentation" = "Präsentation";
+"conversation.wireCells.files.spreadsheet" = "Kalkulationstabelle";
+"conversation.wireCells.files.video" = "Video";
+"conversation.wireCells.files.folder" = "Ordner";
+"conversation.wireCells.files.text" = "Text";

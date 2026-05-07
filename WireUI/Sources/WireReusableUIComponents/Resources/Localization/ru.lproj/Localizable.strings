@@ -21,3 +21,5 @@
 "passwordtextfield.preview.passwordrules" = "Используйте как минимум 8 символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
 "passwordtextfield.hide_password" = "Скрыть пароль";
 "passwordtextfield.show_password" = "Показать пароль";
+
+"validationTextField.removeEntry" = "Удалить запись";

@@ -43,6 +43,12 @@ class WelcomePage: PageModel {
         return try LoginPage()
     }
 
+    func enterSSOCode(_ code: String) throws -> OktaLoginPage {
+        try typeEmailOrSSO(code)
+        nextButton.waitAndTap()
+        return try OktaLoginPage()
+    }
+
     @discardableResult
     func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
         try emailTextField.tapIfKeyboardNotFocused().typeText(input)

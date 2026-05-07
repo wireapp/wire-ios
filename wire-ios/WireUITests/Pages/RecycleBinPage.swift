@@ -29,6 +29,27 @@ class RecycleBinPage: PageModel {
         app.staticTexts[Locators.WireDrive.FilesPage.recycleBinPageheader.rawValue]
     }
 
+    var moreButton: XCUIElement {
+        app.buttons
+            .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
+            .firstMatch
+    }
+
+    var restoreOnMenuContext: XCUIElement {
+        app.buttons[Locators.WireDrive.FileMenu.restore.identifier]
+    }
+
+    var restoreOptionOnBottomSheet: XCUIElement {
+        app.buttons[Locators.WireDrive.FilesItemPage.confirmRestoreButton.rawValue].firstMatch
+    }
+
+    var closeRecycleBinButton: XCUIElement {
+        app.navigationBars[Locators.WireDrive.FilesPage.recycleBinPageheader.rawValue]
+            .buttons
+            .matching(identifier: Locators.WireDrive.FilesPage.close.rawValue)
+            .firstMatch
+    }
+
     private var fileTexts: XCUIElementQuery {
         app.staticTexts
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
@@ -40,6 +61,38 @@ class RecycleBinPage: PageModel {
 
     func verifyFileMovedToRecycleBin(fileName: String) -> Bool {
         self.fileName.label == fileName
+    }
+
+    func openMoreOptionsOnFileAndRestoreFile() throws -> RecycleBinPage {
+        moreButton.tap()
+        restoreOnMenuContext.tap()
+        restoreOptionOnBottomSheet.tap()
+        return self
+    }
+
+    func closeRecycleBin() throws -> SharedDriveFilesPage {
+        closeRecycleBinButton.tap()
+        return try SharedDriveFilesPage()
+    }
+
+    var deletePermanentlyOnMenuContext: XCUIElement {
+        app.buttons[Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue]
+    }
+
+    var deletePermanentlyOptionOnBottomSheet: XCUIElement {
+        app.buttons[Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue].firstMatch
+    }
+
+    func deleteFilePermanently() -> Self {
+        moreButton.tap()
+        deletePermanentlyOnMenuContext.tap()
+        deletePermanentlyOptionOnBottomSheet.tap()
+        return self
+    }
+
+    func verifyRecycleBinIsEmpty() -> Bool {
+        let file = app.staticTexts[Locators.WireDrive.FilesContentPage.fileItem(0)]
+        return !file.waitForExistence(timeout: 3)
     }
 
 }

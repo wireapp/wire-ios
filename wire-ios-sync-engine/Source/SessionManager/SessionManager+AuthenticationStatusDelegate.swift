@@ -32,9 +32,7 @@ extension SessionManager: ZMAuthenticationStatusDelegate {
     }
 
     public func authenticationWasRequested() {
-        Task {
-            await addAccount()
-        }
+        addAccount()
     }
 
     public func loginCodeRequestDidFail(_ error: Error!) {
@@ -46,11 +44,9 @@ extension SessionManager: ZMAuthenticationStatusDelegate {
     }
 
     public func companyLoginCodeDidBecomeAvailable(_ uuid: UUID!) {
-        Task {
-            await addAccount(userInfo: [
-                SessionManager.companyLoginCodeKey: uuid ?? UUID(),
-                SessionManager.companyLoginRequestTimestampKey: Date()
-            ])
-        }
+        addAccount(userInfo: [
+            SessionManager.companyLoginCodeKey: uuid ?? UUID(),
+            SessionManager.companyLoginRequestTimestampKey: Date()
+        ])
     }
 }
