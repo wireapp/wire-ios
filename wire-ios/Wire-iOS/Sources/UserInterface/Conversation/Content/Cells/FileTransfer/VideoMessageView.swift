@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 final class VideoMessageView: UIView, TransferView {
     var fileMessage: ZMConversationMessage?
@@ -63,7 +64,7 @@ final class VideoMessageView: UIView, TransferView {
         previewImageView.backgroundColor = SemanticColors.View.backgroundCollectionCell
 
         playButton.addTarget(self, action: #selector(VideoMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
-        playButton.accessibilityIdentifier = "VideoActionButton"
+        playButton.accessibilityIdentifier = Locators.ActiveConversationPage.videoPlayButton.rawValue
         playButton.accessibilityLabel = L10n.Accessibility.AudioMessage.Play.value
         playButton.layer.masksToBounds = true
 
