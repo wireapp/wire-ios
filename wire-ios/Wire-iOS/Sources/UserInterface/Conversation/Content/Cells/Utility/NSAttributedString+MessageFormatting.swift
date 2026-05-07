@@ -86,8 +86,8 @@ extension NSAttributedString {
     fileprivate static func defaultMarkdownStyle() -> DownStyle {
         let style = DownStyle.normal
 
-        style.baseFont = FontSpec.body.font!
-        style.baseFontColor = SemanticColors.Label.textDefault
+        style.baseFont = UIFont.font(for: .body1)
+        style.baseFontColor = ColorTheme.Backgrounds.onBackground
         style.baseParagraphStyle = paragraphStyle
         style.listItemPrefixColor = style.baseFontColor.withAlphaComponent(0.64)
         style.quoteColor = style.baseFontColor.withAlphaComponent(0.6)
@@ -99,7 +99,7 @@ extension NSAttributedString {
     static func formatForPreview(
         message: TextMessageData,
         inputMode: Bool,
-        textColor: UIColor = SemanticColors.Label.textDefault,
+        textColor: UIColor = ColorTheme.Backgrounds.onBackground,
         accentColor: AccentColor
     ) -> NSAttributedString {
         var plainText = message.messageText ?? ""
