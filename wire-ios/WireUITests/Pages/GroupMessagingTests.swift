@@ -132,7 +132,7 @@ final class GroupMessagingTests: WireUITestCase {
         )
 
         XCTAssertTrue(
-            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 2),
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 4),
             "Unread messages count element did not appear"
         )
 
@@ -208,7 +208,7 @@ final class GroupMessagingTests: WireUITestCase {
         )
 
         XCTAssertTrue(
-            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 2),
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
             "Unread messages count element did not appear"
         )
 

@@ -311,10 +311,14 @@ class ActiveConversationPage: PageModel {
 
     @discardableResult
     func recordAudioAndSend() throws -> ActiveConversationPage {
+
         audioButton.tap()
         app.dismissAllowIfPresent()
-        if audioButton.waitForExistence(timeout: 1), audioButton.isHittable {
-            audioButton.tap()
+
+        if !startRecording.waitForExistence(timeout: 1) || !startRecording.isHittable {
+            if audioButton.waitForExistence(timeout: 2), audioButton.isHittable {
+                audioButton.tap()
+            }
         }
         startRecording.waitAndTap()
         XCTAssertTrue(
@@ -331,12 +335,12 @@ class ActiveConversationPage: PageModel {
     }
 
     func receivedPing(for sender: String) -> XCUIElement {
-        let predicate = NSPredicate(
+        let label = NSPredicate(
             format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
             sender,
             "pinged"
         )
-        return app.otherElements.containing(predicate).firstMatch
+        return app.otherElements.containing(label).firstMatch
     }
 
     @discardableResult
