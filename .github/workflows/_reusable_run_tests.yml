@@ -171,13 +171,17 @@ jobs:
             exit 0
           fi
 
-          BOOTED_DEVICE_ID=$(xcrun simctl list devices booted | awk -F '[()]' '/Booted/ { print $2; exit }')
-          if [ -z "$BOOTED_DEVICE_ID" ]; then
-            echo "::warning::No booted simulator found. Skipping simulator media seeding."
+          if [ -z "${IOS_SIM_ID:-}" ]; then
+            echo "::warning::IOS_SIM_ID is not set. Skipping simulator media seeding."
             exit 0
           fi
 
-          xcrun simctl addmedia "$BOOTED_DEVICE_ID" "$VIDEO_PATH" || \
+          if ! xcrun simctl list devices booted | grep -q "$IOS_SIM_ID"; then
+            echo "::warning::Simulator $IOS_SIM_ID is not booted yet. Skipping simulator media seeding."
+            exit 0
+          fi
+
+          xcrun simctl addmedia "$IOS_SIM_ID" "$VIDEO_PATH" || \
             echo "::warning::Failed to seed simulator with test video"
 
       - name: "Test new critical flows"

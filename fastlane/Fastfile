@@ -618,11 +618,20 @@ platform :ios do
         end
         ENV['IOS_SIM_ID'] = existing_simulator.strip
 
+        if ENV['GITHUB_ENV']
+            sh "echo IOS_SIM_ID=#{ENV['IOS_SIM_ID']} >> #{ENV['GITHUB_ENV']}"
+        end
+
         UI.message "boot simulator #{ENV['IOS_SIM_ID']}"
         sh "xcrun simctl boot #{ENV['IOS_SIM_ID']} || true"
-        sh "xcrun simctl bootstatus #{ENV['IOS_SIM_ID']} -b || echo 'WARNING: Simulator did not finish booting'"
-    end
 
+        booted_simulators = `xcrun simctl list devices booted`
+
+        unless booted_simulators.include?(ENV['IOS_SIM_ID'])
+            UI.important("WARNING: Simulator #{ENV['IOS_SIM_ID']} is not booted yet")
+        end
+    end
+    
     # Upload to AppStore
     def upload_app_store(options)
         build = Build.new(options: options)
