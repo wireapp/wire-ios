@@ -138,7 +138,7 @@ struct HistoryDepthViewModel {
 }
 
 final class ConversationChannelHistoryDepthSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSystemMessageCell<ConversationReadReceiptSettingChangedCellDescription>
+    typealias View = ConversationSystemMessageCell<ConversationChannelHistoryDepthSystemMessageCellDescription>
 
     let configuration: View.Configuration
 
