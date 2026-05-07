@@ -357,9 +357,7 @@ public struct SharingSessionLoader {
             localDomain: backendMetadata.domain
         )
         let cookieStorage = CookieStorage(
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain(),
-            cache: CookieStorageCache()
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: buildNumber,
