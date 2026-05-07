@@ -30,7 +30,7 @@ public struct UITestConfig: Codable {
 
     /// When `true`, a triple-tap on the app window triggers the same action as the shake gesture.
     /// On XCUITests, shake gesture is not available.
-    public var useTripleTapForShakeGesture = true
+    public var useTripleTapForShakeGesture = false
 
     /// Developer flags to apply at launch, keyed by `DeveloperFlag.rawValue`.
     /// Overrides any flags already stored in `UserDefaults`.
