@@ -55,6 +55,22 @@ public final class WireCellsLocalAsset: NSManagedObject {
 
     @NSManaged public var size: Int64
 
+    /// The conversation where this asset is shared.
+
+    @NSManaged public var conversationName: String?
+
+    /// The name of the user who shared the asset.
+
+    @NSManaged public var ownerName: String?
+
+    /// The date the asset was created / last modified.
+
+    @NSManaged public var modified: Date?
+
+    /// Whether the asset is available offline for the user (defaults to false).
+
+    @NSManaged public var isAvailableOffline: Bool
+
     /// Whether the asset is downloaded or not.
 
     @NSManaged public var isDownloaded: Bool

@@ -35,7 +35,7 @@ class WireUITestCase: XCTestCase {
     @MainActor
     override func setUpWithError() throws {
         // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
-        dismissAllowIfPresent()
+        XCUIApplication().dismissAllowIfPresent()
         XCUIApplication().terminate()
         callingServiceClient = try CallingServiceClient()
         registerNotificationPermissionMonitor()
@@ -111,15 +111,6 @@ class WireUITestCase: XCTestCase {
         setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
     }
 
-    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
-        let alert = springboard.alerts.firstMatch
-        guard alert.waitForExistence(timeout: timeout) else { return }
-
-        if alert.buttons["Allow"].exists {
-            alert.buttons["Allow"].tap()
-        }
-    }
-
     @MainActor
     func loginToBackend(user: UserInfo) async throws -> ConversationsPage {
         print("login: email \(user.email) and password \(user.password)")
@@ -145,5 +136,17 @@ class WireUITestCase: XCTestCase {
                 allowButton.tap()
                 return true
             }
+    }
+}
+
+extension XCUIApplication {
+    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let alert = springboard.alerts.firstMatch
+        guard alert.waitForExistence(timeout: timeout) else { return }
+
+        if alert.buttons["Allow"].exists {
+            alert.buttons["Allow"].tap()
+        }
     }
 }
