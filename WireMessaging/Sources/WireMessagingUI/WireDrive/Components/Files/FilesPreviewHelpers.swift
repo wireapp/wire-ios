@@ -63,7 +63,7 @@ extension FilesViewModel {
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                createFileUseCase: WireDriveCreateFileUseCase(
+                createFile: WireDriveCreateFileUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(
@@ -77,7 +77,7 @@ extension FilesViewModel {
                 getEditingURL: WireDriveGetEditingURLUseCase(
                     editingURLRepository: previewEditingURLRepository()
                 ),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository, fileCache: cache
                 ),
                 getPublicLinkData: WireDriveGetPublicLinkDataUseCase(
@@ -97,6 +97,15 @@ extension FilesViewModel {
                 ),
                 getDriveConversations: WireDriveGetConversationsUseCase(
                     nodesAPI: previewConversationsApi()
+                ),
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
+                    localAssetRepository: localAssetRepository
                 )
             ),
             setNavigation: { _ in },
@@ -313,12 +322,22 @@ private func mockFileCache() -> any FileCache {
 }
 
 private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryProtocol, @unchecked Sendable {
-
     var failIndex = 0
     var publishers: [UUID: CurrentValueSubject<WireDriveLocalAsset?, Never>] = [:]
 
     func asset(nodeID: UUID) throws -> WireMessagingDomain.WireDriveLocalAsset? {
         publishers[nodeID]?.value
+    }
+
+    func allAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        publishers.values.compactMap(\.value)
+    }
+
+    func offlineAssets(
+        conversationName: String?,
+        assetsPath: String?
+    ) throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        publishers.values.compactMap(\.value).filter(\.isAvailableOffline)
     }
 
     func refreshAssetMetadata(
@@ -336,13 +355,29 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
             path: "some/path.jpg",
             contentType: nil,
             size: nil,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: .pending
         )
 
         return (node, localAsset)
     }
 
-    func downloadAsset(nodeID: UUID) async throws {
+    func updateAsset(_ asset: WireDriveLocalAsset) throws {
+        publishers[asset.nodeID]?.send(asset)
+    }
+
+    func updateAssetAsync(_ asset: WireDriveLocalAsset) async throws {
+        publishers[asset.nodeID]?.send(asset)
+    }
+
+    func deleteAsset(nodeID: UUID) async throws {
+        publishers[nodeID]?.send(nil)
+    }
+
+    func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         failIndex += 1
         // Fail every 3rd download
         let shouldFail = failIndex % 3 == 0
@@ -363,6 +398,10 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
                 path: "some/path.jpg",
                 contentType: nil,
                 size: nil,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: downloadState
             )
 

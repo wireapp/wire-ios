@@ -151,6 +151,10 @@ final class FileVersioningViewModel: ObservableObject {
         try? await Task.sleep(for: .seconds(2))
 
         do {
+            // Disabling the file tracker as we await for the file to be downloaded.
+            WireDriveFileUITracker.isEnabled = false
+            defer { WireDriveFileUITracker.isEnabled = true }
+
             try await restoreNodeVersionUseCase.invoke(
                 nodeID: nodeID,
                 versionID: item.id

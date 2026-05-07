@@ -46,7 +46,7 @@ public final class ZMUserSession: NSObject {
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
-    public internal(set) var isBuildBlacklisted = false
+    public private(set) var isBuildBlacklisted = false
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -402,6 +402,18 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
+    private lazy var checkBlacklistWorker: Worker? = .checkBlacklist(
+        useCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+        onIsBuildBlacklisted: { [weak self] in
+            guard let self else { return }
+
+            isBuildBlacklisted = true
+            delegate?.userSessionDidDiscoverBuildIsBlacklisted()
+        }
+    )
+
+    private var updateBackendMetadataWorker: Worker?
+
     let logFilesProvider: LogFilesProviding
 
     // MARK: Dependency Injection
@@ -459,7 +471,8 @@ public final class ZMUserSession: NSObject {
         journal: Journal,
         logFilesProvider: LogFilesProviding,
         cookieStorage: any CookieStorageProtocol,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -492,6 +505,7 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.journal = journal
         self.logFilesProvider = logFilesProvider
+        self.updateBackendMetadataWorker = .updateBackendMetadata(useCase: updateBackendMetadataUseCase)
 
         super.init()
 
@@ -682,6 +696,8 @@ public final class ZMUserSession: NSObject {
         }
 
         await startWorkAgentAndGenerators()
+        checkBlacklistWorker?.start()
+        updateBackendMetadataWorker?.start()
     }
 
     private func startWorkAgentAndGenerators() async {
@@ -770,6 +786,8 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
+        checkBlacklistWorker = nil
+        updateBackendMetadataWorker = nil
 
         // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
         // are left to be cleaned up when ZMUserSession is deallocated to avoid
@@ -870,7 +888,6 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-        recurringActionService.registerAction(checkBuildBlacklistAction)
     }
 
     func startRequestLoopTracker() {

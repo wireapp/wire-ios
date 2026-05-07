@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireSyncEngine
 
 final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
@@ -200,7 +201,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
+        configuration.isObfuscated ? "ObfuscatedImageCell" : Locators.ActiveConversationPage.imageCell.rawValue
     }
 
     let isAccessibilityElement = true
