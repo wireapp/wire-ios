@@ -617,6 +617,10 @@ platform :ios do
             `xcrun simctl erase #{existing_simulator}`
         end
         ENV['IOS_SIM_ID'] = existing_simulator.strip
+
+        UI.message "boot simulator #{ENV['IOS_SIM_ID']}"
+        sh "xcrun simctl boot #{ENV['IOS_SIM_ID']} || true"
+        sh "xcrun simctl bootstatus #{ENV['IOS_SIM_ID']} -b || echo 'WARNING: Simulator did not finish booting'"
     end
 
     # Upload to AppStore
