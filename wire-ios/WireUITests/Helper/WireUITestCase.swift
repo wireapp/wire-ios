@@ -40,7 +40,7 @@ class WireUITestCase: XCTestCase {
         callingServiceClient = try CallingServiceClient()
         registerNotificationPermissionMonitor()
         uiTestConfig.useTripleTapForShakeGesture = true
-        
+
         let launchArguments = [
             "-resetData",
             "--useEnvStaging"
