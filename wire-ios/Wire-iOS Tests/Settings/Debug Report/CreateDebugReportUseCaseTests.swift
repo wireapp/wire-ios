@@ -133,6 +133,12 @@ final class CreateDebugReportUseCaseTests: XCTestCase {
 
         // THEN
         XCTAssertTrue(FileManager.default.fileExists(atPath: result.path))
+
+        // Filenames are stored as plaintext in the ZIP local file header and central directory,
+        // so they're searchable in the raw archive bytes even though file contents are deflated.
+        let zipData = try Data(contentsOf: result)
+        XCTAssertNotNil(zipData.range(of: Data("app1.log".utf8)), "Expected app1.log entry in zip")
+        XCTAssertNotNil(zipData.range(of: Data("app2.log".utf8)), "Expected app2.log entry in zip")
     }
 
     // MARK: - Helpers

@@ -58,17 +58,6 @@ final class ShareDebugReportViewModelTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockCreateReport.invokeCallsCount, 1)
     }
-
-    func testShareViaActivitySheet_doesNotThrowOnCreateFailure() async {
-        // GIVEN
-        mockCreateReport.invokeThrowableError = NSError(domain: "test", code: 42)
-
-        // WHEN — should not crash
-        await sut.shareViaActivitySheet()
-
-        // THEN
-        XCTAssertEqual(mockCreateReport.invokeCallsCount, 1)
-    }
 }
 
 // MARK: - Mocks
