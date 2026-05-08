@@ -995,6 +995,9 @@ package final class FilesViewModel: ObservableObject {
         Task {
             do {
                 try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
+                
+                // This is a pragmatic solution for storage cleanup and might be removed in the future.
+                await deleteAsset(item: item)
 
                 if isOffline {
                     await reload()
@@ -1003,6 +1006,16 @@ package final class FilesViewModel: ObservableObject {
                 WireLogger.wireDrive
                     .error("Failed to remove asset from available offline: \(String(describing: error))")
             }
+        }
+    }
+    
+    /// Deletes the locally downloaded file associated with the file item.
+    private func deleteAsset(item: FilesViewItem) async {
+        do {
+            try await localAssetRepository.deleteAsset(nodeID: item.id)
+        } catch {
+            WireLogger.wireDrive
+                .error("Failed to delete the locally downloaded file: \(String(describing: error))")
         }
     }
 }
