@@ -21,7 +21,7 @@ import XCTest
 final class SSOTests: WireUITestCase {
 
     private func registerTeamOwnerWithSSOEnabled() async throws -> UserInfo {
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
         let teamID = try XCTUnwrap(teamOwner.teamID, "teamOwner.teamID is nil")
         try await ssoHelper.enableSSOFeature(teamID: teamID)
         return teamOwner
