@@ -5011,13 +5011,15 @@ internal enum L10n {
         /// Guest
         internal static let guest = L10n.tr("Localizable", "profile.details.guest", fallback: "Guest")
         /// Get certainty about %@’s identity before connecting.
+        /// Wire’s Support team will never reach out to you in the app.
         internal static func identityWarning(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "profile.details.identity_warning", String(describing: p1), fallback: "Get certainty about %@’s identity before connecting.")
+          return L10n.tr("Localizable", "profile.details.identity_warning", String(describing: p1), fallback: "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.")
         }
         /// external
         internal static let partner = L10n.tr("Localizable", "profile.details.partner", fallback: "external")
         /// Please verify the person's identity before accepting the connection request.
-        internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.")
+        /// Wire’s Support team will never reach out to you in the app.
+        internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.")
         /// Details
         internal static let title = L10n.tr("Localizable", "profile.details.title", fallback: "Details")
         internal enum Title {

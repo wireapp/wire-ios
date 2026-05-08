@@ -22,13 +22,19 @@ import WireDataModel
 import WireDesign
 
 final class WarningLabelView: UIView {
-    private let stackView = UIStackView(axis: .horizontal)
-    private let imageView = UIImageView(image: UIImage(named: "Info"))
+    private let stackView = UIStackView(axis: .vertical)
 
     private let label = DynamicFontLabel(
         style: .h5,
         color: SemanticColors.Label.textErrorDefault
     )
+
+    private static let paragraphStyle: NSParagraphStyle = {
+        let style = NSMutableParagraphStyle()
+        style.paragraphSpacing = 8
+        style.alignment = .center
+        return style
+    }()
 
     // MARK: - Setup
 
@@ -45,18 +51,12 @@ final class WarningLabelView: UIView {
     private func setupViews() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
-        stackView.alignment = .top
+        stackView.alignment = .center
         stackView.spacing = 10
-        imageView.tintColor = SemanticColors.Icon.foregroundDefaultRed
-        stackView.addArrangedSubview(imageView)
         label.numberOfLines = 0
         stackView.addArrangedSubview(label)
         NSLayoutConstraint.activate(
-            [
-                imageView.widthAnchor.constraint(equalToConstant: 16.0),
-                imageView.heightAnchor.constraint(equalToConstant: 16.0)
-            ] +
-                NSLayoutConstraint.forView(
+            NSLayoutConstraint.forView(
                     view: stackView,
                     inContainer: self,
                     withInsets: .zero
@@ -68,14 +68,17 @@ final class WarningLabelView: UIView {
         typealias profileDetails = L10n.Localizable.Profile.Details
         if user.isPendingApprovalBySelfUser {
             isHidden = false
-            label.text = profileDetails.requestedIdentityWarning
+            label.attributedText = attributedWarning(profileDetails.requestedIdentityWarning)
         }
         guard let name = user.name else {
             isHidden = true
             return
         }
         isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
-        label.text = profileDetails.identityWarning(name)
+        label.attributedText = attributedWarning(profileDetails.identityWarning(name))
+    }
 
+    private func attributedWarning(_ text: String) -> NSAttributedString {
+        NSAttributedString(string: text, attributes: [.paragraphStyle: Self.paragraphStyle])
     }
 }

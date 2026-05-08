@@ -1063,8 +1063,8 @@
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
-"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
-"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list
