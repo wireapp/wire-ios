@@ -508,7 +508,13 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)processCookieResponse:(NSHTTPURLResponse *)HTTPResponse;
 {
-    [self.cookieStorage setCookieDataFromResponse:HTTPResponse forURL:HTTPResponse.URL];
+    NSURL *URL = HTTPResponse.URL;
+
+    if (URL == nil) {
+        return;
+    }
+
+    [self.cookieStorage setCookieDataFromResponse:HTTPResponse forURL:URL];
 }
 
 - (void)handlerDidReceiveAccessToken:(ZMAccessTokenHandler *)handler
