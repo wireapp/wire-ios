@@ -995,7 +995,7 @@ package final class FilesViewModel: ObservableObject {
         Task {
             do {
                 try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
-                
+
                 // This is a pragmatic solution for storage cleanup and might be removed in the future.
                 await deleteAsset(item: item)
 
@@ -1008,7 +1008,7 @@ package final class FilesViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// Deletes the locally downloaded file associated with the file item.
     private func deleteAsset(item: FilesViewItem) async {
         do {
