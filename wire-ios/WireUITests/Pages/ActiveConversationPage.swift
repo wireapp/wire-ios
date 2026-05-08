@@ -344,19 +344,24 @@ class ActiveConversationPage: PageModel {
     }
 
     @discardableResult
-    func sendPing() throws -> ActiveConversationPage {
+    func sendPing() -> ActiveConversationPage {
         showOtherRowButton.tap()
         pingButton.waitAndTap()
         return self
     }
 
     @discardableResult
-    func verifyPingSent() throws -> ActiveConversationPage {
+    func verifyPingSent(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> ActiveConversationPage {
         XCTAssertTrue(
             app.otherElements.containing(
                 NSPredicate(format: "label CONTAINS %@", "You pinged")
             ).firstMatch.waitForExistence(timeout: 2),
-            "Expected ping message not found"
+            "Expected ping message not found",
+            file: file,
+            line: line
         )
         return self
     }
