@@ -33,7 +33,7 @@ final class SSOHelper {
     private(set) var identityProviderId: String?
 
     init(
-        userHelper: UserHelper = UserHelper(),
+        userHelper: UserHelper = UserHelper.default,
         httpClient: HttpClient = HttpClient(),
         oktaBaseURL: URL = .init(string: "https://dev-500508.oktapreview.com")!
     ) {

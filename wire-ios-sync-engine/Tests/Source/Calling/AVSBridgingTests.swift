@@ -168,3 +168,41 @@ class AVSBridgingTests: MessagingTest {
     }
 
 }
+
+extension AVSBridgingTests {
+
+    func testParseNetworkQuality_normal() {
+        XCTAssertEqual(AVSWrapper.parseNetworkQuality(from: #"{"quality":1}"#), .normal)
+    }
+
+    func testParseNetworkQuality_medium() {
+        XCTAssertEqual(AVSWrapper.parseNetworkQuality(from: #"{"quality":2}"#), .medium)
+    }
+
+    func testParseNetworkQuality_poor() {
+        XCTAssertEqual(AVSWrapper.parseNetworkQuality(from: #"{"quality":3}"#), .poor)
+    }
+
+    func testParseNetworkQuality_fullPayload() {
+        let json = #"{"quality":1,"rtt":0,"loss":{"tx":0,"rx":0},"jitter":{"audio":{"tx":0,"rx":0},"video":{"tx":0,"rx":0}},"connection":{"protocol":"Unknown","candidate":"Unknown"},"peer":"User"}"#
+        XCTAssertEqual(AVSWrapper.parseNetworkQuality(from: json), .normal)
+    }
+
+    func testParseNetworkQuality_unknownEnumValues_doesNotFailParsing() {
+        let json = #"{"quality":2,"connection":{"protocol":"QUIC","candidate":"NewType"},"peer":"Bot"}"#
+        XCTAssertEqual(AVSWrapper.parseNetworkQuality(from: json), .medium)
+    }
+
+    func testParseNetworkQuality_missingQuality_returnsNil() {
+        XCTAssertNil(AVSWrapper.parseNetworkQuality(from: #"{"rtt":0,"peer":"User"}"#))
+    }
+
+    func testParseNetworkQuality_unknownQualityValue_returnsNil() {
+        XCTAssertNil(AVSWrapper.parseNetworkQuality(from: #"{"quality":99}"#))
+    }
+
+    func testParseNetworkQuality_invalidJSON_returnsNil() {
+        XCTAssertNil(AVSWrapper.parseNetworkQuality(from: "not json"))
+        XCTAssertNil(AVSWrapper.parseNetworkQuality(from: ""))
+    }
+}

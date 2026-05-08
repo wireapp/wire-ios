@@ -20,13 +20,18 @@ import SwiftUI
 import WireDesign
 
 @MainActor
-func SidebarViewControllerPreview(showMeetings: Bool = false, showFiles: Bool = false) -> UIViewController {
+func SidebarViewControllerPreview(
+    showChannels: Bool = false,
+    showMeetings: Bool = false,
+    showFiles: Bool = false
+) -> UIViewController {
     let splitViewController = UISplitViewController(style: .tripleColumn)
     let sidebarViewController = SidebarViewController(
         accountImageView: { _, _, _ in MockAccountImageView() },
         legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
     )
     sidebarViewController.showFiles = showFiles
+    sidebarViewController.showChannels = showChannels
     sidebarViewController.showMeetings = showMeetings
     sidebarViewController.accountInfo.displayName = "Firstname Lastname"
     sidebarViewController.accountInfo.username = "@username"
