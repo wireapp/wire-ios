@@ -18,16 +18,29 @@ runs:
 
         PID_FILE="$RUNNER_TEMP/testservice.pid"
         LOG_FILE="$RUNNER_TEMP/testservice.log"
+        SHOULD_PRINT_LOGS="$PRINT_LOGS_ON_FAILURE"
+
+        if [[ "${KALIUM_TESTSERVICE_AVAILABLE:-true}" != "true" ]]; then
+          SHOULD_PRINT_LOGS="true"
+        fi
 
         if [[ -f "$PID_FILE" ]]; then
           PID="$(cat "$PID_FILE" || true)"
           if [[ -n "$PID" ]]; then
-            kill "$PID" 2>/dev/null || true
+            if kill -0 "$PID" 2>/dev/null; then
+              kill "$PID" 2>/dev/null || true
+            else
+              echo "::warning::Kalium Testservice pid file exists, but process $PID is not running"
+            fi
+          else
+            echo "::warning::Kalium Testservice pid file is empty"
           fi
           rm -f "$PID_FILE" || true
+        else
+          echo "::notice::No Kalium Testservice pid file found"
         fi
 
-        if [[ "$PRINT_LOGS_ON_FAILURE" == "true" ]]; then
+        if [[ "$SHOULD_PRINT_LOGS" == "true" ]]; then
           if [[ -f "$LOG_FILE" ]]; then
             echo "::group::Kalium Testservice log (last 200 lines)"
             tail -n 200 "$LOG_FILE" || true

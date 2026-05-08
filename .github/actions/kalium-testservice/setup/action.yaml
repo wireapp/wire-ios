@@ -2,46 +2,38 @@ name: "Setup Kalium Testservice"
 
 inputs:
   kalium_ref:
-    description: Optional Kalium tag to use. If empty, latest test-service-v* tag is resolved.
+    description: Optional Kalium testservice release tag to use. If empty, latest test-service-v* release with a fat jar is resolved.
     required: false
     default: ""
 
 runs:
   using: composite
   steps:
-    - name: Resolve Kalium ref
-      id: kalium-ref
+    - name: Resolve Kalium Testservice release
+      id: kalium-release
       shell: bash
       env:
         KALIUM_REF_INPUT: ${{ inputs.kalium_ref }}
+        GITHUB_TOKEN: ${{ github.token }}
       run: |
-        set -euo pipefail
-
+        set -uo pipefail
+        ARGS=(resolve)
         if [[ -n "${KALIUM_REF_INPUT:-}" ]]; then
-          KALIUM_REF="$KALIUM_REF_INPUT"
-        else
-          KALIUM_REF="$({
-            git ls-remote --tags --refs https://github.com/wireapp/kalium.git 'refs/tags/test-service-v*' \
-            | awk -F/ '{print $3}' \
-            | sort -V \
-            | tail -n 1
-          })"
+          ARGS+=(--ref "$KALIUM_REF_INPUT")
         fi
 
-        if [[ -z "$KALIUM_REF" ]]; then
-          echo "::error::Could not resolve Kalium testservice ref"
-          exit 1
+        if ! python3 "$GITHUB_WORKSPACE/scripts/kalium-testservice-jar.py" "${ARGS[@]}"; then
+          echo "::warning::Kalium Testservice release resolution failed. Continuing without Testservice."
+          echo "available=false" >> "$GITHUB_OUTPUT"
+          echo "KALIUM_TESTSERVICE_AVAILABLE=false" >> "$GITHUB_ENV"
+          exit 0
         fi
 
-        if [[ ! "$KALIUM_REF" =~ ^test-service-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "::error::Invalid Kalium ref: $KALIUM_REF"
-          exit 1
-        fi
-
-        echo "ref=$KALIUM_REF" >> "$GITHUB_OUTPUT"
-        echo "Using Kalium ref: $KALIUM_REF"
+        echo "available=true" >> "$GITHUB_OUTPUT"
 
     - name: Setup Java 17 for Kalium Testservice
+      if: ${{ steps.kalium-release.outputs.available == 'true' }}
+      continue-on-error: true
       uses: actions/setup-java@v4
       with:
         distribution: temurin
@@ -49,78 +41,69 @@ runs:
 
     - name: Restore Kalium fat jar cache
       id: jar-cache
+      if: ${{ steps.kalium-release.outputs.available == 'true' }}
+      continue-on-error: true
       uses: actions/cache/restore@v4
       with:
-        path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
-        key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
-        restore-keys: |
-          kalium-jar-${{ runner.os }}-${{ runner.arch }}-
+        path: ${{ runner.temp }}/kalium-testservice/testservice.jar
+        key: kalium-testservice-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-release.outputs.cache_key }}
 
-    - name: Cache Gradle dependencies
-      if: ${{ steps.jar-cache.outputs.cache-hit != 'true' }}
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: kalium-gradle-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
-        restore-keys: |
-          kalium-gradle-${{ runner.os }}-${{ runner.arch }}-
-
-    - name: Clone Kalium
-      if: ${{ steps.jar-cache.outputs.cache-hit != 'true' }}
+    - name: Download or restore Kalium Testservice jar
+      id: kalium-jar
+      if: ${{ steps.kalium-release.outputs.available == 'true' }}
       shell: bash
+      env:
+        JAR_PATH: ${{ runner.temp }}/kalium-testservice/testservice.jar
       run: |
-        set -euo pipefail
-        KALIUM_DIR="$RUNNER_TEMP/kalium"
-        rm -rf "$KALIUM_DIR"
-        git clone --depth 1 --branch "${{ steps.kalium-ref.outputs.ref }}" \
-          https://github.com/wireapp/kalium.git "$KALIUM_DIR"
+        set -uo pipefail
 
-    - name: Build or restore Kalium Testservice jar
-      shell: bash
-      run: |
-        set -euo pipefail
-
-        echo "Kalium fat-jar cache hit: ${{ steps.jar-cache.outputs.cache-hit }}"
-
-        LIBS_DIR="$RUNNER_TEMP/kalium/tools/testservice/build/libs"
-        mkdir -p "$LIBS_DIR"
-
-        JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
-
-        if [[ -z "$JAR" ]]; then
-          echo "Jar not found in $LIBS_DIR, building..."
-          cd "$RUNNER_TEMP/kalium"
-          ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
-          JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
+        echo "Kalium Testservice jar cache hit: ${{ steps.jar-cache.outputs.cache-hit }}"
+        if ! python3 "$GITHUB_WORKSPACE/scripts/kalium-testservice-jar.py" \
+          download \
+          --ref "${{ steps.kalium-release.outputs.ref }}" \
+          --asset-name "${{ steps.kalium-release.outputs.asset_name }}" \
+          --asset-url "${{ steps.kalium-release.outputs.asset_url }}" \
+          --asset-digest "${{ steps.kalium-release.outputs.asset_digest }}" \
+          --asset-size "${{ steps.kalium-release.outputs.asset_size }}" \
+          --output "$JAR_PATH"; then
+          echo "::warning::Kalium Testservice jar download or verification failed. Continuing without Testservice."
+          echo "ready=false" >> "$GITHUB_OUTPUT"
+          echo "KALIUM_TESTSERVICE_AVAILABLE=false" >> "$GITHUB_ENV"
+          exit 0
         fi
 
-        if [[ -z "$JAR" || ! -f "$JAR" ]]; then
-          echo "::error::Kalium fat jar not found in $LIBS_DIR"
-          ls -la "$LIBS_DIR" || true
-          exit 1
-        fi
-
-        echo "JAR=$JAR" >> "$GITHUB_ENV"
-        echo "Using jar: $JAR"
-        ls -la "$LIBS_DIR"
+        echo "JAR=$JAR_PATH" >> "$GITHUB_ENV"
+        echo "jar_path=$JAR_PATH" >> "$GITHUB_OUTPUT"
+        echo "ready=true" >> "$GITHUB_OUTPUT"
+        echo "Using jar: $JAR_PATH"
+        ls -la "$(dirname "$JAR_PATH")"
 
     - name: Save Kalium fat jar cache
-      if: ${{ steps.jar-cache.outputs.cache-hit != 'true' }}
+      if: ${{ steps.kalium-jar.outputs.ready == 'true' && steps.jar-cache.outputs.cache-hit != 'true' }}
+      continue-on-error: true
       uses: actions/cache/save@v4
       with:
-        path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
-        key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
+        path: ${{ runner.temp }}/kalium-testservice/testservice.jar
+        key: kalium-testservice-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-release.outputs.cache_key }}
 
     - name: Start Kalium Testservice
+      if: ${{ steps.kalium-jar.outputs.ready == 'true' }}
       shell: bash
       run: |
-        set -euo pipefail
+        set -uo pipefail
 
         CONFIG="$GITHUB_WORKSPACE/testservice/testservice-config.yml"
-        [[ -f "$CONFIG" ]] || { echo "::error::Config not found: $CONFIG"; exit 1; }
-        [[ -n "${JAR:-}" && -f "$JAR" ]] || { echo "::error::JAR not found: '${JAR:-}'"; exit 1; }
+        if [[ ! -f "$CONFIG" ]]; then
+          echo "::warning::Config not found: $CONFIG. Continuing without Testservice."
+          echo "KALIUM_TESTSERVICE_AVAILABLE=false" >> "$GITHUB_ENV"
+          exit 0
+        fi
+
+        if [[ -z "${JAR:-}" || ! -f "$JAR" ]]; then
+          echo "::warning::JAR not found: '${JAR:-}'. Continuing without Testservice."
+          echo "KALIUM_TESTSERVICE_AVAILABLE=false" >> "$GITHUB_ENV"
+          exit 0
+        fi
 
         nohup java -jar "$JAR" server "$CONFIG" >"$RUNNER_TEMP/testservice.log" 2>&1 &
         echo $! > "$RUNNER_TEMP/testservice.pid"
@@ -128,11 +111,13 @@ runs:
         for i in {1..90}; do
           if curl -fsS "http://localhost:8080/api/v1/instances" >/dev/null 2>&1; then
             echo "Kalium Testservice reachable at http://localhost:8080 after ${i}s"
+            echo "KALIUM_TESTSERVICE_AVAILABLE=true" >> "$GITHUB_ENV"
             exit 0
           fi
           sleep 1
         done
 
-        echo "::error::Testservice not reachable"
+        echo "::warning::Testservice not reachable. Continuing without Testservice."
         tail -n 200 "$RUNNER_TEMP/testservice.log" || true
-        exit 1
+        echo "KALIUM_TESTSERVICE_AVAILABLE=false" >> "$GITHUB_ENV"
+        exit 0

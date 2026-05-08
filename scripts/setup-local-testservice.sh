@@ -29,8 +29,7 @@ if [[ ! -f "$CONFIG_PATH" ]]; then
   exit 1
 fi
 
-STATE_DIR="${TMPDIR:-/tmp}/wire-local-testservice"
-KALIUM_DIR="$STATE_DIR/kalium"
+STATE_DIR="${HOME}/Library/Caches/wire-local-testservice"
 LOG_FILE="$STATE_DIR/testservice.log"
 PID_FILE="$STATE_DIR/testservice.pid"
 JAR_FILE="$STATE_DIR/testservice.jar"
@@ -81,45 +80,14 @@ if [[ -f "$PID_FILE" ]]; then
   rm -f "$PID_FILE"
 fi
 
-rm -f "$LOG_FILE" "$JAR_FILE"
-rm -rf "$KALIUM_DIR"
+rm -f "$LOG_FILE"
 
-echo "== Resolving latest Kalium testservice tag =="
-KALIUM_REF="$({
-  git ls-remote --tags --refs https://github.com/wireapp/kalium.git 'refs/tags/test-service-v*' \
-  | awk -F/ '{print $3}' \
-  | sort -V \
-  | tail -n 1
-})"
-
-if [[ -z "$KALIUM_REF" ]]; then
-  echo "ERROR: Could not resolve Kalium testservice tag"
-  exit 1
+DOWNLOAD_ARGS=(download --output "$JAR_FILE")
+if [[ -n "${KALIUM_TESTSERVICE_REF:-}" ]]; then
+  DOWNLOAD_ARGS+=(--ref "$KALIUM_TESTSERVICE_REF")
 fi
 
-echo "Using Kalium ref: $KALIUM_REF"
-
-echo "== Cloning Kalium =="
-git clone --depth 1 --branch "$KALIUM_REF" https://github.com/wireapp/kalium.git "$KALIUM_DIR"
-
-echo "== Kalium HEAD =="
-git -C "$KALIUM_DIR" rev-parse HEAD
-
-echo "== Building fat jar =="
-cd "$KALIUM_DIR"
-./gradlew --no-daemon --parallel :tools:testservice:shadowJar
-
-echo "== Locating fat jar =="
-BUILT_JAR="$(ls -1 "$KALIUM_DIR/tools/testservice/build/libs/"*"-all.jar" | head -n 1)"
-
-if [[ -z "$BUILT_JAR" || ! -f "$BUILT_JAR" ]]; then
-  echo "ERROR: Fat jar not found after build"
-  ls -la "$KALIUM_DIR/tools/testservice/build/libs" || true
-  exit 1
-fi
-
-cp "$BUILT_JAR" "$JAR_FILE"
-echo "Using jar: $JAR_FILE"
+python3 "$SCRIPT_DIR/kalium-testservice-jar.py" "${DOWNLOAD_ARGS[@]}"
 
 echo "== Starting Kalium Testservice =="
 echo "👉 Service will run at: http://localhost:8080"
