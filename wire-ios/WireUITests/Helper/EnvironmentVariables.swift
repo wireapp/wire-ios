@@ -18,7 +18,7 @@
 import Foundation
 
 struct EnvironmentVariables {
-    enum Failure: Error {
+    enum Failure: LocalizedError {
         case missingBackendURL
         case missingInbucketURL
         case missingInbucketUsername
@@ -31,6 +31,23 @@ struct EnvironmentVariables {
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
         case missingOktaApiKey
+
+        var errorDescription: String? {
+            switch self {
+            case .missingBackendURL: "Missing env var: BACKEND_URL"
+            case .missingInbucketURL: "Missing env var: INBUCKET_URL / ANTA_INBUCKET_URL / BELLA_INBUCKET_URL"
+            case .missingInbucketUsername: "Missing env var: INBUCKET_USERNAME"
+            case .missingInbucketPassword: "Missing env var: INBUCKET_PASSWORD"
+            case .missingDeepLinkURL: "Missing env var: ANTA_DEEPLINK_URL / BELLA_DEEPLINK_URL"
+            case .missingCallingServiceURL: "Missing env var: CALLINGSERVICE_URL"
+            case .missingCallingServiceUsername: "Missing env var: CALLINGSERVICE_USERNAME"
+            case .missingCallingServicePassword: "Missing env var: CALLINGSERVICE_PASSWORD"
+            case .missingCallingBackend: "Missing env var: PREDEFINED_BACKEND"
+            case .missingCallingInstanceTypeName: "Missing env var: CALLING_INSTANCE_TYPE_NAME"
+            case .missingCallingInstanceTypeVersion: "Missing env var: CALLING_INSTANCE_TYPE_VERSION"
+            case .missingOktaApiKey: "Missing env var: OKTA_API_KEY_IOS"
+            }
+        }
     }
 
     private let stagingBackendURL: URL

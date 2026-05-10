@@ -20,6 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
@@ -45,6 +46,12 @@ final class DeveloperFlagOperation: LaunchSequenceOperation {
             let isOn = keyAndValue[1] == "true"
             flag.enable(isOn)
         }
+        #if DEBUG
+            for (key, value) in UITestConfig.environment.developerFlags {
+                guard let flag = DeveloperFlag(rawValue: key) else { continue }
+                flag.enable(value)
+            }
+        #endif
     }
 }
 
