@@ -34,7 +34,7 @@ extension MFMailComposeViewController {
         \(message)
 
         - \(l10n.section2)
-        
+
 
         - \(l10n.section3)
 
