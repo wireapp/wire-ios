@@ -89,6 +89,28 @@ public enum Locators {
 
         case accountCell
         case optionsCell
+        case shareDebugBanner
+    }
+
+    public enum ShareDebugReportPage: String {
+
+        case actionSheet = "Having trouble?"
+        case shareViaWireButton = "ShareDebugReportPage.shareViaWireButton"
+        case sendEmailButton = "ShareDebugReportPage.sendEmailButton"
+        case shareButton = "ShareDebugReportPage.shareButton"
+        case cancelButton = "ShareDebugReportPage.cancelButton"
+    }
+
+    public enum ShareViaWirePage: AutoPrefixedEnum {
+
+        case sendButton
+        case closeButton
+    }
+
+    public enum ActivitySheetPage: String {
+
+        case sheet = "ActivityListView"
+        case saveToFiles = "Save to Files"
     }
 
     public enum AccountSettingsPage: String {

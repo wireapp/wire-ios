@@ -19,20 +19,15 @@
 import Foundation
 import MessageUI
 import WireCommonComponents
-import WireLogging
 import WireSystem
 
 extension MFMailComposeViewController {
 
-    func prefilledBody(withMessage message: String = "") -> String {
-        var body = """
-        --DO NOT EDIT--
-        \(LogFilesProvider().info())
-        ---------------\n
-        """
-
+    static func prefilledBody(withMessage message: String = "") -> String {
+        // swiftformat:disable:next redundantStaticSelf
         typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
-        let details = """
+
+        return """
         \(l10n.firstline)
 
         - \(l10n.section1)
@@ -43,18 +38,6 @@ extension MFMailComposeViewController {
 
         - \(l10n.section3)
 
-
         """
-        body.append("\n\(details)\n")
-        return body
-    }
-
-    func attachLogs() {
-        do {
-            let data = try LogFilesProvider().generateLogFilesData()
-            addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
-        } catch {
-            WireLogger.system.debug("no logs for WireLogger to send: \(String(describing: error))")
-        }
     }
 }
