@@ -15,29 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import WireLocators
+import XCTest
 
-import Foundation
-import MessageUI
-import WireCommonComponents
-import WireSystem
+class ActivitySheetPage: PageModel {
 
-extension MFMailComposeViewController {
+    private typealias ids = Locators.ActivitySheetPage
 
-    static func prefilledBody(withMessage message: String = "") -> String {
-        // swiftformat:disable:next redundantStaticSelf
-        typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
+    override var pageMainElement: XCUIElement {
+        app.otherElements[ids.sheet.rawValue].firstMatch
+    }
 
-        return """
-        \(l10n.firstline)
+    var saveToFilesButton: XCUIElement {
+        app.cells[ids.saveToFiles.rawValue].firstMatch
+    }
 
-        - \(l10n.section1)
-        \(message)
-
-        - \(l10n.section2)
-
-
-        - \(l10n.section3)
-
-        """
+    @discardableResult
+    func selectSaveToFiles() throws -> OnMyiPhonePage {
+        saveToFilesButton.waitAndTap()
+        return try OnMyiPhonePage()
     }
 }
