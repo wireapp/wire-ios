@@ -118,7 +118,7 @@ final class FilesViewTests: XCTestCase {
             localAssetRepository: localAssetsRepository
         )
 
-        networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring())
+        networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
         networkMonitor.currentStatus = .connected
     }
 
