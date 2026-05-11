@@ -43,7 +43,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
         self.coreCryptoProvider = coreCryptoProvider
-        backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+        self.backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
     }
 
     // MARK: - proteusSessionFromPrekey

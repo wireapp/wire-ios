@@ -518,7 +518,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
     }
 
-
 }
 
 /// Mock network to simulate an access token request failure with invalid credential errors and trigger a logout

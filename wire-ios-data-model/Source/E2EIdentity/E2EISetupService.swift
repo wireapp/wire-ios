@@ -69,7 +69,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
     public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: LegacyFeatureRepositoryInterface) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
-        backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+        self.backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
     }
 
     // MARK: - Public interface

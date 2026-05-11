@@ -41,7 +41,7 @@ public extension BackgroundTaskManager {
     func beginBackgroundTask(
         withName: String?
     ) -> UIBackgroundTaskIdentifier {
-        self.beginBackgroundTask(
+        beginBackgroundTask(
             withName: withName,
             expirationHandler: nil
         )

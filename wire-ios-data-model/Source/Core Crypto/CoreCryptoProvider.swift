@@ -448,7 +448,7 @@ public extension CoreCryptoProtocol {
         let transactionTask = Task {
             try await transaction(block)
         }
-        
+
         let taskID = backgroundTaskManager.beginBackgroundTask(
             withName: "core crypto transaction",
             expirationHandler: {
@@ -459,11 +459,11 @@ public extension CoreCryptoProtocol {
                 transactionTask.cancel()
             }
         )
-        
+
         defer {
             backgroundTaskManager.endBackgroundTask(taskID)
         }
-        
+
         return try await transactionTask.value
     }
 

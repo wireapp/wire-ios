@@ -159,7 +159,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
-        backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+        self.backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
     }
 
     // MARK: - Non-reentrant

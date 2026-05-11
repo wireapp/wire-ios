@@ -72,7 +72,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         self.context = context
         self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
         self.featureRepository = featureRepository
-        backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+        self.backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
     }
 
     // MARK: - Interface

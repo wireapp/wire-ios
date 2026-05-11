@@ -166,7 +166,7 @@ public final class MLSService: MLSServiceInterface {
         )
 
         self.localDomain = localDomain
-        backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+        self.backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
         schedulePeriodicKeyMaterialUpdateCheck()
         startObservingEpochs()
     }
