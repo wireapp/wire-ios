@@ -445,10 +445,26 @@ public extension CoreCryptoProtocol {
         backgroundTaskManager: any BackgroundTaskManager,
         block: @escaping (any CoreCryptoContextProtocol) async throws -> Result
     ) async throws -> Result {
-        let taskID = backgroundTaskManager.beginBackgroundTask(withName: "core crypto transaction")
-        let result = try await transaction(block)
-        backgroundTaskManager.endBackgroundTask(taskID)
-        return result
+        let transactionTask = Task {
+            try await transaction(block)
+        }
+        
+        let taskID = backgroundTaskManager.beginBackgroundTask(
+            withName: "core crypto transaction",
+            expirationHandler: {
+                WireLogger.coreCrypto.warn(
+                    "Background task expiring, cancelling core crypto transaction",
+                    attributes: .safePublic
+                )
+                transactionTask.cancel()
+            }
+        )
+        
+        defer {
+            backgroundTaskManager.endBackgroundTask(taskID)
+        }
+        
+        return try await transactionTask.value
     }
 
 }
