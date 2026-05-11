@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import XCTest
 
-// sourcery: AutoMockable
-protocol SettingsDebugReportViewModelProtocol {
+class DeveloperToolsPage: PageModel {
 
-    /// Send a debug report via email or shows fallback alert if email is not available
-    func sendReport(sender: UIView)
+    override var pageMainElement: XCUIElement {
+        app.navigationBars["Developer tools"]
+    }
 
-    /// Presents a list of conversation for the user to share the debug report with
-    func shareReport() async
+    func hide() {
+        app.buttons["Close"].firstMatch.tap()
+    }
+
 }
