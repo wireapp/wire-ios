@@ -38,8 +38,33 @@ extension NSAttributedString {
         result.insertEmptyLinesAtParagraphBreaks()
 
         // There may now be two trailing newlines (paragraph break + blank line); remove both.
+        // Track whether the last paragraph was a list item so we can re-append a tiny
+        // buffer below — UITextView's intrinsic height drops the last list item otherwise.
+        var trailedListItem = false
         while result.string.last == "\n" {
+            if !trailedListItem,
+               let ps = result.attribute(
+                .paragraphStyle,
+                at: result.length - 1,
+                effectiveRange: nil
+               ) as? NSParagraphStyle,
+               ps.headIndent > 0 {
+                trailedListItem = true
+            }
             result.deleteCharacters(in: NSRange(location: result.length - 1, length: 1))
+        }
+
+        // For lists, append a 1pt-tall trailing newline so the last item isn't clipped.
+        // Without this, single-item lists (and the last item of any list) lose their content.
+        if trailedListItem {
+            let blankStyle = NSMutableParagraphStyle()
+            blankStyle.minimumLineHeight = 1
+            blankStyle.maximumLineHeight = 1
+            blankStyle.paragraphSpacing = 0
+            result.append(NSAttributedString(
+                string: "\n",
+                attributes: [.paragraphStyle: blankStyle as NSParagraphStyle]
+            ))
         }
 
         guard !result.string.isEmpty else {
