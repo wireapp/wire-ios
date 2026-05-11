@@ -23,20 +23,30 @@ class TestServicesClient {
     let testServiceURL = "http://localhost:8080"
     let CONNECT_TIMEOUT: TimeInterval = 120
     let RESPONSE_TIMEOUT: TimeInterval = 120
+    let INSTANCE_CREATION_TIMEOUT: TimeInterval = 330
     private var instanceCache: [String: String] = [:]
 
-    func sendHttpRequest(url: String, body: [String: Any], requestType: String) async throws -> (Data, URLResponse) {
+    func sendHttpRequest(
+        url: String,
+        body: [String: Any],
+        requestType: String,
+        timeout: TimeInterval? = nil
+    ) async throws -> (Data, URLResponse) {
         guard let requestUrl = URL(string: url) else { fatalError("Invalid URL") }
+
+        let requestTimeout = timeout ?? CONNECT_TIMEOUT
+        let responseTimeout = timeout ?? RESPONSE_TIMEOUT
 
         var request = URLRequest(url: requestUrl)
         request.httpMethod = requestType
         request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
-        request.timeoutInterval = CONNECT_TIMEOUT
+        request.timeoutInterval = requestTimeout
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForResource = RESPONSE_TIMEOUT
+        config.timeoutIntervalForRequest = requestTimeout
+        config.timeoutIntervalForResource = responseTimeout
         let session = URLSession(configuration: config)
 
         let (responseData, response) = try await session.data(for: request)
@@ -63,18 +73,19 @@ class TestServicesClient {
             "password": password,
             "name": name,
             "developmentApiEnabled": true,
-            "deviceName": "device\(Int.random(in: 10_000 ... 99_999))"
+            "deviceName": "device1"
         ]
 
         let (responseData, response) = try await sendHttpRequest(
             url: requestUrl.absoluteString,
             body: body,
-            requestType: "PUT"
+            requestType: "PUT",
+            timeout: INSTANCE_CREATION_TIMEOUT
         )
 
         let pureResponse = response as! HTTPURLResponse
         if pureResponse.statusCode != 200 {
-            throw (RuntimeError("Error \(pureResponse.description)"))
+            throw httpError(url: requestUrl, response: pureResponse, data: responseData)
         }
 
         let instanceResponse: CreateInstanceResponse = try JSONDecoder().decode(
@@ -311,6 +322,16 @@ class TestServicesClient {
             throw RuntimeError("Error \(pureResponse.description)")
         }
         return responseData
+    }
+
+    private func httpError(url: URL, response: HTTPURLResponse, data: Data) -> RuntimeError {
+        var message = "Error HTTP \(response.statusCode) for \(url.absoluteString): \(response.description)"
+
+        if let body = String(data: data, encoding: .utf8), !body.isEmpty {
+            message += " Body: \(body)"
+        }
+
+        return RuntimeError(message)
     }
 }
 

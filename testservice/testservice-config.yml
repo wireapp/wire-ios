@@ -1,4 +1,4 @@
-instanceCreationTimeoutInSeconds: 120
+instanceCreationTimeoutInSeconds: 300
 instanceMaximumRuntimeInMinutes: 10
 instanceCleanupPeriodInMinutes: 5
 
