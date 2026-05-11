@@ -31,10 +31,10 @@ extension MFMailComposeViewController {
         \(l10n.firstline)
 
         - \(l10n.section1)
-
+        \(message)
 
         - \(l10n.section2)
-        \(message)
+        
 
         - \(l10n.section3)
 
