@@ -127,6 +127,7 @@ final class FilesViewModelTests {
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
         #expect(sut.hasMore == true)
 
         // when
@@ -222,6 +223,7 @@ final class FilesViewModelTests {
         nodesRepository.getNodes_MockMethod = { _ in
             (nodes: [WireDriveNode.fixture()], nextOffset: 1) // There is a new page available
         }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         await sut.reload()
         #expect(sut.hasMore == true)
