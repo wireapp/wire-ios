@@ -59,30 +59,32 @@ private extension NSMutableAttributedString {
     /// By inserting a second `\n` (carrying only `minimumLineHeight`) we create a real
     /// empty line rather than relying on `paragraphSpacing`, which can be too subtle.
     func insertEmptyLinesAtParagraphBreaks() {
-        // Collect the indices of paragraph-break newlines in a first pass.
-        // List-item terminators also carry paragraphSpacing > 0, but Down sets headIndent > 0
-        // on them (for the list rule), which lets us exclude them here.
-        var breakIndices = [Int]()
+        // Collect the indices of paragraph-break newlines and whether each one belongs
+        // to a list item (Down marks list-item terminators with headIndent > 0).
+        var breakIndices = [(index: Int, isListItem: Bool)]()
         let nsString = string as NSString
         var i = 0
         while i < length {
             if nsString.character(at: i) == 0x0A,
                let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
-               ps.paragraphSpacing > 0,
-               ps.headIndent == 0 {
-                breakIndices.append(i)
+               ps.paragraphSpacing > 0 {
+                breakIndices.append((i, ps.headIndent > 0))
             }
             i += 1
         }
 
         // Process in reverse so earlier insertions don't shift later indices.
-        for breakIndex in breakIndices.reversed() {
-            // Build the blank-line style: same minimumLineHeight as the paragraph break so
-            // the blank line is the same height as a text line; no paragraphSpacing so the
-            // gap is exactly one line tall.
+        for (breakIndex, isListItem) in breakIndices.reversed() {
+            // Build the blank-line style:
+            // - For regular paragraph breaks: full line height so a double-newline in the
+            //   source renders as a visible empty line.
+            // - For list-item terminators: a near-zero line height so list items pack
+            //   tightly. We still insert a (collapsed) blank line because skipping it
+            //   entirely breaks UITextView's height calculation for the last item.
             let existingStyle = attribute(.paragraphStyle, at: breakIndex, effectiveRange: nil) as? NSParagraphStyle
             let blankStyle = NSMutableParagraphStyle()
-            blankStyle.minimumLineHeight = existingStyle?.minimumLineHeight ?? 22
+            blankStyle.minimumLineHeight = isListItem ? 1 : (existingStyle?.minimumLineHeight ?? 22)
+            blankStyle.maximumLineHeight = isListItem ? 1 : 0
             blankStyle.paragraphSpacing = 0
 
             let blankLine = NSAttributedString(
