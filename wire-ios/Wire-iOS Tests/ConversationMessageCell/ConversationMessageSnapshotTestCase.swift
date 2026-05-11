@@ -228,9 +228,8 @@ extension ConversationMessageCellDescription {
 
         // Mirror ConversationMessageCellTableViewAdapter: cells that aren't already
         // aligned (e.g. the sender header) start at conversationHorizontalMargins.left
-        // so they line up with the avatar in the sender cell. Trailing is unconstrained
-        // (the cell hugs its content width) to match the production layout.
-        let leadingInset = isCellAlreadyAligned ? 0 : container.conversationHorizontalMargins.left
+        // so they line up with the avatar in the sender cell.
+        let leadingInset: CGFloat = isCellAlreadyAligned ? 0 : 16
         let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: leadingInset)
         let trailing = view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
         let top = view.topAnchor.constraint(equalTo: container.topAnchor)
