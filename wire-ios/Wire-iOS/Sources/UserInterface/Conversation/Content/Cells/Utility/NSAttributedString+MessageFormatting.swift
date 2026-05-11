@@ -110,6 +110,12 @@ extension NSAttributedString {
         // Perform markdown parsing
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: previewStyle)
 
+        // Reply previews are line-limited (`maximumNumberOfLines = 4`), and the layout
+        // blanks `markdown(from:)` inserts between list items would each consume one
+        // of those visible slots. Drop them so the preview shows 4 real items, not
+        // 2 items + 2 blanks.
+        markdownText.stripLayoutBlankLines()
+
         // Highlight mentions using previously inserted text markers
         markdownText
             .highlight(
@@ -220,6 +226,24 @@ extension NSMutableAttributedString {
 
         if trailingWhitespaceRange.location != NSNotFound {
             mutableString.deleteCharacters(in: trailingWhitespaceRange)
+        }
+    }
+
+    /// Remove the 1pt-tall blank-line characters that
+    /// `NSAttributedString.insertEmptyLinesAtParagraphBreaks` inserts between markdown
+    /// list items. Reply-preview cells limit the text container to a fixed line count,
+    /// where those layout blanks would otherwise eat visible rows.
+    func stripLayoutBlankLines() {
+        let nsString = mutableString as NSString
+        var indicesToRemove: [Int] = []
+        for i in 0..<length where nsString.character(at: i) == 0x0A {
+            if let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
+               ps.minimumLineHeight == 1, ps.maximumLineHeight == 1 {
+                indicesToRemove.append(i)
+            }
+        }
+        for index in indicesToRemove.reversed() {
+            deleteCharacters(in: NSRange(location: index, length: 1))
         }
     }
 

@@ -100,12 +100,10 @@ private extension NSMutableAttributedString {
 
         // Process in reverse so earlier insertions don't shift later indices.
         for (breakIndex, isListItem) in breakIndices.reversed() {
-            // Build the blank-line style:
-            // - For regular paragraph breaks: full line height so a double-newline in the
-            //   source renders as a visible empty line.
-            // - For list-item terminators: a near-zero line height so list items pack
-            //   tightly. We still insert a (collapsed) blank line because skipping it
-            //   entirely breaks UITextView's height calculation for the last item.
+            // Regular paragraph break: full-height blank line for visible empty rows.
+            // List-item terminator: 1pt-tall (effectively invisible) blank — these don't
+            // add visible spacing but are needed for UITextView to lay out the items
+            // correctly (otherwise the trailing items get clipped).
             let existingStyle = attribute(.paragraphStyle, at: breakIndex, effectiveRange: nil) as? NSParagraphStyle
             let blankStyle = NSMutableParagraphStyle()
             blankStyle.minimumLineHeight = isListItem ? 1 : (existingStyle?.minimumLineHeight ?? 22)
@@ -128,14 +126,23 @@ extension NSAttributedString {
     /// - Parameter numberOfLinesLimit: number of line reserved
     /// - Returns: the trimmed NSAttributedString. If not excess limit, return the original NSAttributedString
     func trimmedToNumberOfLines(numberOfLinesLimit: Int) -> NSAttributedString {
-        // Trim the string to first four lines to prevent last line narrower spacing issue
-        let lines = string.components(separatedBy: ["\n"])
-        if lines.count > numberOfLinesLimit {
-            let headLines = lines.prefix(numberOfLinesLimit).joined(separator: "\n")
-
-            return attributedSubstring(from: NSRange(location: 0, length: headLines.count)) + String.ellipsis
-        } else {
+        // Collect newline positions, ignoring the 1pt-tall layout blanks inserted
+        // between markdown list items by `insertEmptyLinesAtParagraphBreaks`. They
+        // aren't visible rows and shouldn't count against the limit.
+        let nsString = string as NSString
+        var visibleNewlineIndices: [Int] = []
+        for i in 0..<length where nsString.character(at: i) == 0x0A {
+            if let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
+               ps.minimumLineHeight == 1, ps.maximumLineHeight == 1 {
+                continue
+            }
+            visibleNewlineIndices.append(i)
+        }
+        let visibleLineCount = visibleNewlineIndices.count + 1
+        guard visibleLineCount > numberOfLinesLimit, numberOfLinesLimit > 0 else {
             return self
         }
+        let trimAt = visibleNewlineIndices[numberOfLinesLimit - 1]
+        return attributedSubstring(from: NSRange(location: 0, length: trimAt)) + String.ellipsis
     }
 }
