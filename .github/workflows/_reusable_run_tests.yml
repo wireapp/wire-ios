@@ -216,13 +216,6 @@ jobs:
             --run-name "$TESTINY_RUN_NAME" \
             --require-existing-run
 
-      - name: Extract UI test summary
-        if: ${{ always() && inputs.run_critical_flows }}
-        id: ui-test-summary
-        uses: ./.github/actions/generate-uitest-summary
-        with:
-          xcresult_search_path: artifacts
-
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
@@ -248,6 +241,13 @@ jobs:
       - name: Debug Print xcresult files
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+
+      - name: Extract test summary
+        if: ${{ always() }}
+        id: test-summary
+        uses: ./.github/actions/generate-test-summary
+        with:
+          xcresult_search_path: artifacts
 
       - name: Upload .xcresult files as artifact
         if: always()
@@ -377,7 +377,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            📋 **XCUITest Run Summary for ${{ env.SANITIZED_BRANCH }}**
+            📋 **XCTest Run Summary for ${{ env.SANITIZED_BRANCH }}**
 
             **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
@@ -386,7 +386,7 @@ jobs:
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
-            ${{ steps.ui-test-summary.outputs.report_message }}
+            ${{ steps.test-summary.outputs.report_message }}
 
       - name: Only Notify on Wire failures
         uses: 8398a7/action-slack@v3
@@ -395,7 +395,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            📋 **XCUITest Run Summary for ${{ env.SANITIZED_BRANCH }}**
+            📋 **XCTest Run Summary for ${{ env.SANITIZED_BRANCH }}**
 
             **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
@@ -404,7 +404,7 @@ jobs:
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
-            ${{ steps.ui-test-summary.outputs.report_message }}
+            ${{ steps.test-summary.outputs.report_message }}
 
   analyze-xcresults:
     needs: run-tests

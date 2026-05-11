@@ -17,8 +17,8 @@
       location = "container:.github/actions"
       name = "actions">
       <Group
-         location = "group:generate-uitest-summary"
-         name = "generate-uitest-summary">
+         location = "group:generate-test-summary"
+         name = "generate-test-summary">
          <FileRef
             location = "group:action.yaml">
          </FileRef>
