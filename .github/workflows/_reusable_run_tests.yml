@@ -160,30 +160,6 @@ jobs:
         with:
           kalium_ref: ${{ inputs.kalium_ref }}
 
-      - name: Seed simulator with test video file
-        if: ${{ inputs.run_critical_flows }}
-        continue-on-error: true
-        run: |
-          VIDEO_PATH="${REPO_ROOT}/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
-
-          if [ ! -f "$VIDEO_PATH" ]; then
-            echo "::warning::Missing test video: $VIDEO_PATH. Skipping simulator media seeding."
-            exit 0
-          fi
-
-          if [ -z "${IOS_SIM_ID:-}" ]; then
-            echo "::warning::IOS_SIM_ID is not set. Skipping simulator media seeding."
-            exit 0
-          fi
-
-          if ! xcrun simctl list devices booted | grep -q "$IOS_SIM_ID"; then
-            echo "::warning::Simulator $IOS_SIM_ID is not booted yet. Skipping simulator media seeding."
-            exit 0
-          fi
-
-          xcrun simctl addmedia "$IOS_SIM_ID" "$VIDEO_PATH" || \
-            echo "::warning::Failed to seed simulator with test video"
-
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |

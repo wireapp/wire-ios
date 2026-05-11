@@ -327,7 +327,9 @@ class TestServicesClient {
         )
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendPing")
-        guard let requestUrl = url else { fatalError("Invalid URL") }
+        guard let requestUrl = url else {
+            throw RuntimeError("Invalid URL")
+        }
 
         let body: [String: Any] = [
             "conversationId": conversationId.uuidString.lowercased(),
@@ -340,7 +342,10 @@ class TestServicesClient {
             requestType: "POST"
         )
 
-        let pureResponse = response as! HTTPURLResponse
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
+
         if pureResponse.statusCode != 200 {
             throw RuntimeError("Error \(pureResponse.description)")
         }
