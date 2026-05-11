@@ -26,6 +26,7 @@
 
 import CoreLocation
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
@@ -48,6 +49,94 @@ class MockGetUserByIdUseCaseProtocol: GetUserByIDUseCaseProtocol {
         } else {
             fatalError("no mock for `getUserByIdIdContext`")
         }
+    }
+
+}
+
+class MockLogFilesProviding: LogFilesProviding {
+
+    // MARK: - Life cycle
+
+    // MARK: - logFileURLs
+
+    var logFileURLs: [URL] = []
+
+    // MARK: - info
+
+    var infoSelfUserID_Invocations: [UUID?] = []
+    var infoSelfUserID_MockMethod: ((UUID?) -> String)?
+    var infoSelfUserID_MockValue: String?
+
+    func info(selfUserID: UUID?) -> String {
+        infoSelfUserID_Invocations.append(selfUserID)
+
+        if let mock = infoSelfUserID_MockMethod {
+            return mock(selfUserID)
+        } else if let mock = infoSelfUserID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `infoSelfUserID`")
+        }
+    }
+
+    // MARK: - clearLogsDirectory
+
+    var clearLogsDirectoryFileManager_Invocations: [FileManager] = []
+    var clearLogsDirectoryFileManager_MockError: Error?
+    var clearLogsDirectoryFileManager_MockMethod: ((FileManager) throws -> Void)?
+
+    func clearLogsDirectory(fileManager: FileManager) throws {
+        clearLogsDirectoryFileManager_Invocations.append(fileManager)
+
+        if let error = clearLogsDirectoryFileManager_MockError {
+            throw error
+        }
+
+        guard let mock = clearLogsDirectoryFileManager_MockMethod else {
+            return
+        }
+
+        try mock(fileManager)
+    }
+
+    // MARK: - removeLogFiles
+
+    var removeLogFilesFileManager_Invocations: [FileManager] = []
+    var removeLogFilesFileManager_MockError: Error?
+    var removeLogFilesFileManager_MockMethod: ((FileManager) throws -> Void)?
+
+    func removeLogFiles(fileManager: FileManager) throws {
+        removeLogFilesFileManager_Invocations.append(fileManager)
+
+        if let error = removeLogFilesFileManager_MockError {
+            throw error
+        }
+
+        guard let mock = removeLogFilesFileManager_MockMethod else {
+            return
+        }
+
+        try mock(fileManager)
+    }
+
+    // MARK: - removeLegacyLogArchives
+
+    var removeLegacyLogArchives_Invocations: [Void] = []
+    var removeLegacyLogArchives_MockError: Error?
+    var removeLegacyLogArchives_MockMethod: (() throws -> Void)?
+
+    func removeLegacyLogArchives() throws {
+        removeLegacyLogArchives_Invocations.append(())
+
+        if let error = removeLegacyLogArchives_MockError {
+            throw error
+        }
+
+        guard let mock = removeLegacyLogArchives_MockMethod else {
+            return
+        }
+
+        try mock()
     }
 
 }

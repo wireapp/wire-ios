@@ -55,6 +55,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private let userSession: ZMUserSession?
     private let selfClient: UserClient?
     private let onDismiss: (() -> Void)?
+    private let shareDebugPresenter = ShareDebugReportPresenter()
 
     private let logger = WireLogger(tag: "developer")
 
@@ -74,7 +75,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     private func setupButtons() {
         let buttonItems: [DeveloperDebugActionsDisplayModel.ButtonItem] = [
-            .init(title: "Send debug logs", action: sendDebugLogs),
+            .init(title: "Share debug logs", action: shareDebugLogs),
             .init(title: "Trigger incremental sync", action: triggerIncrementalSync),
             .init(title: "Trigger resources sync", action: triggerResourcesSync),
             .init(title: "Break next incremental sync", action: breakNextIncrementalSync),
@@ -291,30 +292,11 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         onDismiss?()
     }
 
-    // MARK: Send Logs
+    // MARK: Share Logs
 
-    private func sendDebugLogs() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-              let rootViewController = appDelegate.mainWindow?.rootViewController else {
-            return
-        }
-
-        var presentingViewController = rootViewController
-        while let presentedViewController = presentingViewController.presentedViewController {
-            presentingViewController = presentedViewController
-        }
-
-        DebugLogSender.sendLogsByEmail(
-            message: "Send logs",
-            presentingViewController: presentingViewController,
-            fallbackActivityPopoverConfiguration: .sourceView(
-                sourceView: presentingViewController.view,
-                sourceRect: .init(
-                    origin: presentingViewController.view.safeAreaLayoutGuide.layoutFrame.origin,
-                    size: .zero
-                )
-            )
-        )
+    @MainActor
+    private func shareDebugLogs() {
+        shareDebugPresenter.present(from: UIApplication.shared.topmostViewController(onlyFullScreen: false))
     }
 
     // MARK: Quick Sync
