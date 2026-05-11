@@ -38,7 +38,10 @@ package struct WireDriveRemoveAssetAvailableOfflineUseCase {
 
         asset.isAvailableOffline = false
 
-        // This is a pragmatic solution for storage cleanup and might be removed in the future.
+        // This is a temporary solution to automatically clean up some storage space
+        // on the user's device. Later we want to implement a proper Storage Manager
+        // where users will be able to clean up by deleting files manually and with
+        // more control. Then we will no longer need this automatic deletion anymore.
         try await localAssetRepository.deleteAsset(nodeID: nodeID)
 
         try await localAssetRepository.updateAssetAsync(asset)
