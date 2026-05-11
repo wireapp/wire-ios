@@ -37,6 +37,10 @@ package struct WireDriveRemoveAssetAvailableOfflineUseCase {
         }
 
         asset.isAvailableOffline = false
+
+        // This is a pragmatic solution for storage cleanup and might be removed in the future.
+        try await localAssetRepository.deleteAsset(nodeID: nodeID)
+
         try await localAssetRepository.updateAssetAsync(asset)
     }
 }
