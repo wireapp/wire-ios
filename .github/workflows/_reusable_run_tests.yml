@@ -357,7 +357,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            📋 **XCUITest Run Summary**
+            📋 **XCUITest Run Summary for ${{ env.SANITIZED_BRANCH }}**
 
             **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
@@ -375,7 +375,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            📋 **XCUITest Run Summary**
+            📋 **XCUITest Run Summary for ${{ env.SANITIZED_BRANCH }}**
 
             **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
