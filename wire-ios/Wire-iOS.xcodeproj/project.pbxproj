@@ -808,6 +808,7 @@
 				SwitchBackendConfirmationViewModelTests.swift,
 				SwitchBackendConfirmationViewTests.swift,
 				TeamMetadataRefresherTests.swift,
+				TestingAppDelegate.swift,
 				ThumbnailCreationTests.swift,
 				Token/TokenFieldTests.swift,
 				Token/TokenSeparatorAttachmentSnapshotTests.swift,
@@ -863,6 +864,7 @@
 			membershipExceptions = (
 				DeviceManagement/MockContextProvider.swift,
 				Settings/SettingsPropertyTests.swift,
+				TestingAppDelegate.swift,
 			);
 			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
 		};
