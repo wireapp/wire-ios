@@ -34,15 +34,17 @@ package final class NetworkMonitor: Observable, ObservableObject {
 
     private var monitor: any NWPathMonitoring
     private let queue = DispatchQueue(label: "NetworkMonitorQueue")
-    private let subject = CurrentValueSubject<NetworkStatus, Never>(.disconnected)
+    private let subject: CurrentValueSubject<NetworkStatus, Never>
     private var cancellables = Set<AnyCancellable>()
 
     @Published var currentStatus: NetworkStatus?
 
     init(
         monitor: any NWPathMonitoring = NWPathMonitor(),
+        initialStatus: NetworkStatus = .disconnected
     ) {
         self.monitor = monitor
+        self.subject = CurrentValueSubject(initialStatus)
 
         subject
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
@@ -57,7 +59,7 @@ package final class NetworkMonitor: Observable, ObservableObject {
             guard let self else { return }
             Task { @MainActor in
                 let status: NetworkStatus = path.status == .satisfied ? .connected : .disconnected
-                subject.send(status)
+                self.subject.send(status)
             }
         }
 
