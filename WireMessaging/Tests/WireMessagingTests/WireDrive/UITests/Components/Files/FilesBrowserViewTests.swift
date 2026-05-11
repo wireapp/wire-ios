@@ -217,7 +217,7 @@ final class FilesBrowserViewTests: XCTestCase {
 
     @MainActor
     private func makeFilesBrowserView(
-        state: FilesViewModel.State
+        state: FilesListLoader.Loader.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
@@ -238,6 +238,9 @@ final class FilesBrowserViewTests: XCTestCase {
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
                 getDriveConversations: getDriveConversationsUseCase,
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(
+                    repository: nodesRepository
+                ),
                 makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                     localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
                 ),
@@ -251,13 +254,11 @@ final class FilesBrowserViewTests: XCTestCase {
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
             nodesRepository: nodesRepository,
-            fileCache: MockFileCache(),
-            isBrowsing: true,
-            accentColorProvider: { .default }
+            isBrowsing: true
         )
 
-        filesViewModel.state = state
-        filesViewModel.hasMore = false
+        filesViewModel.filesListLoader.loader.state = state
+        filesViewModel.filesListLoader.loader.hasMore = false
 
         let filesBrowserView = FilesBrowserView(viewModel: filesViewModel)
 

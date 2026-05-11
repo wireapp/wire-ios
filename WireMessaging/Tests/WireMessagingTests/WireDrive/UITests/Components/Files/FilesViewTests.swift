@@ -352,7 +352,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     private func makeFilesView(
-        state: FilesViewModel.State
+        state: FilesListLoader.Loader.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
@@ -382,6 +382,9 @@ final class FilesViewTests: XCTestCase {
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
                 getDriveConversations: driveConversationsUseCase,
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(
+                    repository: nodesRepository
+                ),
                 makeAssetAvailableOffline: makeAssetAvailableOfflineUseCase,
                 removeAssetAvailableOffline: removeAssetAvailableOfflineUseCase,
                 getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase
@@ -389,13 +392,11 @@ final class FilesViewTests: XCTestCase {
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
             nodesRepository: nodesRepository,
-            fileCache: MockFileCache(),
-            isBrowsing: false,
-            accentColorProvider: { .default }
+            isBrowsing: false
         )
 
-        filesViewModel.state = state
-        filesViewModel.hasMore = false
+        filesViewModel.filesListLoader.loader.state = state
+        filesViewModel.filesListLoader.loader.hasMore = false
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)

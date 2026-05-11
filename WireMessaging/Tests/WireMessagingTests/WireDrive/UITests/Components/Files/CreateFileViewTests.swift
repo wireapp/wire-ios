@@ -166,7 +166,10 @@ final class CreateFileViewTests: XCTestCase {
         viewModel = CreateFileViewModel(
             creationTarget: target,
             path: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2",
-            createFileUseCase: createFileUseCase
+            createFileUseCase: createFileUseCase,
+            onNodeCreated: { _ in
+                // do nothing
+            }
         )
 
         let vm = viewModel!
