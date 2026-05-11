@@ -173,6 +173,7 @@ final class FilesViewModelTests {
         // given
         let node = WireDriveNode.fixture(path: "some-cell/a.jpg", modified: nil, ownerUserName: nil)
         nodesRepository.getNodes_MockMethod = { _ in (nodes: [node], nextOffset: nil) }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         // when
         await sut.reload()
