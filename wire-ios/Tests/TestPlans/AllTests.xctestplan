@@ -24,6 +24,11 @@
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },
       {
+        "enabled" : false,
+        "key" : "SNAPSHOT_TESTING_RECORD",
+        "value" : "failed"
+      },
+      {
         "key" : "CI",
         "value" : "${CI}"
       },
