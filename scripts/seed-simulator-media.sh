@@ -23,7 +23,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 VIDEO_PATH="$REPO_ROOT/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
 
-if [ ! -f "$VIDEO_PATH" ]; then
+if [[ ! -f "$VIDEO_PATH" ]]; then
   echo "::warning::Missing test video: $VIDEO_PATH. Skipping simulator media seeding."
   exit 0
 fi
