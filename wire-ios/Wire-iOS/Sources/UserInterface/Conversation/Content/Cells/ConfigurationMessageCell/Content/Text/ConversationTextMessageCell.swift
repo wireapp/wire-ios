@@ -54,6 +54,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         view.linkTextAttributes = [.foregroundColor: UIColor.accent()]
         view.setContentHuggingPriority(.required, for: .vertical)
         view.setContentCompressionResistancePriority(.required, for: .vertical)
+        view.setContentCompressionResistancePriority(.required, for: .horizontal)
         view.interactionDelegate = self
 
         view.textDragInteraction?.isEnabled = false
