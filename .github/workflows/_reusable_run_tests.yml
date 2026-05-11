@@ -357,7 +357,6 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            This is a demo notification, please ignore it.
             📋 **XCUITest Run Summary**
 
             **Branch:** ${{ env.SANITIZED_BRANCH }}
@@ -376,7 +375,6 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            This is a demo notification, please ignore it.
             📋 **XCUITest Run Summary**
 
             **Branch:** ${{ env.SANITIZED_BRANCH }}
