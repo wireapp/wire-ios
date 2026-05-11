@@ -127,7 +127,10 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         conversationId: WireCoreCryptoUniffi.ConversationId,
         clientIDs: [WireCoreCryptoUniffi.ClientId]
     ) async throws -> [WireIdentity] {
-        try await coreCrypto.transaction {
+        let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+        return try await coreCrypto.transaction(
+            backgroundTaskManager: backgroundTaskManager
+        ) {
             try await $0.getDeviceIdentities(
                 conversationId: conversationId,
                 deviceIds: clientIDs

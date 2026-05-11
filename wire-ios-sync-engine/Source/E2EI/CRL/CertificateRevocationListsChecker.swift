@@ -131,7 +131,10 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 let crlData = try await crlAPI.getRevocationList(from: crlURL)
 
                 // register the CRL with core crypto
-                let registration = try await coreCrypto.transaction {
+                let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+                let registration = try await coreCrypto.transaction(
+                    backgroundTaskManager: backgroundTaskManager
+                ) {
                     try await $0.e2eiRegisterCrl(crlDp: distributionPoint.absoluteString, crlDer: crlData)
                 }
 

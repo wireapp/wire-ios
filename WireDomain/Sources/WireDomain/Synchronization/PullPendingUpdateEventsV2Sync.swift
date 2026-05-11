@@ -134,7 +134,10 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
 
         // decrypt
-        try await coreCryptoProvider.coreCrypto().transaction { coreCryptoContext in
+        let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+        try await coreCryptoProvider.coreCrypto().transaction(
+            backgroundTaskManager: backgroundTaskManager
+        ) { coreCryptoContext in
             for envelope in envelopes {
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)

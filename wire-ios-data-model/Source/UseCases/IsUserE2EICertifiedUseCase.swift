@@ -70,7 +70,10 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
         // make the call to Core Crypto
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        let userIdentities = try await coreCrypto.transaction { context in
+        let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+        let userIdentities = try await coreCrypto.transaction(
+            backgroundTaskManager: backgroundTaskManager
+        ) { context in
             // get MLS group members
             let allUserIdentities = try await context.getUserIdentities(
                 conversationId: mlsGroupID.conversationId,

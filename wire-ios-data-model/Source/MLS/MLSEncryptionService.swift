@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireLogging
+import WireUtilitiesPackage
 
 // sourcery: AutoMockable
 public protocol MLSEncryptionServiceInterface {
@@ -75,7 +76,10 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     ) async throws -> Data {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try await coreCrypto.transaction { try await $0.encryptMessage(
+            let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+            return try await coreCrypto.transaction(
+                backgroundTaskManager: backgroundTaskManager
+            ) { try await $0.encryptMessage(
                 conversationId: groupID.conversationId,
                 message: message
             ) }

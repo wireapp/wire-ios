@@ -93,8 +93,12 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
             var lastEnvelopeID: UUID?
 
+            let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
+
             // We are decrypting the batch within one core crypto transaction
-            try await coreCryptoProvider.coreCrypto().transaction { context in
+            try await coreCryptoProvider.coreCrypto().transaction(
+                backgroundTaskManager: backgroundTaskManager
+            ) { context in
                 WireLogger.sync.debug(
                     "decrypting batch of \(envelopes.count) envelopes",
                     attributes: .safePublic
