@@ -293,6 +293,16 @@ public enum ColorTheme {
             }
         }
     }
+
+    // MARK: - Wire Design System
+
+    // TODO: [WPB-25347] implement the new color system
+    public enum Content {
+        public enum Base {
+            public static let secondary = UIColor(light: .gray70, dark: .gray60)
+        }
+    }
+
 }
 
 private extension UIColor {

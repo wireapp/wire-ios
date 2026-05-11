@@ -17,27 +17,11 @@
 //
 
 import Foundation
-import MessageUI
-import WireCommonComponents
-import WireSystem
 
-extension MFMailComposeViewController {
-
-    static func prefilledBody(withMessage message: String = "") -> String {
-        // swiftformat:disable:next redundantStaticSelf
-        typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
-
-        return """
-        \(l10n.firstline)
-
-        - \(l10n.section1)
-
-
-        - \(l10n.section2)
-        \(message)
-
-        - \(l10n.section3)
-
-        """
-    }
+struct MailComposeItem: Identifiable {
+    let id = UUID()
+    let recipient: String
+    let subject: String
+    let messageBody: String
+    let attachmentData: Data
 }
