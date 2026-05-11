@@ -366,7 +366,6 @@ jobs:
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
-            **Build URL:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             ${{ steps.ui-test-summary.outputs.report_message }}
 
@@ -386,7 +385,6 @@ jobs:
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
-            **Build URL:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             ${{ steps.ui-test-summary.outputs.report_message }}
 
