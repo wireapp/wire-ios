@@ -153,6 +153,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func setUpDatadog() {
         WireAnalytics.setup(for: .shareExtension)
+        CoreCrypto.registerLogger()
     }
 
     override func viewDidLoad() {
@@ -161,12 +162,12 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
 
+        if let sortedAttachments = extensionContext?.attachments.sorted {
+            attachments = sortedAttachments
+        }
+
         Task { @MainActor in
             await updateAccount(currentAccount)
-
-            if let sortedAttachments = extensionContext?.attachments.sorted {
-                attachments = sortedAttachments
-            }
         }
     }
 

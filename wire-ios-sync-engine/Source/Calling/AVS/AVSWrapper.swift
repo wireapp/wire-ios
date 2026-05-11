@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -143,12 +144,15 @@ public final class AVSWrapper: AVSWrapperType {
         conversationType: AVSConversationType,
         useCBR: Bool
     ) -> Bool {
+        // TODO: [WPB-18511] This is currently just a hardcoded value and will be replaced when we start working on the Meetings.
+        let isMeeting = false
         let didStart = wcall_start(
             handle,
             conversationId.serialized,
             callType.rawValue,
             conversationType.rawValue,
-            useCBR ? 1 : 0
+            useCBR ? 1 : 0,
+            isMeeting ? 1 : 0
         )
         return didStart == 0
     }
@@ -221,6 +225,8 @@ public final class AVSWrapper: AVSWrapperType {
             guard let bytes = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return }
             let currentTime = UInt32(callEvent.currentTimestamp.timeIntervalSince1970)
             let serverTime = UInt32(callEvent.serverTimestamp.timeIntervalSince1970)
+            // TODO: [WPB-18511] This is currently just a hardcoded value and will be replaced when we start working on the Meetings.
+            let isMeeting = false
             zmLog.debug("wcall_recv_msg: currentTime = \(currentTime), serverTime = \(serverTime)")
             // An OTR call-type message has been received,
             // curr_time is the timestamp (synced as close as possible)
@@ -235,7 +241,8 @@ public final class AVSWrapper: AVSWrapperType {
                 callEvent.conversationId.serialized,
                 callEvent.userId.serialized,
                 callEvent.clientId,
-                conversationType.rawValue
+                conversationType.rawValue,
+                isMeeting ? 1 : 0
             ))
         }
 
@@ -444,17 +451,20 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     private let networkQualityHandler: Handler
-        .NetworkQualityChange = { conversationIdRef, userIdRef, clientIdRef, quality, _, _, _, contextRef in
-            AVSWrapper.withCallCenter(contextRef, conversationIdRef, userIdRef, clientIdRef, quality) {
+        .NetworkQualityChange = { conversationIdRef, userIdRef, clientIdRef, qualityInfoRef, contextRef in
+            AVSWrapper.withCallCenter(contextRef, conversationIdRef, userIdRef, clientIdRef, qualityInfoRef) {
                 // For conference calls, userId and clientId will be respectively "sft" and "SFT".
                 // This means we cannot create an AVSIdentifier for the userId, because we intentionally crash when the
                 // identifier isn't formatted as expected.
                 // Instead, we pass the values as Strings and let the handler process them
+                guard let quality = AVSWrapper.parseNetworkQuality(from: $4) else {
+                    return
+                }
                 $0.handleNetworkQualityChange(
                     conversationId: $1,
                     userId: $2,
                     clientId: $3,
-                    quality: $4
+                    quality: quality
                 )
             }
         }
@@ -501,4 +511,15 @@ public final class AVSWrapper: AVSWrapperType {
         }
     }
 
+    static func parseNetworkQuality(from qualityInfo: String) -> NetworkQuality? {
+        guard let data = qualityInfo.data(using: .utf8) else { return nil }
+
+        do {
+            let payload = try JSONDecoder().decode(NetworkQualityPayload.self, from: data)
+            return NetworkQuality(rawValue: payload.quality)
+        } catch {
+            WireLogger.avs.error("Failed to parse NetworkQualityPayload from \(qualityInfo)")
+            return nil
+        }
+    }
 }

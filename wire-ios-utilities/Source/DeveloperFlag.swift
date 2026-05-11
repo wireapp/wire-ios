@@ -39,6 +39,8 @@ public enum DeveloperFlag: String, CaseIterable {
     case useWireAuthentication
     case wireMeetings
     case lowKeyPackageCount
+    case enabledCCDebugLogs
+    case shakeToReport
 
     public var description: String {
         switch self {
@@ -92,6 +94,12 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
+
+        case .enabledCCDebugLogs:
+            "Turn on to enable Core Crypto debug logs"
+
+        case .shakeToReport:
+            "Turn on to enable default shake gesture to present debug report share sheet. Shake again to present DeveloperTools once debug report share sheet presented"
         }
     }
 

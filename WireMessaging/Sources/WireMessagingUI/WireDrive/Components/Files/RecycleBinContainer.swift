@@ -97,7 +97,7 @@ package struct RecycleBinContainer: View {
                 ),
                 updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
+                createFile: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
                 restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesRepository,
@@ -105,7 +105,7 @@ package struct RecycleBinContainer: View {
                     nodeCache: nodeCache
                 ),
                 getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
                 ),
@@ -114,7 +114,16 @@ package struct RecycleBinContainer: View {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
+                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
+                    localAssetRepository: localAssetRepository
+                )
             ),
             title: path.last?.name,
             navigationPath: path,

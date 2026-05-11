@@ -59,19 +59,45 @@ struct WireDriveDocumentHeaderView: View {
                     .font(for: .subline1)
                     .lineLimit(1)
                     .layoutPriority(1)
+
+                Spacer()
+
+                if !isDraftPreview {
+                    stateTextView()
+                        .foregroundStyle(isError ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color)
+                        .font(for: .subline1)
+                        .lineLimit(1)
+                }
             }
             .padding(.horizontal, 8)
             .padding(.top, 8)
             .padding(.bottom, 4)
 
-            Text(labelText)
+            ZStack(alignment: .bottom) {
+                Group {
+                    Text(labelText)
+                    reservedSpaceFor2LinesOfText()
+                }
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
                 .font(for: .h5)
+                .fontWeight(.medium)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.horizontal, .bottom], 8)
+            }
         }
         .frame(minHeight: minHeight)
+    }
+
+    /// Reserving a minimum amout of space for 2 lines of text.
+    /// `.minimumScaleFactor(0.5)` allows the reserved space to shrink for the draft version,
+    /// which has height restrictions and truncates the line instead of breaking into multiple lines.
+    @ViewBuilder
+    private func reservedSpaceFor2LinesOfText() -> some View {
+        Text("\n")
+            .minimumScaleFactor(0.5)
+            .hidden()
+            .accessibilityHidden(true)
     }
 
     private var isError: Bool {
@@ -160,6 +186,7 @@ struct WireDriveDocumentHeaderView: View {
     let headerIcon = Image(WireDriveFileType.pdf.imageResource)
     let headerText = "PDF (336 KB)"
     let labelText = "CDR_20220120 Accessibility Review Reviewed Final Plus"
+    let labelTextShort = "Filename"
 
     ScrollView {
         VStack {
@@ -200,6 +227,14 @@ struct WireDriveDocumentHeaderView: View {
                     headerIcon: headerIcon,
                     headerText: headerText,
                     labelText: labelText,
+                    isDraftPreview: true,
+                    state: .failed
+                )
+
+                WireDriveDocumentHeaderView(
+                    headerIcon: headerIcon,
+                    headerText: headerText,
+                    labelText: labelTextShort,
                     isDraftPreview: true,
                     state: .failed
                 )

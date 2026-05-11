@@ -18,11 +18,12 @@
 
 import Foundation
 import WireFoundation
-import WireNetwork
+@preconcurrency import WireNetwork
 
-public protocol IsBuildBlacklistedUseCase {
+// sourcery: AutoMockable
+public protocol IsBuildBlacklistedUseCase: Sendable {
 
-    func invoke() async -> Bool
+    func invoke() async -> (isBuildBlacklisted: Bool, error: Error?)
 
 }
 
@@ -41,11 +42,15 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
         currentBuildNumber: String,
         api: any BlacklistAPI
     ) {
+        #if DEBUG
+            let currentBuildNumber = UITestConfig.environment.isBuildBlacklisted ? "0" : currentBuildNumber
+        #endif
+
         self.currentBuildNumber = DeveloperOverrides.buildNumber ?? currentBuildNumber
         self.api = api
     }
 
-    public func invoke() async -> Bool {
+    public func invoke() async -> (isBuildBlacklisted: Bool, error: Error?) {
         do {
             let blacklist = try await api.getBlacklist()
 
@@ -53,15 +58,17 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
                 let currentVersion = Int(currentBuildNumber),
                 let minLegalVersion = Int(blacklist.minimumLegalBuildNumber)
             else {
-                return false
+                return (false, nil)
             }
 
-            return currentVersion < minLegalVersion || blacklist.illegalBuildNumbers.contains(String(currentVersion))
+            let isBlacklisted = currentVersion < minLegalVersion
+                || blacklist.illegalBuildNumbers.contains(String(currentVersion))
+            return (isBlacklisted, nil)
         } catch {
             // As per specs, if there is any failure obtaining the blacklist,
             // whether it is missing, can't be decoded, or otherwise, then
             // consider it empty (i.e all clients valid).
-            return false
+            return (false, error)
         }
     }
 

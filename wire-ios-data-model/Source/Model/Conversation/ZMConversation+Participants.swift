@@ -272,7 +272,6 @@ public extension ZMConversation {
 
         if !removedUsers.isEmpty {
             let removedSelf = removedUsers.contains(where: \.isSelfUser)
-            checkIfArchivedStatusChanged(removedSelfUser: removedSelf, initiatingUser: initiatingUser)
             checkIfVerificationLevelChanged(removedUsers: removedUsers)
         }
     }

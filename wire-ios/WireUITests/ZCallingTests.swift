@@ -38,7 +38,7 @@ final class ZCallingTests: WireUITestCase {
     ) async throws -> GroupCallSetupResponse {
         let groupName = groupName ?? UserGenerator.generateRandomConversationName()
 
-        let (teamOwner, teamMembers, _, conversationId) = try await userHelper
+        let (teamOwner, teamMembers, _, conversationId) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: memberCount,
                 conversation: .group(groupName)
@@ -91,7 +91,7 @@ final class ZCallingTests: WireUITestCase {
 
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
-    func test_MultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
+    func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
         do {
             let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)

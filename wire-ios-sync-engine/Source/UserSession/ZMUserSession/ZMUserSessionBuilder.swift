@@ -59,6 +59,7 @@ struct ZMUserSessionBuilder {
     private var journal: Journal?
     private var logFilesProvider: LogFilesProviding?
     private var faultyMLSRemovalKeysByDomain: [String: [String]]?
+    private var updateBackendMetadataUseCase: (any UpdateBackendMetadataUseCaseProtocol)?
 
     // MARK: - Initialize
 
@@ -93,7 +94,8 @@ struct ZMUserSessionBuilder {
             let wireAPIBackendEnvironment,
             let apiVersion,
             let journal,
-            let logFilesProvider
+            let logFilesProvider,
+            let updateBackendMetadataUseCase
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
@@ -115,41 +117,26 @@ struct ZMUserSessionBuilder {
             proxySettings: wireAPIBackendEnvironment.proxySettings
         )
 
+        let restConfig = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
         let restNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.url,
+            urlSessionConfiguration: restConfig,
             serverTrustValidator: serverTrustValidator
         )
-        let restConfig = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let restSession = URLSession(
-            configuration: restConfig,
-            delegate: restNetworkService,
-            delegateQueue: nil
-        )
-        restNetworkService.configure(with: restSession)
 
+        let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let webSocketNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.webSocketURL,
+            urlSessionConfiguration: webSocketConfig,
             serverTrustValidator: serverTrustValidator
         )
-        let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
-        let webSocketSession = URLSession(
-            configuration: webSocketConfig,
-            delegate: webSocketNetworkService,
-            delegateQueue: nil
-        )
-        webSocketNetworkService.configure(with: webSocketSession)
 
+        let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
         let blacklistNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.blacklistURL,
+            urlSessionConfiguration: blacklistConfig,
             serverTrustValidator: serverTrustValidator
         )
-        let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
-        let blacklistSession = URLSession(
-            configuration: blacklistConfig,
-            delegate: blacklistNetworkService,
-            delegateQueue: nil
-        )
-        blacklistNetworkService.configure(with: blacklistSession)
 
         let backendMetadata = ResolvedBackendMetadata(
             apiVersion: .init(rawValue: UInt(apiVersion.rawValue))!,
@@ -187,7 +174,8 @@ struct ZMUserSessionBuilder {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:]
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:],
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase
         )
     }
 
@@ -216,7 +204,8 @@ struct ZMUserSessionBuilder {
         minTLSVersion: String?,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol
     ) {
         // reused dependencies
 
@@ -307,6 +296,7 @@ struct ZMUserSessionBuilder {
         self.journal = journal
         self.logFilesProvider = logFilesProvider
         self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
+        self.updateBackendMetadataUseCase = updateBackendMetadataUseCase
     }
 
     // MARK: UserSesssionDependencies

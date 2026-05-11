@@ -124,6 +124,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set up Datadog and other loggers
         WireAnalytics.setup(for: .app)
+        CoreCrypto.registerLogger()
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
@@ -514,7 +515,7 @@ private extension AppDelegate {
             let data = try Data(contentsOf: URL(filePath: path))
             return try BackendEnvironment2.fromJSON(data, environmentType: .default)
         } catch {
-            fatalError("unabled to fetch default environment: \(error)")
+            fatalError("unable to fetch default environment: \(error)")
         }
     }
 

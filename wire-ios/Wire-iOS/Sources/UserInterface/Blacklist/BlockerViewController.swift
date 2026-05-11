@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MessageUI
 import UIKit
+import WireLocators
 import WireLogging
 import WireMultiBackendUI
 import WireSyncEngine
@@ -37,6 +37,7 @@ final class BlockerViewController: LaunchImageViewController {
     private var context: BlockerViewControllerContext = .blacklist
     private var error: Error?
     private var sessionManager: SessionManager?
+    private let shareDebugPresenter = ShareDebugReportPresenter()
 
     private var observerTokens = [Any]()
 
@@ -54,6 +55,7 @@ final class BlockerViewController: LaunchImageViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.accessibilityIdentifier = Locators.BlockerPage.mainContent.rawValue
         setupApplicationNotifications()
     }
 
@@ -129,20 +131,8 @@ final class BlockerViewController: LaunchImageViewController {
                 title: Strings.sendLogs,
                 style: .default
             ) { [weak self] _ in
-                guard let self else {
-                    return
-                }
-                DebugLogSender.sendLogsByEmail(
-                    message: debugLogMessage,
-                    presentingViewController: self,
-                    fallbackActivityPopoverConfiguration: .sourceView(
-                        sourceView: view,
-                        sourceRect: .init(
-                            origin: view.safeAreaLayoutGuide.layoutFrame.origin,
-                            size: .zero
-                        )
-                    )
-                )
+                guard let self else { return }
+                shareDebugPresenter.present(from: self)
             }
         )
 
@@ -162,9 +152,7 @@ final class BlockerViewController: LaunchImageViewController {
                     title: Strings.retry,
                     style: .cancel,
                     handler: { _ in
-                        Task {
-                            _ = await sessionManager.select(account)
-                        }
+                        sessionManager.select(account)
                     }
                 )
             )
@@ -264,11 +252,7 @@ final class BlockerViewController: LaunchImageViewController {
             style: .default
         ) { [weak self] _ in
             guard let self else { return }
-            let fallbackActivityPopoverConfiguration = PopoverPresentationControllerConfiguration.sourceView(
-                sourceView: view,
-                sourceRect: .init(origin: view.safeAreaLayoutGuide.layoutFrame.origin, size: .zero)
-            )
-            presentMailComposer(fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration)
+            shareDebugPresenter.present(from: self)
         }
 
         databaseFailureAlert.addAction(reportError)
@@ -325,17 +309,6 @@ final class BlockerViewController: LaunchImageViewController {
         present(deleteDatabaseConfirmationAlert, animated: true)
     }
 
-    func mailComposeController(
-        _ controller: MFMailComposeViewController,
-        didFinishWith result: MFMailComposeResult,
-        error: Error?
-    ) {
-        // shown after sending report logs, we should show other choices again
-        // in order not to be stuck on black screen
-        controller.presentingViewController?.dismiss(animated: true) {
-            self.showDatabaseFailureMessage()
-        }
-    }
 }
 
 // MARK: - Application state observing
@@ -349,8 +322,6 @@ extension BlockerViewController: ApplicationStateObserving {
         showAlert()
     }
 }
-
-extension BlockerViewController: SendTechnicalReportPresenter {}
 
 // MARK: - Certificate enrollment
 
@@ -451,9 +422,7 @@ extension BlockerViewController {
     }
 
     private func handleSwitch(to account: Account) {
-        Task {
-            await sessionManager?.switchTo(account: account)
-        }
+        sessionManager?.switchTo(account: account)
     }
 
     private func handleLogout() {

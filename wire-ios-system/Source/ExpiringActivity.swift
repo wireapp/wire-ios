@@ -50,6 +50,9 @@ actor ExpiringActivityManager {
 
     let api: any ExpiringActivityInterface
     var task: Task<Void, any Error>?
+    // Stored as actor state so resumeOnce() is serialised through the actor
+    // executor — no lock required, no threads blocked.
+    private var continuation: CheckedContinuation<Void, any Error>?
 
     init() {
         self.init(api: ProcessInfo.processInfo)
@@ -61,7 +64,11 @@ actor ExpiringActivityManager {
 
     func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
         try await withTaskCancellationHandler {
+            // withCheckedThrowingContinuation forwards the caller's actor
+            // isolation to its body closure, so the body runs on this actor's
+            // executor and may access isolated state directly.
             try await withCheckedThrowingContinuation { continuation in
+                self.continuation = continuation
                 api.performExpiringActivity(withReason: reason) { expiring in
                     if !expiring {
                         let semaphore = DispatchSemaphore(value: 0)
@@ -70,12 +77,11 @@ actor ExpiringActivityManager {
                                 WireLogger.backgroundActivity.debug("Start of activity: \(reason)")
                                 try await self.startWork(block: block, semaphore: semaphore).value
                                 WireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
-                                continuation.resume()
+                                await self.resumeOnce()
                             } catch {
                                 WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
-                                continuation.resume(throwing: error)
+                                await self.resumeOnce(throwing: error)
                             }
-
                         }
                         semaphore.wait()
                     } else {
@@ -84,7 +90,7 @@ actor ExpiringActivityManager {
                             do {
                                 try await self.stopWork()
                             } catch {
-                                continuation.resume(throwing: error)
+                                await self.resumeOnce(throwing: error)
                             }
                         }
                     }
@@ -93,6 +99,16 @@ actor ExpiringActivityManager {
         } onCancel: {
             Task { try? await self.stopWork() }
         }
+    }
+
+    private func resumeOnce() {
+        continuation?.resume()
+        continuation = nil
+    }
+
+    private func resumeOnce(throwing error: any Error) {
+        continuation?.resume(throwing: error)
+        continuation = nil
     }
 
     func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {

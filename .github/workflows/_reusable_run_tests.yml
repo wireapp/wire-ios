@@ -45,6 +45,8 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LANG: en_US.UTF-8
   REPO_ROOT: ${{ github.workspace }}
   PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+  UI_TEST_LOGIN_EMAIL: "foo@example.com" # can be removed after 4.17 is released
+  UI_TEST_LOGIN_PASSWORD: "123456" # can be removed after 4.17 is released
 
 
 jobs:
@@ -142,7 +144,7 @@ jobs:
       - name: Setup simulator
         run: |
           bundle exec fastlane prepare_for_tests
-          
+
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
         uses: 1password/install-cli-action@v1
@@ -151,12 +153,32 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane generate_env
-          
+
       - name: Setup Kalium Testservice
         if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
         uses: ./.github/actions/kalium-testservice/setup
         with:
           kalium_ref: ${{ inputs.kalium_ref }}
+
+      - name: Seed simulator with test video file
+        if: ${{ inputs.run_critical_flows }}
+        continue-on-error: true
+        run: |
+          VIDEO_PATH="${REPO_ROOT}/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
+
+          if [ ! -f "$VIDEO_PATH" ]; then
+            echo "::warning::Missing test video: $VIDEO_PATH. Skipping simulator media seeding."
+            exit 0
+          fi
+
+          BOOTED_DEVICE_ID=$(xcrun simctl list devices booted | awk -F '[()]' '/Booted/ { print $2; exit }')
+          if [ -z "$BOOTED_DEVICE_ID" ]; then
+            echo "::warning::No booted simulator found. Skipping simulator media seeding."
+            exit 0
+          fi
+
+          xcrun simctl addmedia "$BOOTED_DEVICE_ID" "$VIDEO_PATH" || \
+            echo "::warning::Failed to seed simulator with test video"
 
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
@@ -203,6 +225,11 @@ jobs:
         if: ${{ inputs.test_dependencies == false }}
         run: |
           bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
+
+      - name: Check for duplicate symbol implementations
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check_duplicate_classes.sh .
 
       - name: Find all .xcresult files
         if: ${{ always() && github.event_name == 'pull_request' }}
@@ -306,19 +333,47 @@ jobs:
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
-      - name: Notify on Wire
+      - name: Get Commit Info
         if: always()
-        uses: ./.github/actions/notify-wire
+        env:
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "commit_message=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
+
+      - name: Always Notify on Wire
+        uses: 8398a7/action-slack@v3
+        continue-on-error: true
+        if: ${{ inputs.notify == 'always' && always() }}
         with:
-          notify: ${{ inputs.notify }}
           status: ${{ job.status }}
-          branch: ${{ env.SANITIZED_BRANCH }}
-          label: Tests
+          text: |
+            **Tests for ${{ env.SANITIZED_BRANCH }}**
+
+            **Title:** ${{ env.commit_message }}
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Only Notify on Wire failures
+        uses: 8398a7/action-slack@v3
+        continue-on-error: true
+        if: ${{ inputs.notify == 'failure' && failure() }}
+        with:
+          status: ${{ job.status }}
+          text: |
+            **🚨 Tests for ${{ env.SANITIZED_BRANCH }} failed 🆘**
+
+            **Title:** ${{ env.commit_message }}
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   analyze-xcresults:
     needs: run-tests
     name: Analyze xcresults
-    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' }}
+    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' && needs.run-tests.outputs.xcresult_files != '' && needs.run-tests.outputs.xcresult_files != '[]' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     strategy:
       matrix:
@@ -379,12 +434,15 @@ jobs:
           sparse-checkout: .github/actions
 
       - name: Download tests results
+        id: download-test-results
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
 
       - name: Upload JUnit results to Datadog
+        if: steps.download-test-results.outcome == 'success'
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
+

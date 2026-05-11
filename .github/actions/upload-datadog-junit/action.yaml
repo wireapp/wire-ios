@@ -35,4 +35,9 @@ runs:
         DATADOG_SITE: datadoghq.eu
         DD_SERVICE: ${{ inputs.service }}
       run: |
-        find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service "$DD_SERVICE" .
+        JUNIT_FILES=$(find . -name "*.junit" -type f)
+        if [ -z "$JUNIT_FILES" ]; then
+          echo "No junit files found, skipping upload"
+          exit 0
+        fi
+        echo "$JUNIT_FILES" | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service "$DD_SERVICE" .

@@ -49,24 +49,26 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 .ignoresSafeArea(.all)
 
             VStack {
-                VStack(alignment: .leading, spacing: 0) {
-                    FilesFilteringView(
-                        useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
-                        filtersSelection: viewModel.filtersSelection,
-                        isBrowsing: isBrowsing,
-                        conversations: Set(viewModel.conversations),
-                        onUpdate: viewModel.onUpdate(of:),
-                        onSearchFocused: { isSearchFocused = $0 }
-                    )
-                    .opacity(isFilterBarPresented ? 1 : 0)
-                    .frame(height: isFilterBarPresented ? nil : 0)
-                    .padding(.bottom, isFilterBarPresented ? 15 : 0)
+                if !viewModel.isOffline {
+                    VStack(alignment: .leading, spacing: 0) {
+                        FilesFilteringView(
+                            useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
+                            filtersSelection: viewModel.filtersSelection,
+                            isBrowsing: isBrowsing,
+                            conversations: Set(viewModel.conversations),
+                            onUpdate: viewModel.onUpdate(of:),
+                            onSearchFocused: { isSearchFocused = $0 }
+                        )
+                        .opacity(isFilterBarPresented ? 1 : 0)
+                        .frame(height: isFilterBarPresented ? nil : 0)
+                        .padding(.bottom, isFilterBarPresented ? 15 : 0)
 
-                    FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
+                        FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
+                    }
+                    .padding(.top, 4)
+
+                    Spacer()
                 }
-                .padding(.top, 4)
-
-                Spacer()
 
                 switch viewModel.state {
                 case .loading:
@@ -81,13 +83,17 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                             }
                         }
                 case let .error(isConnectionError):
-                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
-                        reloadTask()
-                    })
+                    FilesInfoView(
+                        scope: .files(conversation: isBrowsing ? .all : .one),
+                        kind: .error(isConnectionError: isConnectionError),
+                        onRetry: {
+                            reloadTask()
+                        }
+                    )
                 }
                 Spacer()
             }
-            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
+            .animation(.easeInOut(duration: 0.25), value: viewModel.isOffline)
             .animation(.easeOut(duration: 0.25), value: isSearchFocused)
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(navigationTitle)
@@ -96,7 +102,6 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             .toolbarBackground(backgroundColor, for: .navigationBar)
             .toolbar { toolbarContent() }
             .if(viewModel.showSearchBar, transform: searchView(content:))
-            .onAppear { reloadTask() }
             .onDisappear {
                 isSearchFocused = false
                 viewModel.resetFilters()
@@ -117,6 +122,16 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 }
             )
         }
+        .onChange(of: viewModel.networkStatus) { _, newValue in
+            if newValue != nil {
+                Task {
+                    await viewModel.reload(refreshing: true)
+                }
+            }
+        }
+        .task {
+            await viewModel.setup()
+        }
     }
 
     private var isFilterBarPresented: Bool {
@@ -132,7 +147,10 @@ private extension FilesContentView {
         List {
             Group {
                 itemsSection
-                if showLoadMoreRow { loadMoreRow }
+
+                if showLoadMoreRow {
+                    loadMoreRow
+                }
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
@@ -153,17 +171,34 @@ private extension FilesContentView {
         }
     }
 
+    private func infoViewScope() -> FilesInfoView.Scope {
+        if viewModel.isRecycleBin {
+            .recycleBin(isFolder: viewModel.isInFolder)
+        } else if !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty {
+            .search
+        } else {
+            .files(conversation: isBrowsing ? .all : .one, isFolder: viewModel.isInFolder)
+        }
+    }
+
     @ViewBuilder private var listBackgroundView: some View {
+        let scope = infoViewScope()
+
         switch viewModel.state {
         case let .received(items) where items.isEmpty:
-            FilesInfoView(
-                info: .noFilesFound(
-                    scope: viewModel.isRecycleBin ? .recycleBin : isBrowsing ? .allConversations : .oneConversation,
-                    isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty
-                )
-            )
+            VStack(spacing: 0) {
+                if viewModel.isOffline {
+                    FilesOfflineBarView()
+                }
+
+                Spacer()
+
+                FilesInfoView(scope: scope, kind: .empty)
+
+                Spacer()
+            }
         case .pending:
-            FilesInfoView(info: .preparingFiles)
+            FilesInfoView(scope: scope, kind: .preparing)
         default:
             EmptyView()
         }
@@ -175,8 +210,9 @@ private extension FilesContentView {
         // the items are empty.
         let hasMore = viewModel.hasMore
         let isEmptyItems = viewModel.state.items.isEmpty
+        let isOffline = viewModel.isOffline
 
-        return hasMore && !isEmptyItems
+        return hasMore && !isEmptyItems && !isOffline
     }
 }
 
@@ -228,6 +264,7 @@ private extension FilesContentView {
 
     var offlineBar: some View {
         FilesOfflineBarView()
+            .background(backgroundColor)
             .transition(
                 .move(edge: .top)
                     .combined(with: .opacity)

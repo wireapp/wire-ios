@@ -22,7 +22,7 @@ final class ConversationTests: WireUITestCase {
 
     @MainActor
     func testClearContent_TC_9488() async throws {
-        let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
+        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
 
@@ -48,6 +48,64 @@ final class ConversationTests: WireUITestCase {
             .openConversation()
         let sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
         XCTAssertTrue(sentMessages.isEmpty)
+    }
+
+    @MainActor
+    func testLeaveGroup_TC_8861() async throws {
+        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
+        let userA = try XCTUnwrap(stagingTeam.teamOwner)
+        let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
+
+        let conversationsPage = try await loginToBackend(user: userA)
+
+        // WHEN
+        let activeConversationPage = try conversationsPage
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName("test")
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .doneSelectingMembers()
+            .sendMessage("test")
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .leaveConversation()
+            .closeConversationDetails()
+
+        // THEN
+        let userMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        XCTAssertEqual(userMessages.count, 1)
+
+        XCTAssertTrue(activeConversationPage.userLeftSystemMessage.exists, "the system message is missing")
+    }
+
+    @MainActor
+    func testLeaveAndClearGroup_TC_10525() async throws {
+        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
+        let userA = try XCTUnwrap(stagingTeam.teamOwner)
+        let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
+
+        let conversationsPage = try await loginToBackend(user: userA)
+
+        // WHEN
+        let activeConversationPage = try conversationsPage
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName("test")
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .doneSelectingMembers()
+            .sendMessage("test")
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .leaveAndClearConversation()
+            .closeConversationDetails()
+
+        // THEN
+        let userMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        XCTAssertEqual(userMessages.count, 0)
+
+        XCTAssertFalse(activeConversationPage.userLeftSystemMessage.exists, "the system message has not been removed")
     }
 
 }

@@ -1070,6 +1070,10 @@ internal enum L10n {
           return L10n.tr("Accessibility", "settings.deviceCount.hint", String(describing: p1), fallback: "%@ devices in use")
         }
       }
+      internal enum ShareDebugInfoBanner {
+        /// Double tap to open more options
+        internal static let arrow = L10n.tr("Accessibility", "settings.shareDebugInfoBanner.arrow", fallback: "Double tap to open more options")
+      }
     }
     internal enum ShareProfile {
       internal enum BackButton {
@@ -2145,9 +2149,9 @@ internal enum L10n {
             return L10n.tr("Localizable", "content.system.call.missed-call", p1, fallback: "Plural format key: \"%#@missed_call@\"")
           }
           internal enum MissedCall {
-            /// Plural format key: "%#@missed_call_from@ %2$@"
-            internal static func groups(_ p1: Int, _ p2: Any) -> String {
-              return L10n.tr("Localizable", "content.system.call.missed-call.groups", p1, String(describing: p2), fallback: "Plural format key: \"%#@missed_call_from@ %2$@\"")
+            /// Plural format key: "%#@missed_call_from@"
+            internal static func groups(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "content.system.call.missed-call.groups", p1, fallback: "Plural format key: \"%#@missed_call_from@\"")
             }
           }
         }
@@ -2717,17 +2721,17 @@ internal enum L10n {
         }
       }
       internal enum DeleteRequestDialog {
-        /// This will delete the group and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.
-        internal static let message = L10n.tr("Localizable", "conversation.delete_request_dialog.message", fallback: "This will delete the group and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.")
-        /// Delete group conversation?
-        internal static let title = L10n.tr("Localizable", "conversation.delete_request_dialog.title", fallback: "Delete group conversation?")
+        /// This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.
+        internal static let message = L10n.tr("Localizable", "conversation.delete_request_dialog.message", fallback: "This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.")
+        /// Delete conversation?
+        internal static let title = L10n.tr("Localizable", "conversation.delete_request_dialog.title", fallback: "Delete conversation?")
       }
       internal enum DeleteRequestErrorDialog {
-        /// Delete Group
-        internal static let buttonDeleteGroup = L10n.tr("Localizable", "conversation.delete_request_error_dialog.button_delete_group", fallback: "Delete Group")
-        /// An error occurred while trying to delete the group %@. Please try again.
+        /// Delete Conversation
+        internal static let buttonDeleteGroup = L10n.tr("Localizable", "conversation.delete_request_error_dialog.button_delete_group", fallback: "Delete Conversation")
+        /// An error occurred while trying to delete the conversation %@. Please try again.
         internal static func title(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "conversation.delete_request_error_dialog.title", String(describing: p1), fallback: "An error occurred while trying to delete the group %@. Please try again.")
+          return L10n.tr("Localizable", "conversation.delete_request_error_dialog.title", String(describing: p1), fallback: "An error occurred while trying to delete the conversation %@. Please try again.")
         }
       }
       internal enum InputBar {
@@ -4767,6 +4771,14 @@ internal enum L10n {
       internal static let noSearchResults = L10n.tr("Localizable", "peoplepicker.no_search_results", fallback: "No matching results. Try entering a different name.")
       /// Search by name or username
       internal static let searchPlaceholder = L10n.tr("Localizable", "peoplepicker.search_placeholder", fallback: "Search by name or username")
+      internal enum AppDetails {
+        /// Created by %@
+        internal static func createdBy(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "peoplepicker.app_details.created_by", String(describing: p1), fallback: "Created by %@")
+        }
+        /// Description
+        internal static let description = L10n.tr("Localizable", "peoplepicker.app_details.description", fallback: "Description")
+      }
       internal enum Apps {
         internal enum AddApp {
           /// Add app
@@ -4840,6 +4852,14 @@ internal enum L10n {
       internal enum NavigationHeader {
         /// New conversation
         internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
+      }
+      internal enum NoAppsAdded {
+        /// Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.
+        internal static let addInTmMessage = L10n.tr("Localizable", "peoplepicker.no_apps_added.add_in_tm_message", fallback: "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.")
+        /// Apps are helpers that can improve your workflow. To use them, ask your team admin.
+        internal static let askAdminMessage = L10n.tr("Localizable", "peoplepicker.no_apps_added.ask_admin_message", fallback: "Apps are helpers that can improve your workflow. To use them, ask your team admin.")
+        /// Your team hasn’t added apps yet
+        internal static let title = L10n.tr("Localizable", "peoplepicker.no_apps_added.title", fallback: "Your team hasn’t added apps yet")
       }
       internal enum NoMatchingResults {
         internal enum Action {
@@ -5050,8 +5070,8 @@ internal enum L10n {
         internal static let header = L10n.tr("Localizable", "profile.extended_metadata.header", fallback: "Information")
       }
       internal enum GroupAdminStatusMemo {
-        /// When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.
-        internal static let body = L10n.tr("Localizable", "profile.group_admin_status_memo.body", fallback: "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.")
+        /// When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.
+        internal static let body = L10n.tr("Localizable", "profile.group_admin_status_memo.body", fallback: "When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.")
       }
       internal enum Profile {
         internal enum GroupAdminOptions {
@@ -6026,6 +6046,28 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.description.title", fallback: "Receive news and product updates from Wire via email.")
           }
         }
+        internal enum ShareDebugReport {
+          /// Creating debug report...
+          internal static let creatingReport = L10n.tr("Localizable", "self.settings.share_debug_report.creating_report", fallback: "Creating debug report...")
+          internal enum ActionSheet {
+            /// You can send your report to Wire support, share it with your administrator directly via Wire or any other app.
+            internal static let message = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.message", fallback: "You can send your report to Wire support, share it with your administrator directly via Wire or any other app.")
+            /// Send email to Support
+            internal static let sendEmail = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.send_email", fallback: "Send email to Support")
+            /// Share
+            internal static let share = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.share", fallback: "Share")
+            /// Share via Wire
+            internal static let shareViaWire = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.share_via_wire", fallback: "Share via Wire")
+            /// Having trouble?
+            internal static let title = L10n.tr("Localizable", "self.settings.share_debug_report.action_sheet.title", fallback: "Having trouble?")
+          }
+          internal enum Banner {
+            /// To improve Wire's quality, please send us your feedback and let us know about any problems.
+            internal static let message = L10n.tr("Localizable", "self.settings.share_debug_report.banner.message", fallback: "To improve Wire's quality, please send us your feedback and let us know about any problems.")
+            /// Having trouble?
+            internal static let title = L10n.tr("Localizable", "self.settings.share_debug_report.banner.title", fallback: "Having trouble?")
+          }
+        }
         internal enum SoundMenu {
           /// Sound Alerts
           internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.title", fallback: "Sound Alerts")
@@ -6095,14 +6137,14 @@ internal enum L10n {
           /// Share Report Via Wire
           internal static let shareReport = L10n.tr("Localizable", "self.settings.technical_report.share_report", fallback: "Share Report Via Wire")
           internal enum Mail {
-            /// Wire Debug Report
-            internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Wire Debug Report")
+            /// Issue report
+            internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Issue report")
           }
           internal enum MailBody {
-            /// Please fill in the following
-            internal static let firstline = L10n.tr("Localizable", "self.settings.technical_report.mail_body.firstline", fallback: "Please fill in the following")
-            /// Date and Time of the issue occured:
-            internal static let section1 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section1", fallback: "Date and Time of the issue occured:")
+            /// Please describe what happened below, so that we can understand and reproduce the problem:
+            internal static let firstline = L10n.tr("Localizable", "self.settings.technical_report.mail_body.firstline", fallback: "Please describe what happened below, so that we can understand and reproduce the problem:")
+            /// Date and Time of the issue occurred:
+            internal static let section1 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section1", fallback: "Date and Time of the issue occurred:")
             /// What Happened:
             internal static let section2 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section2", fallback: "What Happened:")
             /// Steps to reproduce (if relevant):
