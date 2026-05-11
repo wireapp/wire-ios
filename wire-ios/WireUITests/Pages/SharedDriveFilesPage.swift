@@ -67,6 +67,10 @@ class SharedDriveFilesPage: PageModel {
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
             .firstMatch
     }
+    
+    var numberOfFilesInList: Int {
+        fileTexts.count
+    }
 
     @discardableResult
     func verifyFileTypeAndMetadata(
@@ -113,5 +117,9 @@ class SharedDriveFilesPage: PageModel {
             .matching(identifier: folderName)
             .element
             .exists
+    }
+    
+    var searchTextField: XCUIElement {
+        app.searchFields.firstMatch
     }
 }
