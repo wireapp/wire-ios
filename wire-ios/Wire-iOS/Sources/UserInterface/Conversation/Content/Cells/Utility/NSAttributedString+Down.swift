@@ -44,9 +44,9 @@ extension NSAttributedString {
         while result.string.last == "\n" {
             if !trailedListItem,
                let ps = result.attribute(
-                .paragraphStyle,
-                at: result.length - 1,
-                effectiveRange: nil
+                   .paragraphStyle,
+                   at: result.length - 1,
+                   effectiveRange: nil
                ) as? NSParagraphStyle,
                ps.headIndent > 0 {
                 trailedListItem = true
@@ -131,7 +131,7 @@ extension NSAttributedString {
         // aren't visible rows and shouldn't count against the limit.
         let nsString = string as NSString
         var visibleNewlineIndices: [Int] = []
-        for i in 0..<length where nsString.character(at: i) == 0x0A {
+        for i in 0 ..< length where nsString.character(at: i) == 0x0A {
             if let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
                ps.minimumLineHeight == 1, ps.maximumLineHeight == 1 {
                 continue

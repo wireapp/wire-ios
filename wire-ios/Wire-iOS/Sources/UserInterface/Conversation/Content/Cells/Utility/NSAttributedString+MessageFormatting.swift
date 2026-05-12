@@ -236,7 +236,7 @@ extension NSMutableAttributedString {
     func stripLayoutBlankLines() {
         let nsString = mutableString as NSString
         var indicesToRemove: [Int] = []
-        for i in 0..<length where nsString.character(at: i) == 0x0A {
+        for i in 0 ..< length where nsString.character(at: i) == 0x0A {
             if let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
                ps.minimumLineHeight == 1, ps.maximumLineHeight == 1 {
                 indicesToRemove.append(i)

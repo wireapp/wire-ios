@@ -116,9 +116,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
-        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
-
+        let ownColor = ColorTheme.OwnChatBubbles.onPrimary
+        let otherColor = ColorTheme.OthersChatBubbles.onPrimary
+        
         let textForegroundColor: UIColor = ownMessage ? ownColor : otherColor
         let linkForegroundColor: UIColor = ownMessage ? ownColor : UIColor.accent()
 

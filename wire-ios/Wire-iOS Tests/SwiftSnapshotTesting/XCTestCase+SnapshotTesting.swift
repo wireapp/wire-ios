@@ -211,27 +211,32 @@ extension Snapshotting where Value == UIView, Format == UIImage {
             view.layoutIfNeeded()
             let size = view.bounds.size
 
-            // Host the view in a key window that is at least as tall as the view *and*
-            // the main screen. Using only the view's size can leave UITextView's tiled
-            // rendering thinking content overflows the window, which causes long text
-            // to render blank at narrow widths.
-            let screenSize = UIScreen.main.bounds.size
-            let windowSize = CGSize(
-                width: max(size.width, screenSize.width),
-                height: max(size.height, screenSize.height)
-            )
-            let window = UIWindow(frame: CGRect(origin: .zero, size: windowSize))
+            // Find the host app's UIWindowScene so we can create a new window attached
+            // to a real screen. iOS's render-server pass only fully renders content
+            // for views in windows that have a windowScene — a detached UIWindow can
+            // silently drop tall UITextView content.
+            let windowScene = UIApplication.shared
+                .connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first
+
+            let window: UIWindow
+            if let windowScene {
+                window = UIWindow(windowScene: windowScene)
+            } else {
+                window = UIWindow(frame: .zero)
+            }
+            window.frame = CGRect(origin: .zero, size: size)
             let rootViewController = UIViewController()
             window.rootViewController = rootViewController
             window.makeKeyAndVisible()
             rootViewController.view.frame = window.bounds
             rootViewController.view.addSubview(view)
             view.frame = CGRect(origin: .zero, size: size)
-            window.layoutIfNeeded()
 
             // Force TextKit 1 layout managers in the subtree to fully lay out their
-            // text containers before drawing — without this, long text in offscreen
-            // UITextViews can render as blank.
+            // text containers before drawing — without this, long text in UITextViews
+            // can render as blank.
             forceTextKitLayout(in: view)
 
             defer {

@@ -33,7 +33,7 @@ final class BlockquoteLayoutManager: NSLayoutManager {
     var barColor: UIColor = .gray
 
     /// Background color drawn behind code ranges. Update when the bubble style changes.
-    var codeBackgroundColor: UIColor = UIColor(white: 0.5, alpha: 0.15)
+    var codeBackgroundColor: UIColor = .init(white: 0.5, alpha: 0.15)
 
     private let barWidth: CGFloat = 2
     private let barLeadingOffset: CGFloat = 2
@@ -56,10 +56,13 @@ final class BlockquoteLayoutManager: NSLayoutManager {
             guard let self,
                   let markdown = value as? Markdown,
                   markdown.contains(.code),
-                  let (minY, maxY) = yRange(forGlyphRange: glyphRange(forCharacterRange: range, actualCharacterRange: nil))
+                  let (minY, maxY) = yRange(forGlyphRange: glyphRange(
+                      forCharacterRange: range,
+                      actualCharacterRange: nil
+                  ))
             else { return }
 
-            UIRectFill(CGRect(x: origin.x, y: origin.y + minY, width: 10000, height: maxY - minY))
+            UIRectFill(CGRect(x: origin.x, y: origin.y + minY, width: 10_000, height: maxY - minY))
         }
     }
 
@@ -75,7 +78,10 @@ final class BlockquoteLayoutManager: NSLayoutManager {
             guard let self,
                   let markdown = value as? Markdown,
                   markdown.contains(.quote),
-                  let (minY, maxY) = yRange(forGlyphRange: glyphRange(forCharacterRange: range, actualCharacterRange: nil))
+                  let (minY, maxY) = yRange(forGlyphRange: glyphRange(
+                      forCharacterRange: range,
+                      actualCharacterRange: nil
+                  ))
             else { return }
 
             UIRectFill(CGRect(

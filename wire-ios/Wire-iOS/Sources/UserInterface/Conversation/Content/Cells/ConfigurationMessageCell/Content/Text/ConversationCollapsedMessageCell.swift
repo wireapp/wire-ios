@@ -288,8 +288,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
-        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
+        let ownColor = ColorTheme.OwnChatBubbles.onPrimary
+        let otherColor = ColorTheme.OthersChatBubbles.onPrimary
         messageTextView.textColor = ownMessage ? ownColor : otherColor
     }
 
