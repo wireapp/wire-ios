@@ -164,7 +164,6 @@ final class FilesViewModelTests {
         localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
         #expect(sut.filesListLoader.loader.isLoading == false)
 
-
         // when
         await sut.reload()
 
