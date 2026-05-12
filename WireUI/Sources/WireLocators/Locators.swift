@@ -89,6 +89,28 @@ public enum Locators {
 
         case accountCell
         case optionsCell
+        case shareDebugBanner
+    }
+
+    public enum ShareDebugReportPage: String {
+
+        case actionSheet = "Having trouble?"
+        case shareViaWireButton = "ShareDebugReportPage.shareViaWireButton"
+        case sendEmailButton = "ShareDebugReportPage.sendEmailButton"
+        case shareButton = "ShareDebugReportPage.shareButton"
+        case cancelButton = "ShareDebugReportPage.cancelButton"
+    }
+
+    public enum ShareViaWirePage: AutoPrefixedEnum {
+
+        case sendButton
+        case closeButton
+    }
+
+    public enum ActivitySheetPage: String {
+
+        case sheet = "ActivityListView"
+        case saveToFiles = "Save to Files"
     }
 
     public enum AccountSettingsPage: String {
@@ -120,7 +142,9 @@ public enum Locators {
         case sharedDriveButton
         case ephemeralTimeSelectionButton
         case message
-        case imageCell = "ImageCell"
+        case imageCell
+        case videoCell
+        case videoPlayButton
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
@@ -133,6 +157,19 @@ public enum Locators {
         case attachmentImagePreview
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
+        case photoButton
+        case allowFullAccess = "Allow Full Access"
+        case ok = "OK"
+        case audioButton
+        case startRecording = "Start recording"
+        case stopRecording = "Stop recording"
+        case helium = "Helium"
+        case sendAudio = "Send"
+        case playAudioFile
+        case recordingTime
+        case showOtherRowButton
+        case pingButton
+
     }
 
     public enum BackupOrRestorePage: String {
@@ -223,6 +260,7 @@ public enum Locators {
         case cancel
         case usernameCell
         case createNewChannelButton
+        case userCellInContactList
     }
 
     public enum OnMyiPhonePage: String {

@@ -26,7 +26,6 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    var userHelper: UserHelper!
     var ssoHelper: SSOHelper!
     let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
@@ -36,19 +35,18 @@ class WireUITestCase: XCTestCase {
     @MainActor
     override func setUpWithError() throws {
         // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
-        dismissAllowIfPresent()
+        XCUIApplication().dismissAllowIfPresent()
         XCUIApplication().terminate()
         callingServiceClient = try CallingServiceClient()
         registerNotificationPermissionMonitor()
+        uiTestConfig.useTripleTapForShakeGesture = true
 
         let launchArguments = [
             "-resetData",
             "--useEnvStaging"
         ]
 
-        userHelper = UserHelper()
         ssoHelper = SSOHelper()
-
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
@@ -65,9 +63,10 @@ class WireUITestCase: XCTestCase {
 
     @MainActor
     override func tearDown() async throws {
+        app?.terminate()
+        app = nil
         await callingServiceClient.destroyCreatedInstances()
-        await userHelper.deleteCreatedUsers()
-        userHelper = nil
+        await UserHelper.deleteCreatedUsers()
         await ssoHelper.cleanUpOktaResources()
     }
 
@@ -111,17 +110,6 @@ class WireUITestCase: XCTestCase {
 
         let deeplink = try EnvironmentVariables().deepLinkURL(for: target)
         setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
-        // need to change for Inbucket
-        BackendContext.current = target
-    }
-
-    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
-        let alert = springboard.alerts.firstMatch
-        guard alert.waitForExistence(timeout: timeout) else { return }
-
-        if alert.buttons["Allow"].exists {
-            alert.buttons["Allow"].tap()
-        }
     }
 
     @MainActor
@@ -149,5 +137,21 @@ class WireUITestCase: XCTestCase {
                 allowButton.tap()
                 return true
             }
+    }
+
+    func simulateShakeGesture() {
+        app.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+    }
+}
+
+extension XCUIApplication {
+    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let alert = springboard.alerts.firstMatch
+        guard alert.waitForExistence(timeout: timeout) else { return }
+
+        if alert.buttons["Allow"].exists {
+            alert.buttons["Allow"].tap()
+        }
     }
 }

@@ -144,7 +144,7 @@ jobs:
       - name: Setup simulator
         run: |
           bundle exec fastlane prepare_for_tests
-          
+
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
         uses: 1password/install-cli-action@v1
@@ -153,7 +153,7 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane generate_env
-          
+
       - name: Setup Kalium Testservice
         if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
         uses: ./.github/actions/kalium-testservice/setup
@@ -425,3 +425,4 @@ jobs:
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
+

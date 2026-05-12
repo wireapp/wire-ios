@@ -60,6 +60,8 @@ export PATH="$JAVA_HOME/bin:$PATH"
 echo "JAVA_HOME=$JAVA_HOME"
 java -version
 
+echo "== Seeding simulator media =="
+"$REPO_ROOT/scripts/seed-simulator-media.sh" || echo "WARNING: Failed to seed simulator media"
 
 echo "== Cleaning previous local state =="
 if [[ -f "$PID_FILE" ]]; then

@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import Network
 import Testing
 import WireMessagingDomain
 
@@ -34,6 +35,7 @@ final class FilesViewModelTests {
     private let sut: FilesViewModel
     private var itemsUpdates: [[FilesViewItem]] = []
     private var cancellables = Set<AnyCancellable>()
+    private var networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
 
     init() {
         let nodesApi = MockNodesAPIProtocol()
@@ -43,6 +45,8 @@ final class FilesViewModelTests {
 
         let editingURLRepository = MockWireDriveEditingURLRepositoryProtocol()
         editingURLRepository.getEditorURLId_MockValue = nil
+
+        networkMonitor.currentStatus = .connected
 
         self.sut = FilesViewModel(
             useCases: .init(
@@ -68,7 +72,7 @@ final class FilesViewModelTests {
                 ),
                 updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesApi),
-                createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesRepository),
+                createFile: WireDriveCreateFileUseCase(nodesRepository: nodesRepository),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
                 restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesRepository,
@@ -76,7 +80,7 @@ final class FilesViewModelTests {
                     nodeCache: MockWireDriveNodeCacheProtocol()
                 ),
                 getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: editingURLRepository),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
                 ),
@@ -85,20 +89,30 @@ final class FilesViewModelTests {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesApi),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
-                getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi)
+                getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi),
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
+                    localAssetRepository: localAssetRepository
+                )
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             isBrowsing: false,
-            accentColorProvider: { .default }
+            accentColorProvider: { .default },
+            networkMonitor: networkMonitor
         )
 
         localAssetRepository.assetNodeID_MockValue = .fixture()
         localAssetRepository
             .refreshAssetMetadataNodeID_MockValue = (WireDriveNode.fixture(), WireDriveLocalAsset.fixture())
-        localAssetRepository.downloadAssetNodeID_MockMethod = { _ in }
+        localAssetRepository.downloadAssetNodeIDIsAvailableOffline_MockMethod = { _, _ in }
 
         sut.$state.dropFirst().sink { [weak self] state in
             self?.itemsUpdates.append(state.items)
@@ -139,6 +153,7 @@ final class FilesViewModelTests {
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
         #expect(sut.isLoading == false)
 
         // when
@@ -366,6 +381,7 @@ final class FilesViewModelTests {
             WireDriveNode.fixture(path: "some-cell/\(i).jpg", modified: nil, ownerUserName: nil)
         }
         nodesRepository.getNodes_MockMethod = { _ in (nodes: nodes, nextOffset: 10) }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         await sut.reload()
         #expect(sut.state.items.count == 10)
@@ -543,7 +559,7 @@ final class FilesViewModelTests {
         localAssetRepository.assetNodeID_MockMethod = { nodeID in
             assets[nodeID]
         }
-        localAssetRepository.downloadAssetNodeID_MockMethod = { nodeID in
+        localAssetRepository.downloadAssetNodeIDIsAvailableOffline_MockMethod = { nodeID, _ in
             assets[nodeID] = WireDriveLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
         }
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
@@ -575,7 +591,7 @@ final class FilesViewModelTests {
 
     @Test
     func testOfflineBarIsHiddenWhenItemsAreEmpty() {
-        sut.connectionState = .offline
+        networkMonitor.currentStatus = .disconnected
         sut.state = .received(items: [])
 
         #expect(sut.shouldShowOfflineBar == false)
@@ -586,7 +602,8 @@ final class FilesViewModelTests {
         let nodeA = WireDriveNode.fixture(path: "foo/aa.xyz")
         let now = Date()
 
-        sut.connectionState = .offline
+        networkMonitor.currentStatus = .disconnected
+
         sut.state = .received(items: [
             FilesViewItem(
                 id: nodeA.id,
@@ -608,4 +625,10 @@ final class FilesViewModelTests {
         #expect(sut.shouldShowOfflineBar == true)
     }
 
+}
+
+private final class MockNWPathMonitoring: NWPathMonitoring {
+    var pathUpdateHandler: (@Sendable (NWPath) -> Void)?
+
+    func start(queue: DispatchQueue) {}
 }
