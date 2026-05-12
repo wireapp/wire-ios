@@ -152,6 +152,7 @@
 "settings.deviceCount.hint" = "%@ verwendete Geräte";
 "settings.closeButton.description" = "Einstellungen schließen";
 "settings.backButton.description" = "Zurück zu Einstellungen";
+"settings.shareDebugInfoBanner.arrow" = "Doppeltippen, um weitere Optionen zu öffnen";
 
 "accountSettings.backButton.description" = "Zurück zum Benutzerkonto";
 
