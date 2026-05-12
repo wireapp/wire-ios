@@ -383,7 +383,7 @@ class TestServicesClient {
 
         return RuntimeError(message)
     }
-  
+
     func sendPing(
         user: UserInfo,
         conversationId: UUID,
