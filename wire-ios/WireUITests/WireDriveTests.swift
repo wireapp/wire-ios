@@ -255,7 +255,7 @@ final class WireDriveTests: WireUITestCase {
         // THEN
         XCTAssertTrue(sharedDrivePage.verifyFolderIsCreated(folderName: folderName))
     }
-    
+
     @MainActor
     func testSearchingForFileByName_TC_8962() async throws {
 
@@ -272,18 +272,18 @@ final class WireDriveTests: WireUITestCase {
 
         let positiveSearchTerm = sharedFileName.prefix(3).lowercased()
         let negativeSearchTerm = "my precious"
-        
+
         let searchTextField = sharedDrivePage.searchTextField
         searchTextField.tap()
-        
+
         searchTextField.typeText(positiveSearchTerm)
         try? await Task.sleep(for: .seconds(1))
         let positiveSearchResults = sharedDrivePage.numberOfFilesInList
-        
+
         searchTextField.typeText(negativeSearchTerm)
         try? await Task.sleep(for: .seconds(1))
         let negativeSearchResults = sharedDrivePage.numberOfFilesInList
-        
+
         // THEN
         XCTAssertEqual(positiveSearchResults, 1)
         XCTAssertEqual(negativeSearchResults, 0)
