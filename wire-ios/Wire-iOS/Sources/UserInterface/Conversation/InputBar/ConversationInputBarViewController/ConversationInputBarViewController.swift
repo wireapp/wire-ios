@@ -1095,6 +1095,12 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let didTouchWireDriveAttachments = touch.view?.isDescendant(of: inputBar.attachmentsContainer) == true
+        // discards gesture, already handled by `AttachmentsCarouselItemView`
+        if didTouchWireDriveAttachments {
+            return false
+        }
+
         if singleTapGestureRecognizer == gestureRecognizer {
             return true
         }
@@ -1149,9 +1155,15 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                         showConfirmationForVideo(url: draft.assetURL)
                     }
                 },
-                onRemove: { [deleteDraftUseCase] item in
+                onRemove: { [attachmentsCarouselViewModel, deleteDraftUseCase] item in
+                    guard let draft = attachmentsCarouselViewModel.draft(for: item),
+                          let localIdentifier = draft.localIdentifier else { return }
+
                     Task.detached {
                         try? await deleteDraftUseCase.invoke(nodeID: item.id)
+                        await self.cameraKeyboardViewController?.deselectItem(
+                            withLocalIdentifier: localIdentifier
+                        )
                     }
                 },
                 onRetry: { [retryUploadDraftUseCase] item in

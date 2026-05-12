@@ -167,7 +167,9 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             asset: .video(url: url),
             onConfirm: { [unowned self] _ in
                 dismiss(animated: true)
-                if !useWireDrive() {
+                if useWireDrive() {
+                    showCamera()
+                } else {
                     uploadFiles(at: [url])
                 }
             },
@@ -217,6 +219,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     }
 
                     if self.useWireDrive() {
+                        self.showCamera()
+
                         if isFromCamera || editedImage != nil {
                             self.uploadDraft(
                                 data: dataToSend,
@@ -239,9 +243,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             },
             onCancel: { [weak self] in
                 self?.dismiss(animated: true) {
-                    self?.mode = .camera
-                    self?.inputBar.textView
-                        .becomeFirstResponder()
+                    self?.showCamera()
                 }
             }
         )
@@ -255,6 +257,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         view.window?.endEditing(true)
         present(confirmImageViewController, animated: true)
+    }
+
+    func showCamera() {
+        mode = .camera
+        inputBar.textView.becomeFirstResponder()
     }
 
     private func executeWithCameraRollPermission(_ closure: @escaping (_ success: Bool) -> Void) {
