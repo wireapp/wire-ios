@@ -69,21 +69,29 @@ def release_info(release, asset):
     }
 
 
-def resolve_release(ref):
-    api = f"https://api.github.com/repos/{REPOSITORY}/releases"
+def release_from_ref(api, ref):
+    if not RELEASE_RE.match(ref):
+        raise RuntimeError(f"Invalid Kalium Testservice ref: {ref}")
 
-    if ref:
-        if not RELEASE_RE.match(ref):
-            raise RuntimeError(f"Invalid Kalium Testservice ref: {ref}")
+    print(f"Resolving Kalium Testservice release: {ref}")
+    release = github_json(f"{api}/tags/{ref}")
+    asset = testservice_jar(release)
+    if not asset:
+        raise RuntimeError(f"Release {ref} has no unique testservice fat jar")
+    return release_info(release, asset)
 
-        print(f"Resolving Kalium Testservice release: {ref}")
-        release = github_json(f"{api}/tags/{ref}")
-        asset = testservice_jar(release)
-        if not asset:
-            raise RuntimeError(f"Release {ref} has no unique testservice fat jar")
-        return release_info(release, asset)
 
-    print("Resolving latest Kalium Testservice release")
+def release_candidate(release):
+    match = RELEASE_RE.match(release.get("tag_name", ""))
+    asset = testservice_jar(release)
+    if not match or not asset:
+        return None
+
+    version = tuple(int(part) for part in match.groups())
+    return version, release, asset
+
+
+def latest_testservice_release(api):
     latest = None
 
     for page in range(1, 11):
@@ -92,14 +100,9 @@ def resolve_release(ref):
             break
 
         for release in releases:
-            match = RELEASE_RE.match(release.get("tag_name", ""))
-            asset = testservice_jar(release)
-            if not match or not asset:
-                continue
-
-            version = tuple(int(part) for part in match.groups())
-            if latest is None or version > latest[0]:
-                latest = (version, release, asset)
+            candidate = release_candidate(release)
+            if candidate and (latest is None or candidate[0] > latest[0]):
+                latest = candidate
 
     if latest is None:
         raise RuntimeError("No Kalium Testservice release with a fat jar found")
@@ -107,9 +110,19 @@ def resolve_release(ref):
     return release_info(latest[1], latest[2])
 
 
+def resolve_release(ref):
+    api = f"https://api.github.com/repos/{REPOSITORY}/releases"
+
+    if ref:
+        return release_from_ref(api, ref)
+
+    print("Resolving latest Kalium Testservice release")
+    return latest_testservice_release(api)
+
+
 def download_jar(info, jar_path):
     jar_path.parent.mkdir(parents=True, exist_ok=True)
-    marker_path = jar_path.with_name(f"{jar_path.name}.version")
+    marker_path = jar_path.parent / "testservice.jar.version"
 
     if jar_path.is_file() and jar_path.stat().st_size > 0 and marker_path.is_file():
         marker = marker_path.read_text(encoding="utf-8").strip()
@@ -117,7 +130,7 @@ def download_jar(info, jar_path):
             print(f"Using cached Kalium Testservice jar: {jar_path}")
             return
 
-    temp_path = jar_path.with_name(f"{jar_path.name}.download")
+    temp_path = jar_path.parent / "testservice.jar.download"
     temp_path.unlink(missing_ok=True)
 
     print(f"Downloading Kalium Testservice jar: {info['asset_name']}")
