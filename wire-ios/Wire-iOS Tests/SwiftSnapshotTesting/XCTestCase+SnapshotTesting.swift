@@ -220,11 +220,10 @@ extension Snapshotting where Value == UIView, Format == UIImage {
                 .compactMap { $0 as? UIWindowScene }
                 .first
 
-            let window: UIWindow
-            if let windowScene {
-                window = UIWindow(windowScene: windowScene)
+            let window = if let windowScene {
+                UIWindow(windowScene: windowScene)
             } else {
-                window = UIWindow(frame: .zero)
+                UIWindow(frame: .zero)
             }
             window.frame = CGRect(origin: .zero, size: size)
             let rootViewController = UIViewController()

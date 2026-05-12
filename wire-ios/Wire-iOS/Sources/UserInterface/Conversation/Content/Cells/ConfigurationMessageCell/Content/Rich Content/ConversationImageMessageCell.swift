@@ -80,7 +80,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         containerView.layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         containerView.layer.borderWidth = 0
         containerView.layer.masksToBounds = true
-        containerView.backgroundColor = .green
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
 
         containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
