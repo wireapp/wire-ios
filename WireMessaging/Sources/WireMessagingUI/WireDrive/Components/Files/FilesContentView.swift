@@ -128,6 +128,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
         }
         .task {
             await viewModel.setup()
+            await viewModel.reload()
         }
     }
 

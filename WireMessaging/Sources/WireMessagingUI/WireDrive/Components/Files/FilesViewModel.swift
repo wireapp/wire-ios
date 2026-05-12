@@ -142,10 +142,9 @@ package final class FilesViewModel: ObservableObject {
 
     func setup() async {
         setupFilesLoader()
-        fetchConversations()
-        fetchTemplates()
+        await fetchConversations()
+        await fetchTemplates()
         bindSearch()
-        Task { await reload() }
     }
 
     func setupFilesLoader() {
@@ -196,25 +195,21 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: fetch general data
 
-    private func fetchTemplates() {
-        Task {
-            do {
-                templates = try await useCases.getFileTemplates.invoke()
-            } catch {
-                WireLogger.wireDrive.error("Failed to fetch templates: \(error)", attributes: .safePublic)
-            }
+    private func fetchTemplates() async {
+        do {
+            templates = try await useCases.getFileTemplates.invoke()
+        } catch {
+            WireLogger.wireDrive.error("Failed to fetch templates: \(error)", attributes: .safePublic)
         }
     }
 
-    private func fetchConversations() {
-        Task {
-            let allDriveConversations = await useCases.getDriveConversations.invoke()
+    private func fetchConversations() async {
+        let allDriveConversations = await useCases.getDriveConversations.invoke()
 
-            if let cellName {
-                conversations = allDriveConversations.filter { $0.id == cellName }
-            } else {
-                conversations = allDriveConversations
-            }
+        if let cellName {
+            conversations = allDriveConversations.filter { $0.id == cellName }
+        } else {
+            conversations = allDriveConversations
         }
     }
 
