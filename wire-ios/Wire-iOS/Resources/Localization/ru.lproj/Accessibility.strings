@@ -153,6 +153,7 @@
 "settings.deviceCount.hint" = "Используемые устройства %@";
 "settings.closeButton.description" = "Закрыть настройки";
 "settings.backButton.description" = "Вернуться в раздел Настройки";
+"settings.shareDebugInfoBanner.arrow" = "Нажмите дважды, чтобы открыть дополнительные параметры";
 
 "accountSettings.backButton.description" = "Вернуться в раздел Аккаунт";
 
@@ -287,7 +288,7 @@
 "calling.microphoneOff.description" = "Микрофон отключен";
 "calling.cameraOn.description" = "Камера включена";
 "calling.cameraOff.description" = "Камера отключена";
-"calling.activeSpeaker.description" = "Активный динамик";
+"calling.activeSpeaker.description" = "Активный спикер";
 "calling.sharesScreen.description" = "Демонстрация экрана";
 "calling.swipeUpParticipants.hint" = "Двойное касание для пролистывания вверх и просмотра всех данных участника";
 "calling.swipeDownParticipants.hint" = "Двойное касание для пролистывания вниз и скрытия данных участника";

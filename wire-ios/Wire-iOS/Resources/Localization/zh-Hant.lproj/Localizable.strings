@@ -1020,11 +1020,11 @@
 "profile.connection_request_dialog.button_cancel" = "忽略";
 "profile.connection_request_dialog.button_connect" = "加為連絡人";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "要刪除群組對話嗎?";
-"conversation.delete_request_dialog.message" = "這將刪除本群組和所有設備上的所有參與者的所有內容。您將無法以任何方式恢復，並將通知所有參與者。";
-"conversation.delete_request_error_dialog.title" = "試圖刪除群組%@時出錯。請再試。";
-"conversation.delete_request_error_dialog.button_delete_group" = "刪除群組";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Delete conversation?";
+"conversation.delete_request_dialog.message" = "This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.";
+"conversation.delete_request_error_dialog.title" = "An error occurred while trying to delete the conversation %@. Please try again.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Delete Conversation";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "取消請求？";
@@ -1052,7 +1052,7 @@
 "profile.read_receipts_disabled_memo.header" = "您已停用讀取回條";
 "profile.read_receipts_memo.body" = "如果雙方都打開讀取回條，則可以查看何時讀取信息。您可以在帳戶設置中更改此選項。";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "資訊";
 
@@ -1435,16 +1435,27 @@
 "self.settings.technical_report_section.title" = "錯誤回報";
 "self.settings.technical_report.send_report" = "Send Report";
 "self.settings.technical_report.share_report" = "Share Report Via Wire";
-"self.settings.technical_report.mail.subject" = "Wire除錯報告";
+"self.settings.technical_report.mail.subject" = "Issue report";
 "self.settings.technical_report.include_log" = "包含詳細日誌";
 "self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "詳細日誌可能包含個人資料";
 "self.settings.technical_report.no_mail_alert" = "沒有電郵程式。點擊「確定」並手動將日誌發送到：";
 
-"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
-"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
-"self.settings.technical_report.mail_body.section2" = "What Happened:";
-"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
+"self.settings.technical_report.mail_body.firstline" = "Explain what happened so that we can understand and reproduce the problem:";
+"self.settings.technical_report.mail_body.section1" = "What Happened?";
+"self.settings.technical_report.mail_body.section2" = "When did it happen?";
+"self.settings.technical_report.mail_body.section3" = "Add steps to reproduce (if relevant):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Having trouble?";
+"self.settings.share_debug_report.banner.message" = "To improve Wire's quality, please send us your feedback and let us know about any problems.";
+"self.settings.share_debug_report.creating_report" = "Creating debug report...";
+"self.settings.share_debug_report.action_sheet.title" = "Having trouble?";
+"self.settings.share_debug_report.action_sheet.message" = "You can send your report to Wire support, share it with your administrator directly via Wire or any other app.";
+"self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
+"self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
+"self.settings.share_debug_report.action_sheet.share" = "Share";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "重設密碼";
 

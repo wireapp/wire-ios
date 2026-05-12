@@ -28,6 +28,10 @@ public final class ProgressSpinner: UIView {
         didSet { updateSpinnerIcon() }
     }
 
+    public var textColor: UIColor = .white {
+        didSet { label.textColor = textColor }
+    }
+
     public var iconSize: CGFloat = 32 {
         didSet { updateSpinnerIcon() }
     }
@@ -37,6 +41,7 @@ public final class ProgressSpinner: UIView {
         set {
             label.text = newValue
             label.isHidden = newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            invalidateIntrinsicContentSize()
         }
     }
 
@@ -82,6 +87,7 @@ public final class ProgressSpinner: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
 
+        spinner.accessibilityElementsHidden = true
         spinner.contentMode = .center
         updateSpinnerIcon()
         stackView.addArrangedSubview(spinner)
@@ -133,7 +139,7 @@ public final class ProgressSpinner: UIView {
     }
 
     public override var intrinsicContentSize: CGSize {
-        spinner.image?.size ?? super.intrinsicContentSize
+        stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
 
     private func startAnimationInternal() {

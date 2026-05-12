@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Network
 import SwiftUI
 import WireDesign
 import WireFoundation
@@ -48,6 +49,7 @@ final class FilesViewTests: XCTestCase {
     private var makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase!
     private var removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase!
     private var fetchOfflineAvailableAssetsUseCase: WireDriveFetchOfflineAvailableAssetsUseCase!
+    private var networkMonitor: NetworkMonitor!
 
     private let record: Bool? = nil
 
@@ -115,6 +117,9 @@ final class FilesViewTests: XCTestCase {
         fetchOfflineAvailableAssetsUseCase = WireDriveFetchOfflineAvailableAssetsUseCase(
             localAssetRepository: localAssetsRepository
         )
+
+        networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
+        networkMonitor.currentStatus = .connected
     }
 
     @MainActor
@@ -132,6 +137,7 @@ final class FilesViewTests: XCTestCase {
         updatePublicLinkExpiration = nil
         updatePublicLinkPassword = nil
         driveConversationsUseCase = nil
+        networkMonitor = nil
     }
 
     @MainActor
@@ -392,7 +398,8 @@ final class FilesViewTests: XCTestCase {
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
             nodesRepository: nodesRepository,
-            isBrowsing: false
+            isBrowsing: false,
+            networkMonitor: networkMonitor
         )
 
         filesViewModel.filesListLoader.loader.state = state
@@ -433,4 +440,10 @@ private extension FilesItemViewModel {
         )
     }
 
+}
+
+private final class MockNWPathMonitoring: NWPathMonitoring {
+    var pathUpdateHandler: (@Sendable (NWPath) -> Void)?
+
+    func start(queue: DispatchQueue) {}
 }
