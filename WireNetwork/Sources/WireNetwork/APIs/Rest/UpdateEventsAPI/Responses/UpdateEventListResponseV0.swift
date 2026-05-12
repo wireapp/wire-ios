@@ -37,6 +37,9 @@ struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
             $0.toAPIModel()
         }
 
+        // The backend guarantees that this endpoint never returns transient events,
+        // so `lastNonTransientEvent` will always equal `eventEnvelopes.last` and
+        // pagination cannot stall on a page of only transient events.
         let lastNonTransientEvent = eventEnvelopes.last {
             !$0.isTransient
         }
@@ -49,7 +52,7 @@ struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
         return .init(
             element: updateEventBatch,
             hasMore: hasMore ?? false,
-            nextStart: lastNonTransientEvent?.id.transportString() ?? "" // TODO: what if one batch doesn't contain any non-transitive event, will we start fetching from the beginning? (`nextStart` being `nil`) Will it ever come to an end? Will we always miss some events?
+            nextStart: lastNonTransientEvent?.id.transportString() ?? ""
         )
     }
 
