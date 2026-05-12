@@ -71,7 +71,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             return try await determineAuthMethod(email: email, domain: domain)
         }
     }
-    
+
     @MainActor
     private func determineAuthMethod(email: String, domain: String) async throws -> AuthenticationMethod {
         let configuration: DomainRegistrationConfiguration
