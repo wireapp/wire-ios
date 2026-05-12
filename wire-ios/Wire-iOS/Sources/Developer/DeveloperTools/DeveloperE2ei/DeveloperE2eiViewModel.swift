@@ -50,7 +50,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
     func enrollCertificate() {
         guard
             let session = userSession,
-            let topmostViewController = UIApplication.shared.topmostViewController()
+            let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
         else { return }
 
         let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
