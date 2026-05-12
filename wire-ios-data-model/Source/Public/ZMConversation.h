@@ -68,7 +68,7 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
 @property (readonly, nonatomic, nullable) NSDate *lastModifiedDate;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *allMessages;
 @property (readonly, nonatomic, nonnull) NSArray<ZMUser *> *sortedActiveParticipants;
-@property (readonly, nonatomic, nonnull) ZMUser *creator;
+@property (readonly, nonatomic, nullable) ZMUser *creator;
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadCount;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadSelfMentionCount;
