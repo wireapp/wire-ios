@@ -46,7 +46,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.descendants(matching: .any).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+        app.descendants(matching: .textView).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
 
     var mentionButton: XCUIElement {
@@ -188,16 +188,10 @@ class ActiveConversationPage: PageModel {
     }
 
     func fetchMessages() -> [String] {
-        var messages: [String] = []
-        for i in 0 ..< messageLabels.count {
-            let element = messageLabels.element(boundBy: i)
-            if let value = element.value as? String {
-                // Normalize spaces inserted by UI
-                let normalized = value.replacingOccurrences(of: "\u{00A0}", with: " ")
-                messages.append(normalized)
-            }
+        messageLabels.allElementsBoundByIndex.compactMap { element in
+            let text = element.label.isEmpty ? element.value as? String : element.label
+            return text?.replacingOccurrences(of: "\u{00A0}", with: " ")
         }
-        return messages
     }
 
     func fetchFileNames() -> [String] {
