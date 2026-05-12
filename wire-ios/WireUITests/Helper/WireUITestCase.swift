@@ -39,6 +39,7 @@ class WireUITestCase: XCTestCase {
         XCUIApplication().terminate()
         callingServiceClient = try CallingServiceClient()
         registerNotificationPermissionMonitor()
+        uiTestConfig.useTripleTapForShakeGesture = true
 
         let launchArguments = [
             "-resetData",
@@ -137,6 +138,10 @@ class WireUITestCase: XCTestCase {
                 allowButton.tap()
                 return true
             }
+    }
+
+    func simulateShakeGesture() {
+        app.tap(withNumberOfTaps: 3, numberOfTouches: 1)
     }
 }
 
