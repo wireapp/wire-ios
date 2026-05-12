@@ -169,7 +169,7 @@ extension XCTestCase {
 
         let failure = verifySnapshot(
             matching: value,
-            as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+            as: .inPlaceImage(precision: precision, perceptualPrecision: perceptualPrecision),
             named: name,
             record: record,
             snapshotDirectory: snapshotDirectory(file: file),
@@ -189,6 +189,70 @@ extension Snapshotting where Value == UIAlertController, Format == UIImage {
     /// Compare UIAlertController.view to prevert the view is resized to fix the default UIViewController.view's size
     static var image: Snapshotting<UIAlertController, UIImage> {
         Snapshotting<UIView, UIImage>.image(precision: 1, size: nil).pullback { $0.view }
+    }
+}
+
+extension Snapshotting where Value == UIView, Format == UIImage {
+
+    /// Renders the view in a real key window at origin (0, 0) so that UITextView/TextKit
+    /// has a non-offscreen host. The default `.image(drawHierarchyInKeyWindow:)` strategy
+    /// moves the view to (10_000, 10_000) before drawing, which causes long-text TextKit
+    /// rendering to fail intermittently in offscreen snapshot tests.
+    static func inPlaceImage(
+        precision: Float = 1,
+        perceptualPrecision: Float = 1
+    ) -> Snapshotting<UIView, UIImage> {
+        Snapshotting<UIImage, UIImage>.image(
+            precision: precision,
+            perceptualPrecision: perceptualPrecision
+        )
+        .pullback { (view: UIView) -> UIImage in
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            let size = view.bounds.size
+
+            // Host the view in a key window that is at least as tall as the view *and*
+            // the main screen. Using only the view's size can leave UITextView's tiled
+            // rendering thinking content overflows the window, which causes long text
+            // to render blank at narrow widths.
+            let screenSize = UIScreen.main.bounds.size
+            let windowSize = CGSize(
+                width: max(size.width, screenSize.width),
+                height: max(size.height, screenSize.height)
+            )
+            let window = UIWindow(frame: CGRect(origin: .zero, size: windowSize))
+            let rootViewController = UIViewController()
+            window.rootViewController = rootViewController
+            window.makeKeyAndVisible()
+            rootViewController.view.frame = window.bounds
+            rootViewController.view.addSubview(view)
+            view.frame = CGRect(origin: .zero, size: size)
+            window.layoutIfNeeded()
+
+            // Force TextKit 1 layout managers in the subtree to fully lay out their
+            // text containers before drawing — without this, long text in offscreen
+            // UITextViews can render as blank.
+            forceTextKitLayout(in: view)
+
+            defer {
+                view.removeFromSuperview()
+                window.isHidden = true
+            }
+
+            let renderer = UIGraphicsImageRenderer(bounds: view.bounds)
+            return renderer.image { _ in
+                view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+            }
+        }
+    }
+}
+
+private func forceTextKitLayout(in view: UIView) {
+    if let textView = view as? UITextView {
+        textView.layoutManager.ensureLayout(for: textView.textContainer)
+    }
+    for subview in view.subviews {
+        forceTextKitLayout(in: subview)
     }
 }
 
