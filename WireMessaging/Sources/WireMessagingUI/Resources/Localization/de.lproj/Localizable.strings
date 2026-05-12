@@ -130,6 +130,8 @@
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Tags hinzufügen oder entfernen";
 "conversation.wireCells.files.item.menu.delete" = "Endgültig löschen";
 "conversation.wireCells.files.item.menu.versionHistory" = "Versionsverlauf";
+"conversation.wireCells.files.item.menu.makeAvailableOffline" = "Offline bereitstellen";
+"conversation.wireCells.files.item.menu.removeAvailableOffline" = "Offlinezugriff entfernen";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Dies wird die Datei %@ für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Endgültig löschen";
 "conversation.wireCells.files.item.menu.delete" = "Löschen";
@@ -142,6 +144,7 @@
 "conversation.wireCells.allFiles.noData.title" = "Es gibt noch keine Dateien";
 "conversation.wireCells.allFiles.noData.message" = "Bei Unterhaltungen mit Geteiltes Drive finden Sie hier die geteilten Dateien.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Mehr erfahren";
+"conversation.wireCells.files.emptyFolder.message" = "Fügen Sie Dateien zu diesem Ordner hinzu, um organisiert zu bleiben.";
 "conversation.wireCells.files.noSearchResults.title" = "Keine Ergebnisse gefunden";
 "conversation.wireCells.files.noSearchResults.message" = "Versuchen Sie, Ihre Suche anzupassen.";
 "conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
@@ -182,11 +185,14 @@
 "conversation.wireCells.files.readyToOpenAfterDownload" = "Bereit zum Öffnen";
 "conversation.wireCells.files.tapToCancelDownload" = "Tippen, um Laden abzubrechen";
 "conversation.wireCells.files.downloadFailed" = "Laden unmöglich, wiederholen";
+"conversation.wireCells.files.downloadingFile" = "Datei wird heruntergeladen...";
+"conversation.wireCells.files.offlineModeHint" = "Sie können weiterhin auf Ihre Offline-Dateien zugreifen.";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Erfahren Sie mehr über den Papierkorb";
 "conversation.wireCells.recycleBin.noData.message" = "Hier finden Sie alle gelöschten Dateien und Ordner.";
+"conversation.wireCells.recycleBin.emptyFolder.message" = "Dieser Ordner ist leer.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Endgültig löschen";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Endgültig löschen";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "Dies wird die Datei \"%@\" für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
