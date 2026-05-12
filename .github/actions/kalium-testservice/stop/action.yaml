@@ -2,7 +2,6 @@ name: "Stop Kalium"
 
 inputs:
   print_logs_on_failure:
-    description: Whether to print Kalium logs during cleanup
     required: false
     default: "false"
 

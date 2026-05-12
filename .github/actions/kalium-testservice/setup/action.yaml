@@ -2,7 +2,6 @@ name: "Setup Kalium Testservice"
 
 inputs:
   kalium_ref:
-    description: Optional Kalium testservice release tag to use. If empty, latest test-service-v* release with a fat jar is resolved.
     required: false
     default: ""
 
@@ -39,20 +38,21 @@ runs:
         distribution: temurin
         java-version: "17"
 
-    - name: Restore Kalium fat jar cache
+    - name: Restore Kalium Testservice jar cache
       id: jar-cache
       if: ${{ steps.kalium-release.outputs.available == 'true' }}
       continue-on-error: true
       uses: actions/cache/restore@v4
       with:
-        path: ${{ runner.temp }}/kalium-testservice/testservice.jar
+        path: ${{ runner.temp }}/kalium-testservice
         key: kalium-testservice-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-release.outputs.cache_key }}
 
-    - name: Download or restore Kalium Testservice jar
+    - name: Download Kalium Testservice jar
       id: kalium-jar
       if: ${{ steps.kalium-release.outputs.available == 'true' }}
       shell: bash
       env:
+        GITHUB_TOKEN: ${{ github.token }}
         JAR_PATH: ${{ runner.temp }}/kalium-testservice/testservice.jar
       run: |
         set -uo pipefail
@@ -61,10 +61,6 @@ runs:
         if ! python3 "$GITHUB_WORKSPACE/scripts/kalium-testservice-jar.py" \
           download \
           --ref "${{ steps.kalium-release.outputs.ref }}" \
-          --asset-name "${{ steps.kalium-release.outputs.asset_name }}" \
-          --asset-url "${{ steps.kalium-release.outputs.asset_url }}" \
-          --asset-digest "${{ steps.kalium-release.outputs.asset_digest }}" \
-          --asset-size "${{ steps.kalium-release.outputs.asset_size }}" \
           --output "$JAR_PATH"; then
           echo "::warning::Kalium Testservice jar download or verification failed. Continuing without Testservice."
           echo "ready=false" >> "$GITHUB_OUTPUT"
@@ -76,14 +72,14 @@ runs:
         echo "jar_path=$JAR_PATH" >> "$GITHUB_OUTPUT"
         echo "ready=true" >> "$GITHUB_OUTPUT"
         echo "Using jar: $JAR_PATH"
-        ls -la "$(dirname "$JAR_PATH")"
+        ls -lh "$JAR_PATH"
 
-    - name: Save Kalium fat jar cache
+    - name: Save Kalium Testservice jar cache
       if: ${{ steps.kalium-jar.outputs.ready == 'true' && steps.jar-cache.outputs.cache-hit != 'true' }}
       continue-on-error: true
       uses: actions/cache/save@v4
       with:
-        path: ${{ runner.temp }}/kalium-testservice/testservice.jar
+        path: ${{ runner.temp }}/kalium-testservice
         key: kalium-testservice-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-release.outputs.cache_key }}
 
     - name: Start Kalium Testservice
