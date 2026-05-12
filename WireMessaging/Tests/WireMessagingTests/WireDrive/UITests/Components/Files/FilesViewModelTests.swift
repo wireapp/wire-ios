@@ -154,6 +154,7 @@ final class FilesViewModelTests {
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
         #expect(sut.isLoading == false)
 
         // when
@@ -383,6 +384,7 @@ final class FilesViewModelTests {
             WireDriveNode.fixture(path: "some-cell/\(i).jpg", modified: nil, ownerUserName: nil)
         }
         nodesRepository.getNodes_MockMethod = { _ in (nodes: nodes, nextOffset: 10) }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         await sut.reload()
         #expect(sut.state.items.count == 10)
