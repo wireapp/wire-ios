@@ -35,7 +35,7 @@ final class FilesViewModelTests {
     private let sut: FilesViewModel
     private var itemsUpdates: [[FilesViewItem]] = []
     private var cancellables = Set<AnyCancellable>()
-    private var networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring())
+    private var networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
 
     init() {
         let nodesApi = MockNodesAPIProtocol()

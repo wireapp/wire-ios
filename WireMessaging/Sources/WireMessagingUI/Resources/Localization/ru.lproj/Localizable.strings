@@ -130,6 +130,8 @@
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Добавить или удалить теги";
 "conversation.wireCells.files.item.menu.delete" = "Удалить навсегда";
 "conversation.wireCells.files.item.menu.versionHistory" = "История версий";
+"conversation.wireCells.files.item.menu.makeAvailableOffline" = "Сделать доступным оффлайн";
+"conversation.wireCells.files.item.menu.removeAvailableOffline" = "Удалить оффлайн доступ";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Это приведет к необратимому удалению файла %@ для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Удалить навсегда";
 "conversation.wireCells.files.item.menu.delete" = "Удалить";
@@ -142,6 +144,7 @@
 "conversation.wireCells.allFiles.noData.title" = "Пока файлов нет";
 "conversation.wireCells.allFiles.noData.message" = "Для бесед, в которых используется общий диск, все файлы можно найти здесь.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Подробнее";
+"conversation.wireCells.files.emptyFolder.message" = "Добавляйте файлы в эту папку, чтобы сохранять порядок.";
 "conversation.wireCells.files.noSearchResults.title" = "Ничего не найдено";
 "conversation.wireCells.files.noSearchResults.message" = "Попробуйте изменить поиск.";
 "conversation.wireCells.files.pendingCells.title" = "Файлы загружаются";
@@ -182,11 +185,14 @@
 "conversation.wireCells.files.readyToOpenAfterDownload" = "Готов к открытию";
 "conversation.wireCells.files.tapToCancelDownload" = "Нажмите, чтобы отменить загрузку";
 "conversation.wireCells.files.downloadFailed" = "Не удалось загрузить, повторите попытку";
+"conversation.wireCells.files.downloadingFile" = "Загрузка файла...";
+"conversation.wireCells.files.offlineModeHint" = "Вы по-прежнему можете получить доступ к своим файлам в режиме оффлайн.";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Подробнее о корзине";
 "conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
+"conversation.wireCells.recycleBin.emptyFolder.message" = "Эта папка пуста.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Удалить навсегда";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Удалить навсегда";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "Это приведет к необратимому удалению файла \"%@\"  для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";

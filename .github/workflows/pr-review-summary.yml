@@ -36,7 +36,15 @@ jobs:
                             per_page: 100,
                         });
 
-                        const openPRs = prs.filter(pr => !pr.draft);
+                        const hasLabel = (pr, name) => pr.labels.some(l => l.name.toLowerCase() === name);
+                        const isWIP = (pr) => /\b(wip)\b|\[wip\]/i.test(pr.title) || hasLabel(pr, 'wip');
+                        const hasStaleLabel = (pr) => hasLabel(pr, 'stale');
+
+                        const totalPRs    = prs.length;
+                        const draftOrWIP  = prs.filter(pr => pr.draft || isWIP(pr));
+                        const openPRs     = prs.filter(pr => !pr.draft && !isWIP(pr));
+                        const stalePRs    = prs.filter(hasStaleLabel);
+                        const cherryPicks = prs.filter(pr => hasLabel(pr, 'cherry-pick'));
 
                         // ── 2. For each PR collect review state ──────────────────────────────────
                         const readyToMerge = [];  // ≥ REQUIRED_APPROVALS approvals
@@ -94,6 +102,14 @@ jobs:
                         const lines = [];
 
                         lines.push(`**📋 PR Review Summary — ${new Date().toDateString()}**`);
+                        lines.push('');
+
+                        lines.push('**Totals**');
+                        lines.push(`  • Total open PRs: ${totalPRs}`);
+                        lines.push(`  • Ready to review: ${openPRs.length}`);
+                        lines.push(`  • Draft or WIP: ${draftOrWIP.length}`);
+                        lines.push(`  • Stale: ${stalePRs.length}`);
+                        lines.push(`  • Cherry-picks 🍒: ${cherryPicks.length}`);
                         lines.push('');
 
                         const reviewers = Object.keys(reviewerMap).sort();

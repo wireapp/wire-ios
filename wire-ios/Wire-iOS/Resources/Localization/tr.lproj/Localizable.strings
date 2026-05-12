@@ -1020,11 +1020,11 @@
 "profile.connection_request_dialog.button_cancel" = "Yoksay";
 "profile.connection_request_dialog.button_connect" = "Bağlan";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "Grup sohbeti silinsin mi?";
-"conversation.delete_request_dialog.message" = "Bu, tüm cihazlardaki tüm katılımcılar için grubu ve tüm içeriği siler. İçeriği geri yüklemek için bir seçenek yoktur. Tüm katılımcılara bildirilecektir.";
-"conversation.delete_request_error_dialog.title" = "An error occurred while trying to delete the group %@. Please try again.";
-"conversation.delete_request_error_dialog.button_delete_group" = "Grubu sil";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Delete conversation?";
+"conversation.delete_request_dialog.message" = "This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.";
+"conversation.delete_request_error_dialog.title" = "An error occurred while trying to delete the conversation %@. Please try again.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Delete Conversation";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "İstek iptal edilsin mi?";
@@ -1052,7 +1052,7 @@
 "profile.read_receipts_disabled_memo.header" = "OKUNDU BİLGİLERİNİ DEVRE DIŞI BIRAKTINIZ";
 "profile.read_receipts_memo.body" = "Her iki taraf da okundu bilgisini açarsa, mesajların ne zaman okunduğunu görebilirsiniz.\n\nBu seçeneği hesap ayarlarınızdan değiştirebilirsiniz.";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Bilgi";
 
@@ -1435,16 +1435,27 @@
 "self.settings.technical_report_section.title" = "Hata Ayıklama Raporu";
 "self.settings.technical_report.send_report" = "Send Report";
 "self.settings.technical_report.share_report" = "Share Report Via Wire";
-"self.settings.technical_report.mail.subject" = "Wire Hata Ayıklama Raporu";
+"self.settings.technical_report.mail.subject" = "Issue report";
 "self.settings.technical_report.include_log" = "Detaylı günlüğü ekle";
 "self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Detaylı günlükler kişisel verilerinizi içerebilir";
 "self.settings.technical_report.no_mail_alert" = "Posta istemcisi algılanmadı. \"Tamam\" düğmesine dokunun ve günlükleri aşağıdakilere manuel olarak gönderin: ";
 
-"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
-"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
-"self.settings.technical_report.mail_body.section2" = "What Happened:";
-"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
+"self.settings.technical_report.mail_body.firstline" = "Explain what happened so that we can understand and reproduce the problem:";
+"self.settings.technical_report.mail_body.section1" = "What Happened?";
+"self.settings.technical_report.mail_body.section2" = "When did it happen?";
+"self.settings.technical_report.mail_body.section3" = "Add steps to reproduce (if relevant):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Having trouble?";
+"self.settings.share_debug_report.banner.message" = "To improve Wire's quality, please send us your feedback and let us know about any problems.";
+"self.settings.share_debug_report.creating_report" = "Creating debug report...";
+"self.settings.share_debug_report.action_sheet.title" = "Having trouble?";
+"self.settings.share_debug_report.action_sheet.message" = "You can send your report to Wire support, share it with your administrator directly via Wire or any other app.";
+"self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
+"self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
+"self.settings.share_debug_report.action_sheet.share" = "Share";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "Parolayı Sıfırla";
 
