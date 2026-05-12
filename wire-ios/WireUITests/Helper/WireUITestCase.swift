@@ -65,6 +65,7 @@ class WireUITestCase: XCTestCase {
         app?.terminate()
         app = nil
         await callingServiceClient.destroyCreatedInstances()
+        await testServicesClient.deleteInstances()
         await UserHelper.deleteCreatedUsers()
         await ssoHelper.cleanUpOktaResources()
     }

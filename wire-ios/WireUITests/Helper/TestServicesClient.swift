@@ -23,30 +23,44 @@ class TestServicesClient {
     let testServiceURL = "http://localhost:8080"
     let CONNECT_TIMEOUT: TimeInterval = 120
     let RESPONSE_TIMEOUT: TimeInterval = 120
-    let INSTANCE_CREATION_TIMEOUT: TimeInterval = 330
     private var instanceCache: [String: String] = [:]
+
+    // MARK: - Created instances log
+
+    private actor CreatedInstancesTracker {
+        private var ids: [String] = []
+
+        func add(_ id: String?) {
+            guard let id, !id.isEmpty, !ids.contains(id) else { return }
+            ids.append(id)
+        }
+
+        func drain() -> [String] {
+            defer { ids.removeAll() }
+            return ids
+        }
+    }
+
+    private let createdInstances = CreatedInstancesTracker()
 
     func sendHttpRequest(
         url: String,
-        body: [String: Any],
+        body: [String: Any]? = nil,
         requestType: String,
-        timeout: TimeInterval? = nil
     ) async throws -> (Data, URLResponse) {
         guard let requestUrl = URL(string: url) else { fatalError("Invalid URL") }
 
-        let requestTimeout = timeout ?? CONNECT_TIMEOUT
-        let responseTimeout = timeout ?? RESPONSE_TIMEOUT
-
         var request = URLRequest(url: requestUrl)
         request.httpMethod = requestType
-        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
-        request.timeoutInterval = requestTimeout
+        if let body {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+        }
+        request.timeoutInterval = CONNECT_TIMEOUT
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = requestTimeout
-        config.timeoutIntervalForResource = responseTimeout
+        config.timeoutIntervalForResource = RESPONSE_TIMEOUT
         let session = URLSession(configuration: config)
 
         let (responseData, response) = try await session.data(for: request)
@@ -80,7 +94,6 @@ class TestServicesClient {
             url: requestUrl.absoluteString,
             body: body,
             requestType: "PUT",
-            timeout: INSTANCE_CREATION_TIMEOUT
         )
 
         let pureResponse = response as! HTTPURLResponse
@@ -93,7 +106,44 @@ class TestServicesClient {
             from: responseData
         )
         instanceCache[email] = instanceResponse.instanceId
+        await createdInstances.add(instanceResponse.instanceId)
         return instanceResponse.instanceId
+    }
+
+    func deleteInstances() async {
+        let instanceIds = await createdInstances.drain()
+        guard !instanceIds.isEmpty else { return }
+
+        for instanceId in instanceIds {
+            let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)")
+            guard let requestUrl = url else { continue }
+
+            do {
+                print("Deleting Testservice instance \(instanceId)")
+                let (responseData, response) = try await sendHttpRequest(
+                    url: requestUrl.absoluteString,
+                    requestType: "DELETE"
+                )
+
+                let pureResponse = response as! HTTPURLResponse
+                if (200 ..< 300).contains(pureResponse.statusCode) {
+                    print("Deleted Kalium Testservice instance \(instanceId)")
+                } else {
+                    let error = httpError(url: requestUrl, response: pureResponse, data: responseData)
+                    print(
+                        "WARNING: Failed to delete Testservice instance \(instanceId): " +
+                            error.description
+                    )
+                }
+            } catch {
+                print(
+                    "WARNING: Failed to delete Testservice instance \(instanceId): " +
+                        "\(error)"
+                )
+            }
+        }
+
+        instanceCache.removeAll()
     }
 
     func createConversation(
