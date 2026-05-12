@@ -6143,14 +6143,14 @@ internal enum L10n {
             internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Issue report")
           }
           internal enum MailBody {
-            /// Please describe what happened below, so that we can understand and reproduce the problem:
-            internal static let firstline = L10n.tr("Localizable", "self.settings.technical_report.mail_body.firstline", fallback: "Please describe what happened below, so that we can understand and reproduce the problem:")
-            /// Date and Time of the issue occurred:
-            internal static let section1 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section1", fallback: "Date and Time of the issue occurred:")
-            /// What Happened:
-            internal static let section2 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section2", fallback: "What Happened:")
-            /// Steps to reproduce (if relevant):
-            internal static let section3 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section3", fallback: "Steps to reproduce (if relevant):")
+            /// Explain what happened so that we can understand and reproduce the problem:
+            internal static let firstline = L10n.tr("Localizable", "self.settings.technical_report.mail_body.firstline", fallback: "Explain what happened so that we can understand and reproduce the problem:")
+            /// What Happened?
+            internal static let section1 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section1", fallback: "What Happened?")
+            /// When did it happen?
+            internal static let section2 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section2", fallback: "When did it happen?")
+            /// Add steps to reproduce (if relevant):
+            internal static let section3 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section3", fallback: "Add steps to reproduce (if relevant):")
           }
         }
         internal enum TechnicalReportSection {
