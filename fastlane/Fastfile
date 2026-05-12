@@ -617,8 +617,13 @@ platform :ios do
             `xcrun simctl erase #{existing_simulator}`
         end
         ENV['IOS_SIM_ID'] = existing_simulator.strip
-    end
 
+        if ENV['GITHUB_ENV']
+            sh "echo IOS_SIM_ID=#{ENV['IOS_SIM_ID']} >> #{ENV['GITHUB_ENV']}"
+        end
+        sh "../scripts/seed-simulator-media.sh"
+    end
+    
     # Upload to AppStore
     def upload_app_store(options)
         build = Build.new(options: options)
