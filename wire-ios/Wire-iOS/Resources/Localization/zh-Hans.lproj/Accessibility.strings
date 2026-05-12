@@ -152,6 +152,7 @@
 "settings.deviceCount.hint" = "%@ 设备使用中";
 "settings.closeButton.description" = "关闭设置";
 "settings.backButton.description" = "返回设置";
+"settings.shareDebugInfoBanner.arrow" = "Double tap to open more options";
 
 "accountSettings.backButton.description" = "返回账户";
 
