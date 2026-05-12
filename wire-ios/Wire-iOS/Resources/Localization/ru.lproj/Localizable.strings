@@ -811,7 +811,7 @@
 "voice.mute_button.title" = "Микрофон";
 "voice.video_button.title" = "Камера";
 "voice.flip_video_button.title" = "Переключить камеру";
-"voice.speaker_button.title" = "Динамик";
+"voice.speaker_button.title" = "Спикер";
 "voice.cancel_button.title" = "Отменить";
 "voice.call_button.title" = "Позвонить";
 "voice.end_call_button.title" = "Завершить звонок";
@@ -849,7 +849,7 @@
 "call.participants.show_all" = "Участников (%d)";
 "call.participants.list.title" = "Участники";
 
-"call.overlay.switch_to.speakers" = "ДИНАМИКИ";
+"call.overlay.switch_to.speakers" = "СПЕКЕРЫ";
 "call.overlay.switch_to.all" = "ВСЕ";
 
 "call.grid.no_active_speakers" = "Нет активных видеоспикеров...";
@@ -903,8 +903,8 @@
 "call.actions.label.toggle_mute_on" = "Отключить уведомления";
 "call.actions.label.toggle_mute_off" = "Включить уведомления";
 "call.actions.label.flip_camera" = "Переключить камеру";
-"call.actions.label.toggle_speaker_on" = "Включить динамик";
-"call.actions.label.toggle_speaker_off" = "Отключить динамик";
+"call.actions.label.toggle_speaker_on" = "Включить спикера";
+"call.actions.label.toggle_speaker_off" = "Отключить спикера";
 "call.actions.label.accept_call" = "Принять вызов";
 "call.actions.label.reject_call" = "Отклонить вызов";
 "call.actions.label.terminate_call" = "Завершить звонок";
@@ -1020,11 +1020,11 @@
 "profile.connection_request_dialog.button_cancel" = "Игнорировать";
 "profile.connection_request_dialog.button_connect" = "Добавить в контакты";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "Удалить беседы группы?";
-"conversation.delete_request_dialog.message" = "Это приведет к удалению группы и всего содержимого для всех участников на всех устройствах. Восстановить контент будет невозможно. Все участники будут оповещены.";
-"conversation.delete_request_error_dialog.title" = "Произошла ошибка при попытке удалить группу %@. Пожалуйста, попробуйте еще раз.";
-"conversation.delete_request_error_dialog.button_delete_group" = "Удалить группу";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Удалить беседу?";
+"conversation.delete_request_dialog.message" = "Это приведет к удалению беседы и всего содержимого для всех участников на всех устройствах. Восстановить контент будет невозможно. Все участники будут оповещены.";
+"conversation.delete_request_error_dialog.title" = "Произошла ошибка при попытке удалить беседу %@. Пожалуйста, попробуйте еще раз.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Удалить беседу";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Отменить запрос?";
@@ -1052,7 +1052,7 @@
 "profile.read_receipts_disabled_memo.header" = "У ВАС ОТКЛЮЧЕНЫ ОТЧЕТЫ О ПРОЧТЕНИИ";
 "profile.read_receipts_memo.body" = "Если обе стороны включат отчеты о прочтении, вы сможете видеть когда были прочитаны ваши сообщения.\n\nЭтот параметр можно изменить в настройках вашего аккаунта.";
 
-"profile.group_admin_status_memo.body" = "Администратор может добавлять или удалять пользователей и приложения, обновлять настройки групп, а также изменять роли участников.";
+"profile.group_admin_status_memo.body" = "Администратор может добавлять или удалять пользователей и приложения, обновлять настройки бесед, а также изменять роли участников.";
 
 "profile.extended_metadata.header" = "Информация";
 
@@ -1435,16 +1435,27 @@
 "self.settings.technical_report_section.title" = "Отладочный отчет";
 "self.settings.technical_report.send_report" = "Отправить отчет";
 "self.settings.technical_report.share_report" = "Поделиться отчетом через Wire";
-"self.settings.technical_report.mail.subject" = "Отладочный отчет Wire";
+"self.settings.technical_report.mail.subject" = "Отчет о проблеме";
 "self.settings.technical_report.include_log" = "Включить подробный журнал";
 "self.settings.technical_report.info" = "Если при использовании Wire вы столкнулись с неожиданным поведением или ошибкой, то можете отправить отчет в нашу службу поддержки. Отчет об ошибке может содержать личную информацию. \n\nВы также можете поделиться журналами отладки непосредственно с администратором вашей команды через Wire.";
 "self.settings.technical_report.privacy_warning" = "Подробные журналы могут содержать личные данные";
 "self.settings.technical_report.no_mail_alert" = "Почтовый клиент не обнаружен. Нажмите \"OK\" и отправьте журналы вручную: ";
 
-"self.settings.technical_report.mail_body.firstline" = "Пожалуйста, заполните следующие поля";
-"self.settings.technical_report.mail_body.section1" = "Дата и время возникновения проблемы:";
-"self.settings.technical_report.mail_body.section2" = "Что случилось:";
-"self.settings.technical_report.mail_body.section3" = "Шаги для воспроизведения (если применимо):";
+"self.settings.technical_report.mail_body.firstline" = "Объясните, что произошло, чтобы мы могли понять и воспроизвести проблему:";
+"self.settings.technical_report.mail_body.section1" = "Что случилось?";
+"self.settings.technical_report.mail_body.section2" = "Когда это произошло?";
+"self.settings.technical_report.mail_body.section3" = "Добавьте шаги для воспроизведения (если необходимо):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Возникли проблемы?";
+"self.settings.share_debug_report.banner.message" = "Чтобы помочь улучшить качество работы Wire, присылайте нам свои отзывы и сообщайте о любых проблемах.";
+"self.settings.share_debug_report.creating_report" = "Создание отладочного отчета...";
+"self.settings.share_debug_report.action_sheet.title" = "Возникли проблемы?";
+"self.settings.share_debug_report.action_sheet.message" = "Вы можете отправить свой отчет в службу поддержки Wire, поделиться им со своим администратором напрямую через Wire или любое другое приложение.";
+"self.settings.share_debug_report.action_sheet.share_via_wire" = "Поделиться через Wire";
+"self.settings.share_debug_report.action_sheet.send_email" = "Отправить email в службу поддержки";
+"self.settings.share_debug_report.action_sheet.share" = "Поделится";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "Сбросить пароль";
 
