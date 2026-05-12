@@ -37,7 +37,7 @@ final class FilesViewModelTests {
     private var cancellables = Set<AnyCancellable>()
     private var networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring())
 
-    init() {
+    init() async {
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
@@ -112,10 +112,18 @@ final class FilesViewModelTests {
         localAssetRepository
             .refreshAssetMetadataNodeID_MockValue = (WireDriveNode.fixture(), WireDriveLocalAsset.fixture())
         localAssetRepository.downloadAssetNodeIDIsAvailableOffline_MockMethod = { _, _ in }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
+        nodesRepository.getNodes_MockMethod = { _ in
+            ([], 0)
+        }
+
+        await sut.setup()
 
         sut.filesListLoader.loader.$state.dropFirst().sink { [weak self] state in
             self?.itemsUpdates.append(state.items)
         }.store(in: &cancellables)
+
+        await sut.reload()
     }
 
     @Test
@@ -172,6 +180,8 @@ final class FilesViewModelTests {
         // given
         let node = WireDriveNode.fixture(path: "some-cell/a.jpg", modified: nil, ownerUserName: nil)
         nodesRepository.getNodes_MockMethod = { _ in (nodes: [node], nextOffset: nil) }
+
+        itemsUpdates = []
 
         // when
         await sut.reload()
@@ -454,10 +464,12 @@ final class FilesViewModelTests {
         let nodeA_V2 = WireDriveNode.fixture(uuid: nodeA.id, path: "foo/aaa.xyz", modified: now)
         let nodeD_V2 = WireDriveNode.fixture(uuid: nodeD.id, path: "foo/ccc.xyz")
 
-        nodesRepository.getNodes_MockValue = (
-            nodes: [nodeA, nodeB, nodeC, nodeD, nodeA_V2, nodeD_V2],
-            nextOffset: nil
-        )
+        nodesRepository.getNodes_MockMethod = { _ in
+            (
+                nodes: [nodeA, nodeB, nodeC, nodeD, nodeA_V2, nodeD_V2],
+                nextOffset: nil
+            )
+        }
 
         // when
         await sut.reload()
