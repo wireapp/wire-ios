@@ -59,6 +59,14 @@ public final class VerificationCodeViewModel: ObservableObject {
         return String(format: "%d:%02d", minutes, seconds)
     }
 
+    var resendButtonTitle: String {
+        if retryAfterSeconds > 0 {
+            return L10n.Localizable.VerificationCode.resendCodeAfterSeconds(formattedRetryTime)
+        } else {
+            return L10n.Localizable.VerificationCode.resendCode
+        }
+    }
+
     // MARK: - Dependencies
 
     package let factory: any Factory

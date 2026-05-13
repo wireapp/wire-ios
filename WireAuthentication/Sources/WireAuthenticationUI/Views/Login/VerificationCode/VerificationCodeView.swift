@@ -74,12 +74,8 @@ package struct VerificationCodeView: View {
                     await viewModel.requestVerificationCode()
                 }
             }, label: {
-                if viewModel.retryAfterSeconds > 0 {
-                    Text(Strings.VerificationCode.resendCodeAfterSeconds(viewModel.formattedRetryTime))
-                        .monospacedDigit()
-                } else {
-                    Text(Strings.VerificationCode.resendCode)
-                }
+                Text(viewModel.resendButtonTitle)
+                    .monospacedDigit()
             })
             .wireButtonStyle(.link)
             .disabled(viewModel.isResendButtonDisabled)
