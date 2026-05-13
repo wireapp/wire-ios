@@ -188,11 +188,17 @@ class ActiveConversationPage: PageModel {
     }
 
     func fetchMessages() -> [String] {
-        messageLabels.allElementsBoundByIndex.compactMap { element in
-            let text = element.label.isEmpty ? element.value as? String : element.label
-            return text?.replacingOccurrences(of: "\u{00A0}", with: " ")
-        }
-    }
+         var messages: [String] = []
+         for i in 0 ..< messageLabels.count {
+             let element = messageLabels.element(boundBy: i)
+             if let value = element.value as? String {
+                 // Normalize spaces inserted by UI
+                 let normalized = value.replacingOccurrences(of: "\u{00A0}", with: " ")
+                 messages.append(normalized)
+             }
+         }
+         return messages
+     }
 
     func fetchFileNames() -> [String] {
         var files: [String] = []
