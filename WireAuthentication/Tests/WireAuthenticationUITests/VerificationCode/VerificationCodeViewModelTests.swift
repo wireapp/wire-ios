@@ -278,13 +278,14 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
 
     // MARK: - resend tests
 
-    @MainActor @Test
-    func resend_whenSuccess_withInformSuccessFalse() async {
+    @MainActor
+    @Test
+    func `resend verification code success`() async {
         // given
         requestLoginVerificationCodeUseCase.invokeEmail_MockMethod = { _ in }
 
         // when
-        await sut.requestVerificationCode(informSuccess: false)
+        await sut.requestVerificationCode()
 
         // then
         #expect(isResendingCalls == [true, false])
@@ -292,41 +293,29 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         #expect(sut.alert == nil)
     }
 
-    @MainActor @Test
-    func resend_whenSuccess_withInformSuccessTrue() async {
-        // given
-        requestLoginVerificationCodeUseCase.invokeEmail_MockMethod = { _ in }
-
-        // when
-        await sut.requestVerificationCode(informSuccess: true)
-
-        // then
-        #expect(isResendingCalls == [true, false])
-        #expect(requestLoginVerificationCodeUseCase.invokeEmail_Invocations == ["abc@example.com"])
-        #expect(sut.alert == .verificationCodeSent(email: "abc@example.com"))
-    }
-
-    @MainActor @Test
-    func resend_withInvalidEmail() async {
+    @MainActor
+    @Test
+    func `resend verification code fails - invalid email`() async {
         // given
         requestLoginVerificationCodeUseCase
             .invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure.invalidEmail
 
         // when
-        await sut.requestVerificationCode(informSuccess: false)
+        await sut.requestVerificationCode()
 
         // then
         #expect(isResendingCalls == [true, false])
         #expect(sut.alert == .invalidEmail)
     }
 
-    @MainActor @Test
-    func resend_whenSomeOtherError() async {
+    @MainActor
+    @Test
+    func `resend verification code fails - unknown error`() async {
         // given
         requestLoginVerificationCodeUseCase.invokeEmail_MockError = URLError(.badURL)
 
         // when
-        await sut.requestVerificationCode(informSuccess: false)
+        await sut.requestVerificationCode()
 
         // then
         #expect(isResendingCalls == [true, false])
@@ -335,25 +324,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
 
     // MARK: - rate limit tests
 
-    @MainActor @Test
-    func resend_withTooManyRequestsError_showsAlert() async {
-        // given
-        requestLoginVerificationCodeUseCase
-            .invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure.tooManyRequests(
-                message: "Too many requests",
-                retryAfter: nil
-            )
-
-        // when
-        await sut.requestVerificationCode(informSuccess: false)
-
-        // then
-        #expect(isResendingCalls == [true, false])
-        #expect(sut.alert == .verificationCodeAlreadySent(email: "abc@example.com"))
-    }
-
-    @MainActor @Test
-    func resend_withTooManyRequestsError_withRetryAfter_startsCountdown() async {
+    @MainActor
+    @Test
+    func `resend verification code fails - too many requests`() async {
         // given
         requestLoginVerificationCodeUseCase
             .invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure.tooManyRequests(
@@ -362,13 +335,12 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
             )
 
         // when
-        await sut.requestVerificationCode(informSuccess: false)
+        await sut.requestVerificationCode()
 
         // then
         #expect(isResendingCalls == [true, false])
-        #expect(sut.alert == .verificationCodeAlreadySent(email: "abc@example.com"))
-        #expect(sut.retryAfterSeconds == 60)
         #expect(sut.isResendButtonDisabled == true)
+        #expect(sut.retryAfterSeconds == 60)
         #expect(sut.countdownTimer != nil)
     }
 

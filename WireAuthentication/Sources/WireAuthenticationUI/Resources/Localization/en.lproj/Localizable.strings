@@ -92,10 +92,7 @@
 "verification_code.message" = "Enter the verification code we sent to %@.";
 "verification_code.confirm" = "Confirm";
 "verification_code.resend_code" = "Resend Code";
-"verification_code.resend_code_after_seconds" = "Resend Code (%@s)";
-"verification_code.code_sent.alert_title" = "Check your inbox";
-"verification_code.code_sent.alert_message" = "A code was sent to %@.";
-"verification_code.code_already_sent.alert_message" = "A code was already sent to %@. You can request a new code later.";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@s)";
 
 "authentication.no_history.title" = "It’s the first time you’re using Wire on this device.";
 "authentication.no_history.message" = "For privacy reasons, your conversation history will not appear here.";

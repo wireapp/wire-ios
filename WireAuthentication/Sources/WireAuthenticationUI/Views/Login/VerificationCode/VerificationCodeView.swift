@@ -70,7 +70,9 @@ package struct VerificationCodeView: View {
             .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
-                Task.detached { await viewModel.requestVerificationCode(informSuccess: true) }
+                Task.detached {
+                    await viewModel.requestVerificationCode()
+                }
             }, label: {
                 if viewModel.retryAfterSeconds > 0 {
                     Text(Strings.VerificationCode.resendCodeAfterSeconds(viewModel.retryAfterSeconds))
@@ -103,7 +105,7 @@ package struct VerificationCodeView: View {
             }
         }
         .task {
-            await viewModel.requestVerificationCode(informSuccess: false)
+            await viewModel.requestVerificationCode()
         }
     }
 
