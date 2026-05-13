@@ -29,6 +29,7 @@ final class CallStatusViewController: UIViewController {
     private let stackView = UIStackView()
     private let statusView: CallStatusView
     private let securityLevelView = SecurityLevelView()
+    private let viewModel = CallStatusViewModel()
     private weak var callDurationTimer: Timer?
 
     init(configuration: CallStatusViewInputType) {
@@ -82,10 +83,13 @@ final class CallStatusViewController: UIViewController {
 
         securityLevelView.configure(with: configuration.classification)
 
-        switch configuration.state {
-        case .established: startCallDurationTimer()
-        case .terminating: stopCallDurationTimer()
-        default: break
+        switch viewModel.timerAction(for: configuration.state) {
+        case .start:
+            startCallDurationTimer()
+        case .stop:
+            stopCallDurationTimer()
+        case .keepCurrent:
+            break
         }
     }
 

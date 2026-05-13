@@ -29,6 +29,7 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     private var topConstraint: NSLayoutConstraint?
     weak var delegate: CallParticipantsListViewControllerDelegate?
     private let selfUser: UserType
+    private let viewModel: CallParticipantsListViewModel
 
     var participants: CallParticipantsList {
         didSet {
@@ -47,6 +48,7 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
         self.participants = participants
         self.showParticipants = showParticipants
         self.selfUser = selfUser
+        self.viewModel = CallParticipantsListViewModel(showParticipants: showParticipants)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -120,9 +122,7 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     }
 
     private func updateRows() {
-        collectionView?.rows = showParticipants
-            ? participants
-            : [.showAll(totalCount: participants.count)]
+        collectionView?.rows = viewModel.rows(for: participants)
     }
 
     func collectionView(
@@ -134,13 +134,11 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        guard case .showAll = self.collectionView.rows[indexPath.item] else { return false }
-        return true
+        viewModel.isShowAllRow(self.collectionView.rows[indexPath.item])
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        guard case .showAll = self.collectionView.rows[indexPath.item] else { return false }
-        return true
+        viewModel.isShowAllRow(self.collectionView.rows[indexPath.item])
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
