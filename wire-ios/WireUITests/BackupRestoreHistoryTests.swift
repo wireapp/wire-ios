@@ -32,17 +32,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .tapBackupNow()
             .enterBackupPasswordAndBackup(teamOwner.password)
 
-        XCTAssertTrue(
-            creatingBackupPage.backupSuccessfullyCreatedLabel.exists,
-            "Backup is unsuccessful"
-        )
-
-        let progressValue = creatingBackupPage.getBackupProgressValue()
-        XCTAssertEqual(
-            progressValue,
-            "100%",
-            "Progress is not 100%"
-        )
+        creatingBackupPage.verifyBackupIsCreatedSuccessfully()
 
         let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
         let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
@@ -86,7 +76,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
     }
 
     @MainActor
-    func testCreateBackupAndRestoreHistoryWithoutPassword_TC_8929() async throws {
+    func testCreateBackupAndRestoreHistoryWithoutPassword_TC_8927_8929() async throws {
         var (messageFromOwner, teamOwner, activeConversationPage) = try await createTeamConversationAndSendMessage()
 
         let backupOrRestorePage = try activeConversationPage.goBackToConversationPage()
@@ -97,17 +87,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
 
         let creatingBackupPage = try backupOrRestorePage.backupWithoutPassword()
 
-        XCTAssertTrue(
-            creatingBackupPage.backupSuccessfullyCreatedLabel.exists,
-            "Backup is unsuccessful"
-        )
-
-        let progressValue = creatingBackupPage.getBackupProgressValue()
-        XCTAssertEqual(
-            progressValue,
-            "100%",
-            "Progress is not 100%"
-        )
+        creatingBackupPage.verifyBackupIsCreatedSuccessfully()
 
         let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
         let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
@@ -180,6 +160,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         )
     }
 
+    @MainActor
     private func loginAndVerifyPreviousMessageIsNotShown(
         email: String,
         password: String,
