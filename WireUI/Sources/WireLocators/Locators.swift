@@ -177,6 +177,7 @@ public enum Locators {
         case backUpNow
         case restoreFromBackupButton
         case browse = "Browse"
+        case historyRestoredAlert = "Your history is restored."
     }
 
     public enum CreatingBackupPage: AutoPrefixedEnum {
