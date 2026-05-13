@@ -68,6 +68,10 @@ class AuthenticationStepController: AuthenticationStepViewController {
     private var contentCenter: NSLayoutConstraint!
     private var contentCenterConstraintActivation: Bool
     private var rightItemAction: AuthenticationCoordinatorAction?
+    private lazy var viewModel = AuthenticationStepViewModel(
+        initialValidation: initialValidation,
+        secondaryView: stepDescription.secondaryView
+    )
 
     var contentCenterYAnchor: NSLayoutYAxisAnchor {
         contentStack.centerYAnchor
@@ -443,31 +447,7 @@ extension AuthenticationStepController {
     }
 
     func updateValidation(_ suggestedValidation: ValueValidation?) {
-        switch suggestedValidation {
-        case let .info(infoText)?:
-            errorLabel.accessibilityIdentifier = "validation-rules"
-            errorLabel.text = infoText
-            errorLabel.textColor = UIColor.Team.placeholderColor
-            errorLabelContainer.isHidden = false
-            showSecondaryView(for: nil)
-
-        case let .error(error, showVisualFeedback)?:
-            UIAccessibility.post(notification: .screenChanged, argument: errorLabel)
-            if !showVisualFeedback {
-                // If we do not want to show an error (eg if all the text was deleted,
-                // either use the initial info or clear the error
-                return updateValidation(initialValidation)
-            }
-
-            errorLabel.accessibilityIdentifier = "validation-failure"
-            errorLabel.text = error.errorDescription
-            errorLabel.textColor = SemanticColors.Label.textErrorDefault
-            errorLabelContainer.isHidden = false
-            showSecondaryView(for: error)
-
-        case nil:
-            clearError()
-        }
+        render(viewModel.displayState(for: suggestedValidation))
     }
 }
 
@@ -475,12 +455,31 @@ extension AuthenticationStepController {
 
 extension AuthenticationStepController {
     func clearError() {
-        errorLabel.text = nil
-        errorLabelContainer.isHidden = true
-        showSecondaryView(for: nil)
+        render(viewModel.displayState(for: nil))
     }
 
-    func showSecondaryView(for error: Error?) {
+    private func render(_ displayState: AuthenticationStepViewModel.DisplayState) {
+        if displayState.shouldAnnounceValidationMessage {
+            UIAccessibility.post(notification: .screenChanged, argument: errorLabel)
+        }
+
+        errorLabel.accessibilityIdentifier = displayState.validationAccessibilityIdentifier
+        errorLabel.text = displayState.validationMessage
+        errorLabelContainer.isHidden = displayState.isValidationMessageHidden
+
+        switch displayState.validationMessageStyle {
+        case .info:
+            errorLabel.textColor = UIColor.Team.placeholderColor
+        case .error:
+            errorLabel.textColor = SemanticColors.Label.textErrorDefault
+        case nil:
+            break
+        }
+
+        showSecondaryView(with: displayState.secondaryErrorDescription)
+    }
+
+    private func showSecondaryView(with errorDescription: ViewDescriptor?) {
         if let view = secondaryErrorView {
             secondaryViewsStackView.removeArrangedSubview(view)
             view.removeFromSuperview()
@@ -488,7 +487,7 @@ extension AuthenticationStepController {
             secondaryErrorView = nil
         }
 
-        if let error, let errorDescription = stepDescription.secondaryView?.display(on: error) {
+        if let errorDescription {
             let view = errorDescription.create()
             secondaryErrorView = view
             secondaryViewsStackView.arrangedSubviews.forEach { $0.isHidden = true }

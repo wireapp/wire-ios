@@ -32,40 +32,29 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     typealias Registration = L10n.Localizable.Registration
     typealias TabBarStrings = L10n.Accessibility.TabBar
+    typealias FlowType = AuthenticationCredentialsViewModel.FlowType
     weak var actioner: AuthenticationActioner?
 
-    /// Types of flow provided by the view controller.
-    enum FlowType {
-        case login(AuthenticationPrefilledCredentials?)
-        case registration(AuthenticationPrefilledCredentials?)
-        case reauthentication(AuthenticationPrefilledCredentials?)
-    }
-
     /// The type of flow presented by the view controller.
-    private(set) var flowType: FlowType!
+    var flowType: FlowType {
+        viewModel.flowType
+    }
 
     /// The currently pre-filled credentials.
     var prefilledCredentials: AuthenticationPrefilledCredentials? {
         didSet {
+            viewModel?.prefilledCredentials = prefilledCredentials
             updatePrefilledCredentials()
         }
     }
 
     /// Whether we are in the registration flow.
     var isRegistering: Bool {
-        if case .registration? = flowType {
-            true
-        } else {
-            false
-        }
+        viewModel.isRegistering
     }
 
     var isReauthenticating: Bool {
-        if case .reauthentication? = flowType {
-            true
-        } else {
-            false
-        }
+        viewModel.isReauthenticating
     }
 
     override weak var authenticationCoordinator: AuthenticationCoordinator? {
@@ -87,6 +76,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     private var emailFieldValidationError: TextFieldValidator.ValidationError? = .tooShort(kind: .email)
     private var shouldUseScrollView = false
     private var loginActiveField: UIResponder? // used for login proxy case
+    private var viewModel: AuthenticationCredentialsViewModel!
 
     convenience init(
         flowType: FlowType,
@@ -96,22 +86,24 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         case let .login(credentials):
             let description = LogInStepDescription()
             self.init(description: description, contentCenterConstraintActivation: false)
+            self.viewModel = AuthenticationCredentialsViewModel(flowType: flowType)
             self.prefilledCredentials = credentials
-            self.shouldUseScrollView = true
+            self.shouldUseScrollView = viewModel.shouldUseScrollView
         case let .reauthentication(credentials):
             let description = ReauthenticateStepDescription(prefilledCredentials: credentials)
             self.init(description: description, contentCenterConstraintActivation: false)
+            self.viewModel = AuthenticationCredentialsViewModel(flowType: flowType)
             self.prefilledCredentials = credentials
-            self.shouldUseScrollView = true
+            self.shouldUseScrollView = viewModel.shouldUseScrollView
         case let .registration(credentials):
             let description = PersonalRegistrationStepDescription()
             self.init(description: description, contentCenterConstraintActivation: true)
+            self.viewModel = AuthenticationCredentialsViewModel(flowType: flowType)
             self.prefilledCredentials = credentials
-            self.shouldUseScrollView = false
+            self.shouldUseScrollView = viewModel.shouldUseScrollView
         }
 
         self.backendEnvironmentProvider = backendEnvironmentProvider
-        self.flowType = flowType
     }
 
     // MARK: - Views
@@ -291,27 +283,36 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     @objc
     func loginButtonTapped(sender: UIButton) {
-        guard isProxyCredentialsRequired else {
-            emailPasswordInputField.confirmButtonTapped()
-            return
+        let proxyUsername: String
+        let proxyPassword: String
+        if isProxyCredentialsRequired {
+            proxyUsername = proxyCredentialsViewController.usernameInput.input
+            proxyPassword = proxyCredentialsViewController.passwordInput.input
+        } else {
+            proxyUsername = ""
+            proxyPassword = ""
         }
 
-        let input: (EmailPasswordInput, AuthenticationProxyCredentialsInput?) = (
-            .init(
-                email: emailPasswordInputField.emailField.input,
-                password: emailPasswordInputField.passwordField.input
-            ),
-            .init(
-                username: proxyCredentialsViewController.usernameInput.input,
-                password: proxyCredentialsViewController.passwordInput.input
-            )
+        let route = viewModel.loginButtonTapped(
+            isProxyCredentialsRequired: isProxyCredentialsRequired,
+            email: emailPasswordInputField.emailField.input,
+            password: emailPasswordInputField.passwordField.input,
+            proxyUsername: proxyUsername,
+            proxyPassword: proxyPassword
         )
-        valueSubmitted(input)
+        switch route {
+        case .confirmEmailPasswordInput:
+            emailPasswordInputField.confirmButtonTapped()
+        case let .submitCredentials(emailPasswordInput, proxyCredentialsInput):
+            valueSubmitted((emailPasswordInput, proxyCredentialsInput))
+        default:
+            break
+        }
     }
 
     @objc
     func forgotPasswordTapped(sender: UIButton) {
-        actioner?.executeAction(.openURL(URL.wr_passwordReset))
+        complete(route: viewModel.forgotPasswordTapped())
     }
 
     override func createConstraints() {
@@ -356,18 +357,17 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     @objc
     func customBackendInfoViewTapped(sender: UITapGestureRecognizer) {
-        let intent = AuthenticationShowCustomBackendInfoHandler.Intent.showCustomBackendInfo
-        authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .userInput(intent))
+        complete(route: viewModel.customBackendInfoTapped())
     }
 
     private var contextualFirstResponder: UIResponder? {
-        switch flowType {
-        case .login:
+        switch viewModel.contextualFirstResponder {
+        case .emailPassword:
             emailPasswordInputField
-        case .registration:
+        case .email:
             emailInputField
-        case .reauthentication:
-            emailPasswordInputField
+        case .proxyUsername:
+            proxyCredentialsViewController.usernameInput
         case .none:
             .none
         }
@@ -384,20 +384,23 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     private func updateCredentialsType() {
         clearError()
 
-        emailPasswordInputField.isHidden = isRegistering
-        emailInputField.isHidden = !isRegistering
-        loginButton.isHidden = isRegistering
-        forgotPasswordButton.isHidden = isRegistering
+        let displayState = viewModel.displayState
+        emailPasswordInputField.isHidden = displayState.isEmailPasswordInputHidden
+        emailInputField.isHidden = displayState.isEmailInputHidden
+        loginButton.isHidden = displayState.isLoginButtonHidden
+        forgotPasswordButton.isHidden = displayState.isForgotPasswordButtonHidden
 
         setSecondaryViewHidden(false)
     }
 
     private func updatePrefilledCredentials() {
-        guard let prefilledCredentials else { return }
-        if isRegistering, let email = prefilledCredentials.credentials.emailAddress, !email.isEmpty {
+        switch viewModel.prefillTarget() {
+        case let .registrationEmail(email):
             emailInputField.text = email
-        } else {
-            emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
+        case let .emailPassword(email):
+            emailPasswordInputField.prefill(email: email)
+        case .none:
+            break
         }
     }
 
@@ -414,9 +417,42 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         (contextualFirstResponder as? MagicTappable)?.performMagicTap() == true
     }
 
+    private func complete(route: AuthenticationCredentialsViewModel.Route) {
+        switch route {
+        case let .submitEmail(email):
+            valueSubmitted(email)
+        case let .submitCredentials(emailPasswordInput, proxyCredentialsInput):
+            valueSubmitted((emailPasswordInput, proxyCredentialsInput))
+        case .confirmEmailPasswordInput:
+            emailPasswordInputField.confirmButtonTapped()
+        case let .focus(target):
+            focus(target)
+        case .openForgotPassword:
+            actioner?.executeAction(.openURL(URL.wr_passwordReset))
+        case .showCustomBackendInfo:
+            let intent = AuthenticationShowCustomBackendInfoHandler.Intent.showCustomBackendInfo
+            authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .userInput(intent))
+        case .none:
+            break
+        }
+    }
+
+    private func focus(_ target: AuthenticationCredentialsViewModel.FocusTarget) {
+        switch target {
+        case .email:
+            emailInputField.becomeFirstResponder()
+        case .emailPassword:
+            emailPasswordInputField.becomeFirstResponder()
+        case .proxyUsername:
+            proxyCredentialsViewController.usernameInput.becomeFirstResponder()
+        case .none:
+            break
+        }
+    }
+
     @objc
     private func emailConfirmButtonTapped(sender: IconButton) {
-        valueSubmitted(emailInputField.input)
+        complete(route: viewModel.emailConfirmed(emailInputField.input))
     }
 
     @objc
@@ -433,17 +469,14 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             return false
         }
 
-        valueSubmitted(emailInputField.input)
+        complete(route: viewModel.emailConfirmed(emailInputField.input))
         return true
     }
 
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         guard
-            DeveloperFlag.useWireAuthentication.isOn,
             textField == emailInputField,
-            isRegistering,
-            let prefilledCredentials,
-            prefilledCredentials.credentials.emailAddress != nil
+            !viewModel.canBeginEditingEmail(useWireAuthentication: DeveloperFlag.useWireAuthentication.isOn)
         else {
             return true
         }
@@ -458,36 +491,43 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     func textField(_ textField: EmailPasswordTextField, didConfirmCredentials credentials: (String, String)) {
-        guard !isProxyCredentialsRequired else {
-            proxyCredentialsViewController.usernameInput.becomeFirstResponder()
-            return
-        }
-        let input: (EmailPasswordInput, AuthenticationProxyCredentialsInput?) = (
-            EmailPasswordInput(email: credentials.0, password: credentials.1),
-            nil
+        complete(
+            route: viewModel.credentialsConfirmed(
+                email: credentials.0,
+                password: credentials.1,
+                isProxyCredentialsRequired: isProxyCredentialsRequired
+            )
         )
-        valueSubmitted(input)
     }
 
     func textFieldDidSubmitWithValidationError(_ textField: EmailPasswordTextField) {
-        guard !isProxyCredentialsRequired, !textField.isPasswordEmpty else {
-            proxyCredentialsViewController.usernameInput.becomeFirstResponder()
-            return
-        }
-        // no-op: we do not update the UI depending on the validity of the input
+        complete(
+            route: viewModel.credentialsSubmittedWithValidationError(
+                isProxyCredentialsRequired: isProxyCredentialsRequired,
+                isPasswordEmpty: textField.isPasswordEmpty
+            )
+        )
     }
 
     private func updateLoginButtonState() {
-        guard isProxyCredentialsRequired else {
-            loginButton.isEnabled = emailPasswordInputField.hasValidInput
-            return
+        let hasValidProxyUsername: Bool
+        let hasValidProxyPassword: Bool
+        if isProxyCredentialsRequired {
+            hasValidProxyUsername = proxyCredentialsViewController.usernameInput.isInputValid
+            hasValidProxyPassword = proxyCredentialsViewController.passwordInput.isInputValid
+        } else {
+            hasValidProxyUsername = false
+            hasValidProxyPassword = false
         }
-        let validEmailPassword = emailPasswordInputField.emailValidationError == nil && emailPasswordInputField
-            .passwordValidationError == nil
-        let validProxyCredentials = proxyCredentialsViewController.usernameInput
-            .isInputValid && proxyCredentialsViewController.passwordInput.isInputValid
-        loginButton.isEnabled = validEmailPassword &&
-            ((isProxyCredentialsRequired && validProxyCredentials) || !isProxyCredentialsRequired)
+
+        loginButton.isEnabled = viewModel.isLoginButtonEnabled(input: .init(
+            isProxyCredentialsRequired: isProxyCredentialsRequired,
+            hasValidEmailPasswordInput: emailPasswordInputField.hasValidInput,
+            hasValidEmail: emailPasswordInputField.emailValidationError == nil,
+            hasValidPassword: emailPasswordInputField.passwordValidationError == nil,
+            hasValidProxyUsername: hasValidProxyUsername,
+            hasValidProxyPassword: hasValidProxyPassword
+        ))
     }
 
     // MARK: - Proxy Credentials

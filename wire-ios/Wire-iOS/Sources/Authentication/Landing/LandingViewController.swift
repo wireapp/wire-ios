@@ -55,11 +55,13 @@ final class LandingViewController: AuthenticationStepViewController {
 
     weak var authenticationCoordinator: AuthenticationCoordinator?
 
-    typealias Landing = L10n.Localizable.Landing
-
     var delegate: LandingViewControllerDelegate? {
         authenticationCoordinator
     }
+
+    private let viewModel = LandingViewModel()
+    private var allowsDirectCompanyLogin = true
+    private var notificationObservers = [NSObjectProtocol]()
 
     // MARK: - UI Elements
 
@@ -88,7 +90,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     private let messageLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
-            text: Landing.welcomeMessage,
+            text: nil,
             fontSpec: .bodyTwoSemibold,
             color: SemanticColors.Label.textDefault
         )
@@ -102,7 +104,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     private let subMessageLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
-            text: Landing.welcomeSubmessage,
+            text: nil,
             fontSpec: .mediumRegularFont,
             color: SemanticColors.Label.textDefault
         )
@@ -132,7 +134,6 @@ final class LandingViewController: AuthenticationStepViewController {
             fontSpec: .buttonBigSemibold
         )
         button.accessibilityIdentifier = "Login"
-        button.setTitle(Landing.Login.Button.title, for: .normal)
         button.addTarget(
             self,
             action: #selector(loginButtonTapped(_:)),
@@ -149,8 +150,6 @@ final class LandingViewController: AuthenticationStepViewController {
             fontSpec: .buttonBigSemibold
         )
         button.accessibilityIdentifier = "Enterprise Login"
-        button.accessibilityLabel = L10n.Accessibility.Landing.LoginEnterpriseButton.description
-        button.setTitle(Landing.Login.Enterprise.Button.title, for: .normal)
         button.addTarget(
             self,
             action: #selector(enterpriseLoginButtonTapped(_:)),
@@ -167,7 +166,6 @@ final class LandingViewController: AuthenticationStepViewController {
             fontSpec: .buttonBigSemibold
         )
         button.accessibilityIdentifier = "Login with email"
-        button.setTitle(Landing.Login.Email.Button.title, for: .normal)
         button.addTarget(
             self,
             action: #selector(loginButtonTapped(_:)),
@@ -179,7 +177,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     private let createAccountInfoLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
-            text: Landing.CreateAccount.infotitle,
+            text: nil,
             fontSpec: .mediumRegularFont,
             color: SemanticColors.Label.textDefault
         )
@@ -197,7 +195,6 @@ final class LandingViewController: AuthenticationStepViewController {
             fontSpec: .buttonSmallBold
         )
         button.accessibilityIdentifier = "Create An Account"
-        button.setTitle(Landing.CreateAccount.title, for: .normal)
         button.addTarget(
             self,
             action: #selector(createAccountButtonTapped(_:)),
@@ -229,7 +226,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     @objc
     func customBackendInfoViewTapped(_: UIGestureRecognizer) {
-        delegate?.landingViewControllerDidChooseInfoBackend()
+        navigate(to: viewModel.routeForCustomBackendInfoTapped())
     }
 
     // MARK: - Constraints
@@ -269,24 +266,30 @@ final class LandingViewController: AuthenticationStepViewController {
 
         configureAccessibilityElements()
 
+        applyDisplayState()
         updateBarButtonItem()
-        updateCustomBackendLabels()
 
-        NotificationCenter.default.addObserver(
+        let accountUpdateObserver = NotificationCenter.default.addObserver(
             forName: AccountManagerDidUpdateAccountsNotificationName,
             object: SessionManager.shared?.accountManager,
             queue: .main
-        ) { _ in
-            self.updateBarButtonItem()
+        ) { [weak self] _ in
+            self?.updateBarButtonItem()
         }
+        notificationObservers.append(accountUpdateObserver)
 
-        NotificationCenter.default.addObserver(
+        let backendSwitchObserver = NotificationCenter.default.addObserver(
             forName: BackendEnvironment.backendSwitchNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.updateCustomBackendLabels()
+            self?.applyDisplayState()
         }
+        notificationObservers.append(backendSwitchObserver)
+    }
+
+    deinit {
+        notificationObservers.forEach(NotificationCenter.default.removeObserver)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -301,7 +304,8 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     func configure(with featureProvider: AuthenticationFeatureProvider) {
-        enterpriseLoginButton.isHidden = !featureProvider.allowDirectCompanyLogin
+        allowsDirectCompanyLogin = featureProvider.allowDirectCompanyLogin
+        applyDisplayState()
     }
 
     private func configureSubviews() {
@@ -463,19 +467,10 @@ final class LandingViewController: AuthenticationStepViewController {
 
     // MARK: - Adaptivity Events
 
-    var isCustomBackend: Bool {
-        switch backendEnvironment.environmentType.value {
-        case .default, .staging, .anta, .bella, .chala, .diya, .elna, .foma:
-            false
-        case .custom:
-            true
-        }
-    }
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        if isIPadRegular() || isCustomBackend {
+        if isIPadRegular() || displayState.usesCustomBackendLayout {
             topStack.spacing = 32
         } else if view.frame.height <= 640 {
             topStack.spacing = view.frame.height / 8
@@ -490,8 +485,8 @@ final class LandingViewController: AuthenticationStepViewController {
             navigationItem.rightBarButtonItem = nil
         } else {
             navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-                self?.cancelButtonTapped()
-            }, accessibilityLabel: L10n.Localizable.General.cancel)
+                self?.navigate(to: self?.viewModel.routeForCancelTapped())
+            }, accessibilityLabel: displayState.cancelButtonAccessibilityLabel)
         }
     }
 
@@ -502,27 +497,46 @@ final class LandingViewController: AuthenticationStepViewController {
         return name
     }
 
-    private func updateCustomBackendLabels() {
-        messageLabel.text = Landing.welcomeMessage
-        subMessageLabel.text = Landing.welcomeSubmessage
+    private var displayState: LandingViewModel.DisplayState {
+        viewModel.displayState(
+            environmentType: backendEnvironment.environmentType.value,
+            allowsDirectCompanyLogin: allowsDirectCompanyLogin,
+            customBackendEnabled: SecurityFlags.customBackend.isEnabled
+        )
+    }
 
-        switch backendEnvironment.environmentType.value {
-        case let .custom(url):
-            guard SecurityFlags.customBackend.isEnabled else {
-                return
-            }
+    private func applyDisplayState() {
+        let displayState = displayState
+
+        messageLabel.text = displayState.welcomeMessage
+        subMessageLabel.text = displayState.welcomeSubmessage
+        loginButton.setTitle(displayState.loginButtonTitle, for: .normal)
+        enterpriseLoginButton.setTitle(displayState.enterpriseLoginButtonTitle, for: .normal)
+        enterpriseLoginButton.accessibilityLabel = displayState.enterpriseLoginButtonAccessibilityLabel
+        enterpriseLoginButton.isHidden = !displayState.showsEnterpriseLogin
+        loginWithEmailButton.setTitle(displayState.loginWithEmailButtonTitle, for: .normal)
+        createAccountInfoLabel.text = displayState.createAccountInfoTitle
+        createAccountButton.setTitle(displayState.createAccountButtonTitle, for: .normal)
+
+        if let url = displayState.customBackendURL {
             customBackendView.isHidden = false
             customBackendView.setBackendUrl(url)
-        default:
+        } else {
             customBackendView.isHidden = true
         }
+
+        configureAccessibilityElements(with: displayState)
     }
 
     // MARK: - Accessibility
 
     private func configureAccessibilityElements() {
+        configureAccessibilityElements(with: displayState)
+    }
+
+    private func configureAccessibilityElements(with displayState: LandingViewModel.DisplayState) {
         logoView.isAccessibilityElement = true
-        logoView.accessibilityLabel = Landing.header
+        logoView.accessibilityLabel = displayState.headerAccessibilityLabel
         logoView.accessibilityTraits.insert(.header)
     }
 
@@ -531,7 +545,7 @@ final class LandingViewController: AuthenticationStepViewController {
             return false
         }
 
-        cancelButtonTapped()
+        navigate(to: viewModel.routeForCancelTapped())
         return true
     }
 
@@ -539,20 +553,37 @@ final class LandingViewController: AuthenticationStepViewController {
 
     @objc
     private func createAccountButtonTapped(_ sender: AnyObject!) {
-        delegate?.landingViewControllerDidChooseCreateAccount()
+        navigate(to: viewModel.routeForCreateAccountTapped())
     }
 
     @objc
     private func loginButtonTapped(_ sender: AnyObject!) {
-        delegate?.landingViewControllerDidChooseLogin()
+        navigate(to: viewModel.routeForLoginTapped())
     }
 
     @objc
     private func enterpriseLoginButtonTapped(_ sender: AnyObject!) {
-        delegate?.landingViewControllerDidChooseEnterpriseLogin()
+        navigate(to: viewModel.routeForEnterpriseLoginTapped())
     }
 
-    private func cancelButtonTapped() {
+    private func navigate(to route: LandingViewModel.Route?) {
+        switch route {
+        case .createAccount:
+            delegate?.landingViewControllerDidChooseCreateAccount()
+        case .login:
+            delegate?.landingViewControllerDidChooseLogin()
+        case .enterpriseLogin:
+            delegate?.landingViewControllerDidChooseEnterpriseLogin()
+        case .customBackendInfo:
+            delegate?.landingViewControllerDidChooseInfoBackend()
+        case .cancel:
+            cancel()
+        case .none:
+            break
+        }
+    }
+
+    private func cancel() {
         guard let account = SessionManager.shared?.firstAuthenticatedAccount else { return }
         SessionManager.shared!.select(account)
     }

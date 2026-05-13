@@ -41,45 +41,44 @@ final class ClientListViewController: UIViewController,
     private let topSeparator = OverflowSeparatorView()
     private weak var delegate: ClientListViewControllerDelegate?
 
-    private var editingList: Bool = false {
-        didSet {
-            guard !clients.isEmpty else {
-                navigationItem.rightBarButtonItem = nil
-                navigationItem.setHidesBackButton(false, animated: true)
-                return
-            }
+    private var editingList: Bool {
+        viewModel.isEditing
+    }
 
+    private let viewModel: ClientListViewModel
+
+    private func setEditingList(_ isEditing: Bool) {
+        viewModel.setEditing(isEditing)
+
+        guard viewModel.showsEditButton else {
+            navigationItem.rightBarButtonItem = nil
+            navigationItem.setHidesBackButton(false, animated: true)
+            clientsTableView?.setEditing(false, animated: true)
+            return
+        }
+
+        createRightBarButtonItem()
+
+        navigationItem.setHidesBackButton(viewModel.hidesBackButton, animated: true)
+
+        clientsTableView?.setEditing(viewModel.isEditing, animated: true)
+    }
+
+    private func updateClients(_ clientsList: [UserClient]) {
+        viewModel.updateClients(clientsList)
+        clientsTableView?.reloadData()
+
+        if viewModel.showsEditButton {
             createRightBarButtonItem()
-
-            navigationItem.setHidesBackButton(editingList, animated: true)
-
-            clientsTableView?.setEditing(editingList, animated: true)
+        } else {
+            setEditingList(false)
         }
     }
 
-    private var clients: [UserClient] = [] {
-        didSet {
-            sortedClients = clients.filter(clientFilter).sorted(by: clientSorter)
-            clientsTableView?.reloadData()
-
-            if !clients.isEmpty {
-                createRightBarButtonItem()
-            } else {
-                editingList = false
-            }
-        }
-    }
-
-    private let clientSorter: (UserClient, UserClient) -> Bool
-    private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession
     private let contextProvider: ContextProvider?
     private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
-    private var sortedClients: [UserClient] = []
-
-    private var selfClient: UserClient?
-    private let detailedView: Bool
     private var credentials: UserEmailCredentials?
     private var clientsObserverToken: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
@@ -97,29 +96,24 @@ final class ClientListViewController: UIViewController,
         showLegalHold: Bool = true
     ) {
         self.userSession = userSession
-        self.selfClient = selfClient
-        self.detailedView = detailedView
         self.credentials = credentials
         self.contextProvider = contextProvider
-
-        self.clientFilter = {
-            $0 != selfClient && (showTemporary || $0.type != .temporary) && (showLegalHold || $0.type != .legalHold)
-        }
-
-        self.clientSorter = {
-            guard let leftDate = $0.activationDate, let rightDate = $1.activationDate else { return false }
-            return leftDate.compare(rightDate) == .orderedDescending
-        }
+        self.viewModel = ClientListViewModel(
+            clientsList: clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []),
+            selfClient: selfClient,
+            showTemporary: showTemporary,
+            showLegalHold: showLegalHold,
+            showsDeviceDetails: detailedView
+        )
 
         super.init(nibName: nil, bundle: nil)
 
-        initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = (userSession as? ZMUserSession)?.addClientUpdateObserver(self)
         if let user = ZMUser.selfUser(), let session = userSession as? ZMUserSession {
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
         }
 
-        if clients.isEmpty {
+        if viewModel.activeClients.isEmpty {
             activityIndicator.start()
             userSession.fetchAllClients()
         }
@@ -135,11 +129,6 @@ final class ClientListViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func initalizeProperties(_ clientsList: [UserClient]) {
-        clients = clientsList.filter { !$0.isSelfClient() }
-        editingList = false
-    }
-
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         [.portrait]
     }
@@ -148,6 +137,7 @@ final class ClientListViewController: UIViewController,
         super.viewDidLoad()
 
         createTableView()
+        setEditingList(viewModel.isEditing)
         view.addSubview(topSeparator)
         createConstraints()
 
@@ -273,14 +263,6 @@ final class ClientListViewController: UIViewController,
         ])
     }
 
-    private func convertSection(_ section: Int) -> Int {
-        if selfClient != nil {
-            section
-        } else {
-            section + 1
-        }
-    }
-
     @objc
     func backPressed(_ sender: AnyObject!) {
         navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
@@ -306,6 +288,9 @@ final class ClientListViewController: UIViewController,
     func finishedFetching(_ userClients: [UserClient]) {
         Task {
             await updateCertificates(for: userClients)
+            await MainActor.run {
+                updateClients(userClients)
+            }
             await dismissLoadingView()
         }
     }
@@ -331,9 +316,8 @@ final class ClientListViewController: UIViewController,
     }
 
     func finishedDeleting(_ remainingClients: [UserClient]) {
-        clients = remainingClients
-
-        editingList = false
+        updateClients(remainingClients)
+        setEditingList(false)
     }
 
     func failedToDeleteClients(_ error: Error) {
@@ -343,52 +327,19 @@ final class ClientListViewController: UIViewController,
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        if selfClient != nil, !sortedClients.isEmpty {
-            2
-        } else {
-            1
-        }
+        viewModel.numberOfSections
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch convertSection(section) {
-        case 0:
-            if selfClient != nil {
-                1
-            } else {
-                0
-            }
-        case 1:
-            sortedClients.count
-        default:
-            0
-        }
+        viewModel.numberOfRows(in: section)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch convertSection(section) {
-        case 0:
-            if selfClient != nil {
-                L10n.Localizable.Registration.Devices.currentListHeader
-            } else {
-                nil
-            }
-        case 1:
-            L10n.Localizable.Registration.Devices.activeListHeader
-        default:
-            nil
-        }
+        viewModel.headerTitle(for: section)
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        switch convertSection(section) {
-        case 0:
-            nil
-        case 1:
-            L10n.Localizable.Registration.Devices.activeListSubtitle
-        default:
-            nil
-        }
+        viewModel.footerTitle(for: section)
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -411,16 +362,10 @@ final class ClientListViewController: UIViewController,
             cell.selectionStyle = .none
             cell.showDisclosureIndicatorAccessoryView()
 
-            switch convertSection((indexPath as NSIndexPath).section) {
-            case 0:
-                if let selfClient {
-                    cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
-                    cell.wr_editable = false
-                }
-            case 1:
-                cell.viewModel = .init(userClient: sortedClients[indexPath.row], shouldSetType: false)
-                cell.wr_editable = true
-            default:
+            if let rowModel = viewModel.rowModel(at: indexPath) {
+                cell.viewModel = rowModel.cellViewModel
+                cell.wr_editable = rowModel.isEditable
+            } else {
                 cell.viewModel = nil
             }
 
@@ -438,27 +383,18 @@ final class ClientListViewController: UIViewController,
         commit editingStyle: UITableViewCell.EditingStyle,
         forRowAt indexPath: IndexPath
     ) {
-        switch convertSection((indexPath as NSIndexPath).section) {
-        case 1:
-
-            let userClient = sortedClients[indexPath.row]
-
+        switch viewModel.actionForDeletingRow(at: indexPath) {
+        case let .delete(userClient):
             deleteUserClient(userClient, credentials: credentials)
-        default: break
+        case .none:
+            break
         }
 
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell
         .EditingStyle {
-        switch convertSection((indexPath as NSIndexPath).section) {
-        case 0:
-            .none
-        case 1:
-            sortedClients[indexPath.row].type == .legalHold ? .none : .delete
-        default:
-            .none
-        }
+        viewModel.rowModel(at: indexPath)?.canDelete == true ? .delete : .none
 
     }
 
@@ -469,20 +405,10 @@ final class ClientListViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if !detailedView {
-            return
-        }
-
-        switch convertSection((indexPath as NSIndexPath).section) {
-        case 0:
-            if let selfClient {
-                openDetailsOfClient(selfClient)
-            }
-
-        case 1:
-            openDetailsOfClient(sortedClients[indexPath.row])
-
-        default:
+        switch viewModel.routeForSelectingRow(at: indexPath) {
+        case let .deviceDetails(client):
+            openDetailsOfClient(client)
+        case .none:
             break
         }
 
@@ -497,7 +423,7 @@ final class ClientListViewController: UIViewController,
             let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.done,
                 action: UIAction { [weak self] _ in
-                    self?.editingList = false
+                    self?.setEditingList(false)
                 }
             )
             navigationItem.rightBarButtonItem = doneButtonItem
@@ -505,7 +431,7 @@ final class ClientListViewController: UIViewController,
             let editButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.edit,
                 action: UIAction { [weak self] _ in
-                    self?.editingList = true
+                    self?.setEditingList(true)
                 }
             )
 
@@ -565,9 +491,12 @@ final class ClientListViewController: UIViewController,
             return
         }
         Task {
-            await updateCertificates(for: Array(selfUser.clients))
-            refreshViews()
-            completed?()
+            let clients = Array(selfUser.clients)
+            await updateCertificates(for: clients)
+            await MainActor.run {
+                updateClients(clients)
+                completed?()
+            }
         }
     }
 
@@ -582,15 +511,10 @@ final class ClientListViewController: UIViewController,
     }
 
     private func findE2EIdentityCertificateClient() -> UserClient? {
-        if selectedDeviceInfoViewModel?.isSelfClient == true {
-            return selfClient
-        }
-
-        guard let selectedUserClient = selectedDeviceInfoViewModel?.userClient as? UserClient else {
-            return nil
-        }
-
-        return clients.first { $0.clientId == selectedUserClient.clientId }
+        viewModel.clientForUpdatedDetails(
+            selectedClient: selectedDeviceInfoViewModel?.userClient as? UserClient,
+            selectedClientIsSelfClient: selectedDeviceInfoViewModel?.isSelfClient == true
+        )
     }
 }
 
@@ -602,7 +526,7 @@ extension ClientListViewController: EditingStateControllable {
     ///
     /// - Parameter isEditing: A boolean indicating whether to enter (true) or exit (false) editing mode.
     func setEditingState(_ isEditing: Bool) {
-        editingList = isEditing
+        setEditingList(isEditing)
     }
 
 }

@@ -21,15 +21,6 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-enum ClientSection: Int {
-    case info = 0
-    case fingerprintAndVerify = 1
-    case resetSession = 2
-    case removeDevice = 3
-}
-
-typealias SettingsClientViewModel = ProfileClientViewModel
-
 final class SettingsClientViewController: UIViewController,
     UITableViewDelegate,
     UITableViewDataSource,
@@ -41,7 +32,7 @@ final class SettingsClientViewController: UIViewController,
     private static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"
 
     let userSession: UserSession
-    let viewModel: ProfileClientViewModel
+    let viewModel: SettingsClientViewModel
     var userClient: UserClient {
         viewModel.userClient
     }
@@ -76,6 +67,7 @@ final class SettingsClientViewController: UIViewController,
         self.userSession = userSession
         self.viewModel = SettingsClientViewModel(
             userClient: userClient,
+            selfUserClient: userSession.selfUserClient,
             getUserClientFingerprint: userSession.getUserClientFingerprint
         )
         super.init(nibName: nil, bundle: nil)
@@ -111,8 +103,8 @@ final class SettingsClientViewController: UIViewController,
     }
 
     private func setupNavigationTitle() {
-        guard let deviceClass = userClient.deviceClass?.localizedDescription else { return }
-        setupNavigationBarTitle(deviceClass.capitalized)
+        guard let title = viewModel.navigationTitle else { return }
+        setupNavigationBarTitle(title)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -185,12 +177,18 @@ final class SettingsClientViewController: UIViewController,
     @objc
     func onVerifiedChanged(_ sender: UISwitch!) {
         let selfClient = userSession.selfUserClient
+        let action = viewModel.actionForVerifiedChanged(isOn: sender.isOn)
 
         userSession.enqueue {
-            if sender.isOn {
-                selfClient?.trustClient(self.userClient)
-            } else {
-                selfClient?.ignoreClient(self.userClient)
+            switch action {
+            case let .setVerified(userClient, isVerified):
+                if isVerified {
+                    selfClient?.trustClient(userClient)
+                } else {
+                    selfClient?.ignoreClient(userClient)
+                }
+            case .resetSession, .removeDevice:
+                break
             }
         } completionHandler: {
             sender.isOn = self.userClient.verified
@@ -200,40 +198,17 @@ final class SettingsClientViewController: UIViewController,
     // MARK: - UITableViewDelegate, UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
-
-        if userClient == userSession.selfUserClient {
-            2
-        } else {
-            userClient.type == .legalHold ? 3 : 4
-        }
+        viewModel.numberOfSections
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let clientSection = ClientSection(rawValue: section) else { return 0 }
-        switch clientSection {
-
-        case .info:
-            return 1
-        case .fingerprintAndVerify:
-            if userClient == userSession.selfUserClient {
-                return 1
-            } else {
-                return 2
-            }
-        case .resetSession:
-            return 1
-        case .removeDevice:
-            return 1
-        }
+        viewModel.numberOfRows(in: section)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let clientSection = ClientSection(rawValue: (indexPath as NSIndexPath).section)
-        else { return UITableViewCell() }
+        switch viewModel.row(at: indexPath) {
 
-        switch clientSection {
-
-        case .info:
+        case let .some(.info(cellViewModel)):
             if let cell = tableView.dequeueReusableCell(
                 withIdentifier: ClientTableViewCell.zm_reuseIdentifier,
                 for: indexPath
@@ -242,59 +217,61 @@ final class SettingsClientViewController: UIViewController,
                 cell.wr_editable = false
                 cell.accessibilityTraits = .none
                 cell.accessibilityHint = ""
-                cell.viewModel = .init(userClient: userClient, shouldSetType: false)
+                cell.viewModel = cellViewModel
                 return cell
             }
 
-        case .fingerprintAndVerify:
-            if (indexPath as NSIndexPath).row == 0 {
-                if let cell = tableView.dequeueReusableCell(
-                    withIdentifier: FingerprintTableViewCell.zm_reuseIdentifier,
-                    for: indexPath
-                ) as? FingerprintTableViewCell {
-                    cell.selectionStyle = .none
-                    cell.separatorInset = .zero
-                    cell.fingerprint = viewModel.fingerprintData
-                    return cell
-                }
-            } else {
-                if let cell = tableView.dequeueReusableCell(
-                    withIdentifier: type(of: self).verifiedCellReuseIdentifier,
-                    for: indexPath
-                ) as? SettingsToggleCell {
-                    cell.titleText = L10n.Localizable.Device.verified
-                    cell.cellNameLabel.accessibilityIdentifier = "device verified label"
-                    cell.switchView.addTarget(
-                        self,
-                        action: #selector(SettingsClientViewController.onVerifiedChanged(_:)),
-                        for: .touchUpInside
-                    )
-                    cell.switchView.accessibilityIdentifier = "device verified"
-                    cell.accessibilityIdentifier = "device verified"
-                    cell.switchView.isOn = userClient.verified
-                    return cell
-                }
+        case let .some(.fingerprint(fingerprintData)):
+            if let cell = tableView.dequeueReusableCell(
+                withIdentifier: FingerprintTableViewCell.zm_reuseIdentifier,
+                for: indexPath
+            ) as? FingerprintTableViewCell {
+                cell.selectionStyle = .none
+                cell.separatorInset = .zero
+                cell.fingerprint = fingerprintData
+                return cell
             }
 
-        case .resetSession:
+        case let .some(.verified(row)):
+            if let cell = tableView.dequeueReusableCell(
+                withIdentifier: type(of: self).verifiedCellReuseIdentifier,
+                for: indexPath
+            ) as? SettingsToggleCell {
+                cell.titleText = row.title
+                cell.cellNameLabel.accessibilityIdentifier = row.labelAccessibilityIdentifier
+                cell.switchView.addTarget(
+                    self,
+                    action: #selector(SettingsClientViewController.onVerifiedChanged(_:)),
+                    for: .touchUpInside
+                )
+                cell.switchView.accessibilityIdentifier = row.switchAccessibilityIdentifier
+                cell.accessibilityIdentifier = row.accessibilityIdentifier
+                cell.switchView.isOn = row.isOn
+                return cell
+            }
+
+        case let .some(.resetSession(row)):
             if let cell = tableView.dequeueReusableCell(
                 withIdentifier: type(of: self).resetCellReuseIdentifier,
                 for: indexPath
             ) as? SettingsTableCell {
-                cell.titleText = L10n.Localizable.Profile.Devices.Detail.ResetSession.title
-                cell.accessibilityIdentifier = "reset session"
+                cell.titleText = row.title
+                cell.accessibilityIdentifier = row.accessibilityIdentifier
                 return cell
             }
 
-        case .removeDevice:
+        case let .some(.removeDevice(row)):
             if let cell = tableView.dequeueReusableCell(
                 withIdentifier: type(of: self).deleteCellReuseIdentifier,
                 for: indexPath
             ) as? SettingsTableCell {
-                cell.titleText = L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title
-                cell.accessibilityIdentifier = "remove device"
+                cell.titleText = row.title
+                cell.accessibilityIdentifier = row.accessibilityIdentifier
                 return cell
             }
+
+        case nil:
+            break
         }
 
         return UITableViewCell()
@@ -303,14 +280,12 @@ final class SettingsClientViewController: UIViewController,
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        guard let clientSection = ClientSection(rawValue: (indexPath as NSIndexPath).section) else { return }
-
-        switch clientSection {
-        case .resetSession:
+        switch viewModel.actionForSelectingRow(at: indexPath) {
+        case let .some(.resetSession(userClient)):
             userClient.resetSession()
             activityIndicator.start()
 
-        case .removeDevice:
+        case let .some(.removeDevice(userClient)):
             removalObserver = nil
 
             let completion: ((Error?) -> Void) = { error in
@@ -329,24 +304,16 @@ final class SettingsClientViewController: UIViewController,
 
             removalObserver?.startRemoval()
 
-        default:
+        case .some(.setVerified):
+            break
+
+        case nil:
             break
         }
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        guard let clientSection = ClientSection(rawValue: section) else { return .none }
-        switch clientSection {
-
-        case .fingerprintAndVerify:
-            return L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle
-        case .resetSession:
-            return L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle
-        case .removeDevice:
-            return L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle
-        default:
-            return .none
-        }
+        viewModel.footerTitle(for: section)
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -368,11 +335,7 @@ final class SettingsClientViewController: UIViewController,
     // MARK: - Copying user client info
 
     func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == ClientSection.info.rawValue, indexPath.row == 0 {
-            true
-        } else {
-            false
-        }
+        viewModel.shouldShowCopyMenu(for: indexPath)
     }
 
     func tableView(
@@ -383,7 +346,7 @@ final class SettingsClientViewController: UIViewController,
     ) -> Bool {
 
         if action == #selector(UIResponder.copy(_:)) {
-            true
+            viewModel.shouldShowCopyMenu(for: indexPath)
         } else {
             false
         }
@@ -396,7 +359,7 @@ final class SettingsClientViewController: UIViewController,
         withSender sender: Any?
     ) {
         if action == #selector(UIResponder.copy(_:)) {
-            UIPasteboard.general.string = self.userClient.information
+            UIPasteboard.general.string = viewModel.copyText(for: indexPath)
         }
     }
 
