@@ -40,32 +40,19 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
         let certificatePublisher = viewModel.$e2eIdentityCertificate
         let isProtuesVerifiedPublisher = viewModel.$isProteusVerificationEnabled
         certificatePublisher.combineLatest(isProtuesVerifiedPublisher)
-            .sink { [weak self] certificate, isProteusVerified in
-                self?.updateNavigationItemTitle(certificate, isProteusVerified)
+            .sink { [weak self] _ in
+                self?.updateNavigationItemTitle()
             }
             .store(in: &cancellables)
     }
 
-    private func updateNavigationItemTitle(
-        _ certificate: E2eIdentityCertificate?,
-        _ isProteusVerified: Bool
-    ) {
+    private func updateNavigationItemTitle() {
 
         let deviceName = NSMutableAttributedString(string: viewModel.title)
-        if
-            viewModel.isE2eIdentityEnabled,
-            let certificate,
-            let imageForStatus = certificate.status.uiImage {
 
-            let attachment = NSTextAttachment(image: imageForStatus)
-            attachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageForStatus.size)
-            deviceName.append(.init(string: " "))
-            deviceName.append(.init(attachment: attachment))
-        }
-        if isProteusVerified {
-            let verifiedShield = UIImage(resource: .verifiedShield)
-            let attachment = NSTextAttachment(image: verifiedShield)
-            attachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: verifiedShield.size)
+        viewModel.navigationTitleBadges.compactMap(\.uiImage).forEach { image in
+            let attachment = NSTextAttachment(image: image)
+            attachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: image.size)
             deviceName.append(.init(string: " "))
             deviceName.append(.init(attachment: attachment))
         }
@@ -75,5 +62,16 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
         label.attributedText = deviceName
         label.font = FontSpec(.header, .semibold).font
         navigationItem.titleView = label
+    }
+}
+
+private extension DeviceInfoViewModel.NavigationTitleBadge {
+    var uiImage: UIImage? {
+        switch self {
+        case let .e2eIdentity(status):
+            status.uiImage
+        case .proteusVerified:
+            UIImage(resource: .verifiedShield)
+        }
     }
 }

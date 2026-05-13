@@ -45,8 +45,7 @@ final class NetworkStatusViewController: UIViewController {
     let networkStatusView = NetworkStatusView()
     private var observersTokens: [Any] = []
     private var networkStatusObserverToken: Any?
-    private var pendingState: NetworkStatusViewState?
-    private var state: NetworkStatusViewState = .online
+    private let viewModel = NetworkStatusViewModel()
     private var finishedViewWillAppear: Bool = false
 
     private var device: DeviceAbstraction
@@ -120,7 +119,7 @@ final class NetworkStatusViewController: UIViewController {
     override func viewDidLoad() {
         // The cast is not needed for compilation but is a necessary hack for tests
         if let userSession = userSession as? ZMUserSession {
-            enqueue(state: viewState(from: userSession.networkState))
+            enqueue(state: viewModel.viewState(from: userSession.networkState))
             networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
                 self,
                 notificationContext: userSession.managedObjectContext.notificationContext
@@ -141,42 +140,31 @@ final class NetworkStatusViewController: UIViewController {
         guard !finishedViewWillAppear else { return }
 
         finishedViewWillAppear = true
-        enqueue(state: viewState(from: userSession.networkState))
+        enqueue(state: viewModel.viewState(from: userSession.networkState))
     }
 
-    func showOfflineAlert() {
+    func showOfflineAlert(_ alertContent: NetworkStatusViewModel.AlertContent) {
         let alert = UIAlertController(
-            title: L10n.Localizable.SystemStatusBar.NoInternet.title,
-            message: L10n.Localizable.SystemStatusBar.NoInternet.explanation,
+            title: alertContent.title,
+            message: alertContent.message,
             preferredStyle: .alert
         )
         alert.addAction(.confirm())
         alert.presentOverAll()
     }
 
-    private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
-        switch networkState {
-        case .offline:
-            .offlineExpanded
-        case .online:
-            .online
-        case .onlineSynchronizing:
-            .onlineSynchronizing
-        }
-    }
-
     @objc
     func tappedOnNetworkStatusBar() {
-        switch networkStatusView.state {
-        case .offlineExpanded:
-            showOfflineAlert()
-        default:
+        switch viewModel.routeForTap(on: networkStatusView.state) {
+        case let .offlineAlert(alertContent):
+            showOfflineAlert(alertContent)
+        case .none:
             break
         }
     }
 
     private func enqueue(state: NetworkStatusViewState) {
-        pendingState = state
+        viewModel.enqueue(state: state)
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(applyPendingState), object: nil)
 
         perform(#selector(applyPendingState), with: nil, afterDelay: 1)
@@ -184,13 +172,12 @@ final class NetworkStatusViewController: UIViewController {
 
     @objc
     func applyPendingState() {
-        guard let state = pendingState else { return }
+        guard let state = viewModel.applyPendingState() else { return }
         update(state: state)
-        pendingState = nil
     }
 
     func update(state newState: NetworkStatusViewState) {
-        state = newState
+        viewModel.update(state: newState)
 
         guard shouldShowOnIPad() else { return }
 
@@ -201,7 +188,7 @@ final class NetworkStatusViewController: UIViewController {
 extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
 
     func didChangeAvailability(newState: NetworkState) {
-        enqueue(state: viewState(from: newState))
+        enqueue(state: viewModel.viewState(from: newState))
     }
 
 }
@@ -210,41 +197,55 @@ extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
 
 extension NetworkStatusViewController {
     func shouldShowOnIPad() -> Bool {
-        guard isIPadRegular(device: device) else { return true }
-        guard let delegate else { return true }
+        let isIPadRegular = isIPadRegular(device: device)
 
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
-            return true
-        }
-
-        let newOrientation = windowScene.interfaceOrientation
-
-        return delegate.showInIPad(networkStatusViewController: self, with: newOrientation)
+        return viewModel.shouldApplyState(
+            isIPadRegular: isIPadRegular,
+            delegateAllowsDisplay: isIPadRegular ? delegateAllowsDisplayOnIPad() : true
+        )
     }
 
     @objc
     func updateStateForIPad() {
         guard device.userInterfaceIdiom == .pad else { return }
 
-        switch traitCollection.horizontalSizeClass {
-        case .regular:
-            if shouldShowOnIPad() {
-                networkStatusView.update(state: state, animated: false)
-            } else {
-                // When size class changes and delegate view controller disabled to show networkStatusView, hide the
-                // networkStatusView
-                networkStatusView.update(state: .online, animated: false)
-            }
-        case .compact, .unspecified:
-            networkStatusView.update(state: state, animated: false)
-        @unknown default:
-            networkStatusView.update(state: state, animated: false)
-        }
+        let horizontalSizeClass = viewModelHorizontalSizeClass
+
+        networkStatusView.update(
+            state: viewModel.visibleStateForIPadTraitChange(
+                horizontalSizeClass: horizontalSizeClass,
+                delegateAllowsDisplay: horizontalSizeClass == .regular ? delegateAllowsDisplayOnIPad() : true
+            ),
+            animated: false
+        )
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateStateForIPad()
+    }
+
+    private var viewModelHorizontalSizeClass: NetworkStatusViewModel.HorizontalSizeClass {
+        switch traitCollection.horizontalSizeClass {
+        case .compact:
+            .compact
+        case .regular:
+            .regular
+        case .unspecified:
+            .unspecified
+        @unknown default:
+            .unspecified
+        }
+    }
+
+    private func delegateAllowsDisplayOnIPad() -> Bool {
+        guard let delegate else { return true }
+
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+            return true
+        }
+
+        return delegate.showInIPad(networkStatusViewController: self, with: windowScene.interfaceOrientation)
     }
 }
 
@@ -258,7 +259,7 @@ extension NetworkStatusViewController: ApplicationStateObserving {
         // Enqueue the current state because the UI might be out of sync if the
         // last state update was applied after the app transitioned to the
         // background, because the view animations would not be applied.
-        enqueue(state: pendingState ?? state)
+        enqueue(state: viewModel.stateToEnqueueWhenApplicationBecomesActive())
     }
 
 }

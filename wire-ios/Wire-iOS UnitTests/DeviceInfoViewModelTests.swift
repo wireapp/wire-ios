@@ -33,11 +33,14 @@ final class DeviceInfoViewModelTests: XCTestCase {
     func setup(
         e2eIdentityCertificate: E2eIdentityCertificate,
         isFromConversation: Bool = false,
-        isSelfClient: Bool = false
+        isSelfClient: Bool = false,
+        isProteusVerified: Bool = true,
+        mlsThumbprint: String? = nil
     ) {
         let userClient = MockUserClient()
         userClient.e2eIdentityCertificate = e2eIdentityCertificate
-        userClient.verified = true
+        userClient.verified = isProteusVerified
+        userClient.mlsThumbPrint = mlsThumbprint
 
         deviceInfoViewModel = DeviceInfoViewModel(
             title: "",
@@ -154,6 +157,32 @@ final class DeviceInfoViewModelTests: XCTestCase {
         XCTAssertFalse(deviceInfoViewModel.isProteusVerificationEnabled)
     }
 
+    func testThatNavigationTitleBadgesIncludeE2EIdentityAndProteusVerification_WhenBothAreAvailable() {
+        setup(
+            e2eIdentityCertificate: .mockValid,
+            isProteusVerified: true,
+            mlsThumbprint: E2eIdentityCertificate.mockValid.mlsThumbprint
+        )
+
+        assertNavigationTitleBadges(
+            deviceInfoViewModel.navigationTitleBadges,
+            match: [
+                .e2eIdentity(.valid),
+                .proteusVerified
+            ]
+        )
+    }
+
+    func testThatNavigationTitleBadgesSkipE2EIdentity_WhenMLSThumbprintIsMissing() {
+        setup(
+            e2eIdentityCertificate: .mockValid,
+            isProteusVerified: true,
+            mlsThumbprint: nil
+        )
+
+        assertNavigationTitleBadges(deviceInfoViewModel.navigationTitleBadges, match: [.proteusVerified])
+    }
+
     func testThatItCallsRemoveDeviceMethodInDeviceActionsHandler_WhenRemoveDeviceMethodIsCalled() async {
         let expectation = expectation(description: "removeDevice should be called")
         mockDeviceActionsHandler.removeDevice_MockMethod = {
@@ -215,6 +244,46 @@ final class DeviceInfoViewModelTests: XCTestCase {
             XCTAssertEqual(deviceInfoViewModel.showCertificateButtonVisible, false)
             XCTAssertEqual(deviceInfoViewModel.getCertificateButtonVisible, isSelfClient)
             XCTAssertEqual(deviceInfoViewModel.updateCertificateButtonVisible, false)
+        }
+    }
+
+    fileprivate func assertNavigationTitleBadges(
+        _ badges: [DeviceInfoViewModel.NavigationTitleBadge],
+        match expectedBadges: [DeviceInfoViewModel.NavigationTitleBadge],
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        XCTAssertEqual(badges.count, expectedBadges.count, file: file, line: line)
+
+        for (badge, expectedBadge) in zip(badges, expectedBadges) {
+            switch (badge, expectedBadge) {
+            case let (.e2eIdentity(status), .e2eIdentity(expectedStatus)):
+                XCTAssertTrue(
+                    e2eIdentityCertificateStatus(status, matches: expectedStatus),
+                    file: file,
+                    line: line
+                )
+            case (.proteusVerified, .proteusVerified):
+                break
+            default:
+                XCTFail("Unexpected navigation title badge", file: file, line: line)
+            }
+        }
+    }
+
+    fileprivate func e2eIdentityCertificateStatus(
+        _ status: E2EIdentityCertificateStatus,
+        matches expectedStatus: E2EIdentityCertificateStatus
+    ) -> Bool {
+        switch (status, expectedStatus) {
+        case (.notActivated, .notActivated),
+             (.revoked, .revoked),
+             (.expired, .expired),
+             (.invalid, .invalid),
+             (.valid, .valid):
+            return true
+        default:
+            return false
         }
     }
 }

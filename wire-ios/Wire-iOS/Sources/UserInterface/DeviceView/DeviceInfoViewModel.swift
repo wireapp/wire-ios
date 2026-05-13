@@ -38,6 +38,11 @@ protocol DeviceDetailsViewActions {
 }
 
 final class DeviceInfoViewModel: ObservableObject {
+    enum NavigationTitleBadge {
+        case e2eIdentity(E2EIdentityCertificateStatus)
+        case proteusVerified
+    }
+
     let addedDate: String
     let proteusID: String
     let gracePeriod: TimeInterval
@@ -61,6 +66,20 @@ final class DeviceInfoViewModel: ObservableObject {
 
     var isE2eIdentityEnabled: Bool {
         e2eIdentityCertificate != nil && mlsThumbprint != nil
+    }
+
+    var navigationTitleBadges: [NavigationTitleBadge] {
+        var badges = [NavigationTitleBadge]()
+
+        if isE2eIdentityEnabled, let status = e2eIdentityCertificate?.status {
+            badges.append(.e2eIdentity(status))
+        }
+
+        if isProteusVerificationEnabled {
+            badges.append(.proteusVerified)
+        }
+
+        return badges
     }
 
     var mlsThumbprint: String? {

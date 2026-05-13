@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireDesign
-import WireLogging
 import WireSyncEngine
 
 final class OtherUserClientsListViewController: UIViewController,
@@ -27,7 +26,7 @@ final class OtherUserClientsListViewController: UIViewController,
 
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
-    private var clients: [UserClientType]
+    private let viewModel: OtherUserClientsListViewModel
 
     private var tokens: [Any?] = []
     private var user: UserType
@@ -47,9 +46,10 @@ final class OtherUserClientsListViewController: UIViewController,
         contextProvider: ContextProvider?,
         mlsGroupId: MLSGroupID?
     ) {
+        let viewModel = OtherUserClientsListViewModel(user: user)
         self.user = user
-        self.clients = OtherUserClientsListViewController.clientsSortedByRelevance(for: user)
-        self.headerView = ParticipantDeviceHeaderView(userName: user.name ?? "")
+        self.viewModel = viewModel
+        self.headerView = ParticipantDeviceHeaderView(userName: viewModel.userName)
         self.userSession = userSession
         self.contextProvider = contextProvider
         self.mlsGroupId = mlsGroupId
@@ -89,7 +89,7 @@ final class OtherUserClientsListViewController: UIViewController,
 
     private func setupViews() {
         headerView.translatesAutoresizingMaskIntoConstraints = false
-        headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.count == 0
+        headerView.showUnencryptedLabel = viewModel.showsUnencryptedLabel
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
@@ -115,16 +115,13 @@ final class OtherUserClientsListViewController: UIViewController,
         ])
     }
 
-    private static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
-        user.allClients.sortedByRelevance().filter { !$0.isSelfClient() }
-    }
-
     private func updateCertificatesForUserClients() {
         Task {
             if let mlsGroupId {
-                clients = await clients.updateCertificates(
+                let clients = await viewModel.clientsForCertificateUpdate.updateCertificates(
                     mlsGroupId: mlsGroupId, userSession: userSession
                 )
+                viewModel.updateClients(clients)
             }
             refreshView()
         }
@@ -168,7 +165,7 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        clients.count
+        viewModel.numberOfItems
     }
 
     func collectionView(
@@ -176,14 +173,17 @@ final class OtherUserClientsListViewController: UIViewController,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserClientCell.self, for: indexPath)
-        let client = clients[indexPath.row]
-        cell.viewModel = .init(userClient: client)
+        cell.viewModel = viewModel.rowModel(at: indexPath)?.cellModel
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let client = clients[indexPath.row] as? UserClient else { return }
-        openDetailsOfClient(client)
+        switch viewModel.routeForSelectingRow(at: indexPath) {
+        case let .deviceDetails(client):
+            openDetailsOfClient(client)
+        case .none:
+            return
+        }
     }
 
     private func openDetailsOfClient(_ client: UserClient) {
@@ -242,10 +242,8 @@ extension OtherUserClientsListViewController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.clientsChanged || changeInfo.trustLevelChanged else { return }
 
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: add clients to userType
-        headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.isEmpty == true
-        clients = OtherUserClientsListViewController.clientsSortedByRelevance(for: user)
+        viewModel.refresh(from: user)
+        headerView.showUnencryptedLabel = viewModel.showsUnencryptedLabel
         updateCertificatesForUserClients()
     }
 
@@ -255,48 +253,4 @@ extension OtherUserClientsListViewController: ParticipantDeviceHeaderViewDelegat
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView) {
         WireURLs.shared.whyToVerifyFingerprintArticle.open(from: self)
     }
-}
-
-extension Array where Element: UserClientType {
-
-    @MainActor
-    func updateCertificates(mlsGroupId: MLSGroupID, userSession: UserSession) async -> [UserClientType] {
-        guard let userClients = self as? [UserClient] else {
-            return self
-        }
-        var updatedUserClients = [UserClientType]()
-        let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-            if let mlsClientId = MLSClientID(userClient: $0, localDomain: userSession.resolvedBackendMetadata.domain) {
-                ($0.clientId.hashValue, mlsClientId)
-            } else {
-                nil
-            }
-        })
-        let mlsClienIds = mlsClients.values.map(\.self)
-        do {
-            let certificates = try await userSession.getE2eIdentityCertificates.invoke(
-                mlsGroupId: mlsGroupId,
-                clientIds: mlsClienIds
-            )
-            if !certificates.isEmpty {
-                for client in userClients {
-                    let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
-                    if let e2eiCertificate = certificates.first(where: { $0.clientId == mlsClientIdRawValue }) {
-                        if userSession.e2eiFeature.isEnabled {
-                            client.e2eIdentityCertificate = e2eiCertificate
-                        }
-                        client.mlsThumbPrint = e2eiCertificate.mlsThumbprint
-                    }
-                    updatedUserClients.append(client)
-                }
-                return updatedUserClients
-            } else {
-                return self
-            }
-        } catch {
-            WireLogger.e2ei.error(error.localizedDescription)
-            return self
-        }
-    }
-
 }

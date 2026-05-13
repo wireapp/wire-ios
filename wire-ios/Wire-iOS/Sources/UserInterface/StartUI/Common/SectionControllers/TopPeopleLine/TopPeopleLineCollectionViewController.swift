@@ -22,14 +22,21 @@ import WireSyncEngine
 
 final class TopPeopleLineCollectionViewController: NSObject {
 
-    var topPeople = [ZMConversation]()
+    var topPeople: [ZMConversation] {
+        get {
+            viewModel.topPeople
+        }
+
+        set {
+            viewModel.updateTopPeople(newValue)
+        }
+    }
+
     var userSession: UserSession?
 
     weak var delegate: TopPeopleLineCollectionViewControllerDelegate?
 
-    private func conversation(at indexPath: IndexPath) -> ZMConversation {
-        topPeople[indexPath.item % topPeople.count]
-    }
+    private let viewModel = TopPeopleLineViewModel()
 }
 
 // MARK: - Collection View Data Source
@@ -37,7 +44,7 @@ final class TopPeopleLineCollectionViewController: NSObject {
 extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        topPeople.count
+        viewModel.numberOfItems
     }
 
     func collectionView(
@@ -45,7 +52,7 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: TopPeopleCell.self, for: indexPath)
-        cell.conversation = conversation(at: indexPath)
+        cell.conversation = viewModel.conversation(at: indexPath)
         cell.userSession = userSession
         return cell
     }
@@ -56,8 +63,14 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
 extension TopPeopleLineCollectionViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let conversation = conversation(at: indexPath)
-        delegate?.topPeopleLineCollectionViewControllerDidSelect(conversation)
+        guard let action = viewModel.actionForSelection(at: indexPath) else {
+            return
+        }
+
+        switch action {
+        case let .selectConversation(conversation):
+            delegate?.topPeopleLineCollectionViewControllerDidSelect(conversation)
+        }
     }
 
 }
@@ -71,7 +84,7 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDelegateFlowLay
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        .init(top: 6, left: 0, bottom: 0, right: 0)
+        viewModel.layout.sectionInsets
     }
 
     func collectionView(
@@ -79,7 +92,7 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDelegateFlowLay
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        .init(width: 56, height: 78)
+        viewModel.layout.itemSize
     }
 
     func collectionView(
@@ -87,6 +100,6 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDelegateFlowLay
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat {
-        12
+        viewModel.layout.minimumInteritemSpacing
     }
 }

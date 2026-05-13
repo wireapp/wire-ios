@@ -33,12 +33,11 @@ protocol UnlockViewControllerDelegate: AnyObject {
 /// This VC should be wrapped in KeyboardAvoidingViewController as the "unlock" button would be covered on 4 inch iPhone
 final class UnlockViewController: UIViewController {
 
-    typealias Unlock = L10n.Localizable.Unlock
-
     weak var delegate: UnlockViewControllerDelegate?
 
     private let selfUser: UserType
     private var userSession: UserSession?
+    private var viewModel: UnlockViewModel
 
     private let stackView: UIStackView = .verticalStackView()
     private let upperStackView = UIStackView.verticalStackView()
@@ -49,8 +48,8 @@ final class UnlockViewController: UIViewController {
 
     private lazy var unlockButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-        button.setTitle(Unlock.SubmitButton.title, for: .normal)
-        button.isEnabled = false
+        button.setTitle(viewModel.displayModel.unlockButton.title, for: .normal)
+        button.isEnabled = viewModel.displayModel.unlockButton.isEnabled
         button.addTarget(self, action: #selector(onUnlockButtonPressed(sender:)), for: .touchUpInside)
         button.accessibilityIdentifier = "unlock_screen.button.unlock"
         return button
@@ -62,16 +61,17 @@ final class UnlockViewController: UIViewController {
             delegate: self,
             setNewColors: true
         )
-        textField.placeholder = Unlock.Textfield.placeholder
+        textField.placeholder = viewModel.displayModel.passcodePlaceholder
         textField.delegate = self
+        textField.isSecureTextEntry = viewModel.inputState.isSecureTextEntry
         textField.accessibilityIdentifier = "unlock_screen.text_field.enter_passcode"
 
         return textField
     }()
 
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = DynamicFontLabel(
-            text: Unlock.titleLabel,
+            text: viewModel.displayModel.title,
             fontSpec: .largeSemiboldFont,
             color: SemanticColors.Label.textDefault
         )
@@ -122,14 +122,15 @@ final class UnlockViewController: UIViewController {
 
     private lazy var wipeButton = {
         let button = ZMButton(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumRegularFont)
-        button.setTitle(Unlock.wipeButton, for: .normal)
+        button.setTitle(viewModel.displayModel.wipeButtonTitle, for: .normal)
         button.addTarget(self, action: #selector(onWipeButtonPressed(sender:)), for: .touchUpInside)
         return button
     }()
 
-    init(selfUser: UserType, userSession: UserSession? = nil) {
+    init(selfUser: UserType, userSession: UserSession? = nil, viewModel: UnlockViewModel = UnlockViewModel()) {
         self.selfUser = selfUser
         self.userSession = userSession
+        self.viewModel = viewModel
 
         super.init(nibName: nil, bundle: nil)
 
@@ -211,22 +212,12 @@ final class UnlockViewController: UIViewController {
 
     @objc
     private func onWipeButtonPressed(sender: AnyObject?) {
-        let wipeDatabaseViewController = WipeDatabaseWireframe().createWipeDatabaseModule()
-        navigationController?.pushViewController(wipeDatabaseViewController, animated: true)
+        handle(route: viewModel.route(for: .wipeTapped))
     }
 
     @discardableResult
     private func unlock() -> Bool {
-        guard
-            let passcode = validatedTextField.text,
-            let userSession,
-            userSession.evaluateAuthentication(customPasscode: passcode) == .granted
-        else {
-            return false
-        }
-
-        delegate?.unlockViewControllerDidUnlock()
-        return true
+        handle(route: viewModel.route(for: .unlockSubmitted(validatedTextField.text)))
     }
 
     @objc
@@ -234,8 +225,52 @@ final class UnlockViewController: UIViewController {
         unlock()
     }
 
-    func showWrongPasscodeMessage() {
+    @discardableResult
+    private func handle(route: UnlockViewModel.Route) -> Bool {
+        switch route {
+        case let .unlock(passcode):
+            guard
+                let userSession,
+                userSession.evaluateAuthentication(customPasscode: passcode) == .granted
+            else {
+                return false
+            }
 
+            delegate?.unlockViewControllerDidUnlock()
+            return true
+
+        case .wipeDatabase:
+            let wipeDatabaseViewController = WipeDatabaseWireframe().createWipeDatabaseModule()
+            navigationController?.pushViewController(wipeDatabaseViewController, animated: true)
+            return true
+
+        case .toggleSecureTextEntry:
+            validatedTextField.isSecureTextEntry = viewModel.inputState.isSecureTextEntry
+            validatedTextField.updatePasscodeIcon()
+            return true
+
+        case .none:
+            return false
+        }
+    }
+
+    private func render() {
+        unlockButton.isEnabled = viewModel.displayModel.unlockButton.isEnabled
+
+        if let errorMessage = viewModel.inputState.errorMessage {
+            showErrorMessage(errorMessage)
+        } else {
+            errorLabel.attributedText = nil
+            errorLabel.text = " "
+        }
+    }
+
+    func showWrongPasscodeMessage() {
+        handle(route: viewModel.route(for: .wrongPasscode))
+        render()
+    }
+
+    private func showErrorMessage(_ message: String) {
         let textAttachment = NSTextAttachment.textAttachment(
             for: .exclamationMarkCircle,
             with: SemanticColors.Label.textErrorDefault,
@@ -244,10 +279,9 @@ final class UnlockViewController: UIViewController {
             insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
         )
 
-        let attributedString = NSAttributedString(string: Unlock.errorLabel) && UnlockViewController.errorFont
+        let attributedString = NSAttributedString(string: message) && UnlockViewController.errorFont
 
         errorLabel.attributedText = NSAttributedString(attachment: textAttachment) + attributedString
-        unlockButton.isEnabled = false
     }
 }
 
@@ -255,9 +289,7 @@ final class UnlockViewController: UIViewController {
 
 extension UnlockViewController: ValidatedTextFieldDelegate {
     func buttonPressed(_ sender: UIButton) {
-        validatedTextField.isSecureTextEntry = !validatedTextField.isSecureTextEntry
-
-        validatedTextField.updatePasscodeIcon()
+        handle(route: viewModel.route(for: .secureEntryToggleTapped))
     }
 }
 
@@ -265,8 +297,8 @@ extension UnlockViewController: ValidatedTextFieldDelegate {
 
 extension UnlockViewController: TextFieldValidationDelegate {
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
-        unlockButton.isEnabled = error == nil
-        errorLabel.text = " "
+        handle(route: viewModel.route(for: .passcodeValidationUpdated(passcode: sender.text, isValid: error == nil)))
+        render()
     }
 }
 
