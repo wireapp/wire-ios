@@ -23,8 +23,10 @@ final class NotSignedInViewController: UIViewController {
     var closeHandler: (() -> Void)?
 
     let messageLabel = UILabel()
+    private let viewModel: NotSignedInViewModel
 
-    init() {
+    init(viewModel: NotSignedInViewModel = NotSignedInViewModel()) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -36,15 +38,17 @@ final class NotSignedInViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.hidesBackButton = true
+        let displayState = viewModel.displayState
+
+        navigationItem.hidesBackButton = displayState.hidesBackButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: L10n.ShareExtension.NotSignedIn.closeButton,
+            title: displayState.closeButtonTitle,
             style: .done,
             target: self,
             action: #selector(onCloseTapped)
         )
 
-        messageLabel.text = L10n.ShareExtension.NotSignedIn.title
+        messageLabel.text = displayState.title
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0
 
@@ -65,6 +69,9 @@ final class NotSignedInViewController: UIViewController {
 
     @objc
     private func onCloseTapped() {
-        closeHandler?()
+        switch viewModel.perform(.close) {
+        case .close:
+            closeHandler?()
+        }
     }
 }

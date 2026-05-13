@@ -41,9 +41,8 @@ final class ProfileDetailsViewController: UIViewController {
         didSet { profileHeaderViewController.isAdminRole = isAdminRole }
     }
 
-    /// The object that calculates and controls the content to display in the user
-    /// details screen. It is also responsible for reacting to user profile updates
-    /// that impact the details.
+    /// The object that renders the content to display in the user details screen
+    /// and reacts to user profile updates that impact the details.
     /// - note: It should be the delegate and data source of the table view.
 
     let contentController: ProfileDetailsContentController
@@ -88,11 +87,18 @@ final class ProfileDetailsViewController: UIViewController {
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
+        let detailsViewModel = ProfileDetailsViewModel(
+            user: user,
+            viewer: viewer,
+            conversation: conversation
+        )
+
         self.contentController = .init(
             user: user,
             viewer: viewer,
             conversation: conversation,
-            userSession: userSession
+            userSession: userSession,
+            viewModel: detailsViewModel
         )
 
         super.init(nibName: nil, bundle: nil)

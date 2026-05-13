@@ -26,10 +26,23 @@ protocol WipeDatabaseUserInterface: AnyObject {
 
 extension WipeDatabaseViewController: WipeDatabaseUserInterface {
     func presentConfirmAlert() {
+        let currentViewModel = viewModel
+        let wipeDatabase: RequestPasswordController.Callback = presenter?.confirmAlertCallback() ?? { _ in }
+        let callback: RequestPasswordController.Callback = { confirmText in
+            switch currentViewModel.route(for: .confirmationSubmitted(confirmText)) {
+            case .wipeDatabase:
+                wipeDatabase(confirmText)
+            case .presentConfirmation, .cancel, .none:
+                break
+            }
+        }
+
         let confirmController = RequestPasswordController(
             context: .wiping,
-            callback: presenter?.confirmAlertCallback() ?? { _ in },
-            inputValidation: presenter?.confirmAlertInputValidation()
+            callback: callback,
+            inputValidation: { confirmText in
+                currentViewModel.confirmationState(for: confirmText).isConfirmEnabled
+            }
         )
 
         self.confirmController = confirmController
@@ -40,17 +53,16 @@ extension WipeDatabaseViewController: WipeDatabaseUserInterface {
 
 final class WipeDatabaseViewController: UIViewController {
 
+    private let viewModel: WipeDatabaseViewModel
+
     var presenter: WipeDatabasePresenter!
 
     var confirmController: RequestPasswordController?
 
     private let stackView: UIStackView = .verticalStackView()
 
-    typealias WipeDatabase = L10n.Localizable.WipeDatabase
-
     private let titleLabel: UILabel = {
         let label = UILabel.createMultiLineCenterdLabel()
-        label.text = L10n.Localizable.WipeDatabase.titleLabel
 
         return label
     }()
@@ -69,36 +81,43 @@ final class WipeDatabaseViewController: UIViewController {
             .foregroundColor: textColor
         ]
 
-        let headingText = NSAttributedString(string: WipeDatabase.infoLabel) &&
+        label.text = " "
+        label.attributedText = NSAttributedString(string: " ") &&
             UIFont.normalRegularFont &&
             baseAttributes
-        let highlightText = NSAttributedString(string: WipeDatabase.InfoLabel.highlighted) &&
-            FontSpec.normalBoldFont.font! &&
-            baseAttributes
-
-        label.text = " "
-        label.attributedText = headingText + highlightText
 
         return label
     }()
 
     private lazy var confirmButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-        button.setTitle(WipeDatabase.Button.title, for: .normal)
         button.addTarget(self, action: #selector(onConfirmButtonPressed(sender:)), for: .touchUpInside)
         return button
     }()
 
     @objc
     private func onConfirmButtonPressed(sender: LegacyButton?) {
-        presentConfirmAlert()
+        perform(route: viewModel.route(for: .confirmTapped))
     }
 
-    convenience init() {
-        self.init(nibName: nil, bundle: nil)
+    init(viewModel: WipeDatabaseViewModel = WipeDatabaseViewModel()) {
+        self.viewModel = viewModel
+
+        super.init(nibName: nil, bundle: nil)
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
+        configure(with: viewModel.displayModel)
+        configureSubviews()
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func configureSubviews() {
         [
             stackView,
             confirmButton
@@ -115,8 +134,32 @@ final class WipeDatabaseViewController: UIViewController {
         ].forEach {
             stackView.addArrangedSubview($0)
         }
+    }
 
-        createConstraints()
+    private func configure(with displayModel: WipeDatabaseViewModel.DisplayModel) {
+        titleLabel.text = displayModel.title
+
+        let textColor = SemanticColors.Label.textDefault
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        let baseAttributes: [NSAttributedString.Key: Any] = [
+            .paragraphStyle: paragraphStyle,
+            .foregroundColor: textColor
+        ]
+
+        let headingText = NSAttributedString(string: displayModel.info) &&
+            UIFont.normalRegularFont &&
+            baseAttributes
+        let highlightText = NSAttributedString(string: displayModel.highlightedInfo) &&
+            FontSpec.normalBoldFont.font! &&
+            baseAttributes
+
+        infoLabel.attributedText = headingText + highlightText
+
+        confirmButton.setTitle(displayModel.confirmButton.title, for: .normal)
+        confirmButton.isEnabled = displayModel.confirmButton.isEnabled
     }
 
     private func createConstraints() {
@@ -156,6 +199,19 @@ final class WipeDatabaseViewController: UIViewController {
                 constant: -CGFloat.PasscodeUnlock.buttonPadding
             )
         ])
+    }
+
+    private func perform(route: WipeDatabaseViewModel.Route) {
+        switch route {
+        case .presentConfirmation:
+            presentConfirmAlert()
+        case .wipeDatabase:
+            break
+        case .cancel:
+            break
+        case .none:
+            break
+        }
     }
 
 }

@@ -21,19 +21,38 @@ import WireDesign
 
 final class NoConversationPlaceholderViewController: UIViewController {
 
+    private let viewModel: NoConversationPlaceholderViewModel
+
+    init(viewModel: NoConversationPlaceholderViewModel = NoConversationPlaceholderViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        render(viewModel.displayState)
+    }
+
+    private func render(_ displayState: NoConversationPlaceholderViewModel.DisplayState) {
         view.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
 
-        let image = WireStyleKit.imageOfShield()
+        let image = image(for: displayState.imageAsset)
             .withRenderingMode(.alwaysTemplate)
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
-        imageView.alpha = 0.24
+        imageView.alpha = CGFloat(displayState.imageAlpha)
         imageView.tintColor = SemanticColors.Label.textDefault
+        imageView.isAccessibilityElement = displayState.imageAccessibility.isAccessibilityElement
+        imageView.accessibilityLabel = displayState.imageAccessibility.label
         imageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(imageView)
+
         let constraints: [NSLayoutConstraint] = [
 
             imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -55,6 +74,13 @@ final class NoConversationPlaceholderViewController: UIViewController {
         constraints[0].priority = .defaultHigh
         constraints[1].priority = .defaultHigh
         NSLayoutConstraint.activate(constraints)
+    }
+
+    private func image(for asset: NoConversationPlaceholderViewModel.ImageAsset) -> UIImage {
+        switch asset {
+        case .shield:
+            WireStyleKit.imageOfShield()
+        }
     }
 }
 

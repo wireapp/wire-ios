@@ -21,19 +21,20 @@ import WireDesign
 
 final class ProxyCredentialsViewController: UIViewController {
 
-    typealias Credentials = L10n.Localizable.ProxyCredentials
-
     let backendURL: URL
+    let viewModel: ProxyCredentialsViewModel
 
     var textFieldDidUpdateText: (ValidatedTextField) -> Void
     var activeFieldChange: (UITextField?) -> Void
 
     init(
         backendURL: URL,
+        viewModel: ProxyCredentialsViewModel? = nil,
         textFieldDidUpdateText: @escaping (ValidatedTextField) -> Void,
         activeFieldChange: @escaping (UITextField?) -> Void
     ) {
         self.backendURL = backendURL
+        self.viewModel = viewModel ?? ProxyCredentialsViewModel(backendURL: backendURL)
         self.textFieldDidUpdateText = textFieldDidUpdateText
         self.activeFieldChange = activeFieldChange
         super.init(nibName: nil, bundle: nil)
@@ -46,17 +47,17 @@ final class ProxyCredentialsViewController: UIViewController {
 
     lazy var titleLabel = {
         let label = DynamicFontLabel(
-            text: Credentials.title,
+            text: viewModel.displayState.title,
             style: .h3,
             color: SemanticColors.Label.textCellSubtitle
         )
-        label.text = Credentials.title
+        label.text = viewModel.displayState.title
         return label
     }()
 
     lazy var captionLabel = {
         let label = DynamicFontLabel(
-            text: Credentials.title,
+            text: viewModel.displayState.caption,
             style: .body1,
             color: SemanticColors.Label.textCellSubtitle
         )
@@ -75,7 +76,7 @@ final class ProxyCredentialsViewController: UIViewController {
         textField.showConfirmButton = false
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: .uppercased() when new design is implemented
-        textField.placeholder = Credentials.Username.placeholder.capitalized
+        textField.placeholder = viewModel.displayState.usernamePlaceholder
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()
@@ -93,7 +94,7 @@ final class ProxyCredentialsViewController: UIViewController {
 
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: .uppercased() when new design is implemented
-        textField.placeholder = Credentials.Password.placeholder.capitalized
+        textField.placeholder = viewModel.displayState.passwordPlaceholder
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()
@@ -104,7 +105,7 @@ final class ProxyCredentialsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        captionLabel.text = Credentials.caption(backendURL.absoluteString)
+        applyDisplayState(viewModel.displayState)
 
         let separator: () -> UIView = {
             let view = UIView()
@@ -154,7 +155,26 @@ final class ProxyCredentialsViewController: UIViewController {
 
     @objc
     private func textInputDidChange(sender: ValidatedTextField) {
+        if sender == usernameInput {
+            applyDisplayState(viewModel.update(.username, text: sender.input))
+        } else if sender == passwordInput {
+            applyDisplayState(viewModel.update(.password, text: sender.input))
+        }
+
         textFieldDidUpdateText(sender)
+    }
+
+    private func applyDisplayState(_ displayState: ProxyCredentialsViewModel.DisplayState) {
+        titleLabel.text = displayState.title
+        captionLabel.text = displayState.caption
+        if usernameInput.text != displayState.username {
+            usernameInput.text = displayState.username
+        }
+        if passwordInput.text != displayState.password {
+            passwordInput.text = displayState.password
+        }
+        usernameInput.placeholder = displayState.usernamePlaceholder
+        passwordInput.placeholder = displayState.passwordPlaceholder
     }
 }
 
@@ -164,6 +184,7 @@ extension ProxyCredentialsViewController: UITextFieldDelegate {
             passwordInput.becomeFirstResponder()
         } else if textField == passwordInput {
             textField.resignFirstResponder()
+            applyDisplayState(viewModel.update(.password, text: passwordInput.input))
             textFieldDidUpdateText(passwordInput)
         }
         return true

@@ -17,25 +17,24 @@
 //
 
 import UIKit
-import WireCommonComponents
 import WireDataModel
-import WireShareEngine
 
 private let cellReuseIdentifier = "AccountCell"
 
 final class AccountSelectionViewController: UITableViewController {
 
-    private var accounts: [Account]
-    private var current: Account?
+    private let viewModel: AccountSelectionViewModel
 
     var selectionHandler: ((_ account: Account) -> Void)?
+    var cancellationHandler: (() -> Void)?
 
     init(accounts: [Account], current: Account?) {
-        self.accounts = accounts
+        self.viewModel = AccountSelectionViewModel(
+            accounts: accounts,
+            currentAccount: current
+        )
 
         super.init(style: .plain)
-
-        self.current = current
 
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
 
@@ -52,25 +51,40 @@ final class AccountSelectionViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        accounts.count
+        viewModel.displayState.rows.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let account = accounts[indexPath.row]
+        let row = viewModel.displayState.rows[indexPath.row]
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellReuseIdentifier)
 
-        cell.textLabel?.text = account.userName
-        cell.detailTextLabel?.text = account.teamName
+        cell.textLabel?.text = row.title
+        cell.detailTextLabel?.text = row.subtitle
         cell.backgroundColor = .clear
-        cell.accessoryType = (account == current) ? .checkmark : .none
+        cell.accessoryType = row.isSelected ? .checkmark : .none
 
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let selectionHandler {
-            selectionHandler(accounts[indexPath.row])
+        guard let route = viewModel.routeForSelectingRow(at: indexPath.row) else {
+            return
+        }
+
+        handle(route)
+    }
+
+    func cancelSelection() {
+        handle(viewModel.routeForCancelTapped())
+    }
+
+    private func handle(_ route: AccountSelectionViewModel.Route) {
+        switch route {
+        case let .selectAccount(account):
+            selectionHandler?(account)
+        case .cancel:
+            cancellationHandler?()
         }
     }
 }

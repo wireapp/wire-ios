@@ -16,56 +16,47 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SystemConfiguration
 import UIKit
 import WireCommonComponents
-import WireShareEngine
-import WireSystem
 
 final class SendingProgressViewController: UIViewController {
 
-    enum ProgressMode {
-        case preparing
-        case sending
-    }
+    typealias ProgressMode = SendingProgressViewModel.ProgressMode
 
     var cancelHandler: (() -> Void)?
 
     private var circularShadow = CircularProgressView()
     private var circularProgress = CircularProgressView()
     private var connectionStatusLabel = UILabel()
-    private let minimumProgress: Float = 0.125
 
     private let networkStatusObservable: any NetworkStatusObservable
+    private var viewModel: SendingProgressViewModel
 
     var progress: Float = 0 {
         didSet {
             mode = .sending
-            let adjustedProgress = (progress / (1 + minimumProgress)) + minimumProgress
-            circularProgress.setProgress(adjustedProgress, animated: true)
+            viewModel.perform(.updateProgress(progress))
+            render(viewModel.displayState, animated: true)
         }
     }
 
     var mode: ProgressMode = .preparing {
         didSet {
-            updateProgressMode()
+            viewModel.perform(.updateMode(mode))
+            render(viewModel.displayState, animated: false)
         }
     }
 
     func updateProgressMode() {
-        switch mode {
-        case .sending:
-            circularProgress.deterministic = true
-            title = L10n.ShareExtension.SendingProgress.title
-        case .preparing:
-            circularProgress.deterministic = false
-            circularProgress.setProgress(minimumProgress, animated: false)
-            title = L10n.ShareExtension.Preparing.title
-        }
+        render(viewModel.displayState, animated: false)
     }
 
-    init(networkStatusObservable: any NetworkStatusObservable) {
+    init(
+        networkStatusObservable: any NetworkStatusObservable,
+        viewModel: SendingProgressViewModel = SendingProgressViewModel()
+    ) {
         self.networkStatusObservable = networkStatusObservable
+        self.viewModel = viewModel
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -104,8 +95,6 @@ final class SendingProgressViewController: UIViewController {
 
         connectionStatusLabel.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
         connectionStatusLabel.textAlignment = .center
-        connectionStatusLabel.isHidden = true
-        connectionStatusLabel.text = L10n.ShareExtension.NoInternetConnection.title
 
         view.addSubview(circularShadow)
         view.addSubview(circularProgress)
@@ -115,8 +104,7 @@ final class SendingProgressViewController: UIViewController {
 
         updateProgressMode()
 
-        let reachability = NetworkStatus.shared.reachability
-        setReachability(from: reachability)
+        setReachability(from: networkStatusObservable.reachability)
     }
 
     private func createConstraints() {
@@ -146,7 +134,8 @@ final class SendingProgressViewController: UIViewController {
 
     @objc
     private func onCancelTapped() {
-        cancelHandler?()
+        let effects = viewModel.perform(.cancelTapped)
+        perform(effects)
     }
 
     @objc
@@ -157,11 +146,24 @@ final class SendingProgressViewController: UIViewController {
     }
 
     func setReachability(from reachability: ServerReachability) {
-        switch reachability {
-        case .ok:
-            connectionStatusLabel.isHidden = true
-        case .unreachable:
-            connectionStatusLabel.isHidden = false
+        viewModel.perform(.updateReachability(reachability))
+        render(viewModel.displayState, animated: false)
+    }
+
+    private func render(_ displayState: SendingProgressViewModel.DisplayState, animated: Bool) {
+        title = displayState.title
+        circularProgress.deterministic = displayState.isProgressDeterministic
+        circularProgress.setProgress(displayState.progress, animated: animated)
+        connectionStatusLabel.isHidden = displayState.isConnectionStatusHidden
+        connectionStatusLabel.text = displayState.connectionStatusText
+    }
+
+    private func perform(_ effects: [SendingProgressViewModel.Effect]) {
+        effects.forEach { effect in
+            switch effect {
+            case .cancel:
+                cancelHandler?()
+            }
         }
     }
 

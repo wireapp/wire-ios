@@ -23,7 +23,9 @@ import WireSyncEngine
 
 final class ConversationPreviewViewController: UIViewController {
 
-    let conversation: ZMConversation
+    var conversation: ZMConversation { viewModel.conversation }
+
+    private let viewModel: ConversationPreviewViewModel
     let actionController: ConversationActionController
     fileprivate var contentViewController: ConversationContentViewController
 
@@ -37,7 +39,7 @@ final class ConversationPreviewViewController: UIViewController {
         conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
-        self.conversation = conversation
+        self.viewModel = ConversationPreviewViewModel(conversation: conversation)
         self.actionController = ConversationActionController(
             conversation: conversation,
             target: presentingViewController,
@@ -99,7 +101,9 @@ final class ConversationPreviewViewController: UIViewController {
         message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
     )
     override var previewActionItems: [UIPreviewActionItem] {
-        conversation.listActions.map(makePreviewAction)
+        viewModel.state.actions.enumerated().map {
+            makePreviewAction(index: $0.offset, action: $0.element)
+        }
     }
 
     @available(
@@ -108,11 +112,38 @@ final class ConversationPreviewViewController: UIViewController {
         deprecated: 13.0,
         message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
     )
-    private func makePreviewAction(for action: ZMConversation.Action) -> UIPreviewAction {
-        action.previewAction { [weak self] in
+    private func makePreviewAction(index: Int, action: ConversationPreviewViewModel.PreviewAction) -> UIPreviewAction {
+        .init(title: action.title, style: action.style.previewActionStyle) { [weak self] _, _ in
             guard let self else { return }
-            actionController.handleAction(action)
+            handle(route: viewModel.routeForPreviewAction(at: index))
         }
     }
 
+    private func handle(route: ConversationPreviewViewModel.Route) {
+        switch route {
+        case let .performConversationAction(action):
+            actionController.handleAction(action)
+        case .openConversation,
+             .dismissPreview:
+            break
+        }
+    }
+}
+
+private extension ConversationPreviewViewModel.ActionStyle {
+
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
+    var previewActionStyle: UIPreviewAction.Style {
+        switch self {
+        case .default:
+            .default
+        case .destructive:
+            .destructive
+        }
+    }
 }

@@ -40,6 +40,7 @@ final class MapViewController: UIViewController {
 
     let mapView = MKMapView()
     weak var delegate: MapViewControllerDelegate?
+    private let viewModel = MapViewModel()
     private let pointAnnotation = MKPointAnnotation()
     private lazy var annotationView: MKMarkerAnnotationView = .init(
         annotation: pointAnnotation,
@@ -100,15 +101,11 @@ final class MapViewController: UIViewController {
 
     func zoomToUserLocation(animated: Bool) {
         guard let coordinate = mapView.userLocation.location?.coordinate else { return }
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
-        mapView.setRegion(region, animated: animated)
+        handle(viewModel.perform(.zoomToUserLocation(.init(coordinate), animated: animated)))
     }
 
     func updateAnnotation(to coordinate: CLLocationCoordinate2D) {
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = coordinate
-        mapView.removeAnnotations(mapView.annotations) // Remove existing annotations
-        mapView.addAnnotation(annotation)
+        handle(viewModel.perform(.updateAnnotation(.init(coordinate))))
     }
 
     func setRegion(
@@ -117,12 +114,43 @@ final class MapViewController: UIViewController {
         longitudinalMeters: Double,
         animated: Bool
     ) {
-        let region = MKCoordinateRegion(
-            center: coordinate,
+        handle(viewModel.perform(.setRegion(
+            .init(coordinate),
             latitudinalMeters: latitudinalMeters,
-            longitudinalMeters: longitudinalMeters
+            longitudinalMeters: longitudinalMeters,
+            animated: animated
+        )))
+    }
+
+    private func handle(_ effects: [MapViewModel.Effect]) {
+        for effect in effects {
+            switch effect {
+            case let .setCamera(camera):
+                setCamera(camera)
+            case let .replaceAnnotations(annotations):
+                replaceAnnotations(annotations)
+            }
+        }
+    }
+
+    private func setCamera(_ camera: MapViewModel.CameraIntent) {
+        let region = MKCoordinateRegion(
+            center: camera.coordinate.locationCoordinate,
+            latitudinalMeters: camera.latitudinalMeters,
+            longitudinalMeters: camera.longitudinalMeters
         )
-        mapView.setRegion(region, animated: animated)
+        mapView.setRegion(region, animated: camera.animated)
+    }
+
+    private func replaceAnnotations(_ annotations: [MapViewModel.AnnotationIntent]) {
+        mapView.removeAnnotations(mapView.annotations)
+
+        let mapAnnotations = annotations.map { annotationIntent in
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = annotationIntent.coordinate.locationCoordinate
+            return annotation
+        }
+        mapView.addAnnotations(mapAnnotations)
     }
 
 }

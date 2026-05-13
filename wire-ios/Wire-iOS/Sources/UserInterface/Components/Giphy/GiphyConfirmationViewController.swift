@@ -33,8 +33,6 @@ protocol GiphyConfirmationViewControllerDelegate: AnyObject {
 
 final class GiphyConfirmationViewController: UIViewController {
 
-    typealias Giphy = L10n.Localizable.Giphy
-
     private let imagePreview = FLAnimatedImageView()
     private let acceptButton = ZMButton(
         style: .accentColorTextButtonStyle,
@@ -50,7 +48,7 @@ final class GiphyConfirmationViewController: UIViewController {
     weak var delegate: GiphyConfirmationViewControllerDelegate?
     private let searchResultController: ZiphySearchResultsController?
     private let ziph: Ziph?
-    private var imageData: Data?
+    private var viewModel: GiphyConfirmationViewModel
 
     /// init method with optional arguments for remove dependency for testing
     ///
@@ -65,6 +63,7 @@ final class GiphyConfirmationViewController: UIViewController {
     ) {
         self.ziph = ziph
         self.searchResultController = searchResultController
+        self.viewModel = GiphyConfirmationViewModel(canFetchImage: ziph != nil && searchResultController != nil)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -73,8 +72,8 @@ final class GiphyConfirmationViewController: UIViewController {
         }
 
         let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true, completion: nil)
-        }, accessibilityLabel: L10n.Localizable.General.close)
+            self?.perform(.closeTapped)
+        }, accessibilityLabel: viewModel.displayState.closeAccessibilityLabel)
 
         navigationItem.rightBarButtonItem = closeItem
 
@@ -99,10 +98,8 @@ final class GiphyConfirmationViewController: UIViewController {
         navigationItem.titleView = titleLabel
 
         view.backgroundColor = .black
-        acceptButton.isEnabled = false
-        acceptButton.setTitle(Giphy.confirm.capitalized, for: .normal)
+        apply(displayState: viewModel.displayState)
         acceptButton.addTarget(self, action: #selector(GiphyConfirmationViewController.onAccept), for: .touchUpInside)
-        cancelButton.setTitle(Giphy.cancel.capitalized, for: .normal)
         cancelButton.addTarget(self, action: #selector(GiphyConfirmationViewController.onCancel), for: .touchUpInside)
 
         imagePreview.contentMode = .scaleAspectFit
@@ -113,38 +110,69 @@ final class GiphyConfirmationViewController: UIViewController {
         [cancelButton, acceptButton].forEach(buttonContainer.addSubview)
 
         configureConstraints()
-        fetchImage()
+        perform(.open)
     }
 
-    func fetchImage() {
-        guard let ziph, let searchResultController else { return }
+    private func fetchImage() {
+        guard let ziph, let searchResultController else {
+            _ = viewModel.effect(for: .imageFetchFailed)
+            return
+        }
 
         searchResultController.fetchImageData(for: ziph, imageType: .downsized) { [weak self] result in
+            guard let self else { return }
+
             guard case let .success(imageData) = result else {
+                _ = self.viewModel.effect(for: .imageFetchFailed)
                 return
             }
 
-            self?.imagePreview.animatedImage = FLAnimatedImage(animatedGIFData: imageData)
-            self?.imageData = imageData
-            self?.acceptButton.isEnabled = true
+            self.imagePreview.animatedImage = FLAnimatedImage(animatedGIFData: imageData)
+            _ = self.viewModel.effect(for: .imageFetchSucceeded(imageData))
+            self.apply(displayState: self.viewModel.displayState)
         }
     }
 
     @objc
     private func onDismiss() {
-        dismiss(animated: true, completion: nil)
+        perform(.closeTapped)
     }
 
     @objc
     private func onCancel() {
-        _ = navigationController?.popViewController(animated: true)
+        perform(.cancelTapped)
     }
 
     @objc
     private func onAccept() {
-        if let imageData {
-            delegate?.giphyConfirmationViewController(self, didConfirmImageData: imageData)
+        perform(.confirmTapped)
+    }
+
+    private func perform(_ action: GiphyConfirmationViewModel.Action) {
+        switch viewModel.effect(for: action) {
+        case .fetchImage:
+            fetchImage()
+        case .none:
+            break
         }
+
+        switch viewModel.route(for: action) {
+        case let .confirm(imageData):
+            delegate?.giphyConfirmationViewController(self, didConfirmImageData: imageData)
+        case .pop:
+            _ = navigationController?.popViewController(animated: true)
+        case .dismiss:
+            presentingViewController?.dismiss(animated: true, completion: nil)
+        case .none:
+            break
+        }
+    }
+
+    private func apply(displayState: GiphyConfirmationViewModel.DisplayState) {
+        acceptButton.isEnabled = displayState.confirmButton.isEnabled
+        acceptButton.setTitle(displayState.confirmButton.title, for: .normal)
+        cancelButton.isEnabled = displayState.cancelButton.isEnabled
+        cancelButton.setTitle(displayState.cancelButton.title, for: .normal)
     }
 
     private func configureConstraints() {

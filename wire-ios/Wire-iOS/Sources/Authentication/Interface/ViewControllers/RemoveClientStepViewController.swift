@@ -25,6 +25,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
+    private let viewModel: RemoveClientStepViewModel
     var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
         traitEnvironment.traitCollection.horizontalSizeClass
     }
@@ -36,6 +37,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     init(clients: [UserClient]) {
         self.clientListController = RemoveClientsViewController(clientsList: clients)
+        self.viewModel = RemoveClientStepViewModel()
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -51,12 +53,12 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
-        updateBackButton()
+        render(viewModel.displayState(canCancel: canCancel))
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
+        setupNavigationBarTitle(viewModel.displayState(canCancel: canCancel).navigationTitle)
     }
 
     private func configureSubviews() {
@@ -76,28 +78,47 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
             clientListController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
-        // Adaptive Constraints
-        contentViewWidthRegular = clientListController.view.widthAnchor.constraint(equalToConstant: 375)
+        let displayState = viewModel.displayState(canCancel: canCancel)
+        contentViewWidthRegular = clientListController.view.widthAnchor.constraint(
+            equalToConstant: displayState.regularContentWidth
+        )
         contentViewWidthCompact = clientListController.view.widthAnchor.constraint(equalTo: view.widthAnchor)
 
         toggleConstraints()
     }
 
+    private var canCancel: Bool {
+        guard let count = navigationController?.viewControllers.count else {
+            return false
+        }
+        return count > 1
+    }
+
+    private func render(_ displayState: RemoveClientStepViewModel.DisplayState) {
+        setupNavigationBarTitle(displayState.navigationTitle)
+        updateBackButton(
+            isVisible: displayState.showsCancelButton,
+            isEnabled: displayState.isCancelButtonEnabled
+        )
+    }
+
     // MARK: - Back Button
 
-    private func updateBackButton() {
-        guard let count = navigationController?.viewControllers.count, count > 1 else {
+    private func updateBackButton(isVisible: Bool, isEnabled: Bool) {
+        guard isVisible else {
+            navigationItem.leftBarButtonItem = nil
             return
         }
 
         let button = AuthenticationNavigationBar.makeBackButton()
+        button.isEnabled = isEnabled
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
     }
 
     @objc
     private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        handle(route: viewModel.routeForCancelTapped())
     }
 
     // MARK: - Adaptive UI
@@ -127,6 +148,27 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     func didRewindToThisView() {
         // no-op
     }
+
+    private func handle(route: RemoveClientStepViewModel.Route) {
+        switch route {
+        case .cancel:
+            navigationController?.popViewController(animated: true)
+        }
+    }
+
+    private func handle(action: RemoveClientStepViewModel.Action) {
+        switch action {
+        case .continueAfterRemovingClient:
+            authenticationCoordinator?.executeActions([.unwindState(withInterface: true), .showLoadingView])
+
+        case let .showRemovalError(error):
+            let alert = AuthenticationCoordinatorErrorAlert(
+                error: error as NSError,
+                completionActions: [.unwindState(withInterface: false)]
+            )
+            authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
+        }
+    }
 }
 
 // MARK: - ClientListViewControllerDelegate
@@ -134,15 +176,11 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
 
     func finishedDeleting(_ clientListViewController: RemoveClientsViewController) {
-        authenticationCoordinator?.executeActions([.unwindState(withInterface: true), .showLoadingView])
+        handle(action: viewModel.actionForFinishedDeleting())
     }
 
     func failedToDeleteClients(_ error: Error) {
-        let alert = AuthenticationCoordinatorErrorAlert(
-            error: error as NSError,
-            completionActions: [.unwindState(withInterface: false)]
-        )
-        authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
+        handle(action: viewModel.actionForFailedToDeleteClients(error))
     }
 
 }

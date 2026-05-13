@@ -26,20 +26,13 @@ final class TextSearchViewController: NSObject {
     weak var delegate: MessageActionResponder? = .none
     let conversation: ConversationLike
     var searchQuery: String? {
-        searchBar.query
+        viewModel.query
     }
 
+    private var viewModel = TextSearchViewModel()
     private var textSearchQuery: TextSearchQuery?
 
-    private var results: [ZMConversationMessage] = [] {
-        didSet {
-            reloadResults()
-        }
-    }
-
     private let userSession: UserSession
-
-    private var searchStartedDate: Date?
 
     init(conversation: ConversationLike, userSession: UserSession) {
         self.conversation = conversation
@@ -49,16 +42,15 @@ final class TextSearchViewController: NSObject {
     }
 
     private func loadViews() {
-        resultsView.isHidden = results.isEmpty
-        resultsView.tableView.isHidden = results.isEmpty
-        resultsView.noResultsView.isHidden = !results.isEmpty
+        applyViewState()
 
         resultsView.tableView.delegate = self
         resultsView.tableView.dataSource = self
 
         searchBar.delegate = self
-        searchBar.placeholderString = L10n.Localizable.Collections.Search.Field.placeholder
-
+        searchBar.placeholderString = viewModel.searchPlaceholder
+        resultsView.noResultsView.label.accessibilityLabel = viewModel.noResultsAccessibilityLabel
+        resultsView.noResultsView.label.text = viewModel.noResultsText
     }
 
     func teardown() {
@@ -79,42 +71,53 @@ final class TextSearchViewController: NSObject {
         textSearchQuery = nil
 
         guard let query = searchQuery, !query.isEmpty else {
-            results = []
+            viewModel.clearResults()
+            applyViewStateAndReloadResults()
             return
         }
 
         textSearchQuery = TextSearchQuery(conversation: conversation, query: query, delegate: self)
         if let query = textSearchQuery {
-            searchStartedDate = Date()
             perform(#selector(showLoadingSpinner), with: nil, afterDelay: 2)
             query.execute()
         }
     }
 
-    private func reloadResults() {
-        let query = searchQuery ?? ""
-        let noResults = results.isEmpty
-        let validQuery = TextSearchQuery.isValid(query: query)
-
-        // We hide the results when we either have none or the query is too short
-        resultsView.tableView.isHidden = noResults || !validQuery
-        // We only show the no results view if there are no results and a valid query
-        resultsView.noResultsView.isHidden = !noResults || !validQuery
-        // If the user did not enter any search query we show the collection again
-        resultsView.isHidden = query.isEmpty
-
+    private func applyViewStateAndReloadResults() {
+        applyViewState()
         resultsView.tableView.reloadData()
         setupAccessibility()
     }
 
+    private func applyViewState() {
+        let viewState = viewModel.viewState
+        resultsView.isHidden = viewState.isResultsViewHidden
+        resultsView.tableView.isHidden = viewState.isTableViewHidden
+        resultsView.noResultsView.isHidden = viewState.isNoResultsViewHidden
+        searchBar.isLoading = viewState.isLoading
+    }
+
     @objc
     private func showLoadingSpinner() {
-        searchBar.isLoading = true
+        viewModel.showLoading()
+        applyViewState()
     }
 
     private func hideLoadingSpinner() {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(showLoadingSpinner), object: nil)
-        searchBar.isLoading = false
+        viewModel.hideLoading()
+        applyViewState()
+    }
+
+    private func applyEffects(_ effects: [TextSearchViewModel.Effect]) {
+        for effect in effects {
+            switch effect {
+            case .cancelSearch:
+                textSearchQuery?.cancel()
+            case .scheduleSearch:
+                scheduleSearch()
+            }
+        }
     }
 
     private func setupAccessibility() {
@@ -132,51 +135,51 @@ extension TextSearchViewController: TextSearchQueryDelegate {
         guard result.query == textSearchQuery else { return }
         if !result.matches.isEmpty || !result.hasMore {
             hideLoadingSpinner()
-            results = result.matches
+            viewModel.updateResults(result.matches)
+            applyViewStateAndReloadResults()
         }
     }
 }
 
 extension TextSearchViewController: TextSearchInputViewDelegate {
     func searchView(_ searchView: TextSearchInputView, didChangeQueryTo query: String) {
-        textSearchQuery?.cancel()
-        searchStartedDate = nil
         hideLoadingSpinner()
-
-        if TextSearchQuery.isValid(query: query) {
-            scheduleSearch()
-        } else {
-            // We reset the results to avoid showing the previous
-            // results for a short period for subsequential searches
-            results = []
-        }
+        applyEffects(viewModel.updateQuery(query))
+        applyViewStateAndReloadResults()
     }
 
     func searchViewShouldReturn(_ searchView: TextSearchInputView) -> Bool {
-        TextSearchQuery.isValid(query: searchView.query)
+        TextSearchQuery.isValid(query: viewModel.query)
     }
 }
 
 extension TextSearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        results.count
+        viewModel.numberOfRows
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView
             .dequeueReusableCell(withIdentifier: TextSearchResultCell.reuseIdentifier) as! TextSearchResultCell
+        guard let rowModel = viewModel.rowModel(at: indexPath.row) else {
+            return cell
+        }
+
         cell.configure(
-            with: results[indexPath.row],
-            queries: searchQuery?.components(
-                separatedBy: .whitespacesAndNewlines
-            ) ?? [],
+            with: rowModel.message,
+            queries: rowModel.queries,
             userSession: userSession
         )
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate?.perform(action: .showInConversation, for: results[indexPath.row], view: tableView)
+        switch viewModel.routeForSelectingRow(at: indexPath.row) {
+        case let .showInConversation(message):
+            delegate?.perform(action: .showInConversation, for: message, view: tableView)
+        case .ignore:
+            break
+        }
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
