@@ -167,14 +167,39 @@ package final class FilesViewModel: ObservableObject {
         filesListLoader.onFetchOfflineFiles = { [weak self] in
             guard let self else { return [] }
 
-            let actionInput = LoadOfflineAvailableFilesUIAction.Input(
-                conversationName: cellName != nil ? conversations.first?.name : nil,
-                assetsPath: navigationPath.last?.filePath,
-                getAsset: useCases.getAsset,
-                getOfflineAvailableAssets: useCases.getOfflineAvailableAssets
+            let conversationName = cellName != nil ? conversations.first?.name : nil
+            let assetsPath = navigationPath.last?.filePath
+
+            let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke(
+                conversationName: conversationName,
+                assetsPath: assetsPath
             )
 
-            return try await LoadOfflineAvailableFilesUIAction(input: actionInput)()
+            let items: [FilesViewItem] = offlineAssets.map { asset in
+                .fromLocalAsset(
+                    asset,
+                    conversationName: conversationName,
+                    assetsPath: assetsPath
+                )
+            }
+
+            let itemsWithCreationDates: [(item: FilesViewItem, creationDate: Date)] = await items.asyncMap { item in
+                let url = try? await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
+                let creationDate = (try? url?.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? Date()
+                return (item: item, creationDate: creationDate)
+            }
+
+            return itemsWithCreationDates.sorted { lhs, rhs in
+                lhs.creationDate.compare(rhs.creationDate) == .orderedDescending
+            }
+            .map(\.item)
+            .reduce(into: [FilesViewItem]()) { result, item in
+                let isDuplicate = result.map(\.filePath).contains(item.filePath) // removes duplicated folders
+
+                if !isDuplicate {
+                    result.append(item)
+                }
+            }
         }
 
         filesListLoader.onErrorToPresent = { [weak self] _ in
@@ -422,5 +447,16 @@ package final class FilesViewModel: ObservableObject {
                     .error("Failed to remove asset from available offline: \(String(describing: error))")
             }
         }
+    }
+}
+
+private extension Sequence {
+    @MainActor
+    func asyncMap<T>(_ transform: @MainActor (Element) async throws -> T) async rethrows -> [T] {
+        var values = [T]()
+        for element in self {
+            try await values.append(transform(element))
+        }
+        return values
     }
 }
