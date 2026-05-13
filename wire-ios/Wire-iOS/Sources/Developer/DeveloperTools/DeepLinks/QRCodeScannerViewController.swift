@@ -21,9 +21,20 @@ import UIKit
 
 final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 
+    private let viewModel: QRCodeScannerViewModel
     private var captureSession: AVCaptureSession!
     private var previewLayer: AVCaptureVideoPreviewLayer!
     var onQRCodeScanned: ((String) -> Void)?
+
+    init(viewModel: QRCodeScannerViewModel = QRCodeScannerViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,12 +83,13 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
     }
 
     private func failed() {
+        let failureAlert = viewModel.displayState.failureAlert
         let alertController = UIAlertController(
-            title: "Scanning not supported",
-            message: "Your device doesn't support QR code scanning.",
+            title: failureAlert.title,
+            message: failureAlert.message,
             preferredStyle: .alert
         )
-        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        alertController.addAction(UIAlertAction(title: failureAlert.actionTitle, style: .default))
         present(alertController, animated: true)
         captureSession = nil
     }
@@ -97,12 +109,12 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
     ) {
         captureSession.stopRunning()
 
-        if let metadataObject = metadataObjects.first {
-            guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
-            guard let stringValue = readableObject.stringValue else { return }
-
+        switch viewModel.route(for: metadataObjects) {
+        case let .qrCodeScanned(stringValue):
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             onQRCodeScanned?(stringValue)
+        case .none:
+            break
         }
     }
 

@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 final class MediaBarViewController: UIViewController {
+    private let viewModel = MediaBarViewModel()
     private var mediaPlaybackManager: MediaPlaybackManager?
 
     private var mediaBarView: MediaBar? {
@@ -53,35 +54,46 @@ final class MediaBarViewController: UIViewController {
     }
 
     func updatePlayPauseButton() {
-        let playPauseIcon: StyleKitIcon
-        let accessibilityIdentifier: String
+        let displayState = viewModel.displayState(isPlaying: isPlaying)
 
-        if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {
-            playPauseIcon = .pause
-            accessibilityIdentifier = "mediaBarPauseButton"
-        } else {
-            playPauseIcon = .play
-            accessibilityIdentifier = "mediaBarPlayButton"
-        }
-
-        mediaBarView?.playPauseButton.setIcon(playPauseIcon, size: .tiny, for: UIControl.State.normal)
-        mediaBarView?.playPauseButton.accessibilityIdentifier = accessibilityIdentifier
+        mediaBarView?.playPauseButton.setIcon(icon(for: displayState.playPauseIcon), size: .tiny, for: .normal)
+        mediaBarView?.playPauseButton.accessibilityIdentifier = displayState.playPauseAccessibilityIdentifier
     }
 
     // MARK: - Actions
 
     @objc
     private func playPause(_ sender: Any?) {
-        if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {
-            mediaPlaybackManager?.pause()
-        } else {
-            mediaPlaybackManager?.play()
-        }
+        perform(viewModel.playPauseAction(isPlaying: isPlaying))
     }
 
     @objc
     private func stop(_ sender: Any?) {
-        mediaPlaybackManager?.stop()
+        perform(viewModel.stopAction())
+    }
+
+    private func perform(_ action: MediaBarViewModel.Action) {
+        switch action {
+        case .stop:
+            mediaPlaybackManager?.stop()
+        case .play:
+            mediaPlaybackManager?.play()
+        case .pause:
+            mediaPlaybackManager?.pause()
+        }
+    }
+
+    private var isPlaying: Bool {
+        mediaPlaybackManager?.activeMediaPlayer?.state == .playing
+    }
+
+    private func icon(for playPauseIcon: MediaBarViewModel.PlayPauseIcon) -> StyleKitIcon {
+        switch playPauseIcon {
+        case .play:
+            .play
+        case .pause:
+            .pause
+        }
     }
 
 }

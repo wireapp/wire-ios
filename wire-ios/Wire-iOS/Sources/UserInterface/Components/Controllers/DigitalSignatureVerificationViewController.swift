@@ -34,15 +34,15 @@ final class DigitalSignatureVerificationViewController: UIViewController {
 
     // MARK: - Private Property
 
+    private let viewModel: DigitalSignatureVerificationViewModel
     private var completion: DigitalSignatureCompletion?
 
     private var webView = WKWebView(frame: .zero)
-    private var url: URL?
 
     // MARK: - Init
 
     init(url: URL, completion: DigitalSignatureCompletion? = nil) {
-        self.url = url
+        self.viewModel = DigitalSignatureVerificationViewModel(url: url)
         self.completion = completion
         super.init(nibName: nil, bundle: nil)
     }
@@ -70,22 +70,21 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     private func updateButtonMode() {
+        let displayState = viewModel.displayState
         let buttonItem = UIBarButtonItem(
-            title: L10n.Localizable.General.done,
+            title: displayState.doneButtonTitle,
             style: .done,
             target: self,
             action: #selector(onClose)
         )
-        buttonItem.accessibilityIdentifier = "DoneButton"
-        buttonItem.accessibilityLabel = L10n.Localizable.General.done
+        buttonItem.accessibilityIdentifier = displayState.doneButtonAccessibilityIdentifier
+        buttonItem.accessibilityLabel = displayState.doneButtonTitle
         buttonItem.tintColor = UIColor.black
         navigationItem.leftBarButtonItem = buttonItem
     }
 
     private func loadURL() {
-        guard let url else { return }
-        let request = URLRequest(url: url)
-        webView.load(request)
+        webView.load(viewModel.request)
     }
 
     @objc
@@ -102,38 +101,20 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        guard
-            let url = navigationAction.request.url,
-            let response = parseVerificationURL(url)
-        else {
+        guard let url = navigationAction.request.url else {
             decisionHandler(.allow)
             return
         }
 
-        switch response {
-        case .success:
+        switch viewModel.route(for: url) {
+        case .verificationSucceeded:
             completion?(.success(()))
             decisionHandler(.cancel)
-        case let .failure(error):
+        case let .verificationFailed(error):
             completion?(.failure(error))
             decisionHandler(.cancel)
-        }
-    }
-
-    func parseVerificationURL(_ url: URL) -> Result<Void, Error>? {
-        let urlComponents = URLComponents(string: url.absoluteString)
-        let postCode = urlComponents?.queryItems?
-            .first(where: { $0.name == "postCode" })
-        guard let  postCodeValue = postCode?.value else {
-            return nil
-        }
-        switch postCodeValue {
-        case "sas-success":
-            return .success(())
-        case "sas-error-authentication-failed":
-            return .failure(DigitalSignatureVerificationError.authenticationFailed)
-        default:
-            return .failure(DigitalSignatureVerificationError.otherError)
+        case .none:
+            decisionHandler(.allow)
         }
     }
 }
