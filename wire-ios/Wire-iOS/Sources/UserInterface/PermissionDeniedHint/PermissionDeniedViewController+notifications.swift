@@ -16,50 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
-import WireDesign
-
 extension PermissionDeniedViewController {
 
     class func pushDeniedViewController() -> PermissionDeniedViewController {
-
-        typealias RegistrationPushAccessDenied = L10n.Localizable.Registration.PushAccessDenied
-
-        let vc = PermissionDeniedViewController()
-        let title = RegistrationPushAccessDenied.Hero.title
-        let paragraph1 = RegistrationPushAccessDenied.Hero.paragraph1
-
-        let text = [title, paragraph1].joined(separator: "\u{2029}")
-
-        let attributedText = text.withCustomParagraphSpacing()
-
-        attributedText.addAttributes([
-            NSAttributedString.Key.font: FontSpec.largeThinFont.font!
-        ], range: (text as NSString).range(of: paragraph1))
-        attributedText.addAttributes([
-            NSAttributedString.Key.font: FontSpec.largeSemiboldFont.font!
-        ], range: (text as NSString).range(of: title))
-        vc.heroLabel.attributedText = attributedText
-
-        vc.settingsButton.setTitle(RegistrationPushAccessDenied.SettingsButton.title.capitalized, for: .normal)
-        vc.laterButton.setTitle(RegistrationPushAccessDenied.MaybeLaterButton.title.capitalized, for: .normal)
-
-        vc.view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        return vc
-    }
-}
-
-private extension String {
-    func withCustomParagraphSpacing() -> NSMutableAttributedString {
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.paragraphSpacing = 10
-
-        return .init(
-            string: self,
-            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
-        )
+        PermissionDeniedViewController(viewModel: .pushDenied)
     }
 }

@@ -33,29 +33,26 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     weak var delegate: AppLockChangeWarningViewControllerDelegate?
 
-    private var isAppLockActive: Bool
+    private let viewModel: AppLockChangeWarningViewModel
     private let userSession: UserSession
 
     private let contentView: UIView = .init()
 
     private lazy var confirmButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-        button.accessibilityIdentifier = "warning_screen.button.confirm"
-        button.setTitle(L10n.Localizable.General.confirm, for: .normal)
         button.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
         return button
     }()
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel.createMultiLineCenterdLabel()
-        label.text = L10n.Localizable.WarningScreen.titleLabel
         label.accessibilityIdentifier = "warning_screen.label.title"
         return label
     }()
 
     private lazy var messageLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
-            text: messageLabelText,
+            text: nil,
             fontSpec: .normalRegularFont,
             color: SemanticColors.Label.textDefault
         )
@@ -66,19 +63,10 @@ final class AppLockChangeWarningViewController: UIViewController {
         return label
     }()
 
-    private var messageLabelText: String {
-        if isAppLockActive {
-            L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel
-                .forcedApplock
-        } else {
-            L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
-        }
-    }
-
     // MARK: - Life cycle
 
     init(isAppLockActive: Bool, userSession: UserSession) {
-        self.isAppLockActive = isAppLockActive
+        self.viewModel = AppLockChangeWarningViewModel(isAppLockActive: isAppLockActive)
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
     }
@@ -99,6 +87,8 @@ final class AppLockChangeWarningViewController: UIViewController {
     private func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
+        configure(with: viewModel.displayModel)
+
         view.addSubview(contentView)
 
         contentView.addSubview(titleLabel)
@@ -106,6 +96,14 @@ final class AppLockChangeWarningViewController: UIViewController {
         contentView.addSubview(messageLabel)
 
         createConstraints()
+    }
+
+    private func configure(with displayModel: AppLockChangeWarningViewModel.DisplayModel) {
+        titleLabel.text = displayModel.title
+        messageLabel.text = displayModel.message
+        confirmButton.setTitle(displayModel.confirmButton.title, for: .normal)
+        confirmButton.accessibilityIdentifier = displayModel.confirmButton.accessibilityIdentifier
+        confirmButton.isEnabled = displayModel.confirmButton.isEnabled
     }
 
     private func createConstraints() {
@@ -146,6 +144,17 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     @objc
     func confirmButtonTapped(sender: AnyObject?) {
+        perform(route: viewModel.route(for: .confirmTapped))
+    }
+
+    private func perform(route: AppLockChangeWarningViewModel.Route) {
+        switch route {
+        case .dismissAfterAcknowledgingConfigurationChange:
+            acknowledgeConfigurationChangeAndDismiss()
+        }
+    }
+
+    private func acknowledgeConfigurationChangeAndDismiss() {
         userSession.perform {
             self.userSession.needsToNotifyUserOfAppLockConfiguration = false
         }

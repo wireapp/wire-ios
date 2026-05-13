@@ -50,42 +50,42 @@ struct SwitchBackendConfirmationView: View {
 
                 itemView(
                     title: Strings.backendName,
-                    value: viewModel.backendName
+                    value: viewModel.state.backendName
                 )
 
                 itemView(
                     title: Strings.backendUrl,
-                    value: viewModel.backendURL,
+                    value: viewModel.state.backendURL,
                     isURL: true
                 )
 
                 itemView(
                     title: Strings.backendWsurl,
-                    value: viewModel.backendWSURL,
+                    value: viewModel.state.backendWSURL,
                     isURL: true
                 )
 
                 itemView(
                     title: Strings.blacklistUrl,
-                    value: viewModel.blacklistURL,
+                    value: viewModel.state.blacklistURL,
                     isURL: true
                 )
 
                 itemView(
                     title: Strings.teamsUrl,
-                    value: viewModel.teamsURL,
+                    value: viewModel.state.teamsURL,
                     isURL: true
                 )
 
                 itemView(
                     title: Strings.accountsUrl,
-                    value: viewModel.accountsURL,
+                    value: viewModel.state.accountsURL,
                     isURL: true
                 )
 
                 itemView(
                     title: Strings.websiteUrl,
-                    value: viewModel.websiteURL,
+                    value: viewModel.state.websiteURL,
                     isURL: true
                 )
             }
@@ -117,8 +117,7 @@ struct SwitchBackendConfirmationView: View {
 
     @ViewBuilder private var cancelButton: some View {
         Button {
-            viewModel.handleEvent(.userDidCancel)
-            dismiss()
+            handleAction(.cancelTapped)
         } label: {
             Text(L10n.Localizable.General.cancel)
                 .font(for: .buttonBig)
@@ -128,13 +127,22 @@ struct SwitchBackendConfirmationView: View {
 
     @ViewBuilder private var proceedButton: some View {
         Button {
-            viewModel.handleEvent(.userDidConfirm)
-            dismiss()
+            handleAction(.proceedTapped)
         } label: {
             Text(Strings.proceed)
                 .font(for: .buttonBig)
         }
         .buttonStyle(PrimaryButtonStyle())
+    }
+
+    private func handleAction(_ action: SwitchBackendConfirmationViewModel.Action) {
+        let route = viewModel.handleAction(action)
+        viewModel.complete(route: route)
+
+        switch route {
+        case .dismiss:
+            dismiss()
+        }
     }
 
 }

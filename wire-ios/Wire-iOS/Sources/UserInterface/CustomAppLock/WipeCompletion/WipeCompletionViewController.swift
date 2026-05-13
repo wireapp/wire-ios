@@ -20,23 +20,29 @@ import UIKit
 import WireDesign
 
 final class WipeCompletionViewController: UIViewController {
-    let wireLogoInfoView = WireLogoInfoView(
-        title: L10n.Localizable.WipeDatabaseCompletion.title,
-        subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle
-    )
+
+    private let viewModel: WipeCompletionViewModel
+
+    let wireLogoInfoView: WireLogoInfoView
 
     private lazy var loginButton = {
         let button = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
-        button.setTitle(L10n.Localizable.Signin.confirm, for: .normal)
         button.addTarget(self, action: #selector(onLoginCodeButtonPressed(sender:)), for: .touchUpInside)
         return button
     }()
 
-    init() {
+    init(viewModel: WipeCompletionViewModel = WipeCompletionViewModel()) {
+        self.viewModel = viewModel
+        self.wireLogoInfoView = WireLogoInfoView(
+            title: viewModel.displayModel.title,
+            subtitle: viewModel.displayModel.subtitle
+        )
+
         super.init(nibName: nil, bundle: nil)
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
+        configure(with: viewModel.displayModel)
         configureSubviews()
         createConstraints()
     }
@@ -50,6 +56,11 @@ final class WipeCompletionViewController: UIViewController {
         view.addSubview(wireLogoInfoView)
 
         wireLogoInfoView.contentView.addSubview(loginButton)
+    }
+
+    private func configure(with displayModel: WipeCompletionViewModel.DisplayModel) {
+        loginButton.setTitle(displayModel.loginButton.title, for: .normal)
+        loginButton.isEnabled = displayModel.loginButton.isEnabled
     }
 
     private func createConstraints() {
@@ -72,7 +83,14 @@ final class WipeCompletionViewController: UIViewController {
 
     @objc
     private func onLoginCodeButtonPressed(sender: AnyObject?) {
-        dismiss(animated: true)
+        perform(route: viewModel.route(for: .loginTapped))
+    }
+
+    private func perform(route: WipeCompletionViewModel.Route) {
+        switch route {
+        case .dismiss:
+            dismiss(animated: true)
+        }
     }
 
 }

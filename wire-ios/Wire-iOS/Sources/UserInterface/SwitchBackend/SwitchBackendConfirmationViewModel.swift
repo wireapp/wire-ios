@@ -17,20 +17,25 @@
 //
 
 import Foundation
-import SwiftUI
 import WireSyncEngine
 
 final class SwitchBackendConfirmationViewModel {
 
     // MARK: - State
 
-    let backendName: String
-    let backendURL: String
-    let backendWSURL: String
-    let blacklistURL: String
-    let teamsURL: String
-    let accountsURL: String
-    let websiteURL: String
+    struct State: Equatable {
+
+        let backendName: String
+        let backendURL: String
+        let backendWSURL: String
+        let blacklistURL: String
+        let teamsURL: String
+        let accountsURL: String
+        let websiteURL: String
+
+    }
+
+    let state: State
 
     // MARK: - Life cycle
 
@@ -62,32 +67,49 @@ final class SwitchBackendConfirmationViewModel {
         websiteURL: String,
         didConfirm: @escaping (Bool) -> Void
     ) {
-        self.backendName = backendName
-        self.backendURL = backendURL
-        self.backendWSURL = backendWSURL
-        self.blacklistURL = blacklistURL
-        self.teamsURL = teamsURL
-        self.accountsURL = accountsURL
-        self.websiteURL = websiteURL
+        self.state = State(
+            backendName: backendName,
+            backendURL: backendURL,
+            backendWSURL: backendWSURL,
+            blacklistURL: blacklistURL,
+            teamsURL: teamsURL,
+            accountsURL: accountsURL,
+            websiteURL: websiteURL
+        )
         self.didConfirm = didConfirm
     }
 
-    // MARK: - Events
+    // MARK: - Actions
 
-    enum Event {
+    enum Action {
 
-        case userDidCancel
-        case userDidConfirm
+        case cancelTapped
+        case proceedTapped
 
     }
 
-    func handleEvent(_ event: Event) {
-        switch event {
-        case .userDidCancel:
-            didConfirm(false)
+    // MARK: - Routing
 
-        case .userDidConfirm:
-            didConfirm(true)
+    enum Route: Equatable {
+
+        case dismiss(confirmed: Bool)
+
+    }
+
+    func handleAction(_ action: Action) -> Route {
+        switch action {
+        case .cancelTapped:
+            return .dismiss(confirmed: false)
+
+        case .proceedTapped:
+            return .dismiss(confirmed: true)
+        }
+    }
+
+    func complete(route: Route) {
+        switch route {
+        case let .dismiss(confirmed):
+            didConfirm(confirmed)
         }
     }
 

@@ -102,4 +102,25 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
             )
     }
 
+    func testViewModelForActiveAppLockExposesDisplayModelAndRoute() {
+        let sut = AppLockChangeWarningViewModel(isAppLockActive: true)
+
+        XCTAssertEqual(sut.displayModel.title, L10n.Localizable.WarningScreen.titleLabel)
+        XCTAssertEqual(
+            sut.displayModel.message,
+            L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel
+                .forcedApplock
+        )
+        XCTAssertEqual(sut.displayModel.confirmButton.title, L10n.Localizable.General.confirm)
+        XCTAssertEqual(sut.displayModel.confirmButton.accessibilityIdentifier, "warning_screen.button.confirm")
+        XCTAssertTrue(sut.displayModel.confirmButton.isEnabled)
+        XCTAssertEqual(sut.route(for: .confirmTapped), .dismissAfterAcknowledgingConfigurationChange)
+    }
+
+    func testViewModelForInactiveAppLockExposesDisplayModel() {
+        let sut = AppLockChangeWarningViewModel(isAppLockActive: false)
+
+        XCTAssertEqual(sut.displayModel.message, L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock)
+    }
+
 }

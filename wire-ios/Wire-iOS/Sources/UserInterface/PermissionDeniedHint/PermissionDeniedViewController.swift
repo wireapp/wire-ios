@@ -26,6 +26,7 @@ final class PermissionDeniedViewController: UIViewController {
 
     weak var delegate: PermissionDeniedViewControllerDelegate?
 
+    private let viewModel: PermissionDeniedViewModel
     private var initialConstraintsCreated = false
     let heroLabel = UILabel()
     private(set) var settingsButton: LegacyButton!
@@ -33,12 +34,14 @@ final class PermissionDeniedViewController: UIViewController {
 
     // MARK: - Initialization
 
-    required init() {
+    init(viewModel: PermissionDeniedViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
 
         setupHeroLabel()
         createSettingsButton()
         createLaterButton()
+        configure(with: viewModel.displayState)
         updateViewConstraints()
     }
 
@@ -81,15 +84,48 @@ final class PermissionDeniedViewController: UIViewController {
 
     @objc
     private func openSettings(_ sender: Any?) {
-        if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
-        delegate?.permissionDeniedViewControllerDidOpenNotificationSettings(self)
+        handle(viewModel.action(for: .primaryButtonTapped))
     }
 
     @objc
     private func continueWithoutAccess(_ sender: Any?) {
-        delegate?.permissionDeniedViewControllerDidSkip(self)
+        handle(viewModel.action(for: .secondaryButtonTapped))
+    }
+
+    private func handle(_ action: PermissionDeniedAction) {
+        switch action {
+        case .openSettings(permissionType: .notifications):
+            openApplicationSettings()
+            delegate?.permissionDeniedViewControllerDidOpenNotificationSettings(self)
+
+        case .skip(permissionType: .notifications):
+            delegate?.permissionDeniedViewControllerDidSkip(self)
+        }
+    }
+
+    private func openApplicationSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
+
+    // MARK: - Display State
+
+    private func configure(with displayState: PermissionDeniedViewModel.DisplayState) {
+        let text = [displayState.title, displayState.message].joined(separator: "\u{2029}")
+        let attributedText = text.withCustomParagraphSpacing()
+
+        attributedText.addAttributes([
+            NSAttributedString.Key.font: FontSpec.largeThinFont.font!
+        ], range: (text as NSString).range(of: displayState.message))
+        attributedText.addAttributes([
+            NSAttributedString.Key.font: FontSpec.largeSemiboldFont.font!
+        ], range: (text as NSString).range(of: displayState.title))
+
+        heroLabel.attributedText = attributedText
+        settingsButton.setTitle(displayState.primaryButtonTitle, for: .normal)
+        laterButton.setTitle(displayState.secondaryButtonTitle, for: .normal)
+        view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     // MARK: - Constraints
@@ -132,5 +168,18 @@ final class PermissionDeniedViewController: UIViewController {
         ]
 
         NSLayoutConstraint.activate(constraints)
+    }
+}
+
+private extension String {
+    func withCustomParagraphSpacing() -> NSMutableAttributedString {
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.paragraphSpacing = 10
+
+        return .init(
+            string: self,
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
+        )
     }
 }

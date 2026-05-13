@@ -64,8 +64,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     // MARK: - Properties
 
     weak var delegate: ConfirmEmailDelegate?
-    typealias SettingsAccountSectionEmailLocalizable = L10n.Localizable.Self.Settings.AccountSection.Email.Change
-    let newEmail: String
+    private let viewModel: ConfirmEmailViewModel
     let userSession: UserSession
     fileprivate var observer: NSObjectProtocol?
 
@@ -78,7 +77,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         useTypeIntrinsicSizeTableView: Bool,
         settingsCoordinator: AnySettingsCoordinator
     ) {
-        self.newEmail = newEmail
+        self.viewModel = ConfirmEmailViewModel(newEmail: newEmail)
         self.delegate = delegate
         self.userSession = userSession
         super.init(
@@ -115,8 +114,9 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     func setupViews() {
         SettingsButtonCell.register(in: tableView)
+        let displayState = viewModel.displayState
 
-        title = SettingsAccountSectionEmailLocalizable.Verify.title
+        title = displayState.title
         view.backgroundColor = .clear
         tableView.isScrollEnabled = false
 
@@ -124,7 +124,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         tableView.estimatedSectionHeaderHeight = 30
 
         let description = DescriptionHeaderView()
-        description.descriptionLabel.text = SettingsAccountSectionEmailLocalizable.Verify.description
+        description.descriptionLabel.text = displayState.description
 
         tableView.autolayoutTableHeaderView = description
     }
@@ -144,8 +144,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
             withIdentifier: SettingsButtonCell.zm_reuseIdentifier,
             for: indexPath
         ) as! SettingsButtonCell
-        let text = SettingsAccountSectionEmailLocalizable.Verify.resend(newEmail)
-        cell.titleText = text
+        cell.titleText = viewModel.displayState.resendButtonTitle
         return cell
     }
 
@@ -153,15 +152,20 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         delegate?.resendVerification(inController: self)
         tableView.deselectRow(at: indexPath, animated: false)
 
-        let message = SettingsAccountSectionEmailLocalizable.Resend.message(newEmail)
+        let action = viewModel.resendButtonTapped()
+        let confirmation: ConfirmEmailViewModel.ResendConfirmation
+        switch action {
+        case let .resendVerification(resendConfirmation):
+            confirmation = resendConfirmation
+        }
 
         let alert = UIAlertController(
-            title: SettingsAccountSectionEmailLocalizable.Resend.title,
-            message: message,
+            title: confirmation.title,
+            message: confirmation.message,
             preferredStyle: .alert
         )
 
-        alert.addAction(.init(title: L10n.Localizable.General.ok, style: .cancel, handler: nil))
+        alert.addAction(.init(title: confirmation.buttonTitle, style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
 }
@@ -178,7 +182,10 @@ extension ConfirmEmailViewController: UserObserving {
                 return
             }
 
-            if let currentEmail = selfUser.emailAddress, currentEmail == newEmail {
+            if viewModel.routeForObservedEmailChange(
+                isSelfUser: note.user.isSelfUser,
+                currentEmail: selfUser.emailAddress
+            ) == .confirmedEmail {
                 delegate?.didConfirmEmail(inController: self)
             }
         }

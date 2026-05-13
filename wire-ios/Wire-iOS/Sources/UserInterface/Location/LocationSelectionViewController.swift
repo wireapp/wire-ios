@@ -204,6 +204,7 @@ final class LocationSelectionViewController: UIViewController {
 
     private func formatAndUpdateAddress() {
         guard mapDidRender else { return }
+        updateSelectedLocationPayload()
         geocoder
             .reverseGeocodeLocation(
                 mapViewController.mapView.centerCoordinate
@@ -211,11 +212,19 @@ final class LocationSelectionViewController: UIViewController {
             ) { [weak self] placemarks, error in
                 guard error == nil, let placemark = placemarks?.first else { return }
                 if let address = placemark.formattedAddress(false), !address.isEmpty {
-                    self?.sendViewController.address = address
+                    self?.sendViewController.updateSelectedAddress(address)
                 } else {
-                    self?.sendViewController.address = nil
+                    self?.sendViewController.updateSelectedAddress(nil)
                 }
             }
+    }
+
+    private func updateSelectedLocationPayload() {
+        sendViewController.updateSelectedLocation(
+            latitude: Float(mapViewController.mapView.centerCoordinate.latitude),
+            longitude: Float(mapViewController.mapView.centerCoordinate.longitude),
+            zoomLevel: Int32(mapViewController.mapView.zoomLevel)
+        )
     }
 }
 
@@ -238,7 +247,8 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
     }
 
     func locationSendViewControllerSendButtonTapped(_ viewController: LocationSendViewController) {
-        let locationData = mapViewController.mapView.locationData(name: viewController.address)
+        updateSelectedLocationPayload()
+        guard let locationData = viewController.selectedLocationData else { return }
         delegate?.locationSelectionViewController(self, didSelectLocationWithData: locationData)
         dismiss(animated: true, completion: nil)
     }

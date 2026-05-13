@@ -39,4 +39,14 @@ final class WipeCompletionViewControllerTests: XCTestCase {
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
     }
+
+    func testViewModelExposesDisplayModelAndRoute() {
+        let sut = WipeCompletionViewModel()
+
+        XCTAssertEqual(sut.displayModel.title, L10n.Localizable.WipeDatabaseCompletion.title)
+        XCTAssertEqual(sut.displayModel.subtitle, L10n.Localizable.WipeDatabaseCompletion.subtitle)
+        XCTAssertEqual(sut.displayModel.loginButton.title, L10n.Localizable.Signin.confirm)
+        XCTAssertTrue(sut.displayModel.loginButton.isEnabled)
+        XCTAssertEqual(sut.route(for: .loginTapped), .dismiss)
+    }
 }

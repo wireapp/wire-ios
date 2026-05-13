@@ -45,10 +45,12 @@ final class SwitchBackendConfirmationViewModelTests: XCTestCase {
         }
 
         // When
-        sut.handleEvent(.userDidConfirm)
+        let route = sut.handleAction(.proceedTapped)
+        sut.complete(route: route)
 
         // Then
         await fulfillment(of: [done], timeout: 1)
+        XCTAssertEqual(route, .dismiss(confirmed: true))
         XCTAssertTrue(didConfirm)
     }
 
@@ -63,11 +65,32 @@ final class SwitchBackendConfirmationViewModelTests: XCTestCase {
         }
 
         // When
-        sut.handleEvent(.userDidCancel)
+        let route = sut.handleAction(.cancelTapped)
+        sut.complete(route: route)
 
         // Then
         await fulfillment(of: [done], timeout: 1)
+        XCTAssertEqual(route, .dismiss(confirmed: false))
         XCTAssertFalse(didConfirm)
+    }
+
+    func testItExposesBackendDetailsAsState() {
+        // Given
+        let sut = createSUT { _ in }
+
+        // Then
+        XCTAssertEqual(
+            sut.state,
+            SwitchBackendConfirmationViewModel.State(
+                backendName: "www.backendName.com",
+                backendURL: "www.backendURL.com",
+                backendWSURL: "www.backendWSURL.com",
+                blacklistURL: "www.blacklistURL.com",
+                teamsURL: "www.teamsURL.com",
+                accountsURL: "www.accountsURL.com",
+                websiteURL: "www.websiteURL.com"
+            )
+        )
     }
 
 }

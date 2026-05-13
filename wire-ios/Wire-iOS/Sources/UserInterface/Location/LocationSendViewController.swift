@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDataModel
 import WireDesign
 
 // MARK: - LocationSendViewControllerDelegate
@@ -47,16 +48,36 @@ final class LocationSendViewController: UIViewController {
     }()
 
     private let containerView = UIView()
+    private let viewModel = LocationSendViewModel()
 
     weak var delegate: LocationSendViewControllerDelegate?
 
     var address: String? {
-        didSet {
-            addressLabel.text = address
-            updateAddressLabelAccessibility()
-            let shouldActivateConstraint = address?.isEmpty ?? true
-            delegate?.locationSendViewController(self, shouldChangeHeight: shouldActivateConstraint)
+        get {
+            viewModel.displayState.selectedAddress
         }
+        set {
+            updateSelectedAddress(newValue)
+        }
+    }
+
+    var selectedLocationData: LocationData? {
+        viewModel.displayState.selectedLocationPayload?.locationData
+    }
+
+    var canSend: Bool {
+        viewModel.displayState.canSend
+    }
+
+    func updateSelectedAddress(_ address: String?) {
+        let routes = viewModel.perform(.updateSelectedAddress(address))
+        render(viewModel.displayState)
+        handle(routes)
+    }
+
+    func updateSelectedLocation(latitude: Float, longitude: Float, zoomLevel: Int32) {
+        viewModel.perform(.updateSelectedLocation(latitude: latitude, longitude: longitude, zoomLevel: zoomLevel))
+        render(viewModel.displayState)
     }
 
     // MARK: - viewDidLoad
@@ -68,29 +89,31 @@ final class LocationSendViewController: UIViewController {
         setupContainerView()
         createConstraints()
         view.backgroundColor = SemanticColors.View.backgroundDefault
+        render(viewModel.displayState)
     }
 
     // MARK: - Setup UI and constraints
 
     private func setupSendLocationButton() {
-        sendButton.setTitle(L10n.Localizable.Location.SendButton.title, for: [])
-
         let action = UIAction { [weak self] _ in
             self?.sendButtonTapped()
         }
         sendButton.addAction(action, for: .touchUpInside)
-        sendButton.accessibilityIdentifier = "sendLocation"
     }
 
     private func setupAddressLabel() {
-        addressLabel.accessibilityIdentifier = "selectedAddress"
         addressLabel.accessibilityTraits = .staticText
-        updateAddressLabelAccessibility()
     }
 
-    private func updateAddressLabelAccessibility() {
-        addressLabel.accessibilityLabel = L10n.Accessibility.SendLocation.Address.description(addressLabel)
-        addressLabel.accessibilityHint = L10n.Accessibility.SendLocation.Address.hint
+    private func render(_ state: LocationSendViewModel.DisplayState) {
+        sendButton.setTitle(state.sendButtonTitle, for: [])
+        sendButton.isEnabled = state.canSend
+        sendButton.accessibilityIdentifier = state.sendButtonAccessibilityIdentifier
+
+        addressLabel.text = state.selectedAddress
+        addressLabel.accessibilityIdentifier = state.selectedAddressAccessibilityIdentifier
+        addressLabel.accessibilityLabel = state.selectedAddressAccessibilityLabel
+        addressLabel.accessibilityHint = state.selectedAddressAccessibilityHint
     }
 
     private func setupContainerView() {
@@ -127,8 +150,18 @@ final class LocationSendViewController: UIViewController {
     // MARK: - Action
 
     private func sendButtonTapped() {
-        guard let delegate else { return }
-        delegate.locationSendViewControllerSendButtonTapped(self)
+        handle(viewModel.perform(.sendButtonTapped))
+    }
+
+    private func handle(_ routes: [LocationSendViewModel.Route]) {
+        for route in routes {
+            switch route {
+            case .send:
+                delegate?.locationSendViewControllerSendButtonTapped(self)
+            case let .updateHeight(shouldUseCompactHeight):
+                delegate?.locationSendViewController(self, shouldChangeHeight: shouldUseCompactHeight)
+            }
+        }
     }
 
 }

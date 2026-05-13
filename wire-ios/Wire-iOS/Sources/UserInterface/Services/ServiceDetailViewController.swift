@@ -63,6 +63,7 @@ final class ServiceDetailViewController: UIViewController {
 
     let completion: (AddBotResult) -> Void
 
+    private let viewModel: ServiceDetailViewModel
     private let detailView: ServiceDetailView
     private let actionButton: ZMButton
     private let actionType: ActionType
@@ -76,29 +77,25 @@ final class ServiceDetailViewController: UIViewController {
         usersAPI: (any UsersAPI)?,
         completion: @escaping (AddBotResult) -> Void
     ) {
-        self.service = Service(user: user)
+        let viewModel = ServiceDetailViewModel(
+            user: user,
+            actionType: actionType,
+            selfUser: userSession.selfUser
+        )
+        let viewState = viewModel.viewState
+
+        self.viewModel = viewModel
+        self.service = viewModel.service
         self.completion = completion
         self.userSession = userSession
         self.usersAPI = usersAPI
 
         self.detailView = ServiceDetailView(
-            service: service,
+            service: viewModel.service,
             userSession: userSession
         )
 
-        let selfUser = userSession.selfUser
-
-        switch actionType {
-        case let .addApp(conversation), let .addBot(conversation):
-            self.actionButton = .createAddAppButton()
-            actionButton.isHidden = !selfUser.canAddService(to: conversation)
-        case let .removeParticipant(conversation):
-            self.actionButton = .createDestructiveAppButton()
-            actionButton.isHidden = !selfUser.canRemoveService(from: conversation)
-        case .openConversation:
-            self.actionButton = .openAppConversationButton()
-            actionButton.isHidden = !selfUser.canCreateService
-        }
+        self.actionButton = .createButton(for: viewState.actionButton)
 
         self.actionType = actionType
 
@@ -115,7 +112,7 @@ final class ServiceDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let title = service.user.name {
+        if let title = viewModel.viewState.navigationTitle {
             setupNavigationBarTitle(title)
         }
 
@@ -164,48 +161,29 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     private func fetchDetails() {
-        if
-            !service.isLegacyBot,
-            let teamID = service.user.teamIdentifier,
-            let appID = service.user.remoteIdentifier {
+        switch viewModel.detailsFetch {
+        case let .app(teamID, appID):
             fetchAppDetails(for: teamID, with: appID)
-        } else {
+        case .bot:
             fetchBotDetails()
         }
     }
 
     private func fetchAppDetails(
-        for teamID: WireNetwork.Team.ID,
-        with appID: UUID
+        for _: WireNetwork.Team.ID,
+        with _: UUID
     ) {
-        let appInfo = service.user.appInfo
-        detailView.service.serviceUserDetails = ServiceDetails(
-            serviceIdentifier: "",
-            providerIdentifier: "",
-            name: service.user.name ?? "",
-            category: appInfo?.category ?? "",
-            serviceDescription: appInfo?.appDescription ?? ""
-        )
-        detailView.service.provider = ServiceProvider(
-            identifier: "",
-            name: service.user.teamName ?? "",
-            email: "",
-            url: "",
-            providerDescription: ""
-        )
+        viewModel.applyLocalAppDetails()
+        updateService(viewModel.service)
+
         let localDomain = userSession.resolvedBackendMetadata.domain
         if let usersAPI, let userID = service.user.qualifiedID(localDomain: localDomain) {
             Task { @MainActor [weak self] in
                 do {
                     guard let self, let appInfo = try await usersAPI.getUser(for: .init(userID)).app else { return }
 
-                    detailView.service.serviceUserDetails = ServiceDetails(
-                        serviceIdentifier: "",
-                        providerIdentifier: "",
-                        name: service.user.name ?? "",
-                        category: appInfo.category,
-                        serviceDescription: appInfo.description
-                    )
+                    viewModel.applyRemoteAppInfo(appInfo)
+                    updateService(viewModel.service)
                 } catch {
                     let errorType = Swift.type(of: error)
                     WireLogger.search.error("Failed to fetch app info: \(String(describing: errorType))")
@@ -218,11 +196,21 @@ final class ServiceDetailViewController: UIViewController {
         guard let userSession = userSession as? ZMUserSession else { return }
 
         service.user.fetchProvider(in: userSession) { [weak self] provider in
-            self?.detailView.service.provider = provider
+            self?.viewModel.applyProvider(provider)
+            if let service = self?.viewModel.service {
+                self?.updateService(service)
+            }
         }
         service.user.fetchDetails(in: userSession) { [weak self] details in
-            self?.detailView.service.serviceUserDetails = details
+            self?.viewModel.applyServiceDetails(details)
+            if let service = self?.viewModel.service {
+                self?.updateService(service)
+            }
         }
+    }
+
+    private func updateService(_ service: Service) {
+        self.service = service
     }
 
     @objc
@@ -388,27 +376,10 @@ final class ServiceDetailViewController: UIViewController {
 
 private extension ZMButton {
 
-    typealias PeoplePickerApps = L10n.Localizable.Peoplepicker.Apps
-
-    static func openAppConversationButton() -> Self {
-        .init(
-            style: .accentColorTextButtonStyle,
-            title: PeoplePickerApps.OpenConversation.item.capitalized
-        )
-    }
-
-    static func createAddAppButton() -> Self {
-        .init(
-            style: .accentColorTextButtonStyle,
-            title: PeoplePickerApps.AddApp.button.capitalized
-        )
-    }
-
-    static func createDestructiveAppButton() -> Self {
-        .init(
-            style: .accentColorTextButtonStyle,
-            title: L10n.Localizable.Participants.Apps.RemoveIntegration.button.capitalized
-        )
+    static func createButton(for state: ServiceDetailViewModel.ActionButtonState) -> Self {
+        let button = Self(style: .accentColorTextButtonStyle, title: state.title)
+        button.isHidden = state.isHidden
+        return button
     }
 
     convenience init(style: ButtonStyle, title: String) {
