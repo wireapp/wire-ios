@@ -22,8 +22,27 @@ import WireDesign
 
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isVerified: Bool
-    var shouldShowActivatedDate: Bool = true
+    var shouldShowActivatedDate: Bool
+
+    init(
+        viewModel: DeviceInfoViewModel,
+        isVerified _: Bool? = nil,
+        shouldShowActivatedDate: Bool = true
+    ) {
+        self.viewModel = viewModel
+        self.shouldShowActivatedDate = shouldShowActivatedDate
+    }
+
+    private var proteusVerificationBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.isProteusVerificationEnabled },
+            set: { value in
+                Task {
+                    await viewModel.updateVerifiedStatus(value)
+                }
+            }
+        )
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -63,14 +82,9 @@ struct DeviceDetailsProteusView: View {
             if !viewModel.isSelfClient {
                 Divider()
 
-                Toggle(L10n.Localizable.Device.verified, isOn: $isVerified)
+                Toggle(L10n.Localizable.Device.verified, isOn: proteusVerificationBinding)
                     .font(FontSpec.headerSemiboldFont.swiftUIFont)
                     .padding(.all, ViewConstants.Padding.standard)
-                    .onChange(of: isVerified) { value in
-                        Task {
-                            await viewModel.updateVerifiedStatus(value)
-                        }
-                    }
             }
         }
     }

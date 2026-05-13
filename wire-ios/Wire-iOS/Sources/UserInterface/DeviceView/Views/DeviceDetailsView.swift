@@ -52,7 +52,7 @@ struct DeviceDetailsView: View {
     @ViewBuilder var proteusView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
-            DeviceDetailsProteusView(viewModel: viewModel, isVerified: viewModel.isProteusVerificationEnabled)
+            DeviceDetailsProteusView(viewModel: viewModel)
                 .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDataModel
 import WireDesign
 import WireSyncEngine
 
@@ -25,14 +26,20 @@ final class ConnectRequestsViewController: UIViewController,
     UITableViewDataSource,
     UITableViewDelegate {
 
-    var connectionRequests: [ConversationLike] = []
+    var connectionRequests: [ConversationLike] {
+        get {
+            viewModel.connectionRequests
+        }
+        set {
+            viewModel.update(connectionRequests: newValue)
+        }
+    }
 
     private var userObserverToken: Any?
     private var pendingConnectionsListObserverToken: Any?
     private let tableView: UITableView = .init(frame: .zero)
     private var lastLayoutBounds = CGRect.zero
-    private var isAccepting = false
-    private var isIgnoring = false
+    private let viewModel = ConnectRequestsViewModel()
     let userSession: UserSession
 
     init(userSession: UserSession) {
@@ -115,7 +122,7 @@ final class ConnectRequestsViewController: UIViewController,
     // MARK: - UITableViewDataSource
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        connectionRequests.count
+        viewModel.rowCount
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -130,7 +137,7 @@ final class ConnectRequestsViewController: UIViewController,
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // If there are more than one request, reduce the cell height to give user a hint
 
-        let inset: CGFloat = connectionRequests.count > 1 ? 48 : 0
+        let inset: CGFloat = viewModel.hasMultipleRequests ? 48 : 0
 
         return max(0, view.safeAreaLayoutGuide.layoutFrame.size.height - inset)
     }
@@ -143,69 +150,62 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     private func configureCell(_ cell: ConnectRequestCell, for indexPath: IndexPath) {
-        // Get the user in reversed order, newer request is shown on top
-        let request = connectionRequests[(connectionRequests.count - 1) - (indexPath.row)]
+        guard let row = viewModel.row(at: indexPath) else { return }
 
-        guard let user = request.connectedUserType else { return }
-
-        cell.configure(user: user, userSession: userSession)
+        cell.configure(user: row.user, userSession: userSession)
         cell.selectionStyle = .none
         cell.separatorInset = .zero
         cell.preservesSuperviewLayoutMargins = false
         cell.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 8, right: 0)
 
         cell.acceptBlock = { [weak self] in
-            self?.acceptConnectionRequest(from: user)
+            self?.acceptConnectionRequest(from: row.user)
         }
 
         cell.ignoreBlock = { [weak self] in
-            self?.ignoreConnectionRequest(from: user)
+            self?.ignoreConnectionRequest(from: row.user)
         }
 
     }
 
     private func acceptConnectionRequest(from user: UserType) {
-        isAccepting = true
-        user.accept { [weak self] error in
-            self?.isAccepting = false
-            if let error = error as? LocalizedError {
-                self?.presentLocalizedErrorAlert(error)
-            } else {
-                guard self?.connectionRequests.isEmpty == true else { return }
-
-                ZClientViewController.shared?.hideIncomingContactRequests() // TODO: [WPB-11994] test this flow manually
-
-                if let oneToOneConversation = user.oneToOneConversation {
-                    ZClientViewController.shared?.select(
-                        conversation: oneToOneConversation,
-                        focusOnView: true,
-                        animated: true
-                    )
-                }
-            }
+        viewModel.accept(user: user) { [weak self] routes in
+            self?.handle(routes)
         }
     }
 
     private func ignoreConnectionRequest(from user: UserType) {
-        isIgnoring = true
-        user.ignore { [weak self] error in
-            self?.isIgnoring = false
-            if let error = error as? LocalizedError {
-                self?.presentLocalizedErrorAlert(error)
-            } else {
-                self?.hideRequestsOrShowNextRequest()
+        viewModel.ignore(user: user) { [weak self] routes in
+            self?.handle(routes)
+        }
+    }
+
+    private func handle(_ routes: [ConnectRequestsViewModel.Route], animated: Bool = true) {
+        routes.forEach { route in
+            switch route {
+            case .hideRequests:
+                hideRequests()
+            case let .selectConversation(conversation):
+                select(conversation: conversation)
+            case let .showNextRequest(indexPath):
+                tableView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
+            case let .showError(error):
+                presentLocalizedErrorAlert(error)
             }
         }
     }
 
-    private func hideRequestsOrShowNextRequest(animated: Bool = true) {
-        if connectionRequests.isEmpty {
-            ZClientViewController.shared?.hideIncomingContactRequests()
-        } else {
-            // scroll to bottom to show the next request
-            let indexPath = IndexPath(row: connectionRequests.count - 1, section: 0)
-            tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        }
+    private func hideRequests() {
+        // TODO: [WPB-11994] test this flow manually
+        ZClientViewController.shared?.hideIncomingContactRequests()
+    }
+
+    private func select(conversation: ZMConversation) {
+        ZClientViewController.shared?.select(
+            conversation: conversation,
+            focusOnView: true,
+            animated: true
+        )
     }
 
     func reload(animated: Bool = true) {
@@ -216,9 +216,7 @@ final class ConnectRequestsViewController: UIViewController,
 
         tableView.reloadData()
 
-        if !isAccepting, !isIgnoring {
-            hideRequestsOrShowNextRequest()
-        }
+        handle(viewModel.routesAfterReloadIfIdle(), animated: animated)
     }
 }
 

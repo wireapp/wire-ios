@@ -136,6 +136,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func update(from userClient: UserClientType) {
         e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        isProteusVerificationEnabled = userClient.verified
         self.userClient = userClient
     }
 

@@ -85,6 +85,7 @@ enum SearchResultsViewControllerSection: Int {
     case apps
     case bots
     case federation
+    case inviteTeamMember
 }
 
 extension UIViewController {
@@ -159,8 +160,10 @@ final class SearchResultsViewController: UIViewController {
 
     var isAddingParticipants: Bool
     let isFederationEnabled: Bool
+    private var viewModel: SearchResultsViewModel
     var searchGroup: SearchGroup = .people {
         didSet {
+            viewModel.searchGroup = searchGroup
             updateVisibleSections()
         }
     }
@@ -172,6 +175,7 @@ final class SearchResultsViewController: UIViewController {
 
     var mode: SearchResultsViewControllerMode = .search {
         didSet {
+            viewModel.mode = mode
             updateVisibleSections()
         }
     }
@@ -192,6 +196,11 @@ final class SearchResultsViewController: UIViewController {
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
         self.searchUsersUseCase = searchUsersUseCase
+        self.viewModel = SearchResultsViewModel(
+            isAddingParticipants: isAddingParticipants,
+            hasTeam: userSession.selfUser.membership?.team != nil,
+            shouldIncludeGuests: shouldIncludeGuests
+        )
 
         let team = userSession.selfUser.membership?.team
         let teamName = team?.name
@@ -311,99 +320,57 @@ final class SearchResultsViewController: UIViewController {
     }
 
     func updateVisibleSections() {
-        var sections: [CollectionViewSectionController]
-        let team = userSession.selfUser.membership?.team
-
-        switch (searchGroup, isAddingParticipants) {
-        case (.apps, _):
-            sections = [appsSection]
-        case (.bots, _):
-            sections = [botsSection]
-        case (.people, true):
-            switch (mode, team != nil) {
-            case (.search, false):
-                sections = [contactsSection]
-            case (.search, true):
-                sections = [teamMemberAndContactsSection]
-            case (.selection, false):
-                sections = [contactsSection]
-            case (.selection, true):
-                sections = [teamMemberAndContactsSection]
-            case (.list, false):
-                sections = [contactsSection]
-            case (.list, true):
-                sections = [teamMemberAndContactsSection]
-            }
-        case (.people, false):
-            switch (mode, team != nil) {
-            case (.search, false):
-                sections = [contactsSection, conversationsSection, directorySection, federationSection]
-            case (.search, true):
-                sections = [teamMemberAndContactsSection, conversationsSection, directorySection, federationSection]
-            case (.selection, false):
-                sections = [contactsSection]
-            case (.selection, true):
-                sections = [teamMemberAndContactsSection]
-            case (.list, false):
-                sections = [topPeopleSection, contactsSection]
-            case (.list, true):
-                sections = [inviteTeamMemberSection, teamMemberAndContactsSection]
-            }
-        }
-
-        sectionController.sections = sections
+        viewModel.isAddingParticipants = isAddingParticipants
+        viewModel.hasTeam = userSession.selfUser.membership?.team != nil
+        sectionController.sections = viewModel.visibleSections.map(sectionController(for:))
     }
 
     func updateSections(withSearchResult searchResult: SearchResult) {
+        let content = viewModel.sectionContent(
+            from: searchResult,
+            excludingParticipantsOf: filterConversation
+        )
 
-        var filteredContacts = searchResult.contacts
-        var filteredTeamContacts = searchResult.teamMembers
-        var filteredApps = searchResult.apps
-
-        if let filteredParticipants = filterConversation?.localParticipants {
-            filteredContacts = filteredContacts.filter {
-                guard let user = $0.user else {
-                    return true
-                }
-                return !filteredParticipants.contains(user)
-            }
-            filteredTeamContacts = filteredTeamContacts.filter {
-                guard let user = $0.user else {
-                    return true
-                }
-                return !filteredParticipants.contains(user)
-            }
-            filteredApps = filteredApps
-                .compactMap { $0 as? ZMUser }
-                .filter { !filteredParticipants.contains($0) }
-        }
-
-        contactsSection.contacts = filteredContacts
-
-        // Access mode is not set, or the guests are allowed.
-        if shouldIncludeGuests {
-            teamMemberAndContactsSection.contacts = Set(filteredTeamContacts + filteredContacts).sorted {
-                let name0 = $0.name ?? ""
-                let name1 = $1.name ?? ""
-
-                if name0 == name1 {
-                    let pseudo0 = $0.handle ?? ""
-                    let pseudo1 = $1.handle ?? ""
-                    return pseudo0.compare(pseudo1) == .orderedAscending
-                }
-                return name0.compare(name1) == .orderedAscending
-            }
-        } else {
-            teamMemberAndContactsSection.contacts = filteredTeamContacts
-        }
-
-        directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
-        conversationsSection.groupConversations = searchResult.conversations
-        appsSection.apps = filteredApps
-        botsSection.apps = searchResult.bots
-        federationSection.users = searchResult.directory.filter(\.isFederated)
+        contactsSection.contacts = content.contacts
+        teamMemberAndContactsSection.contacts = content.teamMembersAndContacts
+        directorySection.suggestions = content.directory
+        conversationsSection.groupConversations = content.conversations
+        appsSection.apps = content.apps
+        botsSection.apps = content.bots
+        federationSection.users = content.federation
 
         sectionController.collectionView?.reloadData()
+    }
+
+    func emptyStateInput(for query: String) -> SearchResultsEmptyStateInput {
+        viewModel.emptyStateInput(for: query)
+    }
+
+    private func sectionController(
+        for section: SearchResultsViewControllerSection
+    ) -> CollectionViewSectionController {
+        switch section {
+        case .topPeople:
+            topPeopleSection
+        case .contacts:
+            contactsSection
+        case .teamMembers:
+            teamMemberAndContactsSection
+        case .conversations:
+            conversationsSection
+        case .directory:
+            directorySection
+        case .apps:
+            appsSection
+        case .bots:
+            botsSection
+        case .federation:
+            federationSection
+        case .inviteTeamMember:
+            inviteTeamMemberSection
+        case .unknown:
+            fatal("unknown search results section")
+        }
     }
 
     func sectionFor(controller: CollectionViewSectionController) -> SearchResultsViewControllerSection {
@@ -423,6 +390,8 @@ final class SearchResultsViewController: UIViewController {
             .bots
         } else if controller === federationSection {
             .federation
+        } else if controller === inviteTeamMemberSection {
+            .inviteTeamMember
         } else {
             .unknown
         }

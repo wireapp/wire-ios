@@ -51,12 +51,33 @@ final class ShareDebugReportViewModelTests: XCTestCase {
     func testShareViaActivitySheet_invokesCreateReport() async {
         // GIVEN
         mockCreateReport.invokeReturnValue = URL(fileURLWithPath: "/tmp/logs.zip")
+        let output = MockShareDebugReportViewModelOutput()
+        sut.output = output
 
         // WHEN
         await sut.shareViaActivitySheet()
 
         // THEN
         XCTAssertEqual(mockCreateReport.invokeCallsCount, 1)
+        XCTAssertEqual(output.presentActivityReportAtURLs, [URL(fileURLWithPath: "/tmp/logs.zip")])
+        XCTAssertEqual(output.didStartCreatingReportCallsCount, 1)
+        XCTAssertEqual(output.didFinishCreatingReportCallsCount, 1)
+    }
+
+    func testSendEmail_invokesCreateReportData() async {
+        // GIVEN
+        mockCreateReport.invokeDataReturnValue = Data([1, 2, 3])
+        let output = MockShareDebugReportViewModelOutput()
+        sut.output = output
+
+        // WHEN
+        await sut.sendEmail()
+
+        // THEN
+        XCTAssertEqual(mockCreateReport.invokeDataCallsCount, 1)
+        XCTAssertEqual(sut.mailComposeItem?.attachmentData, Data([1, 2, 3]))
+        XCTAssertEqual(output.didStartCreatingReportCallsCount, 1)
+        XCTAssertEqual(output.didFinishCreatingReportCallsCount, 1)
     }
 }
 
@@ -67,10 +88,43 @@ final class MockCreateDebugReportUseCaseProtocol: CreateDebugReportUseCaseProtoc
     var invokeCallsCount = 0
     var invokeReturnValue: URL!
     var invokeThrowableError: Error?
+    var invokeDataCallsCount = 0
+    var invokeDataReturnValue: Data!
+    var invokeDataThrowableError: Error?
 
     func invoke() async throws -> URL {
         invokeCallsCount += 1
         if let error = invokeThrowableError { throw error }
         return invokeReturnValue
+    }
+
+    func invokeData() async throws -> Data {
+        invokeDataCallsCount += 1
+        if let error = invokeDataThrowableError { throw error }
+        return invokeDataReturnValue
+    }
+}
+
+final class MockShareDebugReportViewModelOutput: ShareDebugReportViewModelOutput {
+
+    var didStartCreatingReportCallsCount = 0
+    var didFinishCreatingReportCallsCount = 0
+    var presentWireReportAtURLs = [URL]()
+    var presentActivityReportAtURLs = [URL]()
+
+    func shareDebugReportViewModelDidStartCreatingReport(_ viewModel: ShareDebugReportViewModel) {
+        didStartCreatingReportCallsCount += 1
+    }
+
+    func shareDebugReportViewModelDidFinishCreatingReport(_ viewModel: ShareDebugReportViewModel) {
+        didFinishCreatingReportCallsCount += 1
+    }
+
+    func shareDebugReportViewModel(_ viewModel: ShareDebugReportViewModel, presentWireReportAt url: URL) async {
+        presentWireReportAtURLs.append(url)
+    }
+
+    func shareDebugReportViewModel(_ viewModel: ShareDebugReportViewModel, presentActivityReportAt url: URL) async {
+        presentActivityReportAtURLs.append(url)
     }
 }

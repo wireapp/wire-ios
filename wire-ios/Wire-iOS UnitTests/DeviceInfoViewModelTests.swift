@@ -142,6 +142,18 @@ final class DeviceInfoViewModelTests: XCTestCase {
         await fulfillment(of: [expectation])
     }
 
+    func testThatItUpdatesProteusVerificationStatus_WhenUserClientUpdates() {
+        XCTAssertTrue(deviceInfoViewModel.isProteusVerificationEnabled)
+
+        let updatedClient = MockUserClient()
+        updatedClient.e2eIdentityCertificate = .mockExpired
+        updatedClient.verified = false
+
+        deviceInfoViewModel.update(from: updatedClient)
+
+        XCTAssertFalse(deviceInfoViewModel.isProteusVerificationEnabled)
+    }
+
     func testThatItCallsRemoveDeviceMethodInDeviceActionsHandler_WhenRemoveDeviceMethodIsCalled() async {
         let expectation = expectation(description: "removeDevice should be called")
         mockDeviceActionsHandler.removeDevice_MockMethod = {

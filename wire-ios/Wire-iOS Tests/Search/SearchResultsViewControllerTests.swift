@@ -22,6 +22,110 @@ import XCTest
 final class SearchResultsViewControllerTests: XCTestCase {
     weak var sut: SearchResultsViewController!
 
+    func testVisibleSectionsForPeopleListWithoutTeam() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .people,
+            mode: .list,
+            isAddingParticipants: false,
+            hasTeam: false,
+            shouldIncludeGuests: true
+        )
+
+        // THEN
+        XCTAssertEqual(viewModel.visibleSections, [.topPeople, .contacts])
+    }
+
+    func testVisibleSectionsForPeopleListWithTeam() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .people,
+            mode: .list,
+            isAddingParticipants: false,
+            hasTeam: true,
+            shouldIncludeGuests: true
+        )
+
+        // THEN
+        XCTAssertEqual(viewModel.visibleSections, [.inviteTeamMember, .teamMembers])
+    }
+
+    func testVisibleSectionsForPeopleSearchWithTeam() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .people,
+            mode: .search,
+            isAddingParticipants: false,
+            hasTeam: true,
+            shouldIncludeGuests: true
+        )
+
+        // THEN
+        XCTAssertEqual(viewModel.visibleSections, [.teamMembers, .conversations, .directory, .federation])
+    }
+
+    func testVisibleSectionsForAddingParticipantsUsesContactsOnly() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .people,
+            mode: .search,
+            isAddingParticipants: true,
+            hasTeam: false,
+            shouldIncludeGuests: true
+        )
+
+        // THEN
+        XCTAssertEqual(viewModel.visibleSections, [.contacts])
+    }
+
+    func testVisibleSectionsForApps() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .apps,
+            mode: .search,
+            isAddingParticipants: false,
+            hasTeam: true,
+            shouldIncludeGuests: true
+        )
+
+        // THEN
+        XCTAssertEqual(viewModel.visibleSections, [.apps])
+    }
+
+    func testEmptyStateInputForPeopleQuery() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .people,
+            mode: .search,
+            isAddingParticipants: false,
+            hasTeam: false,
+            shouldIncludeGuests: true
+        )
+
+        // THEN
+        XCTAssertEqual(
+            viewModel.emptyStateInput(for: "alice"),
+            SearchResultsEmptyStateInput(searchingForBots: false, hasFilter: true)
+        )
+    }
+
+    func testEmptyStateInputForEmptyAppsQuery() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .apps,
+            mode: .search,
+            isAddingParticipants: false,
+            hasTeam: false,
+            shouldIncludeGuests: true
+        )
+
+        // THEN
+        XCTAssertEqual(
+            viewModel.emptyStateInput(for: ""),
+            SearchResultsEmptyStateInput(searchingForBots: true, hasFilter: false)
+        )
+    }
+
     func testThatSearchResultsViewControllerIsNotRetained() {
         autoreleasepool {
             // GIVEN

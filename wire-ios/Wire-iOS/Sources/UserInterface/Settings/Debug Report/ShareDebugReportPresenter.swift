@@ -19,15 +19,20 @@
 import Combine
 import MessageUI
 import UIKit
+import WireCommonComponents
+import WireDataModel
 import WireLocators
+import WireReusableUIComponents
 import WireSyncEngine
 
-final class ShareDebugReportPresenter: NSObject {
+final class ShareDebugReportPresenter: NSObject, ShareDebugReportViewModelOutput {
 
     private(set) var isPresenting = false
     private weak var presentedSheet: UIAlertController?
+    private weak var presentingViewController: UIViewController?
     private var mailCancellable: AnyCancellable?
     private var mailDelegate: MailComposeDelegate?
+    private var activityIndicator: BlockingActivityIndicator?
 
     @MainActor
     func dismiss(completion: @escaping @MainActor () -> Void) {
@@ -46,6 +51,7 @@ final class ShareDebugReportPresenter: NSObject {
     func present(from topMostViewController: UIViewController?) {
         guard !isPresenting, let viewController = topMostViewController else { return }
         isPresenting = true
+        presentingViewController = viewController
 
         let userSession = SessionManager.shared?.activeUserSession
         let mainCoordinator = ZClientViewController.shared?.mainCoordinator
@@ -56,6 +62,7 @@ final class ShareDebugReportPresenter: NSObject {
             mainCoordinator: mainCoordinator,
             selfUserID: selfUserID
         )
+        viewModel.output = self
 
         typealias l10n = L10n.Localizable.Self.Settings.ShareDebugReport.ActionSheet
         typealias ids = Locators.ShareDebugReportPage
@@ -139,6 +146,76 @@ final class ShareDebugReportPresenter: NSObject {
                 }
                 viewController?.present(mailVC, animated: true)
             }
+    }
+
+    @MainActor
+    func shareDebugReportViewModelDidStartCreatingReport(_ viewModel: ShareDebugReportViewModel) {
+        guard let view = presentingViewController?.view else { return }
+        let indicator = BlockingActivityIndicator(
+            view: view,
+            accessibilityAnnouncement: nil,
+            style: .card
+        )
+        activityIndicator = indicator
+        indicator.start(text: L10n.Localizable.Self.Settings.ShareDebugReport.creatingReport)
+    }
+
+    @MainActor
+    func shareDebugReportViewModelDidFinishCreatingReport(_ viewModel: ShareDebugReportViewModel) {
+        activityIndicator?.stop()
+        activityIndicator = nil
+    }
+
+    @MainActor
+    func shareDebugReportViewModel(
+        _ viewModel: ShareDebugReportViewModel,
+        presentWireReportAt url: URL
+    ) async {
+        guard
+            let viewController = presentingViewController,
+            let userSession = SessionManager.shared?.activeUserSession,
+            let mainCoordinator = ZClientViewController.shared?.mainCoordinator
+        else { return }
+
+        let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
+        let fetchConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
+        let conversations = fetchConversations.invoke()
+        let metadata = await FileMetaDataGenerator().metadataForFile(at: url)
+        let report = ShareableDebugReport(logFileMetadata: metadata, shareFile: shareFile)
+        let shareVC = ShareViewController<ZMConversation, ShareableDebugReport>(
+            shareable: report,
+            destinations: conversations,
+            showPreview: true,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
+        shareVC.onDismiss = { vc, _ in vc.dismiss(animated: true) }
+        configurePopover(for: shareVC, sourceView: viewController.view)
+        viewController.present(shareVC, animated: true)
+    }
+
+    @MainActor
+    func shareDebugReportViewModel(
+        _ viewModel: ShareDebugReportViewModel,
+        presentActivityReportAt url: URL
+    ) async {
+        guard let viewController = presentingViewController else { return }
+        let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        configurePopover(for: activityVC, sourceView: viewController.view)
+        viewController.present(activityVC, animated: true)
+    }
+
+    @MainActor
+    private func configurePopover(for viewController: UIViewController, sourceView: UIView) {
+        guard let popover = viewController.popoverPresentationController else { return }
+        popover.sourceView = sourceView
+        popover.sourceRect = CGRect(
+            x: sourceView.bounds.midX,
+            y: sourceView.bounds.midY,
+            width: 0,
+            height: 0
+        )
+        popover.permittedArrowDirections = []
     }
 }
 

@@ -22,6 +22,38 @@ import WireDesign
 import WireLocators
 
 struct AddParticipantsViewModel {
+    struct SelectionOverflowAlertContent {
+        let title: String
+        let message: String
+        let buttonTitle: String
+    }
+
+    struct ConfirmButtonState {
+        let isVisible: Bool
+        let title: String?
+        let isEnabled: Bool
+    }
+
+    struct SearchGroupSelectionState {
+        let clearsInput: Bool
+        let isConfirmButtonVisible: Bool
+    }
+
+    struct SearchState {
+        enum Action {
+            case searchApps(String)
+            case searchBots(String)
+            case listPeople
+            case searchPeople(String)
+        }
+
+        let action: Action
+        let mode: SearchResultsViewControllerMode
+        let isSearchingForBots: Bool
+        let hasFilter: Bool
+        let showsEmptyAppsPlaceholder: Bool
+    }
+
     let context: AddParticipantsViewController.Context
     let isAppsFeatureEnabled: Bool
     let areLegacyBotsAvailable: Bool
@@ -63,10 +95,62 @@ struct AddParticipantsViewModel {
         }
     }
 
-    func title(with users: UserSet) -> String {
-        users.isEmpty
+    var includeGuests: Bool {
+        switch context {
+        case let .add(conversation):
+            conversation.canAddGuest
+        case let .create(creationValues):
+            creationValues.allowGuests
+        }
+    }
+
+    var selectionLimit: Int {
+        switch context {
+        case let .add(conversation):
+            conversation.freeParticipantSlots
+        case let .create(context):
+            ZMConversation
+                .maxParticipantsExcludingSelf(isChannel: context.isChannel)
+        }
+    }
+
+    var selectionOverflowAlertContent: SelectionOverflowAlertContent {
+        typealias AddParticipantsAlert = L10n.Localizable.AddParticipants.Alert
+        let message: String
+        switch context {
+        case let .add(conversation):
+            let freeSpace = conversation.freeParticipantSlots
+            let max = ZMConversation.getMaxParticipants(isChannel: conversation.isChannel)
+            message = AddParticipantsAlert.Message
+                .existingConversation(
+                    max.formatted(.number),
+                    freeSpace.formatted(.number)
+                )
+        case let .create(context):
+            message = AddParticipantsAlert.Message
+                .newConversation(ZMConversation.getMaxParticipants(isChannel: context.isChannel).formatted(.number))
+        }
+
+        return SelectionOverflowAlertContent(
+            title: AddParticipantsAlert.title.capitalized,
+            message: message,
+            buttonTitle: L10n.Localizable.General.ok
+        )
+    }
+
+    private func title(selectedUsers: UserSet) -> String {
+        selectedUsers.isEmpty
             ? L10n.Localizable.Peoplepicker.Group.Title.singular.capitalized
-            : L10n.Localizable.Peoplepicker.Group.Title.plural(users.count).capitalized
+            : L10n.Localizable.Peoplepicker.Group.Title.plural(selectedUsers.count).capitalized
+    }
+
+    func navigationTitle(currentSelectedUsers: UserSet) -> String {
+        switch context {
+        case let .create(values):
+            title(selectedUsers: values.participants)
+        case .add:
+            title(selectedUsers: currentSelectedUsers)
+        }
     }
 
     var filterConversation: ZMConversation? {
@@ -93,6 +177,82 @@ struct AddParticipantsViewModel {
                 L10n.Localizable.Peoplepicker.Button.addToConversation.capitalized
             }
         }
+    }
+
+    func confirmButtonState(selectedUsers: UserSet, searchGroup: SearchGroup = .people) -> ConfirmButtonState {
+        guard searchGroup != .apps, showsConfirmButton else {
+            return ConfirmButtonState(isVisible: false, title: nil, isEnabled: false)
+        }
+
+        return ConfirmButtonState(
+            isVisible: true,
+            title: confirmButtonTitle,
+            isEnabled: !selectedUsers.isEmpty
+        )
+    }
+
+    func stateForSelectedUsers(_ selectedUsers: UserSet, defaultProtocol: MessageProtocol, selfUser: UserType) -> AddParticipantsViewModel {
+        guard case let .create(values) = context else {
+            return self
+        }
+
+        let updated = ConversationCreationValues(
+            isChannel: values.isChannel,
+            isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+            areLegacyBotsAvailable: values.areLegacyBotsAvailable,
+            name: values.name,
+            participants: selectedUsers,
+            allowGuests: values.allowGuests,
+            allowApps: values.allowApps,
+            enableReceipts: values.enableReceipts,
+            enableFileManagement: values.enableFileManagement,
+            encryptionProtocol: defaultProtocol,
+            selfUser: selfUser
+        )
+        updated.channelHistoryDepth = values.channelHistoryDepth
+
+        return AddParticipantsViewModel(
+            context: .create(updated),
+            isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+            areLegacyBotsAvailable: values.areLegacyBotsAvailable
+        )
+    }
+
+    func stateForSelectingSearchGroup(_ group: SearchGroup, selectedUsers: UserSet) -> SearchGroupSelectionState {
+        SearchGroupSelectionState(
+            clearsInput: group == .apps,
+            isConfirmButtonVisible: confirmButtonState(selectedUsers: selectedUsers, searchGroup: group).isVisible
+        )
+    }
+
+    func searchState(searchGroup: SearchGroup, query: String) -> SearchState {
+        let searchingForBots = [.apps, .bots].contains(searchGroup)
+        let hasFilter = !query.isEmpty
+        let action: SearchState.Action
+        let mode: SearchResultsViewControllerMode
+
+        switch (searchGroup, hasFilter) {
+        case (.apps, _):
+            action = .searchApps(query)
+            mode = .search
+        case (.bots, _):
+            action = .searchBots(query)
+            mode = .search
+        case (.people, false):
+            action = .listPeople
+            mode = .list
+        case (.people, true):
+            action = .searchPeople(query)
+            mode = .search
+        }
+
+        return SearchState(
+            action: action,
+            mode: mode,
+            isSearchingForBots: searchingForBots,
+            hasFilter: hasFilter,
+            showsEmptyAppsPlaceholder: searchGroup == .apps && !hasFilter
+        )
     }
 
     func rightNavigationItem(action: UIAction) -> UIBarButtonItem {

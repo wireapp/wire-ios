@@ -55,7 +55,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private let userSession: ZMUserSession?
     private let selfClient: UserClient?
     private let onDismiss: (() -> Void)?
-    private let shareDebugPresenter = ShareDebugReportPresenter()
+    @MainActor private lazy var shareDebugPresenter = ShareDebugReportPresenter()
 
     private let logger = WireLogger(tag: "developer")
 

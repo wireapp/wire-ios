@@ -17,14 +17,19 @@
 //
 
 import Combine
+import Foundation
 import MessageUI
-import UIKit
-import WireCommonComponents
-import WireDataModel
 import WireLogging
 import WireMainNavigationUI
-import WireReusableUIComponents
 import WireSyncEngine
+
+@MainActor
+protocol ShareDebugReportViewModelOutput: AnyObject {
+    func shareDebugReportViewModelDidStartCreatingReport(_ viewModel: ShareDebugReportViewModel)
+    func shareDebugReportViewModelDidFinishCreatingReport(_ viewModel: ShareDebugReportViewModel)
+    func shareDebugReportViewModel(_ viewModel: ShareDebugReportViewModel, presentWireReportAt url: URL) async
+    func shareDebugReportViewModel(_ viewModel: ShareDebugReportViewModel, presentActivityReportAt url: URL) async
+}
 
 @MainActor
 final class ShareDebugReportViewModel: ObservableObject {
@@ -34,8 +39,8 @@ final class ShareDebugReportViewModel: ObservableObject {
     let canShareViaWire: Bool
     let canSendEmail: Bool
 
-    private let userSession: UserSession?
-    private let mainCoordinator: (any MainCoordinatorProtocol)?
+    weak var output: ShareDebugReportViewModelOutput?
+
     private let mailRecipient: String
     private let createReport: CreateDebugReportUseCaseProtocol
 
@@ -46,8 +51,6 @@ final class ShareDebugReportViewModel: ObservableObject {
         mailRecipient: String = WireEmail.shared.supportEmail,
         createReport: CreateDebugReportUseCaseProtocol? = nil
     ) {
-        self.userSession = userSession
-        self.mainCoordinator = mainCoordinator
         self.mailRecipient = mailRecipient
         self.createReport = createReport ?? CreateDebugReportUseCase(selfUserID: selfUserID)
         self.canShareViaWire = userSession != nil && mainCoordinator != nil
@@ -55,65 +58,25 @@ final class ShareDebugReportViewModel: ObservableObject {
     }
 
     func shareViaWire() async {
-        guard let userSession, let mainCoordinator else { return }
-        guard let viewController = topViewController() else { return }
-        await withReport(from: viewController) { url in
-            let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
-            let fetchConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
-            let conversations = fetchConversations.invoke()
-            let metadata = await FileMetaDataGenerator().metadataForFile(at: url)
-            let report = ShareableDebugReport(logFileMetadata: metadata, shareFile: shareFile)
-            let shareVC = ShareViewController<ZMConversation, ShareableDebugReport>(
-                shareable: report,
-                destinations: conversations,
-                showPreview: true,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator
-            )
-            shareVC.onDismiss = { vc, _ in vc.dismiss(animated: true) }
-            if let popover = shareVC.popoverPresentationController {
-                popover.sourceView = viewController.view
-                popover.sourceRect = CGRect(
-                    x: viewController.view.bounds.midX,
-                    y: viewController.view.bounds.midY,
-                    width: 0,
-                    height: 0
-                )
-                popover.permittedArrowDirections = []
-            }
-            viewController.present(shareVC, animated: true)
+        guard canShareViaWire else { return }
+        await withReport { [weak self] url in
+            guard let self else { return }
+            await output?.shareDebugReportViewModel(self, presentWireReportAt: url)
         }
     }
 
     func shareViaActivitySheet() async {
-        guard let viewController = topViewController() else { return }
-        await withReport(from: viewController) { url in
-            let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-            if let popover = activityVC.popoverPresentationController {
-                popover.sourceView = viewController.view
-                popover.sourceRect = CGRect(
-                    x: viewController.view.bounds.midX,
-                    y: viewController.view.bounds.midY,
-                    width: 0,
-                    height: 0
-                )
-                popover.permittedArrowDirections = []
-            }
-            viewController.present(activityVC, animated: true)
+        await withReport { [weak self] url in
+            guard let self else { return }
+            await output?.shareDebugReportViewModel(self, presentActivityReportAt: url)
         }
     }
 
     func sendEmail() async {
-        guard let viewController = topViewController() else { return }
-        let indicator = BlockingActivityIndicator(
-            view: viewController.view,
-            accessibilityAnnouncement: nil,
-            style: .card
-        )
-        indicator.start(text: L10n.Localizable.Self.Settings.ShareDebugReport.creatingReport)
+        output?.shareDebugReportViewModelDidStartCreatingReport(self)
         do {
             let data = try await createReport.invokeData()
-            indicator.stop()
+            output?.shareDebugReportViewModelDidFinishCreatingReport(self)
             mailComposeItem = MailComposeItem(
                 recipient: mailRecipient,
                 subject: L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject,
@@ -121,7 +84,7 @@ final class ShareDebugReportViewModel: ObservableObject {
                 attachmentData: data
             )
         } catch {
-            indicator.stop()
+            output?.shareDebugReportViewModelDidFinishCreatingReport(self)
             WireLogger.system.error("failed to create debug report: \(error)")
         }
     }
@@ -129,26 +92,16 @@ final class ShareDebugReportViewModel: ObservableObject {
     // MARK: - Private
 
     private func withReport(
-        from viewController: UIViewController,
         then action: @escaping @MainActor (URL) async -> Void
     ) async {
-        let indicator = BlockingActivityIndicator(
-            view: viewController.view,
-            accessibilityAnnouncement: nil,
-            style: .card
-        )
-        indicator.start(text: L10n.Localizable.Self.Settings.ShareDebugReport.creatingReport)
+        output?.shareDebugReportViewModelDidStartCreatingReport(self)
         do {
             let url = try await createReport.invoke()
-            indicator.stop()
+            output?.shareDebugReportViewModelDidFinishCreatingReport(self)
             await action(url)
         } catch {
-            indicator.stop()
+            output?.shareDebugReportViewModelDidFinishCreatingReport(self)
             WireLogger.system.error("failed to create debug report: \(error)")
         }
-    }
-
-    private func topViewController() -> UIViewController? {
-        UIApplication.shared.topmostViewController(onlyFullScreen: false)
     }
 }

@@ -51,57 +51,6 @@ protocol AddParticipantsConversationCreationDelegate: AnyObject {
     )
 }
 
-extension AddParticipantsViewController.Context {
-    var includeGuests: Bool {
-        switch self {
-        case let .add(conversation):
-            conversation.canAddGuest
-        case let .create(creationValues):
-            creationValues.allowGuests
-        }
-    }
-
-    var selectionLimit: Int {
-        switch self {
-        case let .add(conversation):
-            conversation.freeParticipantSlots
-        case let .create(context):
-            ZMConversation
-                .maxParticipantsExcludingSelf(isChannel: context.isChannel)
-        }
-    }
-
-    var alertForSelectionOverflow: UIAlertController {
-        typealias AddParticipantsAlert = L10n.Localizable.AddParticipants.Alert
-        let message: String
-        switch self {
-        case let .add(conversation):
-            let freeSpace = conversation.freeParticipantSlots
-            let max = ZMConversation.getMaxParticipants(isChannel: conversation.isChannel)
-            message = AddParticipantsAlert.Message
-                .existingConversation(
-                    max.formatted(.number),
-                    freeSpace.formatted(.number)
-                )
-        case let .create(context):
-            message = AddParticipantsAlert.Message
-                .newConversation(ZMConversation.getMaxParticipants(isChannel: context.isChannel).formatted(.number))
-        }
-
-        let controller = UIAlertController(
-            title: AddParticipantsAlert.title.capitalized,
-            message: message,
-            preferredStyle: .alert
-        )
-
-        controller.addAction(UIAlertAction(
-            title: L10n.Localizable.General.ok,
-            style: .default
-        ))
-        return controller
-    }
-}
-
 final class AddParticipantsViewController: UIViewController {
 
     enum CreateAction {
@@ -230,7 +179,7 @@ final class AddParticipantsViewController: UIViewController {
             userSelection: userSelection,
             userSession: userSession,
             isAddingParticipants: true,
-            shouldIncludeGuests: viewModel.context.includeGuests,
+            shouldIncludeGuests: viewModel.includeGuests,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         ) else { return nil }
         self.searchResultsViewController = searchResultsViewController
@@ -244,8 +193,8 @@ final class AddParticipantsViewController: UIViewController {
 
         emptyResultView.delegate = self
 
-        userSelection.setLimit(context.selectionLimit) {
-            self.present(context.alertForSelectionOverflow, animated: true)
+        userSelection.setLimit(viewModel.selectionLimit) {
+            self.present(self.alertForSelectionOverflow(), animated: true)
         }
 
         updateValues()
@@ -267,14 +216,12 @@ final class AddParticipantsViewController: UIViewController {
             guard let self else {
                 return
             }
-            // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
-            // not going to be added to the new conversation with the bot.
-            if group == .apps {
+
+            let groupState = viewModel.stateForSelectingSearchGroup(group, selectedUsers: userSelection.users)
+            if groupState.clearsInput {
                 searchHeaderViewController.clearInput()
-                confirmButton.isHidden = true
-            } else {
-                confirmButton.isHidden = false
             }
+            confirmButton.isHidden = !groupState.isConfirmButtonVisible
 
             searchResultsViewController.searchGroup = group
             performSearch()
@@ -363,11 +310,18 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func updateValues() {
-        if let buttonTitle = viewModel.confirmButtonTitle {
-            confirmButton.isHidden = false
+        let buttonState = viewModel.confirmButtonState(
+            selectedUsers: userSelection.users,
+            searchGroup: searchResultsViewController.searchGroup
+        )
+
+        confirmButton.isHidden = !buttonState.isVisible
+        updateConfirmButtonState(state: buttonState.isEnabled)
+
+        if let buttonTitle = buttonState.title {
             confirmButton.setTitle(buttonTitle, for: .normal)
         } else {
-            confirmButton.isHidden = true
+            confirmButton.setTitle(nil, for: .normal)
         }
         updateTitle()
         navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(action: rightNavigationItemTapped())
@@ -376,27 +330,11 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func updateSelectionValues() {
-        // Update view model after selection changed
-        if case let .create(values) = viewModel.context {
-            let updated = ConversationCreationValues(
-                isChannel: values.isChannel,
-                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
-                areLegacyBotsAvailable: values.areLegacyBotsAvailable,
-                name: values.name,
-                participants: userSelection.users,
-                allowGuests: values.allowGuests,
-                encryptionProtocol: userSession.defaultProtocol,
-                selfUser: userSession.selfUser
-            )
-            viewModel = AddParticipantsViewModel(
-                context: .create(updated),
-                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
-                areLegacyBotsAvailable: values.areLegacyBotsAvailable
-            )
-        }
-
-        // Enable button & collection view content inset
-        updateConfirmButtonState(state: !userSelection.users.isEmpty)
+        viewModel = viewModel.stateForSelectedUsers(
+            userSelection.users,
+            defaultProtocol: userSession.defaultProtocol,
+            selfUser: userSession.selfUser
+        )
 
         updateTitle()
 
@@ -413,14 +351,26 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func updateTitle() {
-        title = switch viewModel.context {
-        case let .create(values): viewModel.title(with: values.participants)
-        case .add: viewModel.title(with: userSelection.users)
-        }
+        title = viewModel.navigationTitle(currentSelectedUsers: userSelection.users)
 
         guard let title else { return }
 
         setupNavigationBarTitle(title.capitalized)
+    }
+
+    private func alertForSelectionOverflow() -> UIAlertController {
+        let alertContent = viewModel.selectionOverflowAlertContent
+        let controller = UIAlertController(
+            title: alertContent.title,
+            message: alertContent.message,
+            preferredStyle: .alert
+        )
+
+        controller.addAction(UIAlertAction(
+            title: alertContent.buttonTitle,
+            style: .default
+        ))
+        return controller
     }
 
     private func rightNavigationItemTapped() -> UIAction {
@@ -466,26 +416,29 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func performSearch() {
-        let searchingForBots = [.apps, .bots].contains(searchResultsViewController.searchGroup)
-        let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
+        let searchState = viewModel.searchState(
+            searchGroup: searchResultsViewController.searchGroup,
+            query: searchHeaderViewController.tokenField.filterText
+        )
 
-        emptyResultView.updateStatus(searchingForBots: searchingForBots, hasFilter: hasFilter)
+        emptyResultView.updateStatus(
+            searchingForBots: searchState.isSearchingForBots,
+            hasFilter: searchState.hasFilter
+        )
 
-        switch (searchResultsViewController.searchGroup, hasFilter) {
-        case (.apps, _):
-            searchResultsViewController.mode = .search
-            searchResultsViewController.searchForApps(withQuery: searchHeaderViewController.tokenField.filterText)
-        case (.bots, _):
-            searchResultsViewController.mode = .search
-            searchResultsViewController.searchForBots(withQuery: searchHeaderViewController.tokenField.filterText)
-        case (.people, false):
-            searchResultsViewController.mode = .list
+        searchResultsViewController.mode = searchState.mode
+        switch searchState.action {
+        case let .searchApps(query):
+            searchResultsViewController.searchForApps(withQuery: query)
+        case let .searchBots(query):
+            searchResultsViewController.searchForBots(withQuery: query)
+        case .listPeople:
             searchResultsViewController.searchContactList()
-        case (.people, true):
-            searchResultsViewController.mode = .search
-            searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
+        case let .searchPeople(query):
+            searchResultsViewController.searchForLocalUsers(withQuery: query)
         }
-        if searchResultsViewController.searchGroup == .apps, !hasFilter {
+
+        if searchState.showsEmptyAppsPlaceholder {
             showEmptyAppsSearchResultView()
         } else {
             hideEmptyAppsSearchResultView()

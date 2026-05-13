@@ -206,90 +206,24 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
         }
 
-        if !participants.isEmpty {
-
-            let admins = participants.filter { $0.isGroupAdmin(in: conversation) }
-            let members = participants.filter { !$0.isGroupAdmin(in: conversation) }
-
-            let maxNumberOfDisplayed = Int.ConversationParticipants.maxNumberOfDisplayed
-            let maxNumberWithoutTruncation = Int.ConversationParticipants.maxNumberWithoutTruncation
-
-            if admins.count <= maxNumberWithoutTruncation || admins.isEmpty {
-                // Display the ShowAll button after the first section.
-                if admins.count >= maxNumberOfDisplayed, participants.count > maxNumberWithoutTruncation {
-                    let adminSection = ParticipantsSectionController(
-                        participants: admins,
-                        userStatuses: userStatuses,
-                        conversationRole: .admin,
-                        conversation: conversation,
-                        delegate: self,
-                        totalParticipantsCount: participants.count,
-                        clipSection: true,
-                        maxParticipants: admins.count - 1,
-                        maxDisplayedParticipants: Int.ConversationParticipants.maxNumberOfDisplayed,
-                        userSession: userSession
-                    )
-                    sections.append(adminSection)
-                } else {
-                    let adminSection = ParticipantsSectionController(
-                        participants: admins,
-                        userStatuses: userStatuses,
-                        conversationRole: .admin,
-                        conversation: conversation,
-                        delegate: self,
-                        totalParticipantsCount: participants.count,
-                        clipSection: false,
-                        userSession: userSession
-                    )
-                    sections.append(adminSection)
-                    if members
-                        .count <=
-                        (Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count) {
-                        // Don't display the ShowAll button
-                        if !members.isEmpty {
-                            let memberSection = ParticipantsSectionController(
-                                participants: members,
-                                userStatuses: userStatuses,
-                                conversationRole: .member,
-                                conversation: conversation,
-                                delegate: self,
-                                totalParticipantsCount: participants.count,
-                                clipSection: false,
-                                userSession: userSession
-                            )
-                            sections.append(memberSection)
-                        }
-                    } else { // Display the ShowAll button after the second section
-                        let maxParticipants = Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count
-                        let memberSection = ParticipantsSectionController(
-                            participants: members,
-                            userStatuses: userStatuses,
-                            conversationRole: .member,
-                            conversation: conversation,
-                            delegate: self,
-                            totalParticipantsCount: participants.count,
-                            clipSection: true,
-                            maxParticipants: maxParticipants,
-                            maxDisplayedParticipants: maxParticipants - 2,
-                            userSession: userSession
-                        )
-                        sections.append(memberSection)
-                    }
-                }
-            } else { // Display only one section without the ShowAll button
-                let adminSection = ParticipantsSectionController(
-                    participants: admins,
-                    userStatuses: userStatuses,
-                    conversationRole: .admin,
-                    conversation: conversation,
-                    delegate: self,
-                    totalParticipantsCount: participants.count,
-                    clipSection: true,
-                    userSession: userSession
-                )
-                sections.append(adminSection)
-            }
-        }
+        let participantsState = GroupDetailsParticipantsState.make(
+            participants: participants,
+            isAdmin: { $0.isGroupAdmin(in: conversation) }
+        )
+        sections.append(contentsOf: participantsState.sections.map { section in
+            ParticipantsSectionController(
+                participants: section.participants,
+                userStatuses: userStatuses,
+                conversationRole: section.role,
+                conversation: conversation,
+                delegate: self,
+                totalParticipantsCount: participants.count,
+                clipSection: section.clipSection,
+                maxParticipants: section.maxParticipants,
+                maxDisplayedParticipants: section.maxDisplayedParticipants,
+                userSession: userSession
+            )
+        })
 
         if let user = SelfUser.provider?.providedSelfUser {
             // MARK: options sections
@@ -381,6 +315,15 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     ) {
         switch action {
         case .invite:
+            navigate(to: .addParticipants)
+        case .more:
+            navigate(to: .conversationActions(sourceView: view))
+        }
+    }
+
+    private func navigate(to route: GroupDetailsRoute) {
+        switch route {
+        case .addParticipants:
             let addParticipantsViewController = AddParticipantsViewController(
                 conversation: conversation,
                 userSession: userSession,
@@ -393,18 +336,30 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
             WireLogger.ui
                 .error("failed to perform invite action, addParticipantsViewController is nil", attributes: .safePublic)
-        case .more:
+
+        case let .conversationActions(sourceView):
             actionController = ConversationActionController(
                 conversation: conversation,
                 target: self,
-                sourceView: view,
+                sourceView: sourceView,
                 userSession: userSession
             )
-            actionController?.presentMenu(from: view, context: .details)
+            actionController?.presentMenu(from: sourceView, context: .details)
+
+        case let .participantsDetails(users, selectedUsers, animated):
+            pushParticipantsDetails(with: users, selectedUsers: selectedUsers, animated: animated)
         }
     }
 
     func presentParticipantsDetails(
+        with users: [WireDataModel.UserType],
+        selectedUsers: [WireDataModel.UserType],
+        animated: Bool
+    ) {
+        navigate(to: .participantsDetails(users: users, selectedUsers: selectedUsers, animated: animated))
+    }
+
+    private func pushParticipantsDetails(
         with users: [WireDataModel.UserType],
         selectedUsers: [WireDataModel.UserType],
         animated: Bool
