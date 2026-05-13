@@ -172,14 +172,13 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
 
-    let group: SettingsInternalGroupCellDescriptorType
-    fileprivate var sections: [SettingsSectionDescriptorType]
+    private let viewModel: SettingsTableViewModel
     fileprivate var selfUserObserver: NSObjectProtocol!
     private let userSession: UserSession
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(group.title)
+        setupNavigationBarTitle(viewModel.title)
         configureNavigationBarAppearance()
     }
 
@@ -188,16 +187,15 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         settingsCoordinator: AnySettingsCoordinator,
         userSession: UserSession
     ) {
-        self.group = group
+        self.viewModel = SettingsTableViewModel(group: group)
         self.userSession = userSession
-        self.sections = group.visibleItems
         super.init(
             style: group.style == .plain ? .plain : .grouped,
             useTypeIntrinsicSizeTableView: true,
             settingsCoordinator: settingsCoordinator
         )
 
-        self.group.items.flatMap(\.cellDescriptors).forEach {
+        viewModel.allCellDescriptors.forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
                 groupDescriptor.viewController = self
             }
@@ -272,28 +270,28 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     private func setupNavigationBarAccessibility() {
         typealias Accessibility = L10n.Accessibility.Settings
 
-        navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
+        navigationItem.backBarButtonItem?.accessibilityLabel = viewModel.accessibilityBackButtonText
     }
 
     func refreshData() {
-        sections = group.visibleItems
+        viewModel.refresh()
         tableView.reloadData()
     }
 
     // MARK: - UITableViewDelegate & UITableViewDelegate
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count
+        viewModel.numberOfSections()
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let sectionDescriptor = sections[section]
-        return sectionDescriptor.visibleCellDescriptors.count
+        viewModel.numberOfRows(in: section)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
-        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
+        guard let cellDescriptor = viewModel.cellDescriptor(at: indexPath) else {
+            fatalError("Missing cell descriptor for index path \(indexPath)")
+        }
 
         if let cell = tableView.dequeueReusableCell(
             withIdentifier: type(of: cellDescriptor).cellType.reuseIdentifier,
@@ -308,9 +306,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
-        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
-        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
-        return cellDescriptor.copiableText != nil
+        viewModel.copyText(for: indexPath) != nil
     }
 
     func tableView(
@@ -318,10 +314,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         contextMenuConfigurationForRowAt indexPath: IndexPath,
         point: CGPoint
     ) -> UIContextMenuConfiguration? {
-        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
-        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
-
-        guard let copiableText = cellDescriptor.copiableText else {
+        guard let copiableText = viewModel.copyText(for: indexPath) else {
             return nil
         }
 
@@ -339,25 +332,24 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)!
-        let sectionDescriptor = sections[indexPath.section]
-        let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
 
-        if let content = property.settingsTopLevelMenuItem {
+        switch viewModel.selectionAction(at: indexPath) {
+        case let .showSettingsContent(content):
             settingsCoordinator.showSettingsContent(content)
-        } else {
+        case let .select(property):
             property.select(SettingsPropertyValue.none, sender: cell)
+        case nil:
+            break
         }
         tableView.deselectRow(at: indexPath, animated: false)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let sectionDescriptor = sections[section]
-        return sectionDescriptor.header
+        viewModel.headerTitle(for: section)
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        let sectionDescriptor = sections[section]
-        return sectionDescriptor.footer
+        viewModel.footerTitle(for: section)
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
