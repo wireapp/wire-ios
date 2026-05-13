@@ -176,8 +176,7 @@ final class MessageDetailsViewController: UIViewController {
 
         self.container = TabBarController(viewControllers: viewControllers.all)
 
-        if case .combined = dataSource.displayMode {
-            let tabIndex = preferredDisplayMode == .reactions ? 1 : 0
+        if let tabIndex = dataSource.viewModel.selectedTabIndex(preferredDisplayMode: preferredDisplayMode) {
             container.selectIndex(tabIndex, animated: false)
         }
 

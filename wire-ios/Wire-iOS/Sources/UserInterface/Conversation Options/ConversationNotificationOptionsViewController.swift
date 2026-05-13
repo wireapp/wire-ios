@@ -23,8 +23,7 @@ import WireSyncEngine
 
 final class ConversationNotificationOptionsViewController: UIViewController {
 
-    private var items: [MutedMessageTypes] = [.none, .regular, .all]
-
+    private let viewModel: ConversationNotificationOptionsViewModel
     private let conversation: ZMConversation
     private let userSession: ZMUserSession
     private var observerToken: Any!
@@ -43,6 +42,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
     init(conversation: ZMConversation, userSession: ZMUserSession) {
         self.conversation = conversation
         self.userSession = userSession
+        self.viewModel = ConversationNotificationOptionsViewModel(currentSelection: conversation.mutedMessageTypes)
         super.init(nibName: nil, bundle: nil)
         self.observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
@@ -113,7 +113,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        items.count
+        viewModel.state.options.count
     }
 
     func collectionView(
@@ -121,12 +121,12 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
 
-        let item = items[indexPath.row]
+        let item = viewModel.option(at: indexPath.row)
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
 
-        cell.title = item.localizationKey
-        cell.showCheckmark = item == conversation.mutedMessageTypes
-        cell.showSeparator = indexPath.row < (items.count - 1)
+        cell.title = item.title
+        cell.showCheckmark = item.isSelected
+        cell.showSeparator = indexPath.row < (viewModel.state.options.count - 1)
 
         return cell
     }
@@ -150,7 +150,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
             )
 
             guard let view = dequeuedView as? SectionFooter else { return UICollectionReusableView(frame: .zero) }
-            view.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
+            view.titleLabel.text = viewModel.state.footerDescription
             return view
         }
     }
@@ -160,7 +160,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
-        sizingFooter.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
+        sizingFooter.titleLabel.text = viewModel.state.footerDescription
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
         return sizingFooter.bounds.size
     }
@@ -169,13 +169,17 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        let selectedItem = items[indexPath.row]
 
-        guard selectedItem != conversation.mutedMessageTypes else { return }
-        updateMutedMessageTypes(selectedItem)
+        switch viewModel.actionForSelection(at: indexPath.row) {
+        case .none:
+            return
+        case let .update(types):
+            updateMutedMessageTypes(types)
+        }
     }
 
     private func updateMutedMessageTypes(_ types: MutedMessageTypes) {
+        viewModel.updateCurrentSelection(types)
 
         userSession.perform {
             self.conversation.mutedMessageTypes = types
@@ -205,18 +209,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
 extension ConversationNotificationOptionsViewController: ZMConversationObserver {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard changeInfo.mutedMessageTypesChanged else { return }
+        viewModel.updateCurrentSelection(conversation.mutedMessageTypes)
         collectionView.reloadData()
-    }
-}
-
-extension MutedMessageTypes {
-
-    var localizationKey: String? {
-        switch self {
-        case .none:         L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
-        case .regular:      L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
-        case .all:          L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
-        default:            nil
-        }
     }
 }

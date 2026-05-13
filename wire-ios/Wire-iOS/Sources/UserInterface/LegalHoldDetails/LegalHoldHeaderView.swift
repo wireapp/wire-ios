@@ -23,7 +23,6 @@ import WireDesign
 
 final class LegalHoldHeaderView: UIView {
 
-    typealias LegalHoldHeader = L10n.Localizable.Legalhold.Header
     typealias LabelColors = SemanticColors.Label
 
     let iconView: UIImageView = {
@@ -38,7 +37,6 @@ final class LegalHoldHeaderView: UIView {
     let titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
 
-        label.text = LegalHoldHeader.title
         label.font = FontSpec.largeSemiboldFont.font!
         label.textColor = LabelColors.textDefault
 
@@ -46,12 +44,8 @@ final class LegalHoldHeaderView: UIView {
     }()
 
     let descriptionLabel: UILabel = {
-        let user = SelfUser.provider?.providedSelfUser
-
         let label = UILabel(frame: .zero)
-        let text = user?.isUnderLegalHold == true ? LegalHoldHeader.selfDescription : LegalHoldHeader.otherDescription
 
-        label.attributedText = text && .paragraphSpacing(8)
         label.font = FontSpec.normalFont.font!
         label.numberOfLines = 0
         label.textColor = LabelColors.textDefault
@@ -59,8 +53,11 @@ final class LegalHoldHeaderView: UIView {
         return label
     }()
 
-    override init(frame: CGRect) {
+    init(viewModel: LegalHoldDetailsViewModel.Header, frame: CGRect = .zero) {
         super.init(frame: frame)
+
+        titleLabel.text = viewModel.title
+        descriptionLabel.attributedText = viewModel.description && .paragraphSpacing(8)
 
         let stackView = UIStackView(arrangedSubviews: [iconView, titleLabel, descriptionLabel])
 

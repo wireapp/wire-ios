@@ -27,6 +27,113 @@ enum MessageDetailsDisplayMode: Int {
     case combined
 }
 
+struct MessageDetailsFooterViewModel {
+    let subtitle: String?
+    let accessibilitySubtitle: String?
+}
+
+/// Pure display state for the message details screen.
+struct MessageDetailsViewModel {
+
+    typealias MessageDetails = L10n.Localizable.MessageDetails
+
+    let conversation: ZMConversation
+    let displayMode: MessageDetailsDisplayMode
+    let supportsReadReceipts: Bool
+    let title: String
+    let footer: MessageDetailsFooterViewModel
+    let reactions: [MessageDetailsSectionDescription]
+    let readReceipts: [MessageDetailsSectionDescription]
+
+    init(
+        message: ZMConversationMessage,
+        emojiRepository: EmojiRepositoryInterface
+    ) {
+        self.conversation = message.conversation!
+
+        let showLikesTab = message.canAddReaction
+        let showReceiptsTab = message.areReadReceiptsDetailsAvailable
+        self.supportsReadReceipts = message.needsReadConfirmation
+
+        switch (showLikesTab, showReceiptsTab) {
+        case (true, true):
+            self.displayMode = .combined
+            self.title = MessageDetails.combinedTitle
+        case (false, true):
+            self.displayMode = .receipts
+            self.title = MessageDetails.receiptsTitle
+        case (true, false):
+            self.displayMode = .reactions
+            self.title = MessageDetails.reactionsTitle
+        default:
+            fatal("Trying to display a message that does not support reactions or receipts.")
+        }
+
+        self.footer = Self.makeFooter(for: message)
+        self.reactions = Self.makeReactionSections(
+            usersReaction: message.usersReaction,
+            emojiRepository: emojiRepository
+        )
+        self.readReceipts = Self.makeReadReceiptSections(message.sortedReadReceipts)
+    }
+
+    func selectedTabIndex(preferredDisplayMode: MessageDetailsDisplayMode) -> Int? {
+        guard displayMode == .combined else { return nil }
+        return preferredDisplayMode == .reactions ? 1 : 0
+    }
+
+    private static func makeFooter(for message: ZMConversationMessage) -> MessageDetailsFooterViewModel {
+        guard let sentDate = message.formattedReceivedDateTime() else {
+            return MessageDetailsFooterViewModel(
+                subtitle: nil,
+                accessibilitySubtitle: message.formattedAccessibleMessageDetails()
+            )
+        }
+
+        let sentString = MessageDetails.subtitleSendDate(sentDate)
+        var subtitle = sentString
+
+        if let editedDate = message.formattedEditedDate() {
+            let editedString = MessageDetails.subtitleEditDate(editedDate)
+            subtitle += "\n" + editedString
+        }
+
+        return MessageDetailsFooterViewModel(
+            subtitle: subtitle,
+            accessibilitySubtitle: message.formattedAccessibleMessageDetails()
+        )
+    }
+
+    private static func makeReactionSections(
+        usersReaction: [String: [UserType]],
+        emojiRepository: EmojiRepositoryInterface
+    ) -> [MessageDetailsSectionDescription] {
+        usersReaction.lazy
+            .compactMap { reaction, users in
+                guard let emoji = emojiRepository.emoji(for: reaction) else { return nil }
+                let name = emoji.localizedName ?? emoji.name
+                return MessageDetailsSectionDescription(
+                    headerText: "\(emoji.value) \(name.capitalized) (\(users.count))",
+                    items: MessageDetailsCellDescription.makeReactionCells(users)
+                )
+            }
+            .filter { !$0.items.isEmpty }
+            .sorted { $0.items.count > $1.items.count }
+    }
+
+    private static func makeReadReceiptSections(_ readReceipts: [ReadReceipt]) -> [MessageDetailsSectionDescription] {
+        [
+            MessageDetailsSectionDescription(
+                items: MessageDetailsCellDescription
+                    .makeReceiptCell(readReceipts)
+            )
+        ].filter {
+            !$0.items.isEmpty
+        }
+    }
+
+}
+
 /// An object that observes changes in the message data source.
 
 protocol MessageDetailsDataSourceObserver: AnyObject {
@@ -47,28 +154,47 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     let message: ZMConversationMessage
 
     /// The conversation where the message is
-    let conversation: ZMConversation
+    var conversation: ZMConversation {
+        viewModel.conversation
+    }
 
     /// How to display the message details.
-    let displayMode: MessageDetailsDisplayMode
+    var displayMode: MessageDetailsDisplayMode {
+        viewModel.displayMode
+    }
 
     /// Whether read receipts are supported.
-    let supportsReadReceipts: Bool
+    var supportsReadReceipts: Bool {
+        viewModel.supportsReadReceipts
+    }
 
     /// The title of the message details.
-    let title: String
+    var title: String {
+        viewModel.title
+    }
 
     /// The subtitle of the message details.
-    private(set) var subtitle: String!
+    var subtitle: String? {
+        viewModel.footer.subtitle
+    }
 
     /// The subtitle of the message details for accessibility purposes.
-    private(set) var accessibilitySubtitle: String!
+    var accessibilitySubtitle: String? {
+        viewModel.footer.accessibilitySubtitle
+    }
 
     /// The list of reactions.
-    private(set) var reactions: [MessageDetailsSectionDescription] = []
+    var reactions: [MessageDetailsSectionDescription] {
+        viewModel.reactions
+    }
 
     /// The list of read receipts with the associated date.
-    private(set) var readReceipts: [MessageDetailsSectionDescription] = []
+    var readReceipts: [MessageDetailsSectionDescription] {
+        viewModel.readReceipts
+    }
+
+    /// The full display state of the message details screen.
+    private(set) var viewModel: MessageDetailsViewModel
 
     /// The object that receives information when the message details changes.
     weak var observer: MessageDetailsDataSourceObserver?
@@ -88,55 +214,23 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         self.message = message
         self.userSession = userSession
         self.emojiRepository = emojiRepository
-        self.conversation = message.conversation!
-
-        // Compute the title and display mode
-        let showLikesTab = message.canAddReaction
-        let showReceiptsTab = message.areReadReceiptsDetailsAvailable
-        self.supportsReadReceipts = message.needsReadConfirmation
-
-        switch (showLikesTab, showReceiptsTab) {
-        case (true, true):
-            self.displayMode = .combined
-            self.title = MessageDetails.combinedTitle
-        case (false, true):
-            self.displayMode = .receipts
-            self.title = MessageDetails.receiptsTitle
-        case (true, false):
-            self.displayMode = .reactions
-            self.title = MessageDetails.reactionsTitle
-        default:
-            fatal("Trying to display a message that does not support reactions or receipts.")
-        }
+        self.viewModel = MessageDetailsViewModel(
+            message: message,
+            emojiRepository: emojiRepository
+        )
 
         super.init()
 
-        // Assign the initial data
-        setupReactions()
-        setupReadReceipts()
-
-        updateSubtitle()
         setupObservers()
     }
 
     // MARK: - Interface Properties
 
     private func updateSubtitle() {
-        guard let sentDate = message.formattedReceivedDateTime() else {
-            return
-        }
-
-        let sentString = MessageDetails.subtitleSendDate(sentDate)
-
-        var subtitle = sentString
-
-        if let editedDate = message.formattedEditedDate() {
-            let editedString = MessageDetails.subtitleEditDate(editedDate)
-            subtitle += "\n" + editedString
-        }
-
-        self.subtitle = subtitle
-        accessibilitySubtitle = message.formattedAccessibleMessageDetails()
+        viewModel = MessageDetailsViewModel(
+            message: message,
+            emojiRepository: emojiRepository
+        )
         observer?.detailsFooterDidChange(self)
     }
 
@@ -146,14 +240,14 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         // Detect changes in reactions
         if changeInfo.reactionsChanged {
             performChanges {
-                setupReactions()
+                updateViewModel()
             }
         }
 
         // Detect changes in read receipts
         if changeInfo.confirmationsChanged {
             performChanges {
-                setupReadReceipts()
+                updateViewModel()
             }
         }
 
@@ -165,34 +259,15 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         performChanges {
-            setupReactions()
-            setupReadReceipts()
+            updateViewModel()
         }
     }
 
-    private func setupReactions() {
-        reactions = message.usersReaction.lazy
-            .compactMap { reaction, users in
-                guard let emoji = self.emojiRepository.emoji(for: reaction) else { return nil }
-                let name = emoji.localizedName ?? emoji.name
-                return MessageDetailsSectionDescription(
-                    headerText: "\(emoji.value) \(name.capitalized) (\(users.count))",
-                    items: MessageDetailsCellDescription.makeReactionCells(users)
-                )
-            }
-            .filter { !$0.items.isEmpty }
-            .sorted { $0.items.count > $1.items.count }
-    }
-
-    func setupReadReceipts() {
-        readReceipts = [
-            MessageDetailsSectionDescription(
-                items: MessageDetailsCellDescription
-                    .makeReceiptCell(message.sortedReadReceipts)
-            )
-        ].filter {
-            !$0.items.isEmpty
-        }
+    private func updateViewModel() {
+        viewModel = MessageDetailsViewModel(
+            message: message,
+            emojiRepository: emojiRepository
+        )
     }
 
     private func setupObservers() {

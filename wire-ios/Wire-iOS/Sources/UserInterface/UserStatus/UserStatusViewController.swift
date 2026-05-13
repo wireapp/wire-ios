@@ -26,19 +26,20 @@ final class UserStatusViewController: UIViewController {
 
     private lazy var feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    private let options: UserStatusView.Options
-    private let settings: Settings
+    private let viewModel: UserStatusViewModel
 
     var userStatus = UserStatus() {
-        didSet { (viewIfLoaded as? UserStatusView)?.userStatus = userStatus }
+        didSet {
+            viewModel.userStatus = userStatus
+            applyDisplayModel()
+        }
     }
 
     init(
         options: UserStatusView.Options,
         settings: Settings
     ) {
-        self.options = options
-        self.settings = settings
+        self.viewModel = UserStatusViewModel(options: options, settings: settings)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -48,8 +49,9 @@ final class UserStatusViewController: UIViewController {
     }
 
     override func loadView() {
-        let view = UserStatusView(options: options)
-        view.userStatus = userStatus
+        let displayModel = viewModel.displayModel
+        let view = UserStatusView(options: displayModel.options)
+        view.userStatus = displayModel.userStatus
         view.tapHandler = { [weak self] button in
             self?.presentAvailabilityPicker(button)
         }
@@ -60,13 +62,7 @@ final class UserStatusViewController: UIViewController {
         let availabilityChangedHandler = { [weak self] (availability: Availability) in
             guard let self else { return }
 
-            userStatus.availability = availability
-            delegate?.userStatusViewController(self, didSelect: availability)
-            feedbackGenerator.impactOccurred()
-
-            if settings.shouldRemindUserWhenChanging(availability) {
-                present(UIAlertController.availabilityExplanation(availability), animated: true)
-            }
+            handle(viewModel.selectAvailability(availability))
         }
 
         let alertViewController = UIAlertController.availabilityPicker(availabilityChangedHandler)
@@ -75,5 +71,27 @@ final class UserStatusViewController: UIViewController {
             popoverPresentationController.sourceRect = sender.frame
         }
         present(alertViewController, animated: true)
+    }
+
+    private func applyDisplayModel() {
+        (viewIfLoaded as? UserStatusView)?.userStatus = viewModel.displayModel.userStatus
+    }
+
+    private func handle(_ actions: [UserStatusViewModel.Action]) {
+        applyDisplayModel()
+
+        actions.forEach { action in
+            switch action {
+            case let .notifyAvailabilityChanged(availability):
+                userStatus = viewModel.userStatus
+                delegate?.userStatusViewController(self, didSelect: availability)
+
+            case .playSelectionFeedback:
+                feedbackGenerator.impactOccurred()
+
+            case let .showAvailabilityExplanation(availability):
+                present(UIAlertController.availabilityExplanation(availability), animated: true)
+            }
+        }
     }
 }

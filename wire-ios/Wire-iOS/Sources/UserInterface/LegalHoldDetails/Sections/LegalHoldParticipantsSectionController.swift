@@ -19,21 +19,6 @@
 import Foundation
 import WireSyncEngine
 
-private struct LegalHoldParticipantsSectionViewModel {
-
-    let participants: [UserType]
-
-    var sectionAccesibilityIdentifier = "label.groupdetails.participants"
-    var sectionTitle: String {
-        L10n.Localizable.Legalhold.Participants.Section.title(participants.count).localizedUppercase
-    }
-
-    init(participants: [UserType]) {
-        self.participants = participants
-    }
-
-}
-
 protocol LegalHoldParticipantsSectionControllerDelegate: AnyObject {
 
     func legalHoldParticipantsSectionWantsToPresentUserProfile(for user: UserType)
@@ -42,27 +27,24 @@ protocol LegalHoldParticipantsSectionControllerDelegate: AnyObject {
 
 typealias LegalHoldDetailsConversation = Conversation & GroupDetailsConversation
 
-private extension ConversationLike {
-    func createViewModel() -> LegalHoldParticipantsSectionViewModel {
-        LegalHoldParticipantsSectionViewModel(
-            participants: sortedActiveParticipantsUserTypes
-                .filter(\.isUnderLegalHold)
-        )
-    }
-}
-
 final class LegalHoldParticipantsSectionController: GroupDetailsSectionController {
 
     fileprivate weak var collectionView: UICollectionView?
-    private var viewModel: LegalHoldParticipantsSectionViewModel
+    private var viewModel: LegalHoldDetailsViewModel.ParticipantsSection
+    private let detailsViewModel: LegalHoldDetailsViewModel
     private let conversation: LegalHoldDetailsConversation
     private let userSession: UserSession
     private var token: AnyObject?
 
     weak var delegate: LegalHoldParticipantsSectionControllerDelegate?
 
-    init(conversation: LegalHoldDetailsConversation, userSession: UserSession) {
-        self.viewModel = conversation.createViewModel()
+    init(
+        viewModel: LegalHoldDetailsViewModel,
+        conversation: LegalHoldDetailsConversation,
+        userSession: UserSession
+    ) {
+        self.viewModel = viewModel.participantsSection
+        self.detailsViewModel = viewModel
         self.conversation = conversation
         self.userSession = userSession
         super.init()
@@ -79,11 +61,11 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
     }
 
     override var sectionTitle: String {
-        viewModel.sectionTitle
+        viewModel.title
     }
 
     override var sectionAccessibilityIdentifier: String {
-        viewModel.sectionAccesibilityIdentifier
+        viewModel.accessibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -129,10 +111,9 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 extension LegalHoldParticipantsSectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged
-        else { return }
+        guard detailsViewModel.shouldReloadParticipantsSection(for: changeInfo) else { return }
 
-        viewModel = conversation.createViewModel()
+        viewModel = detailsViewModel.participantsSection
         collectionView?.reloadData()
     }
 

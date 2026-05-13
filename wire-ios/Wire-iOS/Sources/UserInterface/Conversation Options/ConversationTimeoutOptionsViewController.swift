@@ -22,28 +22,10 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-private enum Item {
-    case supportedValue(MessageDestructionTimeoutValue)
-    case unsupportedValue(MessageDestructionTimeoutValue)
-}
-
-private extension ZMConversation {
-    var timeoutItems: [Item] {
-        var newItems = MessageDestructionTimeoutValue.all.map(Item.supportedValue)
-
-        let groupTimeout = messageDestructionTimeoutValue(for: .groupConversation)
-        if case .custom = groupTimeout {
-            newItems.append(.unsupportedValue(groupTimeout))
-        }
-
-        return newItems
-    }
-}
-
 final class ConversationTimeoutOptionsViewController: UIViewController {
 
     private let conversation: ZMConversation
-    private var items: [Item] = []
+    private let viewModel: ConversationTimeoutOptionsViewModel
     private let userSession: ZMUserSession
     private var observerToken: Any!
 
@@ -55,9 +37,11 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
 
     init(conversation: ZMConversation, userSession: ZMUserSession) {
         self.conversation = conversation
+        self.viewModel = ConversationTimeoutOptionsViewModel(
+            currentValue: conversation.messageDestructionTimeoutValue(for: .groupConversation)
+        )
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        updateItems()
         self.observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
@@ -76,10 +60,11 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(L10n.Localizable.GroupDetails.TimeoutOptionsCell.title.capitalized)
+        let state = viewModel.state
+        setupNavigationBarTitle(state.title)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description)
+        }, accessibilityLabel: state.closeButtonAccessibilityLabel)
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -123,7 +108,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        items.count
+        viewModel.state.options.count
     }
 
     func collectionView(
@@ -143,29 +128,15 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
 
-        let item = items[indexPath.row]
+        let option = viewModel.state.options[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
 
-        func configure(_ cell: CheckmarkCell, for value: MessageDestructionTimeoutValue, disabled: Bool) {
-            cell.title = value.displayString
-            cell.disabled = disabled
-            cell.showCheckmark = conversation.messageDestructionTimeoutValue(for: .groupConversation) == value
-        }
-
-        switch item {
-        case let .supportedValue(value):
-            configure(cell, for: value, disabled: false)
-        case let .unsupportedValue(value):
-            configure(cell, for: value, disabled: true)
-        }
-
-        cell.showSeparator = indexPath.row < (items.count - 1)
+        cell.title = option.title
+        cell.disabled = !option.isEnabled
+        cell.showCheckmark = option.isSelected
+        cell.showSeparator = indexPath.row < (viewModel.state.options.count - 1)
 
         return cell
-    }
-
-    private func updateItems() {
-        items = conversation.timeoutItems
     }
 
     private func updateTimeout(_ timeout: MessageDestructionTimeoutValue) {
@@ -188,32 +159,31 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         }
     }
 
-    private func handle(error: Error) {
-        let controller = UIAlertController.checkYourConnection()
+    private func handle(error _: Error) {
+        let state = viewModel.state
+        let controller = UIAlertController(
+            title: state.connectionErrorTitle,
+            message: state.connectionErrorMessage,
+            preferredStyle: .alert
+        )
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ))
+        controller.view.tintColor = SemanticColors.Label.textDefault
         present(controller, animated: true)
     }
 
     // MARK: Saving Changes
 
-    private func canSelectItem(with value: MessageDestructionTimeoutValue) -> Bool {
-        let currentValue = conversation.messageDestructionTimeoutValue(for: .groupConversation)
-        return value != currentValue
-
-    }
-
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        let selectedItem = items[indexPath.row]
 
-        switch selectedItem {
-        case let .supportedValue(value):
-            guard canSelectItem(with: value) else {
-                break
-            }
-            updateTimeout(value)
-        case .unsupportedValue:
-            break
+        guard let timeout = viewModel.timeoutToSave(forOptionAt: indexPath.row) else {
+            return
         }
+
+        updateTimeout(timeout)
     }
 
     // MARK: Layout
@@ -241,7 +211,9 @@ extension ConversationTimeoutOptionsViewController: ZMConversationObserver {
         guard changeInfo.destructionTimeoutChanged else {
             return
         }
-        updateItems()
+        viewModel.updateCurrentValue(
+            conversation.messageDestructionTimeoutValue(for: .groupConversation)
+        )
         collectionView.reloadData()
     }
 }

@@ -28,6 +28,7 @@ final class LegalHoldDetailsViewController: UIViewController {
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
+    private let viewModel: LegalHoldDetailsViewModel
     let userSession: UserSession
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
@@ -58,6 +59,10 @@ final class LegalHoldDetailsViewController: UIViewController {
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.conversation = conversation
+        self.viewModel = LegalHoldDetailsViewModel(
+            conversation: conversation,
+            selfUser: SelfUser.provider?.providedSelfUser
+        )
         self.collectionViewController = SectionCollectionViewController()
         collectionViewController.collectionView = collectionView
         self.userSession = userSession
@@ -126,16 +131,21 @@ final class LegalHoldDetailsViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(L10n.Localizable.Legalhold.Header.title)
+        setupNavigationBarTitle(viewModel.navigationTitle)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Localizable.General.close)
+        }, accessibilityLabel: viewModel.closeButtonAccessibilityLabel)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        (conversation as? ZMConversation)?.verifyLegalHoldSubjects()
+        switch viewModel.viewDidAppearAction {
+        case .verifyLegalHoldSubjects:
+            (conversation as? ZMConversation)?.verifyLegalHoldSubjects()
+        case nil:
+            break
+        }
     }
 
     private func setupViews() {
@@ -157,8 +167,9 @@ final class LegalHoldDetailsViewController: UIViewController {
     }
 
     private func computeVisibleSections() -> [CollectionViewSectionController] {
-        let headerSection = SingleViewSectionController(view: LegalHoldHeaderView(frame: .zero))
+        let headerSection = SingleViewSectionController(view: LegalHoldHeaderView(viewModel: viewModel.header))
         let legalHoldParticipantsSection = LegalHoldParticipantsSectionController(
+            viewModel: viewModel,
             conversation: conversation,
             userSession: userSession
         )

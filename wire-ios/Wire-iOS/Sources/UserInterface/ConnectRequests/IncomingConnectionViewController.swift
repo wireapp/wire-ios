@@ -17,26 +17,18 @@
 //
 import WireSyncEngine
 
-enum IncomingConnectionAction: UInt {
-    case ignore
-    case accept
-}
-
 final class IncomingConnectionViewController: UIViewController {
 
     fileprivate var connectionView: IncomingConnectionView!
 
-    let userSession: UserSession
-    let user: UserType
+    private let viewModel: IncomingConnectionViewModel
     var onAction: ((IncomingConnectionAction) -> Void)?
 
     init(userSession: UserSession, user: UserType) {
-        self.userSession = userSession
-        self.user = user
+        self.viewModel = IncomingConnectionViewModel(userSession: userSession, user: user)
         super.init(nibName: .none, bundle: .none)
 
-        guard !self.user.isConnected else { return }
-        user.refreshData()
+        viewModel.refreshDataIfNeeded()
     }
 
     @available(*, unavailable)
@@ -45,18 +37,20 @@ final class IncomingConnectionViewController: UIViewController {
     }
 
     override func loadView() {
+        let displayState = viewModel.displayState
+
         connectionView = IncomingConnectionView(
-            user: user,
-            userSession: userSession,
-            classificationProvider: userSession as? SecurityClassificationProviding
+            user: displayState.user,
+            userSession: displayState.userSession,
+            classificationProvider: displayState.classificationProvider
         )
         connectionView.onAccept = { [weak self] _ in
             guard let self else { return }
-            onAction?(.accept)
+            onAction?(viewModel.action(for: .acceptTapped))
         }
         connectionView.onIgnore = { [weak self] _ in
             guard let self else { return }
-            onAction?(.ignore)
+            onAction?(viewModel.action(for: .ignoreTapped))
         }
 
         view = connectionView

@@ -45,6 +45,35 @@ final class MessageDetailsContentViewController: UIViewController {
         case receipts(enabled: Bool)
     }
 
+    struct ViewModel {
+        let contentType: ContentType
+        let sections: [MessageDetailsSectionDescription]
+
+        var isEmpty: Bool {
+            sections.isEmpty
+        }
+
+        var title: String {
+            let count = sections.flatMap(\.items).count
+
+            switch contentType {
+            case .receipts:
+                if sections.isEmpty {
+                    return MessageDetails.receiptsTitle
+                } else {
+                    return MessageDetails.Tabs.seen(count)
+                }
+
+            case .reactions:
+                if sections.isEmpty {
+                    return MessageDetails.reactionsTitle
+                } else {
+                    return MessageDetails.Tabs.reactions(count)
+                }
+            }
+        }
+    }
+
     // MARK: - Configuration
 
     /// The conversation that is being accessed.
@@ -82,7 +111,11 @@ final class MessageDetailsContentViewController: UIViewController {
     private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     /// The displayed sections.
-    private(set) var sections = [MessageDetailsSectionDescription]()
+    private(set) var viewModel: ViewModel
+
+    private var sections: [MessageDetailsSectionDescription] {
+        viewModel.sections
+    }
 
     // MARK: - UI Elements
 
@@ -109,6 +142,7 @@ final class MessageDetailsContentViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversationCreationRepository = conversationCreationRepository
+        self.viewModel = ViewModel(contentType: contentType, sections: [])
 
         super.init(nibName: nil, bundle: nil)
 
@@ -208,23 +242,7 @@ final class MessageDetailsContentViewController: UIViewController {
     // MARK: - Update and Configuration
 
     private func updateTitle() {
-        let count = sections.flatMap(\.items).count
-        switch contentType {
-        case .receipts:
-            if sections.isEmpty {
-                title = MessageDetails.receiptsTitle
-            } else {
-                title = MessageDetails.Tabs.seen(count)
-
-            }
-
-        case .reactions:
-            if sections.isEmpty {
-                title = MessageDetails.reactionsTitle
-            } else {
-                title = MessageDetails.Tabs.reactions(count)
-            }
-        }
+        title = viewModel.title
     }
 
     private func updateFooterPosition(for scrollView: UIScrollView) {
@@ -282,8 +300,8 @@ final class MessageDetailsContentViewController: UIViewController {
     /// - parameter sections: The new list of sections to display.
 
     func updateData(_ sections: [MessageDetailsSectionDescription]) {
-        noResultsView.isHidden = !sections.isEmpty
-        self.sections = sections
+        viewModel = ViewModel(contentType: contentType, sections: sections)
+        noResultsView.isHidden = !viewModel.isEmpty
         updateTitle()
 
         guard let collectionView else {
