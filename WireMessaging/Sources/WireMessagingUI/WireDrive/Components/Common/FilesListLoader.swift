@@ -88,7 +88,7 @@ class FilesListLoader: Observable, ObservableObject {
             loader.state = .received(items: items)
         }
     }
-    
+
     var state: State {
         get {
             loader.state
@@ -97,7 +97,7 @@ class FilesListLoader: Observable, ObservableObject {
             loader.state = newValue
         }
     }
-    
+
     var hasMore: Bool {
         get {
             loader.hasMore
@@ -106,15 +106,15 @@ class FilesListLoader: Observable, ObservableObject {
             loader.hasMore = newValue
         }
     }
-    
+
     var isLoading: Bool {
         loader.isLoading
     }
-    
+
     func reload(refreshing: Bool = false) async {
         await loader.reload(refreshing: refreshing)
     }
-    
+
     func loadMoreIfNeeded(index: Int) async {
         await loader.loadMoreIfNeeded(index: index)
     }
