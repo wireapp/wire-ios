@@ -64,8 +64,7 @@ final class LocationSelectionViewController: UIViewController {
     private let mapViewController = MapViewController()
     private let geocoder = CLGeocoder()
     private let sendViewController = LocationSendViewController()
-    private var userShowedInitially = false
-    private var mapDidRender = false
+    private let viewModel = LocationSelectionViewModel()
 
     lazy var appLocationManager: AppLocationManagerProtocol = {
         let manager = AppLocationManager()
@@ -203,8 +202,6 @@ final class LocationSelectionViewController: UIViewController {
     }
 
     private func formatAndUpdateAddress() {
-        guard mapDidRender else { return }
-        updateSelectedLocationPayload()
         geocoder
             .reverseGeocodeLocation(
                 mapViewController.mapView.centerCoordinate
@@ -225,6 +222,29 @@ final class LocationSelectionViewController: UIViewController {
             longitude: Float(mapViewController.mapView.centerCoordinate.longitude),
             zoomLevel: Int32(mapViewController.mapView.zoomLevel)
         )
+    }
+
+    private func handle(_ effects: [LocationSelectionViewModel.Effect]) {
+        for effect in effects {
+            switch effect {
+            case .zoomToUserLocation:
+                mapViewController.zoomToUserLocation(animated: true)
+            case .setInitialRegionToUserLocation:
+                break
+            case .updateSelectedLocationPayload:
+                updateSelectedLocationPayload()
+            case .reverseGeocodeSelectedLocation:
+                formatAndUpdateAddress()
+            case .requestLocationAuthorization:
+                appLocationManager.requestLocationAuthorization()
+            case .presentUnauthorizedAlert:
+                presentUnauthorizedAlert()
+            case .startUpdatingLocation:
+                appLocationManager.startUpdatingLocation()
+            case .showUserLocation:
+                mapViewController.mapView.showsUserLocation = true
+            }
+        }
     }
 }
 
@@ -258,19 +278,15 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
 
 extension LocationSelectionViewController: MapViewControllerDelegate {
     func mapViewController(_ viewController: MapViewController, didUpdateUserLocation userLocation: MKUserLocation) {
-        if !userShowedInitially {
-            userShowedInitially = true
-            mapViewController.zoomToUserLocation(animated: true)
-        }
+        handle(viewModel.perform(.mapDidUpdateUserLocation))
     }
 
     func mapViewController(_ viewController: MapViewController, regionDidChangeAnimated animated: Bool) {
-        formatAndUpdateAddress()
+        handle(viewModel.perform(.mapRegionDidChange))
     }
 
     func mapViewControllerDidFinishRenderingMap(_ viewController: MapViewController, fullyRendered: Bool) {
-        mapDidRender = true
-        formatAndUpdateAddress()
+        handle(viewModel.perform(.mapDidFinishRendering))
     }
 }
 
@@ -280,8 +296,12 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
     func didUpdateLocations(_ locations: [CLLocation]) {
         guard let newLocation = locations.first else { return }
 
-        if !userShowedInitially {
-            userShowedInitially = true
+        for effect in viewModel.perform(.appLocationDidUpdate) {
+            guard case .setInitialRegionToUserLocation = effect else {
+                handle([effect])
+                continue
+            }
+
             mapViewController.setRegion(
                 to: newLocation.coordinate,
                 latitudinalMeters: 50,
@@ -305,15 +325,27 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
     }
 
     func didChangeAuthorization(status: CLAuthorizationStatus) {
-        switch status {
+        handle(viewModel.perform(.authorizationDidChange(status.viewModelAuthorizationStatus)))
+    }
+}
+
+private extension CLAuthorizationStatus {
+
+    var viewModelAuthorizationStatus: LocationSelectionViewModel.AuthorizationStatus {
+        switch self {
         case .notDetermined:
-            appLocationManager.requestLocationAuthorization()
-        case .restricted, .denied:
-            presentUnauthorizedAlert()
-        case .authorizedAlways, .authorizedWhenInUse:
-            appLocationManager.startUpdatingLocation()
-            mapViewController.mapView.showsUserLocation = true
-        @unknown default: break
+            return .notDetermined
+        case .restricted:
+            return .restricted
+        case .denied:
+            return .denied
+        case .authorizedAlways:
+            return .authorizedAlways
+        case .authorizedWhenInUse:
+            return .authorizedWhenInUse
+        @unknown default:
+            return .unknown
         }
     }
+
 }

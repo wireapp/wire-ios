@@ -190,4 +190,74 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         XCTAssertEqual(mockViewModelDelegate.updateFooterActionsViews_Invocations.first, [.openOneToOne])
     }
 
+    // MARK: - Controller state decisions
+
+    func test_ShouldRefreshMembershipOnLoad_IsTrueForTeamMembers() {
+        // Given
+        user.teamIdentifier = UUID()
+
+        // Then
+        XCTAssertTrue(sut.shouldRefreshMembershipOnLoad)
+    }
+
+    func test_ShouldRefreshMembershipOnLoad_IsFalseForNonTeamMembers() {
+        // Given
+        user.teamIdentifier = nil
+
+        // Then
+        XCTAssertFalse(sut.shouldRefreshMembershipOnLoad)
+    }
+
+    func test_InitialTabBarIndex_ReturnsDevices_ForDeviceListContextWithDevicesTab() {
+        // Given
+        sut = makeSUT(context: .deviceList)
+
+        // Then
+        XCTAssertEqual(sut.initialTabBarIndex(availableTabCount: 2), .devices)
+    }
+
+    func test_InitialTabBarIndex_ReturnsNil_ForDeviceListContextWithoutDevicesTab() {
+        // Given
+        sut = makeSUT(context: .deviceList)
+
+        // Then
+        XCTAssertNil(sut.initialTabBarIndex(availableTabCount: 1))
+    }
+
+    func test_InitialTabBarIndex_ReturnsNil_ForNonDeviceListContext() {
+        // Then
+        XCTAssertNil(sut.initialTabBarIndex(availableTabCount: 2))
+    }
+
+    func test_ShouldPinIncomingRequestFooterToBottom_IsTrueWhenThereAreNoFooterActions() {
+        XCTAssertTrue(sut.shouldPinIncomingRequestFooterToBottom(for: []))
+    }
+
+    func test_ShouldPinIncomingRequestFooterToBottom_IsFalseWhenThereAreFooterActions() {
+        XCTAssertFalse(sut.shouldPinIncomingRequestFooterToBottom(for: [.openOneToOne]))
+    }
+
+    func test_NavigationBarLayout_ReturnsModalRoot_ForSingleControllerStack() {
+        XCTAssertEqual(sut.navigationBarLayout(navigationStackCount: 1), .modalRoot)
+    }
+
+    func test_NavigationBarLayout_ReturnsPushed_ForNavigationStack() {
+        XCTAssertEqual(sut.navigationBarLayout(navigationStackCount: 2), .pushed)
+    }
+
+}
+
+private extension ProfileViewControllerViewModelTests {
+
+    func makeSUT(context: ProfileViewControllerContext) -> ProfileViewControllerViewModel {
+        ProfileViewControllerViewModel(
+            user: user,
+            conversation: nil,
+            viewer: MockUserType.createSelfUser(name: "George Johnson", inTeam: nil),
+            context: context,
+            classificationProvider: nil,
+            userSession: mockUserSession,
+            profileActionsFactory: mockProfileActionsFactory
+        )
+    }
 }

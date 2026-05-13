@@ -45,6 +45,36 @@ final class ConnectRequestsViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.row(at: IndexPath(row: 0, section: 0)))
     }
 
+    func testRowHeightUsesAllAvailableHeightForSingleRequest() {
+        let viewModel = ConnectRequestsViewModel(
+            connectionRequests: [conversation(connectedUser: MockUserType.createConnectedUser(name: "Alice"))]
+        )
+
+        XCTAssertEqual(viewModel.rowHeight(forAvailableHeight: 500), 500)
+    }
+
+    func testRowHeightLeavesHintForAdditionalRequests() {
+        let viewModel = ConnectRequestsViewModel(
+            connectionRequests: [
+                conversation(connectedUser: MockUserType.createConnectedUser(name: "Alice")),
+                conversation(connectedUser: MockUserType.createConnectedUser(name: "Bob"))
+            ]
+        )
+
+        XCTAssertEqual(viewModel.rowHeight(forAvailableHeight: 500), 452)
+    }
+
+    func testRowHeightDoesNotGoBelowZero() {
+        let viewModel = ConnectRequestsViewModel(
+            connectionRequests: [
+                conversation(connectedUser: MockUserType.createConnectedUser(name: "Alice")),
+                conversation(connectedUser: MockUserType.createConnectedUser(name: "Bob"))
+            ]
+        )
+
+        XCTAssertEqual(viewModel.rowHeight(forAvailableHeight: 24), 0)
+    }
+
     func testRoutesAfterReloadShowsNextRequestWhenRequestsRemain() throws {
         let viewModel = ConnectRequestsViewModel(
             connectionRequests: [

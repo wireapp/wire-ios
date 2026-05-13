@@ -135,11 +135,7 @@ final class ConnectRequestsViewController: UIViewController,
     // MARK: - UITableViewDelegate
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        // If there are more than one request, reduce the cell height to give user a hint
-
-        let inset: CGFloat = viewModel.hasMultipleRequests ? 48 : 0
-
-        return max(0, view.safeAreaLayoutGuide.layoutFrame.size.height - inset)
+        viewModel.rowHeight(forAvailableHeight: view.safeAreaLayoutGuide.layoutFrame.size.height)
     }
 
     // MARK: - Helpers

@@ -125,7 +125,7 @@ final class ProfileViewController: UIViewController {
         let user = viewModel.user
 
         user.refreshData()
-        if user.isTeamMember {
+        if viewModel.shouldRefreshMembershipOnLoad {
             user.refreshMembership()
         }
     }
@@ -252,10 +252,9 @@ final class ProfileViewController: UIViewController {
 
         tabsController = TabBarController(viewControllers: viewControllers)
 
-        if viewModel.context == .deviceList,
-           let count = tabsController?.viewControllers.count,
-           count > 1 {
-            tabsController?.selectIndex(ProfileViewControllerTabBarIndex.devices.rawValue, animated: false)
+        if let count = tabsController?.viewControllers.count,
+           let selectedIndex = viewModel.initialTabBarIndex(availableTabCount: count) {
+            tabsController?.selectIndex(selectedIndex.rawValue, animated: false)
         }
         addToSelf(tabsController!)
         tabsController?.isTabBarHidden = viewControllers.count < 2
@@ -609,14 +608,15 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     func setupNavigationItems() {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
 
-        if navigationController?.viewControllers.count == 1 {
+        switch viewModel.navigationBarLayout(navigationStackCount: navigationController?.viewControllers.count) {
+        case .modalRoot:
             let closeButton = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
                 self?.presentingViewController?.dismiss(animated: true)
             }, accessibilityLabel: L10n.Accessibility.Profile.CloseButton.description)
             closeButton.accessibilityIdentifier = Locators.UserDetailsPage.close.rawValue
             navigationItem.rightBarButtonItem = closeButton
             navigationItem.leftBarButtonItem = legalHoldItem
-        } else {
+        case .pushed:
             navigationItem.rightBarButtonItem = legalHoldItem
         }
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.DeviceDetails.BackButton.description
@@ -626,7 +626,8 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         // Actions
         profileFooterView.delegate = self
         profileFooterView.isHidden = actions.isEmpty
-        incomingRequestFooterBottomConstraint?.priority = actions.isEmpty ? .required : .defaultLow
+        let shouldPinIncomingRequestFooter = viewModel.shouldPinIncomingRequestFooterToBottom(for: actions)
+        incomingRequestFooterBottomConstraint?.priority = shouldPinIncomingRequestFooter ? .required : .defaultLow
         profileFooterView.configure(with: actions)
         view.bringSubviewToFront(profileFooterView)
     }

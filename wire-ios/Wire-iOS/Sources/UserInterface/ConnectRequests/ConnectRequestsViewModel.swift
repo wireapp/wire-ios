@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreGraphics
 import Foundation
 import WireDataModel
 import WireSyncEngine
@@ -47,6 +48,10 @@ final class ConnectRequestsViewModel {
 
     var hasMultipleRequests: Bool {
         connectionRequests.count > 1
+    }
+
+    func rowHeight(forAvailableHeight availableHeight: CGFloat) -> CGFloat {
+        max(0, availableHeight - rowHeightHintInset)
     }
 
     func update(connectionRequests: [ConversationLike]) {
@@ -121,6 +126,10 @@ final class ConnectRequestsViewModel {
         guard connectionRequests.indices.contains(index) else { return nil }
 
         return connectionRequests[index]
+    }
+
+    private var rowHeightHintInset: CGFloat {
+        hasMultipleRequests ? 48 : 0
     }
 
     private func routesForCurrentRequests() -> [Route] {

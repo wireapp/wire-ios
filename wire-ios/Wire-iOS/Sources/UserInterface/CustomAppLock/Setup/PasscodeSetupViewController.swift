@@ -30,27 +30,13 @@ protocol PasscodeSetupUserInterface: AnyObject {
 
 final class PasscodeSetupViewController: UIViewController {
 
-    enum Context {
-        case forcedForTeam
-        case createPasscode
-
-        var infoLabelString: String {
-            switch self {
-            case .createPasscode:
-                L10n.Localizable.CreatePasscode.infoLabel
-
-            case .forcedForTeam:
-                L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode
-                    .infoLabelForcedApplock
-            }
-        }
-    }
-
     weak var passcodeSetupViewControllerDelegate: PasscodeSetupViewControllerDelegate?
 
     private let userSession: UserSession
 
     private lazy var presenter: PasscodeSetupPresenter = .init(userInterface: self, userSession: userSession)
+
+    private let viewModel: PasscodeSetupViewModel
 
     private let stackView: UIStackView = .verticalStackView()
 
@@ -60,8 +46,8 @@ final class PasscodeSetupViewController: UIViewController {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.accessibilityIdentifier = Locators.SetPasscodePage.createPasscodeButton.rawValue
 
-        button.setTitle(L10n.Localizable.CreatePasscode.CreateButton.title, for: .normal)
-        button.isEnabled = false
+        button.setTitle(viewModel.displayModel.createButton.title, for: .normal)
+        button.isEnabled = viewModel.displayModel.createButton.isEnabled
 
         button.addTarget(self, action: #selector(onCreateCodeButtonPressed(sender:)), for: .touchUpInside)
 
@@ -74,7 +60,7 @@ final class PasscodeSetupViewController: UIViewController {
             delegate: self,
             setNewColors: true
         )
-        textField.placeholder = L10n.Localizable.CreatePasscode.Textfield.placeholder
+        textField.placeholder = viewModel.displayModel.passcodePlaceholder
         textField.delegate = self
 
         textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
@@ -84,19 +70,12 @@ final class PasscodeSetupViewController: UIViewController {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel.createMultiLineCenterdLabel()
-        switch context {
-        case .createPasscode:
-            label.text = L10n.Localizable.CreatePasscode.titleLabel
-        case .forcedForTeam:
-            label.text = L10n.Localizable.WarningScreen.titleLabel
-        }
+        label.text = viewModel.displayModel.title
 
         label.accessibilityIdentifier = "createPasscodeTitle"
 
         return label
     }()
-
-    private let useCompactLayout: Bool
 
     private lazy var infoLabel: UILabel = {
         let label = DynamicFontLabel(
@@ -121,7 +100,6 @@ final class PasscodeSetupViewController: UIViewController {
         }
 
     private var callback: ResultHandler?
-    private let context: Context
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -141,12 +119,15 @@ final class PasscodeSetupViewController: UIViewController {
         callback: ResultHandler?
     ) {
         self.callback = callback
-        self.context = context
         self.userSession = userSession
 
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         let windowHeight = appDelegate?.mainWindow?.frame.height ?? UIScreen.main.bounds.height
-        self.useCompactLayout = useCompactLayout ?? (windowHeight <= CGFloat.iPhone4Inch.height)
+        self.viewModel = PasscodeSetupViewModel(
+            context: context,
+            useCompactLayout: useCompactLayout,
+            windowHeight: windowHeight
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -168,17 +149,17 @@ final class PasscodeSetupViewController: UIViewController {
         scrollView.addSubview(contentView)
 
         stackView.distribution = .fill
-        infoLabel.text = context.infoLabelString
+        infoLabel.text = viewModel.displayModel.info
 
         contentView.addSubview(stackView)
 
         [
             titleLabel,
-            SpacingView(useCompactLayout ? 1 : 10),
+            SpacingView(viewModel.displayModel.useCompactLayout ? 1 : 10),
             infoLabel,
             UILabel.createHintLabel(),
             passcodeTextField,
-            SpacingView(useCompactLayout ? 2 : 16)
+            SpacingView(viewModel.displayModel.useCompactLayout ? 2 : 16)
         ].forEach {
             stackView.addArrangedSubview($0)
         }
@@ -265,7 +246,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     @objc
     private func textFieldDidChange(textField: UITextField) {
-        passcodeTextField.returnKeyType = presenter.isPasscodeValid ? .done : .default
+        passcodeTextField.returnKeyType = viewModel.returnKeyType(isPasscodeValid: presenter.isPasscodeValid)
         passcodeTextField.reloadInputViews()
     }
 
@@ -316,7 +297,7 @@ final class PasscodeSetupViewController: UIViewController {
 
 extension PasscodeSetupViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard presenter.isPasscodeValid else {
+        guard viewModel.shouldSubmitPasscode(isPasscodeValid: presenter.isPasscodeValid) else {
             return false
         }
 

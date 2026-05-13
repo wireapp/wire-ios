@@ -61,6 +61,7 @@ final class SelfProfileViewController: UIViewController {
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
     private let accountManager: (any SelfProfileAccountManager)?
+    private let viewModel: SelfProfileViewModel
 
     // MARK: - Configuration
 
@@ -103,16 +104,19 @@ final class SelfProfileViewController: UIViewController {
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
 
-        var options: ProfileHeaderViewController.Options
-        options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
-        if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
-            options.insert(.allowEditingProfilePicture)
-        }
+        let selfProfileViewModel = SelfProfileViewModel(
+            selfUser: selfUser,
+            userRightInterfaceType: userRightInterfaceType,
+            backendAPIVersionRawValue: userSession.resolvedBackendMetadata.apiVersion.map { UInt($0.rawValue) },
+            canManageTeam: userSession.selfUser.canManageTeam == true,
+            accounts: accountManager?.sortedAccounts() ?? [],
+            selectedAccount: accountManager?.selectedAccount
+        )
         self.profileHeaderViewController = ProfileHeaderViewController(
             user: selfUser,
             viewer: selfUser,
             conversation: .none,
-            options: options,
+            options: selfProfileViewModel.profileHeaderOptions,
             userSession: userSession,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
@@ -122,20 +126,17 @@ final class SelfProfileViewController: UIViewController {
         self.userRightInterfaceType = userRightInterfaceType
         self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         self.profileImagePicker = ProfileImagePickerManager(userSession: userSession)
+        self.viewModel = selfProfileViewModel
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {
             userSession.enqueue {
                 selfUser.refreshTeamData()
             }
-        } else if
-            let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
-            let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-            apiVersion >= .v7 {
-            let accentColor = WireAccentColor(rawValue: selfUser.accentColorValue) ?? .default
+        } else if let bannerPresentation = selfProfileViewModel.teamMigrationBannerPresentation {
             let upgradeBanner = SelfProfileViewCallToActionBanner { [weak self] in
-                self?.onTeamCreationBannerInteraction(apiVersion: apiVersion)
-            }.environment(\.wireAccentColor, accentColor)
+                self?.onTeamCreationBannerInteraction(apiVersion: bannerPresentation.apiVersion)
+            }.environment(\.wireAccentColor, bannerPresentation.accentColor)
             self.teamMigrationBanner = UIHostingController(rootView: upgradeBanner)
             teamMigrationBanner?.view.backgroundColor = .clear
         }
@@ -149,22 +150,23 @@ final class SelfProfileViewController: UIViewController {
 
     private func makeAccountSwitcherViewController(settingsCellDescriptorFactory: SettingsCellDescriptorFactory)
         -> AccountSwitcherHostingController {
-        var options = [Option.addAccountOption(action: {
-            settingsCellDescriptorFactory
-                .addAccountOrTeamCell().select(.none, sender: UIView())
-        })]
-        if userSession.selfUser.canManageTeam == true {
-            options.append(Option.manageTeamOption(action: { [weak self] in
-                let controllerToShow = BrowserViewController(url: URL.manageTeam(source: .settings))
-                controllerToShow.modalPresentationCapturesStatusBarAppearance = true
-                self?.present(controllerToShow, animated: true, completion: .none)
-            }))
+        let options = viewModel.accountSwitcherPresentation.visibleActions.map { action in
+            switch action {
+            case .addAccount:
+                Option.addAccountOption(action: {
+                    settingsCellDescriptorFactory
+                        .addAccountOrTeamCell().select(.none, sender: UIView())
+                })
+            case .manageTeam:
+                Option.manageTeamOption(action: { [weak self] in
+                    let controllerToShow = BrowserViewController(url: URL.manageTeam(source: .settings))
+                    controllerToShow.modalPresentationCapturesStatusBarAppearance = true
+                    self?.present(controllerToShow, animated: true, completion: .none)
+                })
+            }
         }
 
-        let otherAccounts = (accountManager?.sortedAccounts() ?? [])
-            .filter {
-                !$0.isEqual(accountManager?.selectedAccount)
-            }
+        let otherAccounts = viewModel.accountSwitcherPresentation.otherAccounts
             .map { account in
                 account.toUIModel(action: { [weak self] in
                     self?.handleAccountSelected(account)
@@ -384,7 +386,7 @@ final class SelfProfileViewController: UIViewController {
 
     @objc
     private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
-        guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
+        guard viewModel.isProfilePictureEditingEnabled else { return }
 
         let imageView = profileHeaderViewController.imageView
         let alertController = profileImagePicker.selectProfileImage(

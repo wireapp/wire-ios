@@ -31,6 +31,11 @@ enum ProfileViewControllerContext {
     case profileViewer
 }
 
+enum ProfileNavigationBarLayout: Equatable {
+    case modalRoot
+    case pushed
+}
+
 // sourcery: AutoMockable
 protocol ProfileViewControllerViewModeling {
 
@@ -64,6 +69,26 @@ protocol ProfileViewControllerViewModeling {
     func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void)
     func setDelegate(_ delegate: ProfileViewControllerViewModelDelegate)
 
+}
+
+extension ProfileViewControllerViewModeling {
+
+    var shouldRefreshMembershipOnLoad: Bool {
+        user.isTeamMember
+    }
+
+    func initialTabBarIndex(availableTabCount: Int) -> ProfileViewControllerTabBarIndex? {
+        guard context == .deviceList, availableTabCount > 1 else { return nil }
+        return .devices
+    }
+
+    func shouldPinIncomingRequestFooterToBottom(for actions: [ProfileAction]) -> Bool {
+        actions.isEmpty
+    }
+
+    func navigationBarLayout(navigationStackCount: Int?) -> ProfileNavigationBarLayout {
+        navigationStackCount == 1 ? .modalRoot : .pushed
+    }
 }
 
 final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewModeling {
