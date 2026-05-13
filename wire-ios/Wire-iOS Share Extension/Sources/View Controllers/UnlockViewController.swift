@@ -29,6 +29,7 @@ final class UnlockViewController: UIViewController {
 
     var callback: Callback?
 
+    private let viewModel: UnlockViewModel
     private let contentView: UIView = .init()
     private let stackView: UIStackView = .verticalStackView()
 
@@ -39,7 +40,6 @@ final class UnlockViewController: UIViewController {
         button.setTitleColor(.graphite, for: .normal)
         button.setTitleColor(.lightGraphite, for: .highlighted)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        button.setTitle(L10n.ShareExtension.Unlock.SubmitButton.title.localizedUppercase, for: .normal)
         button.isEnabled = false
 
         button.layer.cornerRadius = 4
@@ -56,7 +56,6 @@ final class UnlockViewController: UIViewController {
         textField.isSecureTextEntry = true
         textField.autocapitalizationType = .none
 
-        textField.placeholder = L10n.ShareExtension.Unlock.Textfield.placeholder
         textField.accessibilityIdentifier = "unlock_screen.text_field.enter_passcode"
 
         return textField
@@ -65,7 +64,6 @@ final class UnlockViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
 
-        label.text = L10n.ShareExtension.Unlock.titleLabel
         label.accessibilityIdentifier = "unlock_screen.title.enter_passcode"
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textColor = .white
@@ -91,10 +89,6 @@ final class UnlockViewController: UIViewController {
         style.firstLineHeadIndent = leadingMargin
         style.headIndent = leadingMargin
 
-        label.attributedText = NSAttributedString(
-            string: L10n.ShareExtension.Unlock.hintLabel,
-            attributes: [NSAttributedString.Key.paragraphStyle: style]
-        )
         return label
     }()
 
@@ -110,6 +104,8 @@ final class UnlockViewController: UIViewController {
     // MARK: - Life cycle
 
     init() {
+        self.viewModel = UnlockViewModel()
+
         super.init(nibName: nil, bundle: nil)
 
         setupViews()
@@ -147,6 +143,7 @@ extension UnlockViewController {
             unlockButton
         ].forEach(stackView.addArrangedSubview)
 
+        render(viewModel.displayState)
         createConstraints()
     }
 
@@ -183,9 +180,9 @@ extension UnlockViewController {
     }
 
     private func setupInitialStates() {
-        errorLabel.text = " "
+        viewModel.reset()
+        render(viewModel.displayState)
         passcodeTextField.text = ""
-        unlockButton.isEnabled = false
         passcodeTextField.becomeFirstResponder()
     }
 }
@@ -200,11 +197,17 @@ extension UnlockViewController {
     }
 
     private func unlock() {
-        guard let passcode = passcodeTextField.text else { return }
-        callback?(passcode)
+        switch viewModel.routeForSubmit() {
+        case let .submit(passcode):
+            callback?(passcode)
+        case .none:
+            break
+        }
     }
 
     func showWrongPasscodeMessage() {
+        viewModel.showWrongPasscode()
+
         let textAttachment = NSTextAttachment.textAttachment(
             for: .exclamationMarkCircle,
             with: SemanticColors.Label.textErrorDefault,
@@ -213,11 +216,11 @@ extension UnlockViewController {
             insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
         )
 
-        let attributedString = NSMutableAttributedString(string: L10n.ShareExtension.Unlock.errorLabel)
+        let attributedString = NSMutableAttributedString(string: viewModel.displayState.errorMessage ?? "")
         attributedString.addAttributes([.font: hintFont], range: NSRange(location: 0, length: attributedString.length))
         attributedString.insert(.init(attachment: textAttachment), at: 0)
         errorLabel.attributedText = .init(attributedString)
-        unlockButton.isEnabled = false
+        unlockButton.isEnabled = viewModel.displayState.isSubmitEnabled
     }
 }
 
@@ -226,11 +229,32 @@ extension UnlockViewController {
 extension UnlockViewController: PasscodeTextFieldDelegate {
 
     func textFieldValueChanged(_ value: String?) {
-        errorLabel.text = " "
-        if let isEmpty = value?.isEmpty {
-            unlockButton.isEnabled = !isEmpty
+        viewModel.updatePasscode(value)
+        render(viewModel.displayState)
+    }
+}
+
+private extension UnlockViewController {
+    func render(_ displayState: UnlockViewModel.DisplayState) {
+        titleLabel.text = displayState.title
+        passcodeTextField.placeholder = displayState.passcodePlaceholder
+        unlockButton.setTitle(displayState.submitButtonTitle, for: .normal)
+        unlockButton.isEnabled = displayState.isSubmitEnabled
+
+        let leadingMargin: CGFloat = 16
+        let style = NSMutableParagraphStyle()
+        style.firstLineHeadIndent = leadingMargin
+        style.headIndent = leadingMargin
+
+        hintLabel.attributedText = NSAttributedString(
+            string: displayState.hint,
+            attributes: [NSAttributedString.Key.paragraphStyle: style]
+        )
+
+        if let errorMessage = displayState.errorMessage {
+            errorLabel.text = errorMessage
         } else {
-            unlockButton.isEnabled = false
+            errorLabel.text = " "
         }
     }
 }

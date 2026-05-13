@@ -25,8 +25,7 @@ private let cellReuseIdentifier = "ConversationCell"
 
 final class ConversationSelectionViewController: UITableViewController {
 
-    private var allConversations: [Conversation]
-    private var visibleConversations: [Conversation]
+    private let viewModel: ConversationSelectionViewModel
 
     var selectionHandler: ((_ conversation: Conversation) -> Void)?
 
@@ -34,8 +33,7 @@ final class ConversationSelectionViewController: UITableViewController {
     private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
     init(conversations: [Conversation]) {
-        self.allConversations = conversations
-        self.visibleConversations = conversations
+        self.viewModel = ConversationSelectionViewModel(conversations: conversations)
 
         super.init(style: .plain)
 
@@ -73,11 +71,11 @@ final class ConversationSelectionViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        visibleConversations.count
+        viewModel.displayState.rows.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let conversation = visibleConversations[indexPath.row]
+        let conversation = viewModel.visibleConversations[indexPath.row]
         let cell = tableView.dequeueReusableCell(
             withIdentifier: cellReuseIdentifier,
             for: indexPath
@@ -88,25 +86,18 @@ final class ConversationSelectionViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let selectionHandler {
-            selectionHandler(visibleConversations[indexPath.row])
+        guard let route = viewModel.routeForSelectingRow(at: indexPath.row) else { return }
+
+        switch route {
+        case let .selectConversation(conversation):
+            selectionHandler?(conversation)
         }
     }
 }
 
 extension ConversationSelectionViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        if let searchText = searchController.searchBar.text, !searchText.isEmpty {
-            visibleConversations = allConversations.filter { conversation in
-                if conversation.name?.range(of: searchText, options: [.diacriticInsensitive, .caseInsensitive]) != nil {
-                    true
-                } else {
-                    false
-                }
-            }
-        } else {
-            visibleConversations = allConversations
-        }
+        viewModel.updateSearchText(searchController.searchBar.text)
         tableView.reloadData()
     }
 }
