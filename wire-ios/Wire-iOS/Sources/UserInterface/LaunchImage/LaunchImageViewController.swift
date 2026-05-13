@@ -22,6 +22,7 @@ import WireReusableUIComponents
 /// Replicates the launch screen to prevent the black screen being visible, cause of later UI initialization
 class LaunchImageViewController: UIViewController {
 
+    private var viewModel = LaunchImageViewModel()
     private var shouldShowLoadingScreenOnViewDidLoad = false
 
     private weak var contentView: UIView!
@@ -32,8 +33,7 @@ class LaunchImageViewController: UIViewController {
     /// animation
     func showLoadingScreen() {
         shouldShowLoadingScreenOnViewDidLoad = true
-        loadingScreenLabel.isHidden = false
-        activityIndicator.startAnimation()
+        render(viewModel.showLoadingScreen())
     }
 
     override func viewDidLoad() {
@@ -49,8 +49,7 @@ class LaunchImageViewController: UIViewController {
 
         loadingScreenLabel.font = .systemFont(ofSize: 12)
         loadingScreenLabel.textColor = .white
-        loadingScreenLabel.text = L10n.Localizable.Migration.pleaseWaitMessage.localizedUppercase
-        loadingScreenLabel.isHidden = true
+        render(viewModel.displayState)
         loadingScreenLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loadingScreenLabel)
 
@@ -81,10 +80,19 @@ class LaunchImageViewController: UIViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        true
+        viewModel.displayState.prefersStatusBarHidden
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations
+    }
+
+    private func render(_ displayState: LaunchImageViewModel.DisplayState) {
+        loadingScreenLabel.text = displayState.loadingMessage
+        loadingScreenLabel.isHidden = !displayState.isLoadingVisible
+
+        if displayState.isLoadingVisible {
+            activityIndicator.startAnimation()
+        }
     }
 }

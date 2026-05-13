@@ -31,6 +31,8 @@ protocol SearchHeaderViewControllerDelegate: AnyObject {
 
 final class SearchHeaderViewController: UIViewController {
 
+    private let viewModel = SearchHeaderViewModel()
+
     let tokenFieldContainer = UIView()
     let tokenField = TokenField()
     let searchIcon = UIImageView()
@@ -66,15 +68,17 @@ final class SearchHeaderViewController: UIViewController {
         searchIcon.setTemplateIcon(.search, size: .tiny)
         searchIcon.tintColor = SemanticColors.SearchBar.backgroundButton
 
-        clearButton.accessibilityLabel = L10n.Accessibility.SearchView.ClearButton.description
+        let displayState = viewModel.displayState()
+
+        clearButton.accessibilityLabel = displayState.clearButtonAccessibilityLabel
         clearButton.setIcon(.clearInput, size: .tiny, for: .normal)
         clearButton.addTarget(self, action: #selector(onClearButtonPressed), for: .touchUpInside)
-        clearButton.isHidden = true
+        clearButton.isHidden = displayState.clearButtonIsHidden
         clearButton.setIconColor(SemanticColors.SearchBar.backgroundButton, for: .normal)
 
-        tokenField.textView.accessibilityIdentifier = Locators.SelectParticipantsPage.searchByNameOrUsername.rawValue
+        tokenField.textView.accessibilityIdentifier = displayState.textFieldAccessibilityIdentifier
         tokenField.tokenTitleColor = SemanticColors.SearchBar.textInputView.resolvedColor(with: traitCollection)
-        tokenField.textView.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
+        tokenField.textView.placeholder = displayState.placeholder
         tokenField.textView.keyboardAppearance = .default
         tokenField.textView.returnKeyType = .done
         tokenField.textView.autocorrectionType = .no
@@ -134,11 +138,25 @@ final class SearchHeaderViewController: UIViewController {
 
     func resetQuery() {
         tokenField.filterUnwantedAttachments()
-        delegate?.searchHeaderViewController(self, updatedSearchQuery: tokenField.filterText)
+        perform(viewModel.routeForResetQuery(tokenField.filterText))
     }
 
     private func updateClearIndicator(for tokenField: TokenField) {
-        clearButton.isHidden = tokenField.filterText.isEmpty && tokenField.tokens.isEmpty
+        clearButton.isHidden = viewModel.displayState(
+            query: tokenField.filterText,
+            tokenCount: tokenField.tokens.count
+        ).clearButtonIsHidden
+    }
+
+    private func perform(_ route: SearchHeaderViewModel.Route) {
+        switch route {
+        case let .updateQuery(query):
+            delegate?.searchHeaderViewController(self, updatedSearchQuery: query)
+        case .confirmSelection:
+            delegate?.searchHeaderViewControllerDidConfirmAction(self)
+        case .none:
+            break
+        }
     }
 
 }
@@ -170,11 +188,11 @@ extension SearchHeaderViewController: TokenFieldDelegate {
     }
 
     func tokenField(_ tokenField: TokenField, changedFilterTextTo text: String) {
-        delegate?.searchHeaderViewController(self, updatedSearchQuery: text)
+        perform(viewModel.routeForFilterTextChanged(text))
         updateClearIndicator(for: tokenField)
     }
 
     func tokenFieldDidConfirmSelection(_ controller: TokenField) {
-        delegate?.searchHeaderViewControllerDidConfirmAction(self)
+        perform(viewModel.routeForConfirmSelection())
     }
 }
