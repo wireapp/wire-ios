@@ -8,9 +8,9 @@ Wire iOS is a secure messaging app built as a monorepo (`wire-ios-mono.xcworkspa
 
 ## Prerequisites & Setup
 
-- **Xcode**: version specified in `.xcode-version` (currently 26.1.1)
+- **Xcode**: version specified in `.xcode-version`
 - **Carthage**: 0.39.1+
-- **Ruby**: version in `Gemfile` (3.4.7), managed via rbenv
+- **Ruby**: version in `.ruby-version`, managed via `rbenv`
 - **Git LFS**: required for binary files
 
 Initial setup:
@@ -18,16 +18,17 @@ Initial setup:
 ./setup.sh
 ```
 
-To rebuild Carthage dependencies:
-```sh
-carthage bootstrap --platform ios --use-xcframeworks
-```
+To update or rebuild dependencies, just re-run the `setup.sh` script when needed.
 
 ## Build
 
 Open `wire-ios-mono.xcworkspace` in Xcode and select the `Wire-iOS` scheme.
 
 ## Testing
+
+All the commands for testing are used via fastlane. This is what the CI executes. See `fastlane/README.md` for the common commands.
+
+Note that the simulator model and OS version can be read in `fastlane/.env`
 
 Run security tests from the command line:
 ```sh
@@ -48,7 +49,7 @@ Available test plans in `wire-ios/Tests/TestPlans/`:
 The same `-testPlan` flag applies to the `WireSyncEngine` and `WireDataModel` schemes.
 
 UI test methods **must** include a Testiny TC ID suffix, e.g. `testLogin_TC_1234`.
-
+UITests require a special env, that is filled by 1password command. See `wire-ios/WireUITests/README` for more information
 ## Linting & Formatting
 
 Both tools are distributed as SPM binary targets in `scripts/Package.swift`.
@@ -96,10 +97,10 @@ Code generation: Sourcery generates mocks (`AutoMockable`), SwiftGen generates s
 
 ## Conventions
 
-- **Commits and PR titles** must reference a JIRA issue: `fix: description - WPB-XXXXX`
+- **Commits and PR titles** must reference a JIRA issue: `fix: description - WPB-XXXXX` - see [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- Code review uses [conventional comments](https://conventionalcomments.org/)
 - Cherry-picked commits are marked with 🍒
 - All colors in UI code must come from `WireDesign.ColorTheme` or `WireDesign.BaseColorPalette`
 - New UI elements require `accessibilityLabel` / `accessibilityIdentifier` strings for VoiceOver
 - UI elements that display text must use the API that supports dynamic type / large fonts
 - Push notifications only work with the App Store-signed build (Apple security restriction)
-- The open-source AVS library differs from the App Store version (proprietary call quality improvements)
