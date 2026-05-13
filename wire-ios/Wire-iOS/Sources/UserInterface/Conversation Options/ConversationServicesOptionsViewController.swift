@@ -21,6 +21,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUtilities
 
 final class ConversationServicesOptionsViewController: UIViewController,
     UITableViewDelegate,
@@ -29,6 +30,8 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
+    private let setAllowApps: ((Bool, @escaping (Result<Void, Error>) -> Void) -> Void)?
+    private var loadingItem: CancelableItem?
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
@@ -49,12 +52,17 @@ final class ConversationServicesOptionsViewController: UIViewController,
             isAppsFeatureEnabled: isAppsFeatureEnabled
         )
         self.init(
-            viewModel: .init(configuration: configuration)
+            viewModel: .init(configuration: configuration),
+            setAllowApps: configuration.setAllowApps
         )
     }
 
-    init(viewModel: ConversationServicesOptionsViewModel) {
+    init(
+        viewModel: ConversationServicesOptionsViewModel,
+        setAllowApps: ((Bool, @escaping (Result<Void, Error>) -> Void) -> Void)? = nil
+    ) {
         self.viewModel = viewModel
+        self.setAllowApps = setAllowApps
         super.init(nibName: nil, bundle: nil)
         setupViews()
         createConstraints()
@@ -64,10 +72,10 @@ final class ConversationServicesOptionsViewController: UIViewController,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        setupNavigationBarTitle(L10n.Localizable.GroupDetails.AppsOptionsCell.title.capitalized)
+        setupNavigationBarTitle(viewModel.state.title)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Accessibility.ServiceConversationSettings.CloseButton.description)
+        }, accessibilityLabel: viewModel.state.closeButtonAccessibilityLabel)
     }
 
     @available(*, unavailable)
@@ -114,18 +122,6 @@ final class ConversationServicesOptionsViewController: UIViewController,
         present(UIAlertController.checkYourConnection(), animated: false)
     }
 
-    func conversationServicesOptionsViewModel(
-        _ viewModel: ConversationServicesOptionsViewModel,
-        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
-        confirmRemovingServices completion: @escaping (Bool) -> Void
-    ) -> UIAlertController? {
-        let alertController = UIAlertController.confirmRemovingServices(completion)
-        alertController.configurePopoverPresentationController(using: fallbackActivityPopoverConfiguration)
-        present(alertController, animated: true)
-
-        return alertController
-    }
-
     // MARK: – UITableViewDelegate & UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -137,22 +133,105 @@ final class ConversationServicesOptionsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        viewModel.state.rows[indexPath.row].action != nil
+        false
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = viewModel.state.rows[indexPath.row]
+        let configuration = cellConfiguration(for: row)
         let cell = tableView.dequeueReusableCell(
-            withIdentifier: row.cellType.reuseIdentifier,
+            withIdentifier: configuration.cellType.reuseIdentifier,
             for: indexPath
         ) as! CellConfigurationConfigurable
-        cell.configure(with: row)
+        cell.configure(with: configuration)
         return cell as! UITableViewCell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath)!
-        viewModel.state.rows[indexPath.row].action?(cell)
+    }
+
+    private func cellConfiguration(for row: ConversationServicesOptionsViewModel.Row) -> CellConfiguration {
+        switch row {
+        case let .appsDisabledHint(title, body):
+            return .titleAndBody(title: title, body: body)
+
+        case let .allowAppsToggle(toggle):
+            return .iconToggle(
+                title: toggle.title,
+                subtitle: toggle.subtitle,
+                identifier: toggle.accessibilityIdentifier,
+                titleIdentifier: toggle.titleAccessibilityIdentifier,
+                icon: nil,
+                color: nil,
+                isEnabled: toggle.isEnabled,
+                get: { toggle.isOn },
+                set: { [weak self] allowApps, sender in
+                    guard let self else { return }
+                    handle(viewModel.actionForAllowAppsToggle(allowApps), sender: sender)
+                }
+            )
+        }
+    }
+
+    private func handle(
+        _ action: ConversationServicesOptionsViewModel.Action,
+        sender: UIView
+    ) {
+        switch action {
+        case .none:
+            return
+
+        case let .confirmRemovingServices(allowApps):
+            confirmRemovingServices(allowApps: allowApps, sender: sender)
+
+        case let .setAllowApps(allowApps):
+            saveAllowApps(allowApps)
+        }
+    }
+
+    private func confirmRemovingServices(
+        allowApps: Bool,
+        sender: UIView
+    ) {
+        let alertController = UIAlertController.confirmRemovingServices { [weak self] confirmed in
+            guard let self else { return }
+
+            handle(
+                viewModel.actionForRemovingServicesConfirmation(
+                    confirmed: confirmed,
+                    allowApps: allowApps
+                ),
+                sender: sender
+            )
+        }
+        alertController.configurePopoverPresentationController(
+            using: .sourceView(
+                sourceView: sender.superview ?? sender,
+                sourceRect: sender.frame.insetBy(dx: -4, dy: -4)
+            )
+        )
+        present(alertController, animated: true)
+    }
+
+    private func saveAllowApps(_ allowApps: Bool) {
+        guard let setAllowApps else {
+            viewModel.applySetAllowAppsResult(.success(()))
+            return
+        }
+
+        loadingItem = CancelableItem(delay: 0.4) { [weak self] in
+            self?.viewModel.updateIsLoading(true)
+        }
+
+        setAllowApps(allowApps) { [weak self] result in
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+
+                loadingItem?.cancel()
+                loadingItem = nil
+                viewModel.applySetAllowAppsResult(result)
+            }
+        }
     }
 }

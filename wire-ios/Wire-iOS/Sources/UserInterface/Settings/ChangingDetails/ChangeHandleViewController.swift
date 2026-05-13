@@ -152,79 +152,15 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 }
 
-enum HandleValidation {
-    static var allowedCharacters: CharacterSet = .init(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.")
-        .union(.decimalDigits)
-
-    static var allowedLength: CountableClosedRange<Int> {
-        2 ... 256
-    }
-}
-
-/// This struct represents the current state of a handle
-/// change operation and performs necessary validation steps of
-/// a new handle. The `ChangeHandleViewController` uses this state
-/// to layout its interface.
-struct HandleChangeState {
-
-    enum ValidationError: Error {
-        case tooShort
-        case tooLong
-        case invalidCharacter
-        case sameAsPrevious
-    }
-
-    enum HandleAvailability {
-        case unknown
-        case available
-        case taken
-    }
-
-    let currentHandle: String?
-    private(set) var newHandle: String?
-    var availability: HandleAvailability
-
-    var displayHandle: String? {
-        newHandle ?? currentHandle
-    }
-
-    init(currentHandle: String?, newHandle: String?, availability: HandleAvailability) {
-        self.currentHandle = currentHandle
-        self.newHandle = newHandle
-        self.availability = availability
-    }
-
-    /// Validates the passed in handle and updates the state if
-    /// no error occurs, otherwise a `ValidationError` will be thrown.
-    mutating func update(_ handle: String) throws {
-        availability = .unknown
-        try validate(handle)
-        newHandle = handle
-    }
-
-    /// Validation a new handle, if passed in handle
-    /// is invalid, an error will be thrown.
-    /// This function does not update the `HandleChangeState` itself.
-    func validate(_ handle: String) throws {
-        let subset = CharacterSet(charactersIn: handle).isSubset(of: HandleValidation.allowedCharacters)
-        guard subset, handle.isEqualToUnicodeName else { throw ValidationError.invalidCharacter }
-        guard handle.count >= HandleValidation.allowedLength.lowerBound else { throw ValidationError.tooShort }
-        guard handle.count <= HandleValidation.allowedLength.upperBound else { throw ValidationError.tooLong }
-        guard handle != currentHandle else { throw ValidationError.sameAsPrevious }
-    }
-
-}
-
 final class ChangeHandleViewController: SettingsBaseTableViewController {
     private typealias HandleChange = L10n.Localizable.Self.Settings.AccountSection.Handle.Change
 
     var footerFont: UIFont = .smallFont
-    var state: HandleChangeState
+    private var viewModel: ChangeHandleViewModel
     private var footerLabel = UILabel()
     fileprivate weak var userProfile: UserProfile?
     private var observerToken: Any?
     var popOnSuccess = true
-    private var federationEnabled: Bool
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
@@ -270,8 +206,11 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         isFederationEnabled: Bool,
         userSession: UserSession
     ) {
-        self.state = state
-        self.federationEnabled = isFederationEnabled
+        self.viewModel = ChangeHandleViewModel(
+            state: state,
+            federationEnabled: isFederationEnabled,
+            domainString: SelfUser.provider?.providedSelfUser.domainString
+        )
         super.init(
             style: .grouped,
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
@@ -325,7 +264,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     func saveButtonTapped() {
-        guard let handleToSet = state.newHandle else { return }
+        guard let handleToSet = viewModel.handleToSave else { return }
         userProfile?.requestSettingHandle(handle: handleToSet)
         activityIndicator.start()
     }
@@ -333,7 +272,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     fileprivate var attributedFooterTitle: NSAttributedString? {
         let infoText = HandleChange.footer.attributedString && SemanticColors.Label.textSectionFooter
         let alreadyTakenText = HandleChange.Footer.unavailable && SemanticColors.Label.textErrorDefault
-        let prefix = state.availability == .taken ? alreadyTakenText + "\n\n" : "\n\n".attributedString
+        let prefix = viewModel.displayModel.availability == .taken ? alreadyTakenText + "\n\n" : "\n\n".attributedString
         return (prefix + infoText) && footerFont
     }
 
@@ -345,7 +284,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     private func updateNavigationItem() {
-        navigationItem.rightBarButtonItem?.isEnabled = state.availability == .available
+        navigationItem.rightBarButtonItem?.isEnabled = viewModel.displayModel.isSaveEnabled
     }
 
     fileprivate func updateUI() {
@@ -368,13 +307,14 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
             withIdentifier: ChangeHandleTableViewCell.zm_reuseIdentifier,
             for: indexPath
         ) as! ChangeHandleTableViewCell
+        let displayModel = viewModel.displayModel
         cell.delegate = self
-        cell.handleTextField.text = state.displayHandle
+        cell.handleTextField.text = displayModel.displayHandle
         cell.handleTextField.becomeFirstResponder()
-        cell.domainLabel.isHidden = !federationEnabled
+        cell.domainLabel.isHidden = displayModel.isDomainHidden
 
-        if let user = SelfUser.provider?.providedSelfUser {
-            cell.domainLabel.text = federationEnabled ? user.domainString : ""
+        if SelfUser.provider?.providedSelfUser != nil {
+            cell.domainLabel.text = displayModel.domainText
         } else {
             assertionFailure("expected available 'user'!")
         }
@@ -390,27 +330,18 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
 
     func tableViewCell(cell: ChangeHandleTableViewCell, shouldAllowEditingText text: String) -> Bool {
-        do {
-            // We validate the new handle and only allow the edit if
-            // the new handle neither contains invalid characters nor is too long.
-            try state.validate(text)
-            return true
-        } catch HandleChangeState.ValidationError.invalidCharacter {
-            return false
-        } catch HandleChangeState.ValidationError.tooLong {
-            return false
-        } catch {
-            return true
-        }
+        // The edit is allowed unless the new handle contains invalid characters or is too long.
+        viewModel.shouldAllowEditingText(text)
     }
 
     func tableViewCellDidChangeText(cell: ChangeHandleTableViewCell, text: String) {
-        do {
-            NSObject.cancelPreviousPerformRequests(withTarget: self)
-            try state.update(text)
-            perform(#selector(checkAvailability), with: text, afterDelay: 0.2)
-        } catch {
-            // no-op
+        NSObject.cancelPreviousPerformRequests(withTarget: self)
+
+        switch viewModel.updateText(text) {
+        case .checkAvailability(let handle):
+            perform(#selector(checkAvailability), with: handle, afterDelay: 0.2)
+        case .none:
+            break
         }
 
         updateUI()
@@ -426,23 +357,23 @@ extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
 extension ChangeHandleViewController: UserProfileUpdateObserver {
 
     func didCheckAvailiabilityOfHandle(handle: String, available: Bool) {
-        guard handle == state.newHandle else { return }
-        state.availability = available ? .available : .taken
+        guard viewModel.didCheckAvailability(of: handle, available: available) else { return }
         updateUI()
     }
 
     func didFailToCheckAvailabilityOfHandle(handle: String) {
-        guard handle == state.newHandle else { return }
-        // If we fail to check we let the user check again by tapping the save button
-        state.availability = .available
+        guard viewModel.didFailToCheckAvailability(of: handle) else { return }
         updateUI()
     }
 
     func didSetHandle() {
         activityIndicator.stop()
-        state.availability = .taken
-        guard popOnSuccess else { return }
-        _ = navigationController?.popViewController(animated: true)
+        switch viewModel.didSetHandle(popOnSuccess: popOnSuccess) {
+        case .pop:
+            _ = navigationController?.popViewController(animated: true)
+        case .none:
+            break
+        }
     }
 
     func didFailToSetHandle() {
@@ -451,7 +382,7 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     }
 
     func didFailToSetHandleBecauseExisting() {
-        state.availability = .taken
+        viewModel.didFailToSetHandleBecauseExisting()
         updateUI()
         activityIndicator.stop()
     }
@@ -466,12 +397,4 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
         alert.addAction(.init(title: L10n.Localizable.General.ok, style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
-}
-
-extension String {
-
-    var isEqualToUnicodeName: Bool {
-        applyingTransform(.toUnicodeName, reverse: false) == self
-    }
-
 }

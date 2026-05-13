@@ -21,25 +21,78 @@ import WireSyncEngine
 
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
-        private(set) var clients: [UserClient] = []
-
-        init(clientsList: [UserClient]) {
-            super.init()
-            initalizeProperties(clientsList)
+        struct Row {
+            let cellViewModel: ClientTableViewCellModel
+            let canDelete: Bool
         }
 
-        private func initalizeProperties(_ clientsList: [UserClient]) {
-            clients = clientsList
-                .filter { !$0.isSelfClient() }
-                .sorted(by: {
-                    guard
-                        let leftDate = $0.activationDate,
-                        let rightDate = $1.activationDate
-                    else {
-                        return false
-                    }
-                    return leftDate.compare(rightDate) == .orderedDescending
-                })
+        struct State {
+            let activeListHeaderTitle: String
+            let activeListFooterMessage: String
+            let rows: [Row]
+        }
+
+        enum Action {
+            case requestPassword(UserClient)
+            case removeClient(UserClient, password: String?)
+            case notifyFinishedDeleting
+            case notifyFailedToDelete(Error)
+        }
+
+        enum Route {
+            case dismiss
+        }
+
+        private let clients: [UserClient]
+
+        var state: State {
+            State(
+                activeListHeaderTitle: L10n.Localizable.Registration.Devices.activeListHeader,
+                activeListFooterMessage: L10n.Localizable.Registration.Devices.activeListSubtitle,
+                rows: clients.map { row(for: $0) }
+            )
+        }
+
+        init(clientsList: [UserClient]) {
+            self.clients = Self.displayedClients(from: clientsList)
+            super.init()
+        }
+
+        func routeForBackButtonTapped() -> Route {
+            .dismiss
+        }
+
+        func actionForDelete(at index: Int) -> Action? {
+            guard clients.indices.contains(index) else {
+                return nil
+            }
+
+            let userClient = clients[index]
+            guard row(for: userClient).canDelete else {
+                return nil
+            }
+
+            if let user = userClient.user, user.usesCompanyLogin {
+                return .removeClient(userClient, password: nil)
+            } else {
+                return .requestPassword(userClient)
+            }
+        }
+
+        func actionForPassword(_ password: String?, userClient: UserClient) -> Action? {
+            guard let password else {
+                return nil
+            }
+
+            return .removeClient(userClient, password: password)
+        }
+
+        func actionForRemoveClientSuccess() -> Action {
+            .notifyFinishedDeleting
+        }
+
+        func actionForRemoveClientFailure(_ error: Error) -> Action {
+            .notifyFailedToDelete(error)
         }
 
         @MainActor
@@ -60,6 +113,27 @@ extension RemoveClientsViewController {
             try await useCase?.invoke(
                 clientId: clientId,
                 password: password
+            )
+        }
+
+        private static func displayedClients(from clientsList: [UserClient]) -> [UserClient] {
+            clientsList
+                .filter { !$0.isSelfClient() }
+                .sorted(by: {
+                    guard
+                        let leftDate = $0.activationDate,
+                        let rightDate = $1.activationDate
+                    else {
+                        return false
+                    }
+                    return leftDate.compare(rightDate) == .orderedDescending
+                })
+        }
+
+        private func row(for userClient: UserClient) -> Row {
+            Row(
+                cellViewModel: .init(userClient: userClient, shouldSetType: false),
+                canDelete: userClient.type != .legalHold
             )
         }
     }

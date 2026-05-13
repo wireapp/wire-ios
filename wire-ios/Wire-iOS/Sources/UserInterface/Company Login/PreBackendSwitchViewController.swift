@@ -27,9 +27,13 @@ protocol PreBackendSwitchViewControllerDelegate: AnyObject {
 final class PreBackendSwitchViewController: AuthenticationStepViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
-    var backendURL: URL?
+    var backendURL: URL? {
+        didSet {
+            updateViewModel()
+        }
+    }
 
-    typealias Login = L10n.Localizable.Login.Sso.BackendSwitch
+    private lazy var viewModel = makeViewModel()
 
     var delegate: PreBackendSwitchViewControllerDelegate? {
         authenticationCoordinator
@@ -41,21 +45,23 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
 
     // MARK: - UI Elements
 
-    let wireLogoInfoView = WireLogoInfoView(title: Login.title, subtitle: Login.subtitle)
+    private lazy var wireLogoInfoView = WireLogoInfoView(
+        title: viewModel.state.title,
+        subtitle: viewModel.state.subtitle
+    )
 
     let progressView: TimedCircularProgressView = {
         let progress = TimedCircularProgressView()
         progress.lineWidth = 4
         progress.lineCap = .round
         progress.tintColor = PreBackendSwitchViewController.informationBlue
-        progress.duration = 5
         progress.accessibilityIdentifier = "ProgressView.Timer"
         return progress
     }()
 
-    let informationLabel: UILabel = {
+    private lazy var informationLabel: UILabel = {
         let label = DynamicFontLabel(
-            text: Login.information,
+            text: viewModel.state.information,
             fontSpec: .normalSemiboldFont,
             color: SemanticColors.Label.textDefault
         )
@@ -72,18 +78,41 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
         view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationController?.navigationBar.barStyle = .black
 
+        apply(state: viewModel.state)
         configureSubviews()
         createConstraints()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        progressView.animate { [backendURL, delegate] in
-            guard let url = backendURL else {
-                return
-            }
-            delegate?.preBackendSwitchViewControllerDidComplete(url)
+        progressView.animate { [viewModel] in
+            let route = viewModel.handleAction(.timerCompleted)
+            viewModel.complete(route: route)
         }
+    }
+
+    private func makeViewModel() -> PreBackendSwitchViewModel {
+        PreBackendSwitchViewModel(backendURL: backendURL) { [weak self] url in
+            self?.delegate?.preBackendSwitchViewControllerDidComplete(url)
+        }
+    }
+
+    private func updateViewModel() {
+        viewModel = makeViewModel()
+
+        if isViewLoaded {
+            apply(state: viewModel.state)
+        }
+    }
+
+    private func apply(state: PreBackendSwitchViewModel.State) {
+        wireLogoInfoView.titleLabel.text = state.title
+        wireLogoInfoView.titleLabel.accessibilityValue = state.title
+        wireLogoInfoView.subtitleLabel.text = state.subtitle
+        wireLogoInfoView.subtitleLabel.accessibilityValue = state.subtitle
+        informationLabel.text = state.information
+        informationLabel.accessibilityValue = state.information
+        progressView.duration = state.progressDuration
     }
 
     private func configureSubviews() {

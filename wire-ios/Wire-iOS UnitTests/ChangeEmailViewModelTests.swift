@@ -46,6 +46,82 @@ final class ChangeEmailViewModelTests: XCTestCase {
 
     // MARK: - Unit Tests
 
+    func testInitialDisplayStateShowsCurrentEmailAndDisablesSave() {
+        XCTAssertEqual(
+            sut.displayState,
+            ChangeEmailViewModel.DisplayState(
+                visibleEmail: "current@example.com",
+                isSaveButtonEnabled: false
+            )
+        )
+    }
+
+    func testUpdateNewEmailTrimsInputAndEnablesSaveForValidChangedEmail() {
+        // WHEN
+        sut.updateNewEmail("  new@example.com  ")
+
+        // THEN
+        XCTAssertEqual(
+            sut.displayState,
+            ChangeEmailViewModel.DisplayState(
+                visibleEmail: "new@example.com",
+                isSaveButtonEnabled: true
+            )
+        )
+    }
+
+    func testUpdateNewEmailDisablesSaveForCurrentEmail() {
+        // WHEN
+        sut.updateNewEmail("current@example.com")
+
+        // THEN
+        XCTAssertEqual(
+            sut.displayState,
+            ChangeEmailViewModel.DisplayState(
+                visibleEmail: "current@example.com",
+                isSaveButtonEnabled: false
+            )
+        )
+    }
+
+    func testUpdateNewEmailDisablesSaveForInvalidEmail() {
+        // WHEN
+        sut.updateNewEmail("invalid-email")
+
+        // THEN
+        XCTAssertEqual(
+            sut.displayState,
+            ChangeEmailViewModel.DisplayState(
+                visibleEmail: "invalid-email",
+                isSaveButtonEnabled: false
+            )
+        )
+    }
+
+    func testSaveButtonTappedWithValidEmailRequestsUpdate() {
+        // GIVEN
+        sut.updateNewEmail("new@example.com")
+
+        // WHEN
+        let action = sut.saveButtonTapped()
+
+        // THEN
+        guard case .requestEmailUpdate = action else {
+            return XCTFail("Expected requestEmailUpdate action")
+        }
+    }
+
+    func testSaveButtonTappedWithInvalidEmailShowsAlert() {
+        // WHEN
+        let action = sut.saveButtonTapped()
+
+        // THEN
+        guard case let .showAlert(error) = action else {
+            return XCTFail("Expected showAlert action")
+        }
+        XCTAssertEqual(error as? ChangeEmailError, .invalidEmail)
+    }
+
     func testRequestEmailUpdateWithInvalidEmail() {
         XCTAssertThrowsError(try sut.requestEmailUpdate()) { error in
             XCTAssertEqual(error as? ChangeEmailError, ChangeEmailError.invalidEmail)
@@ -60,7 +136,7 @@ final class ChangeEmailViewModelTests: XCTestCase {
         }
 
         // WHEN & THEN
-        XCTAssertNoThrow(try sut.requestEmailUpdate())
+        XCTAssertEqual(try sut.requestEmailUpdate(), .confirmEmail(newEmail: "new@example.com"))
         XCTAssertEqual(mockUserProfile.requestEmailChangeEmail_Invocations, ["new@example.com"])
     }
 

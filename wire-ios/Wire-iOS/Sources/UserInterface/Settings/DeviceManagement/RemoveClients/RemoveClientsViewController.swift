@@ -108,20 +108,36 @@ final class RemoveClientsViewController: UIViewController,
 
     @objc
     func backPressed(_ sender: AnyObject!) {
-        navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
+        handle(route: viewModel.routeForBackButtonTapped())
     }
 
-    func removeUserClient(_ userClient: UserClient) async {
-        if let user = userClient.user, user.usesCompanyLogin {
-            await removeUserClient(userClient, password: nil)
-        } else {
-            if let password = await presentRequestPasswordController() {
-                await removeUserClient(userClient, password: password)
-            }
+    private func handle(route: RemoveClientsViewController.ViewModel.Route) {
+        switch route {
+        case .dismiss:
+            navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
         }
     }
 
-    // MARK: - Helpers
+    private func handle(action: RemoveClientsViewController.ViewModel.Action?) async {
+        guard let action else {
+            return
+        }
+
+        switch action {
+        case let .requestPassword(userClient):
+            let password = await presentRequestPasswordController()
+            await handle(action: viewModel.actionForPassword(password, userClient: userClient))
+
+        case let .removeClient(userClient, password):
+            await removeUserClient(userClient, password: password)
+
+        case .notifyFinishedDeleting:
+            delegate?.finishedDeleting(self)
+
+        case let .notifyFailedToDelete(error):
+            delegate?.failedToDeleteClients(error)
+        }
+    }
 
     private func presentRequestPasswordController() async -> String? {
         await withCheckedContinuation { continuation in
@@ -144,9 +160,9 @@ final class RemoveClientsViewController: UIViewController,
         activityIndicator.start()
         do {
             try await viewModel.removeUserClient(userClient, password: password)
-            delegate?.finishedDeleting(self)
+            await handle(action: viewModel.actionForRemoveClientSuccess())
         } catch {
-            delegate?.failedToDeleteClients(error)
+            await handle(action: viewModel.actionForRemoveClientFailure(error))
         }
         activityIndicator.stop()
     }
@@ -158,15 +174,15 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.clients.count
+        viewModel.state.rows.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        L10n.Localizable.Registration.Devices.activeListHeader
+        viewModel.state.activeListHeaderTitle
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        L10n.Localizable.Registration.Devices.activeListSubtitle
+        viewModel.state.activeListFooterMessage
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -187,7 +203,7 @@ final class RemoveClientsViewController: UIViewController,
             for: indexPath
         ) as? RemoveClientTableViewCell {
             cell.selectionStyle = .none
-            cell.viewModel = .init(userClient: viewModel.clients[indexPath.row], shouldSetType: false)
+            cell.viewModel = viewModel.state.rows[indexPath.row].cellViewModel
 
             return cell
         } else {
@@ -200,15 +216,18 @@ final class RemoveClientsViewController: UIViewController,
         commit editingStyle: UITableViewCell.EditingStyle,
         forRowAt indexPath: IndexPath
     ) {
-        let userClient = viewModel.clients[indexPath.row]
+        guard editingStyle == .delete else {
+            return
+        }
+
         Task {
-            await removeUserClient(userClient)
+            await handle(action: viewModel.actionForDelete(at: indexPath.row))
         }
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell
         .EditingStyle {
-        viewModel.clients[indexPath.row].type == .legalHold ? .none : .delete
+        viewModel.state.rows[indexPath.row].canDelete ? .delete : .none
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

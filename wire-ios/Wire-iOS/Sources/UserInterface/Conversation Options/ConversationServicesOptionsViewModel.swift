@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import WireDataModel
-import WireUtilities
 
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
 
@@ -39,8 +37,6 @@ protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
     var areAppsPresent: Bool { get }
     var allowAppsChangedHandler: ((Bool) -> Void)? { get set }
 
-    func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void)
-
 }
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
@@ -55,21 +51,38 @@ protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
         didReceiveError error: Error
     )
 
-    func conversationServicesOptionsViewModel(
-        _ viewModel: ConversationServicesOptionsViewModel,
-        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
-        confirmRemovingServices completion: @escaping (Bool) -> Void
-    ) -> UIAlertController?
-
 }
 
 final class ConversationServicesOptionsViewModel {
-    struct State {
-        var rows = [CellConfiguration]()
-        var isLoading = false
+
+    struct State: Equatable {
+        let title: String
+        let closeButtonAccessibilityLabel: String
+        var rows: [Row]
+        var isLoading: Bool
     }
 
-    var state = State() {
+    enum Row: Equatable {
+        case appsDisabledHint(title: String, body: String)
+        case allowAppsToggle(Toggle)
+    }
+
+    struct Toggle: Equatable {
+        let title: String
+        let subtitle: String
+        let accessibilityIdentifier: String
+        let titleAccessibilityIdentifier: String
+        let isEnabled: Bool
+        let isOn: Bool
+    }
+
+    enum Action: Equatable {
+        case none
+        case setAllowApps(Bool)
+        case confirmRemovingServices(Bool)
+    }
+
+    private(set) var state: State {
         didSet {
             delegate?.conversationServicesOptionsViewModel(self, didUpdateState: state)
         }
@@ -81,7 +94,12 @@ final class ConversationServicesOptionsViewModel {
 
     init(configuration: ConversationServicesOptionsViewModelConfiguration) {
         self.configuration = configuration
-        updateRows()
+        self.state = State(
+            title: L10n.Localizable.GroupDetails.AppsOptionsCell.title.capitalized,
+            closeButtonAccessibilityLabel: L10n.Accessibility.ServiceConversationSettings.CloseButton.description,
+            rows: ConversationServicesOptionsViewModel.makeRows(from: configuration),
+            isLoading: false
+        )
 
         configuration.allowAppsChangedHandler = { [weak self] _ in
             self?.updateRows()
@@ -89,7 +107,10 @@ final class ConversationServicesOptionsViewModel {
     }
 
     private func updateRows() {
+        state.rows = Self.makeRows(from: configuration)
+    }
 
+    private static func makeRows(from configuration: ConversationServicesOptionsViewModelConfiguration) -> [Row] {
         var showAppsNotEnabledHint = true
 
         if configuration.allowApps {
@@ -104,77 +125,60 @@ final class ConversationServicesOptionsViewModel {
         }
 
         if showAppsNotEnabledHint {
-            state.rows = [
-                .titleAndBody(
+            return [
+                .appsDisabledHint(
                     title: L10n.Localizable.Conversation.Create.AppsDisabled.title,
                     body: L10n.Localizable.Conversation.Create.AppsDisabled.message
                 )
             ]
         } else {
-            state.rows = [
+            return [
                 .allowAppsToggle(
-                    get: { [unowned self] in return configuration.allowApps },
-                    set: { [unowned self] in setAllowApps($0, sender: $1) }
+                    Toggle(
+                        title: L10n.Localizable.AppsOptions.AllowApps.title,
+                        subtitle: L10n.Localizable.AppsOptions.AllowApps.subtitle,
+                        accessibilityIdentifier: "toggle.guestoptions.allowapps",
+                        titleAccessibilityIdentifier: "label.guestoptions.apps.description",
+                        isEnabled: true,
+                        isOn: configuration.allowApps
+                    )
                 )
             ]
         }
 
     }
 
-    /// set conversation option AllowApps
-    /// - Parameters:
-    ///   - allowApps: new state AllowApps
-    ///   - sender: the source view which triggers setAllowApps action
-    /// - Returns: alert controller
-    @discardableResult
-    func setAllowApps(
-        _ allowApps: Bool,
-        sender: UIView
-    ) -> UIAlertController? {
-        func _setAllowApps() {
-            let item = CancelableItem(delay: 0.4) { [weak self] in
-                self?.state.isLoading = true
-            }
+    func actionForAllowAppsToggle(_ allowApps: Bool) -> Action {
+        guard allowApps != configuration.allowApps else { return .none }
 
-            configuration.setAllowApps(allowApps) { [weak self] result in
-                DispatchQueue.main.async { [weak self] in
-                    guard let self else { return }
-
-                    item.cancel()
-                    state.isLoading = false
-
-                    switch result {
-                    case .success:
-                        updateRows()
-                    case let .failure(error):
-                        delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
-                    }
-                }
-            }
-        }
-
-        guard allowApps != configuration.allowApps else { return nil }
-
-        // In case allow services mode should be deactivated & service in conversation, ask the delegate
-        // to confirm this action as all services will be removed.
         if !allowApps, configuration.areAppsPresent {
-            // Make "remove services" warning only appear if services are present
-            return delegate?.conversationServicesOptionsViewModel(
-                self,
-                fallbackActivityPopoverConfiguration: .sourceView(
-                    sourceView: sender.superview!,
-                    sourceRect: sender.frame.insetBy(dx: -4, dy: -4)
-                )
-            ) { [weak self] remove in
-                guard let self else { return }
-
-                guard remove else { return updateRows() }
-                _setAllowApps()
-            }
-        } else {
-            _setAllowApps()
+            return .confirmRemovingServices(allowApps)
         }
 
-        return nil
+        return .setAllowApps(allowApps)
+    }
+
+    func actionForRemovingServicesConfirmation(confirmed: Bool, allowApps: Bool) -> Action {
+        guard confirmed else {
+            updateRows()
+            return .none
+        }
+
+        return .setAllowApps(allowApps)
+    }
+
+    func updateIsLoading(_ isLoading: Bool) {
+        state.isLoading = isLoading
+    }
+
+    func applySetAllowAppsResult(_ result: Result<Void, Error>) {
+        state.isLoading = false
+
+        switch result {
+        case .success:
+            updateRows()
+        case let .failure(error):
+            delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
+        }
     }
 }

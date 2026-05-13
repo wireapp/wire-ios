@@ -17,6 +17,7 @@
 //
 
 import WireTestingPackage
+import WireSyncEngine
 import XCTest
 
 @testable import Wire
@@ -43,5 +44,53 @@ final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: XCTestCa
     func testThatItShouldShowAppropriateMessage_WhenUpdateE2eIdentityIsSuccessful() {
         let sut = SuccessfulCertificateEnrollmentViewController(isUpdateMode: true)
         snapshotHelper.verify(matching: sut)
+    }
+
+    func testDisplayState_WhenEnrollE2eIdentityIsSuccessful() {
+        let sut = SuccessfulCertificateEnrollmentViewModel(mode: .enroll)
+
+        XCTAssertEqual(sut.displayState.title, L10n.Localizable.EnrollE2eiCertificate.title)
+        XCTAssertEqual(sut.displayState.subtitle, L10n.Localizable.EnrollE2eiCertificate.subtitle)
+        XCTAssertEqual(
+            sut.displayState.certificateDetailsButtonTitle,
+            L10n.Localizable.EnrollE2eiCertificate.certificateDetailsButton
+        )
+        XCTAssertEqual(sut.displayState.confirmationButtonTitle, L10n.Localizable.EnrollE2eiCertificate.okButton)
+        XCTAssertEqual(sut.displayState.image, .certificateValid)
+    }
+
+    func testDisplayState_WhenUpdateE2eIdentityIsSuccessful() {
+        let sut = SuccessfulCertificateEnrollmentViewModel(mode: .update)
+
+        XCTAssertEqual(sut.displayState.title, L10n.Localizable.UpdateE2eiCertificate.title)
+        XCTAssertEqual(sut.displayState.subtitle, L10n.Localizable.UpdateE2eiCertificate.subtitle)
+        XCTAssertEqual(
+            sut.displayState.certificateDetailsButtonTitle,
+            L10n.Localizable.EnrollE2eiCertificate.certificateDetailsButton
+        )
+        XCTAssertEqual(sut.displayState.confirmationButtonTitle, L10n.Localizable.EnrollE2eiCertificate.okButton)
+        XCTAssertEqual(sut.displayState.image, .certificateValid)
+    }
+
+    func testCertificateDetailsRoute() {
+        let certificateDetails = "certificate-chain"
+        let sut = SuccessfulCertificateEnrollmentViewModel(mode: .enroll, certificateDetails: certificateDetails)
+
+        guard case let .certificateDetails(detailsState) = sut.certificateDetailsTapped() else {
+            return XCTFail("Expected certificate details route")
+        }
+
+        XCTAssertEqual(detailsState.certificateDetails, certificateDetails)
+        XCTAssertEqual(detailsState.isDownloadAndCopyEnabled, Settings.isClipboardEnabled)
+        XCTAssertEqual(detailsState.fileName, "certificate-chain")
+        XCTAssertEqual(detailsState.fileType, "txt")
+    }
+
+    func testConfirmationRoute() {
+        let sut = SuccessfulCertificateEnrollmentViewModel(mode: .enroll)
+
+        guard case .complete = sut.confirmationTapped() else {
+            return XCTFail("Expected complete route")
+        }
     }
 }

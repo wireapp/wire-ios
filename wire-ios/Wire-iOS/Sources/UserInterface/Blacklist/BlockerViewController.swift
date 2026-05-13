@@ -22,28 +22,15 @@ import WireLogging
 import WireMultiBackendUI
 import WireSyncEngine
 
-enum BlockerViewControllerContext {
-    case blacklist
-    case jailbroken
-    case databaseFailure
-    case backendObsolete
-    case clientObsolete
-    case pendingCertificateEnroll
-    case networkError(code: Int)
-    case genericError
-}
-
 final class BlockerViewController: LaunchImageViewController {
-    private var context: BlockerViewControllerContext = .blacklist
-    private var error: Error?
+    private let viewModel: BlockerViewModel
     private var sessionManager: SessionManager?
     private let shareDebugPresenter = ShareDebugReportPresenter()
 
     private var observerTokens = [Any]()
 
     init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil, error: Error? = nil) {
-        self.error = error
-        self.context = context
+        self.viewModel = BlockerViewModel(context: context, error: error)
         self.sessionManager = sessionManager
         super.init(nibName: nil, bundle: nil)
     }
@@ -65,103 +52,17 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     func showAlert() {
-        switch context {
-        case .blacklist:
-            showClientObsoleteMessage()
-        case .backendObsolete:
-            showBackendObsoleteMessage()
-        case .clientObsolete:
-            showClientObsoleteMessage()
-        case .jailbroken:
-            showJailbrokenMessage()
-        case .databaseFailure:
-            showDatabaseFailureMessage()
-        case .pendingCertificateEnroll:
-            showGetCertificateMessage()
-        case let .networkError(code):
-            showNetworkErrorMessage(code: code)
-        case .genericError:
-            showGenericErrorMessage()
+        switch viewModel.route(capabilities: capabilities) {
+        case .obsoleteClient:
+            presentObsoleteClientAlert()
+        case .obsoleteServer:
+            presentObsoleteServerAlert()
+        case let .alert(alertState):
+            present(alertState: alertState)
         }
     }
 
-    private func showNetworkErrorMessage(code: Int) {
-        typealias Strings = L10n.Localizable.AccountBlocked.NetworkError.Alert
-        showErrorMessage(
-            title: Strings.title,
-            message: Strings.message,
-            debugLogMessage: "Account failed to load due to network error (code: \(code))"
-        )
-    }
-
-    private func showGenericErrorMessage() {
-        typealias Strings = L10n.Localizable.AccountBlocked.GenericError.Alert
-        showErrorMessage(
-            title: Strings.title,
-            message: Strings.message,
-            debugLogMessage: "Account failed to load"
-        )
-    }
-
-    private func showErrorMessage(
-        title: String,
-        message: String,
-        debugLogMessage: String
-    ) {
-        typealias Strings = L10n.Localizable.AccountBlocked.GenericError.Alert
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-
-        if let switchAccountAction {
-            alert.addAction(
-                UIAlertAction(
-                    title: Strings.switchAccounts,
-                    style: .default
-                ) { _ in
-                    switchAccountAction()
-                }
-            )
-        }
-
-        alert.addAction(
-            UIAlertAction(
-                title: Strings.sendLogs,
-                style: .default
-            ) { [weak self] _ in
-                guard let self else { return }
-                shareDebugPresenter.present(from: self)
-            }
-        )
-
-        if let sessionManager, let account = sessionManager.accountManager.selectedAccount {
-            alert.addAction(
-                UIAlertAction(
-                    title: L10n.Localizable.Self.signOut,
-                    style: .default,
-                    handler: { _ in
-                        sessionManager.logout(account: account)
-                    }
-                )
-            )
-
-            alert.addAction(
-                UIAlertAction(
-                    title: Strings.retry,
-                    style: .cancel,
-                    handler: { _ in
-                        sessionManager.select(account)
-                    }
-                )
-            )
-        }
-
-        present(alert, animated: true)
-    }
-
-    private func showBackendObsoleteMessage() {
+    private func presentObsoleteServerAlert() {
         let alert = MultibackendAlertMainApp.obsoleteServer(
             switchAccountAction: switchAccountAction,
             logoutAction: handleLogout
@@ -170,7 +71,7 @@ final class BlockerViewController: LaunchImageViewController {
         present(alert, animated: true)
     }
 
-    private func showClientObsoleteMessage() {
+    private func presentObsoleteClientAlert() {
         let alert = MultibackendAlertMainApp.obsoleteClient(
             updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
             switchAccountAction: switchAccountAction,
@@ -180,135 +81,82 @@ final class BlockerViewController: LaunchImageViewController {
         present(alert, animated: true)
     }
 
-    private func showJailbrokenMessage() {
-        presentOKAlert(
-            title: L10n.Localizable.Jailbrokendevice.Alert.title,
-            message: L10n.Localizable.Jailbrokendevice.Alert.message
-        )
-    }
-
-    private func presentOKAlert(
-        title: String,
-        message: String,
-        handler: ((UIAlertAction) -> Void)? = nil
-    ) {
+    private func present(alertState: BlockerViewModel.AlertState) {
         let alert = UIAlertController(
-            title: title,
-            message: message,
+            title: alertState.title,
+            message: alertState.message,
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.General.ok,
-            style: .cancel,
-            handler: handler
-        ))
+
+        alertState.actions.forEach { actionState in
+            alert.addAction(
+                UIAlertAction(
+                    title: actionState.title,
+                    style: actionState.style.uiAlertActionStyle
+                ) { [weak self] _ in
+                    self?.perform(actionState.kind)
+                }
+            )
+        }
 
         present(alert, animated: true)
     }
 
-    private func showGetCertificateMessage() {
-        typealias E2EI = L10n.Localizable.Registration.Signin.E2ei
-
-        let getCertificateAlert = UIAlertController(
-            title: E2EI.title,
-            message: E2EI.subtitle,
-            preferredStyle: .alert
+    private var capabilities: BlockerViewModel.Capabilities {
+        .init(
+            canSwitchAccounts: switchAccountAction != nil,
+            hasSelectedAccount: sessionManager?.accountManager.selectedAccount != nil
         )
-
-        let learnMoreAction = UIAlertAction(
-            title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
-            style: .default,
-            handler: { _ in
-                UIApplication.shared.open(WireURLs.shared.endToEndIdentityInfo)
-            }
-        )
-
-        let getCertificateAction = UIAlertAction(
-            title: E2EI.GetCertificateButton.title,
-            style: .default,
-            handler: { [weak self] _ in
-                Task {
-                    await self?.enrollCertificateAction()
-                }
-            }
-        )
-
-        getCertificateAlert.addAction(learnMoreAction)
-        getCertificateAlert.addAction(getCertificateAction)
-        present(getCertificateAlert, animated: true)
     }
 
-    private func showDatabaseFailureMessage() {
-        let message = L10n.Localizable.Databaseloadingfailure.Alert.message(error?.localizedDescription ?? "-")
-
-        let databaseFailureAlert = UIAlertController(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.title,
-            message: message,
-            preferredStyle: .alert
-        )
-
-        let reportError = UIAlertAction(
-            title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
-            style: .default
-        ) { [weak self] _ in
-            guard let self else { return }
+    private func perform(_ action: BlockerViewModel.ActionKind) {
+        switch action {
+        case .ok:
+            break
+        case .switchAccount:
+            switchAccountAction?()
+        case .sendLogs:
             shareDebugPresenter.present(from: self)
-        }
-
-        databaseFailureAlert.addAction(reportError)
-
-        let retryAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
-            style: .default
-        ) { [weak self] _ in
-            self?.sessionManager?.retryStart()
-        }
-
-        databaseFailureAlert.addAction(retryAction)
-
-        let deleteDatabaseAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
-            style: .destructive
-        ) { [weak self] _ in
-            self?.dismiss(animated: true) {
-                self?.showConfirmationDatabaseDeletionAlert()
+        case .signOut:
+            guard let account = sessionManager?.accountManager.selectedAccount else { return }
+            sessionManager?.logout(account: account)
+        case .retrySelectedAccount:
+            guard let account = sessionManager?.accountManager.selectedAccount else { return }
+            sessionManager?.select(account)
+        case .retryStart:
+            sessionManager?.retryStart()
+        case .requestDatabaseDeletion:
+            dismiss(animated: true) { [weak self] in
+                guard let self else { return }
+                self.present(alertState: self.viewModel.databaseDeletionConfirmationAlert)
+            }
+        case .confirmDatabaseDeletion:
+            sessionManager?.removeDatabaseFromDisk()
+        case .cancelDatabaseDeletion:
+            showAlert()
+        case .learnMoreCertificate:
+            UIApplication.shared.open(WireURLs.shared.endToEndIdentityInfo)
+        case .getCertificate:
+            Task { [weak self] in
+                await self?.enrollCertificateAction()
             }
         }
-
-        databaseFailureAlert.addAction(deleteDatabaseAction)
-        databaseFailureAlert.addSwitchAccountAction(switchAccountAction)
-        present(databaseFailureAlert, animated: true)
     }
 
-    private func showConfirmationDatabaseDeletionAlert() {
-        let deleteDatabaseConfirmationAlert = UIAlertController(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
-            message: L10n.Localizable.Databaseloadingfailure.Alert.DeleteDatabase.message,
-            preferredStyle: .alert
-        )
+}
 
-        let continueAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.DeleteDatabase.continue,
-            style: .destructive,
-            handler: { [weak self] _ in
-                self?.sessionManager?.removeDatabaseFromDisk()
-            }
-        )
+private extension BlockerViewModel.ActionStyle {
 
-        deleteDatabaseConfirmationAlert.addAction(continueAction)
-
-        let cancelAction = UIAlertAction(
-            title: L10n.Localizable.General.cancel,
-            style: .default,
-            handler: { [weak self] _ in
-                self?.showDatabaseFailureMessage()
-            }
-        )
-
-        deleteDatabaseConfirmationAlert.addAction(cancelAction)
-        present(deleteDatabaseConfirmationAlert, animated: true)
+    var uiAlertActionStyle: UIAlertAction.Style {
+        switch self {
+        case .default:
+            .default
+        case .cancel:
+            .cancel
+        case .destructive:
+            .destructive
+        }
     }
-
 }
 
 // MARK: - Application state observing

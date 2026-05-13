@@ -72,6 +72,9 @@ final class ConversationGuestOptionsViewController: UIViewController,
         setupViews()
         createConstraints()
         viewModel.delegate = self
+        viewModel.onRoute = { [weak self] route in
+            self?.handle(route)
+        }
     }
 
     deinit {
@@ -97,6 +100,36 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private func handleGuestLinkNotification(_ notification: Notification) {
         if let link = notification.userInfo?["link"] as? String {
             viewModel.securedLink = link
+        }
+    }
+
+    private func handle(_ route: ConversationGuestOptionsViewModel.Route) {
+        switch route {
+        case let .confirmRemovingGuests(sourceView, completion):
+            _ = presentConfirmRemovingGuests(sourceView: sourceView, completion: completion)
+
+        case let .presentGuestLinkTypeSelection(sourceView, completion):
+            presentGuestLinkTypeSelection(sourceView: sourceView, completion: completion)
+
+        case let .confirmRevokingLink(sourceView, completion):
+            presentConfirmRevokingLink(sourceView: sourceView, completion: completion)
+
+        case let .copyLink(link):
+            UIPasteboard.general.string = link
+
+        case let .shareMessage(message, sourceView):
+            presentShareSheet(message: message, sourceView: sourceView)
+
+        case let .presentCreateSecureGuestLink(conversation, createSecureGuestLinkUseCase):
+            let viewController = CreateSecureGuestLinkViewController(
+                conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
+                conversation: conversation
+            )
+
+            present(viewController.wrapInNavigationController(), animated: true)
+
+        case let .showError(error):
+            presentError(error)
         }
     }
 
@@ -155,6 +188,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
         _ viewModel: ConversationGuestOptionsViewModel,
         didReceiveError error: Error
     ) {
+        presentError(error)
+    }
+
+    private func presentError(_ error: Error) {
         // We shouldn't display an error message if the guestLinks feature flag is disabled. There's a UI element that
         // explains why the user cannot use/create links to join the conversation.
 
@@ -171,6 +208,13 @@ final class ConversationGuestOptionsViewController: UIViewController,
         sourceView: UIView,
         confirmRemovingGuests completion: @escaping (Bool) -> Void
     ) -> UIAlertController? {
+        presentConfirmRemovingGuests(sourceView: sourceView, completion: completion)
+    }
+
+    private func presentConfirmRemovingGuests(
+        sourceView: UIView,
+        completion: @escaping (Bool) -> Void
+    ) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingGuests(completion)
         if let popoverPresentationController = alertController.popoverPresentationController {
             popoverPresentationController.sourceView = sourceView.superview!
@@ -184,6 +228,13 @@ final class ConversationGuestOptionsViewController: UIViewController,
         _ viewModel: ConversationGuestOptionsViewModel,
         sourceView: UIView,
         presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void
+    ) {
+        presentGuestLinkTypeSelection(sourceView: sourceView, completion: completion)
+    }
+
+    private func presentGuestLinkTypeSelection(
+        sourceView: UIView,
+        completion: @escaping (GuestLinkType) -> Void
     ) {
         let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
             completion(guestLinkType)
@@ -200,6 +251,13 @@ final class ConversationGuestOptionsViewController: UIViewController,
         sourceView: UIView,
         confirmRevokingLink completion: @escaping (Bool) -> Void
     ) {
+        presentConfirmRevokingLink(sourceView: sourceView, completion: completion)
+    }
+
+    private func presentConfirmRevokingLink(
+        sourceView: UIView,
+        completion: @escaping (Bool) -> Void
+    ) {
         let alertController = UIAlertController.confirmRevokingLink(completion)
         if let popoverPresentationController = alertController.popoverPresentationController {
             popoverPresentationController.sourceView = sourceView.superview!
@@ -213,6 +271,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
         wantsToShareMessage message: String,
         sourceView: UIView
     ) {
+        presentShareSheet(message: message, sourceView: sourceView)
+    }
+
+    private func presentShareSheet(message: String, sourceView: UIView) {
         let activityController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
         if let popoverPresentationController = activityController.popoverPresentationController {
             popoverPresentationController.sourceView = sourceView.superview!

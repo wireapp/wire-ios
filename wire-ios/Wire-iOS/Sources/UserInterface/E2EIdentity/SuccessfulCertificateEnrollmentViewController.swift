@@ -22,21 +22,20 @@ import WireSyncEngine
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
 
-    typealias LocalizedEnrollE2eiCertificate = L10n.Localizable.EnrollE2eiCertificate
-    typealias LocalizedUpdateE2eiCertificate = L10n.Localizable.UpdateE2eiCertificate
-
     // MARK: - Properties
 
-    var certificateDetails: String = ""
+    var certificateDetails: String {
+        get { viewModel.certificateDetails }
+        set { viewModel.certificateDetails = newValue }
+    }
+
     var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
-    // Based on this value, appropriate texts are displayed for update certifcate or enroll certificate for E2EI
-    private let isUpdateMode: Bool
+    private var viewModel: SuccessfulCertificateEnrollmentViewModel
 
     private var titleLabel: UILabel {
-        let title = isUpdateMode ? LocalizedUpdateE2eiCertificate.title : LocalizedEnrollE2eiCertificate.title
         let label = DynamicFontLabel(
-            text: title,
+            text: viewModel.displayState.title,
             style: .largeTitle,
             color: SemanticColors.Label.textDefault
         )
@@ -48,9 +47,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     }
 
     private var detailsLabel: UILabel {
-        let subtitle = isUpdateMode ? LocalizedUpdateE2eiCertificate.subtitle : LocalizedEnrollE2eiCertificate.subtitle
         let label = DynamicFontLabel(
-            text: subtitle,
+            text: viewModel.displayState.subtitle,
             style: .body1,
             color: SemanticColors.Label.textDefault
         )
@@ -61,8 +59,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         return label
     }
 
-    private let shieldImageView = {
-        let shieldImage = ImageResource.E_2_EI.Enrollment.certificateValid
+    private lazy var shieldImageView = {
+        let shieldImage = SuccessfulCertificateEnrollmentViewController.imageResource(for: viewModel.displayState.image)
         let imageView = UIImageView(image: .init(resource: shieldImage))
         imageView.accessibilityIdentifier = "shieldImageView"
         imageView.isAccessibilityElement = false
@@ -78,7 +76,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         )
 
         button.accessibilityIdentifier = "certificateDetailsButton"
-        button.setTitle(L10n.Localizable.EnrollE2eiCertificate.certificateDetailsButton, for: .normal)
+        button.setTitle(viewModel.displayState.certificateDetailsButtonTitle, for: .normal)
         button.addTarget(
             self,
             action: #selector(certificateDetailsTapped),
@@ -95,7 +93,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
             fontSpec: .buttonBigSemibold
         )
         button.accessibilityIdentifier = "confirmationButton"
-        button.setTitle(L10n.Localizable.EnrollE2eiCertificate.okButton, for: .normal)
+        button.setTitle(viewModel.displayState.confirmationButtonTitle, for: .normal)
         button.addTarget(
             self,
             action: #selector(okTapped),
@@ -117,7 +115,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     // MARK: - Life cycle
 
     init(isUpdateMode: Bool = false) {
-        self.isUpdateMode = isUpdateMode
+        let mode: SuccessfulCertificateEnrollmentViewModel.Mode = isUpdateMode ? .update : .enroll
+        self.viewModel = .init(mode: mode)
         super.init(nibName: nil, bundle: nil)
         setupViews()
     }
@@ -134,6 +133,13 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     }
 
     // MARK: - Helpers
+
+    private static func imageResource(for image: SuccessfulCertificateEnrollmentViewModel.Image) -> ImageResource {
+        switch image {
+        case .certificateValid:
+            ImageResource.E_2_EI.Enrollment.certificateValid
+        }
+    }
 
     private func setupViews() {
         [
@@ -184,14 +190,22 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     @objc
     private func certificateDetailsTapped() {
+        guard case let .certificateDetails(detailsState) = viewModel.certificateDetailsTapped() else {
+            return
+        }
+
         let wrapNavigationController = UINavigationController()
         let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
         var detailsView = E2EIdentityCertificateDetailsView(
-            certificateDetails: certificateDetails,
-            isDownloadAndCopyEnabled: Settings.isClipboardEnabled,
+            certificateDetails: detailsState.certificateDetails,
+            isDownloadAndCopyEnabled: detailsState.isDownloadAndCopyEnabled,
             isMenuPresented: false
         ) {
-            saveFileManager.save(value: self.certificateDetails, fileName: "certificate-chain", type: "txt")
+            saveFileManager.save(
+                value: detailsState.certificateDetails,
+                fileName: detailsState.fileName,
+                type: detailsState.fileType
+            )
         } performCopy: { value in
             UIPasteboard.general.string = value
         }
@@ -207,6 +221,10 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     @MainActor
     @objc
     private func okTapped() {
+        guard case .complete = viewModel.confirmationTapped() else {
+            return
+        }
+
         onOkTapped?(self)
     }
 

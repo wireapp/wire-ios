@@ -117,7 +117,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         textField.accessibilityLabel = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.description
         textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.hint
 
-        textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
 
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.Textfield.placeholder
@@ -162,7 +161,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.hint
 
         textField.showConfirmButton = false
-        textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         textField.addRevealButton(delegate: self)
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.VerifyPasswordTextField.placeholder
@@ -195,6 +193,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindViewModel()
         setUpViews()
         setupConstraints()
         textFieldDidChange(securedGuestLinkPasswordTextfield)
@@ -233,6 +232,16 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }
 
     // MARK: - Setup UI
+
+    private func bindViewModel() {
+        viewModel.onStateChange = { [weak self] state in
+            self?.render(state)
+        }
+
+        viewModel.onRoute = { [weak self] route in
+            self?.handle(route)
+        }
+    }
 
     private func setUpViews() {
         let contentSubviews: [UIView] = [
@@ -356,17 +365,12 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     @objc
     func generatePasswordButtonTapped() {
-        viewModel.requestRandomPassword()
-        textFieldDidChange(securedGuestLinkPasswordTextfield)
+        viewModel.send(.generatePassword)
     }
 
     @objc
     func createSecuredLinkButtonTapped(_ sender: UIButton) {
-        viewModel.createSecuredGuestLinkIfValid(
-            conversation: conversation,
-            passwordField: securedGuestLinkPasswordTextfield,
-            confirmPasswordField: securedGuestLinkPasswordValidatedTextField
-        )
+        viewModel.send(.createLink(conversation))
     }
 
     @objc
@@ -376,7 +380,14 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             setPasswordLabel
         ] : [confirmPasswordLabel]
 
-        let isValid = viewModel.validatePassword(for: textField, against: securedGuestLinkPasswordTextfield)
+        let isPasswordField = textField == securedGuestLinkPasswordTextfield
+        let isValid = isPasswordField
+            ? textField.isValid && !(textField.text?.isEmpty ?? true)
+            : viewModel.validatePassword(
+                password: securedGuestLinkPasswordTextfield.text,
+                confirmPassword: textField.text,
+                isPasswordValid: securedGuestLinkPasswordTextfield.isValid
+            )
 
         if isValid {
             createSecureGuestLinkPasswordValidatorHelper.resetPasswordDefaultState(for: [textField], for: labels)
@@ -429,13 +440,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }
 
     func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel) {
-
-        UIAlertController.presentPasswordCopiedAlert(
-            on: self,
-            title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
-            message: SecuredGuestLinkWithPasswordLocale.AlertController.message
-        )
-
     }
 
     func viewModel(
@@ -444,11 +448,46 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     ) {}
 
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String) {
-        print("Link created successfully: \(link)")
     }
 
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error) {
-        print("Failed to create link: \(error.localizedDescription)")
+    }
+}
+
+// MARK: - State Rendering
+
+private extension CreateSecureGuestLinkViewController {
+
+    func render(_ state: CreateSecureConversationGuestLinkViewModel.State) {
+        createSecuredLinkButton.isEnabled = state.canCreateLink
+        generatePasswordButton.isEnabled = !state.isLoading
+    }
+
+    func handle(_ route: CreateSecureConversationGuestLinkViewModel.Route) {
+        switch route {
+        case let .displayGeneratedPassword(password):
+            securedGuestLinkPasswordTextfield.text = password
+            securedGuestLinkPasswordValidatedTextField.text = password
+            textFieldDidChange(securedGuestLinkPasswordTextfield)
+
+        case let .copyPasswordAndDismiss(password):
+            UIPasteboard.general.string = password
+            UIAlertController.presentPasswordCopiedAlert(
+                on: self,
+                title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
+                message: SecuredGuestLinkWithPasswordLocale.AlertController.message
+            )
+
+        case let .didCreateLink(link):
+            NotificationCenter.default.post(
+                name: ConversationGuestLink.didCreateSecureGuestLinkNotification,
+                object: nil,
+                userInfo: [CreateSecureConversationGuestLinkViewModel.UserInfoKeys.link: link]
+            )
+
+        case .showError:
+            break
+        }
     }
 }
 
@@ -470,7 +509,7 @@ extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
 
     @objc
     func textFieldDidChange(_ textField: UITextField) {
-        evaluateTextfieldsAndToggleCreateLinkButtonState()
+        syncPasswordState()
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -480,22 +519,25 @@ extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
         } else {
             // Dismiss keyboard and finalize
             textField.resignFirstResponder()
-            evaluateTextfieldsAndToggleCreateLinkButtonState()
+            syncPasswordState()
         }
 
         return true
     }
 
-    private func evaluateTextfieldsAndToggleCreateLinkButtonState() {
-        if let text1 = securedGuestLinkPasswordTextfield.text,
-           let text2 = securedGuestLinkPasswordValidatedTextField.text,
-           !text1.isEmpty,
-           !text2.isEmpty,
-           handlePasswordValidation(for: securedGuestLinkPasswordTextfield),
-           text1 == text2 {
-            createSecuredLinkButton.isEnabled = true
-        } else {
-            createSecuredLinkButton.isEnabled = false
+    private func syncPasswordState() {
+        viewModel.send(.passwordChanged(
+            securedGuestLinkPasswordTextfield.text ?? "",
+            isValid: securedGuestLinkPasswordTextfield.isValid
+        ))
+        viewModel.send(.confirmPasswordChanged(securedGuestLinkPasswordValidatedTextField.text ?? ""))
+
+        if !(securedGuestLinkPasswordTextfield.text?.isEmpty ?? true) {
+            _ = handlePasswordValidation(for: securedGuestLinkPasswordTextfield)
+        }
+
+        if !(securedGuestLinkPasswordValidatedTextField.text?.isEmpty ?? true) {
+            _ = handlePasswordValidation(for: securedGuestLinkPasswordValidatedTextField)
         }
     }
 }

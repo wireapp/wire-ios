@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import UIKit
 import WireSyncEngine
 
 // MARK: - CreatePasswordSecuredLinkViewModelDelegate
@@ -43,12 +42,52 @@ final class CreateSecureConversationGuestLinkViewModel {
     }
 
     enum LinkCreationError: Error {
-        case underfinedLink
+        case undefinedLink
+    }
+
+    struct State: Equatable {
+        var password = ""
+        var confirmPassword = ""
+        var isPasswordValid = false
+        var isLoading = false
+        var hasValidationError = false
+
+        var canCreateLink: Bool {
+            !password.isEmpty
+                && !confirmPassword.isEmpty
+                && isPasswordValid
+                && password == confirmPassword
+                && !isLoading
+        }
+    }
+
+    enum Action {
+        case generatePassword
+        case passwordChanged(String, isValid: Bool)
+        case confirmPasswordChanged(String)
+        case createLink(ZMConversation)
+    }
+
+    enum Route {
+        case displayGeneratedPassword(String)
+        case copyPasswordAndDismiss(String)
+        case didCreateLink(String)
+        case showError(Error)
     }
 
     // MARK: - Properties
 
     weak var delegate: CreatePasswordSecuredLinkViewModelDelegate?
+    private(set) var state = State() {
+        didSet {
+            guard oldValue != state else { return }
+            onStateChange?(state)
+        }
+    }
+
+    var onStateChange: ((State) -> Void)?
+    var onRoute: ((Route) -> Void)?
+
     private let conversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
     // MARK: - Init
@@ -63,63 +102,73 @@ final class CreateSecureConversationGuestLinkViewModel {
 
     // MARK: - Methods
 
+    func send(_ action: Action) {
+        switch action {
+        case .generatePassword:
+            requestRandomPassword()
+
+        case let .passwordChanged(password, isValid):
+            state.password = password
+            state.isPasswordValid = isValid
+            clearValidationErrorIfPasswordChanged()
+
+        case let .confirmPasswordChanged(confirmPassword):
+            state.confirmPassword = confirmPassword
+            clearValidationErrorIfPasswordChanged()
+
+        case let .createLink(conversation):
+            createSecuredGuestLinkIfValid(conversation: conversation)
+        }
+    }
+
     func requestRandomPassword() {
         let randomPassword = generateRandomPassword()
+        state.password = randomPassword
+        state.confirmPassword = randomPassword
+        state.isPasswordValid = true
+        state.hasValidationError = false
+        onRoute?(.displayGeneratedPassword(randomPassword))
         delegate?.viewModel(self, didGeneratePassword: randomPassword)
     }
 
     func validatePassword(
-        for textField: ValidatedTextField,
-        against confirmPasswordField: ValidatedTextField
+        password: String?,
+        confirmPassword: String?,
+        isPasswordValid: Bool
     ) -> Bool {
 
-        guard let enteredPassword = textField.text,
+        guard let enteredPassword = password,
               !enteredPassword.isEmpty,
-              textField.isValid,
-              confirmPasswordField.text == enteredPassword else {
+              isPasswordValid,
+              confirmPassword == enteredPassword else {
             return false
         }
 
         return true
     }
 
-    func createSecuredGuestLinkIfValid(
-        conversation: ZMConversation,
-        passwordField: ValidatedTextField,
-        confirmPasswordField: ValidatedTextField
-    ) {
-        guard validatePassword(for: passwordField, against: confirmPasswordField) else {
+    func createSecuredGuestLinkIfValid(conversation: ZMConversation) {
+        guard validatePassword(
+            password: state.password,
+            confirmPassword: state.confirmPassword,
+            isPasswordValid: state.isPasswordValid
+        ) else {
+            state.hasValidationError = true
             delegate?.viewModel(self, didFailToValidatePasswordWithReason: "Password validation failed.")
             return
         }
 
-        guard let password = passwordField.text else {
-            return
-        }
-
-        UIPasteboard.general.string = password
+        let password = state.password
+        state.isLoading = true
+        state.hasValidationError = false
 
         conversationGuestLinkUseCase.invoke(conversation: conversation, password: password) { [weak self] result in
             guard let self else { return }
 
-            switch result {
-            case let .success(link?):
-                delegate?.viewModel(self, didCreateLink: link)
-                NotificationCenter.default.post(
-                    name: ConversationGuestLink.didCreateSecureGuestLinkNotification,
-                    object: nil,
-                    userInfo: [UserInfoKeys.link: link]
-                )
-
-            case .success(nil):
-                delegate?.viewModel(self, didFailToCreateLinkWithError: LinkCreationError.underfinedLink)
-
-            case let .failure(error):
-                delegate?.viewModel(self, didFailToCreateLinkWithError: error)
+            DispatchQueue.main.async {
+                self.handleLinkCreationResult(result, password: password)
             }
         }
-
-        delegate?.viewModelDidValidatePasswordSuccessfully(self)
     }
 
     func generateRandomPassword() -> String {
@@ -144,6 +193,34 @@ final class CreateSecureConversationGuestLinkViewModel {
         }
 
         return String(characters.shuffled())
+    }
+
+    private func clearValidationErrorIfPasswordChanged() {
+        guard state.hasValidationError else { return }
+        state.hasValidationError = false
+    }
+
+    private func handleLinkCreationResult(
+        _ result: Result<String?, CreateConversationGuestLinkUseCaseError>,
+        password: String
+    ) {
+        state.isLoading = false
+
+        switch result {
+        case let .success(link?):
+            onRoute?(.didCreateLink(link))
+            onRoute?(.copyPasswordAndDismiss(password))
+            delegate?.viewModel(self, didCreateLink: link)
+
+        case .success(nil):
+            let error = LinkCreationError.undefinedLink
+            onRoute?(.showError(error))
+            delegate?.viewModel(self, didFailToCreateLinkWithError: error)
+
+        case let .failure(error):
+            onRoute?(.showError(error))
+            delegate?.viewModel(self, didFailToCreateLinkWithError: error)
+        }
     }
 
 }

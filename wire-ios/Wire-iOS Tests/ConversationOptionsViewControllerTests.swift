@@ -517,4 +517,52 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
             0
         )
     }
+
+    func testThatCopyLinkActionRoutesLinkToCopyAndUpdatesDisplayState() {
+        // GIVEN
+        let link = "https://app.wire.com/test-link"
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        config.linkResult = .success((uri: link, secured: false))
+        let viewModel = makeViewModel(config: config)
+
+        var routedLink: String?
+        viewModel.onRoute = { route in
+            if case let .copyLink(link) = route {
+                routedLink = link
+            }
+        }
+
+        // WHEN
+        viewModel.send(.copyLink)
+
+        // THEN
+        XCTAssertEqual(routedLink, link)
+        XCTAssertTrue(viewModel.copyInProgress)
+    }
+
+    func testThatSecureGuestLinkSelectionRoutesToSecureGuestLinkCreation() {
+        // GIVEN
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        let viewModel = makeViewModel(config: config, apiVersion: .v4)
+
+        var linkTypeCompletion: ((GuestLinkType) -> Void)?
+        var didRouteToSecureGuestLinkCreation = false
+        viewModel.onRoute = { route in
+            switch route {
+            case let .presentGuestLinkTypeSelection(_, completion):
+                linkTypeCompletion = completion
+            case .presentCreateSecureGuestLink(_, _):
+                didRouteToSecureGuestLinkCreation = true
+            default:
+                break
+            }
+        }
+
+        // WHEN
+        viewModel.send(.createGuestLink(.init()))
+        linkTypeCompletion?(.secure)
+
+        // THEN
+        XCTAssertTrue(didRouteToSecureGuestLinkCreation)
+    }
 }

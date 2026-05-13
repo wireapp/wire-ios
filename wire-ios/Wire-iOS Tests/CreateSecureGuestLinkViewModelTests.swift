@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
 import WireSyncEngineSupport
 import XCTest
 
@@ -28,8 +27,6 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     var viewModel: CreateSecureConversationGuestLinkViewModel!
     var mockDelegate: MockCreatePasswordSecuredLinkViewModelDelegate!
-    var textField: ValidatedTextField!
-    var confirmPasswordField: ValidatedTextField!
 
     var conversationGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
 
@@ -44,8 +41,6 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
         )
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
-        textField = ValidatedTextField(style: .default)
-        confirmPasswordField = ValidatedTextField(style: .default)
     }
 
     // MARK: - tearDown
@@ -53,8 +48,6 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
     override func tearDown() {
         viewModel = nil
         mockDelegate = nil
-        textField = nil
-        confirmPasswordField = nil
         conversationGuestLinkUseCase = nil
         super.tearDown()
     }
@@ -94,13 +87,58 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     func testRequestRandomPassword() {
         // GIVEN
+        var routedPassword: String?
         mockDelegate.viewModelDidGeneratePassword_MockMethod = { _, _ in }
+        viewModel.onRoute = { route in
+            if case let .displayGeneratedPassword(password) = route {
+                routedPassword = password
+            }
+        }
 
         // WHEN
         viewModel.requestRandomPassword()
 
         // THEN
         XCTAssertEqual(mockDelegate.viewModelDidGeneratePassword_Invocations.count, 1)
+        XCTAssertEqual(viewModel.state.password, routedPassword)
+        XCTAssertEqual(viewModel.state.confirmPassword, routedPassword)
+        XCTAssertTrue(viewModel.state.canCreateLink)
+    }
+
+    func testPasswordStateAllowsCreatingLinkForMatchingValidPasswords() {
+        // WHEN
+        viewModel.send(.passwordChanged("Str0ng-password", isValid: true))
+        viewModel.send(.confirmPasswordChanged("Str0ng-password"))
+
+        // THEN
+        XCTAssertTrue(viewModel.state.canCreateLink)
+    }
+
+    func testPasswordStatePreventsCreatingLinkForMismatchedPasswords() {
+        // WHEN
+        viewModel.send(.passwordChanged("Str0ng-password", isValid: true))
+        viewModel.send(.confirmPasswordChanged("different-password"))
+
+        // THEN
+        XCTAssertFalse(viewModel.state.canCreateLink)
+    }
+
+    func testValidatePasswordRequiresNonEmptyValidMatchingPasswords() {
+        XCTAssertTrue(viewModel.validatePassword(
+            password: "Str0ng-password",
+            confirmPassword: "Str0ng-password",
+            isPasswordValid: true
+        ))
+        XCTAssertFalse(viewModel.validatePassword(
+            password: "Str0ng-password",
+            confirmPassword: "different-password",
+            isPasswordValid: true
+        ))
+        XCTAssertFalse(viewModel.validatePassword(
+            password: "Str0ng-password",
+            confirmPassword: "Str0ng-password",
+            isPasswordValid: false
+        ))
     }
 
 }

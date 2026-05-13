@@ -26,9 +26,6 @@ import WireSyncEngine
 
 final class ProfileHeaderViewController: UIViewController {
 
-    /// The options to customize the appearance and behavior of the view.
-    private let options: Options
-
     /// Associated conversation, if displayed in the context of a conversation
     private let conversation: ZMConversation?
 
@@ -42,9 +39,7 @@ final class ProfileHeaderViewController: UIViewController {
     private let userSession: UserSession
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
-
-    /// The user who is viewing this view
-    private let viewer: UserType
+    private let viewModel: ProfileHeaderViewModel
 
     /// The current group admin status.
     var isAdminRole: Bool {
@@ -101,6 +96,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     private var userObserver: NSObjectProtocol?
     private var teamObserver: NSObjectProtocol?
+    private var isQRCodeFeatureEnabled: Bool?
 
     /// Creates a profile view for the specified user and options.
     /// - parameter user: The user to display the profile of.
@@ -110,7 +106,6 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter isUserE2EICertifiedUseCase: Use case for getting the user's MLS verification status.
     /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if
     /// `user.isSelfUser` is `true`.
-    /// Note: You can change the options later through the `options` property.
     init(
         user: UserType,
         viewer: UserType,
@@ -126,11 +121,15 @@ final class ProfileHeaderViewController: UIViewController {
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         self.isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
-        self.viewer = viewer
         self.conversation = conversation
-        self.options = options
+        self.viewModel = ProfileHeaderViewModel(
+            user: user,
+            viewer: viewer,
+            conversation: conversation,
+            options: options
+        )
         self.userStatusViewController = .init(
-            options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
+            options: viewModel.userStatusViewOptions,
             settings: .shared
         )
         super.init(nibName: nil, bundle: nil)
@@ -175,22 +174,12 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let remainingTimeString = user.expirationDisplayString
-        remainingTimeLabel.text = remainingTimeString
-        remainingTimeLabel.isHidden = remainingTimeString == nil
-
         guestIndicatorStack.addArrangedSubview(guestIndicator)
         guestIndicatorStack.addArrangedSubview(remainingTimeLabel)
         guestIndicatorStack.spacing = 12
         guestIndicatorStack.axis = .vertical
         guestIndicatorStack.alignment = .center
 
-        updateGuestIndicator()
-        updateExternalIndicator()
-        updateFederatedIndicator()
-        updateGroupRoleIndicator()
-        updateHandleLabel()
-        updateTeamLabel()
         updateQRCodeButton()
 
         addChild(userStatusViewController)
@@ -227,7 +216,8 @@ final class ProfileHeaderViewController: UIViewController {
 
         configureConstraints()
         applyUserStatus()
-        applyOptions()
+        applyDisplayState()
+        warningView.update(withUser: user)
 
         userStatusViewController.didMove(toParent: self)
 
@@ -295,68 +285,40 @@ final class ProfileHeaderViewController: UIViewController {
         return userNameWithIcons.joined(separator: NSAttributedString(string: " "))
     }
 
-    private func updateGuestIndicator() {
-        if let conversation {
-            guestIndicatorStack.isHidden = !user.isGuest(in: conversation)
-        } else {
-            guestIndicatorStack.isHidden = !viewer.isTeamMember || viewer.canAccessCompanyInformation(of: user)
-        }
-    }
+    private func applyDisplayState() {
+        let displayState = viewModel.displayState
 
-    private func updateExternalIndicator() {
-        externalIndicator.isHidden = !user.isExternalPartner
-    }
-
-    private func updateFederatedIndicator() {
-        federatedIndicator.isHidden = !user.isFederated
-    }
-
-    private func updateGroupRoleIndicator() {
-        let groupRoleIndicatorHidden: Bool = switch conversation?.conversationType {
-        case .group?:
-            !(conversation.map(user.isGroupAdmin) ?? false)
-        default:
-            true
-        }
-        groupRoleIndicator.isHidden = groupRoleIndicatorHidden
-
-    }
-
-    private func applyOptions() {
-        updateHandleLabel()
-        updateTeamLabel()
-        updateImageButton()
-        updateAvailabilityVisibility()
-        warningView.update(withUser: user)
-    }
-
-    private func updateHandleLabel() {
-        if let handle = user.handle, !handle.isEmpty {
-            handleLabel.text = "@" + handle
-            handleLabel.accessibilityValue = handleLabel.text
+        if let handleText = displayState.handleText {
+            handleLabel.text = handleText
+            handleLabel.accessibilityValue = handleText
+            handleLabel.isHidden = false
         } else {
             handleLabel.isHidden = true
         }
-    }
 
-    private func updateTeamLabel() {
-        if let teamName = user.teamName, !options.contains(.hideTeamName) {
+        if let teamName = displayState.teamNameText {
             teamNameLabel.text = teamName
-            teamNameLabel.accessibilityValue = teamNameLabel.text
+            teamNameLabel.accessibilityValue = teamName
             teamNameLabel.isHidden = false
         } else {
             teamNameLabel.isHidden = true
         }
-    }
 
-    private func updateAvailabilityVisibility() {
-        let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user
-            .availability == .none
-        userStatusViewController.view?.isHidden = isHidden
-    }
+        remainingTimeLabel.text = displayState.remainingTimeText
+        remainingTimeLabel.isHidden = displayState.remainingTimeText == nil
 
-    private func updateImageButton() {
-        if options.contains(.allowEditingProfilePicture) {
+        guestIndicatorStack.isHidden = displayState.isGuestIndicatorHidden
+        externalIndicator.isHidden = displayState.isExternalIndicatorHidden
+        federatedIndicator.isHidden = displayState.isFederatedIndicatorHidden
+        groupRoleIndicator.isHidden = displayState.isGroupRoleIndicatorHidden
+        userStatusViewController.view?.isHidden = displayState.isAvailabilityHidden
+        if let isQRCodeFeatureEnabled {
+            qrCodeButton.isHidden = viewModel.isQRCodeButtonHidden(isFeatureEnabled: isQRCodeFeatureEnabled)
+        } else {
+            qrCodeButton.isHidden = displayState.isQRCodeButtonHidden
+        }
+
+        if displayState.isProfilePictureEditingEnabled {
             imageView.accessibilityLabel = AccountPageStrings.ProfilePicture.description
             imageView.accessibilityHint = AccountPageStrings.ProfilePicture.hint
             imageView.accessibilityTraits = .button
@@ -396,12 +358,13 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateQRCodeButtonIsHidden() {
-        qrCodeButton.isHidden = !user.isSelfUser
-        guard user.isSelfUser else { return }
+        qrCodeButton.isHidden = viewModel.displayState.isQRCodeButtonHidden
+        guard !qrCodeButton.isHidden else { return }
         Task {
-            let hasToShow = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
-            await MainActor.run { [hasToShow] in
-                qrCodeButton.isHidden = !hasToShow
+            let isFeatureEnabled = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
+            await MainActor.run { [isFeatureEnabled] in
+                isQRCodeFeatureEnabled = isFeatureEnabled
+                qrCodeButton.isHidden = viewModel.isQRCodeButtonHidden(isFeatureEnabled: isFeatureEnabled)
             }
         }
     }
@@ -431,10 +394,10 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func qrCodeButtonTapped() {
-        guard let viewModel = makeUserQRCodeViewModel(selfUser: user) else {
+        guard case let .showQRCode(qrCodeViewModel) = viewModel.qrCodeButtonTapped() else {
             return
         }
-        let qrCodeView = QRCodeView(viewModel: viewModel)
+        let qrCodeView = QRCodeView(viewModel: qrCodeViewModel)
         let hostingController = UIHostingController(rootView: qrCodeView)
         hostingController.setupNavigationBarTitle(L10n.Localizable.Qrcode.title)
 
@@ -445,22 +408,6 @@ final class ProfileHeaderViewController: UIViewController {
             accessibilityLabel: L10n.Accessibility.ShareProfile.CloseButton.description
         )
         navigationController?.pushViewController(hostingController, animated: true)
-    }
-
-    private func makeUserQRCodeViewModel(selfUser: UserType) -> UserQRCodeViewModel? {
-        guard
-            let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
-            let profileDeepLink = selfUser.profileDeepLink,
-            let handle = selfUser.handle
-        else {
-            return nil
-        }
-
-        return UserQRCodeViewModel(
-            profileLink: profileLink,
-            profileDeepLink: profileDeepLink,
-            handle: handle
-        )
     }
 
     // MARK: -
@@ -492,8 +439,11 @@ extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
         guard viewController === userStatusViewController else { return }
 
-        userSession.perform { [weak self] in
-            self?.user.availability = availability
+        switch viewModel.availabilitySelected(availability) {
+        case let .updateAvailability(availability):
+            userSession.perform { [weak self] in
+                self?.user.availability = availability
+            }
         }
     }
 }
@@ -507,11 +457,11 @@ extension ProfileHeaderViewController: UserObserving {
             userStatus.displayName = changeInfo.user.name ?? ""
         }
         if changeInfo.handleChanged {
-            updateHandleLabel()
+            applyDisplayState()
         }
         if changeInfo.availabilityChanged {
-            updateAvailabilityVisibility()
             userStatus.availability = changeInfo.user.availability
+            applyDisplayState()
         }
         if changeInfo.trustLevelChanged {
             userStatus.isProteusVerified = changeInfo.user.isVerified
@@ -526,7 +476,7 @@ extension ProfileHeaderViewController: TeamObserver {
 
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
         if changeInfo.nameChanged {
-            updateTeamLabel()
+            applyDisplayState()
         }
     }
 }

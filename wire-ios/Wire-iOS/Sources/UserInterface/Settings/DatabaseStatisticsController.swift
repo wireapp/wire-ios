@@ -26,6 +26,7 @@ final class DatabaseStatisticsController: UIViewController {
     let spinner = UIActivityIndicatorView()
 
     private let userSession: UserSession
+    private let viewModel = DatabaseStatisticsViewModel()
 
     init(userSession: UserSession) {
         self.userSession = userSession
@@ -81,77 +82,95 @@ final class DatabaseStatisticsController: UIViewController {
         return stackView
     }
 
-    func addRow(title: String, contents: String) {
-        DispatchQueue.main.async {
-            let spinnerIndex = self.stackView.arrangedSubviews.firstIndex(of: self.spinner)!
-            self.stackView.insertArrangedSubview(self.rowWith(title: title, contents: contents), at: spinnerIndex)
+    func render(_ displayState: DatabaseStatisticsViewModel.DisplayState) {
+        stackView.arrangedSubviews.filter { $0 !== spinner }.forEach {
+            stackView.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
+
+        displayState.rows.forEach {
+            let spinnerIndex = stackView.arrangedSubviews.firstIndex(of: spinner) ?? stackView.arrangedSubviews.count
+            stackView.insertArrangedSubview(rowWith(title: $0.title, contents: $0.contents), at: spinnerIndex)
+        }
+
+        spinner.isHidden = !displayState.isLoading
+        if displayState.isLoading {
+            spinner.startAnimating()
+        } else {
+            spinner.stopAnimating()
         }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.Self.Settings.DeveloperOptions.DatabaseStatistics.title.capitalized)
-        guard let session = userSession as? ZMUserSession else { return }
+        render(viewModel.startLoading())
+
+        guard let session = userSession as? ZMUserSession else {
+            render(viewModel.update(with: DatabaseStatisticsError.unavailableSession))
+            return
+        }
+
         let syncMoc = session.managedObjectContext.zm_sync!
         syncMoc.performGroupedBlock {
             do {
-                defer {
-                    // Hide the spinner when we are done
-                    DispatchQueue.main.async {
-                        self.spinner.isHidden = true
-                    }
-                }
-
                 let allConversations = ZMConversation.fetchRequest()
 
                 let version = syncMoc.persistentStoreCoordinator?.managedObjectModel.version ?? "unknown"
-                self.addRow(title: "Version", contents: version)
-
                 let conversationsCount = try syncMoc.count(for: allConversations)
-                self.addRow(title: "Number of conversations", contents: "\(conversationsCount)")
 
                 allConversations.predicate = NSPredicate(
                     format: "conversationType == %d",
                     ZMConversationType.invalid.rawValue
                 )
                 let invalidConversationsCount = try syncMoc.count(for: allConversations)
-                self.addRow(title: "   Invalid", contents: "\(invalidConversationsCount)")
 
                 let users = ZMUser.fetchRequest()
                 let usersCount = try syncMoc.count(for: users)
-                self.addRow(title: "Number of users", contents: "\(usersCount)")
 
                 let messages = ZMMessage.fetchRequest()
                 let messagesCount = try syncMoc.count(for: messages)
-                self.addRow(title: "Number of messages", contents: "\(messagesCount)")
 
                 let assetMessages = ZMAssetClientMessage.fetchRequest()
                 let allAssets = try syncMoc.fetch(assetMessages)
                     .compactMap {
                         $0 as? ZMAssetClientMessage
                     }
-
-                self.addRow(title: "Asset messages:", contents: "")
-
-                func addSize(of assets: [ZMAssetClientMessage], title: String, filter: (ZMAssetClientMessage) -> Bool) {
-                    let filtered = assets.filter(filter)
-                    let size = filtered.reduce(0) { count, asset -> Int64 in
-                        return count + Int64(asset.size)
+                    .map {
+                        DatabaseStatisticsViewModel.AssetSummary(
+                            size: Int64($0.size),
+                            isImage: $0.isImage,
+                            isFile: $0.isFile,
+                            isVideo: $0.isVideo,
+                            isAudio: $0.isAudio
+                        )
                     }
-                    let titleWithCount = filtered.isEmpty ? title : title + " (\(filtered.count))"
-                    self.addRow(
-                        title: titleWithCount,
-                        contents: ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
-                    )
+
+                let statistics = DatabaseStatisticsViewModel.Statistics(
+                    databaseVersion: version,
+                    conversationsCount: conversationsCount,
+                    invalidConversationsCount: invalidConversationsCount,
+                    usersCount: usersCount,
+                    messagesCount: messagesCount,
+                    assets: allAssets
+                )
+
+                DispatchQueue.main.async {
+                    self.render(self.viewModel.update(with: statistics))
                 }
-
-                addSize(of: allAssets, title: "   Total", filter: { _ in true })
-                addSize(of: allAssets, title: "   Images", filter: { $0.isImage })
-                addSize(of: allAssets, title: "   Files", filter: { $0.isFile })
-                addSize(of: allAssets, title: "   Video", filter: { $0.isVideo })
-                addSize(of: allAssets, title: "   Audio", filter: { $0.isAudio })
-
-            } catch {}
+            } catch {
+                DispatchQueue.main.async {
+                    self.render(self.viewModel.update(with: error))
+                }
+            }
         }
+    }
+}
+
+private enum DatabaseStatisticsError: LocalizedError {
+    case unavailableSession
+
+    var errorDescription: String? {
+        "Database statistics are unavailable for this session."
     }
 }

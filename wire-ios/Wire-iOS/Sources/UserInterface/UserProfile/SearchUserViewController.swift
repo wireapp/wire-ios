@@ -36,11 +36,9 @@ final class SearchUserViewController: UIViewController {
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    private var viewModel = SearchUserViewModel()
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
-
-    /// flag for handleSearchResult. Only allow to display the result once
-    private var resultHandled = false
 
     // MARK: - Init
 
@@ -100,7 +98,7 @@ final class SearchUserViewController: UIViewController {
             self?.pendingSearchTask?.cancel()
             self?.pendingSearchTask = nil
             self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Localizable.General.cancel)
+        }, accessibilityLabel: viewModel.closeButtonAccessibilityLabel)
 
         navigationItem.rightBarButtonItem = closeItem
     }
@@ -121,49 +119,47 @@ final class SearchUserViewController: UIViewController {
     }
 
     private func handleSearchResult(searchResult: SearchResult) {
-        guard !resultHandled else { return }
-        guard let selfUser = ZMUser.selfUser() else {
-            assertionFailure("ZMUser.selfUser() is nil")
-            return
+        switch viewModel.action(for: searchResult, viewer: ZMUser.selfUser()) {
+        case let .showProfile(route):
+            showProfile(route)
+        case let .showInvalidUser(alertContent):
+            showInvalidUserAlert(alertContent)
+        case let .assertMissingSelfUser(message):
+            assertionFailure(message)
+        case .ignore:
+            break
         }
+    }
 
-        let profileUser: UserType? = if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
-            searchUser
-        } else if let memberUser = searchResult.teamMembers.first?.user, !memberUser.isAccountDeleted {
-            memberUser
-        } else {
-            nil
-        }
+    private func showProfile(_ route: SearchUserViewModel.ProfileRoute) {
+        let profileViewController = ProfileViewController(
+            user: route.user,
+            viewer: route.viewer,
+            context: .profileViewer,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
+        )
+        profileViewController.delegate = profileViewControllerDelegate
 
-        if let profileUser {
-            let profileViewController = ProfileViewController(
-                user: profileUser,
-                viewer: selfUser,
-                context: .profileViewer,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder,
-                conversationCreationRepository: conversationCreationRepository
-            )
-            profileViewController.delegate = profileViewControllerDelegate
+        navigationController?.setViewControllers([profileViewController], animated: true)
+    }
 
-            navigationController?.setViewControllers([profileViewController], animated: true)
-            resultHandled = true
-        } else {
-            let alert = UIAlertController(
-                title: L10n.Localizable.UrlAction.InvalidUser.title,
-                message: L10n.Localizable.UrlAction.InvalidUser.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel,
-                handler: { [weak self] _ in
-                    self?.dismiss(animated: true)
-                }
-            ))
+    private func showInvalidUserAlert(_ alertContent: SearchUserViewModel.AlertContent) {
+        let alert = UIAlertController(
+            title: alertContent.title,
+            message: alertContent.message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: alertContent.buttonTitle,
+            style: .cancel,
+            handler: { [weak self] _ in
+                self?.dismiss(animated: true)
+            }
+        ))
 
-            present(alert, animated: true)
-        }
+        present(alert, animated: true)
     }
 }

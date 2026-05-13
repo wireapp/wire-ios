@@ -155,27 +155,85 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
         config.areAppsPresent = false
 
-        let viewModel = ConversationServicesOptionsViewModel(configuration: config)
-
-        // Show the alert
-        let sut = viewModel.setAllowApps(false, sender: .init())
+        let sut = ConversationServicesOptionsViewModel(configuration: config)
 
         // THEN
-        XCTAssertNil(sut)
+        XCTAssertEqual(sut.actionForAllowAppsToggle(false), .setAllowApps(false))
     }
 
     func testThatItRendersRemoveServicesWarning() {
         // GIVEN
         let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
-        let viewModel = ConversationServicesOptionsViewModel(configuration: config)
-
-        // For ConversationServicesOptionsViewModel's delegate
-        let viewController = ConversationServicesOptionsViewController(viewModel: viewModel)
-
-        // Show the alert
-        let sut = viewModel.setAllowApps(false, sender: viewController.view.subviews[0])!
+        let sut = ConversationServicesOptionsViewModel(configuration: config)
 
         // THEN
-        XCTAssertNotNil(sut)
+        XCTAssertEqual(sut.actionForAllowAppsToggle(false), .confirmRemovingServices(false))
+    }
+
+    func testThatItReturnsNoActionWhenAllowAppsValueDoesNotChange() {
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
+        let sut = ConversationServicesOptionsViewModel(configuration: config)
+
+        XCTAssertEqual(sut.actionForAllowAppsToggle(true), .none)
+    }
+
+    func testThatItReturnsSetAllowAppsAfterRemovingServicesConfirmation() {
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
+        let sut = ConversationServicesOptionsViewModel(configuration: config)
+
+        XCTAssertEqual(
+            sut.actionForRemovingServicesConfirmation(confirmed: true, allowApps: false),
+            .setAllowApps(false)
+        )
+    }
+
+    func testThatItReturnsNoActionWhenRemovingServicesIsCancelled() {
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
+        let sut = ConversationServicesOptionsViewModel(configuration: config)
+
+        XCTAssertEqual(
+            sut.actionForRemovingServicesConfirmation(confirmed: false, allowApps: false),
+            .none
+        )
+    }
+
+    func testThatItBuildsDisabledHintWhenAppsAreNotAvailable() {
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: false)
+        config.messageProtocol = .proteus
+        config.areLegacyBotsAvailable = false
+        let sut = ConversationServicesOptionsViewModel(configuration: config)
+
+        XCTAssertEqual(
+            sut.state.rows,
+            [
+                .appsDisabledHint(
+                    title: L10n.Localizable.Conversation.Create.AppsDisabled.title,
+                    body: L10n.Localizable.Conversation.Create.AppsDisabled.message
+                )
+            ]
+        )
+    }
+
+    func testThatItBuildsToggleWhenAppsAreAvailable() {
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: false)
+        config.messageProtocol = .proteus
+        config.areLegacyBotsAvailable = true
+        let sut = ConversationServicesOptionsViewModel(configuration: config)
+
+        XCTAssertEqual(
+            sut.state.rows,
+            [
+                .allowAppsToggle(
+                    .init(
+                        title: L10n.Localizable.AppsOptions.AllowApps.title,
+                        subtitle: L10n.Localizable.AppsOptions.AllowApps.subtitle,
+                        accessibilityIdentifier: "toggle.guestoptions.allowapps",
+                        titleAccessibilityIdentifier: "label.guestoptions.apps.description",
+                        isEnabled: true,
+                        isOn: false
+                    )
+                )
+            ]
+        )
     }
 }
