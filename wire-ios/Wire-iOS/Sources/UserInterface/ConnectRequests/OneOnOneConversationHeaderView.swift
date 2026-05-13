@@ -20,11 +20,7 @@ import WireDesign
 import WireLocators
 import WireSyncEngine
 
-final class OneOnOneConversationHeaderView: UIView, Copyable {
-
-    convenience init(instance: OneOnOneConversationHeaderView) {
-        self.init(user: instance.user, userSession: instance.userSession)
-    }
+final class OneOnOneConversationHeaderView: UIView {
 
     private static var correlationFormatter: AddressBookCorrelationFormatter = .init(
         lightFont: FontSpec(.small, .light),
@@ -47,10 +43,10 @@ final class OneOnOneConversationHeaderView: UIView, Copyable {
         }
     }
 
-    init(user: UserType) {
+    init(user: UserType, userSession: UserSession) {
         self.user = user
         super.init(frame: .zero)
-        userImageView.userSession = ZMUserSession.shared()
+        userImageView.userSession = userSession
         setup()
         createConstraints()
     }
