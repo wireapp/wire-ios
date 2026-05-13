@@ -69,6 +69,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     private let statusViewController: CallStatusViewController
     private let accessoryViewController: CallAccessoryViewController
     private let actionsView = CallActionsView()
+    private let viewModel = CallInfoViewModel()
 
     var configuration: CallInfoViewControllerInput {
         didSet {
@@ -160,9 +161,10 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     }
 
     private func updateAccessoryView() {
-        let isHidden = traitCollection.verticalSizeClass == .compact && !configuration.callState.isConnected
-
-        accessoryViewController.view.isHidden = isHidden
+        accessoryViewController.view.isHidden = viewModel.isAccessoryHidden(
+            verticalSizeClass: traitCollection.verticalSizeClass,
+            isCallConnected: configuration.callState.isConnected
+        )
     }
 
     private func updateState() {

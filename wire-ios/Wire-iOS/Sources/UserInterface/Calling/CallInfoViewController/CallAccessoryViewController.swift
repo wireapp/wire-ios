@@ -28,6 +28,7 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
 
     weak var delegate: CallAccessoryViewControllerDelegate?
     private let participantsViewController: CallParticipantsListViewController
+    private let viewModel = CallAccessoryViewModel()
 
     private let avatarView: UserImageViewContainer
     private let videoPlaceholderStatusLabel = UILabel(
@@ -106,17 +107,19 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
     }
 
     private func updateState() {
-        switch configuration.accessoryType {
-        case let .avatar(user):
-            avatarView.user = user.value
-        case let .participantsList(participants):
-            participantsViewController.participants = participants
-        case .none: break
+        let displayState = viewModel.displayState(for: configuration)
+
+        if let avatarUser = displayState.avatarUser {
+            avatarView.user = avatarUser.value
         }
 
-        avatarView.isHidden = !configuration.accessoryType.showAvatar
-        participantsViewController.view.isHidden = !configuration.accessoryType.showParticipantList
-        videoPlaceholderStatusLabel.isHidden = configuration.videoPlaceholderState != .statusTextDisplayed
+        if let participants = displayState.participants {
+            participantsViewController.participants = participants
+        }
+
+        avatarView.isHidden = displayState.isAvatarHidden
+        participantsViewController.view.isHidden = displayState.isParticipantsListHidden
+        videoPlaceholderStatusLabel.isHidden = displayState.isVideoPlaceholderStatusHidden
     }
 
     func callParticipantsListViewControllerDidSelectShowMore(viewController: CallParticipantsListViewController) {

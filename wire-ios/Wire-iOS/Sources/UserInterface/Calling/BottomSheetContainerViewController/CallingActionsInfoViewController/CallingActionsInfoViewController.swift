@@ -27,6 +27,7 @@ protocol CallingActionsInfoViewControllerDelegate: AnyObject {
 final class CallingActionsInfoViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     private let participantsHeaderHeight: CGFloat = 42
     private let cellHeight: CGFloat = 56
+    private let viewModel = CallingActionsInfoViewModel()
     private var topConstraint: NSLayoutConstraint?
     private let selfUser: UserType
 
@@ -47,7 +48,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     var participants: CallParticipantsList {
         didSet {
             updateRows()
-            participantsHeaderLabel.text = L10n.Localizable.Call.Participants.showAll(participants.count).uppercased()
+            participantsHeaderLabel.text = viewModel.participantsHeaderTitle(count: participants.count)
         }
     }
 
@@ -98,7 +99,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         participantsHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
         participantsHeaderLabel.applyStyle(.headerLabel)
         participantsHeaderLabel.accessibilityTraits.insert(.header)
-        participantsHeaderLabel.text = L10n.Localizable.Call.Participants.showAll(participants.count).uppercased()
+        participantsHeaderLabel.text = viewModel.participantsHeaderTitle(count: participants.count)
 
         let collectionView = CallParticipantsListView(collectionViewLayout: collectionViewLayout, selfUser: selfUser)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -158,25 +159,16 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     private func calculateHeightConstant() -> CGFloat {
-        var baseHeight: CGFloat = if UIDevice.current.twoDimensionOrientation.isLandscape {
-            128
-        } else {
-            isIncomingCall ? 250 : 128
-        }
-
-        if !securityLevelView.isHidden {
-            baseHeight += SecurityLevelView.securityLevelViewHeight
-        }
-
-        return baseHeight + view.safeAreaInsets.bottom
+        viewModel.actionsHeight(
+            isLandscape: UIDevice.current.twoDimensionOrientation.isLandscape,
+            isIncomingCall: isIncomingCall,
+            isSecurityLevelVisible: !securityLevelView.isHidden,
+            bottomSafeAreaInset: view.safeAreaInsets.bottom
+        )
     }
 
     private func determineStackViewAlignment() -> UIStackView.Alignment {
-        if UIDevice.current.twoDimensionOrientation.isLandscape {
-            .center
-        } else {
-            .fill
-        }
+        viewModel.stackViewAlignment(isLandscape: UIDevice.current.twoDimensionOrientation.isLandscape)
     }
 
     private func updateRows() {
