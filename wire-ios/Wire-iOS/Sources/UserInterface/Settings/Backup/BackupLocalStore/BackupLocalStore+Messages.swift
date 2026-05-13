@@ -447,12 +447,28 @@ extension BackupLocalStore {
                     WireLogger.backupImport.warn("Failed to delete invalid messages \(String(describing: error))")
                 }
             }
+
+            // Imported history was already read on other devices: advance
+            // lastReadServerTimeStamp so scrolling restored history doesn't
+            // broadcast an older lastRead via the self-conversation sync.
+            advanceLastReadAfterImport(conversationsByID: conversationsByID)
         }
 
         return .init(
             successCount: restoredCount,
             failureCount: failedCount
         )
+    }
+
+    private func advanceLastReadAfterImport(
+        conversationsByID: [QualifiedID: ZMConversation]
+    ) {
+        for conversation in conversationsByID.values {
+            guard let lastModified = conversation.lastModifiedDate else { continue }
+            let currentLastRead = conversation.lastReadServerTimeStamp ?? .distantPast
+            guard currentLastRead < lastModified else { continue }
+            conversation.lastReadServerTimeStamp = lastModified
+        }
     }
 
     private enum RehydrationFailure: Error {
