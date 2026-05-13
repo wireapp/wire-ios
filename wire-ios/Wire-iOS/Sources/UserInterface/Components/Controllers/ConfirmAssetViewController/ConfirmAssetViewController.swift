@@ -49,6 +49,7 @@ final class ConfirmAssetViewController: UIViewController {
 
     let context: Context
     private let userSession: UserSession
+    private let viewModel: ConfirmAssetViewModel
 
     var previewTitle: String? {
         didSet {
@@ -90,6 +91,7 @@ final class ConfirmAssetViewController: UIViewController {
     init(context: Context, userSession: UserSession) {
         self.context = context
         self.userSession = userSession
+        self.viewModel = ConfirmAssetViewModel(asset: context.asset)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -148,21 +150,11 @@ final class ConfirmAssetViewController: UIViewController {
 
     /// Show editing options only if the image is not animated
     var showEditingOptions: Bool {
-        switch asset {
-        case let .image(mediaAsset):
-            mediaAsset is UIImage
-        case .video:
-            false
-        }
+        viewModel.displayState.toolbarPlacement != .none
     }
 
     private var imageToolbarFitsInsideImage: Bool {
-        switch asset {
-        case let .image(image):
-            image.size.width > 192 && image.size.height > 96
-        case .video:
-            false
-        }
+        viewModel.displayState.toolbarPlacement == .insideImage
     }
 
     private func createVideoPanel(videoURL: URL) {
@@ -250,11 +242,11 @@ final class ConfirmAssetViewController: UIViewController {
         bottomPanel.addSubview(confirmButtonsStack)
 
         rejectImageButton.addTarget(self, action: #selector(rejectImage(_:)), for: .touchUpInside)
-        rejectImageButton.setTitle(L10n.Localizable.ImageConfirmer.cancel, for: .normal)
+        rejectImageButton.setTitle(viewModel.displayState.cancelButtonTitle, for: .normal)
         confirmButtonsStack.addArrangedSubview(rejectImageButton)
 
         acceptImageButton.addTarget(self, action: #selector(acceptImage(_:)), for: .touchUpInside)
-        acceptImageButton.setTitle(L10n.Localizable.ImageConfirmer.confirm, for: .normal)
+        acceptImageButton.setTitle(viewModel.displayState.confirmButtonTitle, for: .normal)
         confirmButtonsStack.addArrangedSubview(acceptImageButton)
     }
 
@@ -362,15 +354,13 @@ final class ConfirmAssetViewController: UIViewController {
         switch asset {
         // Preview Image
         case let .image(mediaAsset):
-            let imageSize: CGSize = mediaAsset.size
-
             if let imagePreviewView {
 
                 constraints += [
                     // dimension
                     imagePreviewView.heightAnchor.constraint(
                         equalTo: imagePreviewView.widthAnchor,
-                        multiplier: imageSize.height / imageSize.width
+                        multiplier: viewModel.displayState.imageAspectRatio ?? 1
                     ),
 
                     // centering

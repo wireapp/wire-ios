@@ -59,6 +59,7 @@ final class FullscreenImageViewController: UIViewController {
         context: .collection,
         view: scrollView
     )
+    private let viewModel = FullscreenImageViewModel()
 
     // MARK: pull to dismiss
 
@@ -781,14 +782,12 @@ extension FullscreenImageViewController: UIGestureRecognizerDelegate {
 extension FullscreenImageViewController: MessageActionResponder {
 
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
-        switch action {
-
-        case .showInConversation,
-             .reply:
+        switch viewModel.route(for: action) {
+        case .dismissThenPerform:
             dismiss(animated: true) {
                 self.perform(action: action)
             }
-        case .openDetails:
+        case .presentDetails:
             let detailsViewController = MessageDetailsViewController(
                 message: message,
                 userSession: userSession,
@@ -800,20 +799,25 @@ extension FullscreenImageViewController: MessageActionResponder {
             navigationController.modalPresentationStyle = .formSheet
 
             present(navigationController, animated: true)
-        default:
+        case .performDirectly:
             perform(action: action)
         }
     }
 
     fileprivate func perform(action: MessageAction) {
-        let sourceView: UIView
-
-            // iPad popover points to delete button of container is availible. The scrollView occupies most of the
+        let sourceView: UIView = switch viewModel.sourceViewRole(
+            for: action,
+            hasConversationImagesDelegate: delegate is ConversationImagesViewController
+        ) {
+        case .deleteButton:
+            // iPad popover points to delete button of container is available. The scrollView occupies most of the
             // screen area and the popover is compressed.
-            = if action == .delete,
-            let conversationImagesViewController = delegate as? ConversationImagesViewController {
-            conversationImagesViewController.deleteButton
-        } else {
+            if let conversationImagesViewController = delegate as? ConversationImagesViewController {
+                conversationImagesViewController.deleteButton
+            } else {
+                scrollView
+            }
+        case .scrollView:
             scrollView
         }
 
