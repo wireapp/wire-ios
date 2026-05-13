@@ -54,6 +54,7 @@ final class ServiceDetailViewController: UIViewController {
     var service: Service {
         didSet {
             detailView.service = service
+            detailView.viewState = viewModel.viewState
         }
     }
 
@@ -92,6 +93,7 @@ final class ServiceDetailViewController: UIViewController {
 
         self.detailView = ServiceDetailView(
             service: viewModel.service,
+            viewState: viewState,
             userSession: userSession
         )
 
@@ -130,7 +132,6 @@ final class ServiceDetailViewController: UIViewController {
         actionButton.addCallback(
             for: .primaryActionTriggered,
             callback: callback(
-                for: actionType,
                 sender: actionButton,
                 completion: completion
             )
@@ -226,14 +227,13 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     func callback(
-        for type: ActionType,
         sender: UIView,
         completion: @escaping (AddBotResult) -> Void
     ) -> Callback<LegacyButton> {
         { [weak self] _ in
             guard let self, let userSession = userSession as? ZMUserSession else { return }
 
-            switch type {
+            switch viewModel.actionRoute {
 
             case let .addApp(conversation):
                 addApp(to: conversation, contextProvider: userSession, completion: completion)
@@ -248,12 +248,11 @@ final class ServiceDetailViewController: UIViewController {
                     sender: sender
                 )
 
-            case .openConversation:
-                if !service.isLegacyBot {
-                    openConversationWithBot(completion: completion)
-                } else {
-                    openConversationWithApp(userSession: userSession, completion: completion)
-                }
+            case .openConversationWithBot:
+                openConversationWithBot(completion: completion)
+
+            case .openConversationWithApp:
+                openConversationWithApp(userSession: userSession, completion: completion)
             }
         }
     }

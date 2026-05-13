@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import WireDataModel
-import WireDesign
 import WireLocators
 
 struct AddParticipantsViewModel {
@@ -52,6 +50,25 @@ struct AddParticipantsViewModel {
         let isSearchingForBots: Bool
         let hasFilter: Bool
         let showsEmptyAppsPlaceholder: Bool
+    }
+
+    struct RightNavigationItemState {
+        enum Style {
+            case close
+            case text(String)
+        }
+
+        let style: Style
+        let accessibilityIdentifier: String
+    }
+
+    enum RightNavigationAction {
+        case dismiss
+        case createConversation
+    }
+
+    enum ConfirmAction {
+        case addParticipants(GroupDetailsConversationType)
     }
 
     let context: AddParticipantsViewController.Context
@@ -255,24 +272,41 @@ struct AddParticipantsViewModel {
         )
     }
 
-    func rightNavigationItem(action: UIAction) -> UIBarButtonItem {
+    var rightNavigationItemState: RightNavigationItemState {
         switch context {
         case .add:
-            let item = UIBarButtonItem.closeButton(action: action, accessibilityLabel: L10n.Localizable.General.close)
-            item.tintColor = SemanticColors.Icon.foregroundDefault
-            item.accessibilityIdentifier = Locators.ConversationDetailsPage.close.rawValue
-            return item
+            return RightNavigationItemState(
+                style: .close,
+                accessibilityIdentifier: Locators.ConversationDetailsPage.close.rawValue
+            )
         case let .create(values):
             let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable
                 .Peoplepicker.Group.done
-            let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-                title: key,
-                action: action
-            )
-            newItem.tintColor = UIColor.accent()
-            newItem.accessibilityIdentifier = values.participants
+            let accessibilityIdentifier = values.participants
                 .isEmpty ? Locators.SelectParticipantsPage.skip.rawValue : Locators.SelectParticipantsPage.done.rawValue
-            return newItem
+
+            return RightNavigationItemState(
+                style: .text(key),
+                accessibilityIdentifier: accessibilityIdentifier
+            )
+        }
+    }
+
+    var rightNavigationAction: RightNavigationAction {
+        switch context {
+        case .add:
+            return .dismiss
+        case .create:
+            return .createConversation
+        }
+    }
+
+    var confirmAction: ConfirmAction? {
+        switch context {
+        case let .add(conversation):
+            return .addParticipants(conversation)
+        case .create:
+            return nil
         }
     }
 

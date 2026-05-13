@@ -90,6 +90,12 @@ final class ChangeHandleViewModel {
         let domainText: String
     }
 
+    struct FailureAlert: Equatable {
+        let title: String
+        let message: String
+        let buttonTitle: String
+    }
+
     enum TextChangeAction: Equatable {
         case none
         case checkAvailability(String)
@@ -115,6 +121,14 @@ final class ChangeHandleViewModel {
             isSaveEnabled: state.availability == .available,
             isDomainHidden: !federationEnabled,
             domainText: federationEnabled ? domainString ?? "" : ""
+        )
+    }
+
+    var failureAlert: FailureAlert {
+        FailureAlert(
+            title: L10n.Localizable.Self.Settings.AccountSection.Handle.Change.FailureAlert.title,
+            message: L10n.Localizable.Self.Settings.AccountSection.Handle.Change.FailureAlert.message,
+            buttonTitle: L10n.Localizable.General.ok
         )
     }
 

@@ -68,4 +68,20 @@ final class LegalHoldDetailsViewModelTests: XCTestCase {
         XCTAssertEqual(sut.participantsSection.accessibilityIdentifier, "label.groupdetails.participants")
     }
 
+    func testThatSectionsContainHeaderAndParticipants() {
+        let conversation = MockGroupDetailsConversation()
+
+        let sut = LegalHoldDetailsViewModel(conversation: conversation, selfUser: nil)
+
+        XCTAssertEqual(sut.sections, [.header, .participants])
+    }
+
+    func testThatItProvidesCollectionAccessibilityIdentifier() {
+        let conversation = MockGroupDetailsConversation()
+
+        let sut = LegalHoldDetailsViewModel(conversation: conversation, selfUser: nil)
+
+        XCTAssertEqual(sut.collectionAccessibilityIdentifier, "list.legalhold")
+    }
+
 }

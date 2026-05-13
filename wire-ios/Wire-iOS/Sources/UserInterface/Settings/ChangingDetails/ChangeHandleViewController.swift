@@ -388,13 +388,14 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     }
 
     private func presentFailureAlert() {
+        let failureAlert = viewModel.failureAlert
         let alert = UIAlertController(
-            title: HandleChange.FailureAlert.title,
-            message: HandleChange.FailureAlert.message,
+            title: failureAlert.title,
+            message: failureAlert.message,
             preferredStyle: .alert
         )
 
-        alert.addAction(.init(title: L10n.Localizable.General.ok, style: .cancel, handler: nil))
+        alert.addAction(.init(title: failureAlert.buttonTitle, style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
 }

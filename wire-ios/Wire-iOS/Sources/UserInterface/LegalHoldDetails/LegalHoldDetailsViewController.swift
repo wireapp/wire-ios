@@ -75,7 +75,7 @@ final class LegalHoldDetailsViewController: UIViewController {
         setupViews()
         createConstraints()
         collectionViewController.sections = computeVisibleSections()
-        collectionView.accessibilityIdentifier = "list.legalhold"
+        collectionView.accessibilityIdentifier = viewModel.collectionAccessibilityIdentifier
     }
 
     @available(*, unavailable)
@@ -167,15 +167,27 @@ final class LegalHoldDetailsViewController: UIViewController {
     }
 
     private func computeVisibleSections() -> [CollectionViewSectionController] {
-        let headerSection = SingleViewSectionController(view: LegalHoldHeaderView(viewModel: viewModel.header))
-        let legalHoldParticipantsSection = LegalHoldParticipantsSectionController(
+        viewModel.sections.map(makeSection)
+    }
+
+    private func makeSection(_ section: LegalHoldDetailsViewModel.Section) -> CollectionViewSectionController {
+        switch section {
+        case .header:
+            SingleViewSectionController(view: LegalHoldHeaderView(viewModel: viewModel.header))
+        case .participants:
+            makeLegalHoldParticipantsSection()
+        }
+    }
+
+    private func makeLegalHoldParticipantsSection() -> LegalHoldParticipantsSectionController {
+        let section = LegalHoldParticipantsSectionController(
             viewModel: viewModel,
             conversation: conversation,
             userSession: userSession
         )
-        legalHoldParticipantsSection.delegate = self
+        section.delegate = self
 
-        return [headerSection, legalHoldParticipantsSection]
+        return section
     }
 
 }

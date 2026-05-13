@@ -51,6 +51,14 @@ final class ServiceDetailViewModel {
         case bot
     }
 
+    enum ActionRoute {
+        case addApp(ZMConversation)
+        case addBot(ZMConversation)
+        case removeParticipant(ZMConversation)
+        case openConversationWithApp
+        case openConversationWithBot
+    }
+
     private(set) var service: Service
 
     private let actionType: ServiceDetailViewController.ActionType
@@ -82,6 +90,23 @@ final class ServiceDetailViewModel {
             return .app(teamID: teamID, appID: appID)
         } else {
             return .bot
+        }
+    }
+
+    var actionRoute: ActionRoute {
+        switch actionType {
+        case let .addApp(conversation):
+            .addApp(conversation)
+        case let .addBot(conversation):
+            .addBot(conversation)
+        case let .removeParticipant(conversation):
+            .removeParticipant(conversation)
+        case .openConversation:
+            if service.isLegacyBot {
+                .openConversationWithApp
+            } else {
+                .openConversationWithBot
+            }
         }
     }
 
@@ -164,4 +189,25 @@ final class ServiceDetailViewModel {
         )
     }
 
+}
+
+extension ServiceDetailViewModel.ViewState {
+
+    var summary: (title: String?, provider: String?, category: String?)? {
+        for section in sections {
+            if case let .summary(title, provider, category) = section {
+                return (title, provider, category)
+            }
+        }
+        return nil
+    }
+
+    var descriptionText: String? {
+        for section in sections {
+            if case let .description(description) = section {
+                return description
+            }
+        }
+        return nil
+    }
 }

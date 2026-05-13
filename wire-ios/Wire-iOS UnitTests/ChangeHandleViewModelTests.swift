@@ -68,4 +68,21 @@ final class ChangeHandleViewModelTests: XCTestCase {
         XCTAssertFalse(sut.displayModel.isDomainHidden)
         XCTAssertEqual(sut.displayModel.domainText, "wire.com")
     }
+
+    func testFailureAlertUsesHandleChangeCopy() {
+        let sut = ChangeHandleViewModel(
+            state: .init(currentHandle: "current", newHandle: nil, availability: .unknown),
+            federationEnabled: false,
+            domainString: nil
+        )
+
+        XCTAssertEqual(
+            sut.failureAlert,
+            .init(
+                title: L10n.Localizable.Self.Settings.AccountSection.Handle.Change.FailureAlert.title,
+                message: L10n.Localizable.Self.Settings.AccountSection.Handle.Change.FailureAlert.message,
+                buttonTitle: L10n.Localizable.General.ok
+            )
+        )
+    }
 }

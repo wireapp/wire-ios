@@ -276,29 +276,15 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func createControlsBarButtons() -> [IconButton] {
-        var buttons = [IconButton]()
-
-        // ephemermal images should not contain these buttons.
-        // if the current message is ephemeral, then it will be the only
-        // message b/c ephemeral messages are excluded in the collection.
-        if !currentMessage.isEphemeral {
-            let copyButton = iconButton(messageAction: .copy)
-
-            let saveButton = iconButton(messageAction: .save)
-
-            let sketchButton = iconButton(messageAction: .sketchDraw)
-
-            let emojiSketchButton = iconButton(messageAction: .sketchEmoji)
-
-            let revealButton = iconButton(messageAction: .showInConversation)
-            if !MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession).canDownloadMedia {
-                buttons = [sketchButton, emojiSketchButton, revealButton]
-            } else {
-                buttons = [sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
-            }
+        let canDownloadMedia = MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession)
+            .canDownloadMedia
+        let buttons = ConversationImageToolbarActions.actions(
+            isEphemeral: currentMessage.isEphemeral,
+            canDownloadMedia: canDownloadMedia
+        ).map { action in
+            action == .delete ? deleteButton : iconButton(messageAction: action)
         }
 
-        buttons.append(deleteButton)
         buttons.forEach {
             $0.hitAreaPadding = .zero
             setupButtonStyle(button: $0)

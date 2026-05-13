@@ -26,20 +26,29 @@ final class ServiceDetailView: UIView {
     private let titleLabel = UILabel()
     private let descriptionTextView = UITextView()
 
+    var viewState: ServiceDetailViewModel.ViewState {
+        didSet {
+            updateForViewState()
+            serviceView.viewState = viewState
+        }
+    }
+
     var service: Service {
         didSet {
             updateForService()
-            serviceView.service = service
         }
     }
 
     init(
         service: Service,
+        viewState: ServiceDetailViewModel.ViewState,
         userSession: any UserSession
     ) {
         self.service = service
+        self.viewState = viewState
         self.serviceView = ServiceView(
             service: service,
+            viewState: viewState,
             userSession: userSession
         )
         super.init(frame: .zero)
@@ -60,6 +69,7 @@ final class ServiceDetailView: UIView {
         descriptionTextView.isEditable = false
 
         updateForService()
+        updateForViewState()
     }
 
     @available(*, unavailable)
@@ -91,7 +101,11 @@ final class ServiceDetailView: UIView {
     }
 
     private func updateForService() {
-        descriptionTextView.text = service.serviceUserDetails?.serviceDescription
+        serviceView.service = service
+    }
+
+    private func updateForViewState() {
+        descriptionTextView.text = viewState.descriptionText
     }
 }
 
@@ -108,11 +122,19 @@ final class ServiceView: UIView {
         }
     }
 
+    var viewState: ServiceDetailViewModel.ViewState {
+        didSet {
+            updateForViewState()
+        }
+    }
+
     init(
         service: Service,
+        viewState: ServiceDetailViewModel.ViewState,
         userSession: any UserSession
     ) {
         self.service = service
+        self.viewState = viewState
         let logoView = UserImageView(size: .normal)
         logoView.userSession = userSession
         self.logoView = logoView
@@ -133,6 +155,7 @@ final class ServiceView: UIView {
         categoryLabel.textColor = SemanticColors.Label.textDefault
 
         updateForService()
+        updateForViewState()
     }
 
     @available(*, unavailable)
@@ -169,11 +192,14 @@ final class ServiceView: UIView {
 
     private func updateForService() {
         logoView.user = service.user
-        nameLabel.text = service.user.name
-        providerLabel.text = if let createdBy = service.provider?.name,
+    }
+
+    private func updateForViewState() {
+        nameLabel.text = viewState.summary?.title
+        providerLabel.text = if let createdBy = viewState.summary?.provider,
                                 !createdBy.isEmpty { L10n.Localizable.Peoplepicker.AppDetails.createdBy(createdBy)
         } else { nil }
-        categoryLabel.text = service.serviceUserDetails?.category
+        categoryLabel.text = viewState.summary?.category
     }
 
 }

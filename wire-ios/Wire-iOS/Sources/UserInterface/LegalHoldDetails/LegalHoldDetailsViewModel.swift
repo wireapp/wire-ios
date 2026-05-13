@@ -40,6 +40,11 @@ struct LegalHoldDetailsViewModel {
         case verifyLegalHoldSubjects
     }
 
+    enum Section: Equatable {
+        case header
+        case participants
+    }
+
     let conversation: LegalHoldDetailsConversation
     let selfUser: UserType?
 
@@ -49,6 +54,10 @@ struct LegalHoldDetailsViewModel {
 
     var closeButtonAccessibilityLabel: String {
         L10n.Localizable.General.close
+    }
+
+    var collectionAccessibilityIdentifier: String {
+        "list.legalhold"
     }
 
     var header: Header {
@@ -65,6 +74,10 @@ struct LegalHoldDetailsViewModel {
             participants: conversation.sortedActiveParticipantsUserTypes.filter(\.isUnderLegalHold),
             accessibilityIdentifier: "label.groupdetails.participants"
         )
+    }
+
+    var sections: [Section] {
+        [.header, .participants]
     }
 
     var viewDidAppearAction: Action? {

@@ -324,7 +324,10 @@ final class AddParticipantsViewController: UIViewController {
             confirmButton.setTitle(nil, for: .normal)
         }
         updateTitle()
-        navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(action: rightNavigationItemTapped())
+        navigationItem.rightBarButtonItem = rightNavigationItem(
+            state: viewModel.rightNavigationItemState,
+            action: rightNavigationItemTapped()
+        )
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.AddParticipantsConversationSettings
             .CloseButton.description
     }
@@ -373,14 +376,32 @@ final class AddParticipantsViewController: UIViewController {
         return controller
     }
 
+    private func rightNavigationItem(
+        state: AddParticipantsViewModel.RightNavigationItemState,
+        action: UIAction
+    ) -> UIBarButtonItem {
+        let item: UIBarButtonItem
+        switch state.style {
+        case .close:
+            item = .closeButton(action: action, accessibilityLabel: L10n.Localizable.General.close)
+            item.tintColor = SemanticColors.Icon.foregroundDefault
+        case let .text(title):
+            item = .createNavigationRightBarButtonItem(title: title, action: action)
+            item.tintColor = UIColor.accent()
+        }
+
+        item.accessibilityIdentifier = state.accessibilityIdentifier
+        return item
+    }
+
     private func rightNavigationItemTapped() -> UIAction {
         UIAction { [weak self] _ in
             guard let self else { return }
 
-            switch viewModel.context {
-            case .add:
+            switch viewModel.rightNavigationAction {
+            case .dismiss:
                 navigationController?.dismiss(animated: true, completion: nil)
-            case .create:
+            case .createConversation:
                 conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
             }
         }
@@ -482,11 +503,13 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
 
     @objc
     func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        if case let .add(conversation) = viewModel.context {
+        switch viewModel.confirmAction {
+        case let .addParticipants(conversation):
             dismiss(animated: true) {
                 self.addSelectedParticipants(to: conversation)
             }
-
+        case nil:
+            break
         }
     }
 
