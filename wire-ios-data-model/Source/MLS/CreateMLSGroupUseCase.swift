@@ -27,8 +27,7 @@ struct CreateMLSGroupUseCase {
     private let parentGroupID: MLSGroupID?
     private let removalKeys: BackendMLSPublicKeys?
     private let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite
-    private let coreCrypto: any CoreCryptoProtocol
-    private let backgroundTaskManager: any BackgroundTaskManager
+    private let coreCrypto: SafeCoreCrypto
     private let staleKeyMaterialDetector: any StaleMLSKeyDetectorProtocol
     private let actionsProvider: any MLSActionsProviderProtocol
     private let notificationContext: NotificationContext
@@ -37,8 +36,7 @@ struct CreateMLSGroupUseCase {
         parentGroupID: MLSGroupID?,
         removalKeys: BackendMLSPublicKeys?,
         defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite,
-        coreCrypto: any CoreCryptoProtocol,
-        backgroundTaskManager: any BackgroundTaskManager,
+        coreCrypto: SafeCoreCrypto,
         staleKeyMaterialDetector: any StaleMLSKeyDetectorProtocol,
         actionsProvider: any MLSActionsProviderProtocol,
         notificationContext: NotificationContext
@@ -48,7 +46,6 @@ struct CreateMLSGroupUseCase {
         self.defaultCipherSuite = defaultCipherSuite
 
         self.coreCrypto = coreCrypto
-        self.backgroundTaskManager = backgroundTaskManager
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
         self.actionsProvider = actionsProvider
         self.notificationContext = notificationContext
@@ -92,9 +89,7 @@ extension CreateMLSGroupUseCase {
         // the external senders is the same as the parent, otherwise we
         // won't be able to decrypt external remove proposals from the
         // owning domain.
-        let externalSenders = try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) {
+        let externalSenders = try await coreCrypto.transaction {
             [try await $0.getExternalSender(conversationId: parentGroupID.conversationId)]
         }
 
@@ -142,9 +137,7 @@ extension CreateMLSGroupUseCase {
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
-            try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            try await coreCrypto.transaction {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite.coreCryptoCipherSuite)
                 try await $0.createConversation(
                     conversationId: groupID.conversationId,

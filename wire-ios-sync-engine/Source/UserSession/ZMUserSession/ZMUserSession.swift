@@ -1657,9 +1657,8 @@ public extension ZMUserSession {
 
     // TODO: [WPB-25551] Clean up testing code
     func _simulateLongCCTransaction(seconds: Int) async throws {
-        let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        try await coreCrypto.transaction(backgroundTaskManager: backgroundTaskManager) { _ in
+        try await coreCrypto.transaction { _ in
             WireLogger.coreCrypto.debug("starting long transaction")
             try await Task.sleep(for: .seconds(seconds))
             WireLogger.coreCrypto.debug("finished long transaction")

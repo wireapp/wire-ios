@@ -496,7 +496,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
 
         Task {
-            try? await userSession.simulateLongCCTransaction(seconds: seconds)
+            try? await userSession._simulateLongCCTransaction(seconds: seconds)
         }
     }
 

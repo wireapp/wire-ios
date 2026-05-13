@@ -28,12 +28,7 @@ public protocol CoreCryptoProviderProtocol {
     /// Retrieve the shared core crypto instance or create one if one does not yet exist.
     ///
     /// This function is safe to be called concurrently from multiple Tasks
-    func coreCrypto() async throws -> CoreCryptoProtocol
-
-    /// A object that can be used to run Core Crypto operations within background
-    /// tasks to ensure that they have enough time to complete while the app
-    /// transitions to a suspended state.
-    var backgroundTaskManager: any BackgroundTaskManager { get }
+    func coreCrypto() async throws -> SafeCoreCrypto
 
     /// Initialise a new MLS client with basic credentials
     ///
@@ -81,7 +76,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
     private let localDomain: String?
 
-    public let backgroundTaskManager: any BackgroundTaskManager
+    private let backgroundTaskManager: any BackgroundTaskManager
 
     public init(
         selfUserID: UUID,
@@ -106,19 +101,20 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.backgroundTaskManager = backgroundTaskManager
     }
 
-    public func coreCrypto() async throws -> CoreCryptoProtocol {
+    public func coreCrypto() async throws -> SafeCoreCrypto {
         let coreCrypto = try await getCoreCrypto()
         try await registerMlsTransportIfNecessary(with: coreCrypto)
-        return coreCrypto
+        return SafeCoreCrypto(
+            backgroundTaskManager: backgroundTaskManager,
+            coreCrypto: coreCrypto
+        )
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
         let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCrypto()
-        _ = try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { context in
+        _ = try await coreCrypto.transaction { context in
             try await context.mlsInit(
                 clientId: .init(bytes: mlsClientID.data),
                 ciphersuites: [defaultCiphersuite],
@@ -134,9 +130,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     ) async throws -> CRLsDistributionPoints? {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
         let coreCrypto = try await coreCrypto()
-        return try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { context in
+        return try await coreCrypto.transaction { context in
             let crlsDistributionPoints = try await context.e2eiMlsInitOnly(
                 enrollment: enrollment,
                 certificateChain: certificateChain,
@@ -157,7 +151,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func registerEpochObserverIfNecessary(with coreCrypto: CoreCryptoProtocol) async throws {
+    private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCrypto) async throws {
         guard let epochObserver, !hasRegisteredEpochObserver else {
             return
         }
@@ -268,9 +262,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             attributes: .safePublic
         )
 
-        try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) {
+        try await coreCrypto.transaction {
             WireLogger.coreCrypto.debug(
                 "proteus init",
                 attributes: .safePublic
@@ -313,9 +305,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 "core crypto transaction...",
                 attributes: .safePublic
             )
-            try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            try await coreCrypto.transaction {
                 WireLogger.coreCrypto.debug(
                     "mls init",
                     attributes: .safePublic
@@ -428,7 +418,37 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
 }
 
-public extension CoreCryptoProtocol {
+/// A wrapper object for CoreCrypto that ensures transactions are executed
+/// within a background task (if a task manager is provided).
+public final class SafeCoreCrypto {
+
+    private let backgroundTaskManager: (any BackgroundTaskManager)?
+    let coreCrypto: any CoreCryptoProtocol
+
+    public init(
+        backgroundTaskManager: (any BackgroundTaskManager)?,
+        coreCrypto: any CoreCryptoProtocol
+    ) {
+        self.backgroundTaskManager = backgroundTaskManager
+        self.coreCrypto = coreCrypto
+    }
+
+    public func registerEpochObserver(_ epochObserver: any EpochObserver) async throws {
+        try await coreCrypto.registerEpochObserver(epochObserver)
+    }
+
+    public func transaction<Result>(
+        block: @escaping (any CoreCryptoContextProtocol) async throws -> Result
+    ) async throws -> Result {
+        if let backgroundTaskManager {
+            try await transaction(
+                backgroundTaskManager: backgroundTaskManager,
+                block: block
+            )
+        } else {
+            try await coreCrypto.transaction(block)
+        }
+    }
 
     /// Perform a transaction within the context of a background task to
     /// ensure the transaction has additional time to complete while the
@@ -441,12 +461,12 @@ public extension CoreCryptoProtocol {
     /// own transactions. This can lead to the Notification Service Extension
     /// being blocked and not process any notifications until the main app
     /// is resumed and the transaction is completed and the file lock released.
-    func transaction<Result>(
+    private func transaction<Result>(
         backgroundTaskManager: any BackgroundTaskManager,
         block: @escaping (any CoreCryptoContextProtocol) async throws -> Result
     ) async throws -> Result {
         let transactionTask = Task {
-            try await transaction(block)
+            try await coreCrypto.transaction(block)
         }
 
         let taskID = backgroundTaskManager.beginBackgroundTask(

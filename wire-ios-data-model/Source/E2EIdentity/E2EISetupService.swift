@@ -56,44 +56,35 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     private let featureRepository: LegacyFeatureRepositoryInterface
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: CoreCryptoProtocol {
+    private var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
     }
-
-    private let backgroundTaskManager: any BackgroundTaskManager
 
     // MARK: - Life cycle
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: LegacyFeatureRepositoryInterface) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
-        self.backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
     }
 
     // MARK: - Public interface
 
     public func isTrustAnchorRegistered() async throws -> Bool {
-        try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { context in
+        try await coreCrypto.transaction { context in
             try await context.e2eiIsPkiEnvSetup()
         }
     }
 
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
-        try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { context in
+        try await coreCrypto.transaction { context in
             try await context.e2eiRegisterAcmeCa(trustAnchorPem: trustAnchor)
         }
     }
 
     public func registerFederationCertificate(_ certificate: String) async throws {
-        try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { context in
+        _ = try await coreCrypto.transaction { context in
             try await context.e2eiRegisterIntermediateCa(certPem: certificate)
         }
     }
@@ -131,9 +122,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
         let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let expirySec = expirySec ?? UInt32(TimeInterval.oneDay * 90)
 
-        return try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) {
+        return try await coreCrypto.transaction {
             if isUpgradingClient {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 if e2eiIsEnabled {

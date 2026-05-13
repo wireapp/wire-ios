@@ -328,12 +328,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
 
-        let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
-
         // decrypt
-        try await coreCryptoProvider.coreCrypto().transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { coreCryptoContext in
+        try await coreCryptoProvider.coreCrypto().transaction { coreCryptoContext in
             for envelope in envelopes {
 
                 if DeveloperFlag.ignoreIncomingEvents.isOn {

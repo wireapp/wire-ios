@@ -31,19 +31,16 @@ public final class ProteusService: ProteusServiceInterface {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let logger = WireLogger.proteus
 
-    private var coreCrypto: CoreCryptoProtocol {
+    private var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
     }
 
-    private let backgroundTaskManager: any BackgroundTaskManager
-
     // MARK: - Life cycle
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
         self.coreCryptoProvider = coreCryptoProvider
-        self.backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
     }
 
     // MARK: - proteusSessionFromPrekey
@@ -64,12 +61,12 @@ public final class ProteusService: ProteusServiceInterface {
         }
 
         do {
-            try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) { try await $0.proteusSessionFromPrekey(
-                sessionId: id.rawValue,
-                prekey: prekeyData
-            ) }
+            try await coreCrypto.transaction {
+                try await $0.proteusSessionFromPrekey(
+                    sessionId: id.rawValue,
+                    prekey: prekeyData
+                )
+            }
         } catch {
             logger.error("failed to establish session from prekey: \(String(describing: error))")
             throw ProteusSessionError.failedToEstablishSession
@@ -86,9 +83,7 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("deleting session")
 
         do {
-            try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            try await coreCrypto.transaction {
                 try await $0.proteusSessionDelete(sessionId: id.rawValue)
             }
         } catch {
@@ -108,9 +103,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     func saveSession(id: ProteusSessionID) async throws {
         do {
-            try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            try await coreCrypto.transaction {
                 try await $0.proteusSessionSave(sessionId: id.rawValue)
             }
         } catch {
@@ -126,9 +119,7 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("checking if session exists")
 
         do {
-            return try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            return try await coreCrypto.transaction {
                 try await $0.proteusSessionExists(sessionId: id.rawValue)
             }
         } catch {
@@ -173,9 +164,7 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("encrypting data")
 
         do {
-            return try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            return try await coreCrypto.transaction {
                 try await $0.proteusEncrypt(
                     sessionId: id.rawValue,
                     plaintext: data
@@ -195,9 +184,7 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("encrypting data batch")
 
         do {
-            return try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            return try await coreCrypto.transaction {
                 try await $0.proteusEncryptBatched(
                     sessions: sessions.map(\.rawValue),
                     plaintext: data
@@ -244,9 +231,7 @@ public final class ProteusService: ProteusServiceInterface {
         if let context {
             try await decryptInternal(data: data, forSession: id, context: context)
         } else {
-            try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) { context in
+            try await coreCrypto.transaction { context in
                 try await self.decryptInternal(data: data, forSession: id, context: context)
             }
         }
@@ -306,9 +291,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     public func generatePrekey(id: UInt16) async throws -> String {
         do {
-            return try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            return try await coreCrypto.transaction {
                 try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString()
             }
         } catch {
@@ -319,9 +302,7 @@ public final class ProteusService: ProteusServiceInterface {
     public func lastPrekey() async throws -> String {
         logger.info("getting last resort prekey")
         do {
-            return try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            return try await coreCrypto.transaction {
                 try await $0.proteusLastResortPrekey().base64EncodedString()
             }
         } catch {
@@ -332,9 +313,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     public var lastPrekeyID: UInt16 {
         get async {
-            let lastPrekeyID = try? await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            let lastPrekeyID = try? await coreCrypto.transaction {
                 try $0.proteusLastResortPrekeyId()
             }
             return lastPrekeyID ?? UInt16.max
@@ -387,9 +366,7 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("fetching local fingerprint")
 
         do {
-            return try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            return try await coreCrypto.transaction {
                 try await $0.proteusFingerprint()
             }
         } catch {
@@ -402,9 +379,7 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("fetching remote fingerprint")
 
         do {
-            return try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            return try await coreCrypto.transaction {
                 try await $0.proteusFingerprintRemote(sessionId: id.rawValue)
             }
         } catch {
@@ -421,9 +396,7 @@ public final class ProteusService: ProteusServiceInterface {
         }
 
         do {
-            return try await coreCrypto.transaction(
-                backgroundTaskManager: backgroundTaskManager
-            ) {
+            return try await coreCrypto.transaction {
                 try $0.proteusFingerprintPrekeybundle(prekey: prekeyData)
             }
         } catch {

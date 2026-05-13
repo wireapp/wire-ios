@@ -52,13 +52,11 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let featureRepository: LegacyFeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
-    private var coreCrypto: CoreCryptoProtocol {
+    private var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
     }
-
-    private var backgroundTaskManager: any BackgroundTaskManager
 
     // MARK: - Life cycle
 
@@ -72,7 +70,6 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         self.context = context
         self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
         self.featureRepository = featureRepository
-        self.backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
     }
 
     // MARK: - Interface
@@ -89,9 +86,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidIdentity
         }
 
-        let crlNewDistributionPoints = try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { context in
+        let crlNewDistributionPoints = try await coreCrypto.transaction { context in
             try await context.saveX509Credential(
                 enrollment: enrollment,
                 certificateChain: certificateChain
@@ -123,9 +118,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             return mlsGroupIDs
         }
 
-        try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { context in
+        try await coreCrypto.transaction { context in
             for groupID in mlsConversationsToMigrate {
                 do {
                     try await context.e2eiRotate(conversationId: groupID.conversationId)
@@ -152,9 +145,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidCiphersuite
         }
 
-        try await coreCrypto.transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) { coreCryptoContext in
+        try await coreCrypto.transaction { coreCryptoContext in
             try await coreCryptoContext.deleteStaleKeyPackages(
                 ciphersuite: ciphersuite.coreCryptoCipherSuite
             )

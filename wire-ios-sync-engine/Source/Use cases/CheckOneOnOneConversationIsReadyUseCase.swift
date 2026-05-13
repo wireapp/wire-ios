@@ -88,10 +88,7 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
     // MARK: - Helpers
 
     private func isMLSConversationEstablished(groupID: MLSGroupID) async throws -> Bool {
-        let backgroundTaskManager = coreCryptoProvider.backgroundTaskManager
-        return try await coreCryptoProvider.coreCrypto().transaction(
-            backgroundTaskManager: backgroundTaskManager
-        ) {
+        try await coreCryptoProvider.coreCrypto().transaction {
             try await $0.conversationExists(conversationId: groupID.conversationId)
         }
     }
