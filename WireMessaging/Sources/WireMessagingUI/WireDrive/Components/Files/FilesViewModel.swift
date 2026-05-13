@@ -103,8 +103,8 @@ package final class FilesViewModel: ObservableObject {
     @Published var networkMonitor: NetworkMonitor
     @Published var filesListLoader: FilesListLoader
 
-    var state: FilesListLoader.Loader.State {
-        filesListLoader.loader.state
+    var state: FilesListLoader.State {
+        filesListLoader.state
     }
 
     // MARK: init
@@ -135,7 +135,7 @@ package final class FilesViewModel: ObservableObject {
         self.triggerReload = triggerReload
         self.networkMonitor = networkMonitor
         self.filesListLoader = .init(networkMonitor: networkMonitor)
-        filesListLoader.loader.state = isCellsStatePending ? .pending : .loading
+        filesListLoader.state = isCellsStatePending ? .pending : .loading
     }
 
     // MARK: setup
@@ -243,11 +243,11 @@ package final class FilesViewModel: ObservableObject {
     func reload(refreshing: Bool = false) async {
         guard networkMonitor.currentStatus != nil else { return }
 
-        await filesListLoader.loader.reload(refreshing: refreshing)
+        await filesListLoader.reload(refreshing: refreshing)
     }
 
     func loadMoreIfNeeded(index: Int) async {
-        await filesListLoader.loader.loadMoreIfNeeded(index: index)
+        await filesListLoader.loadMoreIfNeeded(index: index)
     }
 
     // MARK: folders

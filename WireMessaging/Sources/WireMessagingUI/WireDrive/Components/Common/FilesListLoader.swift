@@ -25,9 +25,10 @@ import WireLogging
 @MainActor
 class FilesListLoader: Observable, ObservableObject {
     typealias Loader = IncrementalListLoader<FilesViewItem>
+    typealias State = Loader.State
 
     @Published private(set) var networkMonitor: NetworkMonitor
-    @Published private(set) var loader: Loader
+    @Published private var loader: Loader
 
     var onFetchOnlineFiles: ((Int) async throws -> (items: [FilesViewItem], isLastPage: Bool))?
     var onFetchOfflineFiles: (() async throws -> [FilesViewItem])?
@@ -86,6 +87,36 @@ class FilesListLoader: Observable, ObservableObject {
             // set items to how they were before the change:
             loader.state = .received(items: items)
         }
+    }
+    
+    var state: State {
+        get {
+            loader.state
+        }
+        set {
+            loader.state = newValue
+        }
+    }
+    
+    var hasMore: Bool {
+        get {
+            loader.hasMore
+        }
+        set {
+            loader.hasMore = newValue
+        }
+    }
+    
+    var isLoading: Bool {
+        loader.isLoading
+    }
+    
+    func reload(refreshing: Bool = false) async {
+        await loader.reload(refreshing: refreshing)
+    }
+    
+    func loadMoreIfNeeded(index: Int) async {
+        await loader.loadMoreIfNeeded(index: index)
     }
 }
 

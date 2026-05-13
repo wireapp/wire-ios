@@ -217,7 +217,7 @@ final class FilesBrowserViewTests: XCTestCase {
 
     @MainActor
     private func makeFilesBrowserView(
-        state: FilesListLoader.Loader.State
+        state: FilesListLoader.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
@@ -257,8 +257,8 @@ final class FilesBrowserViewTests: XCTestCase {
             isBrowsing: true
         )
 
-        filesViewModel.filesListLoader.loader.state = state
-        filesViewModel.filesListLoader.loader.hasMore = false
+        filesViewModel.filesListLoader.state = state
+        filesViewModel.filesListLoader.hasMore = false
 
         let filesBrowserView = FilesBrowserView(viewModel: filesViewModel)
 
