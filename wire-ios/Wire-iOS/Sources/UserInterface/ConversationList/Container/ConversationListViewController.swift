@@ -74,29 +74,7 @@ final class ConversationListViewController: UIViewController {
     }()
 
     var selectedFilterLabel: String {
-        typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
-        switch listContentController.listViewModel.selectedFilter {
-        case .favorites:
-            return FilterMenuLocale.Favorites.title
-        case .groups:
-            return FilterMenuLocale.Groups.title
-        case .channels:
-            return FilterMenuLocale.Channels.title
-        case .oneOnOne:
-            return FilterMenuLocale.OneOnOneConversations.title
-        case .unread:
-            return FilterMenuLocale.Unread.title
-        case .mentions:
-            return FilterMenuLocale.Mentions.title
-        case .replies:
-            return FilterMenuLocale.Replies.title
-        case .drafts:
-            return FilterMenuLocale.Drafts.title
-        case let .folder(_, name):
-            return name
-        case .none:
-            return ""
-        }
+        ViewModel.selectedFilterLabel(for: listContentController.listViewModel.selectedFilter)
     }
 
     /// for NetworkStatusViewDelegate
@@ -366,12 +344,14 @@ final class ConversationListViewController: UIViewController {
     }
 
     func updateFilterContainerView() {
-        filterContainerView
-            // This used to check for isEmptyPlaceholderVisible as well,
-            // which lead to the filter not being removable if the filter found no matches
-            .isHidden = mainSplitViewState == .expanded || listContentController
-            .listViewModel.selectedFilter == .none
-        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
+        let displayState = ViewModel.filterHeaderDisplayState(
+            mainSplitViewState: mainSplitViewState,
+            selectedFilter: listContentController.listViewModel.selectedFilter
+        )
+        // This used to check for isEmptyPlaceholderVisible as well,
+        // which lead to the filter not being removable if the filter found no matches.
+        filterContainerView.isHidden = displayState.isHidden
+        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(displayState.selectedFilterLabel)
     }
 
     private func setupListContentController() {
@@ -460,37 +440,12 @@ final class ConversationListViewController: UIViewController {
         return searchController
     }
 
-    private static func searchPlaceholderText(for filter: ConversationFilter?) -> String {
-        switch filter {
-        case .none:
-            L10n.Localizable.ConversationList.SearchBar.placeholder
-        case .favorites:
-            L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
-        case .groups:
-            L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
-        case .channels:
-            L10n.Localizable.ConversationList.SearchBar.channelsPlaceholder
-        case .oneOnOne:
-            L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
-        case .unread:
-            L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder
-        case .mentions:
-            L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder
-        case .replies:
-            L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder
-        case .drafts:
-            L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder
-        case let .folder(_, name):
-            L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
-        }
-    }
-
     private func setupSearchController() {
         let filter = listContentController.listViewModel.selectedFilter
         let searchController = Self.makeSearchController()
         searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
-        searchController.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
+        searchController.searchBar.placeholder = ViewModel.searchPlaceholderText(for: filter)
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -506,7 +461,7 @@ final class ConversationListViewController: UIViewController {
     /// For collapsed layouts the navigation bar should additionally show an account image and a filter button item.
     private func updateNavigationItem() {
 
-        switch mainSplitViewState {
+        switch ViewModel.navigationBarUpdate(for: mainSplitViewState) {
         case .collapsed:
             setupLeftNavigationBarButtonItems()
             setupRightNavigationBarButtonItems()
@@ -557,7 +512,7 @@ final class ConversationListViewController: UIViewController {
         configureEmptyPlaceholder()
 
         let filter = listContentController.listViewModel.selectedFilter
-        navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
+        navigationItem.searchController?.searchBar.placeholder = ViewModel.searchPlaceholderText(for: filter)
 
         // This should actually be done as a result of an empty list of conversations, not directly when selecting a
         // filter.

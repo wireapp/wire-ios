@@ -34,6 +34,13 @@ struct SearchResultsSectionContent {
     let federation: [ZMSearchUser]
 }
 
+enum SearchResultsUserSelectionAction: Equatable {
+    case regularUser
+    case app
+    case bot
+    case none
+}
+
 struct SearchResultsViewModel {
     var searchGroup: SearchGroup = .people
     var mode: SearchResultsViewControllerMode = .list
@@ -71,6 +78,20 @@ struct SearchResultsViewModel {
             searchingForBots: searchGroup == .apps || searchGroup == .bots,
             hasFilter: !query.isEmpty
         )
+    }
+
+    func userSelectionAction(for user: UserType) -> SearchResultsUserSelectionAction {
+        if let user = user as? ZMUser, user.type == .regular {
+            return .regularUser
+        } else if let user = user as? ZMUser, user.type == .app {
+            return .app
+        } else if user.isAppOrBot {
+            return .bot
+        } else if user is ZMSearchUser {
+            return .regularUser
+        } else {
+            return .none
+        }
     }
 
     func sectionContent(

@@ -406,24 +406,29 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
         didSelectUser user: UserType,
         at indexPath: IndexPath
     ) {
-        if let user = user as? ZMUser, user.type == .regular {
+        switch viewModel.userSelectionAction(for: user) {
+        case .regularUser where user is ZMUser:
             delegate?.searchResultsViewController(
                 self,
                 didTapOnUser: user,
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else if let user = user as? ZMUser, user.type == .app {
+        case .app:
+            guard let user = user as? ZMUser else { return }
             delegate?.searchResultsViewController(self, didTapOnApp: user)
-        } else if user.isAppOrBot {
+        case .bot:
             delegate?.searchResultsViewController(self, didTapOnBot: user)
-        } else if let searchUser = user as? ZMSearchUser {
+        case .regularUser:
+            guard let searchUser = user as? ZMSearchUser else { return }
             delegate?.searchResultsViewController(
                 self,
                 didTapOnUser: searchUser,
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
+        case .none:
+            return
         }
     }
 

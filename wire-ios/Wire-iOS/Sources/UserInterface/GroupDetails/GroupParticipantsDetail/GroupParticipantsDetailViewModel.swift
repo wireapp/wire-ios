@@ -33,6 +33,17 @@ final class GroupParticipantsDetailViewModel: NSObject, ZMConversationObserver {
 
     // MARK: - Properties
 
+    struct ParticipantSectionDisplayState {
+        let participants: [UserType]
+        let role: ConversationRole
+        let count: Int
+    }
+
+    enum UserDetailsRoute {
+        case none
+        case details(user: UserType, conversation: ZMConversation)
+    }
+
     private var internalParticipants: [UserType]
     private var filterQuery: String?
     fileprivate var token: NSObjectProtocol?
@@ -64,6 +75,32 @@ final class GroupParticipantsDetailViewModel: NSObject, ZMConversationObserver {
 
     var admins = [UserType]()
     var members = [UserType]()
+
+    var participantSections: [ParticipantSectionDisplayState] {
+        var sections = [ParticipantSectionDisplayState]()
+
+        if !admins.isEmpty {
+            sections.append(.init(
+                participants: admins,
+                role: .admin,
+                count: admins.count
+            ))
+        }
+
+        if !members.isEmpty {
+            sections.append(.init(
+                participants: members,
+                role: .member,
+                count: members.count
+            ))
+        }
+
+        return sections
+    }
+
+    var shouldShowNoSearchResultsMessage: Bool {
+        admins.isEmpty && members.isEmpty
+    }
 
     // MARK: - Initialization
 
@@ -130,6 +167,17 @@ final class GroupParticipantsDetailViewModel: NSObject, ZMConversationObserver {
     func updateSearch(query: String) {
         filterQuery = query
         computeVisibleParticipants()
+    }
+
+    func userDetailsRoute(for user: UserType) -> UserDetailsRoute {
+        guard
+            !user.isSelfUser,
+            let conversation = conversation as? ZMConversation
+        else {
+            return .none
+        }
+
+        return .details(user: user, conversation: conversation)
     }
 
     // MARK: - UserStatuses

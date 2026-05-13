@@ -126,6 +126,37 @@ final class SearchResultsViewControllerTests: XCTestCase {
         )
     }
 
+    func testUserSelectionActionForBot() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .people,
+            mode: .search,
+            isAddingParticipants: false,
+            hasTeam: false,
+            shouldIncludeGuests: true
+        )
+        let user = MockUserType.createUser(name: "Service")
+        user.mockedIsBot = true
+
+        // THEN
+        XCTAssertEqual(viewModel.userSelectionAction(for: user), .bot)
+    }
+
+    func testUserSelectionActionForUnsupportedUser() {
+        // GIVEN
+        let viewModel = SearchResultsViewModel(
+            searchGroup: .people,
+            mode: .search,
+            isAddingParticipants: false,
+            hasTeam: false,
+            shouldIncludeGuests: true
+        )
+        let user = MockUserType.createUser(name: "Unsupported")
+
+        // THEN
+        XCTAssertEqual(viewModel.userSelectionAction(for: user), .none)
+    }
+
     func testThatSearchResultsViewControllerIsNotRetained() {
         autoreleasepool {
             // GIVEN

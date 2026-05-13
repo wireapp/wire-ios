@@ -181,8 +181,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         collectionViewController.sections = computeSections()
         collectionViewController.collectionView?.reloadData()
 
-        let emptyResultMessage = (viewModel.admins.isEmpty && viewModel.members.isEmpty) ? PeoplePicker
-            .noSearchResults : ""
+        let emptyResultMessage = viewModel.shouldShowNoSearchResultsMessage ? PeoplePicker.noSearchResults : ""
         collectionViewController.collectionView?.setEmptyMessage(emptyResultMessage)
     }
 
@@ -192,39 +191,19 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     private func computeSections() -> [CollectionViewSectionController] {
-        var sections = [CollectionViewSectionController]()
-
-        if !viewModel.admins.isEmpty {
-            sections.append(createParticipantsSection(
-                participants: viewModel.admins,
-                role: .admin,
-                count: viewModel.admins.count
-            ))
-        }
-
-        if !viewModel.members.isEmpty {
-            sections.append(createParticipantsSection(
-                participants: viewModel.members,
-                role: .member,
-                count: viewModel.members.count
-            ))
-        }
-
-        return sections
+        viewModel.participantSections.map(createParticipantsSection)
     }
 
     private func createParticipantsSection(
-        participants: [UserType],
-        role: ConversationRole,
-        count: Int
+        from displayState: GroupParticipantsDetailViewModel.ParticipantSectionDisplayState
     ) -> ParticipantsSectionController {
         ParticipantsSectionController(
-            participants: participants,
+            participants: displayState.participants,
             userStatuses: viewModel.userStatuses,
-            conversationRole: role,
+            conversationRole: displayState.role,
             conversation: viewModel.conversation,
             delegate: self,
-            totalParticipantsCount: count,
+            totalParticipantsCount: displayState.count,
             clipSection: false,
             showSectionCount: false,
             userSession: viewModel.userSession
@@ -257,10 +236,7 @@ extension GroupParticipantsDetailViewController: UISearchBarDelegate {
 
 extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDelegate {
     func presentDetails(for user: UserType) {
-        guard
-            !user.isSelfUser,
-            let conversation = viewModel.conversation as? ZMConversation
-        else { return }
+        guard case let .details(user, conversation) = viewModel.userDetailsRoute(for: user) else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,

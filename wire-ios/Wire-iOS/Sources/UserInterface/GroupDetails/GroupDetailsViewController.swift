@@ -46,6 +46,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     private let areLegacyBotsAvailable: Bool
     private let isAppsFeatureEnabled: Bool
+    private let viewModel: GroupDetailsViewModel
 
     var didCompleteInitialSync = false {
         didSet { collectionViewController.sections = computeVisibleSections() }
@@ -74,6 +75,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.collectionViewController = SectionCollectionViewController()
         self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.viewModel = GroupDetailsViewModel(
+            conversation: conversation,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
+        )
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -206,11 +211,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
         }
 
-        let participantsState = GroupDetailsParticipantsState.make(
+        let sectionsState = viewModel.sectionsState(
             participants: participants,
-            isAdmin: { $0.isGroupAdmin(in: conversation) }
+            apps: apps,
+            selfUser: SelfUser.provider?.providedSelfUser
         )
-        sections.append(contentsOf: participantsState.sections.map { section in
+        sections.append(contentsOf: sectionsState.participantSections.map { section in
             ParticipantsSectionController(
                 participants: section.participants,
                 userStatuses: userStatuses,
@@ -235,11 +241,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 syncCompleted: didCompleteInitialSync,
                 areLegacyBotsAvailable: areLegacyBotsAvailable
             )
-            if optionsSectionController.hasOptions {
+            if sectionsState.showsGroupOptions {
                 sections.append(optionsSectionController)
             }
 
-            if conversation.isWireDriveEnabled, let collectionView = collectionViewController.collectionView {
+            if sectionsState.showsSelfDeletingMessagesDisabled,
+               let collectionView = collectionViewController.collectionView {
                 let selfDeletingMessagesDisabledSectionController = SelfDeletingMessagesDisabledSectionController(
                     conversation: conversation,
                     collectionView: collectionView
@@ -247,10 +254,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 sections.append(selfDeletingMessagesDisabledSectionController)
             }
 
-            if conversation.teamRemoteIdentifier != nil,
-               user.canModifyReadReceiptSettings(in: conversation),
-               conversation.messageProtocol != .mls, // TODO: [WPB-16771] Remove when read receipts supported on MLS
+            if sectionsState.showsReceiptOptions,
                let collectionView = collectionViewController.collectionView {
+                // TODO: [WPB-16771] Remove MLS exclusion from the view model when read receipts are supported on MLS
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
@@ -264,7 +270,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         // MARK: services sections
 
-        if !apps.isEmpty {
+        if sectionsState.showsServices {
             let servicesSection = ServicesSectionController(
                 apps: apps,
                 conversation: conversation,

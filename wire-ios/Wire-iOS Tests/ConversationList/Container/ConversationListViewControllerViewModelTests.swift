@@ -82,4 +82,73 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         XCTAssertEqual(mockConversation, sut.selectedConversation)
         XCTAssert(mockViewController.isSelectedOnListContentController)
     }
+
+    func testSelectedFilterLabelReturnsEmptyStringForAllConversations() {
+        XCTAssertEqual(ConversationListViewController.ViewModel.selectedFilterLabel(for: nil), "")
+    }
+
+    func testSelectedFilterLabelReturnsFolderNameForFolderFilter() {
+        XCTAssertEqual(
+            ConversationListViewController.ViewModel.selectedFilterLabel(
+                for: .folder(id: UUID(), name: "Important")
+            ),
+            "Important"
+        )
+    }
+
+    func testFilterHeaderDisplayStateIsHiddenForExpandedLayoutWithSelectedFilter() {
+        let displayState = ConversationListViewController.ViewModel.filterHeaderDisplayState(
+            mainSplitViewState: .expanded,
+            selectedFilter: .favorites
+        )
+
+        XCTAssertTrue(displayState.isHidden)
+        XCTAssertEqual(
+            displayState.selectedFilterLabel,
+            L10n.Localizable.ConversationList.Filter.Favorites.title
+        )
+    }
+
+    func testFilterHeaderDisplayStateIsVisibleForCollapsedLayoutWithSelectedFilter() {
+        let displayState = ConversationListViewController.ViewModel.filterHeaderDisplayState(
+            mainSplitViewState: .collapsed,
+            selectedFilter: .favorites
+        )
+
+        XCTAssertFalse(displayState.isHidden)
+        XCTAssertEqual(
+            displayState.selectedFilterLabel,
+            L10n.Localizable.ConversationList.Filter.Favorites.title
+        )
+    }
+
+    func testFilterHeaderDisplayStateIsHiddenForCollapsedLayoutWithoutFilter() {
+        let displayState = ConversationListViewController.ViewModel.filterHeaderDisplayState(
+            mainSplitViewState: .collapsed,
+            selectedFilter: nil
+        )
+
+        XCTAssertTrue(displayState.isHidden)
+        XCTAssertEqual(displayState.selectedFilterLabel, "")
+    }
+
+    func testNavigationBarUpdateMatchesSplitViewState() {
+        XCTAssertEqual(
+            ConversationListViewController.ViewModel.navigationBarUpdate(for: .collapsed),
+            .collapsed
+        )
+        XCTAssertEqual(
+            ConversationListViewController.ViewModel.navigationBarUpdate(for: .expanded),
+            .expanded
+        )
+    }
+
+    func testSearchPlaceholderTextReturnsFolderSpecificPlaceholder() {
+        XCTAssertEqual(
+            ConversationListViewController.ViewModel.searchPlaceholderText(
+                for: .folder(id: UUID(), name: "Important")
+            ),
+            L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder("Important")
+        )
+    }
 }

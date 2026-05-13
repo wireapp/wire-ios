@@ -187,6 +187,89 @@ extension ConversationListViewController {
 
 extension ConversationListViewController.ViewModel {
 
+    struct FilterHeaderDisplayState: Equatable {
+        let isHidden: Bool
+        let selectedFilterLabel: String
+    }
+
+    enum NavigationBarUpdate: Equatable {
+        case collapsed
+        case expanded
+    }
+
+    static func selectedFilterLabel(for filter: ConversationFilter?) -> String {
+        typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
+        switch filter {
+        case .favorites:
+            return FilterMenuLocale.Favorites.title
+        case .groups:
+            return FilterMenuLocale.Groups.title
+        case .channels:
+            return FilterMenuLocale.Channels.title
+        case .oneOnOne:
+            return FilterMenuLocale.OneOnOneConversations.title
+        case .unread:
+            return FilterMenuLocale.Unread.title
+        case .mentions:
+            return FilterMenuLocale.Mentions.title
+        case .replies:
+            return FilterMenuLocale.Replies.title
+        case .drafts:
+            return FilterMenuLocale.Drafts.title
+        case let .folder(_, name):
+            return name
+        case .none:
+            return ""
+        }
+    }
+
+    static func filterHeaderDisplayState(
+        mainSplitViewState: MainSplitViewState,
+        selectedFilter: ConversationFilter?
+    ) -> FilterHeaderDisplayState {
+        FilterHeaderDisplayState(
+            isHidden: mainSplitViewState == .expanded || selectedFilter == .none,
+            selectedFilterLabel: selectedFilterLabel(for: selectedFilter)
+        )
+    }
+
+    static func navigationBarUpdate(for mainSplitViewState: MainSplitViewState) -> NavigationBarUpdate {
+        switch mainSplitViewState {
+        case .collapsed:
+            return .collapsed
+        case .expanded:
+            return .expanded
+        }
+    }
+
+    static func searchPlaceholderText(for filter: ConversationFilter?) -> String {
+        switch filter {
+        case .none:
+            L10n.Localizable.ConversationList.SearchBar.placeholder
+        case .favorites:
+            L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
+        case .groups:
+            L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+        case .channels:
+            L10n.Localizable.ConversationList.SearchBar.channelsPlaceholder
+        case .oneOnOne:
+            L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        case .unread:
+            L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder
+        case .mentions:
+            L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder
+        case .replies:
+            L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder
+        case .drafts:
+            L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder
+        case let .folder(_, name):
+            L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
+        }
+    }
+}
+
+extension ConversationListViewController.ViewModel {
+
     func setupObservers() {
 
         if let userSession = userSession as? ZMUserSession {

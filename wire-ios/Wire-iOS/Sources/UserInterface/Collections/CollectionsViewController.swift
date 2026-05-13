@@ -316,7 +316,11 @@ final class CollectionsViewController: UIViewController {
     }
 
     private func updateNoElementsState() {
-        contentView.noItemsInLibrary = fetchingDone && inOverviewMode && totalNumberOfElements() == 0
+        contentView.noItemsInLibrary = CollectionsViewLayoutDecisions.shouldShowNoItems(
+            fetchingDone: fetchingDone,
+            inOverviewMode: inOverviewMode,
+            totalNumberOfElements: totalNumberOfElements()
+        )
     }
 
     private func setupNavigationItem() {
@@ -426,7 +430,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             return min(imageMessages.count, max)
 
         case CollectionsSectionSet.filesAndAudio:
-            let max = inOverviewMode ? maxOverviewElementsInTable : Int.max
+            let max = inOverviewMode ? CollectionsViewLayoutDecisions.maxOverviewElementsInTable : Int.max
             return min(fileAndAudioMessages.count, max)
 
         case CollectionsSectionSet.videos:
@@ -434,7 +438,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             return min(videoMessages.count, max)
 
         case CollectionsSectionSet.links:
-            let max = inOverviewMode ? maxOverviewElementsInTable : Int.max
+            let max = inOverviewMode ? CollectionsViewLayoutDecisions.maxOverviewElementsInTable : Int.max
             return min(linkMessages.count, max)
 
         case CollectionsSectionSet.loading, .searchFiles:
@@ -484,51 +488,16 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         elementsPerLine(in: section) * 2 // 2 lines of elements
     }
 
-    private var maxOverviewElementsInTable: Int {
-        3
-    }
-
     private func sizeForCell(at indexPath: IndexPath) -> (CGFloat?, CGFloat?) {
         let section = collectionSection(for: indexPath.section)
-
-        let gridElementSize = gridElementSize(in: section)
-
-        var desiredWidth: CGFloat?
-        var desiredHeight: CGFloat?
-
-        switch section {
-        case CollectionsSectionSet.images, CollectionsSectionSet.videos:
-            desiredWidth = gridElementSize.width
-            desiredHeight = gridElementSize.height
-
-        case CollectionsSectionSet.filesAndAudio:
-            desiredWidth = contentView.collectionView.bounds.size.width - horizontalInset(in: section)
-            if !CollectionsView.useAutolayout {
-                desiredHeight = 96
-            }
-
-        case CollectionsSectionSet.links:
-            desiredWidth = contentView.collectionView.bounds.size.width - horizontalInset(in: section)
-            if !CollectionsView.useAutolayout {
-                desiredHeight = 98
-            }
-
-        case CollectionsSectionSet.loading:
-            desiredWidth = contentView.collectionView.bounds.size.width - horizontalInset(in: section)
-            if !CollectionsView.useAutolayout {
-                desiredHeight = fetchingDone ? 24 : 88
-            }
-
-        case CollectionsSectionSet.searchFiles:
-            desiredWidth = contentView.collectionView.bounds.size.width - horizontalInset(in: section)
-            if !CollectionsView.useAutolayout {
-                desiredHeight = 50
-            }
-
-        default: fatal("Unknown section")
-        }
-
-        return (desiredWidth, desiredHeight)
+        return CollectionsViewLayoutDecisions.cellSize(
+            for: section,
+            collectionWidth: contentView.collectionView.bounds.size.width,
+            horizontalInset: horizontalInset(in: section),
+            gridElementSize: gridElementSize(in: section),
+            fetchingDone: fetchingDone,
+            usesAutolayout: CollectionsView.useAutolayout
+        )
     }
 
     private func horizontalInset(in section: CollectionsSectionSet) -> CGFloat {
@@ -537,11 +506,8 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     private func sectionInsets(in section: CollectionsSectionSet) -> UIEdgeInsets {
-        if section == CollectionsSectionSet.loading || section == .searchFiles {
-            return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
-
-        return elements(for: section).isEmpty ? .zero : UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 16)
+        let isEmpty = section == .loading || section == .searchFiles || elements(for: section).isEmpty
+        return CollectionsViewLayoutDecisions.sectionInsets(for: section, isEmpty: isEmpty)
     }
 
     // MARK: - Data Source
@@ -703,11 +669,13 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
         let section = collectionSection(for: section)
+        let isEmpty = section == .loading || section == .searchFiles || elements(for: section).isEmpty
 
-        if section == CollectionsSectionSet.loading || section == CollectionsSectionSet.searchFiles {
-            return .zero
-        }
-        return elements(for: section).isEmpty ? .zero : CGSize(width: collectionView.bounds.size.width, height: 48)
+        return CollectionsViewLayoutDecisions.headerSize(
+            for: section,
+            isEmpty: isEmpty,
+            collectionWidth: collectionView.bounds.size.width
+        )
     }
 
     func collectionView(

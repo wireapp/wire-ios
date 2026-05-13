@@ -109,6 +109,20 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         !options.isEmpty
     }
 
+    static func hasAccessibleOptions(
+        in conversation: GroupDetailsConversationType,
+        by user: UserType,
+        areLegacyBotsAvailable: Bool
+    ) -> Bool {
+        Option.allCases.contains { option in
+            option.accessible(
+                in: conversation,
+                by: user,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
+            )
+        }
+    }
+
     init(
         conversation: GroupDetailsConversationType,
         user: UserType,
