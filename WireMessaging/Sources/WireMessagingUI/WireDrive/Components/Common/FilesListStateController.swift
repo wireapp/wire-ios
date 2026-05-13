@@ -23,12 +23,12 @@ import WireLogging
 
 /// Loads and manages a paginated list of `FilesViewItem` elements.
 @MainActor
-class FilesListLoader: Observable, ObservableObject {
-    typealias Loader = IncrementalListLoader<FilesViewItem>
-    typealias State = Loader.State
+class FilesListStateController: Observable, ObservableObject {
+    typealias Controller = IncrementalListStateController<FilesViewItem>
+    typealias State = Controller.State
 
     @Published private(set) var networkMonitor: NetworkMonitor
-    @Published private var loader: Loader
+    @Published private(set) var controller: Controller
 
     var onFetchOnlineFiles: ((Int) async throws -> (items: [FilesViewItem], isLastPage: Bool))?
     var onFetchOfflineFiles: (() async throws -> [FilesViewItem])?
@@ -37,8 +37,9 @@ class FilesListLoader: Observable, ObservableObject {
     init(networkMonitor: NetworkMonitor = .shared) {
         self.networkMonitor = networkMonitor
 
-        self.loader = .init()
-        loader.onFetch = { [weak self] offset in
+        self.controller = .init()
+
+        controller.onFetch = { [weak self] offset in
             guard let self else { return (items: [], isLastPage: true) }
 
             if isOffline {
@@ -49,15 +50,16 @@ class FilesListLoader: Observable, ObservableObject {
                 return (items: items.latestModified(), isLastPage: isLastPage)
             }
         }
-        loader.onError = { [weak self] error in
+
+        controller.onError = { [weak self] error in
             guard let self else { return }
 
             if isOffline {
                 WireLogger.wireDrive.error("Error fetching offline assets:\n\(error)")
                 onErrorToPresent?(error)
             } else {
-                if loader.state.items.isEmpty {
-                    loader.state = .error(isConnectionError: error.isNoInternetError)
+                if controller.state.items.isEmpty {
+                    controller.state = .error(isConnectionError: error.isNoInternetError)
                 } else {
                     if !error.isNoInternetError {
                         WireLogger.wireDrive.error("Error fetching online files:\n\(error)")
@@ -75,48 +77,48 @@ class FilesListLoader: Observable, ObservableObject {
     /// Removes an item from the list, then performs an async action.
     /// If the action fails, restores the list to how it was before removing the item.
     func removeItem(_ item: FilesViewItem, withAction action: @escaping () async throws -> Void) async {
-        let items = loader.state.items
+        let items = controller.state.items
         let changedItems = items.filter { $0.id != item.id }
-        loader.state = .received(items: changedItems)
+        controller.state = .received(items: changedItems)
 
         do {
             try await action()
         } catch {
-            guard loader.state.isLoaded else { return }
+            guard controller.state.isLoaded else { return }
 
             // set items to how they were before the change:
-            loader.state = .received(items: items)
+            controller.state = .received(items: items)
         }
     }
 
     var state: State {
         get {
-            loader.state
+            controller.state
         }
         set {
-            loader.state = newValue
+            controller.state = newValue
         }
     }
 
     var hasMore: Bool {
         get {
-            loader.hasMore
+            controller.hasMore
         }
         set {
-            loader.hasMore = newValue
+            controller.hasMore = newValue
         }
     }
 
     var isLoading: Bool {
-        loader.isLoading
+        controller.isLoading
     }
 
     func reload(refreshing: Bool = false) async {
-        await loader.reload(refreshing: refreshing)
+        await controller.reload(refreshing: refreshing)
     }
 
     func loadMoreIfNeeded(index: Int) async {
-        await loader.loadMoreIfNeeded(index: index)
+        await controller.loadMoreIfNeeded(index: index)
     }
 }
 

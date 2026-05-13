@@ -19,9 +19,9 @@
 import Combine
 import Observation
 
-/// A generic loader for paginated lists of items.
+/// A generic controller for loading and managing paginated lists of items.
 @MainActor
-class IncrementalListLoader<Item: Identifiable & Hashable & Sendable>: Observable, ObservableObject {
+class IncrementalListStateController<Item: Identifiable & Hashable & Sendable>: Observable, ObservableObject {
     private typealias LoadTask = Task<(items: [Item], isLastPage: Bool), any Error>
     typealias ItemsData = (items: [Item], isLastPage: Bool)
 
@@ -94,7 +94,7 @@ class IncrementalListLoader<Item: Identifiable & Hashable & Sendable>: Observabl
     }
 }
 
-private extension IncrementalListLoader {
+private extension IncrementalListStateController {
     func cancelLoad() {
         loadTask?.cancel()
         loadTask = nil

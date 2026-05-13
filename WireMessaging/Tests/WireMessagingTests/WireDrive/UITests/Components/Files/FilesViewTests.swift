@@ -358,7 +358,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     private func makeFilesView(
-        state: FilesListLoader.State
+        state: FilesListStateController.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
@@ -402,8 +402,8 @@ final class FilesViewTests: XCTestCase {
             networkMonitor: networkMonitor
         )
 
-        filesViewModel.filesListLoader.state = state
-        filesViewModel.filesListLoader.hasMore = false
+        filesViewModel.filesController.state = state
+        filesViewModel.filesController.hasMore = false
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)

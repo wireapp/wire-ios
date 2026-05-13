@@ -101,10 +101,10 @@ package final class FilesViewModel: ObservableObject {
     @Published var conversations: [WireDriveConversation] = []
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
     @Published var networkMonitor: NetworkMonitor
-    @Published var filesListLoader: FilesListLoader
+    @Published var filesController: FilesListStateController
 
-    var state: FilesListLoader.State {
-        filesListLoader.state
+    var state: FilesListStateController.State {
+        filesController.state
     }
 
     // MARK: init
@@ -134,21 +134,21 @@ package final class FilesViewModel: ObservableObject {
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.networkMonitor = networkMonitor
-        self.filesListLoader = .init(networkMonitor: networkMonitor)
-        filesListLoader.state = isCellsStatePending ? .pending : .loading
+        self.filesController = .init(networkMonitor: networkMonitor)
+        filesController.state = isCellsStatePending ? .pending : .loading
     }
 
     // MARK: setup
 
     func setup() async {
-        setupFilesLoader()
+        setupFilesStateController()
         await fetchConversations()
         await fetchTemplates()
         bindSearch()
     }
 
-    func setupFilesLoader() {
-        filesListLoader.onFetchOnlineFiles = { [weak self] offset in
+    func setupFilesStateController() {
+        filesController.onFetchOnlineFiles = { [weak self] offset in
             guard let self else { return (items: [], isLastPage: true) }
 
             let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
@@ -164,7 +164,7 @@ package final class FilesViewModel: ObservableObject {
             return (items, isLastPage)
         }
 
-        filesListLoader.onFetchOfflineFiles = { [weak self] in
+        filesController.onFetchOfflineFiles = { [weak self] in
             guard let self else { return [] }
 
             let conversationName = cellName != nil ? conversations.first?.name : nil
@@ -202,7 +202,7 @@ package final class FilesViewModel: ObservableObject {
             }
         }
 
-        filesListLoader.onErrorToPresent = { [weak self] _ in
+        filesController.onErrorToPresent = { [weak self] _ in
             self?.alert = .unknownError
         }
     }
@@ -243,11 +243,11 @@ package final class FilesViewModel: ObservableObject {
     func reload(refreshing: Bool = false) async {
         guard networkMonitor.currentStatus != nil else { return }
 
-        await filesListLoader.reload(refreshing: refreshing)
+        await filesController.reload(refreshing: refreshing)
     }
 
     func loadMoreIfNeeded(index: Int) async {
-        await filesListLoader.loadMoreIfNeeded(index: index)
+        await filesController.loadMoreIfNeeded(index: index)
     }
 
     // MARK: folders
@@ -357,7 +357,7 @@ package final class FilesViewModel: ObservableObject {
             return
         }
 
-        await filesListLoader.removeItem(asset) { [weak self] in
+        await filesController.removeItem(asset) { [weak self] in
             try await self?.useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
         }
     }
@@ -368,7 +368,7 @@ package final class FilesViewModel: ObservableObject {
             return
         }
 
-        await filesListLoader.removeItem(asset) { [weak self] in
+        await filesController.removeItem(asset) { [weak self] in
             guard let self else { return }
             let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
             try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
