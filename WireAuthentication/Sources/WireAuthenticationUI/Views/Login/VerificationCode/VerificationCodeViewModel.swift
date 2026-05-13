@@ -61,9 +61,9 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     var resendButtonTitle: String {
         if retryAfterSeconds > 0 {
-            return L10n.Localizable.VerificationCode.resendCodeAfterSeconds(formattedRetryTime)
+            L10n.Localizable.VerificationCode.resendCodeAfterSeconds(formattedRetryTime)
         } else {
-            return L10n.Localizable.VerificationCode.resendCode
+            L10n.Localizable.VerificationCode.resendCode
         }
     }
 
