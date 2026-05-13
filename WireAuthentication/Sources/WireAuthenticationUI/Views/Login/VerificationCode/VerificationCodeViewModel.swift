@@ -53,6 +53,12 @@ public final class VerificationCodeViewModel: ObservableObject {
         isResending || retryAfterSeconds > 0
     }
 
+    var formattedRetryTime: String {
+        let minutes = retryAfterSeconds / 60
+        let seconds = retryAfterSeconds % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+
     // MARK: - Dependencies
 
     package let factory: any Factory
@@ -179,6 +185,7 @@ public final class VerificationCodeViewModel: ObservableObject {
                 if let retryAfter {
                     startCountdown(seconds: Int(retryAfter))
                 }
+
             default:
                 router.presentAlert(for: error)
             }

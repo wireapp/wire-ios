@@ -75,7 +75,7 @@ package struct VerificationCodeView: View {
                 }
             }, label: {
                 if viewModel.retryAfterSeconds > 0 {
-                    Text(Strings.VerificationCode.resendCodeAfterSeconds(viewModel.retryAfterSeconds))
+                    Text(Strings.VerificationCode.resendCodeAfterSeconds(viewModel.formattedRetryTime))
                         .monospacedDigit()
                 } else {
                     Text(Strings.VerificationCode.resendCode)
