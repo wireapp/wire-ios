@@ -179,6 +179,14 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.recordingTime.rawValue]
     }
 
+    var showOtherRowButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.showOtherRowButton.rawValue]
+    }
+
+    var pingButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.pingButton.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -303,10 +311,14 @@ class ActiveConversationPage: PageModel {
 
     @discardableResult
     func recordAudioAndSend() throws -> ActiveConversationPage {
+
         audioButton.tap()
         app.dismissAllowIfPresent()
-        if audioButton.waitForExistence(timeout: 1), audioButton.isHittable {
-            audioButton.tap()
+
+        if !startRecording.waitForExistence(timeout: 1) || !startRecording.isHittable {
+            if audioButton.waitForExistence(timeout: 2), audioButton.isHittable {
+                audioButton.tap()
+            }
         }
         startRecording.waitAndTap()
         XCTAssertTrue(
@@ -319,6 +331,38 @@ class ActiveConversationPage: PageModel {
         }
         heliumButton.tap()
         sendAudioButton.tap()
+        return self
+    }
+
+    func receivedPing(for sender: String) -> XCUIElement {
+        let label = NSPredicate(
+            format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+            sender,
+            "pinged"
+        )
+        return app.otherElements.containing(label).firstMatch
+    }
+
+    @discardableResult
+    func sendPing() -> ActiveConversationPage {
+        showOtherRowButton.tap()
+        pingButton.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func verifyPingSent(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.otherElements.containing(
+                NSPredicate(format: "label CONTAINS %@", "You pinged")
+            ).firstMatch.waitForExistence(timeout: 2),
+            "Expected ping message not found",
+            file: file,
+            line: line
+        )
         return self
     }
 }

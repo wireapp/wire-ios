@@ -1020,11 +1020,11 @@
 "profile.connection_request_dialog.button_cancel" = "Ignorieren";
 "profile.connection_request_dialog.button_connect" = "Kontaktanfrage";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "Gruppenunterhaltung löschen?";
-"conversation.delete_request_dialog.message" = "Dies wird die Gruppe und alle Inhalte für alle Teilnehmer auf allen Geräten löschen. Es gibt keine Möglichkeit, den Inhalt wiederherzustellen. Alle Teilnehmer werden darüber benachrichtigt.";
-"conversation.delete_request_error_dialog.title" = "Beim Löschen der Gruppe %@ ist ein Fehler aufgetreten. Bitte erneut versuchen.";
-"conversation.delete_request_error_dialog.button_delete_group" = "Gruppe löschen";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Unterhaltung löschen?";
+"conversation.delete_request_dialog.message" = "Dies wird die Unterhaltung und alle Inhalte für alle Teilnehmer auf allen Geräten löschen. Es gibt keine Möglichkeit, den Inhalt wiederherzustellen. Alle Teilnehmer werden darüber benachrichtigt.";
+"conversation.delete_request_error_dialog.title" = "Beim Löschen der Unterhaltung %@ ist ein Fehler aufgetreten. Bitte erneut versuchen.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Unterhaltung löschen";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Kontaktanfrage abbrechen?";
@@ -1435,16 +1435,27 @@
 "self.settings.technical_report_section.title" = "Fehlerbericht";
 "self.settings.technical_report.send_report" = "Protokoll senden";
 "self.settings.technical_report.share_report" = "Protokoll über Wire teilen";
-"self.settings.technical_report.mail.subject" = "Fehlerbericht";
+"self.settings.technical_report.mail.subject" = "Problem melden";
 "self.settings.technical_report.include_log" = "Detaillierten Verlauf hinzufügen";
 "self.settings.technical_report.info" = "Wenn Sie während der Benutzung von Wire auf unerwartetes Verhalten oder einen Fehler stoßen, können Sie von hier aus ein Protokoll an unser Support-Team senden. Das Protokoll könnte persönliche Informationen enthalten. \n\nSie können Ihre Protokolle auch direkt mit Ihrem Team-Administrator via Wire teilen.";
 "self.settings.technical_report.privacy_warning" = "Detaillierte Protokolle können personenbezogene Daten enthalten.";
 "self.settings.technical_report.no_mail_alert" = "Kein Mail-Client erkannt. Wählen Sie \"OK\" und senden Sie die Protokolle manuell an: ";
 
-"self.settings.technical_report.mail_body.firstline" = "Füllen Sie bitte die folgenden Felder aus";
-"self.settings.technical_report.mail_body.section1" = "Datum und Zeit, zu der das Problem auftrat";
-"self.settings.technical_report.mail_body.section2" = "Was passiert ist:";
-"self.settings.technical_report.mail_body.section3" = "Schritte zum Nachstellen des Problems (falls relevant):";
+"self.settings.technical_report.mail_body.firstline" = "Erklären Sie, was passiert ist, damit wir das Problem verstehen und reproduzieren können:";
+"self.settings.technical_report.mail_body.section1" = "Was ist passiert?";
+"self.settings.technical_report.mail_body.section2" = "Wann ist es passiert?";
+"self.settings.technical_report.mail_body.section3" = "Fügen Sie Schritte zum Reproduzieren des Problems hinzu (falls relevant):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Haben Sie Schwierigkeiten?";
+"self.settings.share_debug_report.banner.message" = "Um die Qualität von Wire zu verbessern, bitten wir Sie, uns Ihr Feedback zukommen zu lassen und uns über eventuelle Probleme zu informieren.";
+"self.settings.share_debug_report.creating_report" = "Fehlerbericht wird erstellt...";
+"self.settings.share_debug_report.action_sheet.title" = "Haben Sie Schwierigkeiten?";
+"self.settings.share_debug_report.action_sheet.message" = "Sie können Ihren Bericht an den Wire-Support senden oder ihn direkt über Wire oder eine andere App an Ihren Admin weiterleiten.";
+"self.settings.share_debug_report.action_sheet.share_via_wire" = "Über Wire teilen";
+"self.settings.share_debug_report.action_sheet.send_email" = "E-Mail an Support senden";
+"self.settings.share_debug_report.action_sheet.share" = "Teilen";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "Passwort zurücksetzen";
 
