@@ -70,12 +70,15 @@ package struct VerificationCodeView: View {
             .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
-                Task.detached { await viewModel.requestVerificationCode() }
+                Task.detached {
+                    await viewModel.requestVerificationCode()
+                }
             }, label: {
-                Text(Strings.VerificationCode.resendCode)
+                Text(viewModel.resendButtonTitle)
+                    .monospacedDigit()
             })
             .wireButtonStyle(.link)
-            .disabled(viewModel.isResending)
+            .disabled(viewModel.isResendButtonDisabled)
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
@@ -97,10 +100,8 @@ package struct VerificationCodeView: View {
                 viewModel.factory.noHistoryView(result: authenticationResult)
             }
         }
-        .onAppear {
-            Task {
-                await viewModel.requestVerificationCode()
-            }
+        .task {
+            await viewModel.requestVerificationCode()
         }
     }
 
