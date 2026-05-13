@@ -238,7 +238,7 @@ public final class SharingSession {
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: localDomain,
-            backgroundTaskManager: NoOpBackgroundTaskManager()
+            backgroundTaskManager: nil
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(

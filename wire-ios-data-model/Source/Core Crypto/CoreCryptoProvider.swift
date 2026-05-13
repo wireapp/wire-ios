@@ -76,7 +76,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
     private let localDomain: String?
 
-    private let backgroundTaskManager: any BackgroundTaskManager
+    private let backgroundTaskManager: (any BackgroundTaskManager)?
 
     public init(
         selfUserID: UUID,
@@ -87,7 +87,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         allowCreation: Bool = true,
         localDomain: String?,
-        backgroundTaskManager: any BackgroundTaskManager
+        backgroundTaskManager: (any BackgroundTaskManager)?
     ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL

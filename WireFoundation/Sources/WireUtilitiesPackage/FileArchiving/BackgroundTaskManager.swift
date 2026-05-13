@@ -23,8 +23,7 @@ public import UIKit
 /// methods.
 ///
 /// This is intented to be used only within the main app target
-/// (via UIApplication) and not the app extensions (use
-/// `NoOpBackgroundTaskManager` instead.)
+/// (via UIApplication) and not the app extensions.
 public protocol BackgroundTaskManager {
 
     func beginBackgroundTask(
@@ -50,25 +49,3 @@ public extension BackgroundTaskManager {
 }
 
 extension UIApplication: BackgroundTaskManager {}
-
-/// A background task manager that does nothing.
-///
-/// Since the BackgroundTaskManager is only intended to be
-/// used from a main app target, this implementation can be used
-/// when running in an app extension.
-public struct NoOpBackgroundTaskManager: BackgroundTaskManager {
-
-    public init() {}
-
-    public func beginBackgroundTask(
-        withName: String?,
-        expirationHandler: (@MainActor () -> Void)?
-    ) -> UIBackgroundTaskIdentifier {
-        UIBackgroundTaskIdentifier.invalid
-    }
-
-    public func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
-        // No op
-    }
-
-}

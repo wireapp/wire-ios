@@ -260,7 +260,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
                 localDomain: localDomain,
-                backgroundTaskManager: NoOpBackgroundTaskManager()
+                backgroundTaskManager: nil
             )
         }
     }
