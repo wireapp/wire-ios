@@ -28,6 +28,28 @@ struct CallViewModel {
         case none
     }
 
+    enum CallActionPlan {
+        case continueDegradedCall
+        case acceptCall
+        case acceptDegradedCall
+        case terminateCall
+        case terminateDegradedCall
+        case toggleMuteState
+        case toggleSpeakerState
+        case minimizeOverlay
+        case toggleVideoState
+        case alertVideoUnavailable
+        case flipCamera
+        case showParticipantsList
+        case updateVideoGridPresentationMode(VideoGridPresentationMode)
+    }
+
+    enum ContextAction {
+        case startOverlayTimer
+        case stopOverlayTimer
+        case none
+    }
+
     func canHideOverlay(
         callState: CallStatusViewState,
         shouldOverlayStayVisibleForAutomation: Bool
@@ -74,5 +96,50 @@ struct CallViewModel {
 
     func nextCameraType(currentCameraType: CaptureDevice) -> CaptureDevice {
         currentCameraType == .front ? .back : .front
+    }
+
+    func plan(for action: CallAction) -> CallActionPlan {
+        switch action {
+        case .continueDegradedCall:
+            .continueDegradedCall
+        case .acceptCall:
+            .acceptCall
+        case .acceptDegradedCall:
+            .acceptDegradedCall
+        case .terminateCall:
+            .terminateCall
+        case .terminateDegradedCall:
+            .terminateDegradedCall
+        case .toggleMuteState:
+            .toggleMuteState
+        case .toggleSpeakerState:
+            .toggleSpeakerState
+        case .minimizeOverlay:
+            .minimizeOverlay
+        case .toggleVideoState:
+            .toggleVideoState
+        case .alertVideoUnavailable:
+            .alertVideoUnavailable
+        case .flipCamera:
+            .flipCamera
+        case .showParticipantsList:
+            .showParticipantsList
+        case let .updateVideoGridPresentationMode(mode):
+            .updateVideoGridPresentationMode(mode)
+        }
+    }
+
+    func contextAction(
+        for context: CallInfoRootViewController.Context,
+        canHideOverlay: Bool
+    ) -> ContextAction {
+        guard canHideOverlay else { return .none }
+
+        switch context {
+        case .overview:
+            return .startOverlayTimer
+        case .participants:
+            return .stopOverlayTimer
+        }
     }
 }

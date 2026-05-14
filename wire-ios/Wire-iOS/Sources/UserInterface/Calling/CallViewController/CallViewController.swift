@@ -561,7 +561,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         Log.calling.debug("request to perform call action: \(action)")
         guard let userSession = userSession as? ZMUserSession else { return }
 
-        switch action {
+        switch viewModel.plan(for: action) {
         case .continueDegradedCall: userSession
             .enqueue { self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession) }
         case .acceptCall: acceptCallIfPossible()
@@ -589,10 +589,13 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         _ viewController: CallInfoRootViewController,
         contextDidChange context: CallInfoRootViewController.Context
     ) {
-        guard canHideOverlay else { return }
-        switch context {
-        case .overview: startOverlayTimer()
-        case .participants: stopOverlayTimer()
+        switch viewModel.contextAction(for: context, canHideOverlay: canHideOverlay) {
+        case .startOverlayTimer:
+            startOverlayTimer()
+        case .stopOverlayTimer:
+            stopOverlayTimer()
+        case .none:
+            break
         }
     }
 
