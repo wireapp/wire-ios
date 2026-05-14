@@ -33,7 +33,7 @@ public class CoreCryptoConfigProvider {
     // MARK: - Properties
 
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
-    private let coreCryptoPathComponent = "corecrypto"
+    private static let coreCryptoPathComponent = "corecrypto"
 
     // MARK: - Life cycle
 
@@ -55,7 +55,9 @@ public class CoreCryptoConfigProvider {
         )
 
         try FileManager.default.createAndProtectDirectory(at: accountDirectory)
-        let coreCryptoDirectory = accountDirectory.appendingPathComponent(coreCryptoPathComponent)
+        let coreCryptoDirectory = Self.legacyCoreCryptoOpenInPlaceDirectory(
+            legacyAccountDirectory: accountDirectory
+        )
 
         do {
             let key = try await coreCryptoKeyProvider.coreCryptoKey(
@@ -78,5 +80,9 @@ public class CoreCryptoConfigProvider {
     public enum ConfigurationSetupFailure: Error, Equatable {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
+    }
+
+    public static func legacyCoreCryptoOpenInPlaceDirectory(legacyAccountDirectory: URL) -> URL {
+        legacyAccountDirectory.appendingPathComponent(coreCryptoPathComponent)
     }
 }
