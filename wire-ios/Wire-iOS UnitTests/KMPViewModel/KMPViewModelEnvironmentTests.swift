@@ -131,6 +131,7 @@ final class KMPViewModelEnvironmentTests: XCTestCase {
 
 private let knownScreenIDs: [KMPViewModelScreenID] = [
     .archivedList,
+    .connectRequests,
     .createGroupConversation,
     .folderPicker,
     .noConversationPlaceholder,

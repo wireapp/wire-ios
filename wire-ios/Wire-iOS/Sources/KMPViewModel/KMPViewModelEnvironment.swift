@@ -64,6 +64,7 @@ struct KMPViewModelEnvironment {
 
 enum KMPViewModelScreenID: String, Equatable {
     case archivedList
+    case connectRequests
     case createGroupConversation
     case folderPicker
     case noConversationPlaceholder

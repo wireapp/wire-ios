@@ -22,6 +22,47 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
+struct ConnectRequestsViewControllerBuilder {
+
+    private let userSession: UserSession
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        userSession: UserSession,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.userSession = userSession
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build() -> ConnectRequestsViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .connectRequests,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation() -> ConnectRequestsViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    @MainActor
+    private func buildLegacy() -> ConnectRequestsViewController {
+        ConnectRequestsViewController(userSession: userSession)
+    }
+}
+
 final class ConnectRequestsViewController: UIViewController,
     UITableViewDataSource,
     UITableViewDelegate {

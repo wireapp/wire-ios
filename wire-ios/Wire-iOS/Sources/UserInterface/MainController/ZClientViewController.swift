@@ -163,6 +163,11 @@ final class ZClientViewController: UIViewController {
         kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
+    private lazy var connectRequestsViewControllerBuilder = ConnectRequestsViewControllerBuilder(
+        userSession: userSession,
+        kmpViewModelEnvironment: kmpViewModelEnvironment
+    )
+
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
         userSession: userSession,
         conversationCreationRepository: conversationCreationRepository,
@@ -568,7 +573,7 @@ final class ZClientViewController: UIViewController {
 
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
         // TODO: [WPB-11620] check if this flow works
-        let connectRequests = ConnectRequestsViewController(userSession: userSession)
+        let connectRequests = connectRequestsViewControllerBuilder.build()
         let navigationController = UINavigationController(rootViewController: connectRequests)
         Task {
             await mainCoordinator.presentViewController(navigationController)
