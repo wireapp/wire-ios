@@ -18,7 +18,6 @@
 
 import WireCoreCrypto
 import WireLogging
-import WireUtilitiesPackage
 
 /// A wrapper object for CoreCrypto that ensures transactions are executed
 /// within a background task (if a task manager is provided).
