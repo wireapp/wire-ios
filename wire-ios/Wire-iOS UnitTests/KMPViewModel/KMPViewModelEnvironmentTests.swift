@@ -122,6 +122,7 @@ private let knownScreenIDs: [KMPViewModelScreenID] = [
     .archivedList,
     .createGroupConversation,
     .folderPicker,
+    .searchUser,
     .selfProfile
 ]
 

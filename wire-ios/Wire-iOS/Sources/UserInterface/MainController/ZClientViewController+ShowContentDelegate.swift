@@ -30,13 +30,9 @@ extension ZClientViewController {
     }
 
     func showConnectionRequest(qualifiedID: QualifiedID) {
-        let searchUserViewController = SearchUserViewController(
+        let searchUserViewController = searchUserViewControllerBuilder.build(
             qualifiedID: qualifiedID,
-            profileViewControllerDelegate: self,
-            userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
-            selfProfileUIBuilder: selfProfileViewControllerBuilder,
-            conversationCreationRepository: conversationCreationRepository
+            profileViewControllerDelegate: self
         )
 
         Task { @MainActor in

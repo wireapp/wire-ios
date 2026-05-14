@@ -176,6 +176,14 @@ final class ZClientViewController: UIViewController {
         kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
+    private(set) lazy var searchUserViewControllerBuilder = SearchUserViewControllerBuilder(
+        userSession: userSession,
+        mainCoordinator: .init(mainCoordinator: mainCoordinator),
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        conversationCreationRepository: conversationCreationRepository,
+        kmpViewModelEnvironment: kmpViewModelEnvironment
+    )
+
     private(set) lazy var conversationCreationRepository = ConversationCreationRepository(
         searchUsersUseCase: { [weak userSession] in userSession?.makeSearchUsersUseCase() }
     )

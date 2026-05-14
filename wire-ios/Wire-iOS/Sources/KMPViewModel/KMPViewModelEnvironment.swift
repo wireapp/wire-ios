@@ -66,5 +66,6 @@ enum KMPViewModelScreenID: String, Equatable {
     case archivedList
     case createGroupConversation
     case folderPicker
+    case searchUser
     case selfProfile
 }
