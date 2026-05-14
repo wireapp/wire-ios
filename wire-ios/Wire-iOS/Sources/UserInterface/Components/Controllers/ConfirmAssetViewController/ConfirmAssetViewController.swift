@@ -150,11 +150,7 @@ final class ConfirmAssetViewController: UIViewController {
 
     /// Show editing options only if the image is not animated
     var showEditingOptions: Bool {
-        viewModel.displayState.toolbarPlacement != .none
-    }
-
-    private var imageToolbarFitsInsideImage: Bool {
-        viewModel.displayState.toolbarPlacement == .insideImage
+        viewModel.displayState.showsEditingOptions
     }
 
     private func createVideoPanel(videoURL: URL) {
@@ -199,7 +195,7 @@ final class ConfirmAssetViewController: UIViewController {
 
         imagePreviewView.mediaAsset = image
 
-        if showEditingOptions, imageToolbarFitsInsideImage {
+        if viewModel.displayState.showsToolbarInsideImage {
             let imageToolbarViewInsideImage = ImageToolbarView(withConfiguraton: .preview)
             imageToolbarViewInsideImage.isPlacedOnImage = true
             imageToolbarViewInsideImage.sketchButton.addTarget(
@@ -223,7 +219,7 @@ final class ConfirmAssetViewController: UIViewController {
     private func createBottomPanel() {
         view.addSubview(bottomPanel)
 
-        if showEditingOptions, !imageToolbarFitsInsideImage {
+        if viewModel.displayState.showsToolbarInBottomPanel {
             let imageToolbarView = ImageToolbarView(withConfiguraton: .preview)
             imageToolbarView.sketchButton.addTarget(self, action: #selector(sketchEdit(_:)), for: .touchUpInside)
             imageToolbarView.emojiButton.addTarget(self, action: #selector(emojiEdit(_:)), for: .touchUpInside)

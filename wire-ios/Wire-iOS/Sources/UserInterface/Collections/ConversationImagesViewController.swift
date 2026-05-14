@@ -276,12 +276,8 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func createControlsBarButtons() -> [IconButton] {
-        let canDownloadMedia = MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession)
-            .canDownloadMedia
-        let buttons = ConversationImageToolbarActions.actions(
-            isEphemeral: currentMessage.isEphemeral,
-            canDownloadMedia: canDownloadMedia
-        ).map { action in
+        let toolbarState = toolbarState(for: currentMessage)
+        let buttons = toolbarState.actions.map { action in
             action == .delete ? deleteButton : iconButton(messageAction: action)
         }
 
@@ -289,8 +285,24 @@ final class ConversationImagesViewController: UIViewController {
             $0.hitAreaPadding = .zero
             setupButtonStyle(button: $0)
         }
+        apply(toolbarState: toolbarState)
 
         return buttons
+    }
+
+    private func toolbarState(for message: ZMConversationMessage) -> ConversationImageToolbarActions.State {
+        let canDownloadMedia = MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession)
+            .canDownloadMedia
+
+        return ConversationImageToolbarActions.state(
+            isEphemeral: message.isEphemeral,
+            canDownloadMedia: canDownloadMedia,
+            canDelete: message.canBeDeleted
+        )
+    }
+
+    private func apply(toolbarState: ConversationImageToolbarActions.State) {
+        deleteButton.isHidden = toolbarState.isHidden(.delete)
     }
 
     private func setupButtonStyle(button: IconButton) {
@@ -384,7 +396,7 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func updateButtonsForMessage() {
-        deleteButton.isHidden = !currentMessage.canBeDeleted
+        apply(toolbarState: toolbarState(for: currentMessage))
     }
 
     private func updateActionControllerForMessage() {

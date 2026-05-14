@@ -149,7 +149,7 @@ extension TextSearchViewController: TextSearchInputViewDelegate {
     }
 
     func searchViewShouldReturn(_ searchView: TextSearchInputView) -> Bool {
-        TextSearchQuery.isValid(query: viewModel.query)
+        viewModel.isSearchQueryValid
     }
 }
 

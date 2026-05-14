@@ -63,14 +63,17 @@ struct TextSearchViewModel {
         results.count
     }
 
+    var isSearchQueryValid: Bool {
+        TextSearchQuery.isValid(query: query)
+    }
+
     var viewState: ViewState {
         let noResults = results.isEmpty
-        let validQuery = TextSearchQuery.isValid(query: query)
 
         return ViewState(
             isResultsViewHidden: query.isEmpty,
-            isTableViewHidden: noResults || !validQuery,
-            isNoResultsViewHidden: !noResults || !validQuery,
+            isTableViewHidden: noResults || !isSearchQueryValid,
+            isNoResultsViewHidden: !noResults || !isSearchQueryValid,
             isLoading: isLoading
         )
     }

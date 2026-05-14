@@ -31,6 +31,18 @@ struct ConfirmAssetViewModel {
         let cancelButtonTitle: String
         let confirmButtonTitle: String
         let imageAspectRatio: CGFloat?
+
+        var showsEditingOptions: Bool {
+            toolbarPlacement != .none
+        }
+
+        var showsToolbarInsideImage: Bool {
+            toolbarPlacement == .insideImage
+        }
+
+        var showsToolbarInBottomPanel: Bool {
+            toolbarPlacement == .bottomPanel
+        }
     }
 
     let displayState: DisplayState

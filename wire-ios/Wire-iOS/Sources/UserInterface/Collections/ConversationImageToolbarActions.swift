@@ -18,6 +18,30 @@
 
 enum ConversationImageToolbarActions {
 
+    struct State {
+
+        let actions: [MessageAction]
+        let hiddenActions: [MessageAction]
+
+        func isHidden(_ action: MessageAction) -> Bool {
+            hiddenActions.contains(action)
+        }
+    }
+
+    static func state(
+        isEphemeral: Bool,
+        canDownloadMedia: Bool,
+        canDelete: Bool
+    ) -> State {
+        let actions = actions(
+            isEphemeral: isEphemeral,
+            canDownloadMedia: canDownloadMedia
+        )
+        let hiddenActions: [MessageAction] = canDelete ? [] : [.delete]
+
+        return State(actions: actions, hiddenActions: hiddenActions)
+    }
+
     static func actions(
         isEphemeral: Bool,
         canDownloadMedia: Bool

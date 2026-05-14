@@ -37,7 +37,6 @@ protocol CollectionsViewControllerDelegate: AnyObject {
 
 final class CollectionsViewController: UIViewController {
     var onDismiss: ((CollectionsViewController) -> Void)?
-    let sections: CollectionsSectionSet
     weak var delegate: CollectionsViewControllerDelegate?
     var isShowingSearchResults: Bool {
         !textSearchController.resultsView.isHidden
@@ -70,11 +69,24 @@ final class CollectionsViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let conversationCreationRepository: any ConversationCreationRepositoryProtocol
-    var collectionsSectionSet: [CollectionsSectionSet]
-    let isCellsEnabled: Bool
+    var sections: CollectionsSectionSet {
+        viewModel.sections
+    }
 
-    private var fetchingDone: Bool = false {
+    var collectionsSectionSet: [CollectionsSectionSet] {
+        viewModel.visibleSections
+    }
+
+    var isCellsEnabled: Bool {
+        viewModel.isCellsEnabled
+    }
+
+    private var viewModel: CollectionsViewModel {
         didSet {
+            guard oldValue.fetchingDone != viewModel.fetchingDone else {
+                return
+            }
+
             if isViewLoaded {
                 updateNoElementsState()
                 contentView.collectionView.reloadData()
@@ -85,7 +97,7 @@ final class CollectionsViewController: UIViewController {
     }
 
     private var inOverviewMode: Bool {
-        sections == .all
+        viewModel.inOverviewMode
     }
 
     private lazy var textSearchController = TextSearchViewController(
@@ -132,15 +144,15 @@ final class CollectionsViewController: UIViewController {
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.collection = collection
-        self.sections = sections
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversationCreationRepository = conversationCreationRepository
-        self.isCellsEnabled = isCellsEnabled
-
-        self.collectionsSectionSet = isCellsEnabled ? CollectionsSectionSet
-            .visibleWithSearchFiles : CollectionsSectionSet.visible
+        self.viewModel = CollectionsViewModel(
+            sections: sections,
+            isCellsEnabled: isCellsEnabled,
+            fetchingDone: fetchingDone
+        )
 
         switch sections {
         case CollectionsSectionSet.images:
@@ -154,7 +166,6 @@ final class CollectionsViewController: UIViewController {
         default: break
         }
 
-        self.fetchingDone = fetchingDone
         self.messagePresenter = MessagePresenter(userSession: userSession)
 
         super.init(nibName: .none, bundle: .none)
@@ -262,7 +273,7 @@ final class CollectionsViewController: UIViewController {
     }
 
     private func trackOpeningIfNeeded() {
-        guard shouldTrackOnNextOpen, fetchingDone else { return }
+        guard shouldTrackOnNextOpen, viewModel.fetchingDone else { return }
 
         shouldTrackOnNextOpen = false
     }
@@ -271,10 +282,13 @@ final class CollectionsViewController: UIViewController {
     private func reloadData() {
         UIView.performWithoutAnimation {
             contentView.collectionView.performBatchUpdates({
-                for section in [CollectionsSectionSet.images, CollectionsSectionSet.videos]
+                for section in viewModel.reloadableMediaSections
                     where numberOfElements(for: section) != 0 {
-                    contentView.collectionView
-                        .reloadSections(IndexSet(integer: (collectionsSectionSet.firstIndex(of: section))!))
+                    guard let sectionIndex = viewModel.index(of: section) else {
+                        continue
+                    }
+
+                    contentView.collectionView.reloadSections(IndexSet(integer: sectionIndex))
                 }
             }, completion: { _ in
                 self.contentView.collectionView.reloadData()
@@ -316,10 +330,9 @@ final class CollectionsViewController: UIViewController {
     }
 
     private func updateNoElementsState() {
-        contentView.noItemsInLibrary = CollectionsViewLayoutDecisions.shouldShowNoItems(
-            fetchingDone: fetchingDone,
-            inOverviewMode: inOverviewMode,
-            totalNumberOfElements: totalNumberOfElements()
+        contentView.noItemsInLibrary = viewModel.shouldShowNoItems(
+            counts: elementCounts(),
+            maxOverviewElementsInGrid: maxOverviewElementsInGrid(in:)
         )
     }
 
@@ -402,7 +415,7 @@ extension CollectionsViewController: AssetCollectionDelegate {
     }
 
     func assetCollectionDidFinishFetching(collection: ZMCollection, result: AssetFetchResult) {
-        fetchingDone = true
+        viewModel.fetchingDone = true
     }
 }
 
@@ -423,38 +436,29 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         }
     }
 
-    private func numberOfElements(for section: CollectionsSectionSet) -> Int {
-        switch section {
-        case CollectionsSectionSet.images:
-            let max = inOverviewMode ? maxOverviewElementsInGrid(in: section) : Int.max
-            return min(imageMessages.count, max)
-
-        case CollectionsSectionSet.filesAndAudio:
-            let max = inOverviewMode ? CollectionsViewLayoutDecisions.maxOverviewElementsInTable : Int.max
-            return min(fileAndAudioMessages.count, max)
-
-        case CollectionsSectionSet.videos:
-            let max = inOverviewMode ? maxOverviewElementsInGrid(in: section) : Int.max
-            return min(videoMessages.count, max)
-
-        case CollectionsSectionSet.links:
-            let max = inOverviewMode ? CollectionsViewLayoutDecisions.maxOverviewElementsInTable : Int.max
-            return min(linkMessages.count, max)
-
-        case CollectionsSectionSet.loading, .searchFiles:
-            return 1
-
-        default: fatal("Unknown section")
-        }
+    private func elementCounts() -> CollectionsViewModel.ElementCounts {
+        CollectionsViewModel.ElementCounts(
+            images: imageMessages.count,
+            filesAndAudio: fileAndAudioMessages.count,
+            videos: videoMessages.count,
+            links: linkMessages.count
+        )
     }
 
-    private func totalNumberOfElements() -> Int {
-        // Empty collection contains one element (loading cell)
-        collectionsSectionSet.map { numberOfElements(for: $0) }.reduce(0, +) - 1
+    private func numberOfElements(for section: CollectionsSectionSet) -> Int {
+        viewModel.numberOfElements(
+            for: section,
+            counts: elementCounts(),
+            maxOverviewElementsInGrid: maxOverviewElementsInGrid(in: section)
+        )
     }
 
     private func moreElementsToSee(in section: CollectionsSectionSet) -> Bool {
-        elements(for: section).count > numberOfElements(for: section)
+        viewModel.hasMoreElements(
+            in: section,
+            counts: elementCounts(),
+            maxOverviewElementsInGrid: maxOverviewElementsInGrid(in: section)
+        )
     }
 
     private func message(for indexPath: IndexPath) -> ZMConversationMessage {
@@ -495,7 +499,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             collectionWidth: contentView.collectionView.bounds.size.width,
             horizontalInset: horizontalInset(in: section),
             gridElementSize: gridElementSize(in: section),
-            fetchingDone: fetchingDone,
+            fetchingDone: viewModel.fetchingDone,
             usesAutolayout: CollectionsView.useAutolayout
         )
     }
@@ -513,7 +517,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     // MARK: - Data Source
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        collectionsSectionSet.count
+        viewModel.numberOfSections()
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -578,7 +582,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                 withReuseIdentifier: CollectionLoadingCell.reuseIdentifier,
                 for: indexPath
             ) as! CollectionLoadingCell
-            cell.collapsed = fetchingDone
+            cell.collapsed = viewModel.fetchingDone
             cell.containerWidth = collectionView.bounds.size.width - horizontalInset(in: section)
             return cell
 
@@ -638,7 +642,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                     sections: section,
                     messages: elements(for: section),
                     isCellsEnabled: isCellsEnabled,
-                    fetchingDone: fetchingDone,
+                    fetchingDone: viewModel.fetchingDone,
                     userSession: userSession,
                     mainCoordinator: mainCoordinator,
                     selfProfileUIBuilder: selfProfileUIBuilder,
@@ -695,10 +699,9 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     private func collectionSection(for section: Int) -> CollectionsSectionSet {
-        guard let section = CollectionsSectionSet(
-            index: UInt(section),
-            isCellsEnabled: isCellsEnabled
-        ) else { fatal("Unknown section") }
+        guard let section = viewModel.section(at: section) else {
+            fatal("Unknown section")
+        }
 
         return section
     }
