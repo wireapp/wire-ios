@@ -24,7 +24,6 @@ import WireLinkPreview
 import WireNetwork
 import WireRequestStrategy
 import WireTransport
-import WireUtilitiesPackage
 
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of

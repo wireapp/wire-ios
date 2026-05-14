@@ -18,7 +18,6 @@
 
 import WireCoreCrypto
 import WireLogging
-import WireUtilitiesPackage
 
 struct CreateMLSGroupUseCase {
 

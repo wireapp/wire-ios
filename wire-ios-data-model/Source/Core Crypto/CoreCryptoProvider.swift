@@ -20,7 +20,6 @@ import Foundation
 import WireCoreCrypto
 import WireFoundation
 import WireLogging
-import WireUtilitiesPackage
 
 // sourcery: AutoMockable
 public protocol CoreCryptoProviderProtocol {

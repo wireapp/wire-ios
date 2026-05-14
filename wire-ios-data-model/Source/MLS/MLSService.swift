@@ -22,7 +22,6 @@ import WireCoreCrypto
 import WireFoundation
 import WireLogging
 import WireNetwork
-import WireUtilitiesPackage
 
 // This is only used in tests, so it should be removed.
 public protocol MLSServiceDelegate: AnyObject {

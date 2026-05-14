@@ -21,7 +21,6 @@ import Foundation
 import WireCoreCrypto
 import WireDataModel
 import WireLogging
-import WireUtilitiesPackage
 
 // sourcery: AutoMockable
 public protocol E2EIKeyPackageRotating {

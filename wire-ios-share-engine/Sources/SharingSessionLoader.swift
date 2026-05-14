@@ -22,7 +22,6 @@ import WireDomain
 import WireFoundation
 import WireNetwork
 import WireRequestStrategy
-import WireUtilitiesPackage
 
 public struct SharingSessionLoader {
 

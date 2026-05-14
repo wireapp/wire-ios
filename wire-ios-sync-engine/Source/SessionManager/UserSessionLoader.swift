@@ -21,7 +21,6 @@ import WireDomain
 import WireFoundation
 import WireLogging
 import WireNetwork
-import WireUtilitiesPackage
 
 protocol UserSessionLoaderDelegate: AnyObject {
 

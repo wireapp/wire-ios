@@ -18,7 +18,6 @@
 
 import Foundation
 import WireCoreCrypto
-import WireUtilitiesPackage
 
 public protocol E2EISetupServiceInterface {
 

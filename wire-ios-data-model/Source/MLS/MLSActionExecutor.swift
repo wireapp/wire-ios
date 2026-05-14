@@ -20,7 +20,6 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireLogging
-import WireUtilitiesPackage
 
 public protocol MLSActionExecutorProtocol {
 
