@@ -337,39 +337,54 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     @MainActor
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(
-            context: reason.blockerViewControllerContext,
-            sessionManager: sessionManager
+        let blockerViewController = buildBlockerViewController(
+            context: reason.blockerViewControllerContext
         )
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     @MainActor
     private func showJailbroken(completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(
-            context: .jailbroken,
-            sessionManager: sessionManager
+        let blockerViewController = buildBlockerViewController(
+            context: .jailbroken
         )
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     @MainActor
     private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(
-            context: .pendingCertificateEnroll,
-            sessionManager: sessionManager
+        let blockerViewController = buildBlockerViewController(
+            context: .pendingCertificateEnroll
         )
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     @MainActor
     private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(
+        let blockerViewController = buildBlockerViewController(
             context: .databaseFailure,
-            sessionManager: sessionManager,
             error: error
         )
         replaceRootViewController(by: blockerViewController, completion: completion)
+    }
+
+    @MainActor
+    private func buildBlockerViewController(
+        context: BlockerViewControllerContext,
+        error: Error? = nil
+    ) -> BlockerViewController {
+        let kmpViewModelEnvironment = KMPViewModelEnvironment.legacyOnly(
+            sessionBoundaryContext: SessionBoundaryContext(
+                accountID: sessionManager.currentAccount?.userIdentifier.uuidString
+            )
+        )
+
+        return BlockerViewControllerBuilder(
+            context: context,
+            sessionManager: sessionManager,
+            error: error,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        ).build()
     }
 
     @MainActor

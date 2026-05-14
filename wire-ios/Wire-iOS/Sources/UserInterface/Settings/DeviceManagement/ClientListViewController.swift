@@ -27,6 +27,55 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
 
+struct SelfClientListViewControllerBuilder {
+
+    private let userSession: UserSession
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        userSession: UserSession,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.userSession = userSession
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build(clientsList: [UserClient]) -> ClientListViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation(clientsList: clientsList)
+        }
+
+        return buildLegacy(clientsList: clientsList)
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .selfClientList,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation(clientsList: [UserClient]) -> ClientListViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy(clientsList: clientsList)
+    }
+
+    @MainActor
+    private func buildLegacy(clientsList: [UserClient]) -> ClientListViewController {
+        ClientListViewController(
+            clientsList: clientsList,
+            selfClient: userSession.selfUserClient,
+            userSession: userSession,
+            credentials: nil,
+            contextProvider: userSession.contextProvider,
+            detailedView: true,
+            showTemporary: true
+        )
+    }
+}
+
 final class ClientListViewController: UIViewController,
     UITableViewDelegate,
     UITableViewDataSource,

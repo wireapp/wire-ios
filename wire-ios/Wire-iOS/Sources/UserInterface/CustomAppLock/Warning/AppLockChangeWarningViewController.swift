@@ -21,6 +21,50 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
+struct AppLockChangeWarningViewControllerBuilder {
+
+    private let isAppLockActive: Bool
+    private let userSession: UserSession
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        isAppLockActive: Bool,
+        userSession: UserSession,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.isAppLockActive = isAppLockActive
+        self.userSession = userSession
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build() -> AppLockChangeWarningViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .appLockChangeWarning,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation() -> AppLockChangeWarningViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    @MainActor
+    private func buildLegacy() -> AppLockChangeWarningViewController {
+        AppLockChangeWarningViewController(isAppLockActive: isAppLockActive, userSession: userSession)
+    }
+}
+
 protocol AppLockChangeWarningViewControllerDelegate: AnyObject {
 
     func appLockChangeWarningViewControllerDidDismiss()

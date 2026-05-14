@@ -22,6 +22,57 @@ import WireLogging
 import WireMultiBackendUI
 import WireSyncEngine
 
+struct BlockerViewControllerBuilder {
+
+    private let context: BlockerViewControllerContext
+    private let sessionManager: SessionManager?
+    private let error: Error?
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        context: BlockerViewControllerContext,
+        sessionManager: SessionManager? = nil,
+        error: Error? = nil,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.context = context
+        self.sessionManager = sessionManager
+        self.error = error
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build() -> BlockerViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .blocker,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation() -> BlockerViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    @MainActor
+    private func buildLegacy() -> BlockerViewController {
+        BlockerViewController(
+            context: context,
+            sessionManager: sessionManager,
+            error: error
+        )
+    }
+}
+
 final class BlockerViewController: LaunchImageViewController {
     private let viewModel: BlockerViewModel
     private var sessionManager: SessionManager?

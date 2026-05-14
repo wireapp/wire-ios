@@ -130,10 +130,13 @@ final class KMPViewModelEnvironmentTests: XCTestCase {
 // MARK: - Test Types
 
 private let knownScreenIDs: [KMPViewModelScreenID] = [
+    .appLockChangeWarning,
     .archivedList,
+    .blocker,
     .connectRequests,
     .createGroupConversation,
     .folderPicker,
+    .networkStatus,
     .noConversationPlaceholder,
     .searchUser,
     .sidebar,
@@ -146,6 +149,7 @@ private let knownScreenIDs: [KMPViewModelScreenID] = [
     .settingsOptions,
     .settingsRoot,
     .settingsSupport,
+    .selfClientList,
     .selfProfile,
     .startUI
 ]

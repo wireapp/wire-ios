@@ -63,10 +63,13 @@ struct KMPViewModelEnvironment {
 }
 
 enum KMPViewModelScreenID: String, Equatable {
+    case appLockChangeWarning
     case archivedList
+    case blocker
     case connectRequests
     case createGroupConversation
     case folderPicker
+    case networkStatus
     case noConversationPlaceholder
     case searchUser
     case sidebar
@@ -79,6 +82,7 @@ enum KMPViewModelScreenID: String, Equatable {
     case settingsOptions
     case settingsRoot
     case settingsSupport
+    case selfClientList
     case selfProfile
     case startUI
 }

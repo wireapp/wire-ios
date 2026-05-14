@@ -124,7 +124,8 @@ final class ConversationListViewController: UIViewController {
         conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
         folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
-        getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
+        getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol,
+        kmpViewModelEnvironment: KMPViewModelEnvironment? = nil
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -143,7 +144,8 @@ final class ConversationListViewController: UIViewController {
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
             conversationCreationRepository: conversationCreationRepository,
             createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder,
-            folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
+            folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
         )
     }
 
@@ -155,7 +157,8 @@ final class ConversationListViewController: UIViewController {
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
         conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
-        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
+        kmpViewModelEnvironment: KMPViewModelEnvironment? = nil
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -178,7 +181,13 @@ final class ConversationListViewController: UIViewController {
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
-        self.networkStatusViewController = NetworkStatusViewController(userSession: viewModel.userSession)
+        let kmpViewModelEnvironment = kmpViewModelEnvironment ?? KMPViewModelEnvironment.legacyOnly(
+            sessionBoundaryContext: SessionBoundaryContext(accountID: viewModel.account.userIdentifier.uuidString)
+        )
+        self.networkStatusViewController = NetworkStatusViewControllerBuilder(
+            userSession: viewModel.userSession,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        ).build()
 
         super.init(nibName: nil, bundle: nil)
 

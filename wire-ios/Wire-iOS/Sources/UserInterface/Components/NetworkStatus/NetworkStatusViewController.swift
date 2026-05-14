@@ -34,6 +34,47 @@ protocol NetworkStatusViewControllerDelegate: AnyObject {
         -> Bool
 }
 
+struct NetworkStatusViewControllerBuilder {
+
+    private let userSession: UserSession
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        userSession: UserSession,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.userSession = userSession
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build() -> NetworkStatusViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .networkStatus,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation() -> NetworkStatusViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    @MainActor
+    private func buildLegacy() -> NetworkStatusViewController {
+        NetworkStatusViewController(userSession: userSession)
+    }
+}
+
 final class NetworkStatusViewController: UIViewController {
 
     weak var delegate: NetworkStatusBarDelegate? {

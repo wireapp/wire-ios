@@ -211,7 +211,8 @@ final class ZClientViewController: UIViewController {
         conversationCreationRepository: conversationCreationRepository,
         createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
         folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
-        getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
+        getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase(),
+        kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
     let proximityMonitorManager: ProximityMonitorManager
@@ -825,15 +826,10 @@ final class ZClientViewController: UIViewController {
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
-            let clientListViewController = ClientListViewController(
-                clientsList: clients,
-                selfClient: userSession.selfUserClient,
+            let clientListViewController = SelfClientListViewControllerBuilder(
                 userSession: userSession,
-                credentials: nil,
-                contextProvider: userSession.contextProvider,
-                detailedView: true,
-                showTemporary: true
-            )
+                kmpViewModelEnvironment: kmpViewModelEnvironment
+            ).build(clientsList: clients)
             clientListViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
                 barButtonSystemItem: .done,
                 target: self,
