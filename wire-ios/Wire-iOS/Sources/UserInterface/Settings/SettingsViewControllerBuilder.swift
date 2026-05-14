@@ -47,7 +47,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             settingsCoordinator: settingsCoordinator,
             localDomain: userSession.resolvedBackendMetadata.domain,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled,
-            userSession: userSession
+            userSession: userSession,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
         )
     }
 

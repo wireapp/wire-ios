@@ -19,6 +19,42 @@
 import SwiftUI
 import WireDesign
 
+struct NoConversationPlaceholderViewControllerBuilder {
+
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(kmpViewModelEnvironment: KMPViewModelEnvironment) {
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build() -> NoConversationPlaceholderViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .noConversationPlaceholder,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation() -> NoConversationPlaceholderViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    @MainActor
+    private func buildLegacy() -> NoConversationPlaceholderViewController {
+        NoConversationPlaceholderViewController()
+    }
+}
+
 final class NoConversationPlaceholderViewController: UIViewController {
 
     private let viewModel: NoConversationPlaceholderViewModel

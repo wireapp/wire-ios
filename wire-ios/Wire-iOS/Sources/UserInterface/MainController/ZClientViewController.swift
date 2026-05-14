@@ -92,7 +92,9 @@ final class ZClientViewController: UIViewController {
 
     private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
         sidebar: sidebarViewController,
-        noConversationPlaceholder: NoConversationPlaceholderViewController(),
+        noConversationPlaceholder: NoConversationPlaceholderViewControllerBuilder(
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        ).build(),
         tabController: mainTabBarController
     )
 

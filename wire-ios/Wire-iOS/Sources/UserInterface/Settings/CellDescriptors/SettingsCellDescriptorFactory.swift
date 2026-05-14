@@ -33,6 +33,7 @@ struct SettingsCellDescriptorFactory {
     let localDomain: String?
     let isFederationEnabled: Bool
     let userSession: UserSession
+    var kmpViewModelEnvironment: KMPViewModelEnvironment? = nil
 
     func rootGroup(userSession: UserSession) -> any SettingsControllerGeneratorType &
         SettingsInternalGroupCellDescriptorType {
@@ -169,13 +170,7 @@ struct SettingsCellDescriptorFactory {
             identifier: type(of: self).settingsDevicesCellIdentifier,
             presentationAction: { [weak userSession] () -> (UIViewController?) in
                 guard let userSession else { return nil }
-                return ClientListViewController(
-                    clientsList: .none,
-                    selfClient: userSession.selfUserClient,
-                    userSession: userSession,
-                    contextProvider: userSession.contextProvider,
-                    detailedView: true
-                )
+                return self.buildDevicesViewController(userSession: userSession)
             },
             previewGenerator: { _ -> SettingsCellPreview in
                 return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
@@ -184,6 +179,36 @@ struct SettingsCellDescriptorFactory {
             copiableText: nil,
             settingsTopLevelMenuItem: .devices
         )
+    }
+
+    private func buildDevicesViewController(userSession: UserSession) -> UIViewController {
+        if shouldBuildKMPViewModelImplementation(for: .settingsClientList) {
+            return buildKMPViewModelDevicesImplementation(userSession: userSession)
+        }
+
+        return buildLegacyDevices(userSession: userSession)
+    }
+
+    private func buildKMPViewModelDevicesImplementation(userSession: UserSession) -> UIViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacyDevices(userSession: userSession)
+    }
+
+    private func buildLegacyDevices(userSession: UserSession) -> UIViewController {
+        ClientListViewController(
+            clientsList: .none,
+            selfClient: userSession.selfUserClient,
+            userSession: userSession,
+            contextProvider: userSession.contextProvider,
+            detailedView: true
+        )
+    }
+
+    private func shouldBuildKMPViewModelImplementation(for screenID: KMPViewModelScreenID) -> Bool {
+        kmpViewModelEnvironment?.usesKMPViewModel(
+            for: screenID,
+            isKMPImplementationAvailable: false
+        ) == true
     }
 
     func soundGroupForSetting(

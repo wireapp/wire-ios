@@ -66,11 +66,13 @@ enum KMPViewModelScreenID: String, Equatable {
     case archivedList
     case createGroupConversation
     case folderPicker
+    case noConversationPlaceholder
     case searchUser
     case sidebar
     case settingsAbout
     case settingsAccount
     case settingsAdvanced
+    case settingsClientList
     case settingsDeveloper
     case settingsDevices
     case settingsOptions
