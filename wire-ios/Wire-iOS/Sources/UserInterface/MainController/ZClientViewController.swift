@@ -75,7 +75,9 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
+    private lazy var sidebarViewController = SidebarViewControllerBuilder(
+        kmpViewModelEnvironment: kmpViewModelEnvironment
+    ).build(
         isWireDriveEnabled: userSession.isWireDriveEnabled,
         isChannelsEnabled: userSession.channelsFeature.isEnabled
     )
@@ -155,7 +157,8 @@ final class ZClientViewController: UIViewController {
         channelConversationFormFactory: channelConversationFormFactory,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
         featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
-        conversationCreationRepository: conversationCreationRepository
+        conversationCreationRepository: conversationCreationRepository,
+        kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(

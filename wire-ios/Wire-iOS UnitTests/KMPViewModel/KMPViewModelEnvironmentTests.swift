@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireSettingsUI
 
 @testable import Wire
 
@@ -114,6 +115,16 @@ final class KMPViewModelEnvironmentTests: XCTestCase {
             )
         }
     }
+
+    func testSettingsTopLevelMenuItemsMapToSeparateScreenIDs() {
+        XCTAssertEqual(SettingsTopLevelMenuItem.account.kmpViewModelScreenID, .settingsAccount)
+        XCTAssertEqual(SettingsTopLevelMenuItem.devices.kmpViewModelScreenID, .settingsDevices)
+        XCTAssertEqual(SettingsTopLevelMenuItem.options.kmpViewModelScreenID, .settingsOptions)
+        XCTAssertEqual(SettingsTopLevelMenuItem.advanced.kmpViewModelScreenID, .settingsAdvanced)
+        XCTAssertEqual(SettingsTopLevelMenuItem.support.kmpViewModelScreenID, .settingsSupport)
+        XCTAssertEqual(SettingsTopLevelMenuItem.about.kmpViewModelScreenID, .settingsAbout)
+        XCTAssertEqual(SettingsTopLevelMenuItem.developerOptions.kmpViewModelScreenID, .settingsDeveloper)
+    }
 }
 
 // MARK: - Test Types
@@ -123,9 +134,17 @@ private let knownScreenIDs: [KMPViewModelScreenID] = [
     .createGroupConversation,
     .folderPicker,
     .searchUser,
+    .sidebar,
+    .settingsAbout,
+    .settingsAccount,
+    .settingsAdvanced,
+    .settingsDeveloper,
+    .settingsDevices,
+    .settingsOptions,
     .settingsRoot,
-    .settingsTopLevelMenuItem,
-    .selfProfile
+    .settingsSupport,
+    .selfProfile,
+    .startUI
 ]
 
 private enum TestState: Equatable {

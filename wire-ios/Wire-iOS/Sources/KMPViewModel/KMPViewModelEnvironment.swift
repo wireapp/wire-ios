@@ -67,7 +67,15 @@ enum KMPViewModelScreenID: String, Equatable {
     case createGroupConversation
     case folderPicker
     case searchUser
+    case sidebar
+    case settingsAbout
+    case settingsAccount
+    case settingsAdvanced
+    case settingsDeveloper
+    case settingsDevices
+    case settingsOptions
     case settingsRoot
-    case settingsTopLevelMenuItem
+    case settingsSupport
     case selfProfile
+    case startUI
 }

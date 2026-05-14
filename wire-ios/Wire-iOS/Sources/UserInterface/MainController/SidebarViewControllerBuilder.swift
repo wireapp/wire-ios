@@ -26,10 +26,53 @@ import WireUtilities
 
 struct SidebarViewControllerBuilder {
 
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(kmpViewModelEnvironment: KMPViewModelEnvironment) {
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
     @MainActor
     func build(
         isWireDriveEnabled: Bool = false,
         isChannelsEnabled: Bool = false
+    ) -> SidebarViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation(
+                isWireDriveEnabled: isWireDriveEnabled,
+                isChannelsEnabled: isChannelsEnabled
+            )
+        }
+
+        return buildLegacy(
+            isWireDriveEnabled: isWireDriveEnabled,
+            isChannelsEnabled: isChannelsEnabled
+        )
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .sidebar,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation(
+        isWireDriveEnabled: Bool,
+        isChannelsEnabled: Bool
+    ) -> SidebarViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy(
+            isWireDriveEnabled: isWireDriveEnabled,
+            isChannelsEnabled: isChannelsEnabled
+        )
+    }
+
+    @MainActor
+    private func buildLegacy(
+        isWireDriveEnabled: Bool,
+        isChannelsEnabled: Bool
     ) -> SidebarViewController {
 
         let accountImageViewDesign = AccountImageViewDesign()

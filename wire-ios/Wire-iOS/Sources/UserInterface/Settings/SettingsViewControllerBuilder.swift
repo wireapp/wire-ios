@@ -115,7 +115,7 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         topLevelMenuItem: SettingsTopLevelMenuItem,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController {
-        if shouldBuildKMPViewModelImplementation(for: .settingsTopLevelMenuItem) {
+        if shouldBuildKMPViewModelImplementation(for: topLevelMenuItem.kmpViewModelScreenID) {
             return buildKMPViewModelTopLevelMenuItemImplementation(
                 topLevelMenuItem: topLevelMenuItem,
                 mainCoordinator: mainCoordinator
@@ -257,5 +257,27 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
             userSession: userSession
         )
+    }
+}
+
+extension SettingsTopLevelMenuItem {
+
+    var kmpViewModelScreenID: KMPViewModelScreenID {
+        switch self {
+        case .account:
+            .settingsAccount
+        case .devices:
+            .settingsDevices
+        case .options:
+            .settingsOptions
+        case .advanced:
+            .settingsAdvanced
+        case .support:
+            .settingsSupport
+        case .about:
+            .settingsAbout
+        case .developerOptions:
+            .settingsDeveloper
+        }
     }
 }

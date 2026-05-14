@@ -29,7 +29,11 @@ final class SidebarViewControllerBuilderSnapshotTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        sut = SidebarViewControllerBuilder().build()
+        sut = SidebarViewControllerBuilder(
+            kmpViewModelEnvironment: .legacyOnly(
+                sessionBoundaryContext: SessionBoundaryContext(accountID: "account-1")
+            )
+        ).build()
         sut.accountInfo.displayName = "Firstname Surname"
         sut.accountInfo.username = "@username"
         sut.accountInfo.availability = .busy

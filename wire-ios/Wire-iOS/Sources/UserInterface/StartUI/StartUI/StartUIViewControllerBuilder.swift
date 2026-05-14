@@ -32,6 +32,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
 
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
 
     let featureConfigRepository: FeatureConfigRepositoryProtocol
 
@@ -44,7 +45,8 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         featureConfigRepository: FeatureConfigRepositoryProtocol,
-        conversationCreationRepository: ConversationCreationRepositoryProtocol
+        conversationCreationRepository: ConversationCreationRepositoryProtocol,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
     ) {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
@@ -53,12 +55,51 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.featureConfigRepository = featureConfigRepository
         self.conversationCreationRepository = conversationCreationRepository
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
     }
 
     @MainActor
     func build() async -> UIViewController? {
         let isAppsFeatureEnabled = await featureConfigRepository.isFeatureEnabled(.apps)
         let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
+
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation(
+                areLegacyBotsAvailable: areLegacyBotsAvailable,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+        }
+
+        return buildLegacy(
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
+            isAppsFeatureEnabled: isAppsFeatureEnabled
+        )
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .startUI,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation(
+        areLegacyBotsAvailable: Bool,
+        isAppsFeatureEnabled: Bool
+    ) -> UIViewController? {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy(
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
+            isAppsFeatureEnabled: isAppsFeatureEnabled
+        )
+    }
+
+    @MainActor
+    private func buildLegacy(
+        areLegacyBotsAvailable: Bool,
+        isAppsFeatureEnabled: Bool
+    ) -> UIViewController? {
         let rootViewController = StartUIViewController(
             areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
