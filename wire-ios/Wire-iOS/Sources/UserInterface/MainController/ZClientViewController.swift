@@ -171,6 +171,11 @@ final class ZClientViewController: UIViewController {
         kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
+    private lazy var archivedListViewControllerBuilder = ArchivedListViewControllerBuilder(
+        userSession: userSession,
+        kmpViewModelEnvironment: kmpViewModelEnvironment
+    )
+
     private(set) lazy var conversationCreationRepository = ConversationCreationRepository(
         searchUsersUseCase: { [weak userSession] in userSession?.makeSearchUsersUseCase() }
     )
@@ -416,7 +421,7 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupSplitViewController() {
-        let archiveUI = ArchivedListViewController(userSession: userSession)
+        let archiveUI = archivedListViewControllerBuilder.build()
 
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
