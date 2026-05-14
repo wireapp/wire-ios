@@ -79,11 +79,12 @@ final class CallStatusViewController: UIViewController {
     }
 
     private func updateState() {
-        statusView.configuration = configuration
+        let viewState = viewModel.viewState(for: configuration)
 
-        securityLevelView.configure(with: configuration.classification)
+        statusView.configuration = viewState.statusConfiguration
+        securityLevelView.configure(with: viewState.securityClassification)
 
-        switch viewModel.timerAction(for: configuration.state) {
+        switch viewState.timerAction {
         case .start:
             startCallDurationTimer()
         case .stop:

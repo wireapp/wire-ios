@@ -20,8 +20,41 @@ import UIKit
 
 struct CallingActionsInfoViewModel {
 
+    struct DisplayState {
+        let isIncomingCall: Bool
+        let isSecurityLevelVisible: Bool
+    }
+
+    struct LayoutState {
+        let actionsHeight: CGFloat
+        let stackViewAlignment: UIStackView.Alignment
+    }
+
     func participantsHeaderTitle(count: Int) -> String {
         L10n.Localizable.Call.Participants.showAll(count).uppercased()
+    }
+
+    func displayState(for configuration: CallInfoConfiguration) -> DisplayState {
+        DisplayState(
+            isIncomingCall: configuration.state.isIncoming,
+            isSecurityLevelVisible: configuration.classification != nil
+        )
+    }
+
+    func layoutState(
+        isLandscape: Bool,
+        displayState: DisplayState,
+        bottomSafeAreaInset: CGFloat
+    ) -> LayoutState {
+        LayoutState(
+            actionsHeight: actionsHeight(
+                isLandscape: isLandscape,
+                isIncomingCall: displayState.isIncomingCall,
+                isSecurityLevelVisible: displayState.isSecurityLevelVisible,
+                bottomSafeAreaInset: bottomSafeAreaInset
+            ),
+            stackViewAlignment: stackViewAlignment(isLandscape: isLandscape)
+        )
     }
 
     func actionsHeight(

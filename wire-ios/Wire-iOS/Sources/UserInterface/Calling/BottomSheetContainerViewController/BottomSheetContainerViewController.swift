@@ -36,6 +36,7 @@ class BottomSheetContainerViewController: UIViewController {
 
     // MARK: - Variables
 
+    private let viewModel = BottomSheetContainerViewModel()
     private var topConstraint = NSLayoutConstraint()
     var state: BottomSheetState = .initial {
         didSet {
@@ -51,8 +52,9 @@ class BottomSheetContainerViewController: UIViewController {
 
     var configuration: BottomSheetConfiguration {
         didSet {
-            visibleControllerBottomConstraint.constant = -configuration.initialOffset
-            bottomViewHeightConstraint.constant = configuration.height
+            let constraintState = viewModel.configurationConstraintState(for: configuration)
+            visibleControllerBottomConstraint.constant = constraintState.visibleControllerBottomConstant
+            bottomViewHeightConstraint.constant = constraintState.bottomViewHeightConstant
             view.setNeedsLayout()
         }
     }
@@ -147,7 +149,7 @@ class BottomSheetContainerViewController: UIViewController {
     // MARK: - Bottom Sheet Actions
 
     func showBottomSheet(animated: Bool = true) {
-        topConstraint.constant = -configuration.height
+        topConstraint.constant = viewModel.topConstraintConstant(for: .full, configuration: configuration)
 
         if animated {
             UIView.animate(withDuration: 0.2, animations: {
@@ -164,7 +166,7 @@ class BottomSheetContainerViewController: UIViewController {
     }
 
     func hideBottomSheet(animated: Bool = true) {
-        topConstraint.constant = -configuration.initialOffset
+        topConstraint.constant = viewModel.topConstraintConstant(for: .initial, configuration: configuration)
 
         if animated {
             UIView.animate(
@@ -193,54 +195,52 @@ class BottomSheetContainerViewController: UIViewController {
         let translation = sender.translation(in: bottomSheetViewController.view)
         let velocity = sender.velocity(in: bottomSheetViewController.view)
 
-        let yTranslationMagnitude = translation.y.magnitude
-
         switch sender.state {
         case .began, .changed:
-            if state == .full {
-                guard translation.y > 0 else { return }
-                topConstraint.constant = -(configuration.height - yTranslationMagnitude)
+            switch viewModel.panChangeDecision(
+                state: state,
+                translationY: translation.y,
+                configuration: configuration
+            ) {
+            case .none:
+                return
+            case let .update(topConstraintConstant):
+                topConstraint.constant = topConstraintConstant
                 view.layoutIfNeeded()
-            } else {
-                let newConstant = -(configuration.initialOffset + yTranslationMagnitude)
-                guard translation.y < 0 else { return }
-                guard newConstant.magnitude < configuration.height else {
-                    showBottomSheet()
-                    return
-                }
-                topConstraint.constant = newConstant
-                view.layoutIfNeeded()
+            case .show:
+                showBottomSheet()
+                return
             }
-            let percent = (-topConstraint.constant - configuration.initialOffset) /
-                (configuration.height - configuration.initialOffset)
+            let percent = viewModel.offsetPercentage(
+                topConstraintConstant: topConstraint.constant,
+                configuration: configuration
+            )
             bottomSheetChangedOffset(fullHeightPercentage: percent)
         case .ended:
-            if state == .full {
-                if velocity.y < 0 {
-                    showBottomSheet()
-                } else if yTranslationMagnitude >= configuration.height / 2 || velocity.y > 1000 {
-                    hideBottomSheet()
-                } else {
-                    showBottomSheet()
-                }
-            } else {
-                if yTranslationMagnitude >= configuration.height / 2 || velocity.y < -1000 {
-                    showBottomSheet()
-                } else {
-                    hideBottomSheet()
-                }
-            }
+            apply(
+                snapDecision: viewModel.panEndSnapDecision(
+                    state: state,
+                    translationY: translation.y,
+                    velocityY: velocity.y,
+                    configuration: configuration
+                )
+            )
         case .failed:
-            if state == .full {
-                showBottomSheet()
-            } else {
-                hideBottomSheet()
-            }
+            apply(snapDecision: viewModel.panFailedSnapDecision(state: state))
         default: break
         }
     }
 
     func bottomSheetChangedOffset(fullHeightPercentage: CGFloat) {}
+
+    private func apply(snapDecision: BottomSheetContainerViewModel.SnapDecision) {
+        switch snapDecision {
+        case .show:
+            showBottomSheet()
+        case .hide:
+            hideBottomSheet()
+        }
+    }
 }
 
 extension BottomSheetContainerViewController: UIGestureRecognizerDelegate {

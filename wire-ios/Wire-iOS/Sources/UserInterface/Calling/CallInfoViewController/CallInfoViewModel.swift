@@ -20,7 +20,23 @@ import UIKit
 
 struct CallInfoViewModel {
 
-    func isAccessoryHidden(verticalSizeClass: UIUserInterfaceSizeClass, isCallConnected: Bool) -> Bool {
-        verticalSizeClass == .compact && !isCallConnected
+    struct DisplayState {
+        let isAccessoryHidden: Bool
+    }
+
+    struct ActionState {
+        let minimizeOverlayAction: CallAction
+        let showParticipantsListAction: CallAction
+    }
+
+    func displayState(verticalSizeClass: UIUserInterfaceSizeClass, isCallConnected: Bool) -> DisplayState {
+        DisplayState(isAccessoryHidden: verticalSizeClass == .compact && !isCallConnected)
+    }
+
+    func actionState() -> ActionState {
+        ActionState(
+            minimizeOverlayAction: .minimizeOverlay,
+            showParticipantsListAction: .showParticipantsList
+        )
     }
 }

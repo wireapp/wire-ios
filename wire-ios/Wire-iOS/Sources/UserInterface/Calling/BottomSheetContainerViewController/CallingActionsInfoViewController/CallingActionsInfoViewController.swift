@@ -28,6 +28,10 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     private let participantsHeaderHeight: CGFloat = 42
     private let cellHeight: CGFloat = 56
     private let viewModel = CallingActionsInfoViewModel()
+    private var displayState = CallingActionsInfoViewModel.DisplayState(
+        isIncomingCall: false,
+        isSecurityLevelVisible: true
+    )
     private var topConstraint: NSLayoutConstraint?
     private let selfUser: UserType
 
@@ -152,23 +156,22 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     func updateActionViewHeight() {
-        let height = calculateHeightConstant()
-        actionsViewHeightConstraint.constant = height
-        delegate?.actionsViewHeightChanged(to: height)
-        actionsView.verticalStackView.alignment = determineStackViewAlignment()
+        let layoutState = viewModel.layoutState(
+            isLandscape: UIDevice.current.twoDimensionOrientation.isLandscape,
+            displayState: displayState,
+            bottomSafeAreaInset: view.safeAreaInsets.bottom
+        )
+        actionsViewHeightConstraint.constant = layoutState.actionsHeight
+        delegate?.actionsViewHeightChanged(to: layoutState.actionsHeight)
+        actionsView.verticalStackView.alignment = layoutState.stackViewAlignment
     }
 
     private func calculateHeightConstant() -> CGFloat {
-        viewModel.actionsHeight(
+        viewModel.layoutState(
             isLandscape: UIDevice.current.twoDimensionOrientation.isLandscape,
-            isIncomingCall: isIncomingCall,
-            isSecurityLevelVisible: !securityLevelView.isHidden,
+            displayState: displayState,
             bottomSafeAreaInset: view.safeAreaInsets.bottom
-        )
-    }
-
-    private func determineStackViewAlignment() -> UIStackView.Alignment {
-        viewModel.stackViewAlignment(isLandscape: UIDevice.current.twoDimensionOrientation.isLandscape)
+        ).actionsHeight
     }
 
     private func updateRows() {
@@ -197,9 +200,11 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
 
 extension CallingActionsInfoViewController: CallInfoConfigurationObserver {
     func didUpdateConfiguration(configuration: CallInfoConfiguration) {
-        isIncomingCall = configuration.state.isIncoming
+        displayState = viewModel.displayState(for: configuration)
+        isIncomingCall = displayState.isIncomingCall
         actionsView.isIncomingCall = isIncomingCall
         actionsView.update(with: configuration)
+        securityLevelView.isHidden = !displayState.isSecurityLevelVisible
         securityLevelView.configure(with: configuration.classification)
 
         updateActionViewHeight()

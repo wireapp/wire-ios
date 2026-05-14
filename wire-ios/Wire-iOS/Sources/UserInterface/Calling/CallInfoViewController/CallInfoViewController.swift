@@ -161,10 +161,11 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     }
 
     private func updateAccessoryView() {
-        accessoryViewController.view.isHidden = viewModel.isAccessoryHidden(
+        let displayState = viewModel.displayState(
             verticalSizeClass: traitCollection.verticalSizeClass,
             isCallConnected: configuration.callState.isConnected
         )
+        accessoryViewController.view.isHidden = displayState.isAccessoryHidden
     }
 
     private func updateState() {
@@ -179,7 +180,10 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
 
     @objc
     private func minimizeCallOverlay(_ sender: UIBarButtonItem) {
-        delegate?.infoViewController(self, perform: .minimizeOverlay)
+        delegate?.infoViewController(
+            self,
+            perform: viewModel.actionState().minimizeOverlayAction
+        )
     }
 
     func callActionsView(_ callActionsView: CallActionsView, perform action: CallAction) {
@@ -187,6 +191,9 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     }
 
     func callAccessoryViewControllerDidSelectShowMore(viewController: CallAccessoryViewController) {
-        delegate?.infoViewController(self, perform: .showParticipantsList)
+        delegate?.infoViewController(
+            self,
+            perform: viewModel.actionState().showParticipantsListAction
+        )
     }
 }

@@ -39,6 +39,7 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     }
 
     weak var delegate: CallInfoRootViewControllerDelegate?
+    private let viewModel = CallInfoRootViewModel()
     private let contentController: CallInfoViewController
     private let contentNavigationController: UINavigationController
     private let callDegradationController: CallDegradationController
@@ -147,10 +148,11 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     // MARK: - Delegates
 
     func infoViewController(_ viewController: CallInfoViewController, perform action: CallAction) {
-        switch (action, configuration.degradationState) {
-        case (.showParticipantsList, _): presentParticipantsList()
-        case (.acceptCall, .incoming): delegate?.callingActionsViewPerformAction(.acceptDegradedCall)
-        default: delegate?.callingActionsViewPerformAction(action)
+        switch viewModel.route(for: action, degradationState: configuration.degradationState) {
+        case .presentParticipantsList:
+            presentParticipantsList()
+        case let .perform(action):
+            delegate?.callingActionsViewPerformAction(action)
         }
     }
 
@@ -159,8 +161,10 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         didShow viewController: UIViewController,
         animated: Bool
     ) {
-        guard viewController is CallInfoViewController else { return }
-        context = .overview
+        guard let nextContext = viewModel.contextAfterShowingOverview(
+            isOverviewVisible: viewController is CallInfoViewController
+        ) else { return }
+        context = nextContext
     }
 
     func continueDegradedCall() {
@@ -171,4 +175,30 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         delegate?.callingActionsViewPerformAction(.terminateDegradedCall)
     }
 
+}
+
+private struct CallInfoRootViewModel {
+
+    enum ActionRoute {
+        case presentParticipantsList
+        case perform(CallAction)
+    }
+
+    func route(
+        for action: CallAction,
+        degradationState: CallDegradationState
+    ) -> ActionRoute {
+        switch (action, degradationState) {
+        case (.showParticipantsList, _):
+            return .presentParticipantsList
+        case (.acceptCall, .incoming):
+            return .perform(.acceptDegradedCall)
+        default:
+            return .perform(action)
+        }
+    }
+
+    func contextAfterShowingOverview(isOverviewVisible: Bool) -> CallInfoRootViewController.Context? {
+        return isOverviewVisible ? .overview : nil
+    }
 }

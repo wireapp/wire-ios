@@ -17,13 +17,28 @@
 //
 
 import Foundation
+import WireSyncEngine
 
 struct CallStatusViewModel {
+
+    struct ViewState {
+        let statusConfiguration: CallStatusViewInputType
+        let securityClassification: SecurityClassification?
+        let timerAction: TimerAction
+    }
 
     enum TimerAction: Equatable {
         case start
         case stop
         case keepCurrent
+    }
+
+    func viewState(for configuration: CallStatusViewInputType) -> ViewState {
+        ViewState(
+            statusConfiguration: configuration,
+            securityClassification: configuration.classification,
+            timerAction: timerAction(for: configuration.state)
+        )
     }
 
     func timerAction(for state: CallStatusViewState) -> TimerAction {
