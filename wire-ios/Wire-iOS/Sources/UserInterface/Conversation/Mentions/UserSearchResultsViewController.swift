@@ -41,35 +41,85 @@ protocol UserList: AnyObject {
     func selectNextUser()
 }
 
+private struct UserSearchResultsViewModel {
+
+    enum DisplayState {
+        case hidden
+        case visible
+    }
+
+    private var searchResults: [UserType] = []
+    private(set) var selectedRow: Int?
+
+    var displayState: DisplayState {
+        searchResults.isEmpty ? .hidden : .visible
+    }
+
+    var rowCount: Int {
+        searchResults.count
+    }
+
+    var users: [UserType] {
+        get {
+            Array(searchResults.reversed())
+        }
+
+        set {
+            setSearchResults(Array(newValue.reversed()))
+        }
+    }
+
+    var selectedUser: UserType? {
+        guard let selectedRow else {
+            return .none
+        }
+
+        return user(at: selectedRow)
+    }
+
+    mutating func setSearchResults(_ results: [UserType]) {
+        searchResults = results
+        selectedRow = searchResults.isEmpty ? .none : searchResults.count - 1
+    }
+
+    mutating func dismiss() {
+        selectedRow = .none
+    }
+
+    mutating func selectNextUser() -> Bool {
+        guard let selectedRow else { return false }
+
+        self.selectedRow = clampedRow(selectedRow + 1)
+        return true
+    }
+
+    mutating func selectPreviousUser() -> Bool {
+        guard let selectedRow else { return false }
+
+        self.selectedRow = clampedRow(selectedRow - 1)
+        return true
+    }
+
+    func user(at row: Int) -> UserType {
+        searchResults[row]
+    }
+
+    func isSelected(row: Int) -> Bool {
+        row == selectedRow
+    }
+
+    private func clampedRow(_ row: Int) -> Int {
+        min(searchResults.count - 1, max(0, row))
+    }
+}
+
 final class UserSearchResultsViewController: UIViewController, KeyboardCollapseObserver {
 
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
-    private var searchResults: [UserType] = [] {
-        didSet {
-            if !searchResults.isEmpty {
-                collectionViewSelectedIndex = searchResults.count - 1
-            } else {
-                collectionViewSelectedIndex = .none
-            }
-        }
-    }
+    private var viewModel = UserSearchResultsViewModel()
 
     private let rowHeight: CGFloat = 56.0
     private var isKeyboardCollapsedFirstCalled = true
-
-    private var _collectionViewSelectedIndex: Int? = .none
-    private var collectionViewSelectedIndex: Int? {
-        get {
-            _collectionViewSelectedIndex
-        }
-        set {
-            if let newValue {
-                _collectionViewSelectedIndex = min(searchResults.count - 1, max(0, newValue))
-            } else {
-                _collectionViewSelectedIndex = newValue
-            }
-        }
-    }
 
     private(set) var isKeyboardCollapsed: Bool = true {
         didSet {
@@ -152,7 +202,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
     @objc
     func reloadTable(with results: [UserType]) {
-        searchResults = results
+        viewModel.setSearchResults(results)
         resizeTable()
 
         collectionView.reloadData()
@@ -160,16 +210,17 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
         scrollToLastItem()
 
-        if !results.isEmpty {
+        switch viewModel.displayState {
+        case .visible:
             show()
-        } else {
+        case .hidden:
             dismiss()
         }
     }
 
     private func resizeTable() {
         let viewHeight = view.bounds.size.height
-        let contentHeight = CGFloat(searchResults.count) * rowHeight
+        let contentHeight = CGFloat(viewModel.rowCount) * rowHeight
 
         // If there are more rows that can fix on screen, enable scroll.
         collectionView.isScrollEnabled = contentHeight > viewHeight
@@ -180,7 +231,9 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     }
 
     private func scrollToLastItem() {
-        let firstMatchIndexPath = IndexPath(item: searchResults.count - 1, section: 0)
+        guard viewModel.rowCount > 0 else { return }
+
+        let firstMatchIndexPath = IndexPath(item: viewModel.rowCount - 1, section: 0)
 
         if collectionView.containsCell(at: firstMatchIndexPath) {
             collectionView.scrollToItem(at: firstMatchIndexPath, at: .bottom, animated: false)
@@ -214,32 +267,23 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 extension UserSearchResultsViewController: Dismissable {
     func dismiss() {
         view.isHidden = true
-        collectionViewSelectedIndex = .none
+        viewModel.dismiss()
     }
 }
 
 extension UserSearchResultsViewController: UserList {
     var selectedUser: UserType? {
-
-        guard let collectionViewSelectedIndex else {
-            return .none
-        }
-
-        return searchResults[collectionViewSelectedIndex]
+        viewModel.selectedUser
     }
 
     func selectNextUser() {
-        guard let collectionViewSelectedIndex else { return }
-
-        self.collectionViewSelectedIndex = collectionViewSelectedIndex + 1
+        guard viewModel.selectNextUser() else { return }
 
         updateHighlightedItem()
     }
 
     func selectPreviousUser() {
-        guard let collectionViewSelectedIndex else { return }
-
-        self.collectionViewSelectedIndex = collectionViewSelectedIndex - 1
+        guard viewModel.selectPreviousUser() else { return }
 
         updateHighlightedItem()
     }
@@ -247,10 +291,10 @@ extension UserSearchResultsViewController: UserList {
     func updateHighlightedItem() {
         collectionView.reloadData()
 
-        guard let collectionViewSelectedIndex else { return }
+        guard let selectedRow = viewModel.selectedRow else { return }
 
         collectionView.scrollToItem(
-            at: IndexPath(item: collectionViewSelectedIndex, section: 0),
+            at: IndexPath(item: selectedRow, section: 0),
             at: .centeredVertically,
             animated: true
         )
@@ -258,11 +302,11 @@ extension UserSearchResultsViewController: UserList {
 
     var users: [UserType] {
         get {
-            searchResults.reversed()
+            viewModel.users
         }
 
         set {
-            reloadTable(with: newValue.reversed())
+            reloadTable(with: Array(newValue.reversed()))
         }
     }
 }
@@ -274,7 +318,7 @@ extension UserSearchResultsViewController: UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        searchResults.count
+        viewModel.rowCount
     }
 }
 
@@ -294,7 +338,7 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let user = searchResults[indexPath.item]
+        let user = viewModel.user(at: indexPath.item)
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: UserCell.reuseIdentifier,
             for: indexPath
@@ -312,7 +356,7 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
 
         // hightlight the lowest cell if keyboard is collapsed
         if isKeyboardCollapsed || UIDevice.current.userInterfaceIdiom == .pad {
-            if indexPath.item == collectionViewSelectedIndex {
+            if viewModel.isSelected(row: indexPath.item) {
                 cell.backgroundColor = SemanticColors.View.backgroundUserCellHightLighted
             } else {
                 cell.backgroundColor = SemanticColors.View.backgroundUserCell
@@ -326,7 +370,7 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.didSelect(user: searchResults[indexPath.item])
+        delegate?.didSelect(user: viewModel.user(at: indexPath.item))
         dismiss()
     }
 }

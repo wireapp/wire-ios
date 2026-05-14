@@ -39,6 +39,18 @@ final class ArchivedListViewModel: NSObject {
         archivedConversations.isEmpty
     }
 
+    var navigationTitle: String {
+        L10n.Localizable.ArchivedList.title.capitalized
+    }
+
+    var emptyPlaceholderTitle: String {
+        L10n.Localizable.ArchivedList.EmptyPlaceholder.headline + " 👻"
+    }
+
+    var emptyPlaceholderDescription: String {
+        L10n.Localizable.ArchivedList.EmptyPlaceholder.subheadline
+    }
+
     init(userSession: UserSession) {
         self.userSession = userSession
         super.init()

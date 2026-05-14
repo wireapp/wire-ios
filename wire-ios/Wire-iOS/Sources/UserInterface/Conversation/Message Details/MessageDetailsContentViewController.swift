@@ -46,6 +46,12 @@ final class MessageDetailsContentViewController: UIViewController {
     }
 
     struct ViewModel {
+        struct EmptyState {
+            let accessibilityIdentifier: String
+            let placeholderText: String
+            let icon: StyleKitIcon
+        }
+
         let contentType: ContentType
         let sections: [MessageDetailsSectionDescription]
 
@@ -70,6 +76,31 @@ final class MessageDetailsContentViewController: UIViewController {
                 } else {
                     return MessageDetails.Tabs.reactions(count)
                 }
+            }
+        }
+
+        var emptyState: EmptyState {
+            switch contentType {
+            case .reactions:
+                EmptyState(
+                    accessibilityIdentifier: "placeholder.no_likes",
+                    placeholderText: MessageDetails.emptyLikes,
+                    icon: .like
+                )
+
+            case .receipts(enabled: true):
+                EmptyState(
+                    accessibilityIdentifier: "placeholder.no_read_receipts",
+                    placeholderText: MessageDetails.emptyReadReceipts,
+                    icon: .eye
+                )
+
+            case .receipts(enabled: false):
+                EmptyState(
+                    accessibilityIdentifier: "placeholder.read_receipts_disabled",
+                    placeholderText: MessageDetails.readReceiptsDisabled,
+                    icon: .eye
+                )
             }
         }
     }
@@ -208,7 +239,7 @@ final class MessageDetailsContentViewController: UIViewController {
         view.addSubview(subtitleLabel)
 
         noResultsView.isHidden = true
-        configureForContentType()
+        configureEmptyState()
         view.addSubview(noResultsView)
         updateData(sections)
         configureConstraints()
@@ -275,23 +306,11 @@ final class MessageDetailsContentViewController: UIViewController {
         subtitleBottom?.constant = constant
     }
 
-    private func configureForContentType() {
-        switch contentType {
-        case .reactions:
-            noResultsView.label.accessibilityIdentifier = "placeholder.no_likes"
-            noResultsView.placeholderText = MessageDetails.emptyLikes
-            noResultsView.icon = .like
-
-        case .receipts(enabled: true):
-            noResultsView.label.accessibilityIdentifier = "placeholder.no_read_receipts"
-            noResultsView.placeholderText = MessageDetails.emptyReadReceipts
-            noResultsView.icon = .eye
-
-        case .receipts(enabled: false):
-            noResultsView.label.accessibilityIdentifier = "placeholder.read_receipts_disabled"
-            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled
-            noResultsView.icon = .eye
-        }
+    private func configureEmptyState() {
+        let emptyState = viewModel.emptyState
+        noResultsView.label.accessibilityIdentifier = emptyState.accessibilityIdentifier
+        noResultsView.placeholderText = emptyState.placeholderText
+        noResultsView.icon = emptyState.icon
     }
 
     // MARK: - Updating the Data

@@ -32,17 +32,9 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     private let userSession: UserSession
     private var values: ConversationCreationValues
 
-    private lazy var viewModel = ConversationChannelCreationFormViewModel(
-        channelName: "",
-        channelInvitePolicy: .admins,
-        channelHistoryOption: .off,
-        areAppsSupported: values.isAppsFeatureEnabled,
-        appsAllowed: true,
-        guestsAllowed: true,
-        readReceiptsEnabled: true,
-        isUserPremium: userSession.isEnterpriseUser,
-        isWireDriveEnabled: userSession.isWireDriveEnabled,
-        teamsURL: URL.manageTeam(source: .settings),
+    private lazy var viewModel = WireConversationChannelCreationFormViewModel(
+        values: values,
+        userSession: userSession,
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
                 self?.onFormValidityUpdate(formIsValid: formIsValid)
@@ -54,12 +46,12 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     private lazy var hostingController: UIHostingController<some View> = UIHostingController(
         rootView: ConversationChannelCreationForm(
-            viewModel: viewModel
+            viewModel: viewModel.formViewModel
         ).environment(\.wireAccentColor, userSession.selfUser.wireAccentColor)
     )
 
     @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
-        viewModel.getChannelCreationSettings()
+        viewModel.channelCreationSettings
     }
 
     init(
@@ -126,7 +118,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         )
         nextButton.accessibilityIdentifier = Locators.CreateChannelPage.newChannelNextButton.rawValue
         navigationItem.rightBarButtonItem = nextButton
-        nextButton.isEnabled = viewModel.isFormValid
+        nextButton.isEnabled = viewModel.isProceedActionEnabled
     }
 
     private var navigationBarTitle: String? {
@@ -139,17 +131,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     @MainActor
     func attemptToProceedToParticipants() {
-        guard
-            let channelCreationSettings,
-            !channelCreationSettings.channelName.isEmpty
-        else { return }
-
-        values.name = channelCreationSettings.channelName
-        values.allowGuests = channelCreationSettings.guestsAllowed
-        values.allowApps = channelCreationSettings.appsAllowed
-        values.enableReceipts = channelCreationSettings.readReceiptsEnabled
-        values.channelHistoryDepth = channelCreationSettings.historyDepth
-        values.enableFileManagement = channelCreationSettings.fileManagementEnabled
+        guard viewModel.updateValuesForProceeding(&values) else { return }
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
@@ -163,6 +145,56 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         }
         participantsController.conversationCreationDelegate = self
         navigationController?.pushViewController(participantsController, animated: true)
+    }
+}
+
+private final class WireConversationChannelCreationFormViewModel {
+
+    let formViewModel: ConversationChannelCreationFormViewModel
+
+    var isProceedActionEnabled: Bool {
+        formViewModel.isFormValid
+    }
+
+    @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
+        formViewModel.getChannelCreationSettings()
+    }
+
+    init(
+        values: ConversationCreationValues,
+        userSession: UserSession,
+        onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
+    ) {
+        self.formViewModel = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: values.isAppsFeatureEnabled,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
+            isUserPremium: userSession.isEnterpriseUser,
+            isWireDriveEnabled: userSession.isWireDriveEnabled,
+            teamsURL: URL.manageTeam(source: .settings),
+            onFormValidityUpdate: onFormValidityUpdate
+        )
+    }
+
+    @MainActor
+    func updateValuesForProceeding(_ values: inout ConversationCreationValues) -> Bool {
+        guard
+            let channelCreationSettings,
+            !channelCreationSettings.channelName.isEmpty
+        else { return false }
+
+        values.name = channelCreationSettings.channelName
+        values.allowGuests = channelCreationSettings.guestsAllowed
+        values.allowApps = channelCreationSettings.appsAllowed
+        values.enableReceipts = channelCreationSettings.readReceiptsEnabled
+        values.channelHistoryDepth = channelCreationSettings.historyDepth
+        values.enableFileManagement = channelCreationSettings.fileManagementEnabled
+
+        return true
     }
 }
 

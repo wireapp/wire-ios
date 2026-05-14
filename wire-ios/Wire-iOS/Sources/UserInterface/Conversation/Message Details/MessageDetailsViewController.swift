@@ -80,6 +80,9 @@ final class MessageDetailsViewController: UIViewController {
 
     let container: TabBarController
     private let viewControllers: ViewControllers
+    private var viewModel: MessageDetailsViewModel {
+        dataSource.viewModel
+    }
 
     // MARK: - Initialization
 
@@ -127,12 +130,14 @@ final class MessageDetailsViewController: UIViewController {
         self.dataSource = MessageDetailsDataSource(message: message, userSession: userSession)
         self.userSession = userSession
 
+        let viewModel = dataSource.viewModel
+
         // Setup view controllers based on display mode
-        switch dataSource.displayMode {
+        switch viewModel.displayMode {
         case .combined:
             let readReceiptsViewController = MessageDetailsContentViewController(
-                contentType: .receipts(enabled: dataSource.supportsReadReceipts),
-                conversation: dataSource.conversation,
+                contentType: .receipts(enabled: viewModel.supportsReadReceipts),
+                conversation: viewModel.conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
@@ -140,7 +145,7 @@ final class MessageDetailsViewController: UIViewController {
             )
             let reactionsViewController = MessageDetailsContentViewController(
                 contentType: .reactions,
-                conversation: dataSource.conversation,
+                conversation: viewModel.conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
@@ -154,7 +159,7 @@ final class MessageDetailsViewController: UIViewController {
         case .reactions:
             let reactionsViewController = MessageDetailsContentViewController(
                 contentType: .reactions,
-                conversation: dataSource.conversation,
+                conversation: viewModel.conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
@@ -164,8 +169,8 @@ final class MessageDetailsViewController: UIViewController {
 
         case .receipts:
             let readReceiptsViewController = MessageDetailsContentViewController(
-                contentType: .receipts(enabled: dataSource.supportsReadReceipts),
-                conversation: dataSource.conversation,
+                contentType: .receipts(enabled: viewModel.supportsReadReceipts),
+                conversation: viewModel.conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
@@ -176,7 +181,7 @@ final class MessageDetailsViewController: UIViewController {
 
         self.container = TabBarController(viewControllers: viewControllers.all)
 
-        if let tabIndex = dataSource.viewModel.selectedTabIndex(preferredDisplayMode: preferredDisplayMode) {
+        if let tabIndex = viewModel.selectedTabIndex(preferredDisplayMode: preferredDisplayMode) {
             container.selectIndex(tabIndex, animated: false)
         }
 
@@ -221,7 +226,7 @@ final class MessageDetailsViewController: UIViewController {
 
         // use nav bar appearance before commiting those changes
         // make sure you hide the thin line between the nav bar and the rest of the view
-        setupNavigationBarTitle(dataSource.title)
+        setupNavigationBarTitle(viewModel.title)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             guard let self else { return }
             presentingViewController?.dismiss(animated: true)
@@ -237,8 +242,8 @@ final class MessageDetailsViewController: UIViewController {
         view.addSubview(container.view)
         container.didMove(toParent: self)
 
-        container.isTabBarHidden = dataSource.displayMode != .combined
-        container.isEnabled = dataSource.displayMode == .combined
+        container.isTabBarHidden = viewModel.displayMode != .combined
+        container.isEnabled = viewModel.displayMode == .combined
     }
 
     private func configureConstraints() {
@@ -255,22 +260,26 @@ final class MessageDetailsViewController: UIViewController {
     // MARK: - Data Management
 
     func reloadData() {
-        switch dataSource.displayMode {
+        let currentViewModel = viewModel
+
+        switch currentViewModel.displayMode {
         case .combined:
-            viewControllers.reactions.updateData(dataSource.reactions)
-            viewControllers.readReceipts.updateData(dataSource.readReceipts)
+            viewControllers.reactions.updateData(currentViewModel.reactions)
+            viewControllers.readReceipts.updateData(currentViewModel.readReceipts)
         case .reactions:
-            viewControllers.reactions.updateData(dataSource.reactions)
+            viewControllers.reactions.updateData(currentViewModel.reactions)
         case .receipts:
-            viewControllers.readReceipts.updateData(dataSource.readReceipts)
+            viewControllers.readReceipts.updateData(currentViewModel.readReceipts)
         }
         reloadFooters()
     }
 
     private func reloadFooters() {
+        let footer = viewModel.footer
+
         viewControllers.all.forEach {
-            $0.subtitle = dataSource.subtitle
-            $0.accessibleSubtitle = dataSource.accessibilitySubtitle
+            $0.subtitle = footer.subtitle
+            $0.accessibleSubtitle = footer.accessibilitySubtitle
         }
     }
 

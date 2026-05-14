@@ -58,7 +58,7 @@ final class ArchivedListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(L10n.Localizable.ArchivedList.title.capitalized)
+        setupNavigationBarTitle(viewModel.navigationTitle)
         configureNavigationBarAppearance()
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
@@ -103,14 +103,14 @@ final class ArchivedListViewController: UIViewController {
     private func setupEmptyPlaceholder() {
 
         let titleLabel = DynamicFontLabel(
-            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.headline + " 👻",
+            text: viewModel.emptyPlaceholderTitle,
             style: .h3,
             color: SemanticColors.Label.textDefault
         )
         titleLabel.textAlignment = .center
 
         let descriptionLabel = DynamicFontLabel(
-            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.subheadline,
+            text: viewModel.emptyPlaceholderDescription,
             style: .body1,
             color: SemanticColors.Label.baseSecondaryText
         )
