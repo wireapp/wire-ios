@@ -199,6 +199,7 @@ struct SettingsCellDescriptorFactory {
             clientsList: .none,
             selfClient: userSession.selfUserClient,
             userSession: userSession,
+            kmpViewModelEnvironment: kmpViewModelEnvironment,
             contextProvider: userSession.contextProvider,
             detailedView: true
         )

@@ -76,7 +76,8 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
             accountSelector: accountSelector,
             mainCoordinator: mainCoordinator,
             analyticsEventTracker: analyticsEventTracker(),
-            accountManager: SessionManager.shared?.accountManager
+            accountManager: SessionManager.shared?.accountManager,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
         )
     }
 }

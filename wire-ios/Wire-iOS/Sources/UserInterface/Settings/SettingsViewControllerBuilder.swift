@@ -188,13 +188,10 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
     }
 
     private func buildDevices() -> UIViewController {
-        ClientListViewController(
-            clientsList: .none,
-            selfClient: userSession.selfUserClient,
+        SelfClientListViewControllerBuilder(
             userSession: userSession,
-            contextProvider: userSession.contextProvider,
-            detailedView: true
-        )
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        ).build(clientsList: .none)
     }
 
     private func buildOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {

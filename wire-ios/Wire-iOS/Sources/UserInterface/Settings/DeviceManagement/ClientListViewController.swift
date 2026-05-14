@@ -41,7 +41,7 @@ struct SelfClientListViewControllerBuilder {
     }
 
     @MainActor
-    func build(clientsList: [UserClient]) -> ClientListViewController {
+    func build(clientsList: [UserClient]? = nil) -> ClientListViewController {
         if shouldBuildKMPViewModelImplementation {
             return buildKMPViewModelImplementation(clientsList: clientsList)
         }
@@ -57,17 +57,18 @@ struct SelfClientListViewControllerBuilder {
     }
 
     @MainActor
-    private func buildKMPViewModelImplementation(clientsList: [UserClient]) -> ClientListViewController {
+    private func buildKMPViewModelImplementation(clientsList: [UserClient]?) -> ClientListViewController {
         // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
         buildLegacy(clientsList: clientsList)
     }
 
     @MainActor
-    private func buildLegacy(clientsList: [UserClient]) -> ClientListViewController {
+    private func buildLegacy(clientsList: [UserClient]?) -> ClientListViewController {
         ClientListViewController(
             clientsList: clientsList,
             selfClient: userSession.selfUserClient,
             userSession: userSession,
+            kmpViewModelEnvironment: kmpViewModelEnvironment,
             credentials: nil,
             contextProvider: userSession.contextProvider,
             detailedView: true,
@@ -126,6 +127,7 @@ final class ClientListViewController: UIViewController,
 
     private let userSession: UserSession
     private let contextProvider: ContextProvider?
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment?
     private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
     private var credentials: UserEmailCredentials?
@@ -138,6 +140,7 @@ final class ClientListViewController: UIViewController,
         clientsList: [UserClient]?,
         selfClient: UserClient?,
         userSession: UserSession,
+        kmpViewModelEnvironment: KMPViewModelEnvironment? = nil,
         credentials: UserEmailCredentials? = .none,
         contextProvider: ContextProvider?,
         detailedView: Bool = false,
@@ -147,6 +150,7 @@ final class ClientListViewController: UIViewController,
         self.userSession = userSession
         self.credentials = credentials
         self.contextProvider = contextProvider
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
         self.viewModel = ClientListViewModel(
             clientsList: clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []),
             selfClient: selfClient,
@@ -240,17 +244,37 @@ final class ClientListViewController: UIViewController,
                 self.updateE2EIdentityCertificateInDetailsView()
             }
 
-            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(isUpdateMode: true)
-            successEnrollmentViewController.certificateDetails = certificateChain
-            successEnrollmentViewController.onOkTapped = { viewController in
-                viewController.dismiss(animated: true)
-            }
+            let successEnrollmentViewController = makeCertificateUpdateSuccessViewController(
+                certificateDetails: certificateChain
+            )
             successEnrollmentViewController.presentOverAll()
         }
         selectedDeviceInfoViewModel = viewModel
 
         let detailsViewController = DeviceInfoViewController(rootView: DeviceDetailsView(viewModel: viewModel))
         navigationController.pushViewController(detailsViewController, animated: true)
+    }
+
+    private func makeCertificateUpdateSuccessViewController(
+        certificateDetails: String
+    ) -> SuccessfulCertificateEnrollmentViewController {
+        if let kmpViewModelEnvironment {
+            return SuccessfulCertificateEnrollmentViewControllerBuilder(
+                kmpViewModelEnvironment: kmpViewModelEnvironment
+            ).build(
+                isUpdateMode: true,
+                certificateDetails: certificateDetails
+            ) { viewController in
+                viewController.dismiss(animated: true)
+            }
+        }
+
+        let viewController = SuccessfulCertificateEnrollmentViewController(isUpdateMode: true)
+        viewController.certificateDetails = certificateDetails
+        viewController.onOkTapped = { viewController in
+            viewController.dismiss(animated: true)
+        }
+        return viewController
     }
 
     private func makeDeviceInfoViewModel(

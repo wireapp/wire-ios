@@ -68,7 +68,8 @@ struct BlockerViewControllerBuilder {
         BlockerViewController(
             context: context,
             sessionManager: sessionManager,
-            error: error
+            error: error,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
         )
     }
 }
@@ -76,13 +77,20 @@ struct BlockerViewControllerBuilder {
 final class BlockerViewController: LaunchImageViewController {
     private let viewModel: BlockerViewModel
     private var sessionManager: SessionManager?
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment?
     private let shareDebugPresenter = ShareDebugReportPresenter()
 
     private var observerTokens = [Any]()
 
-    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil, error: Error? = nil) {
+    init(
+        context: BlockerViewControllerContext,
+        sessionManager: SessionManager? = nil,
+        error: Error? = nil,
+        kmpViewModelEnvironment: KMPViewModelEnvironment? = nil
+    ) {
         self.viewModel = BlockerViewModel(context: context, error: error)
         self.sessionManager = sessionManager
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -257,10 +265,22 @@ extension BlockerViewController {
             .enrollE2EICertificate
             .invoke(authenticate: oauthUseCase.invoke)
 
-        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
-        successEnrollmentViewController.certificateDetails = certificateChain
-        successEnrollmentViewController.onOkTapped = { viewController in
+        let onOkTapped: (SuccessfulCertificateEnrollmentViewController) -> Void = { viewController in
             viewController.dismiss(animated: true)
+        }
+
+        let successEnrollmentViewController: SuccessfulCertificateEnrollmentViewController
+        if let kmpViewModelEnvironment {
+            successEnrollmentViewController = SuccessfulCertificateEnrollmentViewControllerBuilder(
+                kmpViewModelEnvironment: kmpViewModelEnvironment
+            ).build(
+                certificateDetails: certificateChain,
+                onOkTapped: onOkTapped
+            )
+        } else {
+            successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+            successEnrollmentViewController.certificateDetails = certificateChain
+            successEnrollmentViewController.onOkTapped = onOkTapped
         }
         successEnrollmentViewController.presentOverAll()
     }

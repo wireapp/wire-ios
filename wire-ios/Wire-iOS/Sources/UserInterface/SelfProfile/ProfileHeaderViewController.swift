@@ -113,7 +113,8 @@ final class ProfileHeaderViewController: UIViewController {
         options: Options,
         userSession: UserSession,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        kmpViewModelEnvironment: KMPViewModelEnvironment? = nil
     ) {
         self.userStatus = .init(user: user, isE2EICertified: false)
         self.user = user
@@ -128,7 +129,14 @@ final class ProfileHeaderViewController: UIViewController {
             conversation: conversation,
             options: options
         )
-        self.userStatusViewController = .init(
+        let kmpViewModelEnvironment = kmpViewModelEnvironment ?? KMPViewModelEnvironment.legacyOnly(
+            sessionBoundaryContext: SessionBoundaryContext(
+                accountID: userSession.selfUser.remoteIdentifier?.uuidString ?? ""
+            )
+        )
+        self.userStatusViewController = UserStatusViewControllerBuilder(
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        ).build(
             options: viewModel.userStatusViewOptions,
             settings: .shared
         )

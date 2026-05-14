@@ -82,10 +82,23 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     }
 
     private func presentWarningModule() {
-        let warningViewController = AppLockChangeWarningViewController(isAppLockActive: true, userSession: userSession)
-        warningViewController.modalPresentationStyle = .fullScreen
-        warningViewController.delegate = view
-        view.present(warningViewController, animated: false)
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            let kmpViewModelEnvironment = KMPViewModelEnvironment.legacyOnly(
+                sessionBoundaryContext: SessionBoundaryContext(
+                    accountID: userSession.selfUser.remoteIdentifier?.uuidString
+                )
+            )
+            let warningViewController = AppLockChangeWarningViewControllerBuilder(
+                isAppLockActive: true,
+                userSession: userSession,
+                kmpViewModelEnvironment: kmpViewModelEnvironment
+            ).build()
+            warningViewController.modalPresentationStyle = .fullScreen
+            warningViewController.delegate = view
+            view.present(warningViewController, animated: false)
+        }
     }
 
     private func presentDeviceSettings() {

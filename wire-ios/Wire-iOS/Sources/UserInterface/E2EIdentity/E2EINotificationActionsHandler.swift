@@ -45,6 +45,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
     private var isUpdateMode: Bool = false
 
     private let targetVC: () -> UIViewController
@@ -70,6 +71,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
+        kmpViewModelEnvironment: KMPViewModelEnvironment,
         targetVC: @escaping () -> UIViewController
     ) {
         self.enrollCertificateUseCase = enrollCertificateUseCase
@@ -80,6 +82,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         self.lastE2EIdentityUpdateAlertDateRepository = lastE2EIdentityUpdateAlertDateRepository
         self.e2eIdentityCertificateUpdateStatus = e2eIdentityCertificateUpdateStatus
         self.selfClientCertificateProvider = selfClientCertificateProvider
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
         self.targetVC = targetVC
 
         self.observer = NotificationCenter.default.addObserver(
@@ -174,9 +177,12 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) {
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
         stopCertificateEnrollmentSnoozerUseCase.invoke()
-        let successScreen = SuccessfulCertificateEnrollmentViewController(isUpdateMode: isUpdateMode)
-        successScreen.certificateDetails = certificateDetails
-        successScreen.onOkTapped = { viewController in
+        let successScreen = SuccessfulCertificateEnrollmentViewControllerBuilder(
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        ).build(
+            isUpdateMode: isUpdateMode,
+            certificateDetails: certificateDetails
+        ) { viewController in
             viewController.dismiss(animated: true)
             self.isUpdateMode = false
         }

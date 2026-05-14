@@ -78,7 +78,8 @@ final class SelfProfileViewController: UIViewController {
         accountSelector: AccountSelector?,
         mainCoordinator: AnyMainCoordinator,
         analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?,
-        accountManager: (any SelfProfileAccountManager)?
+        accountManager: (any SelfProfileAccountManager)?,
+        kmpViewModelEnvironment: KMPViewModelEnvironment? = nil
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
@@ -119,7 +120,8 @@ final class SelfProfileViewController: UIViewController {
             options: selfProfileViewModel.profileHeaderOptions,
             userSession: userSession,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
         )
 
         self.userSession = userSession
