@@ -60,14 +60,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     private let conversation: ZMConversation
 
-    private var ziphs: [Ziph] = [] {
-        didSet {
-            collectionView?.reloadData()
-            noResultsLabel.isHidden = ziphs.count > 0
-        }
-    }
-
-    private var searchTerm: String
+    private var viewModel: GiphySearchViewModel
     private var pendingTimer: Timer?
     private var pendingSearchtask: CancelableTask?
     private var pendingFetchTask: CancelableTask?
@@ -101,7 +94,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         searchResultsController: ZiphySearchResultsController
     ) {
         self.conversation = conversation
-        self.searchTerm = searchTerm
+        self.viewModel = GiphySearchViewModel(searchTerm: searchTerm)
         self.searchResultsController = searchResultsController
 
         let columnCount = AdaptiveColumnCount(
@@ -155,7 +148,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
-        searchController.searchBar.text = searchTerm
+        searchController.searchBar.text = viewModel.searchTerm
     }
 
     // MARK: - Setup UI
@@ -210,7 +203,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     // MARK: - Collection View
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        ziphs.count
+        viewModel.displayState.ziphs.count
     }
 
     override func collectionView(
@@ -221,7 +214,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
             withReuseIdentifier: GiphyCollectionViewCell.CellIdentifier,
             for: indexPath
         ) as! GiphyCollectionViewCell
-        let ziph = ziphs[indexPath.item]
+        let ziph = viewModel.displayState.ziphs[indexPath.item]
 
         guard let representation = ziph.images[.preview] else {
             return cell
@@ -251,7 +244,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, sizeOfItemAt indexPath: IndexPath) -> CGSize {
-        let ziph = ziphs[indexPath.item]
+        let ziph = viewModel.displayState.ziphs[indexPath.item]
 
         guard let representation = ziph.previewImage else {
             return .zero
@@ -261,7 +254,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let ziph = ziphs[indexPath.item]
+        let ziph = viewModel.displayState.ziphs[indexPath.item]
         var previewImage: FLAnimatedImage?
 
         if let cell = collectionView.cellForItem(at: indexPath) as? GiphyCollectionViewCell {
@@ -288,17 +281,30 @@ extension GiphySearchViewController {
     private func performSearch() {
         cleanUpPendingTimer()
 
-        let callback: ZiphyListRequestCallback = { [weak self] result in
-            if case let .success(ziphs) = result {
-                self?.ziphs = ziphs
-            } else {
-                self?.ziphs = []
-            }
+        perform(viewModel.effect(for: .searchRequested))
+    }
+
+    private func perform(_ effect: GiphySearchViewModel.Effect) {
+        guard case let .performSearch(searchRequest) = effect else {
+            return
         }
 
-        if searchTerm.isEmpty {
+        let callback: ZiphyListRequestCallback = { [weak self] result in
+            guard let self else { return }
+
+            if case let .success(ziphs) = result {
+                _ = self.viewModel.effect(for: .searchSucceeded(ziphs))
+            } else {
+                _ = self.viewModel.effect(for: .searchFailed)
+            }
+
+            self.applyDisplayState()
+        }
+
+        switch searchRequest {
+        case .trending:
             pendingSearchtask = searchResultsController.trending(callback)
-        } else {
+        case let .query(searchTerm):
             pendingSearchtask = searchResultsController.search(withTerm: searchTerm, callback)
         }
     }
@@ -310,6 +316,11 @@ extension GiphySearchViewController {
         pendingTimer = .scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
             self?.performSearch()
         }
+    }
+
+    private func applyDisplayState() {
+        collectionView?.reloadData()
+        noResultsLabel.isHidden = viewModel.displayState.isEmptyStateHidden
     }
 
 }
@@ -336,13 +347,15 @@ extension GiphySearchViewController {
     }
 
     private func insertSearchResults(_ results: [Ziph]) {
-        ziphs.append(contentsOf: results)
+        let startIndex = viewModel.displayState.ziphs.endIndex
+        viewModel.appendSearchResults(results)
 
-        let updatedIndices = ziphs.indices.suffix(results.count).map {
+        let updatedIndices = (startIndex ..< viewModel.displayState.ziphs.endIndex).map {
             IndexPath(item: $0, section: 0)
         }
 
         collectionView?.insertItems(at: updatedIndices)
+        noResultsLabel.isHidden = viewModel.displayState.isEmptyStateHidden
 
         let newItemsCount = results.count
         let announcement = L10n.Accessibility.SearchGifs.GifItemsLoaded.announcement(newItemsCount)
@@ -377,7 +390,7 @@ extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
         _ giphyConfirmationViewController: GiphyConfirmationViewController,
         didConfirmImageData imageData: Data
     ) {
-        delegate?.giphySearchViewController(self, didSelectImageData: imageData, searchTerm: searchTerm)
+        delegate?.giphySearchViewController(self, didSelectImageData: imageData, searchTerm: viewModel.searchTerm)
     }
 
 }
@@ -385,13 +398,14 @@ extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
 extension GiphySearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text else { return }
-        searchTerm = searchText
+        _ = viewModel.effect(for: .searchTextChanged(searchText))
         performSearchAfter(delay: 0.3)
     }
 }
 
 extension GiphySearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        _ = viewModel.effect(for: .searchTextChanged(searchBar.text ?? ""))
         performSearch()
     }
 }

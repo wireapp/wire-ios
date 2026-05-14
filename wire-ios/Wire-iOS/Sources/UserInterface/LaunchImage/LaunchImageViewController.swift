@@ -23,7 +23,6 @@ import WireReusableUIComponents
 class LaunchImageViewController: UIViewController {
 
     private var viewModel = LaunchImageViewModel()
-    private var shouldShowLoadingScreenOnViewDidLoad = false
 
     private weak var contentView: UIView!
     private let loadingScreenLabel = UILabel()
@@ -32,7 +31,6 @@ class LaunchImageViewController: UIViewController {
     /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning
     /// animation
     func showLoadingScreen() {
-        shouldShowLoadingScreenOnViewDidLoad = true
         render(viewModel.showLoadingScreen())
     }
 
@@ -54,11 +52,6 @@ class LaunchImageViewController: UIViewController {
         view.addSubview(loadingScreenLabel)
 
         createConstraints()
-
-        // Start the spinner in case of it was requested right after the init
-        if shouldShowLoadingScreenOnViewDidLoad {
-            showLoadingScreen()
-        }
     }
 
     private func createConstraints() {

@@ -36,6 +36,7 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
     let url: URL
     weak var delegate: WebAuthViewControllerDelegate?
 
+    private var viewModel: WebAuthViewModel
     private var urlLabel: URLLabel!
 
     private lazy var webView: WKWebView = {
@@ -81,6 +82,7 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
 
     init(url: URL) {
         self.url = url
+        self.viewModel = WebAuthViewModel(url: url)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -97,11 +99,11 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
         // Prevent auto dismissal.
         isModalInPresentation = true
 
-        urlLabel = URLLabel(url: url)
+        urlLabel = URLLabel(url: viewModel.displayedURL)
         urlLabel.isUserInteractionEnabled = true
         urlLabel.isAccessibilityElement = true
-        urlLabel.accessibilityLabel = L10n.Accessibility.WebAuth.UrlLabel.description
-        urlLabel.accessibilityHint = L10n.Accessibility.WebAuth.UrlLabel.hint
+        urlLabel.accessibilityLabel = viewModel.urlAccessibilityLabel
+        urlLabel.accessibilityHint = viewModel.urlAccessibilityHint
 
         urlLabel.addGestureRecognizer(
             UITapGestureRecognizer(
@@ -139,8 +141,7 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
-        let request = URLRequest(url: url)
-        webView.load(request)
+        webView.load(viewModel.initialRequest)
     }
 
     func webView(
@@ -186,7 +187,8 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
         didFinish navigation: WKNavigation!
     ) {
         if let currentURL = webView.url {
-            urlLabel.url = currentURL
+            viewModel.updateDisplayedURL(currentURL)
+            urlLabel.url = viewModel.displayedURL
         }
     }
 
@@ -227,7 +229,7 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
     @objc
     private func urlLabelTapped() {
         // Show the user the entire URL for them to verify.
-        let view = WebAuthURLView(url: url.absoluteString)
+        let view = WebAuthURLView(url: viewModel.fullURLText)
         let viewController = UIHostingController(rootView: view)
         present(viewController, animated: true)
     }
@@ -247,6 +249,38 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
 
         case webKitProcessTerminated
 
+    }
+
+}
+
+private struct WebAuthViewModel {
+
+    let initialURL: URL
+    private(set) var displayedURL: URL
+
+    var initialRequest: URLRequest {
+        URLRequest(url: initialURL)
+    }
+
+    var fullURLText: String {
+        initialURL.absoluteString
+    }
+
+    var urlAccessibilityLabel: String {
+        L10n.Accessibility.WebAuth.UrlLabel.description
+    }
+
+    var urlAccessibilityHint: String {
+        L10n.Accessibility.WebAuth.UrlLabel.hint
+    }
+
+    init(url: URL) {
+        self.initialURL = url
+        self.displayedURL = url
+    }
+
+    mutating func updateDisplayedURL(_ url: URL) {
+        displayedURL = url
     }
 
 }

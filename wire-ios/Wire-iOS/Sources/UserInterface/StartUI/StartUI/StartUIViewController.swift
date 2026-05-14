@@ -102,6 +102,7 @@ final class StartUIViewController: UIViewController {
     let isFederationEnabled: Bool
 
     let profilePresenter: ProfilePresenter
+    private let viewModel: StartUIViewModel
     private var emptyResultView: EmptySearchResultsView!
 
     private(set) var activityIndicator: BlockingActivityIndicator!
@@ -115,7 +116,7 @@ final class StartUIViewController: UIViewController {
     /// - the team's default protocol is Proteus the team has been using bots
     /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
-        makeViewState().showsGroupSelector
+        viewModel.showsGroupSelector
     }
 
     // MARK: - Init
@@ -156,6 +157,15 @@ final class StartUIViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository
+        )
+        self.viewModel = StartUIViewModel(
+            viewState: StartUIViewState(
+                availableSearchGroups: SearchGroup.all(for: userSession.defaultProtocol),
+                canSeeServices: userSession.selfUser.canSeeServices,
+                defaultProtocol: userSession.defaultProtocol,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
+            )
         )
         self.groupSelector = SearchGroupSelector(for: userSession.defaultProtocol)
         super.init(nibName: nil, bundle: nil)
@@ -297,7 +307,7 @@ final class StartUIViewController: UIViewController {
 
     func showKeyboardIfNeeded() {
         let conversationCount = userSession.conversationList().items.count
-        if makeViewState().shouldShowKeyboard(
+        if viewModel.shouldShowKeyboard(
             conversationCount: conversationCount,
             threshold: StartUIViewController.InitiallyShowsKeyboardConversationThreshold
         ) {
@@ -312,8 +322,7 @@ final class StartUIViewController: UIViewController {
         let searchString = searchController.searchBar.text ?? ""
         zmLog.info("Search for \(searchString)")
 
-        let searchState = StartUISearchState(group: groupSelector.group, query: searchString)
-        switch searchState.action {
+        switch viewModel.searchAction(group: groupSelector.group, query: searchString) {
         case .showPeopleList:
             searchResultsViewController.mode = .list
             searchResultsViewController.searchContactList()
@@ -330,7 +339,10 @@ final class StartUIViewController: UIViewController {
             searchingForBots: emptyStateInput.searchingForBots,
             hasFilter: emptyStateInput.hasFilter
         )
-        if searchState.shouldShowEmptyAppsSearchResultView {
+        if viewModel.shouldShowEmptyAppsSearchResultView(
+            group: groupSelector.group,
+            query: searchString
+        ) {
             showEmptyAppsSearchResultView()
         } else {
             hideEmptyAppsSearchResultView()
@@ -427,16 +439,6 @@ final class StartUIViewController: UIViewController {
 
     private func hideEmptyAppsSearchResultView() {
         searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
-    }
-
-    private func makeViewState() -> StartUIViewState {
-        StartUIViewState(
-            availableSearchGroups: SearchGroup.all(for: userSession.defaultProtocol),
-            canSeeServices: userSession.selfUser.canSeeServices,
-            defaultProtocol: userSession.defaultProtocol,
-            isAppsFeatureEnabled: isAppsFeatureEnabled,
-            areLegacyBotsAvailable: areLegacyBotsAvailable
-        )
     }
 
 }
