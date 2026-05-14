@@ -36,6 +36,7 @@ protocol CallInfoConfigurationObserver: AnyObject {
 
 final class CallingBottomSheetViewController: BottomSheetContainerViewController {
     private let bottomSheetMaxHeight = UIScreen.main.bounds.height * 0.7
+    private let viewModel = CallingBottomSheetViewModel()
 
     weak var delegate: ActiveCallViewControllerDelegate?
     private var participantsObserverToken: Any?
@@ -159,8 +160,12 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
 
     private func updateConstraints(forHeight height: CGFloat) {
         let isLandscape = UIDevice.current.twoDimensionOrientation.isLandscape
-        // if landscape then bottom sheet should take whole screen (without headerBar)
-        let bottomSheetMaxHeight = isLandscape ? (height - headerBar.bounds.height) : bottomSheetMaxHeight
+        let bottomSheetMaxHeight = viewModel.bottomSheetHeight(
+            availableHeight: height,
+            headerHeight: headerBar.bounds.height,
+            defaultMaxHeight: bottomSheetMaxHeight,
+            isLandscape: isLandscape
+        )
         let newConfiguration = BottomSheetConfiguration(
             height: bottomSheetMaxHeight,
             initialOffset: bottomSheetMinimalOffset
@@ -173,14 +178,10 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     }
 
     override func didChangeState() {
-        switch state {
-        case .initial:
-            visibleVoiceChannelViewController.view.accessibilityElementsHidden = false
-            visibleVoiceChannelViewController.view.isUserInteractionEnabled = true
-        case .full:
-            visibleVoiceChannelViewController.view.accessibilityElementsHidden = true
-            visibleVoiceChannelViewController.view.isUserInteractionEnabled = false
-        }
+        let contentInteractionState = viewModel.contentInteractionState(for: state)
+        visibleVoiceChannelViewController.view.accessibilityElementsHidden = contentInteractionState
+            .accessibilityElementsHidden
+        visibleVoiceChannelViewController.view.isUserInteractionEnabled = contentInteractionState.isUserInteractionEnabled
     }
 
     func transition(to toViewController: CallViewController, from fromViewController: CallViewController) {
@@ -235,14 +236,6 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         overlay.alpha = fullHeightPercentage * 0.7
     }
 
-    private func updateState() {
-        switch callInfoConfiguration?.state {
-        case .established: startCallDurationTimer()
-        case .terminating: stopCallDurationTimer()
-        default: break
-        }
-    }
-
     private func startCallDurationTimer() {
         stopCallDurationTimer()
         callDurationTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
@@ -260,20 +253,33 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
 
 extension CallingBottomSheetViewController: CallInfoConfigurationObserver {
     func didUpdateConfiguration(configuration: CallInfoConfiguration) {
-        if configuration.state != callInfoConfiguration?.state {
-            if case .established = configuration.state {
-                headerBar.updateConfiguration(configuration: configuration)
-            }
+        let updateState = viewModel.configurationUpdateState(
+            newConfiguration: configuration,
+            previousConfiguration: callInfoConfiguration
+        )
+
+        if updateState.shouldUpdateHeaderBar {
+            headerBar.updateConfiguration(configuration: configuration)
+        }
+
+        if updateState.shouldReloadGrid {
             visibleVoiceChannelViewController.reloadGrid()
-            callInfoConfiguration = configuration
-            updateState()
-        } else {
-            callInfoConfiguration = configuration
+        }
+
+        callInfoConfiguration = configuration
+
+        switch updateState.timerAction {
+        case .start:
+            startCallDurationTimer()
+        case .stop:
+            stopCallDurationTimer()
+        case .keepCurrent:
+            break
         }
 
         callDegradationController.state = configuration.degradationState
         callingActionsInfoViewController.didUpdateConfiguration(configuration: configuration)
-        panGesture.isEnabled = !configuration.state.isIncoming
+        panGesture.isEnabled = updateState.isPanGestureEnabled
         updateConstraints(forHeight: view.bounds.height)
     }
 }
