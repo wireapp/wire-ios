@@ -74,14 +74,16 @@ final class KMPViewModelEnvironmentTests: XCTestCase {
             sessionBoundaryContext: SessionBoundaryContext(accountID: "account-1")
         )
 
-        // WHEN
-        let usesKMPViewModel = sut.usesKMPViewModel(
-            for: .createGroupConversation,
-            isKMPImplementationAvailable: true
-        )
+        for screenID in knownScreenIDs {
+            // WHEN
+            let usesKMPViewModel = sut.usesKMPViewModel(
+                for: screenID,
+                isKMPImplementationAvailable: true
+            )
 
-        // THEN
-        XCTAssertFalse(usesKMPViewModel)
+            // THEN
+            XCTAssertFalse(usesKMPViewModel, "Expected legacy mode for \(screenID)")
+        }
     }
 
     func testScreenGateRequiresEnabledSessionAndAvailableKMPImplementation() {
@@ -94,22 +96,33 @@ final class KMPViewModelEnvironmentTests: XCTestCase {
         )
 
         // WHEN / THEN
-        XCTAssertFalse(
-            sut.usesKMPViewModel(
-                for: .createGroupConversation,
-                isKMPImplementationAvailable: false
+        for screenID in knownScreenIDs {
+            XCTAssertFalse(
+                sut.usesKMPViewModel(
+                    for: screenID,
+                    isKMPImplementationAvailable: false
+                ),
+                "Expected unavailable KMP implementation to keep legacy for \(screenID)"
             )
-        )
-        XCTAssertTrue(
-            sut.usesKMPViewModel(
-                for: .createGroupConversation,
-                isKMPImplementationAvailable: true
+
+            XCTAssertTrue(
+                sut.usesKMPViewModel(
+                    for: screenID,
+                    isKMPImplementationAvailable: true
+                ),
+                "Expected enabled KMP implementation for \(screenID)"
             )
-        )
+        }
     }
 }
 
 // MARK: - Test Types
+
+private let knownScreenIDs: [KMPViewModelScreenID] = [
+    .createGroupConversation,
+    .folderPicker,
+    .selfProfile
+]
 
 private enum TestState: Equatable {
     case idle

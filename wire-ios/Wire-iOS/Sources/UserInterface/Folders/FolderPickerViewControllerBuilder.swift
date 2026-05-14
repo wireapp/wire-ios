@@ -23,14 +23,54 @@ import WireFolderPickerUI
 struct FolderPickerViewControllerBuilder {
     private let conversationDirectory: ConversationDirectoryType
     private let conversationFilter: () -> ConversationFilter?
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
 
-    init(conversationDirectory: ConversationDirectoryType, conversationFilter: @escaping () -> ConversationFilter?) {
+    init(
+        conversationDirectory: ConversationDirectoryType,
+        conversationFilter: @escaping () -> ConversationFilter?,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
         self.conversationDirectory = conversationDirectory
         self.conversationFilter = conversationFilter
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
     }
 
     @MainActor
     func build(mainCoordinator: AnyMainCoordinator, showCloseButton: Bool) -> UIViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation(
+                mainCoordinator: mainCoordinator,
+                showCloseButton: showCloseButton
+            )
+        }
+
+        return buildLegacy(
+            mainCoordinator: mainCoordinator,
+            showCloseButton: showCloseButton
+        )
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .folderPicker,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation(
+        mainCoordinator: AnyMainCoordinator,
+        showCloseButton: Bool
+    ) -> UIViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy(
+            mainCoordinator: mainCoordinator,
+            showCloseButton: showCloseButton
+        )
+    }
+
+    @MainActor
+    private func buildLegacy(mainCoordinator: AnyMainCoordinator, showCloseButton: Bool) -> UIViewController {
         let folders: [FolderPickerOption] = conversationDirectory.nonDeletedFolders.compactMap {
             guard let id = $0.remoteIdentifier, let title = $0.name else { return nil }
 

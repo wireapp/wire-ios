@@ -143,7 +143,8 @@ final class ZClientViewController: UIViewController {
         userRightInterfaceType: UserRight.self,
         userSession: userSession,
         accountSelector: SessionManager.shared,
-        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
+        kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
@@ -166,7 +167,8 @@ final class ZClientViewController: UIViewController {
         conversationDirectory: userSession.conversationDirectory,
         conversationFilter: { [weak self] in
             self?.conversationFilter()
-        }
+        },
+        kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
     private(set) lazy var conversationCreationRepository = ConversationCreationRepository(

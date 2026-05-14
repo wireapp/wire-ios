@@ -94,7 +94,12 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
             folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
                 conversationDirectory: userSession.conversationDirectory,
-                conversationFilter: { nil }
+                conversationFilter: { nil },
+                kmpViewModelEnvironment: .legacyOnly(
+                    sessionBoundaryContext: SessionBoundaryContext(
+                        accountID: coreDataStack.account.userIdentifier.uuidString
+                    )
+                )
             ),
             getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )

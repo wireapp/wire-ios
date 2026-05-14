@@ -30,22 +30,45 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
     var userSession: UserSession
     var accountSelector: AccountSelector?
     var analyticsEventTracker: () -> (any AnalyticsEventTrackerProtocol)?
+    let kmpViewModelEnvironment: KMPViewModelEnvironment
 
     init(
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTrackerProtocol)?
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTrackerProtocol)?,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
     ) {
         self.selfUser = selfUser
         self.userRightInterfaceType = userRightInterfaceType
         self.userSession = userSession
         self.accountSelector = accountSelector
         self.analyticsEventTracker = analyticsEventTracker
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
     }
 
     func build(mainCoordinator: AnyMainCoordinator) -> ViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation(mainCoordinator: mainCoordinator)
+        }
+
+        return buildLegacy(mainCoordinator: mainCoordinator)
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .selfProfile,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    private func buildKMPViewModelImplementation(mainCoordinator: AnyMainCoordinator) -> ViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy(mainCoordinator: mainCoordinator)
+    }
+
+    private func buildLegacy(mainCoordinator: AnyMainCoordinator) -> ViewController {
         SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
