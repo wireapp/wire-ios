@@ -69,8 +69,12 @@ final class KMPViewModelAdapter<State, Effect, Intent>: ObservableObject {
     deinit {
         guard !isClosed else { return }
 
-        observations.forEach { $0.cancel() }
-        closeSource()
+        let observations = observations
+        let closeSource = closeSource
+        Task { @MainActor in
+            observations.forEach { $0.cancel() }
+            closeSource()
+        }
     }
 
     func send(_ intent: Intent) {
