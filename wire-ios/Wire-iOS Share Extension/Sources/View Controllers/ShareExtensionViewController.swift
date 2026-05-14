@@ -52,14 +52,14 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     typealias ShareExtensionConversationLocale = L10n.ShareExtension.ConversationSelection
 
-    let maximumMessageLength = 8000
+    private let viewModel = ShareExtensionViewModel()
 
     lazy var accountItem: SLComposeSheetConfigurationItem = { [weak self] in
         let item = SLComposeSheetConfigurationItem()!
         let accountName = self?.currentAccount?.shareExtensionDisplayName
 
         item.title = ShareExtensionConversationLocale.account
-        item.value = accountName ?? ShareExtensionConversationLocale.Empty.value
+        item.value = self?.viewModel.accountValue(displayName: accountName) ?? ShareExtensionConversationLocale.Empty.value
         item.tapHandler = { [weak self] in
             self?.presentChooseAccount()
         }
@@ -70,7 +70,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         let item = SLComposeSheetConfigurationItem()!
 
         item.title = ShareExtensionConversationLocale.title
-        item.value = ShareExtensionConversationLocale.Empty.value
+        item.value = viewModel.conversationValue(name: nil)
         item.tapHandler = { [weak self] in
             self?.presentChooseConversation()
         }
@@ -251,19 +251,13 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     // MARK: - Editing
 
     override func isContentValid() -> Bool {
-        // Do validation of contentText and/or NSExtensionContext attachments here
-        let textLength = contentText.trimmingCharacters(in: .whitespaces).count
-        let remaining = maximumMessageLength - textLength
-        let remainingCharactersThreshold = 30
-
-        if remaining <= remainingCharactersThreshold {
-            charactersRemaining = remaining as NSNumber
-        } else {
-            charactersRemaining = nil
-        }
-
-        let conditions = sharingSession != nil && postContent?.target != nil
-        return charactersRemaining == nil ? conditions : conditions && charactersRemaining.intValue >= 0
+        let displayState = viewModel.contentValidationDisplayState(
+            text: contentText,
+            hasSharingSession: sharingSession != nil,
+            hasTargetConversation: postContent?.target != nil
+        )
+        charactersRemaining = displayState.charactersRemaining
+        return displayState.isPostEnabled
     }
 
     /// If there is a URL attachment, copy the text of the URL attachment into the text field
@@ -500,7 +494,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     func updateState(conversation: WireShareEngine.Conversation?) {
-        conversationItem.value = conversation?.name ?? L10n.ShareExtension.ConversationSelection.Empty.value
+        conversationItem.value = viewModel.conversationValue(name: conversation?.name)
         postContent?.target = conversation
     }
 

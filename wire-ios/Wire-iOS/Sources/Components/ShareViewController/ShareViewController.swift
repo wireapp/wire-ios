@@ -36,6 +36,52 @@ protocol Shareable {
     func previewView(userSession: UserSession) -> UIView?
 }
 
+private struct ShareViewModel<D: ShareDestination> {
+    let destinations: [D]
+    private(set) var filteredDestinations: [D]
+    private(set) var selectedDestinations: Set<D> = []
+
+    var isSendButtonEnabled: Bool {
+        !selectedDestinations.isEmpty
+    }
+
+    init(destinations: [D]) {
+        self.destinations = destinations
+        self.filteredDestinations = destinations
+    }
+
+    mutating func updateFilterText(_ filterText: String) {
+        guard !filterText.isEmpty else {
+            filteredDestinations = destinations
+            return
+        }
+
+        filteredDestinations = destinations.filter {
+            $0.displayNameWithFallback.range(of: filterText, options: .caseInsensitive) != nil
+        }
+    }
+
+    func destination(at indexPath: IndexPath) -> D {
+        filteredDestinations[indexPath.row]
+    }
+
+    func isDestinationSelected(_ destination: D) -> Bool {
+        selectedDestinations.contains(destination)
+    }
+
+    mutating func selectDestination(_ destination: D) {
+        selectedDestinations.insert(destination)
+    }
+
+    mutating func deselectDestination(_ destination: D) {
+        selectedDestinations.remove(destination)
+    }
+
+    mutating func updateSelectedDestinations(_ destinations: Set<D>) {
+        selectedDestinations = destinations
+    }
+}
+
 final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,
     UITableViewDelegate, UITableViewDataSource {
 
@@ -45,10 +91,9 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     let shareable: S
     let userSession: UserSession
     private let mainCoordinator: any MainCoordinatorProtocol
-    private(set) var selectedDestinations: Set<D> = Set() {
-        didSet {
-            sendButton.isEnabled = selectedDestinations.count > 0
-        }
+    private var viewModel: ShareViewModel<D>
+    private var selectedDestinations: Set<D> {
+        viewModel.selectedDestinations
     }
 
     var tokenFieldTopConstraint: NSLayoutConstraint?
@@ -88,12 +133,12 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         mainCoordinator: any MainCoordinatorProtocol
     ) {
         self.destinations = destinations
-        self.filteredDestinations = destinations
         self.shareable = shareable
         self.showPreview = showPreview
         self.allowsMultipleSelection = allowsMultipleSelection
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.viewModel = ShareViewModel(destinations: destinations)
         super.init(nibName: nil, bundle: nil)
 
         NotificationCenter.default.addObserver(
@@ -129,23 +174,6 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     }()
 
     // MARK: - Search
-
-    private var filteredDestinations: [D] = []
-
-    private var filterString: String? = .none {
-        didSet {
-            if let filterString, !filterString.isEmpty {
-                filteredDestinations = destinations.filter {
-                    let name = $0.displayNameWithFallback
-                    return name.range(of: filterString, options: .caseInsensitive) != nil
-                }
-            } else {
-                filteredDestinations = destinations
-            }
-
-            destinationsTableView.reloadData()
-        }
-    }
 
     // MARK: - Actions
 
@@ -184,17 +212,17 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        filteredDestinations.count
+        viewModel.filteredDestinations.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView
             .dequeueReusableCell(withIdentifier: ShareDestinationCell<D>.reuseIdentifier) as! ShareDestinationCell<D>
 
-        let destination = filteredDestinations[indexPath.row]
+        let destination = viewModel.destination(at: indexPath)
         cell.destination = destination
         cell.allowsMultipleSelection = allowsMultipleSelection
-        cell.isSelected = selectedDestinations.contains(destination)
+        cell.isSelected = viewModel.isDestinationSelected(destination)
         if cell.isSelected {
             tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
         }
@@ -202,11 +230,12 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let destination = filteredDestinations[indexPath.row]
+        let destination = viewModel.destination(at: indexPath)
 
         tokenField.addToken(forTitle: destination.displayNameWithFallback, representedObject: destination)
 
-        selectedDestinations.insert(destination)
+        viewModel.selectDestination(destination)
+        updateSendButtonState()
 
         if !allowsMultipleSelection {
             onSendButtonPressed(sender: nil)
@@ -214,14 +243,15 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     }
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let destination = filteredDestinations[indexPath.row]
+        let destination = viewModel.destination(at: indexPath)
 
         guard let token = tokenField.token(forRepresentedObject: destination) else {
             return
         }
         tokenField.removeToken(token)
 
-        selectedDestinations.remove(destination)
+        viewModel.deselectDestination(destination)
+        updateSendButtonState()
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -248,19 +278,25 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     private func updateClearIndicator(for tokenField: TokenField) {
         clearButton.isHidden = tokenField.filterText.isEmpty && tokenField.tokens.isEmpty
     }
+
+    private func updateSendButtonState() {
+        sendButton.isEnabled = viewModel.isSendButtonEnabled
+    }
 }
 
 // MARK: - TokenFieldDelegate
 
 extension ShareViewController: TokenFieldDelegate {
     func tokenField(_ tokenField: TokenField, changedTokensTo tokens: [Token<NSObjectProtocol>]) {
-        selectedDestinations = Set(tokens.map { $0.representedObject.value as! D })
+        viewModel.updateSelectedDestinations(Set(tokens.map { $0.representedObject.value as! D }))
+        updateSendButtonState()
         destinationsTableView.reloadData()
     }
 
     func tokenField(_ tokenField: TokenField, changedFilterTextTo text: String) {
         updateClearIndicator(for: tokenField)
-        filterString = text
+        viewModel.updateFilterText(text)
+        destinationsTableView.reloadData()
     }
 
     func tokenFieldDidConfirmSelection(_ controller: TokenField) {
