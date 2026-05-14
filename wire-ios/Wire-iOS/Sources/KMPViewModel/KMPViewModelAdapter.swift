@@ -39,6 +39,74 @@ protocol KMPViewModelSource: AnyObject {
 }
 
 @MainActor
+protocol KMPViewModelHosting: AnyObject {
+    associatedtype State
+    associatedtype Effect
+    associatedtype Intent
+
+    var viewModel: KMPViewModelAdapter<State, Effect, Intent> { get }
+}
+
+@MainActor
+protocol KMPViewModelFactory {
+    func makeViewModel<State, Effect, Intent>(
+        for descriptor: KMPViewModelDescriptor<State, Effect, Intent>
+    ) -> KMPViewModelAdapter<State, Effect, Intent>
+}
+
+@MainActor
+struct KMPViewModelDescriptor<State, Effect, Intent> {
+
+    private let makeAdapter: @MainActor () -> KMPViewModelAdapter<State, Effect, Intent>
+
+    init<Source: KMPViewModelSource>(
+        source makeSource: @escaping @MainActor () -> Source
+    ) where Source.State == State, Source.Effect == Effect, Source.Intent == Intent {
+        self.makeAdapter = {
+            KMPViewModelAdapter(source: makeSource())
+        }
+    }
+
+    fileprivate func makeViewModel() -> KMPViewModelAdapter<State, Effect, Intent> {
+        makeAdapter()
+    }
+}
+
+@MainActor
+final class DefaultKMPViewModelFactory: KMPViewModelFactory {
+
+    func makeViewModel<State, Effect, Intent>(
+        for descriptor: KMPViewModelDescriptor<State, Effect, Intent>
+    ) -> KMPViewModelAdapter<State, Effect, Intent> {
+        descriptor.makeViewModel()
+    }
+}
+
+@MainActor
+final class KMPViewModelHost<State, Effect, Intent>: KMPViewModelHosting {
+
+    let viewModel: KMPViewModelAdapter<State, Effect, Intent>
+
+    init(viewModel: KMPViewModelAdapter<State, Effect, Intent>) {
+        self.viewModel = viewModel
+    }
+
+    convenience init(descriptor: KMPViewModelDescriptor<State, Effect, Intent>) {
+        self.init(
+            descriptor: descriptor,
+            factory: DefaultKMPViewModelFactory()
+        )
+    }
+
+    init(
+        descriptor: KMPViewModelDescriptor<State, Effect, Intent>,
+        factory: some KMPViewModelFactory
+    ) {
+        self.viewModel = factory.makeViewModel(for: descriptor)
+    }
+}
+
+@MainActor
 final class KMPViewModelAdapter<State, Effect, Intent>: ObservableObject {
 
     @Published private(set) var state: State

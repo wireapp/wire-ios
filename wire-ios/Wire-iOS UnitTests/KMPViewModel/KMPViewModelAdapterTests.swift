@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import XCTest
 
 @testable import Wire
@@ -24,27 +23,11 @@ import XCTest
 @MainActor
 final class KMPViewModelAdapterTests: XCTestCase {
 
-    private var cancellables = Set<AnyCancellable>()
-
-    override func tearDown() {
-        cancellables.removeAll()
-    }
-
     func testAdapterPublishesStateAndEffectsAndForwardsIntent() {
         // GIVEN
-        let source = FakeKMPViewModelSource(initialState: .idle)
-        let sut = KMPViewModelAdapter<TestState, TestEffect, TestIntent>(source: source)
-        var states = [TestState]()
-        var effects = [TestEffect]()
-
-        sut.$state
-            .sink { states.append($0) }
-            .store(in: &cancellables)
-
-        sut.$effect
-            .compactMap { $0 }
-            .sink { effects.append($0) }
-            .store(in: &cancellables)
+        let source = makeSource(initialState: .idle)
+        let sut = source.makeAdapter()
+        let recorder = KMPViewModelAdapterRecorder(adapter: sut)
 
         // WHEN
         source.publish(state: .loaded("conversation-list"))
@@ -52,26 +35,17 @@ final class KMPViewModelAdapterTests: XCTestCase {
         sut.send(.refresh)
 
         // THEN
-        XCTAssertEqual(states, [.idle, .loaded("conversation-list")])
-        XCTAssertEqual(effects, [.showToast("synced")])
-        XCTAssertEqual(source.sentIntents, [.refresh])
+        recorder.assertStates([.idle, .loaded("conversation-list")])
+        recorder.assertEffects([.showToast("synced")])
+        source.assertSentIntents([.refresh])
+        source.assertObserving()
     }
 
     func testCloseDisconnectsObservationsAndClosesSource() {
         // GIVEN
-        let source = FakeKMPViewModelSource(initialState: .idle)
-        let sut = KMPViewModelAdapter<TestState, TestEffect, TestIntent>(source: source)
-        var states = [TestState]()
-        var effects = [TestEffect]()
-
-        sut.$state
-            .sink { states.append($0) }
-            .store(in: &cancellables)
-
-        sut.$effect
-            .compactMap { $0 }
-            .sink { effects.append($0) }
-            .store(in: &cancellables)
+        let source = makeSource(initialState: .idle)
+        let sut = source.makeAdapter()
+        let recorder = KMPViewModelAdapterRecorder(adapter: sut)
 
         // WHEN
         sut.close()
@@ -81,25 +55,82 @@ final class KMPViewModelAdapterTests: XCTestCase {
         sut.close()
 
         // THEN
-        XCTAssertEqual(states, [.idle])
-        XCTAssertTrue(effects.isEmpty)
-        XCTAssertEqual(source.closeCallsCount, 1)
-        XCTAssertEqual(source.cancelledObservationsCount, 2)
-        XCTAssertTrue(source.sentIntents.isEmpty)
+        recorder.assertStates([.idle])
+        recorder.assertEffects([])
+        source.assertClosed()
+        source.assertSentIntents([])
     }
 
     func testDeinitAfterCloseDoesNotCloseSourceTwice() {
         // GIVEN
-        let source = FakeKMPViewModelSource(initialState: .idle)
-        var sut: KMPViewModelAdapter<TestState, TestEffect, TestIntent>? = KMPViewModelAdapter(source: source)
+        let source = makeSource(initialState: .idle)
+        var sut: KMPViewModelAdapter<TestState, TestEffect, TestIntent>? = source.makeAdapter()
 
         // WHEN
         sut?.close()
         sut = nil
 
         // THEN
-        XCTAssertEqual(source.closeCallsCount, 1)
-        XCTAssertEqual(source.cancelledObservationsCount, 2)
+        source.assertClosed()
+    }
+
+    func testDefaultFactoryBuildsAdapterFromDescriptor() {
+        // GIVEN
+        let source = makeSource(initialState: .idle)
+        var makeSourceCallsCount = 0
+        let descriptor = KMPViewModelDescriptor<TestState, TestEffect, TestIntent> {
+            makeSourceCallsCount += 1
+            return source
+        }
+        let sut = DefaultKMPViewModelFactory()
+
+        // WHEN
+        let viewModel = sut.makeViewModel(for: descriptor)
+        source.publish(state: .loaded("from-factory"))
+        viewModel.send(.refresh)
+
+        // THEN
+        XCTAssertEqual(makeSourceCallsCount, 1)
+        XCTAssertEqual(viewModel.state, .loaded("from-factory"))
+        source.assertSentIntents([.refresh])
+    }
+
+    func testHostOwnsAdapterCreatedByFactory() {
+        // GIVEN
+        let source = makeSource(initialState: .idle)
+
+        // WHEN
+        let sut = source.makeHost()
+        source.publish(effect: .showToast("hosted"))
+
+        // THEN
+        assertTestHost(sut)
+        XCTAssertEqual(sut.viewModel.effect, .showToast("hosted"))
+    }
+
+    func testHostCanWrapExistingAdapter() {
+        // GIVEN
+        let source = makeSource(initialState: .idle)
+        let viewModel = source.makeAdapter()
+
+        // WHEN
+        let sut = KMPViewModelHost(viewModel: viewModel)
+
+        // THEN
+        XCTAssertTrue(sut.viewModel === viewModel)
+        assertTestHost(sut)
+    }
+
+    private func assertTestHost<Host: KMPViewModelHosting>(
+        _ host: Host
+    ) where Host.State == TestState, Host.Effect == TestEffect, Host.Intent == TestIntent {
+        XCTAssertEqual(host.viewModel.state, .idle)
+    }
+
+    private func makeSource(
+        initialState: TestState
+    ) -> FakeKMPViewModelSource<TestState, TestEffect, TestIntent> {
+        FakeKMPViewModelSource(initialState: initialState)
     }
 }
 
@@ -116,87 +147,4 @@ private enum TestEffect: Equatable {
 
 private enum TestIntent: Equatable {
     case refresh
-}
-
-// MARK: - Fakes
-
-@MainActor
-private final class FakeKMPViewModelSource: KMPViewModelSource {
-
-    private(set) var currentState: TestState
-    private(set) var sentIntents = [TestIntent]()
-    private(set) var closeCallsCount = 0
-    private(set) var cancelledObservationsCount = 0
-
-    private var nextObservationID = 0
-    private var stateObservers = [Int: @MainActor (TestState) -> Void]()
-    private var effectObservers = [Int: @MainActor (TestEffect) -> Void]()
-
-    init(initialState: TestState) {
-        self.currentState = initialState
-    }
-
-    func observeState(_ observer: @escaping @MainActor (TestState) -> Void) -> KMPViewModelObservation {
-        let id = makeObservationID()
-        stateObservers[id] = observer
-
-        return FakeKMPViewModelObservation { [weak self] in
-            guard let self else { return }
-
-            stateObservers[id] = nil
-            cancelledObservationsCount += 1
-        }
-    }
-
-    func observeEffect(_ observer: @escaping @MainActor (TestEffect) -> Void) -> KMPViewModelObservation {
-        let id = makeObservationID()
-        effectObservers[id] = observer
-
-        return FakeKMPViewModelObservation { [weak self] in
-            guard let self else { return }
-
-            effectObservers[id] = nil
-            cancelledObservationsCount += 1
-        }
-    }
-
-    func send(_ intent: TestIntent) {
-        sentIntents.append(intent)
-    }
-
-    func close() {
-        closeCallsCount += 1
-    }
-
-    func publish(state: TestState) {
-        currentState = state
-        stateObservers.values.forEach { $0(state) }
-    }
-
-    func publish(effect: TestEffect) {
-        effectObservers.values.forEach { $0(effect) }
-    }
-
-    private func makeObservationID() -> Int {
-        defer { nextObservationID += 1 }
-        return nextObservationID
-    }
-}
-
-@MainActor
-private final class FakeKMPViewModelObservation: KMPViewModelObservation {
-
-    private let onCancel: () -> Void
-    private var isCancelled = false
-
-    init(onCancel: @escaping () -> Void) {
-        self.onCancel = onCancel
-    }
-
-    func cancel() {
-        guard !isCancelled else { return }
-
-        isCancelled = true
-        onCancel()
-    }
 }
