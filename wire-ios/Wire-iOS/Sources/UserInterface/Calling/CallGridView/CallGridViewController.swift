@@ -43,10 +43,10 @@ final class CallGridViewController: UIViewController {
     // MARK: - Private Properties
 
     private var streams: [Stream] {
-        if let stream = configuration.streams.first(where: { isMaximized(stream: $0) }) {
-            return [stream]
-        }
-        return configuration.streams
+        viewModel.displayedStreams(
+            configuration: configuration,
+            maximizedStreamId: maximizedView?.stream.streamId
+        )
     }
 
     private var pinchToZoomRule: PinchToZoomRule {
@@ -63,6 +63,7 @@ final class CallGridViewController: UIViewController {
     private var viewCache = [AVSClient: OrientableView]()
     private var networkQualityObserverToken: Any?
     private var networkQuality: NetworkQuality
+    private let viewModel = CallGridViewModel()
 
     private let mediaManager: AVSMediaManagerInterface
     private let voiceChannel: VoiceChannel
@@ -236,10 +237,12 @@ final class CallGridViewController: UIViewController {
     }
 
     private func allowMaximizationToggling(for stream: Stream) -> Bool {
-        let isStreamScreenSharingOneToOne = gridIsOneToOneWithFloatingTile && stream.isScreenSharing
-        let isStreamMinimizedAndNotSharingVideo = !isMaximized(stream: stream) && !stream.isSharingVideo
-
-        return !isStreamScreenSharingOneToOne && !(isStreamMinimizedAndNotSharingVideo && gridHasOnlyOneTile)
+        viewModel.allowsMaximizationToggling(
+            for: stream,
+            isMaximized: isMaximized(stream: stream),
+            streamCount: configuration.streams.count,
+            hasFloatingStream: configuration.floatingStream != nil
+        )
     }
 
     private func isMaximized(stream: Stream?) -> Bool {
@@ -260,39 +263,30 @@ final class CallGridViewController: UIViewController {
     // MARK: - Hint
 
     func updateHint(for event: CallGridEvent) {
-        switch event {
-        case .viewDidLoad:
+        switch viewModel.hintAction(
+            for: event,
+            configuration: configuration,
+            maximizedStreamId: maximizedView?.stream.streamId
+        ) {
+        case .none:
             break
-        case .connectionEstablished:
-            hintView.show(hint: .fullscreen)
-        case .configurationChanged where configuration.callHasTwoParticipants:
-            guard
-                let stream = configuration.streams.first,
-                stream.isSharingVideo
-            else { return }
-
-            if stream.isScreenSharing {
-                hintView.show(hint: .zoom)
-            } else if isMaximized(stream: stream) {
-                hintView.show(hint: .goBackOrZoom)
-            }
-        case let .maximizationChanged(stream: stream, maximized: maximized):
-            if maximized {
-                hintView.show(hint: stream.isSharingVideo ? .goBackOrZoom : .goBack)
-            } else {
-                hintView.hideAndStopTimer()
-            }
-        default: break
+        case .hide:
+            hintView.hideAndStopTimer()
+        case let .show(hint):
+            hintView.show(hint: hint)
         }
     }
 
     // MARK: - UI Update
 
     private func displayNetworkConditionViewIfNeeded(for networkQuality: NetworkQuality) {
-        let shouldHideNetworkCondition = isCovered || networkQuality.isNormal
+        let state = viewModel.networkConditionViewState(
+            isCovered: isCovered,
+            networkQuality: networkQuality
+        )
 
-        networkConditionView.networkQuality = networkQuality
-        networkConditionView.isHidden = shouldHideNetworkCondition
+        networkConditionView.networkQuality = state.networkQuality
+        networkConditionView.isHidden = state.isHidden
     }
 
     private func notifyVisibilityChanged() {
@@ -308,7 +302,12 @@ final class CallGridViewController: UIViewController {
             withDuration: 0.2,
             delay: 0,
             options: [.curveEaseInOut, .beginFromCurrentState],
-            animations: { self.networkConditionView.alpha = self.isCovered ? 0.0 : 1.0 }
+            animations: {
+                self.networkConditionView.alpha = self.viewModel.networkConditionViewState(
+                    isCovered: self.isCovered,
+                    networkQuality: self.networkQuality
+                ).alpha
+            }
         )
     }
 
@@ -326,15 +325,11 @@ final class CallGridViewController: UIViewController {
     }
 
     private func displaySpinnerIfNeeded() {
-        guard
-            configuration.presentationMode == .activeSpeakers,
-            configuration.streams.isEmpty
-        else {
+        if viewModel.shouldDisplaySpinner(configuration: configuration) {
+            activityIndicator.start(text: L10n.Localizable.Call.Grid.noActiveSpeakers)
+        } else {
             activityIndicator.stop()
-            return
         }
-
-        activityIndicator.start(text: L10n.Localizable.Call.Grid.noActiveSpeakers)
     }
 
     private func updateSelfCallParticipantView() {
@@ -423,32 +418,16 @@ final class CallGridViewController: UIViewController {
     }
 
     func requestVideoStreamsIfNeeded(forPage page: Int) {
-        let startIndex = page * gridView.maxItemsPerPage
-        var endIndex = startIndex + gridView.maxItemsPerPage
-        endIndex = min(endIndex, dataSource.count)
-
-        guard dataSource.indices.contains(startIndex),
-              endIndex > startIndex
-        else { return }
-
-        let clientsWithVideo = dataSource[startIndex ..< endIndex]
-            .filter(\.isSharingVideo)
-
-        let oneStreamDisplayedExcludingSelf = clientsWithVideo.count == 1
-        let clientStreams = clientsWithVideo
-            .map { client in
-                AVSClientVideoStream(
-                    client: client.streamId,
-                    quality: oneStreamDisplayedExcludingSelf ? .high : .low
-                )
-            }
-
-        let newVisibleClientsSharingVideo = Set(clientStreams)
-
-        guard newVisibleClientsSharingVideo != visibleClientsSharingVideo else { return }
+        guard let clientStreams = viewModel.requestedVideoStreams(
+            forPage: page,
+            maxItemsPerPage: gridView.maxItemsPerPage,
+            dataSource: dataSource,
+            visibleClientsSharingVideo: visibleClientsSharingVideo
+        ) else { return }
         guard let delegate else { return }
+
         delegate.callGridViewController(self, perform: .requestVideoStreamsForClients(clientStreams))
-        visibleClientsSharingVideo = newVisibleClientsSharingVideo
+        visibleClientsSharingVideo = Set(clientStreams)
     }
 
     // MARK: - Grid View Axis
@@ -472,27 +451,20 @@ final class CallGridViewController: UIViewController {
     }
 
     private func gridAxis(for traitCollection: UITraitCollection) -> UICollectionView.ScrollDirection {
-        let isLandscape = UIWindow.interfaceOrientation?.isLandscape
-        switch (traitCollection.userInterfaceIdiom, traitCollection.horizontalSizeClass, isLandscape) {
-        case (.pad, .regular, true), (.phone, _, true):
-            return .horizontal
-        default:
-            return .vertical
-        }
+        viewModel.gridAxis(
+            userInterfaceIdiom: traitCollection.userInterfaceIdiom,
+            horizontalSizeClass: traitCollection.horizontalSizeClass,
+            isLandscape: UIWindow.interfaceOrientation?.isLandscape
+        )
     }
 
     // MARK: - Helpers
 
     private var shouldShowBorderWhenVideoIsStopped: Bool {
-        !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
-    }
-
-    private var gridHasOnlyOneTile: Bool {
-        configuration.streams.count == 1
-    }
-
-    private var gridIsOneToOneWithFloatingTile: Bool {
-        gridHasOnlyOneTile && configuration.floatingStream != nil
+        viewModel.shouldShowBorderWhenVideoIsStopped(
+            streamCount: configuration.streams.count,
+            hasFloatingStream: configuration.floatingStream != nil
+        )
     }
 
     private func cachedStreamView(for stream: Stream) -> OrientableView? {
