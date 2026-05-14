@@ -24,6 +24,7 @@ final class PinnableThumbnailViewController: UIViewController {
     private let thumbnailView = RoundedView()
     private let thumbnailContainerView = PassthroughTouchesView()
     private(set) var contentView: OrientableView?
+    private let viewModel = PinnableThumbnailViewModel()
 
     // MARK: - Dynamics
 
@@ -149,15 +150,10 @@ final class PinnableThumbnailViewController: UIViewController {
 
         pinningBehavior.isEnabled = false
 
-        // Calculate the new size of the container
-
-        let insets = view.safeAreaInsets
-
-        let safeSize = CGSize(
-            width: size.width - insets.left - insets.right,
-            height: size.height - insets.top - insets.bottom
+        let safeSize = viewModel.safeSize(
+            containerSize: size,
+            safeAreaInsets: view.safeAreaInsets
         )
-
         let bounds = CGRect(origin: CGPoint.zero, size: safeSize)
         pinningBehavior.updateFields(in: bounds)
 
@@ -180,18 +176,17 @@ final class PinnableThumbnailViewController: UIViewController {
     }
 
     private func updateThumbnailFrame(animated: Bool, parentSize: CGSize) {
-        guard thumbnailContentSize != .zero else { return }
-        let size = thumbnailContentSize.withOrientation(UIDevice.current.orientation)
-        let position = thumbnailPosition(for: size, parentSize: parentSize)
+        guard let frame = viewModel.thumbnailFrame(
+            contentSize: thumbnailContentSize,
+            parentSize: parentSize,
+            edgeInsets: edgeInsets,
+            pinnedCenter: pinningBehavior.positionForCurrentCorner(),
+            isLeftToRightLayout: UIApplication.isLeftToRightLayout,
+            orientation: UIDevice.current.orientation
+        ) else { return }
 
         let changesBlock = { [contentView, thumbnailView, view] in
-            thumbnailView.frame = CGRect(
-                x: position.x - size.width / 2,
-                y: position.y - size.height / 2,
-                width: size.width,
-                height: size.height
-            )
-
+            thumbnailView.frame = frame
             view?.layoutIfNeeded()
             contentView?.layoutForOrientation()
         }
@@ -208,25 +203,6 @@ final class PinnableThumbnailViewController: UIViewController {
         pinningBehavior.updateFields(in: thumbnailContainerView.bounds)
     }
 
-    private func thumbnailPosition(for size: CGSize, parentSize: CGSize) -> CGPoint {
-        if let center = pinningBehavior.positionForCurrentCorner() {
-            return center
-        }
-
-        let frame = if UIApplication.isLeftToRightLayout {
-            CGRect(
-                x: parentSize.width - size.width - edgeInsets.x,
-                y: edgeInsets.y,
-                width: size.width,
-                height: size.height
-            )
-        } else {
-            CGRect(x: edgeInsets.x, y: edgeInsets.y, width: size.width, height: size.height)
-        }
-
-        return CGPoint(x: frame.midX, y: frame.midY)
-    }
-
     // MARK: - Panning
 
     @objc
@@ -238,44 +214,12 @@ final class PinnableThumbnailViewController: UIViewController {
             originalCenter = thumbnailView.center
 
         case .changed:
-
-            // Calculate the target center
-
-            let originalFrame = thumbnailView.frame
-            let containerBounds = thumbnailContainerView.bounds
-
-            let translation = recognizer.translation(in: thumbnailContainerView)
-            let transform = CGAffineTransform(translationX: translation.x, y: translation.y)
-            let transformedPoint = originalCenter.applying(transform)
-
-            // Calculate the appropriate horizontal origin
-
-            let x: CGFloat
-            let halfWidth = originalFrame.width / 2
-
-            if (transformedPoint.x - halfWidth) < containerBounds.minX {
-                x = containerBounds.minX
-            } else if (transformedPoint.x + halfWidth) > containerBounds.maxX {
-                x = containerBounds.maxX - originalFrame.width
-            } else {
-                x = transformedPoint.x - halfWidth
-            }
-
-            // Calculate the appropriate vertical origin
-
-            let y: CGFloat
-            let halfHeight = originalFrame.height / 2
-
-            if (transformedPoint.y - halfHeight) < containerBounds.minY {
-                y = containerBounds.minY
-            } else if (transformedPoint.y + halfHeight) > containerBounds.maxY {
-                y = containerBounds.maxY - originalFrame.height
-            } else {
-                y = transformedPoint.y - halfHeight
-            }
-
-            // Do not move the thumbnail outside the container
-            thumbnailView.frame = CGRect(x: x, y: y, width: originalFrame.width, height: originalFrame.height)
+            thumbnailView.frame = viewModel.pannedFrame(
+                originalFrame: thumbnailView.frame,
+                containerBounds: thumbnailContainerView.bounds,
+                originalCenter: originalCenter,
+                translation: recognizer.translation(in: thumbnailContainerView)
+            )
 
         case .cancelled, .ended:
 
