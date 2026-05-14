@@ -329,14 +329,16 @@ final class CallViewController: UIViewController {
     }
 
     private func showIncomingCallStatusViewIfNeeded(forConfiguration configuration: CallInfoConfiguration) {
-        let state = configuration.state
-        guard state.requiresShowingStatusView else {
+        switch viewModel.establishingStatusViewState(configuration: configuration) {
+        case .hide:
             establishingCallStatusView.removeFromSuperview()
             return
+        case let .show(title, state, isProfileImageHidden):
+            establishingCallStatusView.setProfileImage(hidden: isProfileImageHidden)
+            establishingCallStatusView.updateState(state: state)
+            establishingCallStatusView.setTitle(title: title)
         }
-        establishingCallStatusView.setProfileImage(hidden: configuration.mediaState.isSendingVideo)
-        establishingCallStatusView.updateState(state: state)
-        establishingCallStatusView.setTitle(title: configuration.title)
+
         guard establishingCallStatusView.superview == nil else { return }
         establishingCallStatusView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(establishingCallStatusView)
@@ -358,7 +360,7 @@ final class CallViewController: UIViewController {
     }
 
     private func updateIdleTimer() {
-        let disabled = callInfoConfiguration.disableIdleTimer
+        let disabled = viewModel.isIdleTimerDisabled(configuration: callInfoConfiguration)
         UIApplication.shared.isIdleTimerDisabled = disabled
         Log.calling.debug("Updated idle timer: \(disabled ? "disabled" : "enabled")")
     }

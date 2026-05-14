@@ -50,6 +50,11 @@ struct CallViewModel {
         case none
     }
 
+    enum EstablishingStatusViewState {
+        case hide
+        case show(title: String, callState: CallStatusViewState, isProfileImageHidden: Bool)
+    }
+
     func canHideOverlay(
         callState: CallStatusViewState,
         shouldOverlayStayVisibleForAutomation: Bool
@@ -141,5 +146,20 @@ struct CallViewModel {
         case .participants:
             return .stopOverlayTimer
         }
+    }
+
+    func establishingStatusViewState(configuration: CallInfoConfiguration) -> EstablishingStatusViewState {
+        let callState = configuration.state
+        guard callState.requiresShowingStatusView else { return .hide }
+
+        return .show(
+            title: configuration.title,
+            callState: callState,
+            isProfileImageHidden: configuration.mediaState.isSendingVideo
+        )
+    }
+
+    func isIdleTimerDisabled(configuration: CallInfoConfiguration) -> Bool {
+        configuration.disableIdleTimer
     }
 }
