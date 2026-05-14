@@ -40,6 +40,7 @@ final class CallViewController: UIViewController {
     private weak var overlayTimer: Timer?
     private let hapticsController = CallHapticsController()
     private let isOverlayEnabled: Bool
+    private let viewModel = CallViewModel()
 
     private var classification: SecurityClassification? = .none {
         didSet { updateConfiguration() }
@@ -402,7 +403,7 @@ final class CallViewController: UIViewController {
         }
 
         let newState = voiceChannel.videoState.toggledState
-        preferedVideoPlaceholderState = newState == .stopped ? .statusTextHidden : .hidden
+        preferedVideoPlaceholderState = viewModel.preferredVideoPlaceholderState(for: newState)
         voiceChannel.videoState = newState
         updateConfiguration()
     }
@@ -413,7 +414,7 @@ final class CallViewController: UIViewController {
 
     private func toggleCameraType() {
         do {
-            let newType: CaptureDevice = cameraType == .front ? .back : .front
+            let newType = viewModel.nextCameraType(currentCameraType: cameraType)
             try voiceChannel.setVideoCaptureDevice(newType)
             cameraType = newType
         } catch {
@@ -539,7 +540,7 @@ extension CallViewController {
     }
 
     private func disableVideoIfNeeded() {
-        if permissions.isVideoDisabledForever {
+        if viewModel.shouldDisableVideo(permissions: permissions) {
             voiceChannel.videoState = .stopped
         }
     }
@@ -618,9 +619,10 @@ extension CallViewController {
     }
 
     private var canHideOverlay: Bool {
-        guard case .established = callInfoConfiguration.state else { return false }
-
-        return !shouldOverlayStayVisibleForAutomation
+        viewModel.canHideOverlay(
+            callState: callInfoConfiguration.state,
+            shouldOverlayStayVisibleForAutomation: shouldOverlayStayVisibleForAutomation
+        )
     }
 
     private func toggleOverlayVisibility() {
@@ -655,12 +657,12 @@ extension CallViewController {
     private func hideOverlayAfterCallEstablishedIfNeeded() {
         let isNotAnimating = callInfoRootViewController.view.layer.animationKeys()?.isEmpty ?? true
 
-        guard
-            overlayTimer == nil,
-            canHideOverlay,
-            isOverlayVisible,
-            isNotAnimating
-        else { return }
+        guard viewModel.shouldHideOverlayAfterCallEstablished(
+            hasOverlayTimer: overlayTimer != nil,
+            canHideOverlay: canHideOverlay,
+            isOverlayVisible: isOverlayVisible,
+            isAnimating: !isNotAnimating
+        ) else { return }
 
         animateOverlay(show: false)
     }
@@ -675,20 +677,28 @@ extension CallViewController {
     }
 
     private func updateOverlayAfterStateChanged() {
-        if canHideOverlay {
-            if overlayTimer == nil {
-                startOverlayTimer()
-            }
-        } else {
-            if !isOverlayVisible {
-                animateOverlay(show: true)
-            }
+        switch viewModel.overlayStateAction(
+            canHideOverlay: canHideOverlay,
+            isOverlayVisible: isOverlayVisible,
+            hasOverlayTimer: overlayTimer != nil
+        ) {
+        case .startTimer:
+            startOverlayTimer()
+        case .stopTimer:
             stopOverlayTimer()
+        case .showOverlayAndStopTimer:
+            animateOverlay(show: true)
+            stopOverlayTimer()
+        case .none:
+            break
         }
     }
 
     private func restartOverlayTimerIfNeeded() {
-        guard overlayTimer != nil, canHideOverlay else { return }
+        guard viewModel.shouldRestartOverlayTimer(
+            hasOverlayTimer: overlayTimer != nil,
+            canHideOverlay: canHideOverlay
+        ) else { return }
         startOverlayTimer()
     }
 
