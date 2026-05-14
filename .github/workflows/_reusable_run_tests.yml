@@ -383,7 +383,7 @@ jobs:
       
       - name: Analyze .xcresult file
         continue-on-error: true
-        uses: wireapp/analyze-xcoderesults-action@v1.0.0
+        uses: wireapp/analyze-xcoderesults-action@228125b6d1488f02b1d80e2040cbfac88c2b1cb3
         with:
           results: ${{ matrix.xcresult_file }}
           warningAnnotations: true
