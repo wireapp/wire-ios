@@ -498,6 +498,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         let newEnvironment = try? sessionManager.environmentStore.fetchBackendEnvironment(
             accountID: account.userIdentifier
         )
+        let kmpViewModelEnvironment = KMPViewModelEnvironment.legacyOnly(
+            sessionBoundaryContext: SessionBoundaryContext(
+                accountID: account.userIdentifier.uuidString
+            )
+        )
 
         return AuthenticatedRouter(
             mainWindow: mainWindow,
@@ -506,6 +511,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             legacyEnvironment: sessionManager.environment,
             newEnvironment: newEnvironment,
             trackingManager: trackingManager,
+            kmpViewModelEnvironment: kmpViewModelEnvironment,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,

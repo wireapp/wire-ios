@@ -71,6 +71,7 @@ final class AuthenticatedRouter {
         // TODO: [WPB-18798] remove legacyEnvironment and newEnvironment properties when ticket is implemented
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
+        kmpViewModelEnvironment: KMPViewModelEnvironment,
         featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -85,7 +86,8 @@ final class AuthenticatedRouter {
             userSession: userSession,
             trackingManager: trackingManager,
             legacyEnvironment: legacyEnvironment,
-            newEnvironment: newEnvironment
+            newEnvironment: newEnvironment,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
         )
 
         self.notificationCenter = notificationCenter

@@ -33,6 +33,7 @@ final class ZClientControllerBuilder {
     private(set) var account: Account
     private(set) var userSession: UserSession
     private(set) var trackingManager: TrackingManager?
+    private(set) var kmpViewModelEnvironment: KMPViewModelEnvironment
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
     private var wireDriveBackendURL: URL? {
@@ -50,13 +51,15 @@ final class ZClientControllerBuilder {
         userSession: UserSession,
         trackingManager: TrackingManager? = nil,
         legacyEnvironment: WireTransport.BackendEnvironment,
-        newEnvironment: WireNetwork.BackendEnvironment2?
+        newEnvironment: WireNetwork.BackendEnvironment2?,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
     ) {
         self.account = account
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.legacyEnvironment = legacyEnvironment
         self.newEnvironment = newEnvironment
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
     }
 
     @MainActor
