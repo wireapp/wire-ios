@@ -25,6 +25,11 @@ final class UserStatusViewModel {
         let userStatus: UserStatus
     }
 
+    struct Selection {
+        let displayModel: DisplayModel
+        let actions: [Action]
+    }
+
     enum Action {
         case notifyAvailabilityChanged(Availability)
         case playSelectionFeedback
@@ -51,7 +56,7 @@ final class UserStatusViewModel {
         self.displayModel = DisplayModel(options: options, userStatus: userStatus)
     }
 
-    func selectAvailability(_ availability: Availability) -> [Action] {
+    func selectAvailability(_ availability: Availability) -> Selection {
         userStatus.availability = availability
 
         var actions: [Action] = [
@@ -63,7 +68,7 @@ final class UserStatusViewModel {
             actions.append(.showAvailabilityExplanation(availability))
         }
 
-        return actions
+        return Selection(displayModel: displayModel, actions: actions)
     }
 
     private func makeDisplayModel() -> DisplayModel {

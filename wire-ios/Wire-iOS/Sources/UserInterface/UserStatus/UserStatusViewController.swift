@@ -74,16 +74,20 @@ final class UserStatusViewController: UIViewController {
     }
 
     private func applyDisplayModel() {
-        (viewIfLoaded as? UserStatusView)?.userStatus = viewModel.displayModel.userStatus
+        applyDisplayModel(viewModel.displayModel)
     }
 
-    private func handle(_ actions: [UserStatusViewModel.Action]) {
-        applyDisplayModel()
+    private func applyDisplayModel(_ displayModel: UserStatusViewModel.DisplayModel) {
+        (viewIfLoaded as? UserStatusView)?.userStatus = displayModel.userStatus
+    }
 
-        actions.forEach { action in
+    private func handle(_ selection: UserStatusViewModel.Selection) {
+        applyDisplayModel(selection.displayModel)
+
+        selection.actions.forEach { action in
             switch action {
             case let .notifyAvailabilityChanged(availability):
-                userStatus = viewModel.userStatus
+                userStatus = selection.displayModel.userStatus
                 delegate?.userStatusViewController(self, didSelect: availability)
 
             case .playSelectionFeedback:

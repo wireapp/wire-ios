@@ -53,39 +53,70 @@ final class SectionCollectionViewController: NSObject {
     }
 
     var visibleSections: [CollectionViewSectionController] {
-        sections.filter { !$0.isHidden }
+        state.visibleSections
+    }
+
+    var isEmpty: Bool {
+        state.isEmpty
     }
 
     init(sections: [CollectionViewSectionController] = []) {
         self.sections = sections
+    }
+
+    private var state: SectionCollectionViewState {
+        SectionCollectionViewState(sections: sections)
+    }
+}
+
+private struct SectionCollectionViewState {
+
+    let sections: [CollectionViewSectionController]
+
+    var visibleSections: [CollectionViewSectionController] {
+        sections.filter { !$0.isHidden }
+    }
+
+    var numberOfSections: Int {
+        visibleSections.count
+    }
+
+    var isEmpty: Bool {
+        visibleSections.isEmpty
+    }
+
+    func section(at index: Int) -> CollectionViewSectionController? {
+        let currentVisibleSections = visibleSections
+        guard currentVisibleSections.indices.contains(index) else { return nil }
+
+        return currentVisibleSections[index]
     }
 }
 
 extension SectionCollectionViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        guard visibleSections.indices.contains(indexPath.section) else { return true }
+        guard let section = state.section(at: indexPath.section) else { return true }
 
-        return visibleSections[indexPath.section]
-            .collectionView?(collectionView, shouldHighlightItemAt: indexPath) ?? true
+        return section.collectionView?(collectionView, shouldHighlightItemAt: indexPath) ?? true
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        guard visibleSections.indices.contains(indexPath.section) else { return true }
+        guard let section = state.section(at: indexPath.section) else { return true }
 
-        return visibleSections[indexPath.section].collectionView?(collectionView, shouldSelectItemAt: indexPath) ?? true
+        return section.collectionView?(collectionView, shouldSelectItemAt: indexPath) ?? true
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard visibleSections.indices.contains(indexPath.section) else { return }
+        guard let section = state.section(at: indexPath.section) else { return }
 
-        visibleSections[indexPath.section].collectionView?(collectionView, didSelectItemAt: indexPath)
+        section.collectionView?(collectionView, didSelectItemAt: indexPath)
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard visibleSections.indices.contains(indexPath.section) else { return }
+        guard let section = state.section(at: indexPath.section) else { return }
 
-        visibleSections[indexPath.section].collectionView?(collectionView, didDeselectItemAt: indexPath)
+        section.collectionView?(collectionView, didDeselectItemAt: indexPath)
     }
 
 }
@@ -93,7 +124,7 @@ extension SectionCollectionViewController: UICollectionViewDelegate {
 extension SectionCollectionViewController: UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        visibleSections.count
+        state.numberOfSections
     }
 
     func collectionView(
@@ -101,26 +132,26 @@ extension SectionCollectionViewController: UICollectionViewDataSource {
         willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
-        guard visibleSections.indices.contains(indexPath.section) else { return }
+        guard let section = state.section(at: indexPath.section) else { return }
 
-        visibleSections[indexPath.section].collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
+        section.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard visibleSections.indices.contains(section) else { return 0 }
+        guard let sectionController = state.section(at: section) else { return 0 }
 
-        return visibleSections[section].collectionView(collectionView, numberOfItemsInSection: 0)
+        return sectionController.collectionView(collectionView, numberOfItemsInSection: 0)
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard visibleSections.indices.contains(indexPath.section) else {
+        guard let section = state.section(at: indexPath.section) else {
             fatal("Unknown section, indexPath: \(indexPath)")
         }
 
-        return visibleSections[indexPath.section].collectionView(collectionView, cellForItemAt: indexPath)
+        return section.collectionView(collectionView, cellForItemAt: indexPath)
     }
 
     func collectionView(
@@ -128,11 +159,11 @@ extension SectionCollectionViewController: UICollectionViewDataSource {
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        guard visibleSections.indices.contains(indexPath.section) else {
+        guard let section = state.section(at: indexPath.section) else {
             fatal("Unknown section, indexPath: \(indexPath)")
         }
 
-        return visibleSections[indexPath.section].collectionView!(
+        return section.collectionView!(
             collectionView,
             viewForSupplementaryElementOfKind: kind,
             at: indexPath
@@ -148,7 +179,7 @@ extension SectionCollectionViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        visibleSections[section].collectionView?(
+        state.visibleSections[section].collectionView?(
             collectionView,
             layout: collectionViewLayout,
             referenceSizeForHeaderInSection: section
@@ -160,7 +191,7 @@ extension SectionCollectionViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
-        visibleSections[section].collectionView?(
+        state.visibleSections[section].collectionView?(
             collectionView,
             layout: collectionViewLayout,
             referenceSizeForFooterInSection: section
@@ -172,7 +203,7 @@ extension SectionCollectionViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        visibleSections[indexPath.section].collectionView?(
+        state.visibleSections[indexPath.section].collectionView?(
             collectionView,
             layout: collectionViewLayout,
             sizeForItemAt: indexPath

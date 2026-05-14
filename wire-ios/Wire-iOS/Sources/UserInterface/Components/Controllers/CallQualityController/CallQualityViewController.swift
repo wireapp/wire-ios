@@ -31,7 +31,7 @@ protocol CallQualityViewControllerDelegate: AnyObject {
 
 final class CallQualityViewController: UIViewController, UIGestureRecognizerDelegate {
 
-    let questionLabelText: String
+    let viewModel: CallQualityViewModel
     let callDuration: TimeInterval
 
     weak var delegate: CallQualityViewControllerDelegate?
@@ -64,7 +64,7 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     // MARK: Initialization
 
     init(questionLabelText: String, callDuration: TimeInterval) {
-        self.questionLabelText = questionLabelText
+        self.viewModel = CallQualityViewModel(questionText: questionLabelText)
         self.callDuration = callDuration
         super.init(nibName: nil, bundle: nil)
     }
@@ -84,9 +84,6 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     // MARK: Interface
 
     func createViews() {
-
-        typealias QualitySurvey = L10n.Localizable.Calling.QualitySurvey
-
         scoreSelectorView = QualityScoreSelectorView(onScoreSet: { [weak self] score in
             self?.delegate?.callQualityController(self!, didSelect: score)
         })
@@ -94,10 +91,10 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
         dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         dimmingView.alpha = 0
 
-        let closeButtonTitle = QualitySurvey.skipButtonTitle
+        let closeButtonTitle = viewModel.skipButtonTitle
 
         closeButton.setTitle(closeButtonTitle, for: .normal)
-        closeButton.accessibilityIdentifier = "score_close"
+        closeButton.accessibilityIdentifier = viewModel.closeButtonAccessibilityIdentifier
         closeButton.accessibilityLabel = closeButtonTitle
         closeButton.clipsToBounds = true
         closeButton.layer.cornerRadius = 16
@@ -107,11 +104,11 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
 
         titleLabel.textColor = SemanticColors.Label.textDefault
         titleLabel.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.medium)
-        titleLabel.text = QualitySurvey.title
+        titleLabel.text = viewModel.titleText
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.textAlignment = .center
 
-        questionLabel.text = questionLabelText
+        questionLabel.text = viewModel.questionText
         questionLabel.textAlignment = .center
         questionLabel.numberOfLines = 0
 
@@ -254,13 +251,11 @@ final class CallQualityView: UIStackView {
     )
     let scoreButton = ZMButton()
     let callback: (Int) -> Void
-    let labelText: String
-    let buttonScore: Int
+    let rowState: CallQualityScoreRowState
 
-    init(labelText: String, buttonScore: Int, callback: @escaping (Int) -> Void) {
+    init(rowState: CallQualityScoreRowState, callback: @escaping (Int) -> Void) {
         self.callback = callback
-        self.buttonScore = buttonScore
-        self.labelText = labelText
+        self.rowState = rowState
 
         super.init(frame: .zero)
 
@@ -275,19 +270,19 @@ final class CallQualityView: UIStackView {
     }
 
     func setupSubviews() {
-        scoreLabel.text = [1, 3, 5].contains(buttonScore) ? labelText : ""
+        scoreLabel.text = rowState.labelText
         scoreLabel.textAlignment = .center
         scoreLabel.adjustsFontSizeToFitWidth = true
 
-        scoreButton.tag = buttonScore
+        scoreButton.tag = rowState.score
         scoreButton.circular = true
-        scoreButton.setTitle(String(buttonScore), for: .normal)
+        scoreButton.setTitle(rowState.buttonTitle, for: .normal)
         scoreButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: UIFont.Weight.semibold)
         scoreButton.addTarget(self, action: #selector(onClick), for: .primaryActionTriggered)
         scoreButton.applyStyle(.secondaryTextButtonStyle)
-        scoreButton.accessibilityIdentifier = "score_\(buttonScore)"
+        scoreButton.accessibilityIdentifier = rowState.accessibilityIdentifier
 
-        scoreButton.accessibilityLabel = labelText
+        scoreButton.accessibilityLabel = rowState.accessibilityLabel
     }
 
     private func createConstraints() {
@@ -305,7 +300,7 @@ final class CallQualityView: UIStackView {
 
     @objc
     func onClick(_ sender: UIButton) {
-        callback(buttonScore)
+        callback(rowState.score)
     }
 }
 
@@ -327,8 +322,8 @@ final class QualityScoreSelectorView: UIView {
         scoreStackView.spacing = 12
 
         (1 ... 5)
-            .map { (localizedNameForScore($0), $0) }
-            .map { CallQualityView(labelText: $0.0, buttonScore: $0.1, callback: onScoreSet) }
+            .map(CallQualityViewModel.scoreRow)
+            .map { CallQualityView(rowState: $0, callback: onScoreSet) }
             .forEach(scoreStackView.addArrangedSubview)
 
         addSubview(scoreStackView)
@@ -351,10 +346,6 @@ final class QualityScoreSelectorView: UIView {
             scoreStackView.spacing = 12
         }
 
-    }
-
-    func localizedNameForScore(_ score: Int) -> String {
-        NSLocalizedString("calling.quality_survey.answer.\(score)", comment: "")
     }
 
     @available(*, unavailable)
