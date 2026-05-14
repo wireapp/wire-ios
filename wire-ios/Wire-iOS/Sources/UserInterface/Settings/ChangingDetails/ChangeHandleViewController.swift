@@ -23,6 +23,58 @@ import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
 
+final class ChangeHandleViewControllerBuilder {
+
+    private let useTypeIntrinsicSizeTableView: Bool
+    private let settingsCoordinator: AnySettingsCoordinator
+    private let isFederationEnabled: Bool
+    private let userSession: UserSession
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator,
+        isFederationEnabled: Bool,
+        userSession: UserSession,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        self.settingsCoordinator = settingsCoordinator
+        self.isFederationEnabled = isFederationEnabled
+        self.userSession = userSession
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    func build() -> UIViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .changeHandle,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    private func buildKMPViewModelImplementation() -> UIViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    private func buildLegacy() -> UIViewController {
+        ChangeHandleViewController(
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator,
+            isFederationEnabled: isFederationEnabled,
+            userSession: userSession
+        )
+    }
+}
+
 private extension UIView {
 
     func wiggle() {

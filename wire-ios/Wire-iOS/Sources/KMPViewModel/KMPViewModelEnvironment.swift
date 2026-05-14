@@ -66,11 +66,15 @@ enum KMPViewModelScreenID: String, Equatable {
     case appLockChangeWarning
     case archivedList
     case blocker
+    case changeEmail
+    case changeHandle
     case connectRequests
+    case confirmEmail
     case createGroupConversation
     case folderPicker
     case networkStatus
     case noConversationPlaceholder
+    case permissionDenied
     case searchUser
     case sidebar
     case settingsAbout
@@ -85,4 +89,7 @@ enum KMPViewModelScreenID: String, Equatable {
     case selfClientList
     case selfProfile
     case startUI
+    case successfulCertificateEnrollment
+    case userStatus
+    case wipeCompletion
 }

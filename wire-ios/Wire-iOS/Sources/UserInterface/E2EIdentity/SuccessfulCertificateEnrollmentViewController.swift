@@ -20,6 +20,71 @@ import SwiftUI
 import WireDesign
 import WireSyncEngine
 
+struct SuccessfulCertificateEnrollmentViewControllerBuilder {
+
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(kmpViewModelEnvironment: KMPViewModelEnvironment) {
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build(
+        isUpdateMode: Bool = false,
+        certificateDetails: String? = nil,
+        onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)? = nil
+    ) -> SuccessfulCertificateEnrollmentViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation(
+                isUpdateMode: isUpdateMode,
+                certificateDetails: certificateDetails,
+                onOkTapped: onOkTapped
+            )
+        }
+
+        return buildLegacy(
+            isUpdateMode: isUpdateMode,
+            certificateDetails: certificateDetails,
+            onOkTapped: onOkTapped
+        )
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .successfulCertificateEnrollment,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation(
+        isUpdateMode: Bool,
+        certificateDetails: String?,
+        onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
+    ) -> SuccessfulCertificateEnrollmentViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy(
+            isUpdateMode: isUpdateMode,
+            certificateDetails: certificateDetails,
+            onOkTapped: onOkTapped
+        )
+    }
+
+    @MainActor
+    private func buildLegacy(
+        isUpdateMode: Bool,
+        certificateDetails: String?,
+        onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
+    ) -> SuccessfulCertificateEnrollmentViewController {
+        let viewController = SuccessfulCertificateEnrollmentViewController(isUpdateMode: isUpdateMode)
+        if let certificateDetails {
+            viewController.certificateDetails = certificateDetails
+        }
+        viewController.onOkTapped = onOkTapped
+        return viewController
+    }
+}
+
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
 
     // MARK: - Properties

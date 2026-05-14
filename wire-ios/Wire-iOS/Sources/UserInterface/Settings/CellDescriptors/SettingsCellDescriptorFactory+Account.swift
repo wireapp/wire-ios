@@ -226,6 +226,15 @@ extension SettingsCellDescriptorFactory {
                         assertionFailure("ZMUser.selfUser() is nil")
                         return .none
                     }
+                    if let kmpViewModelEnvironment {
+                        return ChangeEmailViewControllerBuilder(
+                            user: selfUser,
+                            userSession: userSession,
+                            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+                            settingsCoordinator: settingsCoordinator,
+                            kmpViewModelEnvironment: kmpViewModelEnvironment
+                        ).build()
+                    }
                     return ChangeEmailViewController(
                         user: selfUser,
                         userSession: userSession,
@@ -256,12 +265,22 @@ extension SettingsCellDescriptorFactory {
             let presentation: () -> UIViewController? = { [weak userSession] in
                 guard let userSession else { return nil }
 
-                return ChangeHandleViewController(
+                guard let kmpViewModelEnvironment else {
+                    return ChangeHandleViewController(
+                        useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+                        settingsCoordinator: settingsCoordinator,
+                        isFederationEnabled: isFederationEnabled,
+                        userSession: userSession
+                    )
+                }
+
+                return ChangeHandleViewControllerBuilder(
                     useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
                     settingsCoordinator: settingsCoordinator,
                     isFederationEnabled: isFederationEnabled,
-                    userSession: userSession
-                )
+                    userSession: userSession,
+                    kmpViewModelEnvironment: kmpViewModelEnvironment
+                ).build()
             }
 
             if let selfUser = ZMUser.selfUser(), selfUser.handle != nil {

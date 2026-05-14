@@ -20,6 +20,63 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+struct UserStatusViewControllerBuilder {
+
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(kmpViewModelEnvironment: KMPViewModelEnvironment) {
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build(
+        options: UserStatusView.Options,
+        settings: Settings
+    ) -> UserStatusViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation(
+                options: options,
+                settings: settings
+            )
+        }
+
+        return buildLegacy(
+            options: options,
+            settings: settings
+        )
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .userStatus,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation(
+        options: UserStatusView.Options,
+        settings: Settings
+    ) -> UserStatusViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy(
+            options: options,
+            settings: settings
+        )
+    }
+
+    @MainActor
+    private func buildLegacy(
+        options: UserStatusView.Options,
+        settings: Settings
+    ) -> UserStatusViewController {
+        UserStatusViewController(
+            options: options,
+            settings: settings
+        )
+    }
+}
+
 final class UserStatusViewController: UIViewController {
 
     weak var delegate: UserStatusViewControllerDelegate?

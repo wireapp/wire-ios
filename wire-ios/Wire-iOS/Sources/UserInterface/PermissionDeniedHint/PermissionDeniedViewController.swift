@@ -20,6 +20,47 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+struct PermissionDeniedViewControllerBuilder {
+
+    private let viewModel: PermissionDeniedViewModel
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        viewModel: PermissionDeniedViewModel,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.viewModel = viewModel
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build() -> PermissionDeniedViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .permissionDenied,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation() -> PermissionDeniedViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    @MainActor
+    private func buildLegacy() -> PermissionDeniedViewController {
+        PermissionDeniedViewController(viewModel: viewModel)
+    }
+}
+
 final class PermissionDeniedViewController: UIViewController {
 
     // MARK: - Properties

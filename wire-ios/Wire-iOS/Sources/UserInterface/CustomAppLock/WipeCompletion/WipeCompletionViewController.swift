@@ -19,6 +19,42 @@
 import UIKit
 import WireDesign
 
+struct WipeCompletionViewControllerBuilder {
+
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(kmpViewModelEnvironment: KMPViewModelEnvironment) {
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    @MainActor
+    func build() -> WipeCompletionViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .wipeCompletion,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation() -> WipeCompletionViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    @MainActor
+    private func buildLegacy() -> WipeCompletionViewController {
+        WipeCompletionViewController()
+    }
+}
+
 final class WipeCompletionViewController: UIViewController {
 
     private let viewModel: WipeCompletionViewModel

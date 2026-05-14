@@ -41,6 +41,7 @@ final class ConversationListViewController: UIViewController {
     let createGroupConversationUIBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+    let kmpViewModelEnvironment: KMPViewModelEnvironment
     weak var zClientViewController: ZClientViewController?
 
     private static let contentControllerBottomInset: CGFloat = 16
@@ -184,6 +185,7 @@ final class ConversationListViewController: UIViewController {
         let kmpViewModelEnvironment = kmpViewModelEnvironment ?? KMPViewModelEnvironment.legacyOnly(
             sessionBoundaryContext: SessionBoundaryContext(accountID: viewModel.account.userIdentifier.uuidString)
         )
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
         self.networkStatusViewController = NetworkStatusViewControllerBuilder(
             userSession: viewModel.userSession,
             kmpViewModelEnvironment: kmpViewModelEnvironment

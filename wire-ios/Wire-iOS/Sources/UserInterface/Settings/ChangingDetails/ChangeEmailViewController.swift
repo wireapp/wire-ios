@@ -23,6 +23,59 @@ import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
 
+struct ChangeEmailViewControllerBuilder {
+
+    private let user: UserType
+    private let userSession: UserSession
+    private let useTypeIntrinsicSizeTableView: Bool
+    private let settingsCoordinator: AnySettingsCoordinator
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        user: UserType,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.user = user
+        self.userSession = userSession
+        self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        self.settingsCoordinator = settingsCoordinator
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    func build() -> ChangeEmailViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .changeEmail,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    private func buildKMPViewModelImplementation() -> ChangeEmailViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    private func buildLegacy() -> ChangeEmailViewController {
+        ChangeEmailViewController(
+            user: user,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        )
+    }
+}
+
 final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     // MARK: - Types
@@ -37,6 +90,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     private let emailCell = AccessoryTextFieldCell(style: .default, reuseIdentifier: nil)
 
     private let userSession: UserSession
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment?
 
     // MARK: - Init
 
@@ -46,9 +100,11 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         user: UserType,
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        kmpViewModelEnvironment: KMPViewModelEnvironment? = nil
     ) {
         self.userSession = userSession
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
         self.viewModel = ChangeEmailViewModel(
             currentEmail: user.emailAddress,
             userProfile: userSession.userProfile
@@ -153,17 +209,32 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     private func handle(_ route: ChangeEmailViewModel.Route?) {
         switch route {
         case let .confirmEmail(newEmail):
-            let confirmController = ConfirmEmailViewController(
+            let confirmController = buildConfirmEmailController(newEmail: newEmail)
+            navigationController?.pushViewController(confirmController, animated: true)
+        case .none:
+            break
+        }
+    }
+
+    private func buildConfirmEmailController(newEmail: String) -> ConfirmEmailViewController {
+        guard let kmpViewModelEnvironment else {
+            return ConfirmEmailViewController(
                 newEmail: newEmail,
                 delegate: self,
                 userSession: userSession,
                 useTypeIntrinsicSizeTableView: true,
                 settingsCoordinator: settingsCoordinator
             )
-            navigationController?.pushViewController(confirmController, animated: true)
-        case .none:
-            break
         }
+
+        return ConfirmEmailViewControllerBuilder(
+            newEmail: newEmail,
+            delegate: self,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: settingsCoordinator,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        ).build()
     }
 
     // MARK: - SettingsBaseTableViewController

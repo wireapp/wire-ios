@@ -552,6 +552,7 @@ extension AppRootRouter {
         configureColorScheme()
     }
 
+    @MainActor
     private func applicationDidTransition(to appState: AppState) {
         switch appState {
         case let .unauthenticated(_, _, error):
@@ -615,6 +616,7 @@ extension AppRootRouter {
 
     }
 
+    @MainActor
     private func presentAlertForDeletedAccountIfNeeded(_ error: NSError?) {
         guard
             error?.userSessionErrorCode == .accountDeleted,
@@ -649,7 +651,14 @@ extension AppRootRouter {
             rootViewController.present(alert, animated: true)
 
         case .databaseWiped:
-            let wipeCompletionViewController = WipeCompletionViewController()
+            let kmpViewModelEnvironment = KMPViewModelEnvironment.legacyOnly(
+                sessionBoundaryContext: SessionBoundaryContext(
+                    accountID: sessionManager.currentAccount?.userIdentifier.uuidString
+                )
+            )
+            let wipeCompletionViewController = WipeCompletionViewControllerBuilder(
+                kmpViewModelEnvironment: kmpViewModelEnvironment
+            ).build()
             wipeCompletionViewController.modalPresentationStyle = .fullScreen
             rootViewController.present(wipeCompletionViewController, animated: true)
 

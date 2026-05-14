@@ -28,6 +28,62 @@ protocol ConfirmEmailDelegate: AnyObject {
     func didConfirmEmail(inController controller: ConfirmEmailViewController)
 }
 
+struct ConfirmEmailViewControllerBuilder {
+
+    private let newEmail: String
+    private let delegate: ConfirmEmailDelegate?
+    private let userSession: UserSession
+    private let useTypeIntrinsicSizeTableView: Bool
+    private let settingsCoordinator: AnySettingsCoordinator
+    private let kmpViewModelEnvironment: KMPViewModelEnvironment
+
+    init(
+        newEmail: String,
+        delegate: ConfirmEmailDelegate?,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
+    ) {
+        self.newEmail = newEmail
+        self.delegate = delegate
+        self.userSession = userSession
+        self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        self.settingsCoordinator = settingsCoordinator
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
+    }
+
+    func build() -> ConfirmEmailViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return buildKMPViewModelImplementation()
+        }
+
+        return buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .confirmEmail,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    private func buildKMPViewModelImplementation() -> ConfirmEmailViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacy()
+    }
+
+    private func buildLegacy() -> ConfirmEmailViewController {
+        ConfirmEmailViewController(
+            newEmail: newEmail,
+            delegate: delegate,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
+    }
+}
+
 // MARK: - UITableView extension
 
 extension UITableView {

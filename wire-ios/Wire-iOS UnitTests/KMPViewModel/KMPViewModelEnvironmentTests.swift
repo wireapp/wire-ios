@@ -133,11 +133,15 @@ private let knownScreenIDs: [KMPViewModelScreenID] = [
     .appLockChangeWarning,
     .archivedList,
     .blocker,
+    .changeEmail,
+    .changeHandle,
     .connectRequests,
+    .confirmEmail,
     .createGroupConversation,
     .folderPicker,
     .networkStatus,
     .noConversationPlaceholder,
+    .permissionDenied,
     .searchUser,
     .sidebar,
     .settingsAbout,
@@ -151,7 +155,10 @@ private let knownScreenIDs: [KMPViewModelScreenID] = [
     .settingsSupport,
     .selfClientList,
     .selfProfile,
-    .startUI
+    .startUI,
+    .successfulCertificateEnrollment,
+    .userStatus,
+    .wipeCompletion
 ]
 
 private enum TestState: Equatable {

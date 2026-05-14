@@ -42,7 +42,10 @@ extension ConversationListViewController {
 
     func showPermissionDeniedViewController() {
 
-        let viewController = PermissionDeniedViewController.pushDeniedViewController()
+        let viewController = PermissionDeniedViewControllerBuilder(
+            viewModel: .pushDenied,
+            kmpViewModelEnvironment: kmpViewModelEnvironment
+        ).build()
         viewController.delegate = self
         viewController.modalPresentationStyle = .fullScreen
         present(viewController, animated: true)
