@@ -26,6 +26,7 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     let userSession: UserSession
     let trackingManager: (any TrackingInterface)?
+    let kmpViewModelEnvironment: KMPViewModelEnvironment
     weak var settingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate?
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
@@ -59,13 +60,30 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     init(
         userSession: UserSession,
-        trackingManager: (any TrackingInterface)?
+        trackingManager: (any TrackingInterface)?,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
     ) {
         self.userSession = userSession
         self.trackingManager = trackingManager
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
     }
 
     func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsTableViewController {
+        if shouldBuildKMPViewModelImplementation(for: .settingsRoot) {
+            return buildKMPViewModelRootImplementation(mainCoordinator: mainCoordinator)
+        }
+
+        return buildLegacyRoot(mainCoordinator: mainCoordinator)
+    }
+
+    private func buildKMPViewModelRootImplementation(
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> SettingsTableViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacyRoot(mainCoordinator: mainCoordinator)
+    }
+
+    private func buildLegacyRoot(mainCoordinator: some MainCoordinatorProtocol) -> SettingsTableViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory =
             settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
@@ -94,6 +112,41 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
     }
 
     func build(
+        topLevelMenuItem: SettingsTopLevelMenuItem,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UIViewController {
+        if shouldBuildKMPViewModelImplementation(for: .settingsTopLevelMenuItem) {
+            return buildKMPViewModelTopLevelMenuItemImplementation(
+                topLevelMenuItem: topLevelMenuItem,
+                mainCoordinator: mainCoordinator
+            )
+        }
+
+        return buildLegacyTopLevelMenuItem(
+            topLevelMenuItem: topLevelMenuItem,
+            mainCoordinator: mainCoordinator
+        )
+    }
+
+    private func shouldBuildKMPViewModelImplementation(for screenID: KMPViewModelScreenID) -> Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: screenID,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    private func buildKMPViewModelTopLevelMenuItemImplementation(
+        topLevelMenuItem: SettingsTopLevelMenuItem,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UIViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        buildLegacyTopLevelMenuItem(
+            topLevelMenuItem: topLevelMenuItem,
+            mainCoordinator: mainCoordinator
+        )
+    }
+
+    private func buildLegacyTopLevelMenuItem(
         topLevelMenuItem: SettingsTopLevelMenuItem,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController {

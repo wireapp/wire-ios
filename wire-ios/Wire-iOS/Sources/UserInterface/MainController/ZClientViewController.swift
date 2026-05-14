@@ -120,7 +120,8 @@ final class ZClientViewController: UIViewController {
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
         userSession: userSession,
-        trackingManager: trackingManager
+        trackingManager: trackingManager,
+        kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
     private lazy var defaultSettingsPropertyFactoryDelegate = {
