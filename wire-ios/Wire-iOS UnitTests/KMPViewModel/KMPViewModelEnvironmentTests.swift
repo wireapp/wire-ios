@@ -67,6 +67,46 @@ final class KMPViewModelEnvironmentTests: XCTestCase {
         XCTAssertEqual(viewModel.state, .loaded)
         source.assertSentIntents([.refresh])
     }
+
+    func testScreenGateKeepsLegacyScreensInLegacyMode() {
+        // GIVEN
+        let sut = KMPViewModelEnvironment.legacyOnly(
+            sessionBoundaryContext: SessionBoundaryContext(accountID: "account-1")
+        )
+
+        // WHEN
+        let usesKMPViewModel = sut.usesKMPViewModel(
+            for: .createGroupConversation,
+            isKMPImplementationAvailable: true
+        )
+
+        // THEN
+        XCTAssertFalse(usesKMPViewModel)
+    }
+
+    func testScreenGateRequiresEnabledSessionAndAvailableKMPImplementation() {
+        // GIVEN
+        let context = SessionBoundaryContext(accountID: "account-1")
+        let sut = KMPViewModelEnvironment(
+            sessionBoundaryContext: context,
+            sessionBoundaryModeResolver: SessionBoundaryModeResolverFactory.makeResolver { _ in .kaliumEnabled },
+            viewModelFactory: DefaultKMPViewModelFactory()
+        )
+
+        // WHEN / THEN
+        XCTAssertFalse(
+            sut.usesKMPViewModel(
+                for: .createGroupConversation,
+                isKMPImplementationAvailable: false
+            )
+        )
+        XCTAssertTrue(
+            sut.usesKMPViewModel(
+                for: .createGroupConversation,
+                isKMPImplementationAvailable: true
+            )
+        )
+    }
 }
 
 // MARK: - Test Types

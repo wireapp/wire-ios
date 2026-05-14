@@ -71,7 +71,8 @@ final class ZClientControllerBuilder {
             userSession: userSession,
             trackingManager: trackingManager,
             wireMeetingsFactory: buildWireMeetingsFactory(),
-            wireMessagingFactory: buildWireMessagingFactory()
+            wireMessagingFactory: buildWireMessagingFactory(),
+            kmpViewModelEnvironment: kmpViewModelEnvironment
         )
         viewController.router = router
         return viewController

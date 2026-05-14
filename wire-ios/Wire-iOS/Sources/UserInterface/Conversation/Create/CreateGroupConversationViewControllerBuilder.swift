@@ -25,18 +25,43 @@ final class CreateGroupConversationViewControllerBuilder: CreateGroupConversatio
 
     let userSession: UserSession
     let conversationCreationRepository: ConversationCreationRepositoryProtocol
+    let kmpViewModelEnvironment: KMPViewModelEnvironment
     weak var delegate: ConversationCreationControllerDelegate?
 
     init(
         userSession: UserSession,
-        conversationCreationRepository: ConversationCreationRepositoryProtocol
+        conversationCreationRepository: ConversationCreationRepositoryProtocol,
+        kmpViewModelEnvironment: KMPViewModelEnvironment
     ) {
         self.userSession = userSession
         self.conversationCreationRepository = conversationCreationRepository
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment
     }
 
     @MainActor
     func build() async -> UIViewController {
+        if shouldBuildKMPViewModelImplementation {
+            return await buildKMPViewModelImplementation()
+        }
+
+        return await buildLegacy()
+    }
+
+    private var shouldBuildKMPViewModelImplementation: Bool {
+        kmpViewModelEnvironment.usesKMPViewModel(
+            for: .createGroupConversation,
+            isKMPImplementationAvailable: false
+        )
+    }
+
+    @MainActor
+    private func buildKMPViewModelImplementation() async -> UIViewController {
+        // KMP-backed implementation will be added once Metro/Kalium exposes this screen contract.
+        await buildLegacy()
+    }
+
+    @MainActor
+    private func buildLegacy() async -> UIViewController {
         let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
         let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
         let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()

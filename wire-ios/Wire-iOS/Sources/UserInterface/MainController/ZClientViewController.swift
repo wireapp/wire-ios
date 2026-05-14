@@ -46,6 +46,7 @@ final class ZClientViewController: UIViewController {
     let contextProvider: any ManagedObjectContextProvider
     let userSession: UserSession
     let trackingManager: TrackingManager?
+    let kmpViewModelEnvironment: KMPViewModelEnvironment
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet {
@@ -157,7 +158,8 @@ final class ZClientViewController: UIViewController {
 
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
         userSession: userSession,
-        conversationCreationRepository: conversationCreationRepository
+        conversationCreationRepository: conversationCreationRepository,
+        kmpViewModelEnvironment: kmpViewModelEnvironment
     )
 
     private lazy var folderPickerViewControllerBuilder = FolderPickerViewControllerBuilder(
@@ -222,13 +224,19 @@ final class ZClientViewController: UIViewController {
         userSession: UserSession,
         trackingManager: TrackingManager?,
         wireMeetingsFactory: any WireMeetingsFactoryProtocol,
-        wireMessagingFactory: any WireMessagingFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol,
+        kmpViewModelEnvironment: KMPViewModelEnvironment? = nil
     ) {
         self.account = account
         self.contextProvider = contextProvider
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
+        self.kmpViewModelEnvironment = kmpViewModelEnvironment ?? .legacyOnly(
+            sessionBoundaryContext: SessionBoundaryContext(
+                accountID: account.userIdentifier.uuidString
+            )
+        )
         self.colorSchemeController = .init(userSession: userSession)
 
         self.wireMeetingsFactory = wireMeetingsFactory

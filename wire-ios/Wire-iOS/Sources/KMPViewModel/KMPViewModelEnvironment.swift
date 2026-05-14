@@ -53,4 +53,15 @@ struct KMPViewModelEnvironment {
     ) -> KMPViewModelAdapter<State, Effect, Intent> {
         viewModelFactory.makeViewModel(for: descriptor)
     }
+
+    func usesKMPViewModel(
+        for screenID: KMPViewModelScreenID,
+        isKMPImplementationAvailable: Bool
+    ) -> Bool {
+        sessionBoundaryMode.usesKaliumViewModels && isKMPImplementationAvailable
+    }
+}
+
+enum KMPViewModelScreenID: String, Equatable {
+    case createGroupConversation
 }
