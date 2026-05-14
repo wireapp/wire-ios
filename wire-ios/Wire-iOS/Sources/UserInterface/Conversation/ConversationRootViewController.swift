@@ -31,6 +31,7 @@ final class ConversationRootViewController: UIViewController {
     fileprivate var contentView = UIView()
     private var navBarHeightForFederatedUsers: CGFloat = 50
     private var defaultNavBarHeight: CGFloat = 44
+    private let viewModel = ConversationRootViewModel()
     var networkStatusBarHeight: NSLayoutConstraint?
 
     private var conversation: ZMConversation
@@ -87,12 +88,12 @@ final class ConversationRootViewController: UIViewController {
             navBar.tintColor = SemanticColors.Label.textDefault
             navBar.barStyle = .default
 
-            // Handle federated users case
-            if conversation.conversationType == .oneOnOne,
-               let user = conversation.connectedUserType,
-               user.isFederated {
-                navBar.frame.size.height = navBarHeightForFederatedUsers
-            }
+            navBar.frame.size.height = viewModel.navigationBarHeight(
+                isOneOnOneConversation: conversation.conversationType == .oneOnOne,
+                isConnectedUserFederated: conversation.connectedUserType?.isFederated == true,
+                defaultHeight: defaultNavBarHeight,
+                federatedHeight: navBarHeightForFederatedUsers
+            )
         }
 
         networkStatusViewController.delegate = self
@@ -121,8 +122,7 @@ final class ConversationRootViewController: UIViewController {
         super.viewDidAppear(animated)
 
         shouldAnimateNetworkStatusView = true
-        navigationController?.navigationBar.accessibilityElementsHidden = false
-        conversationViewController?.view.accessibilityElementsHidden = false
+        applyAccessibilityState(isConversationVisible: true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -133,8 +133,7 @@ final class ConversationRootViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        navigationController?.navigationBar.accessibilityElementsHidden = true
-        conversationViewController?.view.accessibilityElementsHidden = true
+        applyAccessibilityState(isConversationVisible: false)
     }
 
     private var child: UIViewController? {
@@ -152,7 +151,10 @@ final class ConversationRootViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+        if viewModel.shouldRefreshNavigationItems(
+            currentStyle: traitCollection.userInterfaceStyle,
+            previousStyle: previousTraitCollection?.userInterfaceStyle
+        ) {
             // Refresh navigation items to get new buttons with updated colors
             guard let conversationViewController else { return }
 
@@ -221,6 +223,12 @@ final class ConversationRootViewController: UIViewController {
 
     func scroll(to message: ZMConversationMessage) {
         conversationViewController?.scroll(to: message)
+    }
+
+    private func applyAccessibilityState(isConversationVisible: Bool) {
+        let accessibilityState = viewModel.accessibilityState(isConversationVisible: isConversationVisible)
+        navigationController?.navigationBar.accessibilityElementsHidden = accessibilityState.navigationBarElementsHidden
+        conversationViewController?.view.accessibilityElementsHidden = accessibilityState.conversationElementsHidden
     }
 }
 
