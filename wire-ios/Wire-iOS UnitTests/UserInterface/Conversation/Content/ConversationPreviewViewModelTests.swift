@@ -24,7 +24,7 @@ final class ConversationPreviewViewModelTests: XCTestCase {
 
     func testStateMapsConversationTitleAndPreviewActions() {
         let conversation = ZMConversation()
-        conversation.displayName = "Design"
+        conversation.userDefinedName = "Design"
 
         let sut = ConversationPreviewViewModel(
             conversation: conversation,

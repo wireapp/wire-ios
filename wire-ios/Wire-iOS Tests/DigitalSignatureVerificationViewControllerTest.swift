@@ -21,12 +21,12 @@ import XCTest
 
 class DigitalSignatureVerificationViewControllerTest: XCTestCase {
 
-    var sut: DigitalSignatureVerificationViewController!
+    var sut: DigitalSignatureVerificationViewModel!
 
     override func setUp() {
         let mainURL =
             URL(string: "https://ais-sas.swisscom.com/sas/web/tkeb8ac3f9bf794cfd90ccc7741c11c908tx/otp?lang=en")!
-        sut = DigitalSignatureVerificationViewController(url: mainURL)
+        sut = DigitalSignatureVerificationViewModel(url: mainURL)
     }
 
     override func tearDown() {
@@ -39,10 +39,10 @@ class DigitalSignatureVerificationViewControllerTest: XCTestCase {
         let successURL = URL(string: "https://ais-sas.swisscom.com/sas/web/success?lang=en&postCode=sas-success")!
 
         // when
-        let response = sut.parseVerificationURL(successURL)
+        let response = sut.route(for: successURL)
 
         // then
-        guard case .success? = response else {
+        guard case .verificationSucceeded = response else {
             XCTFail("Digital Signature Verification URL didn't return success")
             return
         }
@@ -56,10 +56,10 @@ class DigitalSignatureVerificationViewControllerTest: XCTestCase {
             )!
 
         // when
-        let response = sut.parseVerificationURL(failedURL)
+        let response = sut.route(for: failedURL)
 
         // then
-        guard case .failure? = response else {
+        guard case .verificationFailed = response else {
             XCTFail("Digital Signature Verification URL didn't return failure")
             return
         }
