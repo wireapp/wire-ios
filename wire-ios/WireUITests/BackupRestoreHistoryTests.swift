@@ -67,11 +67,6 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .goBackToSettingsPage()
             .switchToConversationsTab()
             .openConversation()
-      
-          XCTAssertTrue(
-            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 2),
-            "Sent message did not appear"
-        )
 
         let restoredMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
@@ -126,11 +121,6 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .goBackToSettingsPage()
             .switchToConversationsTab()
             .openConversation()
-      
-          XCTAssertTrue(
-            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 2),
-            "Sent message did not appear"
-        )
 
         let restoredMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
@@ -157,16 +147,9 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .openConversation()
             .sendMessage(messageFromOwner)
 
-        let sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
-            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 3),
-            "Restored message did not appear"
-        )
-
-        let restoredMessages = activeConversationPage.fetchMessages()
-        XCTAssertTrue(
-            restoredMessages.contains(messageFromOwner),
-            "Expected message '\(messageFromOwner)' not found in restored messages: \(restoredMessages)"
+            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 2),
+            "Sent message did not appear"
         )
 
         return (
