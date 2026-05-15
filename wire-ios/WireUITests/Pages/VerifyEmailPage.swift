@@ -35,7 +35,7 @@ class VerifyEmailPage: PageModel {
 
     func goBacktoAccountSetting() throws -> AccountSettingsPage {
         backToPreviousPage.tap()
-        backToPreviousPage.tap()
+        backToPreviousPage.waitAndTap()
         return try AccountSettingsPage()
     }
 
