@@ -20,6 +20,8 @@
 
 // Linking
 BUNDLE_LOADER = $(TEST_HOST)
+// TODO: Remove with the temporary WireIosShared login probe.
+FRAMEWORK_SEARCH_PATHS = $(inherited) "$(SRCROOT)/../../wire-android-rc-ios-avs/shared/export-ios/build/bin/iosSimulatorArm64/debugFramework"
 
 // Packaging
 INFOPLIST_FILE = Wire-iOS Tests/Info.plist

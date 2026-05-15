@@ -38,9 +38,33 @@ struct DeveloperDebugActionsView: View {
             }
         }
         .sheet(item: $viewModel.mlsGroupSearchItem, content: mlsGroupSearchView)
+        .sheet(isPresented: $viewModel.isKMPActionsPresented) {
+            kmpActionsView
+        }
         .sheet(isPresented: $viewModel.isAppVersionInputPresented) {
             appVersionInputView
         }
+        .alert(
+            viewModel.kmpLoginProbeReport?.title ?? "",
+            isPresented: Binding(
+                get: { viewModel.kmpLoginProbeReport != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        viewModel.kmpLoginProbeReport = nil
+                    }
+                }
+            ),
+            actions: {
+                Button("OK", role: .cancel) {
+                    viewModel.kmpLoginProbeReport = nil
+                }
+            },
+            message: {
+                if let report = viewModel.kmpLoginProbeReport {
+                    Text(report.details)
+                }
+            }
+        )
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
     }
@@ -98,6 +122,31 @@ struct DeveloperDebugActionsView: View {
         }
         .padding()
         .presentationDetents([.height(200)])
+    }
+
+    // TODO: Remove this sheet with the temporary WireIosShared login probe.
+    @ViewBuilder private var kmpActionsView: some View {
+        NavigationStack {
+            List {
+                Button("Run login email VM probe") {
+                    viewModel.runKMPLoginIdentifierProbe()
+                }
+
+                Button("Run login email VM probe with credentials") {
+                    viewModel.requestKMPLoginIdentifierProbeInput()
+                }
+            }
+            .navigationTitle("KMP actions")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") {
+                        viewModel.isKMPActionsPresented = false
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
     }
 }
 

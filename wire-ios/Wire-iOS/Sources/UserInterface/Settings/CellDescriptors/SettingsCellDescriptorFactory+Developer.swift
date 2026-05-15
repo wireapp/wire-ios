@@ -87,6 +87,8 @@ extension SettingsCellDescriptorFactory {
             )
         )
 
+        developerCellDescriptors.append(kmpActionsGroup) // TODO: Remove with the temporary WireIosShared login probe.
+
         developerCellDescriptors.append(
             Button(
                 title: "Re-calculate badge count",
@@ -167,6 +169,53 @@ extension SettingsCellDescriptorFactory {
             icon: .robot,
             accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: .developerOptions,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
+        )
+    }
+
+    // TODO: Remove this group with the temporary WireIosShared login probe.
+    private var kmpActionsGroup: any SettingsCellDescriptorType {
+        typealias Button = SettingsButtonCellDescriptor
+
+        return SettingsGroupCellDescriptor(
+            items: [
+                SettingsSectionDescriptor(cellDescriptors: [
+                    Button(
+                        title: "Run login email VM probe",
+                        isDestructive: false,
+                        selectAction: { _ in
+                            Task { @MainActor in
+                                let report = await KMPLoginIdentifierDebugProbeRunner().run()
+                                DebugActions.alert(
+                                    report.details,
+                                    title: report.title,
+                                    textToCopy: report.details
+                                )
+                            }
+                        }
+                    ),
+                    Button(
+                        title: "Run login email VM probe with credentials",
+                        isDestructive: false,
+                        selectAction: { _ in
+                            DebugActions.askKMPLoginProbeInput { input in
+                                Task { @MainActor in
+                                    let report = await KMPLoginIdentifierDebugProbeRunner().run(input: input)
+                                    DebugActions.alert(
+                                        report.details,
+                                        title: report.title,
+                                        textToCopy: report.details
+                                    )
+                                }
+                            }
+                        }
+                    )
+                ])
+            ],
+            title: "KMP actions",
+            accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator,
             userSession: userSession
         )

@@ -51,6 +51,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     @Published var debugItems: [DeveloperDebugActionsDisplayModel.DebugItem] = []
     @Published var mlsGroupSearchItem: MLSGroupSearchItem?
     @Published var isAppVersionInputPresented = false
+    @Published var isKMPActionsPresented = false
+    @Published var kmpLoginProbeReport: KMPLoginIdentifierDebugProbeReport?
 
     private let userSession: ZMUserSession?
     private let selfClient: UserClient?
@@ -87,6 +89,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache),
             .init(title: "Simulate access token failure", action: simulateAccessTokenFailure),
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
+            // TODO: Remove this entry with the temporary WireIosShared login probe.
+            .init(title: "KMP actions", action: showKMPActions),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
             .init(title: "Initiate reset of affected MLS groups", action: initiateRepairRemovalKeys),
@@ -102,6 +106,31 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         ]
 
         debugItems = buttonItems.map { .button($0) } + toggleItems.map { .toggle($0) }
+    }
+
+    // MARK: - KMP login probe
+    // TODO: Remove this section with the temporary WireIosShared login probe.
+
+    private func showKMPActions() {
+        isKMPActionsPresented = true
+    }
+
+    func runKMPLoginIdentifierProbe() {
+        Task { @MainActor in
+            let report = await KMPLoginIdentifierDebugProbeRunner().run()
+            logger.info("KMP login VM probe finished: \(report.title)", attributes: .safePublic)
+            kmpLoginProbeReport = report
+        }
+    }
+
+    func requestKMPLoginIdentifierProbeInput() {
+        DebugActions.askKMPLoginProbeInput { [weak self] input in
+            Task { @MainActor in
+                let report = await KMPLoginIdentifierDebugProbeRunner().run(input: input)
+                self?.logger.info("KMP login VM credential probe finished: \(report.title)", attributes: .safePublic)
+                self?.kmpLoginProbeReport = report
+            }
+        }
     }
 
     // MARK: - App version migration

@@ -21,3 +21,5 @@
 
 GCC_SYMBOLS_PRIVATE_EXTERN = NO
 CODE_SIGN_ENTITLEMENTS_APP = Wire-iOS/Entitlements-Dev.entitlements
+// TODO: Remove with the temporary WireIosShared login probe.
+FRAMEWORK_SEARCH_PATHS = $(inherited) "$(SRCROOT)/../../wire-android-rc-ios-avs/shared/export-ios/build/bin/iosSimulatorArm64/debugFramework"
