@@ -95,6 +95,27 @@ class AccountSettingsPage: PageModel {
         return try EmailUpdatePage()
     }
 
+    func tapNameField() throws -> AccountSettingsPage {
+        nameField.tap()
+        return self
+    }
+
+    func tapUsernameField() throws -> UsernameUpdatePage {
+        usernameField.tap()
+        return try UsernameUpdatePage()
+    }
+
+    func clearTextField(_ textfield: XCUIElement) {
+        textfield.doubleTap()
+        textfield.typeText("\u{8}")
+    }
+
+    func updateName() throws -> AccountSettingsPage {
+        clearTextField(nameField)
+        nameField.typeText("-updated")
+        return self
+    }
+
     @discardableResult
     func logout() throws -> LogOutPage {
         logoutButton.tap()
