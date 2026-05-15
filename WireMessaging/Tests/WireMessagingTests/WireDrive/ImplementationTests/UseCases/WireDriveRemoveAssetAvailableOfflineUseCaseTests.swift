@@ -33,9 +33,11 @@ final class WireDriveRemoveAssetAvailableOfflineUseCaseTests {
     private let sut: WireDriveRemoveAssetAvailableOfflineUseCase
 
     init() {
+        let fileCache = MockFileCache()
+
         self.localAssetRepository = WireDriveLocalAssetRepository(
             nodesAPI: nodesAPI,
-            fileCache: MockFileCache(),
+            fileCache: fileCache,
             store: store
         )
 
@@ -48,6 +50,13 @@ final class WireDriveRemoveAssetAvailableOfflineUseCaseTests {
         }
         store.upsertAssetAsync_MockMethod = { [weak self] asset in
             self?.storeBacking[asset.nodeID] = asset
+        }
+        store.deleteAssetsNodeIDs_MockMethod = { _ in
+            // do nothing
+        }
+
+        fileCache.deleteFileForKey_MockMethod = { _ in
+            // do nothing
         }
     }
 

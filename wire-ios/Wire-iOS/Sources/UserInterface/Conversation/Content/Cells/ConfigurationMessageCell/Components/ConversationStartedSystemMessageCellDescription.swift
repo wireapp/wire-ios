@@ -94,15 +94,16 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
         let iconColor = IconColors.backgroundDefault
         let isChannel = conversation.isChannel
 
-        let creator: UserType = conversation.creator
-        let senderName = creator.isSelfUser
+        let creator: (any UserType)? = conversation.creator
+        let creatorIsSelfUser = creator?.isSelfUser ?? false
+        let senderName = creatorIsSelfUser
             ? L10n.Localizable.Content.System.youNominative
-            : (creator.name ?? L10n.Localizable.Conversation.Status.someone)
+            : (creator?.name ?? L10n.Localizable.Conversation.Status.someone)
 
         // Heading (only for named conversations)
         let heading: NSAttributedString?
         if let name = conversation.displayName, !name.isEmpty {
-            let headingText = switch (isChannel, creator.isSelfUser) {
+            let headingText = switch (isChannel, creatorIsSelfUser) {
             case (true, true):
                 L10n.Localizable.Content.System.Channel.WithName.titleYou(senderName)
             case (true, false):
@@ -121,12 +122,12 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
         }
 
         // Participants excluding creator, with self user placed last
-        let creatorObjectID = conversation.creator.objectID
+        let creatorObjectID = conversation.creator?.objectID
         let participantsExcludingCreator = conversation.sortedActiveParticipantsUserTypes.filter { participant in
-            guard let zmUser = participant as? ZMUser else { return true }
+            guard let creatorObjectID, let zmUser = participant as? ZMUser else { return true }
             return zmUser.objectID != creatorObjectID
         }
-        let hasSelf = !creator.isSelfUser && participantsExcludingCreator.contains(where: \.isSelfUser)
+        let hasSelf = !creatorIsSelfUser && participantsExcludingCreator.contains(where: \.isSelfUser)
         var names = participantsExcludingCreator
             .filter { !$0.isSelfUser }
             .compactMap(\.name)
@@ -143,7 +144,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
                 .isEmpty ? nil :
                 "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(participantsString)" && font &&
                 textColor
-        } else if creator.isSelfUser {
+        } else if creatorIsSelfUser {
             L10n.Localizable.Content.System.Conversation.You.started(senderName, participantsString)
                 && font && textColor
         } else {
