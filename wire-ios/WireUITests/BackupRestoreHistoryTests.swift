@@ -56,6 +56,11 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .openConversation()
             .sendMessage(messageFromOwner)
 
+        XCTAssertTrue(
+            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 2),
+            "Sent message did not appear"
+        )
+
         var sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
@@ -112,10 +117,15 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .switchToConversationsTab()
             .openConversation()
 
-        sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
-            sentMessages.contains(messageFromOwner),
-            "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
+            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 3),
+            "Restored message did not appear"
+        )
+
+        let restoredMessages = activeConversationPage.fetchMessages()
+        XCTAssertTrue(
+            restoredMessages.contains(messageFromOwner),
+            "Expected message '\(messageFromOwner)' not found in restored messages: \(restoredMessages)"
         )
     }
 }
