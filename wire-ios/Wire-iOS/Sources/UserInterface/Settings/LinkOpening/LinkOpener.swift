@@ -23,25 +23,35 @@ import WireSystem
 
 private let log = ZMSLog(tag: "link opening")
 
+protocol LinkOpeningApplication {
+    func canOpenURL(_ url: URL) -> Bool
+    func openURL(_ url: URL)
+    func canHandleScheme(_ scheme: String) -> Bool
+}
+
+protocol BrowserOpeningPresenter: AnyObject {
+    func presentBrowser(_ viewControllerToPresent: UIViewController, animated: Bool)
+}
+
 extension URL {
 
     @discardableResult
-    func open() -> Bool {
-        let opened = openAsLink()
+    func open(using application: any LinkOpeningApplication = UIApplication.shared) -> Bool {
+        let opened = openAsLink(using: application)
         if opened {
             return true
         } else {
             log.debug("Did not open \"\(self)\" in a twitter application or third party browser.")
-            guard UIApplication.shared.canOpenURL(self) else { return false }
-            UIApplication.shared.open(self)
+            guard application.canOpenURL(self) else { return false }
+            application.openURL(self)
             return true
         }
     }
 
-    private func openInApp(above viewController: UIViewController) {
+    private func openInApp(above presenter: any BrowserOpeningPresenter) {
         let browser = BrowserViewController(url: self)
         browser.modalPresentationCapturesStatusBarAppearance = true
-        viewController.present(browser, animated: true, completion: nil)
+        presenter.presentBrowser(browser, animated: true)
     }
 
 }
@@ -63,13 +73,13 @@ extension URL {
     /// Opens the URL directly: externally if `openLinksExternally` is true, or presents the internal browser from the
     /// given presenter.
     func open(
-        from presenter: UIViewController?,
+        from presenter: (any BrowserOpeningPresenter)?,
         onDismiss: (() -> Void)? = nil
     ) {
         if let browserVC = browserControllerOrOpenExternally() as? BrowserViewController {
             browserVC.onDismiss = onDismiss
             browserVC.modalPresentationCapturesStatusBarAppearance = true
-            presenter?.present(browserVC, animated: true)
+            presenter?.presentBrowser(browserVC, animated: true)
         }
     }
 
@@ -109,10 +119,22 @@ extension LinkOpeningOption {
 
 }
 
-extension UIApplication {
+extension UIApplication: LinkOpeningApplication {
+
+    func openURL(_ url: URL) {
+        open(url)
+    }
 
     func canHandleScheme(_ scheme: String) -> Bool {
         URL(string: scheme).map(canOpenURL) ?? false
+    }
+
+}
+
+extension UIViewController: BrowserOpeningPresenter {
+
+    func presentBrowser(_ viewControllerToPresent: UIViewController, animated: Bool) {
+        present(viewControllerToPresent, animated: animated)
     }
 
 }

@@ -42,6 +42,18 @@ struct Service {
 
 }
 
+private protocol ServiceDetailActionHandling {
+
+    func perform(
+        _ route: ServiceDetailViewModel.ActionRoute,
+        service: Service,
+        sender: UIView,
+        presentingViewController: UIViewController,
+        completion: @escaping (AddBotResult) -> Void
+    )
+
+}
+
 final class ServiceDetailViewController: UIViewController {
 
     enum ActionType {
@@ -69,7 +81,8 @@ final class ServiceDetailViewController: UIViewController {
     private let actionButton: ZMButton
     private let actionType: ActionType
     private let userSession: UserSession
-    private let usersAPI: (any UsersAPI)?
+    private let detailsFetcher: any ServiceDetailFetchHandling
+    private let actionHandler: any ServiceDetailActionHandling
 
     init(
         user: any WireDataModel.UserType,
@@ -89,7 +102,11 @@ final class ServiceDetailViewController: UIViewController {
         self.service = viewModel.service
         self.completion = completion
         self.userSession = userSession
-        self.usersAPI = usersAPI
+        self.detailsFetcher = LegacyServiceDetailFetchHandler(
+            userSession: userSession,
+            usersAPI: usersAPI
+        )
+        self.actionHandler = DefaultServiceDetailActionHandler(userSession: userSession)
 
         self.detailView = ServiceDetailView(
             service: viewModel.service,
@@ -162,51 +179,8 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     private func fetchDetails() {
-        switch viewModel.detailsFetch {
-        case let .app(teamID, appID):
-            fetchAppDetails(for: teamID, with: appID)
-        case .bot:
-            fetchBotDetails()
-        }
-    }
-
-    private func fetchAppDetails(
-        for _: WireNetwork.Team.ID,
-        with _: UUID
-    ) {
-        viewModel.applyLocalAppDetails()
-        updateService(viewModel.service)
-
-        let localDomain = userSession.resolvedBackendMetadata.domain
-        if let usersAPI, let userID = service.user.qualifiedID(localDomain: localDomain) {
-            Task { @MainActor [weak self] in
-                do {
-                    guard let self, let appInfo = try await usersAPI.getUser(for: .init(userID)).app else { return }
-
-                    viewModel.applyRemoteAppInfo(appInfo)
-                    updateService(viewModel.service)
-                } catch {
-                    let errorType = Swift.type(of: error)
-                    WireLogger.search.error("Failed to fetch app info: \(String(describing: errorType))")
-                }
-            }
-        }
-    }
-
-    private func fetchBotDetails() {
-        guard let userSession = userSession as? ZMUserSession else { return }
-
-        service.user.fetchProvider(in: userSession) { [weak self] provider in
-            self?.viewModel.applyProvider(provider)
-            if let service = self?.viewModel.service {
-                self?.updateService(service)
-            }
-        }
-        service.user.fetchDetails(in: userSession) { [weak self] details in
-            self?.viewModel.applyServiceDetails(details)
-            if let service = self?.viewModel.service {
-                self?.updateService(service)
-            }
+        detailsFetcher.fetchDetails(using: viewModel) { [weak self] service in
+            self?.updateService(service)
         }
     }
 
@@ -231,35 +205,81 @@ final class ServiceDetailViewController: UIViewController {
         completion: @escaping (AddBotResult) -> Void
     ) -> Callback<LegacyButton> {
         { [weak self] _ in
-            guard let self, let userSession = userSession as? ZMUserSession else { return }
+            guard let self else { return }
 
-            switch viewModel.actionRoute {
+            actionHandler.perform(
+                viewModel.actionRoute,
+                service: service,
+                sender: sender,
+                presentingViewController: self,
+                completion: completion
+            )
+        }
+    }
 
-            case let .addApp(conversation):
-                addApp(to: conversation, contextProvider: userSession, completion: completion)
+}
 
-            case let .addBot(conversation):
-                addBot(to: conversation, userSession: userSession, completion: completion)
+private final class DefaultServiceDetailActionHandler: ServiceDetailActionHandling {
 
-            case let .removeParticipant(conversation):
-                presentRemoveDialogue(
-                    for: service.user,
-                    from: conversation,
-                    sender: sender
-                )
+    private let userSession: UserSession
 
-            case .openConversationWithBot:
-                openConversationWithBot(completion: completion)
+    init(userSession: UserSession) {
+        self.userSession = userSession
+    }
 
-            case .openConversationWithApp:
-                openConversationWithApp(userSession: userSession, completion: completion)
-            }
+    func perform(
+        _ route: ServiceDetailViewModel.ActionRoute,
+        service: Service,
+        sender: UIView,
+        presentingViewController: UIViewController,
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        guard let userSession = userSession as? ZMUserSession else { return }
+
+        switch route {
+        case let .addApp(conversation):
+            addApp(
+                to: conversation,
+                service: service,
+                userSession: userSession,
+                completion: completion
+            )
+
+        case let .addBot(conversation):
+            addBot(
+                to: conversation,
+                service: service,
+                userSession: userSession,
+                completion: completion
+            )
+
+        case let .removeParticipant(conversation):
+            presentingViewController.presentRemoveDialogue(
+                for: service.user,
+                from: conversation,
+                sender: sender
+            )
+
+        case .openConversationWithBot:
+            openConversationWithBot(
+                service: service,
+                userSession: userSession,
+                completion: completion
+            )
+
+        case .openConversationWithApp:
+            openConversationWithApp(
+                service: service,
+                userSession: userSession,
+                completion: completion
+            )
         }
     }
 
     private func addApp(
         to conversation: ZMConversation,
-        contextProvider: some ContextProvider,
+        service: Service,
+        userSession: ZMUserSession,
         completion: @escaping (AddBotResult) -> Void
     ) {
         guard let user = service.user as? ZMUser else {
@@ -268,9 +288,9 @@ final class ServiceDetailViewController: UIViewController {
 
         Task { @MainActor [weak self] in
             do {
-                guard let self else { return }
+                guard self != nil else { return }
 
-                let syncContext = contextProvider.syncContext
+                let syncContext = userSession.syncContext
                 let conversationParticipantsService = ConversationParticipantsService(
                     context: syncContext,
                     localDomain: userSession.resolvedBackendMetadata.domain
@@ -295,6 +315,7 @@ final class ServiceDetailViewController: UIViewController {
 
     private func addBot(
         to conversation: ZMConversation,
+        service: Service,
         userSession: ZMUserSession,
         completion: @escaping (AddBotResult) -> Void
     ) {
@@ -309,6 +330,7 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     private func openConversationWithApp(
+        service: Service,
         userSession: ZMUserSession,
         completion: @escaping (AddBotResult) -> Void
     ) {
@@ -331,11 +353,13 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     private func openConversationWithBot(
+        service: Service,
+        userSession: ZMUserSession,
         completion: @escaping (AddBotResult) -> Void
     ) {
         let user = service.user
         Task { @MainActor [weak self] in
-            guard let self else { return }
+            guard self != nil else { return }
 
             guard let userID = user.qualifiedID(
                 localDomain: userSession.resolvedBackendMetadata.domain

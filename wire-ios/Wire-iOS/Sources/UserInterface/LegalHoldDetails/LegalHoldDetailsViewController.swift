@@ -23,6 +23,62 @@ import WireMainNavigationUI
 import WireMessagingDomain
 import WireSyncEngine
 
+protocol LegalHoldDetailsActionHandling {
+
+    func handle(_ action: LegalHoldDetailsViewModel.Action)
+    func presentUserProfile(for user: UserType, from viewController: UIViewController)
+
+}
+
+private final class LegacyLegalHoldDetailsActionHandler: LegalHoldDetailsActionHandling {
+
+    private let conversation: LegalHoldDetailsConversation
+    private let userSession: UserSession
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+
+    init(
+        conversation: LegalHoldDetailsConversation,
+        userSession: UserSession,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    ) {
+        self.conversation = conversation
+        self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
+    }
+
+    func handle(_ action: LegalHoldDetailsViewModel.Action) {
+        switch action {
+        case .verifyLegalHoldSubjects:
+            (conversation as? ZMConversation)?.verifyLegalHoldSubjects()
+        }
+    }
+
+    func presentUserProfile(for user: UserType, from viewController: UIViewController) {
+        guard let viewer = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: viewer,
+            context: .deviceList,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
+        )
+        viewController.show(profileViewController, sender: nil)
+    }
+
+}
+
 final class LegalHoldDetailsViewController: UIViewController {
 
     private let collectionView = UICollectionView(forGroupedSections: ())
@@ -30,9 +86,7 @@ final class LegalHoldDetailsViewController: UIViewController {
     private let conversation: LegalHoldDetailsConversation
     private let viewModel: LegalHoldDetailsViewModel
     let userSession: UserSession
-    private let mainCoordinator: AnyMainCoordinator
-    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
-    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    private let actionHandler: LegalHoldDetailsActionHandling
 
     convenience init?(
         user: UserType,
@@ -47,7 +101,8 @@ final class LegalHoldDetailsViewController: UIViewController {
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
-            conversationCreationRepository: conversationCreationRepository
+            conversationCreationRepository: conversationCreationRepository,
+            actionHandler: nil
         )
     }
 
@@ -56,7 +111,8 @@ final class LegalHoldDetailsViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        conversationCreationRepository: any ConversationCreationRepositoryProtocol
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
+        actionHandler: LegalHoldDetailsActionHandling? = nil
     ) {
         self.conversation = conversation
         self.viewModel = LegalHoldDetailsViewModel(
@@ -66,9 +122,13 @@ final class LegalHoldDetailsViewController: UIViewController {
         self.collectionViewController = SectionCollectionViewController()
         collectionViewController.collectionView = collectionView
         self.userSession = userSession
-        self.mainCoordinator = mainCoordinator
-        self.selfProfileUIBuilder = selfProfileUIBuilder
-        self.conversationCreationRepository = conversationCreationRepository
+        self.actionHandler = actionHandler ?? LegacyLegalHoldDetailsActionHandler(
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -142,7 +202,7 @@ final class LegalHoldDetailsViewController: UIViewController {
 
         switch viewModel.viewDidAppearAction {
         case .verifyLegalHoldSubjects:
-            (conversation as? ZMConversation)?.verifyLegalHoldSubjects()
+            actionHandler.handle(.verifyLegalHoldSubjects)
         case nil:
             break
         }
@@ -195,20 +255,6 @@ final class LegalHoldDetailsViewController: UIViewController {
 extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionControllerDelegate {
 
     func legalHoldParticipantsSectionWantsToPresentUserProfile(for user: UserType) {
-        guard let viewer = SelfUser.provider?.providedSelfUser else {
-            assertionFailure("expected available 'user'!")
-            return
-        }
-
-        let profileViewController = ProfileViewController(
-            user: user,
-            viewer: viewer,
-            context: .deviceList,
-            userSession: userSession,
-            mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder,
-            conversationCreationRepository: conversationCreationRepository
-        )
-        show(profileViewController, sender: nil)
+        actionHandler.presentUserProfile(for: user, from: self)
     }
 }

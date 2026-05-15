@@ -41,16 +41,20 @@ enum MapsOpeningOption: Int, LinkOpeningOption {
     }
 
     var isAvailable: Bool {
+        isAvailable(using: UIApplication.shared)
+    }
+
+    func isAvailable(using application: any LinkOpeningApplication) -> Bool {
         switch self {
         case .apple: true
-        case .google: UIApplication.shared.googleMapsInstalled
+        case .google: application.googleMapsInstalled
         }
     }
 }
 
 extension URL {
 
-    func openAsLocation() -> Bool {
+    func openAsLocation(using application: any LinkOpeningApplication = UIApplication.shared) -> Bool {
         log.debug("Trying to open \"\(self)\" as location")
         let saved = MapsOpeningOption.storedPreference
         log.debug("Saved option to open a location: \(saved.displayString)")
@@ -58,8 +62,8 @@ extension URL {
         switch saved {
         case .apple: return false
         case .google:
-            guard UIApplication.shared.canOpenURL(self) else { return false }
-            UIApplication.shared.open(self)
+            guard application.canOpenURL(self) else { return false }
+            application.openURL(self)
             return true
         }
     }
@@ -68,7 +72,7 @@ extension URL {
 
 // MARK: - Private
 
-private extension UIApplication {
+private extension LinkOpeningApplication {
 
     var googleMapsInstalled: Bool {
         canHandleScheme("comgooglemaps://")

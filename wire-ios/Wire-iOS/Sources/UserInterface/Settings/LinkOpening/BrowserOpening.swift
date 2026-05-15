@@ -48,42 +48,45 @@ enum BrowserOpeningOption: Int, LinkOpeningOption {
     }
 
     var isAvailable: Bool {
+        isAvailable(using: UIApplication.shared)
+    }
+
+    func isAvailable(using application: any LinkOpeningApplication) -> Bool {
         switch self {
         case .safari: true
-        case .chrome: UIApplication.shared.chromeInstalled
-        case .firefox: UIApplication.shared.firefoxInstalled
-        case .snowhaze: UIApplication.shared.snowhazeInstalled
-        case .brave: UIApplication.shared.braveInstalled
+        case .chrome: application.chromeInstalled
+        case .firefox: application.firefoxInstalled
+        case .snowhaze: application.snowhazeInstalled
+        case .brave: application.braveInstalled
         }
     }
 }
 
 extension URL {
 
-    func openAsLink() -> Bool {
+    func openAsLink(using application: any LinkOpeningApplication = UIApplication.shared) -> Bool {
         log.debug("Trying to open \"\(self)\" in thrid party browser")
         let saved = BrowserOpeningOption.storedPreference
         log.debug("Saved option to open a regular link: \(saved.displayString)")
-        let app = UIApplication.shared
 
         switch saved {
         case .safari: return false
         case .chrome:
-            guard let url = chromeURL, app.canOpenURL(url) else { return false }
+            guard let url = chromeURL, application.canOpenURL(url) else { return false }
             log.debug("Trying to open chrome app using \"\(url)\"")
-            app.open(url)
+            application.openURL(url)
         case .firefox:
-            guard let url = firefoxURL, app.canOpenURL(url) else { return false }
+            guard let url = firefoxURL, application.canOpenURL(url) else { return false }
             log.debug("Trying to open firefox app using \"\(url)\"")
-            app.open(url)
+            application.openURL(url)
         case .snowhaze:
-            guard let url = snowhazeURL, app.canOpenURL(url) else { return false }
+            guard let url = snowhazeURL, application.canOpenURL(url) else { return false }
             log.debug("Trying to open snowhaze app using \"\(url)\"")
-            app.open(url)
+            application.openURL(url)
         case .brave:
-            guard let url = braveURL, app.canOpenURL(url) else { return false }
+            guard let url = braveURL, application.canOpenURL(url) else { return false }
             log.debug("Trying to open brave app using \"\(url)\"")
-            app.open(url)
+            application.openURL(url)
         }
 
         return true
@@ -93,7 +96,7 @@ extension URL {
 
 // MARK: - Private
 
-private extension UIApplication {
+private extension LinkOpeningApplication {
 
     var chromeInstalled: Bool {
         canHandleScheme("googlechrome://")

@@ -28,6 +28,7 @@ import WireDesign
 final class DeviceInfoViewController<Content>: UIHostingController<Content> where Content: DeviceInfoView {
 
     private var viewModel: DeviceInfoViewModel { rootView.viewModel }
+    private let navigationTitleAdapter = DeviceInfoNavigationTitleAdapter()
     private var cancellables = Set<AnyCancellable>()
 
     override func viewDidLoad() {
@@ -38,8 +39,8 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
     private func setupNavigationItemTitleObservation() {
 
         let certificatePublisher = viewModel.$e2eIdentityCertificate
-        let isProtuesVerifiedPublisher = viewModel.$isProteusVerificationEnabled
-        certificatePublisher.combineLatest(isProtuesVerifiedPublisher)
+        let isProteusVerifiedPublisher = viewModel.$isProteusVerificationEnabled
+        certificatePublisher.combineLatest(isProteusVerifiedPublisher)
             .sink { [weak self] _ in
                 self?.updateNavigationItemTitle()
             }
@@ -48,9 +49,22 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
 
     private func updateNavigationItemTitle() {
 
-        let deviceName = NSMutableAttributedString(string: viewModel.title)
+        navigationItem.titleView = navigationTitleAdapter.makeTitleView(
+            title: viewModel.title,
+            badges: viewModel.navigationTitleBadges
+        )
+    }
+}
 
-        viewModel.navigationTitleBadges.compactMap(\.uiImage).forEach { image in
+private struct DeviceInfoNavigationTitleAdapter {
+
+    func makeTitleView(
+        title: String,
+        badges: [DeviceInfoViewModel.NavigationTitleBadge]
+    ) -> UIView {
+        let deviceName = NSMutableAttributedString(string: title)
+
+        badges.compactMap(\.uiImage).forEach { image in
             let attachment = NSTextAttachment(image: image)
             attachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: image.size)
             deviceName.append(.init(string: " "))
@@ -61,7 +75,7 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
         label.translatesAutoresizingMaskIntoConstraints = false
         label.attributedText = deviceName
         label.font = FontSpec(.header, .semibold).font
-        navigationItem.titleView = label
+        return label
     }
 }
 
