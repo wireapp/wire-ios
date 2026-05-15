@@ -141,12 +141,12 @@ runs:
         SKIPPED="$(jq -r '.skipped' <<< "$SUMMARY")"
         FAILED_DETAILS="$(jq -r '.failed_details | if length == 0 then "None" else join("\n") end' <<< "$SUMMARY")"
 
-        REPORT_MESSAGE="======================================
+        REPORT_MESSAGE="--------------------------------------
         **Total Tests:** ${TOTAL}
         ✅ **Passed:** ${PASSED}
         ❌ **Failed:** ${FAILED}
         ⏭️ **Skipped:** ${SKIPPED}
-        ======================================"
+        --------------------------------------"
 
         if [ "$FAILED" -gt 0 ] && [ "$FAILED_DETAILS" != "None" ]; then
           REPORT_MESSAGE="${REPORT_MESSAGE}
