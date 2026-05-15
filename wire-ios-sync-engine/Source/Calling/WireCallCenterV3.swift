@@ -863,10 +863,12 @@ public extension WireCallCenterV3 {
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
 
-            leaveSubconversation(
-                parentQualifiedID: mlsParentIDs.0,
-                parentGroupID: mlsParentIDs.1
-            )
+            if snapshot?.isGroup == true {
+                leaveSubconversation(
+                    parentQualifiedID: mlsParentIDs.0,
+                    parentGroupID: mlsParentIDs.1
+                )
+            }
         }
     }
 
