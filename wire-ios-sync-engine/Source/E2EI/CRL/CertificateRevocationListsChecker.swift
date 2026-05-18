@@ -37,7 +37,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: CoreCryptoProtocol {
+    private var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
