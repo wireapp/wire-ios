@@ -63,7 +63,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                         .frame(height: isFilterBarPresented ? nil : 0)
                         .padding(.bottom, isFilterBarPresented ? 15 : 0)
 
-                        FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
+                        FilesSortingView(viewModel: viewModel.filesSortingViewModel())
                     }
                     .padding(.top, 4)
 
@@ -114,9 +114,6 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             )
             .sheet(
                 item: $viewModel.sheetNavigation,
-                onDismiss: {
-                    Task { await viewModel.onSheetDismissed() }
-                },
                 content: { navigationItem in
                     sheetContent(navigationItem)
                 }
@@ -131,6 +128,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
         }
         .task {
             await viewModel.setup()
+            await viewModel.reload()
         }
     }
 
@@ -208,7 +206,7 @@ private extension FilesContentView {
         // workaround: when filtering by conversation, BE returns sometimes empty payload with hasMore flag set to true
         // which wrongly displays the load more row on an empty state screen so we need here to explicitly check that
         // the items are empty.
-        let hasMore = viewModel.hasMore
+        let hasMore = viewModel.filesController.hasMore
         let isEmptyItems = viewModel.state.items.isEmpty
         let isOffline = viewModel.isOffline
 
@@ -226,7 +224,7 @@ private extension FilesContentView {
     }
 
     var loadMoreRow: some View {
-        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMoreTask)
+        LoadMoreView(isLoading: viewModel.filesController.isLoading, onLoadMore: loadMoreTask)
     }
 }
 

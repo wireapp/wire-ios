@@ -26,11 +26,11 @@ final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
-    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
+    func setRequestHeaderFields(on request: NSMutableURLRequest) {}
 
-    var didCallDeleteKeychainItems: Bool = false
-    func deleteKeychainItems() {
-        didCallDeleteKeychainItems = true
+    var didCallRemoveCookies: Bool = false
+    func removeCookies() throws {
+        didCallRemoveCookies = true
     }
 
 }
@@ -566,7 +566,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         // then
         syncMOC.performAndWait {
             XCTAssertNil(syncMOC.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
-            XCTAssertTrue(mockCookieStorage.didCallDeleteKeychainItems)
+            XCTAssertTrue(mockCookieStorage.didCallRemoveCookies)
         }
     }
 

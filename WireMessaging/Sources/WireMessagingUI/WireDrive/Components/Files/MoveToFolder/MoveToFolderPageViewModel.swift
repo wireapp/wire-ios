@@ -256,19 +256,14 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     }
 
     private func makeCreateFileViewModel() -> CreateFileViewModel {
-        let viewModel = CreateFileViewModel(
+        .init(
             creationTarget: .folder,
             path: containerPath,
-            createFileUseCase: createFileUseCase
-        )
-
-        viewModel.$createdNode
-            .compactMap(\.self)
-            .sink { [weak self] _ in
+            createFileUseCase: createFileUseCase,
+            onNodeCreated: { [weak self] _ in
                 Task { await self?.reload() }
-            }.store(in: &subscriptions)
-
-        return viewModel
+            }
+        )
     }
 
     /// Returns the title for a given path.
