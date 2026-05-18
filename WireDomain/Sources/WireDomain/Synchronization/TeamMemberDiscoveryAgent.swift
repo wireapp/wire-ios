@@ -18,21 +18,65 @@
 
 import Foundation
 import WireLogging
+import WireNetwork
 
 final class TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
 
+    private let api: any TeamsAPI
+    private let store: any TeamLocalStoreProtocol
+
     // MARK: - Life cycle
 
-    public init() {}
+    public init(
+        api: any TeamsAPI,
+        store: any TeamLocalStoreProtocol
+    ) {
+        self.api = api
+        self.store = store
+    }
 
     // MARK: - TeamMemberDiscoveryAgentProtocol
 
     public func discoverMembers() async {
-        // TODO: WPB-24947 — use teamsAPI.getNotifications(sinceNotificationID:)
-        // to fetch recent team notifications, then extract & apply
-        // `team.member-join` events to discover all team members
-        // (works around the 2000-member cap on the legacy bulk endpoint).
-        WireLogger.sync.debug("team member discovery: not implemented yet")
+        guard let selfTeamID = await store.selfTeamID() else {
+            WireLogger.sync.debug("team member discovery: self user is not in a team")
+            return
+        }
+
+        do {
+            // TODO: WPB-24947 — persist the last-seen notification id between runs
+            // to avoid re-walking the whole notification history each sync.
+            // Blocked: `TeamMemberJoinNotification` doesn't carry the notification id
+            // and `PayloadPager` doesn't expose `nextStart` to its consumer.
+            let pager = try api.getNotifications(sinceNotificationID: nil)
+
+            var discoveredCount = 0
+            for try await notifications in pager {
+                let teamMembersInfo = notifications.map { notification -> TeamMemberInfo in
+                    switch notification {
+                    case let .memberJoin(event):
+                        TeamMemberInfo(
+                            id: event.userID,
+                            selfPermission: nil,
+                            creatorID: nil,
+                            creationDate: event.time
+                        )
+                    }
+                }
+
+                guard !teamMembersInfo.isEmpty else { continue }
+
+                try await store.storeTeamMembers(
+                    selfTeamID: selfTeamID,
+                    teamMembersInfo: teamMembersInfo
+                )
+                discoveredCount += teamMembersInfo.count
+            }
+
+            WireLogger.sync.debug("team member discovery: stored \(discoveredCount) member(s)")
+        } catch {
+            WireLogger.sync.error("team member discovery failed: \(String(describing: error))")
+        }
     }
 
 }

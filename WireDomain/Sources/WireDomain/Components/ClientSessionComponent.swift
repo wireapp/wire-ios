@@ -398,7 +398,10 @@ public final class ClientSessionComponent {
         mlsService: mlsService
     )
 
-    private lazy var teamMemberDiscoveryAgent = TeamMemberDiscoveryAgent()
+    private lazy var teamMemberDiscoveryAgent = TeamMemberDiscoveryAgent(
+        api: teamsAPI,
+        store: teamLocalStore
+    )
 
     public private(set) lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
