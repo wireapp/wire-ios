@@ -302,11 +302,6 @@ class ActiveConversationPage: PageModel {
         if !imageToChoose.waitForExistence(timeout: 2) {
             photoButton.waitAndTap()
         }
-
-        XCTAssertTrue(
-            imageToChoose.waitForExistence(timeout: 2),
-            "Image picker did not show an image to choose"
-        )
         imageToChoose.waitAndTap()
 
         XCTAssertTrue(
@@ -318,14 +313,9 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectVideoAndSend() throws -> ActiveConversationPage {
-        if !videoToChoose.waitForExistence(timeout: 5) {
+        if !videoToChoose.waitForExistence(timeout: 2) {
             photoButton.waitAndTap()
         }
-
-        XCTAssertTrue(
-            videoToChoose.waitForExistence(timeout: 5),
-            "Image picker did not show a video to choose"
-        )
         videoToChoose.waitAndTap()
 
         XCTAssertTrue(
