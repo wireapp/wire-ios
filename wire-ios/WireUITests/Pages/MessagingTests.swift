@@ -214,12 +214,11 @@ final class MessagingTests: WireUITestCase {
             predicate: pausePredicate,
             object: conversationAsA.audioPlayButton
         )
-        let result = XCTWaiter().wait(for: [pauseExpectation], timeout: 15)
-        XCTAssertEqual(
-            result,
-            .completed,
-            "Audio did not start playing after tapping play. Button value: \(conversationAsA.audioPlayButton.value ?? "nil"). Expected to become 'Pause'."
-        )
+        do {
+            try await fulfillment(of: [pauseExpectation], timeout: 5)
+        } catch {
+            XCTFail("Audio did not start playing after tapping play. Button value: \(conversationAsA.audioPlayButton.value ?? "nil"). Expected to become 'Pause'.")
+        }
     }
 
     private func verifyMessageReceivedAndSenderInfo(
