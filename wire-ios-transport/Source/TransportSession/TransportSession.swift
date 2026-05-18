@@ -25,7 +25,7 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
 
     var accessTokenHandler: ZMAccessTokenHandler { get }
 
-    var cookieStorage: ZMPersistentCookieStorage { get }
+    var cookieStorage: LegacyCookieStorage { get }
 
     var requestLoopDetectionCallback: ((_ path: String) -> Void)? { get set }
 
