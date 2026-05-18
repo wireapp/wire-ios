@@ -113,7 +113,7 @@ public final class SearchTask {
             let ep = try! teamsAPI.getNotifications(sinceNotificationID: .none)
             for try await ep in ep {
                 for n in ep {
-                    switch n {
+                    switch n.kind {
                     case .memberJoin(let memberJoinNotification):
                         missingUsers.removeAll { u in
                             u.id == memberJoinNotification.userID

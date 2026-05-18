@@ -24,7 +24,7 @@ struct TeamNotificationV5: Decodable {
     let payload: [TeamNotificationDecodingProxy]
 
     func toAPIModel() -> [TeamNotification] {
-        payload.map(\.notification)
+        payload.map { TeamNotification(id: id, kind: $0.kind) }
     }
 
 }

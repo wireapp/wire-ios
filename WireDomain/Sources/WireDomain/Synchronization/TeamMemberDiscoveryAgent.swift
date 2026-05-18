@@ -24,15 +24,18 @@ final class TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
 
     private let api: any TeamsAPI
     private let store: any TeamLocalStoreProtocol
+    private let journal: Journal
 
     // MARK: - Life cycle
 
     public init(
         api: any TeamsAPI,
-        store: any TeamLocalStoreProtocol
+        store: any TeamLocalStoreProtocol,
+        journal: Journal
     ) {
         self.api = api
         self.store = store
+        self.journal = journal
     }
 
     // MARK: - TeamMemberDiscoveryAgentProtocol
@@ -43,17 +46,15 @@ final class TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
             return
         }
 
+        let sinceNotificationID = journal[.lastTeamNotificationID].flatMap(UUID.init(uuidString:))
+
         do {
-            // TODO: WPB-24947 — persist the last-seen notification id between runs
-            // to avoid re-walking the whole notification history each sync.
-            // Blocked: `TeamMemberJoinNotification` doesn't carry the notification id
-            // and `PayloadPager` doesn't expose `nextStart` to its consumer.
-            let pager = try api.getNotifications(sinceNotificationID: nil)
+            let pager = try api.getNotifications(sinceNotificationID: sinceNotificationID)
 
             var discoveredCount = 0
             for try await notifications in pager {
                 let teamMembersInfo = notifications.map { notification -> TeamMemberInfo in
-                    switch notification {
+                    switch notification.kind {
                     case let .memberJoin(event):
                         TeamMemberInfo(
                             id: event.userID,
@@ -71,6 +72,12 @@ final class TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
                     teamMembersInfo: teamMembersInfo
                 )
                 discoveredCount += teamMembersInfo.count
+
+                // Persist forward progress per page so an interruption
+                // doesn't force a full re-walk on the next run.
+                if let lastID = notifications.last?.id {
+                    journal[.lastTeamNotificationID] = lastID.uuidString
+                }
             }
 
             WireLogger.sync.debug("team member discovery: stored \(discoveredCount) member(s)")

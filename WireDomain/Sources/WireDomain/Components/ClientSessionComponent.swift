@@ -400,7 +400,8 @@ public final class ClientSessionComponent {
 
     private lazy var teamMemberDiscoveryAgent = TeamMemberDiscoveryAgent(
         api: teamsAPI,
-        store: teamLocalStore
+        store: teamLocalStore,
+        journal: journal
     )
 
     public private(set) lazy var incrementalSync = IncrementalSync(

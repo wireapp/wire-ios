@@ -16,10 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum TeamNotification: Equatable, Sendable {
+public import Foundation
 
-    /// A user has joined a team.
+public struct TeamNotification: Equatable, Sendable {
 
-    case memberJoin(TeamMemberJoinNotification)
+    /// The id of the notification envelope, used as a cursor when
+    /// fetching subsequent notifications.
+
+    public let id: UUID
+
+    /// The kind of event the notification represents.
+
+    public let kind: Kind
+
+    public init(id: UUID, kind: Kind) {
+        self.id = id
+        self.kind = kind
+    }
+
+    public enum Kind: Equatable, Sendable {
+
+        /// A user has joined a team.
+
+        case memberJoin(TeamMemberJoinNotification)
+
+    }
 
 }

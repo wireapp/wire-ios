@@ -127,6 +127,18 @@ public extension JournalKey where Value == Bool {
 
 }
 
+public extension JournalKey where Value == String? {
+
+    /// The id of the last team notification processed by
+    /// `TeamMemberDiscoveryAgent`, used as a cursor on subsequent runs.
+
+    static let lastTeamNotificationID = Self(
+        "lastTeamNotificationID",
+        defaultValue: nil
+    )
+
+}
+
 public extension JournalKey where Value == Set<String> {
 
     /// The set of MLS group IDs to be repaired.

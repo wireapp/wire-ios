@@ -20,10 +20,10 @@ import Foundation
 
 struct TeamNotificationDecodingProxy: Decodable {
 
-    let notification: TeamNotification
+    let kind: TeamNotification.Kind
 
-    init(notification: TeamNotification) {
-        self.notification = notification
+    init(kind: TeamNotification.Kind) {
+        self.kind = kind
     }
 
     init(from decoder: any Decoder) throws {
@@ -34,7 +34,7 @@ struct TeamNotificationDecodingProxy: Decodable {
             switch TeamNotificationType(rawValue: notificationType) {
             case .memberJoin:
                 let notification = try TeamMemberJoinNotificationDecoder().decode(from: container)
-                self.notification = .memberJoin(notification)
+                self.kind = .memberJoin(notification)
             case .none:
                 throw UnknownTeamNotificationTypeError()
             }
