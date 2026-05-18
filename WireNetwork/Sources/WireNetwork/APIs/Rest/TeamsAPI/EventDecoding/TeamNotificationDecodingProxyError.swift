@@ -16,27 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLocators
-import XCTest
+public struct TeamNotificationDecodingProxyError: Error, CustomStringConvertible {
 
-class VerifyEmailPage: PageModel {
+    /// The type of the notification being decoded.
 
-    override var pageMainElement: XCUIElement {
-        verifyEmailPageLabel
-    }
+    public let notificationType: String
 
-    var verifyEmailPageLabel: XCUIElement {
-        app.navigationBars[Locators.VerifyEmailPage.verifyEmailPageLabel.rawValue]
-    }
+    /// The error that occurred when decoding.
 
-    var backToPreviousPage: XCUIElement {
-        app.navigationBars.buttons.element(boundBy: 0)
-    }
+    public let decodingError: any Error
 
-    func goBacktoAccountSetting() throws -> AccountSettingsPage {
-        backToPreviousPage.tap()
-        backToPreviousPage.waitAndTap()
-        return try AccountSettingsPage()
+    /// A textual representation of the error.
+
+    public var description: String {
+        "failed to decode notification '\(notificationType)': \(decodingError)"
     }
 
 }

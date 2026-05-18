@@ -16,27 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLocators
-import XCTest
+enum TeamNotificationCodingKeys: String, CodingKey {
 
-class VerifyEmailPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        verifyEmailPageLabel
-    }
-
-    var verifyEmailPageLabel: XCUIElement {
-        app.navigationBars[Locators.VerifyEmailPage.verifyEmailPageLabel.rawValue]
-    }
-
-    var backToPreviousPage: XCUIElement {
-        app.navigationBars.buttons.element(boundBy: 0)
-    }
-
-    func goBacktoAccountSetting() throws -> AccountSettingsPage {
-        backToPreviousPage.tap()
-        backToPreviousPage.waitAndTap()
-        return try AccountSettingsPage()
-    }
+    case time
+    case teamID = "team"
+    case payload = "data"
+    case notificationType = "type"
 
 }

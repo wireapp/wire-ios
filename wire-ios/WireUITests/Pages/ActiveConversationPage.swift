@@ -46,7 +46,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.descendants(matching: .any).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+        app.descendants(matching: .textView).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
 
     var mentionButton: XCUIElement {

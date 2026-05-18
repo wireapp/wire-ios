@@ -16,27 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLocators
-import XCTest
+public import Foundation
 
-class VerifyEmailPage: PageModel {
+/// An event where a user joined the team.
 
-    override var pageMainElement: XCUIElement {
-        verifyEmailPageLabel
-    }
+public struct TeamMemberJoinNotification: Equatable, Sendable {
 
-    var verifyEmailPageLabel: XCUIElement {
-        app.navigationBars[Locators.VerifyEmailPage.verifyEmailPageLabel.rawValue]
-    }
+    /// The team id.
 
-    var backToPreviousPage: XCUIElement {
-        app.navigationBars.buttons.element(boundBy: 0)
-    }
+    public let teamID: UUID
 
-    func goBacktoAccountSetting() throws -> AccountSettingsPage {
-        backToPreviousPage.tap()
-        backToPreviousPage.waitAndTap()
-        return try AccountSettingsPage()
+    /// The id of the member who joined.
+
+    public let userID: UUID
+
+    /// The time at which the member joined.
+
+    public let time: Date
+
+    public init(
+        teamID: UUID,
+        userID: UUID,
+        time: Date
+    ) {
+        self.teamID = teamID
+        self.userID = userID
+        self.time = time
     }
 
 }

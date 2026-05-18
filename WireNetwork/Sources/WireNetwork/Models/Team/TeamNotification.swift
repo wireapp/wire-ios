@@ -16,27 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLocators
-import XCTest
+public enum TeamNotification: Equatable, Sendable {
 
-class VerifyEmailPage: PageModel {
+    /// A user has joined a team.
 
-    override var pageMainElement: XCUIElement {
-        verifyEmailPageLabel
-    }
-
-    var verifyEmailPageLabel: XCUIElement {
-        app.navigationBars[Locators.VerifyEmailPage.verifyEmailPageLabel.rawValue]
-    }
-
-    var backToPreviousPage: XCUIElement {
-        app.navigationBars.buttons.element(boundBy: 0)
-    }
-
-    func goBacktoAccountSetting() throws -> AccountSettingsPage {
-        backToPreviousPage.tap()
-        backToPreviousPage.waitAndTap()
-        return try AccountSettingsPage()
-    }
+    case memberJoin(TeamMemberJoinNotification)
 
 }
