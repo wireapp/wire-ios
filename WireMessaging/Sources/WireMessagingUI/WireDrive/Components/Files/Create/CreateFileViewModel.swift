@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
 import SwiftUI
 import WireLogging
@@ -27,7 +26,12 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 @MainActor
 final class CreateFileViewModel: ObservableObject {
 
-    @Published var nameInput: String = ""
+    @Published var nameInput: String = "" {
+        didSet {
+            validate()
+        }
+    }
+
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
@@ -99,8 +103,7 @@ final class CreateFileViewModel: ObservableObject {
     private let creationTarget: WireDriveCreateFileUseCase.Target
     private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
     private let path: String
-    private var subscriptions = Set<AnyCancellable>()
-    private let filenameValidator = FilenameValidator()
+    private let validator = TextValidator()
     private var isInputValid = true
 
     init(
@@ -111,8 +114,6 @@ final class CreateFileViewModel: ObservableObject {
         self.creationTarget = creationTarget
         self.createFileUseCase = createFileUseCase
         self.path = path
-
-        bindTextInput()
     }
 
     func create() async -> Bool {
@@ -124,7 +125,7 @@ final class CreateFileViewModel: ObservableObject {
             createdNode = try await createFileUseCase.invoke(
                 creationTarget: creationTarget,
                 path: path,
-                name: nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
+                name: trimmed(nameInput)
             )
 
             isLoading = false
@@ -151,38 +152,24 @@ final class CreateFileViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func bindTextInput() {
-        $nameInput
-            .compactMap { [weak self] input in
-                self?.filenameValidator.validate(input)
-            }
-            .flatMap(\.self)
-            .sink { [weak self] result in
-                self?.handleValidationResult(result)
-            }.store(in: &subscriptions)
+    private let trimmed: (String) -> String = {
+        $0.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private func handleValidationResult(_ result: Result<Void, FilenameValidator.Failure>) {
-        switch result {
-        case .success:
-            isInputValid = true
-            errorMessage = nil
-        case let .failure(failure):
-            isInputValid = false
-            switch failure {
-            case .tooLong:
-                errorMessage = inputTooLongErrorMessage
-            case .invalidCharacters, .dotPrefix:
-                let formattedCharacters = FilenameValidator.Constants.invalidCharacters.map { String($0) }
-                    .joined(separator: " ")
-                errorMessage = Strings.Files.RenameFile.wrongCharacterError.replacingOccurrences(
-                    of: "{0}",
-                    with: formattedCharacters
-                )
-            case .empty:
-                errorMessage = nil
-            }
+    private func validate() {
+        let validatorKind: TextValidator.Kind = switch creationTarget {
+        case .file: .fileName
+        case .folder: .folderName
         }
+
+        let validationResult = validator.validate(trimmed(nameInput), for: validatorKind)
+
+        isInputValid = switch validationResult {
+        case .valid: true
+        case .invalid: false
+        }
+
+        errorMessage = validationResult.firstLocalizedViolationMessage(for: validatorKind)
     }
 
 }

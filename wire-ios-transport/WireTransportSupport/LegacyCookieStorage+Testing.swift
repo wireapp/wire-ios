@@ -16,28 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import WireNetwork
 import WireTransport
 
-extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> LegacyCookieStorage {
-        let cookieStorage = CookieStorage(
-            cookieEncryptionKey: UserDefaults.cookiesKey()
-        )
-        return LegacyCookieStorage(
-            userIdentifier: account.userIdentifier,
-            cookieStorage: cookieStorage
-        )
+/// An in-memory cookie storage for testing purposes.
+public final class StubCookieStorage: CookieStorageProtocol {
+
+    public nonisolated(unsafe) var cookies: [HTTPCookie] = []
+
+    public init() {}
+
+    public func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws {
+        self.cookies = cookies
     }
 
-    public func isAuthenticated(_ account: Account) -> Bool {
-        guard let expirationDate = cookieStorage(for: account).authenticationCookieExpirationDate else {
-            return false
-        }
-
-        return expirationDate.timeIntervalSinceNow > 0
+    public func fetchCookies(userID: UUID) throws -> [HTTPCookie] {
+        cookies
     }
+
+    public func removeCookies(userID: UUID) throws {
+        cookies = []
+    }
+
 }
 
-extension CookieStorage: WireTransport.CookieStorageProtocol {}
+public extension LegacyCookieStorage {
+
+    @objc
+    convenience init(testingWithUserIdentifier userIdentifier: UUID) {
+        self.init(
+            userIdentifier: userIdentifier,
+            cookieStorage: StubCookieStorage()
+        )
+    }
+
+}

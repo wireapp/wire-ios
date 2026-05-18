@@ -387,7 +387,12 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     @objc
     public func invalidateCookieAndNotify() {
         emailCredentials = nil
-        cookieProvider.deleteKeychainItems()
+        do {
+            try cookieProvider.removeCookies()
+        } catch {
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.error("Failed to remove cookies: \(errorDescription)", attributes: .safePublic)
+        }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         let outError = NSError.userSessionError(

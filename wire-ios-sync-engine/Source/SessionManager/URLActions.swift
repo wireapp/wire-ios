@@ -202,13 +202,12 @@ extension URLAction {
                     throw CompanyLoginError.missingRequiredParameter
                 }
 
-                guard let cookieData = HTTPCookie.extractCookieData(from: cookieString, url: url) else {
+                let cookies = HTTPCookie.cookies(from: cookieString, for: url)
+                guard !cookies.isEmpty else {
                     throw CompanyLoginError.invalidCookie
                 }
 
-                let cookies = HTTPCookie.cookies(from: cookieString, for: url)
-
-                let userInfo = UserInfo(identifier: userID, cookieData: cookieData, cookies: cookies)
+                let userInfo = UserInfo(identifier: userID, cookies: cookies)
                 self = .companyLoginSuccess(userInfo: userInfo)
 
             case URL.Path.failure:
