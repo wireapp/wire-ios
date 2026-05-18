@@ -46,13 +46,21 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
     try await manager.withExpiringActivity(reason: reason, block: block)
 }
 
+/// Single-use: one instance per activity. The only entry point is the
+/// `withExpiringActivity(reason:block:)` free function above, which creates a
+/// fresh manager every call. Members below are `private` to enforce this — the
+/// actor's idempotency tracking (`didStartWork`) is not designed to reset.
 actor ExpiringActivityManager {
 
     let api: any ExpiringActivityInterface
-    var task: Task<Void, any Error>?
+    private var task: Task<Void, any Error>?
     // Stored as actor state so resumeOnce() is serialised through the actor
     // executor — no lock required, no threads blocked.
     private var continuation: CheckedContinuation<Void, any Error>?
+    // Distinguishes "work was never started" from "work started then stopped".
+    // Without this, a second stopWork() (e.g. outer-task cancel followed by
+    // OS expiry) misreports the latter as ExpiringActivityNotAllowedToRun.
+    private var didStartWork = false
 
     init() {
         self.init(api: ProcessInfo.processInfo)
@@ -111,7 +119,11 @@ actor ExpiringActivityManager {
         continuation = nil
     }
 
-    func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {
+    private func startWork(
+        block: @escaping () async throws -> Void,
+        semaphore: DispatchSemaphore
+    ) -> Task<Void, any Error> {
+        didStartWork = true
         let task = Task {
             defer {
                 WireLogger.backgroundActivity.debug("Releasing semaphore")
@@ -123,9 +135,14 @@ actor ExpiringActivityManager {
         return task
     }
 
-    func stopWork() throws {
-        guard let task else { throw ExpiringActivityNotAllowedToRun() }
-        task.cancel()
-        self.task = nil
+    private func stopWork() throws {
+        if let task {
+            task.cancel()
+            self.task = nil
+            return
+        }
+        if !didStartWork {
+            throw ExpiringActivityNotAllowedToRun()
+        }
     }
 }
