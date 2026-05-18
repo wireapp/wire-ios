@@ -25,6 +25,7 @@ extension ConversationInputBarViewController: PHPickerViewControllerDelegate {
 
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
+        showCamera()
 
         for result in results {
             let localIdentifier = result.assetIdentifier
