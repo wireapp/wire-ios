@@ -48,12 +48,9 @@ final class FileVersioningViewModel: ObservableObject {
     private let fetchNodeVersionsUseCase: any WireDriveFetchNodeVersionsUseCaseProtocol
     private let restoreNodeVersionUseCase: any WireDriveRestoreNodeVersionUseCaseProtocol
     private let getAssetUseCase: WireDriveGetAssetUseCase
-    private let accentColorProvider: () -> WireAccentColor
     private var subscriptions = Set<AnyCancellable>()
 
-    var accentColor: WireAccentColor {
-        accentColorProvider()
-    }
+    let onVersionRestored: () -> Void
 
     enum State {
         case loading
@@ -94,7 +91,7 @@ final class FileVersioningViewModel: ObservableObject {
         fetchNodeVersionsUseCase: any WireDriveFetchNodeVersionsUseCaseProtocol,
         restoreNodeVersionUseCase: any WireDriveRestoreNodeVersionUseCaseProtocol,
         getAssetUseCase: WireDriveGetAssetUseCase,
-        accentColorProvider: @escaping () -> WireAccentColor
+        onVersionRestored: @escaping () -> Void
     ) {
         self.nodeID = nodeID
         self.name = name
@@ -103,8 +100,8 @@ final class FileVersioningViewModel: ObservableObject {
         self.fetchNodeVersionsUseCase = fetchNodeVersionsUseCase
         self.restoreNodeVersionUseCase = restoreNodeVersionUseCase
         self.getAssetUseCase = getAssetUseCase
-        self.accentColorProvider = accentColorProvider
         self.state = .loading
+        self.onVersionRestored = onVersionRestored
     }
 
     func startPolling() {
@@ -122,7 +119,6 @@ final class FileVersioningViewModel: ObservableObject {
         FileVersionItemViewModel(
             nodeID: nodeID,
             item: state.versions[sectionIndex].items[itemIndex],
-            accentColor: accentColor,
             onRestore: { [weak self] item in
                 Task { await self?.restore(item: item) }
             }
@@ -148,6 +144,7 @@ final class FileVersioningViewModel: ObservableObject {
     private func restore(item: FileVersionItem) async {
         state = .restoringVersion
 
+        // Keep loader visible for at least 2 sec to avoid a glitch 😅
         try? await Task.sleep(for: .seconds(2))
 
         do {
@@ -166,6 +163,7 @@ final class FileVersioningViewModel: ObservableObject {
 
             viewingURL = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
 
+            onVersionRestored()
         } catch {
             alert = AlertModel(
                 title: Strings.FilesVersioning.restoreFailureAlertTitle,

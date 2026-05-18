@@ -173,7 +173,10 @@ final class FileRenameViewTests: XCTestCase {
         let viewModel = FileRenameViewModel(
             renameNodeUseCase: renameNodeUseCase,
             model: model,
-            kind: kind
+            kind: kind,
+            onRenamed: {
+                // do nothing
+            }
         )
 
         let view = FileRenameView(viewModel: viewModel)
