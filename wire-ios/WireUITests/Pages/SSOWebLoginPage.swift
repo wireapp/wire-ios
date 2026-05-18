@@ -19,7 +19,7 @@
 import WireLocators
 import XCTest
 
-class OktaLoginPage: PageModel {
+class SSOWebLoginPage: PageModel {
 
     override var pageMainElement: XCUIElement {
         usernameTextField
@@ -42,7 +42,8 @@ class OktaLoginPage: PageModel {
     }
 
     @MainActor
-    func oktaLogin(email: String, password: String) async throws -> FirstTimePage {
+    @discardableResult
+    func ssoWebLogin(email: String, password: String) async throws -> FirstTimePage {
         usernameTextField.waitAndTap()
         usernameTextField.typeText(email)
         webView.tap()

@@ -332,6 +332,13 @@ public enum Locators {
         case confirmUsernameButton
     }
 
+    public enum ManageDevicesPage: String {
+
+        case manageDevices
+        case removeDevice = "minus.circle.fill"
+        case deleteDevice = "Delete"
+    }
+
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
 
         case checkbox
