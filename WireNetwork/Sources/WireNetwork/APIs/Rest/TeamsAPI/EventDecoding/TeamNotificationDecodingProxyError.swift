@@ -16,34 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents an update event received from the backend
-/// that can be used to incrementally update the state of
-/// the client.
+public struct TeamNotificationDecodingProxyError: Error, CustomStringConvertible {
 
-public enum UpdateEvent: Equatable, Sendable {
+    /// The type of the notification being decoded.
 
-    /// A conversation event.
+    public let notificationType: String
 
-    case conversation(ConversationEvent)
+    /// The error that occurred when decoding.
 
-    /// A feature config event.
+    public let decodingError: any Error
 
-    case featureConfig(FeatureConfigEvent)
+    /// A textual representation of the error.
 
-    /// A federation event.
-
-    case federation(FederationEvent)
-
-    /// A user event.
-
-    case user(UserEvent)
-
-    /// A team event.
-
-    case team(TeamEvent)
-
-    /// An event that is not known by the client.
-
-    case unknown(eventType: String)
+    public var description: String {
+        "failed to decode notification '\(notificationType)': \(decodingError)"
+    }
 
 }

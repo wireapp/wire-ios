@@ -16,34 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents an update event received from the backend
-/// that can be used to incrementally update the state of
-/// the client.
+public import Foundation
 
-public enum UpdateEvent: Equatable, Sendable {
+/// An event where a user joined the team.
 
-    /// A conversation event.
+public struct TeamMemberJoinNotification: Equatable, Sendable {
 
-    case conversation(ConversationEvent)
+    /// The team id.
 
-    /// A feature config event.
+    public let teamID: UUID
 
-    case featureConfig(FeatureConfigEvent)
+    /// The id of the member who joined.
 
-    /// A federation event.
+    public let userID: UUID
 
-    case federation(FederationEvent)
+    /// The time at which the member joined.
 
-    /// A user event.
+    public let time: Date
 
-    case user(UserEvent)
-
-    /// A team event.
-
-    case team(TeamEvent)
-
-    /// An event that is not known by the client.
-
-    case unknown(eventType: String)
+    public init(
+        teamID: UUID,
+        userID: UUID,
+        time: Date
+    ) {
+        self.teamID = teamID
+        self.userID = userID
+        self.time = time
+    }
 
 }
