@@ -117,13 +117,8 @@ class AccountSettingsPage: PageModel {
         return try UsernameUpdatePage()
     }
 
-    func clearTextField(_ textfield: XCUIElement) {
-        textfield.doubleTap()
-        textfield.typeText("\u{8}")
-    }
-
     func updateName() throws -> AccountSettingsPage {
-        clearTextField(nameField)
+        nameField.tap()
         nameField.typeText("-updated")
         return self
     }

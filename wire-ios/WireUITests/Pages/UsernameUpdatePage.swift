@@ -39,7 +39,7 @@ class UsernameUpdatePage: PageModel {
 
     func updateUsernameAndSave() throws -> AccountSettingsPage {
         usernameTextField.typeText("-updated")
-        saveButton.tap()
+        saveButton.waitAndTap()
         return try AccountSettingsPage()
     }
 }

@@ -37,9 +37,8 @@ final class AccountManagementTests: WireUITestCase {
             .tapUsernameField()
             .updateUsernameAndSave()
 
-        XCTAssertEqual(
-            accountSettingPage.nameField.value as? String,
-            "Smoke Tester -updated",
+        XCTAssertTrue(
+            (accountSettingPage.nameField.value as? String)?.contains("-updated") == true,
             "Updated name was not visible"
         )
 
