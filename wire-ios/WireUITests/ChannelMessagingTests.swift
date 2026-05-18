@@ -60,18 +60,15 @@ final class ChannelMessagingTests: WireUITestCase {
         // WHEN
         let activeConversationPage = try login(user: teamWithChannelConversation.teamOwner)
             .openConversation()
-            .sendMessage(message)
             .openPhotosAndGrantPermission()
             .selectImageAndSend()
             .recordAudioAndSend()
+            .sendMessage(message)
             .sendPing()
 
         // THEN
+
         let sentMessages = activeConversationPage.fetchMessages()
-        XCTAssertTrue(
-            sentMessages.contains(message),
-            "Expected message '\(message)' not found in sent messages: \(sentMessages)"
-        )
 
         XCTAssertTrue(
             activeConversationPage.imageCell.waitForExistence(timeout: 2),
@@ -81,6 +78,11 @@ final class ChannelMessagingTests: WireUITestCase {
         XCTAssertTrue(
             activeConversationPage.playAudioFile.waitForExistence(timeout: 2),
             "No audio found"
+        )
+
+        XCTAssertTrue(
+            sentMessages.contains(message),
+            "Expected message '\(message)' not found in sent messages: \(sentMessages)"
         )
 
         try activeConversationPage.verifyPingSent()

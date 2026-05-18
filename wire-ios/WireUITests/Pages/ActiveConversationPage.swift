@@ -299,7 +299,16 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectImageAndSend() throws -> ActiveConversationPage {
+        if !imageToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+
+        XCTAssertTrue(
+            imageToChoose.waitForExistence(timeout: 2),
+            "Image picker did not show an image to choose"
+        )
         imageToChoose.waitAndTap()
+
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
             "OK button did not appear after selecting media"
@@ -309,7 +318,16 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectVideoAndSend() throws -> ActiveConversationPage {
+        if !videoToChoose.waitForExistence(timeout: 5) {
+            photoButton.waitAndTap()
+        }
+
+        XCTAssertTrue(
+            videoToChoose.waitForExistence(timeout: 5),
+            "Image picker did not show a video to choose"
+        )
         videoToChoose.waitAndTap()
+
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
             "OK button did not appear after selecting media"
