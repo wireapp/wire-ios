@@ -360,6 +360,8 @@ public final class ClientSessionComponent {
     public private(set) lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
     private(set) lazy var liveBrokenGroupSubject = PassthroughSubject<Set<String>, Never>()
 
+    // TODO: add use case here?
+
     public private(set) lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
@@ -396,6 +398,8 @@ public final class ClientSessionComponent {
         mlsService: mlsService
     )
 
+    private lazy var teamMemberDiscoveryAgent = TeamMemberDiscoveryAgent()
+
     public private(set) lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
@@ -409,7 +413,8 @@ public final class ClientSessionComponent {
         liveBrokenGroupSubject: liveBrokenGroupSubject,
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent,
-        earService: earService
+        earService: earService,
+        teamMemberDiscoveryAgent: teamMemberDiscoveryAgent
     )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
@@ -428,6 +433,7 @@ public final class ClientSessionComponent {
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
+            teamMemberDiscoveryAgent: teamMemberDiscoveryAgent,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
             }

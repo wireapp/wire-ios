@@ -45,6 +45,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let journal: Journal
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
+    private let teamMemberDiscoveryAgent: any TeamMemberDiscoveryAgentProtocol
 
     public init(
         selfClientID: String,
@@ -59,7 +60,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
-        earService: EARServiceInterface
+        earService: EARServiceInterface,
+        teamMemberDiscoveryAgent: any TeamMemberDiscoveryAgentProtocol
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -74,6 +76,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.earService = earService
+        self.teamMemberDiscoveryAgent = teamMemberDiscoveryAgent
     }
 
     public func perform() async throws -> Token {
@@ -160,6 +163,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             }
 
             await mlsGroupRepairAgent.repairConversations()
+
+            if !backgroundAccessibleOnly {
+                await teamMemberDiscoveryAgent.discoverMembers()
+            }
 
             let liveEventTask = Task { @Sendable [self] in
                 logger.info("handling live event stream", attributes: .incrementalSyncV2, .safePublic)

@@ -52,6 +52,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let createPushChannelState: CreatePushChannelStateClosure
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
+    private let teamMemberDiscoveryAgent: any TeamMemberDiscoveryAgentProtocol
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -70,6 +71,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
         earService: EARServiceInterface,
+        teamMemberDiscoveryAgent: any TeamMemberDiscoveryAgentProtocol,
         createPushChannelState: @escaping CreatePushChannelStateClosure,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -87,6 +89,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.earService = earService
+        self.teamMemberDiscoveryAgent = teamMemberDiscoveryAgent
         self.syncMarkerGenerator = syncMarkerGenerator
         self.createPushChannelState = createPushChannelState
     }
@@ -151,6 +154,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         }
 
         await mlsGroupRepairAgent.repairConversations()
+
+        await teamMemberDiscoveryAgent.discoverMembers()
 
         let task = Task { @Sendable [self] in
             logger.debug("handling live event stream", attributes: logAttributes)
