@@ -94,7 +94,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
         return try ResponseParser()
             .success(code: .ok, type: TeamMemberListResponseV0.self)
-            .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParmeter)
+            .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParameter)
             .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
             .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
             .parse(code: response.statusCode, data: data)
@@ -133,7 +133,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    // MARK: - Invite memeber to Team
+    // MARK: - Invite member to Team
 
     func inviteMemberToTeam(
         access_token: String,
@@ -173,6 +173,15 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         for teamID: Team.ID,
         with prefix: String
     ) throws -> PayloadPager<[WhitelistedBotProfile]> {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    // MARK: - Notifications
+
+    func getNotifications(
+        sinceNotificationID _: UUID?,
+        maxResults _: UInt
+    ) throws -> PayloadPager<[TeamNotification]> {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 

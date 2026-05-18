@@ -16,43 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+struct PaginatedTeamNotificationsResponseV5: Decodable, ToAPIModelConvertible {
 
-struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
-
-    let notifications: [UpdateEventEnvelopeV0]
+    let notifications: [TeamNotificationV5]
     let time: UTCTime?
     let hasMore: Bool?
 
     enum CodingKeys: String, CodingKey {
-
         case notifications
         case time
         case hasMore = "has_more"
-
     }
 
-    func toAPIModel() -> PayloadPager<UpdateEventBatch>.Page {
-        let eventEnvelopes = notifications.map {
-            $0.toAPIModel()
-        }
-
-        // The backend guarantees that this endpoint never returns transient events,
-        // so `lastNonTransientEvent` will always equal `eventEnvelopes.last` and
-        // pagination cannot stall on a page of only transient events.
-        let lastNonTransientEvent = eventEnvelopes.last {
-            !$0.isTransient
-        }
-
-        let updateEventBatch = UpdateEventBatch(
-            time: time?.date,
-            updateEventEnvelopes: notifications.map { $0.toAPIModel() }
-        )
-
-        return .init(
-            element: updateEventBatch,
+    func toAPIModel() -> PayloadPager<[TeamNotification]>.Page {
+        .init(
+            element: notifications.flatMap { $0.toAPIModel() },
             hasMore: hasMore ?? false,
-            nextStart: lastNonTransientEvent?.id.transportString() ?? ""
+            nextStart: notifications.last?.id.transportString() ?? ""
         )
     }
 

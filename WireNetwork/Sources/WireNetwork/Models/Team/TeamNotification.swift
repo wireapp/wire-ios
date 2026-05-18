@@ -16,34 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents an update event received from the backend
-/// that can be used to incrementally update the state of
-/// the client.
+public enum TeamNotification: Equatable, Sendable {
 
-public enum UpdateEvent: Equatable, Sendable {
+    /// A user has joined a team.
 
-    /// A conversation event.
-
-    case conversation(ConversationEvent)
-
-    /// A feature config event.
-
-    case featureConfig(FeatureConfigEvent)
-
-    /// A federation event.
-
-    case federation(FederationEvent)
-
-    /// A user event.
-
-    case user(UserEvent)
-
-    /// A team event.
-
-    case team(TeamEvent)
-
-    /// An event that is not known by the client.
-
-    case unknown(eventType: String)
+    case memberJoin(TeamMemberJoinNotification)
 
 }
