@@ -46,7 +46,7 @@ public enum TeamsAPIError: Error {
 
     /// An invalid query parameter was used.
 
-    case invalidQueryParmeter
+    case invalidQueryParameter
 
     /// A request was deemed invalid by the server.
 

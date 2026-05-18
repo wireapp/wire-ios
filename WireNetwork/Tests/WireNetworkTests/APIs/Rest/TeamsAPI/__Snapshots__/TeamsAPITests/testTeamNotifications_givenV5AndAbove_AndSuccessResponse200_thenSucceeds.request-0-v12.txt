@@ -1,0 +1,2 @@
+curl \
+	"/v12/teams/notifications?size=1000"

@@ -22,15 +22,27 @@ import XCTest
 class AccountSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        nameField
+        accountHeader
+    }
+
+    var accountHeader: XCUIElement {
+        app.navigationBars[Locators.AccountSettingsPage.accountHeader.rawValue]
     }
 
     var nameField: XCUIElement {
         app.textFields[Locators.AccountSettingsPage.nameField.rawValue]
     }
 
+    var nameFieldDisabled: XCUIElement {
+        app.textFields[Locators.AccountSettingsPage.nameFieldDisabled.rawValue]
+    }
+
     var usernameField: XCUIElement {
         app.staticTexts[Locators.AccountSettingsPage.usernameField.rawValue]
+    }
+
+    var usernameFieldDisabled: XCUIElement {
+        app.textFields[Locators.AccountSettingsPage.usernameFieldDisabled.rawValue]
     }
 
     var emailField: XCUIElement {
@@ -122,5 +134,4 @@ class AccountSettingsPage: PageModel {
         resetPasswordButton.tap()
         return try WebViewPage()
     }
-
 }
