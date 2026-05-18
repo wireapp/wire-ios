@@ -46,10 +46,14 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
     try await manager.withExpiringActivity(reason: reason, block: block)
 }
 
+/// Single-use: one instance per activity. The only entry point is the
+/// `withExpiringActivity(reason:block:)` free function above, which creates a
+/// fresh manager every call. Members below are `private` to enforce this — the
+/// actor's idempotency tracking (`didStartWork`) is not designed to reset.
 actor ExpiringActivityManager {
 
     let api: any ExpiringActivityInterface
-    var task: Task<Void, any Error>?
+    private var task: Task<Void, any Error>?
     // Stored as actor state so resumeOnce() is serialised through the actor
     // executor — no lock required, no threads blocked.
     private var continuation: CheckedContinuation<Void, any Error>?
@@ -115,7 +119,10 @@ actor ExpiringActivityManager {
         continuation = nil
     }
 
-    func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {
+    private func startWork(
+        block: @escaping () async throws -> Void,
+        semaphore: DispatchSemaphore
+    ) -> Task<Void, any Error> {
         didStartWork = true
         let task = Task {
             defer {
@@ -128,7 +135,7 @@ actor ExpiringActivityManager {
         return task
     }
 
-    func stopWork() throws {
+    private func stopWork() throws {
         if let task {
             task.cancel()
             self.task = nil
