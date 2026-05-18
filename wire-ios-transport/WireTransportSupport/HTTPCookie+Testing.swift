@@ -30,4 +30,14 @@ public extension HTTPCookie {
         HTTPCookie.extractCookieData(from: string, url: URL(string: "https://example.com")!)!
     }
 
+    @objc
+    class func validCookies() -> [HTTPCookie] {
+        validCookies(string: "zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure")
+    }
+
+    @objc
+    class func validCookies(string: String) -> [HTTPCookie] {
+        HTTPCookie.cookies(from: string, for: URL(string: "https://example.com")!)
+    }
+
 }

@@ -329,7 +329,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 let userInfo = UserInfo(
                     identifier: result.userID,
-                    cookieData: HTTPCookie.extractData(from: result.cookies)!,
                     cookies: result.cookies
                 )
 

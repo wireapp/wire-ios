@@ -37,7 +37,7 @@ final class FilesViewModelTests {
     private var cancellables = Set<AnyCancellable>()
     private var networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
 
-    init() {
+    init() async {
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
@@ -47,6 +47,7 @@ final class FilesViewModelTests {
         editingURLRepository.getEditorURLId_MockValue = nil
 
         networkMonitor.currentStatus = .connected
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         self.sut = FilesViewModel(
             useCases: .init(
@@ -90,6 +91,7 @@ final class FilesViewModelTests {
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
                 getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi),
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(repository: nodesRepository),
                 makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                     localAssetRepository: localAssetRepository
                 ),
@@ -103,9 +105,7 @@ final class FilesViewModelTests {
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             nodesRepository: nodesRepository,
-            fileCache: fileCache,
             isBrowsing: false,
-            accentColorProvider: { .default },
             networkMonitor: networkMonitor
         )
 
@@ -113,10 +113,18 @@ final class FilesViewModelTests {
         localAssetRepository
             .refreshAssetMetadataNodeID_MockValue = (WireDriveNode.fixture(), WireDriveLocalAsset.fixture())
         localAssetRepository.downloadAssetNodeIDIsAvailableOffline_MockMethod = { _, _ in }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
+        nodesRepository.getNodes_MockMethod = { _ in
+            ([], 0)
+        }
 
-        sut.$state.dropFirst().sink { [weak self] state in
+        await sut.setup()
+
+        sut.filesController.controller.$state.dropFirst().sink { [weak self] state in
             self?.itemsUpdates.append(state.items)
         }.store(in: &cancellables)
+
+        await sut.reload()
     }
 
     @Test
@@ -127,19 +135,19 @@ final class FilesViewModelTests {
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
-        #expect(sut.hasMore == true)
+        #expect(sut.filesController.hasMore == true)
 
         // when
         await sut.reload()
 
         // then
-        #expect(sut.hasMore == true)
+        #expect(sut.filesController.hasMore == true)
 
         // when
         await sut.loadMoreIfNeeded(index: 0)
 
         // then
-        #expect(sut.hasMore == false)
+        #expect(sut.filesController.hasMore == false)
     }
 
     @Test
@@ -147,25 +155,26 @@ final class FilesViewModelTests {
         // given
         nodesRepository.getNodes_MockMethod = { [sut] request in
             // Here we assert that loading is true when the methods under test are called.
-            #expect(sut.isLoading == true)
+            #expect(sut.filesController.isLoading == true)
 
             let page1 = (nodes: [WireDriveNode.fixture()], nextOffset: 1)
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
-        #expect(sut.isLoading == false)
+
+        #expect(sut.filesController.isLoading == false)
 
         // when
         await sut.reload()
 
         // then
-        #expect(sut.isLoading == false)
+        #expect(sut.filesController.isLoading == false)
 
         // when
         await sut.loadMoreIfNeeded(index: 0)
 
         // then
-        #expect(sut.isLoading == false)
+        #expect(sut.filesController.isLoading == false)
     }
 
     @Test
@@ -173,6 +182,8 @@ final class FilesViewModelTests {
         // given
         let node = WireDriveNode.fixture(path: "some-cell/a.jpg", modified: nil, ownerUserName: nil)
         nodesRepository.getNodes_MockMethod = { _ in (nodes: [node], nextOffset: nil) }
+
+        itemsUpdates = []
 
         // when
         await sut.reload()
@@ -223,7 +234,7 @@ final class FilesViewModelTests {
         }
 
         await sut.reload()
-        #expect(sut.hasMore == true)
+        #expect(sut.filesController.hasMore == true)
 
         // when
         await sut.reload()
@@ -437,7 +448,7 @@ final class FilesViewModelTests {
         // then
         let isConnectionError = error.isURLError(.notConnectedToInternet) || error.isURLError(.networkConnectionLost)
         #expect(sut.state == .error(isConnectionError: isConnectionError))
-        #expect(sut.isLoading == false)
+        #expect(sut.filesController.isLoading == false)
     }
 
     @Test
@@ -455,10 +466,12 @@ final class FilesViewModelTests {
         let nodeA_V2 = WireDriveNode.fixture(uuid: nodeA.id, path: "foo/aaa.xyz", modified: now)
         let nodeD_V2 = WireDriveNode.fixture(uuid: nodeD.id, path: "foo/ccc.xyz")
 
-        nodesRepository.getNodes_MockValue = (
-            nodes: [nodeA, nodeB, nodeC, nodeD, nodeA_V2, nodeD_V2],
-            nextOffset: nil
-        )
+        nodesRepository.getNodes_MockMethod = { _ in
+            (
+                nodes: [nodeA, nodeB, nodeC, nodeD, nodeA_V2, nodeD_V2],
+                nextOffset: nil
+            )
+        }
 
         // when
         await sut.reload()
@@ -590,7 +603,7 @@ final class FilesViewModelTests {
     @Test
     func testOfflineBarIsHiddenWhenItemsAreEmpty() {
         networkMonitor.currentStatus = .disconnected
-        sut.state = .received(items: [])
+        sut.filesController.state = .received(items: [])
 
         #expect(sut.shouldShowOfflineBar == false)
     }
@@ -602,7 +615,7 @@ final class FilesViewModelTests {
 
         networkMonitor.currentStatus = .disconnected
 
-        sut.state = .received(items: [
+        sut.filesController.state = .received(items: [
             FilesViewItem(
                 id: nodeA.id,
                 eTag: "eTag",
