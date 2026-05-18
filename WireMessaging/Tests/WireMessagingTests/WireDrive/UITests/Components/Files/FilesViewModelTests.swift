@@ -127,7 +127,6 @@ final class FilesViewModelTests {
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
-        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
         #expect(sut.hasMore == true)
 
         // when
@@ -154,7 +153,6 @@ final class FilesViewModelTests {
             let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
-        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
         #expect(sut.isLoading == false)
 
         // when
@@ -175,7 +173,6 @@ final class FilesViewModelTests {
         // given
         let node = WireDriveNode.fixture(path: "some-cell/a.jpg", modified: nil, ownerUserName: nil)
         nodesRepository.getNodes_MockMethod = { _ in (nodes: [node], nextOffset: nil) }
-        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         // when
         await sut.reload()
@@ -224,7 +221,6 @@ final class FilesViewModelTests {
         nodesRepository.getNodes_MockMethod = { _ in
             (nodes: [WireDriveNode.fixture()], nextOffset: 1) // There is a new page available
         }
-        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         await sut.reload()
         #expect(sut.hasMore == true)
@@ -384,7 +380,6 @@ final class FilesViewModelTests {
             WireDriveNode.fixture(path: "some-cell/\(i).jpg", modified: nil, ownerUserName: nil)
         }
         nodesRepository.getNodes_MockMethod = { _ in (nodes: nodes, nextOffset: 10) }
-        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         await sut.reload()
         #expect(sut.state.items.count == 10)
