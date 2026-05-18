@@ -24,6 +24,7 @@ import WireReusableUIComponents
 struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
 
     var mockDependencies = MockDependencies()
+    var sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
 
     var viewModel: RootViewModel {
         RootViewModel(

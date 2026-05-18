@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import UIKit
 import WireAuthenticationAPI
 import WireLogging
 import WireNetwork
@@ -54,8 +55,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package let factory: any Factory
     private let router: any Router
     private let bridge: WireAuthenticationBridge
+    private let sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
     package let environment: BackendEnvironment2
     private var cancellable: AnyCancellable?
+    private var sharedStateObservation: (any SharedAuthLoginFlowObservation)?
+    private var sharedEffectObservation: (any SharedAuthLoginFlowObservation)?
+    private var lastSharedStep: SharedAuthLoginFlowStep?
 
     // MARK: - Life cycle
 
@@ -63,6 +68,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         factory: any Factory,
         router: any Router,
         bridge: WireAuthenticationBridge,
+        sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?,
         environment: BackendEnvironment2,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
@@ -71,6 +77,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.factory = factory
         self.router = router
         self.bridge = bridge
+        self.sharedAuthLoginFlow = sharedAuthLoginFlow
         self.environment = environment
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
@@ -88,11 +95,24 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 break
             }
         }
+
+        observeSharedAuthLoginFlow()
+    }
+
+    deinit {
+        sharedStateObservation?.cancel()
+        sharedEffectObservation?.cancel()
     }
 
     // MARK: - Actions
 
     func submitEmailOrSSOCode() async {
+        if let sharedAuthLoginFlow {
+            sharedAuthLoginFlow.send(.identifierChanged(emailOrSSOCode))
+            sharedAuthLoginFlow.send(.submitIdentifier)
+            return
+        }
+
         isLoading = true
         defer {
             isLoading = false
@@ -139,6 +159,61 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func observeSharedAuthLoginFlow() {
+        guard let sharedAuthLoginFlow else { return }
+
+        applySharedState(sharedAuthLoginFlow.currentState)
+
+        sharedStateObservation = sharedAuthLoginFlow.observeState { [weak self] state in
+            self?.applySharedState(state)
+        }
+
+        sharedEffectObservation = sharedAuthLoginFlow.observeEffect { [weak self] effect in
+            self?.handleSharedEffect(effect)
+        }
+    }
+
+    private func applySharedState(_ state: SharedAuthLoginFlowState) {
+        emailOrSSOCode = state.identifier
+        isLoading = state.isLoading
+
+        switch state.error {
+        case .invalidIdentifier:
+            alert = .invalidEmail
+        case .generic, .tooManyDevices:
+            alert = .unknownError
+        case .invalidCredentials, .invalidSecondFactorCode, nil:
+            break
+        }
+
+        guard state.step != lastSharedStep else { return }
+        lastSharedStep = state.step
+
+        switch state.step {
+        case .identifierEntry:
+            break
+        case .emailCredentialsEntry:
+            router.navigate(to: DetermineAuthMethodDestination.login(
+                email: state.identifier,
+                didDetectDomainConflict: false,
+                environment: environment
+            ))
+        case .secondFactorEntry:
+            break
+        case .success:
+            break
+        }
+    }
+
+    private func handleSharedEffect(_ effect: SharedAuthLoginFlowEffect) {
+        switch effect {
+        case let .openSsoURL(url, _):
+            UIApplication.shared.open(url)
+        case .loginSucceeded:
+            break
+        }
+    }
 
     private func handleAuthenticationMethod(
         _ method: AuthenticationMethod

@@ -35,6 +35,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
         .init(
             factory: self,
             router: FakeRootFactory().viewModel,
+            sharedAuthLoginFlow: nil,
             email: email,
             environment: environment,
             canCreateAccount: canCreateAccount,

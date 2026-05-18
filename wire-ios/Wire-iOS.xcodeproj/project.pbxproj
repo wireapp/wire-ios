@@ -20,10 +20,7 @@
 		};
 /* End PBXAggregateTarget section */
 
-/* TODO: Remove WireIosShared.framework project entries with the temporary WireIosShared login probe. */
 /* Begin PBXBuildFile section */
-		C0DEF0010000000000000001 /* WireIosShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0DEF0030000000000000003 /* WireIosShared.framework */; };
-		C0DEF0020000000000000002 /* WireIosShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0DEF0030000000000000003 /* WireIosShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */; };
 		0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
 		016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; };
@@ -120,6 +117,8 @@
 		76EF74902E9E6380006A1579 /* WireLocators in Frameworks */ = {isa = PBXBuildFile; productRef = 76EF748F2E9E6380006A1579 /* WireLocators */; };
 		A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
 		A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0DEF0010000000000000001 /* WireIosShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0DEF0030000000000000003 /* WireIosShared.framework */; };
+		C0DEF0020000000000000002 /* WireIosShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0DEF0030000000000000003 /* WireIosShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C9954F8E2E38D08D00A5EB01 /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = C9954F8D2E38D08D00A5EB01 /* WireMessagingDomain */; };
 		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
@@ -409,8 +408,8 @@
 		8F42C538199244A700288E4D /* Wire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FC853A0199245770008B66B /* Wire-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Wire-Info.plist"; path = "Wire-iOS/Wire-Info.plist"; sourceTree = "<group>"; };
 		BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0DEF0030000000000000003 /* WireIosShared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireIosShared.framework; path = "../../wire-android-rc-ios-avs/shared/export-ios/build/bin/iosSimulatorArm64/debugFramework/WireIosShared.framework"; sourceTree = "<group>"; };
+		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS UnitTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E970F6E42CC90115007A2CEB /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };

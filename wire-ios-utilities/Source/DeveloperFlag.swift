@@ -36,6 +36,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
+    case useKaliumSharedAuth
     case useWireAuthentication
     case wireMeetings
     case lowKeyPackageCount
@@ -70,6 +71,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .useWireAuthentication:
             "Use the new WireAuthentication feature module"
+
+        case .useKaliumSharedAuth:
+            "Use shared Kalium-backed auth ViewModels behind the iOS authentication UI"
 
         case .disablePushChannelBatching:
             "Turn on to disable batching while app is live"

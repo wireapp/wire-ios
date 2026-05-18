@@ -50,7 +50,8 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)? = nil
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
             authenticationType: authenticationType,
@@ -65,7 +66,8 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
-            registrationAnalyticsTracker: registrationAnalyticsTracker
+            registrationAnalyticsTracker: registrationAnalyticsTracker,
+            sharedAuthLoginFlow: sharedAuthLoginFlow
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

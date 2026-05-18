@@ -42,6 +42,7 @@ final class RootComponent: BootstrapComponent {
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    public let sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -68,7 +69,8 @@ final class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
     ) {
         self.authenticationType = authenticationType
         self.environment = environment
@@ -84,6 +86,7 @@ final class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
         self.registrationAnalyticsTracker = registrationAnalyticsTracker
+        self.sharedAuthLoginFlow = sharedAuthLoginFlow
     }
 
     // MARK: - Children
@@ -99,7 +102,8 @@ final class RootComponent: BootstrapComponent {
         return DetermineAuthMethodComponent(
             parent: self,
             networkStack: networkStack,
-            existsAnotherAccount: !accountsPublisher.value.isEmpty
+            existsAnotherAccount: !accountsPublisher.value.isEmpty,
+            sharedAuthLoginFlow: sharedAuthLoginFlow
         )
     }
 

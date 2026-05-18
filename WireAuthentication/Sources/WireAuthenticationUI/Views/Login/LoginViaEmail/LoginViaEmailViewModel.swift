@@ -35,8 +35,19 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - View state
 
-    @Published var email: String
-    @Published var password: String = ""
+    @Published var email: String {
+        didSet {
+            guard !isApplyingSharedState, oldValue != email else { return }
+            sharedAuthLoginFlow?.send(.identifierChanged(email))
+        }
+    }
+
+    @Published var password: String = "" {
+        didSet {
+            guard !isApplyingSharedState, oldValue != password else { return }
+            sharedAuthLoginFlow?.send(.passwordChanged(password))
+        }
+    }
 
     @Published var proxyUsername: String = ""
     @Published var proxyPassword: String = ""
@@ -67,7 +78,11 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var canSubmitCredentials: Bool {
-        if areProxyCredentialsRequired {
+        if let sharedAuthLoginFlow {
+            return sharedAuthLoginFlow.currentState.canSubmitCredentials
+        }
+
+        return if areProxyCredentialsRequired {
             areAccountCredentialsValid && areProxyCredentialsValid
         } else {
             areAccountCredentialsValid
@@ -96,13 +111,19 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     package let factory: any Factory
     private let router: any Router
+    private let sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
     private let didDetectDomainConflict: Bool
+    private var sharedStateObservation: (any SharedAuthLoginFlowObservation)?
+    private var sharedEffectObservation: (any SharedAuthLoginFlowObservation)?
+    private var lastSharedStep: SharedAuthLoginFlowStep?
+    private var isApplyingSharedState = false
 
     // MARK: - Life cycle
 
     package init(
         factory: any Factory,
         router: any Router,
+        sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?,
         email: String?,
         environment: BackendEnvironment2,
         canCreateAccount: Bool,
@@ -110,16 +131,30 @@ package final class LoginViaEmailViewModel: ObservableObject {
     ) {
         self.factory = factory
         self.router = router
+        self.sharedAuthLoginFlow = sharedAuthLoginFlow
         self.email = email ?? ""
         self.environment = environment
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.isEmailPrefilled = email != nil
+        observeSharedAuthLoginFlow()
+    }
+
+    deinit {
+        sharedStateObservation?.cancel()
+        sharedEffectObservation?.cancel()
     }
 
     // MARK: - Actions
 
     func submitCredentials() async {
+        if let sharedAuthLoginFlow {
+            sharedAuthLoginFlow.send(.identifierChanged(email))
+            sharedAuthLoginFlow.send(.passwordChanged(password))
+            sharedAuthLoginFlow.send(.submitCredentials(usernameAllowed: true))
+            return
+        }
+
         isLoading = true
 
         let sanitizedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -216,6 +251,96 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - Private
 
+    private func observeSharedAuthLoginFlow() {
+        guard let sharedAuthLoginFlow else { return }
+
+        applySharedState(sharedAuthLoginFlow.currentState)
+
+        sharedStateObservation = sharedAuthLoginFlow.observeState { [weak self] state in
+            self?.applySharedState(state)
+        }
+
+        sharedEffectObservation = sharedAuthLoginFlow.observeEffect { [weak self] effect in
+            switch effect {
+            case let .loginSucceeded(payload):
+                Task {
+                    await self?.completeSharedLogin(payload: payload)
+                }
+            case .openSsoURL:
+                break
+            }
+        }
+    }
+
+    private func applySharedState(_ state: SharedAuthLoginFlowState) {
+        isApplyingSharedState = true
+        email = state.identifier
+        password = state.password
+        isApplyingSharedState = false
+        isLoading = state.isLoading
+
+        switch state.error {
+        case .invalidCredentials:
+            alert = .invalidCredentials
+        case .invalidSecondFactorCode:
+            alert = .invalid2FACode
+        case .tooManyDevices, .generic:
+            alert = .unknownError
+        case .invalidIdentifier, nil:
+            break
+        }
+
+        guard state.step != lastSharedStep else { return }
+        lastSharedStep = state.step
+
+        switch state.step {
+        case .identifierEntry, .emailCredentialsEntry:
+            break
+        case .secondFactorEntry:
+            router.navigate(
+                to: LoginViaEmailDestination.verifyLogin(
+                    email: state.identifier,
+                    password: state.password,
+                    proxyCredentials: proxyCredentials
+                )
+            )
+        case .success:
+            break
+        }
+    }
+
+    private func completeSharedLogin(payload: SharedAuthLoginSuccessPayload) async {
+        do {
+            WireLogger.authentication.info(
+                "Shared Kalium auth login succeeded, handing off to legacy auth",
+                attributes: .safePublic
+            )
+
+            let userID = try payload.makeUserID()
+            let cookies = try payload.makeCookies(
+                fallbackDomain: environment.config.endpoints.restAPIURL.host ?? "wire.com"
+            )
+            let accessToken = payload.makeAccessToken(userID: userID)
+            let emailCredentials = payload.makeEmailCredentials(
+                fallbackEmail: email,
+                fallbackPassword: password
+            )
+
+            let authenticationResult = try await createAuthenticationResult(
+                cookies: cookies,
+                accessToken: accessToken,
+                emailCredentials: emailCredentials
+            )
+
+            router.navigate(
+                to: LoginViaEmailDestination.noHistory(authenticationResult: authenticationResult)
+            )
+        } catch {
+            WireLogger.authentication.error("Shared auth login handoff failed: \(error)")
+            alert = .unknownError
+        }
+    }
+
     private var proxyCredentials: ProxyCredentials? {
         guard areProxyCredentialsRequired else {
             return nil
@@ -261,7 +386,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private func createAuthenticationResult(
         cookies: [HTTPCookie],
         accessToken: AccessToken,
-        emailCredentials: EmailCredentials
+        emailCredentials: EmailCredentials?
     ) async throws -> AuthenticationResult {
         let useCase = factory.createAuthenticationResultUseCase()
         return try await Task.detached {
@@ -274,4 +399,77 @@ package final class LoginViaEmailViewModel: ObservableObject {
         }.value
     }
 
+}
+
+private enum SharedAuthLoginHandoffFailure: Error {
+    case invalidUserID(String)
+    case invalidRefreshTokenCookie
+}
+
+private extension SharedAuthLoginSuccessPayload {
+
+    func makeUserID() throws -> UUID {
+        guard let userID = UUID(uuidString: userIdValue) else {
+            throw SharedAuthLoginHandoffFailure.invalidUserID(userIdValue)
+        }
+
+        return userID
+    }
+
+    func makeCookies(fallbackDomain: String) throws -> [HTTPCookie] {
+        var properties: [HTTPCookiePropertyKey: Any] = [
+            .name: refreshTokenCookieName,
+            .value: refreshTokenValue,
+            .domain: refreshTokenCookieDomain ?? fallbackDomain,
+            .path: refreshTokenCookiePath,
+            // TODO: Remove with the temporary shared auth bridge.
+            // Kalium currently exposes the refresh token value but not the original
+            // cookie expiry. Legacy client registration treats a session as logged
+            // in only when ZMPersistentCookieStorage can read a zuid expiry.
+            .expires: Date(timeIntervalSinceNow: 30 * 24 * 60 * 60)
+        ]
+
+        if refreshTokenCookieSecure {
+            properties[.secure] = "TRUE"
+        }
+
+        if refreshTokenCookieHttpOnly {
+            properties[HTTPCookiePropertyKey("HttpOnly")] = "TRUE"
+        }
+
+        guard let cookie = HTTPCookie(properties: properties) else {
+            throw SharedAuthLoginHandoffFailure.invalidRefreshTokenCookie
+        }
+
+        return [cookie]
+    }
+
+    func makeAccessToken(userID: UUID) -> AccessToken {
+        let expiresIn = accessTokenExpiresInSeconds ?? 60
+
+        return AccessToken(
+            userID: userID,
+            token: accessTokenValue,
+            type: accessTokenType,
+            expirationDate: Date(timeIntervalSinceNow: TimeInterval(expiresIn))
+        )
+    }
+
+    func makeEmailCredentials(
+        fallbackEmail: String,
+        fallbackPassword: String
+    ) -> EmailCredentials? {
+        let resolvedEmail = email ?? fallbackEmail
+        let resolvedPassword = password ?? fallbackPassword
+
+        guard !resolvedEmail.isEmpty, !resolvedPassword.isEmpty else {
+            return nil
+        }
+
+        return EmailCredentials(
+            email: resolvedEmail,
+            password: resolvedPassword,
+            verificationCode: secondFactorCode
+        )
+    }
 }

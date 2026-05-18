@@ -28,6 +28,11 @@ import WireDesign
 import WireFoundation
 import WireNetwork
 import WireSyncEngine
+import WireUtilities
+
+#if canImport(WireIosShared)
+import WireIosShared
+#endif
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -327,12 +332,28 @@ final class AuthenticationInterfaceBuilder {
             ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
-            registrationAnalyticsTracker: registrationAnalyticsTracker
+            registrationAnalyticsTracker: registrationAnalyticsTracker,
+            sharedAuthLoginFlow: makeSharedAuthLoginFlow(environment: environment)
         )
 
         return (
             view: view.environment(\.isClipboardEnabled, SecurityFlags.clipboard.isEnabled),
             bridge: bridge
         )
+    }
+
+    @MainActor
+    private func makeSharedAuthLoginFlow(
+        environment: BackendEnvironment2
+    ) -> (any SharedAuthLoginFlowManaging)? {
+        guard DeveloperFlag.useKaliumSharedAuth.isOn else { return nil }
+
+        #if canImport(WireIosShared)
+        return try? SharedAuthLoginFlowKMPGraph(
+            environment: environment
+        ).makeSharedAuthLoginFlow()
+        #else
+        return nil
+        #endif
     }
 }

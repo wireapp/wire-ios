@@ -40,18 +40,21 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
     private let canCreateAccount: Bool
     public let didDetectDomainConflict: Bool
     public let networkStack: NetworkStack
+    private let sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
 
     init(
         parent: any Scope,
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        networkStack: NetworkStack
+        networkStack: NetworkStack,
+        sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
     ) {
         self.email = email
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.networkStack = networkStack
+        self.sharedAuthLoginFlow = sharedAuthLoginFlow
         super.init(parent: parent)
     }
 
@@ -104,6 +107,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         LoginViaEmailViewModel(
             factory: self,
             router: dependency.router,
+            sharedAuthLoginFlow: sharedAuthLoginFlow,
             email: email,
             environment: networkStack.backendEnvironment,
             canCreateAccount: canCreateAccount,

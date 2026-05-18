@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
+
 enum SessionBoundaryModeResolverFactory {
 
     static func makeDefaultResolver() -> any SessionBoundaryModeResolving {
-        SessionBoundaryModeResolver()
+        SessionBoundaryModeResolver { _ in
+            DeveloperFlag.useKaliumSharedAuth.isOn ? .kaliumEnabled : .legacyOnly
+        }
     }
 
     static func makeResolver(

@@ -38,6 +38,7 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
             factory: self,
             router: FakeRootFactory().viewModel,
             bridge: WireAuthenticationBridge(),
+            sharedAuthLoginFlow: nil,
             environment: mockDependencies.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount
         )

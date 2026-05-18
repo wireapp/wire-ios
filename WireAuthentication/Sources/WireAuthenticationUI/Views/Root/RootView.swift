@@ -21,7 +21,7 @@ import WireAuthenticationAPI
 import WireNetwork
 import WireReusableUIComponents
 
-package protocol RootFactory {
+package protocol RootFactory: SharedAuthLoginFlowFactory {
 
     @MainActor var viewModel: RootViewModel { get }
 

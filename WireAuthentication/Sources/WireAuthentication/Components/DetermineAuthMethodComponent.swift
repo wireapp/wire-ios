@@ -38,14 +38,17 @@ final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponent
     public let networkStack: NetworkStack
     public let didReauthenticate: Bool = false
     private let existsAnotherAccount: Bool
+    private let sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
 
     init(
         parent: any Scope,
         networkStack: NetworkStack,
-        existsAnotherAccount: Bool
+        existsAnotherAccount: Bool,
+        sharedAuthLoginFlow: (any SharedAuthLoginFlowManaging)?
     ) {
         self.networkStack = networkStack
         self.existsAnotherAccount = existsAnotherAccount
+        self.sharedAuthLoginFlow = sharedAuthLoginFlow
         super.init(parent: parent)
     }
 
@@ -94,6 +97,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             factory: self,
             router: dependency.router,
             bridge: dependency.bridge,
+            sharedAuthLoginFlow: sharedAuthLoginFlow,
             environment: networkStack.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount
         )
@@ -116,7 +120,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             email: email,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            networkStack: networkStack
+            networkStack: networkStack,
+            sharedAuthLoginFlow: sharedAuthLoginFlow
         )
     }
 

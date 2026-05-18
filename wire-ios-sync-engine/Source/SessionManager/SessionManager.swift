@@ -988,6 +988,27 @@ public final class SessionManager: NSObject, SessionManagerType {
         processPendingURLActionRequiresAuthentication()
     }
 
+    private func bootstrapSelfUserForSharedAuthIfNeeded(
+        account: Account,
+        userSession: ZMUserSession
+    ) async {
+        guard DeveloperFlag.useKaliumSharedAuth.isOn else { return }
+
+        await userSession.syncContext.perform {
+            let selfUser = ZMUser.selfUser(in: userSession.syncContext)
+
+            guard selfUser.remoteIdentifier == nil else { return }
+
+            // TODO: Remove with the temporary shared auth bridge.
+            // KMP performs the login and legacy iOS only receives a handoff payload.
+            // Until the real account/storage migration is implemented, seed the legacy
+            // self user id so existing client registration can continue.
+            selfUser.remoteIdentifier = account.userIdentifier
+            selfUser.domain = selfUser.domain ?? userSession.resolvedBackendMetadata.domain
+            selfUser.needsToBeUpdatedFromBackend = true
+        }
+    }
+
     @MainActor
     func withSession(
         for account: Account,
@@ -1027,6 +1048,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                     newSession: userSession,
                     coreDataStack: userSession.coreDataStack
                 )
+
+                await bootstrapSelfUserForSharedAuthIfNeeded(account: account, userSession: userSession)
 
                 await userSession.start()
 

@@ -118,8 +118,10 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         if (! selfUser.needsToBeUpdatedFromBackend) {
             selfUser.needsToBeUpdatedFromBackend = YES;
             [self.managedObjectContext enqueueDelayedSave];
-            [self.downstreamSelfUserSync readyForNextRequestIfNotBusy];
         }
+
+        [self.downstreamSelfUserSync readyForNextRequestIfNotBusy];
+
         if (selfUser.needsToBeUpdatedFromBackend) {
             return [self.downstreamSelfUserSync nextRequestForAPIVersion:apiVersion];
         }

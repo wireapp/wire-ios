@@ -440,6 +440,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         )
 
         managedObjectContext.saveOrRollback()
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
     private func needsToCreateNewClientForSelfUser(_ selfUser: ZMUser) -> Bool {

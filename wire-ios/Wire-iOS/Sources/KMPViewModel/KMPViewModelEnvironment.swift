@@ -65,6 +65,7 @@ struct KMPViewModelEnvironment {
 enum KMPViewModelScreenID: String, Equatable {
     case appLockChangeWarning
     case archivedList
+    case authLoginFlow
     case blocker
     case changeEmail
     case changeHandle

@@ -53,6 +53,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
         sut = LoginViaEmailViewModel(
             factory: self,
             router: router,
+            sharedAuthLoginFlow: nil,
             email: "mika@example.com",
             environment: MockDependencies().backendEnvironment,
             canCreateAccount: true,
