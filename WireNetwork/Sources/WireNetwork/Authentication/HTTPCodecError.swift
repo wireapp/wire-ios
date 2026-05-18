@@ -18,7 +18,7 @@
 
 import Foundation
 
-enum HTTPCookieCodecError: Error {
+enum HTTPCookieCodecError: Error, Equatable {
 
     case invalidCookies
     case invalidCookieData(reason: String)

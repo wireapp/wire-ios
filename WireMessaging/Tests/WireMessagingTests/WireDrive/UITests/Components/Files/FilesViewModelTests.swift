@@ -47,6 +47,7 @@ final class FilesViewModelTests {
         editingURLRepository.getEditorURLId_MockValue = nil
 
         networkMonitor.currentStatus = .connected
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         self.sut = FilesViewModel(
             useCases: .init(
