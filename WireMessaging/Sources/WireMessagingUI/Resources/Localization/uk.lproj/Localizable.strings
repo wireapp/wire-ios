@@ -130,6 +130,8 @@
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";
 "conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.files.item.menu.versionHistory" = "Version history";
+"conversation.wireCells.files.item.menu.makeAvailableOffline" = "Make available offline";
+"conversation.wireCells.files.item.menu.removeAvailableOffline" = "Remove offline access";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
 "conversation.wireCells.files.item.menu.delete" = "Видалити";
@@ -142,6 +144,7 @@
 "conversation.wireCells.allFiles.noData.title" = "There are no files yet";
 "conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Дізнатися більше";
+"conversation.wireCells.files.emptyFolder.message" = "Add files to this folder to stay organized.";
 "conversation.wireCells.files.noSearchResults.title" = "No results found";
 "conversation.wireCells.files.noSearchResults.message" = "Try adjusting your search.";
 "conversation.wireCells.files.pendingCells.title" = "Files are loading";
@@ -182,11 +185,14 @@
 "conversation.wireCells.files.readyToOpenAfterDownload" = "Ready to open";
 "conversation.wireCells.files.tapToCancelDownload" = "Tap to cancel loading";
 "conversation.wireCells.files.downloadFailed" = "Unable to load, retry";
+"conversation.wireCells.files.downloadingFile" = "Downloading file...";
+"conversation.wireCells.files.offlineModeHint" = "You can still access your offline files.";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
+"conversation.wireCells.recycleBin.emptyFolder.message" = "This folder is empty.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "This will permanently delete the file \"%@\" for all participants. Everyone will lose access and there is no way to recover the file.";

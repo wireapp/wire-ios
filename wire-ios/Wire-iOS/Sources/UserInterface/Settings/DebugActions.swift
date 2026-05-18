@@ -26,16 +26,17 @@ enum DebugActions {
     static func alert(
         _ message: String,
         title: String = "",
-        textToCopy: String? = nil
+        textToCopy: String? = nil,
+        copyActionTitle: String = "Copy"
     ) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         if let textToCopy {
-            alert.addAction(UIAlertAction(title: "Copy", style: .default) { _ in
+            alert.addAction(UIAlertAction(title: copyActionTitle, style: .default) { _ in
                 UIPasteboard.general.string = textToCopy
             })
         }
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: nil))
         controller.present(alert, animated: false)
     }
 
@@ -47,17 +48,18 @@ enum DebugActions {
         let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         let allConversations = uiMOC.fetchOrAssert(request: fetchRequest)
 
+        let unreadStrings = L10n.Localizable.Settings.DebuggingTools.UnreadConversations.self
         if let convo = allConversations.first(where: { predicate.evaluate(with: $0) }) {
 
             let message = [
-                "Found an unread conversation:",
+                unreadStrings.found,
                 "\(String(describing: convo.displayName))",
                 "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
             ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
-            alert(message, textToCopy: textToCopy)
+            alert(message, textToCopy: textToCopy, copyActionTitle: unreadStrings.actionCopy)
         } else {
-            alert("No unread conversation")
+            alert(unreadStrings.notFound)
         }
     }
 
@@ -76,18 +78,19 @@ enum DebugActions {
     static func findUnreadConversationContributingToBackArrowDot(userSession: ZMUserSession) {
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
+        let unreadStrings = L10n.Localizable.Settings.DebuggingTools.UnreadConversations.self
         if let convo = ConversationList.conversations(inUserSession: userSession).items
             .first(where: predicate.evaluate) {
             let message = [
-                "Found an unread conversation:",
+                unreadStrings.found,
                 "\(String(describing: convo.displayName))",
                 "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
             ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
-            alert(message, textToCopy: textToCopy)
+            alert(message, textToCopy: textToCopy, copyActionTitle: unreadStrings.actionCopy)
 
         } else {
-            alert("No unread conversation")
+            alert(unreadStrings.notFound)
         }
     }
 
@@ -227,9 +230,10 @@ enum DebugActions {
 
     /// Accepts a debug command
     static func enterDebugCommand(userSession: ZMUserSession) {
-        askString(title: "Debug command") { string in
+        let debugCommandStrings = L10n.Localizable.Settings.DebuggingTools.DebugCommand.self
+        askString(title: debugCommandStrings.title) { string in
             guard let command = DebugCommand(string: string) else {
-                alert("Command not recognized")
+                alert(debugCommandStrings.commandNotRecognized)
                 return
             }
 
@@ -270,8 +274,9 @@ enum DebugActions {
     }
 
     static func repairFaultyMLSRemovalKeys(userSession: UserSession) {
+        let strings = L10n.Localizable.Settings.DebuggingTools.RepairMlsRemovalKeys.self
         guard let useCase = userSession.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
-            alert("Error: Repair use case not available")
+            alert(strings.useCaseUnavailable)
             return
         }
 
@@ -279,15 +284,12 @@ enum DebugActions {
             do {
                 let result = try await useCase.invoke()
                 await MainActor.run {
-                    let message = """
-                    Found: \(result.faultyConversationsFound) faulty conversation(s)
-                    Repaired: \(result.conversationsRepaired) conversation(s)
-                    """
-                    alert(message, title: "Faulty MLS Removal Keys Repair")
+                    let message = strings.successMessage(result.faultyConversationsFound, result.conversationsRepaired)
+                    alert(message, title: strings.successTitle)
                 }
             } catch {
                 await MainActor.run {
-                    alert("Error: \(error.localizedDescription)", title: "Repair Failed")
+                    alert(strings.failureMessage(error.localizedDescription), title: strings.failureTitle)
                 }
             }
         }

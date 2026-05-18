@@ -1020,11 +1020,11 @@
 "profile.connection_request_dialog.button_cancel" = "Ігнорувати";
 "profile.connection_request_dialog.button_connect" = "Додати";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "Видалити цю розмову?";
-"conversation.delete_request_dialog.message" = "Це видалить групу та весь її вміст для всіх учасників на всіх пристроях. Можливостей для відновлення вмісту розмови не існує. Всі учасники будуть повідмлені про це.";
-"conversation.delete_request_error_dialog.title" = "При вилученні групи \"%@\" сталася помилка. Будь ласка, пробуйте ще раз.";
-"conversation.delete_request_error_dialog.button_delete_group" = "Видалити групу";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Delete conversation?";
+"conversation.delete_request_dialog.message" = "This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.";
+"conversation.delete_request_error_dialog.title" = "An error occurred while trying to delete the conversation %@. Please try again.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Delete Conversation";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Скасувати запит?";
@@ -1052,7 +1052,7 @@
 "profile.read_receipts_disabled_memo.header" = "ВИ ВИМКНУЛИ ЗВІТИ ПРО ПЕРЕГЛЯД";
 "profile.read_receipts_memo.body" = "Якщо обидві сторони увімкнуть звіти про перегляд, ви зможете бачити, коли повідомлення були переглянуті.\n\nДану опцію можна змінити в налаштуваннях акаунта.";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Інформація";
 
@@ -1435,16 +1435,27 @@
 "self.settings.technical_report_section.title" = "Відлагоджувальний звіт";
 "self.settings.technical_report.send_report" = "Send Report";
 "self.settings.technical_report.share_report" = "Share Report Via Wire";
-"self.settings.technical_report.mail.subject" = "Відлагоджувальний звіт Wire";
+"self.settings.technical_report.mail.subject" = "Issue report";
 "self.settings.technical_report.include_log" = "Включити детальний журнал логів";
 "self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Детальні логи можуть містити персональні дані";
 "self.settings.technical_report.no_mail_alert" = "Не виявлено жодного поштового клієнту. Натисніть \"ОК\" та надішліть логи вручну на: ";
 
-"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
-"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
-"self.settings.technical_report.mail_body.section2" = "What Happened:";
-"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
+"self.settings.technical_report.mail_body.firstline" = "Explain what happened so that we can understand and reproduce the problem:";
+"self.settings.technical_report.mail_body.section1" = "What Happened?";
+"self.settings.technical_report.mail_body.section2" = "When did it happen?";
+"self.settings.technical_report.mail_body.section3" = "Add steps to reproduce (if relevant):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Having trouble?";
+"self.settings.share_debug_report.banner.message" = "To improve Wire's quality, please send us your feedback and let us know about any problems.";
+"self.settings.share_debug_report.creating_report" = "Creating debug report...";
+"self.settings.share_debug_report.action_sheet.title" = "Having trouble?";
+"self.settings.share_debug_report.action_sheet.message" = "You can send your report to Wire support, share it with your administrator directly via Wire or any other app.";
+"self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
+"self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
+"self.settings.share_debug_report.action_sheet.share" = "Share";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "Скинути пароль";
 

@@ -118,9 +118,13 @@ public enum Locators {
         // TODO: [WPB-21952] Improve these identifiers later.
         // We are keeping the current title+field identifiers for now to avoid
         // changing existing references across the app.
+        case accountHeader = "Account"
         case nameField = "NameField"
+        case nameFieldDisabled = "NameFieldDisabled"
         case usernameField = "UsernameField"
+        case usernameFieldDisabled = "UsernameFieldDisabled"
         case emailField = "EmailField"
+        case emailFieldDisabled = "EmailFieldDisabled"
         case domainFieldDisabled = "DomainFieldDisabled"
         case backuporRestoreField = "Back up or RestoreField"
         case resetPasswordField = "Reset Password"
@@ -168,6 +172,8 @@ public enum Locators {
         case sendAudio = "Send"
         case playAudioFile
         case recordingTime
+        case showOtherRowButton
+        case pingButton
 
     }
 
