@@ -134,7 +134,6 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(audioStartRecordingButton.waitForExistence(timeout: 5), "Start recording button not found")
         audioStartRecordingButton.tap()
 
-
         XCTAssertTrue(
             audioStopRecordingButton.waitForExistence(timeout: 5),
             "Stop recording button did not appear — recording may not have started"
@@ -149,12 +148,12 @@ class ActiveConversationPage: PageModel {
     }
 
     private var microphonePermissionMonitor: AnyObject?
-    
+
     func registerMicrophonePermissionMonitor(testCase: XCTestCase) {
         guard microphonePermissionMonitor == nil else { return }
 
         microphonePermissionMonitor =
-        testCase.addUIInterruptionMonitor(withDescription: "Microphone Permission Alert") { alertElement -> Bool in
+            testCase.addUIInterruptionMonitor(withDescription: "Microphone Permission Alert") { alertElement -> Bool in
                 let message = "Allow Wire to access your microphone so you can talk to people and send audio message."
                 let allowButton = alertElement.buttons["Allow"].firstMatch
 

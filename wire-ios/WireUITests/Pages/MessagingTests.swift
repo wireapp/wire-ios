@@ -155,7 +155,7 @@ final class MessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testReceivedAudioMessagePlaybackStartsOnTap_WPB_25713() async throws {
+    func testReceivedAudioMessagePlaybackStartsOnTap_TC_10871() async throws {
 
         // GIVEN a team with 2 users sharing a group conversation
         let groupName = UserGenerator.generateRandomConversationName()
@@ -217,7 +217,9 @@ final class MessagingTests: WireUITestCase {
         do {
             try await fulfillment(of: [pauseExpectation], timeout: 5)
         } catch {
-            XCTFail("Audio did not start playing after tapping play. Button value: \(conversationAsA.audioPlayButton.value ?? "nil"). Expected to become 'Pause'.")
+            XCTFail(
+                "Audio did not start playing after tapping play. Button value: \(conversationAsA.audioPlayButton.value ?? "nil"). Expected to become 'Pause'."
+            )
         }
     }
 
