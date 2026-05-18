@@ -93,6 +93,10 @@ class ActiveConversationPage: PageModel {
         app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
 
+    var audioPlayButton: XCUIElement {
+        app.buttons["AudioActionButton"]
+    }
+
     func fileAttachment(name: String, type: String) -> XCUIElement {
         app.buttons.containing(
             NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
