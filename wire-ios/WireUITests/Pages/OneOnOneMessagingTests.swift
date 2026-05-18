@@ -94,8 +94,8 @@ final class OneOnOneMessagingTests: WireUITestCase {
 
         // WHEN user B records and sends an audio message to the shared conversation via the UI
         let conversationAsB = try conversationsPageAsB.openConversation()
-        conversationAsB.registerMicrophonePermissionMonitor(testCase: self)
-        try conversationAsB.recordAndSendAudioMessage(recordingDuration: 3)
+        conversationAsB.showOtherRowButton.waitAndTap()
+        try conversationAsB.recordAudioAndSend()
 
         // ...and user B logs out, leaving user A as the active session
         _ = try conversationAsB
@@ -115,33 +115,30 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let conversationAsA = try conversationsPageAsA.openConversation()
 
         XCTAssertTrue(
-            conversationAsA.audioPlayButton.waitForExistence(timeout: 5),
+            conversationAsA.playAudioFile.waitForExistence(timeout: 5),
             "Audio play button not found"
         )
 
         // ...and user A taps the play button
-        conversationAsA.audioPlayButton.tap()
+        conversationAsA.playAudioFile.tap()
 
-        // THEN playback starts (button accessibility value flips from "Play" to "Pause").
         // Regression guard for WPB-25713: tapping play on a not-yet-downloaded received audio
         // must trigger the download + playback. If userSession is not propagated to
         // AudioMessageView, the download is never enqueued and the button stays on "Play".
         let pausePredicate = NSPredicate(format: "value == %@", "Pause")
         let pauseExpectation = XCTNSPredicateExpectation(
             predicate: pausePredicate,
-            object: conversationAsA.audioPlayButton
+            object: conversationAsA.playAudioFile
         )
         do {
             try await fulfillment(of: [pauseExpectation], timeout: 5)
         } catch {
             XCTFail(
-                "Audio did not start playing after tapping play. Button value: \(conversationAsA.audioPlayButton.value ?? "nil"). Expected to become 'Pause'."
+                "Audio did not start playing after tapping play. Button value: \(conversationAsA.playAudioFile.value ?? "nil"). Expected to become 'Pause'."
             )
         }
     }
 
-    
-    
     @MainActor
     func testReceiveTextAndAudioInOneOnOneConversation_TC_8826_8828() async throws {
 
