@@ -50,7 +50,9 @@ class OktaLoginPage: PageModel {
         passwordSecureTextField.waitAndTap()
         passwordSecureTextField.typeText(password + "\n")
 
-        if signinButton.exists, signinButton.isHittable {
+        if !webView.waitForNonExistence(timeout: 4),
+           signinButton.exists,
+           signinButton.isHittable {
             signinButton.tap()
         }
 
