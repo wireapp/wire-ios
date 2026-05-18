@@ -112,13 +112,18 @@ class ExpiringActivityTests: XCTestCase {
 
     // MARK: - Double-resume regression tests (crash: EXC_BREAKPOINT on CheckedContinuation.resume)
 
-    /// Regression test for the crash where outer-task cancellation and the expiry callback
-    /// both tried to resume the continuation:
+    /// Regression test for the bug where outer-task cancellation and the expiry callback
+    /// both invoked `stopWork()`, and the second call threw `ExpiringActivityNotAllowedToRun`
+    /// because `self.task` had already been nilled by the first call:
     ///   1. `onCancel` fires → `stopWork()` cancels the inner task, sets `self.task = nil`
     ///   2. Inner task throws `CancellationError` → first resume
-    ///   3. `expiring = true` fires → `stopWork()` finds `self.task == nil`, throws,
-    ///      and previously tried to resume the continuation a second time → crash
-    func testNoCrash_WhenExpiryFires_AfterOuterTaskCancellation() async throws {
+    ///   3. `expiring = true` fires → `stopWork()` previously found `self.task == nil` and
+    ///      threw, which (before the double-resume fix) crashed on the second resume, and
+    ///      (after) racily surfaced as `ExpiringActivityNotAllowedToRun` to the caller.
+    /// After the idempotency fix, `stopWork()` distinguishes "never started" from "already
+    /// stopped" via `didStartWork`, so the second call is a no-op and the caller always
+    /// sees the inner task's `CancellationError`.
+    func testCancellationErrorIsThrown_WhenExpiryFiresAfterOuterTaskCancellation() async throws {
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
 
@@ -148,8 +153,14 @@ class ExpiringActivityTests: XCTestCase {
         outerTask.cancel()
         await fulfillment(of: [expiryFired], timeout: 1)
 
-        // Must not crash (EXC_BREAKPOINT) regardless of which error is thrown.
-        do { try await outerTask.value } catch {}
+        do {
+            try await outerTask.value
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // expected
+        } catch {
+            XCTFail("Expected CancellationError, got \(error)")
+        }
     }
 
     /// Regression test for the race where the expiry callback fires *before* the

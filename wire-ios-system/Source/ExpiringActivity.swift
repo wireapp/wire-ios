@@ -53,6 +53,10 @@ actor ExpiringActivityManager {
     // Stored as actor state so resumeOnce() is serialised through the actor
     // executor — no lock required, no threads blocked.
     private var continuation: CheckedContinuation<Void, any Error>?
+    // Distinguishes "work was never started" from "work started then stopped".
+    // Without this, a second stopWork() (e.g. outer-task cancel followed by
+    // OS expiry) misreports the latter as ExpiringActivityNotAllowedToRun.
+    private var didStartWork = false
 
     init() {
         self.init(api: ProcessInfo.processInfo)
@@ -112,6 +116,7 @@ actor ExpiringActivityManager {
     }
 
     func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {
+        didStartWork = true
         let task = Task {
             defer {
                 WireLogger.backgroundActivity.debug("Releasing semaphore")
@@ -124,8 +129,13 @@ actor ExpiringActivityManager {
     }
 
     func stopWork() throws {
-        guard let task else { throw ExpiringActivityNotAllowedToRun() }
-        task.cancel()
-        self.task = nil
+        if let task {
+            task.cancel()
+            self.task = nil
+            return
+        }
+        if !didStartWork {
+            throw ExpiringActivityNotAllowedToRun()
+        }
     }
 }
