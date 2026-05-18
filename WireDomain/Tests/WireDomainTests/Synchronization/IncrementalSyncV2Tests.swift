@@ -19,6 +19,7 @@
 import Combine
 import CoreData
 import XCTest
+
 @testable import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -46,6 +47,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var journal: Journal!
     var cancellables: Set<AnyCancellable>!
     var earService: MockEARServiceInterface!
+    private var teamMemberDiscoveryAgentMock: (any TeamMemberDiscoveryAgentProtocol)!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -71,6 +73,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         liveBrokenGroupSubject = .init()
         cancellables = .init()
         earService = MockEARServiceInterface()
+        teamMemberDiscoveryAgentMock = MockTeamMemberDiscoveryAgentProtocol()
 
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
@@ -87,6 +90,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
+            teamMemberDiscoveryAgent: teamMemberDiscoveryAgentMock,
             createPushChannelState: {
                 self.pushChannelState
             },
@@ -106,6 +110,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        teamMemberDiscoveryAgentMock = nil
         pushChannelAPI = nil
         mlsGroupRepairAgent = nil
         pullServerTimeSync = nil

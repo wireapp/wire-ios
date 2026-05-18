@@ -4430,6 +4430,30 @@ public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
 
 }
 
+public class MockTeamMemberDiscoveryAgentProtocol: TeamMemberDiscoveryAgentProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - discoverMembers
+
+    public var discoverMembers_Invocations: [Void] = []
+    public var discoverMembers_MockMethod: (() async -> Void)?
+
+    public func discoverMembers() async {
+        discoverMembers_Invocations.append(())
+
+        guard let mock = discoverMembers_MockMethod else {
+            fatalError("no mock for `discoverMembers`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
 
     // MARK: - Life cycle

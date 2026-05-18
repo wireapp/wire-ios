@@ -20,7 +20,7 @@ import Foundation
 import WireLogging
 import WireNetwork
 
-final class TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
+struct TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
 
     private let api: any TeamsAPI
     private let store: any TeamLocalStoreProtocol
@@ -28,7 +28,7 @@ final class TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
 
     // MARK: - Life cycle
 
-    public init(
+    init(
         api: any TeamsAPI,
         store: any TeamLocalStoreProtocol,
         journal: Journal
@@ -40,7 +40,7 @@ final class TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
 
     // MARK: - TeamMemberDiscoveryAgentProtocol
 
-    public func discoverMembers() async {
+    func discoverMembers() async {
         guard let selfTeamID = await store.selfTeamID() else {
             WireLogger.sync.debug("team member discovery: self user is not in a team")
             return

@@ -45,6 +45,7 @@ final class IncrementalSyncTests: XCTestCase {
     var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
     var cancellables: Set<AnyCancellable>!
     var earService: MockEARServiceInterface!
+    private var teamMemberDiscoveryAgentMock: (any TeamMemberDiscoveryAgentProtocol)!
     fileprivate var notificationContext: MockNotificationContext!
 
     override func setUp() {
@@ -64,6 +65,7 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
         cancellables = Set<AnyCancellable>()
         earService = MockEARServiceInterface()
+        teamMemberDiscoveryAgentMock = MockTeamMemberDiscoveryAgentProtocol()
         notificationContext = MockNotificationContext()
 
         earService.underlyingIsLocked = false
@@ -83,12 +85,14 @@ final class IncrementalSyncTests: XCTestCase {
             liveBrokenGroupSubject: liveBrokenGroupSubject,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
-            earService: earService
+            earService: earService,
+            teamMemberDiscoveryAgent: teamMemberDiscoveryAgentMock
         )
     }
 
     override func tearDown() {
         sut = nil
+        teamMemberDiscoveryAgentMock = nil
         journal = nil
         pushChannelAPI = nil
         updateEventsSync = nil
