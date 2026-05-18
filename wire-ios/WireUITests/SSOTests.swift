@@ -20,23 +20,75 @@ import XCTest
 
 final class SSOTests: WireUITestCase {
 
-    @MainActor
-    func testSSOLoginWithSSOCode_TC_8966() async throws {
+    private func registerTeamOwnerWithSSOEnabled() async throws -> UserInfo {
         let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
-        guard let teamID = teamOwner.teamID else {
-            throw RuntimeError("teamOwner.teamID is nil")
-        }
+        let teamID = try XCTUnwrap(teamOwner.teamID, "teamOwner.teamID is nil")
         try await ssoHelper.enableSSOFeature(teamID: teamID)
+        return teamOwner
+    }
 
+    @MainActor
+    private func loginWithSSOCode(email: String, password: String, ssoCode: String) async throws -> FirstTimePage {
+        try await WelcomePage()
+            .enterSSOCode(ssoCode)
+            .oktaLogin(email: email, password: password)
+            .acceptFirstTimeAlert()
+    }
+
+    @MainActor
+    func testSSOLoginWithSSOCodeAndNoResetPassword_TC_8966_TC_10850() async throws {
+        // GIVEN
+        let teamOwner = try await registerTeamOwnerWithSSOEnabled()
         let ssoMember = UserGenerator.generateUniqueUserInfo()
         let ssoUser = try await ssoHelper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
         let ssoCode = try ssoHelper.getSSOCode()
 
-        _ = try await WelcomePage()
-            .enterSSOCode(ssoCode)
-            .oktaLogin(email: ssoUser.email, password: ssoUser.password)
-            .acceptFirstTimeAlert()
-            .acceptPopupOnTeamMemberSetup()
-            .setUsername(ssoUser.username)
+        // WHEN
+        let accountSettingsPage = try await loginWithSSOCode(
+            email: ssoUser.email,
+            password: ssoUser.password,
+            ssoCode: ssoCode
+        )
+        .acceptPopupOnTeamMemberSetup()
+        .setUsername(ssoUser.username)
+        .openSettings()
+        .openAccountSettings()
+
+        // THEN
+        XCTAssertFalse(
+            accountSettingsPage.resetPasswordButton.exists,
+            "Reset password option is visible for SSO users"
+        )
+    }
+
+    @MainActor
+    func testSCIMManagedUserCannotChangeAccountFields_TC_10851() async throws {
+
+        // GIVEN
+        let teamOwner = try await registerTeamOwnerWithSSOEnabled()
+        let scimMember = UserGenerator.generateUniqueUserInfo()
+        let scimUser = try await ssoHelper.createSCIMManagedSSOUser(owner: teamOwner, ssoUser: scimMember)
+        let ssoCode = try ssoHelper.getSSOCode()
+
+        // WHEN
+        let accountSettingsPage = try await loginWithSSOCode(
+            email: scimUser.email,
+            password: scimUser.password,
+            ssoCode: ssoCode
+        )
+        .acceptPopup()
+        .openSettings()
+        .openAccountSettings()
+
+        // THEN
+        XCTAssertTrue(
+            accountSettingsPage.nameFieldDisabled.exists,
+            "name field editable, should be disabled"
+        )
+
+        XCTAssertTrue(
+            accountSettingsPage.usernameFieldDisabled.exists,
+            "username field editable, shold be disabled"
+        )
     }
 }

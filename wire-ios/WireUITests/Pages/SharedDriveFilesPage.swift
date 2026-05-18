@@ -112,6 +112,6 @@ class SharedDriveFilesPage: PageModel {
         app.staticTexts
             .matching(identifier: folderName)
             .element
-            .exists
+            .waitForExistence(timeout: 2)
     }
 }
