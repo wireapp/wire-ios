@@ -1156,14 +1156,16 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                     }
                 },
                 onRemove: { [attachmentsCarouselViewModel, deleteDraftUseCase] item in
-                    guard let draft = attachmentsCarouselViewModel.draft(for: item),
-                          let localIdentifier = draft.localIdentifier else { return }
+                    let draft = attachmentsCarouselViewModel.draft(for: item)
 
                     Task.detached {
                         try? await deleteDraftUseCase.invoke(nodeID: item.id)
-                        await self.cameraKeyboardViewController?.deselectItem(
-                            withLocalIdentifier: localIdentifier
-                        )
+
+                        if let localIdentifier = draft?.localIdentifier {
+                            await self.cameraKeyboardViewController?.deselectItem(
+                                withLocalIdentifier: localIdentifier
+                            )
+                        }
                     }
                 },
                 onRetry: { [retryUploadDraftUseCase] item in
