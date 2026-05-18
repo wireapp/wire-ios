@@ -25,7 +25,7 @@ final class WireDriveUploadDraftUseCaseProtocolMock: WireDriveUploadDraftUseCase
         fatalError("Implement")
     }
 
-    func invoke(data: Data, type: UTType, localIdentifier: String?, nodeID: UUID?) async throws {
+    func invoke(data: Data, type: UTType, localIdentifier: String?, existingNodeID: UUID?) async throws {
         fatalError("Implement")
     }
 
