@@ -38,25 +38,23 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 @objcMembers
 public final class UserInfo: NSObject {
     public let identifier: UUID
-    public let cookieData: Data
     public let cookies: [HTTPCookie]
 
-    public init(identifier: UUID, cookieData: Data, cookies: [HTTPCookie]) {
+    public init(identifier: UUID, cookies: [HTTPCookie]) {
         self.identifier = identifier
-        self.cookieData = cookieData
         self.cookies = cookies
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserInfo else { return false }
-        return other.cookieData == cookieData && other.identifier == identifier
+        return other.identifier == identifier
     }
 }
 
 /// The `UnauthenticatedTransportSession` class should be used instead of `ZMTransportSession`
 /// until a user has been authenticated. Consumers should set themselves as delegate to
 /// be notified when a cookie was parsed from a response of a request made using this transport session.
-/// When cookie data became available it should be used to create a `ZMPersistentCookieStorage` and
+/// When cookie data became available it should be used to create a `LegacyCookieStorage` and
 /// to create a regular transport session with it.
 public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
@@ -280,13 +278,13 @@ extension ZMTransportResponse {
     @objc
     public func extractUserInfo() -> UserInfo? {
         guard
-            let data = extractCookies().data,
+            extractCookies().data != nil, // TODO: [WPB-24887] Validate this in another way.
             let cookies = extractCookies().array,
             let id = extractUserIdentifier()
         else {
             return nil
         }
-        return .init(identifier: id, cookieData: data, cookies: cookies)
+        return .init(identifier: id, cookies: cookies)
     }
 
 }

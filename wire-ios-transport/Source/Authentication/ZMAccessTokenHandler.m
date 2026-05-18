@@ -24,7 +24,6 @@
 #import "ZMTransportData.h"
 #import "ZMTransportCodec.h"
 #import <mach-o/dyld.h>
-#import "ZMPersistentCookieStorage.h"
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
 #import "ZMTransportRequest.h"
@@ -54,7 +53,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 
 @property (nonatomic) NSURL *baseURL;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) LegacyCookieStorage *cookieStorage;
 @property (nonatomic, weak) id<ZMAccessTokenHandlerDelegate> delegate;
 
 @property (nonatomic) ZMExponentialBackoff *backoff;
@@ -68,7 +67,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 @implementation ZMAccessTokenHandler
 
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
-                  cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                  cookieStorage:(LegacyCookieStorage *)cookieStorage
                        delegate:(id<ZMAccessTokenHandlerDelegate>)delegate
                           queue:(NSOperationQueue *)queue
                           group:(ZMSDispatchGroup *)group
@@ -323,7 +322,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     if (didFail) {
         [self logError:[NSString stringWithFormat:@"Failed to process access token response... clearing access token and cookie. Response result: %d, response status: %ld", response.result, (long)response.HTTPStatus]];
         self.accessToken = nil;
-        self.cookieStorage.authenticationCookieData = nil;
+        [self.cookieStorage removeCookiesAndReturnError:nil];
         [self notifyTokenFailure:response];
     }
     

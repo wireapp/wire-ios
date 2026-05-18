@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@interface ZMPersistentCookieStorage (Testing)
+public struct TeamNotificationDecodingProxyError: Error, CustomStringConvertible {
 
-/**
- Disable/enable keychain access. This method should be called for testing only
+    /// The type of the notification being decoded.
 
- @param disabled true if not persist to keychain
- */
-+ (void)setDoNotPersistToKeychain:(BOOL)disabled;
+    public let notificationType: String
 
-/**
- This method should be called for testing only
- */
-- (BOOL)isCacheEmpty;
+    /// The error that occurred when decoding.
 
-@end
+    public let decodingError: any Error
+
+    /// A textual representation of the error.
+
+    public var description: String {
+        "failed to decode notification '\(notificationType)': \(decodingError)"
+    }
+
+}

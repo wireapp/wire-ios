@@ -364,7 +364,6 @@ struct FilesItemView: View {
                 label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
             )
         }
-
     }
 
     @ViewBuilder

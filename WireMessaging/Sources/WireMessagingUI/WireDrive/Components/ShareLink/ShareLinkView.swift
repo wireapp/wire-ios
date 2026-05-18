@@ -345,6 +345,10 @@ struct ShareLinkView: View {
     )
 
     ShareLinkView(
-        viewModel: .init(fileItem: item, useCases: useCases)
+        viewModel: .init(
+            fileItem: item,
+            useCases: useCases,
+            onLinkStateChanged: { _ in }
+        )
     )
 }

@@ -23,10 +23,10 @@ import Testing
 
 @MainActor
 final class FilenameValidatorTests {
-    private let sut: FilenameValidator
+    private let sut: TextValidator
 
     init() {
-        self.sut = FilenameValidator()
+        self.sut = TextValidator()
     }
 
     @Test
@@ -35,11 +35,10 @@ final class FilenameValidatorTests {
         let input = "filename"
 
         // when
-        var iterator = sut.validate(input).values.makeAsyncIterator()
-        let result = await iterator.next()!
+        let result = sut.validate(input, for: .fileName)
 
         // then
-        #expect((try? result.get()) != nil)
+        #expect(result == .valid)
     }
 
     @Test
@@ -47,13 +46,11 @@ final class FilenameValidatorTests {
         // given
         let input = Array(repeating: "t", count: 65).joined()
 
+        // when
+        let violatedRules = sut.validate(input, for: .fileName).violatedRules
+
         // then
-        await #expect(throws: FilenameValidator.Failure.tooLong) {
-            // when
-            var iterator = sut.validate(input).values.makeAsyncIterator()
-            let result = await iterator.next()!
-            try result.get()
-        }
+        #expect(violatedRules.contains { if case .maxLength = $0 { true } else { false } })
     }
 
     @Test
@@ -61,13 +58,11 @@ final class FilenameValidatorTests {
         // given
         let input = ".filename"
 
+        // when
+        let violatedRules = sut.validate(input, for: .fileName).violatedRules
+
         // then
-        await #expect(throws: FilenameValidator.Failure.dotPrefix) {
-            // when
-            var iterator = sut.validate(input).values.makeAsyncIterator()
-            let result = await iterator.next()!
-            try result.get()
-        }
+        #expect(violatedRules.contains(.doesntStartWithDot))
     }
 
     @Test
@@ -75,13 +70,11 @@ final class FilenameValidatorTests {
         // given
         let input = "filename/"
 
+        // when
+        let violatedRules = sut.validate(input, for: .fileName).violatedRules
+
         // then
-        await #expect(throws: FilenameValidator.Failure.invalidCharacters) {
-            // when
-            var iterator = sut.validate(input).values.makeAsyncIterator()
-            let result = await iterator.next()!
-            try result.get()
-        }
+        #expect(violatedRules.contains { if case .doesntContain = $0 { true } else { false } })
     }
 
     @Test
@@ -89,13 +82,11 @@ final class FilenameValidatorTests {
         // given
         let input = "filename\\"
 
+        // when
+        let violatedRules = sut.validate(input, for: .fileName).violatedRules
+
         // then
-        await #expect(throws: FilenameValidator.Failure.invalidCharacters) {
-            // when
-            var iterator = sut.validate(input).values.makeAsyncIterator()
-            let result = await iterator.next()!
-            try result.get()
-        }
+        #expect(violatedRules.contains { if case .doesntContain = $0 { true } else { false } })
     }
 
     @Test
@@ -103,13 +94,11 @@ final class FilenameValidatorTests {
         // given
         let input = "filename\""
 
+        // when
+        let violatedRules = sut.validate(input, for: .fileName).violatedRules
+
         // then
-        await #expect(throws: FilenameValidator.Failure.invalidCharacters) {
-            // when
-            var iterator = sut.validate(input).values.makeAsyncIterator()
-            let result = await iterator.next()!
-            try result.get()
-        }
+        #expect(violatedRules.contains { if case .doesntContain = $0 { true } else { false } })
     }
 
     @Test
@@ -117,13 +106,11 @@ final class FilenameValidatorTests {
         // given
         let input = ""
 
+        // when
+        let violatedRules = sut.validate(input, for: .fileName).violatedRules
+
         // then
-        await #expect(throws: FilenameValidator.Failure.empty) {
-            // when
-            var iterator = sut.validate(input).values.makeAsyncIterator()
-            let result = await iterator.next()!
-            try result.get()
-        }
+        #expect(violatedRules.contains(.notEmptyOrWhitespace))
     }
 
     @Test
@@ -131,12 +118,10 @@ final class FilenameValidatorTests {
         // given
         let input = "   "
 
+        // when
+        let violatedRules = sut.validate(input, for: .fileName).violatedRules
+
         // then
-        await #expect(throws: FilenameValidator.Failure.empty) {
-            // when
-            var iterator = sut.validate(input).values.makeAsyncIterator()
-            let result = await iterator.next()!
-            try result.get()
-        }
+        #expect(violatedRules.contains(.notEmptyOrWhitespace))
     }
 }

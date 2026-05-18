@@ -21,6 +21,7 @@ import XCTest
 final class FederationTests: WireUITestCase {
     @MainActor
     func testConnectFederatedUsers_TC_9459() async throws {
+
         try switchBackend(target: .bella)
         let bellaTeam = try await UserHelper.instance(backend: .bella).registerTeam(withMemberCount: 0)
         _ = try await loginToBackend(user: bellaTeam.teamOwner)
