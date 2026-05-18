@@ -173,7 +173,6 @@ public enum Locators {
         case recordingTime
         case showOtherRowButton
         case pingButton
-
     }
 
     public enum BackupOrRestorePage: String {

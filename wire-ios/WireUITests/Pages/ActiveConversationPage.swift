@@ -94,27 +94,23 @@ class ActiveConversationPage: PageModel {
     }
 
     var audioPlayButton: XCUIElement {
-        app.buttons["AudioActionButton"]
-    }
-
-    var showOtherRowButton: XCUIElement {
-        app.buttons["showOtherRowButton"]
+        app.buttons[Locators.ActiveConversationPage.playAudioFile.rawValue]
     }
 
     var audioRecordInputButton: XCUIElement {
-        app.buttons["audioButton"]
+        app.buttons[Locators.ActiveConversationPage.audioButton.rawValue]
     }
 
     var audioStartRecordingButton: XCUIElement {
-        app.buttons["Start recording"].firstMatch
+        app.buttons[Locators.ActiveConversationPage.startRecording.rawValue].firstMatch
     }
 
     var audioStopRecordingButton: XCUIElement {
-        app.buttons["Stop recording"].firstMatch
+        app.buttons[Locators.ActiveConversationPage.stopRecording.rawValue].firstMatch
     }
 
     var audioSendRecordingButton: XCUIElement {
-        app.buttons["Send"].firstMatch
+        app.buttons[Locators.ActiveConversationPage.sendAudio.rawValue].firstMatch
     }
 
     @discardableResult
@@ -131,15 +127,27 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(audioRecordInputButton.waitForExistence(timeout: 5), "Audio record input button not found")
         audioRecordInputButton.tap()
 
-        XCTAssertTrue(audioStartRecordingButton.waitForExistence(timeout: 5), "Start recording button not found")
-        audioStartRecordingButton.tap()
+        // The microphone permission alert is presented the first time the audio recorder is
+        // opened. UIInterruptionMonitor handlers only fire after the test next interacts with
+        // the app, so nudge the app to give the registered monitor a chance to run.
+        app.tap()
+
+        // If permission was just granted, the first tap was consumed by the prompt and the
+        // recorder keyboard never opened. Re-tap the input bar mic button.
+        if !startRecording.waitForExistence(timeout: 2),
+           audioRecordInputButton.exists, audioRecordInputButton.isHittable {
+            audioRecordInputButton.tap()
+        }
+
+        XCTAssertTrue(startRecording.waitForExistence(timeout: 5), "Start recording button not found")
+        startRecording.tap()
 
         XCTAssertTrue(
-            audioStopRecordingButton.waitForExistence(timeout: 5),
+            stopRecording.waitForExistence(timeout: 5),
             "Stop recording button did not appear — recording may not have started"
         )
         Thread.sleep(forTimeInterval: recordingDuration)
-        audioStopRecordingButton.tap()
+        stopRecording.tap()
 
         XCTAssertTrue(audioSendRecordingButton.waitForExistence(timeout: 5), "Send recording button not found")
         audioSendRecordingButton.tap()
@@ -154,10 +162,9 @@ class ActiveConversationPage: PageModel {
 
         microphonePermissionMonitor =
             testCase.addUIInterruptionMonitor(withDescription: "Microphone Permission Alert") { alertElement -> Bool in
-                let message = "Allow Wire to access your microphone so you can talk to people and send audio message."
                 let allowButton = alertElement.buttons["Allow"].firstMatch
 
-                guard alertElement.label.contains(message),
+                guard alertElement.label.contains("Microphone"),
                       allowButton.waitForExistence(timeout: 1) else {
                     return false
                 }
