@@ -97,6 +97,77 @@ class ActiveConversationPage: PageModel {
         app.buttons["AudioActionButton"]
     }
 
+    var showOtherRowButton: XCUIElement {
+        app.buttons["showOtherRowButton"]
+    }
+
+    var audioRecordInputButton: XCUIElement {
+        app.buttons["audioButton"]
+    }
+
+    var audioStartRecordingButton: XCUIElement {
+        app.buttons["Start recording"].firstMatch
+    }
+
+    var audioStopRecordingButton: XCUIElement {
+        app.buttons["Stop recording"].firstMatch
+    }
+
+    var audioSendRecordingButton: XCUIElement {
+        app.buttons["Send"].firstMatch
+    }
+
+    @discardableResult
+    func recordAndSendAudioMessage(
+        recordingDuration: TimeInterval = 2,
+        permissionAlertTimeout: TimeInterval = 5
+    ) throws -> ActiveConversationPage {
+        // The audio button lives in the expanded row of the input bar — open it first.
+        if !audioRecordInputButton.exists || !audioRecordInputButton.isHittable {
+            XCTAssertTrue(showOtherRowButton.waitForExistence(timeout: 5), "More options (3-dots) button not found")
+            showOtherRowButton.tap()
+        }
+
+        XCTAssertTrue(audioRecordInputButton.waitForExistence(timeout: 5), "Audio record input button not found")
+        audioRecordInputButton.tap()
+
+        XCTAssertTrue(audioStartRecordingButton.waitForExistence(timeout: 5), "Start recording button not found")
+        audioStartRecordingButton.tap()
+
+
+        XCTAssertTrue(
+            audioStopRecordingButton.waitForExistence(timeout: 5),
+            "Stop recording button did not appear — recording may not have started"
+        )
+        Thread.sleep(forTimeInterval: recordingDuration)
+        audioStopRecordingButton.tap()
+
+        XCTAssertTrue(audioSendRecordingButton.waitForExistence(timeout: 5), "Send recording button not found")
+        audioSendRecordingButton.tap()
+
+        return self
+    }
+
+    private var microphonePermissionMonitor: AnyObject?
+    
+    func registerMicrophonePermissionMonitor(testCase: XCTestCase) {
+        guard microphonePermissionMonitor == nil else { return }
+
+        microphonePermissionMonitor =
+        testCase.addUIInterruptionMonitor(withDescription: "Microphone Permission Alert") { alertElement -> Bool in
+                let message = "Allow Wire to access your microphone so you can talk to people and send audio message."
+                let allowButton = alertElement.buttons["Allow"].firstMatch
+
+                guard alertElement.label.contains(message),
+                      allowButton.waitForExistence(timeout: 1) else {
+                    return false
+                }
+
+                allowButton.tap()
+                return true
+            }
+    }
+
     func fileAttachment(name: String, type: String) -> XCUIElement {
         app.buttons.containing(
             NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)

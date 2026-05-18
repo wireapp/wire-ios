@@ -157,51 +157,53 @@ final class MessagingTests: WireUITestCase {
     @MainActor
     func testReceivedAudioMessagePlaybackStartsOnTap_WPB_25713() async throws {
 
-        // GIVEN
+        // GIVEN a team with 2 users sharing a group conversation
         let groupName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, teamMembers, _, conversationID) = try await userHelper
+        let (userA, teamMembers, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)
             )
+        let userB = teamMembers[0]
 
-        let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
-        let conversationDomain = BackendContext.current.domainInfo
+        // ...login user A, then add user B as a second account in the app
+        _ = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
 
-        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationsPage = try firstTimePage.acceptPopup()
+        let conversationsPageAsB = try app.loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
 
-        let durationInMillis = 5000
-        let normalizedLoudness = (0 ..< 10).map { _ in Int.random(in: 0 ... 255) }
+        // WHEN user B records and sends an audio message to the shared conversation via the UI
+        let conversationAsB = try conversationsPageAsB.openConversation()
+        conversationAsB.registerMicrophonePermissionMonitor(testCase: self)
+        try conversationAsB.recordAndSendAudioMessage(recordingDuration: 3)
 
-        // WHEN another member sends an audio file
-        try await testServicesClient.sendFile(
-            type: "audio",
-            user: teamMembers[0],
-            fileName: "audio-message",
-            filepath: nil,
-            convoId: conversationId,
-            domain: conversationDomain,
-            audio: [
-                "durationInMillis": durationInMillis,
-                "normalizedLoudness": normalizedLoudness
-            ]
-        )
+        // ...and user B logs out, leaving user A as the active session
+        _ = try conversationAsB
+            .goBackToConversationPage()
+            .openSettings()
+            .openAccountSettings()
+            .logout()
+            .enterPassword(userB.password, expectWelcomePage: false)
 
-        XCTAssertTrue(
-            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
-            "Unread messages count element did not appear"
-        )
-
-        let activeConversationPage = try conversationsPage.openConversation()
+        let conversationsPageAsA = try ConversationsPage()
 
         XCTAssertTrue(
-            activeConversationPage.audioPlayButton.waitForExistence(timeout: 5),
+            conversationsPageAsA.unreadMessagesCount.waitForExistence(timeout: 10),
+            "Unread messages count element did not appear for user A"
+        )
+
+        let conversationAsA = try conversationsPageAsA.openConversation()
+
+        XCTAssertTrue(
+            conversationAsA.audioPlayButton.waitForExistence(timeout: 5),
             "Audio play button not found"
         )
 
-        // ...and the receiver taps the play button
-        activeConversationPage.audioPlayButton.tap()
+        // ...and user A taps the play button
+        conversationAsA.audioPlayButton.tap()
 
         // THEN playback starts (button accessibility value flips from "Play" to "Pause").
         // Regression guard for WPB-25713: tapping play on a not-yet-downloaded received audio
@@ -210,13 +212,13 @@ final class MessagingTests: WireUITestCase {
         let pausePredicate = NSPredicate(format: "value == %@", "Pause")
         let pauseExpectation = XCTNSPredicateExpectation(
             predicate: pausePredicate,
-            object: activeConversationPage.audioPlayButton
+            object: conversationAsA.audioPlayButton
         )
         let result = XCTWaiter().wait(for: [pauseExpectation], timeout: 15)
         XCTAssertEqual(
             result,
             .completed,
-            "Audio did not start playing after tapping play. Button value: \(activeConversationPage.audioPlayButton.value ?? "nil"). Expected to become 'Pause'."
+            "Audio did not start playing after tapping play. Button value: \(conversationAsA.audioPlayButton.value ?? "nil"). Expected to become 'Pause'."
         )
     }
 
