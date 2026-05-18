@@ -70,7 +70,7 @@ public extension ZMConversation {
         )
     }
 
-    func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
+    func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser?, at timestamp: Date) {
         appendSystemMessage(
             type: .failedToAddParticipants,
             sender: sender,

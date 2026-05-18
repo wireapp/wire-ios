@@ -312,6 +312,45 @@ class TestServicesClient {
         }
         return responseData
     }
+
+    func sendPing(
+        user: UserInfo,
+        conversationId: UUID,
+        domain: String,
+    ) async throws {
+
+        let instanceId = try await getInstanceId(
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            verificationCode: nil
+        )
+
+        let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendPing")
+        guard let requestUrl = url else {
+            throw RuntimeError("Invalid URL")
+        }
+
+        let body: [String: Any] = [
+            "conversationId": conversationId.uuidString.lowercased(),
+            "conversationDomain": domain
+        ]
+
+        let (_, response) = try await sendHttpRequest(
+            url: requestUrl.absoluteString,
+            body: body,
+            requestType: "POST"
+        )
+
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
+
+        if pureResponse.statusCode != 200 {
+            throw RuntimeError("Error \(pureResponse.description)")
+        }
+    }
+
 }
 
 private struct CreateInstanceResponse: Decodable {

@@ -1181,15 +1181,15 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func setupInputBar() {
-        audioButton.accessibilityIdentifier = "audioButton"
+        audioButton.accessibilityIdentifier = Locators.ActiveConversationPage.audioButton.rawValue
         videoButton.accessibilityIdentifier = "videoButton"
-        photoButton.accessibilityIdentifier = "photoButton"
+        photoButton.accessibilityIdentifier = Locators.ActiveConversationPage.photoButton.rawValue
         uploadFileButton.accessibilityIdentifier = "uploadFileButton"
         sketchButton.accessibilityIdentifier = Locators.ActiveConversationPage.sketchButton.rawValue
-        pingButton.accessibilityIdentifier = "pingButton"
+        pingButton.accessibilityIdentifier = Locators.ActiveConversationPage.pingButton.rawValue
         locationButton.accessibilityIdentifier = "locationButton"
         gifButton.accessibilityIdentifier = "gifButton"
-        mentionButton.accessibilityIdentifier = "mentionButton"
+        mentionButton.accessibilityIdentifier = Locators.ActiveConversationPage.mentionButton.rawValue
         markdownButton.accessibilityIdentifier = "markdownButton"
 
         inputBarButtons.forEach {
