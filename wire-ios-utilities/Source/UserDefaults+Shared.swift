@@ -32,6 +32,7 @@ public extension UserDefaults {
 
         let key: Data
 
+#if os(iOS)
         // On older versions we stored key in standard user defaults.
         // We need to check for key there first and save it to shared defaults.
         // This way extension can use it to decrypt cookies stored in keychain.
@@ -41,6 +42,9 @@ public extension UserDefaults {
         } else {
             key = makeRandomAES256Key()
         }
+#else
+        key = makeRandomAES256Key()
+#endif
 
         sharedDefaults?.set(key, forKey: cookieKeyKey)
         return key
