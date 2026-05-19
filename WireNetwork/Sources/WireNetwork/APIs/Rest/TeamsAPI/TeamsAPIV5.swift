@@ -184,11 +184,21 @@ class TeamsAPIV5: TeamsAPIV4 {
                 requiringAccessToken: true
             )
 
-            return try ResponseParser()
+            let page: PayloadPager<[TeamNotification]>.Page = try ResponseParser()
                 .success(code: .ok, type: PaginatedTeamNotificationsResponseV5.self)
                 .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParameter)
                 .failure(code: .notFound, error: TeamsAPIError.selfUserIsNotTeamMember)
                 .parse(code: response.statusCode, data: data)
+
+            // The `/teams/notifications` endpoint uses an inclusive cursor:
+            // it returns the `since` notification as the first item. Drop it
+            // so consumers only see new notifications.
+            guard let sinceNotificationID else { return page }
+            return .init(
+                element: page.element.filter { $0.id != sinceNotificationID },
+                hasMore: page.hasMore,
+                nextStart: page.nextStart
+            )
         }
     }
 
