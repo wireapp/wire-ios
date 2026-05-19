@@ -34,6 +34,7 @@ struct WireDriveLargeDocumentPreviewView: View {
     let url: URL?
     let state: WireDriveFileUITracker.State
     let isDraftPreview: Bool
+    let isAvailableOffline: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -45,7 +46,8 @@ struct WireDriveLargeDocumentPreviewView: View {
                     headerText: headerText,
                     labelText: labelText,
                     isDraftPreview: isDraftPreview,
-                    state: state
+                    state: state,
+                    isAvailableOffline: isAvailableOffline
                 )
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
                 .frame(maxWidth: .infinity)
@@ -131,7 +133,8 @@ struct WireDriveLargeDocumentPreviewView: View {
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
         ),
         state: .loading(progress: 0.7, isLargeFile: false),
-        isDraftPreview: false
+        isDraftPreview: false,
+        isAvailableOffline: false
     )
     .padding()
 }
