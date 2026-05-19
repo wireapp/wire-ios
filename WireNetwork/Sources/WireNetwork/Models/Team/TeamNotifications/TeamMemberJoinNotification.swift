@@ -16,18 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-public protocol CookieProvider {
-    var isAuthenticated: Bool { get }
-    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest)
-    func deleteKeychainItems()
-}
+/// An event where a user joined the team.
 
-extension ZMPersistentCookieStorage: CookieProvider {
+public struct TeamMemberJoinNotification: Equatable, Sendable {
 
-    public var isAuthenticated: Bool {
-        hasAuthenticationCookie
+    /// The team id.
+
+    public let teamID: UUID
+
+    /// The id of the member who joined.
+
+    public let userID: UUID
+
+    /// The time at which the member joined.
+
+    public let time: Date
+
+    public init(
+        teamID: UUID,
+        userID: UUID,
+        time: Date
+    ) {
+        self.teamID = teamID
+        self.userID = userID
+        self.time = time
     }
 
 }

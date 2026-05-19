@@ -49,7 +49,7 @@ public final class UserSessionComponent {
     public init(
         currentBuildNumber: String,
         selfUserID: UUID,
-        cookieStorage: any CookieStorageProtocol,
+        cookieStorage: any WireNetwork.CookieStorageProtocol,
         restNetworkService: NetworkService,
         websocketNetworkService: NetworkService,
         blacklistNetworkService: NetworkService,
@@ -86,7 +86,7 @@ public final class UserSessionComponent {
         self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
-    private let cookieStorage: any CookieStorageProtocol
+    private let cookieStorage: any WireNetwork.CookieStorageProtocol
 
     // MARK: - Children
 

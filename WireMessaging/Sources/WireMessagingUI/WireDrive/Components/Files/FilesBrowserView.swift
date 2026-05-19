@@ -63,8 +63,8 @@ private extension FilesBrowserView {
     @ViewBuilder
     func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
         switch navigationItem {
-        case let .shareLink(shareLinkView):
-            shareLinkView
+        case let .shareLink(item):
+            ShareLinkView(viewModel: viewModel.shareLinkViewModel(item: item))
         default:
             EmptyView()
         }

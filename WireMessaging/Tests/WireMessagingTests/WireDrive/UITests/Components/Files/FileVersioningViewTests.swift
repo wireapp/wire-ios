@@ -112,7 +112,9 @@ final class FileVersioningViewTests: XCTestCase {
             fetchNodeVersionsUseCase: fetchNodeVersionUseCase,
             restoreNodeVersionUseCase: restoreNodeVersionUseCase,
             getAssetUseCase: getAssetUseCase,
-            accentColorProvider: { .default }
+            onVersionRestored: {
+                // do nothing
+            }
         )
 
         switch testCase {
