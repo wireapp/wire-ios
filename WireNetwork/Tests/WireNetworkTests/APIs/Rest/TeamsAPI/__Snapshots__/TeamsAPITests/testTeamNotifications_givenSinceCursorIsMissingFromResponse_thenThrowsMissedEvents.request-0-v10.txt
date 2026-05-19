@@ -1,0 +1,2 @@
+curl \
+	"/v10/teams/notifications?since=00000000-0000-0000-0000-000000000001&size=1000"
