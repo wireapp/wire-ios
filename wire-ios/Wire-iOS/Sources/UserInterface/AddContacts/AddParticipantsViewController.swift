@@ -382,7 +382,6 @@ final class AddParticipantsViewController: UIViewController {
                 name: values.name,
                 participants: userSelection.users,
                 allowGuests: values.allowGuests,
-                allowApps: <#Bool#>,
                 encryptionProtocol: userSession.defaultProtocol,
                 selfUser: userSession.selfUser
             )
