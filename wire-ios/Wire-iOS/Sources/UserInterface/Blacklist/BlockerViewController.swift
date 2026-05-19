@@ -380,10 +380,19 @@ extension BlockerViewController {
         }
 
         let oauthUseCase = OAuthUseCase(targetViewController: { rootViewController })
+        let oAuthFlow = E2EIOAuthFlow(
+            oauthUseCase: oauthUseCase,
+            targetVC: { rootViewController }
+        )
+
+        oAuthFlow.start()
+        defer { oAuthFlow.stop() }
 
         let certificateChain = try await activeUserSession
             .enrollE2EICertificate
-            .invoke(authenticate: oauthUseCase.invoke)
+            .invoke(authenticate: oAuthFlow.authenticate)
+
+        oAuthFlow.stop()
 
         let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
         successEnrollmentViewController.certificateDetails = certificateChain

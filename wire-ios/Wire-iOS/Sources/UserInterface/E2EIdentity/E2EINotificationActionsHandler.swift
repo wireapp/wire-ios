@@ -46,11 +46,13 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private var isUpdateMode: Bool = false
+    private var isEnrolling: Bool = false
 
     private let targetVC: () -> UIViewController
     private var observer: NSObjectProtocol?
 
-    private weak var alertForE2EIChange: UIAlertController?
+    private var alertForE2EIChange: UIAlertController?
+    private var oAuthFlow: E2EIOAuthFlow?
 
     private let durationFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -98,13 +100,22 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         NotificationCenter.default.removeObserver(observer)
     }
 
+    @MainActor
     func getCertificate() async {
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
+        let oAuthFlow = E2EIOAuthFlow(oauthUseCase: oauthUseCase, targetVC: targetVC)
+        self.oAuthFlow = oAuthFlow
+        isEnrolling = true
+        oAuthFlow.start()
+
         do {
-            let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+            let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oAuthFlow.authenticate)
             stopCertificateEnrollmentSnoozerUseCase.invoke()
-            await confirmSuccessfulEnrollment(certificateDetails)
+            confirmSuccessfulEnrollment(certificateDetails)
         } catch {
+            isEnrolling = false
+            oAuthFlow.stop()
+            self.oAuthFlow = nil
             let canCancel = gracePeriodEndDate == nil || gracePeriodEndDate?.isInThePast == false
             await showGetCertificateErrorAlert(canCancel: canCancel, retry: getCertificate)
         }
@@ -172,6 +183,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     @MainActor
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) {
+        isEnrolling = false
+        oAuthFlow?.stop()
+        oAuthFlow = nil
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
         stopCertificateEnrollmentSnoozerUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController(isUpdateMode: isUpdateMode)
@@ -180,7 +194,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             viewController.dismiss(animated: true)
             self.isUpdateMode = false
         }
-
         presentScreen(viewController: successScreen)
     }
 
@@ -194,26 +207,30 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
         typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
 
-        guard alertForE2EIChange == nil else { return }
+        guard alertForE2EIChange?.presentingViewController == nil, !isEnrolling else { return }
+        alertForE2EIChange = nil
 
         let alert = UIAlertController.alertForE2EIChangeWithActions(
             title: E2EIUpdateStrings.title,
             message: canRemindLater ? E2EIUpdateStrings.message : E2EIUpdateStrings.expiredMessage,
             enrollButtonText: E2EIUpdateStrings.title,
             canRemindLater: canRemindLater
-        ) { action in
+        ) { [weak self] action in
 
             switch action {
             case .getCertificate:
+                self?.alertForE2EIChange = nil
+                self?.isEnrolling = true
                 Task { [weak self] in
                     await self?.getCertificate()
                 }
             case .remindLater:
+                self?.alertForE2EIChange = nil
                 Task { [weak self] in
                     await self?.snoozeReminder()
                 }
             case .learnMore:
-                break
+                self?.alertForE2EIChange = nil
             }
         }
         alertForE2EIChange = alert
