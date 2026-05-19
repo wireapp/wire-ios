@@ -19,7 +19,6 @@
 import CommonCrypto
 import Foundation
 import Security
-import WireLogging
 
 public extension UserDefaults {
 
@@ -31,14 +30,11 @@ public extension UserDefaults {
             return key
         }
 
-        if sharedDefaults == nil {
-            WireLogger.authentication.critical("Failed to access shared user defaults", attributes: .safePublic)
-        }
+        let key: Data
 
         // On older versions we stored key in standard user defaults.
         // We need to check for key there first and save it to shared defaults.
         // This way extension can use it to decrypt cookies stored in keychain.
-        let key: Data
         if let migratedKey = UserDefaults.standard.data(forKey: cookieKeyKey) {
             UserDefaults.standard.removeObject(forKey: cookieKeyKey)
             key = migratedKey
@@ -47,8 +43,6 @@ public extension UserDefaults {
         }
 
         sharedDefaults?.set(key, forKey: cookieKeyKey)
-        WireLogger.authentication.info("Generated cookie key", attributes: .safePublic)
-
         return key
     }
 
