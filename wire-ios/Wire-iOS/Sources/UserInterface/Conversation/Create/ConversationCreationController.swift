@@ -187,6 +187,7 @@ final class ConversationCreationController: UIViewController {
             isChannel: false,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
             areLegacyBotsAvailable: areLegacyBotsAvailable,
+            allowApps: <#Bool#>,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )

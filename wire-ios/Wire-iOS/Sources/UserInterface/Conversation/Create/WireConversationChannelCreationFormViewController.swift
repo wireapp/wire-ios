@@ -68,6 +68,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
             isChannel: true,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
             areLegacyBotsAvailable: areLegacyBotsAvailable,
+            allowApps: isAppsFeatureEnabled, // channels are MLS
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
