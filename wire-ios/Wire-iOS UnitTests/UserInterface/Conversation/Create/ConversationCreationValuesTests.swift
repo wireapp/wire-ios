@@ -16,84 +16,75 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Testing
 import WireDataModel
-import XCTest
 
 @testable import Wire
 
-final class ConversationCreationValuesTests: XCTestCase {
+@Suite
+struct ConversationCreationValuesTests {
 
-    // MARK: - Properties
-
-    private var selfUser: MockUserType!
-
-    // MARK: - Set up
-
-    override func setUp() {
-        super.setUp()
-        selfUser = MockUserType()
-    }
-
-    override func tearDown() {
-        selfUser = nil
-        super.tearDown()
-    }
+    private let selfUser = MockUserType()
 
     // MARK: - allowApps safeguard
 
-    func test_AllowApps_IsFalse_WhenCallerPassesFalse() {
-        for messageProtocol in MessageProtocol.allCases {
-            let values = makeValues(
-                allowApps: false,
-                encryptionProtocol: messageProtocol,
-                isAppsFeatureEnabled: true,
-                areLegacyBotsAvailable: true
-            )
-
-            XCTAssertFalse(values.allowApps, "expected false for \(messageProtocol)")
-        }
-    }
-
-    func test_AllowApps_MLS_IsTrue_OnlyWhenAppsFeatureIsEnabled() {
-        let enabled = makeValues(
-            allowApps: true,
-            encryptionProtocol: .mls,
+    @Test(
+        "allowApps is false when the caller passes false, regardless of protocol or feature flags",
+        arguments: MessageProtocol.allCases
+    )
+    func allowAppsIsFalseWhenCallerPassesFalse(messageProtocol: MessageProtocol) {
+        let values = makeValues(
+            allowApps: false,
+            encryptionProtocol: messageProtocol,
             isAppsFeatureEnabled: true,
-            areLegacyBotsAvailable: false
-        )
-        XCTAssertTrue(enabled.allowApps)
-
-        // With mls, the legacy-bots flag must not influence the result.
-        let disabled = makeValues(
-            allowApps: true,
-            encryptionProtocol: .mls,
-            isAppsFeatureEnabled: false,
             areLegacyBotsAvailable: true
         )
-        XCTAssertFalse(disabled.allowApps)
+
+        #expect(values.allowApps == false)
     }
 
-    func test_AllowApps_Proteus_IsTrue_OnlyWhenLegacyBotsAreAvailable() {
-        let available = makeValues(
+    @Test(
+        "with mls, allowApps follows isAppsFeatureEnabled and ignores legacy-bots availability",
+        arguments: [
+            (true, false, true),
+            (true, true, true),
+            (false, true, false),
+            (false, false, false)
+        ]
+    )
+    func allowAppsWithMLS(isAppsFeatureEnabled: Bool, areLegacyBotsAvailable: Bool, expected: Bool) {
+        let values = makeValues(
             allowApps: true,
-            encryptionProtocol: .proteus,
-            isAppsFeatureEnabled: false,
-            areLegacyBotsAvailable: true
+            encryptionProtocol: .mls,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
-        XCTAssertTrue(available.allowApps)
 
-        // With proteus, the apps-feature flag must not influence the result.
-        let unavailable = makeValues(
-            allowApps: true,
-            encryptionProtocol: .proteus,
-            isAppsFeatureEnabled: true,
-            areLegacyBotsAvailable: false
-        )
-        XCTAssertFalse(unavailable.allowApps)
+        #expect(values.allowApps == expected)
     }
 
-    func test_AllowApps_Mixed_IsAlwaysFalse() {
-        // The `mixed` protocol is intentionally not covered by either branch of the safeguard.
+    @Test(
+        "with proteus, allowApps follows areLegacyBotsAvailable and ignores apps-feature flag",
+        arguments: [
+            (false, true, true),
+            (true, true, true),
+            (true, false, false),
+            (false, false, false)
+        ]
+    )
+    func allowAppsWithProteus(isAppsFeatureEnabled: Bool, areLegacyBotsAvailable: Bool, expected: Bool) {
+        let values = makeValues(
+            allowApps: true,
+            encryptionProtocol: .proteus,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
+        )
+
+        #expect(values.allowApps == expected)
+    }
+
+    @Test("with the mixed protocol, allowApps is always false even when all flags are enabled")
+    func allowAppsWithMixedProtocolIsAlwaysFalse() {
         let values = makeValues(
             allowApps: true,
             encryptionProtocol: .mixed,
@@ -101,7 +92,7 @@ final class ConversationCreationValuesTests: XCTestCase {
             areLegacyBotsAvailable: true
         )
 
-        XCTAssertFalse(values.allowApps)
+        #expect(values.allowApps == false)
     }
 
     // MARK: - Helpers
