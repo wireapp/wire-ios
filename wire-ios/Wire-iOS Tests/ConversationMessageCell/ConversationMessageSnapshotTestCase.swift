@@ -226,11 +226,7 @@ extension ConversationMessageCellDescription {
         view.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(view)
 
-        // Mirror ConversationMessageCellTableViewAdapter: cells that aren't already
-        // aligned (e.g. the sender header) start at conversationHorizontalMargins.left
-        // so they line up with the avatar in the sender cell.
-        let leadingInset: CGFloat = isCellAlreadyAligned ? 0 : 16
-        let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: leadingInset)
+        let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor)
         let trailing = view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
         let top = view.topAnchor.constraint(equalTo: container.topAnchor)
         let bottom = view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
