@@ -237,9 +237,9 @@ final class ConversationInputBarViewController: UIViewController,
     let publishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol
     let clearPublishedDraftsUseCase: WireDriveClearPublishedDraftsUseCaseProtocol
     private let observeDraftsUseCase: WireDriveObserveDraftsUseCaseProtocol
-    private let deleteDraftUseCase: WireDriveDeleteDraftUseCaseProtocol
+    let deleteDraftUseCase: WireDriveDeleteDraftUseCaseProtocol
     private let retryUploadDraftUseCase: WireDriveRetryUploadDraftUseCaseProtocol
-    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel()
+    let attachmentsCarouselViewModel = AttachmentsCarouselViewModel()
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -1095,6 +1095,12 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let didTouchWireDriveAttachments = touch.view?.isDescendant(of: inputBar.attachmentsContainer) == true
+        // discards gesture, already handled by `AttachmentsCarouselItemView`
+        if didTouchWireDriveAttachments {
+            return false
+        }
+
         if singleTapGestureRecognizer == gestureRecognizer {
             return true
         }
@@ -1133,10 +1139,33 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         let carouselViewController = UIHostingController(
             rootView: AttachmentsCarousel(
                 viewModel: attachmentsCarouselViewModel,
-                onTap: { WireLogger.conversation.debug("Did tap draft attachment: \($0)") },
-                onRemove: { [deleteDraftUseCase] item in
+                onTap: { [weak self] item in
+                    guard let self, let draft = attachmentsCarouselViewModel.draft(for: item) else { return }
+
+                    if draft.isImage, let data = draft.data {
+                        let sendableImage = SendableImage(
+                            id: draft.nodeID,
+                            name: nil,
+                            utType: nil,
+                            data: data
+                        )
+
+                        showConfirmationForImage(sendableImage, isFromCamera: false)
+                    } else if draft.isVideo {
+                        showConfirmationForVideo(url: draft.assetURL)
+                    }
+                },
+                onRemove: { [attachmentsCarouselViewModel, deleteDraftUseCase] item in
+                    let draft = attachmentsCarouselViewModel.draft(for: item)
+
                     Task.detached {
                         try? await deleteDraftUseCase.invoke(nodeID: item.id)
+
+                        if let localIdentifier = draft?.localIdentifier {
+                            await self.cameraKeyboardViewController?.deselectItem(
+                                withLocalIdentifier: localIdentifier
+                            )
+                        }
                     }
                 },
                 onRetry: { [retryUploadDraftUseCase] item in
@@ -1249,7 +1278,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         ])
     }
 
-    private func useWireDrive() -> Bool {
+    func useWireDrive() -> Bool {
         userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
     }
 
