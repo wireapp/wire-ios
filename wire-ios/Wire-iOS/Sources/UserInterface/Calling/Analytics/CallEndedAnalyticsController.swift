@@ -135,8 +135,8 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         _ conversation: ZMConversation,
         _ reason: CallClosedReason
     ) {
-        if eventInfos[conversation.remoteIdentifier] == nil {
-            logger.error("handleCallTerminating: expected eventInfo to be non-nil")
+        guard eventInfos[conversation.remoteIdentifier] != nil else {
+            logger.debug("handleCallTerminating: no eventInfo to flush (reason: \(reason)) — call ended before this client engaged")
             return
         }
 
