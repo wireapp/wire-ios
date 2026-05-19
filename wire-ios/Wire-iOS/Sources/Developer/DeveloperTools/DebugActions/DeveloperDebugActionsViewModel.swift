@@ -243,9 +243,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }) else { return }
 
         let cookieStorage = CookieStorage(
-            userID: selfUserID,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: WireFoundation.Keychain()
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         // Forces the access token request to fail with 403 (invalid credentials)
@@ -272,6 +270,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         networkService.executeRequest_MockValue = (data, httpURLResponse)
 
         let authenticationManager = AuthenticationManager(
+            userID: selfUserID,
             clientID: UUID().uuidString,
             cookieStorage: cookieStorage,
             networkService: networkService

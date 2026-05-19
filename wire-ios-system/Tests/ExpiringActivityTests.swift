@@ -110,15 +110,13 @@ class ExpiringActivityTests: XCTestCase {
         } catch {}
     }
 
-    // MARK: - Double-resume regression tests (crash: EXC_BREAKPOINT on CheckedContinuation.resume)
+    // MARK: - Regression tests for stop/expiry races
 
-    /// Regression test for the crash where outer-task cancellation and the expiry callback
-    /// both tried to resume the continuation:
-    ///   1. `onCancel` fires → `stopWork()` cancels the inner task, sets `self.task = nil`
-    ///   2. Inner task throws `CancellationError` → first resume
-    ///   3. `expiring = true` fires → `stopWork()` finds `self.task == nil`, throws,
-    ///      and previously tried to resume the continuation a second time → crash
-    func testNoCrash_WhenExpiryFires_AfterOuterTaskCancellation() async throws {
+    /// When outer-task cancellation and OS expiry both fire, `stopWork()` is
+    /// invoked twice. The caller must see the inner task's `CancellationError`
+    /// (not `ExpiringActivityNotAllowedToRun` from the late expiry), and the
+    /// continuation must not be resumed twice.
+    func testCancellationErrorIsThrown_WhenExpiryFiresAfterOuterTaskCancellation() async throws {
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
 
@@ -148,16 +146,21 @@ class ExpiringActivityTests: XCTestCase {
         outerTask.cancel()
         await fulfillment(of: [expiryFired], timeout: 1)
 
-        // Must not crash (EXC_BREAKPOINT) regardless of which error is thrown.
-        do { try await outerTask.value } catch {}
+        do {
+            try await outerTask.value
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // expected
+        } catch {
+            XCTFail("Expected CancellationError, got \(error)")
+        }
     }
 
-    /// Regression test for the race where the expiry callback fires *before* the
-    /// `expiring = false` callback has had a chance to call `startWork` on the actor:
-    ///   1. `expiring = true` reaches the actor first → `stopWork()` finds `task == nil`,
-    ///      throws, and previously resumed the continuation with that error
-    ///   2. `expiring = false` then runs `startWork`, work completes, and previously
-    ///      tried to resume the continuation a second time → crash
+    /// When the expiry callback reaches the actor before `startWork` has run,
+    /// the subsequent successful completion of `startWork` must not resume the
+    /// continuation a second time. Both `ExpiringActivityNotAllowedToRun` and
+    /// `CancellationError` are valid outcomes of the race — the only failure
+    /// mode being guarded against here is a crash.
     func testNoCrash_WhenExpiryCallbackFiresBeforeWorkStarts() async throws {
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)

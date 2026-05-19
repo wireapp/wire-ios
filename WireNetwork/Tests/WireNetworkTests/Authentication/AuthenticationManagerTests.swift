@@ -46,6 +46,7 @@ final class AuthenticationManagerTests: XCTestCase {
         )
 
         sut = AuthenticationManager(
+            userID: Scaffolding.userID,
             clientID: Scaffolding.clientID,
             cookieStorage: cookieStorage,
             networkService: networkService,
@@ -65,7 +66,7 @@ final class AuthenticationManagerTests: XCTestCase {
 
     func testGetValidAccessToken_CacheIsEmpty() async throws {
         // Mock valid cookie.
-        cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
+        cookieStorage.fetchCookiesUserID_MockValue = [try Scaffolding.cookie()]
 
         // Mock successful token response.
         var receivedRequests = [URLRequest]()
@@ -133,7 +134,7 @@ final class AuthenticationManagerTests: XCTestCase {
     }
 
     private func setCachedExpiringAccessToken() async throws -> AccessToken {
-        cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
+        cookieStorage.fetchCookiesUserID_MockValue = [try Scaffolding.cookie()]
 
         URLProtocolMock.mockHandler = {
             try $0.mockResponse(
@@ -147,7 +148,7 @@ final class AuthenticationManagerTests: XCTestCase {
 
     func testGetValidAccessToken_AwaitTokenRefresh() async throws {
         // Mock valid cookie.
-        cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
+        cookieStorage.fetchCookiesUserID_MockValue = [try Scaffolding.cookie()]
 
         // Mock successful token response.
         var receivedRequests = [URLRequest]()
@@ -185,8 +186,8 @@ final class AuthenticationManagerTests: XCTestCase {
 
     func testRefreshAccessToken_AfterAnError_WeCanStillRefresh() async throws {
         // Mock token refresh error.
-        cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
-        cookieStorage.removeCookies_MockMethod = {}
+        cookieStorage.fetchCookiesUserID_MockValue = [try Scaffolding.cookie()]
+        cookieStorage.removeCookiesUserID_MockMethod = { _ in }
         URLProtocolMock.mockHandler = {
             try $0.mockErrorResponse(
                 statusCode: .forbidden,

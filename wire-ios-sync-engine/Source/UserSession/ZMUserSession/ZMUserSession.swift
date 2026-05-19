@@ -470,7 +470,7 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        cookieStorage: any CookieStorageProtocol,
+        cookieStorage: any WireNetwork.CookieStorageProtocol,
         faultyMLSRemovalKeysByDomain: [String: [String]],
         updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol
     ) {
@@ -825,7 +825,6 @@ public final class ZMUserSession: NSObject {
         StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
-            cookieStorage: transportSession.cookieStorage,
             pushMessageHandler: localNotificationDispatcher!,
             flowManager: flowManager,
             localNotificationDispatcher: localNotificationDispatcher!,
@@ -1550,7 +1549,15 @@ extension ZMUserSession {
             let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
 
             clientRegistrationStatus.emailCredentials = nil
-            clientRegistrationStatus.cookieProvider.deleteKeychainItems()
+            do {
+                try clientRegistrationStatus.cookieProvider.removeCookies()
+            } catch {
+                let errorDescription = (error as NSError).safeForLoggingDescription
+                WireLogger.authentication.error(
+                    "Failed to remove cookies: \(errorDescription)",
+                    attributes: .safePublic
+                )
+            }
 
             let selfUser = ZMUser.selfUser(in: syncContext)
             let clientDeletedRemotelyError = NSError.userSessionError(
