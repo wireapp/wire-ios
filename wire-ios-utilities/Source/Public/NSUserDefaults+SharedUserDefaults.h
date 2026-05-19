@@ -24,5 +24,6 @@
 
 + (NSString *)groupName;
 + (instancetype)sharedUserDefaults;
++ (NSData *)cookiesKey;
 
 @end
