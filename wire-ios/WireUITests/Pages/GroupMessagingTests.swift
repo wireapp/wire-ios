@@ -154,6 +154,74 @@ final class GroupMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testReceivedAudioMessagePlaybackStartsOnTap_TC_10871() async throws {
+
+        // GIVEN a team with 2 users sharing a group conversation
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (userA, teamMembers, _, _) = try await UserHelper.default
+            .registerTeam(
+                withMemberCount: 1,
+                conversation: .group(groupName)
+            )
+        let userB = teamMembers[0]
+
+        // ...login user A, then add user B as a second account in the app
+        _ = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let conversationsPageAsB = try app.loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
+
+        // WHEN user B records and sends an audio message to the shared conversation via the UI
+        let conversationAsB = try conversationsPageAsB.openConversation()
+        conversationAsB.showOtherRowButton.waitAndTap()
+        try conversationAsB.recordAudioAndSend()
+
+        // ...and user B logs out, leaving user A as the active session
+        _ = try conversationAsB
+            .goBackToConversationPage()
+            .openSettings()
+            .openAccountSettings()
+            .logout()
+            .enterPassword(userB.password, expectWelcomePage: false)
+
+        let conversationsPageAsA = try ConversationsPage()
+
+        XCTAssertTrue(
+            conversationsPageAsA.unreadMessagesCount.waitForExistence(timeout: 10),
+            "Unread messages count element did not appear for user A"
+        )
+
+        let conversationAsA = try conversationsPageAsA.openConversation()
+
+        XCTAssertTrue(
+            conversationAsA.playAudioFile.waitForExistence(timeout: 5),
+            "Audio play button not found"
+        )
+
+        // ...and user A taps the play button
+        conversationAsA.playAudioFile.tap()
+
+        // Regression guard for WPB-25713: tapping play on a not-yet-downloaded received audio
+        // must trigger the download + playback. If userSession is not propagated to
+        // AudioMessageView, the download is never enqueued and the button stays on "Play".
+        let pausePredicate = NSPredicate(format: "value == %@", "Pause")
+        let pauseExpectation = XCTNSPredicateExpectation(
+            predicate: pausePredicate,
+            object: conversationAsA.playAudioFile
+        )
+        do {
+            try await fulfillment(of: [pauseExpectation], timeout: 5)
+        } catch {
+            XCTFail(
+                "Audio did not start playing after tapping play. Button value: \(conversationAsA.playAudioFile.value ?? "nil"). Expected to become 'Pause'."
+            )
+        }
+    }
+
+    @MainActor
     func testSendImageAndVideoInGroupConversation_TC_8834_8836() async throws {
 
         // GIVEN
