@@ -247,7 +247,8 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         case let .incoming(isVideoCall, true, _):
             handleIncomingCall(conversation, isVideoCall)
         case .answered:
-            handleIncomingCall(conversation, false)
+            // tracking already started by .incoming; .established will mark callStart
+            break
         case let .outgoing(isVideoCall, _):
             handleOutgoingCall(conversation, isVideoCall)
         case .established:
