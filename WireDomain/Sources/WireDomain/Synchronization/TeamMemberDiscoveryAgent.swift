@@ -58,7 +58,12 @@ struct TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
 
             var discoveredCount = 0
             for try await notifications in pager {
-                let teamMembersInfo = notifications.map { notification -> TeamMemberInfo in
+                // The `since` cursor is inclusive: the backend returns the
+                // cursor notification as the first item of the first page.
+                // Drop it so we don't re-process what we already stored.
+                let newNotifications = notifications.filter { $0.id != sinceNotificationID }
+
+                let teamMembersInfo = newNotifications.map { notification -> TeamMemberInfo in
                     switch notification.kind {
                     case let .memberJoin(event):
                         TeamMemberInfo(
@@ -80,7 +85,7 @@ struct TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
 
                 // Persist forward progress per page so an interruption
                 // doesn't force a full re-walk on the next run.
-                if let lastID = notifications.last?.id {
+                if let lastID = newNotifications.last?.id {
                     journal[.lastTeamNotificationID] = lastID.uuidString
                 }
             }
