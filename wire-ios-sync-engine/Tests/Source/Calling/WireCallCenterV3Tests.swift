@@ -678,6 +678,34 @@ final class WireCallCenterV3Tests: MessagingTest {
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
+    func testThatLeavingAnMLSConferenceLeavesTheSubconversation1() throws {
+        // Given
+        let conversationID = try XCTUnwrap(oneOnOneConversationID)
+        oneOnOneConversation.messageProtocol = .mls
+        oneOnOneConversation.mlsGroupID = .random()
+
+        let mlsService = MockMLSServiceInterface()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
+        mlsService
+            .leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod =
+            { parentID, parentGroupID, subconversationType in
+                XCTAssertEqual(parentID, self.uiMOC.performAndWait { self.oneOnOneConversation.qualifiedID })
+                XCTAssertEqual(parentGroupID, self.uiMOC.performAndWait { self.oneOnOneConversation.mlsGroupID })
+                XCTAssertEqual(subconversationType, .conference)
+                didLeaveSubconversation.fulfill()
+            }
+
+        // When
+        sut.closeCall(conversationId: conversationID)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
 
     func testThatItLeavesSubconversationIfNeededOnIncoming() throws {
         // Given

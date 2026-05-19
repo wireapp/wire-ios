@@ -863,12 +863,27 @@ public extension WireCallCenterV3 {
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
 
-            if snapshot?.isGroup == true {
+            guard
+                let context = uiMOC,
+                let domain = conversationId.domain ?? localDomain,
+                let conversation = ZMConversation.fetch(
+                    with: conversationId.identifier,
+                    domain: domain,
+                    in: context
+                ),
+                conversation.messageProtocol == .mls,
+                conversation.conversationType == .group,
+                let qualifiedID = conversation.qualifiedID,
+                let groupID = conversation.mlsGroupID
+            else {
+                return
+            }
+//            if snapshot?.isGroup == true {
                 leaveSubconversation(
                     parentQualifiedID: mlsParentIDs.0,
                     parentGroupID: mlsParentIDs.1
                 )
-            }
+//            }
         }
     }
 
