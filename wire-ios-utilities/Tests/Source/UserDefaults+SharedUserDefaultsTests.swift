@@ -51,7 +51,6 @@ final class UserDefaultsSharedTests: XCTestCase {
         XCTAssertNotEqual(key1, key2)
     }
 
-#if os(iOS)
     func testThatItMovesCookiesFromStandardDefaultsToSharedDefaults() {
         // given
         let key1 = UserDefaults.cookiesKey()
@@ -66,5 +65,5 @@ final class UserDefaultsSharedTests: XCTestCase {
         XCTAssertNil(UserDefaults.standard.object(forKey: cookiesKeyName))
         XCTAssertEqual(UserDefaults.shared()?.data(forKey: cookiesKeyName), key1)
     }
-#endif
+
 }
