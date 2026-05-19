@@ -1094,6 +1094,10 @@ internal enum L10n {
         /// Close sketch
         internal static let description = L10n.tr("Accessibility", "sketch.closeButton.description", fallback: "Close sketch")
       }
+      internal enum ConfirmButton {
+        /// Confirm
+        internal static let description = L10n.tr("Accessibility", "sketch.confirmButton.description", fallback: "Confirm")
+      }
       internal enum DrawButton {
         /// Draw or write
         internal static let description = L10n.tr("Accessibility", "sketch.drawButton.description", fallback: "Draw or write")

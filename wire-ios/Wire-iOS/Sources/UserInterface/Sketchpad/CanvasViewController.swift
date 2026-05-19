@@ -44,10 +44,16 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     weak var delegate: CanvasViewControllerDelegate?
     var canvas = Canvas()
-    private lazy var toolbar: SketchToolbar = .init(buttons: [photoButton, drawButton, emojiButton, sendButton])
+    private lazy var toolbar: SketchToolbar = .init(buttons: [
+        photoButton,
+        drawButton,
+        emojiButton,
+        isWireDriveEnabled ? checkmarkButton : sendButton
+    ])
     let drawButton = NonLegacyIconButton()
     let emojiButton = NonLegacyIconButton()
     let sendButton = IconButton.sendButton()
+    let checkmarkButton = IconButton.checkmarkButton()
     let photoButton = NonLegacyIconButton()
     let separatorLine = UIView()
     let hintLabel = UILabel()
@@ -66,11 +72,13 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     let colorPickerController = SketchColorPickerController()
 
     private let userSession: UserSession
+    private let isWireDriveEnabled: Bool
 
     // MARK: - Init
 
-    init(userSession: UserSession) {
+    init(userSession: UserSession, isWireDriveEnabled: Bool = false) {
         self.userSession = userSession
+        self.isWireDriveEnabled = isWireDriveEnabled
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -152,11 +160,19 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         typealias Sketch = L10n.Accessibility.Sketch
         let hitAreaPadding = CGSize(width: 16, height: 16)
 
-        sendButton.addTarget(self, action: #selector(exportImage), for: .touchUpInside)
-        sendButton.isEnabled = false
-        sendButton.hitAreaPadding = hitAreaPadding
-        sendButton.accessibilityLabel = Sketch.SendButton.description
-        sendButton.accessibilityIdentifier = Locators.ActiveConversationPage.canvasSendButton.rawValue
+        if isWireDriveEnabled {
+            checkmarkButton.addTarget(self, action: #selector(exportImage), for: .touchUpInside)
+            checkmarkButton.isEnabled = false
+            checkmarkButton.hitAreaPadding = hitAreaPadding
+            sendButton.accessibilityLabel = Sketch.ConfirmButton.description
+            sendButton.accessibilityIdentifier = Locators.ActiveConversationPage.canvasConfirmButton.rawValue
+        } else {
+            sendButton.addTarget(self, action: #selector(exportImage), for: .touchUpInside)
+            sendButton.isEnabled = false
+            sendButton.hitAreaPadding = hitAreaPadding
+            sendButton.accessibilityLabel = Sketch.SendButton.description
+            sendButton.accessibilityIdentifier = Locators.ActiveConversationPage.canvasSendButton.rawValue
+        }
 
         drawButton.setIcon(.brush, size: .tiny, for: .normal)
         drawButton.addTarget(self, action: #selector(toggleDrawTool), for: .touchUpInside)
@@ -302,6 +318,7 @@ extension CanvasViewController: CanvasDelegate {
 
     func canvasDidChange(_ canvas: Canvas) {
         sendButton.isEnabled = canvas.hasChanges
+        checkmarkButton.isEnabled = canvas.hasChanges
         navigationItem.leftBarButtonItem?.isEnabled = canvas.hasChanges
         hideHint()
     }
