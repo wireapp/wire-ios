@@ -1,0 +1,2 @@
+curl \
+	"/v15/teams/notifications?since=2541e4a1-420f-11f1-8001-0ee6e9ab7c8d&size=1000"

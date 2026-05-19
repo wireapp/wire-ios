@@ -669,6 +669,43 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
+    func testTeamNotifications_givenSinceCursorMatchesFirstResponseItem_thenFiltersThatItem() async throws {
+
+        for apiVersion in APIVersion.v5.andNextVersions {
+
+            // Given the cursor matches the first notification in the response.
+            // The `/teams/notifications` endpoint uses an inclusive cursor, so
+            // the api implementation should drop that item before returning.
+            let inclusiveCursor = UUID(uuidString: "2541e4a1-420f-11f1-8001-0ee6e9ab7c8d")!
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetNotificationsResponseV5")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let pager = try sut.getNotifications(sinceNotificationID: inclusiveCursor)
+                let notifications = try await pager.reduce(into: []) { $0 += $1 }
+
+                // Then only the non-cursor item remains.
+                let expectedNotifications = [
+                    TeamNotification(
+                        id: UUID(uuidString: "254b3ac0-420f-11f1-8001-0ee6e9ab7c8d")!,
+                        kind: .memberJoin(
+                            .init(
+                                teamID: UUID(uuidString: "9f00f4e7-2426-4d6d-b2b1-9190b204556f")!,
+                                userID: UUID(uuidString: "bbaf8e02-db59-4577-91ce-4750ece8e8f8")!,
+                                time: ISO8601DateFormatter.fractionalInternetDateTime
+                                    .date(from: "2026-04-27T08:00:24.265610179Z")!
+                            )
+                        )
+                    )
+                ]
+                XCTAssertEqual(notifications, expectedNotifications, "failed for apiVersion \(apiVersion)")
+            }
+        }
+
+    }
+
     // MARK: - V15
 
     func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
