@@ -35,12 +35,12 @@ struct HorizontalMargins {
     init(userInterfaceSizeClass: UIUserInterfaceSizeClass) {
         switch userInterfaceSizeClass {
         case .regular:
-            self.left = 16
+            self.left = 56
             self.right = 16
             self.chatBubbleMinimumLeading = 136.0
             self.chatBubbleMinimumTrailing = 136.0
         default:
-            self.left = 16
+            self.left = 56
             self.right = 16
             self.chatBubbleMinimumLeading = 104.0
             self.chatBubbleMinimumTrailing = 72.0

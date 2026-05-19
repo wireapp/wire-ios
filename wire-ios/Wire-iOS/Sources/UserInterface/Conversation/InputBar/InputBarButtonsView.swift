@@ -193,7 +193,7 @@ final class InputBarButtonsView: UIView {
     // MARK: - Button Layout
 
     private var buttonMargin: CGFloat {
-        28 - StyleKitIcon.Size.tiny.rawValue / 2
+        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
 
     private func layoutAndConstrainButtonRows() {
@@ -434,7 +434,7 @@ final class InputBarButtonsView: UIView {
         let labelSize = button.titleLabel!.intrinsicContentSize
         let iconSize = InputBarRowConstants.iconSize
         let topMargin = InputBarRowConstants.titleTopMargin
-        let titleMargin = 28 - iconSize - (labelSize.width / 2)
+        let titleMargin = (conversationHorizontalMargins.left / 2) - iconSize - (labelSize.width / 2)
 
         switch position {
         case .first:

@@ -57,10 +57,6 @@ final class FailedUsersSystemMessageCell<
         insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     )
 
-    private var withIconConstraints: [NSLayoutConstraint] = []
-    private var withoutIconConstraints: [NSLayoutConstraint] = []
-    private var currentIconPresent: Bool?
-
     private var config: Configuration? {
         didSet {
             updateUI()
@@ -94,18 +90,6 @@ final class FailedUsersSystemMessageCell<
         isCollapsed = config.isCollapsed
         buttonAction = config.buttonAction
         imageView.image = config.icon?.withTintColor(SemanticColors.Label.textErrorDefault)
-
-        let iconPresent = config.icon != nil
-        if currentIconPresent != iconPresent {
-            currentIconPresent = iconPresent
-            if iconPresent {
-                NSLayoutConstraint.deactivate(withoutIconConstraints)
-                NSLayoutConstraint.activate(withIconConstraints)
-            } else {
-                NSLayoutConstraint.deactivate(withIconConstraints)
-                NSLayoutConstraint.activate(withoutIconConstraints)
-            }
-        }
 
         guard let title = config.title else {
             usersView.attributedText = config.content
@@ -157,23 +141,6 @@ final class FailedUsersSystemMessageCell<
         totalCountView.translatesAutoresizingMaskIntoConstraints = false
         usersView.translatesAutoresizingMaskIntoConstraints = false
         button.translatesAutoresizingMaskIntoConstraints = false
-
-        let margins = conversationHorizontalMargins
-
-        withIconConstraints = [
-            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
-            imageContainer.widthAnchor.constraint(equalToConstant: 32),
-            stackView.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor, constant: 8),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -margins.right)
-        ]
-
-        withoutIconConstraints = [
-            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageContainer.widthAnchor.constraint(equalToConstant: 0),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ]
-
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),

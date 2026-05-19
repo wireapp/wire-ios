@@ -54,6 +54,8 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         }
     }
 
+    private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor
+        .constraint(equalToConstant: 0)
     private let rowHeight: CGFloat = 56.0
     private let avatarSpacing: CGFloat = 56.0
     private var isKeyboardCollapsedFirstCalled = true
@@ -309,7 +311,7 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
             assertionFailure("ZMUser.selfUser() is nil")
         }
         cell.showSeparator = false
-        cell.avatarSpacing = avatarSpacing
+        cell.avatarSpacing = conversationHorizontalMargins.left
 
         // hightlight the lowest cell if keyboard is collapsed
         if isKeyboardCollapsed || UIDevice.current.userInterfaceIdiom == .pad {
