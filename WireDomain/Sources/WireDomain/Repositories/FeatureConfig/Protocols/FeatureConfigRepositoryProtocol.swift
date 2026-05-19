@@ -54,6 +54,7 @@ public protocol FeatureConfigRepositoryProtocol {
     func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config>
     func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config>
     func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config>
+    func fetchE2EIConfig() async throws -> LocalFeature<Feature.E2EI.Config>
 
     func isFeatureEnabled(
         _ feature: Feature.Name

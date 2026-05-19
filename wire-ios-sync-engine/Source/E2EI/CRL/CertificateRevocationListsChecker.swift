@@ -34,7 +34,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let crlAPI: CertificateRevocationListAPIProtocol
     private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
+    private let fetchE2EIFeatureConfig: () async -> Feature.E2EI.Config?
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCrypto {
@@ -52,7 +52,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlAPI: CertificateRevocationListAPIProtocol,
         mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
+        fetchE2EIFeatureConfig: @escaping (() async -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -72,7 +72,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
         mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
+        fetchE2EIFeatureConfig: @escaping (() async -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -115,9 +115,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
-        let e2eiFeatureConfig = await context.perform {
-            self.fetchE2EIFeatureConfig()
-        }
+        let e2eiFeatureConfig = await self.fetchE2EIFeatureConfig()
         let crlURLBuilder = CRLURLBuilder(
             shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
             proxyURLString: e2eiFeatureConfig?.crlProxy

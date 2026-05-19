@@ -18,7 +18,7 @@
 
 import Foundation
 import WireLogging
-
+import WireDomain
 extension ZMUserSession {
 
     func setupCertificateRevocationLists() {
@@ -36,8 +36,8 @@ extension ZMUserSession {
             fetchE2EIFeatureConfig: { [weak self] in
                 guard let self else { return nil }
 
-                let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
-                return featureRepository.fetchE2EI().config
+                let featureRepository = clientSessionComponent?.featureConfigRepository
+                return try? await featureRepository?.fetchE2EIConfig().config
             },
             coreCryptoProvider: coreCryptoProvider,
             context: coreDataStack.syncContext
@@ -51,17 +51,13 @@ extension ZMUserSession {
         self.cRLsDistributionPointsObserver = cRLsDistributionPointsObserver
     }
 
-    func checkExpiredCertificateRevocationLists() {
+    func checkExpiredCertificateRevocationLists() async {
+        guard await isE2EIFeatureEnabled() else { return }
+        
         guard let cRLsChecker else {
             WireLogger.e2ei.error("requires 'cRLsChecker' to check expired CRLs!", attributes: .safePublic)
             return
-        }
-
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
-            if isE2EIFeatureEnabled {
-                await cRLsChecker.checkExpiredCRLs()
-            }
-        }
+        }    
+        await cRLsChecker.checkExpiredCRLs()
     }
 }

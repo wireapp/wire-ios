@@ -1657,7 +1657,9 @@ extension SessionManager {
     @objc
     private func applicationDidBecomeActive(_ note: Notification) {
         guard let session = activeUserSession, session.isLoggedIn else { return }
-        session.checkE2EICertificateExpiryStatus()
+        Task {
+            await session.checkE2EICertificateExpiryStatus()
+        }
     }
 
 }
