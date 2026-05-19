@@ -439,8 +439,7 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
-            localDomain: backendMetadata.domain,
-            backgroundTaskManager: UIApplication.shared
+            localDomain: backendMetadata.domain
         )
 
         let lastEventIDRepository = LastEventIDRepository(

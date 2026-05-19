@@ -32,7 +32,7 @@ final class ProteusClientSimulator {
     private let storageURL: URL
 
     /// Dictionary to store ProteusService instances for simulated remote clients
-    private var clientServices: [String: (service: ProteusServiceInterface, coreCrypto: SafeCoreCrypto)] = [:]
+    private var clientServices: [String: (service: ProteusServiceInterface, coreCrypto: CoreCryptoProtocol)] = [:]
 
     init(syncMOC: NSManagedObjectContext, owningDomain: String, storageURL: URL) {
         self.syncMOC = syncMOC
@@ -83,8 +83,7 @@ final class ProteusClientSimulator {
             syncContext: syncMOC,
             coreCryptoKeyMigrationManager: mockKeyMigrationManager,
             allowCreation: true,
-            localDomain: owningDomain,
-            backgroundTaskManager: nil
+            localDomain: owningDomain
         )
 
         // Initialize CoreCrypto

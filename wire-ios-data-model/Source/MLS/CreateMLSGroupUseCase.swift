@@ -26,7 +26,7 @@ struct CreateMLSGroupUseCase {
     private let parentGroupID: MLSGroupID?
     private let removalKeys: BackendMLSPublicKeys?
     private let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite
-    private let coreCrypto: SafeCoreCrypto
+    private let coreCrypto: any CoreCryptoProtocol
     private let staleKeyMaterialDetector: any StaleMLSKeyDetectorProtocol
     private let actionsProvider: any MLSActionsProviderProtocol
     private let notificationContext: NotificationContext
@@ -35,7 +35,7 @@ struct CreateMLSGroupUseCase {
         parentGroupID: MLSGroupID?,
         removalKeys: BackendMLSPublicKeys?,
         defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite,
-        coreCrypto: SafeCoreCrypto,
+        coreCrypto: any CoreCryptoProtocol,
         staleKeyMaterialDetector: any StaleMLSKeyDetectorProtocol,
         actionsProvider: any MLSActionsProviderProtocol,
         notificationContext: NotificationContext

@@ -18,7 +18,6 @@
 
 import Combine
 import GenericMessageProtocol
-import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import WireNetwork
@@ -67,10 +66,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         )
 
         // Setup mocks
-        coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: coreCrypto
-        )
+        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
