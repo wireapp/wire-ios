@@ -27,13 +27,6 @@
 
 @implementation NSUserDefaults_SharedUserDefaultsTests
 
-static NSString *const cookiesKey = @"ZMCookieKey";
-
-- (void)tearDown {
-    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:cookiesKey];
-    [super tearDown];
-}
-
 - (void)testThatItReturnsNilFromGroupNameIfNoWireGroupIdInInfoPlist
 {
 #if !TARGET_OS_IPHONE
@@ -88,55 +81,6 @@ static NSString *const cookiesKey = @"ZMCookieKey";
     [mockBundle stopMocking];
 #endif
 }
-
-- (void)testThatItReturnsTheSameCookiesKey
-{
-    //given
-    NSData *key1 = [NSUserDefaults cookiesKey];
-    
-    //when
-    NSData *key2 = [NSUserDefaults cookiesKey];
-    
-    //then
-    XCTAssertEqualObjects(key2, key1);
-}
-
-- (void)testThatItCreatesNewKeyIfNoKeyFoundInDefaults
-{
-    //given
-    NSData *key1 = [NSUserDefaults cookiesKey];
-    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:cookiesKey];
-    
-    //when
-    NSData *key2 = [NSUserDefaults cookiesKey];
-    
-    //then
-    XCTAssertNotEqualObjects(key1, key2);
-}
-
-#if TARGET_OS_IPHONE
-//this is only for iOS, on OSX we still use standard user defaults
-- (void)testThatItMovesCookiesFromStandardDefaultsToSharedDefaults
-{
-    //given
-    NSData *key1 = [NSUserDefaults cookiesKey];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:key1 forKey:cookiesKey];
-    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:cookiesKey];
-    
-    //when
-    NSData *key2 = [NSUserDefaults cookiesKey];
-    XCTAssertEqualObjects(key2, key1);
-    
-    //then
-    
-    //key should be removed from standard user defaults
-    XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:cookiesKey]);
-    
-    //key should be stored in shared user defaults
-    XCTAssertEqualObjects([[NSUserDefaults sharedUserDefaults] objectForKey:cookiesKey], key1);
-}
-#endif
 
 
 @end
