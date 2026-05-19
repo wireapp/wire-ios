@@ -25,8 +25,7 @@ public extension UserDefaults {
     static var existingCookiesKey: Data? {
         guard let defaults = UserDefaults.shared() else { return nil }
 
-        let cookiesKeyKey = "ZMCookieKey"
-        return defaults.data(forKey: cookiesKeyKey)
+        return defaults.data(forKey: ZMCookieKeyKey)
     }
 
 }
