@@ -337,6 +337,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
     let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    private let cookieStorage: CookieStorage
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
@@ -413,6 +414,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
+        cookieStorage: CookieStorage,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -454,6 +456,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
+            cookieStorage: cookieStorage,
             mediaManager: mediaManager,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -518,6 +521,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
+        cookieStorage: CookieStorage,
         mediaManager: MediaManagerType,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -545,6 +549,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.environment = environment
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
+        self.cookieStorage = cookieStorage
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -1005,6 +1010,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 let loader = try UserSessionLoader(
                     account: account,
                     accountManager: accountManager,
+                    cookieStorage: cookieStorage,
                     sharedContainerURL: sharedContainerURL,
                     defaultEnvironment: defaultEnvironment,
                     legacyEnvironment: environment,
@@ -1147,7 +1153,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func deleteAccountData(for account: Account) {
         WireLogger.sessionManager.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         WireLogger.session.debug("Deleting the data for account \(account)")
-        environment.cookieStorage(for: account).deleteKeychainItems()
+        do {
+            try environment.cookieStorage(for: account).removeCookies()
+        } catch {
+            WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
+        }
         account.deleteKeychainItems()
 
         clearCRLExpirationDates(for: account)

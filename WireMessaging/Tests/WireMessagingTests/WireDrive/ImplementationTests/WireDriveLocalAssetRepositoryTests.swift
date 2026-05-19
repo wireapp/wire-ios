@@ -439,5 +439,4 @@ final class WireDriveLocalAssetRepositoryTests {
             ]
         )
     }
-
 }

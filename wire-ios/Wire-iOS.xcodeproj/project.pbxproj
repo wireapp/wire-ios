@@ -527,6 +527,7 @@
 				AudioRecordViewControllerTests.swift,
 				Authentication/AuthenticationInterfaceBuilderTests.swift,
 				Authentication/AuthenticationStateControllerTests.swift,
+				Authentication/CookieStorageTests.swift,
 				Authentication/Helpers/RegistrationAnalyticsTrackerTests.swift,
 				Authentication/MockAuthenticationFeatureProvider.swift,
 				AvailabilityLabelTests.swift,

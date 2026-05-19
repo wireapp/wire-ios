@@ -179,7 +179,7 @@ public final class AccountManager: NSObject, Sendable {
 
     public static func delete(at root: URL) {
         AccountStore.delete(directory: AccountURLs(root: root).accounts)
-        UserDefaults.shared().selectedAccountIdentifier = nil
+        UserDefaults.shared()!.selectedAccountIdentifier = nil
     }
 
     // MARK: - Retrieve

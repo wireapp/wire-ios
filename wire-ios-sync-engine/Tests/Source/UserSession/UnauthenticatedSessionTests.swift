@@ -17,12 +17,13 @@
 //
 
 import WireTesting
+import WireTransportSupport
 import XCTest
 @testable import WireSyncEngine
 
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
-    public var cookieStorage = ZMPersistentCookieStorage()
+    public var cookieStorage = LegacyCookieStorage(testingWithUserIdentifier: UUID())
 
     var nextEnqueueResult: EnqueueResult = .nilRequest
     var lastEnqueuedRequest: ZMTransportRequest?
@@ -210,7 +211,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(account.userIdentifier, userId)
-        XCTAssertNotNil(transportSession.environment.cookieStorage(for: account).authenticationCookieData)
+        XCTAssertTrue(transportSession.environment.cookieStorage(for: account).hasAuthenticationCookie)
     }
 
     func testThatItParsesCookieDataAndDoesCallTheDelegateIfTheCookieIsValidAndThereIsAUserIdKeyId() throws {
@@ -224,7 +225,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(account.userIdentifier, userId)
-        XCTAssertNotNil(transportSession.environment.cookieStorage(for: account).authenticationCookieData)
+        XCTAssertTrue(transportSession.environment.cookieStorage(for: account).hasAuthenticationCookie)
     }
 
     func testThatItDoesNotParseAnAccountWithWrongUserIdKey() {
