@@ -20,6 +20,7 @@ import Combine
 import CoreData
 import GenericMessageProtocol
 import XCTest
+
 @testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireDomain
@@ -45,7 +46,7 @@ final class IncrementalSyncTests: XCTestCase {
     var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
     var cancellables: Set<AnyCancellable>!
     var earService: MockEARServiceInterface!
-    private var teamMemberDiscoveryAgentMock: (any TeamMemberDiscoveryAgentProtocol)!
+    private var teamMemberDiscoveryAgentMock: MockTeamMemberDiscoveryAgentProtocol!
     fileprivate var notificationContext: MockNotificationContext!
 
     override func setUp() {
@@ -66,6 +67,7 @@ final class IncrementalSyncTests: XCTestCase {
         cancellables = Set<AnyCancellable>()
         earService = MockEARServiceInterface()
         teamMemberDiscoveryAgentMock = MockTeamMemberDiscoveryAgentProtocol()
+        teamMemberDiscoveryAgentMock.discoverMembers_MockMethod = {}
         notificationContext = MockNotificationContext()
 
         earService.underlyingIsLocked = false

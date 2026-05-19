@@ -47,7 +47,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var journal: Journal!
     var cancellables: Set<AnyCancellable>!
     var earService: MockEARServiceInterface!
-    private var teamMemberDiscoveryAgentMock: (any TeamMemberDiscoveryAgentProtocol)!
+    private var teamMemberDiscoveryAgentMock: MockTeamMemberDiscoveryAgentProtocol!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -74,6 +74,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         cancellables = .init()
         earService = MockEARServiceInterface()
         teamMemberDiscoveryAgentMock = MockTeamMemberDiscoveryAgentProtocol()
+        teamMemberDiscoveryAgentMock.discoverMembers_MockMethod = {}
 
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
