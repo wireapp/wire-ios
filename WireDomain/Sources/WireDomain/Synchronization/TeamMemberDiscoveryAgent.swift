@@ -46,14 +46,8 @@ struct TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
             return
         }
 
-        let sinceNotificationID = journal[.lastTeamNotificationID].flatMap(UUID.init(uuidString:))
-        if let sinceNotificationID { // TODO: delete this logging
-            WireLogger.sync.debug("sinceNotificationID: \(sinceNotificationID.uuidString)", attributes: .safePublic)
-        } else {
-            WireLogger.sync.debug("sinceNotificationID is nil", attributes: .safePublic)
-        }
-
         do {
+            let sinceNotificationID = journal[.lastTeamNotificationID].flatMap(UUID.init(uuidString:))
             let pager = try api.getNotifications(sinceNotificationID: sinceNotificationID)
 
             var discoveredCount = 0
