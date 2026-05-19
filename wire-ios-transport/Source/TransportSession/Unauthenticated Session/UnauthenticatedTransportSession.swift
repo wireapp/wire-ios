@@ -310,7 +310,7 @@ public extension HTTPCookie {
         archiver.encode(properties, forKey: CookieKey.properties.rawValue)
         archiver.finishEncoding()
         let data = archiver.encodedData
-        let key = UserDefaults.cookiesKey()!
+        let key = UserDefaults.cookiesKey()
         return data.zmEncryptPrefixingIV(key: key).base64EncodedData()
     }
 
