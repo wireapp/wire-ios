@@ -203,7 +203,7 @@ extension NotificationServiceExtension {
         switch error {
         case let .mainAppRequired(message):
             logger.error(
-                "Main app required, need to open main app: \(String(describing: error))",
+                "Main app required, need to open main app: \(message)",
                 attributes: .newNSE, .safePublic
             )
         case let .failedToFetchBackendEnvironment(error):
