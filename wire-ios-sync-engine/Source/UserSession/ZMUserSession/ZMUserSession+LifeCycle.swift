@@ -56,6 +56,11 @@ public extension ZMUserSession {
         } catch {
             WireLogger.assets.error("failed to purge temporary assets: \(error)")
         }
+
+        // Shed the viewContext's registered-objects set so long foreground
+        // sessions don't make `internalFetchObjectWithRemoteIdentifier`'s
+        // linear scan blow past the scene-update watchdog on resume.
+        managedObjectContext.refreshAllObjects()
     }
 
     @objc

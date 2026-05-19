@@ -130,6 +130,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         setupSelfUser()
         setupPushToken()
         setupDatadog()
+        setupCoreData()
         sections.append(debugViewSection)
     }
 
@@ -240,6 +241,25 @@ final class DeveloperToolsViewModel: ObservableObject {
                 ]
             ))
         }
+    }
+
+    private func setupCoreData() {
+        guard let userSession else { return }
+
+        let viewContextCount = userSession.viewContext.registeredObjects.count
+
+        let syncContext = userSession.syncContext
+        let syncContextCount = syncContext.performGroupedAndWait {
+            syncContext.registeredObjects.count
+        }
+
+        sections.append(Section(
+            header: "Core Data",
+            items: [
+                .text(TextItem(title: "View context registered objects", value: String(viewContextCount))),
+                .text(TextItem(title: "Sync context registered objects", value: String(syncContextCount)))
+            ]
+        ))
     }
 
     private func setupDatadog() {
