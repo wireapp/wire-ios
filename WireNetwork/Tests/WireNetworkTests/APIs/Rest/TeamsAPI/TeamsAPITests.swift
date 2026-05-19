@@ -706,6 +706,33 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
+    func testTeamNotifications_givenSinceCursorIsMissingFromResponse_thenThrowsMissedEvents() async throws {
+
+        for apiVersion in APIVersion.v5.andNextVersions {
+
+            // Given a cursor that does NOT match any notification in the response,
+            // simulating events past retention on the server.
+            let staleCursor = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetNotificationsResponseV5")
+            ])
+
+            // When / Then
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let pager = try sut.getNotifications(sinceNotificationID: staleCursor)
+                do {
+                    _ = try await pager.reduce(into: []) { $0 += $1 }
+                    XCTFail("expected TeamsAPIError.missedEvents for apiVersion \(apiVersion)")
+                } catch TeamsAPIError.missedEvents {
+                    // expected
+                } catch {
+                    XCTFail("expected TeamsAPIError.missedEvents, got \(error) for apiVersion \(apiVersion)")
+                }
+            }
+        }
+
+    }
+
     // MARK: - V15
 
     func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {

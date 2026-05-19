@@ -52,4 +52,10 @@ public enum TeamsAPIError: Error {
 
     case invalidRequest
 
+    /// The notification corresponding to the supplied `sinceNotificationID`
+    /// was not returned by the server, indicating events past retention.
+    /// Callers should reset their cursor and re-fetch.
+
+    case missedEvents
+
 }

@@ -191,11 +191,17 @@ class TeamsAPIV5: TeamsAPIV4 {
                 .parse(code: response.statusCode, data: data)
 
             // The `/teams/notifications` endpoint uses an inclusive cursor:
-            // it returns the `since` notification as the first item. Drop it
-            // so consumers only see new notifications.
-            guard let sinceNotificationID else { return page }
+            // the notification matching the `since` argument must appear in
+            // the response. Its absence indicates events were lost from the
+            // server (past retention).
+            guard let nextSince, let cursor = UUID(uuidString: nextSince) else {
+                return page
+            }
+            guard page.element.contains(where: { $0.id == cursor }) else {
+                throw TeamsAPIError.missedEvents
+            }
             return .init(
-                element: page.element.filter { $0.id != sinceNotificationID },
+                element: page.element.filter { $0.id != cursor },
                 hasMore: page.hasMore,
                 nextStart: page.nextStart
             )

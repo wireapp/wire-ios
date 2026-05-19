@@ -47,42 +47,59 @@ struct TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
         }
 
         do {
-            let sinceNotificationID = journal[.lastTeamNotificationID].flatMap(UUID.init(uuidString:))
-            let pager = try api.getNotifications(sinceNotificationID: sinceNotificationID)
-
-            var discoveredCount = 0
-            for try await notifications in pager {
-                let teamMembersInfo = notifications.map { notification -> TeamMemberInfo in
-                    switch notification.kind {
-                    case let .memberJoin(event):
-                        TeamMemberInfo(
-                            id: event.userID,
-                            selfPermission: nil,
-                            creatorID: nil,
-                            creationDate: event.time
-                        )
-                    }
-                }
-
-                guard !teamMembersInfo.isEmpty else { continue }
-
-                try await store.storeTeamMembers(
-                    selfTeamID: selfTeamID,
-                    teamMembersInfo: teamMembersInfo
+            try await runDiscovery(selfTeamID: selfTeamID)
+        } catch TeamsAPIError.missedEvents {
+            WireLogger.sync.warn(
+                "team member discovery: server lost cursor history, resetting and re-running",
+                attributes: .safePublic
+            )
+            journal[.lastTeamNotificationID] = nil
+            do {
+                try await runDiscovery(selfTeamID: selfTeamID)
+            } catch {
+                WireLogger.sync.error(
+                    "team member discovery failed after cursor reset: \(String(describing: error))"
                 )
-                discoveredCount += teamMembersInfo.count
-
-                // Persist forward progress per page so an interruption
-                // doesn't force a full re-walk on the next run.
-                if let lastID = notifications.last?.id {
-                    journal[.lastTeamNotificationID] = lastID.uuidString
-                }
             }
-
-            WireLogger.sync.debug("team member discovery: stored \(discoveredCount) member(s)")
         } catch {
             WireLogger.sync.error("team member discovery failed: \(String(describing: error))")
         }
+    }
+
+    private func runDiscovery(selfTeamID: UUID) async throws {
+        let sinceNotificationID = journal[.lastTeamNotificationID].flatMap(UUID.init(uuidString:))
+        let pager = try api.getNotifications(sinceNotificationID: sinceNotificationID)
+
+        var discoveredCount = 0
+        for try await notifications in pager {
+            let teamMembersInfo = notifications.map { notification -> TeamMemberInfo in
+                switch notification.kind {
+                case let .memberJoin(event):
+                    TeamMemberInfo(
+                        id: event.userID,
+                        selfPermission: nil,
+                        creatorID: nil,
+                        creationDate: event.time
+                    )
+                }
+            }
+
+            guard !teamMembersInfo.isEmpty else { continue }
+
+            try await store.storeTeamMembers(
+                selfTeamID: selfTeamID,
+                teamMembersInfo: teamMembersInfo
+            )
+            discoveredCount += teamMembersInfo.count
+
+            // Persist forward progress per page so an interruption
+            // doesn't force a full re-walk on the next run.
+            if let lastID = notifications.last?.id {
+                journal[.lastTeamNotificationID] = lastID.uuidString
+            }
+        }
+
+        WireLogger.sync.debug("team member discovery: stored \(discoveredCount) member(s)")
     }
 
 }
