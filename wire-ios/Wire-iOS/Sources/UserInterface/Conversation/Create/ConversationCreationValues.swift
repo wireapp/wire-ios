@@ -73,7 +73,7 @@ final class ConversationCreationValues {
         name: String = "",
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
-        allowApps: Bool,
+        allowApps: Bool = true,
         enableReceipts: Bool = true,
         enableFileManagement: Bool = false,
         encryptionProtocol: MessageProtocol,
@@ -85,9 +85,9 @@ final class ConversationCreationValues {
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
-        self.allowApps = allowApps
-            // Safeguard: the caller is responsible for only passing `allowApps == true` when apps or legacy bots are actually available.
-            && (isAppsFeatureEnabled || areLegacyBotsAvailable)
+        self.allowApps = allowApps &&
+            (encryptionProtocol == .mls && isAppsFeatureEnabled || encryptionProtocol == .proteus &&
+                areLegacyBotsAvailable)
         self.enableReceipts = enableReceipts
         self.enableFileManagement = enableFileManagement
         self.encryptionProtocol = encryptionProtocol
