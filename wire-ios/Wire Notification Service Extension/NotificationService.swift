@@ -106,7 +106,7 @@ final class NotificationService: UNNotificationServiceExtension {
         }
 
         guard let cookiesKey = UserDefaults.existingCookiesKey else {
-            WireLogger.notifications.critical(
+            WireLogger.notifications.warn(
                 "no cookie encryption key, not loading service",
                 attributes: .safePublic
             )
