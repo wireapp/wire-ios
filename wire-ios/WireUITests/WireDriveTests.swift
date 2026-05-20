@@ -283,19 +283,19 @@ final class WireDriveTests: WireUITestCase {
         // GIVEN
         let groupName = "Team + Guest"
         let guest = try await createDriveEnabledConversationWithGuest(groupName: groupName)
-        
+
         // WHEN
         let conversationsPage = try app
             .loginUser(email: guest.email, password: guest.password)
             .acceptPopup()
-        
+
         // THEN
         conversationsPage.verifyDriveTabButtonIsHidden()
         let activeConversationPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
         XCTAssert(activeConversationPage.guestsArePresentBanner.exists)
         activeConversationPage.verifyCanAccessSharedDrive()
     }
-    
+
     @MainActor
     func testSearchingForFileByName_TC_8962() async throws {
 
