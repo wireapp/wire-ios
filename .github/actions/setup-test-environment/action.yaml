@@ -63,7 +63,7 @@ runs:
 
     - name: Restore Swift Package Dependencies Cache
       id: cache-swift-packages
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       with:
         path: ${{ env.PACKAGES_DIR }}
         key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-false
@@ -76,6 +76,14 @@ runs:
           -resolvePackageDependencies \
           -disableAutomaticPackageResolution \
           -clonedSourcePackagesDirPath "$PACKAGES_DIR"
+
+    # Save the cache eagerly so it lands even if a later step fails or the job is cancelled.
+    - name: Save Swift Package Dependencies Cache
+      if: steps.cache-swift-packages.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ env.PACKAGES_DIR }}
+        key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-false
 
     - name: Restore DerivedData Cache
       if: ${{ inputs.scheme != '' }}

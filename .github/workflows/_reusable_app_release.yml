@@ -157,15 +157,24 @@ jobs:
          # Restore Swift Package Dependencies Cache
       - name: Restore Swift Package Dependencies Cache
         id: cache-swift-packages
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           path: ${{ env.PACKAGES_DIR }}
           key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_COUNTLY }}-${{ env.ENABLE_DATADOG }}
 
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
+        if: steps.cache-swift-packages.outputs.cache-hit != 'true'
         run: |
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+
+        # Save the cache eagerly so it lands even if a later step fails or the job is cancelled.
+      - name: Save Swift Package Dependencies Cache
+        if: steps.cache-swift-packages.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_COUNTLY }}-${{ env.ENABLE_DATADOG }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
