@@ -37,10 +37,7 @@ public class CoreCryptoMocksEnvelope {
         self.coreCrypto = MockCoreCryptoProtocol()
         self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
 
-        coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: coreCrypto
-        )
+        coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: coreCrypto)
         coreCrypto.mockTransaction(context: coreCryptoContext)
     }
 

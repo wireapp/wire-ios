@@ -283,16 +283,49 @@ final class WireDriveTests: WireUITestCase {
         // GIVEN
         let groupName = "Team + Guest"
         let guest = try await createDriveEnabledConversationWithGuest(groupName: groupName)
-
+        
         // WHEN
         let conversationsPage = try app
             .loginUser(email: guest.email, password: guest.password)
             .acceptPopup()
-
+        
         // THEN
         conversationsPage.verifyDriveTabButtonIsHidden()
         let activeConversationPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
         XCTAssert(activeConversationPage.guestsArePresentBanner.exists)
         activeConversationPage.verifyCanAccessSharedDrive()
+    }
+    
+    @MainActor
+    func testSearchingForFileByName_TC_8962() async throws {
+
+        // GIVEN
+        let message = "Attachment with Text"
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        // WHEN
+        let sharedDrivePage = try uploadSketchAndOpenSharedDrive(message: message, for: teamOwner)
+
+        let sharedFileName = sharedDrivePage.fileNameText
+
+        let positiveSearchTerm = sharedFileName.prefix(3).lowercased()
+        let negativeSearchTerm = "my precious"
+
+        let searchTextField = sharedDrivePage.searchTextField
+        searchTextField.tap()
+
+        searchTextField.typeText(positiveSearchTerm)
+        try? await Task.sleep(for: .seconds(1))
+        let positiveSearchResults = sharedDrivePage.numberOfFilesInList
+
+        searchTextField.typeText(negativeSearchTerm)
+        try? await Task.sleep(for: .seconds(1))
+        let negativeSearchResults = sharedDrivePage.numberOfFilesInList
+
+        // THEN
+        XCTAssertEqual(positiveSearchResults, 1)
+        XCTAssertEqual(negativeSearchResults, 0)
     }
 }

@@ -83,8 +83,7 @@ final class ProteusClientSimulator {
             syncContext: syncMOC,
             coreCryptoKeyMigrationManager: mockKeyMigrationManager,
             allowCreation: true,
-            localDomain: owningDomain,
-            backgroundTaskManager: nil
+            localDomain: owningDomain
         )
 
         // Initialize CoreCrypto
