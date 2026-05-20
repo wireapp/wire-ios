@@ -1,0 +1,34 @@
+name: "Cache Swift Packages"
+description: "Restore the SPM cache, resolve packages on a miss, and save the cache eagerly so it lands even if a later step fails or the job is cancelled. Requires PACKAGES_DIR and REPO_ROOT to be set in env."
+
+inputs:
+  cache-key-suffix:
+    description: "Trailing component of the cache key — e.g. 'false' for test runs, or '${ENABLE_COUNTLY}-${ENABLE_DATADOG}' for release builds where conditional dependencies change the resolved graph."
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Restore Swift Package Dependencies Cache
+      id: cache-swift-packages
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ env.PACKAGES_DIR }}
+        key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ inputs.cache-key-suffix }}
+
+    - name: Resolve Swift Package Dependencies
+      if: steps.cache-swift-packages.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        cd "$REPO_ROOT" && xcodebuild \
+          -resolvePackageDependencies \
+          -disableAutomaticPackageResolution \
+          -clonedSourcePackagesDirPath "$PACKAGES_DIR"
+
+    - name: Save Swift Package Dependencies Cache
+      if: steps.cache-swift-packages.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ env.PACKAGES_DIR }}
+        key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ inputs.cache-key-suffix }}
