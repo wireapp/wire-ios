@@ -85,7 +85,9 @@ final class ConversationCreationValues {
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
-        self.allowApps = isAppsFeatureEnabled ? allowApps : false
+        self.allowApps = allowApps &&
+            (encryptionProtocol == .mls && isAppsFeatureEnabled || encryptionProtocol == .proteus &&
+                areLegacyBotsAvailable)
         self.enableReceipts = enableReceipts
         self.enableFileManagement = enableFileManagement
         self.encryptionProtocol = encryptionProtocol
