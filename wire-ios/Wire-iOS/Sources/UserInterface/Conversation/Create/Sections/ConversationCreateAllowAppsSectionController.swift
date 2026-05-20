@@ -24,6 +24,7 @@ final class ConversationCreateAllowAppsSectionController: ConversationCreateSect
     typealias ToggleCell = ConversationCreateAllowAppsCell
     typealias FeatureDisabledCell = ConversationCreateAppsDisabledBannerCell
 
+    var isTeamAdmin = false
     var wireAccentColor = WireAccentColor.default
     var toggleAction: ((Bool) -> Void)?
 
@@ -68,6 +69,7 @@ final class ConversationCreateAllowAppsSectionController: ConversationCreateSect
         default:
             let cell = collectionView.dequeueReusableCell(ofType: FeatureDisabledCell.self, for: indexPath)
             cell.wireAccentColor = wireAccentColor
+            cell.isTeamAdmin = isTeamAdmin
             return cell
         }
 
