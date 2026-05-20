@@ -19,7 +19,6 @@
 import WireTesting
 import XCTest
 
-@testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireSyncEngine
 
@@ -44,10 +43,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: mockCoreCrypto
-        )
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
 
         sut = CheckOneOnOneConversationIsReadyUseCase(
             context: syncMOC,

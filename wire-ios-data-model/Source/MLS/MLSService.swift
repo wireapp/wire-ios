@@ -68,7 +68,7 @@ public final class MLSService: MLSServiceInterface {
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
     public let localDomain: String
 
-    private var coreCrypto: SafeCoreCrypto {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }

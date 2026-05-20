@@ -41,10 +41,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: mockCoreCrypto
-        )
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
 
         sut = MLSActionExecutor(
