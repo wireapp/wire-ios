@@ -980,7 +980,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     private func createSystemMessage(
         messageType: ZMSystemMessageType,
-        sender: ZMUser,
+        sender: ZMUser?,
         users: Set<ZMUser>? = nil,
         addedUsers: Set<ZMUser> = Set(),
         clients: Set<UserClient>? = nil,
