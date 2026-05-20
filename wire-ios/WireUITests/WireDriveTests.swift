@@ -33,6 +33,28 @@ final class WireDriveTests: WireUITestCase {
         return teamOwner
     }
 
+    private func createDriveEnabledConversationWithGuest(groupName: String) async throws -> UserInfo {
+        let (owner, guest) = try await UserHelper.default.connectDriveEnabledTeamUserWithGuestUser()
+
+        let domain = BackendTarget.staging.domainInfo
+        let ownerQualifiedID = WireFoundation.QualifiedID(id: try XCTUnwrap(UUID(uuidString: owner.id)), domain: domain)
+        let guestQualifiedID = WireFoundation.QualifiedID(id: try XCTUnwrap(UUID(uuidString: guest.id)), domain: domain)
+
+        let participantsQualifiedIDs = [
+            ownerQualifiedID,
+            guestQualifiedID
+        ]
+
+        try await UserHelper.default.createGroupConversations(
+            qualifiedIds: participantsQualifiedIDs,
+            owner: owner,
+            groupName: groupName,
+            driveEnabled: true
+        )
+
+        return owner
+    }
+
     private func loginAndOpenConversation(for user: UserInfo) throws -> ActiveConversationPage {
         try app
             .loginUser(email: user.email, password: user.password)
@@ -254,5 +276,23 @@ final class WireDriveTests: WireUITestCase {
 
         // THEN
         XCTAssertTrue(sharedDrivePage.verifyFolderIsCreated(folderName: folderName))
+    }
+
+    @MainActor
+    func testGuestCanAccessSharedDriveOnly_TC_10875() async throws {
+        // GIVEN
+        let groupName = "Team + Guest"
+        let guest = try await createDriveEnabledConversationWithGuest(groupName: groupName)
+
+        // WHEN
+        let conversationsPage = try app
+            .loginUser(email: guest.email, password: guest.password)
+            .acceptPopup()
+
+        // THEN
+        conversationsPage.verifyDriveTabButtonIsHidden()
+        let activeConversationPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
+        XCTAssert(activeConversationPage.guestsArePresentBanner.exists)
+        activeConversationPage.verifyCanAccessSharedDrive()
     }
 }
