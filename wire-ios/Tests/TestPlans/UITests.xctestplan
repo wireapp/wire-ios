@@ -98,6 +98,7 @@
     "environmentVariableEntries" : [
 
     ],
+    "defaultTestExecutionTimeAllowance" : 300,
     "language" : "en",
     "region" : "US",
     "testTimeoutsEnabled" : true

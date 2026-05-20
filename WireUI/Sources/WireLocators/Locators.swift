@@ -159,6 +159,7 @@ public enum Locators {
         case sketchButton
         case canvas
         case canvasSendButton
+        case canvasConfirmButton
         case attachmentImagePreview
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
