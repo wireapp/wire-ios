@@ -23,14 +23,9 @@ import WireLogging
 /// within a background task (if a task manager is provided).
 public final class SafeCoreCrypto {
 
-    private let backgroundTaskManager: (any BackgroundTaskManager)?
     let coreCrypto: any CoreCryptoProtocol
 
-    public init(
-        backgroundTaskManager: (any BackgroundTaskManager)?,
-        coreCrypto: any CoreCryptoProtocol
-    ) {
-        self.backgroundTaskManager = backgroundTaskManager
+    public init(coreCrypto: any CoreCryptoProtocol) {
         self.coreCrypto = coreCrypto
     }
 
@@ -38,22 +33,9 @@ public final class SafeCoreCrypto {
         try await coreCrypto.registerEpochObserver(epochObserver)
     }
 
-    public func transaction<Result>(
-        block: @escaping (any CoreCryptoContextProtocol) async throws -> Result
-    ) async throws -> Result {
-        if let backgroundTaskManager {
-            try await transaction(
-                backgroundTaskManager: backgroundTaskManager,
-                block: block
-            )
-        } else {
-            try await coreCrypto.transaction(block)
-        }
-    }
-
-    /// Perform a transaction within the context of a background task to
-    /// ensure the transaction has additional time to complete while the
-    /// app transitions to a suspended state.
+    /// Perform a transaction within an expiring activity to ensure the
+    /// transaction has additional time to complete while the app transitions
+    /// to a suspended state.
     ///
     /// This is particularly important when running in the main app because
     /// if the app is suspended during a transaction, then core crypto will
@@ -62,30 +44,13 @@ public final class SafeCoreCrypto {
     /// own transactions. This can lead to the Notification Service Extension
     /// being blocked and not process any notifications until the main app
     /// is resumed and the transaction is completed and the file lock released.
-    private func transaction<Result>(
-        backgroundTaskManager: any BackgroundTaskManager,
-        block: @escaping (any CoreCryptoContextProtocol) async throws -> Result
+    ///
+    public func transaction<Result>(
+        block: @escaping @Sendable (any CoreCryptoContextProtocol) async throws -> Result
     ) async throws -> Result {
-        let transactionTask = Task {
+        try await withExpiringActivity(reason: "core crypto transaction") { [coreCrypto] in
             try await coreCrypto.transaction(block)
         }
-
-        let taskID = backgroundTaskManager.beginBackgroundTask(
-            withName: "core crypto transaction",
-            expirationHandler: {
-                WireLogger.coreCrypto.warn(
-                    "Background task expiring, cancelling core crypto transaction",
-                    attributes: .safePublic
-                )
-                transactionTask.cancel()
-            }
-        )
-
-        defer {
-            backgroundTaskManager.endBackgroundTask(taskID)
-        }
-
-        return try await transactionTask.value
     }
 
 }

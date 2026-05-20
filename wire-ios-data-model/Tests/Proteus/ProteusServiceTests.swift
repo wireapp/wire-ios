@@ -41,10 +41,7 @@ class ProteusServiceTests: XCTestCase {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: mockCoreCrypto
-        )
+        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: mockCoreCrypto)
         sut = ProteusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
