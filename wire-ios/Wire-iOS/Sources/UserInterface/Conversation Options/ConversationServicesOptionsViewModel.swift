@@ -22,6 +22,7 @@ import WireUtilities
 
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
 
+    var isAdmin: Bool { get }
     var messageProtocol: MessageProtocol { get }
 
     /// `true` if at least one bot is whitelisted for the team.
@@ -104,10 +105,13 @@ final class ConversationServicesOptionsViewModel {
         }
 
         if showAppsNotEnabledHint {
+            let body = configuration.isAdmin
+                ? L10n.Localizable.Conversation.Create.AppsDisabledAsAdmin.message
+                : L10n.Localizable.Conversation.Create.AppsDisabled.message
             state.rows = [
                 .titleAndBody(
                     title: L10n.Localizable.Conversation.Create.AppsDisabled.title,
-                    body: L10n.Localizable.Conversation.Create.AppsDisabled.message
+                    body: body
                 )
             ]
         } else {
