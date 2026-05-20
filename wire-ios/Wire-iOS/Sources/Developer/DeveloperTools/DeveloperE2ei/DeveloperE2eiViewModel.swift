@@ -56,22 +56,22 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
         let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
         let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
-        let oAuthFlow = E2EIOAuthFlow(
+        let enrollmentFlow = E2EIEnrollmentFlow(
             oauthUseCase: oauthUseCase,
             targetVC: { topmostViewController }
         )
 
         Task { @MainActor in
-            oAuthFlow.start()
-            defer { oAuthFlow.stop() }
+            enrollmentFlow.showActivityIndicator()
+            defer { enrollmentFlow.dismissActivityIndicator() }
             do {
                 let expirySec = UInt32(certificateExpirationTime)
                 guard let certificateDetails = try await e2eiCertificateUseCase?.invoke(
-                    authenticate: oAuthFlow.authenticate,
+                    authenticate: enrollmentFlow.authenticate,
                     expirySec: expirySec
                 ) else { return }
 
-                oAuthFlow.stop()
+                enrollmentFlow.dismissActivityIndicator()
 
                 let successVC = SuccessfulCertificateEnrollmentViewController()
                 successVC.certificateDetails = certificateDetails

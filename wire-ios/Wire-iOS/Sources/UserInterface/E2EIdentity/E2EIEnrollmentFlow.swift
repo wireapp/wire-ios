@@ -21,7 +21,7 @@ import WireReusableUIComponents
 import WireRequestStrategy
 
 @MainActor
-final class E2EIOAuthFlow {
+final class E2EIEnrollmentFlow {
 
     private let oauthUseCase: OAuthUseCaseInterface
     private let targetVC: () -> UIViewController
@@ -35,23 +35,7 @@ final class E2EIOAuthFlow {
         self.targetVC = targetVC
     }
 
-    func start() {
-        showActivityIndicator()
-    }
-
-    func stop() {
-        dismissActivityIndicator()
-    }
-
-    func authenticate(_ parameters: OAuthParameters) async throws -> OAuthResponse {
-        try await oauthUseCase.invoke(
-            parameters: parameters,
-            onWebViewPresenting: { [weak self] in self?.dismissActivityIndicator() },
-            onWebViewDismissed: { [weak self] in self?.showActivityIndicator() }
-        )
-    }
-
-    private func showActivityIndicator() {
+    func showActivityIndicator() {
         guard
             activityIndicator == nil,
             let window = targetVC().view.window
@@ -61,8 +45,16 @@ final class E2EIOAuthFlow {
         activityIndicator?.start()
     }
 
-    private func dismissActivityIndicator() {
+    func dismissActivityIndicator() {
         activityIndicator?.stop()
         activityIndicator = nil
+    }
+
+    func authenticate(_ parameters: OAuthParameters) async throws -> OAuthResponse {
+        try await oauthUseCase.invoke(
+            parameters: parameters,
+            onWebViewPresenting: { [weak self] in self?.dismissActivityIndicator() },
+            onWebViewDismissed: { [weak self] in self?.showActivityIndicator() }
+        )
     }
 }

@@ -52,7 +52,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var observer: NSObjectProtocol?
 
     private var alertForE2EIChange: UIAlertController?
-    private var oAuthFlow: E2EIOAuthFlow?
+    private var enrollmentFlow: E2EIEnrollmentFlow?
 
     private let durationFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -103,19 +103,19 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     func getCertificate() async {
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
-        let oAuthFlow = E2EIOAuthFlow(oauthUseCase: oauthUseCase, targetVC: targetVC)
-        self.oAuthFlow = oAuthFlow
         isEnrolling = true
-        oAuthFlow.start()
+        let enrollmentFlow = E2EIEnrollmentFlow(oauthUseCase: oauthUseCase, targetVC: targetVC)
+        self.enrollmentFlow = enrollmentFlow
+        enrollmentFlow.showActivityIndicator()
 
         do {
-            let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oAuthFlow.authenticate)
+            let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: enrollmentFlow.authenticate)
             stopCertificateEnrollmentSnoozerUseCase.invoke()
             confirmSuccessfulEnrollment(certificateDetails)
         } catch {
             isEnrolling = false
-            oAuthFlow.stop()
-            self.oAuthFlow = nil
+            enrollmentFlow.dismissActivityIndicator()
+            self.enrollmentFlow = nil
             let canCancel = gracePeriodEndDate == nil || gracePeriodEndDate?.isInThePast == false
             await showGetCertificateErrorAlert(canCancel: canCancel, retry: getCertificate)
         }
@@ -184,8 +184,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) {
         isEnrolling = false
-        oAuthFlow?.stop()
-        oAuthFlow = nil
+        enrollmentFlow?.dismissActivityIndicator()
+        enrollmentFlow = nil
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
         stopCertificateEnrollmentSnoozerUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController(isUpdateMode: isUpdateMode)

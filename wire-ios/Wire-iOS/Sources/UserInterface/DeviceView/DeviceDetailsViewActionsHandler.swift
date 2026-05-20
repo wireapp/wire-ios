@@ -140,16 +140,16 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             throw DeviceDetailsActionsError.failedAction(errorDescription)
         }
         let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
-        let oAuthFlow = E2EIOAuthFlow(
+        let enrollmentFlow = E2EIEnrollmentFlow(
             oauthUseCase: oauthUseCase,
             targetVC: { topmostViewController }
         )
 
-        oAuthFlow.start()
-        defer { oAuthFlow.stop() }
+        enrollmentFlow.showActivityIndicator()
+        defer { enrollmentFlow.dismissActivityIndicator() }
 
         return try await e2eiCertificateEnrollment.invoke(
-            authenticate: oAuthFlow.authenticate
+            authenticate: enrollmentFlow.authenticate
         )
     }
 }
