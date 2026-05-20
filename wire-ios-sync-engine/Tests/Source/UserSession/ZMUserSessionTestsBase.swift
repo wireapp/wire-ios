@@ -17,7 +17,6 @@
 //
 
 import Combine
-import WireDataModel
 import WireDataModelSupport
 import WireDomain
 import WireDomainSupport
@@ -156,7 +155,11 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+<<<<<<< HEAD
         mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: mockCoreCrypto)
+=======
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+>>>>>>> 106d6e8c9c (revert: fix: prevent main app from blocking notification extension (take 2) - WPB-23511 (#4735))
 
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = {}

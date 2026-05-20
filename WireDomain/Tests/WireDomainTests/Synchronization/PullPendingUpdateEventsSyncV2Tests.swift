@@ -18,7 +18,6 @@
 
 import Combine
 import GenericMessageProtocol
-import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import WireNetwork
@@ -67,7 +66,11 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         )
 
         // Setup mocks
+<<<<<<< HEAD
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: coreCrypto)
+=======
+        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+>>>>>>> 106d6e8c9c (revert: fix: prevent main app from blocking notification extension (take 2) - WPB-23511 (#4735))
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }

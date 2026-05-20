@@ -90,13 +90,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
             .init(title: "Initiate reset of affected MLS groups", action: initiateRepairRemovalKeys),
-            .init(title: "Trigger 15s CC transaction", action: { [weak self] in
-                self?.simulateLongCCTransaction(seconds: 15)
-            }),
-            .init(title: "Trigger 60s CC transaction", action: { [weak self] in
-                self?.simulateLongCCTransaction(seconds: 60)
-            }),
             .init(title: "Logout", action: logout)
+
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -483,20 +478,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     @MainActor
     private func showConversationInfo(results: [ConversationResult], term: String) {
         mlsGroupSearchItem = .result(results, term)
-    }
-
-    // MARK: - Simulate long CC transaction
-
-    // Use this to trigger a long CC transaction and seeing how the app
-    // and extensions behave when the app moves to the background.
-    private func simulateLongCCTransaction(seconds: Int) {
-        guard let userSession else {
-            return
-        }
-
-        Task {
-            try? await userSession._simulateLongCCTransaction(seconds: seconds)
-        }
     }
 
 }

@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-
 public class CoreCryptoMocksEnvelope {
 
     // MARK: - Public attributes
@@ -37,7 +35,11 @@ public class CoreCryptoMocksEnvelope {
         self.coreCrypto = MockCoreCryptoProtocol()
         self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
 
+<<<<<<< HEAD
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: coreCrypto)
+=======
+        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+>>>>>>> 106d6e8c9c (revert: fix: prevent main app from blocking notification extension (take 2) - WPB-23511 (#4735))
         coreCrypto.mockTransaction(context: coreCryptoContext)
     }
 

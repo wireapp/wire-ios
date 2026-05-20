@@ -18,7 +18,6 @@
 
 import Foundation
 import XCTest
-@testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
 @testable import WireSyncEngine
@@ -43,7 +42,11 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         let coreCrypto = MockCoreCryptoProtocol()
         coreCrypto.mockTransaction(context: mockCoreCryptoContext)
         let provider = MockCoreCryptoProviderProtocol()
+<<<<<<< HEAD
         provider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: coreCrypto)
+=======
+        provider.coreCrypto_MockValue = coreCrypto
+>>>>>>> 106d6e8c9c (revert: fix: prevent main app from blocking notification extension (take 2) - WPB-23511 (#4735))
 
         coreDataHelper = CoreDataStackHelper()
         mockCoreDataStack = try await coreDataHelper.createStack()

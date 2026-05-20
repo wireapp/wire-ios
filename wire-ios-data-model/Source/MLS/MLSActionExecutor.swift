@@ -142,7 +142,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
     private let featureRepository: LegacyFeatureRepositoryInterface
 
-    private var coreCrypto: SafeCoreCrypto {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }

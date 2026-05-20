@@ -19,7 +19,6 @@
 import Combine
 import CoreData
 import XCTest
-@testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -62,7 +61,11 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCrypto = MockCoreCryptoProtocol()
         coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
+<<<<<<< HEAD
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: coreCrypto)
+=======
+        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+>>>>>>> 106d6e8c9c (revert: fix: prevent main app from blocking notification extension (take 2) - WPB-23511 (#4735))
         journal = Journal(
             userID: UUID(),
             storage: UserDefaults.temporary()

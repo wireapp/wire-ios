@@ -19,7 +19,6 @@
 import WireTesting
 import XCTest
 
-@testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireSyncEngine
 
@@ -44,7 +43,11 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+<<<<<<< HEAD
         mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: mockCoreCrypto)
+=======
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+>>>>>>> 106d6e8c9c (revert: fix: prevent main app from blocking notification extension (take 2) - WPB-23511 (#4735))
 
         sut = CheckOneOnOneConversationIsReadyUseCase(
             context: syncMOC,

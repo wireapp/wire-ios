@@ -27,7 +27,7 @@ public protocol CoreCryptoProviderProtocol {
     /// Retrieve the shared core crypto instance or create one if one does not yet exist.
     ///
     /// This function is safe to be called concurrently from multiple Tasks
-    func coreCrypto() async throws -> SafeCoreCrypto
+    func coreCrypto() async throws -> CoreCryptoProtocol
 
     /// Initialise a new MLS client with basic credentials
     ///
@@ -96,10 +96,14 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.localDomain = localDomain
     }
 
-    public func coreCrypto() async throws -> SafeCoreCrypto {
+    public func coreCrypto() async throws -> CoreCryptoProtocol {
         let coreCrypto = try await getCoreCrypto()
         try await registerMlsTransportIfNecessary(with: coreCrypto)
+<<<<<<< HEAD
         return SafeCoreCrypto(coreCrypto: coreCrypto)
+=======
+        return coreCrypto
+>>>>>>> 106d6e8c9c (revert: fix: prevent main app from blocking notification extension (take 2) - WPB-23511 (#4735))
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
@@ -143,7 +147,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCrypto) async throws {
+    private func registerEpochObserverIfNecessary(with coreCrypto: CoreCryptoProtocol) async throws {
         guard let epochObserver, !hasRegisteredEpochObserver else {
             return
         }

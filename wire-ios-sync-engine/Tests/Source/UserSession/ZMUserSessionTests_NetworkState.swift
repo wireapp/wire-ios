@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireDataModelSupport
 import WireDomain
 import WireDomainSupport
@@ -42,7 +41,11 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         let coreCryptoProvider = MockCoreCryptoProviderProtocol()
+<<<<<<< HEAD
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: mockCoreCrypto)
+=======
+        coreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+>>>>>>> 106d6e8c9c (revert: fix: prevent main app from blocking notification extension (take 2) - WPB-23511 (#4735))
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         let coreDataStack = try await createCoreDataStack()
