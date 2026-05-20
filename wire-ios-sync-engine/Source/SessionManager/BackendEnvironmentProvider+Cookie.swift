@@ -16,15 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
+import WireNetwork
 import WireTransport
 
 extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = backendURL.host!
-        return ZMPersistentCookieStorage(
-            forServerName: backendURL,
+    func cookieStorage(for account: Account) -> LegacyCookieStorage {
+        let cookieStorage = CookieStorage(
+            cookieEncryptionKey: UserDefaults.cookiesKey()
+        )
+        return LegacyCookieStorage(
             userIdentifier: account.userIdentifier,
-            useCache: true
+            cookieStorage: cookieStorage
         )
     }
 
@@ -36,3 +39,5 @@ extension BackendEnvironmentProvider {
         return expirationDate.timeIntervalSinceNow > 0
     }
 }
+
+extension CookieStorage: WireTransport.CookieStorageProtocol {}

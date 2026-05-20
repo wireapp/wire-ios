@@ -208,6 +208,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var authenticationManager: AuthenticationManager {
         shared {
             AuthenticationManager(
+                userID: dependency.accountID,
                 clientID: clientID,
                 cookieStorage: dependency.cookieStorage,
                 networkService: restNetworkService,
@@ -258,7 +259,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 syncContext: coreDataStack.syncContext,
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
-                localDomain: localDomain
+                localDomain: localDomain,
+                backgroundTaskManager: nil
             )
         }
     }

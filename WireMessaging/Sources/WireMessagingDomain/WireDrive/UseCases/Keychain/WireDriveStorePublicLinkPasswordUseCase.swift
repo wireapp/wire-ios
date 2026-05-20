@@ -45,12 +45,12 @@ package struct WireDriveStorePublicLinkPasswordUseCase {
         ]
 
         do {
-            try await keychain.addItem(query: query)
+            try keychain.addItem(query: query)
         } catch let error as KeychainError {
             switch error {
             case let .errorStatus(oSstatus) where oSstatus == errSecDuplicateItem:
                 let updateQuery: Set<KeychainQueryItem> = [.data(data)]
-                try await keychain.updateItem(query: query, attributesToUpdate: updateQuery)
+                try keychain.updateItem(query: query, attributesToUpdate: updateQuery)
             default:
                 return WireLogger.wireDrive.error("Failed to store password in keychain: \(error)")
             }

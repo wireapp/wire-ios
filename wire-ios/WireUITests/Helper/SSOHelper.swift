@@ -29,6 +29,7 @@ final class SSOHelper {
     private var oktaApplicationId: String?
     private var oktaUserIds: [String] = []
     private var oktaClient: OktaClient?
+    private var scimAuthToken: String?
     private(set) var identityProviderId: String?
 
     init(
@@ -51,6 +52,28 @@ final class SSOHelper {
     func createSSOUser(owner: UserInfo, ssoUser: UserInfo) async throws -> UserInfo {
         _ = try await createSSOUserForOkta(user: owner)
         return try await addUserToOkta(user: ssoUser)
+    }
+
+    @discardableResult
+    func createSCIMManagedSSOUser(owner: UserInfo, ssoUser: UserInfo) async throws -> UserInfo {
+        _ = try await createSSOUserForOkta(user: owner)
+
+        ssoUser.password = "SSO\(ssoUser.password)"
+        ssoUser.isSSOUser = true
+
+        let oktaUserId = try await createOktaUser(
+            name: ssoUser.name,
+            email: ssoUser.email,
+            password: ssoUser.password
+        )
+
+        if oktaApplicationId != nil {
+            try await assignUserToApplication(userId: oktaUserId)
+        }
+
+        ssoUser.id = try await createSCIMUser(owner: owner, user: ssoUser)
+        userHelper.addUser(ssoUser)
+        return ssoUser
     }
 
     @discardableResult
@@ -360,6 +383,155 @@ final class SSOHelper {
         )
     }
 
+    @discardableResult
+    private func createSCIMUser(owner: UserInfo, user: UserInfo) async throws -> String {
+        let profile: [String: Any] = [
+            "externalId": user.email,
+            "userName": user.username,
+            "displayName": user.name
+        ]
+
+        let (data, response) = try await sendSCIMRequest(
+            path: ["Users"],
+            method: .post,
+            body: try JSONSerialization.data(withJSONObject: profile, options: [])
+        ) {
+            try await scimAuthorizationHeader(owner: owner)
+        }
+
+        try verifySCIMResponse(data: data, response: response, operation: "createSCIMUser")
+
+        let object = try JSONSerialization.jsonObject(with: data, options: [])
+        guard let json = object as? [String: Any],
+              let id = json["id"] as? String else {
+            throw RuntimeError("createSCIMUser: failed to parse user id")
+        }
+
+        return id
+    }
+
+    private func getSCIMProfile(userId: String) async throws -> [String: Any] {
+        let (data, response) = try await sendSCIMRequest(
+            path: ["Users", userId],
+            method: .get,
+            body: Data()
+        ) {
+            try scimAuthorizationHeader()
+        }
+
+        try verifySCIMResponse(data: data, response: response, operation: "getSCIMProfile")
+
+        let object = try JSONSerialization.jsonObject(with: data, options: [])
+        guard let profile = object as? [String: Any] else {
+            throw RuntimeError("getSCIMProfile: failed to parse profile")
+        }
+
+        return profile
+    }
+
+    private func updateSCIMProfile(userId: String, profile: [String: Any]) async throws {
+        let (data, response) = try await sendSCIMRequest(
+            path: ["Users", userId],
+            method: .put,
+            body: try JSONSerialization.data(withJSONObject: profile, options: [])
+        ) {
+            try scimAuthorizationHeader()
+        }
+
+        try verifySCIMResponse(data: data, response: response, operation: "updateSCIMProfile")
+    }
+
+    private func sendSCIMRequest(
+        path: [String],
+        method: HttpClient.Method,
+        body: Data,
+        authorizationHeader: () async throws -> String
+    ) async throws -> (Data, HTTPURLResponse) {
+        try await httpClient.send(
+            url: scimURL(path: path),
+            method: method,
+            body: body,
+            headers: [
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.contentType: "application/scim+json",
+                HttpClient.HeaderKey.authorization: try await authorizationHeader()
+            ]
+        )
+    }
+
+    private func createSCIMAuthToken(owner: UserInfo) async throws -> String {
+        let accessToken = try await userHelper.fetchAccessToken(email: owner.email, password: owner.password)
+        let body = try JSONSerialization.data(
+            withJSONObject: [
+                "description": "SCIM",
+                "password": owner.password
+            ],
+            options: []
+        )
+
+        let (data, response) = try await httpClient.send(
+            url: userHelper.backendURL
+                .appendingPathComponent("scim")
+                .appendingPathComponent("auth-tokens"),
+            method: .post,
+            body: body,
+            headers: [
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                HttpClient.HeaderKey.authorization: "Bearer \(accessToken.token)"
+            ]
+        )
+
+        guard response.statusCode == 200 else {
+            throw RuntimeError(
+                "createSCIMAuthToken failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        let object = try JSONSerialization.jsonObject(with: data, options: [])
+        guard let json = object as? [String: Any],
+              let token = json["token"] as? String else {
+            throw RuntimeError("createSCIMAuthToken: failed to parse token")
+        }
+
+        scimAuthToken = token
+        return token
+    }
+
+    private func scimAuthorizationHeader(owner: UserInfo) async throws -> String {
+        if let scimAuthToken {
+            return "Bearer \(scimAuthToken)"
+        }
+
+        return "Bearer \(try await createSCIMAuthToken(owner: owner))"
+    }
+
+    private func scimAuthorizationHeader() throws -> String {
+        guard let scimAuthToken else {
+            throw RuntimeError("SCIM auth token is missing")
+        }
+
+        return "Bearer \(scimAuthToken)"
+    }
+
+    private func verifySCIMResponse(data: Data, response: HTTPURLResponse, operation: String) throws {
+        guard response.statusCode < 400 else {
+            throw RuntimeError(
+                "\(operation) failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    private func scimURL(path: [String]) -> URL {
+        path.reduce(
+            userHelper.backendURL
+                .appendingPathComponent("scim")
+                .appendingPathComponent("v2")
+        ) { partialURL, component in
+            partialURL.appendingPathComponent(component)
+        }
+    }
+
     private func oktaURL(path: [String]) -> URL {
         path.reduce(
             oktaBaseURL
@@ -421,4 +593,6 @@ final class SSOHelper {
         let sanitizedBackend = backend.hasSuffix("/") ? String(backend.dropLast()) : backend
         return sanitizedBackend + "/sso/finalize-login"
     }
+
+    private static let scimWireUserSchema = "urn:ietf:params:scim:schemas:extension:wire:1.0:User"
 }

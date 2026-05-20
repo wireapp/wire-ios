@@ -236,7 +236,8 @@ public final class SharingSession {
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
-            localDomain: localDomain
+            localDomain: localDomain,
+            backgroundTaskManager: nil
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -292,9 +293,7 @@ public final class SharingSession {
         let networkServices = try await networkStack.networkServices
         let metadata = try await networkStack.resolvedBackendMetadata()
         let cookieStorage = CookieStorage(
-            userID: accountIdentifier,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         let isMLSEnabled = journal[.isBackendMLSEnabled]

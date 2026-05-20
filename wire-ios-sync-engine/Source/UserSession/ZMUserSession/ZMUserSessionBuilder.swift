@@ -102,9 +102,7 @@ struct ZMUserSessionBuilder {
 
         let keychain = WireFoundation.Keychain()
         let cookieStorage = CookieStorage(
-            userID: userId,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: keychain
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         let serverTrustValidator = ServerTrustValidator(

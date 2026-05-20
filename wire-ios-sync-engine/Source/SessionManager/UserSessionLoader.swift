@@ -32,6 +32,7 @@ final class UserSessionLoader {
 
     private let account: Account
     private let accountManager: AccountManager
+    private let cookieStorage: CookieStorage
     private let sharedContainerURL: URL
     private let defaultEnvironment: BackendEnvironment2
     private let legacyEnvironment: WireTransport.BackendEnvironment
@@ -56,6 +57,7 @@ final class UserSessionLoader {
     init(
         account: Account,
         accountManager: AccountManager,
+        cookieStorage: CookieStorage,
         sharedContainerURL: URL,
         defaultEnvironment: BackendEnvironment2,
         legacyEnvironment: WireTransport.BackendEnvironment,
@@ -73,6 +75,7 @@ final class UserSessionLoader {
     ) throws {
         self.account = account
         self.accountManager = accountManager
+        self.cookieStorage = cookieStorage
         self.sharedContainerURL = sharedContainerURL
         self.defaultEnvironment = defaultEnvironment
         self.legacyEnvironment = legacyEnvironment
@@ -185,18 +188,13 @@ final class UserSessionLoader {
         let networkServices = try await networkStack.networkServices
 
         // Store any new cookies.
-        let cookieStorage = CookieStorage(
-            userID: accountID,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
-        )
-
         if let cookies = newEnvironment?.cookies {
-            try await cookieStorage.storeCookies(cookies)
+            try cookieStorage.storeCookies(cookies, userID: accountID)
         }
 
         // Check if this backend supports MLS.
         if let isBackendMLSEnabled = try await isBackendMLSEnabled(
+            accountID: accountID,
             networkService: networkServices.rest,
             cookieStorage: cookieStorage,
             apiVersion: metadata.apiVersion
@@ -439,7 +437,8 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskManager: UIApplication.shared
         )
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -578,12 +577,14 @@ final class UserSessionLoader {
     }
 
     private func isBackendMLSEnabled(
+        accountID: UUID,
         networkService: NetworkService,
         cookieStorage: CookieStorage,
         apiVersion: WireNetwork.APIVersion
     ) async throws -> Bool? {
         do {
             let authenticationManager = AuthenticationManager(
+                userID: accountID,
                 clientID: nil,
                 cookieStorage: cookieStorage,
                 networkService: networkService,
