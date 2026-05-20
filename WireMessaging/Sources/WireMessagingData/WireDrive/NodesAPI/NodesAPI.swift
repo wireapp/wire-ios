@@ -73,6 +73,11 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
             : .success
     }
 
+    package func deleteFile(nodeID: UUID) async throws {
+        let node = try await getNode(nodeID: nodeID)
+        try await awsClient.delete(node: node.toDTO())
+    }
+
     package func uploadFile(
         path: URL,
         node: WireDriveNode,

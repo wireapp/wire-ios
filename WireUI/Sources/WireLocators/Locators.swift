@@ -158,6 +158,7 @@ public enum Locators {
         case sketchButton
         case canvas
         case canvasSendButton
+        case canvasConfirmButton
         case attachmentImagePreview
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
@@ -173,7 +174,6 @@ public enum Locators {
         case recordingTime
         case showOtherRowButton
         case pingButton
-
     }
 
     public enum BackupOrRestorePage: String {

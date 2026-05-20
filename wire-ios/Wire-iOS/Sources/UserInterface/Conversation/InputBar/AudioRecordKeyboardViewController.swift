@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 import WireSystem
 
@@ -247,8 +248,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         typealias AudioRecord = L10n.Accessibility.AudioRecord
 
         recordButton.accessibilityLabel = AudioRecord.StartButton.description
+        recordButton.accessibilityIdentifier = Locators.ActiveConversationPage.startRecording.rawValue
         stopRecordButton.accessibilityLabel = AudioRecord.StopButton.description
+        stopRecordButton.accessibilityIdentifier = Locators.ActiveConversationPage.stopRecording.rawValue
         confirmButton.accessibilityLabel = AudioRecord.SendButton.description
+        confirmButton.accessibilityIdentifier = Locators.ActiveConversationPage.sendAudio.rawValue
         redoButton.accessibilityLabel = AudioRecord.RedoButton.description
         cancelButton.accessibilityLabel = AudioRecord.CancelButton.description
     }
