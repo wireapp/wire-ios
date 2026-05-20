@@ -182,7 +182,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let (_, activeConversationPage) = try await openOneOnOneConversation()
 
         // WHEN
-         activeConversationPage.sendPing()
+        activeConversationPage.sendPing()
 
         // THEN
         try activeConversationPage.verifyPingSent()
