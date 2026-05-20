@@ -24,6 +24,7 @@ import WireRequestStrategy
 import WireSystem
 import WireUtilities
 
+// sourcery: AutoMockable
 protocol OAuthUseCaseInterface {
 
     func invoke(
