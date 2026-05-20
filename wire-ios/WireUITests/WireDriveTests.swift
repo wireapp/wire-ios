@@ -52,7 +52,7 @@ final class WireDriveTests: WireUITestCase {
             driveEnabled: true
         )
 
-        return owner
+        return guest
     }
 
     private func loginAndOpenConversation(for user: UserInfo) throws -> ActiveConversationPage {
