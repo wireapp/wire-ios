@@ -46,12 +46,11 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private var isUpdateMode: Bool = false
-    private var isEnrolling: Bool = false
+    private var isUpdateFlowActive: Bool = false
 
     private let targetVC: () -> UIViewController
     private var observer: NSObjectProtocol?
 
-    private var alertForE2EIChange: UIAlertController?
     private var enrollmentFlow: E2EIEnrollmentFlow?
 
     private let durationFormatter: DateComponentsFormatter = {
@@ -102,8 +101,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     @MainActor
     func getCertificate() async {
+        isUpdateFlowActive = true
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
-        isEnrolling = true
         let enrollmentFlow = E2EIEnrollmentFlow(oauthUseCase: oauthUseCase, targetVC: targetVC)
         self.enrollmentFlow = enrollmentFlow
         enrollmentFlow.showActivityIndicator()
@@ -113,7 +112,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             stopCertificateEnrollmentSnoozerUseCase.invoke()
             confirmSuccessfulEnrollment(certificateDetails)
         } catch {
-            isEnrolling = false
             enrollmentFlow.dismissActivityIndicator()
             self.enrollmentFlow = nil
             let canCancel = gracePeriodEndDate == nil || gracePeriodEndDate?.isInThePast == false
@@ -176,6 +174,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             }
 
         } cancelled: { [weak self] in
+            self?.isUpdateFlowActive = false
             self?.isUpdateMode = false
         }
         await presentScreen(viewController: alert)
@@ -183,7 +182,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     @MainActor
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) {
-        isEnrolling = false
+        isUpdateFlowActive = false
         enrollmentFlow?.dismissActivityIndicator()
         enrollmentFlow = nil
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
@@ -207,8 +206,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
         typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
 
-        guard alertForE2EIChange?.presentingViewController == nil, !isEnrolling else { return }
-        alertForE2EIChange = nil
+        guard !isUpdateFlowActive else { return }
+        isUpdateFlowActive = true
 
         let alert = UIAlertController.alertForE2EIChangeWithActions(
             title: E2EIUpdateStrings.title,
@@ -219,21 +218,18 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
             switch action {
             case .getCertificate:
-                self?.alertForE2EIChange = nil
-                self?.isEnrolling = true
                 Task { [weak self] in
                     await self?.getCertificate()
                 }
             case .remindLater:
-                self?.alertForE2EIChange = nil
+                self?.isUpdateFlowActive = false
                 Task { [weak self] in
                     await self?.snoozeReminder()
                 }
             case .learnMore:
-                self?.alertForE2EIChange = nil
+                self?.isUpdateFlowActive = false
             }
         }
-        alertForE2EIChange = alert
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
 
         presentScreen(viewController: alert)
