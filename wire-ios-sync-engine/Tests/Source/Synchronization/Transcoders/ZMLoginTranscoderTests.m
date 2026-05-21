@@ -284,7 +284,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 - (void)testThatItDoesNotGenerateALoginRequestWhenTheUserSessionIsLoggedIn
 {
     // given
-    [self.authenticationStatus setAuthenticationCookieData:[@"foo" dataUsingEncoding:NSUTF8StringEncoding]];
+    self.authenticationStatus.didReceiveAuthenticationCookies = YES;
 
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
@@ -455,7 +455,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
         [self.authenticationStatus continueAfterBackupImportStep];
-        [self.authenticationStatus setAuthenticationCookieData:[@"foo" dataUsingEncoding:NSUTF8StringEncoding]];
+        self.authenticationStatus.didReceiveAuthenticationCookies = YES;
         WaitForAllGroupsToBeEmpty(0.5);
     }];
 

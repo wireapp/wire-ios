@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public struct TeamNotificationDecodingProxyError: Error, CustomStringConvertible {
 
-public protocol CookieProvider {
-    var isAuthenticated: Bool { get }
-    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest)
-    func deleteKeychainItems()
-}
+    /// The type of the notification being decoded.
 
-extension ZMPersistentCookieStorage: CookieProvider {
+    public let notificationType: String
 
-    public var isAuthenticated: Bool {
-        hasAuthenticationCookie
+    /// The error that occurred when decoding.
+
+    public let decodingError: any Error
+
+    /// A textual representation of the error.
+
+    public var description: String {
+        "failed to decode notification '\(notificationType)': \(decodingError)"
     }
 
 }

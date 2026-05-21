@@ -18,7 +18,7 @@
 
 public import WireFoundation
 
-public actor KeychainProtocolMock: KeychainProtocol {
+public final class KeychainProtocolMock: KeychainProtocol, @unchecked Sendable {
 
     // MARK: - Init
 
@@ -33,12 +33,12 @@ public actor KeychainProtocolMock: KeychainProtocol {
         addItemQuery_MockError = error
     }
 
-    var addItemQuery_MockMethod: ((Set<KeychainQueryItem>) async throws -> Void)?
-    public func setAddItemQuery_MockMethod(_ method: @escaping (Set<KeychainQueryItem>) async throws -> Void) {
+    var addItemQuery_MockMethod: ((Set<KeychainQueryItem>) throws -> Void)?
+    public func setAddItemQuery_MockMethod(_ method: @escaping (Set<KeychainQueryItem>) throws -> Void) {
         addItemQuery_MockMethod = method
     }
 
-    public func addItem(query: Set<KeychainQueryItem>) async throws {
+    public func addItem(query: Set<KeychainQueryItem>) throws {
         addItemQuery_Invocations.append(query)
 
         if let error = addItemQuery_MockError {
@@ -49,7 +49,7 @@ public actor KeychainProtocolMock: KeychainProtocol {
             fatalError("no mock for `addItemQuery`")
         }
 
-        try await mock(query)
+        try mock(query)
     }
 
     // MARK: - updateItem
@@ -61,12 +61,12 @@ public actor KeychainProtocolMock: KeychainProtocol {
         updateItemQueryAttributesToUpdate_MockError = error
     }
 
-    var updateItemQueryAttributesToUpdate_MockMethod: ((Set<KeychainQueryItem>, Set<KeychainQueryItem>) async throws -> Void)?
-    public func setUpdateItemQueryAttributesToUpdate_MockMethod(_ method: @escaping (Set<KeychainQueryItem>, Set<KeychainQueryItem>) async throws -> Void) {
+    var updateItemQueryAttributesToUpdate_MockMethod: ((Set<KeychainQueryItem>, Set<KeychainQueryItem>) throws -> Void)?
+    public func setUpdateItemQueryAttributesToUpdate_MockMethod(_ method: @escaping (Set<KeychainQueryItem>, Set<KeychainQueryItem>) throws -> Void) {
         updateItemQueryAttributesToUpdate_MockMethod = method
     }
 
-    public func updateItem(query: Set<KeychainQueryItem>, attributesToUpdate: Set<KeychainQueryItem>) async throws {
+    public func updateItem(query: Set<KeychainQueryItem>, attributesToUpdate: Set<KeychainQueryItem>) throws {
         updateItemQueryAttributesToUpdate_Invocations.append((query: query, attributesToUpdate: attributesToUpdate))
 
         if let error = updateItemQueryAttributesToUpdate_MockError {
@@ -77,7 +77,7 @@ public actor KeychainProtocolMock: KeychainProtocol {
             fatalError("no mock for `updateItemQueryAttributesToUpdate`")
         }
 
-        try await mock(query, attributesToUpdate)
+        try mock(query, attributesToUpdate)
     }
 
     // MARK: - fetchItem<T>
@@ -89,19 +89,19 @@ public actor KeychainProtocolMock: KeychainProtocol {
         fetchItemQuery_MockError = error
     }
 
-    var fetchItemQuery_MockMethod: ((Set<KeychainQueryItem>) async throws -> (any Sendable)?)?
+    var fetchItemQuery_MockMethod: ((Set<KeychainQueryItem>) throws -> (any Sendable)?)?
     public func setFetchItemQuery_MockMethod(
-        _ method: @escaping (Set<KeychainQueryItem>) async throws -> (any Sendable)?
+        _ method: @escaping (Set<KeychainQueryItem>) throws -> (any Sendable)?
     ) {
         fetchItemQuery_MockMethod = method
     }
 
     var fetchItemQuery_MockValue: (any Sendable)??
-    public func setFetchItemQuery_MockValue(_ value: (any Sendable)?) async {
+    public func setFetchItemQuery_MockValue(_ value: (any Sendable)?) {
         fetchItemQuery_MockValue = value
     }
 
-    public func fetchItem<T: Sendable>(query: Set<KeychainQueryItem>) async throws -> T? {
+    public func fetchItem<T: Sendable>(query: Set<KeychainQueryItem>) throws -> T? {
         fetchItemQuery_Invocations.append(query)
 
         if let error = fetchItemQuery_MockError {
@@ -109,7 +109,7 @@ public actor KeychainProtocolMock: KeychainProtocol {
         }
 
         if let mock = fetchItemQuery_MockMethod {
-            return try await mock(query) as? T
+            return try mock(query) as? T
         } else if let mock = fetchItemQuery_MockValue {
             return mock as? T
         } else {
@@ -126,12 +126,12 @@ public actor KeychainProtocolMock: KeychainProtocol {
         deleteItemQuery_MockError = error
     }
 
-    var deleteItemQuery_MockMethod: ((Set<KeychainQueryItem>) async throws -> Void)?
-    public func setDeleteItemQuery_MockMethod(_ method: @escaping (Set<KeychainQueryItem>) async throws -> Void) {
+    var deleteItemQuery_MockMethod: ((Set<KeychainQueryItem>) throws -> Void)?
+    public func setDeleteItemQuery_MockMethod(_ method: @escaping (Set<KeychainQueryItem>) throws -> Void) {
         deleteItemQuery_MockMethod = method
     }
 
-    public func deleteItem(query: Set<KeychainQueryItem>) async throws {
+    public func deleteItem(query: Set<KeychainQueryItem>) throws {
         deleteItemQuery_Invocations.append(query)
 
         if let error = deleteItemQuery_MockError {
@@ -142,7 +142,7 @@ public actor KeychainProtocolMock: KeychainProtocol {
             fatalError("no mock for `deleteItemQuery`")
         }
 
-        try await mock(query)
+        try mock(query)
     }
 
 }

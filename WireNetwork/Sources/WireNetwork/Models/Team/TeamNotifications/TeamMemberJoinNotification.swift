@@ -16,14 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+public import Foundation
 
-// sourcery: AutoMockable
-protocol SettingsDebugReportViewModelProtocol {
+/// An event where a user joined the team.
 
-    /// Send a debug report via email or shows fallback alert if email is not available
-    func sendReport(sender: UIView)
+public struct TeamMemberJoinNotification: Equatable, Sendable {
 
-    /// Presents a list of conversation for the user to share the debug report with
-    func shareReport() async
+    /// The team id.
+
+    public let teamID: UUID
+
+    /// The id of the member who joined.
+
+    public let userID: UUID
+
+    /// The time at which the member joined.
+
+    public let time: Date
+
+    public init(
+        teamID: UUID,
+        userID: UUID,
+        time: Date
+    ) {
+        self.teamID = teamID
+        self.userID = userID
+        self.time = time
+    }
+
 }

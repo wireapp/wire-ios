@@ -16,18 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@interface ZMPersistentCookieStorage (Testing)
+enum TeamNotificationType: String {
 
-/**
- Disable/enable keychain access. This method should be called for testing only
+    case memberJoin = "team.member-join"
 
- @param disabled true if not persist to keychain
- */
-+ (void)setDoNotPersistToKeychain:(BOOL)disabled;
-
-/**
- This method should be called for testing only
- */
-- (BOOL)isCacheEmpty;
-
-@end
+}

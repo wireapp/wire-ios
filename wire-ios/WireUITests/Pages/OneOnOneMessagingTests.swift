@@ -174,4 +174,43 @@ final class OneOnOneMessagingTests: WireUITestCase {
             "Expected MP4 video attachment not found"
         )
     }
+
+    @MainActor
+    func testSendPingInOneOnOneConversation_TC_8824() async throws {
+
+        // GIVEN
+        let (_, activeConversationPage) = try await openOneOnOneConversation()
+
+        // WHEN
+        activeConversationPage.sendPing()
+
+        // THEN
+        try activeConversationPage.verifyPingSent()
+    }
+
+    @MainActor
+    func testReceivePingInOneOnOneConversation_TC_8831() async throws {
+
+        // GIVEN
+        let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
+
+        let (conversationId, domain) = try await UserHelper.default
+            .getConversationId(matching: .conversationType(.group))
+        let conversationDomain = try XCTUnwrap(domain, "domain is nil")
+
+        // WHEN
+        try await testServicesClient.sendPing(
+            user: teamOwner,
+            conversationId: conversationId,
+            domain: conversationDomain
+        )
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage
+                .receivedPing(for: teamOwner.name)
+                .waitForExistence(timeout: 2),
+            "Expected ping message from \(teamOwner.name) not found"
+        )
+    }
 }

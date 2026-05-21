@@ -278,8 +278,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
 
     // MARK: - resend tests
 
-    @MainActor @Test
-    func resend_whenSuccess() async {
+    @MainActor
+    @Test
+    func `resend verification code success`() async {
         // given
         requestLoginVerificationCodeUseCase.invokeEmail_MockMethod = { _ in }
 
@@ -289,10 +290,12 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         // then
         #expect(isResendingCalls == [true, false])
         #expect(requestLoginVerificationCodeUseCase.invokeEmail_Invocations == ["abc@example.com"])
+        #expect(sut.alert == nil)
     }
 
-    @MainActor @Test
-    func resend_withInvalidEmail() async {
+    @MainActor
+    @Test
+    func `resend verification code fails - invalid email`() async {
         // given
         requestLoginVerificationCodeUseCase
             .invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure.invalidEmail
@@ -305,8 +308,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         #expect(sut.alert == .invalidEmail)
     }
 
-    @MainActor @Test
-    func resend_whenSomeOtherError() async {
+    @MainActor
+    @Test
+    func `resend verification code fails - unknown error`() async {
         // given
         requestLoginVerificationCodeUseCase.invokeEmail_MockError = URLError(.badURL)
 
@@ -316,6 +320,28 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         // then
         #expect(isResendingCalls == [true, false])
         #expect(router.alert_Invocations == [.unknownError])
+    }
+
+    // MARK: - rate limit tests
+
+    @MainActor
+    @Test
+    func `resend verification code fails - too many requests`() async {
+        // given
+        requestLoginVerificationCodeUseCase
+            .invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure.tooManyRequests(
+                message: "Too many requests",
+                retryAfter: 60
+            )
+
+        // when
+        await sut.requestVerificationCode()
+
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(sut.isResendButtonDisabled == true)
+        #expect(sut.retryAfterSeconds == 60)
+        #expect(sut.countdownTimer != nil)
     }
 
 }

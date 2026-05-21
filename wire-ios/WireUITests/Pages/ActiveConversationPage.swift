@@ -46,7 +46,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.descendants(matching: .any).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+        app.descendants(matching: .textView).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
 
     var mentionButton: XCUIElement {
@@ -179,6 +179,14 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.recordingTime.rawValue]
     }
 
+    var showOtherRowButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.showOtherRowButton.rawValue]
+    }
+
+    var pingButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.pingButton.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -214,8 +222,8 @@ class ActiveConversationPage: PageModel {
     }
 
     func openConversationDetails() throws -> ConversationDetailsPage {
-        conversationTitleButton.tap()
-        conversationDetailsButton.tap()
+        conversationTitleButton.waitAndTap()
+        conversationDetailsButton.waitAndTap()
         return try ConversationDetailsPage()
     }
 
@@ -303,10 +311,14 @@ class ActiveConversationPage: PageModel {
 
     @discardableResult
     func recordAudioAndSend() throws -> ActiveConversationPage {
-        audioButton.tap()
+
+        audioButton.waitAndTap()
         app.dismissAllowIfPresent()
-        if audioButton.waitForExistence(timeout: 1), audioButton.isHittable {
-            audioButton.tap()
+
+        if !startRecording.waitForExistence(timeout: 1) || !startRecording.isHittable {
+            if audioButton.waitForExistence(timeout: 2), audioButton.isHittable {
+                audioButton.tap()
+            }
         }
         startRecording.waitAndTap()
         XCTAssertTrue(
@@ -318,7 +330,39 @@ class ActiveConversationPage: PageModel {
             stopRecording.tap()
         }
         heliumButton.tap()
-        sendAudioButton.tap()
+        sendAudioButton.waitAndTap()
+        return self
+    }
+
+    func receivedPing(for sender: String) -> XCUIElement {
+        let label = NSPredicate(
+            format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+            sender,
+            "pinged"
+        )
+        return app.otherElements.containing(label).firstMatch
+    }
+
+    @discardableResult
+    func sendPing() -> ActiveConversationPage {
+        showOtherRowButton.waitAndTap()
+        pingButton.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func verifyPingSent(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.otherElements.containing(
+                NSPredicate(format: "label CONTAINS %@", "You pinged")
+            ).firstMatch.waitForExistence(timeout: 2),
+            "Expected ping message not found",
+            file: file,
+            line: line
+        )
         return self
     }
 }

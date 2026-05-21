@@ -101,6 +101,6 @@ Code generation: Sourcery generates mocks (`AutoMockable`), SwiftGen generates s
 - Code review uses [conventional comments](https://conventionalcomments.org/)
 - Cherry-picked commits are marked with 🍒
 - All colors in UI code must come from `WireDesign.ColorTheme` or `WireDesign.BaseColorPalette`
-- New UI elements require `accessibilityLabel` / `accessibilityIdentifier` strings for VoiceOver
+- New UI elements require `accessibilityLabel` for VoiceOver / `accessibilityIdentifier` for UI tests
 - UI elements that display text must use the API that supports dynamic type / large fonts
 - Push notifications only work with the App Store-signed build (Apple security restriction)

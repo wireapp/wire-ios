@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-public extension ZMPersistentCookieStorage {
+class DeveloperToolsPage: PageModel {
 
-    /// Returns true if `self` has an authentication cookie that can be **decrypted**.
-    ///
-    /// - note: This should generally be used in favor of `ZMPersistentCookieStorage.authenticationCookieData` which
-    /// makes no guarantees about whether it's returned value can be decrypted.
-    @objc var hasAuthenticationCookie: Bool {
-        authenticationCookieExpirationDate != nil
+    override var pageMainElement: XCUIElement {
+        app.navigationBars["Developer tools"]
+    }
+
+    func hide() {
+        app.buttons["Close"].firstMatch.tap()
     }
 
 }

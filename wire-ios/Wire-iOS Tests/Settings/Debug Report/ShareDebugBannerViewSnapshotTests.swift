@@ -16,25 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
-final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
+final class ShareDebugBannerViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: SettingsDebugReportViewController!
+    private var sut: UIHostingController<AnyView>!
 
     // MARK: - setUp
 
     @MainActor
     override func setUp() async throws {
         snapshotHelper = SnapshotHelper()
-        accentColor = .blue
-        sut = SettingsDebugReportViewController(viewModel: MockSettingsDebugReportViewModelProtocol())
+        let view = ShareDebugBannerView(onTap: { /* not relevant for snapshot */ })
+            .padding()
+        sut = UIHostingController(rootView: AnyView(view))
+        sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 120)
     }
 
     // MARK: - tearDown
@@ -42,13 +45,18 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-
         super.tearDown()
     }
 
-    // MARK: - Snapshot Test
+    // MARK: - Tests
 
-    func testForInitState() {
+    func testLightMode() {
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut)
+    }
+
+    func testDarkMode() {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)

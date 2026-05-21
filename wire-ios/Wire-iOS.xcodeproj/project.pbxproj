@@ -527,6 +527,7 @@
 				AudioRecordViewControllerTests.swift,
 				Authentication/AuthenticationInterfaceBuilderTests.swift,
 				Authentication/AuthenticationStateControllerTests.swift,
+				Authentication/CookieStorageTests.swift,
 				Authentication/Helpers/RegistrationAnalyticsTrackerTests.swift,
 				Authentication/MockAuthenticationFeatureProvider.swift,
 				AvailabilityLabelTests.swift,
@@ -788,8 +789,6 @@
 				SecurityLevel/SecurityLevelViewTests.swift,
 				SelfProfileViewControllerTests.swift,
 				"Settings/Debug Report/LogFilesProviderTests.swift",
-				"Settings/Debug Report/SettingsDebugReportViewControllerSnapshotTests.swift",
-				"Settings/Debug Report/SettingsDebugReportViewModelTests.swift",
 				Settings/SettingsTests.swift,
 				"Settings+Reset.swift",
 				SettingsTableViewControllerSnapshotTests.swift,
@@ -861,6 +860,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				DeviceManagement/MockContextProvider.swift,
+				"Settings/Debug Report/CreateDebugReportUseCaseTests.swift",
 				Settings/SettingsPropertyTests.swift,
 			);
 			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
