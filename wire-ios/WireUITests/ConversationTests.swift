@@ -107,4 +107,5 @@ final class ConversationTests: WireUITestCase {
 
         XCTAssertFalse(activeConversationPage.userLeftSystemMessage.exists, "the system message has not been removed")
     }
+
 }

@@ -71,4 +71,5 @@ final class SettingsTests: WireUITestCase {
             .verifyMessageSent("Second link:")
             .verifyLinkPreviewCell()
     }
+
 }
