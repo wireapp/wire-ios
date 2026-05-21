@@ -156,8 +156,6 @@ jobs:
 
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
-        with:
-          cache-key-suffix: ${{ env.ENABLE_COUNTLY }}-${{ env.ENABLE_DATADOG }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
