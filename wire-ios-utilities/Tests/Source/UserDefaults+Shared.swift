@@ -16,14 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Testing
 
-extern NSString * const ZMCookieKeyKey;
+@testable import WireUtilities
 
-@interface NSUserDefaults (SharedUserDefaults)
+@Suite(.serialized)
+final class UserDefaults_SharedTests {
 
-+ (NSString *)groupName;
-+ (instancetype)sharedUserDefaults;
-+ (NSData *)cookiesKey;
+    deinit {
+        UserDefaults.shared().removeObject(forKey: ZMCookieKeyKey)
+    }
 
-@end
+    @Test()
+    func `existingCookiesKey defaults to nil`() {
+        // Given, When, Then
+        #expect(UserDefaults.existingCookiesKey == nil)
+    }
+
+    @Test()
+    func `existingCookiesKey returns cookiesKey if set`() throws {
+        // Given
+        let key = try #require(UserDefaults.cookiesKey()) // This call creates the key in UserDefaults
+
+        // When, Then
+        #expect(UserDefaults.existingCookiesKey == key)
+    }
+
+}
