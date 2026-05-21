@@ -30,7 +30,7 @@ final class SettingsTests: WireUITestCase {
         _ = try await loginToBackend(user: userA)
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
-            .enterGroupName("disabled preview test")
+            .enterGroupName("Test")
             .tapMemberCells(withLabelPrefixes: [userB.name])
             .doneSelectingMembers()
             .goBackToConversationPage()
