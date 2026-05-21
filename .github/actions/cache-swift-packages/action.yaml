@@ -26,8 +26,15 @@ runs:
           -disableAutomaticPackageResolution \
           -clonedSourcePackagesDirPath "$PACKAGES_DIR"
 
+    # Only save on real branch refs. PR refs (refs/pull/*) and merge-queue refs
+    # (refs/heads/gh-readonly-queue/*) are sandboxed scopes that no other run can
+    # read from, so saving there just consumes the 10 GB repo cache quota and can
+    # evict develop's cache (the one all PRs actually benefit from).
     - name: Save Swift Package Dependencies Cache
-      if: steps.cache-swift-packages.outputs.cache-hit != 'true'
+      if: >-
+        steps.cache-swift-packages.outputs.cache-hit != 'true' &&
+        startsWith(github.ref, 'refs/heads/') &&
+        !startsWith(github.ref, 'refs/heads/gh-readonly-queue/')
       uses: actions/cache/save@v4
       with:
         path: ${{ env.PACKAGES_DIR }}
