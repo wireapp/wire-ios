@@ -1205,8 +1205,18 @@ public final class SessionManager: NSObject, SessionManagerType {
             userSession: session
         )
 
-        let databaseEncryptionObserverToken = session.registerDatabaseLockedHandler { [weak self] _ in
-            guard session == self?.activeUserSession else { return }
+        let databaseEncryptionObserverToken = session.registerDatabaseLockedHandler { [weak self] isEncrypted in
+            WireLogger.sessionManager.info(
+                "DatabaseEncryptionLockNotification observed (databaseIsEncrypted=\(isEncrypted)) — about to forward lock change",
+                attributes: .safePublic
+            )
+            guard session == self?.activeUserSession else {
+                WireLogger.sessionManager.info(
+                    "DatabaseEncryptionLockNotification ignored: session is not the active session",
+                    attributes: .safePublic
+                )
+                return
+            }
             self?.delegate?.sessionManagerDidReportLockChange(forSession: session)
         }
 
@@ -1669,6 +1679,10 @@ extension SessionManager: AccountDeletedObserver {
 extension SessionManager {
     @objc
     private func applicationWillEnterForeground(_ note: Notification) {
+        WireLogger.sessionManager.info(
+            "applicationWillEnterForeground (activeUserSession=\(activeUserSession != nil ? "set" : "nil"))",
+            attributes: .safePublic
+        )
 
         BackgroundActivityFactory.shared.resume()
 
@@ -1682,22 +1696,39 @@ extension SessionManager {
             // If the user isn't logged in it's because they still need
             // to complete the login flow, which will be handle elsewhere.
             if session.isLoggedIn {
+                WireLogger.sessionManager.info(
+                    "applicationWillEnterForeground — forwarding sessionManagerDidReportLockChange",
+                    attributes: .safePublic
+                )
                 session.trackAppOpenAnalyticEventWhenAppBecomesActive()
                 delegate?.sessionManagerDidReportLockChange(forSession: session)
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()
                 }
+            } else {
+                WireLogger.sessionManager.info(
+                    "applicationWillEnterForeground — session not logged in, skipping lock-change forward",
+                    attributes: .safePublic
+                )
             }
         }
     }
 
     @objc
     func applicationWillResignActive(_ note: Notification) {
+        WireLogger.sessionManager.info(
+            "applicationWillResignActive — calling appLockController.beginTimer() (activeUserSession=\(activeUserSession != nil ? "set" : "nil"))",
+            attributes: .safePublic
+        )
         activeUserSession?.appLockController.beginTimer()
     }
 
     @objc
     private func applicationDidBecomeActive(_ note: Notification) {
+        WireLogger.sessionManager.info(
+            "applicationDidBecomeActive (activeUserSession=\(activeUserSession != nil ? "set" : "nil"))",
+            attributes: .safePublic
+        )
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()
     }

@@ -19,23 +19,34 @@
 import Foundation
 import LocalAuthentication
 import WireDataModel
+import WireLogging
 
 extension ZMUserSession: UserSession {
 
     // MARK: Properties
 
     public var lock: SessionLock? {
-        if isDatabaseLocked {
-            .database
-        } else if appLockController.isLocked {
-            .screen
-        } else {
-            nil
-        }
+        let dbLocked = isDatabaseLocked
+        let screenLocked = appLockController.isLocked
+        let result: SessionLock? = if dbLocked { .database }
+            else if screenLocked { .screen }
+            else { nil }
+        WireLogger.appLock.info(
+            "UserSession.lock evaluated: isDatabaseLocked=\(dbLocked), appLockController.isLocked=\(screenLocked), result=\(String(describing: result))",
+            attributes: .safePublic
+        )
+        return result
     }
 
     public var isLocked: Bool {
-        isDatabaseLocked || appLockController.isLocked
+        let dbLocked = isDatabaseLocked
+        let screenLocked = appLockController.isLocked
+        let result = dbLocked || screenLocked
+        WireLogger.appLock.info(
+            "UserSession.isLocked evaluated: isDatabaseLocked=\(dbLocked), appLockController.isLocked=\(screenLocked), result=\(result)",
+            attributes: .safePublic
+        )
+        return result
     }
 
     public var requiresScreenCurtain: Bool {
@@ -113,9 +124,17 @@ extension ZMUserSession: UserSession {
     }
 
     public func unlockDatabase() throws {
+        WireLogger.ear.info(
+            "ZMUserSession.unlockDatabase called — about to invoke earService.unlockDatabase()",
+            attributes: .safePublic
+        )
         try earService.unlockDatabase()
         syncAgent?.resume()
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
+        WireLogger.ear.info(
+            "ZMUserSession.unlockDatabase finished — DatabaseEncryptionLockNotification(false) posted",
+            attributes: .safePublic
+        )
     }
 
     public func deleteAppLockPasscode() throws {

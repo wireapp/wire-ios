@@ -117,9 +117,23 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// until the database is unlocked.
 
     func lockDatabase() {
-        guard managedObjectContext.encryptMessagesAtRest else { return }
+        guard managedObjectContext.encryptMessagesAtRest else {
+            WireLogger.ear.info(
+                "ZMUserSession.lockDatabase skipped: encryptMessagesAtRest = false",
+                attributes: .safePublic
+            )
+            return
+        }
 
+        WireLogger.ear.info(
+            "ZMUserSession.lockDatabase scheduled — waiting for all background activities to end",
+            attributes: .safePublic
+        )
         BackgroundActivityFactory.shared.notifyWhenAllBackgroundActivitiesEnd { [weak self] in
+            WireLogger.ear.info(
+                "background activities ended — invoking earService.lockDatabase()",
+                attributes: .safePublic
+            )
             self?.earService.lockDatabase()
 
             if let notificationContext = self?.notificationContext {

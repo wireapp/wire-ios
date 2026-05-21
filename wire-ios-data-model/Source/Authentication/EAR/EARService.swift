@@ -464,9 +464,16 @@ public class EARService: EARServiceInterface {
     /// until the database is unlocked again.
 
     public func lockDatabase() {
-        WireLogger.ear.info("locking database", attributes: .safePublic)
+        WireLogger.ear.info(
+            "locking database (isLocked before = \(isLocked))",
+            attributes: .safePublic
+        )
         earMessageEncryptionService.setDatabaseKey(nil)
         keyRepository.clearCache()
+        WireLogger.ear.info(
+            "locking database completed (isLocked after = \(isLocked))",
+            attributes: .safePublic
+        )
     }
 
     /// Unlock the database.
@@ -476,9 +483,16 @@ public class EARService: EARServiceInterface {
 
     public func unlockDatabase() throws {
         do {
-            WireLogger.ear.info("unlocking database", attributes: .safePublic)
+            WireLogger.ear.info(
+                "unlocking database (isLocked before = \(isLocked))",
+                attributes: .safePublic
+            )
             let databaseKey = try fetchDecryptedDatabaseKey()
             earMessageEncryptionService.setDatabaseKey(databaseKey)
+            WireLogger.ear.info(
+                "unlocking database completed (isLocked after = \(isLocked))",
+                attributes: .safePublic
+            )
         } catch {
             WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
             throw error

@@ -17,10 +17,15 @@
 //
 
 import Foundation
+import WireLogging
 
 extension SessionManager: UserSessionAppLockDelegate {
 
     func userSessionDidUnlock(_ session: ZMUserSession) {
+        WireLogger.appLock.info(
+            "userSessionDidUnlock — about to forward sessionManagerDidReportLockChange",
+            attributes: .safePublic
+        )
         performPostUnlockActionsIfPossible(for: session)
 
         DispatchQueue.main.async {

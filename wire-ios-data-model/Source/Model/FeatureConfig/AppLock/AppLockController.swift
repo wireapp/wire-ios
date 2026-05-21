@@ -58,17 +58,37 @@ public final class AppLockController: AppLockType {
     }
 
     public var isLocked: Bool {
-        guard isActive else { return false }
+        guard isActive else {
+            WireLogger.appLock.info(
+                "isLocked = false (isActive = false)",
+                attributes: .safePublic
+            )
+            return false
+        }
 
         switch state {
         case .unlocked:
+            WireLogger.appLock.info(
+                "isLocked = false (state = unlocked)",
+                attributes: .safePublic
+            )
             return false
 
         case .locked:
+            WireLogger.appLock.info(
+                "isLocked = true (state = locked)",
+                attributes: .safePublic
+            )
             return true
 
         case .needsChecking:
-            state = isTimeoutExceeded ? .locked : .unlocked
+            let timeSinceAuth = -lastCheckpoint.timeIntervalSinceNow
+            let exceeded = isTimeoutExceeded
+            state = exceeded ? .locked : .unlocked
+            WireLogger.appLock.info(
+                "isLocked = \(exceeded) (state was needsChecking, timeSinceAuth = \(timeSinceAuth)s, timeout = \(timeout)s, new state = \(state))",
+                attributes: .safePublic
+            )
             return state == .locked
         }
     }
@@ -145,9 +165,19 @@ public final class AppLockController: AppLockType {
     // MARK: - Methods
 
     public func beginTimer() {
-        guard state == .unlocked else { return }
+        guard state == .unlocked else {
+            WireLogger.appLock.info(
+                "beginTimer skipped (state = \(state), expected .unlocked)",
+                attributes: .safePublic
+            )
+            return
+        }
         state = .needsChecking
         lastCheckpoint = Date()
+        WireLogger.appLock.info(
+            "beginTimer set state = needsChecking, lastCheckpoint = now, timeout = \(timeout)s",
+            attributes: .safePublic
+        )
     }
 
     /// Open the app lock.
@@ -158,7 +188,14 @@ public final class AppLockController: AppLockType {
     /// - Throws: AppLockError
 
     public func open() throws {
-        guard !isLocked else { throw AppLockError.authenticationNeeded }
+        guard !isLocked else {
+            WireLogger.appLock.warn(
+                "open() refused: still locked",
+                attributes: .safePublic
+            )
+            throw AppLockError.authenticationNeeded
+        }
+        WireLogger.appLock.info("open() succeeded, notifying delegate", attributes: .safePublic)
         delegate?.appLockDidOpen(self)
     }
 
@@ -207,6 +244,10 @@ public final class AppLockController: AppLockType {
 
             if result == .granted {
                 self.state = .unlocked
+                WireLogger.appLock.info(
+                    "state flipped to unlocked after device auth",
+                    attributes: .safePublic
+                )
             }
 
             WireLogger.appLock.info("app lock auth concluded with (result: \(result), policy: \(policy))")
