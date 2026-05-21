@@ -57,10 +57,10 @@ final class WarningLabelView: UIView {
         stackView.addArrangedSubview(label)
         NSLayoutConstraint.activate(
             NSLayoutConstraint.forView(
-                    view: stackView,
-                    inContainer: self,
-                    withInsets: .zero
-                )
+                view: stackView,
+                inContainer: self,
+                withInsets: .zero
+            )
         )
     }
 
