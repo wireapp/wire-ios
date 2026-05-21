@@ -278,6 +278,7 @@ public enum Locators {
     public enum OptionsOnSettingsPage: String {
 
         case lockWithPasscode = "Lock With Passcode"
+        case createLinkPreviews = "Create Link Previews"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {

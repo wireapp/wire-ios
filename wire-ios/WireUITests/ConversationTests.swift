@@ -108,4 +108,40 @@ final class ConversationTests: WireUITestCase {
         XCTAssertFalse(activeConversationPage.userLeftSystemMessage.exists, "the system message has not been removed")
     }
 
+    @MainActor
+    func testCreateLinkPreviewsOption_TC_25795() async throws {
+        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
+        let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
+        let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
+        let message = "Here is a link: https://github.com/wireapp/wire-ios"
+
+        _ = try await loginToBackend(user: userA)
+            .openSettings()
+            .openOptionsMenu()
+            .disableCreateLinkPreviews()
+            .backToSettings()
+            .switchToConversationsTab()
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName("disabled preview test")
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .doneSelectingMembers()
+            .sendMessage(message)
+            .verifyMessageSent(message)
+            .goBackToConversationPage()
+            .openSettings()
+            .openOptionsMenu()
+            .enableCreateLinkPreviews()
+            .backToSettings()
+            .switchToConversationsTab()
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName("enabled preview test")
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .doneSelectingMembers()
+            .sendMessage(message)
+            .verifyMessageSent("Here is a link:")
+            .verifyLinkPreviewCell()
+    }
+
 }
