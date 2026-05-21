@@ -1640,6 +1640,9 @@ extension ZMUserSession {
             ),
             AppVersionMigration_4_18_0(
                 coreDataStack: coreDataStack
+            ),
+            AppVersionMigration_4_20_0(
+                coreDataStack: coreDataStack
             )
         ]
 
