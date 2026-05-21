@@ -226,8 +226,8 @@ class ActiveConversationPage: PageModel {
     }
 
     func openConversationDetails() throws -> ConversationDetailsPage {
-        conversationTitleButton.tap()
-        conversationDetailsButton.tap()
+        conversationTitleButton.waitAndTap()
+        conversationDetailsButton.waitAndTap()
         return try ConversationDetailsPage()
     }
 
@@ -321,7 +321,7 @@ class ActiveConversationPage: PageModel {
     @discardableResult
     func recordAudioAndSend() throws -> ActiveConversationPage {
 
-        audioButton.tap()
+        audioButton.waitAndTap()
         app.dismissAllowIfPresent()
 
         if !startRecording.waitForExistence(timeout: 1) || !startRecording.isHittable {
@@ -339,7 +339,7 @@ class ActiveConversationPage: PageModel {
             stopRecording.tap()
         }
         heliumButton.tap()
-        sendAudioButton.tap()
+        sendAudioButton.waitAndTap()
         return self
     }
 
@@ -354,7 +354,7 @@ class ActiveConversationPage: PageModel {
 
     @discardableResult
     func sendPing() -> ActiveConversationPage {
-        showOtherRowButton.tap()
+        showOtherRowButton.waitAndTap()
         pingButton.waitAndTap()
         return self
     }
