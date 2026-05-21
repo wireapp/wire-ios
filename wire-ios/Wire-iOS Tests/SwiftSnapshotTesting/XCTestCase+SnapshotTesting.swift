@@ -50,6 +50,18 @@ extension XCTestCase {
         for width in widths {
             widthConstraint.constant = width
 
+            // UILabel caches intrinsicContentSize based on the
+            // preferredMaxLayoutWidth observed during the previous layout pass.
+            // When the container is reused across widths, that cached value is
+            // stale and labels end up with a frame too short for their wrapped
+            // text — lines overlap. Invalidate recursively and run two layout
+            // passes so the new width propagates to preferredMaxLayoutWidth,
+            // then to the height.
+            invalidateIntrinsicContentSizes(in: container)
+            container.setNeedsLayout()
+            container.layoutIfNeeded()
+            container.layoutIfNeeded()
+
             configuration?(container)
 
             verifyWithWidthInName(
@@ -60,6 +72,13 @@ extension XCTestCase {
                 testName: testName,
                 line: line
             )
+        }
+    }
+
+    private func invalidateIntrinsicContentSizes(in view: UIView) {
+        view.invalidateIntrinsicContentSize()
+        for subview in view.subviews {
+            invalidateIntrinsicContentSizes(in: subview)
         }
     }
 
