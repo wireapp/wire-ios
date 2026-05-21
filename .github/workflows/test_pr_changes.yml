@@ -6,16 +6,53 @@ on:
   merge_group:
     types: [checks_requested]
 
+permissions:
+  contents: read # required for workflows that need repository checkout access
+  actions: read # required for reading workflow/action metadata
+
 # This is what will cancel the workflow
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  workflow-security:
+    name: Workflow security analysis
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read # required for actions/checkout to read workflow sources
+      actions: read # required for zizmor online audits in private repositories
+      security-events: write # required for SARIF upload
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor
+        id: zizmor
+        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
+        with:
+          inputs: .github/workflows/test_pr_changes.yml
+          version: 1.25.2
+          persona: pedantic
+          min-severity: informational
+          min-confidence: low
+          config: .github/zizmor.yml
+
+      - name: Fail if zizmor reported findings
+        env:
+          sarifFilePath: ${{ steps.zizmor.outputs.output-file }}
+        run: |
+          findingsCount="$(jq '[.runs[].results[]] | length' "$sarifFilePath")"
+          echo "zizmor findings: $findingsCount"
+          test "$findingsCount" -eq 0
+
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
     name: Detect PR Changes
+    needs: [workflow-security]
     if: ${{ github.event.pull_request.draft != true }}
     runs-on: ubuntu-24.04
     # Set job outputs to values from filter step
@@ -23,11 +60,12 @@ jobs:
       folders: ${{ steps.filter.outputs.changes }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         if: ${{ github.event_name == 'merge_group' }} # on PR, paths-filter can access list of changed files from event payload
         with:
+          persist-credentials: false
           lfs: 'false' # as long as we use lfs only for snapshotTesting it should not be useful here
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3
         id: filter
         with:
           filters: |
@@ -139,6 +177,10 @@ jobs:
     needs: [detect-changes, decide-strategy]
     name: PR Tests
     if: ${{ needs.decide-strategy.outputs.use_parallel != 'true' }}
+    permissions:
+      contents: read # required for called workflow repository checkout
+      pull-requests: write # required for called workflow test result publication
+      checks: write # required for called workflow check annotations
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
@@ -146,13 +188,21 @@ jobs:
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
       run_critical_flows: false # separate workflow
       notify: failure
-    secrets: inherit
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      WIRE_IOS_CI_WEBHOOK: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
   # ── Parallel ────────────────────────────────────────────────────────────────
   trigger_tests_pr_parallel:
     needs: [detect-changes, decide-strategy]
     name: PR Tests
     if: ${{ needs.decide-strategy.outputs.use_parallel == 'true' }}
+    permissions:
+      contents: read # required for called workflow repository checkout
+      pull-requests: write # required for called workflow test result publication
+      checks: write # required for called workflow check annotations
     uses: ./.github/workflows/_reusable_run_tests_parallel.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}

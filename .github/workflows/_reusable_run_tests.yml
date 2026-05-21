@@ -39,6 +39,10 @@ on:
         required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
+      WIRE_IOS_CI_WEBHOOK:
+        required: false
+      WIRE_IOS_NIGHTLY_WEBHOOK:
+        required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -461,4 +465,3 @@ jobs:
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
-
