@@ -176,7 +176,6 @@ final class GroupMessagingTests: WireUITestCase {
 
         // WHEN user B records and sends an audio message to the shared conversation via the UI
         let conversationAsB = try conversationsPageAsB.openConversation()
-        conversationAsB.showOtherRowButton.waitAndTap()
         try conversationAsB.recordAudioAndSend()
 
         // ...and user B logs out, leaving user A as the active session
