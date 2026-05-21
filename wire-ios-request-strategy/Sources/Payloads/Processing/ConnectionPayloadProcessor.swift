@@ -67,8 +67,17 @@ final class ConnectionPayloadProcessor {
         conversation.lastModifiedDate = payload.lastUpdate
         conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
+        // Don't clobber an existing MLS 1:1 link with the Proteus conversation reference
+        // carried by the connection payload. After MLS migration the user's 1:1 is the
+        // MLS conversation; the Proteus conversation is retained only for legacy reasons.
+        // Overwriting the link on every connection update (block/unblock in particular)
+        // causes the conversation list to flip between the two rows and can briefly hide
+        // the conversation entirely. [WPB-24403]
         // The conversation we link here may be wrong and may need to be unset using `ConnectionValidator`.
-        connection.to.oneOnOneConversation = conversation
+        let existing = connection.to.oneOnOneConversation
+        if existing?.messageProtocol != .mls || existing?.migratedToMLS != true {
+            connection.to.oneOnOneConversation = conversation
+        }
         connection.status = payload.status.internalStatus
         connection.lastUpdateDateInGMT = payload.lastUpdate
     }
