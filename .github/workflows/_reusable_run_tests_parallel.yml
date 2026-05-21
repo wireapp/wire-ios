@@ -79,7 +79,6 @@ jobs:
     needs: generate-framework-list
     if: ${{ needs.generate-framework-list.outputs.schemes != '[]' && needs.generate-framework-list.outputs.schemes != '' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
-    timeout-minutes: 20
     permissions:
       contents: read
       pull-requests: write
@@ -107,6 +106,7 @@ jobs:
         uses: ./.github/actions/setup-test-environment
 
       - name: "Test ${{ matrix.scheme }}"
+        timeout-minutes: 20
         run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
 
       - name: Check for duplicate symbol implementations
