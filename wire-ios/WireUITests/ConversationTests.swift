@@ -113,34 +113,50 @@ final class ConversationTests: WireUITestCase {
         let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
-        let message = "Here is a link: https://github.com/wireapp/wire-ios"
 
+        // Login & create conversation
         _ = try await loginToBackend(user: userA)
-            .openSettings()
-            .openOptionsMenu()
-            .disableCreateLinkPreviews()
-            .backToSettings()
-            .switchToConversationsTab()
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName("disabled preview test")
             .tapMemberCells(withLabelPrefixes: [userB.name])
             .doneSelectingMembers()
-            .sendMessage(message)
-            .verifyMessageSent(message)
             .goBackToConversationPage()
+
+        // Disable link previews
+        _ = try ConversationsPage()
+            .openSettings()
+            .openOptionsMenu()
+            .disableCreateLinkPreviews()
+            .backToSettings()
+            .switchToConversationsTab()
+
+        // Open conversation and send first link
+        _ = try ConversationsPage()
+            .openConversation()
+            .sendMessage("First link: https://github.com/wireapp/wire-ios")
+            .goBackToConversationPage()
+
+        // Enable link previews
+        _ = try ConversationsPage()
             .openSettings()
             .openOptionsMenu()
             .enableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-            .tapPlusButtonToCreateGroup()
-            .tapNewGroupButton()
-            .enterGroupName("enabled preview test")
-            .tapMemberCells(withLabelPrefixes: [userB.name])
-            .doneSelectingMembers()
-            .sendMessage(message)
-            .verifyMessageSent("Here is a link:")
+
+        // Open conversation and send first link
+        let conversationPage = try ConversationsPage()
+            .openConversation()
+            .sendMessage("Second link: https://github.com/wireapp/wire-android")
+
+        // Verify first message is the original message without preview
+        _ = conversationPage
+            .verifyMessageSent("First link: https://github.com/wireapp/wire-ios")
+
+        // Verify second message has link preview
+        _ = conversationPage
+            .verifyMessageSent("Second link:")
             .verifyLinkPreviewCell()
     }
 
