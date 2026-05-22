@@ -80,7 +80,7 @@ final class ConversationTests: WireUITestCase {
     }
 
     @MainActor
-    func testBlockAndUnblockUser_TC_TBD() async throws {
+    func testBlockAndUnblockUser_TC_8868() async throws {
         let userA = try await UserHelper.default.createPersonalUser()
         let userB = try await UserHelper.default.createPersonalUser()
         let messageFromUserB = "Hello from \(userB.name)"
