@@ -526,6 +526,13 @@ extension AppRootRouter {
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
+            // Hide the screen curtain proactively: by the time we reach this point
+            // the rootViewController is the unlocked content, so waiting for
+            // `UIApplication.didBecomeActiveNotification` (which can lag behind the
+            // EAR unlock by an entire sync cycle) just keeps the curtain visible
+            // longer than needed. `applicationWillResignActive` will re-show it if
+            // the app resigns active later.
+            screenCurtainWindow.isHidden = true
             // This is needed to display an ongoing call when coming from the background.
             authenticatedRouter?.updateActiveCallPresentationState()
             urlActionRouter.authenticatedRouter = authenticatedRouter
