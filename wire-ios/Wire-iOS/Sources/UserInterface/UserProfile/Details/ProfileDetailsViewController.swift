@@ -74,6 +74,12 @@ final class ProfileDetailsViewController: UIViewController {
         // the user's profile.
         profileHeaderOptions.insert(.hideAvailability)
 
+        // For an unanswered incoming connection request, hide the picture only if the requester is on the
+        // public "wire.com" domain.
+        if user.isPendingApprovalBySelfUser, user.domain == "wire.com" {
+            profileHeaderOptions.insert(.showInitialsOnly)
+        }
+
         self.user = user
         self.isAdminRole = conversation.map(user.isGroupAdmin) ?? false
         self.viewer = viewer
