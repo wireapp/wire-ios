@@ -47,7 +47,6 @@ static dispatch_queue_t isolationQueue(void)
 
 @interface ZMPersistentCookieStorage ()
 
-@property (nonatomic, readonly) NSString *serverName;
 @property (nonatomic, readonly) NSArray<NSHTTPCookie *> *authenticationCookies;
 @property (nonatomic, readonly) BOOL useCache;
 
@@ -84,7 +83,9 @@ static dispatch_queue_t isolationQueue(void)
 {
     self = [super init];
     if (self) {
-        _serverName = [serverName copy];
+        // As a specific fix for https://wearezeta.atlassian.net/browse/WPB-25092 on 4.16 we just ignore `serverName`
+        // and don't change the API of `ZMPersistentCookieStorage` to have minimum impact on the codebase.
+        // In recent code `ZMPersistentCookieStorage` no longer exists.
         _userIdentifier = [userIdentifier copy];
         _useCache = useCache;
     }
@@ -136,11 +137,7 @@ static dispatch_queue_t isolationQueue(void)
 
 - (NSString *)cookieKey
 {
-    if (nil != self.accountName) {
-        return [[self.accountName stringByAppendingString:@"_"] stringByAppendingString:self.serverName];
-    } else {
-        return self.serverName; // Legacy and migration support
-    }
+    return self.accountName;
 }
 
 - (NSString *)accountName
@@ -419,48 +416,5 @@ static dispatch_queue_t isolationQueue(void)
         [request addValue:value forHTTPHeaderField:field];
     }];
 }
-
-@end
-
-#pragma mark – Legacy Storage Migration
-
-
-@interface ZMPersistentCookieStorageMigrator ()
-@property (nonatomic, readonly) NSUUID *userIdentifier;
-@property (nonatomic, readonly) NSString *serverName;
-@end
-
-@implementation ZMPersistentCookieStorageMigrator
-
-+ (instancetype)migratorWithUserIdentifier:(NSUUID *)userIdentifier serverName:(NSString *)serverName
-{
-    return [[self alloc] initWithUserIdentifier:userIdentifier serverName:serverName];
-}
-
-- (instancetype)initWithUserIdentifier:(NSUUID *)userIdentifier serverName:(NSString *)serverName
-{
-    self = [super init];
-    if (self) {
-        _userIdentifier = userIdentifier;
-        _serverName = serverName;
-    }
-    return self;
-}
-
-- (ZMPersistentCookieStorage *)createStoreMigratingLegacyStoreIfNeeded
-{
-    ZMPersistentCookieStorage *oldStorage = [ZMPersistentCookieStorage storageForServerName:self.serverName userIdentifier:(NSUUID *_Nonnull)nil useCache:YES];
-    ZMPersistentCookieStorage *newStorage = [ZMPersistentCookieStorage storageForServerName:self.serverName userIdentifier:self.userIdentifier useCache:YES];
-    NSData *cookieData = oldStorage.authenticationCookieData;
-
-    if (nil != cookieData) {
-        // Migrate cookie data to the new storage
-        newStorage.authenticationCookieData = oldStorage.authenticationCookieData;
-        [oldStorage deleteKeychainItems];
-    }
-
-    return newStorage;
-}
-
 
 @end
