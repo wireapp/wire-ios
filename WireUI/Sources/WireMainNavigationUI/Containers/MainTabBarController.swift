@@ -358,7 +358,7 @@ public final class MainTabBarController<
             image: .init(systemName: "rectangle.stack"),
             selectedImage: .init(systemName: "rectangle.stack.fill")
         )
-        tabBarItem.accessibilityIdentifier = "bottomBarFilesButton"
+        tabBarItem.accessibilityIdentifier = Locators.ConversationsPage.bottomBarDriveButton.rawValue
         tabBarItem.accessibilityLabel = String(
             localized: "tabBar.files.description",
             table: "Accessibility",
