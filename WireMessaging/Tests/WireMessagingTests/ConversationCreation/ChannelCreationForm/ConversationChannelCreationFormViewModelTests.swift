@@ -211,6 +211,7 @@ private extension ConversationChannelCreationFormViewModel {
             channelName: channelName,
             channelInvitePolicy: .admins,
             channelHistoryOption: .off,
+            isTeamAdmin: false,
             areAppsSupported: true,
             appsAllowed: true,
             guestsAllowed: true,
