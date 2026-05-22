@@ -60,6 +60,7 @@ public enum Locators {
 
         case bottomBarRecentListButton
         case bottomBarSettingsButton
+        case bottomBarDriveButton
         case createGroupOrSearchButton
         case conversationCell
         case blockOptionOnContextMenu
@@ -175,6 +176,8 @@ public enum Locators {
         case recordingTime
         case showOtherRowButton
         case pingButton
+        case guestsArePresent = "Guests are present"
+
     }
 
     public enum BackupOrRestorePage: String {

@@ -163,6 +163,13 @@ class ConversationsPage: PageModel {
         return try ConnectionRequestsPage()
     }
 
+    func verifyDriveTabButtonIsHidden() {
+        XCTAssertFalse(
+            app.tabBars.buttons[Locators.ConversationsPage.bottomBarDriveButton.rawValue]
+                .waitForExistence(timeout: 2)
+        )
+    }
+
     @discardableResult
     func openConversation() throws -> ActiveConversationPage {
         try letTheSyncFinish()
@@ -174,6 +181,37 @@ class ConversationsPage: PageModel {
         while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
             if conversationCell.isHittable {
                 conversationCell.tap()
+                break
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        }
+        return try ActiveConversationPage()
+    }
+
+    @discardableResult
+    func openConversationWithGuest(groupName: String) throws -> ActiveConversationPage {
+        try letTheSyncFinish()
+        let groupConversationWithGuestCell = app.buttons
+            .matching(
+                NSPredicate(
+                    format: "identifier == %@ AND label CONTAINS[c] %@",
+                    Locators.ConversationsPage.conversationCell.rawValue,
+                    groupName
+                )
+            )
+            .firstMatch
+
+        XCTAssertTrue(
+            groupConversationWithGuestCell.waitForExistence(timeout: 5),
+            "Group conversation with guest cell did not appear"
+        )
+
+        let maxDuration: TimeInterval = 10
+        let start = Date()
+
+        while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
+            if groupConversationWithGuestCell.isHittable {
+                groupConversationWithGuestCell.tap()
                 break
             }
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
