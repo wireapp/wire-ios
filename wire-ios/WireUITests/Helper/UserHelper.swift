@@ -592,6 +592,10 @@ final class UserHelper {
             throw RuntimeError("registerTeam: teamOwner.teamID is nil")
         }
 
+        if driveEnabled {
+            try await unlockAndEnableDriveFeature(teamID: teamID)
+        }
+
         let ownerAccessToken = try await fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
@@ -617,9 +621,6 @@ final class UserHelper {
         if let conversation {
             switch conversation {
             case let .group(name):
-                if driveEnabled {
-                    try await unlockAndEnableDriveFeature(teamID: teamID)
-                }
                 try await createGroupConversations(
                     qualifiedIds: qualifiedIDs,
                     owner: teamOwner,
@@ -636,9 +637,6 @@ final class UserHelper {
                 let basicAuth = basicAuth()
                 try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
                 try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
-                if driveEnabled {
-                    try await unlockAndEnableDriveFeature(teamID: teamID)
-                }
 
                 try await createChannelConversations(
                     qualifiedIds: qualifiedIDs,
@@ -718,6 +716,40 @@ final class UserHelper {
         let basicAuth = basicAuth()
         try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
         try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+    }
+
+    func connectDriveEnabledTeamUserWithGuestUser() async throws -> (userA: UserInfo, userB: UserInfo) {
+        let (userA, _, _, _) = try await registerTeam(withMemberCount: 1, driveEnabled: true)
+        let (userB, _, _, _) = try await registerTeam(withMemberCount: 1)
+
+        // User A
+        let (_, accessTokenUserA) = try await authenticationAPI.login(
+            email: userA.email,
+            password: userA.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessTokenUserA
+        let selfUserA = try await selfUserAPI.getSelfUser()
+        userA.id = selfUserA.id.uuidString
+
+        // User B
+        let (_, accessTokenUserB) = try await authenticationAPI.login(
+            email: userB.email,
+            password: userB.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessTokenUserB
+        let selfUserB = try await selfUserAPI.getSelfUser()
+        userB.id = selfUserB.id.uuidString
+
+        // Connects with guest user
+        let domain = BackendTarget.staging.domainInfo
+        try await sendConnectionRequestToUser(domain: domain, userId: userA.id)
+        try await acceptConnectionRequestFromUser(domain: domain, user1: userA, userId: userB.id)
+
+        return (userA, userB)
     }
 }
 
