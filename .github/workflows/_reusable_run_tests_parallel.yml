@@ -106,7 +106,7 @@ jobs:
         uses: ./.github/actions/setup-test-environment
 
       - name: "Test ${{ matrix.scheme }}"
-        timeout-minutes: 20
+        timeout-minutes: 15
         run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
 
       - name: Check for duplicate symbol implementations
