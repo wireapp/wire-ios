@@ -425,6 +425,18 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         userSession: UserSession,
         completion: @escaping () -> Void
     ) {
+        // Re-use the existing router when transitioning back from `.locked` (EAR unlock),
+        // so the current zClientViewController and its navigation focus are preserved.
+        if let existingRouter = authenticatedRouter {
+            let existingZClient = existingRouter.zClientViewController
+            if mainWindow.rootViewController === existingZClient {
+                completion()
+            } else {
+                replaceRootViewController(by: existingZClient, completion: completion)
+            }
+            return
+        }
+
         guard let authenticatedRouter = buildAuthenticatedRouter(
             account: userSession.contextProvider.account,
             userSession: userSession,
@@ -532,7 +544,9 @@ extension AppRootRouter {
 
     private func resetAuthenticatedRouterIfNeeded(for appState: AppState) {
         switch appState {
-        case .authenticated: break
+        // Keep the router alive across `.locked` so unlocking restores the
+        // existing zClientViewController instead of rebuilding the whole UI.
+        case .authenticated, .locked: break
         default:
             authenticatedRouter = nil
         }
