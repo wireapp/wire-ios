@@ -81,7 +81,7 @@ fi
 echo ""
 
 # Workaround for carthage "The file couldn't be saved." error
-rm -rf ${TMPDIR}/TemporaryItems/*carthage*
+# rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
 echo "ℹ️ Carthage bootstrap. This might take a while..."
 if [[ -n "${CI-}" ]]; then
