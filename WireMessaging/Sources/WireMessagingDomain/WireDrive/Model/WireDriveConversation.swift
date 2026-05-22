@@ -111,8 +111,16 @@ public extension WireDriveConversation {
 public extension Collection<WireDriveConversation> {
     static func mocked() -> [Element] {
         [
-            .init(id: "1234", name: "Conversation 1", participants: Set([WireDriveConversation.Participant].mocked())),
-            .init(id: "5678", name: "Conversation 2", participants: Set([WireDriveConversation.Participant].mocked())),
+            .init(
+                id: "1234",
+                name: "Conversation 1",
+                participants: Set([WireDriveConversation.Participant].mocked())
+            ),
+            .init(
+                id: "5678",
+                name: "Conversation 2",
+                participants: Set([WireDriveConversation.Participant].mocked())
+            ),
             .init(
                 id: "5678",
                 name: "Conversation 3",
@@ -140,7 +148,13 @@ public extension Collection<WireDriveConversation.Participant> {
                 isSelfUser: false,
                 id: UUID().uuidString
             ),
-            .init(handle: "tucosalamanca", displayName: "Tuco", role: .editor, isSelfUser: false, id: UUID().uuidString)
+            .init(
+                handle: "tucosalamanca",
+                displayName: "Tuco",
+                role: .editor,
+                isSelfUser: false,
+                id: UUID().uuidString
+            )
         ]
     }
 }
