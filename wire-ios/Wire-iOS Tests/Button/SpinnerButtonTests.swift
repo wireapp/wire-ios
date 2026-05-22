@@ -51,6 +51,7 @@ final class SpinnerButtonTests: XCTestCase {
 
         // WHEN
         sut.isLoading = true
+        freezeSpinnerAnimation()
 
         // THEN
         verifyInWidths(
@@ -81,6 +82,7 @@ final class SpinnerButtonTests: XCTestCase {
         ColorScheme.default.variant = .dark
         createSut()
         sut.isLoading = true
+        freezeSpinnerAnimation()
 
         verifyInAllPhoneWidths(
             matching: sut,
@@ -91,10 +93,18 @@ final class SpinnerButtonTests: XCTestCase {
         ColorScheme.default.variant = .light
         createSut()
         sut.isLoading = true
+        freezeSpinnerAnimation()
         verifyInAllPhoneWidths(
             matching: sut,
             snapshotBackgroundColor: UIColor.from(scheme: .contentBackground),
             named: "light"
         )
+    }
+
+    // Freeze CABasicAnimation rotation phase so the spinner renders at a
+    // deterministic angle in snapshot tests instead of one driven by wall clock.
+    private func freezeSpinnerAnimation() {
+        sut.layer.speed = 0
+        sut.layer.beginTime = 0
     }
 }
