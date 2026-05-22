@@ -56,7 +56,7 @@ class IncrementalListStateController<Item: Identifiable & Hashable & Sendable>: 
     @Published var state: State = .pending
     @Published var hasMore = true
 
-    private var loadTask: LoadTask?
+    @Published private var loadTask: LoadTask?
 
     var onFetch: ((Int) async throws -> ItemsData)?
     var onError: ((any Error) -> Void)?
