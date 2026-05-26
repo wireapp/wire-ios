@@ -626,7 +626,46 @@ final class TeamsAPITests: XCTestCase {
 
     // MARK: - V15
 
-    // TODO: getApps tests
+    func testGetApps_givenV15AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
+
+        for apiVersion in APIVersion.v15.andNextVersions {
+
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetAppsSuccessResponseV15")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let apps = try await sut.getApps(for: Scaffolding.teamID)
+
+                // Then
+                fatalError("TODO") // TODO: finish
+//                let expectedApps = [
+//                    App(
+//                        name: "WPB-18618",
+//                        category: "developer",
+//                        description: "WPB-18618",
+//                        accentID: 0,
+//                        assets: [
+//                            UserAsset(
+//                                key: "lorem-ipsum",
+//                                size: .complete,
+//                                type: .image
+//                            ),
+//                            UserAsset(
+//                                key: "dolor",
+//                                size: .preview,
+//                                type: .image
+//                            )
+//                        ]
+//                    )
+//                ]
+//                XCTAssertEqual(apps, expectedApps, "failed for apiVersion \(apiVersion)")
+            }
+        }
+
+    }
 
     func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
 
