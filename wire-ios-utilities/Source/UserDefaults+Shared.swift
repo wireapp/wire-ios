@@ -17,17 +17,15 @@
 //
 
 import Foundation
-import UniformTypeIdentifiers
-import WireMessagingDomain
 
-final class WireDriveUploadDraftUseCaseProtocolMock: WireDriveUploadDraftUseCaseProtocol {
-    func invoke(fileURL: URL, localIdentifier: String?) async throws {
-        fatalError("Implement")
+public extension UserDefaults {
+
+    /// Returns the `UserDefaults.cookiesKey()` if created and accessible. Unlike `UserDefaults.cookiesKey()`, this
+    /// property will not attempt to create the key.
+    static var existingCookiesKey: Data? {
+        guard let defaults = UserDefaults.shared() else { return nil }
+
+        return defaults.data(forKey: ZMCookieKeyKey)
     }
 
-    func invoke(data: Data, type: UTType, localIdentifier: String?, existingNodeID: UUID?) async throws {
-        fatalError("Implement")
-    }
-
-    let charactersToReplace: [Character] = ["\\", "\""]
 }

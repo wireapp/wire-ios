@@ -60,6 +60,7 @@ public enum Locators {
 
         case bottomBarRecentListButton
         case bottomBarSettingsButton
+        case bottomBarDriveButton
         case createGroupOrSearchButton
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
@@ -158,6 +159,7 @@ public enum Locators {
         case sketchButton
         case canvas
         case canvasSendButton
+        case canvasConfirmButton
         case attachmentImagePreview
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
@@ -173,6 +175,7 @@ public enum Locators {
         case recordingTime
         case showOtherRowButton
         case pingButton
+        case guestsArePresent = "Guests are present"
 
     }
 

@@ -110,7 +110,7 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var appsSection: ConversationCreateAllowAppsSectionController = {
         let section = ConversationCreateAllowAppsSectionController(values: values)
-
+        section.isTeamAdmin = userSession.selfUser.canManageTeam
         section.wireAccentColor = WireAccentColor(rawValue: userSession.selfUser.accentColorValue) ?? .default
         section.toggleAction = { [unowned self] allowApps in
             values.allowApps = allowApps

@@ -16,18 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UniformTypeIdentifiers
-import WireMessagingDomain
+import Testing
 
-final class WireDriveUploadDraftUseCaseProtocolMock: WireDriveUploadDraftUseCaseProtocol {
-    func invoke(fileURL: URL, localIdentifier: String?) async throws {
-        fatalError("Implement")
+@testable import WireUtilities
+
+@Suite(.serialized)
+final class UserDefaults_SharedTests {
+
+    deinit {
+        UserDefaults.shared().removeObject(forKey: ZMCookieKeyKey)
     }
 
-    func invoke(data: Data, type: UTType, localIdentifier: String?, existingNodeID: UUID?) async throws {
-        fatalError("Implement")
+    @Test()
+    func `existingCookiesKey defaults to nil`() {
+        // Given, When, Then
+        #expect(UserDefaults.existingCookiesKey == nil)
     }
 
-    let charactersToReplace: [Character] = ["\\", "\""]
+    @Test()
+    func `existingCookiesKey returns cookiesKey if set`() throws {
+        // Given
+        let key = try #require(UserDefaults.cookiesKey()) // This call creates the key in UserDefaults
+
+        // When, Then
+        #expect(UserDefaults.existingCookiesKey == key)
+    }
+
 }
