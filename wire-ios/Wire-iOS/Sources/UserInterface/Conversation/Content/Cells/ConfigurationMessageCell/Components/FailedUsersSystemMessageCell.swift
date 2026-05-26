@@ -142,9 +142,16 @@ final class FailedUsersSystemMessageCell<
         usersView.translatesAutoresizingMaskIntoConstraints = false
         button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
+            stackView.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
+            imageContainer.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
+            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageContainer.topAnchor.constraint(equalTo: stackView.topAnchor),
             imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor),
 
