@@ -35,9 +35,9 @@ final class TeamsAPIV15: TeamsAPIV14 {
             request,
             requiringAccessToken: true
         )
-print(String(decoding: data, as: UTF8.self)) // TODO: remove
+
         return try ResponseParser()
-            .success(code: .ok, type: GetAppsResponseV15.self)
+            .success(code: .ok, type: GetAppsResponseV15.self) // `GetAppsResponseV15` is taken from TeamsAPI
             .parse(code: response.statusCode, data: data)
 
     }
@@ -64,44 +64,13 @@ print(String(decoding: data, as: UTF8.self)) // TODO: remove
 
 }
 
-struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
-
-    let name: String
-    let category: String
-    let description: String
-    let accentID: Int
-    let assets: [UserAssetV0]
-
-    enum CodingKeys: String, CodingKey {
-
-        case name
-        case category
-        case description
-        case accentID = "accent_id"
-        case assets
-
-    }
-
-    func toAPIModel() -> User {
-        fatalError("TODO")
-//        App(
-//            name: name,
-//            category: category,
-//            description: description,
-//            accentID: accentID,
-//            assets: assets.map { $0.toAPIModel() }
-//        )
-    }
-
-}
-
 private struct GetAppsResponseV15: Decodable, ToAPIModelConvertible {
 
-    var apps: [GetAppResponseV14]
+    var apps: [UserResponseV15]
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.apps = try container.decode([GetAppResponseV14].self)
+        self.apps = try container.decode([UserResponseV15].self)
     }
 
     func toAPIModel() -> [User] {

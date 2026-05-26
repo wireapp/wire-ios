@@ -501,75 +501,23 @@ public final class SearchTask {
             let apiVersion,
             apiVersion <= .v15,
             case let .search(searchRequest) = type,
+            searchRequest.query.string.isEmpty, //
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.apps)
         else { return { _ in } }
 
-        /*
-        let viewContext = contextProvider.viewContext
-        return await withCheckedContinuation { continuation in
-
-            let request = Self.searchRequestInDirectory(
-                withHandle: searchRequest.query.string,
-                apiVersion: apiVersion
-            )
-
-            request.add(ZMCompletionHandler(on: viewContext) { [weak self] response in
-
-                guard
-                    let self,
-                    let payload = response.payload?.asArray(),
-                    let userPayload = (payload.first as? ZMTransportData)?.asDictionary()
-                else {
-                    return continuation.resume(returning: { _ in })
-                }
-
-                guard
-                    let handle = userPayload["handle"] as? String,
-                    let name = userPayload["name"] as? String,
-                    let id = userPayload["id"] as? String
-                else {
-                    return continuation.resume(returning: { _ in })
-                }
-
-                let document = ["handle": handle, "name": name, "id": id]
-                let documentPayload = ["documents": [document]]
-                guard let partialResult = SearchResult(
-                    payload: documentPayload,
-                    query: searchRequest.query,
-                    searchOptions: searchRequest.searchOptions,
-                    contextProvider: contextProvider,
-                    searchUsersCache: searchUsersCache
-                ) else {
-                    return continuation.resume(returning: { _ in })
-                }
-
-                if let user = partialResult.directory.first, !user.isSelfUser {
-                    let partialResult = SearchResult(
-                        context: viewContext,
-                        contacts: [],
-                        teamMembers: [],
-                        directory: partialResult.directory,
-                        conversations: [],
-                        apps: [],
-                        bots: [],
-                        searchUsersCache: searchUsersCache
-                    )
-                    continuation.resume(returning: { aggregatedResult in
-                        if !aggregatedResult.directory.contains(user) {
-                            aggregatedResult = aggregatedResult.union(prependingDirectory: partialResult)
-                        }
-                    })
-                } else {
-                    continuation.resume(returning: { _ in })
-                }
-            })
-
-            transportSession.enqueueOneTime(request)
+        let searchContext = contextProvider.newBackgroundContext()
+        let teamID = await searchContext.perform {
+            ZMUser.selfUser(in: searchContext).team?.remoteIdentifier
         }
-         */
+        guard let teamID else { return { _ in } }
 
-        fatalError() // TODO: finsih
+        let apps = try await teamsAPI.getApps(for: teamID)
+        print(apps)
+
+        // TODO: maybe do all this in performRemoteSearch instead?
+
+        fatalError()
     }
 
     // MARK: -
