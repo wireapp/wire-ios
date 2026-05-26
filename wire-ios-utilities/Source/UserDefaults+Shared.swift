@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-extern NSString * const ZMCookieKeyKey;
+public extension UserDefaults {
 
-@interface NSUserDefaults (SharedUserDefaults)
+    /// Returns the `UserDefaults.cookiesKey()` if created and accessible. Unlike `UserDefaults.cookiesKey()`, this
+    /// property will not attempt to create the key.
+    static var existingCookiesKey: Data? {
+        guard let defaults = UserDefaults.shared() else { return nil }
 
-+ (NSString *)groupName;
-+ (instancetype)sharedUserDefaults;
-+ (NSData *)cookiesKey;
+        return defaults.data(forKey: ZMCookieKeyKey)
+    }
 
-@end
+}

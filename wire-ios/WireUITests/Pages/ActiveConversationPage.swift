@@ -131,6 +131,10 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
 
+    var guestsArePresentBanner: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
+    }
+
     var userLeftSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
@@ -263,6 +267,11 @@ class ActiveConversationPage: PageModel {
         return try SharedDriveFilesPage()
     }
 
+    func verifyCanAccessSharedDrive() {
+        conversationTitleButton.waitAndTap()
+        XCTAssertTrue(sharedDriveButton.exists)
+    }
+
     func openPhotosAndGrantPermission() throws -> ActiveConversationPage {
         photoButton.waitAndTap()
 
@@ -290,7 +299,11 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectImageAndSend() throws -> ActiveConversationPage {
+        if !imageToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
         imageToChoose.waitAndTap()
+
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
             "OK button did not appear after selecting media"
@@ -300,7 +313,11 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectVideoAndSend() throws -> ActiveConversationPage {
+        if !videoToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
         videoToChoose.waitAndTap()
+
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
             "OK button did not appear after selecting media"
