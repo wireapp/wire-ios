@@ -433,7 +433,12 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             if let errorLabel = response.payload?.asDictionary()?["label"] as? String {
                 switch errorLabel {
                 case "missing-auth":
-                    if let emailAddress = ZMUser.selfUser(in: moc).emailAddress, !emailAddress.isEmpty {
+                    let selfUser = ZMUser.selfUser(in: moc)
+                    if selfUser.usesCompanyLogin {
+                        // Federated SSO user — no Wire password to provide, so do not
+                        // surface a password prompt. Re-auth must go through the IdP.
+                        errorCode = .invalidCredentials
+                    } else if let emailAddress = selfUser.emailAddress, !emailAddress.isEmpty {
                         errorCode = .needsPasswordToRegisterClient
                     } else {
                         errorCode = .invalidCredentials

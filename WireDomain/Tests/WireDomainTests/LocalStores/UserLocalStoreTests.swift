@@ -106,6 +106,7 @@ final class UserLocalStoreTests: XCTestCase {
             XCTAssertEqual(user.appInfo?.appDescription, "desc")
             XCTAssertEqual(user.appInfo?.category, "cat")
             XCTAssertEqual(user.supportedProtocols, Scaffolding.userInfo.supportedProtocols)
+            XCTAssertEqual(user.usesCompanyLogin, Scaffolding.userInfo.usesCompanyLogin)
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         }
     }
@@ -403,7 +404,8 @@ final class UserLocalStoreTests: XCTestCase {
             appCategory: "cat",
             serviceID: nil,
             serviceProvider: nil,
-            supportedProtocols: [.mls]
+            supportedProtocols: [.mls],
+            usesCompanyLogin: true
         )
 
         static let userUpdateInfo = UserUpdateInfo(

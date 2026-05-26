@@ -305,6 +305,10 @@ public extension ZMUser {
     /// `accountIsDeleted` is true if this account has been deleted on the backend
     @NSManaged var isAccountDeleted: Bool
 
+    /// `true` only when `sso_id.subject` is non-empty (federated SSO).
+    /// `false` when `sso_id` is `nil` or its `subject` is `nil`/blank, in which
+    /// case the user has a Wire password and must be prompted for it for sensitive
+    /// actions (logout, remove/register client, legal hold accept).
     @NSManaged var usesCompanyLogin: Bool
 
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)

@@ -36,4 +36,11 @@ public struct NewUserInfo: Equatable, Sendable {
     let serviceID: UUID?
     let serviceProvider: UUID?
     let supportedProtocols: Set<WireDataModel.MessageProtocol>?
+
+    /// `true` only when the backend's `sso_id.subject` is non-empty (federated SSO,
+    /// no Wire password). `false` when `sso_id` is missing or its `subject` is
+    /// `nil`/blank — those users still authenticate with email + password and must
+    /// be prompted for it. Only meaningful for the self user; defaults to `false`
+    /// for other users.
+    let usesCompanyLogin: Bool
 }

@@ -86,7 +86,14 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     var isAppOrBot: Bool { get }
 
-    /// Whether this uses uses SSO.
+    /// Whether the user is a federated SSO user with a non-empty `sso_id.subject`,
+    /// meaning Wire does not hold their password and must not prompt for one.
+    ///
+    /// `true` only when `sso_id.subject` is present and non-empty. A user with an
+    /// `sso_id` but a `nil`/blank `subject` (e.g. SCIM-provisioned details without
+    /// IdP federation) still authenticates with email + password and returns `false`.
+    /// Mirrors Kalium's `IsPasswordRequiredUseCase` (inverted: this is `true` when no
+    /// password is required).
     var usesCompanyLogin: Bool { get }
 
     /// The one-to-one conversation with this user.

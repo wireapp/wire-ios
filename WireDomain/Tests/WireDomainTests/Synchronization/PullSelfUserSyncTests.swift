@@ -60,6 +60,56 @@ final class PullSelfUserSyncTests: XCTestCase {
         XCTAssertEqual(result.teamID, Scaffolding.remoteSelfUser.teamID)
     }
 
+    func testSelfUserMapping_usesCompanyLogin_isTrue_whenSSOSubjectIsPopulated() {
+        // Given
+        let selfUser = Scaffolding.selfUser(
+            ssoID: SSOID(scimExternalId: nil, subject: "external-subject-id", tenant: "idp.example.com")
+        )
+
+        // When
+        let info = selfUser.toDomainModel()
+
+        // Then
+        XCTAssertTrue(info.usesCompanyLogin)
+    }
+
+    func testSelfUserMapping_usesCompanyLogin_isFalse_whenSSOSubjectIsBlank() {
+        // Given: SCIM-managed details but no IdP federation → still password-based login
+        let selfUser = Scaffolding.selfUser(
+            ssoID: SSOID(scimExternalId: "scim-1", subject: "", tenant: nil)
+        )
+
+        // When
+        let info = selfUser.toDomainModel()
+
+        // Then
+        XCTAssertFalse(info.usesCompanyLogin)
+    }
+
+    func testSelfUserMapping_usesCompanyLogin_isFalse_whenSSOSubjectIsNil() {
+        // Given
+        let selfUser = Scaffolding.selfUser(
+            ssoID: SSOID(scimExternalId: nil, subject: nil, tenant: nil)
+        )
+
+        // When
+        let info = selfUser.toDomainModel()
+
+        // Then
+        XCTAssertFalse(info.usesCompanyLogin)
+    }
+
+    func testSelfUserMapping_usesCompanyLogin_isFalse_whenSSOIDIsNil() {
+        // Given
+        let selfUser = Scaffolding.selfUser(ssoID: nil)
+
+        // When
+        let info = selfUser.toDomainModel()
+
+        // Then
+        XCTAssertFalse(info.usesCompanyLogin)
+    }
+
 }
 
 private enum Scaffolding {
@@ -90,6 +140,27 @@ private enum Scaffolding {
 
     static var localSelfUser: NewUserInfo {
         remoteSelfUser.toDomainModel()
+    }
+
+    static func selfUser(ssoID: SSOID?) -> SelfUser {
+        SelfUser(
+            id: qualifiedID.id,
+            qualifiedID: qualifiedID,
+            ssoID: ssoID,
+            name: "username",
+            handle: "username",
+            teamID: UUID(),
+            phone: "",
+            accentID: 1,
+            managedBy: .wire,
+            assets: [],
+            deleted: false,
+            email: "username@wire.com",
+            expiresAt: .now,
+            app: nil,
+            service: nil,
+            supportedProtocols: [.mls]
+        )
     }
 
 }

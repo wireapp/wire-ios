@@ -405,6 +405,52 @@ extension UserClientRequestStrategyTests {
         }
     }
 
+    func testThatItProcessFailedInsertResponseWithAuthenticationError_SSOUser() {
+
+        let emailAddress = "sso-user@example.com"
+
+        syncMOC.performGroupedBlock {
+            // given
+            self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
+            self.clientRegistrationStatus.lastResortPrekey = (ushort.max, "last-resort-prekey")
+            self.clientRegistrationStatus.mockPhase = .unregistered
+
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.setValue(emailAddress, forKey: #keyPath(ZMUser.emailAddress))
+            selfUser.usesCompanyLogin = true
+
+            let client = self.createSelfClient(self.syncMOC)
+            self.sut.notifyChangeTrackers(client)
+
+            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            let responsePayload = [
+                "code": 403,
+                "message": "Re-authentication via password required",
+                "label": "missing-auth"
+            ] as [String: Any]
+            let response = ZMTransportResponse(
+                payload: responsePayload as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
+
+            // when
+            request.complete(with: response)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // then: an SSO user has no Wire password, so we must not surface
+        // needsPasswordToRegisterClient even when the server returns missing-auth.
+        XCTAssertTrue(mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
+        let expectedError = NSError(
+            domain: NSError.userSessionErrorDomain,
+            code: UserSessionErrorCode.invalidCredentials.rawValue,
+            userInfo: nil
+        )
+        XCTAssertEqual(mockClientRegistrationStatusDelegate.currentError as NSError?, expectedError)
+    }
+
     func testThatItProcessFailedInsertResponseWithTooManyClientsError() {
 
         syncMOC.performGroupedBlock {
