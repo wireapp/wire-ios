@@ -95,27 +95,17 @@ public protocol TeamsAPI {
         ) async throws -> UUID
     #endif
 
+    /// Fetches details of all apps in a team.
+
+    func getApps(
+        for teamID: Team.ID
+    ) async throws -> [User]
+
+    /// Fetches legacy services (bots) in a team.
+
     func getWhitelistedBots(
         for teamID: Team.ID,
         with prefix: String
     ) throws -> PayloadPager<[WhitelistedBotProfile]>
-
-    /// This endpoint lists `member-join` events. It can be used to discover users and apps which are cut off the
-    /// `/list-users` result in large teams (2000+ members).
-    func getNotifications(
-        sinceNotificationID: UUID?,
-        maxResults: UInt
-    ) throws -> PayloadPager<[TeamNotification]>
-
-}
-
-public extension TeamsAPI {
-
-    /// Calls `getNotifications(sinceNotificationID:maxResults:)` with `maxResults` set to 1000.
-    func getNotifications(
-        sinceNotificationID: UUID?
-    ) throws -> PayloadPager<[TeamNotification]> {
-        try getNotifications(sinceNotificationID: sinceNotificationID, maxResults: 1000)
-    }
 
 }

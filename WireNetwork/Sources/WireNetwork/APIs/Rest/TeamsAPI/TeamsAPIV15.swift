@@ -20,6 +20,28 @@ final class TeamsAPIV15: TeamsAPIV14 {
 
     override var apiVersion: APIVersion { .v15 }
 
+    // MARK: - Get apps
+
+    override func getApps(
+        for teamID: Team.ID
+    ) async throws -> [User] {
+
+        let path = "\(basePath(for: teamID))/apps"
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: GetAppsResponseV15.self)
+            .parse(code: response.statusCode, data: data)
+
+    }
+
     // MARK: - Get team roles
 
     override func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole] {
@@ -38,6 +60,52 @@ final class TeamsAPIV15: TeamsAPIV14 {
             .success(code: .ok, type: ConversationRolesListResponseV15.self)
             .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
             .parse(code: response.statusCode, data: data)
+    }
+
+}
+
+struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
+
+    let name: String
+    let category: String
+    let description: String
+    let accentID: Int
+    let assets: [UserAssetV0]
+
+    enum CodingKeys: String, CodingKey {
+
+        case name
+        case category
+        case description
+        case accentID = "accent_id"
+        case assets
+
+    }
+
+    func toAPIModel() -> User {
+        fatalError("TODO")
+//        App(
+//            name: name,
+//            category: category,
+//            description: description,
+//            accentID: accentID,
+//            assets: assets.map { $0.toAPIModel() }
+//        )
+    }
+
+}
+
+private struct GetAppsResponseV15: Decodable, ToAPIModelConvertible {
+
+    var apps: [GetAppResponseV14]
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.apps = try container.decode([GetAppResponseV14].self)
+    }
+
+    func toAPIModel() -> [User] {
+        apps.map { $0.toAPIModel() }
     }
 
 }
