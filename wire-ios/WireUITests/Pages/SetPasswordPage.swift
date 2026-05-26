@@ -52,9 +52,19 @@ class SetPasswordPage: PageModel {
         return try CreatingBackupPage()
     }
 
+    func backupWithoutPassword() throws -> CreatingBackupPage {
+        backupNowButton.tap()
+        return try CreatingBackupPage()
+    }
+
     func enterBackupPasswordAndRestore(_ password: String) throws -> SetPasswordPage {
         passwordField.tap()
         passwordField.typeText(password)
+        continueButton.tap()
+        return self
+    }
+
+    func restoreWithoutPassword() throws -> SetPasswordPage {
         continueButton.tap()
         return self
     }
