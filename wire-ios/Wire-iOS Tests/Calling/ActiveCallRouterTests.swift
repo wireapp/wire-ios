@@ -25,20 +25,27 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
     var mockTopOverlayPresenter: MockTopOverlayPresenting!
     var sut: ActiveCallRouter<MockTopOverlayPresenting>!
     var userSession: UserSessionMock!
+    var mainWindow: UIWindow!
+    var rootViewController: RootPresentSpyViewController!
 
     override func setUp() {
         super.setUp()
 
         mockTopOverlayPresenter = .init()
         userSession = UserSessionMock()
+        mainWindow = UIWindow()
+        rootViewController = RootPresentSpyViewController()
+        mainWindow.rootViewController = rootViewController
         sut = ActiveCallRouter(
-            mainWindow: .init(),
+            mainWindow: mainWindow,
             userSession: userSession,
             topOverlayPresenter: mockTopOverlayPresenter
         )
     }
 
     override func tearDown() {
+        rootViewController = nil
+        mainWindow = nil
         userSession = nil
         sut = nil
         mockTopOverlayPresenter = nil
@@ -95,6 +102,43 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         XCTAssertFalse(sut.isActiveCallShown)
     }
 
+    func testThat_ItRepresentsCall_WhenStateSaysShown_ButNoPresentedCallVCExists() {
+        // given (stale state)
+        let conversation = createOneOnOneConversation()
+        let voiceChannel = MockVoiceChannel(conversation: conversation)
+        let selfClient = MockUserClient()
+        selfClient.remoteIdentifier = "selfClient123"
+        MockUser.mockSelf().clients = Set([selfClient])
+
+        sut.isActiveCallShown = true
+        sut.isPresentingActiveCall = true
+        XCTAssertNil(mainWindow.rootViewController?.presentedViewController)
+
+        // when
+        sut.presentActiveCall(for: voiceChannel, animated: false)
+
+        // then
+        XCTAssertEqual(rootViewController.presentCallCount, 1)
+    }
+
+    func testThat_ItDoesNotPresentAgain_WhenAlreadyPresentingAndNotStale() {
+        // given
+        let conversation = createOneOnOneConversation()
+        let voiceChannel = MockVoiceChannel(conversation: conversation)
+        let selfClient = MockUserClient()
+        selfClient.remoteIdentifier = "selfClient123"
+        MockUser.mockSelf().clients = Set([selfClient])
+
+        sut.isPresentingActiveCall = true
+        sut.isActiveCallShown = false
+
+        // when
+        sut.presentActiveCall(for: voiceChannel, animated: false)
+
+        // then
+        XCTAssertEqual(rootViewController.presentCallCount, 0)
+    }
+
     private func createOneOnOneConversation() -> ZMConversation {
 
         let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -114,5 +158,19 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         connection.status = .accepted
 
         return mockConversation
+    }
+}
+
+final class RootPresentSpyViewController: UIViewController {
+
+    var presentCallCount = 0
+
+    override func present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
+        presentCallCount += 1
+        completion?()
     }
 }

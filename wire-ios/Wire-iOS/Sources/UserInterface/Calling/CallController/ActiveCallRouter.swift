@@ -127,7 +127,20 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - ActiveCall
 
+    private func isCallUIActuallyPresented() -> Bool {
+        guard let presentedActiveCallViewController else { return false }
+        if mainWindow.rootViewController?.presentedViewController === presentedActiveCallViewController {
+            return true
+        }
+        return presentedActiveCallViewController.presentingViewController != nil
+    }
+
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
+        if (isActiveCallShown || isPresentingActiveCall) && !isCallUIActuallyPresented() {
+            isActiveCallShown = false
+            isPresentingActiveCall = false
+            presentedActiveCallViewController = nil
+        }
         guard
             !isPresentingActiveCall,
             !isActiveCallShown
