@@ -44,7 +44,7 @@ final class PullSelfTeamMembersSyncTests: XCTestCase {
         // Mock
         api.getTeamMembersForMaxResults_MockValue = Scaffolding.remoteMembers
 
-        store.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
+        store.storeTeamMembersSelfTeamIDTeamMemberInfos_MockMethod = { _, _ in }
 
         // When
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
@@ -55,10 +55,10 @@ final class PullSelfTeamMembersSyncTests: XCTestCase {
         XCTAssertEqual(apiInvocations[0].teamID, Scaffolding.selfTeamID)
         XCTAssertEqual(apiInvocations[0].maxResults, 2000)
 
-        let storeInvocations = store.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations
+        let storeInvocations = store.storeTeamMembersSelfTeamIDTeamMemberInfos_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0].selfTeamID, Scaffolding.selfTeamID)
-        XCTAssertEqual(storeInvocations[0].teamMembersInfo, Scaffolding.localMembers)
+        XCTAssertEqual(storeInvocations[0].teamMemberInfos, Scaffolding.localMembers)
     }
 
 }

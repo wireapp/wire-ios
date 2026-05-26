@@ -149,7 +149,7 @@ final class TeamRepositoryTests: XCTestCase {
             )
         ]
 
-        teamLocalStore.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
+        teamLocalStore.storeTeamMembersSelfTeamIDTeamMemberInfos_MockMethod = { _, _ in }
 
         // When
 
@@ -158,7 +158,7 @@ final class TeamRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(teamsAPI.getTeamMembersForMaxResults_Invocations.count, 1)
-        XCTAssertEqual(teamLocalStore.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.count, 1)
+        XCTAssertEqual(teamLocalStore.storeTeamMembersSelfTeamIDTeamMemberInfos_Invocations.count, 1)
     }
 
     func testFetchSelfLegalholdStatus_It_Invokes_Local_Store_And_Teams_API_Methods_And_Legal_Hold_Status_Is_Pending(

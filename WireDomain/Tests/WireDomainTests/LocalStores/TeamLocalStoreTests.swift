@@ -169,7 +169,7 @@ final class TeamLocalStoreTests: XCTestCase {
 
         try await sut.storeTeamMembers(
             selfTeamID: Scaffolding.selfTeamID,
-            teamMembersInfo: Scaffolding.teamMembersInfo
+            teamMemberInfos: Scaffolding.teamMemberInfos
         )
 
         // Then
@@ -352,7 +352,7 @@ final class TeamLocalStoreTests: XCTestCase {
             )
         ]
 
-        static let teamMembersInfo: [TeamMemberInfo] = [
+        static let teamMemberInfos: [TeamMemberInfo] = [
             .init(
                 id: member1ID,
                 selfPermission: Scaffolding.member1Permissions,

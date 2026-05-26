@@ -53,14 +53,14 @@ final class TeamMemberDiscoveryAgentTests: XCTestCase {
 
         // Then
         XCTAssertEqual(api.getNotificationsSinceNotificationIDMaxResults_Invocations.count, 0)
-        XCTAssertEqual(store.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.count, 0)
+        XCTAssertEqual(store.storeTeamMembersSelfTeamIDTeamMemberInfos_Invocations.count, 0)
         XCTAssertNil(journal[.lastTeamNotificationID])
     }
 
     func test_discoverMembers_storesMembersAndAdvancesCursor() async throws {
         // Given
         store.selfTeamID_MockMethod = { Scaffolding.selfTeamID }
-        store.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
+        store.storeTeamMembersSelfTeamIDTeamMemberInfos_MockMethod = { _, _ in }
         api.getNotificationsSinceNotificationIDMaxResults_MockMethod = { _, _ in
             PayloadPager<[TeamNotification]> { _ in
                 .init(
@@ -75,12 +75,12 @@ final class TeamMemberDiscoveryAgentTests: XCTestCase {
         await sut.discoverMembers()
 
         // Then
-        let storeInvocations = store.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations
+        let storeInvocations = store.storeTeamMembersSelfTeamIDTeamMemberInfos_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0].selfTeamID, Scaffolding.selfTeamID)
-        XCTAssertEqual(storeInvocations[0].teamMembersInfo.count, 2)
-        XCTAssertEqual(storeInvocations[0].teamMembersInfo[0].id, Scaffolding.member1UserID)
-        XCTAssertEqual(storeInvocations[0].teamMembersInfo[1].id, Scaffolding.member2UserID)
+        XCTAssertEqual(storeInvocations[0].teamMemberInfos.count, 2)
+        XCTAssertEqual(storeInvocations[0].teamMemberInfos[0].id, Scaffolding.member1UserID)
+        XCTAssertEqual(storeInvocations[0].teamMemberInfos[1].id, Scaffolding.member2UserID)
 
         XCTAssertEqual(
             journal[.lastTeamNotificationID],
@@ -92,7 +92,7 @@ final class TeamMemberDiscoveryAgentTests: XCTestCase {
         // Given
         journal[.lastTeamNotificationID] = Scaffolding.priorCursor.uuidString
         store.selfTeamID_MockMethod = { Scaffolding.selfTeamID }
-        store.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
+        store.storeTeamMembersSelfTeamIDTeamMemberInfos_MockMethod = { _, _ in }
         api.getNotificationsSinceNotificationIDMaxResults_MockMethod = { _, _ in
             PayloadPager<[TeamNotification]> { _ in
                 .init(
@@ -115,7 +115,7 @@ final class TeamMemberDiscoveryAgentTests: XCTestCase {
     func test_discoverMembers_advancesCursorPerPage() async throws {
         // Given an api that returns two pages.
         store.selfTeamID_MockMethod = { Scaffolding.selfTeamID }
-        store.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
+        store.storeTeamMembersSelfTeamIDTeamMemberInfos_MockMethod = { _, _ in }
         api.getNotificationsSinceNotificationIDMaxResults_MockMethod = { _, _ in
             PayloadPager<[TeamNotification]> { nextSince in
                 if nextSince == nil {
@@ -138,7 +138,7 @@ final class TeamMemberDiscoveryAgentTests: XCTestCase {
         await sut.discoverMembers()
 
         // Then: store called once per non-empty page, cursor reflects final page.
-        let storeInvocations = store.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations
+        let storeInvocations = store.storeTeamMembersSelfTeamIDTeamMemberInfos_Invocations
         try XCTAssertCount(storeInvocations, count: 2)
         XCTAssertEqual(
             journal[.lastTeamNotificationID],
@@ -151,7 +151,7 @@ final class TeamMemberDiscoveryAgentTests: XCTestCase {
         // call, then succeeds on the retry.
         journal[.lastTeamNotificationID] = Scaffolding.priorCursor.uuidString
         store.selfTeamID_MockMethod = { Scaffolding.selfTeamID }
-        store.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
+        store.storeTeamMembersSelfTeamIDTeamMemberInfos_MockMethod = { _, _ in }
 
         var callCount = 0
         api.getNotificationsSinceNotificationIDMaxResults_MockMethod = { _, _ in
@@ -181,7 +181,7 @@ final class TeamMemberDiscoveryAgentTests: XCTestCase {
         XCTAssertNil(apiInvocations[1].sinceNotificationID)
 
         // Retry succeeded, so members were stored once and cursor advanced.
-        let storeInvocations = store.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations
+        let storeInvocations = store.storeTeamMembersSelfTeamIDTeamMemberInfos_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(
             journal[.lastTeamNotificationID],

@@ -38,13 +38,13 @@ struct PullSelfTeamMembersSync: PullSelfTeamMembersSyncProtocol {
             maxResults: 2000
         )
 
-        let teamMembersInfo = remoteMembers.map {
+        let teamMemberInfos = remoteMembers.map {
             $0.toDomainModel()
         }
 
         try await store.storeTeamMembers(
             selfTeamID: selfTeamID,
-            teamMembersInfo: teamMembersInfo
+            teamMemberInfos: teamMemberInfos
         )
     }
 

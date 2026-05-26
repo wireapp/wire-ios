@@ -4377,22 +4377,22 @@ public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
 
     // MARK: - storeTeamMembers
 
-    public var storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations: [(selfTeamID: UUID, teamMembersInfo: [TeamMemberInfo])] = []
-    public var storeTeamMembersSelfTeamIDTeamMembersInfo_MockError: Error?
-    public var storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod: ((UUID, [TeamMemberInfo]) async throws -> Void)?
+    public var storeTeamMembersSelfTeamIDTeamMemberInfos_Invocations: [(selfTeamID: UUID, teamMemberInfos: [TeamMemberInfo])] = []
+    public var storeTeamMembersSelfTeamIDTeamMemberInfos_MockError: Error?
+    public var storeTeamMembersSelfTeamIDTeamMemberInfos_MockMethod: ((UUID, [TeamMemberInfo]) async throws -> Void)?
 
-    public func storeTeamMembers(selfTeamID: UUID, teamMembersInfo: [TeamMemberInfo]) async throws {
-        storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.append((selfTeamID: selfTeamID, teamMembersInfo: teamMembersInfo))
+    public func storeTeamMembers(selfTeamID: UUID, teamMemberInfos: [TeamMemberInfo]) async throws {
+        storeTeamMembersSelfTeamIDTeamMemberInfos_Invocations.append((selfTeamID: selfTeamID, teamMemberInfos: teamMemberInfos))
 
-        if let error = storeTeamMembersSelfTeamIDTeamMembersInfo_MockError {
+        if let error = storeTeamMembersSelfTeamIDTeamMemberInfos_MockError {
             throw error
         }
 
-        guard let mock = storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod else {
-            fatalError("no mock for `storeTeamMembersSelfTeamIDTeamMembersInfo`")
+        guard let mock = storeTeamMembersSelfTeamIDTeamMemberInfos_MockMethod else {
+            fatalError("no mock for `storeTeamMembersSelfTeamIDTeamMemberInfos`")
         }
 
-        try await mock(selfTeamID, teamMembersInfo)
+        try await mock(selfTeamID, teamMemberInfos)
     }
 
     // MARK: - selfUserInfo

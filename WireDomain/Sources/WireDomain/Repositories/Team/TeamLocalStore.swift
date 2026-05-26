@@ -185,7 +185,7 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
 
     public func storeTeamMembers(
         selfTeamID: UUID,
-        teamMembersInfo: [TeamMemberInfo]
+        teamMemberInfos: [TeamMemberInfo]
     ) async throws {
         try await context.perform { [context, selfTeamID] in
             guard let team = WireDataModel.Team.fetch(
@@ -195,7 +195,7 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
                 throw Error.teamNotFoundLocally
             }
 
-            for teamMemberInfo in teamMembersInfo {
+            for teamMemberInfo in teamMemberInfos {
                 let user = ZMUser.fetchOrCreate(
                     with: teamMemberInfo.id,
                     domain: nil,

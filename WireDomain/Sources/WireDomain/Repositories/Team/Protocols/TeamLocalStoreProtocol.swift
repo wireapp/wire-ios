@@ -98,11 +98,11 @@ public protocol TeamLocalStoreProtocol {
     /// Stores team members locally.
     /// - parameters:
     ///     - selfTeamID: The self team ID.
-    ///     - teamMembersInfo: A list of member info (id, permission, creator id, date)
+    ///     - teamMemberInfos: A list of member info (id, permission, creator id, date)
 
     func storeTeamMembers(
         selfTeamID: UUID,
-        teamMembersInfo: [TeamMemberInfo]
+        teamMemberInfos: [TeamMemberInfo]
     ) async throws
 
     /// Fetches self user info : user ID and client ID.

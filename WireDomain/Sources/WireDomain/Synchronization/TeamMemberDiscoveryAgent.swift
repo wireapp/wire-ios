@@ -72,7 +72,7 @@ struct TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
 
         var discoveredCount = 0
         for try await notifications in pager {
-            let teamMembersInfo = notifications.map { notification -> TeamMemberInfo in
+            let teamMemberInfos = notifications.map { notification -> TeamMemberInfo in
                 switch notification.kind {
                 case let .memberJoin(event):
                     TeamMemberInfo(
@@ -84,13 +84,13 @@ struct TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
                 }
             }
 
-            guard !teamMembersInfo.isEmpty else { continue }
+            guard !teamMemberInfos.isEmpty else { continue }
 
             try await store.storeTeamMembers(
                 selfTeamID: selfTeamID,
-                teamMembersInfo: teamMembersInfo
+                teamMemberInfos: teamMemberInfos
             )
-            discoveredCount += teamMembersInfo.count
+            discoveredCount += teamMemberInfos.count
 
             // Persist forward progress per page so an interruption
             // doesn't force a full re-walk on the next run.
