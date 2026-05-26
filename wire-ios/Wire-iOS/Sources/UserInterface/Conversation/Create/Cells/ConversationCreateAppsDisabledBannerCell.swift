@@ -24,6 +24,12 @@ import WireReusableUIComponents
 
 final class ConversationCreateAppsDisabledBannerCell: UICollectionViewCell {
 
+    var isTeamAdmin = false {
+        didSet {
+            updateContent()
+        }
+    }
+
     var wireAccentColor = WireAccentColor.default {
         didSet {
             updateContent()
@@ -44,7 +50,9 @@ final class ConversationCreateAppsDisabledBannerCell: UICollectionViewCell {
         contentConfiguration = UIHostingConfiguration {
             InfoBannerView(
                 title: String(localized: "conversation.create.apps_disabled.title", bundle: .main),
-                message: String(localized: "conversation.create.apps_disabled.message", bundle: .main)
+                message: isTeamAdmin
+                    ? String(localized: "conversation.create.apps_disabled_as_admin.message", bundle: .main)
+                    : String(localized: "conversation.create.apps_disabled.message", bundle: .main)
             )
             .padding(16)
             .environment(\.wireAccentColor, wireAccentColor)

@@ -17,6 +17,7 @@
 //
 
 import Combine
+import WireDataModel
 import WireDataModelSupport
 import WireDomain
 import WireDomainSupport
@@ -155,7 +156,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: mockCoreCrypto)
 
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = {}

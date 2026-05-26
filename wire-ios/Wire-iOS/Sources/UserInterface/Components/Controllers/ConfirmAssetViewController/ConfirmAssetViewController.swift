@@ -49,6 +49,7 @@ final class ConfirmAssetViewController: UIViewController {
 
     let context: Context
     private let userSession: UserSession
+    private let isWireDriveEnabled: Bool
 
     var previewTitle: String? {
         didSet {
@@ -87,9 +88,10 @@ final class ConfirmAssetViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    init(context: Context, userSession: UserSession) {
+    init(context: Context, userSession: UserSession, isWireDriveEnabled: Bool = false) {
         self.context = context
         self.userSession = userSession
+        self.isWireDriveEnabled = isWireDriveEnabled
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -185,7 +187,10 @@ final class ConfirmAssetViewController: UIViewController {
             return
         }
 
-        let canvasViewController = CanvasViewController(userSession: userSession)
+        let canvasViewController = CanvasViewController(
+            userSession: userSession,
+            isWireDriveEnabled: isWireDriveEnabled
+        )
         canvasViewController.sketchImage = image
         canvasViewController.delegate = self
         canvasViewController.title = previewTitle

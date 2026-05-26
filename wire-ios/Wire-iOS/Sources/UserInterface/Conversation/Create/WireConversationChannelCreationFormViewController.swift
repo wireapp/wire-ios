@@ -36,6 +36,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         channelName: "",
         channelInvitePolicy: .admins,
         channelHistoryOption: .off,
+        isTeamAdmin: userSession.selfUser.canManageTeam,
         areAppsSupported: values.isAppsFeatureEnabled,
         appsAllowed: true,
         guestsAllowed: true,

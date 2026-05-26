@@ -193,7 +193,9 @@ public struct ConversationChannelCreationForm: View {
             } else {
                 InfoBannerView(
                     title: Strings.CreationForm.AppsDisabled.title,
-                    message: Strings.CreationForm.AppsDisabled.message
+                    message: viewModel.isTeamAdmin
+                        ? Strings.CreationForm.AppsDisabledAsAdmin.message
+                        : Strings.CreationForm.AppsDisabled.message
                 )
                 .foregroundStyle(Color.primary)
                 .padding(.horizontal, -16)
@@ -235,6 +237,7 @@ public struct ConversationChannelCreationForm: View {
             channelName: "",
             channelInvitePolicy: .admins,
             channelHistoryOption: .off,
+            isTeamAdmin: true,
             areAppsSupported: true,
             appsAllowed: true,
             guestsAllowed: true,
@@ -247,12 +250,32 @@ public struct ConversationChannelCreationForm: View {
     )
 }
 
-#Preview("apps not supported") {
+#Preview("apps not supported [admin]") {
     ConversationChannelCreationForm(
         viewModel: ConversationChannelCreationFormViewModel(
             channelName: "",
             channelInvitePolicy: .admins,
             channelHistoryOption: .off,
+            isTeamAdmin: true,
+            areAppsSupported: false,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
+            isUserPremium: false,
+            isWireDriveEnabled: true,
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
+    )
+}
+
+#Preview("apps not supported [non-admin]") {
+    ConversationChannelCreationForm(
+        viewModel: ConversationChannelCreationFormViewModel(
+            channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            isTeamAdmin: false,
             areAppsSupported: false,
             appsAllowed: true,
             guestsAllowed: true,

@@ -43,7 +43,15 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
         switch emailOrSSOCode {
         case let .email(email, domain):
-            return try await determineAuthMethod(email: email, domain: domain)
+
+            do {
+                let ssoCode = try await authenticationAPI.getSSOCode(forEmail: email)
+                return .loginViaSSO(code: ssoCode)
+            } catch AuthenticationAPIError.unsupportedEndpointForAPIVersion, AuthenticationAPIError.ssoCodeNotFound {
+                // back to default behaviour - no default sso code
+                return try await determineAuthMethod(email: email, domain: domain)
+            }
+
         case let .ssoCode(ssoCode):
             return .loginViaSSO(code: ssoCode)
         }

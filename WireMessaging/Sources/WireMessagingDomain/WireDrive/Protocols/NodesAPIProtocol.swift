@@ -30,6 +30,8 @@ package protocol NodesAPIProtocol: Sendable {
 
     func uploadFile(path: URL, node: WireDriveNode, versionID: UUID) async throws -> AsyncThrowingStream<Int, any Error>
 
+    func deleteFile(nodeID: UUID) async throws
+
     func deleteVersion(nodeID: UUID, versionID: UUID) async throws
 
     func publishDraft(nodeID: UUID, versionID: UUID) async throws
