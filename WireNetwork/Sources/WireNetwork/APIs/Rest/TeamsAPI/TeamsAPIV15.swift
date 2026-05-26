@@ -35,7 +35,7 @@ final class TeamsAPIV15: TeamsAPIV14 {
             request,
             requiringAccessToken: true
         )
-
+print(String(decoding: data, as: UTF8.self)) // TODO: remove
         return try ResponseParser()
             .success(code: .ok, type: GetAppsResponseV15.self)
             .parse(code: response.statusCode, data: data)

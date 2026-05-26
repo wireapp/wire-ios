@@ -138,6 +138,15 @@ public final class SearchTask {
                     return { _ in }
                 }
             }
+            taskGroup.addTask {
+                do {
+                    return try await self.listAllApps()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to list all apps: \(String(describing: errorType))")
+                    return { _ in }
+                }
+            }
 
             var result = SearchResult()
             while let aggregator = await taskGroup.next() {
@@ -368,7 +377,7 @@ public final class SearchTask {
         return partialResult
     }
 
-    private func apps(
+    private func apps( // TODO: still needed?
         in team: WireDataModel.Team?,
         matching query: String
     ) -> [ZMUser] {
@@ -485,6 +494,82 @@ public final class SearchTask {
             return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
 
+    }
+
+    func listAllApps() async throws -> SearchResultAggregator {
+        guard
+            let apiVersion,
+            apiVersion <= .v15,
+            case let .search(searchRequest) = type,
+            !searchRequest.searchOptions.contains(.localResultsOnly),
+            searchRequest.searchOptions.contains(.apps)
+        else { return { _ in } }
+
+        /*
+        let viewContext = contextProvider.viewContext
+        return await withCheckedContinuation { continuation in
+
+            let request = Self.searchRequestInDirectory(
+                withHandle: searchRequest.query.string,
+                apiVersion: apiVersion
+            )
+
+            request.add(ZMCompletionHandler(on: viewContext) { [weak self] response in
+
+                guard
+                    let self,
+                    let payload = response.payload?.asArray(),
+                    let userPayload = (payload.first as? ZMTransportData)?.asDictionary()
+                else {
+                    return continuation.resume(returning: { _ in })
+                }
+
+                guard
+                    let handle = userPayload["handle"] as? String,
+                    let name = userPayload["name"] as? String,
+                    let id = userPayload["id"] as? String
+                else {
+                    return continuation.resume(returning: { _ in })
+                }
+
+                let document = ["handle": handle, "name": name, "id": id]
+                let documentPayload = ["documents": [document]]
+                guard let partialResult = SearchResult(
+                    payload: documentPayload,
+                    query: searchRequest.query,
+                    searchOptions: searchRequest.searchOptions,
+                    contextProvider: contextProvider,
+                    searchUsersCache: searchUsersCache
+                ) else {
+                    return continuation.resume(returning: { _ in })
+                }
+
+                if let user = partialResult.directory.first, !user.isSelfUser {
+                    let partialResult = SearchResult(
+                        context: viewContext,
+                        contacts: [],
+                        teamMembers: [],
+                        directory: partialResult.directory,
+                        conversations: [],
+                        apps: [],
+                        bots: [],
+                        searchUsersCache: searchUsersCache
+                    )
+                    continuation.resume(returning: { aggregatedResult in
+                        if !aggregatedResult.directory.contains(user) {
+                            aggregatedResult = aggregatedResult.union(prependingDirectory: partialResult)
+                        }
+                    })
+                } else {
+                    continuation.resume(returning: { _ in })
+                }
+            })
+
+            transportSession.enqueueOneTime(request)
+        }
+         */
+
+        fatalError() // TODO: finsih
     }
 
     // MARK: -

@@ -1474,6 +1474,8 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.directory.count, 1)
     }
 
+    // TODO: add tests
+
     // MARK: - Helpers
 
     private func makeSearchTask(
