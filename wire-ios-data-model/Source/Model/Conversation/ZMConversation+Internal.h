@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_END
 @property (readonly, nonatomic, nonnull) NSMutableSet<ZMMessage *> *mutableMessages;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *hiddenMessages;
 @property (readonly, nonatomic) enum ZMConnectionStatus relatedConnectionState; // This is a computed property, needed for snapshoting
-@property (nonatomic, nonnull) ZMUser *creator;
+@property (nonatomic, nullable) ZMUser *creator;
 @property (nonatomic, nullable) NSDate *lastModifiedDate;
 @property (nonatomic) ZMConversationType conversationType;
 @property (nonatomic, readonly) BOOL isSelfConversation;
