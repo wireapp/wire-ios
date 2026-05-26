@@ -75,8 +75,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
     private let localDomain: String?
 
-    private let backgroundTaskManager: (any BackgroundTaskManager)?
-
     public init(
         selfUserID: UUID,
         sharedContainerURL: URL,
@@ -85,8 +83,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         syncContext: NSManagedObjectContext,
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         allowCreation: Bool = true,
-        localDomain: String?,
-        backgroundTaskManager: (any BackgroundTaskManager)?
+        localDomain: String?
     ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
@@ -97,16 +94,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
         self.localDomain = localDomain
-        self.backgroundTaskManager = backgroundTaskManager
     }
 
     public func coreCrypto() async throws -> SafeCoreCrypto {
         let coreCrypto = try await getCoreCrypto()
         try await registerMlsTransportIfNecessary(with: coreCrypto)
-        return SafeCoreCrypto(
-            backgroundTaskManager: backgroundTaskManager,
-            coreCrypto: coreCrypto
-        )
+        return SafeCoreCrypto(coreCrypto: coreCrypto)
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {

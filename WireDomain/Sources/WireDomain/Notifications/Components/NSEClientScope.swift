@@ -259,8 +259,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 syncContext: coreDataStack.syncContext,
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
-                localDomain: localDomain,
-                backgroundTaskManager: nil
+                localDomain: localDomain
             )
         }
     }
