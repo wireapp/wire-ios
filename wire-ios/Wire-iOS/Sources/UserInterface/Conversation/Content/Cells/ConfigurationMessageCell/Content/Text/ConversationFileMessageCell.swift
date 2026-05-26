@@ -89,10 +89,8 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
         if isOwnMessage {
             containerView.backgroundColor = ColorTheme.OwnChatBubbles.primary(accentColor)
-            containerView.layer.borderColor = ColorTheme.OwnChatBubbles.primary(accentColor).cgColor
         } else {
             containerView.backgroundColor = ColorTheme.OthersChatBubbles.primary
-            containerView.layer.borderColor = ColorTheme.OthersChatBubbles.primary.cgColor
         }
 
         if object.isObfuscated {
