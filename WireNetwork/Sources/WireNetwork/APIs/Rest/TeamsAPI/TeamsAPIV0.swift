@@ -175,6 +175,14 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 
+    // MARK: - Get collaborators
+
+    func getCollaborators(
+        for teamID: Team.ID
+    ) async throws -> [Void] {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Get whitelisted bots
 
     func getWhitelistedBots(

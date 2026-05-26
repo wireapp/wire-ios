@@ -101,7 +101,11 @@ public protocol TeamsAPI {
         for teamID: Team.ID
     ) async throws -> [User]
 
-    // TODO: collaborator apps
+    /// Fetches collaborators.
+
+    func getCollaborators(
+        for teamID: Team.ID
+    ) async throws -> [Void] // TODO: finish
 
     /// Fetches legacy services (bots) in a team.
 

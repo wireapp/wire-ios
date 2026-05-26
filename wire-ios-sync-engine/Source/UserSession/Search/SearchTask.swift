@@ -138,6 +138,15 @@ public final class SearchTask {
                     return { _ in }
                 }
             }
+            taskGroup.addTask {
+                do {
+                    return try await self.listAllAppsAndCollaborators()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to list all apps: \(String(describing: errorType))")
+                    return { _ in }
+                }
+            }
 
             var result = SearchResult()
             while let aggregator = await taskGroup.next() {
@@ -229,12 +238,6 @@ public final class SearchTask {
         }
 
         let searchContext = contextProvider.newBackgroundContext()
-
-        if let apiVersion, apiVersion <= .v15, !request.searchOptions.contains(.localResultsOnly), request.searchOptions.contains(.apps), request.query.string.isEmpty {
-            // before searching for apps locally, import all apps
-            await importAllApps()
-        }
-
         let (connectedUserIDs, teamMemberIDs, appIDs, conversationIDs) = await searchContext.perform { [self] in
 
             var team: WireDataModel.Team?
@@ -493,24 +496,34 @@ public final class SearchTask {
 
     }
 
-    private func importAllApps() async {
+    /// If no search query is provided we cannot use the search API.
+    /// This func basically serves two purposes:
+    /// - abc
+    /// - efg
+    private func listAllAppsAndCollaborators() async throws -> SearchResultAggregator {
+        guard
+            let apiVersion,
+            apiVersion <= .v15,
+            case let .search(searchRequest) = type,
+            searchRequest.query.string.isEmpty,
+            !searchRequest.searchOptions.contains(.localResultsOnly),
+            searchRequest.searchOptions.contains(.apps)
+        else { return { _ in } }
 
         let searchContext = contextProvider.newBackgroundContext()
         let teamID = await searchContext.perform {
             ZMUser.selfUser(in: searchContext).team?.remoteIdentifier
         }
-        guard let teamID else { return }
+        guard let teamID else { return { _ in } }
 
-        do {
-            let apps = try await teamsAPI.getApps(for: teamID)
-            print(apps)
+        let apps = try await teamsAPI.getApps(for: teamID)
+        print(apps)
+        let collaborators = try await teamsAPI.getCollaborators(for: teamID)
+        print(apps)
 
-            fatalError() // TODO: import
-        } catch {
-            let errorType = Swift.type(of: error)
-            WireLogger.search.error("failed to fetch all apps: \(String(describing: errorType))")
-        }
+        // TODO: maybe do all this in performRemoteSearch instead?
 
+        fatalError()
     }
 
     // MARK: -
