@@ -172,51 +172,8 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .newConversation:
-            var cells: [AnyConversationMessageCellDescription] = []
-
-            let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
-                variant: (
-                    wireCells: conversation.isWireDriveEnabled,
-                    isChannel: conversation.isChannel
-                )
-            )
-            cells.append(AnyConversationMessageCellDescription(welcomeCell))
-
-            let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
-            cells.append(AnyConversationMessageCellDescription(startedConversationCell))
-
-            // Only display invite user cell for team members
-            if selfUser.isTeamMember,
-               conversation.selfCanAddUsers(selfUser: selfUser),
-               conversation.isOpenGroup {
-                cells.append(
-                    AnyConversationMessageCellDescription(
-                        GuestsAllowedCellDescription(isChannel: conversation.isChannel)
-                    )
-                )
-            }
-
-            if conversation.isWireDriveEnabled {
-                let fileCollaborationCell = ConversationFileCollaborationSystemMessageCellDescription()
-                cells.append(AnyConversationMessageCellDescription(fileCollaborationCell))
-
-                let timerCell = ConversationMessageTimerSystemMessageCellDescription(
-                    state: .unavailable
-                )
-                cells.append(AnyConversationMessageCellDescription(timerCell))
-            }
-
-            if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
-                let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
-                    sender: sender,
-                    historyDepth: channelHistoryDepth,
-                    isNewConversation: true
-                )
-
-                cells.append(AnyConversationMessageCellDescription(cell))
-            }
-
-            return cells
+            // Displayed in the table header via GroupConversationHeaderView.
+            return []
 
         case .failedToAddParticipants:
             if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction {
