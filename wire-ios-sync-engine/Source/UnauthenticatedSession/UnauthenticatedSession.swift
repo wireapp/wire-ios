@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireNetwork
 import WireUtilities
 
@@ -162,8 +163,13 @@ extension UnauthenticatedSession: UserInfoParser {
     public func upgradeToAuthenticatedSession(with userInfo: UserInfo) {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
-        cookieStorage.authenticationCookieData = userInfo.cookieData
-        authenticationStatus.authenticationCookieData = userInfo.cookieData
+        do {
+            try cookieStorage.storeCookies(userInfo.cookies)
+        } catch {
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.critical("Failed to store cookies: \(errorDescription)", attributes: .safePublic)
+        }
+        authenticationStatus.didReceiveAuthenticationCookies = true
         delegate?.session(
             session: self,
             createdAccount: account,
@@ -177,8 +183,13 @@ extension UnauthenticatedSession: UserInfoParser {
     ) {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
-        cookieStorage.authenticationCookieData = userInfo.cookieData
-        authenticationStatus.authenticationCookieData = userInfo.cookieData
+        do {
+            try cookieStorage.storeCookies(userInfo.cookies)
+        } catch {
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.critical("Failed to store cookies: \(errorDescription)", attributes: .safePublic)
+        }
+        authenticationStatus.didReceiveAuthenticationCookies = true
         delegate?.session(
             session: self,
             createdAccount: account,

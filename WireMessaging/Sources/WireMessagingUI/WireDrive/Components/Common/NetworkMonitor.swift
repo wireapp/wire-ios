@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import Combine
+import Combine
 import Network
+import Observation
 
-final class NetworkMonitor: Sendable {
+/// Provides observable changes in internet connection.
+/// Conforms to both, `Observable` and `ObservableObject` to support ViewModels with the old and the new system.
+@MainActor
+package final class NetworkMonitor: Observable, ObservableObject {
 
     enum NetworkStatus {
         case connected
@@ -28,26 +32,44 @@ final class NetworkMonitor: Sendable {
 
     static let shared = NetworkMonitor()
 
-    private let monitor = NWPathMonitor()
+    private var monitor: any NWPathMonitoring
     private let queue = DispatchQueue(label: "NetworkMonitorQueue")
-    private let subject = CurrentValueSubject<NetworkStatus, Never>(.disconnected)
+    private let subject: CurrentValueSubject<NetworkStatus, Never>
+    private var cancellables = Set<AnyCancellable>()
 
-    var statusPublisher: AnyPublisher<NetworkStatus, Never> {
-        subject.eraseToAnyPublisher()
-    }
+    @Published var currentStatus: NetworkStatus?
 
-    var currentStatus: NetworkStatus {
-        subject.value
-    }
+    init(
+        monitor: any NWPathMonitoring = NWPathMonitor(),
+        initialStatus: NetworkStatus = .disconnected
+    ) {
+        self.monitor = monitor
+        self.subject = CurrentValueSubject(initialStatus)
 
-    private init() {
-        monitor.pathUpdateHandler = { [weak self] path in
-            let status: NetworkStatus =
-                path.status == .satisfied ? .connected : .disconnected
+        subject
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                guard let self else { return }
+                self.currentStatus = status
+            }
+            .store(in: &cancellables)
 
-            self?.subject.send(status)
+        self.monitor.pathUpdateHandler = { [weak self] path in
+            guard let self else { return }
+            Task { @MainActor in
+                let status: NetworkStatus = path.status == .satisfied ? .connected : .disconnected
+                self.subject.send(status)
+            }
         }
 
         monitor.start(queue: queue)
     }
 }
+
+protocol NWPathMonitoring {
+    var pathUpdateHandler: (@Sendable (NWPath) -> Void)? { get set }
+    func start(queue: DispatchQueue)
+}
+
+extension NWPathMonitor: NWPathMonitoring {}

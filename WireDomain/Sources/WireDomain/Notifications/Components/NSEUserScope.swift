@@ -77,9 +77,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     public var cookieStorage: CookieStorage {
         shared {
             CookieStorage(
-                userID: accountID,
-                cookieEncryptionKey: dependency.cookieEncryptionKey,
-                keychain: Keychain()
+                cookieEncryptionKey: dependency.cookieEncryptionKey
             )
         }
     }
@@ -286,7 +284,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     private func isAuthenticated() async throws -> Bool {
         let cookies: [HTTPCookie]
         do {
-            cookies = try await cookieStorage.fetchCookies()
+            cookies = try cookieStorage.fetchCookies(userID: accountID)
         } catch {
             throw Failure.failedToFetchCookies(error)
         }

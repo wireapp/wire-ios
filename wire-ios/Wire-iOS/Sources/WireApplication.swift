@@ -17,25 +17,100 @@
 //
 
 import WireCommonComponents
+import WireFoundation
 import WireSyncEngine
 
 final class WireApplication: UIApplication {
 
-    private let presenter = DeveloperToolsPresenter()
+    private let developerToolsPresenter = DeveloperToolsPresenter()
+    private let shareDebugPresenter = ShareDebugReportPresenter()
+    private var tripleTapGestureRecognizer: UITapGestureRecognizer?
+
+    override init() {
+        super.init()
+        setupTripleTapGestureForSimulator()
+    }
+
+    deinit {
+        #if targetEnvironment(simulator)
+            NotificationCenter.default.removeObserver(self)
+        #endif
+    }
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        guard motion == .motionShake else { return }
+        handleShakeAction()
+    }
+
+    @objc
+    private func handleShakeAction() {
         guard Bundle.developerModeEnabled else {
+            presentDebugShareSheet()
             return
         }
 
-        guard motion == .motionShake else { return }
-
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            presenter.presentIfNotDisplayed(
-                with: appDelegate.appRootRouter,
-                from: self.topmostViewController(onlyFullScreen: false)
-            )
+        guard DeveloperFlag.shakeToReport.isOn else {
+            presentDeveloperTools()
+            return
         }
+
+        guard shareDebugPresenter.isPresenting else {
+            presentDebugShareSheet()
+            return
+        }
+
+        shareDebugPresenter.dismiss { [weak self] in
+            self?.presentDeveloperTools()
+        }
+    }
+
+    private func presentDeveloperTools() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+        developerToolsPresenter.presentIfNotDisplayed(
+            with: appDelegate.appRootRouter,
+            from: self.topmostViewController(onlyFullScreen: false)
+        )
+    }
+
+    private func presentDebugShareSheet() {
+        shareDebugPresenter.present(from: topmostViewController(onlyFullScreen: false))
+    }
+
+    // MARK: - UITest support
+
+    // Triple tap gesture for simulator (used in XCUITests)
+    private func setupTripleTapGestureForSimulator() {
+        #if targetEnvironment(simulator)
+            guard Bundle.developerModeEnabled else {
+                return
+            }
+
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(windowDidBecomeKey),
+                name: UIWindow.didBecomeKeyNotification,
+                object: nil
+            )
+        #endif
+    }
+
+    @objc
+    private func windowDidBecomeKey(_ notification: Notification) {
+        #if targetEnvironment(simulator)
+            guard let window = notification.object as? UIWindow,
+                  window === keyWindow,
+                  tripleTapGestureRecognizer == nil else {
+                return
+            }
+
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleShakeAction))
+            tapGesture.numberOfTapsRequired = 3
+            tapGesture.cancelsTouchesInView = false
+            window.addGestureRecognizer(tapGesture)
+            tripleTapGestureRecognizer = tapGesture
+        #endif
     }
 }
 

@@ -68,7 +68,7 @@ package struct FilesView: View {
                 Task { await viewModel.reload() }
             },
             content: { item in
-                viewModel.editFileView(item: item)
+                EditFileView(viewModel: viewModel.editFileViewModel(item: item))
             }
         )
     }
@@ -85,7 +85,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin {
+        if !viewModel.isRecycleBin, !viewModel.isOffline {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -178,13 +178,14 @@ private extension FilesView {
 // MARK: - Sheet Navigation
 
 private extension FilesView {
-
     @ViewBuilder
     func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
         switch navigationItem {
-        case let .editTags(fileItem: fileItem):
+        case let .create(target):
+            CreateFileView(viewModel: viewModel.createFileViewModel(target: target))
+        case let .editTags(fileItem: item):
             TagsEditView(
-                fileItem: fileItem,
+                fileItem: item,
                 useCases: .init(
                     updateTags: viewModel.useCases.updateTags,
                     getSuggestions: viewModel.useCases.getTagSuggestions
@@ -193,22 +194,21 @@ private extension FilesView {
                     await viewModel.reload()
                 }
             )
-        case let .shareLink(shareLinkView):
-            shareLinkView
-        case let .renameFile(fileRenameView):
-            fileRenameView
-        case let .create(folderView):
-            folderView
-        case let .versionHistory(versionHistoryView):
-            versionHistoryView
-        case let .moveToFolder(fileItem):
-            viewModel.moveToFolderView(item: fileItem)
+        case let .shareLink(item):
+            ShareLinkView(viewModel: viewModel.shareLinkViewModel(item: item))
+        case let .renameFile(item):
+            FileRenameView(viewModel: viewModel.fileRenameViewModel(item: item))
+        case let .versionHistory(item):
+            FileVersioningView(viewModel: viewModel.fileVersioningViewModel(item: item))
+        case let .moveToFolder(item):
+            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(item: item))
         }
     }
 }
 
-private extension FilesViewModel.FolderMenuOption {
+// MARK: - folder menu title
 
+private extension FilesViewModel.FolderMenuOption {
     var title: String {
         switch self {
         case let .folder(_, title):
@@ -217,8 +217,35 @@ private extension FilesViewModel.FolderMenuOption {
             Strings.Files.navigationTitle
         }
     }
-
 }
+
+// MARK: - template / create file
+
+private extension WireDriveFileTemplate.Kind {
+    var title: String {
+        switch self {
+        case .document:
+            Strings.Files.List.CreateFile.document
+        case .spreadsheet:
+            Strings.Files.List.CreateFile.spreadsheet
+        case .presentation:
+            Strings.Files.List.CreateFile.presentation
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .document:
+            "text.document"
+        case .spreadsheet:
+            "tablecells"
+        case .presentation:
+            "sparkles.tv"
+        }
+    }
+}
+
+// MARK: - Preview
 
 #Preview {
     NavigationStack {

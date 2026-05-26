@@ -46,7 +46,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.descendants(matching: .any).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+        app.descendants(matching: .textView).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
 
     var mentionButton: XCUIElement {
@@ -70,7 +70,15 @@ class ActiveConversationPage: PageModel {
     }
 
     var imageCell: XCUIElement {
-        app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.imageCell.rawValue].firstMatch
+    }
+
+    var videoCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCell.rawValue].firstMatch
+    }
+
+    var videoPlayButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPlayButton.rawValue].firstMatch
     }
 
     var userRemovedSystemMessage: XCUIElement {
@@ -123,8 +131,64 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
 
+    var guestsArePresentBanner: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
+    }
+
     var userLeftSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
+    }
+
+    var photoButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
+    }
+
+    var imageToChoose: XCUIElement {
+        app.images.element(boundBy: 1).firstMatch
+    }
+
+    var videoToChoose: XCUIElement {
+        app.images.element(boundBy: 0).firstMatch
+    }
+
+    var okToSend: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.ok.rawValue].firstMatch
+    }
+
+    var audioButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.audioButton.rawValue].firstMatch
+    }
+
+    var startRecording: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.startRecording.rawValue].firstMatch
+    }
+
+    var stopRecording: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.stopRecording.rawValue].firstMatch
+    }
+
+    var heliumButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.helium.rawValue].firstMatch
+    }
+
+    var sendAudioButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.sendAudio.rawValue].firstMatch
+    }
+
+    var playAudioFile: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.playAudioFile.rawValue].firstMatch
+    }
+
+    var recordingTimeLabel: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.recordingTime.rawValue]
+    }
+
+    var showOtherRowButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.showOtherRowButton.rawValue]
+    }
+
+    var pingButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.pingButton.rawValue]
     }
 
     func fetchMessages() -> [String] {
@@ -162,8 +226,8 @@ class ActiveConversationPage: PageModel {
     }
 
     func openConversationDetails() throws -> ConversationDetailsPage {
-        conversationTitleButton.tap()
-        conversationDetailsButton.tap()
+        conversationTitleButton.waitAndTap()
+        conversationDetailsButton.waitAndTap()
         return try ConversationDetailsPage()
     }
 
@@ -201,5 +265,121 @@ class ActiveConversationPage: PageModel {
         conversationTitleButton.waitAndTap()
         sharedDriveButton.tap()
         return try SharedDriveFilesPage()
+    }
+
+    func verifyCanAccessSharedDrive() {
+        conversationTitleButton.waitAndTap()
+        XCTAssertTrue(sharedDriveButton.exists)
+    }
+
+    func openPhotosAndGrantPermission() throws -> ActiveConversationPage {
+        photoButton.waitAndTap()
+
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+        let allowButton = springboard.buttons["Allow"].firstMatch
+        if allowButton.waitForExistence(timeout: 2) {
+            allowButton.tap()
+        }
+
+        let allowFullAccessButton = springboard.buttons[
+            Locators.ActiveConversationPage.allowFullAccess.rawValue
+        ].firstMatch
+        if allowFullAccessButton.waitForExistence(timeout: 2) {
+            allowFullAccessButton.tap()
+        }
+
+        app.activate()
+        return self
+    }
+
+    func openPhotos() throws -> ActiveConversationPage {
+        photoButton.waitAndTap()
+        return self
+    }
+
+    func selectImageAndSend() throws -> ActiveConversationPage {
+        if !imageToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+        imageToChoose.waitAndTap()
+
+        XCTAssertTrue(
+            okToSend.waitForExistence(timeout: 3),
+            "OK button did not appear after selecting media"
+        )
+        okToSend.waitAndTap()
+        return self
+    }
+
+    func selectVideoAndSend() throws -> ActiveConversationPage {
+        if !videoToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+        videoToChoose.waitAndTap()
+
+        XCTAssertTrue(
+            okToSend.waitForExistence(timeout: 3),
+            "OK button did not appear after selecting media"
+        )
+        okToSend.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func recordAudioAndSend() throws -> ActiveConversationPage {
+
+        audioButton.waitAndTap()
+        app.dismissAllowIfPresent()
+
+        if !startRecording.waitForExistence(timeout: 1) || !startRecording.isHittable {
+            if audioButton.waitForExistence(timeout: 2), audioButton.isHittable {
+                audioButton.tap()
+            }
+        }
+        startRecording.waitAndTap()
+        XCTAssertTrue(
+            recordingTimeLabel.waitForExistence(timeout: 2),
+            "Audio recording not started"
+        )
+
+        if stopRecording.waitForExistence(timeout: 2), stopRecording.isHittable {
+            stopRecording.tap()
+        }
+        heliumButton.tap()
+        sendAudioButton.waitAndTap()
+        return self
+    }
+
+    func receivedPing(for sender: String) -> XCUIElement {
+        let label = NSPredicate(
+            format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+            sender,
+            "pinged"
+        )
+        return app.otherElements.containing(label).firstMatch
+    }
+
+    @discardableResult
+    func sendPing() -> ActiveConversationPage {
+        showOtherRowButton.waitAndTap()
+        pingButton.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func verifyPingSent(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.otherElements.containing(
+                NSPredicate(format: "label CONTAINS %@", "You pinged")
+            ).firstMatch.waitForExistence(timeout: 2),
+            "Expected ping message not found",
+            file: file,
+            line: line
+        )
+        return self
     }
 }

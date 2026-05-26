@@ -63,7 +63,7 @@ extension FilesViewModel {
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                createFileUseCase: WireDriveCreateFileUseCase(
+                createFile: WireDriveCreateFileUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(
@@ -77,7 +77,7 @@ extension FilesViewModel {
                 getEditingURL: WireDriveGetEditingURLUseCase(
                     editingURLRepository: previewEditingURLRepository()
                 ),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository, fileCache: cache
                 ),
                 getPublicLinkData: WireDriveGetPublicLinkDataUseCase(
@@ -97,16 +97,26 @@ extension FilesViewModel {
                 ),
                 getDriveConversations: WireDriveGetConversationsUseCase(
                     nodesAPI: previewConversationsApi()
+                ),
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(
+                    repository: previewNodesRepository()
+                ),
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
+                    localAssetRepository: localAssetRepository
                 )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             nodesRepository: previewNodesRepository(),
-            fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-            isBrowsing: isBrowsing,
-            accentColorProvider: { .default }
+            isBrowsing: isBrowsing
         )
     }
 }
@@ -130,7 +140,8 @@ extension FileRenameViewModel {
                 filename: "foo.jpg",
                 filepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image PNG-TEST3.png"
             ),
-            kind: kind
+            kind: kind,
+            onRenamed: {}
         )
     }
 }
@@ -181,7 +192,6 @@ extension FileVersionItemViewModel {
                 title: "5:46AM",
                 subtitle: "Deniz Agha · 13MB"
             ),
-            accentColor: .default,
             onRestore: { _ in }
         )
     }
@@ -229,7 +239,7 @@ extension FileVersioningViewModel {
                 localAssetRepository: localAssetsRepository,
                 fileCache: MockFileCache()
             ),
-            accentColorProvider: { .default }
+            onVersionRestored: {}
         )
     }
 }
@@ -256,6 +266,28 @@ private func previewNodesRepository() -> any WireDriveNodesRepositoryProtocol {
         let page = request.offset < nodes.count ? Array(nodes[request.offset ..< end]) : []
         let nextOffset = end < nodes.count ? end : nil
         return (page, nextOffset)
+    }
+    repository.getTemplates_MockMethod = {
+        [
+            .init(
+                kind: .document,
+                editable: true,
+                label: "Microsoft Word",
+                id: "01-Microsoft Word.docx"
+            ),
+            .init(
+                kind: .spreadsheet,
+                editable: true,
+                label: "Microsoft Excel",
+                id: "02-Microsoft Excel.xlsx"
+            ),
+            .init(
+                kind: .presentation,
+                editable: true,
+                label: "Microsoft PowerPoint",
+                id: "03-Microsoft PowerPoint.pptx"
+            )
+        ]
     }
     return repository
 }
@@ -313,12 +345,22 @@ private func mockFileCache() -> any FileCache {
 }
 
 private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryProtocol, @unchecked Sendable {
-
     var failIndex = 0
     var publishers: [UUID: CurrentValueSubject<WireDriveLocalAsset?, Never>] = [:]
 
     func asset(nodeID: UUID) throws -> WireMessagingDomain.WireDriveLocalAsset? {
         publishers[nodeID]?.value
+    }
+
+    func allAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        publishers.values.compactMap(\.value)
+    }
+
+    func offlineAssets(
+        conversationName: String?,
+        assetsPath: String?
+    ) throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        publishers.values.compactMap(\.value).filter(\.isAvailableOffline)
     }
 
     func refreshAssetMetadata(
@@ -336,13 +378,29 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
             path: "some/path.jpg",
             contentType: nil,
             size: nil,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: .pending
         )
 
         return (node, localAsset)
     }
 
-    func downloadAsset(nodeID: UUID) async throws {
+    func updateAsset(_ asset: WireDriveLocalAsset) throws {
+        publishers[asset.nodeID]?.send(asset)
+    }
+
+    func updateAssetAsync(_ asset: WireDriveLocalAsset) async throws {
+        publishers[asset.nodeID]?.send(asset)
+    }
+
+    func deleteAsset(nodeID: UUID) async throws {
+        publishers[nodeID]?.send(nil)
+    }
+
+    func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         failIndex += 1
         // Fail every 3rd download
         let shouldFail = failIndex % 3 == 0
@@ -363,6 +421,10 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
                 path: "some/path.jpg",
                 contentType: nil,
                 size: nil,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: downloadState
             )
 
@@ -397,7 +459,8 @@ extension CreateFileViewModel {
                 id: "01-Microsoft Word.docx"
             )),
             path: "Test-1/Test-2",
-            createFileUseCase: createFileUseCase
+            createFileUseCase: createFileUseCase,
+            onNodeCreated: { _ in }
         )
     }
 }

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 extension ZMUserSession {
 
@@ -60,7 +61,12 @@ extension ZMUserSession {
     /// This will delete user data stored by WireSyncEngine in the keychain.
 
     func deleteUserKeychainItems() {
-        transportSession.cookieStorage.deleteKeychainItems()
+        do {
+            try transportSession.cookieStorage.removeCookies()
+        } catch {
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.error("Failed to remove cookies: \(errorDescription)", attributes: .safePublic)
+        }
     }
 
     /// Logout the current user

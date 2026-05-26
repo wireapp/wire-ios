@@ -1,0 +1,23 @@
+{
+    "has_more": false,
+    "notifications": [
+        {
+            "payload": [{
+                "data": {"user": "c05922f8-2b42-45c6-911a-56394ab8474d"},
+                "team": "9f00f4e7-2426-4d6d-b2b1-9190b204556f",
+                "time": "2026-04-27T08:00:24.215142065Z",
+                "type": "team.member-join"
+            }],
+            "id": "2541e4a1-420f-11f1-8001-0ee6e9ab7c8d"
+        },
+        {
+            "payload": [{
+                "data": {"user": "bbaf8e02-db59-4577-91ce-4750ece8e8f8"},
+                "team": "9f00f4e7-2426-4d6d-b2b1-9190b204556f",
+                "time": "2026-04-27T08:00:24.265610179Z",
+                "type": "team.member-join"
+            }],
+            "id": "254b3ac0-420f-11f1-8001-0ee6e9ab7c8d"
+        }
+    ]
+}

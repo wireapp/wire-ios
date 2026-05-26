@@ -40,7 +40,7 @@
 @interface MockTransportSessionTests : ZMTBaseTest
 
 @property (nonatomic) MockTransportSession *sut;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) LegacyCookieStorage *cookieStorage;
 /// Array of TestPushChannelEvent
 @property (nonatomic) NSMutableArray *pushChannelReceivedEvents;
 @property (nonatomic) NSUInteger pushChannelDidOpenCount;

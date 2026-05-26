@@ -17,15 +17,18 @@
 //
 
 import WireDataModel
+import WireFoundation
+import WireNetwork
 import WireTransport
 
 extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = backendURL.host!
-        return ZMPersistentCookieStorage(
-            forServerName: backendURL,
+    func cookieStorage(for account: Account) -> LegacyCookieStorage {
+        let cookieStorage = CookieStorage(
+            cookieEncryptionKey: UserDefaults.cookiesKey()
+        )
+        return LegacyCookieStorage(
             userIdentifier: account.userIdentifier,
-            useCache: false
+            cookieStorage: cookieStorage
         )
     }
 
@@ -33,3 +36,5 @@ extension BackendEnvironmentProvider {
         cookieStorage(for: account).hasAuthenticationCookie
     }
 }
+
+extension CookieStorage: WireTransport.CookieStorageProtocol {}

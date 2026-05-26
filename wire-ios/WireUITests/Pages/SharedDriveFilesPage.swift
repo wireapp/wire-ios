@@ -68,6 +68,10 @@ class SharedDriveFilesPage: PageModel {
             .firstMatch
     }
 
+    var numberOfFilesInList: Int {
+        fileTexts.count
+    }
+
     @discardableResult
     func verifyFileTypeAndMetadata(
         name: String,
@@ -112,6 +116,10 @@ class SharedDriveFilesPage: PageModel {
         app.staticTexts
             .matching(identifier: folderName)
             .element
-            .exists
+            .waitForExistence(timeout: 2)
+    }
+
+    var searchTextField: XCUIElement {
+        app.searchFields.firstMatch
     }
 }

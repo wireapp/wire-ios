@@ -22,45 +22,8 @@ import XCTest
 final class BackupRestoreHistoryTests: WireUITestCase {
 
     @MainActor
-    func testCreateBackupAndRestoreHistory_TC_8928_TC_8930_TC_8805() async throws {
-        let groupName = UserGenerator.generateRandomConversationName()
-        let messageFromOwner = UserGenerator.generateRandomMessage()
-        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
-        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-        let countOfMembers = 2
-
-        var qualifiedIds: [QualifiedID] = []
-        var teamMembers: [UserInfo] = []
-
-        for _ in 0 ..< countOfMembers {
-            let (qualifiedId, teamMember) = try await UserHelper.default.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken.token,
-                teamID: teamID
-            )
-            qualifiedIds.append(qualifiedId)
-            teamMembers.append(teamMember)
-        }
-
-        try await UserHelper.default.createGroupConversations(
-            qualifiedIds: qualifiedIds,
-            owner: teamOwner,
-            groupName: groupName
-        )
-
-        var activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
-            .openConversation()
-            .sendMessage(messageFromOwner)
-
-        var sentMessages = activeConversationPage.fetchMessages()
-        XCTAssertTrue(
-            sentMessages.contains(messageFromOwner),
-            "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
-        )
+    func testCreateBackupAndRestoreHistoryWithPassword_TC_8928_TC_8930_TC_8805() async throws {
+        var (messageFromOwner, teamOwner, activeConversationPage) = try await createTeamConversationAndSendMessage()
 
         let creatingBackupPage = try activeConversationPage.goBackToConversationPage()
             .openSettings()
@@ -69,12 +32,9 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .tapBackupNow()
             .enterBackupPasswordAndBackup(teamOwner.password)
 
-        XCTAssertTrue(creatingBackupPage.backupSuccessfullyCreatedLabel.exists, "Backup is unsuccessful")
-        let getProgressValue = try XCTUnwrap(creatingBackupPage.getBackupProgressValue())
-        XCTAssertEqual(getProgressValue, "100%", "Progress is not 100%")
+        creatingBackupPage.verifyBackupIsCreatedSuccessfully()
 
         let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
-
         let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
 
         _ = try saveBackupFileBottomSheetPage.tapSaveToFilesOnBottomSheet()
@@ -83,14 +43,10 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .logout()
             .enterPassword(teamOwner.password)
 
-        activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
-            .openConversation()
-
-        sentMessages = activeConversationPage.fetchMessages()
-        XCTAssertFalse(
-            sentMessages.contains(messageFromOwner),
-            "Expected message '\(messageFromOwner)' found in sent messages: \(sentMessages)"
+        activeConversationPage = try loginAndVerifyPreviousMessageIsNotShown(
+            email: teamOwner.email,
+            password: teamOwner.password,
+            message: messageFromOwner
         )
 
         let setPasswordPage = try activeConversationPage.goBackToConversationPage()
@@ -98,7 +54,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .openAccountSettings()
             .tapBackupOrRestore()
             .tapRestoreFromBackupButton()
-            .selectBackupFile(withName: backupFileName)
+            .selectBackupFileWithPassword(withName: backupFileName)
             .enterBackupPasswordAndRestore(teamOwner.password)
 
         XCTAssertTrue(
@@ -112,10 +68,116 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .switchToConversationsTab()
             .openConversation()
 
-        sentMessages = activeConversationPage.fetchMessages()
+        let restoredMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
-            sentMessages.contains(messageFromOwner),
-            "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
+            restoredMessages.contains(messageFromOwner),
+            "Expected message '\(messageFromOwner)' not found in restored messages: \(restoredMessages)"
         )
+    }
+
+    @MainActor
+    func testCreateBackupAndRestoreHistoryWithoutPassword_TC_8927_8929() async throws {
+        var (messageFromOwner, teamOwner, activeConversationPage) = try await createTeamConversationAndSendMessage()
+
+        let backupOrRestorePage = try activeConversationPage.goBackToConversationPage()
+            .openSettings()
+            .openAccountSettings()
+            .tapBackupOrRestore()
+            .tapBackupNow()
+
+        let creatingBackupPage = try backupOrRestorePage.backupWithoutPassword()
+
+        creatingBackupPage.verifyBackupIsCreatedSuccessfully()
+
+        let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
+        let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
+
+        _ = try saveBackupFileBottomSheetPage.tapSaveToFilesOnBottomSheet()
+            .tapSaveButtonOnMyiPhonePage()
+            .goBackToAccountPage()
+            .logout()
+            .enterPassword(teamOwner.password)
+
+        activeConversationPage = try loginAndVerifyPreviousMessageIsNotShown(
+            email: teamOwner.email,
+            password: teamOwner.password,
+            message: messageFromOwner
+        )
+
+        let backupOrRestorePageAfterRestore = try activeConversationPage.goBackToConversationPage()
+            .openSettings()
+            .openAccountSettings()
+            .tapBackupOrRestore()
+            .tapRestoreFromBackupButton()
+            .selectBackupFileWithoutPassword(withName: backupFileName)
+
+        XCTAssertTrue(
+            backupOrRestorePageAfterRestore.historyRestoredAlert.waitForExistence(timeout: 3),
+            "History restored alert missing"
+        )
+
+        _ = try backupOrRestorePageAfterRestore.acceptHistoryrestoredAlert()
+            .goBackToAccountPage()
+            .goBackToSettingsPage()
+            .switchToConversationsTab()
+            .openConversation()
+
+        let restoredMessages = activeConversationPage.fetchMessages()
+        XCTAssertTrue(
+            restoredMessages.contains(messageFromOwner),
+            "Expected message '\(messageFromOwner)' not found in restored messages: \(restoredMessages)"
+        )
+    }
+
+    @MainActor
+    private func createTeamConversationAndSendMessage() async throws -> (
+        messageFromOwner: String,
+        teamOwner: UserInfo,
+        activeConversationPage: ActiveConversationPage
+    ) {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let messageFromOwner = UserGenerator.generateRandomMessage()
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 2,
+            conversation: .group(groupName)
+        )
+
+        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openConversation()
+            .sendMessage(messageFromOwner)
+
+        XCTAssertTrue(
+            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 2),
+            "Sent message did not appear"
+        )
+
+        return (
+            messageFromOwner: messageFromOwner,
+            teamOwner: teamOwner,
+            activeConversationPage: activeConversationPage
+        )
+    }
+
+    @MainActor
+    private func loginAndVerifyPreviousMessageIsNotShown(
+        email: String,
+        password: String,
+        message: String
+    ) throws -> ActiveConversationPage {
+        let activeConversationPage = try app.loginUser(
+            email: email,
+            password: password
+        )
+        .acceptPopup()
+        .openConversation()
+
+        let sentMessages = activeConversationPage.fetchMessages()
+        XCTAssertFalse(
+            sentMessages.contains(message),
+            "Expected message '\(message)' found in sent messages: \(sentMessages)"
+        )
+
+        return activeConversationPage
     }
 }

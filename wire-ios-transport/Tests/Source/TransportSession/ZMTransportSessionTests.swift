@@ -18,7 +18,8 @@
 
 import Foundation
 import WireTesting
-import WireTransport
+import WireTransportSupport
+@testable import WireTransport
 
 @objcMembers
 public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCapable {
@@ -64,7 +65,7 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
     var serverName: String!
     var baseURL: URL!
     var websocketURL: URL!
-    var cookieStorage: ZMPersistentCookieStorage!
+    var cookieStorage: LegacyCookieStorage!
     var reachability: FakeReachability!
     var sut: ZMTransportSession!
     var environment: MockEnvironment!
@@ -76,10 +77,8 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         serverName = "https://example.com"
         baseURL = URL(string: serverName)!
         websocketURL = URL(string: serverName)!.appendingPathComponent("websocket")
-        cookieStorage = ZMPersistentCookieStorage(
-            forServerName: serverName,
-            userIdentifier: userIdentifier,
-            useCache: true
+        cookieStorage = LegacyCookieStorage(
+            testingWithUserIdentifier: userIdentifier
         )
         reachability = FakeReachability()
         environment = MockEnvironment()
