@@ -101,6 +101,8 @@ public protocol TeamsAPI {
         for teamID: Team.ID
     ) async throws -> [User]
 
+    // TODO: collaborator apps
+
     /// Fetches legacy services (bots) in a team.
 
     func getWhitelistedBots(
