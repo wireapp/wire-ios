@@ -43,12 +43,16 @@ final class AudioRecordViewControllerTests: XCTestCase {
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!
     var userSession: UserSessionMock!
+    var audioRecorder: MockAudioRecorder!
 
     override func setUp() {
         super.setUp()
         accentColor = .blue
         userSession = UserSessionMock()
-        sut = AudioRecordViewController(userSession: userSession)
+        // Use a mock recorder so no real recordLevelCallBack fires extra
+        // SCSiriWaveformView phase advances between init and snapshot.
+        audioRecorder = MockAudioRecorder()
+        sut = AudioRecordViewController(audioRecorder: audioRecorder, userSession: userSession)
         delegate = MockAudioRecordViewControllerDelegate()
         sut.delegate = delegate
         sut.updateTimeLabel(123)
@@ -59,6 +63,7 @@ final class AudioRecordViewControllerTests: XCTestCase {
         sut = nil
         delegate = nil
         userSession = nil
+        audioRecorder = nil
 
         super.tearDown()
     }
