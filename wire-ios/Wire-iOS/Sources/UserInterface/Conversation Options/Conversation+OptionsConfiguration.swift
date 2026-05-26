@@ -31,6 +31,7 @@ extension ZMConversation {
         private var conversation: ZMConversation
         private var token: NSObjectProtocol?
         private let userSession: ZMUserSession
+        var isTeamAdmin: Bool { userSession.selfUser.canManageTeam }
         var messageProtocol: MessageProtocol { conversation.messageProtocol }
         let areLegacyBotsAvailable: Bool
         let isAppsFeatureEnabled: Bool
