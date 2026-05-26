@@ -57,12 +57,18 @@ struct TeamMemberDiscoveryAgent: TeamMemberDiscoveryAgentProtocol {
             do {
                 try await runDiscovery(selfTeamID: selfTeamID)
             } catch {
+                let errorType = Swift.type(of: error)
                 WireLogger.sync.error(
-                    "team member discovery failed after cursor reset: \(String(describing: error))"
+                    "team member discovery failed after cursor reset: \(String(describing: errorType))",
+                    attributes: .safePublic
                 )
             }
         } catch {
-            WireLogger.sync.error("team member discovery failed: \(String(describing: error))")
+            let errorType = Swift.type(of: error)
+            WireLogger.sync.error(
+                "team member discovery failed: \(String(describing: errorType))",
+                attributes: .safePublic
+            )
         }
     }
 
