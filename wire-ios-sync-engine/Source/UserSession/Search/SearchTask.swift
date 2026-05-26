@@ -459,22 +459,13 @@ public final class SearchTask {
                 cachedSearchUser.user = localUser
                 searchUser = cachedSearchUser
             } else {
-                let accentColor = Int16(exactly: result.accentID).flatMap(AccentColor.init(rawValue:))
                 searchUser = ZMSearchUser(
                     viewContext: viewContext,
-                    name: result.name,
-                    handle: result.handle,
-                    accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
-                    remoteIdentifier: qualifiedID.uuid,
-                    domain: qualifiedID.domain,
-                    teamIdentifier: result.teamID,
-                    providerIdentifier: result.service?.provider.transportString(),
-                    user: localUser,
-                    searchUsersCache: searchUsersCache,
-                    type: localUser?.type,
-                    summary: localUser?.appInfo?.appDescription,
-                    isDeleted: result.deleted ?? false
+                    user: result,
+                    localUser: localUser,
+                    searchUsersCache: searchUsersCache
                 )
+                // TODO: add searchUsersCache?
             }
 
             guard searchUser.user == nil || searchUser.user?.isTeamMember == false else {
@@ -498,12 +489,12 @@ public final class SearchTask {
 
     /// If no search query is provided we cannot use the search API.
     /// This func basically serves two purposes:
-    /// - abc
-    /// - efg
+    /// - Apps added to the team don't trigger events, so this allows apps being added right now (while the iOS client is running) to be displayed in the search results.
+    /// - In large teams apps might not be discovered without this code (2000 members cap).
     private func listAllAppsAndCollaborators() async throws -> SearchResultAggregator {
         guard
             let apiVersion,
-            apiVersion <= .v15,
+            apiVersion <= .v10, // collaborators: v10, apps: v15
             case let .search(searchRequest) = type,
             searchRequest.query.string.isEmpty,
             !searchRequest.searchOptions.contains(.localResultsOnly),
@@ -516,14 +507,42 @@ public final class SearchTask {
         }
         guard let teamID else { return { _ in } }
 
-        let apps = try await teamsAPI.getApps(for: teamID)
-        print(apps)
-        let collaborators = try await teamsAPI.getCollaborators(for: teamID)
-        print(apps)
+        let apps = if apiVersion >= .v15 {
+            try await teamsAPI.getApps(for: teamID)
+        } else { [] }
 
-        // TODO: maybe do all this in performRemoteSearch instead?
+        try Task.checkCancellation()
+
+        let collaboratorIDs = try await teamsAPI.getCollaborators(for: teamID)
+            .map { _ in () }
+
+        try Task.checkCancellation()
+
+        let collaborators = try await usersAPI.getUsers(userIDs: []).found
+
+        try Task.checkCancellation()
+
+
 
         fatalError()
+//        return try await withTaskGroup(
+//            of: SearchResultAggregator.self,
+//            returning: SearchResultAggregator.self
+//        ) { taskGroup in
+//
+//            // TODO: get apps and collaborators
+//
+//            print(apps)
+//            let collaborators = try await teamsAPI.getCollaborators(for: teamID)
+//            print(apps)
+//
+//            var result = SearchResult()
+//            while let aggregator = await taskGroup.next() {
+//                aggregator(&result)
+//            }
+//            return result
+//
+//        }
     }
 
     // MARK: -
@@ -871,6 +890,35 @@ private extension TypeOfUser {
         case .bot:
             self = .bot
         }
+    }
+
+}
+
+private extension ZMSearchUser {
+
+    convenience init(
+        viewContext: NSManagedObjectContext,
+        user: WireNetwork.User,
+        localUser: ZMUser?,
+        searchUsersCache: SearchUsersCache?
+    ) {
+        let accentColor = Int16(exactly: user.accentID).flatMap(AccentColor.init(rawValue:))
+        let qualifiedID = WireDataModel.QualifiedID(uuid: user.id.id, domain: user.id.domain)
+        self.init(
+            viewContext: viewContext,
+            name: user.name,
+            handle: user.handle,
+            accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+            remoteIdentifier: qualifiedID.uuid,
+            domain: qualifiedID.domain,
+            teamIdentifier: user.teamID,
+            providerIdentifier: user.service?.provider.transportString(),
+            user: localUser,
+            searchUsersCache: searchUsersCache,
+            type: localUser?.type,
+            summary: localUser?.appInfo?.appDescription,
+            isDeleted: user.deleted ?? false
+        )
     }
 
 }
