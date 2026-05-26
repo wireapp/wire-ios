@@ -101,10 +101,10 @@ final class SpinnerButtonTests: XCTestCase {
         )
     }
 
-    // Freeze CABasicAnimation rotation phase so the spinner renders at a
-    // deterministic angle in snapshot tests instead of one driven by wall clock.
+    // Strip the spinner's rotation animation after it's added so snapshots
+    // render the icon at its natural orientation instead of a wall-clock-driven
+    // phase. Layer-speed pauses leave the captured beginTime non-deterministic.
     private func freezeSpinnerAnimation() {
-        sut.layer.speed = 0
-        sut.layer.beginTime = 0
+        sut.removeAllAnimationsRecursively()
     }
 }

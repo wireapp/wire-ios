@@ -211,11 +211,10 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             RunLoop.main.run(until: delay)
         }
 
-        // Freeze any sublayer animations (e.g. SpinnerButton's rotation in
-        // .selected state) so snapshots render at a deterministic phase
-        // instead of one driven by wall clock.
-        stackView.layer.speed = 0
-        stackView.layer.beginTime = 0
+        // Strip any sublayer animations (e.g. SpinnerButton's rotation in
+        // .selected state) so snapshots render at a deterministic frame
+        // instead of a wall-clock-driven phase.
+        stackView.removeAllAnimationsRecursively()
 
         return stackView
 

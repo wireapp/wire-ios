@@ -291,6 +291,16 @@ extension UIView {
 
         return widthConstraint
     }
+
+    // Walks the view tree and clears all CAAnimations. Use after triggering a
+    // loading/spinner state so snapshots capture a deterministic frame instead
+    // of one driven by wall-clock animation phase.
+    func removeAllAnimationsRecursively() {
+        layer.removeAllAnimations()
+        for subview in subviews {
+            subview.removeAllAnimationsRecursively()
+        }
+    }
 }
 
 extension XCTestCase {
