@@ -108,7 +108,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         enrollmentFlow.showActivityIndicator()
 
         do {
-            let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: enrollmentFlow.authenticate)
+            let certificateDetails = try await enrollCertificateUseCase
+                .invoke(authenticate: enrollmentFlow.authenticate)
             stopCertificateEnrollmentSnoozerUseCase.invoke()
             confirmSuccessfulEnrollment(certificateDetails)
         } catch {

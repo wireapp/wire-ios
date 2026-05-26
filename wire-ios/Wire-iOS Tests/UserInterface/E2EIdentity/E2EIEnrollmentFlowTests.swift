@@ -47,7 +47,10 @@ final class E2EIEnrollmentFlowTests: XCTestCase {
 
     func test_authenticate_callsOAuthUseCaseInvoke() async throws {
         // Given
-        oauthUseCase.invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue = OAuthResponse(idToken: "id", refreshToken: "refresh")
+        oauthUseCase.invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue = OAuthResponse(
+            idToken: "id",
+            refreshToken: "refresh"
+        )
         let sut = makeSUT()
 
         // When
@@ -91,7 +94,7 @@ final class E2EIEnrollmentFlowTests: XCTestCase {
     private func makeSUT() -> E2EIEnrollmentFlow {
         E2EIEnrollmentFlow(
             oauthUseCase: oauthUseCase,
-            targetVC: { [unowned self] in self.targetVC }
+            targetVC: { [unowned self] in targetVC }
         )
     }
 

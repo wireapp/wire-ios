@@ -89,12 +89,14 @@ final class DeveloperE2eiViewModel: ObservableObject {
     func showUpdateCertificateAlert(canRemindLater: Bool) {
         typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
 
-        guard let developerToolsViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+        guard let developerToolsViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        else {
             return
         }
 
         developerToolsViewController.dismiss(animated: true) {
-            guard let presentingViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            guard let presentingViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+            else {
                 return
             }
 

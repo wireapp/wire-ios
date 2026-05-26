@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireReusableUIComponents
 import WireRequestStrategy
+import WireReusableUIComponents
 
 @MainActor
 final class E2EIEnrollmentFlow {

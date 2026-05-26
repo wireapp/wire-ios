@@ -67,7 +67,7 @@ struct DeveloperE2eiView: View {
                         "Starts the enrollment flow with the selected expiration time."
                     )
                 }
-                
+
                 VStack(alignment: .leading) {
                     Button(String("Show update certificate alert")) {
                         viewModel.showUpdateCertificateAlert(canRemindLater: false)
