@@ -63,6 +63,8 @@ To rebuild a dependency and use it in the umbrella project, run:
 carthage bootstrap --platform ios --use-xcframeworks
 ```
 
+To run tests, make sure to use a simulated iPhone 17 with iOS 26.1, as reference screenshot tests rely on that layout.
+
 ### Known Limitations
 
 Notifications sent through the Apple Push Notification service can only be received by the App Store Wire client, which is code-signed with Wire's own certificate. This is a security feature enforced by Apple, as documented in Apple's [Local and Remote Notification Programming Guide](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/). Any client built from source will not be able to receive notifications.

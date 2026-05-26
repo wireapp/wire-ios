@@ -259,7 +259,7 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
     func collectionsViewControllerDidRequestOpenSearchFiles(
         _ viewController: CollectionsViewController
     ) {
-        onFilesButtonPressed(nil)
+        onSharedDriveButtonPressed(nil)
     }
 }
 
