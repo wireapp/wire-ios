@@ -624,6 +624,23 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
+    // MARK: - V10
+
+    func testGetCollaborators_givenV10AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
+
+        for apiVersion in APIVersion.v10.andNextVersions {
+
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetCollaboratorsSuccessResponseV10")
+            ])
+
+            // When
+            fatalError() // TODO: finsih
+        }
+
+    }
+
     // MARK: - V15
 
     func testGetApps_givenV15AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
