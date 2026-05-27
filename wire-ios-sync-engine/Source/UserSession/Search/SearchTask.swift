@@ -494,7 +494,7 @@ public final class SearchTask {
     private func listAllAppsAndCollaborators() async throws -> SearchResultAggregator {
         guard
             let apiVersion,
-            apiVersion <= .v10, // collaborators: v10, apps: v15
+            apiVersion >= .v10, // collaborators: v10, apps: v15
             case let .search(searchRequest) = type,
             searchRequest.query.string.isEmpty,
             !searchRequest.searchOptions.contains(.localResultsOnly),
@@ -502,8 +502,11 @@ public final class SearchTask {
         else { return { _ in } }
 
         let searchContext = contextProvider.newBackgroundContext()
-        let teamID = await searchContext.perform {
-            ZMUser.selfUser(in: searchContext).team?.remoteIdentifier
+        let (teamID, selfUserDomain) = await searchContext.perform {
+            let selfUser = ZMUser.selfUser(in: searchContext)
+            let teamID = selfUser.team?.remoteIdentifier
+            let domain = selfUser.domain ?? ""
+            return (teamID, domain)
         }
         guard let teamID else { return { _ in } }
 
@@ -514,15 +517,23 @@ public final class SearchTask {
         try Task.checkCancellation()
 
         let collaboratorIDs = try await teamsAPI.getCollaborators(for: teamID)
-            .map { _ in () }
+            .map { collaboratorInfo in
+                WireFoundation.QualifiedID(
+                    id: collaboratorInfo.userID,
+                    domain: selfUserDomain
+                )
+            }
 
         try Task.checkCancellation()
 
-        let collaborators = try await usersAPI.getUsers(userIDs: []).found
+        let collaborators = try await usersAPI.getUsers(userIDs: collaboratorIDs)
+        if !collaborators.failed.isEmpty {
+            WireLogger.network.warn("at least one collaborator's info couldn't be fetched", attributes: .safePublic)
+        }
 
         try Task.checkCancellation()
 
-
+        // let searchUsers = // TODO: convert apps and collaborators.found to ZMSearchUser and return a SearchResultAggregator
 
         fatalError()
     }
