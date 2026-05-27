@@ -1601,44 +1601,35 @@ public final class MLSService: MLSServiceInterface {
                 parentID: parentQualifiedID,
                 context: notificationContext
             )
-            print("⏰ fetched subgroup")
 
             await subconversationGroupIDRepository.storeSubconversationGroupID(
                 subgroup.groupID,
                 forType: .conference,
                 parentGroupID: parentID
             )
-            print("⏰ stored subgroup")
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(5))
-            }
+
             if subgroup.epoch <= 0 {
                 try await createSubgroup(
                     with: subgroup.groupID,
                     parentID: parentID
                 )
-                print("⏰ created subgroup")
             } else if let epochAge = subgroup.epochTimestamp?.ageInDays, epochAge >= 1 {
                 try await deleteSubgroup(
                     parentID: parentQualifiedID,
                     subgroup: subgroup,
                     context: notificationContext
                 )
-                print("⏰ deleted subgroup")
                 try await createSubgroup(
                     with: subgroup.groupID,
                     parentID: parentID
                 )
-                print("⏰ created subgroup")
             } else {
                 try await joinSubgroup(
                     parentID: parentID,
                     subgroupID: subgroup.groupID
                 )
-                print("⏰ joined subgroup")
             }
 
-            print("⏰ will return subgroup.groupID")
             return subgroup.groupID
         } catch {
             logger

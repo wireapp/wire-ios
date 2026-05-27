@@ -107,6 +107,8 @@ public class WireCallCenterV3: NSObject {
     let localDomain: String?
     let isFederationEnabled: Bool
 
+    var mlsConferenceSetupTimeout: Duration = .seconds(10)
+
     // MARK: - Initialization
 
     deinit {
@@ -704,8 +706,6 @@ public extension WireCallCenterV3 {
     /// See documentation:
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/692027483/Use+case+Join+conference+sub-conversation+MLS
 
-    private static let mlsConferenceSetupTimeout: Duration = .seconds(4)
-
     private func setUpMLSConference(
         in conversation: ZMConversation,
         avsCallHandler: @escaping () throws -> Void
@@ -743,28 +743,12 @@ public extension WireCallCenterV3 {
             Task {
                 do {
                     // Join the subgroup or create it if it doesn't exist
-                    let subgroupID = try await mlsService.createOrJoinSubgroup(
+                    let subgroupID = try await self.createOrJoinSubgroupWithTimeout(
+                        using: mlsService,
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
-                    print("⏰ MLS conference: subgroup joined successfully")
-//                    let subgroupID = try await withThrowingTaskGroup(of: MLSGroupID.self) { group in
-//                        group.addTask {
-//                            try await mlsService.createOrJoinSubgroup(
-//                                parentQualifiedID: parentQualifiedID,
-//                                parentID: parentGroupID
-//                            )
-//                        }
-//                        group.addTask {
-//                            try await Task.sleep(for: Self.mlsConferenceSetupTimeout)
-//                            throw Failure.mlsConferenceSetupTimeout
-//                        }
-//                        guard let result = try await group.next() else {
-//                            throw Failure.mlsConferenceSetupTimeout
-//                        }
-//                        group.cancelAll()
-//                        return result
-//                    }
+
                     WireLogger.calling.info(
                         "MLS conference: subgroup joined successfully",
                         attributes: .safePublic
@@ -844,6 +828,34 @@ public extension WireCallCenterV3 {
         }
     }
 
+    /// Joins (or creates) the MLS subgroup, enforcing `mlsConferenceSetupTimeout`.
+    ///
+    /// If the network call doesn't complete in time, throws `Failure.mlsConferenceSetupTimeout`
+    /// instead of leaving the user stuck in "Connecting…".
+    private func createOrJoinSubgroupWithTimeout(
+        using mlsService: MLSServiceInterface,
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async throws -> MLSGroupID {
+        try await withThrowingTaskGroup(of: MLSGroupID.self) { group in
+            group.addTask {
+                try await mlsService.createOrJoinSubgroup(
+                    parentQualifiedID: parentQualifiedID,
+                    parentID: parentID
+                )
+            }
+            group.addTask {
+                try await Task.sleep(for: self.mlsConferenceSetupTimeout)
+                throw Failure.mlsConferenceSetupTimeout
+            }
+            defer { group.cancelAll() }
+            guard let result = try await group.next() else {
+                throw Failure.mlsConferenceSetupTimeout
+            }
+            return result
+        }
+    }
+
     private func onMLSConferenceFailure(id: AVSIdentifier) {
         uiMOC?.perform { [weak self] in
             // Notify to close calling UI
@@ -861,7 +873,6 @@ public extension WireCallCenterV3 {
 
     func closeCall(conversationId: AVSIdentifier, reason: CallClosedReason = .normal) {
         Self.logger.info("closing call")
-        print("⏰ closing call")
         avsWrapper.endCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
