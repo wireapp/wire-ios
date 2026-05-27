@@ -1609,9 +1609,9 @@ public final class MLSService: MLSServiceInterface {
                 parentGroupID: parentID
             )
             print("⏰ stored subgroup")
-//            while !Task.isCancelled {
-//                try? await Task.sleep(for: .seconds(5))
-//            }
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(5))
+            }
             if subgroup.epoch <= 0 {
                 try await createSubgroup(
                     with: subgroup.groupID,
