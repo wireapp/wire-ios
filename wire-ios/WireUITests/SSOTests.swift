@@ -91,29 +91,28 @@ final class SSOTests: WireUITestCase {
             "username field editable, shold be disabled"
         )
     }
-    
-    
+
     @MainActor
-       func testSSOLoginWithClaimedDomain_TC_8967() async throws {
+    func testSSOLoginWithClaimedDomain_TC_8967() async throws {
 
-           // GIVEN
-           let environmentVariables = try EnvironmentVariables()
+        // GIVEN
+        let environmentVariables = try EnvironmentVariables()
 
-           // WHEN
-           _ = try await WelcomePage()
-               .enterSSOCode(environmentVariables.ssoClaimedUserEmail)
-               .ssoWebLogin(
-                   email: environmentVariables.ssoClaimedUserEmail,
-                   password: environmentVariables.ssoClaimedUserPassword
-               )
-               .acceptFirstTimeAlert()
+        // WHEN
+        _ = try await WelcomePage()
+            .enterSSOCode(environmentVariables.ssoClaimedUserEmail)
+            .ssoWebLogin(
+                email: environmentVariables.ssoClaimedUserEmail,
+                password: environmentVariables.ssoClaimedUserPassword
+            )
+            .acceptFirstTimeAlert()
 
-           // THEN
-           let conversationsPage = try ManagedDevicesPage().removeDeviceAndContinueIfShown()
+        // THEN
+        let conversationsPage = try ManagedDevicesPage().removeDeviceAndContinueIfShown()
 
-           XCTAssertTrue(
-               conversationsPage.pageMainElement.waitForExistence(timeout: 2),
-               "Conversations page did not appear after SSO login"
-           )
-       }
+        XCTAssertTrue(
+            conversationsPage.pageMainElement.waitForExistence(timeout: 2),
+            "Conversations page did not appear after SSO login"
+        )
+    }
 }
