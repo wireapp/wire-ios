@@ -48,6 +48,7 @@ public class Feature: ZMManagedObject {
         case mls
         case mlsMigration
         case selfDeletingMessages
+        case preventAdminlessGroups
 
     }
 
