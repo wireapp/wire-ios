@@ -22,6 +22,6 @@ public struct CollaboratorInfo: Equatable {
 
     public var userID: UUID
     public var teamID: UUID
-    public var permissions: Set<CollaboratorPermission>
+    public var permissions: [CollaboratorPermission]
 
 }
