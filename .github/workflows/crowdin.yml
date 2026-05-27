@@ -52,7 +52,7 @@ jobs:
           HEAD_BRANCH="chore/update-localization"
           TITLE="chore: Update localization - WPB-15278"
           BODY="This PR pulls in the latest localization translations from Crowdin."
-
+          exit 123
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
           find . -name "*.xcstrings" | tee string-catalogs.txt
