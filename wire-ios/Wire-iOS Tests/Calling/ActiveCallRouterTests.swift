@@ -85,7 +85,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         XCTAssertTrue(executed)
     }
 
-    func testThat_ItSetIsActiveCallShown_ToFalse_When_RestoringCallFromTopOverlay() {
+    func testThat_ItSetIsActiveCallShown_ToTrue_When_RestoringCallFromTopOverlay() {
         // given
         let conversation = createOneOnOneConversation()
         let voiceChannel = MockVoiceChannel(conversation: conversation)
@@ -93,13 +93,13 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         mockSelfClient.remoteIdentifier = "selfClient123"
         MockUser.mockSelf().clients = Set([mockSelfClient])
 
-        sut.isActiveCallShown = true
+        sut.isActiveCallShown = false
 
         // when
         sut.voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: voiceChannel)
 
         // then
-        XCTAssertFalse(sut.isActiveCallShown)
+        XCTAssertTrue(sut.isActiveCallShown)
     }
 
     func testThat_ItRepresentsCall_WhenStateSaysShown_ButNoPresentedCallVCExists() {
