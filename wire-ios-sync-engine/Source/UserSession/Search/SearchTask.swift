@@ -527,7 +527,7 @@ public final class SearchTask {
                 .map { collaboratorInfo in
                     WireFoundation.QualifiedID(
                         id: collaboratorInfo.userID,
-                        domain: selfUserDomain // TODO: test self-user being federated
+                        domain: selfUserDomain
                     )
                 }
         } catch let error as FailureResponse {
