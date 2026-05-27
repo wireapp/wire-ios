@@ -92,6 +92,7 @@
 "verification_code.message" = "Введите код подтверждения, который мы отправили на %@.";
 "verification_code.confirm" = "Подтвердить";
 "verification_code.resend_code" = "Отправить код еще раз";
+"verification_code.resend_code_after_seconds" = "Повторная отправка кода (ожидание: %@)";
 
 "authentication.no_history.title" = "Вы впервые используете Wire на этом устройстве.";
 "authentication.no_history.message" = "История бесед не отображается в целях обеспечения конфиденциальности.";
