@@ -244,7 +244,8 @@ public class Feature: ZMManagedObject {
              .e2ei,
              .fileSharing,
              .mls,
-             .mlsMigration:
+             .mlsMigration,
+             .preventAdminlessGroups:
             break
         }
     }
