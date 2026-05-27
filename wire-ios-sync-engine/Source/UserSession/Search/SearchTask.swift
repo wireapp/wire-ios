@@ -143,7 +143,7 @@ public final class SearchTask {
                     return try await self.listAllAppsAndCollaborators()
                 } catch {
                     let errorType = Swift.type(of: error)
-                    WireLogger.search.error("failed to list all apps: \(String(describing: errorType))")
+                    WireLogger.search.error("failed to list all apps and collaborators: \(String(describing: errorType))")
                     return { _ in }
                 }
             }

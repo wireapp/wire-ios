@@ -657,28 +657,25 @@ final class TeamsAPITests: XCTestCase {
                 let apps = try await sut.getApps(for: Scaffolding.teamID)
 
                 // Then
-                fatalError("TODO") // TODO: finish
-//                let expectedApps = [
-//                    App(
-//                        name: "WPB-18618",
-//                        category: "developer",
-//                        description: "WPB-18618",
-//                        accentID: 0,
-//                        assets: [
-//                            UserAsset(
-//                                key: "lorem-ipsum",
-//                                size: .complete,
-//                                type: .image
-//                            ),
-//                            UserAsset(
-//                                key: "dolor",
-//                                size: .preview,
-//                                type: .image
-//                            )
-//                        ]
-//                    )
-//                ]
-//                XCTAssertEqual(apps, expectedApps, "failed for apiVersion \(apiVersion)")
+                let expectedApps = [
+                    User(
+                        id: UserID(id: UUID(uuidString: "fd96a484-d0c2-4fec-844e-a69cc3954811")!, domain: "staging.zinfra.io"),
+                        name: "WPB-24947 App 0",
+                        handle: nil,
+                        teamID: UUID(uuidString: "9f00f4e7-2426-4d6d-b2b1-9190b204556f"),
+                        type: .app,
+                        accentID: 0,
+                        assets: [],
+                        deleted: nil,
+                        email: nil,
+                        expiresAt: nil,
+                        app: .init(category: "cat", description: "desc"),
+                        service: nil,
+                        supportedProtocols: [.mls],
+                        legalholdStatus: .noConsent
+                    )
+                ]
+                XCTAssertEqual(apps, expectedApps, "failed for apiVersion \(apiVersion)")
             }
         }
 
