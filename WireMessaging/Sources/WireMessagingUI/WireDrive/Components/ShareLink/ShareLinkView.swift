@@ -314,6 +314,7 @@ struct ShareLinkView: View {
         isEditable: false,
         publicLinkID: UUID().uuidString,
         conversationName: "Conversation 1",
+        isReadOnly: false,
         size: nil
     )
 
