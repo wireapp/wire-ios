@@ -328,7 +328,6 @@ class ActiveConversationPage: PageModel {
 
     @discardableResult
     func recordAudioAndSend() throws -> ActiveConversationPage {
-
         audioButton.waitAndTap()
         app.dismissAllowIfPresent()
 
@@ -342,8 +341,14 @@ class ActiveConversationPage: PageModel {
             recordingTimeLabel.waitForExistence(timeout: 2),
             "Audio recording not started"
         )
-        // Allow minimum recording duration to avoid 0 second audio clips due to quick execution
-        sleep(1)
+
+        let predicate = NSPredicate(format: "label != %@ AND label != %@", "0:00", "")
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: recordingTimeLabel)
+        XCTAssertEqual(
+            XCTWaiter.wait(for: [expectation], timeout: 5),
+            .completed,
+            "Recording did not reach minimum duration"
+        )
 
         if stopRecording.waitForExistence(timeout: 2), stopRecording.isHittable {
             stopRecording.tap()
