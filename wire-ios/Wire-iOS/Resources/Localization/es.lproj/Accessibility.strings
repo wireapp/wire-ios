@@ -131,6 +131,7 @@
 "sketch.drawButton.hint" = "Doble toque para activar o desactivar";
 "sketch.selectEmojiButton.description" = "Seleccionar emoji";
 "sketch.sendButton.description" = "Enviar";
+"sketch.confirmButton.description" = "Confirmar";
 "sketch.undoButton.description" = "Deshacer el último paso";
 "sketch.closeButton.description" = "Cerrar croquis";
 
