@@ -179,7 +179,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     func getCollaborators(
         for teamID: Team.ID
-    ) async throws -> [Void] {
+    ) async throws -> [CollaboratorInfo] {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 

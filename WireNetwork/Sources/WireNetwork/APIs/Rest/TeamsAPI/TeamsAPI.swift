@@ -105,7 +105,7 @@ public protocol TeamsAPI {
 
     func getCollaborators(
         for teamID: Team.ID
-    ) async throws -> [Void] // TODO: finish
+    ) async throws -> [CollaboratorInfo]
 
     /// Fetches legacy services (bots) in a team.
 

@@ -465,7 +465,7 @@ public final class SearchTask {
                     localUser: localUser,
                     searchUsersCache: searchUsersCache
                 )
-                // TODO: add searchUsersCache?
+                // TODO: add to searchUsersCache needed here?
             }
 
             guard searchUser.user == nil || searchUser.user?.isTeamMember == false else {
@@ -525,24 +525,6 @@ public final class SearchTask {
 
 
         fatalError()
-//        return try await withTaskGroup(
-//            of: SearchResultAggregator.self,
-//            returning: SearchResultAggregator.self
-//        ) { taskGroup in
-//
-//            // TODO: get apps and collaborators
-//
-//            print(apps)
-//            let collaborators = try await teamsAPI.getCollaborators(for: teamID)
-//            print(apps)
-//
-//            var result = SearchResult()
-//            while let aggregator = await taskGroup.next() {
-//                aggregator(&result)
-//            }
-//            return result
-//
-//        }
     }
 
     // MARK: -
