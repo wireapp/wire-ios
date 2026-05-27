@@ -748,7 +748,6 @@ public extension WireCallCenterV3 {
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
-
                     WireLogger.calling.info(
                         "MLS conference: subgroup joined successfully",
                         attributes: .safePublic
@@ -903,7 +902,6 @@ public extension WireCallCenterV3 {
                 parentGroupID: mlsParentIDs.1
             )
         }
-        
     }
 
     private func isGroupConversation(conversationId: AVSIdentifier) -> Bool {

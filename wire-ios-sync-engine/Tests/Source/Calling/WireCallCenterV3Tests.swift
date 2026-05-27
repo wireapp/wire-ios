@@ -2809,8 +2809,8 @@ extension WireCallCenterV3Tests {
         ) { wrappedNote in
             guard let note = wrappedNote
                 .userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
-                  note.conversationId == self.groupConversationID,
-                  case .terminating(reason: .unknown) = note.callState
+                note.conversationId == self.groupConversationID,
+                case .terminating(reason: .unknown) = note.callState
             else { return false }
             return true
         }
@@ -2858,8 +2858,8 @@ extension WireCallCenterV3Tests {
         ) { wrappedNote in
             guard let note = wrappedNote
                 .userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
-                  note.conversationId == self.groupConversationID,
-                  case .terminating(reason: .unknown) = note.callState
+                note.conversationId == self.groupConversationID,
+                case .terminating(reason: .unknown) = note.callState
             else { return false }
             return true
         }
