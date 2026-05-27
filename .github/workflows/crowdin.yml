@@ -44,9 +44,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
 
       - name: Trim unused localizations from string catalogs and create PR
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         run: |
+          set -xEeuo pipefail
           BASE_BRANCH=${GITHUB_REF#refs/heads/}
           HEAD_BRANCH="chore/update-localization"
           TITLE="chore: Update localization - WPB-15278"
