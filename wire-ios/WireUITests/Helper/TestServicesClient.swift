@@ -25,12 +25,32 @@ class TestServicesClient {
     let RESPONSE_TIMEOUT: TimeInterval = 120
     private var instanceCache: [String: String] = [:]
 
-    func sendHttpRequest(url: String, body: [String: Any], requestType: String) async throws -> (Data, URLResponse) {
+    // MARK: - Created instances log
+
+    private actor CreatedInstancesTracker {
+        private var ids: [String] = []
+
+        func add(_ id: String?) {
+            guard let id, !id.isEmpty, !ids.contains(id) else { return }
+            ids.append(id)
+        }
+
+        func drain() -> [String] {
+            defer { ids.removeAll() }
+            return ids
+        }
+    }
+
+    private let createdInstances = CreatedInstancesTracker()
+
+    func sendHttpRequest(url: String, body: [String: Any]? = nil, requestType: String) async throws -> (Data, URLResponse) {
         guard let requestUrl = URL(string: url) else { fatalError("Invalid URL") }
 
         var request = URLRequest(url: requestUrl)
         request.httpMethod = requestType
-        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+        if let body {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+        }
         request.timeoutInterval = CONNECT_TIMEOUT
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -82,7 +102,41 @@ class TestServicesClient {
             from: responseData
         )
         instanceCache[email] = instanceResponse.instanceId
+        await createdInstances.add(instanceResponse.instanceId)
         return instanceResponse.instanceId
+    }
+
+    func deleteInstances() async {
+        let instanceIds = await createdInstances.drain()
+        guard !instanceIds.isEmpty else { return }
+
+        for instanceId in instanceIds {
+            let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)")
+            guard let requestUrl = url else { continue }
+
+            do {
+                print("Deleting Kalium Testservice instance \(instanceId)")
+                let (responseData, response) = try await sendHttpRequest(
+                    url: requestUrl.absoluteString,
+                    requestType: "DELETE"
+                )
+
+                let pureResponse = response as! HTTPURLResponse
+                if (200 ..< 300).contains(pureResponse.statusCode) {
+                    print("Deleted Kalium Testservice instance \(instanceId)")
+                } else {
+                    var message = "HTTP \(pureResponse.statusCode): \(pureResponse.description)"
+                    if let body = String(data: responseData, encoding: .utf8), !body.isEmpty {
+                        message += " Body: \(body)"
+                    }
+                    print("Failed to delete Kalium Testservice instance \(instanceId): \(message)")
+                }
+            } catch {
+                print("Failed to delete Kalium Testservice instance \(instanceId): \(error)")
+            }
+        }
+
+        instanceCache.removeAll()
     }
 
     func createConversation(
