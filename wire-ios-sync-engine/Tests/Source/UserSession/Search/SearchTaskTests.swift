@@ -1151,13 +1151,17 @@ final class SearchTaskTests: DatabaseTest {
 
         // then
         await fulfillment(of: [expectation], timeout: 1)
-        XCTAssertEqual(result.apps.count, 1)
-        // TODO: add asserts
-//        XCTAssertEqual(result.apps.first?.qualifiedID(localDomain: "-").map { .init($0) }, qualifiedID)
-//        XCTAssertEqual(result.apps.first?.name, "Steve")
-//        XCTAssertEqual(result.apps.first?.handle, "o")
-//        XCTAssertEqual(result.apps.first?.teamIdentifier, teamIdentifier)
-//        XCTAssertEqual(result.apps.first?.zmAccentColor?.rawValue, 2)
+        XCTAssertEqual(result.apps.count, 2)
+        XCTAssertEqual(result.apps.first?.qualifiedID(localDomain: "-"), qualifiedID0)
+        XCTAssertEqual(result.apps.first?.name, "app")
+        XCTAssertEqual(result.apps.first?.handle, "a")
+        XCTAssertEqual(result.apps.first?.teamIdentifier, teamIdentifier)
+        XCTAssertEqual(result.apps.first?.zmAccentColor?.rawValue, 2)
+        XCTAssertEqual(result.apps.last?.qualifiedID(localDomain: "-"), qualifiedID1)
+        XCTAssertEqual(result.apps.last?.name, "collaborator app")
+        XCTAssertEqual(result.apps.last?.handle, "ca")
+        XCTAssertEqual(result.apps.last?.teamIdentifier, otherTeamID)
+        XCTAssertEqual(result.apps.last?.zmAccentColor?.rawValue, 1)
     }
 
     func testThatItSendsASearchAppsRequest() async throws {
