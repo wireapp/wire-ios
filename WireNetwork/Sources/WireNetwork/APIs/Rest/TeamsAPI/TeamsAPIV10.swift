@@ -66,13 +66,13 @@ private struct CollaboratorV10: Decodable, ToAPIModelConvertible {
 
     var user: UUID
     var team: UUID
-    var permissions: [String]
+    var permissions: Set<String>
 
     func toAPIModel() -> CollaboratorInfo {
         CollaboratorInfo(
             userID: user,
             teamID: team,
-            permissions: permissions.compactMap { rawValue in
+            permissions: Set(permissions.compactMap { rawValue in
                 guard let permission = CollaboratorPermission(rawValue: rawValue) else {
                     WireLogger.network.warn(
                         "CollaboratorPermission \"\(rawValue)\" is unknown",
@@ -81,7 +81,7 @@ private struct CollaboratorV10: Decodable, ToAPIModelConvertible {
                     return nil
                 }
                 return permission
-            }
+            })
         )
     }
 

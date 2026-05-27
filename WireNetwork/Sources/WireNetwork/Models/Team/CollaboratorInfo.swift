@@ -18,10 +18,10 @@
 
 public import Foundation
 
-public struct CollaboratorInfo {
+public struct CollaboratorInfo: Equatable {
 
     public var userID: UUID
     public var teamID: UUID
-    public var permissions: [CollaboratorPermission]
+    public var permissions: Set<CollaboratorPermission>
 
 }

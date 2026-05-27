@@ -636,7 +636,19 @@ final class TeamsAPITests: XCTestCase {
             ])
 
             // When
-            fatalError() // TODO: finsih
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let collaborators = try await sut.getCollaborators(for: Scaffolding.teamID)
+
+                // Then
+                let expectedCollaborators = [
+                    CollaboratorInfo(
+                        userID: UUID(uuidString: "c05922f8-2b42-45c6-911a-56394ab8474d")!,
+                        teamID: UUID(uuidString: "9f00f4e7-2426-4d6d-b2b1-9190b204556f")!,
+                        permissions: [.createTeamConversation, .implicitConnection]
+                    )
+                ]
+                XCTAssertEqual(collaborators, expectedCollaborators, "failed for apiVersion \(apiVersion)")
+            }
         }
 
     }
