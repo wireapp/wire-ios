@@ -92,6 +92,7 @@
 "verification_code.message" = "Vnesite verifikacijsko kodo, ki smo jo poslali na %@.";
 "verification_code.confirm" = "Confirm";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Prvič uporabljate Wire na tej napravi.";
 "authentication.no_history.message" = "Zaradi zasebnosti se vaša zgodovina pogovorov ne bo pojavila tukaj.";

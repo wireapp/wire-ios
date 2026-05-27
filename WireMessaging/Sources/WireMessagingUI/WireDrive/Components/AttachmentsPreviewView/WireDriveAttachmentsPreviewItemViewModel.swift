@@ -230,6 +230,18 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         return duration.formatted(.time(pattern: .minuteSecond))
     }
 
+    var isAvailableOffline: Bool {
+        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isDownloaded = switch fileTracker.state {
+        case .loaded:
+            true
+        default:
+            false
+        }
+
+        return isAvailableOffline && isDownloaded
+    }
+
     // MARK: - Private
 
     private func updateNode(_ node: WireDriveNode?) {

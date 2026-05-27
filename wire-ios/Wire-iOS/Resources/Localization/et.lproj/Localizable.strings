@@ -368,6 +368,7 @@
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
 "conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.create.apps_disabled_as_admin.message" = "To improve your workflow with apps, your team needs configuration.";
 "conversation.create.receipts.title" = "Lugemiskinnitused";
 "conversation.create.receipts.subtitle" = "Kui see on sees, saavad inimesed näha, kas nende vestluse sõnumid on loetud.";
 "conversation.create.mls.title" = "Protocol";
@@ -1063,8 +1064,8 @@
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
-"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
-"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list
@@ -1455,6 +1456,20 @@
 "self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
 "self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
 "self.settings.share_debug_report.action_sheet.share" = "Share";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "No unread conversation";
+"settings.debugging_tools.unread_conversations.found" = "Found an unread conversation:";
+"settings.debugging_tools.unread_conversations.action_copy" = "Kopeeri";
+"settings.debugging_tools.debug_command.title" = "Debug command";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Command not recognized";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Error: Repair use case not available";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Faulty MLS Removal Keys Repair";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Repair Failed";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Error: %@";
 
 // Password reset
 "self.settings.password_reset_menu.title" = "Lähtesta parool";

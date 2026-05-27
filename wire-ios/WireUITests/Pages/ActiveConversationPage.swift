@@ -342,6 +342,8 @@ class ActiveConversationPage: PageModel {
             recordingTimeLabel.waitForExistence(timeout: 2),
             "Audio recording not started"
         )
+        // Allow minimum recording duration to avoid 0 second audio clips due to quick execution
+        sleep(1)
 
         if stopRecording.waitForExistence(timeout: 2), stopRecording.isHittable {
             stopRecording.tap()
