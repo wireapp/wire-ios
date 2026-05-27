@@ -4257,6 +4257,22 @@ internal enum L10n {
         }
       }
     }
+    internal enum LastAdminLeave {
+      /// Delete group
+      internal static let deleteGroup = L10n.tr("Localizable", "last_admin_leave.delete_group", fallback: "Delete group")
+      /// You're the only admin.
+      /// None of the other participants can be promoted to admin. You can only delete the group.
+      internal static let noEligibleCandidatesMessage = L10n.tr("Localizable", "last_admin_leave.no_eligible_candidates_message", fallback: "You're the only admin.\nNone of the other participants can be promoted to admin. You can only delete the group.")
+      /// Promote new admin
+      internal static let promoteNewAdmin = L10n.tr("Localizable", "last_admin_leave.promote_new_admin", fallback: "Promote new admin")
+      /// You're the only admin.
+      /// Promote another participant before leaving, or delete the group if it is no longer needed.
+      internal static let promoteOrDeleteMessage = L10n.tr("Localizable", "last_admin_leave.promote_or_delete_message", fallback: "You're the only admin.\nPromote another participant before leaving, or delete the group if it is no longer needed.")
+      /// Leave "%@"?
+      internal static func title(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "last_admin_leave.title", String(describing: p1), fallback: "Leave \"%@\"?")
+      }
+    }
     internal enum LegalHold {
       internal enum Deactivated {
         /// Future messages will not be recorded.
