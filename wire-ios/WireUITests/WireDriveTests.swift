@@ -266,13 +266,12 @@ final class WireDriveTests: WireUITestCase {
 
         // WHEN
         let activeConversationPage = try loginAndOpenConversation(for: teamOwner)
+
+        let folderName = "Test"
         let sharedDrivePage = try activeConversationPage
             .openSharedDrive()
-
-        let createFolderPage = try sharedDrivePage
             .createFolder()
-
-        let folderName = createFolderPage.enterFolderNameAndValidate()
+            .enterFolderNameAndValidate(name: folderName)
 
         // THEN
         XCTAssertTrue(sharedDrivePage.verifyFolderIsCreated(folderName: folderName))
