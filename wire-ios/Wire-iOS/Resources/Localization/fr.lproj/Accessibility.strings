@@ -130,6 +130,7 @@
 "sketch.drawButton.hint" = "Double tap to enable or disable";
 "sketch.selectEmojiButton.description" = "Select emoji";
 "sketch.sendButton.description" = "Envoyer";
+"sketch.confirmButton.description" = "Confirmer";
 "sketch.undoButton.description" = "Undo last step";
 "sketch.closeButton.description" = "Close sketch";
 

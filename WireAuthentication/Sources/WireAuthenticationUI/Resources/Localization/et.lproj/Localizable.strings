@@ -92,6 +92,7 @@
 "verification_code.message" = "Sisesta kinnituskood, mille saatsime aadressile %@";
 "verification_code.confirm" = "Kinnita";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Kasutad sellel seadmel Wire’t esimest korda.";
 "authentication.no_history.message" = "Privaatuse tagamiseks ei ilmu siia sinu varasemad vestlused.";
