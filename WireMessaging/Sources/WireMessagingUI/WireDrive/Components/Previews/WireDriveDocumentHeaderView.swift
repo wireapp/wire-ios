@@ -22,6 +22,7 @@ import WireFoundation
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct WireDriveDocumentHeaderView: View {
     enum Constants {
@@ -43,6 +44,7 @@ struct WireDriveDocumentHeaderView: View {
     let isDraftPreview: Bool
     let state: WireDriveFileUITracker.State
     var minHeight: CGFloat?
+    let isAvailableOffline: Bool
 
     var body: some View {
         header()
@@ -59,6 +61,8 @@ struct WireDriveDocumentHeaderView: View {
                     .font(for: .subline1)
                     .lineLimit(1)
                     .layoutPriority(1)
+
+                if isAvailableOffline { availableOfflineIcon() }
 
                 Spacer()
 
@@ -180,6 +184,14 @@ struct WireDriveDocumentHeaderView: View {
         }
     }
 
+    @ViewBuilder
+    private func availableOfflineIcon() -> some View {
+        Image(systemName: "arrow.down.circle.fill")
+            .resizable()
+            .frame(width: 12 * scale, height: 11 + scale)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            .accessibilityLabel(Accessibility.Files.availableOffline)
+    }
 }
 
 #Preview {
@@ -196,7 +208,8 @@ struct WireDriveDocumentHeaderView: View {
                     headerText: headerText,
                     labelText: labelText,
                     isDraftPreview: false,
-                    state: .loading(progress: 0.7, isLargeFile: false)
+                    state: .loading(progress: 0.7, isLargeFile: false),
+                    isAvailableOffline: false
                 )
 
                 WireDriveDocumentHeaderView(
@@ -204,7 +217,8 @@ struct WireDriveDocumentHeaderView: View {
                     headerText: headerText,
                     labelText: labelText,
                     isDraftPreview: false,
-                    state: .loaded(showReadyToOpen: true)
+                    state: .loaded(showReadyToOpen: true),
+                    isAvailableOffline: true
                 )
 
                 WireDriveDocumentHeaderView(
@@ -212,7 +226,8 @@ struct WireDriveDocumentHeaderView: View {
                     headerText: headerText,
                     labelText: labelText,
                     isDraftPreview: false,
-                    state: .notLoaded
+                    state: .notLoaded,
+                    isAvailableOffline: false
                 )
 
                 WireDriveDocumentHeaderView(
@@ -220,7 +235,8 @@ struct WireDriveDocumentHeaderView: View {
                     headerText: headerText,
                     labelText: labelText,
                     isDraftPreview: false,
-                    state: .failed
+                    state: .failed,
+                    isAvailableOffline: false
                 )
 
                 WireDriveDocumentHeaderView(
@@ -228,7 +244,8 @@ struct WireDriveDocumentHeaderView: View {
                     headerText: headerText,
                     labelText: labelText,
                     isDraftPreview: true,
-                    state: .failed
+                    state: .failed,
+                    isAvailableOffline: false
                 )
 
                 WireDriveDocumentHeaderView(
@@ -236,7 +253,8 @@ struct WireDriveDocumentHeaderView: View {
                     headerText: headerText,
                     labelText: labelTextShort,
                     isDraftPreview: true,
-                    state: .failed
+                    state: .failed,
+                    isAvailableOffline: false
                 )
             }
             .background(.background)

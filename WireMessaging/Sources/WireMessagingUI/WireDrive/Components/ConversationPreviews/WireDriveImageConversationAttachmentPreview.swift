@@ -21,19 +21,29 @@ import WireDesign
 import WireFoundation
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct WireDriveImageConversationAttachmentPreview: View {
 
     let thumbnailURL: URL?
     let state: WireDriveFileUITracker.State
     let isLargePreview: Bool
+    let isAvailableOffline: Bool
+
+    @ScaledMetric private var scale: CGFloat = 1
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    init(thumbnailURL: URL?, state: WireDriveFileUITracker.State, isLargePreview: Bool) {
+    init(
+        thumbnailURL: URL?,
+        state: WireDriveFileUITracker.State,
+        isLargePreview: Bool,
+        isAvailableOffline: Bool
+    ) {
         self.thumbnailURL = thumbnailURL
         self.state = state
         self.isLargePreview = isLargePreview
+        self.isAvailableOffline = isAvailableOffline
     }
 
     var body: some View {
@@ -96,6 +106,11 @@ struct WireDriveImageConversationAttachmentPreview: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(ColorTheme.Backdrop.background.color)
+            .overlay(alignment: .topTrailing) {
+                if isAvailableOffline {
+                    availableOfflineIcon(state: state)
+                }
+            }
         }
     }
 
@@ -122,23 +137,81 @@ struct WireDriveImageConversationAttachmentPreview: View {
         }
     }
 
+    @ViewBuilder
+    private func availableOfflineIcon(state: WireDriveFileUITracker.State) -> some View {
+        Image(systemName: "arrow.down.circle.fill")
+            .resizable()
+            .frame(width: 12 * scale, height: 11 + scale)
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color, .white)
+            .accessibilityLabel(Accessibility.Files.availableOffline)
+            .padding(6)
+    }
 }
 
 // MARK: - Preview
 
 #Preview {
-    VStack {
-        WireDriveImageConversationAttachmentPreview(
+    let previewCases: [(
+        thumbnailURL: URL?,
+        state: WireDriveFileUITracker.State,
+        isLargePreview: Bool,
+        isAvailableOffline: Bool
+    )] = [
+        (
             thumbnailURL: nil,
             state: .loading(progress: 0.5, isLargeFile: false),
-            isLargePreview: true
-        )
-
-        WireDriveImageConversationAttachmentPreview(
+            isLargePreview: true,
+            isAvailableOffline: false
+        ),
+        (
+            thumbnailURL: nil,
+            state: .loading(progress: 0.5, isLargeFile: false),
+            isLargePreview: false,
+            isAvailableOffline: false
+        ),
+        (
             thumbnailURL: nil,
             state: .notLoaded,
-            isLargePreview: true
+            isLargePreview: true,
+            isAvailableOffline: true
+        ),
+        (
+            thumbnailURL: nil,
+            state: .notLoaded,
+            isLargePreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            thumbnailURL: nil,
+            state: .failed,
+            isLargePreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            thumbnailURL: nil,
+            state: .loaded(showReadyToOpen: true),
+            isLargePreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            thumbnailURL: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .notLoaded,
+            isLargePreview: true,
+            isAvailableOffline: true
         )
+    ]
+    VStack {
+        ForEach(0 ..< previewCases.count, id: \.self) { index in
+            let data = previewCases[index]
+
+            WireDriveImageConversationAttachmentPreview(
+                thumbnailURL: data.thumbnailURL,
+                state: data.state,
+                isLargePreview: data.isLargePreview,
+                isAvailableOffline: data.isAvailableOffline
+            )
+        }
     }
     .padding()
 }
