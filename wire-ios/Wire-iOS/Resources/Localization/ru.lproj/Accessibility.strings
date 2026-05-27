@@ -131,6 +131,7 @@
 "sketch.drawButton.hint" = "Нажмите дважды для включения или отключения";
 "sketch.selectEmojiButton.description" = "Выбрать смайлик";
 "sketch.sendButton.description" = "Отправить";
+"sketch.confirmButton.description" = "Подтвердить";
 "sketch.undoButton.description" = "Отменить последний шаг";
 "sketch.closeButton.description" = "Закрыть скетч";
 
