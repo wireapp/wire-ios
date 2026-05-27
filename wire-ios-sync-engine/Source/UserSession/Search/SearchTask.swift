@@ -512,15 +512,18 @@ public final class SearchTask {
 
         let apps = if apiVersion >= .v15 {
             try await teamsAPI.getApps(for: teamID)
-        } else { [] }
+        } else { [] as [User] }
 
         try Task.checkCancellation()
 
         let collaboratorIDs = try await teamsAPI.getCollaborators(for: teamID)
+            .filter { collaboratorInfo in
+                !apps.contains { $0.id.id == collaboratorInfo.userID }
+            }
             .map { collaboratorInfo in
                 WireFoundation.QualifiedID(
                     id: collaboratorInfo.userID,
-                    domain: selfUserDomain
+                    domain: selfUserDomain // TODO: test self-user being federated
                 )
             }
 
@@ -533,9 +536,40 @@ public final class SearchTask {
 
         try Task.checkCancellation()
 
-        // let searchUsers = // TODO: convert apps and collaborators.found to ZMSearchUser and return a SearchResultAggregator
+        let viewContext = contextProvider.viewContext
+        let searchUsers = await viewContext.perform { [searchUsersCache] in
+            var searchUsers = [ZMSearchUser]()
+            for app in apps + collaborators.found {
+                guard app.type == .app else { continue }
+                let localUser = ZMUser.fetch(with: app.id.id, domain: app.id.domain, in: viewContext)
+                let searchUser: ZMSearchUser
+                if let cachedSearchUser = searchUsersCache?.object(forKey: app.id.id as NSUUID) {
+                    cachedSearchUser.user = localUser
+                    searchUser = cachedSearchUser
+                } else {
+                    searchUser = ZMSearchUser(
+                        viewContext: viewContext,
+                        user: app,
+                        localUser: localUser,
+                        searchUsersCache: searchUsersCache
+                    )
+                }
+                searchUsers += [searchUser]
+            }
+            return searchUsers
+        }
+        let partialResult = SearchResult(
+            context: viewContext,
+            contacts: [],
+            teamMembers: [],
+            directory: [],
+            conversations: [],
+            apps: searchUsers,
+            bots: [],
+            searchUsersCache: searchUsersCache
+        )
 
-        fatalError()
+        return { $0 = $0.union(withAppsResult: partialResult) }
     }
 
     // MARK: -
