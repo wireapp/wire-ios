@@ -143,7 +143,8 @@ public final class SearchTask {
                     return try await self.listAllAppsAndCollaborators()
                 } catch {
                     let errorType = Swift.type(of: error)
-                    WireLogger.search.error("failed to list all apps and collaborators: \(String(describing: errorType))")
+                    WireLogger.search
+                        .error("failed to list all apps and collaborators: \(String(describing: errorType))")
                     return { _ in }
                 }
             }
@@ -377,7 +378,7 @@ public final class SearchTask {
         return partialResult
     }
 
-    private func apps( // TODO: still needed?
+    private func apps(
         in team: WireDataModel.Team?,
         matching query: String
     ) -> [ZMUser] {
@@ -465,7 +466,6 @@ public final class SearchTask {
                     localUser: localUser,
                     searchUsersCache: searchUsersCache
                 )
-                // TODO: add to searchUsersCache needed here?
             }
 
             guard searchUser.user == nil || searchUser.user?.isTeamMember == false else {
@@ -489,7 +489,8 @@ public final class SearchTask {
 
     /// If no search query is provided we cannot use the search API.
     /// This func basically serves two purposes:
-    /// - Apps added to the team don't trigger events, so this allows apps being added right now (while the iOS client is running) to be displayed in the search results.
+    /// - Apps added to the team don't trigger events, so this allows apps being added right now (while the iOS client
+    /// is running) to be displayed in the search results.
     /// - In large teams apps might not be discovered without this code (2000 members cap).
     private func listAllAppsAndCollaborators() async throws -> SearchResultAggregator {
         guard
@@ -529,9 +530,13 @@ public final class SearchTask {
                     )
                 }
         } catch let error as FailureResponse {
-            // at the time of writing this code there was a bug which forbid team members (except admins and owners) to browse/fetch collaborators: https://github.com/wireapp/wire-server/pull/5239 WPB-25521
+            // at the time of writing this code there was a bug which forbid team members (except admins and owners) to
+            // browse/fetch collaborators: https://github.com/wireapp/wire-server/pull/5239 WPB-25521
             if error.code == 403, error.label == "insufficient-permissions" {
-                WireLogger.network.warn("Swallowing 403 error when getting collaborators, assuming it is bug WPB-25521", attributes: .safePublic)
+                WireLogger.network.warn(
+                    "Swallowing 403 error when getting collaborators, assuming it is bug WPB-25521",
+                    attributes: .safePublic
+                )
             } else {
                 throw error
             }

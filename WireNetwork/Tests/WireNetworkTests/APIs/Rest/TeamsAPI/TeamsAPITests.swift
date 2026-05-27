@@ -671,7 +671,10 @@ final class TeamsAPITests: XCTestCase {
                 // Then
                 let expectedApps = [
                     User(
-                        id: UserID(id: UUID(uuidString: "fd96a484-d0c2-4fec-844e-a69cc3954811")!, domain: "staging.zinfra.io"),
+                        id: UserID(
+                            id: UUID(uuidString: "fd96a484-d0c2-4fec-844e-a69cc3954811")!,
+                            domain: "staging.zinfra.io"
+                        ),
                         name: "WPB-24947 App 0",
                         handle: nil,
                         teamID: UUID(uuidString: "9f00f4e7-2426-4d6d-b2b1-9190b204556f"),
