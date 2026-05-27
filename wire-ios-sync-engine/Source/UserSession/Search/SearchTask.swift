@@ -529,9 +529,9 @@ public final class SearchTask {
                     )
                 }
         } catch let error as FailureResponse {
+            // at the time of writing this code there was a bug which forbid team members (except admins and owners) to browse/fetch collaborators: https://github.com/wireapp/wire-server/pull/5239 WPB-25521
             if error.code == 403, error.label == "insufficient-permissions" {
-                // TODO: add ticket number
-                WireLogger.network.warn("Swallowing 403 error when getting collaborators, assuming it is bug WPB-", attributes: .safePublic)
+                WireLogger.network.warn("Swallowing 403 error when getting collaborators, assuming it is bug WPB-25521", attributes: .safePublic)
             } else {
                 throw error
             }
