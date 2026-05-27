@@ -76,8 +76,9 @@ jobs:
             // Edge = WIRE_SHORT_VERSION on develop
             const edgeVersion = await readVersionFromRef('develop');
 
-            // Beta = latest release/cycle-X.Y branch → its WIRE_SHORT_VERSION
-            const { data: branches } = await github.rest.repos.listBranches({
+            // Beta = latest release/cycle-X.Y branch → its WIRE_SHORT_VERSION.
+            // Paginate: this repo has hundreds of branches/tags, so a single page misses them.
+            const branches = await github.paginate(github.rest.repos.listBranches, {
               owner: context.repo.owner, repo: context.repo.repo, per_page: 100,
             });
             const cycles = branches
@@ -88,8 +89,8 @@ jobs:
             const betaBranch  = cycles[0].name;
             const betaVersion = await readVersionFromRef(betaBranch);
 
-            // Prod = latest appstore/X.Y.Z tag
-            const { data: tags } = await github.rest.repos.listTags({
+            // Prod = latest appstore/X.Y.Z tag (paginated for the same reason).
+            const tags = await github.paginate(github.rest.repos.listTags, {
               owner: context.repo.owner, repo: context.repo.repo, per_page: 100,
             });
             const appstore = tags
