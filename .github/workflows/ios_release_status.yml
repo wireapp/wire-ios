@@ -1,0 +1,195 @@
+name: Daily iOS Release Status
+
+# **What it does**: Posts a daily Jira-driven status of the three live iOS releases
+#                   — Edge (develop), Beta (latest release/cycle-*), Prod (latest appstore/* tag).
+# **Why we have it**: Surface QA load, triage backlog, and release dates without anyone hunting in Jira.
+# **Who does it impact**: iOS release managers, QA, and engineers owning ticket triage.
+#
+# Required secrets:
+#   JIRA_TOKEN          — Atlassian API token (already used by jira_lint_and_link.yml)
+#   JIRA_EMAIL          — Atlassian account email paired with the token (Basic auth).
+#                         If absent, the token is sent as a Bearer token instead.
+#   WIRE_IOS_RELEASES   — Slack webhook URL for the channel that receives the report.
+
+on:
+  schedule:
+    - cron: '0 7 * * MON-FRI'   # 07:00 UTC weekdays, before pr-review-summary
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  release-status:
+    runs-on: ubuntu-24.04
+    env:
+      JIRA_BASE_URL: https://wearezeta.atlassian.net
+      JIRA_PROJECT: WPB
+      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASES }}
+    steps:
+      - name: Build release report
+        id: build
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const VERSION_FILE = 'wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig';
+            const base    = process.env.JIRA_BASE_URL;
+            const project = process.env.JIRA_PROJECT;
+
+            const authHeader = process.env.JIRA_EMAIL
+              ? `Basic ${Buffer.from(`${process.env.JIRA_EMAIL}:${process.env.JIRA_TOKEN}`).toString('base64')}`
+              : `Bearer ${process.env.JIRA_TOKEN}`;
+
+            const jira = async (path) => {
+              const res = await fetch(`${base}${path}`, {
+                headers: { Authorization: authHeader, Accept: 'application/json' },
+              });
+              if (!res.ok) throw new Error(`Jira ${path}: ${res.status} ${await res.text()}`);
+              return res.json();
+            };
+
+            const readVersionFromRef = async (ref) => {
+              const { data } = await github.rest.repos.getContent({
+                owner: context.repo.owner, repo: context.repo.repo, path: VERSION_FILE, ref,
+              });
+              const text = Buffer.from(data.content, 'base64').toString('utf8');
+              const m = text.match(/WIRE_SHORT_VERSION\s*=\s*(\S+)/);
+              if (!m) throw new Error(`WIRE_SHORT_VERSION not found in ${ref}`);
+              return m[1];
+            };
+
+            const compareSemver = (a, b) => {
+              const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
+              for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+                const x = pa[i] || 0, y = pb[i] || 0;
+                if (x !== y) return x - y;
+              }
+              return 0;
+            };
+
+            // ── Resolve the three versions ────────────────────────────────────
+            // Edge = WIRE_SHORT_VERSION on develop
+            const edgeVersion = await readVersionFromRef('develop');
+
+            // Beta = latest release/cycle-X.Y branch → its WIRE_SHORT_VERSION
+            const { data: branches } = await github.rest.repos.listBranches({
+              owner: context.repo.owner, repo: context.repo.repo, per_page: 100,
+            });
+            const cycles = branches
+              .map(b => ({ name: b.name, m: b.name.match(/^release\/cycle-(\d+\.\d+)$/) }))
+              .filter(b => b.m)
+              .sort((a, b) => compareSemver(b.m[1], a.m[1]));
+            if (cycles.length === 0) throw new Error('No release/cycle-* branches found');
+            const betaBranch  = cycles[0].name;
+            const betaVersion = await readVersionFromRef(betaBranch);
+
+            // Prod = latest appstore/X.Y.Z tag
+            const { data: tags } = await github.rest.repos.listTags({
+              owner: context.repo.owner, repo: context.repo.repo, per_page: 100,
+            });
+            const appstore = tags
+              .map(t => ({ name: t.name, m: t.name.match(/^appstore\/(\d+\.\d+\.\d+)$/) }))
+              .filter(t => t.m)
+              .sort((a, b) => compareSemver(b.m[1], a.m[1]));
+            if (appstore.length === 0) throw new Error('No appstore/* tags found');
+            const prodTag     = appstore[0].name;
+            const prodVersion = appstore[0].m[1];
+
+            // ── Jira lookups ──────────────────────────────────────────────────
+            const projectVersions = await jira(`/rest/api/3/project/${project}/versions`);
+            const findJiraVersion = (semver) =>
+              projectVersions.find(v => v.name === `iOS v${semver}`);
+
+            const search = async (jql) => {
+              const qs = new URLSearchParams({ jql, fields: 'summary,status', maxResults: '50' });
+              return jira(`/rest/api/3/search?${qs}`);
+            };
+
+            const daysBetween = (isoDate) => {
+              if (!isoDate) return null;
+              const ms = new Date(isoDate).getTime() - Date.now();
+              return Math.ceil(ms / 86_400_000);
+            };
+
+            const issueLink = (i) =>
+              `<${base}/browse/${i.key}|${i.key}>`;
+
+            const renderIssues = (issues, limit = 10) =>
+              issues.slice(0, limit).map(i =>
+                `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
+
+            // ── Edge: fixVersion ──────────────────────────────────────────────
+            const edgeName  = `iOS v${edgeVersion}`;
+            const edgeTotal = await search(`project = ${project} AND fixVersion = "${edgeName}"`);
+            const edgeOpen  = await search(`project = ${project} AND fixVersion = "${edgeName}" AND statusCategory != Done`);
+            const edgeQA    = await search(`project = ${project} AND fixVersion = "${edgeName}" AND status in ("Ready for QA", "In QA Review")`);
+
+            // ── Beta: affectedVersion + startDate ─────────────────────────────
+            const betaName     = `iOS v${betaVersion}`;
+            const betaJira     = findJiraVersion(betaVersion);
+            const betaAffected = await search(`project = ${project} AND affectedVersion = "${betaName}"`);
+            const daysToBeta   = betaJira ? daysBetween(betaJira.startDate) : null;
+
+            // ── Prod: affectedVersion + releaseDate ───────────────────────────
+            const prodName     = `iOS v${prodVersion}`;
+            const prodJira     = findJiraVersion(prodVersion);
+            const prodAffected = await search(`project = ${project} AND affectedVersion = "${prodName}"`);
+            const daysSinceProd = prodJira ? -daysBetween(prodJira.releaseDate) : null;
+
+            // ── Render Slack-flavoured Markdown ───────────────────────────────
+            const lines = [];
+            lines.push(`*🚀 iOS Release Status — ${new Date().toDateString()}*`);
+            lines.push('');
+
+            // Edge
+            lines.push(`*🟢 Edge — ${edgeName}*  _(develop)_`);
+            lines.push(`  • ${edgeOpen.total} of ${edgeTotal.total} tickets not done`);
+            if (edgeQA.total > 0) {
+              lines.push(`  • 🎮 *${edgeQA.total} ticket(s) in QA — suggest a playtest*`);
+              lines.push(...renderIssues(edgeQA.issues));
+            }
+            lines.push('');
+
+            // Beta
+            lines.push(`*🔵 Beta — ${betaName}*  _(\`${betaBranch}\`)_`);
+            if (daysToBeta != null) {
+              const label = daysToBeta >= 0 ? 'until start' : 'past start';
+              lines.push(`  • ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.startDate})`);
+            } else {
+              lines.push(`  • ⚠️ no start date on Jira version`);
+            }
+            lines.push(`  • ${betaAffected.total} ticket(s) with affectedVersion`);
+            if (betaAffected.total > 0) {
+              lines.push(`  • 🔍 *suggest triage*`);
+              lines.push(...renderIssues(betaAffected.issues));
+            }
+            lines.push('');
+
+            // Prod
+            lines.push(`*⚪ Prod — ${prodName}*  _(\`${prodTag}\`)_`);
+            if (daysSinceProd != null) {
+              lines.push(`  • ${daysSinceProd} day(s) since release (${prodJira.releaseDate})`);
+            } else {
+              lines.push(`  • ⚠️ no release date on Jira version`);
+            }
+            lines.push(`  • ${prodAffected.total} ticket(s) with affectedVersion`);
+            if (prodAffected.total > 0) {
+              lines.push(`  • 🔍 *suggest triage*`);
+              lines.push(...renderIssues(prodAffected.issues));
+            }
+
+            const message = lines.join('\n');
+            await core.summary.addRaw(message).write();
+            return message;
+
+      - name: Post to Wire
+        if: env.SLACK_WEBHOOK_URL != ''
+        continue-on-error: true
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            { "text": ${{ steps.build.outputs.result }} }
