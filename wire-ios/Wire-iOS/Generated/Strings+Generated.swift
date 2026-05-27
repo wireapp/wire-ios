@@ -1249,6 +1249,14 @@ internal enum L10n {
         }
       }
     }
+    internal enum AdminSelection {
+      /// After you promoted a new admin, you will leave the group.
+      internal static let infoBanner = L10n.tr("Localizable", "admin_selection.info_banner", fallback: "After you promoted a new admin, you will leave the group.")
+      /// Promote
+      internal static let promote = L10n.tr("Localizable", "admin_selection.promote", fallback: "Promote")
+      /// New admin
+      internal static let title = L10n.tr("Localizable", "admin_selection.title", fallback: "New admin")
+    }
     internal enum AppLockModule {
       internal enum GoToSettingsButton {
         /// Go to Settings

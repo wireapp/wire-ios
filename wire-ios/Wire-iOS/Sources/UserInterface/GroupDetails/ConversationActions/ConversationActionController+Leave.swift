@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SwiftUI
 import WireDataModel
 import WireLocators
 
@@ -68,6 +69,22 @@ enum LeaveResult: AlertResultConfiguration {
 
 extension ConversationActionController {
 
+    func requestLeave(for conversation: ZMConversation) {
+        let session = userSession
+        Task { @MainActor in
+            let isPreventAdminlessGroupsEnabled = await session.clientSessionComponent?
+                .featureConfigRepository.isFeatureEnabled(.preventAdminlessGroups) ?? false
+
+            if isPreventAdminlessGroupsEnabled && self.isLastAdmin(in: conversation) {
+                self.presentAdminSelection(for: conversation)
+            } else {
+                self.request(LeaveResult.self) { result in
+                    self.handleLeaveResult(result, for: conversation)
+                }
+            }
+        }
+    }
+
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
         guard  case let .leave(delete: clearContent) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {
@@ -90,6 +107,37 @@ extension ConversationActionController {
                     conversation.removeOrShowError(participant: user)
                 }
             }
+        }
+    }
+
+    private func isLastAdmin(in conversation: ZMConversation) -> Bool {
+        let admins = conversation.localParticipants.filter { $0.isGroupAdmin(in: conversation) }
+        return admins.count == 1 && admins.first?.isSelfUser == true
+    }
+
+    private func presentAdminSelection(for conversation: ZMConversation) {
+        let session = userSession
+        Task { @MainActor in
+            let viewModel = AdminSelectionViewModel(
+                conversation: conversation,
+                userSession: session
+            ) { [weak self] newAdmin in
+                self?.promoteToAdmin(newAdmin, in: conversation)
+            }
+            let hostingController = UIHostingController(rootView: AdminSelectionView(viewModel: viewModel))
+            self.present(hostingController)
+        }
+    }
+
+    private func promoteToAdmin(_ user: UserType, in conversation: ZMConversation) {
+        let groupRoles = conversation.getRoles()
+        let adminRole = groupRoles.first { $0.name == ZMConversation.defaultAdminRoleName }
+        guard let role = adminRole, let zmUser = (user as? ZMUser) ?? (user as? ZMSearchUser)?.user else {
+            return
+        }
+        conversation.updateRole(of: zmUser, to: role) { [weak self] result in
+            guard case .success = result else { return }
+            self?.handleLeaveResult(.leave(delete: false), for: conversation)
         }
     }
 

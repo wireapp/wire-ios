@@ -981,6 +981,11 @@
 "meta.leave_conversation_button_leave" = "Leave";
 "meta.leave_conversation_button_leave_and_delete" = "Leave and clear content";
 
+// Admin selection (promote new admin before leaving)
+"admin_selection.title" = "New admin";
+"admin_selection.promote" = "Promote";
+"admin_selection.info_banner" = "After you promoted a new admin, you will leave the group.";
+
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ started using a new device.";
 "meta.degraded.degradation_reason_message.plural" = "%@ started using new devices.";
