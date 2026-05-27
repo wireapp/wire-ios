@@ -516,20 +516,30 @@ public final class SearchTask {
 
         try Task.checkCancellation()
 
-        let collaboratorIDs = try? await teamsAPI.getCollaborators(for: teamID) // TODO: log error
-            .filter { collaboratorInfo in
-                !apps.contains { $0.id.id == collaboratorInfo.userID }
+        var collaboratorIDs = [UserID]()
+        do {
+            collaboratorIDs = try await teamsAPI.getCollaborators(for: teamID)
+                .filter { collaboratorInfo in
+                    !apps.contains { $0.id.id == collaboratorInfo.userID }
+                }
+                .map { collaboratorInfo in
+                    WireFoundation.QualifiedID(
+                        id: collaboratorInfo.userID,
+                        domain: selfUserDomain // TODO: test self-user being federated
+                    )
+                }
+        } catch let error as FailureResponse {
+            if error.code == 403, error.label == "insufficient-permissions" {
+                // TODO: add ticket number
+                WireLogger.network.warn("Swallowing 403 error when getting collaborators, assuming it is bug WPB-", attributes: .safePublic)
+            } else {
+                throw error
             }
-            .map { collaboratorInfo in
-                WireFoundation.QualifiedID(
-                    id: collaboratorInfo.userID,
-                    domain: selfUserDomain // TODO: test self-user being federated
-                )
-            }
+        }
 
         try Task.checkCancellation()
 
-        let collaborators = try await usersAPI.getUsers(userIDs: collaboratorIDs ?? [])
+        let collaborators = try await usersAPI.getUsers(userIDs: collaboratorIDs)
         if !collaborators.failed.isEmpty {
             WireLogger.network.warn("at least one collaborator's info couldn't be fetched", attributes: .safePublic)
         }
