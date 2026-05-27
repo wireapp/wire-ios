@@ -653,6 +653,22 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
+    func testGetCollaborators_givenV10AndAbove_AndFailureResponse_403() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "insufficient-permissions"
+        )
+
+        let sut = TeamsAPIV10(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(FailureResponse(code: 403, label: "insufficient-permissions", message: "")) {
+            // When
+            try await sut.getCollaborators(for: Team.ID())
+        }
+    }
+
     // MARK: - V15
 
     func testGetApps_givenV15AndAbove_AndSuccessResponse200_thenSucceeds() async throws {

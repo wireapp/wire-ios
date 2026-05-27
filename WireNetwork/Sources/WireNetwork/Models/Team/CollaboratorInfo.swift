@@ -24,4 +24,10 @@ public struct CollaboratorInfo: Equatable {
     public var teamID: UUID
     public var permissions: [CollaboratorPermission]
 
+    public init(userID: UUID, teamID: UUID, permissions: [CollaboratorPermission]) {
+        self.userID = userID
+        self.teamID = teamID
+        self.permissions = permissions
+    }
+
 }

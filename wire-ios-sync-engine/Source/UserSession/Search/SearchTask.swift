@@ -140,7 +140,7 @@ public final class SearchTask {
             }
             taskGroup.addTask {
                 do {
-                    return try await self.listAllAppsAndCollaborators()
+                    return try await self.listAllAppsAndCollaboratorApps()
                 } catch {
                     let errorType = Swift.type(of: error)
                     WireLogger.search
@@ -492,7 +492,7 @@ public final class SearchTask {
     /// - Apps added to the team don't trigger events, so this allows apps being added right now (while the iOS client
     /// is running) to be displayed in the search results.
     /// - In large teams apps might not be discovered without this code (2000 members cap).
-    private func listAllAppsAndCollaborators() async throws -> SearchResultAggregator {
+    private func listAllAppsAndCollaboratorApps() async throws -> SearchResultAggregator {
         guard
             let apiVersion,
             apiVersion >= .v10, // collaborators: v10, apps: v15
@@ -519,9 +519,10 @@ public final class SearchTask {
 
         var collaboratorIDs = [UserID]()
         do {
+            let appIDs = Set(apps.map(\.id.id))
             collaboratorIDs = try await teamsAPI.getCollaborators(for: teamID)
                 .filter { collaboratorInfo in
-                    !apps.contains { $0.id.id == collaboratorInfo.userID }
+                    !appIDs.contains(collaboratorInfo.userID)
                 }
                 .map { collaboratorInfo in
                     WireFoundation.QualifiedID(
