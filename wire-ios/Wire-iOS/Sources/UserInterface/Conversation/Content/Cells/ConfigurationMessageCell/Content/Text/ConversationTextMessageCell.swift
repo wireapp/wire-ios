@@ -328,7 +328,6 @@ extension ConversationTextMessageCellDescription {
         let hasText = !messageText.string.isEmpty
 
         if hasQuote, hasText {
-            // Render quote + text as a single unified bubble cell.
             // quotedMessage may be nil when the original was deleted.
             let viewModel = MessageReplyAttachmentsViewModel(
                 fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
@@ -345,33 +344,13 @@ extension ConversationTextMessageCellDescription {
                 senderAccentColor: message.senderUser?.wireAccentColor ?? .blue
             )
             cells.append(AnyConversationMessageCellDescription(combinedCell))
-        } else {
-            // Quote only (no text body — rare edge case).
-            // quotedMessage may be nil when the original was deleted.
-            if hasQuote {
-                let viewModel = MessageReplyAttachmentsViewModel(
-                    fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
-                    fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
-                )
-                let quoteCell = ConversationReplyCellDescription(
-                    quotedMessage: quotedMessage,
-                    accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
-                    isSentBySelfUser: message.isSentBySelfUser,
-                    senderAccentColor: message.senderUser?.wireAccentColor ?? .blue,
-                    messageReplyAttachmentsViewModel: viewModel
-                )
-                cells.append(AnyConversationMessageCellDescription(quoteCell))
-            }
-
-            // Text only (no quote)
-            if hasText {
-                let textCell = ConversationTextMessageCellDescription(
-                    attributedString: messageText,
-                    isObfuscated: message.isObfuscated,
-                    userSession: userSession
-                )
-                cells.append(AnyConversationMessageCellDescription(textCell))
-            }
+        } else if hasText {
+            let textCell = ConversationTextMessageCellDescription(
+                attributedString: messageText,
+                isObfuscated: message.isObfuscated,
+                userSession: userSession
+            )
+            cells.append(AnyConversationMessageCellDescription(textCell))
         }
 
         guard !message.isObfuscated else { return cells }

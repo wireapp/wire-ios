@@ -650,8 +650,6 @@
 				ConversationMessageCell/ReadReceiptSystemMessage/ReadReceiptViewModelTests.swift,
 				ConversationMessageCell/SimpleChatBubblesSnapshotTests.swift,
 				ConversationOptionsViewControllerTests.swift,
-				ConversationReplyCellDescriptionTests.swift,
-				ConversationReplyCellTests.swift,
 				ConversationServicesOptionsViewControllerTests.swift,
 				ConversationStatusTests.swift,
 				"ConversationStatusTests+Icon.swift",
