@@ -43,14 +43,12 @@ final class AdminSelectionViewModel: ObservableObject {
     }
 
     init(
-        conversation: ZMConversation,
+        candidates: [UserType],
         userSession: UserSession,
         onPromote: @escaping (UserType) -> Void
     ) {
         self.userSession = userSession
         self.onPromote = onPromote
-        self.candidates = conversation.localParticipantsExcludingSelf
-            .filter { !$0.isGroupAdmin(in: conversation) }
-            .sorted { ($0.name ?? "") < ($1.name ?? "") }
+        self.candidates = candidates
     }
 }
