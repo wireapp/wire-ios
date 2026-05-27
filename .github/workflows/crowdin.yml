@@ -49,12 +49,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         run: |
           set -xEeuo pipefail
+
           BASE_BRANCH=${GITHUB_REF#refs/heads/}
           HEAD_BRANCH="chore/update-localization"
           TITLE="chore: Update localization - WPB-15278"
           BODY="This PR pulls in the latest localization translations from Crowdin."
 
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          # The crowdin action restores the original checkout (develop) after pushing
+          # translations to $HEAD_BRANCH, so switch to it before trimming and diffing.
+          git checkout "$HEAD_BRANCH"
 
           find . -name "*.xcstrings" | tee string-catalogs.txt
           xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
