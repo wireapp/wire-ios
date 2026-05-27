@@ -124,6 +124,11 @@ struct WireDriveLargeDocumentPreviewView: View {
 }
 
 #Preview {
+    let headerIcon = Image(WireDriveFileType.pdf.imageResource)
+    let url = URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg")
+    let headerText = "PDF (336 KB)"
+    let labelText = "CDR_20220120 Accessibility Review Reviewed Final Plus"
+
     let previewCases: [(
         headerIcon: Image,
         headerText: String,
@@ -134,73 +139,55 @@ struct WireDriveLargeDocumentPreviewView: View {
         isAvailableOffline: Bool
     )] = [
         (
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            url: URL(
-                string:
-                "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
-            ),
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
             state: .loading(progress: 0.7, isLargeFile: false),
             isDraftPreview: false,
             isAvailableOffline: false
         ),
         (
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            url: URL(
-                string:
-                "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
-            ),
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
             state: .loaded(showReadyToOpen: true),
             isDraftPreview: false,
             isAvailableOffline: false
         ),
         (
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            url: URL(
-                string:
-                "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
-            ),
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
             state: .loaded(showReadyToOpen: true),
             isDraftPreview: false,
             isAvailableOffline: true
         ),
         (
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            url: URL(
-                string:
-                "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
-            ),
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
             state: .failed,
             isDraftPreview: false,
             isAvailableOffline: false
         ),
         (
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            url: URL(
-                string:
-                "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
-            ),
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
             state: .loaded(showReadyToOpen: false),
             isDraftPreview: false,
             isAvailableOffline: false
         ),
         (
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            url: URL(
-                string:
-                "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
-            ),
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
             state: .notLoaded,
             isDraftPreview: false,
             isAvailableOffline: false

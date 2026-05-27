@@ -124,28 +124,29 @@ struct WireDriveSmallVideoPreviewView: View {
 }
 
 #Preview {
+    let url = URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg")
     let previewCases: [(
         url: URL?,
         state: WireDriveFileUITracker.State
     )] = [
         (
-            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            url: url,
             state: .loading(progress: 0.7, isLargeFile: false)
         ),
         (
-            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            url: url,
             state: .loaded(showReadyToOpen: true)
         ),
         (
-            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            url: url,
             state: .loaded(showReadyToOpen: false)
         ),
         (
-            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            url: url,
             state: .notLoaded
         ),
         (
-            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            url: url,
             state: .failed
         ),
         (
