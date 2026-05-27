@@ -516,7 +516,7 @@ public final class SearchTask {
 
         try Task.checkCancellation()
 
-        let collaboratorIDs = try await teamsAPI.getCollaborators(for: teamID)
+        let collaboratorIDs = try? await teamsAPI.getCollaborators(for: teamID) // TODO: log error
             .filter { collaboratorInfo in
                 !apps.contains { $0.id.id == collaboratorInfo.userID }
             }
@@ -529,7 +529,7 @@ public final class SearchTask {
 
         try Task.checkCancellation()
 
-        let collaborators = try await usersAPI.getUsers(userIDs: collaboratorIDs)
+        let collaborators = try await usersAPI.getUsers(userIDs: collaboratorIDs ?? [])
         if !collaborators.failed.isEmpty {
             WireLogger.network.warn("at least one collaborator's info couldn't be fetched", attributes: .safePublic)
         }
