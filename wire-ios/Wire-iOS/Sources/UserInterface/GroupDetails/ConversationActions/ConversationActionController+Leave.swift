@@ -20,6 +20,7 @@ import Foundation
 import SwiftUI
 import WireDataModel
 import WireLocators
+import WireSyncEngine
 
 enum LeaveResult: AlertResultConfiguration {
     case leave(delete: Bool)
@@ -75,18 +76,39 @@ extension ConversationActionController {
             let isPreventAdminlessGroupsEnabled = await session.clientSessionComponent?
                 .featureConfigRepository.isFeatureEnabled(.preventAdminlessGroups) ?? false
 
-            if isPreventAdminlessGroupsEnabled && self.isLastAdmin(in: conversation) {
-                self.presentAdminSelection(for: conversation)
-            } else {
+            guard isPreventAdminlessGroupsEnabled, self.isLastAdmin(in: conversation) else {
                 self.request(LeaveResult.self) { result in
                     self.handleLeaveResult(result, for: conversation)
                 }
+                return
+            }
+
+            guard let zmSession = session as? ZMUserSession else { return }
+
+            let eligibleCandidates = self.eligibleAdminCandidates(in: conversation)
+            let groupName = conversation.displayNameWithFallback
+            if eligibleCandidates.isEmpty {
+                self.present(LastAdminLeaveAlert.deleteOnly(groupName: groupName) { [weak self] in
+                    self?.requestDeleteGroupResult { [weak self] confirmed in
+                        guard let self, confirmed else { return }
+                        self.handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
+                    }
+                })
+            } else {
+                self.present(LastAdminLeaveAlert.promoteOrDelete(groupName: groupName) { [weak self] in
+                    self?.presentAdminSelection(for: conversation, candidates: eligibleCandidates)
+                } onDelete: { [weak self] in
+                    self?.requestDeleteGroupResult { [weak self] confirmed in
+                        guard let self, confirmed else { return }
+                        self.handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
+                    }
+                })
             }
         }
     }
 
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
-        guard  case let .leave(delete: clearContent) = result else { return }
+        guard case let .leave(delete: clearContent) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
@@ -115,11 +137,20 @@ extension ConversationActionController {
         return admins.count == 1 && admins.first?.isSelfUser == true
     }
 
-    private func presentAdminSelection(for conversation: ZMConversation) {
+    private func eligibleAdminCandidates(in conversation: ZMConversation) -> [UserType] {
+        conversation.localParticipantsExcludingSelf.filter {
+            !$0.isGroupAdmin(in: conversation) &&
+            !$0.isFederated &&
+            !$0.isExternalPartner &&
+            !$0.isTemporaryUser
+        }
+    }
+
+    private func presentAdminSelection(for conversation: ZMConversation, candidates: [UserType]) {
         let session = userSession
         Task { @MainActor in
             let viewModel = AdminSelectionViewModel(
-                conversation: conversation,
+                candidates: candidates,
                 userSession: session
             ) { [weak self] newAdmin in
                 self?.promoteToAdmin(newAdmin, in: conversation)
