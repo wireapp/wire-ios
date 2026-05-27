@@ -952,7 +952,7 @@ private extension ZMSearchUser {
             providerIdentifier: user.service?.provider.transportString(),
             user: localUser,
             searchUsersCache: searchUsersCache,
-            type: localUser?.type,
+            type: user.type.map(TypeOfUser.init) ?? localUser?.type,
             summary: localUser?.appInfo?.appDescription,
             isDeleted: user.deleted ?? false
         )
