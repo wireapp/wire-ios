@@ -58,20 +58,16 @@ jobs:
           xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
           xargs git add < string-catalogs.txt
 
-          # abort if there are no changes after trimming
-          if git diff --quiet && git diff --cached --quiet; then
-          echo "No changes to commit."
-          exit 0
-          fi
-
           # commit and push the changes
-          git commit --no-verify -m "chore: trim string catalogs"
+          if ! git diff --quiet || ! git diff --cached --quiet; then
+            git commit --no-verify -m "chore: trim string catalogs"
+          fi
           git push --no-verify origin "$HEAD_BRANCH"
 
           # abort if there no changes to be merged
           if git diff --quiet "origin/$BASE_BRANCH"; then
-          echo "No changes compared to the base branch, aborting."
-          exit 0
+            echo "No changes compared to the base branch, aborting."
+            exit 0
           fi
 
           # abort if the pr already exists
@@ -79,12 +75,12 @@ jobs:
           git lfs install || git lfs update --force
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
           if [ -n "$PR_EXISTS" ]; then
-          echo "A PR already exists, aborting."
-          exit 0
+            echo "A PR already exists, aborting."
+            exit 0
           fi
 
           gh pr create --fill \
-          --base "$BASE_BRANCH" \
-          --head "$HEAD_BRANCH" \
-          --title "$TITLE" \
-          --body "$BODY" \
+            --base "$BASE_BRANCH" \
+            --head "$HEAD_BRANCH" \
+            --title "$TITLE" \
+            --body "$BODY" \
