@@ -43,7 +43,11 @@ class TestServicesClient {
 
     private let createdInstances = CreatedInstancesTracker()
 
-    func sendHttpRequest(url: String, body: [String: Any]? = nil, requestType: String) async throws -> (Data, URLResponse) {
+    func sendHttpRequest(
+        url: String,
+        body: [String: Any]? = nil,
+        requestType: String
+    ) async throws -> (Data, URLResponse) {
         guard let requestUrl = URL(string: url) else { fatalError("Invalid URL") }
 
         var request = URLRequest(url: requestUrl)
