@@ -23,6 +23,8 @@ concurrency:
 jobs:
   release-status:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     env:
       JIRA_BASE_URL: https://wearezeta.atlassian.net
       JIRA_PROJECT: WPB
@@ -100,13 +102,23 @@ jobs:
 
             // ── Jira lookups ──────────────────────────────────────────────────
             const projectVersions = await jira(`/rest/api/3/project/${project}/versions`);
-            const findJiraVersion = (semver) =>
-              projectVersions.find(v => v.name === `iOS v${semver}`);
+            const findJiraVersion = async (semver) => {
+              const v = projectVersions.find(x => x.name === `iOS v${semver}`);
+              if (!v) return null;
+              // expand=driver pulls the Release Driver assigned in Jira's Releases view.
+              return jira(`/rest/api/3/version/${v.id}?expand=driver`);
+            };
+            const driverLabel = (v) => {
+              const name = v?.driver?.displayName;
+              return name ? `👤 Release captain: ${name}` : `⚠️ Release captain: Unassigned`;
+            };
 
             const search = async (jql) => {
               const qs = new URLSearchParams({ jql, fields: 'summary,status', maxResults: '50' });
               return jira(`/rest/api/3/search?${qs}`);
             };
+            // Escape backslashes and double-quotes before interpolating into a JQL "..." literal.
+            const jqlEscape = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
             const daysBetween = (isoDate) => {
               if (!isoDate) return null;
@@ -123,20 +135,24 @@ jobs:
 
             // ── Edge: fixVersion ──────────────────────────────────────────────
             const edgeName  = `iOS v${edgeVersion}`;
-            const edgeTotal = await search(`project = ${project} AND fixVersion = "${edgeName}"`);
-            const edgeOpen  = await search(`project = ${project} AND fixVersion = "${edgeName}" AND statusCategory != Done`);
-            const edgeQA    = await search(`project = ${project} AND fixVersion = "${edgeName}" AND status in ("Ready for QA", "In QA Review")`);
+            const edgeQ     = jqlEscape(edgeName);
+            const edgeJira  = await findJiraVersion(edgeVersion);
+            const edgeTotal = await search(`project = ${project} AND fixVersion = "${edgeQ}"`);
+            const edgeOpen  = await search(`project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`);
+            const edgeQA    = await search(`project = ${project} AND fixVersion = "${edgeQ}" AND status in ("Ready for QA", "In QA Review")`);
 
             // ── Beta: affectedVersion + startDate ─────────────────────────────
             const betaName     = `iOS v${betaVersion}`;
-            const betaJira     = findJiraVersion(betaVersion);
-            const betaAffected = await search(`project = ${project} AND affectedVersion = "${betaName}"`);
+            const betaQ        = jqlEscape(betaName);
+            const betaJira     = await findJiraVersion(betaVersion);
+            const betaAffected = await search(`project = ${project} AND affectedVersion = "${betaQ}"`);
             const daysToBeta   = betaJira ? daysBetween(betaJira.startDate) : null;
 
             // ── Prod: affectedVersion + releaseDate ───────────────────────────
             const prodName     = `iOS v${prodVersion}`;
-            const prodJira     = findJiraVersion(prodVersion);
-            const prodAffected = await search(`project = ${project} AND affectedVersion = "${prodName}"`);
+            const prodQ        = jqlEscape(prodName);
+            const prodJira     = await findJiraVersion(prodVersion);
+            const prodAffected = await search(`project = ${project} AND affectedVersion = "${prodQ}"`);
             const daysSinceProd = prodJira ? -daysBetween(prodJira.releaseDate) : null;
 
             // ── Render Slack-flavoured Markdown ───────────────────────────────
@@ -146,6 +162,7 @@ jobs:
 
             // Edge
             lines.push(`*🟢 Edge — ${edgeName}*  _(develop)_`);
+            lines.push(`  • ${driverLabel(edgeJira)}`);
             lines.push(`  • ${edgeOpen.total} of ${edgeTotal.total} tickets not done`);
             if (edgeQA.total > 0) {
               lines.push(`  • 🎮 *${edgeQA.total} ticket(s) in QA — suggest a playtest*`);
@@ -155,6 +172,7 @@ jobs:
 
             // Beta
             lines.push(`*🔵 Beta — ${betaName}*  _(\`${betaBranch}\`)_`);
+            lines.push(`  • ${driverLabel(betaJira)}`);
             if (daysToBeta != null) {
               const label = daysToBeta >= 0 ? 'until start' : 'past start';
               lines.push(`  • ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.startDate})`);
@@ -170,6 +188,7 @@ jobs:
 
             // Prod
             lines.push(`*⚪ Prod — ${prodName}*  _(\`${prodTag}\`)_`);
+            lines.push(`  • ${driverLabel(prodJira)}`);
             if (daysSinceProd != null) {
               lines.push(`  • ${daysSinceProd} day(s) since release (${prodJira.releaseDate})`);
             } else {
