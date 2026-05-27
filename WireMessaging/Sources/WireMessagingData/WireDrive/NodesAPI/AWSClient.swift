@@ -31,6 +31,7 @@ package protocol S3ClientProtocol: Sendable {
 
     func getObject(input: GetObjectInput) async throws -> GetObjectOutput
     func putObject(input: PutObjectInput) async throws -> PutObjectOutput
+    func deleteObject(input: DeleteObjectInput) async throws -> DeleteObjectOutput
     func uploadPart(input: UploadPartInput) async throws -> UploadPartOutput
     func createMultipartUpload(input: CreateMultipartUploadInput) async throws -> CreateMultipartUploadOutput
     func completeMultipartUpload(input: CompleteMultipartUploadInput) async throws -> CompleteMultipartUploadOutput
@@ -157,6 +158,15 @@ final class AWSClient: Sendable {
         }
     }
 
+    func delete(node: WireDriveNodeNetworkModel) async throws {
+        let deleteObjectInput = DeleteObjectInput(
+            bucket: Constants.bucket,
+            key: node.path
+        )
+
+        try await s3.deleteObject(input: deleteObjectInput)
+    }
+
     private func upload(
         path: URL,
         node: WireDriveNodeNetworkModel,
@@ -198,6 +208,7 @@ final class AWSClient: Sendable {
 
         try await withTaskCancellationHandler {
             do {
+
                 _ = try await s3.putObject(input: input)
             } catch {
                 if Task.isCancelled {

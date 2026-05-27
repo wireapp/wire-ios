@@ -42,14 +42,16 @@ struct WireDriveAttachmentsPreviewItemView: View {
                 WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     state: viewModel.fileTracker.state,
-                    isLargePreview: false
+                    isLargePreview: false,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .frame(width: 120, height: 120)
             case (.image, .large):
                 WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     state: viewModel.fileTracker.state,
-                    isLargePreview: true
+                    isLargePreview: true,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .aspectRatio(viewModel.previewAspectRatio, contentMode: .fit)
                 .frame(
@@ -64,13 +66,15 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     url: viewModel.imagePreviewURL,
                     state: viewModel.fileTracker.state,
                     duration: viewModel.attachmentDuration,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
             case (.video, .large):
                 WireDriveLargeVideoPreviewView(
                     url: viewModel.imagePreviewURL,
                     imageAspectRatio: viewModel.previewAspectRatio,
                     duration: viewModel.attachmentDuration,
-                    state: viewModel.fileTracker.state
+                    state: viewModel.fileTracker.state,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .frame(idealWidth: 288)
             case (.document, .small):
@@ -79,7 +83,8 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     state: viewModel.fileTracker.state,
-                    isDraftPreview: false
+                    isDraftPreview: false,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .frame(idealWidth: 288)
             case (.document, .large):
@@ -89,7 +94,8 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     labelText: viewModel.fileName,
                     url: viewModel.imagePreviewURL,
                     state: viewModel.fileTracker.state,
-                    isDraftPreview: false
+                    isDraftPreview: false,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .frame(idealWidth: 288)
             case (.audio, .small), (.audio, .large):
@@ -98,7 +104,8 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     state: viewModel.fileTracker.state,
-                    isDraftPreview: false
+                    isDraftPreview: false,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .frame(idealWidth: 288)
             }
@@ -116,7 +123,6 @@ struct WireDriveAttachmentsPreviewItemView: View {
     private func onTap() {
         Task { await viewModel.handleAsset() }
     }
-
 }
 
 // MARK: - Preview

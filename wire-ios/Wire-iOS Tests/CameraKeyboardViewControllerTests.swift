@@ -19,6 +19,7 @@
 import AVFoundation
 import Photos
 import WireDesign
+import WireMessagingUI
 import WireTestingPackage
 import XCTest
 
@@ -45,6 +46,7 @@ final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControll
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
         didSelectVideo: URL,
+        withLocalIdentifier id: String?,
         duration: TimeInterval
     ) {
         cameraKeyboardDidSelectVideoHitCount += 1
@@ -58,6 +60,15 @@ final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControll
     ) {
         cameraKeyboardViewControllerDidSelectImageDataHitCount += 1
     }
+
+    var cameraKeyboardViewControllerDidDeselectImageDataHitCount: UInt = 0
+    func cameraKeyboardViewController(
+        _ controller: Wire.CameraKeyboardViewController,
+        didDeselectImage image: PHAsset
+    ) {
+        cameraKeyboardViewControllerDidDeselectImageDataHitCount += 1
+    }
+
 }
 
 // MARK: - SplitLayoutObservableMock
@@ -188,6 +199,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         sut = CameraKeyboardViewController(
             splitLayoutObservable: splitView,
             permissions: permissions,
+            attachmentsCarouselViewModel: AttachmentsCarouselViewModel(),
             userSession: UserSessionMock()
         )
     }
@@ -199,6 +211,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         sut = CallingMockCameraKeyboardViewController(
             splitLayoutObservable: splitView,
             permissions: permissions,
+            attachmentsCarouselViewModel: AttachmentsCarouselViewModel(),
             userSession: UserSessionMock()
         )
 
@@ -291,7 +304,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         initialStateLayoutSizeCompact(with: permissions)
     }
 
-    // MARK: - Tests for InitialStateLayoutSizeRegularPortrait
+    // MARK: - Tests for InitialStateLayoutSizeRegularPortrait#imageLiteral(resourceName: "testInitialStateLayoutSizeCompact_LibraryAccessGranted.1.png")
 
     private func initialStateLayoutSizeRegularPortrait(
         with permissions: PhotoPermissionsController,

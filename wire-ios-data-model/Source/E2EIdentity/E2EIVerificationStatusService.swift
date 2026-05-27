@@ -32,7 +32,7 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: CoreCryptoProtocol {
+    private var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }

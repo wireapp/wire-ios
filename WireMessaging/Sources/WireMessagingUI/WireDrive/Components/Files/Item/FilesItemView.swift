@@ -33,6 +33,7 @@ struct FilesItemView: View {
     private let iconSpaceWidth: CGFloat = 56 // this is explicitly not supposed to scale.
     @ScaledMetric private var iconSpaceHeight: CGFloat = 28
     @ScaledMetric private var iconHorizontalPadding: CGFloat = 7
+    @ScaledMetric private var scale: CGFloat = 1
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -174,8 +175,9 @@ struct FilesItemView: View {
     private func availableOfflineIcon() -> some View {
         Image(systemName: "arrow.down.circle.fill")
             .resizable()
-            .frame(width: 10, height: 10)
+            .frame(width: 10 * scale, height: 10 * scale)
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            .accessibilityLabel(Accessibility.Files.availableOffline)
     }
 
     @ViewBuilder
