@@ -154,6 +154,11 @@ jobs:
             const issueLink = (i) =>
               `<${base}/browse/${i.key}|${i.key}>`;
 
+            // Slack-formatted link to a Jira version's release page; falls back to plain text
+            // when the version isn't in Jira yet (e.g. edge before someone creates it).
+            const releaseLink = (v, label) =>
+              v ? `<${base}/projects/${project}/versions/${v.id}|${label}>` : label;
+
             const renderIssues = (issues, limit = 10) =>
               issues.slice(0, limit).map(i =>
                 `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
@@ -163,13 +168,14 @@ jobs:
             const edgeQ          = jqlEscape(edgeName);
             const edgeJira       = await findJiraVersion(edgeVersion);
             const edgeDriver     = await resolveUserName(edgeJira?.driver);
+            const daysToEdge     = edgeJira ? daysBetween(edgeJira.startDate) : null;
             const edgeTotalCount = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}"`);
             const edgeOpenCount  = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`);
             const edgeQAJql      = `project = ${project} AND fixVersion = "${edgeQ}" AND status in ("Ready for QA", "In QA Review")`;
             const edgeQACount    = await countIssues(edgeQAJql);
             const edgeQAIssues   = edgeQACount > 0 ? (await listIssues(edgeQAJql)).issues : [];
 
-            // ── Beta: affectedVersion + startDate ─────────────────────────────
+            // ── Beta: affectedVersion + releaseDate ───────────────────────────
             const betaName          = `iOS v${betaVersion}`;
             const betaQ             = jqlEscape(betaName);
             const betaJira          = await findJiraVersion(betaVersion);
@@ -177,7 +183,7 @@ jobs:
             const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}"`;
             const betaAffectedCount = await countIssues(betaAffectedJql);
             const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql)).issues : [];
-            const daysToBeta        = betaJira ? daysBetween(betaJira.startDate) : null;
+            const daysToBeta        = betaJira ? daysBetween(betaJira.releaseDate) : null;
 
             // ── Prod: affectedVersion + releaseDate ───────────────────────────
             const prodName          = `iOS v${prodVersion}`;
@@ -195,8 +201,12 @@ jobs:
             lines.push('');
 
             // Edge
-            lines.push(`*🟢 Edge — ${edgeName}*  _(develop)_`);
+            lines.push(`*🟢 Edge — ${releaseLink(edgeJira, edgeName)}*  _(develop)_`);
             lines.push(`  • ${driverLabel(edgeDriver, edgeJira?.driver)}`);
+            if (daysToEdge != null) {
+              const label = daysToEdge >= 0 ? 'until start' : 'past start';
+              lines.push(`  • ${Math.abs(daysToEdge)} day(s) ${label} (${edgeJira.startDate})`);
+            }
             lines.push(`  • ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
             if (edgeQACount > 0) {
               lines.push(`  • 🎮 *${edgeQACount} ticket(s) in QA — Playtest recommended*`);
@@ -208,13 +218,13 @@ jobs:
             lines.push('');
 
             // Beta
-            lines.push(`*🔵 Beta — ${betaName}*  _(\`${betaBranch}\`)_`);
+            lines.push(`*🔵 Beta — ${releaseLink(betaJira, betaName)}*  _(\`${betaBranch}\`)_`);
             lines.push(`  • ${driverLabel(betaDriver, betaJira?.driver)}`);
             if (daysToBeta != null) {
-              const label = daysToBeta >= 0 ? 'until start' : 'past start';
-              lines.push(`  • ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.startDate})`);
+              const label = daysToBeta >= 0 ? 'until release' : 'past release';
+              lines.push(`  • ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.releaseDate})`);
             } else {
-              lines.push(`  • ⚠️ no start date on Jira version`);
+              lines.push(`  • ⚠️ no release date on Jira version`);
             }
             lines.push(`  • ${betaAffectedCount} ticket(s) with affectedVersion`);
             if (betaAffectedCount > 0) {
@@ -224,7 +234,7 @@ jobs:
             lines.push('');
 
             // Prod
-            lines.push(`*⚪ Prod — ${prodName}*  _(\`${prodTag}\`)_`);
+            lines.push(`*⚪ Prod — ${releaseLink(prodJira, prodName)}*  _(\`${prodTag}\`)_`);
             lines.push(`  • ${driverLabel(prodDriver, prodJira?.driver)}`);
             if (daysSinceProd != null) {
               lines.push(`  • ${daysSinceProd} day(s) since release (${prodJira.releaseDate})`);
