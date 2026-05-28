@@ -195,7 +195,7 @@ jobs:
             lines.push(`  • ${driverLabel(edgeDriver)}`);
             lines.push(`  • ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
             if (edgeQACount > 0) {
-              lines.push(`  • 🎮 *${edgeQACount} ticket(s) in QA — suggest a playtest*`);
+              lines.push(`  • 🎮 *${edgeQACount} ticket(s) in QA — Playtest recommended*`);
               lines.push(...renderIssues(edgeQAIssues));
             }
             if (edgeVersion === betaVersion) {
@@ -214,7 +214,7 @@ jobs:
             }
             lines.push(`  • ${betaAffectedCount} ticket(s) with affectedVersion`);
             if (betaAffectedCount > 0) {
-              lines.push(`  • 🔍 *suggest triage*`);
+              lines.push(`  • 🔍 *Triage needed*`);
               lines.push(...renderIssues(betaAffectedItems));
             }
             lines.push('');
@@ -229,7 +229,7 @@ jobs:
             }
             lines.push(`  • ${prodAffectedCount} ticket(s) with affectedVersion`);
             if (prodAffectedCount > 0) {
-              lines.push(`  • 🔍 *suggest triage*`);
+              lines.push(`  • 🔍 *Triage needed*`);
               lines.push(...renderIssues(prodAffectedItems));
             }
 
