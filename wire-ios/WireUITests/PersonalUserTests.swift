@@ -73,6 +73,8 @@ final class PersonalUsersTests: WireUITestCase {
     func testSearchUserAndConnectionRequestLifecycle_TC_8806_8807_8808_8809_8810() async throws {
         let userA = try await UserHelper.default.createPersonalUser()
         let userB = try await UserHelper.default.createPersonalUser()
+        let userC = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
 
         let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
             .acceptPopup()
@@ -89,6 +91,7 @@ final class PersonalUsersTests: WireUITestCase {
             .closeNewConversationPage()
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
+
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
             .acceptPopup()
             .openPendingRequest()
@@ -101,6 +104,20 @@ final class PersonalUsersTests: WireUITestCase {
 
         let nameA = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(nameA, userA.name, "name didn't match \(userA.name)")
+
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
+
+        let secondConnectionRequestsPage = try conversationsPage.openPendingRequest()
+        let userNameC = try XCTUnwrap(secondConnectionRequestsPage.getUserName())
+        XCTAssertEqual(userNameC, "@\(userC.username)", "username didn't match @\(userC.username)")
+
+        let otherUserConversationPage = try secondConnectionRequestsPage.rejectConnectionRequest()
+            .goBackToConversationPage()
+
+        XCTAssertFalse(
+            otherUserConversationPage.conversationCell(named: userC.name).exists,
+            "Conversation with rejected user \(userC.name) is still shown after rejecting @\(userC.username) request"
+        )
     }
 
     @MainActor
