@@ -405,6 +405,10 @@ final class ConversationInputBarViewController: UIViewController,
             if conversation.isWireDriveEnabled, userSession.selfUser.isGuest(in: conversation) {
                 [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
                     $0.isEnabled = false
+                    $0.setBackgroundImageColor(
+                        SemanticColors.Button.backgroundInputBarItemDisabled,
+                        for: .disabled
+                    )
                 }
             }
         }
@@ -544,6 +548,7 @@ final class ConversationInputBarViewController: UIViewController,
         hourglassButton.layer.borderWidth = 1
         hourglassButton.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
         hourglassButton.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
+        hourglassButton.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemDisabled, for: .disabled)
         hourglassButton.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
 
     }

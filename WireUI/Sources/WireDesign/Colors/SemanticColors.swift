@@ -211,6 +211,7 @@ public enum SemanticColors {
         public static let backgroundSendDisabled = UIColor(light: .gray70, dark: .gray70)
         public static let backgroundInputBarItemEnabled = UIColor(light: .white, dark: .gray90)
         public static let backgroundInputBarItemHighlighted = UIColor(light: .blue50Light, dark: .blue800Dark)
+        public static let backgroundInputBarItemDisabled = UIColor(light: .gray20, dark: .gray70)
         public static let borderInputBarItemEnabled = UIColor(light: .gray40, dark: .gray100)
         public static let borderInputBarItemHighlighted = UIColor(light: .blue300Light, dark: .blue700Dark)
         public static let textInputBarItemEnabled = UIColor(light: .black, dark: .white)
