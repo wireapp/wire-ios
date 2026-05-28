@@ -108,8 +108,11 @@ jobs:
             const findJiraVersion = async (semver) => {
               const v = projectVersions.find(x => x.name === `iOS v${semver}`);
               if (!v) return null;
-              // expand=driver pulls the Release Driver assigned in Jira's Releases view.
-              return jira(`/rest/api/3/version/${v.id}?expand=driver`);
+              // expand=driver,approvers pulls Release Hub fields when available.
+              const detail = await jira(`/rest/api/3/version/${v.id}?expand=driver,approvers,operations`);
+              core.info(`Jira version "${detail.name}" — keys: ${Object.keys(detail).join(', ')}`);
+              core.info(`Jira version "${detail.name}" — full: ${JSON.stringify(detail)}`);
+              return detail;
             };
             const driverLabel = (v) => {
               const name = v?.driver?.displayName;
