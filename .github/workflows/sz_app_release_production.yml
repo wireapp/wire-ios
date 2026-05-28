@@ -167,7 +167,8 @@ jobs:
               issues.slice(0, limit).map(i =>
                 `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
 
-            // Edge/LTS: bullets headered by status name.
+            // Edge/LTS: bullets headered by status name, with assignee inline.
+            const assigneeOf = (issue) => issue.fields.assignee?.displayName ?? 'Unassigned';
             const renderGroupedByStatus = (issues, perGroupLimit = 10) => {
               const groups = new Map();
               for (const i of issues) {
@@ -179,7 +180,7 @@ jobs:
               for (const [status, items] of [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))) {
                 out.push(`  • *${status}* (${items.length})`);
                 for (const i of items.slice(0, perGroupLimit)) {
-                  out.push(`    • ${issueLink(i)} — ${i.fields.summary}`);
+                  out.push(`    • ${issueLink(i)} — ${assigneeOf(i)} — ${i.fields.summary}`);
                 }
               }
               return out;
@@ -209,7 +210,7 @@ jobs:
             const edgeTotalCount = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}"`);
             const edgeOpenJql    = `project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`;
             const edgeOpenCount  = await countIssues(edgeOpenJql);
-            const edgeOpenItems  = edgeOpenCount > 0 ? (await listIssues(edgeOpenJql)).issues : [];
+            const edgeOpenItems  = edgeOpenCount > 0 ? (await listIssues(edgeOpenJql, ['summary', 'status', 'assignee'])).issues : [];
             const edgeQAJql      = `project = ${project} AND fixVersion = "${edgeQ}" AND status in ("Ready for QA", "In QA Review")`;
             const edgeQACount    = await countIssues(edgeQAJql);
 
@@ -233,7 +234,8 @@ jobs:
             const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, ['summary', 'components'])).issues : [];
             const daysSinceProd     = prodJira ? -daysBetween(prodJira.releaseDate) : null;
 
-            // ── LTS C Builds (optional, only if vars.LTS_RELEASE is set) ──────
+            // ── LTS C Builds (optional, only if vars.LTS_RELEASE is set
+            //                 and the Jira version isn't yet released) ────────
             let lts = null;
             if (process.env.LTS_RELEASE) {
               const ltsBranch  = process.env.LTS_RELEASE;
@@ -241,12 +243,16 @@ jobs:
               const ltsName    = `iOS v${ltsVersion}`;
               const ltsQ       = jqlEscape(ltsName);
               const ltsJira    = await findJiraVersion(ltsVersion);
-              const ltsDriver  = await resolveUserName(ltsJira?.driver);
-              const ltsOpenJql = `project = ${project} AND fixVersion = "${ltsQ}" AND statusCategory != Done`;
-              const ltsOpen    = await countIssues(ltsOpenJql);
-              const ltsOpenItems = ltsOpen > 0 ? (await listIssues(ltsOpenJql)).issues : [];
-              const daysToLts  = ltsJira ? daysBetween(ltsJira.releaseDate) : null;
-              lts = { ltsBranch, ltsName, ltsJira, ltsDriver, ltsOpen, ltsOpenItems, daysToLts };
+              if (ltsJira?.released) {
+                core.info(`LTS ${ltsName} is already released in Jira — skipping section`);
+              } else {
+                const ltsDriver  = await resolveUserName(ltsJira?.driver);
+                const ltsOpenJql = `project = ${project} AND fixVersion = "${ltsQ}" AND statusCategory != Done`;
+                const ltsOpen    = await countIssues(ltsOpenJql);
+                const ltsOpenItems = ltsOpen > 0 ? (await listIssues(ltsOpenJql, ['summary', 'status', 'assignee'])).issues : [];
+                const daysToLts  = ltsJira ? daysBetween(ltsJira.releaseDate) : null;
+                lts = { ltsBranch, ltsName, ltsJira, ltsDriver, ltsOpen, ltsOpenItems, daysToLts };
+              }
             }
 
             // ── Render Slack-flavoured Markdown ───────────────────────────────
