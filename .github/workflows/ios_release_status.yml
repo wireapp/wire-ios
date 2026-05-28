@@ -28,6 +28,9 @@ jobs:
       JIRA_PROJECT: WPB
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASES }}
+      # Optional: full branch name of the current LTS C-build release (e.g. release/cycle-4.18).
+      # When set, an extra LTS section is appended to the report.
+      LTS_RELEASE: ${{ vars.LTS_RELEASE }}
     steps:
       - name: Build release report
         id: build
@@ -105,6 +108,7 @@ jobs:
 
             // ── Jira lookups ──────────────────────────────────────────────────
             const projectVersions = await jira(`/rest/api/3/project/${project}/versions`);
+
             const findJiraVersion = async (semver) => {
               const v = projectVersions.find(x => x.name === `iOS v${semver}`);
               if (!v) return null;
@@ -134,8 +138,8 @@ jobs:
             // Migrated from the removed /rest/api/3/search endpoint:
             //   list issues       → GET  /rest/api/3/search/jql        (no `total` in response)
             //   count only        → POST /rest/api/3/search/approximate-count
-            const listIssues = async (jql) => {
-              const qs = new URLSearchParams({ jql, fields: 'summary,status', maxResults: '50' });
+            const listIssues = async (jql, fields = ['summary', 'status']) => {
+              const qs = new URLSearchParams({ jql, fields: fields.join(','), maxResults: '50' });
               return jira(`/rest/api/3/search/jql?${qs}`);
             };
             const countIssues = async (jql) => {
@@ -163,6 +167,39 @@ jobs:
               issues.slice(0, limit).map(i =>
                 `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
 
+            // Edge/LTS: bullets headered by status name.
+            const renderGroupedByStatus = (issues, perGroupLimit = 10) => {
+              const groups = new Map();
+              for (const i of issues) {
+                const s = i.fields.status.name;
+                if (!groups.has(s)) groups.set(s, []);
+                groups.get(s).push(i);
+              }
+              const out = [];
+              for (const [status, items] of [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+                out.push(`  • *${status}* (${items.length})`);
+                for (const i of items.slice(0, perGroupLimit)) {
+                  out.push(`    • ${issueLink(i)} — ${i.fields.summary}`);
+                }
+              }
+              return out;
+            };
+
+            // Prod: scope = the issue's Jira Components, with "iOS" hidden.
+            const scopeOf = (issue) =>
+              (issue.fields.components || [])
+                .map(c => c.name)
+                .filter(n => n && n.toLowerCase() !== 'ios')
+                .join(', ') || null;
+            const renderWithScope = (issues) => {
+              const sorted = [...issues].sort((a, b) =>
+                (scopeOf(a) ?? '').localeCompare(scopeOf(b) ?? ''));
+              return sorted.map(i => {
+                const scope = scopeOf(i);
+                return `    • ${issueLink(i)}${scope ? ` — ${scope}` : ''} — ${i.fields.summary}`;
+              });
+            };
+
             // ── Edge: fixVersion ──────────────────────────────────────────────
             const edgeName       = `iOS v${edgeVersion}`;
             const edgeQ          = jqlEscape(edgeName);
@@ -170,10 +207,11 @@ jobs:
             const edgeDriver     = await resolveUserName(edgeJira?.driver);
             const daysToEdge     = edgeJira ? daysBetween(edgeJira.startDate) : null;
             const edgeTotalCount = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}"`);
-            const edgeOpenCount  = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`);
+            const edgeOpenJql    = `project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`;
+            const edgeOpenCount  = await countIssues(edgeOpenJql);
+            const edgeOpenItems  = edgeOpenCount > 0 ? (await listIssues(edgeOpenJql)).issues : [];
             const edgeQAJql      = `project = ${project} AND fixVersion = "${edgeQ}" AND status in ("Ready for QA", "In QA Review")`;
             const edgeQACount    = await countIssues(edgeQAJql);
-            const edgeQAIssues   = edgeQACount > 0 ? (await listIssues(edgeQAJql)).issues : [];
 
             // ── Beta: affectedVersion + releaseDate ───────────────────────────
             const betaName          = `iOS v${betaVersion}`;
@@ -192,8 +230,24 @@ jobs:
             const prodDriver        = await resolveUserName(prodJira?.driver);
             const prodAffectedJql   = `project = ${project} AND affectedVersion = "${prodQ}" AND status not in ("Done", "Rejected")`;
             const prodAffectedCount = await countIssues(prodAffectedJql);
-            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql)).issues : [];
+            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, ['summary', 'components'])).issues : [];
             const daysSinceProd     = prodJira ? -daysBetween(prodJira.releaseDate) : null;
+
+            // ── LTS C Builds (optional, only if vars.LTS_RELEASE is set) ──────
+            let lts = null;
+            if (process.env.LTS_RELEASE) {
+              const ltsBranch  = process.env.LTS_RELEASE;
+              const ltsVersion = await readVersionFromRef(ltsBranch);
+              const ltsName    = `iOS v${ltsVersion}`;
+              const ltsQ       = jqlEscape(ltsName);
+              const ltsJira    = await findJiraVersion(ltsVersion);
+              const ltsDriver  = await resolveUserName(ltsJira?.driver);
+              const ltsOpenJql = `project = ${project} AND fixVersion = "${ltsQ}" AND statusCategory != Done`;
+              const ltsOpen    = await countIssues(ltsOpenJql);
+              const ltsOpenItems = ltsOpen > 0 ? (await listIssues(ltsOpenJql)).issues : [];
+              const daysToLts  = ltsJira ? daysBetween(ltsJira.releaseDate) : null;
+              lts = { ltsBranch, ltsName, ltsJira, ltsDriver, ltsOpen, ltsOpenItems, daysToLts };
+            }
 
             // ── Render Slack-flavoured Markdown ───────────────────────────────
             const lines = [];
@@ -210,10 +264,12 @@ jobs:
             lines.push(`  • ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
             if (edgeQACount > 0) {
               lines.push(`  • 🎮 *${edgeQACount} ticket(s) in QA — Playtest recommended*`);
-              lines.push(...renderIssues(edgeQAIssues));
             }
             if (edgeVersion === betaVersion) {
               lines.push(`  • ⚠️ *develop is still on ${edgeVersion} — bump \`WIRE_SHORT_VERSION\` now that \`${betaBranch}\` is cut*`);
+            }
+            if (edgeOpenCount > 0) {
+              lines.push(...renderGroupedByStatus(edgeOpenItems));
             }
             lines.push('');
 
@@ -244,7 +300,24 @@ jobs:
             lines.push(`  • ${prodAffectedCount} ticket(s) with affectedVersion`);
             if (prodAffectedCount > 0) {
               lines.push(`  • 🔍 *Triage needed*`);
-              lines.push(...renderIssues(prodAffectedItems));
+              lines.push(...renderWithScope(prodAffectedItems));
+            }
+
+            // LTS C Builds (optional)
+            if (lts) {
+              lines.push('');
+              lines.push(`*⬜ LTS C Builds - ${releaseLink(lts.ltsJira, lts.ltsName)} (\`${lts.ltsBranch}\`)*`);
+              lines.push(`  • ${driverLabel(lts.ltsDriver, lts.ltsJira?.driver)}`);
+              if (lts.daysToLts != null) {
+                const label = lts.daysToLts >= 0 ? 'until release' : 'past release';
+                lines.push(`  • ${Math.abs(lts.daysToLts)} day(s) ${label} (${lts.ltsJira.releaseDate})`);
+              } else {
+                lines.push(`  • ⚠️ no release date on Jira version`);
+              }
+              lines.push(`  • ${lts.ltsOpen} tickets not done`);
+              if (lts.ltsOpen > 0) {
+                lines.push(...renderGroupedByStatus(lts.ltsOpenItems));
+              }
             }
 
             const message = lines.join('\n');
