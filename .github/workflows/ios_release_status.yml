@@ -6,9 +6,7 @@ name: Daily iOS Release Status
 # **Who does it impact**: iOS release managers, QA, and engineers owning ticket triage.
 #
 # Required secrets:
-#   JIRA_TOKEN          — Atlassian API token (already used by jira_lint_and_link.yml)
-#   JIRA_EMAIL          — Atlassian account email paired with the token (Basic auth).
-#                         If absent, the token is sent as a Bearer token instead.
+#   JIRA_TOKEN          — Same secret used by jira_lint_and_link.yml.
 #   WIRE_IOS_RELEASES   — Slack webhook URL for the channel that receives the report.
 
 on:
@@ -29,7 +27,6 @@ jobs:
       JIRA_BASE_URL: https://wearezeta.atlassian.net
       JIRA_PROJECT: WPB
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASES }}
     steps:
       - name: Build release report
@@ -41,9 +38,10 @@ jobs:
             const base    = process.env.JIRA_BASE_URL;
             const project = process.env.JIRA_PROJECT;
 
-            const authHeader = process.env.JIRA_EMAIL
-              ? `Basic ${Buffer.from(`${process.env.JIRA_EMAIL}:${process.env.JIRA_TOKEN}`).toString('base64')}`
-              : `Bearer ${process.env.JIRA_TOKEN}`;
+            if (!process.env.JIRA_TOKEN) {
+              throw new Error('JIRA_TOKEN secret is required');
+            }
+            const authHeader = `Basic ${Buffer.from(process.env.JIRA_TOKEN).toString('base64')}`;
 
             const jira = async (path) => {
               const res = await fetch(`${base}${path}`, {
