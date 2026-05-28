@@ -38,6 +38,14 @@ final class LifecycleAwareUserAgent: NSObject, OIDExternalUserAgent {
         self.onDismissed = onDismissed
     }
 
+    // `OIDExternalUserAgent` is an Obj-C protocol with no actor annotation, so Swift treats `present` and
+    // `dismiss` as callable from any context.
+    //
+    // We can't annotate it `@MainActor`, but AppAuth always calls it on the main thread since it deals with UI.
+    //
+    // `assumeIsolated` is tells the compiler we're already on the main actor, so we can call the
+    // `@MainActor`-bound `onPresented()` and `onDismiss()` closures synchronously.
+
     func present(
         _ request: any OIDExternalUserAgentRequest,
         session: any OIDExternalUserAgentSession
