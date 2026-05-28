@@ -18,8 +18,8 @@
 
 import GenericMessageProtocol
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 enum DebugActions {
 
