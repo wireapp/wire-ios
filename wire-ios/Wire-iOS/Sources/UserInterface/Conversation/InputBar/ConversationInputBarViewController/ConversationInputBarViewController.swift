@@ -399,7 +399,7 @@ final class ConversationInputBarViewController: UIViewController,
             self.conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
-        
+
         // TODO: [WPB-25941] Remove developer flag when feature is complete
         if DeveloperFlag.enableDrivePermissions.isOn {
             if conversation.isWireDriveEnabled, userSession.selfUser.isGuest(in: conversation) {
