@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireNetwork
 import WireSystem
 
@@ -24,6 +25,7 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
     let conversationRepository: any ConversationRepositoryProtocol
     let userRepository: any UserRepositoryProtocol
     let localStore: any ConversationLocalStoreProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol
 
     func processEvent(_ event: ConversationMemberUpdateEvent) async throws {
         let conversationID = event.conversationID
@@ -56,10 +58,25 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
             return
         }
 
+        // update participant role
         await conversationRepository.addOrUpdateParticipant(
             participantID: memberChangeID.id,
             participantDomain: memberChangeID.domain,
             participantRole: role,
+            conversationID: conversationID.id,
+            conversationDomain: conversationID.domain
+        )
+
+        guard role == ZMConversation.defaultAdminRoleName, isSelfUser else {
+            return
+        }
+
+        await messageLocalStore.addSystemMessage(
+            messageType: .promotedToGroupAdmin(
+                user: (memberChangeID.id, memberChangeID.domain),
+                sender: (event.senderID.id, event.senderID.domain),
+                date: event.timestamp
+            ),
             conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )

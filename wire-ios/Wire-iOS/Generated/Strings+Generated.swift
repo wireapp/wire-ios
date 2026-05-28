@@ -2289,6 +2289,10 @@ internal enum L10n {
             internal static func `left`(_ p1: Any) -> String {
               return L10n.tr("Localizable", "content.system.conversation.you.left", String(describing: p1), fallback: "%@ left")
             }
+            /// %@ were promoted to group admin
+            internal static func promoted(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.conversation.you.promoted", String(describing: p1), fallback: "%@ were promoted to group admin")
+            }
             /// %@ removed %@
             internal static func removed(_ p1: Any, _ p2: Any) -> String {
               return L10n.tr("Localizable", "content.system.conversation.you.removed", String(describing: p1), String(describing: p2), fallback: "%@ removed %@")
