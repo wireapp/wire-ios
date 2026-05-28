@@ -284,7 +284,7 @@ enum DebugActions {
 
     static func repairFaultyMLSRemovalKeys() {
         let strings = L10n.Localizable.Settings.DebuggingTools.RepairMlsRemovalKeys.self
-        guard let useCase = ZMUserSession.shared().clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
+        guard let useCase = ZMUserSession.shared()?.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
             alert(strings.useCaseUnavailable)
             return
         }
