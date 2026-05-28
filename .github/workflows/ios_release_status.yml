@@ -120,7 +120,8 @@ jobs:
                 const u = await jira(`/rest/api/3/user?accountId=${encodeURIComponent(accountId)}`);
                 userCache.set(accountId, u.displayName);
                 return u.displayName;
-              } catch {
+              } catch (e) {
+                core.warning(`resolveUserName(${accountId}) failed: ${e.message}`);
                 return null;
               }
             };
