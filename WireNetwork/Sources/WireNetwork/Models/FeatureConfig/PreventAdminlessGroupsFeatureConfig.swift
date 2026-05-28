@@ -26,8 +26,8 @@ public struct PreventAdminlessGroupsFeatureConfig: Equatable, Sendable, Hashable
 
     public let status: FeatureConfigStatus
 
-    /// Strategy used to prompt the last admin to assign a replacement
-    /// before leaving. (alphabetical / random / all)
+    /// How the backend selects an admin candidate when 
+    /// automatic promotion is needed. (alphabetical / random / all)
 
     public let promotionStrategy: String
 
