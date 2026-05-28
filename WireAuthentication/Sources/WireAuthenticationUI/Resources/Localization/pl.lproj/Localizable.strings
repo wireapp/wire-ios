@@ -92,6 +92,7 @@
 "verification_code.message" = "Wpisz kod weryfikacyjny wysłany do %@.";
 "verification_code.confirm" = "Potwierdź";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Uruchomiłeś Wire na tym urządzeniu po raz pierwszy.";
 "authentication.no_history.message" = "Ze względu na prywatność, poprzednie konwersacje nie będą tutaj widoczne.";
