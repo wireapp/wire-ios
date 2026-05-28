@@ -11,7 +11,7 @@ name: Daily iOS Release Status
 
 on:
   schedule:
-    - cron: '0 7 * * MON-FRI'   # 07:00 UTC weekdays, before pr-review-summary
+    - cron: '0 6 * * MON-FRI'   # 06:00 UTC weekdays, so 08:00 Berlin time
   workflow_dispatch:
 
 concurrency:
@@ -27,7 +27,7 @@ jobs:
       JIRA_BASE_URL: https://wearezeta.atlassian.net
       JIRA_PROJECT: WPB
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASES }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
       # Optional: full branch name of the current LTS C-build release (e.g. release/cycle-4.18).
       # When set, an extra LTS section is appended to the report.
       LTS_RELEASE: ${{ vars.LTS_RELEASE }}
