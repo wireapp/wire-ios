@@ -125,8 +125,11 @@ jobs:
                 return null;
               }
             };
-            const driverLabel = (name) =>
-              name ? `👤 Release captain: ${name}` : `⚠️ Release captain: Unassigned`;
+            const driverLabel = (name, accountId) => {
+              if (name) return `👤 Release captain: ${name}`;
+              if (accountId) return `👤 Release captain: <${base}/jira/people/${accountId}|view profile>`;
+              return `⚠️ Release captain: Unassigned`;
+            };
 
             // Migrated from the removed /rest/api/3/search endpoint:
             //   list issues       → GET  /rest/api/3/search/jql        (no `total` in response)
@@ -193,7 +196,7 @@ jobs:
 
             // Edge
             lines.push(`*🟢 Edge — ${edgeName}*  _(develop)_`);
-            lines.push(`  • ${driverLabel(edgeDriver)}`);
+            lines.push(`  • ${driverLabel(edgeDriver, edgeJira?.driver)}`);
             lines.push(`  • ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
             if (edgeQACount > 0) {
               lines.push(`  • 🎮 *${edgeQACount} ticket(s) in QA — Playtest recommended*`);
@@ -206,7 +209,7 @@ jobs:
 
             // Beta
             lines.push(`*🔵 Beta — ${betaName}*  _(\`${betaBranch}\`)_`);
-            lines.push(`  • ${driverLabel(betaDriver)}`);
+            lines.push(`  • ${driverLabel(betaDriver, betaJira?.driver)}`);
             if (daysToBeta != null) {
               const label = daysToBeta >= 0 ? 'until start' : 'past start';
               lines.push(`  • ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.startDate})`);
@@ -222,7 +225,7 @@ jobs:
 
             // Prod
             lines.push(`*⚪ Prod — ${prodName}*  _(\`${prodTag}\`)_`);
-            lines.push(`  • ${driverLabel(prodDriver)}`);
+            lines.push(`  • ${driverLabel(prodDriver, prodJira?.driver)}`);
             if (daysSinceProd != null) {
               lines.push(`  • ${daysSinceProd} day(s) since release (${prodJira.releaseDate})`);
             } else {
