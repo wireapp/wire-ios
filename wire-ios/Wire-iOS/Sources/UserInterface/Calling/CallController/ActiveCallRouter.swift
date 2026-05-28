@@ -136,6 +136,9 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
+        // During account/rootViewController switches, the call screen can be dismissed by UIKit
+        // while these flags still say it's shown/presenting. Reconcile with UIKit truth and reset
+        // stale state so this presentation attempt is not blocked by outdated bookkeeping.
         if isActiveCallShown, !isCallUIActuallyPresented() {
             isActiveCallShown = false
             isPresentingActiveCall = false
