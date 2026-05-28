@@ -260,6 +260,14 @@ public enum Locators {
         case save
     }
 
+    public enum UsernameUpdatePage: String {
+
+        case usernameField
+        case save = "Save"
+        case username = "Username"
+        case handleTextField
+    }
+
     public enum NewConversationPage: String {
 
         case createNewGroupButton
