@@ -130,6 +130,7 @@
 "sketch.drawButton.hint" = "Торкніться двічі, щоб увімкнути або вимкнути";
 "sketch.selectEmojiButton.description" = "Виберіть смайлик";
 "sketch.sendButton.description" = "Надіслати";
+"sketch.confirmButton.description" = "Підтвердити";
 "sketch.undoButton.description" = "Скасувати останній крок";
 "sketch.closeButton.description" = "Закрити ескіз";
 

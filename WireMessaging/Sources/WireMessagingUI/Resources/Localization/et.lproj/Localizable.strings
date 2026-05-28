@@ -82,6 +82,7 @@
 "conversation.creationForm.guests.description" = "Open this conversation to people outside your team or services.";
 "conversation.creationForm.appsDisabled.title" = "Your team doesn't use apps yet";
 "conversation.creationForm.appsDisabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.creationForm.appsDisabledAsAdmin.message" = "To improve your workflow with apps, your team needs configuration.";
 
 "conversation.creationForm.readReceipts.toggle" = "Lugemiskinnitused";
 "conversation.creationForm.readReceipts.description" = "Kui see on sees, saavad inimesed näha, kas nende vestluse sõnumid on loetud.";
