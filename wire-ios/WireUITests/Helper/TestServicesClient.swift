@@ -28,16 +28,16 @@ class TestServicesClient {
     // MARK: - Created instances log
 
     private actor CreatedInstancesTracker {
-        private var ids: [String] = []
+        private var ids: Set<String> = []
 
         func add(_ id: String?) {
-            guard let id, !id.isEmpty, !ids.contains(id) else { return }
-            ids.append(id)
+            guard let id, !id.isEmpty else { return }
+            ids.insert(id)
         }
 
         func drain() -> [String] {
             defer { ids.removeAll() }
-            return ids
+            return Array(ids)
         }
     }
 
@@ -96,7 +96,9 @@ class TestServicesClient {
             requestType: "PUT"
         )
 
-        let pureResponse = response as! HTTPURLResponse
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
         if pureResponse.statusCode != 200 {
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
@@ -125,7 +127,10 @@ class TestServicesClient {
                     requestType: "DELETE"
                 )
 
-                let pureResponse = response as! HTTPURLResponse
+                guard let pureResponse = response as? HTTPURLResponse else {
+                    print("Failed to delete instance \(instanceId): Invalid response")
+                    continue
+                }
                 if (200 ..< 300).contains(pureResponse.statusCode) {
                     print("Deleted Kalium Testservice instance \(instanceId)")
                 } else {
@@ -170,7 +175,9 @@ class TestServicesClient {
             requestType: "POST"
         )
 
-        let pureResponse = response as! HTTPURLResponse
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
         if pureResponse.statusCode != 200 {
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
@@ -231,7 +238,9 @@ class TestServicesClient {
             requestType: "POST"
         )
 
-        let pureResponse = response as! HTTPURLResponse
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
         if pureResponse.statusCode != 200 {
             throw RuntimeError("Error \(pureResponse.description)")
         }
@@ -294,7 +303,9 @@ class TestServicesClient {
             requestType: "POST"
         )
 
-        let pureResponse = response as! HTTPURLResponse
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
         if pureResponse.statusCode != 200 {
             throw RuntimeError("Error \(pureResponse.description)")
         }
@@ -331,7 +342,9 @@ class TestServicesClient {
             requestType: "POST"
         )
 
-        let pureResponse = response as! HTTPURLResponse
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
         if pureResponse.statusCode != 200 {
             throw RuntimeError("Error \(pureResponse.description)")
         }
@@ -364,7 +377,9 @@ class TestServicesClient {
             requestType: "POST"
         )
 
-        let pureResponse = response as! HTTPURLResponse
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
         if pureResponse.statusCode != 200 {
             throw RuntimeError("Error \(pureResponse.description)")
         }
