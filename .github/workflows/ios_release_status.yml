@@ -43,9 +43,13 @@ jobs:
             }
             const authHeader = `Basic ${Buffer.from(process.env.JIRA_TOKEN).toString('base64')}`;
 
-            const jira = async (path) => {
+            const jira = async (path, body = null) => {
+              const headers = { Authorization: authHeader, Accept: 'application/json' };
+              if (body) headers['Content-Type'] = 'application/json';
               const res = await fetch(`${base}${path}`, {
-                headers: { Authorization: authHeader, Accept: 'application/json' },
+                method: body ? 'POST' : 'GET',
+                headers,
+                body: body ? JSON.stringify(body) : undefined,
               });
               if (!res.ok) throw new Error(`Jira ${path}: ${res.status} ${await res.text()}`);
               return res.json();
@@ -112,9 +116,16 @@ jobs:
               return name ? `👤 Release captain: ${name}` : `⚠️ Release captain: Unassigned`;
             };
 
-            const search = async (jql) => {
+            // Migrated from the removed /rest/api/3/search endpoint:
+            //   list issues       → GET  /rest/api/3/search/jql        (no `total` in response)
+            //   count only        → POST /rest/api/3/search/approximate-count
+            const listIssues = async (jql) => {
               const qs = new URLSearchParams({ jql, fields: 'summary,status', maxResults: '50' });
-              return jira(`/rest/api/3/search?${qs}`);
+              return jira(`/rest/api/3/search/jql?${qs}`);
+            };
+            const countIssues = async (jql) => {
+              const r = await jira('/rest/api/3/search/approximate-count', { jql });
+              return r.count ?? 0;
             };
             // Escape backslashes and double-quotes before interpolating into a JQL "..." literal.
             const jqlEscape = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
@@ -133,26 +144,32 @@ jobs:
                 `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
 
             // ── Edge: fixVersion ──────────────────────────────────────────────
-            const edgeName  = `iOS v${edgeVersion}`;
-            const edgeQ     = jqlEscape(edgeName);
-            const edgeJira  = await findJiraVersion(edgeVersion);
-            const edgeTotal = await search(`project = ${project} AND fixVersion = "${edgeQ}"`);
-            const edgeOpen  = await search(`project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`);
-            const edgeQA    = await search(`project = ${project} AND fixVersion = "${edgeQ}" AND status in ("Ready for QA", "In QA Review")`);
+            const edgeName       = `iOS v${edgeVersion}`;
+            const edgeQ          = jqlEscape(edgeName);
+            const edgeJira       = await findJiraVersion(edgeVersion);
+            const edgeTotalCount = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}"`);
+            const edgeOpenCount  = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`);
+            const edgeQAJql      = `project = ${project} AND fixVersion = "${edgeQ}" AND status in ("Ready for QA", "In QA Review")`;
+            const edgeQACount    = await countIssues(edgeQAJql);
+            const edgeQAIssues   = edgeQACount > 0 ? (await listIssues(edgeQAJql)).issues : [];
 
             // ── Beta: affectedVersion + startDate ─────────────────────────────
-            const betaName     = `iOS v${betaVersion}`;
-            const betaQ        = jqlEscape(betaName);
-            const betaJira     = await findJiraVersion(betaVersion);
-            const betaAffected = await search(`project = ${project} AND affectedVersion = "${betaQ}"`);
-            const daysToBeta   = betaJira ? daysBetween(betaJira.startDate) : null;
+            const betaName          = `iOS v${betaVersion}`;
+            const betaQ             = jqlEscape(betaName);
+            const betaJira          = await findJiraVersion(betaVersion);
+            const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}"`;
+            const betaAffectedCount = await countIssues(betaAffectedJql);
+            const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql)).issues : [];
+            const daysToBeta        = betaJira ? daysBetween(betaJira.startDate) : null;
 
             // ── Prod: affectedVersion + releaseDate ───────────────────────────
-            const prodName     = `iOS v${prodVersion}`;
-            const prodQ        = jqlEscape(prodName);
-            const prodJira     = await findJiraVersion(prodVersion);
-            const prodAffected = await search(`project = ${project} AND affectedVersion = "${prodQ}"`);
-            const daysSinceProd = prodJira ? -daysBetween(prodJira.releaseDate) : null;
+            const prodName          = `iOS v${prodVersion}`;
+            const prodQ             = jqlEscape(prodName);
+            const prodJira          = await findJiraVersion(prodVersion);
+            const prodAffectedJql   = `project = ${project} AND affectedVersion = "${prodQ}"`;
+            const prodAffectedCount = await countIssues(prodAffectedJql);
+            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql)).issues : [];
+            const daysSinceProd     = prodJira ? -daysBetween(prodJira.releaseDate) : null;
 
             // ── Render Slack-flavoured Markdown ───────────────────────────────
             const lines = [];
@@ -162,10 +179,10 @@ jobs:
             // Edge
             lines.push(`*🟢 Edge — ${edgeName}*  _(develop)_`);
             lines.push(`  • ${driverLabel(edgeJira)}`);
-            lines.push(`  • ${edgeOpen.total} of ${edgeTotal.total} tickets not done`);
-            if (edgeQA.total > 0) {
-              lines.push(`  • 🎮 *${edgeQA.total} ticket(s) in QA — suggest a playtest*`);
-              lines.push(...renderIssues(edgeQA.issues));
+            lines.push(`  • ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
+            if (edgeQACount > 0) {
+              lines.push(`  • 🎮 *${edgeQACount} ticket(s) in QA — suggest a playtest*`);
+              lines.push(...renderIssues(edgeQAIssues));
             }
             lines.push('');
 
@@ -178,10 +195,10 @@ jobs:
             } else {
               lines.push(`  • ⚠️ no start date on Jira version`);
             }
-            lines.push(`  • ${betaAffected.total} ticket(s) with affectedVersion`);
-            if (betaAffected.total > 0) {
+            lines.push(`  • ${betaAffectedCount} ticket(s) with affectedVersion`);
+            if (betaAffectedCount > 0) {
               lines.push(`  • 🔍 *suggest triage*`);
-              lines.push(...renderIssues(betaAffected.issues));
+              lines.push(...renderIssues(betaAffectedItems));
             }
             lines.push('');
 
@@ -193,10 +210,10 @@ jobs:
             } else {
               lines.push(`  • ⚠️ no release date on Jira version`);
             }
-            lines.push(`  • ${prodAffected.total} ticket(s) with affectedVersion`);
-            if (prodAffected.total > 0) {
+            lines.push(`  • ${prodAffectedCount} ticket(s) with affectedVersion`);
+            if (prodAffectedCount > 0) {
               lines.push(`  • 🔍 *suggest triage*`);
-              lines.push(...renderIssues(prodAffected.issues));
+              lines.push(...renderIssues(prodAffectedItems));
             }
 
             const message = lines.join('\n');
