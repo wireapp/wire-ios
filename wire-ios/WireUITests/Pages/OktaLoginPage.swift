@@ -22,7 +22,7 @@ import XCTest
 class OktaLoginPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        webView
+        usernameTextField
     }
 
     private var webView: XCUIElement {
