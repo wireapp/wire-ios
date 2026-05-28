@@ -19,43 +19,27 @@
 import WireLocators
 import XCTest
 
-class OktaLoginPage: PageModel {
+class UsernameUpdatePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        usernameTextField
+        navigationBarUsername
     }
 
-    private var webView: XCUIElement {
-        app.webViews.firstMatch
+    var navigationBarUsername: XCUIElement {
+        app.navigationBars[Locators.UsernameUpdatePage.username.rawValue]
     }
 
     var usernameTextField: XCUIElement {
-        webView.textFields.firstMatch
+        app.textFields[Locators.UsernameUpdatePage.handleTextField.rawValue]
     }
 
-    var passwordSecureTextField: XCUIElement {
-        webView.secureTextFields.firstMatch
+    var saveButton: XCUIElement {
+        app.buttons[Locators.UsernameUpdatePage.save.rawValue]
     }
 
-    var signinButton: XCUIElement {
-        webView.buttons["Sign In"]
-    }
-
-    @MainActor
-    func oktaLogin(email: String, password: String) async throws -> FirstTimePage {
-        usernameTextField.waitAndTap()
-        usernameTextField.typeText(email)
-        webView.tap()
-
-        passwordSecureTextField.waitAndTap()
-        passwordSecureTextField.typeText(password + "\n")
-
-        if !webView.waitForNonExistence(timeout: 4),
-           signinButton.exists,
-           signinButton.isHittable {
-            signinButton.tap()
-        }
-
-        return try FirstTimePage()
+    func updateUsernameAndSave() throws -> AccountSettingsPage {
+        usernameTextField.typeText("-updated")
+        saveButton.waitAndTap()
+        return try AccountSettingsPage()
     }
 }
