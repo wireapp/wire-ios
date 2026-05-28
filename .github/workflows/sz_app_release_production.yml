@@ -27,7 +27,7 @@ jobs:
       JIRA_BASE_URL: https://wearezeta.atlassian.net
       JIRA_PROJECT: WPB
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_TEST }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASES }}
       # Optional: full branch name of the current LTS C-build release (e.g. release/cycle-4.18).
       # When set, an extra LTS section is appended to the report.
       LTS_RELEASE: ${{ vars.LTS_RELEASE }}
@@ -116,24 +116,12 @@ jobs:
               return jira(`/rest/api/3/version/${v.id}?expand=driver`);
             };
 
-            const userCache = new Map();
-            const resolveUserName = async (accountId) => {
-              if (!accountId) return null;
-              if (userCache.has(accountId)) return userCache.get(accountId);
-              try {
-                const u = await jira(`/rest/api/3/user?accountId=${encodeURIComponent(accountId)}`);
-                userCache.set(accountId, u.displayName);
-                return u.displayName;
-              } catch (e) {
-                core.warning(`resolveUserName(${accountId}) failed: ${e.message}`);
-                return null;
-              }
-            };
-            const driverLabel = (name, accountId) => {
-              if (name) return `👤 Release captain: ${name}`;
-              if (accountId) return `👤 Release captain: <${base}/jira/people/${accountId}|view profile>`;
-              return `⚠️ Release captain: Unassigned`;
-            };
+            // We can't resolve accountId → displayName: the token's user lacks
+            // "Browse users and groups". Link to the Jira profile instead.
+            const driverLabel = (accountId) =>
+              accountId
+                ? `<${base}/jira/people/${accountId}|👤 Release captain>`
+                : `⚠️ Release captain: Unassigned`;
 
             // Migrated from the removed /rest/api/3/search endpoint:
             //   list issues       → GET  /rest/api/3/search/jql        (no `total` in response)
@@ -205,7 +193,6 @@ jobs:
             const edgeName       = `iOS v${edgeVersion}`;
             const edgeQ          = jqlEscape(edgeName);
             const edgeJira       = await findJiraVersion(edgeVersion);
-            const edgeDriver     = await resolveUserName(edgeJira?.driver);
             const daysToEdge     = edgeJira ? daysBetween(edgeJira.startDate) : null;
             const edgeTotalCount = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}"`);
             const edgeOpenJql    = `project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`;
@@ -218,7 +205,6 @@ jobs:
             const betaName          = `iOS v${betaVersion}`;
             const betaQ             = jqlEscape(betaName);
             const betaJira          = await findJiraVersion(betaVersion);
-            const betaDriver        = await resolveUserName(betaJira?.driver);
             const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}"`;
             const betaAffectedCount = await countIssues(betaAffectedJql);
             const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql)).issues : [];
@@ -228,7 +214,6 @@ jobs:
             const prodName          = `iOS v${prodVersion}`;
             const prodQ             = jqlEscape(prodName);
             const prodJira          = await findJiraVersion(prodVersion);
-            const prodDriver        = await resolveUserName(prodJira?.driver);
             const prodAffectedJql   = `project = ${project} AND affectedVersion = "${prodQ}" AND status not in ("Done", "Rejected")`;
             const prodAffectedCount = await countIssues(prodAffectedJql);
             const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, ['summary', 'components'])).issues : [];
@@ -246,12 +231,11 @@ jobs:
               if (ltsJira?.released) {
                 core.info(`LTS ${ltsName} is already released in Jira — skipping section`);
               } else {
-                const ltsDriver  = await resolveUserName(ltsJira?.driver);
                 const ltsOpenJql = `project = ${project} AND fixVersion = "${ltsQ}" AND statusCategory != Done`;
                 const ltsOpen    = await countIssues(ltsOpenJql);
                 const ltsOpenItems = ltsOpen > 0 ? (await listIssues(ltsOpenJql, ['summary', 'status', 'assignee'])).issues : [];
                 const daysToLts  = ltsJira ? daysBetween(ltsJira.releaseDate) : null;
-                lts = { ltsBranch, ltsName, ltsJira, ltsDriver, ltsOpen, ltsOpenItems, daysToLts };
+                lts = { ltsBranch, ltsName, ltsJira, ltsOpen, ltsOpenItems, daysToLts };
               }
             }
 
@@ -262,7 +246,7 @@ jobs:
 
             // Edge
             lines.push(`*🟢 Edge — ${releaseLink(edgeJira, edgeName)}*  _(develop)_`);
-            lines.push(`  • ${driverLabel(edgeDriver, edgeJira?.driver)}`);
+            lines.push(`  • ${driverLabel(edgeJira?.driver)}`);
             if (daysToEdge != null) {
               const label = daysToEdge >= 0 ? 'until start' : 'past start';
               lines.push(`  • ${Math.abs(daysToEdge)} day(s) ${label} (${edgeJira.startDate})`);
@@ -281,7 +265,7 @@ jobs:
 
             // Beta
             lines.push(`*🔵 Beta — ${releaseLink(betaJira, betaName)}*  _(\`${betaBranch}\`)_`);
-            lines.push(`  • ${driverLabel(betaDriver, betaJira?.driver)}`);
+            lines.push(`  • ${driverLabel(betaJira?.driver)}`);
             if (daysToBeta != null) {
               const label = daysToBeta >= 0 ? 'until release' : 'past release';
               lines.push(`  • ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.releaseDate})`);
@@ -297,7 +281,7 @@ jobs:
 
             // Prod
             lines.push(`*⚪ Prod — ${releaseLink(prodJira, prodName)}*  _(\`${prodTag}\`)_`);
-            lines.push(`  • ${driverLabel(prodDriver, prodJira?.driver)}`);
+            lines.push(`  • ${driverLabel(prodJira?.driver)}`);
             if (daysSinceProd != null) {
               lines.push(`  • ${daysSinceProd} day(s) since release (${prodJira.releaseDate})`);
             } else {
@@ -313,7 +297,7 @@ jobs:
             if (lts) {
               lines.push('');
               lines.push(`*⬜ LTS C Builds - ${releaseLink(lts.ltsJira, lts.ltsName)} (\`${lts.ltsBranch}\`)*`);
-              lines.push(`  • ${driverLabel(lts.ltsDriver, lts.ltsJira?.driver)}`);
+              lines.push(`  • ${driverLabel(lts.ltsJira?.driver)}`);
               if (lts.daysToLts != null) {
                 const label = lts.daysToLts >= 0 ? 'until release' : 'past release';
                 lines.push(`  • ${Math.abs(lts.daysToLts)} day(s) ${label} (${lts.ltsJira.releaseDate})`);
