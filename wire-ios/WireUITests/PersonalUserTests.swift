@@ -70,17 +70,16 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func testPersonalAccountLifecycle_TC_8807_TC_8810_TC_8819_TC_8826_TC_8867_TC_9450() async throws {
+    func testSearchUserAndConnectionRequestLifecycle_TC_8806_8807_8808_8809_8810() async throws {
         let userA = try await UserHelper.default.createPersonalUser()
         let userB = try await UserHelper.default.createPersonalUser()
-        let messageFromUserB = "Hello from \(userB.name)"
 
         let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
             .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapSearchBox()
             .searchUserByUserHandle(userB.username)
-            .tapSearchedUserCell()
+            .tapSearchedUserCell(handle: userB.username)
 
         let userNameB = try XCTUnwrap(userDetailsPage.getUserName())
         XCTAssertEqual(userNameB, "@\(userB.username)", "username didn't match @\(userB.username)")
@@ -97,41 +96,55 @@ final class PersonalUsersTests: WireUITestCase {
         let userNameA = try XCTUnwrap(connectionRequestsPage.getUserName())
         XCTAssertEqual(userNameA, "@\(userA.username)", "username didn't match @\(userA.username)")
 
-        var conversationsPage = try connectionRequestsPage.acceptConnectionRequest()
-            .sendMessage(messageFromUserB)
+        let conversationsPage = try connectionRequestsPage.acceptConnectionRequest()
             .goBackToConversationPage()
 
         let nameA = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(nameA, userA.name, "name didn't match \(userA.name)")
+    }
 
-        conversationsPage = try conversationsPage.openUserProfilePage()
-            .switchUserAccountForUser(withName: userA.name)
+    @MainActor
+    func testBlockAndDeleteUser_TC_8867_9450() async throws {
 
-        let nameUserB = try XCTUnwrap(conversationsPage.getNameLabel())
-        XCTAssertEqual(nameUserB, userB.name, "name didn't match \(userB.name)")
+        let userB = try await UserHelper.default.createPersonalUser()
+        let userA = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
 
-        let activeConversationPage = try conversationsPage.openConversation()
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
+        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: userB, userId: userA.id)
 
-        let fetchMessages = activeConversationPage.fetchMessages()
-        XCTAssertTrue(
-            fetchMessages.contains(messageFromUserB),
-            "Expected message '\(messageFromUserB)' not found in sent messages: \(fetchMessages)"
-        )
+        _ = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
 
-        var accountSettingsPage = try activeConversationPage.goBackToConversationPage()
+        let conversationsPage = try app.loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
             .longPressForMoreOptionOnConversation()
             .blockUser()
-            .openSettings()
-            .openAccountSettings()
 
-        let accountNameUserA = try XCTUnwrap(accountSettingsPage.getAccountName())
+        let blockedConversationCell = conversationsPage.conversationCell.buttons[userA.name]
+
+        XCTAssertFalse(
+            blockedConversationCell.exists,
+            "Blocked conversation is still visible after blocking"
+        )
+
+        var accountSettingsPage = try conversationsPage.openSettings()
+            .openAccountSettings()
+        let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
+
         accountSettingsPage = try accountSettingsPage.deleteAccount()
             .openSettings()
             .openAccountSettings()
 
-        let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
+        let accountNameUserA = try XCTUnwrap(accountSettingsPage.getAccountName())
 
-        XCTAssertNotEqual(accountNameUserA, accountNameUserB, "Account name didn't change after deleting")
+        XCTAssertNotEqual(
+            accountNameUserA,
+            accountNameUserB,
+            "Account name didn't change after deleting, still showing deleted one"
+        )
     }
 
     @MainActor
