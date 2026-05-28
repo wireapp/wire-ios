@@ -50,6 +50,7 @@ extension FilesViewItem {
             isEditable: isEditable,
             publicLinkID: publicLinkID,
             conversationName: conversationName,
+            isReadOnly: false,
             size: nil
         )
     }
