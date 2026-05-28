@@ -386,20 +386,24 @@ extension BlockerViewController {
         )
 
         enrollmentFlow.showActivityIndicator()
-        defer { enrollmentFlow.dismissActivityIndicator() }
 
-        let certificateChain = try await activeUserSession
-            .enrollE2EICertificate
-            .invoke(authenticate: enrollmentFlow.authenticate)
+        do {
+            let certificateChain = try await activeUserSession
+                .enrollE2EICertificate
+                .invoke(authenticate: enrollmentFlow.authenticate)
 
-        enrollmentFlow.dismissActivityIndicator()
+            enrollmentFlow.dismissActivityIndicator()
 
-        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
-        successEnrollmentViewController.certificateDetails = certificateChain
-        successEnrollmentViewController.onOkTapped = { viewController in
-            viewController.dismiss(animated: true)
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+            successEnrollmentViewController.certificateDetails = certificateChain
+            successEnrollmentViewController.onOkTapped = { viewController in
+                viewController.dismiss(animated: true)
+            }
+            successEnrollmentViewController.presentOverAll()
+        } catch {
+            enrollmentFlow.dismissActivityIndicator()
+            throw error
         }
-        successEnrollmentViewController.presentOverAll()
     }
 
 }
