@@ -231,11 +231,13 @@ jobs:
               if (ltsJira?.released) {
                 core.info(`LTS ${ltsName} is already released in Jira — skipping section`);
               } else {
-                const ltsOpenJql = `project = ${project} AND fixVersion = "${ltsQ}" AND statusCategory != Done`;
-                const ltsOpen    = await countIssues(ltsOpenJql);
+                const ltsTotalJql = `project = ${project} AND fixVersion = "${ltsQ}"`;
+                const ltsTotal    = await countIssues(ltsTotalJql);
+                const ltsOpenJql  = `project = ${project} AND fixVersion = "${ltsQ}" AND statusCategory != Done`;
+                const ltsOpen     = await countIssues(ltsOpenJql);
                 const ltsOpenItems = ltsOpen > 0 ? (await listIssues(ltsOpenJql, ['summary', 'status', 'assignee'])).issues : [];
                 const daysToLts  = ltsJira ? daysBetween(ltsJira.releaseDate) : null;
-                lts = { ltsBranch, ltsName, ltsJira, ltsOpen, ltsOpenItems, daysToLts };
+                lts = { ltsBranch, ltsName, ltsJira, ltsTotal, ltsOpen, ltsOpenItems, daysToLts };
               }
             }
 
@@ -304,7 +306,7 @@ jobs:
               } else {
                 lines.push(`  • ⚠️ no release date on Jira version`);
               }
-              lines.push(`  • ${lts.ltsOpen} tickets not done`);
+              lines.push(`  • ${lts.ltsOpen} of ${lts.ltsTotal} tickets not done`);
               if (lts.ltsOpen > 0) {
                 lines.push(...renderGroupedByStatus(lts.ltsOpenItems));
               }
@@ -317,7 +319,7 @@ jobs:
       - name: Post to Wire
         if: env.SLACK_WEBHOOK_URL != ''
         continue-on-error: true
-        uses: 8398a7/action-slack@v3
+        uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
         with:
           status: custom
           custom_payload: |
