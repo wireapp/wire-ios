@@ -1440,6 +1440,20 @@
 "self.settings.technical_report.mail_body.section1" = "Datum und Zeit, zu der das Problem auftrat";
 "self.settings.technical_report.mail_body.section2" = "Was passiert ist:";
 "self.settings.technical_report.mail_body.section3" = "Schritte zum Nachstellen des Problems (falls relevant):";
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "Keine ungelesene Unterhaltung";
+"settings.debugging_tools.unread_conversations.found" = "Ungelesene Unterhaltung gefunden:";
+"settings.debugging_tools.unread_conversations.action_copy" = "Kopieren";
+"settings.debugging_tools.debug_command.title" = "Befehl zur Fehlerbehebung";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Befehl nicht erkannt";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Fehler: Anwendungsfall Reparatur nicht verfügbar";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Fehlerhaftes MLS Entfernen der Schlüssel Reparatur";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Gefunden: %d fehlerhaft(e) Unterhaltung(en)\nRepariert: %d Unterhaltung(en)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Reparatur fehlgeschlagen";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Fehler: %@";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "Passwort zurücksetzen";
 
