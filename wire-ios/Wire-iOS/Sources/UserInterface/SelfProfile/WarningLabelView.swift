@@ -35,8 +35,6 @@ final class WarningLabelView: UIView {
         return textView
     }()
 
-    private static let reportMisuseURL = URL(string: "https://support.wire.com/hc/articles/202857164")!
-
     private static let paragraphStyle: NSParagraphStyle = {
         let style = NSMutableParagraphStyle()
         style.paragraphSpacing = 8
@@ -102,7 +100,7 @@ final class WarningLabelView: UIView {
         )
         let linkRange = (fullText as NSString).range(of: linkText, options: .backwards)
         if linkRange.location != NSNotFound {
-            result.addAttribute(.link, value: Self.reportMisuseURL, range: linkRange)
+            result.addAttribute(.link, value: WireURLs.shared.reportAbuse, range: linkRange)
         }
         return result
     }
