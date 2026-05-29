@@ -107,6 +107,22 @@ class AccountSettingsPage: PageModel {
         return try EmailUpdatePage()
     }
 
+    func tapNameField() throws -> AccountSettingsPage {
+        nameField.tap()
+        return self
+    }
+
+    func tapUsernameField() throws -> UsernameUpdatePage {
+        usernameField.tap()
+        return try UsernameUpdatePage()
+    }
+
+    func updateName() throws -> AccountSettingsPage {
+        nameField.tap()
+        nameField.typeText("-updated")
+        return self
+    }
+
     @discardableResult
     func logout() throws -> LogOutPage {
         logoutButton.tap()
