@@ -94,7 +94,7 @@ package final class FilesViewModel: ObservableObject {
 
     @Published var searchText = ""
     @Published var alert: AlertModel?
-    @Published var viewingURL: URL?
+    @Published var quickPreviewItem: QuickPreviewItem?
     @Published var sheetNavigation: SheetNavigation?
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
@@ -329,9 +329,9 @@ package final class FilesViewModel: ObservableObject {
             case .pending, .failed:
                 _ = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
             case .downloaded:
-                viewingURL = nil
+                quickPreviewItem = nil
                 let url = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
-                viewingURL = url
+                quickPreviewItem = QuickPreviewItem.fromFilesViewItem(item, url: url)
             case .downloading:
                 await useCases.getAsset.cancelDownload(nodeID: item.id)
             }
