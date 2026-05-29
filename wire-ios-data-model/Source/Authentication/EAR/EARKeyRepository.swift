@@ -76,10 +76,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
 
     func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
         if let key = keyCache[description.id] {
-            WireLogger.ear.info(
-                "found private key in key cache (id: \(description.id)) — biometric prompt SKIPPED",
-                attributes: .safePublic
-            )
+            WireLogger.ear.info("found private key in key cache")
             return key
         }
 
@@ -126,10 +123,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
     // MARK: - Cache
 
     func clearCache() {
-        WireLogger.ear.info(
-            "clear key cache (entries before = \(keyCache.count))",
-            attributes: .safePublic
-        )
+        WireLogger.ear.info("clear key cache", attributes: .safePublic)
         keyCache.removeAll()
     }
 

@@ -38,10 +38,6 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
-        WireLogger.ear.info(
-            "ZMUserSession.applicationDidEnterBackground — about to lockDatabase()",
-            attributes: .safePublic
-        )
         Task { @MainActor [weak self] in
             guard let self else { return }
             let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
@@ -64,10 +60,6 @@ public extension ZMUserSession {
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
-        WireLogger.ear.info(
-            "ZMUserSession.applicationWillEnterForeground (isLoggedIn=\(isLoggedIn), isDatabaseLocked=\(isDatabaseLocked))",
-            attributes: .safePublic
-        )
         if isLoggedIn {
             syncAgent?.resume()
         }

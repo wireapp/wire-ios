@@ -323,15 +323,9 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerDidReportLockChange(forSession session: UserSession) {
-        let locked = session.isLocked
-        WireLogger.appState.info(
-            "sessionManagerDidReportLockChange — session.isLocked = \(locked), session.lock = \(String(describing: session.lock))",
-            attributes: .safePublic
-        )
-
         if session.isBuildBlacklisted {
             transition(to: .blacklisted(reason: .appVersionBlacklisted))
-        } else if locked {
+        } else if session.isLocked {
             transition(to: .locked(session))
         } else {
             transition(to: .authenticated(session))

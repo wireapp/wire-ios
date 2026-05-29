@@ -19,7 +19,6 @@
 import Foundation
 import LocalAuthentication
 import WireDataModel
-import WireLogging
 import WireSyncEngine
 
 extension AppLockModule {
@@ -95,16 +94,8 @@ extension AppLockModule {
 extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
     func executeRequest(_ request: AppLockModule.Request) {
-        WireLogger.appLock.info(
-            "Interactor.executeRequest(\(request)) — userSession.lock=\(String(describing: userSession.lock)), passcodePreference=\(String(describing: passcodePreference)), isAuthenticationNeeded=\(isAuthenticationNeeded)",
-            attributes: .safePublic
-        )
         switch request {
         case .initiateAuthentication where !isAuthenticationNeeded:
-            WireLogger.appLock.info(
-                "initiateAuthentication — no auth needed, opening app lock directly",
-                attributes: .safePublic
-            )
             openAppLock()
 
         case .initiateAuthentication where needsToCreateCustomPasscode:
@@ -115,10 +106,6 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
         case .evaluateAuthentication:
             guard let preference = passcodePreference else {
-                WireLogger.appLock.warn(
-                    "evaluateAuthentication — passcodePreference is nil, granting without prompt",
-                    attributes: .safePublic
-                )
                 handleAuthenticationResult(.granted)
                 return
             }
@@ -156,18 +143,10 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
     }
 
     private func unlockDatabase() {
-        WireLogger.appLock.info(
-            "Interactor.unlockDatabase — calling userSession.unlockDatabase() after granted auth",
-            attributes: .safePublic
-        )
         try? userSession.unlockDatabase()
     }
 
     private func openAppLock() {
-        WireLogger.appLock.info(
-            "Interactor.openAppLock — calling userSession.openAppLock()",
-            attributes: .safePublic
-        )
         try? userSession.openAppLock()
     }
 
