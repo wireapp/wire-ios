@@ -332,6 +332,13 @@ public enum Locators {
         case confirmUsernameButton
     }
 
+    public enum ManageDevicesPage: String {
+
+        case manageDevices
+        case removeDevice = "minus.circle.fill"
+        case deleteDevice = "Delete"
+    }
+
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
 
         case checkbox
@@ -536,6 +543,12 @@ public enum Locators {
 
         case mainContent
         case clientObsoleteAlertTitle = "Update required"
+
+    }
+
+    public enum SSOWebLoginPage: String {
+        case username = "Username"
+        case signInButton = "Sign In"
 
     }
 }
