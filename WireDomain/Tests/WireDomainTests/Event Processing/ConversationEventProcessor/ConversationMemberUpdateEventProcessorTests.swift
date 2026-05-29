@@ -29,6 +29,7 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
     private var conversationRepository: MockConversationRepositoryProtocol!
     private var userRepository: MockUserRepositoryProtocol!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -45,11 +46,13 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
         conversationRepository = MockConversationRepositoryProtocol()
         userRepository = MockUserRepositoryProtocol()
         conversationLocalStore = MockConversationLocalStoreProtocol()
+        messageLocalStore = MockMessageLocalStoreProtocol()
 
         sut = ConversationMemberUpdateEventProcessor(
             conversationRepository: conversationRepository,
             userRepository: userRepository,
-            localStore: conversationLocalStore
+            localStore: conversationLocalStore,
+            messageLocalStore: messageLocalStore
         )
     }
 
@@ -59,6 +62,7 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
         conversationRepository = nil
         userRepository = nil
         conversationLocalStore = nil
+        messageLocalStore = nil
         sut = nil
         coreDataStack = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -66,6 +70,90 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
     }
 
     // MARK: - Tests
+
+    func testProcessEvent_WhenSelfUserPromotedToAdmin_AddsSystemMessage() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        userRepository.isSelfUserIdDomain_MockMethod = { _, _ in true }
+        conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationRepository
+            .addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_MockMethod =
+            { _, _, _, _, _ in }
+        conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_MockMethod = { _, _, _ in }
+        messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+
+        // When
+
+        try await sut.processEvent(Scaffolding.adminPromotionEvent)
+
+        // Then
+
+        XCTAssertEqual(
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
+            1
+        )
+        let invocation = try XCTUnwrap(
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.first
+        )
+        guard case .promotedToGroupAdmin = invocation.messageType else {
+            return XCTFail("Expected .promotedToGroupAdmin message type")
+        }
+    }
+
+    func testProcessEvent_WhenOtherUserPromotedToAdmin_DoesNotAddSystemMessage() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        userRepository.isSelfUserIdDomain_MockMethod = { _, _ in false }
+        conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationRepository
+            .addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_MockMethod =
+            { _, _, _, _, _ in }
+
+        // When
+
+        try await sut.processEvent(Scaffolding.adminPromotionEvent)
+
+        // Then
+
+        XCTAssertEqual(
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
+            0
+        )
+    }
+
+    func testProcessEvent_WhenSelfUserChangedToMember_DoesNotAddSystemMessage() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        userRepository.isSelfUserIdDomain_MockMethod = { _, _ in true }
+        conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationRepository
+            .addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_MockMethod =
+            { _, _, _, _, _ in }
+        conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_MockMethod = { _, _, _ in }
+
+        // When
+
+        try await sut.processEvent(Scaffolding.memberRoleEvent)
+
+        // Then
+
+        XCTAssertEqual(
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
+            0
+        )
+    }
 
     func testProcessEvent_It_Invokes_Repo_And_Local_Store_Methods() async throws {
         // Mock
@@ -102,16 +190,46 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
     }
 
     private enum Scaffolding {
+        static let domain = "domain.com"
+
         static let event = ConversationMemberUpdateEvent(
-            conversationID: ConversationID(id: UUID(), domain: "domain.com"),
-            senderID: UserID(id: UUID(), domain: "domain.com"),
+            conversationID: ConversationID(id: UUID(), domain: domain),
+            senderID: UserID(id: UUID(), domain: domain),
             timestamp: .now,
             memberChange: .init(
-                id: UserID(id: UUID(), domain: "domain.com"),
+                id: UserID(id: UUID(), domain: domain),
                 newRoleName: "",
                 newMuteStatus: nil,
                 muteStatusReferenceDate: .now,
                 newArchivedStatus: true,
+                archivedStatusReferenceDate: .now
+            )
+        )
+
+        static let adminPromotionEvent = ConversationMemberUpdateEvent(
+            conversationID: ConversationID(id: UUID(), domain: domain),
+            senderID: UserID(id: UUID(), domain: domain),
+            timestamp: .now,
+            memberChange: .init(
+                id: UserID(id: UUID(), domain: domain),
+                newRoleName: ZMConversation.defaultAdminRoleName,
+                newMuteStatus: nil,
+                muteStatusReferenceDate: .now,
+                newArchivedStatus: false,
+                archivedStatusReferenceDate: .now
+            )
+        )
+
+        static let memberRoleEvent = ConversationMemberUpdateEvent(
+            conversationID: ConversationID(id: UUID(), domain: domain),
+            senderID: UserID(id: UUID(), domain: domain),
+            timestamp: .now,
+            memberChange: .init(
+                id: UserID(id: UUID(), domain: domain),
+                newRoleName: ZMConversation.defaultMemberRoleName,
+                newMuteStatus: nil,
+                muteStatusReferenceDate: .now,
+                newArchivedStatus: false,
                 archivedStatusReferenceDate: .now
             )
         )
