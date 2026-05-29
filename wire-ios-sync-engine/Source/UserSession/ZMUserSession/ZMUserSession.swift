@@ -657,10 +657,8 @@ public final class ZMUserSession: NSObject {
     }
 
     public func start() async {
-        WireLogger.session.info("ZMUserSession.start() — entered", attributes: .safePublic)
         operationLoop?.resumeEnqueuing()
 
-        WireLogger.session.info("ZMUserSession.start() — about to await syncContext.perform", attributes: .safePublic)
         await syncContext.perform {
             self.applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
@@ -672,23 +670,18 @@ public final class ZMUserSession: NSObject {
             let selfUser = ZMUser.selfUser(in: self.syncContext)
             selfUser.needsToBeUpdatedFromBackend = true
         }
-        WireLogger.session.info("ZMUserSession.start() — syncContext.perform returned", attributes: .safePublic)
 
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
 
         // Proactively ensure we clean up invalid connection state.
         do {
-            WireLogger.session.info("ZMUserSession.start() — about to cleanUpAllInvalidConnections", attributes: .safePublic)
             let connectionValidator = ConnectionValidator(context: syncContext)
             try await connectionValidator.cleanUpAllInvalidConnections()
-            WireLogger.session.info("ZMUserSession.start() — cleanUpAllInvalidConnections returned", attributes: .safePublic)
         } catch {
             WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
         }
 
-        WireLogger.session.info("ZMUserSession.start() — about to await startWorkAgentAndGenerators", attributes: .safePublic)
         await startWorkAgentAndGenerators()
-        WireLogger.session.info("ZMUserSession.start() — startWorkAgentAndGenerators returned, start() complete", attributes: .safePublic)
     }
 
     private func startWorkAgentAndGenerators() async {

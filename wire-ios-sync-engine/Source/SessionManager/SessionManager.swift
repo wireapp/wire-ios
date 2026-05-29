@@ -947,10 +947,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         activeUserSession = session
-        WireLogger.sessionManager.info(
-            "activateSession — activeUserSession assigned (isLoggedIn=\(session.isLoggedIn), isDatabaseLocked=\(session.isDatabaseLocked))",
-            attributes: .safePublic
-        )
 
         WireLogger.sessionManager.debug(
             "Activated ZMUserSession for account - "
@@ -963,15 +959,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
         if session.isLoggedIn {
-            WireLogger.sessionManager.info(
-                "activateSession — about to await session.triggerSync()",
-                attributes: .safePublic
-            )
             await session.triggerSync()
-            WireLogger.sessionManager.info(
-                "activateSession — triggerSync returned, about to forward sessionManagerDidReportLockChange",
-                attributes: .safePublic
-            )
             delegate?.sessionManagerDidReportLockChange(forSession: session)
             performPostUnlockActionsIfPossible(for: session)
             await configureAnalytics(for: session)
@@ -1039,30 +1027,14 @@ public final class SessionManager: NSObject, SessionManagerType {
                     faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
                 )
 
-                WireLogger.sessionManager.info(
-                    "withSession — about to await loader.load()",
-                    attributes: .safePublic
-                )
                 let userSession = try await loader.load(newEnvironment: newEnvironment)
-                WireLogger.sessionManager.info(
-                    "withSession — loader.load() returned (isDatabaseLocked=\(userSession.isDatabaseLocked))",
-                    attributes: .safePublic
-                )
                 finishSettingUpUserSession(
                     account: account,
                     newSession: userSession,
                     coreDataStack: userSession.coreDataStack
                 )
 
-                WireLogger.sessionManager.info(
-                    "withSession — about to await userSession.start()",
-                    attributes: .safePublic
-                )
                 await userSession.start()
-                WireLogger.sessionManager.info(
-                    "withSession — userSession.start() returned",
-                    attributes: .safePublic
-                )
 
                 return userSession
 
