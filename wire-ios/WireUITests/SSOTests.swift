@@ -31,7 +31,7 @@ final class SSOTests: WireUITestCase {
     private func loginWithSSOCode(email: String, password: String, ssoCode: String) async throws -> FirstTimePage {
         try await WelcomePage()
             .enterSSOCode(ssoCode)
-            .oktaLogin(email: email, password: password)
+            .ssoWebLogin(email: email, password: password)
             .acceptFirstTimeAlert()
     }
 
@@ -89,6 +89,30 @@ final class SSOTests: WireUITestCase {
         XCTAssertTrue(
             accountSettingsPage.usernameFieldDisabled.exists,
             "username field editable, shold be disabled"
+        )
+    }
+
+    @MainActor
+    func testSSOLoginWithClaimedDomain_TC_8967() async throws {
+
+        // GIVEN
+        let environmentVariables = try EnvironmentVariables()
+
+        // WHEN
+        _ = try await WelcomePage()
+            .enterSSOCode(environmentVariables.ssoClaimedUserEmail)
+            .ssoWebLogin(
+                email: environmentVariables.ssoClaimedUserEmail,
+                password: environmentVariables.ssoClaimedUserPassword
+            )
+            .acceptFirstTimeAlert()
+
+        // THEN
+        let conversationsPage = try ManagedDevicesPage().removeDeviceAndContinueIfShown()
+
+        XCTAssertTrue(
+            conversationsPage.pageMainElement.waitForExistence(timeout: 2),
+            "Conversations page did not appear after SSO login"
         )
     }
 }
