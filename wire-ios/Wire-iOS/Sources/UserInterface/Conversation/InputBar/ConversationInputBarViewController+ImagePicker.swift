@@ -32,6 +32,21 @@ extension ConversationInputBarViewController {
         pointToView: UIView
     ) {
 
+        // UIImagePickerController with .camera crashes on Mac (Designed for iPad) because Portrait
+        // Effects initializes Metal textures with unsupported IOSurface formats. Use the custom
+        // Mac recorder instead.
+        if ProcessInfo.processInfo.isiOSAppOnMac && sourceType == .camera {
+            execute(videoPermissions: { [self] in
+                let recorder = MacVideoRecorderViewController()
+                recorder.maxDuration = userSession.maxVideoLength
+                recorder.onVideoRecorded = { [weak self] url in
+                    self?.processRecordedVideoAt(url)
+                }
+                present(recorder, animated: true)
+            })
+            return
+        }
+
         if !UIImagePickerController.isSourceTypeAvailable(sourceType) {
             if UIDevice.isSimulator {
                 let testFilePath = "/var/tmp/video.mp4"
@@ -40,7 +55,6 @@ extension ConversationInputBarViewController {
                 }
             }
             return
-                // Don't crash on Simulator
         }
 
         let presentController = { [self] in
@@ -137,6 +151,39 @@ extension ConversationInputBarViewController {
                 }
 
                 self.parent?.dismiss(animated: true)
+            }
+    }
+
+    /// Processes a video recorded by `MacVideoRecorderViewController`.
+    /// Skips the camera-roll save step that doesn't apply on Mac.
+    func processRecordedVideoAt(_ videoURL: URL) {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
+        let videoTempURL = URL(
+            fileURLWithPath: NSTemporaryDirectory(),
+            isDirectory: true
+        ).appendingPathComponent(String.filename(for: selfUser))
+            .appendingPathExtension(videoURL.pathExtension)
+
+        do {
+            try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
+        } catch {
+            zmLog.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
+            return
+        }
+
+        AVURLAsset
+            .convertVideoToUploadFormat(
+                at: videoTempURL,
+                fileLengthLimit: Int64(userSession.maxUploadFileSize)
+            ) { [weak self] resultURL, _, error in
+                guard let self else { return }
+                if error == nil, let resultURL {
+                    self.uploadFiles(at: [resultURL])
+                }
             }
     }
 

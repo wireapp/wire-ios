@@ -85,21 +85,35 @@ final class CameraController {
 
         // SETUP INPUTS
 
-        let availableInputs = [AVCaptureDevice.Position.front, .back]
+        var availableInputs = [AVCaptureDevice.Position.front, .back]
             .compactMap { cameraDevice(for: $0) }
             .compactMap { try? AVCaptureDeviceInput(device: $0) }
             .filter { session.canAddInput($0) }
+
+        // On Mac, builtInWideAngleCamera at front/back positions is unavailable.
+        // Fall back to the system default video device (e.g. FaceTime HD camera).
+        if availableInputs.isEmpty,
+           let defaultDevice = AVCaptureDevice.default(for: .video),
+           let input = try? AVCaptureDeviceInput(device: defaultDevice),
+           session.canAddInput(input) {
+            availableInputs = [input]
+        }
 
         switch availableInputs.count {
         case 1:
             let input = availableInputs.first!
 
-            if input.device.position == .front {
+            switch input.device.position {
+            case .front:
                 currentCamera = .front
                 frontCameraDeviceInput = input
-            } else {
+            case .back:
                 currentCamera = .back
                 backCameraDeviceInput = input
+            default:
+                // Mac cameras report .unspecified; treat as front (facing the user).
+                currentCamera = .front
+                frontCameraDeviceInput = input
             }
 
         case 2:
