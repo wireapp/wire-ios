@@ -545,4 +545,10 @@ public enum Locators {
         case clientObsoleteAlertTitle = "Update required"
 
     }
+
+    public enum SSOWebLoginPage: String {
+        case username = "Username"
+        case signInButton = "Sign In"
+
+    }
 }
