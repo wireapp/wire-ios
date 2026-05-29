@@ -92,6 +92,7 @@
 "verification_code.message" = "Enter the verification code we sent to %@.";
 "verification_code.confirm" = "Vahvista";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Käytät Wireä ensimmäistä kertaa tällä laitteella.";
 "authentication.no_history.message" = "Tietosuojasyistä keskusteluhistoriasi ei näy täällä.";

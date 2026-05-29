@@ -60,6 +60,7 @@ public enum Locators {
 
         case bottomBarRecentListButton
         case bottomBarSettingsButton
+        case bottomBarDriveButton
         case createGroupOrSearchButton
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
@@ -174,6 +175,8 @@ public enum Locators {
         case recordingTime
         case showOtherRowButton
         case pingButton
+        case guestsArePresent = "Guests are present"
+
     }
 
     public enum BackupOrRestorePage: String {
@@ -181,6 +184,7 @@ public enum Locators {
         case backUpNow
         case restoreFromBackupButton
         case browse = "Browse"
+        case historyRestoredAlert = "Your history is restored."
     }
 
     public enum CreatingBackupPage: AutoPrefixedEnum {
@@ -256,6 +260,14 @@ public enum Locators {
         case save
     }
 
+    public enum UsernameUpdatePage: String {
+
+        case usernameField
+        case save = "Save"
+        case username = "Username"
+        case handleTextField
+    }
+
     public enum NewConversationPage: String {
 
         case createNewGroupButton
@@ -278,6 +290,7 @@ public enum Locators {
     public enum OptionsOnSettingsPage: String {
 
         case lockWithPasscode = "Lock With Passcode"
+        case createLinkPreviews = "Create Link Previews"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {

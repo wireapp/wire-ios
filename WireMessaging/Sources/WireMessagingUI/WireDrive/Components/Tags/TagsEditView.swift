@@ -320,6 +320,7 @@ struct TagsEditView: View {
         isEditable: false,
         publicLinkID: nil,
         conversationName: "Conversation 1",
+        isReadOnly: false,
         size: nil
     )
 

@@ -2287,6 +2287,10 @@ internal enum L10n {
             internal static func `left`(_ p1: Any) -> String {
               return L10n.tr("Localizable", "content.system.conversation.you.left", String(describing: p1), fallback: "%@ left")
             }
+            /// %@ were promoted to group admin
+            internal static func promoted(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.conversation.you.promoted", String(describing: p1), fallback: "%@ were promoted to group admin")
+            }
             /// %@ removed %@
             internal static func removed(_ p1: Any, _ p2: Any) -> String {
               return L10n.tr("Localizable", "content.system.conversation.you.removed", String(describing: p1), String(describing: p2), fallback: "%@ removed %@")
@@ -2643,6 +2647,10 @@ internal enum L10n {
           internal static let message = L10n.tr("Localizable", "conversation.create.apps_disabled.message", fallback: "To improve your workflow with apps, your team needs configuration. Please contact your team admin.")
           /// Your team doesn't use apps yet
           internal static let title = L10n.tr("Localizable", "conversation.create.apps_disabled.title", fallback: "Your team doesn't use apps yet")
+        }
+        internal enum AppsDisabledAsAdmin {
+          /// To improve your workflow with apps, your team needs configuration.
+          internal static let message = L10n.tr("Localizable", "conversation.create.apps_disabled_as_admin.message", fallback: "To improve your workflow with apps, your team needs configuration.")
         }
         internal enum Channel {
           /// Back

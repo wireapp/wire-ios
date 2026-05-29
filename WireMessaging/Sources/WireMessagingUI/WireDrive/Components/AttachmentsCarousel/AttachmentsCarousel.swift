@@ -120,7 +120,8 @@ private struct AttachmentsCarouselItemView: View {
                 labelText: item.name,
                 state: fileTrackerState(for: item),
                 isDraftPreview: true,
-                minHeight: 72
+                minHeight: 72,
+                isAvailableOffline: false
             )
         }
     }

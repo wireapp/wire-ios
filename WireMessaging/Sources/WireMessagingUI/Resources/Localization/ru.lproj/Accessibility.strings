@@ -69,3 +69,4 @@
 "conversation.wireCells.files.video" = "Видео";
 "conversation.wireCells.files.folder" = "Папка";
 "conversation.wireCells.files.text" = "Текст";
+"conversation.wireCells.files.availableOffline" = "Доступно оффлайн";
