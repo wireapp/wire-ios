@@ -25,8 +25,16 @@ class OptionsOnSettingsPage: PageModel {
         lockWithPasscodeSwitch
     }
 
+    var backToPreviousPage: XCUIElement {
+        app.navigationBars.buttons.element(boundBy: 0)
+    }
+
     var lockWithPasscodeSwitch: XCUIElement {
         app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.lockWithPasscode.rawValue].firstMatch
+    }
+
+    var createLinkPreviewsSwitch: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.createLinkPreviews.rawValue].firstMatch
     }
 
     var conversationsButton: XCUIElement {
@@ -57,4 +65,38 @@ class OptionsOnSettingsPage: PageModel {
         }
         return try ConversationsPage()
     }
+
+    func enableCreateLinkPreviews(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> OptionsOnSettingsPage {
+        createLinkPreviewsSwitch.tap()
+        XCTAssertTrue(
+            createLinkPreviewsSwitch.value as? String == "1",
+            "Create link previews should be enabled",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func disableCreateLinkPreviews(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> OptionsOnSettingsPage {
+        createLinkPreviewsSwitch.tap()
+        XCTAssertTrue(
+            createLinkPreviewsSwitch.value as? String == "0",
+            "Create link previews should be disabled",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func backToSettings() throws -> SettingsPage {
+        backToPreviousPage.tap()
+        return try SettingsPage()
+    }
+
 }
