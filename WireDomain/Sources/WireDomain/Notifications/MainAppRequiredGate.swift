@@ -38,7 +38,11 @@ struct MainAppRequiredGate {
         isMainAppRequiredError(error) && shouldNotify(now: now)
     }
 
-    func shouldNotify(now: Date = .now) -> Bool {
+    func markNotified(now: Date = .now) {
+        userDefaults.set(now, forKey: Self.lastNotifiedDateKey)
+    }
+
+    private func shouldNotify(now: Date = .now) -> Bool {
         guard let lastNotifiedDate = userDefaults.object(forKey: Self.lastNotifiedDateKey) as? Date else {
             return true
         }
@@ -46,11 +50,7 @@ struct MainAppRequiredGate {
         return now.timeIntervalSince(lastNotifiedDate) >= interval
     }
 
-    func markNotified(now: Date = .now) {
-        userDefaults.set(now, forKey: Self.lastNotifiedDateKey)
-    }
-
-    func isMainAppRequiredError(_ error: any Error) -> Bool {
+    private func isMainAppRequiredError(_ error: any Error) -> Bool {
         guard let nseUserError = error as? NSEUserScope.Failure,
               case .mainAppRequired = nseUserError else {
             return false

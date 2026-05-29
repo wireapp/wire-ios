@@ -224,7 +224,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue
         )
 
-        if DeveloperFlag.simulateShareExtensionMainAppRequiredError.isOn {
+        if DeveloperFlag.simulateMainAppRequiredError.isOn {
             throw SharingSessionLoader.Failure.mainAppRequired(message: "simulated developer flag")
         }
 

@@ -16,65 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Testing
 import WireSystem
-import XCTest
 @testable import WireDomain
 
-final class MainAppRequiredGateTests: XCTestCase {
-    private var userDefaults: UserDefaults!
-    private var sut: MainAppRequiredGate!
+struct MainAppRequiredGateTests {
+    private let userDefaults = UserDefaults.temporary()
 
-    override func setUp() {
-        super.setUp()
-        userDefaults = .temporary()
-        sut = MainAppRequiredGate(userDefaults: userDefaults)
+    private var sut: MainAppRequiredGate {
+        MainAppRequiredGate(userDefaults: userDefaults)
     }
 
-    override func tearDown() {
-        sut = nil
-        userDefaults = nil
-        super.tearDown()
-    }
-
-    func test_shouldNotify_whenNoPreviousNotification_returnsTrue() {
-        XCTAssertTrue(sut.shouldNotify(now: Date(timeIntervalSince1970: 1000)))
-    }
-
-    func test_shouldNotify_withinOneHourOfPreviousNotification_returnsFalse() {
-        let now = Date(timeIntervalSince1970: 2000)
-        sut.markNotified(now: now)
-
-        XCTAssertFalse(sut.shouldNotify(now: now.addingTimeInterval(3599)))
-    }
-
-    func test_shouldNotify_afterOneHourOfPreviousNotification_returnsTrue() {
-        let now = Date(timeIntervalSince1970: 2000)
-        sut.markNotified(now: now)
-
-        XCTAssertTrue(sut.shouldNotify(now: now.addingTimeInterval(3600)))
-    }
-
-    func test_isMainAppRequiredError_withMatchingError_returnsTrue() {
+    @Test("It notifies on first main-app-required error")
+    func notifiesOnFirstMainAppRequiredError() {
         let error = NSEUserScope.Failure.mainAppRequired(message: "test")
 
-        XCTAssertTrue(MainAppRequiredGate.isMainAppRequiredError(error))
+        #expect(sut.shouldNotify(error, now: Date(timeIntervalSince1970: 1000)))
     }
 
-    func test_isMainAppRequiredError_withNonMatchingError_returnsFalse() {
-        let error = TestError(message: "test")
-
-        XCTAssertFalse(MainAppRequiredGate.isMainAppRequiredError(error))
-    }
-
-    func test_shouldNotify_withMatchingErrorAndNoPreviousNotification_returnsTrue() {
+    @Test("It suppresses notifications within one hour")
+    func suppressesNotificationsWithinOneHour() {
+        let now = Date(timeIntervalSince1970: 2000)
         let error = NSEUserScope.Failure.mainAppRequired(message: "test")
 
-        XCTAssertTrue(sut.shouldNotify(error, now: Date(timeIntervalSince1970: 1000)))
+        sut.markNotified(now: now)
+
+        #expect(!sut.shouldNotify(error, now: now.addingTimeInterval(3599)))
     }
 
-    func test_shouldNotify_withNonMatchingError_returnsFalse() {
+    @Test("It notifies again after one hour")
+    func notifiesAgainAfterOneHour() {
+        let now = Date(timeIntervalSince1970: 2000)
+        let error = NSEUserScope.Failure.mainAppRequired(message: "test")
+
+        sut.markNotified(now: now)
+
+        #expect(sut.shouldNotify(error, now: now.addingTimeInterval(3600)))
+    }
+
+    @Test("It ignores non main-app-required errors")
+    func ignoresNonMainAppRequiredErrors() {
         let error = TestError(message: "test")
 
-        XCTAssertFalse(sut.shouldNotify(error, now: Date(timeIntervalSince1970: 1000)))
+        #expect(!sut.shouldNotify(error, now: Date(timeIntervalSince1970: 1000)))
     }
 }

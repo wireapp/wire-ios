@@ -98,7 +98,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             }
 
             do {
-                if DeveloperFlag.simulateNSEMainAppRequiredError.isOn {
+                if DeveloperFlag.simulateMainAppRequiredError.isOn {
                     throw NSEUserScope.Failure.mainAppRequired(message: "simulated developer flag")
                 }
 
