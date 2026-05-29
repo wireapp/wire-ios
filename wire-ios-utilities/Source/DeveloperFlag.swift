@@ -42,6 +42,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
+    case simulateNSEMainAppRequiredError
     case enableDrivePermissions
 
     public var description: String {
@@ -105,6 +106,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .showNSEErrors:
             "Turn on to show Notification Service Extension errors as notifications"
+
+        case .simulateNSEMainAppRequiredError:
+            "Turn on to force a 'main app required' error in the Notification Service Extension"
 
         case .enableDrivePermissions:
             "Turn on to enable drive permissions"

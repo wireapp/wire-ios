@@ -96,6 +96,10 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             }
 
             do {
+                if DeveloperFlag.simulateNSEMainAppRequiredError.isOn {
+                    throw NSEUserScope.Failure.mainAppRequired(message: "simulated developer flag")
+                }
+
                 let nseFlow = try NSEFlow(
                     currentAppVersion: currentAppVersion,
                     currentBuildNumber: currentBuildNumber,
@@ -112,7 +116,9 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                 )
             } catch {
                 logError(error)
-                if DeveloperFlag.showNSEErrors.isOn {
+                if mainAppRequiredError(from: error) != nil {
+                    notificationContentHandler(mainAppRequiredNotification(for: request))
+                } else if DeveloperFlag.showNSEErrors.isOn {
                     notificationContentHandler(errorNotification(for: error))
                 } else {
                     notificationContentHandler(.emptyNotification)
@@ -130,12 +136,32 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 // MARK: - Error notification
 
 extension NotificationServiceExtension {
+    private func mainAppRequiredNotification(
+        for request: UNNotificationRequest
+    ) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+        content.title = request.content.title.isEmpty ? "Wire" : request.content.title
+        content.body = "Open main app to resume notifications"
+        content.interruptionLevel = .active
+        content.sound = request.content.sound
+        return content
+    }
+
     private func errorNotification(for error: any Error) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         content.title = "NSE Error"
         content.body = String(describing: error)
         content.interruptionLevel = .active
         return content
+    }
+
+    private func mainAppRequiredError(from error: any Error) -> NSEUserScope.Failure? {
+        guard let nseUserError = error as? NSEUserScope.Failure,
+              case .mainAppRequired = nseUserError else {
+            return nil
+        }
+
+        return nseUserError
     }
 }
 
