@@ -389,4 +389,29 @@ class ActiveConversationPage: PageModel {
         )
         return self
     }
+
+    func verifyMessageSent(
+        _ message: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.textViews.matching(NSPredicate(format: "label == %@", message)).firstMatch.waitForExistence(timeout: 5),
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func verifyLinkPreviewCell(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.cells["LinkPreviewCell"].firstMatch.waitForExistence(timeout: 10),
+            file: file,
+            line: line
+        )
+        return self
+    }
 }
