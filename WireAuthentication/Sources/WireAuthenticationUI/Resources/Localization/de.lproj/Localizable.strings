@@ -92,6 +92,7 @@
 "verification_code.message" = "Geben Sie den Code ein, den wir an %@ gesendet haben.";
 "verification_code.confirm" = "Bestätigen";
 "verification_code.resend_code" = "Code erneut senden";
+"verification_code.resend_code_after_seconds" = "Code erneut senden (warten: %@)";
 
 "authentication.no_history.title" = "Sie nutzen Wire zum ersten Mal auf diesem Gerät.";
 "authentication.no_history.message" = "Aus Datenschutzgründen wird der bisherige Gesprächsverlauf nicht angezeigt.";

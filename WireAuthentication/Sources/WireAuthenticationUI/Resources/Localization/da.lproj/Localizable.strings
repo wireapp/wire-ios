@@ -92,6 +92,7 @@
 "verification_code.message" = "Enter the verification code we sent to %@.";
 "verification_code.confirm" = "Bekræft";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Det er første gang du bruger Wire på denne enhed.";
 "authentication.no_history.message" = "Af hensyn til fortrolighed, vil din samtalehistorik ikke vises her.";

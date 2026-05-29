@@ -92,6 +92,7 @@
 "verification_code.message" = "Voer de verificatiecode in die we naar %@ gestuurde hebben.";
 "verification_code.confirm" = "Bevestig";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Het is de eerste keer dat je Wire op dit apparaat gebruikt.";
 "authentication.no_history.message" = "Om privacyredenen wordt je gespreksgeschiedenis hier niet getoond.";

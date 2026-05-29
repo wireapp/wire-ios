@@ -92,6 +92,7 @@
 "verification_code.message" = "أدخل رمز التحقق الذي أرسلناه إلى: %@.";
 "verification_code.confirm" = "تأكيد";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "أنها المرة الأولى التي تستخدم فيها واير على هذا الجهاز.";
 "authentication.no_history.message" = "لأسباب تتعلق بالخصوصية، لن يظهر تاريخ المحادثات الخاصة بك هنا.";

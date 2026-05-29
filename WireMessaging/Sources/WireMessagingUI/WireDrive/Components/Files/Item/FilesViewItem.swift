@@ -18,6 +18,7 @@
 
 package import Foundation
 import UniformTypeIdentifiers
+import WireLogging
 import WireMessagingDomain
 
 /// An item in the `FilesView`.
@@ -73,6 +74,9 @@ package struct FilesViewItem: Identifiable, Hashable, Sendable {
     /// The name of the conversation the node is attached to.
     let conversationName: String?
 
+    /// Restricts actions on this file, viewer mode only.
+    let isReadOnly: Bool
+
     /// The size of of this item
     let size: UInt64?
 }
@@ -80,6 +84,11 @@ package struct FilesViewItem: Identifiable, Hashable, Sendable {
 extension FilesViewItem {
     static func fromNode(_ node: WireDriveNode) -> FilesViewItem? {
         guard let eTag = node.eTag else { return nil }
+
+        guard let selfUser = node.conversation?.participants.first(where: \.isSelfUser) else {
+            WireLogger.wireDrive.error("Self user not found - cannot establish file permission - discarding item")
+            return nil
+        }
 
         let url = URL(string: node.path)
         let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
@@ -99,6 +108,7 @@ extension FilesViewItem {
             isEditable: node.isEditable,
             publicLinkID: node.publicLinkID?.string,
             conversationName: node.conversation?.name,
+            isReadOnly: selfUser.role == .viewer,
             size: node.size
         )
     }
@@ -162,6 +172,7 @@ extension FilesViewItem {
             isEditable: false, // change later if we want to edit files in offline mode.
             publicLinkID: nil, // change later if we want to be able to share a public link in offline mode.
             conversationName: asset.conversationName,
+            isReadOnly: false,
             size: asset.size
         )
     }

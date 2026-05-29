@@ -131,8 +131,8 @@ final class FilesViewModelTests {
     func hasMore() async throws {
         // given
         nodesRepository.getNodes_MockMethod = { request in
-            let page1 = (nodes: [WireDriveNode.fixture()], nextOffset: 1)
-            let page2 = (nodes: [WireDriveNode.fixture()], nextOffset: Int?.none)
+            let page1 = (nodes: [WireDriveNode.fixture(conversation: .fixture())], nextOffset: 1)
+            let page2 = (nodes: [WireDriveNode.fixture(conversation: .fixture())], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
         #expect(sut.filesController.hasMore == true)
@@ -180,7 +180,13 @@ final class FilesViewModelTests {
     @Test
     func reload_clearsItemsBeforeLoading() async throws {
         // given
-        let node = WireDriveNode.fixture(path: "some-cell/a.jpg", modified: nil, ownerUserName: nil)
+        let conversation = WireDriveConversation.fixture()
+        let node = WireDriveNode.fixture(
+            conversation: conversation,
+            path: "some-cell/a.jpg",
+            modified: nil,
+            ownerUserName: nil
+        )
         nodesRepository.getNodes_MockMethod = { _ in (nodes: [node], nextOffset: nil) }
 
         itemsUpdates = []
@@ -204,7 +210,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil,
+                conversationName: conversation.name,
+                isReadOnly: false,
                 size: nil
             )],
             [], // Clears items
@@ -220,7 +227,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil,
+                conversationName: conversation.name,
+                isReadOnly: false,
                 size: nil
             )]
         ])
@@ -247,13 +255,20 @@ final class FilesViewModelTests {
     func reload_updatesItems() async throws {
         // given
         let now = Date()
+        let conversation = WireDriveConversation.fixture()
         let node1 = WireDriveNode.fixture(
+            conversation: conversation,
             path: "some-cell/a.jpg",
             modified: now,
             mimeType: "image/jpeg",
             ownerUserName: "Emel"
         )
-        let node2 = WireDriveNode.fixture(path: "some-cell/b.jpg", modified: nil, ownerUserName: nil)
+        let node2 = WireDriveNode.fixture(
+            conversation: conversation,
+            path: "some-cell/b.jpg",
+            modified: nil,
+            ownerUserName: nil
+        )
         nodesRepository.getNodes_MockMethod = { _ in (nodes: [node1, node2], nextOffset: nil) }
 
         // when
@@ -273,7 +288,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil,
+                conversationName: conversation.name,
+                isReadOnly: false,
                 size: nil
             ),
             FilesViewItem(
@@ -288,7 +304,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil,
+                conversationName: conversation.name,
+                isReadOnly: false,
                 size: nil
             )
         ])
@@ -298,9 +315,25 @@ final class FilesViewModelTests {
     func loadMoreIfNeeded_appendsItems() async throws {
         // given
         let now = Date()
-        let node1 = WireDriveNode.fixture(path: "some-cell/a.jpg", modified: now, ownerUserName: "Emel")
-        let node2 = WireDriveNode.fixture(path: "some-cell/b.jpg", modified: now - 60, ownerUserName: nil)
-        let node3 = WireDriveNode.fixture(path: "some-cell/c.jpg", modified: nil, ownerUserName: nil)
+        let conversation = WireDriveConversation.fixture()
+        let node1 = WireDriveNode.fixture(
+            conversation: conversation,
+            path: "some-cell/a.jpg",
+            modified: now,
+            ownerUserName: "Emel"
+        )
+        let node2 = WireDriveNode.fixture(
+            conversation: conversation,
+            path: "some-cell/b.jpg",
+            modified: now - 60,
+            ownerUserName: nil
+        )
+        let node3 = WireDriveNode.fixture(
+            conversation: conversation,
+            path: "some-cell/c.jpg",
+            modified: nil,
+            ownerUserName: nil
+        )
         nodesRepository.getNodes_MockMethod = { request in
             switch request.offset {
             case 0:
@@ -331,7 +364,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil,
+                conversationName: conversation.name,
+                isReadOnly: false,
                 size: nil
             ),
             FilesViewItem(
@@ -346,7 +380,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil,
+                conversationName: conversation.name,
+                isReadOnly: false,
                 size: nil
             ),
             FilesViewItem(
@@ -361,7 +396,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil,
+                conversationName: conversation.name,
+                isReadOnly: false,
                 size: nil
             )
         ])
@@ -371,7 +407,7 @@ final class FilesViewModelTests {
     func loadMoreIfNeeded_doesNothingWhenNoMoreToLoad() async throws {
         // given
         nodesRepository.getNodes_MockMethod = { _ in
-            (nodes: [WireDriveNode.fixture()], nextOffset: nil) // No more pages available
+            (nodes: [WireDriveNode.fixture(conversation: .fixture())], nextOffset: nil) // No more pages available
         }
         await sut.reload()
         #expect(sut.state.items.count == 1)
@@ -388,7 +424,12 @@ final class FilesViewModelTests {
     func loadMoreIfNeeded_respectsThreshold() async throws {
         // given
         let nodes = (0 ..< 10).map { i in
-            WireDriveNode.fixture(path: "some-cell/\(i).jpg", modified: nil, ownerUserName: nil)
+            WireDriveNode.fixture(
+                conversation: .fixture(),
+                path: "some-cell/\(i).jpg",
+                modified: nil,
+                ownerUserName: nil
+            )
         }
         nodesRepository.getNodes_MockMethod = { _ in (nodes: nodes, nextOffset: 10) }
 
@@ -414,7 +455,7 @@ final class FilesViewModelTests {
         // given
         nodesRepository.getNodes_MockMethod = { request in
             try await Task.sleep(nanoseconds: 50_000_000) // 50ms
-            return (nodes: [WireDriveNode.fixture()], nextOffset: request.offset + 1)
+            return (nodes: [WireDriveNode.fixture(conversation: .fixture())], nextOffset: request.offset + 1)
         }
         await sut.reload()
         #expect(sut.state.items.count == 1)
@@ -459,12 +500,18 @@ final class FilesViewModelTests {
 
         // given
         let now = Date()
-        let nodeA = WireDriveNode.fixture(path: "foo/aa.xyz")
-        let nodeB = WireDriveNode.fixture(path: "foo/bb.xyz")
-        let nodeC = WireDriveNode.fixture(path: "foo/cc.xyz")
-        let nodeD = WireDriveNode.fixture(path: "foo/dd.xyz")
-        let nodeA_V2 = WireDriveNode.fixture(uuid: nodeA.id, path: "foo/aaa.xyz", modified: now)
-        let nodeD_V2 = WireDriveNode.fixture(uuid: nodeD.id, path: "foo/ccc.xyz")
+        let conversation = WireDriveConversation.fixture()
+        let nodeA = WireDriveNode.fixture(conversation: conversation, path: "foo/aa.xyz")
+        let nodeB = WireDriveNode.fixture(conversation: conversation, path: "foo/bb.xyz")
+        let nodeC = WireDriveNode.fixture(conversation: conversation, path: "foo/cc.xyz")
+        let nodeD = WireDriveNode.fixture(conversation: conversation, path: "foo/dd.xyz")
+        let nodeA_V2 = WireDriveNode.fixture(
+            uuid: nodeA.id,
+            conversation: conversation,
+            path: "foo/aaa.xyz",
+            modified: now
+        )
+        let nodeD_V2 = WireDriveNode.fixture(uuid: nodeD.id, conversation: conversation, path: "foo/ccc.xyz")
 
         nodesRepository.getNodes_MockMethod = { _ in
             (
@@ -491,7 +538,8 @@ final class FilesViewModelTests {
                     tags: [],
                     isEditable: false,
                     publicLinkID: nil,
-                    conversationName: nil,
+                    conversationName: conversation.name,
+                    isReadOnly: false,
                     size: nil
                 ),
                 FilesViewItem(
@@ -506,7 +554,8 @@ final class FilesViewModelTests {
                     tags: [],
                     isEditable: false,
                     publicLinkID: nil,
-                    conversationName: nil,
+                    conversationName: conversation.name,
+                    isReadOnly: false,
                     size: nil
                 ),
                 FilesViewItem(
@@ -521,7 +570,8 @@ final class FilesViewModelTests {
                     tags: [],
                     isEditable: false,
                     publicLinkID: nil,
-                    conversationName: nil,
+                    conversationName: conversation.name,
+                    isReadOnly: false,
                     size: nil
                 ),
                 FilesViewItem(
@@ -536,7 +586,8 @@ final class FilesViewModelTests {
                     tags: [],
                     isEditable: false,
                     publicLinkID: nil,
-                    conversationName: nil,
+                    conversationName: conversation.name,
+                    isReadOnly: false,
                     size: nil
                 )
             ]
@@ -629,6 +680,7 @@ final class FilesViewModelTests {
                 isEditable: false,
                 publicLinkID: nil,
                 conversationName: nil,
+                isReadOnly: false,
                 size: nil
             )
         ])
