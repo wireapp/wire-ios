@@ -170,6 +170,10 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
         activeCallRouter.updateActiveCallPresentationState()
     }
 
+    func prepareForRootReplacement() {
+        activeCallRouter.prepareForRootReplacement()
+    }
+
     func minimizeCallOverlay(animated: Bool, completion: Completion?) {
         activeCallRouter.minimizeCall(animated: animated, completion: completion)
     }
