@@ -19,30 +19,37 @@
 import WireLocators
 import XCTest
 
-class OktaLoginPage: PageModel {
+class SSOWebLoginPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        webView
+        usernameLabel
     }
 
     private var webView: XCUIElement {
         app.webViews.firstMatch
     }
 
+    private var usernameLabel: XCUIElement {
+        app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] %@", Locators.SSOWebLoginPage.username.rawValue))
+            .firstMatch
+    }
+
     var usernameTextField: XCUIElement {
-        webView.textFields.firstMatch
+        app.textFields.firstMatch
     }
 
     var passwordSecureTextField: XCUIElement {
-        webView.secureTextFields.firstMatch
+        app.secureTextFields.firstMatch
     }
 
     var signinButton: XCUIElement {
-        webView.buttons["Sign In"]
+        app.buttons[Locators.SSOWebLoginPage.signInButton.rawValue].firstMatch
     }
 
     @MainActor
-    func oktaLogin(email: String, password: String) async throws -> FirstTimePage {
+    @discardableResult
+    func ssoWebLogin(email: String, password: String) async throws -> FirstTimePage {
         usernameTextField.waitAndTap()
         usernameTextField.typeText(email)
         webView.tap()

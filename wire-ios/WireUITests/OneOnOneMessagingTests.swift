@@ -54,7 +54,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let (_, activeConversationPage) = try await openOneOnOneConversation()
 
         // WHEN
-        try activeConversationPage
+        try await activeConversationPage
             .sendMessage(message)
             .recordAudioAndSend()
 

@@ -316,11 +316,15 @@ final class WireDriveTests: WireUITestCase {
         searchTextField.tap()
 
         searchTextField.typeText(positiveSearchTerm)
-        try? await Task.sleep(for: .seconds(1))
+        XCTAssertTrue(
+            sharedDrivePage.fileIcon.waitForExistence(timeout: 2)
+        )
         let positiveSearchResults = sharedDrivePage.numberOfFilesInList
 
         searchTextField.typeText(negativeSearchTerm)
-        try? await Task.sleep(for: .seconds(1))
+        XCTAssertTrue(
+            sharedDrivePage.fileIcon.waitForNonExistence(timeout: 2)
+        )
         let negativeSearchResults = sharedDrivePage.numberOfFilesInList
 
         // THEN
