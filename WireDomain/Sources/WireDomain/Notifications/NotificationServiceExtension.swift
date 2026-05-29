@@ -45,6 +45,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private let cookieEncryptionKey: Data
     private let minTLSVersion: String?
     private let preferredAPIVersion: UInt?
+    private let mainAppRequiredGate: MainAppRequiredGate
 
     public init(
         currentAppVersion: String,
@@ -62,6 +63,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         self.cookieEncryptionKey = cookieEncryptionKey
         self.minTLSVersion = minTLSVersion
         self.preferredAPIVersion = preferredAPIVersion
+        self.mainAppRequiredGate = MainAppRequiredGate(userDefaults: sharedUserDefaults)
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE, .safePublic)
     }
@@ -116,7 +118,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                 )
             } catch {
                 logError(error)
-                if mainAppRequiredError(from: error) != nil {
+                if mainAppRequiredGate.shouldNotify(error) {
                     notificationContentHandler(mainAppRequiredNotification(for: request))
                 } else if DeveloperFlag.showNSEErrors.isOn {
                     notificationContentHandler(errorNotification(for: error))
@@ -139,9 +141,11 @@ extension NotificationServiceExtension {
     private func mainAppRequiredNotification(
         for request: UNNotificationRequest
     ) -> UNMutableNotificationContent {
+        mainAppRequiredGate.markNotified()
+
         let content = UNMutableNotificationContent()
-        content.title = request.content.title.isEmpty ? "Wire" : request.content.title
-        content.body = "Open main app to resume notifications"
+        content.title = String(localized: "notification_service_extension.error.open_app.title", bundle: .module)
+        content.body = String(localized: "notification_service_extension.error.open_app.message", bundle: .module)
         content.interruptionLevel = .active
         content.sound = request.content.sound
         return content
@@ -153,15 +157,6 @@ extension NotificationServiceExtension {
         content.body = String(describing: error)
         content.interruptionLevel = .active
         return content
-    }
-
-    private func mainAppRequiredError(from error: any Error) -> NSEUserScope.Failure? {
-        guard let nseUserError = error as? NSEUserScope.Failure,
-              case .mainAppRequired = nseUserError else {
-            return nil
-        }
-
-        return nseUserError
     }
 }
 
