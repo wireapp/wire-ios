@@ -50,6 +50,18 @@ extension XCTestCase {
         for width in widths {
             widthConstraint.constant = width
 
+            // UILabel caches intrinsicContentSize based on the
+            // preferredMaxLayoutWidth observed during the previous layout pass.
+            // When the container is reused across widths, that cached value is
+            // stale and labels end up with a frame too short for their wrapped
+            // text — lines overlap. Invalidate recursively and run two layout
+            // passes so the new width propagates to preferredMaxLayoutWidth,
+            // then to the height.
+            invalidateIntrinsicContentSizes(in: container)
+            container.setNeedsLayout()
+            container.layoutIfNeeded()
+            container.layoutIfNeeded()
+
             configuration?(container)
 
             verifyWithWidthInName(
@@ -60,6 +72,13 @@ extension XCTestCase {
                 testName: testName,
                 line: line
             )
+        }
+    }
+
+    private func invalidateIntrinsicContentSizes(in view: UIView) {
+        view.invalidateIntrinsicContentSize()
+        for subview in view.subviews {
+            invalidateIntrinsicContentSizes(in: subview)
         }
     }
 
@@ -169,7 +188,7 @@ extension XCTestCase {
 
         let failure = verifySnapshot(
             matching: value,
-            as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+            as: .inPlaceImage(precision: precision, perceptualPrecision: perceptualPrecision),
             named: name,
             record: record,
             snapshotDirectory: snapshotDirectory(file: file),
@@ -192,6 +211,74 @@ extension Snapshotting where Value == UIAlertController, Format == UIImage {
     }
 }
 
+extension Snapshotting where Value == UIView, Format == UIImage {
+
+    /// Renders the view in a real key window at origin (0, 0) so that UITextView/TextKit
+    /// has a non-offscreen host. The default `.image(drawHierarchyInKeyWindow:)` strategy
+    /// moves the view to (10_000, 10_000) before drawing, which causes long-text TextKit
+    /// rendering to fail intermittently in offscreen snapshot tests.
+    static func inPlaceImage(
+        precision: Float = 1,
+        perceptualPrecision: Float = 1
+    ) -> Snapshotting<UIView, UIImage> {
+        Snapshotting<UIImage, UIImage>.image(
+            precision: precision,
+            perceptualPrecision: perceptualPrecision
+        )
+        .pullback { (view: UIView) -> UIImage in
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            let size = view.bounds.size
+
+            // Find the host app's UIWindowScene so we can create a new window attached
+            // to a real screen. iOS's render-server pass only fully renders content
+            // for views in windows that have a windowScene — a detached UIWindow can
+            // silently drop tall UITextView content.
+            let windowScene = UIApplication.shared
+                .connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first
+
+            let window = if let windowScene {
+                UIWindow(windowScene: windowScene)
+            } else {
+                UIWindow(frame: .zero)
+            }
+            window.frame = CGRect(origin: .zero, size: size)
+            let rootViewController = UIViewController()
+            window.rootViewController = rootViewController
+            window.makeKeyAndVisible()
+            rootViewController.view.frame = window.bounds
+            rootViewController.view.addSubview(view)
+            view.frame = CGRect(origin: .zero, size: size)
+
+            // Force TextKit 1 layout managers in the subtree to fully lay out their
+            // text containers before drawing — without this, long text in UITextViews
+            // can render as blank.
+            forceTextKitLayout(in: view)
+
+            defer {
+                view.removeFromSuperview()
+                window.isHidden = true
+            }
+
+            let renderer = UIGraphicsImageRenderer(bounds: view.bounds)
+            return renderer.image { _ in
+                view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+            }
+        }
+    }
+}
+
+private func forceTextKitLayout(in view: UIView) {
+    if let textView = view as? UITextView {
+        textView.layoutManager.ensureLayout(for: textView.textContainer)
+    }
+    for subview in view.subviews {
+        forceTextKitLayout(in: subview)
+    }
+}
+
 extension UIView {
     func addWidthConstraint(width: CGFloat) -> NSLayoutConstraint {
         translatesAutoresizingMaskIntoConstraints = false
@@ -203,6 +290,16 @@ extension UIView {
         layoutIfNeeded()
 
         return widthConstraint
+    }
+
+    // Walks the view tree and clears all CAAnimations. Use after triggering a
+    // loading/spinner state so snapshots capture a deterministic frame instead
+    // of one driven by wall-clock animation phase.
+    func removeAllAnimationsRecursively() {
+        layer.removeAllAnimations()
+        for subview in subviews {
+            subview.removeAllAnimationsRecursively()
+        }
     }
 }
 

@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@ removed %@";
 "content.system.conversation.you.removed.legalhold" = "%@ were removed from this conversation because legal hold has been activated.";
 "content.system.conversation.you.left" = "%@ left";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ was removed from the team.";
 "content.system.conversation.guest.joined" = "%@ joined";
 "content.system.conversation.guest.you_joined" = "You joined";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Original message from %@";
 "content.message.reply.original_timestamp.time" = "Original message from %@";
 "content.message.reply.broken_message" = "You cannot see this message.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Edited";
 
 "content.message.open_link_alert.title" = "Visit Link";

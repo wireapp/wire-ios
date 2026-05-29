@@ -71,6 +71,13 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
         verify(message: message)
     }
 
+    // MARK: Group Admin
+
+    func test_promotedToGroupAdmin() {
+        let message = makeMessage(messageType: .promotedToGroupAdmin)
+        verify(message: message)
+    }
+
     // MARK: - Helpers
 
     private func makeMessage(messageType: ZMSystemMessageType) -> MockMessage {
