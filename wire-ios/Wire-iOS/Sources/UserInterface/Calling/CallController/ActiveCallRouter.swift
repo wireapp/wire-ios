@@ -119,6 +119,14 @@ final class ActiveCallRouter<TopOverlayPresenter>
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
+
+    func prepareForRootReplacement() {
+        // Do not rely on dismiss completion during root swap
+        presentedActiveCallViewController?.dismiss(animated: false)
+        isPresentingActiveCall = false
+        isActiveCallShown = false
+        presentedActiveCallViewController = nil
+    }
 }
 
 // MARK: - ActiveCallRouterProtocol

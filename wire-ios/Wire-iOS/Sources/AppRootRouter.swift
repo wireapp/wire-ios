@@ -537,6 +537,7 @@ extension AppRootRouter {
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
+            authenticatedRouter?.prepareForRootReplacement()
             // This is needed to display an ongoing call when coming from the background.
             authenticatedRouter?.updateActiveCallPresentationState()
             urlActionRouter.authenticatedRouter = authenticatedRouter
