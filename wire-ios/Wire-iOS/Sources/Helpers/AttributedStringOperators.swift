@@ -259,4 +259,16 @@ extension NSMutableAttributedString {
         addAttributes(attributes, range: substringRange)
     }
 
+    /// Adds line spacing to all runs while preserving other paragraph style attributes
+    /// (e.g. blockquote indentation set by the Down markdown renderer).
+    func mergeLineSpacing(_ lineSpacing: CGFloat) {
+        let fullRange = NSRange(location: 0, length: length)
+        enumerateAttribute(.paragraphStyle, in: fullRange, options: []) { value, range, _ in
+            let style = (value as? NSParagraphStyle)?
+                .mutableCopy() as? NSMutableParagraphStyle ?? NSMutableParagraphStyle()
+            style.lineSpacing = lineSpacing
+            addAttribute(.paragraphStyle, value: style as NSParagraphStyle, range: range)
+        }
+    }
+
 }

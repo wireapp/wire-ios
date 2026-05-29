@@ -1893,6 +1893,8 @@ internal enum L10n {
         internal enum Reply {
           /// You cannot see this message.
           internal static let brokenMessage = L10n.tr("Localizable", "content.message.reply.broken_message", fallback: "You cannot see this message.")
+          /// Deleted message
+          internal static let deletedMessage = L10n.tr("Localizable", "content.message.reply.deleted_message", fallback: "Deleted message")
           /// Edited
           internal static let editedMessage = L10n.tr("Localizable", "content.message.reply.edited_message", fallback: "Edited")
           internal enum Files {
@@ -2286,6 +2288,10 @@ internal enum L10n {
             /// %@ left
             internal static func `left`(_ p1: Any) -> String {
               return L10n.tr("Localizable", "content.system.conversation.you.left", String(describing: p1), fallback: "%@ left")
+            }
+            /// %@ were promoted to group admin
+            internal static func promoted(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.conversation.you.promoted", String(describing: p1), fallback: "%@ were promoted to group admin")
             }
             /// %@ removed %@
             internal static func removed(_ p1: Any, _ p2: Any) -> String {

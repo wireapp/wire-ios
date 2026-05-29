@@ -29,16 +29,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         let isObfuscated: Bool
         let userSession: UserSession?
 
-        init(
-            attributedText: NSAttributedString,
-            isObfuscated: Bool,
-            userSession: UserSession? = nil
-        ) {
-            self.attributedText = attributedText
-            self.isObfuscated = isObfuscated
-            self.userSession = userSession
-        }
-
         static func == (
             lhs: ConversationTextMessageCell.Configuration,
             rhs: ConversationTextMessageCell.Configuration
@@ -49,7 +39,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private lazy var messageTextView: LinkInteractionTextView = {
-        let view = LinkInteractionTextView()
+        let view = LinkInteractionTextView.withBlockquoteBars()
 
         view.isEditable = false
         view.isSelectable = true
@@ -72,7 +62,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }()
 
     private var container: ConversationMessageContainerView?
-    private var currentConfiguration: Configuration?
 
     var isSelected = false
 
@@ -80,11 +69,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         didSet {
             guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
-            let userColor = message.senderUser?.accentColor ?? .clear
-            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
-            if let currentConfig = currentConfiguration {
-                configure(with: currentConfig, animated: false)
-            }
+            let userColor = message.senderUser?.wireAccentColor ?? .default
+            let ownMessageColor = ColorTheme.OwnChatBubbles.primary(userColor)
+            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
+            configureTextColor(forOwnMessage: isOwnMessage)
         }
     }
 
@@ -128,8 +116,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
-        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
+        let ownColor = ColorTheme.OwnChatBubbles.onPrimary
+        let otherColor = ColorTheme.OthersChatBubbles.onPrimary
 
         let textForegroundColor: UIColor = ownMessage ? ownColor : otherColor
         let linkForegroundColor: UIColor = ownMessage ? ownColor : UIColor.accent()
@@ -148,23 +136,14 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
         messageTextView.textColor = textForegroundColor
         messageTextView.linkTextAttributes = linkTextAttributes
+        messageTextView.applyMarkdownColors(textForegroundColor)
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        currentConfiguration = object
+        let mutableText = NSMutableAttributedString(attributedString: object.attributedText)
+        mutableText.mergeLineSpacing(3)
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.firstLineHeadIndent = 0
-        paragraphStyle.lineSpacing = 3
-
-        let attributes: [NSAttributedString.Key: AnyObject] = [
-            .paragraphStyle: paragraphStyle
-        ]
-
-        messageTextView.attributedText = object.attributedText.addAttributes(
-            attributes,
-            toSubstring: object.attributedText.string
-        )
+        messageTextView.attributedText = mutableText
 
         if object.isObfuscated {
             messageTextView.accessibilityIdentifier = "Obfuscated message"
@@ -190,8 +169,13 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     private func updateContainerStyle() {
         guard let message else { return }
         let isOwnMessage = message.isSentBySelfUser
-        let userColor = message.senderUser?.accentColor ?? .clear
-        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+        let userColor = message.senderUser?.wireAccentColor ?? .default
+        let ownMessageColor = ColorTheme.OwnChatBubbles.primary(userColor)
+        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
+        container?.layer.maskedCorners = [
+            .layerMinXMinYCorner, .layerMaxXMinYCorner,
+            .layerMinXMaxYCorner, .layerMaxXMaxYCorner
+        ]
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
@@ -244,7 +228,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -326,8 +310,6 @@ extension ConversationTextMessageCellDescription {
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
 
-        let detectedLinks = findDetectedLinks(in: messageText)
-
         // Search queries
         if !searchQueries.isEmpty {
             let highlightStyle: [NSAttributedString.Key: AnyObject] = [.backgroundColor: UIColor.accentDarken]
@@ -339,23 +321,30 @@ extension ConversationTextMessageCellDescription {
             )
         }
 
-        // Quote
-        if let quotedMessage = textMessageData.quoteMessage {
+        // Use the protobuf-backed flag so the reply box is preserved even when the
+        // quoted message is deleted (which nullifies the Core Data relationship).
+        let quotedMessage = textMessageData.quoteMessage
+        let hasQuote = textMessageData.hasQuote
+        let hasText = !messageText.string.isEmpty
+
+        if hasQuote, hasText {
+            // quotedMessage may be nil when the original was deleted.
             let viewModel = MessageReplyAttachmentsViewModel(
                 fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
                 fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
             )
-
-            let quoteCell = ConversationReplyCellDescription(
+            let combinedCell = ConversationReplyWithTextCellDescription(
                 quotedMessage: quotedMessage,
                 accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
-                messageReplyAttachmentsViewModel: viewModel
+                messageReplyAttachmentsViewModel: viewModel,
+                attributedText: messageText,
+                isObfuscated: message.isObfuscated,
+                userSession: userSession,
+                isSentBySelfUser: message.isSentBySelfUser,
+                senderAccentColor: message.senderUser?.wireAccentColor ?? .blue
             )
-            cells.append(AnyConversationMessageCellDescription(quoteCell))
-        }
-
-        // Text
-        if !messageText.string.isEmpty {
+            cells.append(AnyConversationMessageCellDescription(combinedCell))
+        } else if hasText {
             let textCell = ConversationTextMessageCellDescription(
                 attributedString: messageText,
                 isObfuscated: message.isObfuscated,

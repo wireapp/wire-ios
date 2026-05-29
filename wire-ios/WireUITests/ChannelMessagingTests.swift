@@ -58,7 +58,7 @@ final class ChannelMessagingTests: WireUITestCase {
         let teamWithChannelConversation = try await registerTeamWithChannelConversation()
 
         // WHEN
-        let activeConversationPage = try login(user: teamWithChannelConversation.teamOwner)
+        let activeConversationPage = try await login(user: teamWithChannelConversation.teamOwner)
             .openConversation()
             .openPhotosAndGrantPermission()
             .selectImageAndSend()
