@@ -556,6 +556,7 @@ extension AppRootRouter {
             // longer than needed. `applicationWillResignActive` will re-show it if
             // the app resigns active later.
             screenCurtainWindow.isHidden = true
+            authenticatedRouter?.prepareForRootReplacement()
             // This is needed to display an ongoing call when coming from the background.
             authenticatedRouter?.updateActiveCallPresentationState()
             urlActionRouter.authenticatedRouter = authenticatedRouter
