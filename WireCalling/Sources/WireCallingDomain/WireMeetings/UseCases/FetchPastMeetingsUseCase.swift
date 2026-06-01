@@ -47,7 +47,7 @@ package struct FetchPastMeetingsUseCase: FetchPastMeetingsUseCaseProtocol {
         let allPast = repository.fetchMeetingsEnding(before: now)
         let displayedPast = allPast.filter { dateInterval.contains($0.end) }
 
-        return grouper.group(displayedPast, byHours: true, sort: .descending)
+        return grouper.group(displayedPast, sort: .descending)
     }
 
 }

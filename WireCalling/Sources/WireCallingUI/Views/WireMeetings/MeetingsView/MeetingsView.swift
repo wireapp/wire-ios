@@ -94,8 +94,7 @@ struct MeetingsView: View {
             }
             GroupedSections(
                 groups: viewModel.groupedNextMeetings,
-                formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
+                formatDay: viewModel.formatDay(_:)
             )
 
             if viewModel.showMoreButton {
@@ -122,8 +121,7 @@ struct MeetingsView: View {
         List {
             GroupedSections(
                 groups: viewModel.groupedPastMeetings,
-                formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
+                formatDay: viewModel.formatDay(_:)
             )
         }
         .listStyle(.insetGrouped)
@@ -147,7 +145,6 @@ private func SectionTitle(_ text: String) -> some View {
 private struct GroupedSections: View {
     let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
     let formatDay: (Date) -> String
-    let formatTime: (Date) -> String
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
@@ -156,10 +153,6 @@ private struct GroupedSections: View {
                         ForEach(slot.meetings, id: \.id) { meeting in
                             MeetingRow(meeting: meeting)
                         }
-                    } header: {
-                        Text(formatTime(slot.time))
-                            .font(for: .subline1)
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     }
                 }
             } header: {
@@ -184,7 +177,7 @@ private struct MeetingRow: View {
                     )
                     .frame(width: 31, height: 31)
 
-                Image(systemName: "video.fill").font(.system(size: 15))
+                Image(systemName: "calendar").font(.system(size: 15))
             }
 
             VStack(alignment: .leading, spacing: 2) {

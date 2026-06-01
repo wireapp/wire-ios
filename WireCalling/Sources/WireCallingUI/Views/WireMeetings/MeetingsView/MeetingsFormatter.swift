@@ -20,7 +20,6 @@ package import Foundation
 
 package protocol MeetingsFormatterProtocol {
     func dayHeader(for date: Date, now: Date) -> String
-    func timeHeader(for date: Date) -> String
 }
 
 package struct MeetingsFormatter: MeetingsFormatterProtocol {
@@ -34,25 +33,9 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
         if calendar.isDate(date, inSameDayAs: now) {
             return Strings.Header.today + " (\(DateFormatter.dayHeader.string(from: date)))"
-        } else if calendar.isDate(
-            date,
-            equalTo: calendar.date(byAdding: .day, value: 1, to: now) ?? now,
-            toGranularity: .day
-        ) {
-            return Strings.Header.tomorrow + " (\(DateFormatter.dayHeader.string(from: date)))"
-        } else if calendar.isDate(
-            date,
-            equalTo: calendar.date(byAdding: .day, value: -1, to: now) ?? now,
-            toGranularity: .day
-        ) {
-            return Strings.Header.yesterday + " (\(DateFormatter.dayHeader.string(from: date)))"
         } else {
             return DateFormatter.dayHeader.string(from: date)
         }
-    }
-
-    package func timeHeader(for date: Date) -> String {
-        DateFormatter.timeHeader.string(from: date)
     }
 
 }
@@ -65,13 +48,6 @@ private extension DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = .current
         formatter.dateFormat = "EEEE, MMMM d"
-        return formatter
-    }()
-
-    static let timeHeader: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "h:mm a"
         return formatter
     }()
 

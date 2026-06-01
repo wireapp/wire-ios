@@ -100,10 +100,6 @@ package final class MeetingsViewModel: ObservableObject {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
     }
 
-    func formatTime(_ date: Date) -> String {
-        formatter.timeHeader(for: date)
-    }
-
     // MARK: - Private Methods
 
     private func loadUpcomingMeetings() {
