@@ -1,0 +1,24 @@
+[
+    {
+        "accent_id": 0,
+        "app": {
+            "category": "cat",
+            "description": "desc"
+        },
+        "assets": [],
+        "id": "fd96a484-d0c2-4fec-844e-a69cc3954811",
+        "legalhold_status": "no_consent",
+        "name": "WPB-24947 App 0",
+        "picture": [],
+        "qualified_id": {
+            "domain": "staging.zinfra.io",
+            "id": "fd96a484-d0c2-4fec-844e-a69cc3954811"
+        },
+        "searchable": true,
+        "supported_protocols": [
+            "mls"
+        ],
+        "team": "9f00f4e7-2426-4d6d-b2b1-9190b204556f",
+        "type": "app"
+    }
+]

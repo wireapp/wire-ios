@@ -130,6 +130,7 @@
 "sketch.drawButton.hint" = "Toque duplo para ativar ou desativar";
 "sketch.selectEmojiButton.description" = "Selecionar emoji";
 "sketch.sendButton.description" = "Enviar";
+"sketch.confirmButton.description" = "Confirmar";
 "sketch.undoButton.description" = "Desfazer a última etapa";
 "sketch.closeButton.description" = "Fechar esboço";
 

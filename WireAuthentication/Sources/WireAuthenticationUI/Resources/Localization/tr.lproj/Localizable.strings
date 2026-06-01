@@ -92,6 +92,7 @@
 "verification_code.message" = "%@'a gönderdiğimiz doğrulama kodunu girin.";
 "verification_code.confirm" = "Onay";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Wire'ı bu aygıtta ilk defa kullanıyorsunuz.";
 "authentication.no_history.message" = "Gizlilik nedenleriyle, konuşma geçmişiniz burada görünmeyecek.";

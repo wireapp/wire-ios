@@ -82,6 +82,7 @@
 "conversation.creationForm.guests.description" = "Abrir esta conversa para pessoas de fora da sua equipe ou serviços.";
 "conversation.creationForm.appsDisabled.title" = "Your team doesn't use apps yet";
 "conversation.creationForm.appsDisabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.creationForm.appsDisabledAsAdmin.message" = "To improve your workflow with apps, your team needs configuration.";
 
 "conversation.creationForm.readReceipts.toggle" = "Confirmação de Leitura";
 "conversation.creationForm.readReceipts.description" = "Quando isso está ativado, as pessoas podem ver quando suas mensagens nessa conversa são lidas.";

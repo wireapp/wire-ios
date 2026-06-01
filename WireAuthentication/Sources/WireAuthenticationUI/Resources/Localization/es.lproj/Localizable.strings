@@ -92,6 +92,7 @@
 "verification_code.message" = "Introduce el código de verificación que enviamos a %@.";
 "verification_code.confirm" = "Confirmar";
 "verification_code.resend_code" = "Reenviar código";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Es la primera vez que usas Wire en este dispositivo.";
 "authentication.no_history.message" = "Por motivos de privacidad, tu historial de chat no aparecerá aquí.";

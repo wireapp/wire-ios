@@ -52,7 +52,7 @@ final class AuthenticatedRouter {
 
     // MARK: - Public Property
 
-    private weak var _zClientViewController: ZClientViewController?
+    private var _zClientViewController: ZClientViewController?
 
     @MainActor var zClientViewController: ZClientViewController {
         let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
@@ -168,6 +168,10 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func updateActiveCallPresentationState() {
         activeCallRouter.updateActiveCallPresentationState()
+    }
+
+    func prepareForRootReplacement() {
+        activeCallRouter.prepareForRootReplacement()
     }
 
     func minimizeCallOverlay(animated: Bool, completion: Completion?) {

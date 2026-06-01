@@ -368,6 +368,7 @@
 "conversation.create.apps.subtitle" = "Открыть эту беседу для приложений.";
 "conversation.create.apps_disabled.title" = "Ваша команда еще не использует приложения";
 "conversation.create.apps_disabled.message" = "Для улучшения рабочего процесса с приложениями, вашей команде требуется настройка. Пожалуйста, свяжитесь с администратором вашей команды.";
+"conversation.create.apps_disabled_as_admin.message" = "Чтобы оптимизировать рабочий процесс с приложениями, вашей команде необходимо их настроить.";
 "conversation.create.receipts.title" = "Отчеты о прочтении";
 "conversation.create.receipts.subtitle" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "conversation.create.mls.title" = "Протокол";
@@ -1063,8 +1064,8 @@
 "profile.details.partner" = "внешний";
 "profile.details.federated" = "Федеративный";
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
-"profile.details.identity_warning" = "Перед добавлением убедитесь в личности %@.";
-"profile.details.requested_identity_warning" = "Прежде чем принять запрос на добавление, верифицируйте личность собеседника.";
+"profile.details.identity_warning" = "Убедитесь в личности %@ перед началом общения.\nСлужба поддержки Wire никогда не свяжется с вами в приложении.";
+"profile.details.requested_identity_warning" = "Пожалуйста, подтвердите личность пользователя, прежде чем принимать запрос на общение.\nСлужба поддержки Wire никогда не свяжется с вами через приложение.";
 "profile.details.title.unavailable" = "Имя недоступно";
 
 // Device list
@@ -1455,6 +1456,20 @@
 "self.settings.share_debug_report.action_sheet.share_via_wire" = "Поделиться через Wire";
 "self.settings.share_debug_report.action_sheet.send_email" = "Отправить email в службу поддержки";
 "self.settings.share_debug_report.action_sheet.share" = "Поделится";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "Нет непрочитанных бесед";
+"settings.debugging_tools.unread_conversations.found" = "Найдена непрочитанная беседа:";
+"settings.debugging_tools.unread_conversations.action_copy" = "Скопировать";
+"settings.debugging_tools.debug_command.title" = "Команда отладки";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Команда не распознана";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Ошибка: вариант для исправления недоступен";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Исправление ключей удаления MLS";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Найдено: %d поврежденных бесед\nИсправлено: %d бесед";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Ошибка восстановления";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Ошибка: %@";
 
 // Password reset
 "self.settings.password_reset_menu.title" = "Сбросить пароль";

@@ -130,6 +130,7 @@
 "sketch.drawButton.hint" = "双击启用或禁用";
 "sketch.selectEmojiButton.description" = "选择表情符号";
 "sketch.sendButton.description" = "发送";
+"sketch.confirmButton.description" = "确认";
 "sketch.undoButton.description" = "撤销上一步";
 "sketch.closeButton.description" = "关闭草图";
 
