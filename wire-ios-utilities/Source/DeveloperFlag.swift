@@ -39,10 +39,14 @@ public enum DeveloperFlag: String, CaseIterable {
     case useWireAuthentication
     case wireMeetings
     case lowKeyPackageCount
+<<<<<<< HEAD
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
     case enableDrivePermissions
+=======
+    case unSafeLogsForPublic
+>>>>>>> f53ab5c9f2 (feat: add flag to log every logs - WPB-24848 (#4748))
 
     public var description: String {
         switch self {
@@ -97,6 +101,7 @@ public enum DeveloperFlag: String, CaseIterable {
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
 
+<<<<<<< HEAD
         case .enabledCCDebugLogs:
             "Turn on to enable Core Crypto debug logs"
 
@@ -108,6 +113,10 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .enableDrivePermissions:
             "Turn on to enable drive permissions"
+=======
+        case .unSafeLogsForPublic:
+            "Turn on to write all logs (including debug and non-public) to disk in release builds"
+>>>>>>> f53ab5c9f2 (feat: add flag to log every logs - WPB-24848 (#4748))
         }
     }
 
