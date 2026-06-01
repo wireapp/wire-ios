@@ -52,7 +52,7 @@ struct FilePreviewView: View {
                 case .presentation:
                     PresentationView(url: url)
                 case .archive:
-                    ZIPView(url: url)
+                    ZipView(url: url)
                 default:
                     DocumentView(url: url)
                 }

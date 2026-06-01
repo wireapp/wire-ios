@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct ZIPView: View {
+struct ZipView: View {
     let url: URL
 
     @State private var rootNode: ZipNode?
