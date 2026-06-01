@@ -39,6 +39,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case useWireAuthentication
     case wireMeetings
     case lowKeyPackageCount
+    case unSafeLogsForPublic
 
     public var description: String {
         switch self {
@@ -92,6 +93,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
+
+        case .unSafeLogsForPublic:
+            "Turn on to write all logs (including debug and non-public) to disk in release builds"
         }
     }
 
