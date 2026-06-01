@@ -43,30 +43,22 @@ struct MeetingsView: View {
     }
 
     @ViewBuilder private var content: some View {
-            if viewModel.ongoingMeetings.isEmpty, viewModel.groupedNextMeetings.isEmpty {
+            if viewModel.groupedUpcomingMeetings.isEmpty {
                 MeetingsEmptyStateView(
                     title: Strings.EmptyState.Next.title,
                     subtitle: Strings.EmptyState.Next.subtitle
                 )
             } else {
-                nextTabContent
+                meetingsList
             }
     }
 
-    @ViewBuilder private var nextTabContent: some View {
+    @ViewBuilder private var meetingsList: some View {
         List {
-            if !viewModel.ongoingMeetings.isEmpty {
-                Section {
-                    ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
-                        MeetingRow(meeting: meeting)
-                    }
-                } header: {
-                    SectionTitle(Strings.Header.ongoing)
-                }
-            }
             GroupedSections(
-                groups: viewModel.groupedNextMeetings,
-                formatDay: viewModel.formatDay(_:)
+                groups: viewModel.groupedUpcomingMeetings,
+                formatDay: viewModel.formatDay(_:),
+                formatTimeRange: viewModel.formatTimeRange(for:)
             )
 
             if viewModel.showMoreButton {
@@ -84,7 +76,6 @@ struct MeetingsView: View {
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
-            viewModel.refreshOngoingMeetings()
             viewModel.showAll = false
         }
     }
@@ -101,17 +92,15 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
-    let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
+    let groups: [(day: Date, meetings: [Meeting])]
     let formatDay: (Date) -> String
+    let formatTimeRange: (Meeting) -> String
+
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
-                ForEach(dayGroup.timeSlots, id: \.time) { slot in
-                    Section {
-                        ForEach(slot.meetings, id: \.id) { meeting in
-                            MeetingRow(meeting: meeting)
-                        }
-                    }
+                ForEach(dayGroup.meetings, id: \.id) { meeting in
+                    MeetingRow(meeting: meeting, formatTimeRange: formatTimeRange)
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
@@ -124,6 +113,7 @@ private struct GroupedSections: View {
 
 private struct MeetingRow: View {
     let meeting: Meeting
+    let formatTimeRange: (Meeting) -> String
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             ZStack {
@@ -144,7 +134,7 @@ private struct MeetingRow: View {
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     .lineLimit(2)
 
-                Text("Meeting date")
+                Text(formatTimeRange(meeting))
                     .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 

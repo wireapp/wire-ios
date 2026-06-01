@@ -46,7 +46,7 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
 
         let hasMore = meetings.count > pageSize
         let paginatedMeetings = hasMore ? Array(meetings.prefix(pageSize)) : meetings
-        let groups = grouper.group(paginatedMeetings, sort: .ascending)
+        let groups = grouper.group(paginatedMeetings)
 
         return PaginatedGroupedMeetings(
             groups: groups,

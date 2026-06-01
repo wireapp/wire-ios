@@ -18,8 +18,7 @@
 
 package import Foundation
 
-package typealias MeetingTimeSlot = (time: Date, meetings: [Meeting])
-package typealias GroupedMeetings = [(day: Date, timeSlots: [MeetingTimeSlot])]
+package typealias GroupedMeetings = [(day: Date, meetings: [Meeting])]
 
 package struct PaginatedGroupedMeetings {
 

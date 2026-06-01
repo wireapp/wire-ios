@@ -25,8 +25,7 @@ package struct MeetingsGrouper {
     package init() {}
 
     package func group(
-        _ meetings: [Meeting],
-        sort: SortOrder
+        _ meetings: [Meeting]
     ) -> GroupedMeetings {
         let sortMeetings: ([Meeting]) -> [Meeting] = { meetings in
             meetings.sorted {
@@ -38,20 +37,8 @@ package struct MeetingsGrouper {
             }
         }
 
-        let groupedByDay = Dictionary(grouping: meetings) { calendar.startOfDay(for: $0.start) }
+        return Dictionary(grouping: meetings) { calendar.startOfDay(for: $0.start) }
             .map { (day: $0.key, meetings: sortMeetings($0.value)) }
-
-        let sortedDays: [(day: Date, meetings: [Meeting])] = switch sort {
-        case .ascending:  groupedByDay.sorted { $0.day < $1.day }
-        case .descending: groupedByDay.sorted { $0.day > $1.day }
-        }
-
-        return sortedDays.map { (day: $0.day, timeSlots: [(time: $0.day, meetings: $0.meetings)]) }
-    }
-
-    package enum SortOrder {
-        case ascending
-        case descending
     }
 
 }

@@ -20,6 +20,7 @@ package import Foundation
 
 package protocol MeetingsFormatterProtocol {
     func dayHeader(for date: Date, now: Date) -> String
+    func timeRange(from start: Date, to end: Date) -> String
 }
 
 package struct MeetingsFormatter: MeetingsFormatterProtocol {
@@ -38,6 +39,10 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
         }
     }
 
+    package func timeRange(from start: Date, to end: Date) -> String {
+        DateIntervalFormatter.meetingTimeRange.string(from: start, to: end)
+    }
+
 }
 
 // MARK: - Helpers
@@ -48,6 +53,18 @@ private extension DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = .current
         formatter.dateFormat = "EEEE, MMMM d"
+        return formatter
+    }()
+
+}
+
+private extension DateIntervalFormatter {
+
+    static let meetingTimeRange: DateIntervalFormatter = {
+        let formatter = DateIntervalFormatter()
+        formatter.locale = .current
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
         return formatter
     }()
 

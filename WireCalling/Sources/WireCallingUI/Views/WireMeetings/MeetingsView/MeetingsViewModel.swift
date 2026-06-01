@@ -36,8 +36,6 @@ package final class MeetingsViewModel: ObservableObject {
 
     @Published private(set) var showMoreButton: Bool = false
     @Published private(set) var upcomingMeetings: GroupedMeetings = []
-    @Published private(set) var cachedOngoingMeetings: [Meeting] = []
-    @Published private(set) var cachedPastMeetings: GroupedMeetings = []
 
     private let repository: any MeetingsRepositoryProtocol
     private let formatter: MeetingsFormatter
@@ -62,20 +60,11 @@ package final class MeetingsViewModel: ObservableObject {
 
     // MARK: - Public Interface
 
-    var ongoingMeetings: [Meeting] {
-        cachedOngoingMeetings
-    }
-
-    var groupedPastMeetings: GroupedMeetings {
-        cachedPastMeetings
-    }
-
-    var groupedNextMeetings: GroupedMeetings {
+    var groupedUpcomingMeetings: GroupedMeetings {
         upcomingMeetings
     }
 
     func loadInitialData() {
-        refreshOngoingMeetings()
         loadUpcomingMeetings()
     }
 
@@ -83,12 +72,12 @@ package final class MeetingsViewModel: ObservableObject {
         loadUpcomingMeetings()
     }
 
-    func refreshOngoingMeetings() {
-        cachedOngoingMeetings = repository.fetchOngoingMeetings(at: currentDateProvider.now)
-    }
-
     func formatDay(_ date: Date) -> String {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
+    }
+
+    func formatTimeRange(for meeting: Meeting) -> String {
+        formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
     // MARK: - Private Methods
@@ -117,34 +106,26 @@ package final class MeetingsViewModel: ObservableObject {
     }
 
     private func mergeGroups(existing: GroupedMeetings, new: GroupedMeetings) -> GroupedMeetings {
-        var mergedDict: [Date: [MeetingTimeSlot]] = [:]
+        var mergedDict: [Date: [Meeting]] = [:]
 
         for group in existing + new {
-            var slots = mergedDict[group.day] ?? []
-            for newSlot in group.timeSlots {
-                if let index = slots.firstIndex(where: { $0.time == newSlot.time }) {
-                    let mergedMeetings = slots[index].meetings + newSlot.meetings
-                    slots[index] = (time: newSlot.time, meetings: mergedMeetings)
-                } else {
-                    slots.append(newSlot)
-                }
-            }
-            mergedDict[group.day] = slots.sorted { $0.time < $1.time }
+            mergedDict[group.day, default: []] += group.meetings
         }
 
-        return mergedDict.sorted { $0.key < $1.key }.map { (day: $0.key, timeSlots: $0.value) }
+        return mergedDict
+            .sorted { $0.key < $1.key }
+            .map { (day: $0.key, meetings: sortMeetings($0.value)) }
     }
 
-}
-
-private extension Sequence<MeetingTimeSlot> {
-    var meetingCount: Int {
-        reduce(0) { $0 + $1.meetings.count }
+    // TODO: maybe add helper
+    private func sortMeetings(_ meetings: [Meeting]) -> [Meeting] {
+        meetings.sorted {
+            if $0.start != $1.start {
+                $0.start < $1.start
+            } else {
+                $0.title < $1.title
+            }
+        }
     }
-}
 
-private extension Sequence<(day: Date, timeSlots: [MeetingTimeSlot])> {
-    var meetingCount: Int {
-        reduce(0) { $0 + $1.timeSlots.meetingCount }
-    }
 }
