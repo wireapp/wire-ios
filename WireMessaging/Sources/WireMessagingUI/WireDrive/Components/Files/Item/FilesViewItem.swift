@@ -118,6 +118,7 @@ extension FilesViewItem {
     static func fromLocalAsset(
         _ asset: WireDriveLocalAsset,
         conversationName: String?,
+        isReadOnly: Bool,
         assetsPath: String?
     ) -> FilesViewItem {
 
@@ -172,7 +173,7 @@ extension FilesViewItem {
             isEditable: false, // change later if we want to edit files in offline mode.
             publicLinkID: nil, // change later if we want to be able to share a public link in offline mode.
             conversationName: asset.conversationName,
-            isReadOnly: false,
+            isReadOnly: isReadOnly,
             size: asset.size
         )
     }

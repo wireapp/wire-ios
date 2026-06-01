@@ -71,6 +71,11 @@ final class FilesItemViewModel: ObservableObject {
 
     let isBrowsing: Bool
     let isInRecycleBin: Bool
+    
+    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
+    var isDrivePermissionsFlagEnabled: Bool {
+        UserDefaults.standard.bool(forKey: "enableDrivePermissions")
+    }
 
     struct TagsInfo {
         let firstTag: String?

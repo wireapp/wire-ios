@@ -176,9 +176,16 @@ package final class FilesViewModel: ObservableObject {
             )
 
             let items: [FilesViewItem] = offlineAssets.map { asset in
-                .fromLocalAsset(
+                let selfUserRole = conversations
+                    .first(where: { $0.name == asset.conversationName })?
+                    .participants
+                    .first(where: { $0.isSelfUser })?
+                    .role
+                
+                return .fromLocalAsset(
                     asset,
                     conversationName: conversationName,
+                    isReadOnly: (selfUserRole ?? .viewer) == .viewer,
                     assetsPath: assetsPath
                 )
             }
