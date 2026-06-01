@@ -26,7 +26,7 @@ public struct PreventAdminlessGroupsFeatureConfig: Equatable, Sendable, Hashable
 
     public let status: FeatureConfigStatus
 
-    /// How the backend selects an admin candidate when 
+    /// How the backend selects an admin candidate when
     /// automatic promotion is needed. (alphabetical / random / all)
 
     public let promotionStrategy: String
