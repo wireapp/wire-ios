@@ -36,20 +36,14 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
         self.grouper = grouper
     }
 
-    package func invoke(limitToTwoDays: Bool, pageSize: Int, offset: Int) -> PaginatedGroupedMeetings {
+    package func invoke(pageSize: Int, offset: Int) -> PaginatedGroupedMeetings {
         let now = currentDateProvider.now
-        var meetings = repository.fetchMeetingsStarting(
+        let meetings = repository.fetchMeetingsStarting(
             after: now,
             offset: offset,
             limit: pageSize
         )
 
-        if limitToTwoDays {
-            guard let tomorrowEnd = calendar.todayAndTomorrowRange(using: currentDateProvider)?.end else {
-                return PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: offset)
-            }
-            meetings = meetings.filter { $0.start < tomorrowEnd }
-        }
         let hasMore = meetings.count > pageSize
         let paginatedMeetings = hasMore ? Array(meetings.prefix(pageSize)) : meetings
         let groups = grouper.group(paginatedMeetings, sort: .ascending)

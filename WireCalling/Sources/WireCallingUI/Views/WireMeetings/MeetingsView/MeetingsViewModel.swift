@@ -24,7 +24,6 @@ package final class MeetingsViewModel: ObservableObject {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @Published var selectedTab: Tab = .next
     @Published var showAll: Bool = false {
         didSet {
             if oldValue != showAll {
@@ -43,7 +42,6 @@ package final class MeetingsViewModel: ObservableObject {
     private let repository: any MeetingsRepositoryProtocol
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
-    private let pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
 
     private var futureOffset: Int = 0
@@ -54,13 +52,11 @@ package final class MeetingsViewModel: ObservableObject {
         repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     ) {
         self.repository = repository
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
-        self.pastMeetingsUseCase = pastMeetingsUseCase
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
     }
 
@@ -80,7 +76,6 @@ package final class MeetingsViewModel: ObservableObject {
 
     func loadInitialData() {
         refreshOngoingMeetings()
-        refreshPastMeetings()
         loadUpcomingMeetings()
     }
 
@@ -92,10 +87,6 @@ package final class MeetingsViewModel: ObservableObject {
         cachedOngoingMeetings = repository.fetchOngoingMeetings(at: currentDateProvider.now)
     }
 
-    func refreshPastMeetings() {
-        cachedPastMeetings = pastMeetingsUseCase.invoke()
-    }
-
     func formatDay(_ date: Date) -> String {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
     }
@@ -105,7 +96,6 @@ package final class MeetingsViewModel: ObservableObject {
     private func loadUpcomingMeetings() {
         let isLimited = !showAll
         let result = upcomingMeetingsUseCase.invoke(
-            limitToTwoDays: isLimited,
             pageSize: pageSize,
             offset: futureOffset
         )
@@ -143,22 +133,6 @@ package final class MeetingsViewModel: ObservableObject {
         }
 
         return mergedDict.sorted { $0.key < $1.key }.map { (day: $0.key, timeSlots: $0.value) }
-    }
-
-}
-
-extension MeetingsViewModel {
-
-    enum Tab: Int, CaseIterable {
-        case next
-        case past
-
-        var title: String {
-            switch self {
-            case .next: Strings.Tabs.next
-            case .past: Strings.Tabs.past
-            }
-        }
     }
 
 }

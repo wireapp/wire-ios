@@ -39,7 +39,6 @@ package final class AllMeetingsViewModel: ObservableObject {
         repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         passwordValidator: any PasswordValidator,
         isContextMenuAllowed: Bool
@@ -48,7 +47,6 @@ package final class AllMeetingsViewModel: ObservableObject {
             repository: repository,
             currentDateProvider: currentDateProvider,
             formatter: formatter,
-            pastMeetingsUseCase: pastMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
         self.passwordValidator = passwordValidator

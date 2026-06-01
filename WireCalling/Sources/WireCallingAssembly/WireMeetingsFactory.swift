@@ -41,10 +41,6 @@ public extension WireMeetingsFactory {
         let meetingsViewModel = AllMeetingsViewModel(
             repository: MeetingsRepository.demo(),
             currentDateProvider: .system,
-            pastMeetingsUseCase: FetchPastMeetingsUseCase(
-                repository: MeetingsRepository.demo(),
-                currentDateProvider: .system
-            ),
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system

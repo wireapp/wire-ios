@@ -22,7 +22,7 @@ package import Foundation
 /// Repository for accessing Meetings
 package protocol MeetingsRepositoryProtocol: Sendable {
 
-    func fetchOngoingMeetings(at date: Date) -> [Meeting]
+    func fetchOngoingMeetings(at date: Date) -> [Meeting] //TODO: remove
 
     func fetchMeetingsEnding(before date: Date) -> [Meeting]
 

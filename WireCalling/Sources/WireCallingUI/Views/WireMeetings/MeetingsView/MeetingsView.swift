@@ -33,16 +33,6 @@ struct MeetingsView: View {
 
     var body: some View {
         VStack {
-            Picker("", selection: $viewModel.selectedTab) {
-                ForEach(MeetingsViewModel.Tab.allCases, id: \.self) { tab in
-                    Text(tab.title).tag(tab)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .accessibilityIdentifier("meetingsListPicker")
-
             content.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -50,17 +40,9 @@ struct MeetingsView: View {
         .onAppear {
             viewModel.loadInitialData()
         }
-        .onChange(of: viewModel.selectedTab) { _, newValue in
-            if newValue == .past {
-                viewModel.refreshPastMeetings()
-            } else {
-                viewModel.refreshOngoingMeetings()
-            }
-        }
     }
 
     @ViewBuilder private var content: some View {
-        if viewModel.selectedTab == .next {
             if viewModel.ongoingMeetings.isEmpty, viewModel.groupedNextMeetings.isEmpty {
                 MeetingsEmptyStateView(
                     title: Strings.EmptyState.Next.title,
@@ -69,16 +51,6 @@ struct MeetingsView: View {
             } else {
                 nextTabContent
             }
-        } else {
-            if viewModel.groupedPastMeetings.isEmpty {
-                MeetingsEmptyStateView(
-                    title: Strings.EmptyState.Past.title,
-                    subtitle: Strings.EmptyState.Past.subtitle
-                )
-            } else {
-                pastTabContent
-            }
-        }
     }
 
     @ViewBuilder private var nextTabContent: some View {
@@ -117,20 +89,6 @@ struct MeetingsView: View {
         }
     }
 
-    @ViewBuilder private var pastTabContent: some View {
-        List {
-            GroupedSections(
-                groups: viewModel.groupedPastMeetings,
-                formatDay: viewModel.formatDay(_:)
-            )
-        }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(ColorTheme.Backgrounds.surface.color)
-        .refreshable {
-            viewModel.refreshPastMeetings()
-        }
-    }
 }
 
 @ViewBuilder
@@ -214,7 +172,6 @@ private struct MeetingRow: View {
         repository: MockMeetingsRepositoryProtocol(),
         currentDateProvider: .system,
         formatter: MeetingsFormatter(),
-        pastMeetingsUseCase: MockFetchPastMeetingsUseCaseProtocol(),
         upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol()
     )
     )
