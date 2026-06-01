@@ -18,6 +18,7 @@
 
 import Down
 import Foundation
+import UIKit
 
 extension NSAttributedString {
 
@@ -30,8 +31,40 @@ extension NSAttributedString {
             NSMutableAttributedString(string: text)
         }
 
-        if result.string.last == "\n" {
+        // Paragraph-break newlines emitted by Down carry an explicit paragraphStyle (with
+        // paragraphSpacing > 0), whereas soft-break newlines carry no paragraphStyle at all.
+        // Insert an actual blank-line newline after each paragraph break so that a double-
+        // newline in the original text renders as a visible empty line.
+        result.insertEmptyLinesAtParagraphBreaks()
+
+        // There may now be two trailing newlines (paragraph break + blank line); remove both.
+        // Track whether the last paragraph was a list item so we can re-append a tiny
+        // buffer below — UITextView's intrinsic height drops the last list item otherwise.
+        var trailedListItem = false
+        while result.string.last == "\n" {
+            if !trailedListItem,
+               let ps = result.attribute(
+                   .paragraphStyle,
+                   at: result.length - 1,
+                   effectiveRange: nil
+               ) as? NSParagraphStyle,
+               ps.headIndent > 0 {
+                trailedListItem = true
+            }
             result.deleteCharacters(in: NSRange(location: result.length - 1, length: 1))
+        }
+
+        // For lists, append a 1pt-tall trailing newline so the last item isn't clipped.
+        // Without this, single-item lists (and the last item of any list) lose their content.
+        if trailedListItem {
+            let blankStyle = NSMutableParagraphStyle()
+            blankStyle.minimumLineHeight = 1
+            blankStyle.maximumLineHeight = 1
+            blankStyle.paragraphSpacing = 0
+            result.append(NSAttributedString(
+                string: "\n",
+                attributes: [.paragraphStyle: blankStyle as NSParagraphStyle]
+            ))
         }
 
         guard !result.string.isEmpty else {
@@ -42,6 +75,50 @@ extension NSAttributedString {
     }
 }
 
+private extension NSMutableAttributedString {
+
+    /// Inserts a blank-line newline after every paragraph-break newline.
+    ///
+    /// Down marks paragraph-break newlines with an explicit `.paragraphStyle` whose
+    /// `paragraphSpacing > 0`.  Soft-break newlines have no paragraph style at all.
+    /// By inserting a second `\n` (carrying only `minimumLineHeight`) we create a real
+    /// empty line rather than relying on `paragraphSpacing`, which can be too subtle.
+    func insertEmptyLinesAtParagraphBreaks() {
+        // Collect the indices of paragraph-break newlines and whether each one belongs
+        // to a list item (Down marks list-item terminators with headIndent > 0).
+        var breakIndices = [(index: Int, isListItem: Bool)]()
+        let nsString = string as NSString
+        var i = 0
+        while i < length {
+            if nsString.character(at: i) == 0x0A,
+               let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
+               ps.paragraphSpacing > 0 {
+                breakIndices.append((i, ps.headIndent > 0))
+            }
+            i += 1
+        }
+
+        // Process in reverse so earlier insertions don't shift later indices.
+        for (breakIndex, isListItem) in breakIndices.reversed() {
+            // Regular paragraph break: full-height blank line for visible empty rows.
+            // List-item terminator: 1pt-tall (effectively invisible) blank — these don't
+            // add visible spacing but are needed for UITextView to lay out the items
+            // correctly (otherwise the trailing items get clipped).
+            let existingStyle = attribute(.paragraphStyle, at: breakIndex, effectiveRange: nil) as? NSParagraphStyle
+            let blankStyle = NSMutableParagraphStyle()
+            blankStyle.minimumLineHeight = isListItem ? 1 : (existingStyle?.minimumLineHeight ?? 22)
+            blankStyle.maximumLineHeight = isListItem ? 1 : 0
+            blankStyle.paragraphSpacing = 0
+
+            let blankLine = NSAttributedString(
+                string: "\n",
+                attributes: [.paragraphStyle: blankStyle as NSParagraphStyle]
+            )
+            insert(blankLine, at: breakIndex + 1)
+        }
+    }
+}
+
 extension NSAttributedString {
 
     /// Trim the NSAttributedString to given number of line limit and add an ellipsis at the end if necessary
@@ -49,14 +126,23 @@ extension NSAttributedString {
     /// - Parameter numberOfLinesLimit: number of line reserved
     /// - Returns: the trimmed NSAttributedString. If not excess limit, return the original NSAttributedString
     func trimmedToNumberOfLines(numberOfLinesLimit: Int) -> NSAttributedString {
-        // Trim the string to first four lines to prevent last line narrower spacing issue
-        let lines = string.components(separatedBy: ["\n"])
-        if lines.count > numberOfLinesLimit {
-            let headLines = lines.prefix(numberOfLinesLimit).joined(separator: "\n")
-
-            return attributedSubstring(from: NSRange(location: 0, length: headLines.count)) + String.ellipsis
-        } else {
+        // Collect newline positions, ignoring the 1pt-tall layout blanks inserted
+        // between markdown list items by `insertEmptyLinesAtParagraphBreaks`. They
+        // aren't visible rows and shouldn't count against the limit.
+        let nsString = string as NSString
+        var visibleNewlineIndices: [Int] = []
+        for i in 0 ..< length where nsString.character(at: i) == 0x0A {
+            if let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
+               ps.minimumLineHeight == 1, ps.maximumLineHeight == 1 {
+                continue
+            }
+            visibleNewlineIndices.append(i)
+        }
+        let visibleLineCount = visibleNewlineIndices.count + 1
+        guard visibleLineCount > numberOfLinesLimit, numberOfLinesLimit > 0 else {
             return self
         }
+        let trimAt = visibleNewlineIndices[numberOfLinesLimit - 1]
+        return attributedSubstring(from: NSRange(location: 0, length: trimAt)) + String.ellipsis
     }
 }

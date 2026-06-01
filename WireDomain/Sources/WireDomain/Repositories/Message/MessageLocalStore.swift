@@ -975,6 +975,29 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
+
+        case let .promotedToGroupAdmin(user: (userID, userDomain), sender: (senderID, senderDomain), date):
+            guard
+                let sender = await fetchUser(
+                    id: senderID,
+                    domain: senderDomain
+                ),
+                let user = await fetchUser(
+                    id: userID,
+                    domain: userDomain
+                )
+            else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .promotedToGroupAdmin,
+                sender: sender,
+                users: Set([user]),
+                timestamp: date
+            )
+
+            return [systemMessage]
         }
     }
 

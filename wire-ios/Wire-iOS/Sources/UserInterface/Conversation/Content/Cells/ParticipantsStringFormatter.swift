@@ -37,6 +37,7 @@ private extension ConversationActionType {
         case .started(name: .none), .none: localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
         case .started(name: .some): "content.system.conversation.with_name.participants"
         case .teamMemberLeave: "content.system.conversation.team.member-leave"
+        case .promoted: "content.system.conversation.you.promoted"
         }
     }
 
@@ -153,6 +154,15 @@ final class ParticipantsStringFormatter {
             typealias System = L10n.Localizable.Content.System
             let text = isChannel ? System.Channel.Guest.youJoined : System.Conversation.Guest.youJoined
             return text && font && textColor
+
+        case .promoted:
+            let youString = L10n.Localizable.Content.System.youNominative.capitalized
+            let text = NSMutableAttributedString(
+                attributedString: L10n.Localizable.Content.System.Conversation.You.promoted(youString)
+                    && font && textColor
+            )
+            text.addAttributes([.font: UIFont.mediumSemiboldFont as AnyObject], to: youString)
+            return text
 
         case .left, .teamMemberLeave, .added(herself: true):
             let formatKey = message.actionType.formatKey

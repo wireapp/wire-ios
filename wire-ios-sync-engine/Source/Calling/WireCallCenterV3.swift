@@ -107,6 +107,8 @@ public class WireCallCenterV3: NSObject {
     let localDomain: String?
     let isFederationEnabled: Bool
 
+    var mlsConferenceSetupTimeout: Duration = .seconds(10)
+
     // MARK: - Initialization
 
     deinit {
@@ -515,6 +517,7 @@ public extension WireCallCenterV3 {
         case missingAVSConversationType
         case missingConferencingPermission
         case failedToSetupMLSConference
+        case mlsConferenceSetupTimeout
         case unknown
 
     }
@@ -740,7 +743,8 @@ public extension WireCallCenterV3 {
             Task {
                 do {
                     // Join the subgroup or create it if it doesn't exist
-                    let subgroupID = try await mlsService.createOrJoinSubgroup(
+                    let subgroupID = try await self.createOrJoinSubgroupWithTimeout(
+                        using: mlsService,
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
@@ -820,6 +824,34 @@ public extension WireCallCenterV3 {
                     self.onMLSConferenceFailure(id: conversationID)
                 }
             }
+        }
+    }
+
+    /// Joins (or creates) the MLS subgroup, enforcing `mlsConferenceSetupTimeout`.
+    ///
+    /// If the network call doesn't complete in time, throws `Failure.mlsConferenceSetupTimeout`
+    /// instead of leaving the user stuck in "Connecting…".
+    private func createOrJoinSubgroupWithTimeout(
+        using mlsService: MLSServiceInterface,
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async throws -> MLSGroupID {
+        try await withThrowingTaskGroup(of: MLSGroupID.self) { group in
+            group.addTask {
+                try await mlsService.createOrJoinSubgroup(
+                    parentQualifiedID: parentQualifiedID,
+                    parentID: parentID
+                )
+            }
+            group.addTask {
+                try await Task.sleep(for: self.mlsConferenceSetupTimeout)
+                throw Failure.mlsConferenceSetupTimeout
+            }
+            defer { group.cancelAll() }
+            guard let result = try await group.next() else {
+                throw Failure.mlsConferenceSetupTimeout
+            }
+            return result
         }
     }
 
