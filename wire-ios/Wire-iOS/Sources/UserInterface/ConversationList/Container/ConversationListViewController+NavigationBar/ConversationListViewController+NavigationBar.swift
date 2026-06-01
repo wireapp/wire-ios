@@ -278,9 +278,13 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             menuChildren.append(draftsAction)
         }
 
+        menuChildren.append(groupsAction)
+
+        if viewModel.isChannelsEnabled {
+            menuChildren.append(channelsAction)
+        }
+
         menuChildren.append(contentsOf: [
-            groupsAction,
-            channelsAction,
             oneToOneConversationsAction,
             foldersAction
         ])

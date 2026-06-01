@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-package import WireFoundation
+import WireFoundation
 package import WireMessagingDomain
 package import WireMessagingData
 
@@ -35,7 +35,6 @@ package struct RecycleBinContainer: View {
     private let nodeCache: any WireDriveNodeCacheProtocol
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
-    private let accentColorProvider: () -> WireAccentColor
 
     package init(
         cellName: String,
@@ -46,8 +45,7 @@ package struct RecycleBinContainer: View {
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
         nodeRenameNotifier: WireDriveNodeRenameNotifier,
-        fileCache: any FileCache,
-        accentColorProvider: @escaping () -> WireAccentColor
+        fileCache: any FileCache
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -58,7 +56,6 @@ package struct RecycleBinContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.accentColorProvider = accentColorProvider
     }
 
     var body: some View {
@@ -97,7 +94,7 @@ package struct RecycleBinContainer: View {
                 ),
                 updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
+                createFile: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
                 restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesRepository,
@@ -105,7 +102,7 @@ package struct RecycleBinContainer: View {
                     nodeCache: nodeCache
                 ),
                 getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
                 ),
@@ -114,7 +111,17 @@ package struct RecycleBinContainer: View {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
+                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(repository: nodesRepository),
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
+                    localAssetRepository: localAssetRepository
+                )
             ),
             title: path.last?.name,
             navigationPath: path,
@@ -124,11 +131,9 @@ package struct RecycleBinContainer: View {
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             nodesRepository: nodesRepository,
-            fileCache: fileCache,
             cellName: cellName,
             isBrowsing: false,
-            isRecycleBin: true,
-            accentColorProvider: accentColorProvider
+            isRecycleBin: true
         )
     }
 }

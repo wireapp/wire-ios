@@ -43,9 +43,21 @@ class WelcomePage: PageModel {
         return try LoginPage()
     }
 
+    func enterSSOCode(_ code: String) throws -> SSOWebLoginPage {
+        try typeEmailOrSSO(code)
+        nextButton.waitAndTap()
+        return try SSOWebLoginPage()
+    }
+
     @discardableResult
     func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
         try emailTextField.tapIfKeyboardNotFocused().typeText(input)
         return self
+    }
+
+    func enterSSOEmail(_ email: String) throws -> SSOWebLoginPage {
+        try typeEmailOrSSO(email)
+        nextButton.waitAndTap()
+        return try SSOWebLoginPage()
     }
 }

@@ -47,6 +47,8 @@ final class FilesItemViewModel: ObservableObject {
         case restore
         case deleteToRecycleBin
         case deletePermanently
+        case makeAvailableOffline
+        case removeAvailableOffline
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -60,7 +62,8 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
-    @Published var menuActions: Set<ItemAction> = []
+
+    @Published private var networkMonitor = NetworkMonitor.shared
 
     let fileName: String
     let subtitle: String?
@@ -115,15 +118,15 @@ final class FilesItemViewModel: ObservableObject {
 
         self.fileTracker = .init()
         fileTracker.onSmallFileLoaded = { [weak self] in
+            guard let asset = self?.asset, !asset.isAvailableOffline else { return }
             self?.performAction(.primaryAction)
         }
 
-        self.menuActions = makeMenuActions()
-
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
-            self?.asset = asset
+            guard let self else { return }
+            self.asset = asset
             if let asset {
-                self?.fileTracker.handleDownloadState(fromAsset: asset)
+                fileTracker.handleDownloadState(fromAsset: asset)
             }
         }.store(in: &cancellables)
     }
@@ -133,13 +136,22 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloadOptionAvailable: Bool {
-        guard item.kind == .file else { return false }
+        guard item.kind == .file, !isOffline else { return false }
 
         return switch fileTracker.state {
         case .loaded:
             false
         default:
             true
+        }
+    }
+
+    var isDownloadingForOfflineUse: Bool {
+        switch fileTracker.state {
+        case .loading where asset?.isAvailableOffline == true:
+            true
+        default:
+            false
         }
     }
 
@@ -164,6 +176,8 @@ final class FilesItemViewModel: ObservableObject {
             showDeleteConfirmation(deletePermanently: true)
         case .deleteToRecycleBin:
             showDeleteConfirmation(deletePermanently: false)
+        case .makeAvailableOffline, .removeAvailableOffline:
+            Task { await onItemAction(action, item) }
         default:
             Task { await onItemAction(action, item) }
         }
@@ -200,6 +214,9 @@ final class FilesItemViewModel: ObservableObject {
         if permanently {
             await onItemAction(.deletePermanently, item)
         } else {
+            if let asset, asset.isAvailableOffline {
+                await onItemAction(.removeAvailableOffline, item)
+            }
             await onItemAction(.deleteToRecycleBin, item)
         }
     }
@@ -207,6 +224,16 @@ final class FilesItemViewModel: ObservableObject {
     func confirmRestore() async {
         await onItemAction(.restore, item)
     }
+
+    #if DEBUG
+        func deleteAsset() {
+            Task {
+                do {
+                    try await localAssetRepository.deleteAsset(nodeID: nodeID)
+                } catch {}
+            }
+        }
+    #endif
 
     private static func subtitle(
         selectedSortingKey: FilesSortingViewModel.SortingKey?,
@@ -340,15 +367,32 @@ final class FilesItemViewModel: ObservableObject {
         )
     }
 
-    private func makeMenuActions() -> Set<ItemAction> {
+    var isOffline: Bool {
+        networkMonitor.currentStatus == .disconnected
+    }
+
+    var menuActions: Set<ItemAction> {
         var actions: Set<ItemAction> = []
 
         if !isInRecycleBin {
             actions.insert(.primaryAction)
-            actions.insert(.shareLink)
+
+            if !isOffline {
+                actions.insert(.shareLink)
+            }
         }
 
-        if !isBrowsing {
+        if !isEditable, !isInRecycleBin, item.kind == .file {
+            if isAvailableOffline {
+                actions.insert(.removeAvailableOffline)
+            } else {
+                if !isOffline {
+                    actions.insert(.makeAvailableOffline)
+                }
+            }
+        }
+
+        if !isBrowsing, !isOffline {
             if isInRecycleBin {
                 actions.insert(.restore)
                 actions.insert(.deletePermanently)
@@ -368,6 +412,20 @@ final class FilesItemViewModel: ObservableObject {
         }
 
         return actions
+    }
+
+    var isAvailableOffline: Bool {
+        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isDownloaded = switch fileTracker.state {
+        case .loaded:
+            true
+        default:
+            false
+        }
+
+        let isFolder = item.kind == .folder
+
+        return isAvailableOffline && isDownloaded && !isFolder
     }
 }
 

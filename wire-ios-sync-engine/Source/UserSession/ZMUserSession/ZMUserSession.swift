@@ -402,8 +402,8 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
-    private lazy var checkBlacklistWorker: CheckBlacklistWorker? = .init(
-        isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+    private lazy var checkBlacklistWorker: Worker? = .checkBlacklist(
+        useCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
         onIsBuildBlacklisted: { [weak self] in
             guard let self else { return }
 
@@ -411,6 +411,8 @@ public final class ZMUserSession: NSObject {
             delegate?.userSessionDidDiscoverBuildIsBlacklisted()
         }
     )
+
+    private var updateBackendMetadataWorker: Worker?
 
     let logFilesProvider: LogFilesProviding
 
@@ -468,8 +470,9 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        cookieStorage: any CookieStorageProtocol,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        cookieStorage: any WireNetwork.CookieStorageProtocol,
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -502,6 +505,7 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.journal = journal
         self.logFilesProvider = logFilesProvider
+        self.updateBackendMetadataWorker = .updateBackendMetadata(useCase: updateBackendMetadataUseCase)
 
         super.init()
 
@@ -693,6 +697,7 @@ public final class ZMUserSession: NSObject {
 
         await startWorkAgentAndGenerators()
         checkBlacklistWorker?.start()
+        updateBackendMetadataWorker?.start()
     }
 
     private func startWorkAgentAndGenerators() async {
@@ -782,6 +787,7 @@ public final class ZMUserSession: NSObject {
         coreDataStack.close()
         contextStorage.clear()
         checkBlacklistWorker = nil
+        updateBackendMetadataWorker = nil
 
         // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
         // are left to be cleaned up when ZMUserSession is deallocated to avoid
@@ -819,7 +825,6 @@ public final class ZMUserSession: NSObject {
         StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
-            cookieStorage: transportSession.cookieStorage,
             pushMessageHandler: localNotificationDispatcher!,
             flowManager: flowManager,
             localNotificationDispatcher: localNotificationDispatcher!,
@@ -1544,7 +1549,15 @@ extension ZMUserSession {
             let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
 
             clientRegistrationStatus.emailCredentials = nil
-            clientRegistrationStatus.cookieProvider.deleteKeychainItems()
+            do {
+                try clientRegistrationStatus.cookieProvider.removeCookies()
+            } catch {
+                let errorDescription = (error as NSError).safeForLoggingDescription
+                WireLogger.authentication.error(
+                    "Failed to remove cookies: \(errorDescription)",
+                    attributes: .safePublic
+                )
+            }
 
             let selfUser = ZMUser.selfUser(in: syncContext)
             let clientDeletedRemotelyError = NSError.userSessionError(
@@ -1643,6 +1656,20 @@ extension ZMUserSession {
         }
 
         return migrations
+    }
+
+}
+
+public extension ZMUserSession {
+
+    // TODO: [WPB-25551] Clean up testing code
+    func _simulateLongCCTransaction(seconds: Int) async throws {
+        let coreCrypto = try await coreCryptoProvider.coreCrypto()
+        try await coreCrypto.transaction { _ in
+            WireLogger.coreCrypto.debug("starting long transaction")
+            try await Task.sleep(for: .seconds(seconds))
+            WireLogger.coreCrypto.debug("finished long transaction")
+        }
     }
 
 }

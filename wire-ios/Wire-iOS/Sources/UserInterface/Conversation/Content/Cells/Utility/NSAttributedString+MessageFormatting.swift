@@ -87,10 +87,12 @@ extension NSAttributedString {
     fileprivate static func defaultMarkdownStyle() -> DownStyle {
         let style = DownStyle.normal
 
-        style.baseFont = UIFont.normalLightFont
-        style.baseFontColor = SemanticColors.Label.textDefault
+        style.baseFont = UIFont.font(for: .body1)
+        style.baseFontColor = ColorTheme.Backgrounds.onBackground
         style.baseParagraphStyle = paragraphStyle
         style.listItemPrefixColor = style.baseFontColor.withAlphaComponent(0.64)
+        style.quoteColor = style.baseFontColor.withAlphaComponent(0.6)
+        style.quoteParagraphStyle = paragraphStyle.indentedBy(points: 10)
 
         return style
     }
@@ -98,6 +100,7 @@ extension NSAttributedString {
     static func formatForPreview(
         message: TextMessageData,
         inputMode: Bool,
+        textColor: UIColor = ColorTheme.Backgrounds.onBackground,
         accentColor: AccentColor
     ) -> NSAttributedString {
         var plainText = message.messageText ?? ""
@@ -107,6 +110,12 @@ extension NSAttributedString {
 
         // Perform markdown parsing
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: previewStyle)
+
+        // Reply previews are line-limited (`maximumNumberOfLines = 4`), and the layout
+        // blanks `markdown(from:)` inserts between list items would each consume one
+        // of those visible slots. Drop them so the preview shows 4 real items, not
+        // 2 items + 2 blanks.
+        markdownText.stripLayoutBlankLines()
 
         // Highlight mentions using previously inserted text markers
         markdownText
@@ -132,7 +141,7 @@ extension NSAttributedString {
         markdownText.removeAttribute(.link, range: NSRange(location: 0, length: markdownText.length))
         markdownText.addAttribute(
             .foregroundColor,
-            value: SemanticColors.Label.textDefault,
+            value: textColor,
             range: NSRange(location: 0, length: markdownText.length)
         )
         return markdownText
@@ -218,6 +227,24 @@ extension NSMutableAttributedString {
 
         if trailingWhitespaceRange.location != NSNotFound {
             mutableString.deleteCharacters(in: trailingWhitespaceRange)
+        }
+    }
+
+    /// Remove the 1pt-tall blank-line characters that
+    /// `NSAttributedString.insertEmptyLinesAtParagraphBreaks` inserts between markdown
+    /// list items. Reply-preview cells limit the text container to a fixed line count,
+    /// where those layout blanks would otherwise eat visible rows.
+    func stripLayoutBlankLines() {
+        let nsString = mutableString as NSString
+        var indicesToRemove: [Int] = []
+        for i in 0 ..< length where nsString.character(at: i) == 0x0A {
+            if let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
+               ps.minimumLineHeight == 1, ps.maximumLineHeight == 1 {
+                indicesToRemove.append(i)
+            }
+        }
+        for index in indicesToRemove.reversed() {
+            deleteCharacters(in: NSRange(location: index, length: 1))
         }
     }
 
@@ -314,6 +341,21 @@ private extension IndexSet {
         includedIndexSet.insert(integersIn: range)
 
         self = includedIndexSet.subtracting(excludedIndexSet)
+    }
+
+}
+
+// extension from Down
+private extension NSParagraphStyle {
+
+    func indentedBy(points: CGFloat) -> NSParagraphStyle {
+        let copy = mutableCopy() as! NSMutableParagraphStyle
+        copy.firstLineHeadIndent += points
+        copy.headIndent += points
+        copy.tabStops = copy.tabStops.map {
+            NSTextTab(textAlignment: $0.alignment, location: $0.location + points)
+        }
+        return copy as NSParagraphStyle
     }
 
 }

@@ -6,8 +6,24 @@
       "options" : {
         "environmentVariableEntries" : [
           {
+            "key" : "SSO_CLAIMED_DOMAIN_CODE",
+            "value" : "$(SSO_CLAIMED_DOMAIN_CODE)"
+          },
+          {
+            "key" : "SSO_CLAIMED_USER_PASSWORD",
+            "value" : "$(SSO_CLAIMED_USER_PASSWORD)"
+          },
+          {
+            "key" : "SSO_CLAIMED_USER_EMAIL",
+            "value" : "$(SSO_CLAIMED_USER_EMAIL)"
+          },
+          {
             "key" : "INBUCKET_USERNAME",
             "value" : "$(INBUCKET_USERNAME)"
+          },
+          {
+            "key" : "OKTA_API_KEY_IOS",
+            "value" : "$(OKTA_API_KEY_IOS)"
           },
           {
             "key" : "BELLA_INBUCKET_URL",
@@ -94,6 +110,7 @@
     "environmentVariableEntries" : [
 
     ],
+    "defaultTestExecutionTimeAllowance" : 300,
     "language" : "en",
     "region" : "US",
     "testTimeoutsEnabled" : true

@@ -49,8 +49,17 @@ class OnMyiPhonePage: PageModel {
         return try BackupOrRestorePage()
     }
 
-    func selectBackupFile(withName name: String) throws -> SetPasswordPage {
+    func save() {
+        saveButton.tap()
+    }
+
+    func selectBackupFileWithPassword(withName name: String) throws -> SetPasswordPage {
         backupFile(name).tap()
         return try SetPasswordPage()
+    }
+
+    func selectBackupFileWithoutPassword(withName name: String) throws -> BackupOrRestorePage {
+        backupFile(name).tap()
+        return try BackupOrRestorePage()
     }
 }

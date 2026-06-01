@@ -336,8 +336,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
-    private let authenticatedSessionFactory: AuthenticatedSessionFactory
-    private let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    private let cookieStorage: CookieStorage
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
@@ -349,10 +349,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         didSet {
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
-            authenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.reachability = reachability
-            authenticatedSessionFactory.reachability = reachability
         }
     }
 
@@ -402,6 +400,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// for the same account concurrently.
     private let withSessionTaskManager = NonReentrantTaskManager<ZMUserSession, any Error>()
 
+    private let mediaManager: MediaManagerType
+    private let flowManager: FlowManager
+
     // MARK: - Life cycle
 
     public override init() {
@@ -413,6 +414,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
+        cookieStorage: CookieStorage,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -432,7 +434,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         countlyProvider: @escaping () -> CountlyProtocol,
         logFilesProvider: LogFilesProviding
     ) throws {
-        let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
 
         var proxyCredentials: WireTransport.ProxyCredentials?
@@ -451,24 +452,12 @@ public final class SessionManager: NSObject, SessionManagerType {
             reachability: reachability
         )
 
-        let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            currentAppVersion: currentAppVersion,
-            currentBuildNumber: currentBuildNumber,
-            application: application,
-            mediaManager: mediaManager,
-            flowManager: flowManager,
-            environment: environment,
-            proxyUsername: proxyCredentials?.username,
-            proxyPassword: proxyCredentials?.password,
-            reachability: reachability,
-            minTLSVersion: minTLSVersion
-        )
-
         try self.init(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
-            authenticatedSessionFactory: authenticatedSessionFactory,
+            cookieStorage: cookieStorage,
+            mediaManager: mediaManager,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
             delegate: delegate,
@@ -532,7 +521,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
-        authenticatedSessionFactory: AuthenticatedSessionFactory,
+        cookieStorage: CookieStorage,
+        mediaManager: MediaManagerType,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
         delegate: SessionManagerDelegate?,
@@ -559,6 +549,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.environment = environment
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
+        self.cookieStorage = cookieStorage
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -570,6 +561,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.minTLSVersion = minTLSVersion
         self.deleteUserLogs = deleteUserLogs
         self.logFilesProvider = logFilesProvider
+        self.mediaManager = mediaManager
+        self.flowManager = FlowManager(mediaManager: mediaManager)
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -599,7 +592,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.sessionManager.debug("No known accounts.")
         }
 
-        self.authenticatedSessionFactory = authenticatedSessionFactory
         self.unauthenticatedSessionFactory = unauthenticatedSessionFactory
         self.reachability = reachability
         self.maxNumberAccounts = maxNumberAccounts
@@ -684,7 +676,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         let proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
             try proxyCredentials.persist()
-            authenticatedSessionFactory.updateProxy(username: username, password: password)
             unauthenticatedSessionFactory.updateProxy(username: username, password: password)
         } catch {
             Logging.network.error("proxy credentials could not be saved - \(error.localizedDescription)")
@@ -1019,6 +1010,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 let loader = try UserSessionLoader(
                     account: account,
                     accountManager: accountManager,
+                    cookieStorage: cookieStorage,
                     sharedContainerURL: sharedContainerURL,
                     defaultEnvironment: defaultEnvironment,
                     legacyEnvironment: environment,
@@ -1028,8 +1020,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                     application: application,
                     appVersion: currentAppVersion,
                     buildNumber: currentBuildNumber,
-                    mediaManager: authenticatedSessionFactory.mediaManager,
-                    flowManager: authenticatedSessionFactory.flowManager,
+                    mediaManager: mediaManager,
+                    flowManager: flowManager,
                     logFilesProvider: logFilesProvider,
                     isDeveloperModeEnabled: isDeveloperModeEnabled,
                     faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
@@ -1161,7 +1153,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func deleteAccountData(for account: Account) {
         WireLogger.sessionManager.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         WireLogger.session.debug("Deleting the data for account \(account)")
-        environment.cookieStorage(for: account).deleteKeychainItems()
+        do {
+            try environment.cookieStorage(for: account).removeCookies()
+        } catch {
+            WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
+        }
         account.deleteKeychainItems()
 
         clearCRLExpirationDates(for: account)
@@ -1271,29 +1267,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @MainActor
-    private func createUserSession(
-        for account: Account,
-        with coreDataStack: CoreDataStack,
-        journal: Journal,
-        logFilesProvider: LogFilesProviding
-    ) async -> ZMUserSession? {
-        let sessionConfig = ZMUserSession.Configuration(
-            appLockConfig: configuration.legacyAppLockConfig
-        )
-
-        return await authenticatedSessionFactory.session(
-            for: account,
-            coreDataStack: coreDataStack,
-            configuration: sessionConfig,
-            sharedUserDefaults: sharedUserDefaults,
-            isDeveloperModeEnabled: isDeveloperModeEnabled,
-            journal: journal,
-            logFilesProvider: logFilesProvider,
-            faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
-        )
-    }
-
-    @MainActor
     private func finishSettingUpUserSession(
         account: Account,
         newSession: ZMUserSession,
@@ -1380,13 +1353,13 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func updateCallNotificationStyle() {
         switch callNotificationStyle {
         case .pushNotifications:
-            authenticatedSessionFactory.mediaManager.setUiStartsAudio(false)
+            mediaManager.setUiStartsAudio(false)
             callKitManager.isEnabled = false
 
         case .callKit:
             // Should be set to true when CallKit is used. Then AVS will not start
             // the audio before the audio session is active
-            authenticatedSessionFactory.mediaManager.setUiStartsAudio(true)
+            mediaManager.setUiStartsAudio(true)
             callKitManager.isEnabled = true
         }
     }

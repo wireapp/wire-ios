@@ -27,10 +27,8 @@
 
 @implementation NSUserDefaults_SharedUserDefaultsTests
 
-static NSString *const cookiesKey = @"ZMCookieKey";
-
 - (void)tearDown {
-    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:cookiesKey];
+    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:ZMCookieKeyKey];
     [super tearDown];
 }
 
@@ -105,7 +103,7 @@ static NSString *const cookiesKey = @"ZMCookieKey";
 {
     //given
     NSData *key1 = [NSUserDefaults cookiesKey];
-    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:cookiesKey];
+    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:ZMCookieKeyKey];
     
     //when
     NSData *key2 = [NSUserDefaults cookiesKey];
@@ -121,8 +119,8 @@ static NSString *const cookiesKey = @"ZMCookieKey";
     //given
     NSData *key1 = [NSUserDefaults cookiesKey];
     
-    [[NSUserDefaults standardUserDefaults] setObject:key1 forKey:cookiesKey];
-    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:cookiesKey];
+    [[NSUserDefaults standardUserDefaults] setObject:key1 forKey:ZMCookieKeyKey];
+    [[NSUserDefaults sharedUserDefaults] removeObjectForKey:ZMCookieKeyKey];
     
     //when
     NSData *key2 = [NSUserDefaults cookiesKey];
@@ -131,10 +129,10 @@ static NSString *const cookiesKey = @"ZMCookieKey";
     //then
     
     //key should be removed from standard user defaults
-    XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:cookiesKey]);
+    XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:ZMCookieKeyKey]);
     
     //key should be stored in shared user defaults
-    XCTAssertEqualObjects([[NSUserDefaults sharedUserDefaults] objectForKey:cookiesKey], key1);
+    XCTAssertEqualObjects([[NSUserDefaults sharedUserDefaults] objectForKey:ZMCookieKeyKey], key1);
 }
 #endif
 

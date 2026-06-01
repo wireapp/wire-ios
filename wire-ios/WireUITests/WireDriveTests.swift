@@ -25,12 +25,34 @@ final class WireDriveTests: WireUITestCase {
         _ conversation: CreateConversationOption,
         memberCount: Int = 2
     ) async throws -> UserInfo {
-        let (teamOwner, _, _, _) = try await userHelper.registerTeam(
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
             withMemberCount: memberCount,
             conversation: conversation,
             driveEnabled: true
         )
         return teamOwner
+    }
+
+    private func createDriveEnabledConversationWithGuest(groupName: String) async throws -> UserInfo {
+        let (owner, guest) = try await UserHelper.default.connectDriveEnabledTeamUserWithGuestUser()
+
+        let domain = BackendTarget.staging.domainInfo
+        let ownerQualifiedID = WireFoundation.QualifiedID(id: try XCTUnwrap(UUID(uuidString: owner.id)), domain: domain)
+        let guestQualifiedID = WireFoundation.QualifiedID(id: try XCTUnwrap(UUID(uuidString: guest.id)), domain: domain)
+
+        let participantsQualifiedIDs = [
+            ownerQualifiedID,
+            guestQualifiedID
+        ]
+
+        try await UserHelper.default.createGroupConversations(
+            qualifiedIds: participantsQualifiedIDs,
+            owner: owner,
+            groupName: groupName,
+            driveEnabled: true
+        )
+
+        return guest
     }
 
     private func loginAndOpenConversation(for user: UserInfo) throws -> ActiveConversationPage {
@@ -54,14 +76,14 @@ final class WireDriveTests: WireUITestCase {
         memberCount: Int = 2,
         channelEnabled: Bool = false
     ) async throws -> (teamOwner: UserInfo, teamMembers: [UserInfo]) {
-        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: memberCount)
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: memberCount)
         let teamID = try XCTUnwrap(teamOwner.teamID)
 
         if channelEnabled {
-            try await userHelper.unlockAndEnableChannelFeature(teamID: teamID)
+            try await UserHelper.default.unlockAndEnableChannelFeature(teamID: teamID)
         }
 
-        try await userHelper.unlockAndEnableDriveFeature(teamID: teamID)
+        try await UserHelper.default.unlockAndEnableDriveFeature(teamID: teamID)
         return (teamOwner, teamMembers)
     }
 
@@ -244,15 +266,69 @@ final class WireDriveTests: WireUITestCase {
 
         // WHEN
         let activeConversationPage = try loginAndOpenConversation(for: teamOwner)
+
+        let folderName = "Test"
         let sharedDrivePage = try activeConversationPage
             .openSharedDrive()
-
-        let createFolderPage = try sharedDrivePage
             .createFolder()
-
-        let folderName = createFolderPage.enterFolderNameAndValidate()
+            .enterFolderNameAndValidate(name: folderName)
 
         // THEN
         XCTAssertTrue(sharedDrivePage.verifyFolderIsCreated(folderName: folderName))
+    }
+
+    @MainActor
+    func testGuestCanAccessSharedDriveOnly_TC_10875() async throws {
+        // GIVEN
+        let groupName = "Team + Guest"
+        let guest = try await createDriveEnabledConversationWithGuest(groupName: groupName)
+
+        // WHEN
+        let conversationsPage = try app
+            .loginUser(email: guest.email, password: guest.password)
+            .acceptPopup()
+
+        // THEN
+        conversationsPage.verifyDriveTabButtonIsHidden()
+        let activeConversationPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
+        XCTAssert(activeConversationPage.guestsArePresentBanner.exists)
+        activeConversationPage.verifyCanAccessSharedDrive()
+    }
+
+    @MainActor
+    func testSearchingForFileByName_TC_8962() async throws {
+
+        // GIVEN
+        let message = "Attachment with Text"
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        // WHEN
+        let sharedDrivePage = try uploadSketchAndOpenSharedDrive(message: message, for: teamOwner)
+
+        let sharedFileName = sharedDrivePage.fileNameText
+
+        let positiveSearchTerm = sharedFileName.prefix(3).lowercased()
+        let negativeSearchTerm = "my precious"
+
+        let searchTextField = sharedDrivePage.searchTextField
+        searchTextField.tap()
+
+        searchTextField.typeText(positiveSearchTerm)
+        XCTAssertTrue(
+            sharedDrivePage.fileIcon.waitForExistence(timeout: 2)
+        )
+        let positiveSearchResults = sharedDrivePage.numberOfFilesInList
+
+        searchTextField.typeText(negativeSearchTerm)
+        XCTAssertTrue(
+            sharedDrivePage.fileIcon.waitForNonExistence(timeout: 2)
+        )
+        let negativeSearchResults = sharedDrivePage.numberOfFilesInList
+
+        // THEN
+        XCTAssertEqual(positiveSearchResults, 1)
+        XCTAssertEqual(negativeSearchResults, 0)
     }
 }

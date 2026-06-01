@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Network
 import SwiftUI
 import WireDesign
 import WireFoundation
@@ -45,6 +46,10 @@ final class FilesViewTests: XCTestCase {
     private var updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase!
     private var updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase!
     private var driveConversationsUseCase: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>!
+    private var makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase!
+    private var removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase!
+    private var fetchOfflineAvailableAssetsUseCase: WireDriveFetchOfflineAvailableAssetsUseCase!
+    private var networkMonitor: NetworkMonitor!
 
     private let record: Bool? = nil
 
@@ -102,6 +107,19 @@ final class FilesViewTests: XCTestCase {
         deletePublicLink = WireDriveDeletePublicLinkUseCase(nodesAPI: nodesApi)
         updatePublicLinkExpiration = WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi)
         updatePublicLinkPassword = WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi)
+        makeAssetAvailableOfflineUseCase = WireDriveMakeAssetAvailableOfflineUseCase(
+            localAssetRepository: localAssetsRepository
+        )
+        removeAssetAvailableOfflineUseCase = WireDriveRemoveAssetAvailableOfflineUseCase(
+            localAssetRepository: localAssetsRepository
+        )
+
+        fetchOfflineAvailableAssetsUseCase = WireDriveFetchOfflineAvailableAssetsUseCase(
+            localAssetRepository: localAssetsRepository
+        )
+
+        networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
+        networkMonitor.currentStatus = .connected
     }
 
     @MainActor
@@ -119,25 +137,12 @@ final class FilesViewTests: XCTestCase {
         updatePublicLinkExpiration = nil
         updatePublicLinkPassword = nil
         driveConversationsUseCase = nil
+        networkMonitor = nil
     }
 
     @MainActor
     func testFilesViewItemView_withShortStrings() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
-        )
+        let item = filesViewItem()
 
         let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
@@ -152,20 +157,10 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_withLongStrings() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
+        let item = filesViewItem(
             name: "some random file with a long name.excel",
-            filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
-            modifiedAt: modifiedAt,
             icon: .spreadsheet,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -181,20 +176,8 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_withOneTag() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: ["important"],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
+        let item = filesViewItem(
+            tags: ["important"]
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -210,20 +193,8 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_withThreeTags() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: ["tag1", "tag2", "abcdef"],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
+        let item = filesViewItem(
+            tags: ["tag1", "tag2", "abcdef"]
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -239,20 +210,10 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_dynamicTypeVariants() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
+        let item = filesViewItem(
             name: "some random file with a long name.excel",
-            filePath: "",
             ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .spreadsheet,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
+            icon: .spreadsheet
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -270,27 +231,18 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_whenDownloading() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
-        )
+        let item = filesViewItem()
+
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
             eTag: "eTag",
             path: "some/path",
             contentType: "some/content/type",
             size: nil,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: .downloading(progress: 0.5)
         )
 
@@ -307,27 +259,18 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_whenDownloadFailed() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
-        )
+        let item = filesViewItem()
+
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
             eTag: "eTag",
             path: "some/path",
             contentType: "some/content/type",
             size: nil,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: .failed(error: URLError(.notConnectedToInternet))
         )
 
@@ -390,9 +333,33 @@ final class FilesViewTests: XCTestCase {
             .verify(matching: view, named: "dark", record: record)
     }
 
+    private func filesViewItem(
+        name: String = "image.jpg",
+        ownedBy: String = "Natsuko Shiroi",
+        icon: WireDriveFileType = .image,
+        tags: [String] = []
+    ) -> FilesViewItem {
+        FilesViewItem(
+            id: UUID(),
+            eTag: "eTag",
+            kind: .file,
+            name: name,
+            filePath: "",
+            ownedBy: ownedBy,
+            modifiedAt: modifiedAt,
+            icon: icon,
+            tags: tags,
+            isEditable: false,
+            publicLinkID: nil,
+            conversationName: "Conversation 1",
+            isReadOnly: false,
+            size: nil
+        )
+    }
+
     @MainActor
     private func makeFilesView(
-        state: FilesViewModel.State
+        state: FilesListStateController.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
@@ -402,7 +369,7 @@ final class FilesViewTests: XCTestCase {
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
-                createFileUseCase: WireDriveCreateFileUseCase(
+                createFile: WireDriveCreateFileUseCase(
                     nodesRepository: nodesRepository
                 ),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
@@ -412,7 +379,7 @@ final class FilesViewTests: XCTestCase {
                     nodeCache: MockWireDriveNodeCacheProtocol()
                 ),
                 getEditingURL: getEditingURLUseCase,
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
                     fileCache: MockFileCache()
                 ),
@@ -422,17 +389,22 @@ final class FilesViewTests: XCTestCase {
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
                 getDriveConversations: driveConversationsUseCase,
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(
+                    repository: nodesRepository
+                ),
+                makeAssetAvailableOffline: makeAssetAvailableOfflineUseCase,
+                removeAssetAvailableOffline: removeAssetAvailableOfflineUseCase,
+                getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
             nodesRepository: nodesRepository,
-            fileCache: MockFileCache(),
             isBrowsing: false,
-            accentColorProvider: { .default }
+            networkMonitor: networkMonitor
         )
 
-        filesViewModel.state = state
-        filesViewModel.hasMore = false
+        filesViewModel.filesController.state = state
+        filesViewModel.filesController.hasMore = false
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)
@@ -453,6 +425,7 @@ private extension FilesItemViewModel {
         let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
         localAssetRepository.observeAssetNodeID_MockValue = CurrentValueSubject<WireDriveLocalAsset?, Never>(asset)
             .eraseToAnyPublisher()
+        localAssetRepository.assetNodeID_MockValue = WireDriveLocalAsset.fixture()
 
         return FilesItemViewModel(
             item: item,
@@ -468,4 +441,10 @@ private extension FilesItemViewModel {
         )
     }
 
+}
+
+private final class MockNWPathMonitoring: NWPathMonitoring {
+    var pathUpdateHandler: (@Sendable (NWPath) -> Void)?
+
+    func start(queue: DispatchQueue) {}
 }

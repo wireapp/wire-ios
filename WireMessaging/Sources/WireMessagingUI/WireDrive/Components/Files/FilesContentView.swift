@@ -49,24 +49,26 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 .ignoresSafeArea(.all)
 
             VStack {
-                VStack(alignment: .leading, spacing: 0) {
-                    FilesFilteringView(
-                        useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
-                        filtersSelection: viewModel.filtersSelection,
-                        isBrowsing: isBrowsing,
-                        conversations: Set(viewModel.conversations),
-                        onUpdate: viewModel.onUpdate(of:),
-                        onSearchFocused: { isSearchFocused = $0 }
-                    )
-                    .opacity(isFilterBarPresented ? 1 : 0)
-                    .frame(height: isFilterBarPresented ? nil : 0)
-                    .padding(.bottom, isFilterBarPresented ? 15 : 0)
+                if !viewModel.isOffline {
+                    VStack(alignment: .leading, spacing: 0) {
+                        FilesFilteringView(
+                            useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
+                            filtersSelection: viewModel.filtersSelection,
+                            isBrowsing: isBrowsing,
+                            conversations: Set(viewModel.conversations),
+                            onUpdate: viewModel.onUpdate(of:),
+                            onSearchFocused: { isSearchFocused = $0 }
+                        )
+                        .opacity(isFilterBarPresented ? 1 : 0)
+                        .frame(height: isFilterBarPresented ? nil : 0)
+                        .padding(.bottom, isFilterBarPresented ? 15 : 0)
 
-                    FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
+                        FilesSortingView(viewModel: viewModel.filesSortingViewModel())
+                    }
+                    .padding(.top, 4)
+
+                    Spacer()
                 }
-                .padding(.top, 4)
-
-                Spacer()
 
                 switch viewModel.state {
                 case .loading:
@@ -91,7 +93,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 }
                 Spacer()
             }
-            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
+            .animation(.easeInOut(duration: 0.25), value: viewModel.isOffline)
             .animation(.easeOut(duration: 0.25), value: isSearchFocused)
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(navigationTitle)
@@ -100,7 +102,6 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             .toolbarBackground(backgroundColor, for: .navigationBar)
             .toolbar { toolbarContent() }
             .if(viewModel.showSearchBar, transform: searchView(content:))
-            .onAppear { reloadTask() }
             .onDisappear {
                 isSearchFocused = false
                 viewModel.resetFilters()
@@ -113,13 +114,21 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             )
             .sheet(
                 item: $viewModel.sheetNavigation,
-                onDismiss: {
-                    Task { await viewModel.onSheetDismissed() }
-                },
                 content: { navigationItem in
                     sheetContent(navigationItem)
                 }
             )
+        }
+        .onChange(of: viewModel.networkStatus) { _, newValue in
+            if newValue != nil {
+                Task {
+                    await viewModel.reload(refreshing: true)
+                }
+            }
+        }
+        .task {
+            await viewModel.setup()
+            await viewModel.reload()
         }
     }
 
@@ -136,7 +145,10 @@ private extension FilesContentView {
         List {
             Group {
                 itemsSection
-                if showLoadMoreRow { loadMoreRow }
+
+                if showLoadMoreRow {
+                    loadMoreRow
+                }
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
@@ -172,7 +184,17 @@ private extension FilesContentView {
 
         switch viewModel.state {
         case let .received(items) where items.isEmpty:
-            FilesInfoView(scope: scope, kind: .empty)
+            VStack(spacing: 0) {
+                if viewModel.isOffline {
+                    FilesOfflineBarView()
+                }
+
+                Spacer()
+
+                FilesInfoView(scope: scope, kind: .empty)
+
+                Spacer()
+            }
         case .pending:
             FilesInfoView(scope: scope, kind: .preparing)
         default:
@@ -184,10 +206,11 @@ private extension FilesContentView {
         // workaround: when filtering by conversation, BE returns sometimes empty payload with hasMore flag set to true
         // which wrongly displays the load more row on an empty state screen so we need here to explicitly check that
         // the items are empty.
-        let hasMore = viewModel.hasMore
+        let hasMore = viewModel.filesController.hasMore
         let isEmptyItems = viewModel.state.items.isEmpty
+        let isOffline = viewModel.isOffline
 
-        return hasMore && !isEmptyItems
+        return hasMore && !isEmptyItems && !isOffline
     }
 }
 
@@ -201,7 +224,7 @@ private extension FilesContentView {
     }
 
     var loadMoreRow: some View {
-        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMoreTask)
+        LoadMoreView(isLoading: viewModel.filesController.isLoading, onLoadMore: loadMoreTask)
     }
 }
 
@@ -239,6 +262,7 @@ private extension FilesContentView {
 
     var offlineBar: some View {
         FilesOfflineBarView()
+            .background(backgroundColor)
             .transition(
                 .move(edge: .top)
                     .combined(with: .opacity)

@@ -19,6 +19,7 @@
 import Combine
 import CoreData
 import XCTest
+@testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -61,7 +62,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCrypto = MockCoreCryptoProtocol()
         coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+        coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: coreCrypto)
         journal = Journal(
             userID: UUID(),
             storage: UserDefaults.temporary()

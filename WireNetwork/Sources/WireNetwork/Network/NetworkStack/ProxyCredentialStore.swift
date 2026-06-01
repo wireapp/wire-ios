@@ -29,13 +29,13 @@ public struct ProxyCredentialStore {
         host: String,
         port: Int
     ) async throws -> (username: String, password: String)? {
-        let usernameData: Data? = try await keychain.fetchItem(query: [
+        let usernameData: Data? = try keychain.fetchItem(query: [
             .itemClass(.genericPassword),
             .account("proxy-\(host):\(port)-username"),
             .returningData(true)
         ])
 
-        let passwordData: Data? = try await keychain.fetchItem(query: [
+        let passwordData: Data? = try keychain.fetchItem(query: [
             .itemClass(.genericPassword),
             .account("proxy-\(host):\(port)-password"),
             .returningData(true)
@@ -60,26 +60,26 @@ public struct ProxyCredentialStore {
         username: String,
         password: String
     ) async throws {
-        try? await keychain.deleteItem(
+        try? keychain.deleteItem(
             query: getUsernameQuery(
                 host: host,
                 port: port
             )
         )
-        try? await keychain.deleteItem(
+        try? keychain.deleteItem(
             query: getPasswordQuery(
                 host: host,
                 port: port
             )
         )
-        try await keychain.addItem(
+        try keychain.addItem(
             query: setUsernameQuery(
                 host: host,
                 port: port,
                 username: username
             )
         )
-        try await keychain.addItem(
+        try keychain.addItem(
             query: setPasswordQuery(
                 host: host,
                 port: port,

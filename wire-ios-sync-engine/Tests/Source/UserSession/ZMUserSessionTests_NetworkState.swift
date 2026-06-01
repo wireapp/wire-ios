@@ -16,9 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireDataModelSupport
 import WireDomain
+import WireDomainSupport
 import WireLoggingSupport
+import WireNetwork
 import XCTest
 
 @testable import WireLogging
@@ -32,16 +35,14 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         // given
         let userId = NSUUID.create()!
 
-        cookieStorage = ZMPersistentCookieStorage(
-            forServerName: "usersessiontest.example.com",
-            userIdentifier: userId,
-            useCache: true
+        cookieStorage = LegacyCookieStorage(
+            testingWithUserIdentifier: userId
         )
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         let coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: mockCoreCrypto)
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         let coreDataStack = try await createCoreDataStack()
@@ -59,6 +60,13 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             storage: UserDefaults.temporary()
         )
         let logFilesProvider = LogFilesProvidingMock()
+
+        let updateBackendMetadataUseCase = MockUpdateBackendMetadataUseCaseProtocol()
+        updateBackendMetadataUseCase.invoke_MockValue = ResolvedBackendMetadata(
+            apiVersion: .v15,
+            domain: "example.com",
+            isFederationEnabled: true
+        )
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
@@ -84,7 +92,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             minTLSVersion: nil,
             journal: journal,
             logFilesProvider: logFilesProvider,
-            faultyMLSRemovalKeysByDomain: [:]
+            faultyMLSRemovalKeysByDomain: [:],
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase
         )
         let testSession = builder.build()
         testSession.setup(

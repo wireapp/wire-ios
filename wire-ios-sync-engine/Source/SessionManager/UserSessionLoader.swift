@@ -32,6 +32,7 @@ final class UserSessionLoader {
 
     private let account: Account
     private let accountManager: AccountManager
+    private let cookieStorage: CookieStorage
     private let sharedContainerURL: URL
     private let defaultEnvironment: BackendEnvironment2
     private let legacyEnvironment: WireTransport.BackendEnvironment
@@ -56,6 +57,7 @@ final class UserSessionLoader {
     init(
         account: Account,
         accountManager: AccountManager,
+        cookieStorage: CookieStorage,
         sharedContainerURL: URL,
         defaultEnvironment: BackendEnvironment2,
         legacyEnvironment: WireTransport.BackendEnvironment,
@@ -73,6 +75,7 @@ final class UserSessionLoader {
     ) throws {
         self.account = account
         self.accountManager = accountManager
+        self.cookieStorage = cookieStorage
         self.sharedContainerURL = sharedContainerURL
         self.defaultEnvironment = defaultEnvironment
         self.legacyEnvironment = legacyEnvironment
@@ -185,18 +188,13 @@ final class UserSessionLoader {
         let networkServices = try await networkStack.networkServices
 
         // Store any new cookies.
-        let cookieStorage = CookieStorage(
-            userID: accountID,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
-        )
-
         if let cookies = newEnvironment?.cookies {
-            try await cookieStorage.storeCookies(cookies)
+            try cookieStorage.storeCookies(cookies, userID: accountID)
         }
 
         // Check if this backend supports MLS.
         if let isBackendMLSEnabled = try await isBackendMLSEnabled(
+            accountID: accountID,
             networkService: networkServices.rest,
             cookieStorage: cookieStorage,
             apiVersion: metadata.apiVersion
@@ -297,45 +295,30 @@ final class UserSessionLoader {
     }
 
     private func resolveBackendMetadata(with networkStack: NetworkStack) async throws -> ResolvedBackendMetadata {
-        // Get the last known metadata.
-        var prevMetadata: ResolvedBackendMetadata?
+        // Return the last stored metadata if available.
         if let storedMetadata = try backendStore.fetchBackendMetadata(accountID: accountID) {
-            prevMetadata = storedMetadata
-        } else if
-            let legacyAPIVersion = BackendInfo.apiVersion,
-            let legacyDomain = BackendInfo.domain {
-            // We're on the update path, use the legacy metadata.
-            prevMetadata = ResolvedBackendMetadata(
+            return storedMetadata
+        }
+
+        // Otherwise store and return legacy metadata if available.
+        if let legacyAPIVersion = BackendInfo.apiVersion, let legacyDomain = BackendInfo.domain {
+            // We're on the update path, use the legacy metadata
+            let legacyMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
                 isFederationEnabled: BackendInfo.isFederationEnabled
             )
+            try backendStore.storeBackendMetadata(legacyMetadata, for: accountID)
+            return legacyMetadata
         }
 
-        // Get new metadata.
+        // Otherwise fetch and store new metadata.
         let newMetadata: ResolvedBackendMetadata
         do {
             newMetadata = try await networkStack.resolvedBackendMetadata()
-        } catch is URLError {
-            // To allow offline browsing fallback to previous metadata if possible.
-            if let prevMetadata {
-                newMetadata = prevMetadata
-            } else {
-                throw Failure.noResolvedBackendMetadataAvailable
-            }
+        } catch {
+            throw Failure.noResolvedBackendMetadataAvailable
         }
-
-        if let prevMetadata {
-            if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-                // Now that federation is enabled we'll start storing domains
-                // on entities in the database. We'll therefore need to add
-                // the local domain to all existing entities so they're
-                // fully qualified.
-                journal[.isFederationMigrationRequired] = true
-            }
-        }
-
-        // Store new metadata.
         do {
             try backendStore.storeBackendMetadata(
                 newMetadata,
@@ -344,7 +327,6 @@ final class UserSessionLoader {
         } catch {
             throw Failure.failedToStoreMetadata(error)
         }
-
         return newMetadata
     }
 
@@ -532,6 +514,19 @@ final class UserSessionLoader {
             )
         )
 
+        let resolveBackendMetadataUseCase = ResolveBackendMetadataUseCase(
+            backendMetadataAPI: BackendMetadataAPIBuilder(networkService: restNetworkService).makeAPI(),
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                WireNetwork.APIVersion($0)
+            }
+        )
+        let updateBackendMetadataUseCase = UpdateBackendMetadataUseCase(
+            resolveBackendMetadataUseCase: resolveBackendMetadataUseCase,
+            backendStore: backendStore,
+            journal: journal,
+            accountID: accountID
+        )
         let userSession = ZMUserSession(
             userId: accountID,
             restNetworkService: restNetworkService,
@@ -562,7 +557,8 @@ final class UserSessionLoader {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase
         )
 
         userSession.setup(
@@ -580,12 +576,14 @@ final class UserSessionLoader {
     }
 
     private func isBackendMLSEnabled(
+        accountID: UUID,
         networkService: NetworkService,
         cookieStorage: CookieStorage,
         apiVersion: WireNetwork.APIVersion
     ) async throws -> Bool? {
         do {
             let authenticationManager = AuthenticationManager(
+                userID: accountID,
                 clientID: nil,
                 cookieStorage: cookieStorage,
                 networkService: networkService,

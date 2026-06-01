@@ -123,11 +123,11 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
 
     @MainActor
     private func getWireIdentity(
-        coreCrypto: CoreCryptoProtocol,
+        coreCrypto: SafeCoreCrypto,
         conversationId: WireCoreCryptoUniffi.ConversationId,
         clientIDs: [WireCoreCryptoUniffi.ClientId]
     ) async throws -> [WireIdentity] {
-        try await coreCrypto.extendedTransaction {
+        try await coreCrypto.transaction {
             try await $0.getDeviceIdentities(
                 conversationId: conversationId,
                 deviceIds: clientIDs

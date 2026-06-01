@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLocators
 
 /// The view that displays the message to inform the user that they have too many devices.
 
@@ -38,7 +39,7 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
 
         self.mainView = SolidButtonDescription(
             title: TooManyDevices.ManageButton.title.capitalized,
-            accessibilityIdentifier: "manage_devices"
+            accessibilityIdentifier: Locators.ManageDevicesPage.manageDevices.rawValue
         )
         self.secondaryView = nil
         self.footerView = nil
