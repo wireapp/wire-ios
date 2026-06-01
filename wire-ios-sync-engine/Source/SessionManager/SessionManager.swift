@@ -1658,6 +1658,10 @@ extension SessionManager {
     private func applicationDidBecomeActive(_ note: Notification) {
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()
+
+        // In order to test the behaviour, assume here the user did open the main app
+        // and extensions are working again
+        DeveloperFlag.simulateMainAppRequiredError.enable(false)
     }
 
 }
