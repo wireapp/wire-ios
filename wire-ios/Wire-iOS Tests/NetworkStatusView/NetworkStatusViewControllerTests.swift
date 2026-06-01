@@ -235,7 +235,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
 
 final class NetworkStatusViewControllerRetainTests: XCTestCase {
 
-    weak var sut: NetworkStatusViewController! = nil
+    weak var sut: NetworkStatusViewController!
 
     override func tearDown() {
         sut = nil

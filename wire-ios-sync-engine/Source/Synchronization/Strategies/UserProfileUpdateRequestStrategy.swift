@@ -22,15 +22,15 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     let userProfileUpdateStatus: UserProfileUpdateStatus
 
-    fileprivate var passwordUpdateSync: ZMSingleRequestSync! = nil
+    fileprivate var passwordUpdateSync: ZMSingleRequestSync!
 
-    fileprivate var emailUpdateSync: ZMSingleRequestSync! = nil
+    fileprivate var emailUpdateSync: ZMSingleRequestSync!
 
-    fileprivate var handleCheckSync: ZMSingleRequestSync! = nil
+    fileprivate var handleCheckSync: ZMSingleRequestSync!
 
-    fileprivate var handleSetSync: ZMSingleRequestSync! = nil
+    fileprivate var handleSetSync: ZMSingleRequestSync!
 
-    fileprivate var handleSuggestionSearchSync: ZMSingleRequestSync! = nil
+    fileprivate var handleSuggestionSearchSync: ZMSingleRequestSync!
 
     @available(
         *,

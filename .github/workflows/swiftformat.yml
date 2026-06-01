@@ -15,8 +15,6 @@ jobs:
   SwiftFormat:
     runs-on: ubuntu-24.04
     if: ${{ github.event.pull_request.draft != true && github.event_name != 'merge_group' }}
-    container:
-      image: ghcr.io/nicklockwood/swiftformat:0.54.5
 
     steps:
 
@@ -30,9 +28,12 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ steps.changes.outputs.swift == 'true' }}
 
-      - name: GitHub Action for SwiftFormat
-        if: ${{ steps.changes.outputs.swift == 'true' }}
-        run: >
-          swiftformat --lint .
-          --reporter github-actions-log
-          --config .swiftformat
+      - name: Install SwiftFormat 0.58.3
+        run: |
+          curl -L -o swiftformat.zip https://github.com/nicklockwood/SwiftFormat/releases/download/0.58.3/swiftformat_linux.zip
+          unzip swiftformat.zip -d swiftformat_bin
+          sudo mv swiftformat_bin/swiftformat_linux /usr/local/bin/swiftformat
+          chmod +x /usr/local/bin/swiftformat
+
+      - name: Run SwiftFormat
+        run: swiftformat --lint . --reporter github-actions-log --config .swiftformat

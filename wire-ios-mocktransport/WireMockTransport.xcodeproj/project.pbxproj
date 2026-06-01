@@ -392,6 +392,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5950B0382E2EA5990051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/generic-message-proto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.54.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5950B0392E2EA5990051B07A /* GenericMessageProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5950B0382E2EA5990051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */;
+			productName = GenericMessageProtocol;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 54C9022A1B7532DD007162A8 /* Project object */;
 }

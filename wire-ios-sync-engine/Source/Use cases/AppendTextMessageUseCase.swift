@@ -21,11 +21,11 @@ import WireDataModel
 
 public protocol AppendTextMessageUseCaseProtocol {
 
-    func invoke<Conversation: MessageAppendableConversation>(
+    func invoke(
         text: String,
         mentions: [Mention],
         replyingTo: ZMConversationMessage?,
-        in conversation: Conversation,
+        in conversation: some MessageAppendableConversation,
         fetchLinkPreview: Bool
     ) throws
 }

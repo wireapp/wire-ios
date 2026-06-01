@@ -33,7 +33,7 @@ set -Eeuo pipefail
 # Additionally, SPM binaries are not supported, so you need to download the LICENSE file manually and add it to the configuration.
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-LICENSEPLIST="$REPO_ROOT/scripts/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.25.1-macos/bin/license-plist"
+LICENSEPLIST="$REPO_ROOT/scripts/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.27.1-macos/bin/license-plist"
 PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
 TMP_DIR="$REPO_ROOT/DerivedData/Generate-Licenses"
 

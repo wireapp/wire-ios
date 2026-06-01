@@ -122,7 +122,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
         // Given
         let groupID = MLSGroupID.random()
-        let messageBytes = Data.random().bytes
+        let messageBytes = [UInt8](Data.random())
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             DecryptedMessage(
                 message: nil,

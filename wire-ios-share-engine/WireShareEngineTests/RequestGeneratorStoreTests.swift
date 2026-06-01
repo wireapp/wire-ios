@@ -59,7 +59,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     }
 
     var mockStrategy: MockStrategy!
-    var sut: RequestGeneratorStore! = nil
+    var sut: RequestGeneratorStore!
 
     override func setUp() {
         super.setUp()

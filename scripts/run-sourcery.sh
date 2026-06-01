@@ -20,7 +20,7 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-SOURCERY="$REPO_ROOT/WirePlugins/.build/artifacts/wireplugins/sourcery/sourcery/bin/sourcery"
+SOURCERY="$REPO_ROOT/WirePlugins/.build/artifacts/wireplugins/sourcery/sourcery-2.3.0.artifactbundle/sourcery/bin/sourcery"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping Sourcery in CI environment"

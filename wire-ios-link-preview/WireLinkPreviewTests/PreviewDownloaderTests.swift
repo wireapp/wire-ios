@@ -22,9 +22,9 @@ import XCTest
 class PreviewDownloaderTests: XCTestCase {
 
     private let url = URL(string: "https://twitter.com/ericasadun/status/743868311843151872")!
-    private var mockSession: MockURLSession! = nil
-    private var mockDataTask: MockURLSessionDataTask! = nil
-    private var sut: PreviewDownloader! = nil
+    private var mockSession: MockURLSession!
+    private var mockDataTask: MockURLSessionDataTask!
+    private var sut: PreviewDownloader!
 
     override func setUp() {
         super.setUp()
