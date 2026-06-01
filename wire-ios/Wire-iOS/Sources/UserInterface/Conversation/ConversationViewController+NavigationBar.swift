@@ -173,11 +173,22 @@ extension ConversationViewController {
         var items: [UIBarButtonItem] = []
 
         if traitCollection.horizontalSizeClass != .regular {
+            // A custom leading bar button item is placed at the navigation bar's layout
+            // margin, whereas the system back button (used e.g. in Settings) gets UIKit's
+            // tighter back-indicator inset. This negative spacer compensates for that gap
+            // so the conversation back button aligns with the system back button.
+            let spacer = UIBarButtonItem(systemItem: .fixedSpace)
+            spacer.width = Self.backButtonLeadingAdjustment
+            items.append(spacer)
             items.append(createBackButton(hasUnread: hasUnread))
         }
 
         return items
     }
+
+    /// Negative leading adjustment that aligns the custom conversation back button with the
+    /// system back button used on other screens (e.g. Settings).
+    private static let backButtonLeadingAdjustment: CGFloat = -8
 
     func updateRightNavigationItemsButtons() {
         let items = rightNavigationItems(forConversation: conversation)
