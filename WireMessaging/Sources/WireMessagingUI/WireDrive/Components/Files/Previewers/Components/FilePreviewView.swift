@@ -23,8 +23,6 @@ import WireMessagingDomain
 
 struct FilePreviewView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var scale: CGFloat = 1.0
-    @State private var lastScale: CGFloat = 1.0
 
     let url: URL
     let fileType: WireDriveFileType
@@ -53,6 +51,8 @@ struct FilePreviewView: View {
                     DocumentView(url: url)
                 case .presentation:
                     PresentationView(url: url)
+                case .archive:
+                    ZIPView(url: url)
                 default:
                     DocumentView(url: url)
                 }
