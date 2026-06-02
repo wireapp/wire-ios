@@ -96,6 +96,11 @@ final class GroupMessagingTests: WireUITestCase {
         XCTAssertTrue(
             activeConversationPage.playAudioFile.waitForExistence(timeout: 2), "No audio found"
         )
+
+        // Temp: Need to remove Intention fail
+        XCTAssertTrue(
+            activeConversationPage.startRecording.waitForExistence(timeout: 2), "Expected fail on github CI - need to remove"
+        )
     }
 
     @MainActor
