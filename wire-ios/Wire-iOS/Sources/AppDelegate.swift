@@ -75,7 +75,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
 
-    private(set) var mainWindow: UIWindow!
+    var mainWindow: UIWindow! {
+        UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }[0].window!
+    }
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -112,13 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
         }
-        guard application.connectedScenes.count == 1,
-              let windowScene = application.connectedScenes.first as? UIWindowScene else {
-            fatalError("Expected a single scene of type `UIWindowScene`")
-        }
-        mainWindow = .init(windowScene: windowScene)
 
-        setNavigationAppearance()
         // enable logs
         _ = Settings.shared
         // switch logs
@@ -152,6 +148,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     #endif
+
+
+    // MARK: - Post scene connection
+
+    func sceneDidFinishConnecting(_ sceneDelegate: SceneDelegate) {
+        // TODO: [WPB-24600] Use method on CookieStorage instead of ZMKeychain.
+        if UIApplication.shared.isProtectedDataAvailable || ZMKeychain.hasAccessibleAccountData() {
+            createAppRootRouterAndInitializeOperations(launchOptions)
+        }
+    }
 
     // MARK: - Reset
 
@@ -195,12 +201,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    private func setNavigationAppearance() {
-        let backIndicator = UIImage(resource: mainWindow.isRightToLeft == true ? .forwardArrow : .backArrow)
-        UINavigationBar.appearance().backIndicatorImage = backIndicator
-        UINavigationBar.appearance().backIndicatorTransitionMaskImage = backIndicator
-    }
-
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         WireLogger.push.info(
             "application did register for remote notifications, storing standard token",
@@ -237,12 +237,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = NSAttributedString.paragraphStyle
 
         DeveloperOverrides.storage = .shared()
-        setupWindowAndRootViewController()
-
-        // TODO: [WPB-24600] Use method on CookieStorage instead of ZMKeychain.
-        if UIApplication.shared.isProtectedDataAvailable || ZMKeychain.hasAccessibleAccountData() {
-            createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
-        }
 
         WireLogger.appDelegate
             .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
@@ -377,7 +371,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter nil")
             return
         }
-        createAppRootRouterAndInitialiazeOperations(launchOptions)
+        createAppRootRouterAndInitializeOperations(launchOptions)
     }
 }
 
@@ -385,12 +379,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 private extension AppDelegate {
 
-    private func setupWindowAndRootViewController() {
-        mainWindow.rootViewController = LaunchScreenViewController()
-        mainWindow.makeKeyAndVisible()
-    }
-
-    private func createAppRootRouterAndInitialiazeOperations(_ launchOptions: LaunchOptions) {
+    private func createAppRootRouterAndInitializeOperations(_ launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
         createAppRootRouter()
