@@ -1,6 +1,28 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "notification_service_extension.error.open_app.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Wire to get future notifications"
+          }
+        }
+      }
+    },
+    "notification_service_extension.error.open_app.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New version installed"
+          }
+        }
+      }
+    },
     "push.notification.action.acceptConnection" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5997,28 +6019,6 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%@ is calling with video"
-          }
-        }
-      }
-    },
-    "notification_service_extension.error.open_app.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open Wire to receive future notifications"
-          }
-        }
-      }
-    },
-    "notification_service_extension.error.open_app.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Action Required"
           }
         }
       }
