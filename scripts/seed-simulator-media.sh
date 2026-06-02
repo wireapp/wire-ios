@@ -33,8 +33,17 @@ if [ -z "${IOS_SIM_ID:-}" ]; then
   exit 0
 fi
 
-echo "Booting simulator $IOS_SIM_ID"
-xcrun simctl boot "$IOS_SIM_ID" || true
+BOOTED_SIMULATORS=$(xcrun simctl list devices booted)
+if echo "$BOOTED_SIMULATORS" | grep -q "$IOS_SIM_ID"; then
+  echo "Simulator $IOS_SIM_ID is already booted"
+else
+  echo "Booting simulator $IOS_SIM_ID"
+  xcrun simctl boot "$IOS_SIM_ID" || true
+  if ! xcrun simctl bootstatus "$IOS_SIM_ID" -b; then
+    echo "::warning::Simulator $IOS_SIM_ID did not finish booting."
+  fi
+fi
+
 BOOTED_SIMULATORS=$(xcrun simctl list devices booted)
 if ! echo "$BOOTED_SIMULATORS" | grep -q "$IOS_SIM_ID"; then
   echo "::warning::Simulator $IOS_SIM_ID is not booted yet. Skipping simulator media seeding."

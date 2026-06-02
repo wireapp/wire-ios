@@ -19,6 +19,10 @@ on:
       run_critical_flows:
         type: boolean
         required: true
+      uitest_shards:
+        type: number
+        default: 2
+        required: false
       kalium_ref:
         type: string
         required: false
@@ -142,6 +146,7 @@ jobs:
           ./setup.sh
 
       - name: Setup simulator
+        if: ${{ !inputs.run_critical_flows || inputs.uitest_shards <= 1 }}
         run: |
           bundle exec fastlane prepare_for_tests
 
@@ -163,7 +168,7 @@ jobs:
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |
-          bundle exec fastlane run_uitests
+          bundle exec fastlane run_uitests uitest_shards:${{ inputs.uitest_shards }}
 
       - name: Stop Kalium Testservice
         if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
@@ -182,8 +187,11 @@ jobs:
           echo "::add-mask::$TESTINY_API_KEY"
           export TESTINY_API_KEY
 
-          # Find a xcresult bundle produced by the run
-          XCRESULT="$(find artifacts -type d -name '*.xcresult' | head -n 1)"
+          # Find the xcresult bundle produced by the run
+          XCRESULT="$(find artifacts -type d -path '*/tests/WireUITests/WireUITests.xcresult' | sort | head -n 1)"
+          if [ -z "$XCRESULT" ]; then
+            XCRESULT="$(find artifacts -type d -name '*.xcresult' | sort | head -n 1)"
+          fi
           if [ -z "$XCRESULT" ]; then
             echo "[ERROR] No .xcresult found under artifacts/"
             exit 1
@@ -260,6 +268,7 @@ jobs:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             build/reports/*.junit
+            build/WireUITests-shards/**/*.junit
             artifacts/**/*.junit
             app-group.zip
             fastlane/app-group.zip
@@ -270,6 +279,7 @@ jobs:
         with:
           files: |
             build/reports/*.junit
+            build/WireUITests-shards/**/*.junit
             artifacts/**/*.junit
           compare_to_earlier_commit: false
           comment_title: "Test Results"
@@ -461,4 +471,3 @@ jobs:
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
-

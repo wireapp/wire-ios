@@ -1,8 +1,11 @@
 require 'git'
 require 'base64'
+require 'fileutils'
 require 'httparty'
 require 'json'
 require 'fastlane/action'
+require 'shellwords'
+require 'thread'
 require_relative 'framework'
 
 opt_out_usage
@@ -111,11 +114,21 @@ platform :ios do
         schemes = ["WireUITests"]
         options[:testplan] = "UITests"
         options[:number_of_retries] = 0 # no retries
+        options[:uitest_shards] = (options[:uitest_shards] || ENV['UITEST_SHARDS'] || 2).to_i
+        options[:uitest_shards] = 1 if options[:uitest_shards] < 1
         begin
             run_tests_frameworks(schemes, options)
         rescue => e
-            device_id = ENV['IOS_SIM_ID']
-            sh "../scripts/zip_logs.sh 'com.wearezeta.zclient.alpha' 'group.com.wearezeta.zclient.alpha' 'app-group.zip' '#{device_id}'"
+            device_id = ENV['IOS_SIM_ID'].to_s.lines.first.to_s.strip
+            begin
+                if device_id.empty?
+                    UI.important("Skipping app log zip after UITest failure: IOS_SIM_ID is missing")
+                else
+                    sh "../scripts/zip_logs.sh 'com.wearezeta.zclient.alpha' 'group.com.wearezeta.zclient.alpha' 'app-group.zip' '#{device_id}'"
+                end
+            rescue => zip_error
+                UI.important("Skipping app log zip after UITest failure: #{zip_error}")
+            end
             UI.test_failure!("Failing running tests #{e.to_s}")
         end
     end
@@ -329,7 +342,7 @@ platform :ios do
         schemas.each do |scheme|
             write_tests_info_to_summary("🤖 Testing scheme #{scheme} with plan #{testplan}")
             begin
-                test_plan(build, scheme, testplan)
+                test_plan(build, scheme, testplan, options)
                 schema_errors[scheme] = false
             rescue => e
                 write_tests_info_to_summary("❌ Scheme: #{scheme} failed with errors: #{e.to_s}")
@@ -564,11 +577,22 @@ platform :ios do
         build = Build.new(options: options)
       
         for scheme in ["Wire-iOS", "WireDataModel", "WireSyncEngine"] do
-            test_plan(build, scheme, "SecurityTests")
+            test_plan(build, scheme, "SecurityTests", options)
         end
     end
 
-    def test_plan(build, scheme, testplan)
+    def test_plan(build, scheme, testplan, options = {})
+        ci_args = is_running_on_ci ? "CI=1" : nil
+
+        if scheme == "WireUITests"
+            uitest_shards = (options[:uitest_shards] || ENV['UITEST_SHARDS'] || 2).to_i
+            uitest_shards = 1 if uitest_shards < 1
+            if uitest_shards > 1
+                run_sharded_wire_uitests(build, testplan, uitest_shards, ci_args)
+                return
+            end
+        end
+
         if ENV['IOS_SIM_ID'].nil?
             create_simulator_if_needed
         end
@@ -577,9 +601,7 @@ platform :ios do
             UI.user_error! "missing id for tests"
         end
 
-        ci_args = is_running_on_ci ? "CI=1" : nil
-
-        run_tests(
+        test_options = {
             step_name: "🧪 Running tests for scheme: #{scheme}",
             testplan: testplan,
             scheme: scheme,
@@ -599,24 +621,452 @@ platform :ios do
             skip_package_dependencies_resolution: true,
             number_of_retries: build.number_of_retries,
             xcargs: ci_args
+        }
+
+        run_tests(test_options)
+    end
+
+    def run_sharded_wire_uitests(build, testplan, requested_shards, ci_args)
+        write_tests_info_to_summary("🤖 Running WireUITests with #{requested_shards} explicit shards")
+
+        clean_sharded_wire_uitest_outputs(build)
+        simulators = create_simulators_for_shards(requested_shards)
+        build_wire_uitests_for_testing(build, testplan, simulators.first, ci_args)
+
+        test_identifiers = enumerate_wire_uitests(build, testplan, simulators.first, ci_args)
+        if test_identifiers.empty?
+            UI.user_error!("No WireUITests were enumerated for sharding")
+        end
+
+        shard_count = [requested_shards, test_identifiers.count].min
+        if shard_count < requested_shards
+            write_tests_info_to_summary("🤖 Reduced WireUITests shard count to #{shard_count} because only #{test_identifiers.count} test(s) were found")
+            simulators = simulators.first(shard_count)
+        end
+
+        shards = split_tests_for_shards(test_identifiers, shard_count)
+        write_shard_assignments(build, shards)
+        shard_run = run_wire_uitest_shards(build, testplan, simulators, shards, ci_args)
+        merge_sharded_wire_uitest_results(build, shard_run[:outputs])
+
+        unless shard_run[:errors].empty?
+            raise shard_run[:errors].first
+        end
+    end
+
+    def clean_sharded_wire_uitest_outputs(build)
+        artifact_output_directory = "#{build.artifact_path(with_filename: false)}/tests/WireUITests"
+        shard_output_directory = "#{build.build_path}/WireUITests-shards"
+
+        in_repo_root do
+            FileUtils.rm_rf(shard_output_directory)
+            FileUtils.rm_rf("#{artifact_output_directory}/WireUITests.xcresult")
+            FileUtils.rm_f("#{artifact_output_directory}/WireUITests.junit")
+            FileUtils.rm_f("#{artifact_output_directory}/test-enumeration.json")
+            FileUtils.rm_rf("#{artifact_output_directory}/shard-assignments")
+            Dir.glob("#{artifact_output_directory}/shard-[0-9]*").each do |path|
+                FileUtils.rm_rf(path)
+            end
+        end
+    end
+
+    def build_wire_uitests_for_testing(build, testplan, simulator_id, ci_args)
+        write_tests_info_to_summary("🤖 Building WireUITests once for sharded execution")
+
+        run_tests(
+            step_name: "🧪 Building WireUITests for sharded execution",
+            testplan: testplan,
+            scheme: "WireUITests",
+            skip_detect_devices: true,
+            configuration: "Debug",
+            sdk: "iphonesimulator",
+            destination: "platform=iOS Simulator,id=#{simulator_id},OS=#{ios_version}",
+            derived_data_path: "DerivedData",
+            buildlog_path: build.build_path,
+            cloned_source_packages_path: ENV['PACKAGES_DIR'],
+            disable_package_automatic_updates: true,
+            skip_package_dependencies_resolution: true,
+            xcargs: ci_args,
+            build_for_testing: true
         )
+    end
+
+    def enumerate_wire_uitests(build, testplan, simulator_id, ci_args)
+        enumeration_path = "#{build.artifact_path(with_filename: false)}/tests/WireUITests/test-enumeration.json"
+        in_repo_root do
+            FileUtils.mkdir_p(File.dirname(enumeration_path))
+            FileUtils.rm_f(enumeration_path)
+        end
+
+        command = xcodebuild_wire_uitests_command(
+            testplan: testplan,
+            simulator_id: simulator_id,
+            result_bundle_path: nil,
+            ci_args: ci_args
+        ) + [
+            "-enumerate-tests",
+            "-test-enumeration-format", "json",
+            "-test-enumeration-output-path", enumeration_path,
+            "test-without-building"
+        ]
+
+        run_logged_command(
+            command,
+            "#{build.build_path}/Wire-WireUITests-enumerate.log"
+        )
+
+        in_repo_root do
+            unless File.exist?(enumeration_path)
+                UI.user_error!("Expected test enumeration file was not created: #{enumeration_path}")
+            end
+
+            identifiers = []
+            collect_wire_uitest_identifiers(JSON.parse(File.read(enumeration_path)), identifiers)
+            identifiers.uniq.sort
+        end
+    end
+
+    def collect_wire_uitest_identifiers(value, identifiers, target_name = nil, class_name = nil)
+        case value
+        when Hash
+            kind = value["kind"]
+            name = value["name"].to_s
+            current_target_name = kind == "target" && !name.empty? ? name : target_name
+            current_class_name = kind == "class" && !name.empty? ? name : class_name
+
+            if kind == "test" && !value["disabled"] && !name.empty? && current_class_name
+                test_name = name.gsub(/\(\)\z/, "")
+                normalized = normalize_wire_uitest_identifier("#{current_target_name || "WireUITests"}/#{current_class_name}/#{test_name}")
+                identifiers << normalized if normalized
+            end
+
+            Array(value["values"]).each do |child|
+                collect_wire_uitest_identifiers(child, identifiers, current_target_name, current_class_name)
+            end
+            Array(value["children"]).each do |child|
+                collect_wire_uitest_identifiers(child, identifiers, current_target_name, current_class_name)
+            end
+        when Array
+            value.each { |child| collect_wire_uitest_identifiers(child, identifiers, target_name, class_name) }
+        when String
+            normalized = normalize_wire_uitest_identifier(value)
+            identifiers << normalized if normalized
+        end
+    end
+
+    def normalize_wire_uitest_identifier(identifier)
+        value = identifier.gsub(/\(\)\z/, "")
+        value = value.sub(/\AWireUITests\.xctest\//, "WireUITests/")
+        value = value.sub(/\AWireUITests\.xctest\./, "WireUITests/")
+        value = value.sub(/\AWireUITests\./, "WireUITests/")
+        value = value.sub(/\A.*\/WireUITests\//, "WireUITests/")
+
+        return nil unless value.start_with?("WireUITests/")
+        return nil unless value.include?("/test")
+
+        value
+    end
+
+    def split_tests_for_shards(test_identifiers, shard_count)
+        base_size = test_identifiers.count / shard_count
+        remainder = test_identifiers.count % shard_count
+        cursor = 0
+
+        (0...shard_count).map do |index|
+            shard_size = base_size + (index < remainder ? 1 : 0)
+            shard = test_identifiers[cursor, shard_size]
+            cursor += shard_size
+            shard
+        end
+    end
+
+    def write_shard_assignments(build, shards)
+        assignments_dir = "#{build.artifact_path(with_filename: false)}/tests/WireUITests/shard-assignments"
+        in_repo_root do
+            FileUtils.mkdir_p(assignments_dir)
+
+            shards.each_with_index do |tests, index|
+                shard_number = index + 1
+                path = "#{assignments_dir}/shard-#{shard_number}.txt"
+                File.write(path, tests.join("\n") + "\n")
+            end
+        end
+
+        shards.each_with_index do |tests, index|
+            shard_number = index + 1
+            path = "#{assignments_dir}/shard-#{shard_number}.txt"
+            write_tests_info_to_summary("🤖 WireUITests shard #{shard_number}: #{tests.count} test(s)")
+            UI.message("WireUITests shard #{shard_number} assignment written to #{path}")
+        end
+    end
+
+    def run_wire_uitest_shards(build, testplan, simulators, shards, ci_args)
+        errors = []
+        errors_mutex = Mutex.new
+        shard_outputs = Array.new(shards.count)
+
+        threads = shards.each_with_index.map do |tests, index|
+            Thread.new do
+                shard_number = index + 1
+                paths = wire_uitest_shard_paths(build, shard_number)
+                shard_outputs[index] = paths
+                begin
+                    run_wire_uitest_shard(
+                        build: build,
+                        testplan: testplan,
+                        simulator_id: simulators[index],
+                        shard_number: shard_number,
+                        tests: tests,
+                        ci_args: ci_args,
+                        paths: paths
+                    )
+                rescue => e
+                    errors_mutex.synchronize { errors << e }
+                end
+            end
+        end
+
+        threads.each(&:join)
+
+        {
+            outputs: shard_outputs.compact,
+            errors: errors
+        }
+    end
+
+    def wire_uitest_shard_paths(build, shard_number)
+        output_directory = "#{build.build_path}/WireUITests-shards/shard-#{shard_number}"
+        {
+            shard_number: shard_number,
+            output_directory: output_directory,
+            result_bundle_path: "#{output_directory}/WireUITests-shard-#{shard_number}.xcresult",
+            junit_path: "#{output_directory}/WireUITests-shard-#{shard_number}.junit",
+            log_path: "#{build.build_path}/Wire-WireUITests-shard-#{shard_number}.log"
+        }
+    end
+
+    def run_wire_uitest_shard(build:, testplan:, simulator_id:, shard_number:, tests:, ci_args:, paths:)
+        FileUtils.mkdir_p(repo_path(paths[:output_directory]))
+        FileUtils.rm_rf(repo_path(paths[:result_bundle_path]))
+        FileUtils.rm_f(repo_path(paths[:junit_path]))
+
+        command = xcodebuild_wire_uitests_command(
+            testplan: testplan,
+            simulator_id: simulator_id,
+            result_bundle_path: paths[:result_bundle_path],
+            ci_args: ci_args
+        )
+
+        tests.each do |test_identifier|
+            command << "-only-testing:#{test_identifier}"
+        end
+
+        command += [
+            "-parallel-testing-enabled", "NO",
+            "test-without-building"
+        ]
+
+        UI.message("Starting WireUITests shard #{shard_number} on simulator #{simulator_id}")
+        run_logged_command(command, paths[:log_path], junit_path: paths[:junit_path])
+        UI.success("WireUITests shard #{shard_number} finished")
+    end
+
+    def merge_sharded_wire_uitest_results(build, shard_outputs)
+        result_paths = in_repo_root do
+            shard_outputs.map { |paths| paths[:result_bundle_path] }.select { |path| File.directory?(path) }.map { |path| repo_path(path) }
+        end
+        if result_paths.empty?
+            UI.important("No WireUITests shard xcresult bundles were produced to merge")
+            return
+        end
+
+        output_directory = "#{build.artifact_path(with_filename: false)}/tests/WireUITests"
+        merged_result_path = "#{output_directory}/WireUITests.xcresult"
+        absolute_merged_result_path = repo_path(merged_result_path)
+
+        in_repo_root do
+            FileUtils.mkdir_p(output_directory)
+            FileUtils.rm_rf(absolute_merged_result_path)
+
+            if result_paths.count == 1
+                FileUtils.cp_r(result_paths.first, absolute_merged_result_path)
+            else
+                command = ["xcrun", "xcresulttool", "merge", "--output-path", absolute_merged_result_path] + result_paths
+                run_logged_command(command, "#{build.build_path}/Wire-WireUITests-merge.log")
+            end
+        end
+
+        UI.success("Merged WireUITests shard results into #{merged_result_path}")
+    end
+
+    def xcodebuild_wire_uitests_command(testplan:, simulator_id:, result_bundle_path:, ci_args:)
+        command = [
+            "xcodebuild",
+            "-workspace", "./wire-ios-mono.xcworkspace",
+            "-scheme", "WireUITests",
+            "-configuration", "Debug",
+            "-derivedDataPath", "DerivedData",
+            "-disableAutomaticPackageResolution",
+            "-sdk", "iphonesimulator",
+            "-destination", "platform=iOS Simulator,id=#{simulator_id},OS=#{ios_version}",
+            "-testPlan", testplan
+        ]
+
+        command += ["-clonedSourcePackagesDirPath", ENV['PACKAGES_DIR']] if ENV['PACKAGES_DIR']
+        command += ["-resultBundlePath", result_bundle_path] if result_bundle_path
+        command << ci_args if ci_args
+        command
+    end
+
+    def run_logged_command(command, log_path, junit_path: nil)
+        success = false
+
+        FileUtils.mkdir_p(repo_path(File.dirname(log_path)))
+        FileUtils.rm_f(repo_path(log_path))
+
+        if junit_path
+            FileUtils.mkdir_p(repo_path(File.dirname(junit_path)))
+            FileUtils.rm_f(repo_path(junit_path))
+        end
+
+        shell_command = if junit_path
+            "#{command.shelljoin} 2>&1 | tee #{log_path.shellescape} | bundle exec xcpretty --report junit --output #{junit_path.shellescape}"
+        else
+            "#{command.shelljoin} > #{log_path.shellescape} 2>&1"
+        end
+
+        UI.command(shell_command)
+        success = if junit_path
+            system("bash", "-o", "pipefail", "-c", shell_command, chdir: repo_root_path)
+        else
+            system(shell_command, chdir: repo_root_path)
+        end
+
+        return if success
+
+        raise "Command failed. See #{log_path}"
+    end
+
+    def repo_root_path
+        current_path = Dir.pwd
+        File.basename(current_path) == "fastlane" ? File.expand_path("..", current_path) : current_path
+    end
+
+    def repo_path(path)
+        path.start_with?("/") ? path : File.join(repo_root_path, path)
+    end
+
+    def in_repo_root(&block)
+        if File.basename(Dir.pwd) == "fastlane"
+            Dir.chdir("..", &block)
+        else
+            yield
+        end
+    end
+
+    def create_simulators_for_shards(shard_count)
+        simulators = []
+
+        (1..shard_count).each do |shard_number|
+            simulator_name = "#{iPhoneNameForTesting} WireUITests Shard #{shard_number} - iOS#{ios_version}"
+            simulator_id = create_or_reset_simulator(simulator_name)
+            simulators << simulator_id
+        end
+
+        ENV['IOS_SIM_ID'] = simulators.first
+        boot_simulators_for_shards(simulators)
+        seed_simulators_media(simulators)
+        simulators
+    end
+
+    def boot_simulators_for_shards(simulators)
+        UI.message("Booting #{simulators.count} WireUITests shard simulator(s)")
+        run_simulator_tasks(simulators, "boot") do |simulator_id|
+            system("xcrun", "simctl", "boot", simulator_id, out: File::NULL, err: File::NULL)
+            unless system("xcrun", "simctl", "bootstatus", simulator_id, "-b")
+                raise "Failed waiting for simulator #{simulator_id} to boot"
+            end
+        end
+    end
+
+    def seed_simulators_media(simulators)
+        UI.message("Seeding media on #{simulators.count} WireUITests shard simulator(s)")
+        run_simulator_tasks(simulators, "seed media") do |simulator_id|
+            seed_simulator_media(simulator_id)
+        end
+    end
+
+    def run_simulator_tasks(simulators, task_name)
+        errors = []
+        errors_mutex = Mutex.new
+
+        threads = simulators.map do |simulator_id|
+            Thread.new do
+                yield simulator_id
+            rescue => e
+                errors_mutex.synchronize { errors << e }
+            end
+        end
+
+        threads.each(&:join)
+        UI.user_error!("Failed to #{task_name} shard simulator: #{errors.first}") unless errors.empty?
+    end
+
+    def create_or_reset_simulator(simulator_name)
+        existing_simulator = simulator_id(named: simulator_name)
+
+        if existing_simulator.empty?
+            UI.message "create simulator #{simulator_name}"
+            simulator_id = `xcrun simctl create #{Shellwords.escape(simulator_name)} #{Shellwords.escape(iPhoneNameForTesting)} #{Shellwords.escape("iOS#{ios_version}")}`.strip
+            UI.user_error!("Failed to create simulator #{simulator_name}") if simulator_id.empty?
+            simulator_id
+        else
+            UI.message "clear simulator content for #{existing_simulator}"
+            system("xcrun", "simctl", "shutdown", existing_simulator, out: File::NULL, err: File::NULL)
+            unless system("xcrun", "simctl", "erase", existing_simulator)
+                UI.user_error!("Failed to erase simulator #{existing_simulator}")
+            end
+            existing_simulator
+        end
+    end
+
+    def simulator_id(named:)
+        devices = JSON.parse(`xcrun simctl list devices available --json`)
+        devices.fetch("devices").each_value do |runtime_devices|
+            matching_device = runtime_devices.find { |device| device["name"] == named }
+            return matching_device["udid"] if matching_device
+        end
+        ""
+    end
+
+    def seed_simulator_media(simulator_id)
+        env = {
+            "IOS_SIM_ID" => simulator_id,
+            "REPO_ROOT" => repo_root_path
+        }
+        unless system(env, repo_path("scripts/seed-simulator-media.sh"), chdir: repo_root_path)
+            raise "Failed to seed simulator media for #{simulator_id}"
+        end
     end
 
     def create_simulator_if_needed
         devices = `xcrun simctl list`
         UI.message("Available simulators:\n#{devices}")
+        simulator_name = "#{iPhoneNameForTesting} - iOS#{ios_version}"
 
-        # Check if the simulator already exists
-        existing_simulator = `xcrun simctl list devices | grep "#{iPhoneNameForTesting}" | grep "iOS#{ios_version}" | awk -F '[()]' '{print $2}'`.chomp
+        existing_simulator = simulator_id(named: simulator_name)
 
         if existing_simulator.empty?
-            UI.message "create simulator #{iPhoneNameForTesting} - iOS#{ios_version}"
-            existing_simulator = `xcrun simctl create "#{iPhoneNameForTesting} - iOS#{ios_version}" "#{iPhoneNameForTesting}" "iOS#{ios_version}"`
+            UI.message "create simulator #{simulator_name}"
+            existing_simulator = `xcrun simctl create #{Shellwords.escape(simulator_name)} #{Shellwords.escape(iPhoneNameForTesting)} #{Shellwords.escape("iOS#{ios_version}")}`.strip
         else
             UI.message "clear simulator content for #{existing_simulator}"
-            `xcrun simctl erase #{existing_simulator}`
+            system("xcrun", "simctl", "shutdown", existing_simulator, out: File::NULL, err: File::NULL)
+            unless system("xcrun", "simctl", "erase", existing_simulator)
+                UI.user_error!("Failed to erase simulator #{existing_simulator}")
+            end
         end
-        ENV['IOS_SIM_ID'] = existing_simulator.strip
+        ENV['IOS_SIM_ID'] = existing_simulator
 
         if ENV['GITHUB_ENV']
             sh "echo IOS_SIM_ID=#{ENV['IOS_SIM_ID']} >> #{ENV['GITHUB_ENV']}"

@@ -7,6 +7,11 @@ on:
         description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
         type: string
+      uitest_shards:
+        description: "Number of parallel WireUITests shards"
+        required: false
+        default: 2
+        type: number
   push:
     branches:
       - 'develop'
@@ -26,6 +31,7 @@ jobs:
       notify_secret: WIRE_IOS_QA_WEBHOOK
       test_dependencies: false
       run_critical_flows: true
+      uitest_shards: ${{ inputs.uitest_shards || 2 }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
     secrets: inherit
