@@ -155,6 +155,7 @@ public enum Locators {
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
         case sharedFileLabel = "FileTransferTopLabel"
+        case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
         case sketchButton
         case canvas
@@ -287,6 +288,16 @@ public enum Locators {
 
     }
 
+    public enum FilesAppPage: String {
+
+        case browse = "Browse"
+        case done = "Done"
+        case onMyIPhone = "On My iPhone"
+        case search = "Search"
+        case share = "Share"
+        case nameContainsSearchToken = "Name Contains"
+    }
+
     public enum OptionsOnSettingsPage: String {
 
         case lockWithPasscode = "Lock With Passcode"
@@ -369,11 +380,13 @@ public enum Locators {
 
     public enum ShareExtensionPage: String {
 
+        case account = "Account:"
         case imageTile = "PXGGridLayout-Info"
         case shareButton = "PUOneUpBarButtonItemIdentifierShare"
         case chooseConversations = "Choose"
         case sendButtonOnShareExtension
         case continueButton = "Continue"
+        case wire = "Wire"
     }
 
     public enum IncomingCallPage: String {

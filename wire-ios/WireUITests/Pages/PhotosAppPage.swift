@@ -22,6 +22,14 @@ import XCTest
 class PhotosAppPage: PageModel {
     private let photosApp: XCUIApplication
     private let timeout: TimeInterval = 2
+    private let shareExtensionTimeout: TimeInterval = 5
+
+    private enum Error: Swift.Error {
+        case missingAccount
+        case missingChooseConversation
+        case missingConversation
+        case missingSendButton
+    }
 
     override var pageMainElement: XCUIElement {
         photosApp.windows.firstMatch
@@ -47,7 +55,11 @@ class PhotosAppPage: PageModel {
     }
 
     var shareToWireApp: XCUIElement {
-        photosApp.cells["Wire"].firstMatch
+        photosApp.cells[Locators.ShareExtensionPage.wire.rawValue].firstMatch
+    }
+
+    var accountPicker: XCUIElement {
+        photosApp.descendants(matching: .any)[Locators.ShareExtensionPage.account.rawValue].firstMatch
     }
 
     var chooseConversation: XCUIElement {
@@ -58,10 +70,78 @@ class PhotosAppPage: PageModel {
         photosApp.buttons[Locators.ShareExtensionPage.sendButtonOnShareExtension.rawValue].firstMatch
     }
 
-    func selectConversation(name: String) -> XCUIElement {
-        let conversationCell = photosApp.staticTexts[name]
-        XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
-        return conversationCell.firstMatch
+    var shareExtensionSearchField: XCUIElement {
+        photosApp.searchFields.allElementsBoundByIndex.first(where: \.isHittable)
+            ?? photosApp.searchFields.firstMatch
+    }
+
+    func accountCell(named name: String) -> XCUIElement {
+        let accountName = photosApp.staticTexts[name].firstMatch
+        if accountName.exists {
+            return accountName
+        }
+
+        return photosApp.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@ OR identifier == %@", name, name))
+            .firstMatch
+    }
+
+    func conversationCell(named name: String) -> XCUIElement {
+        let exactCell = photosApp.cells.matching(NSPredicate(format: "label == %@", name)).firstMatch
+        if exactCell.exists {
+            return exactCell
+        }
+
+        let exactText = photosApp.staticTexts[name].firstMatch
+        if exactText.exists {
+            return exactText
+        }
+
+        return photosApp.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@ OR identifier == %@", name, name))
+            .firstMatch
+    }
+
+    func visibleShareExtensionLabels() -> [String] {
+        let labels = photosApp.staticTexts.allElementsBoundByIndex + photosApp.cells.allElementsBoundByIndex
+        return Array(labels.map(\.label).filter { !$0.isEmpty }.prefix(20))
+    }
+
+    func selectAccountIfNeeded(name: String) throws {
+        guard accountPicker.waitForExistence(timeout: 1) else {
+            return
+        }
+
+        if accountCell(named: name).exists {
+            return
+        }
+
+        accountPicker.tap()
+        let account = accountCell(named: name)
+        guard account.waitForExistence(timeout: shareExtensionTimeout) else {
+            XCTFail("Account '\(name)' was not available in the Wire share extension. " +
+                "Visible labels: \(visibleShareExtensionLabels())")
+            throw Error.missingAccount
+        }
+        account.tap()
+        _ = chooseConversation.waitForExistence(timeout: shareExtensionTimeout)
+    }
+
+    func selectConversation(name: String) throws {
+        var conversation = conversationCell(named: name)
+        if !conversation.waitForExistence(timeout: 1),
+           shareExtensionSearchField.waitForExistence(timeout: shareExtensionTimeout) {
+            _ = try? shareExtensionSearchField.tapIfKeyboardNotFocused()
+            shareExtensionSearchField.typeText(name)
+            conversation = conversationCell(named: name)
+        }
+
+        guard conversation.waitForExistence(timeout: shareExtensionTimeout) else {
+            XCTFail("Conversation '\(name)' was not available in the Wire share extension. " +
+                "Visible labels: \(visibleShareExtensionLabels())")
+            throw Error.missingConversation
+        }
+        conversation.tap()
     }
 
     @discardableResult
@@ -76,10 +156,7 @@ class PhotosAppPage: PageModel {
     func openFirstImage() throws -> PhotosAppPage {
         try continueWhatsNewIfPresent()
         XCTAssertTrue(firstImageTile.waitForExistence(timeout: 10))
-        // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
-        firstImageTile
-            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-            .tap()
+        firstImageTile.tap()
         return self
     }
 
@@ -91,19 +168,25 @@ class PhotosAppPage: PageModel {
         return self
     }
 
-    func chooseConversationAndSend(name: String) throws {
+    func chooseConversationAndSend(name: String, accountName: String? = nil) throws {
         defer { photosApp.terminate() }
 
-        chooseConversation.waitAndTap()
+        if let accountName {
+            try selectAccountIfNeeded(name: accountName)
+        }
 
-        let conversationToSend = selectConversation(name: name)
-        XCTAssertTrue(
-            conversationToSend.waitForExistence(timeout: timeout),
-            "Tap to chooseConversation, didn't pass"
-        )
-        conversationToSend.waitAndTap()
+        guard chooseConversation.waitForExistence(timeout: shareExtensionTimeout) else {
+            XCTFail("Choose conversation control was not available in the Wire share extension")
+            throw Error.missingChooseConversation
+        }
+        chooseConversation.tap()
 
-        XCTAssertTrue(sendButton.waitForExistence(timeout: timeout))
+        try selectConversation(name: name)
+
+        guard sendButton.waitForExistence(timeout: shareExtensionTimeout) else {
+            XCTFail("Send button was not available in the Wire share extension")
+            throw Error.missingSendButton
+        }
         sendButton.waitAndTap()
 
         XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))

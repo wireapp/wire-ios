@@ -89,6 +89,10 @@ class ActiveConversationPage: PageModel {
         app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileLabel.rawValue)
     }
 
+    var fileDetailLabels: XCUIElementQuery {
+        app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileDetailsLabel.rawValue)
+    }
+
     var fileTypeIcons: XCUIElementQuery {
         app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
@@ -97,6 +101,14 @@ class ActiveConversationPage: PageModel {
         app.buttons.containing(
             NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
         ).firstMatch
+    }
+
+    func fileLabel(containing name: String) -> XCUIElement {
+        fileLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
+    }
+
+    func fileDetails(containing text: String) -> XCUIElement {
+        fileDetailLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
     }
 
     var labelSharedDriveIsOn: XCUIElement {
@@ -208,6 +220,15 @@ class ActiveConversationPage: PageModel {
         var files: [String] = []
         for i in 0 ..< fileLabels.count {
             let element = fileLabels.element(boundBy: i)
+            files.append(element.label)
+        }
+        return files
+    }
+
+    func fetchFileDetails() -> [String] {
+        var files: [String] = []
+        for i in 0 ..< fileDetailLabels.count {
+            let element = fileDetailLabels.element(boundBy: i)
             files.append(element.label)
         }
         return files
@@ -397,6 +418,40 @@ class ActiveConversationPage: PageModel {
     ) -> ActiveConversationPage {
         XCTAssertTrue(
             app.textViews.matching(NSPredicate(format: "label == %@", message)).firstMatch.waitForExistence(timeout: 5),
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifySharedFile(
+        name: String,
+        type: String,
+        timeout: TimeInterval = 30,
+        requireReady: Bool = false,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        let attachment = fileAttachment(name: name, type: type)
+        if attachment.waitForExistence(timeout: timeout) {
+            return self
+        }
+
+        if requireReady {
+            XCTAssertTrue(
+                fileDetails(containing: type).waitForExistence(timeout: 2),
+                "Expected \(type) attachment '\(name)' to finish uploading. " +
+                    "Visible files: \(fetchFileNames()). Visible file details: \(fetchFileDetails())",
+                file: file,
+                line: line
+            )
+            return self
+        }
+
+        XCTAssertTrue(
+            fileLabel(containing: name).waitForExistence(timeout: 2),
+            "Expected \(type) attachment '\(name)' not found. Visible files: \(fetchFileNames())",
             file: file,
             line: line
         )
