@@ -464,6 +464,111 @@ final class AudioPlayerDelegate: NSObject, AVAudioPlayerDelegate {
     }
 }
 
+#if DEBUG
+    final class UITestAudioRecorder: AudioRecorderType {
+
+        let format: AudioRecorderFormat = .wav
+        var state: AudioRecorderState = .initializing
+        var fileURL: URL?
+        var maxRecordingDuration: TimeInterval?
+        var maxFileSize: UInt64?
+        var currentDuration: TimeInterval = 0
+        var recordTimerCallback: ((TimeInterval) -> Void)?
+        var recordLevelCallBack: ((RecordingLevel) -> Void)?
+        var playingStateCallback: ((PlayingState) -> Void)?
+        var recordEndedCallback: ((Result<Void, Error>) -> Void)?
+
+        func startRecording(_ completion: @escaping (_ success: Bool) -> Void) {
+            currentDuration = 2
+            state = .recording(start: 0)
+            recordTimerCallback?(0)
+            recordLevelCallBack?(0.5)
+            recordTimerCallback?(currentDuration)
+            completion(true)
+        }
+
+        @discardableResult
+        func stopRecording() -> Bool {
+            do {
+                fileURL = try Self.makeAudioFile(duration: currentDuration)
+                state = .stopped
+                recordLevelCallBack?(0)
+                recordEndedCallback?(.success(()))
+                return true
+            } catch {
+                WireLogger.ui.error("Failed to create UI test audio recording: \(error)")
+                return false
+            }
+        }
+
+        func deleteRecording() {
+            if let fileURL {
+                try? FileManager.default.removeItem(at: fileURL)
+            }
+            fileURL = nil
+            currentDuration = 0
+            state = .initializing
+        }
+
+        func playRecording() {
+            playingStateCallback?(.playing)
+            recordTimerCallback?(currentDuration)
+        }
+
+        func stopPlaying() {
+            playingStateCallback?(.idle)
+        }
+
+        func levelForCurrentState() -> RecordingLevel {
+            0.5
+        }
+
+        func durationForCurrentState() -> TimeInterval? {
+            currentDuration
+        }
+
+        func alertForRecording(error: RecordingError) -> UIAlertController? {
+            nil
+        }
+
+        private static func makeAudioFile(duration: TimeInterval) throws -> URL {
+            let sampleRate: UInt32 = 44_100
+            let channelCount: UInt16 = 1
+            let bitsPerSample: UInt16 = 16
+            let sampleCount = UInt32(TimeInterval(sampleRate) * duration)
+            let blockAlign = channelCount * bitsPerSample / 8
+            let byteRate = sampleRate * UInt32(blockAlign)
+            let dataSize = sampleCount * UInt32(blockAlign)
+
+            var data = Data()
+            data.append(contentsOf: "RIFF".utf8)
+            append(UInt32(36 + dataSize).littleEndian, to: &data)
+            data.append(contentsOf: "WAVE".utf8)
+            data.append(contentsOf: "fmt ".utf8)
+            append(UInt32(16).littleEndian, to: &data)
+            append(UInt16(1).littleEndian, to: &data)
+            append(channelCount.littleEndian, to: &data)
+            append(sampleRate.littleEndian, to: &data)
+            append(byteRate.littleEndian, to: &data)
+            append(blockAlign.littleEndian, to: &data)
+            append(bitsPerSample.littleEndian, to: &data)
+            data.append(contentsOf: "data".utf8)
+            append(dataSize.littleEndian, to: &data)
+            data.append(Data(count: Int(dataSize)))
+
+            let url = URL(fileURLWithPath: NSTemporaryDirectory())
+                .appendingPathComponent("uitest-audio-\(UUID().uuidString).wav")
+            try data.write(to: url, options: .atomic)
+            return url
+        }
+
+        private static func append(_ value: some Any, to data: inout Data) {
+            var value = value
+            withUnsafeBytes(of: &value) { data.append(contentsOf: $0) }
+        }
+    }
+#endif
+
 // MARK: Power Provider
 
 protocol PowerProvider {
