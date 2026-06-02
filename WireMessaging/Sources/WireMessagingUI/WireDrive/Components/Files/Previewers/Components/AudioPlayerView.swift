@@ -18,6 +18,7 @@
 
 import AVKit
 import SwiftUI
+import WireLogging
 
 struct AudioPlayerView: UIViewControllerRepresentable {
     let url: URL
@@ -43,7 +44,7 @@ struct AudioPlayerView: UIViewControllerRepresentable {
             try session.setCategory(.playback, mode: .default, options: [])
             try session.setActive(true)
         } catch {
-            print("Audio session error:", error)
+            WireLogger.wireDrive.error("Unable to configure audio session: \(String(describing: error))")
         }
     }
 }

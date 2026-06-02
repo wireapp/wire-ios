@@ -38,7 +38,7 @@ struct ZipBrowserView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func navigationButton(child: ZipNode) -> some View {
         NavigationLink {
@@ -54,7 +54,7 @@ struct ZipBrowserView: View {
             ).foregroundStyle(.default)
         }
     }
-    
+
     @ViewBuilder
     private func previewButton(child: ZipNode) -> some View {
         Button {
@@ -64,7 +64,7 @@ struct ZipBrowserView: View {
                         child.path,
                         from: archiveURL
                     )
-                    
+
                     quickPreviewItem = QuickPreviewItem(
                         url: url,
                         fileType: fileType(for: child),
@@ -85,7 +85,7 @@ struct ZipBrowserView: View {
             ).foregroundStyle(.default)
         }
     }
-    
+
     private func fileType(for node: ZipNode) -> WireDriveFileType {
         let fileExtension = URL(fileURLWithPath: node.name).pathExtension
         let fileType = UTType(filenameExtension: fileExtension)

@@ -21,6 +21,20 @@ import PDFKit
 import SwiftUI
 import WireMessagingDomain
 
+/// A read-only file preview screen used in Drive conversations.
+///
+/// This view displays file content using **custom previewers** instead of relying on
+/// system Quick Look. This is intentional for guest users in Drive
+/// conversations to restrict actions on these files.
+///
+/// Each supported file type is rendered using a dedicated preview component:
+/// - PDF → `PDFKitView`
+/// - Video → `VideoPlayer`
+/// - Image → `ImageView`
+/// - Audio → `AudioPlayerView`
+/// - Document → `DocumentView`
+/// - Presentation → `PresentationView`
+/// - Archive → `ZipView`
 struct FilePreviewView: View {
     @Environment(\.dismiss) private var dismiss
 

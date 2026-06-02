@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-import ZIPFoundation
 import Foundation
+import ZIPFoundation
 
 enum ZipTreeBuilder {
     static func build(from url: URL) throws -> ZipNode {
@@ -112,7 +111,11 @@ enum ZipTreeBuilder {
             node.children.append(folder)
         }
     }
-    
+
+    /// Returns whether a ZIP entry should be ignored.
+    ///
+    /// Filters macOS-specific metadata commonly found in ZIP archives,
+    /// including `__MACOSX`, `.DS_Store`, and AppleDouble (`._*`) files.
     private static func shouldIgnore(path: String) -> Bool {
         let url = URL(fileURLWithPath: path)
         let name = url.lastPathComponent

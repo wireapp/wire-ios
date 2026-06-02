@@ -179,12 +179,12 @@ struct FilesItemView: View {
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
             .accessibilityLabel(Accessibility.Files.availableOffline)
     }
-    
+
     @ViewBuilder
     private func readOnlyIcon() -> some View {
-        Image(systemName: "eye.fill")
+        Image(.fileViewOnlyIcon)
             .resizable()
-            .frame(width: 15 * scale, height: 10 * scale)
+            .frame(width: 15 * scale, height: 15 * scale)
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
             .accessibilityLabel(Accessibility.Files.readOnly)
     }
@@ -235,10 +235,7 @@ struct FilesItemView: View {
              .loaded(showReadyToOpen: false),
              .loaded(showReadyToOpen: true) where viewModel.isAvailableOffline:
             HStack(spacing: 5) {
-                // TODO: [WPB-25614] - Update when design ready
-                if viewModel.item.isReadOnly, viewModel.isDrivePermissionsFlagEnabled {
-                    readOnlyIcon()
-                }
+                if viewModel.showReadOnlyIcon { readOnlyIcon() }
                 if viewModel.isAvailableOffline { availableOfflineIcon() }
                 tagsInfo()
                 infoRowTextLine(viewModel.subtitle ?? "")

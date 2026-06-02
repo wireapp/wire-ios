@@ -176,12 +176,13 @@ package final class FilesViewModel: ObservableObject {
             )
 
             let items: [FilesViewItem] = offlineAssets.map { asset in
+                // TODO: [WPB-26057] When backend ready, remove this code, the self user role (editor/viewer) will come from the BE and will have to be stored locally in `WireDriveLocalAsset`
                 let selfUserRole = conversations
                     .first(where: { $0.name == asset.conversationName })?
                     .participants
                     .first(where: { $0.isSelfUser })?
                     .role
-                
+
                 return .fromLocalAsset(
                     asset,
                     conversationName: conversationName,

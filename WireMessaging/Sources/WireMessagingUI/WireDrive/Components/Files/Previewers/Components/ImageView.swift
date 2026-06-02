@@ -24,6 +24,11 @@ struct ImageView: View {
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
 
+    private enum Constants {
+        static let animationSpringResponse = 0.35
+        static let animationDampingFraction = 0.85
+    }
+
     var body: some View {
         AsyncImage(url: url) { image in
             image
@@ -36,7 +41,10 @@ struct ImageView: View {
                             scale = lastScale * value
                         }
                         .onEnded { _ in
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                            withAnimation(.spring(
+                                response: Constants.animationSpringResponse,
+                                dampingFraction: Constants.animationDampingFraction
+                            )) {
                                 if scale < 1.0 {
                                     scale = 1.0
                                 } else {
@@ -50,7 +58,10 @@ struct ImageView: View {
                 .gesture(
                     TapGesture(count: 2)
                         .onEnded {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                            withAnimation(.spring(
+                                response: Constants.animationSpringResponse,
+                                dampingFraction: Constants.animationDampingFraction
+                            )) {
                                 scale = 1.0
                                 lastScale = 1.0
                             }
