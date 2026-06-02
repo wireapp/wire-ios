@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 
 enum DebugActions {
@@ -31,7 +32,7 @@ enum DebugActions {
     ) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        if let textToCopy {
+        if let textToCopy, SecurityFlags.clipboard.isEnabled {
             alert.addAction(UIAlertAction(title: copyActionTitle, style: .default) { _ in
                 UIPasteboard.general.string = textToCopy
             })

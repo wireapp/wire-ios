@@ -4,6 +4,8 @@
 # It is triggered whenever a pull request is merged into any `release/*` branch.
 #
 # Target branch selection:
+# - If the source branch is the LTS release branch (vars.LTS_RELEASE, e.g. release/cycle-4.16),
+#   targets `develop` directly, skipping any future release branches.
 # - Gets all release branches and sorts them
 # - Finds the position of the source branch in the sorted list
 # - Selects the next branch in the sorted list, or `develop` if no next branch exists
@@ -56,6 +58,8 @@ jobs:
 
       - name: Determine target branch
         id: target-branch
+        env:
+          LTS_RELEASE: ${{ vars.LTS_RELEASE }}
         run: |
           scripts/determine-cherry-pick-target.py "${{ github.event.pull_request.base.ref }}"
 

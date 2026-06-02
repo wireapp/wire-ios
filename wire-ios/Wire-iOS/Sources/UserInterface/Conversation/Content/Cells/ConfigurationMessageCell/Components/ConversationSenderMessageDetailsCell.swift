@@ -100,6 +100,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     }()
 
     private var userObservation: NSObjectProtocol?
+    private var currentConfiguration: Configuration?
 
     // MARK: - Init
 
@@ -117,6 +118,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - configure
 
     func configure(with object: Configuration, animated: Bool) {
+        currentConfiguration = object
         let user = object.sender
         avatar.userSession = object.userSession
         avatar.user = user
@@ -127,7 +129,14 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         }
 
         configureAuthorLabel(object: object)
+    }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection),
+           let configuration = currentConfiguration {
+            configureAuthorLabel(object: configuration)
+        }
     }
 
     // MARK: - Configure subviews and setup constraints
@@ -240,7 +249,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     }
 
     private func attachment(from icon: StyleKitIcon, size: CGFloat) -> NSAttributedString? {
-        let textColor: UIColor = SemanticColors.Icon.foregroundDefault
+        let textColor: UIColor = ColorTheme.OthersChatBubbles.onPrimary
         let attachment = NSTextAttachment()
 
         let icon = icon.makeImage(
@@ -261,7 +270,13 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         attachment.bounds = iconBounds
         attachment.image = icon
 
-        return NSAttributedString(attachment: attachment)
+        let attachmentString = NSMutableAttributedString(attachment: attachment)
+        attachmentString.addAttribute(
+            .foregroundColor,
+            value: textColor,
+            range: NSRange(location: 0, length: attachmentString.length)
+        )
+        return attachmentString
     }
 
     // MARK: - Tap gesture of avatar
