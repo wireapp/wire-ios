@@ -105,7 +105,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
     private func handleCallEstablished(_ conversation: ZMConversation) {
         if eventInfos[conversation.remoteIdentifier] == nil {
-            logger.error("handleCallEstablished: expected eventInfo to be non-nil")
+            logger.debug("handleCallEstablished: no eventInfo to track — call joined after establishment")
             eventInfos[conversation.remoteIdentifier] = .init(callStart: currentDateProvider.now)
         }
 
