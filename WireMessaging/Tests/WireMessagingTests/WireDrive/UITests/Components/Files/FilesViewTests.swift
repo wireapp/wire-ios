@@ -352,13 +352,14 @@ final class FilesViewTests: XCTestCase {
             isEditable: false,
             publicLinkID: nil,
             conversationName: "Conversation 1",
+            isReadOnly: false,
             size: nil
         )
     }
 
     @MainActor
     private func makeFilesView(
-        state: FilesViewModel.State
+        state: FilesListStateController.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
@@ -388,6 +389,9 @@ final class FilesViewTests: XCTestCase {
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
                 getDriveConversations: driveConversationsUseCase,
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(
+                    repository: nodesRepository
+                ),
                 makeAssetAvailableOffline: makeAssetAvailableOfflineUseCase,
                 removeAssetAvailableOffline: removeAssetAvailableOfflineUseCase,
                 getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase
@@ -395,14 +399,12 @@ final class FilesViewTests: XCTestCase {
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
             nodesRepository: nodesRepository,
-            fileCache: MockFileCache(),
             isBrowsing: false,
-            accentColorProvider: { .default },
             networkMonitor: networkMonitor
         )
 
-        filesViewModel.state = state
-        filesViewModel.hasMore = false
+        filesViewModel.filesController.state = state
+        filesViewModel.filesController.hasMore = false
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)

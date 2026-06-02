@@ -162,9 +162,9 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
-                fileCache: fileCache,
-                accentColorProvider: accentColorProvider
-            ).environment(\.wireAccentColor, accentColorProvider())
+                fileCache: fileCache
+            )
+            .environment(\.wireAccentColor, accentColorProvider())
         )
     }
 
@@ -216,6 +216,7 @@ public extension WireMessagingFactory {
                         updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                         updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
                         getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
+                        getFileTemplates: WireDriveFetchFileTemplatesUseCase(repository: nodesAPI),
                         makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                             localAssetRepository: localAssetRepository
                         ),
@@ -229,11 +230,10 @@ public extension WireMessagingFactory {
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
-                    fileCache: fileCache,
-                    isBrowsing: true,
-                    accentColorProvider: accentColorProvider
+                    isBrowsing: true
                 )
-            ).environment(\.wireAccentColor, accentColorProvider())
+            )
+            .environment(\.wireAccentColor, accentColorProvider())
         )
     }
 

@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// A object representing an error returned from the server.
 
-public struct FailureResponse: Error {
+public struct FailureResponse: Error, Equatable {
 
     /// The http status code.
 

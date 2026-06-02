@@ -98,6 +98,9 @@ extension FilesViewModel {
                 getDriveConversations: WireDriveGetConversationsUseCase(
                     nodesAPI: previewConversationsApi()
                 ),
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(
+                    repository: previewNodesRepository()
+                ),
                 makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                     localAssetRepository: localAssetRepository
                 ),
@@ -112,10 +115,8 @@ extension FilesViewModel {
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             nodesRepository: previewNodesRepository(),
-            fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-            isBrowsing: isBrowsing,
-            accentColorProvider: { .default }
+            isBrowsing: isBrowsing
         )
     }
 }
@@ -139,7 +140,8 @@ extension FileRenameViewModel {
                 filename: "foo.jpg",
                 filepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image PNG-TEST3.png"
             ),
-            kind: kind
+            kind: kind,
+            onRenamed: {}
         )
     }
 }
@@ -167,6 +169,7 @@ extension FilesItemViewModel {
                 isEditable: false,
                 publicLinkID: publicLinkID,
                 conversationName: "Conversation 1",
+                isReadOnly: false,
                 size: nil
             ),
             selectedSortingKey: .date,
@@ -190,7 +193,6 @@ extension FileVersionItemViewModel {
                 title: "5:46AM",
                 subtitle: "Deniz Agha · 13MB"
             ),
-            accentColor: .default,
             onRestore: { _ in }
         )
     }
@@ -238,7 +240,7 @@ extension FileVersioningViewModel {
                 localAssetRepository: localAssetsRepository,
                 fileCache: MockFileCache()
             ),
-            accentColorProvider: { .default }
+            onVersionRestored: {}
         )
     }
 }
@@ -265,6 +267,28 @@ private func previewNodesRepository() -> any WireDriveNodesRepositoryProtocol {
         let page = request.offset < nodes.count ? Array(nodes[request.offset ..< end]) : []
         let nextOffset = end < nodes.count ? end : nil
         return (page, nextOffset)
+    }
+    repository.getTemplates_MockMethod = {
+        [
+            .init(
+                kind: .document,
+                editable: true,
+                label: "Microsoft Word",
+                id: "01-Microsoft Word.docx"
+            ),
+            .init(
+                kind: .spreadsheet,
+                editable: true,
+                label: "Microsoft Excel",
+                id: "02-Microsoft Excel.xlsx"
+            ),
+            .init(
+                kind: .presentation,
+                editable: true,
+                label: "Microsoft PowerPoint",
+                id: "03-Microsoft PowerPoint.pptx"
+            )
+        ]
     }
     return repository
 }
@@ -436,7 +460,8 @@ extension CreateFileViewModel {
                 id: "01-Microsoft Word.docx"
             )),
             path: "Test-1/Test-2",
-            createFileUseCase: createFileUseCase
+            createFileUseCase: createFileUseCase,
+            onNodeCreated: { _ in }
         )
     }
 }

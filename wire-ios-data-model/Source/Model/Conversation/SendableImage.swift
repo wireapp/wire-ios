@@ -20,11 +20,15 @@ import UniformTypeIdentifiers
 
 public struct SendableImage {
 
+    public let id: UUID
+    public let localIdentifier: String? // Optional unique identifier from the device’s Photos library
     public let name: String
     public let utType: UTType?
     public let data: Data
 
     public init(
+        id: UUID = UUID(),
+        localIdentifier: String? = nil,
         name: String?,
         utType: UTType?,
         data: Data
@@ -43,7 +47,9 @@ public struct SendableImage {
             self.name = "picture"
         }
 
+        self.localIdentifier = localIdentifier
         self.data = data
+        self.id = id
     }
 
     private static func determineUTType(from data: Data) -> UTType? {

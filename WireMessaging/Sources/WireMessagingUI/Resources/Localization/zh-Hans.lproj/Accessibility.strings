@@ -69,3 +69,4 @@
 "conversation.wireCells.files.video" = "视频";
 "conversation.wireCells.files.folder" = "Folder";
 "conversation.wireCells.files.text" = "Text";
+"conversation.wireCells.files.availableOffline" = "Available offline";

@@ -43,11 +43,6 @@
 
 @implementation ZMBaseManagedObjectTest
 
-- (BOOL)shouldUseRealKeychain;
-{
-    return NO;
-}
-
 - (BOOL)shouldUseInMemoryStore;
 {
     return YES;
@@ -80,8 +75,6 @@
 - (void)setUp;
 {
     [super setUp];
-
-    [ZMPersistentCookieStorage setDoNotPersistToKeychain:!self.shouldUseRealKeychain];
 
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
     ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;

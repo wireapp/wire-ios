@@ -37,7 +37,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: mockCoreCrypto)
         sut = MLSEncryptionService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 

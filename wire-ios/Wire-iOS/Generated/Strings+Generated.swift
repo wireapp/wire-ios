@@ -1094,6 +1094,10 @@ internal enum L10n {
         /// Close sketch
         internal static let description = L10n.tr("Accessibility", "sketch.closeButton.description", fallback: "Close sketch")
       }
+      internal enum ConfirmButton {
+        /// Confirm
+        internal static let description = L10n.tr("Accessibility", "sketch.confirmButton.description", fallback: "Confirm")
+      }
       internal enum DrawButton {
         /// Draw or write
         internal static let description = L10n.tr("Accessibility", "sketch.drawButton.description", fallback: "Draw or write")
@@ -1889,6 +1893,8 @@ internal enum L10n {
         internal enum Reply {
           /// You cannot see this message.
           internal static let brokenMessage = L10n.tr("Localizable", "content.message.reply.broken_message", fallback: "You cannot see this message.")
+          /// Deleted message
+          internal static let deletedMessage = L10n.tr("Localizable", "content.message.reply.deleted_message", fallback: "Deleted message")
           /// Edited
           internal static let editedMessage = L10n.tr("Localizable", "content.message.reply.edited_message", fallback: "Edited")
           internal enum Files {
@@ -2283,6 +2289,10 @@ internal enum L10n {
             internal static func `left`(_ p1: Any) -> String {
               return L10n.tr("Localizable", "content.system.conversation.you.left", String(describing: p1), fallback: "%@ left")
             }
+            /// %@ were promoted to group admin
+            internal static func promoted(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.conversation.you.promoted", String(describing: p1), fallback: "%@ were promoted to group admin")
+            }
             /// %@ removed %@
             internal static func removed(_ p1: Any, _ p2: Any) -> String {
               return L10n.tr("Localizable", "content.system.conversation.you.removed", String(describing: p1), String(describing: p2), fallback: "%@ removed %@")
@@ -2639,6 +2649,10 @@ internal enum L10n {
           internal static let message = L10n.tr("Localizable", "conversation.create.apps_disabled.message", fallback: "To improve your workflow with apps, your team needs configuration. Please contact your team admin.")
           /// Your team doesn't use apps yet
           internal static let title = L10n.tr("Localizable", "conversation.create.apps_disabled.title", fallback: "Your team doesn't use apps yet")
+        }
+        internal enum AppsDisabledAsAdmin {
+          /// To improve your workflow with apps, your team needs configuration.
+          internal static let message = L10n.tr("Localizable", "conversation.create.apps_disabled_as_admin.message", fallback: "To improve your workflow with apps, your team needs configuration.")
         }
         internal enum Channel {
           /// Back
@@ -5015,13 +5029,15 @@ internal enum L10n {
         /// Guest
         internal static let guest = L10n.tr("Localizable", "profile.details.guest", fallback: "Guest")
         /// Get certainty about %@’s identity before connecting.
+        /// Wire’s Support team will never reach out to you in the app.
         internal static func identityWarning(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "profile.details.identity_warning", String(describing: p1), fallback: "Get certainty about %@’s identity before connecting.")
+          return L10n.tr("Localizable", "profile.details.identity_warning", String(describing: p1), fallback: "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.")
         }
         /// external
         internal static let partner = L10n.tr("Localizable", "profile.details.partner", fallback: "external")
         /// Please verify the person's identity before accepting the connection request.
-        internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.")
+        /// Wire’s Support team will never reach out to you in the app.
+        internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.")
         /// Details
         internal static let title = L10n.tr("Localizable", "profile.details.title", fallback: "Details")
         internal enum Title {

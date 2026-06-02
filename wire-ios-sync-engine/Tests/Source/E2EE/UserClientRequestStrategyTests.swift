@@ -63,7 +63,7 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
     var clientUpdateStatus: ZMMockClientUpdateStatus!
     let fakeCredentialsProvider = FakeCredentialProvider()
 
-    var cookieStorage: ZMPersistentCookieStorage!
+    var cookieStorage: LegacyCookieStorage!
 
     var proteusService: MockProteusServiceInterface!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
@@ -78,10 +78,8 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
             self.setupProteusService()
 
             self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
-            self.cookieStorage = ZMPersistentCookieStorage(
-                forServerName: "myServer",
-                userIdentifier: self.userIdentifier,
-                useCache: true
+            self.cookieStorage = LegacyCookieStorage(
+                testingWithUserIdentifier: self.userIdentifier
             )
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
@@ -413,7 +411,7 @@ extension UserClientRequestStrategyTests {
             // given
             self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
             self.clientRegistrationStatus.lastResortPrekey = (ushort.max, "last-resort-prekey")
-            self.cookieStorage.authenticationCookieData = HTTPCookie.validCookieData()
+            try? self.cookieStorage.storeCookies(HTTPCookie.validCookies())
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let client = self.createSelfClient(self.syncMOC)

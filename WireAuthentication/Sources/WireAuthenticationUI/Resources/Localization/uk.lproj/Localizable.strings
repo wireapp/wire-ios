@@ -92,6 +92,7 @@
 "verification_code.message" = "Введіть код, який ми вислали на %@.";
 "verification_code.confirm" = "Підтвердити";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Це перший раз, коли ви використовуєте Wire на цьому пристрої.";
 "authentication.no_history.message" = "З міркувань конфіденційності, історія ваших розмов тут не показується.";

@@ -1,0 +1,90 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import WireFoundation
+import XCTest
+
+final class ChannelMessagingTests: WireUITestCase {
+
+    private typealias ReturnedTeam = (
+        teamOwner: UserInfo,
+        teamMember: UserInfo,
+        conversationId: UUID,
+        conversationDomain: String
+    )
+
+    @MainActor
+    private func registerTeamWithChannelConversation() async throws -> ReturnedTeam {
+        let channelName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, teamMembers, _, conversationID) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .channel(channelName)
+        )
+
+        return (
+            teamOwner,
+            teamMembers[0],
+            try XCTUnwrap(conversationID, "conversationId is nil"),
+            UserHelper.default.backend.domainInfo
+        )
+    }
+
+    @MainActor
+    private func login(user: UserInfo) throws -> ConversationsPage {
+        try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+    }
+
+    @MainActor
+    func testSendText_Image_AudioInChannelConversation_TC_8847_8848_8849_8852() async throws {
+
+        // GIVEN
+        let message = UserGenerator.generateRandomMessage()
+        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
+
+        // WHEN
+        let activeConversationPage = try await login(user: teamWithChannelConversation.teamOwner)
+            .openConversation()
+            .openPhotosAndGrantPermission()
+            .selectImageAndSend()
+            .recordAudioAndSend()
+            .sendMessage(message)
+            .sendPing()
+
+        // THEN
+
+        let sentMessages = activeConversationPage.fetchMessages()
+
+        XCTAssertTrue(
+            activeConversationPage.imageCell.waitForExistence(timeout: 2),
+            "No Image cell found"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage.playAudioFile.waitForExistence(timeout: 2),
+            "No audio found"
+        )
+
+        XCTAssertTrue(
+            sentMessages.contains(message),
+            "Expected message '\(message)' not found in sent messages: \(sentMessages)"
+        )
+
+        try activeConversationPage.verifyPingSent()
+    }
+}

@@ -43,7 +43,9 @@ extension WireDriveDraft {
             bytes: bytes,
             mimeType: mimeType,
             requiresCleanup: requiresCleanup,
-            metadata: metadata
+            metadata: metadata,
+            data: nil,
+            localIdentifier: nil
         )
     }
 }

@@ -34,6 +34,11 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         mockAuthenticationAPI = MockAuthenticationAPI()
         session = .mockURLSession()
 
+        // By default, no default SSO is configured for the backend so the use
+        // case falls back to the domain-registration path. Individual tests can
+        // override this to exercise the default-SSO branch.
+        mockAuthenticationAPI.getSSOCodeForEmail_MockError = AuthenticationAPIError.ssoCodeNotFound
+
         sut = DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase(),
             authenticationAPI: mockAuthenticationAPI,
@@ -61,6 +66,72 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         // then
         XCTAssertEqual(authMethod, .loginViaSSO(code: UUID(uuidString: "acd708f0-7fab-4b5f-9c1e-2e570bcf7372")!))
     }
+
+    // MARK: - Default SSO for the backend
+
+    func testInvoke_withEmail_whenDefaultSSOCodeAvailable_returnsLoginViaSSO() async throws {
+        // given
+        let email = "user@example.com"
+        let ssoCode = UUID()
+        mockAuthenticationAPI.getSSOCodeForEmail_MockError = nil // override default, see setup
+        mockAuthenticationAPI.getSSOCodeForEmail_MockValue = ssoCode
+
+        // when
+        let authMethod = try await sut.invoke(emailOrSSOCode: email)
+
+        // then
+        XCTAssertEqual(authMethod, .loginViaSSO(code: ssoCode))
+        XCTAssertEqual(mockAuthenticationAPI.getSSOCodeForEmail_Invocations, [email])
+        XCTAssertEqual(mockAuthenticationAPI.getDomainRegistrationForEmail_Invocations.count, 0)
+    }
+
+    func testInvoke_withEmail_whenDefaultSSOEndpointUnsupported_fallsBackToDomainRegistration() async throws {
+        // given
+        let email = "user@example.com"
+        mockAuthenticationAPI
+            .getSSOCodeForEmail_MockError = AuthenticationAPIError.unsupportedEndpointForAPIVersion
+        mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = .make(domainRedirect: .none)
+
+        // when
+        let authMethod = try await sut.invoke(emailOrSSOCode: email)
+
+        // then
+        XCTAssertEqual(authMethod, .loginOrRegisterViaEmail(email: email))
+        XCTAssertEqual(mockAuthenticationAPI.getSSOCodeForEmail_Invocations, [email])
+        XCTAssertEqual(mockAuthenticationAPI.getDomainRegistrationForEmail_Invocations, [email])
+    }
+
+    func testInvoke_withEmail_whenDefaultSSOCodeNotFound_fallsBackToDomainRegistration() async throws {
+        // given
+        let email = "user@example.com"
+        let teamSSOCode = UUID()
+        mockAuthenticationAPI.getSSOCodeForEmail_MockError = AuthenticationAPIError.ssoCodeNotFound
+        mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = .make(
+            domainRedirect: .sso,
+            ssoCodeString: teamSSOCode.uuidString
+        )
+
+        // when
+        let authMethod = try await sut.invoke(emailOrSSOCode: email)
+
+        // then
+        XCTAssertEqual(authMethod, .loginViaSSO(code: teamSSOCode))
+        XCTAssertEqual(mockAuthenticationAPI.getSSOCodeForEmail_Invocations, [email])
+        XCTAssertEqual(mockAuthenticationAPI.getDomainRegistrationForEmail_Invocations, [email])
+    }
+
+    func testInvoke_withEmail_whenDefaultSSOFailsWithUnexpectedError_throws() async {
+        // given
+        mockAuthenticationAPI.getSSOCodeForEmail_MockError = URLError(.notConnectedToInternet)
+
+        // when, then
+        await XCTAssertThrowsErrorAsync(URLError(.notConnectedToInternet)) { [self] in
+            _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
+        }
+        XCTAssertEqual(mockAuthenticationAPI.getDomainRegistrationForEmail_Invocations.count, 0)
+    }
+
+    // MARK: - Legacy / fallback domain-registration path
 
     func testInvoke_withOnPremEmailAndLegacyAPI() async throws {
         // given
