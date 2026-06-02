@@ -102,23 +102,52 @@ extension ConversationViewController {
         return UIBarButtonItem(customView: button)
     }
 
-    func createBackButton(hasUnread: Bool) -> UIBarButtonItem {
-        typealias UnreadMessages = L10n.Localizable.ConversationList.Voiceover.UnreadMessages
-
-        let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
-        let action = #selector(ConversationViewController.onBackButtonPressed(_:))
-
-        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: action)
-        button.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackButton.rawValue
-        button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
-        button.tintColor = hasUnread ? UIColor.accent() : nil
-        button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
-
+    /// Configures the navigation bar's system back button so the conversation screen matches the
+    /// back button used on the Settings screen. It uses the same mechanism Settings does — a
+    /// `UINavigationBarAppearance` with a custom back-indicator image — so the chevron is sized and
+    /// aligned identically. When there are unread messages in other conversations, the indicator
+    /// switches to the unread variant tinted with the accent color.
+    func configureBackButton(hasUnread: Bool) {
         // Enable swipe-to-go-back gesture
         navigationController?.interactivePopGestureRecognizer?.delegate = self
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
-        return button
+        guard let navigationBar = navigationController?.navigationBar else { return }
+
+        let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
+        // The unread variant has a fixed (non-template) color, so tint it explicitly with the
+        // accent color and render it as-is. The default variant is a template image and inherits
+        // the navigation bar's tint color, exactly like the system back button on other screens.
+        let backIndicator = hasUnread
+            ? icon.withTintColor(.accent(), renderingMode: .alwaysOriginal)
+            : icon
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = ColorTheme.Backgrounds.surface
+        // The conversation navigation bar has no hairline separator, unlike Settings.
+        appearance.shadowColor = .clear
+        appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
+
+        navigationBar.standardAppearance = appearance
+        navigationBar.scrollEdgeAppearance = appearance
+        navigationBar.compactAppearance = appearance
+
+        // The back button shown on the conversation is derived from the previous item in the stack
+        // (the conversation list). Configure its display mode (chevron only, no title) and provide
+        // an empty bar button item that carries the accessibility identifier/label so UI tests and
+        // VoiceOver can locate it. The chevron itself comes from the back-indicator image above.
+        if let backItem = navigationController?.viewControllers.dropLast().last?.navigationItem {
+            typealias UnreadMessages = L10n.Localizable.ConversationList.Voiceover.UnreadMessages
+
+            backItem.backButtonDisplayMode = .minimal
+
+            let backButton = UIBarButtonItem()
+            backButton.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackButton.rawValue
+            backButton.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
+            backButton.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
+            backItem.backBarButtonItem = backButton
+        }
     }
 
     private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> UIImage {
@@ -169,34 +198,13 @@ extension ConversationViewController {
         }
     }
 
-    func leftNavigationItems(hasUnread: Bool) -> [UIBarButtonItem] {
-        var items: [UIBarButtonItem] = []
-
-        if traitCollection.horizontalSizeClass != .regular {
-            // A custom leading bar button item is placed at the navigation bar's layout
-            // margin, whereas the system back button (used e.g. in Settings) gets UIKit's
-            // tighter back-indicator inset. This negative spacer compensates for that gap
-            // so the conversation back button aligns with the system back button.
-            let spacer = UIBarButtonItem(systemItem: .fixedSpace)
-            spacer.width = Self.backButtonLeadingAdjustment
-            items.append(spacer)
-            items.append(createBackButton(hasUnread: hasUnread))
-        }
-
-        return items
-    }
-
-    /// Negative leading adjustment that aligns the custom conversation back button with the
-    /// system back button used on other screens (e.g. Settings).
-    private static let backButtonLeadingAdjustment: CGFloat = -8
-
     func updateRightNavigationItemsButtons() {
         let items = rightNavigationItems(forConversation: conversation)
         navigationItem.rightBarButtonItems = items
         parent?.navigationItem.rightBarButtonItems = items
     }
 
-    /// Update left navigation bar items
+    /// Refresh the back button so it reflects the current unread state.
     func updateLeftNavigationBarItems() {
         updateLeftNavigationBarItemsTask?.cancel()
         updateLeftNavigationBarItemsTask = Task {
@@ -206,7 +214,7 @@ extension ConversationViewController {
             if Task.isCancelled { return }
 
             await MainActor.run {
-                navigationItem.leftBarButtonItems = leftNavigationItems(hasUnread: hasUnread)
+                configureBackButton(hasUnread: hasUnread)
             }
         }
     }
