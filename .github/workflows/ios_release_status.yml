@@ -1,0 +1,326 @@
+name: Daily iOS Release Status
+
+# **What it does**: Posts a daily Jira-driven status of the three live iOS releases
+#                   — Edge (develop), Beta (latest release/cycle-*), Prod (latest appstore/* tag).
+# **Why we have it**: Surface QA load, triage backlog, and release dates without anyone hunting in Jira.
+# **Who does it impact**: iOS release managers, QA, and engineers owning ticket triage.
+#
+# Required secrets:
+#   JIRA_TOKEN          — Same secret used by jira_lint_and_link.yml.
+#   WIRE_IOS_RELEASES   — Slack webhook URL for the channel that receives the report.
+
+on:
+  schedule:
+    - cron: '0 6 * * MON-FRI'   # 06:00 UTC weekdays, so 08:00 Berlin time
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  release-status:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      JIRA_BASE_URL: https://wearezeta.atlassian.net
+      JIRA_PROJECT: WPB
+      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
+      # Optional: full branch name of the current LTS C-build release (e.g. release/cycle-4.18).
+      # When set, an extra LTS section is appended to the report.
+      LTS_RELEASE: ${{ vars.LTS_RELEASE }}
+    steps:
+      - name: Build release report
+        id: build
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const VERSION_FILE = 'wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig';
+            const base    = process.env.JIRA_BASE_URL;
+            const project = process.env.JIRA_PROJECT;
+
+            if (!process.env.JIRA_TOKEN) {
+              throw new Error('JIRA_TOKEN secret is required');
+            }
+            const authHeader = `Basic ${Buffer.from(process.env.JIRA_TOKEN).toString('base64')}`;
+
+            const jira = async (path, body = null) => {
+              const headers = { Authorization: authHeader, Accept: 'application/json' };
+              if (body) headers['Content-Type'] = 'application/json';
+              const res = await fetch(`${base}${path}`, {
+                method: body ? 'POST' : 'GET',
+                headers,
+                body: body ? JSON.stringify(body) : undefined,
+              });
+              if (!res.ok) throw new Error(`Jira ${path}: ${res.status} ${await res.text()}`);
+              return res.json();
+            };
+
+            const readVersionFromRef = async (ref) => {
+              const { data } = await github.rest.repos.getContent({
+                owner: context.repo.owner, repo: context.repo.repo, path: VERSION_FILE, ref,
+              });
+              const text = Buffer.from(data.content, 'base64').toString('utf8');
+              const m = text.match(/WIRE_SHORT_VERSION\s*=\s*(\S+)/);
+              if (!m) throw new Error(`WIRE_SHORT_VERSION not found in ${ref}`);
+              return m[1];
+            };
+
+            const compareSemver = (a, b) => {
+              const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
+              for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+                const x = pa[i] || 0, y = pb[i] || 0;
+                if (x !== y) return x - y;
+              }
+              return 0;
+            };
+
+            // ── Resolve the three versions ────────────────────────────────────
+            // Edge = WIRE_SHORT_VERSION on develop
+            const edgeVersion = await readVersionFromRef('develop');
+
+            // Beta = latest release/cycle-X.Y branch → its WIRE_SHORT_VERSION.
+            // Paginate: this repo has hundreds of branches/tags, so a single page misses them.
+            const branches = await github.paginate(github.rest.repos.listBranches, {
+              owner: context.repo.owner, repo: context.repo.repo, per_page: 100,
+            });
+            const cycles = branches
+              .map(b => ({ name: b.name, m: b.name.match(/^release\/cycle-(\d+\.\d+)$/) }))
+              .filter(b => b.m)
+              .sort((a, b) => compareSemver(b.m[1], a.m[1]));
+            if (cycles.length === 0) throw new Error('No release/cycle-* branches found');
+            const betaBranch  = cycles[0].name;
+            const betaVersion = await readVersionFromRef(betaBranch);
+
+            // Prod = latest appstore/X.Y.Z tag (paginated for the same reason).
+            const tags = await github.paginate(github.rest.repos.listTags, {
+              owner: context.repo.owner, repo: context.repo.repo, per_page: 100,
+            });
+            const appstore = tags
+              .map(t => ({ name: t.name, m: t.name.match(/^appstore\/(\d+\.\d+\.\d+)$/) }))
+              .filter(t => t.m)
+              .sort((a, b) => compareSemver(b.m[1], a.m[1]));
+            if (appstore.length === 0) throw new Error('No appstore/* tags found');
+            const prodTag     = appstore[0].name;
+            const prodVersion = appstore[0].m[1];
+
+            // ── Jira lookups ──────────────────────────────────────────────────
+            const projectVersions = await jira(`/rest/api/3/project/${project}/versions`);
+
+            const findJiraVersion = async (semver) => {
+              const v = projectVersions.find(x => x.name === `iOS v${semver}`);
+              if (!v) return null;
+              // expand=driver returns the Release Hub driver as an Atlassian accountId string.
+              return jira(`/rest/api/3/version/${v.id}?expand=driver`);
+            };
+
+            // We can't resolve accountId → displayName: the token's user lacks
+            // "Browse users and groups". Link to the Jira profile instead.
+            const driverLabel = (accountId) =>
+              accountId
+                ? `<${base}/jira/people/${accountId}|👤 Release captain>`
+                : `⚠️ Release captain: Unassigned`;
+
+            // Migrated from the removed /rest/api/3/search endpoint:
+            //   list issues       → GET  /rest/api/3/search/jql        (no `total` in response)
+            //   count only        → POST /rest/api/3/search/approximate-count
+            const listIssues = async (jql, fields = ['summary', 'status']) => {
+              const qs = new URLSearchParams({ jql, fields: fields.join(','), maxResults: '50' });
+              return jira(`/rest/api/3/search/jql?${qs}`);
+            };
+            const countIssues = async (jql) => {
+              const r = await jira('/rest/api/3/search/approximate-count', { jql });
+              return r.count ?? 0;
+            };
+            // Escape backslashes and double-quotes before interpolating into a JQL "..." literal.
+            const jqlEscape = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+            const daysBetween = (isoDate) => {
+              if (!isoDate) return null;
+              const ms = new Date(isoDate).getTime() - Date.now();
+              return Math.ceil(ms / 86_400_000);
+            };
+
+            const issueLink = (i) =>
+              `<${base}/browse/${i.key}|${i.key}>`;
+
+            // Slack-formatted link to a Jira version's release page; falls back to plain text
+            // when the version isn't in Jira yet (e.g. edge before someone creates it).
+            const releaseLink = (v, label) =>
+              v ? `<${base}/projects/${project}/versions/${v.id}|${label}>` : label;
+
+            const renderIssues = (issues, limit = 10) =>
+              issues.slice(0, limit).map(i =>
+                `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
+
+            // Edge/LTS: bullets headered by status name, with assignee inline.
+            const assigneeOf = (issue) => issue.fields.assignee?.displayName ?? 'Unassigned';
+            const renderGroupedByStatus = (issues, perGroupLimit = 10) => {
+              const groups = new Map();
+              for (const i of issues) {
+                const s = i.fields.status.name;
+                if (!groups.has(s)) groups.set(s, []);
+                groups.get(s).push(i);
+              }
+              const out = [];
+              for (const [status, items] of [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+                out.push(`  • *${status}* (${items.length})`);
+                for (const i of items.slice(0, perGroupLimit)) {
+                  out.push(`    • ${issueLink(i)} — ${assigneeOf(i)} — ${i.fields.summary}`);
+                }
+              }
+              return out;
+            };
+
+            // Prod: scope = the issue's Jira Components, with "iOS" hidden.
+            const scopeOf = (issue) =>
+              (issue.fields.components || [])
+                .map(c => c.name)
+                .filter(n => n && n.toLowerCase() !== 'ios')
+                .join(', ') || null;
+            const renderWithScope = (issues) => {
+              const sorted = [...issues].sort((a, b) =>
+                (scopeOf(a) ?? '').localeCompare(scopeOf(b) ?? ''));
+              return sorted.map(i => {
+                const scope = scopeOf(i);
+                return `    • ${issueLink(i)}${scope ? ` — ${scope}` : ''} — ${i.fields.summary}`;
+              });
+            };
+
+            // ── Edge: fixVersion ──────────────────────────────────────────────
+            const edgeName       = `iOS v${edgeVersion}`;
+            const edgeQ          = jqlEscape(edgeName);
+            const edgeJira       = await findJiraVersion(edgeVersion);
+            const daysToEdge     = edgeJira ? daysBetween(edgeJira.startDate) : null;
+            const edgeTotalCount = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}"`);
+            const edgeOpenJql    = `project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`;
+            const edgeOpenCount  = await countIssues(edgeOpenJql);
+            const edgeOpenItems  = edgeOpenCount > 0 ? (await listIssues(edgeOpenJql, ['summary', 'status', 'assignee'])).issues : [];
+            const edgeQAJql      = `project = ${project} AND fixVersion = "${edgeQ}" AND status in ("Ready for QA", "In QA Review")`;
+            const edgeQACount    = await countIssues(edgeQAJql);
+
+            // ── Beta: affectedVersion + releaseDate ───────────────────────────
+            const betaName          = `iOS v${betaVersion}`;
+            const betaQ             = jqlEscape(betaName);
+            const betaJira          = await findJiraVersion(betaVersion);
+            const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}"`;
+            const betaAffectedCount = await countIssues(betaAffectedJql);
+            const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql)).issues : [];
+            const daysToBeta        = betaJira ? daysBetween(betaJira.releaseDate) : null;
+
+            // ── Prod: affectedVersion + releaseDate ───────────────────────────
+            const prodName          = `iOS v${prodVersion}`;
+            const prodQ             = jqlEscape(prodName);
+            const prodJira          = await findJiraVersion(prodVersion);
+            const prodAffectedJql   = `project = ${project} AND affectedVersion = "${prodQ}" AND status not in ("Done", "Rejected")`;
+            const prodAffectedCount = await countIssues(prodAffectedJql);
+            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, ['summary', 'components'])).issues : [];
+            const daysSinceProd     = prodJira ? -daysBetween(prodJira.releaseDate) : null;
+
+            // ── LTS C Builds (optional, only if vars.LTS_RELEASE is set
+            //                 and the Jira version isn't yet released) ────────
+            let lts = null;
+            if (process.env.LTS_RELEASE) {
+              const ltsBranch  = process.env.LTS_RELEASE;
+              const ltsVersion = await readVersionFromRef(ltsBranch);
+              const ltsName    = `iOS v${ltsVersion}`;
+              const ltsQ       = jqlEscape(ltsName);
+              const ltsJira    = await findJiraVersion(ltsVersion);
+              if (ltsJira?.released) {
+                core.info(`LTS ${ltsName} is already released in Jira — skipping section`);
+              } else {
+                const ltsTotalJql = `project = ${project} AND fixVersion = "${ltsQ}"`;
+                const ltsTotal    = await countIssues(ltsTotalJql);
+                const ltsOpenJql  = `project = ${project} AND fixVersion = "${ltsQ}" AND statusCategory != Done`;
+                const ltsOpen     = await countIssues(ltsOpenJql);
+                const ltsOpenItems = ltsOpen > 0 ? (await listIssues(ltsOpenJql, ['summary', 'status', 'assignee'])).issues : [];
+                const daysToLts  = ltsJira ? daysBetween(ltsJira.releaseDate) : null;
+                lts = { ltsBranch, ltsName, ltsJira, ltsTotal, ltsOpen, ltsOpenItems, daysToLts };
+              }
+            }
+
+            // ── Render Slack-flavoured Markdown ───────────────────────────────
+            const lines = [];
+            lines.push(`*🚀 iOS Release Status — ${new Date().toDateString()}*`);
+            lines.push('');
+
+            // Edge
+            lines.push(`*🟢 Edge — ${releaseLink(edgeJira, edgeName)}*  _(develop)_`);
+            lines.push(`  • ${driverLabel(edgeJira?.driver)}`);
+            if (daysToEdge != null) {
+              const label = daysToEdge >= 0 ? 'until start' : 'past start';
+              lines.push(`  • ${Math.abs(daysToEdge)} day(s) ${label} (${edgeJira.startDate})`);
+            }
+            lines.push(`  • ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
+            if (edgeQACount > 0) {
+              lines.push(`  • 🎮 *${edgeQACount} ticket(s) in QA — Playtest recommended*`);
+            }
+            if (edgeVersion === betaVersion) {
+              lines.push(`  • ⚠️ *develop is still on ${edgeVersion} — bump \`WIRE_SHORT_VERSION\` now that \`${betaBranch}\` is cut*`);
+            }
+            if (edgeOpenCount > 0) {
+              lines.push(...renderGroupedByStatus(edgeOpenItems));
+            }
+            lines.push('');
+
+            // Beta
+            lines.push(`*🔵 Beta — ${releaseLink(betaJira, betaName)}*  _(\`${betaBranch}\`)_`);
+            lines.push(`  • ${driverLabel(betaJira?.driver)}`);
+            if (daysToBeta != null) {
+              const label = daysToBeta >= 0 ? 'until release' : 'past release';
+              lines.push(`  • ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.releaseDate})`);
+            } else {
+              lines.push(`  • ⚠️ no release date on Jira version`);
+            }
+            lines.push(`  • ${betaAffectedCount} ticket(s) with affectedVersion`);
+            if (betaAffectedCount > 0) {
+              lines.push(`  • 🔍 *Triage needed*`);
+              lines.push(...renderIssues(betaAffectedItems));
+            }
+            lines.push('');
+
+            // Prod
+            lines.push(`*⚪ Prod — ${releaseLink(prodJira, prodName)}*  _(\`${prodTag}\`)_`);
+            lines.push(`  • ${driverLabel(prodJira?.driver)}`);
+            if (daysSinceProd != null) {
+              lines.push(`  • ${daysSinceProd} day(s) since release (${prodJira.releaseDate})`);
+            } else {
+              lines.push(`  • ⚠️ no release date on Jira version`);
+            }
+            lines.push(`  • ${prodAffectedCount} ticket(s) with affectedVersion`);
+            if (prodAffectedCount > 0) {
+              lines.push(`  • 🔍 *Triage needed*`);
+              lines.push(...renderWithScope(prodAffectedItems));
+            }
+
+            // LTS C Builds (optional)
+            if (lts) {
+              lines.push('');
+              lines.push(`*⬜ LTS C Builds - ${releaseLink(lts.ltsJira, lts.ltsName)} (\`${lts.ltsBranch}\`)*`);
+              lines.push(`  • ${driverLabel(lts.ltsJira?.driver)}`);
+              if (lts.daysToLts != null) {
+                const label = lts.daysToLts >= 0 ? 'until release' : 'past release';
+                lines.push(`  • ${Math.abs(lts.daysToLts)} day(s) ${label} (${lts.ltsJira.releaseDate})`);
+              } else {
+                lines.push(`  • ⚠️ no release date on Jira version`);
+              }
+              lines.push(`  • ${lts.ltsOpen} of ${lts.ltsTotal} tickets not done`);
+              if (lts.ltsOpen > 0) {
+                lines.push(...renderGroupedByStatus(lts.ltsOpenItems));
+              }
+            }
+
+            const message = lines.join('\n');
+            await core.summary.addRaw(message).write();
+            return message;
+
+      - name: Post to Wire
+        if: env.SLACK_WEBHOOK_URL != ''
+        continue-on-error: true
+        uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+        with:
+          status: custom
+          custom_payload: |
+            { "text": ${{ steps.build.outputs.result }} }

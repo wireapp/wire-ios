@@ -34,6 +34,7 @@ struct WireDriveLargeDocumentPreviewView: View {
     let url: URL?
     let state: WireDriveFileUITracker.State
     let isDraftPreview: Bool
+    let isAvailableOffline: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -45,7 +46,8 @@ struct WireDriveLargeDocumentPreviewView: View {
                     headerText: headerText,
                     labelText: labelText,
                     isDraftPreview: isDraftPreview,
-                    state: state
+                    state: state,
+                    isAvailableOffline: isAvailableOffline
                 )
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
                 .frame(maxWidth: .infinity)
@@ -122,16 +124,92 @@ struct WireDriveLargeDocumentPreviewView: View {
 }
 
 #Preview {
-    WireDriveLargeDocumentPreviewView(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        url: URL(
-            string:
-            "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
+    let headerIcon = Image(WireDriveFileType.pdf.imageResource)
+    let url = URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg")
+    let headerText = "PDF (336 KB)"
+    let labelText = "CDR_20220120 Accessibility Review Reviewed Final Plus"
+
+    let previewCases: [(
+        headerIcon: Image,
+        headerText: String,
+        labelText: String,
+        url: URL?,
+        state: WireDriveFileUITracker.State,
+        isDraftPreview: Bool,
+        isAvailableOffline: Bool
+    )] = [
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .loading(progress: 0.7, isLargeFile: false),
+            isDraftPreview: false,
+            isAvailableOffline: false
         ),
-        state: .loading(progress: 0.7, isLargeFile: false),
-        isDraftPreview: false
-    )
-    .padding()
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .loaded(showReadyToOpen: true),
+            isDraftPreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .loaded(showReadyToOpen: true),
+            isDraftPreview: false,
+            isAvailableOffline: true
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .failed,
+            isDraftPreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .loaded(showReadyToOpen: false),
+            isDraftPreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .notLoaded,
+            isDraftPreview: false,
+            isAvailableOffline: false
+        )
+    ]
+    ScrollView {
+        VStack {
+            ForEach(0 ..< previewCases.count, id: \.self) { index in
+                let data = previewCases[index]
+
+                WireDriveLargeDocumentPreviewView(
+                    headerIcon: data.headerIcon,
+                    headerText: data.headerText,
+                    labelText: data.labelText,
+                    url: data.url,
+                    state: data.state,
+                    isDraftPreview: data.isDraftPreview,
+                    isAvailableOffline: data.isAvailableOffline
+                )
+                .padding(.horizontal)
+            }
+        }
+        .padding(.vertical)
+    }
 }
