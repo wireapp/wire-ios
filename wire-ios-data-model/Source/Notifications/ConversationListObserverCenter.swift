@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 
@@ -54,6 +55,16 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     var deletedLabels = [Label]()
 
     weak var managedObjectContext: NSManagedObjectContext!
+
+    /// Cooldown used to coalesce repeated `startObserving()` calls into a single list rebuild.
+    ///
+    /// At launch the `NotificationDispatcher` toggles between economical and normal operation modes once per
+    /// incremental-sync cycle, and each transition back to normal calls `startObserving()` -> `refetchAllLists`,
+    /// a full in-memory predicate rebuild of every list on the main thread. Coalescing collapses such a burst into
+    /// at most one leading + one trailing rebuild. Overridable so tests can shorten the trailing window.
+    var reloadCooldownTime: TimeInterval = 1.0
+
+    private lazy var reloadDebouncer = LeadingTrailingDebouncer(cooldownTime: reloadCooldownTime)
 
     fileprivate init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -224,6 +235,16 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         // list snapshots are automatically re-created when the lists are re-created and `recreateSnapshot(for
         // conversation:)` is called
         zmLog.debug(#function)
+
+        // Coalesce bursts of `startObserving()` (e.g. one per incremental-sync cycle at launch) so the expensive
+        // full list rebuild runs at most once per cooldown window instead of once per call.
+        reloadDebouncer.call(id: nil) { [weak self] in
+            self?.reloadAllLists()
+        }
+    }
+
+    private func reloadAllLists() {
+        guard !isTornDown, let managedObjectContext else { return }
 
         managedObjectContext.conversationListDirectory().refetchAllLists(in: managedObjectContext)
 

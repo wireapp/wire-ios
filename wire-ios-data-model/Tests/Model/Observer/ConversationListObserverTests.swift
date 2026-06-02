@@ -105,6 +105,32 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     }
 
+    func testThatItCoalescesRepeatedReloadsIntoASingleTrailingRebuild() {
+        // given
+        // Shorten the trailing window before the debouncer is lazily created on the first `startObserving`.
+        uiMOC.conversationListObserverCenter.reloadCooldownTime = 0.2
+        sut.operationMode = .normal
+        token = ConversationListChangeInfo.addReloadObserver(
+            testConversationListReloadObserver,
+            managedObjectContext: uiMOC
+        )
+
+        // when - simulate several incremental-sync cycles in quick succession
+        for _ in 0..<5 {
+            sut.operationMode = .economical
+            sut.operationMode = .normal
+        }
+
+        // then - only the leading rebuild has run synchronously so far
+        XCTAssertEqual(testConversationListReloadObserver.conversationListsReloadCount, 1)
+
+        // when - the cooldown elapses
+        spinMainQueue(withTimeout: 0.5)
+
+        // then - the burst collapsed into one additional trailing rebuild (2 total, not 5)
+        XCTAssertEqual(testConversationListReloadObserver.conversationListsReloadCount, 2)
+    }
+
     func testThatItNotifiesObserversWhenANewConversationIsInsertedThatMatchesListPredicate() {
         // given
         let conversationList = ZMConversation.pendingConversations(in: uiMOC)
