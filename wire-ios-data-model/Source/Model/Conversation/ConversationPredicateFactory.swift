@@ -221,7 +221,7 @@ public final class ConversationPredicateFactory: NSObject {
         let isOneOnOne =
             NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let hasOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) != NULL")
-        let isConnectionAccepted =
+        let isConnectionAcceptedOrBlocked =
             NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)).connection.status IN %@", [
                 NSNumber(value: ZMConnectionStatus.accepted.rawValue),
                 NSNumber(value: ZMConnectionStatus.blocked.rawValue)
@@ -243,7 +243,7 @@ public final class ConversationPredicateFactory: NSObject {
         return (isOneOnOne.and(otherUserDeleted))
             .or(userDeletedProteusOneOnOne)
             .or(
-                isOneOnOne.and(hasOneOnOneUser).and(isConnectionAccepted
+                isOneOnOne.and(hasOneOnOneUser).and(isConnectionAcceptedOrBlocked
                     .or(isOtherUserInSameTeam)
                     .or(isOtherUserBot))
             )
