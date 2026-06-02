@@ -915,6 +915,37 @@ class MockNetworkStatusViewDelegate: NetworkStatusViewDelegate {
 
 }
 
+class MockOAuthUseCaseInterface: OAuthUseCaseInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_Invocations: [(parameters: OAuthParameters, onWebViewPresenting: (@MainActor () -> Void)?, onWebViewDismissed: (@MainActor () -> Void)?)] = []
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockError: Error?
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockMethod: ((OAuthParameters, (@MainActor () -> Void)?, (@MainActor () -> Void)?) async throws -> OAuthResponse)?
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue: OAuthResponse?
+
+    func invoke(parameters: OAuthParameters, onWebViewPresenting: (@MainActor () -> Void)?, onWebViewDismissed: (@MainActor () -> Void)?) async throws -> OAuthResponse {
+        invokeParametersOnWebViewPresentingOnWebViewDismissed_Invocations.append((parameters: parameters, onWebViewPresenting: onWebViewPresenting, onWebViewDismissed: onWebViewDismissed))
+
+        if let error = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockError {
+            throw error
+        }
+
+        if let mock = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockMethod {
+            return try await mock(parameters, onWebViewPresenting, onWebViewDismissed)
+        } else if let mock = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeParametersOnWebViewPresentingOnWebViewDismissed`")
+        }
+    }
+
+}
+
 class MockProfileActionsFactoryProtocol: ProfileActionsFactoryProtocol {
 
     // MARK: - Life cycle
