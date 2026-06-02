@@ -4075,6 +4075,30 @@ public class MockResetMLSConversationLockRepositoryProtocol: ResetMLSConversatio
 
 }
 
+public class MockResetProteusSessionUseCaseProtocol: ResetProteusSessionUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUserClient_Invocations: [UserClient] = []
+    public var invokeUserClient_MockMethod: ((UserClient) async -> Void)?
+
+    public func invoke(userClient: UserClient) async {
+        invokeUserClient_Invocations.append(userClient)
+
+        guard let mock = invokeUserClient_MockMethod else {
+            fatalError("no mock for `invokeUserClient`")
+        }
+
+        await mock(userClient)
+    }
+
+}
+
 public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
 
     // MARK: - Life cycle

@@ -30,6 +30,7 @@ struct DeviceDetailsView: View {
     @ObservedObject private(set) var viewModel: DeviceInfoViewModel
     @State private var isCertificateViewPresented = false
     @State private var didEnrollCertificateFail = false
+    @State private var didResetSession = false
 
     @ViewBuilder var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
@@ -110,6 +111,9 @@ struct DeviceDetailsView: View {
         .onReceive(viewModel.$showEnrollmentCertificateError, perform: { _ in
             didEnrollCertificateFail = viewModel.showEnrollmentCertificateError
         })
+        .onReceive(viewModel.$showResetSessionSuccess, perform: { showSuccess in
+            didResetSession = showSuccess
+        })
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
@@ -124,6 +128,14 @@ struct DeviceDetailsView: View {
         .alert(E2ei.Error.Alert.title, isPresented: $didEnrollCertificateFail) {
             Button(L10n.Localizable.General.ok) {
                 didEnrollCertificateFail = false
+            }
+        }
+        .alert(
+            L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success,
+            isPresented: $didResetSession
+        ) {
+            Button(L10n.Localizable.General.ok) {
+                viewModel.showResetSessionSuccess = false
             }
         }
     }

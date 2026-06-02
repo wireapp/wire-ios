@@ -44,9 +44,6 @@ public protocol UserClientType: NSObjectProtocol {
 
     var e2eIdentityCertificate: E2eIdentityCertificate? { get set }
 
-    /// Delete any existing session with client and establish a new one.
-    func resetSession()
-
     /// Returns true if this is the active client of the self user
     func isSelfClient() -> Bool
 }

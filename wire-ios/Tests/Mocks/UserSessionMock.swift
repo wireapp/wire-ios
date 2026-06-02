@@ -298,6 +298,10 @@ final class UserSessionMock: UserSession {
         mockGetUserClientFingerprintUseCaseProtocol
     }
 
+    var resetProteusSession: ResetProteusSessionUseCaseProtocol {
+        MockResetProteusSessionUseCase()
+    }
+
     lazy var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol = {
         let mock = MockIsUserE2EICertifiedUseCaseProtocol()
         mock.invokeConversationUser_MockValue = false
@@ -477,3 +481,7 @@ extension UserSessionMock: ContextProvider {
 }
 
 class MockNotificationContext: NSObject, NotificationContext {}
+
+private struct MockResetProteusSessionUseCase: ResetProteusSessionUseCaseProtocol {
+    func invoke(userClient: UserClient) async {}
+}
