@@ -142,8 +142,10 @@ struct FilesItemView: View {
             .resizable()
             .aspectRatio(contentMode: .fit)
             .overlay(alignment: .bottomTrailing) {
-                if viewModel.item.publicLinkID != nil {
-                    PublicLinkBadge(forIcon: viewModel.item.icon)
+                if viewModel.showReadOnlyIcon {
+                    FileIconBadge(iconName: "eye", for: viewModel.item.icon)
+                } else if viewModel.item.publicLinkID != nil {
+                    FileIconBadge(iconName: "link", for: viewModel.item.icon)
                 }
             }
             .padding(.horizontal, iconHorizontalPadding)
@@ -178,15 +180,6 @@ struct FilesItemView: View {
             .frame(width: 10 * scale, height: 10 * scale)
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
             .accessibilityLabel(Accessibility.Files.availableOffline)
-    }
-
-    @ViewBuilder
-    private func readOnlyIcon() -> some View {
-        Image(.fileViewOnlyIcon)
-            .resizable()
-            .frame(width: 15 * scale, height: 15 * scale)
-            .foregroundStyle(ColorTheme.Base.secondaryText.color)
-            .accessibilityLabel(Accessibility.Files.readOnly)
     }
 
     @ViewBuilder
@@ -235,7 +228,6 @@ struct FilesItemView: View {
              .loaded(showReadyToOpen: false),
              .loaded(showReadyToOpen: true) where viewModel.isAvailableOffline:
             HStack(spacing: 5) {
-                if viewModel.showReadOnlyIcon { readOnlyIcon() }
                 if viewModel.isAvailableOffline { availableOfflineIcon() }
                 tagsInfo()
                 infoRowTextLine(viewModel.subtitle ?? "")
@@ -399,15 +391,19 @@ struct FilesItemView: View {
 }
 
 extension FilesItemView {
-    struct PublicLinkBadge: View {
+    struct FileIconBadge: View {
         @ScaledMetric private var size: CGFloat = 10
         @ScaledMetric private var innerPadding: CGFloat = 2
         @ScaledMetric private var borderThickness: CGFloat = 1
         @ScaledMetric private var offsetX: CGFloat
         @ScaledMetric private var offsetY: CGFloat
 
-        init(forIcon icon: WireDriveFileType) {
-            switch icon {
+        private let iconName: String
+
+        init(iconName: String, for fileType: WireDriveFileType) {
+            self.iconName = iconName
+
+            switch fileType {
             case .folder:
                 _offsetX = .init(wrappedValue: 5)
                 _offsetY = .init(wrappedValue: 1)
@@ -418,7 +414,7 @@ extension FilesItemView {
         }
 
         var body: some View {
-            Image(systemName: "link")
+            Image(systemName: iconName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .fontWeight(.semibold)
