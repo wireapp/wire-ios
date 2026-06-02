@@ -406,7 +406,7 @@ final class ConversationInputBarViewController: UIViewController,
                 [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
                     $0.isEnabled = false
                     $0.setBackgroundImageColor(
-                        SemanticColors.Button.backgroundInputBarItemDisabled,
+                        ColorTheme.Buttons.Secondary.disabled,
                         for: .disabled
                     )
                 }
@@ -548,7 +548,7 @@ final class ConversationInputBarViewController: UIViewController,
         hourglassButton.layer.borderWidth = 1
         hourglassButton.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
         hourglassButton.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
-        hourglassButton.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemDisabled, for: .disabled)
+        hourglassButton.setBackgroundImageColor(ColorTheme.Buttons.Secondary.disabled, for: .disabled)
         hourglassButton.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
 
     }

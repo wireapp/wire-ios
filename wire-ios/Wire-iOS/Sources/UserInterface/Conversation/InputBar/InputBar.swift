@@ -603,7 +603,7 @@ final class InputBar: UIView {
 
             button
                 .setBackgroundImageColor(
-                    SemanticColors.Button.backgroundInputBarItemDisabled.resolvedColor(with: traitCollection),
+                    ColorTheme.Buttons.Secondary.disabled.resolvedColor(with: traitCollection),
                     for: .disabled
                 )
 
