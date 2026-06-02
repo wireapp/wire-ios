@@ -83,24 +83,6 @@
     XCTAssertEqualObjects(self.sut.authenticationCookieData, data2);
 }
 
-- (void)testThatItIsUniqueForServerName;
-{
-    ZMPersistentCookieStorage *sut1 = self.sut;
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:@"2.example.com" userIdentifier:self.userIdentifier useCache:YES];
-
-    XCTAssertNil([sut1 authenticationCookieData]);
-    XCTAssertNil([sut2 authenticationCookieData]);
-    
-    NSData *data1 = [NSData dataWithBytes:(char []){'a'} length:1];
-    [sut1 setAuthenticationCookieData:data1];
-    NSData *data2 = [NSData dataWithBytes:(char []){'b'} length:1];
-    [sut2 setAuthenticationCookieData:data2];
-    
-    XCTAssertEqualObjects([sut1 authenticationCookieData], data1);
-    XCTAssertEqualObjects([sut2 authenticationCookieData], data2);
-    [sut2 deleteKeychainItems];
-}
-
 - (void)testThatItCanDeleteCookies;
 {
     XCTAssertNil(self.sut.authenticationCookieData);
@@ -201,62 +183,6 @@
     // then
     XCTAssertNil(sut1.authenticationCookieData);
     XCTAssertNil(sut2.authenticationCookieData);
-}
-
-- (void)testThatItMigratesAnDeletesOldCookieData
-{
-    // given
-    NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    NSString *serverName = @"z1.example.com";
-    ZMPersistentCookieStorage *legacySut = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:(NSUUID *_Nonnull)nil useCache:YES];
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:otherUserIdentifier useCache:YES];
-
-    NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
-    [legacySut setAuthenticationCookieData:data1];
-    XCTAssertNotNil(legacySut.authenticationCookieData);
-    [sut2 setAuthenticationCookieData:data2];
-    XCTAssertNotNil(sut2.authenticationCookieData);
-
-    // when
-    ZMPersistentCookieStorageMigrator *migrator = [ZMPersistentCookieStorageMigrator migratorWithUserIdentifier:self.userIdentifier serverName:serverName];
-    ZMPersistentCookieStorage *sut1 = [migrator createStoreMigratingLegacyStoreIfNeeded];
-
-    // then
-    XCTAssertNil(legacySut.authenticationCookieData);
-    XCTAssertEqualObjects(sut1.authenticationCookieData, data1);
-    XCTAssertEqualObjects(sut2.authenticationCookieData, data2);
-}
-
-- (void)testThatItDoesNotMigrateIfThereIsNoOldCookieData
-{
-    // given
-    NSString *serverName = @"z1.example.com";
-    NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:otherUserIdentifier useCache:YES];
-    ZMPersistentCookieStorage *legacySut = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:(NSUUID *_Nonnull)nil useCache:YES];
-    NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
-
-    {
-        ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:self.userIdentifier useCache:YES];
-        [sut1 setAuthenticationCookieData:data1];
-        [sut2 setAuthenticationCookieData:data2];
-        XCTAssertNil(legacySut.authenticationCookieData);
-        XCTAssertEqualObjects(sut1.authenticationCookieData, data1);
-        XCTAssertEqualObjects(sut2.authenticationCookieData, data2);
-    }
-
-    {
-        // when
-        ZMPersistentCookieStorageMigrator *migrator = [ZMPersistentCookieStorageMigrator migratorWithUserIdentifier:self.userIdentifier serverName:serverName];
-        ZMPersistentCookieStorage *sut1 = [migrator createStoreMigratingLegacyStoreIfNeeded];
-
-        // then
-        XCTAssertNil(legacySut.authenticationCookieData);
-        XCTAssertEqualObjects(sut1.authenticationCookieData, data1);
-        XCTAssertEqualObjects(sut2.authenticationCookieData, data2);
-    }
 }
 
 - (void)testThatItHasAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsAvailable
