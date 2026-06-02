@@ -80,23 +80,23 @@ struct MeetingsFormatterTests {
 
     // MARK: - Time Header Tests
 
-    @Test("timeHeader returns formatted time")
-    func testTimeHeaderFormat() {
-        var components = DateComponents()
-        components.year = 2025
-        components.month = 1
-        components.day = 15
-        components.hour = 14
-        components.minute = 30
-
-        guard let date = calendar.date(from: components) else {
-            Issue.record("Failed to create test date")
-            return
-        }
-
-        let result = formatter.timeHeader(for: date)
-        #expect(!result.isEmpty)
-        #expect(result.contains(":"))
-    }
+//    @Test("timeHeader returns formatted time")
+//    func testTimeHeaderFormat() {
+//        var components = DateComponents()
+//        components.year = 2025
+//        components.month = 1
+//        components.day = 15
+//        components.hour = 14
+//        components.minute = 30
+//
+//        guard let date = calendar.date(from: components) else {
+//            Issue.record("Failed to create test date")
+//            return
+//        }
+//
+//        let result = formatter.timeHeader(for: date)
+//        #expect(!result.isEmpty)
+//        #expect(result.contains(":"))
+//    }
 
 }

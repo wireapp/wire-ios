@@ -79,7 +79,6 @@ final class MeetingsViewSnapshotTests: XCTestCase {
     func testEmptyPastTabColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
         let viewModel = createEmptyViewModel()
-        viewModel.selectedTab = .past
 
         let view = NavigationStack {
             MeetingsView(viewModel: viewModel)
@@ -98,7 +97,6 @@ final class MeetingsViewSnapshotTests: XCTestCase {
     func testEmptyPastTabDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
         let viewModel = createEmptyViewModel()
-        viewModel.selectedTab = .past
 
         let view = NavigationStack {
             MeetingsView(viewModel: viewModel)
@@ -121,11 +119,11 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         mockRepository.fetchOngoingMeetingsAt_MockValue = []
         mockRepository.hasUpcomingMeetingsAfter_MockValue = false
 
-        let pastMeetingsUseCase = MockFetchPastMeetingsUseCaseProtocol()
-        pastMeetingsUseCase.invoke_MockValue = []
+//        let pastMeetingsUseCase = MockFetchPastMeetingsUseCaseProtocol()
+//        pastMeetingsUseCase.invoke_MockValue = []
 
         let upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockValue = PaginatedGroupedMeetings(
+        upcomingMeetingsUseCase.invokePageSizeOffset_MockValue = PaginatedGroupedMeetings(
             groups: [],
             hasMore: false,
             nextOffset: 0
@@ -135,7 +133,7 @@ final class MeetingsViewSnapshotTests: XCTestCase {
             repository: mockRepository,
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-            pastMeetingsUseCase: pastMeetingsUseCase,
+           // pastMeetingsUseCase: pastMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
     }

@@ -43,6 +43,7 @@ struct MeetingsView: View {
     }
 
     @ViewBuilder private var content: some View {
+
             if viewModel.groupedUpcomingMeetings.isEmpty {
                 MeetingsEmptyStateView(
                     title: Strings.EmptyState.Next.title,
@@ -58,7 +59,9 @@ struct MeetingsView: View {
             GroupedSections(
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTimeRange: viewModel.formatTimeRange(for:)
+                formatTimeRange: viewModel.formatTimeRange(for:),
+                onEdit: {_ in },
+                onDelete: {_ in }
             )
 
             if viewModel.showMoreButton {
@@ -95,12 +98,19 @@ private struct GroupedSections: View {
     let groups: [(day: Date, meetings: [Meeting])]
     let formatDay: (Date) -> String
     let formatTimeRange: (Meeting) -> String
+    let onEdit: (Meeting) -> Void
+    let onDelete: (Meeting) -> Void
 
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
                 ForEach(dayGroup.meetings, id: \.id) { meeting in
-                    MeetingRow(meeting: meeting, formatTimeRange: formatTimeRange)
+                    MeetingRow(
+                        meeting: meeting,
+                        formatTimeRange: formatTimeRange,
+                        onEdit: { onEdit(meeting) },
+                        onDelete: { onDelete(meeting) }
+                    )
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
@@ -112,8 +122,12 @@ private struct GroupedSections: View {
 // MARK: - Row
 
 private struct MeetingRow: View {
+    private typealias Strings = L10n.Localizable.WireMeetings.List
+
     let meeting: Meeting
     let formatTimeRange: (Meeting) -> String
+    let onEdit: () -> Void
+    let onDelete: () -> Void
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             ZStack {
@@ -148,9 +162,23 @@ private struct MeetingRow: View {
 
             Spacer()
 
-            Image(systemName: "ellipsis")
-                .rotationEffect(.degrees(90))
-                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+            Menu {
+                Button {
+                    onEdit()
+                } label: {
+                    Label(Strings.Actions.edit, systemImage: "pencil")
+                }
+
+                Button(role: .destructive) {
+                    onDelete()
+                } label: {
+                    Label(Strings.Actions.delete, systemImage: "trash")
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .rotationEffect(.degrees(90))
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+            }
         }
         .contentShape(Rectangle())
         .padding(.vertical, 6)
