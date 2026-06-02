@@ -260,6 +260,14 @@ public enum Locators {
         case save
     }
 
+    public enum UsernameUpdatePage: String {
+
+        case usernameField
+        case save = "Save"
+        case username = "Username"
+        case handleTextField
+    }
+
     public enum NewConversationPage: String {
 
         case createNewGroupButton
@@ -282,6 +290,7 @@ public enum Locators {
     public enum OptionsOnSettingsPage: String {
 
         case lockWithPasscode = "Lock With Passcode"
+        case createLinkPreviews = "Create Link Previews"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {
@@ -322,6 +331,13 @@ public enum Locators {
 
         case usernameTextField
         case confirmUsernameButton
+    }
+
+    public enum ManageDevicesPage: String {
+
+        case manageDevices
+        case removeDevice = "minus.circle.fill"
+        case deleteDevice = "Delete"
     }
 
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
@@ -528,6 +544,12 @@ public enum Locators {
 
         case mainContent
         case clientObsoleteAlertTitle = "Update required"
+
+    }
+
+    public enum SSOWebLoginPage: String {
+        case username = "Username"
+        case signInButton = "Sign In"
 
     }
 }

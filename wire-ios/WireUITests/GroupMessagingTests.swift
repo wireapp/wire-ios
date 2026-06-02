@@ -82,7 +82,7 @@ final class GroupMessagingTests: WireUITestCase {
         let groupTeam = try await registerGroupTeam()
 
         // WHEN
-        let activeConversationPage = try login(user: groupTeam.teamOwner)
+        let activeConversationPage = try await login(user: groupTeam.teamOwner)
             .openConversation()
             .sendMessage(message)
             .recordAudioAndSend()
@@ -176,7 +176,7 @@ final class GroupMessagingTests: WireUITestCase {
 
         // WHEN user B records and sends an audio message to the shared conversation via the UI
         let conversationAsB = try conversationsPageAsB.openConversation()
-        try conversationAsB.recordAudioAndSend()
+        try await conversationAsB.recordAudioAndSend()
 
         // ...and user B logs out, leaving user A as the active session
         _ = try conversationAsB

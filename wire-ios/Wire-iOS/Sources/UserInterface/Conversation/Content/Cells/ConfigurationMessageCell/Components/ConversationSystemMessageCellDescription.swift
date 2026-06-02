@@ -149,7 +149,7 @@ enum ConversationSystemMessageCellDescription {
             )
             return [AnyConversationMessageCellDescription(missingMessagesCell)]
 
-        case .participantsAdded, .participantsRemoved, .teamMemberLeave:
+        case .participantsAdded, .participantsRemoved, .teamMemberLeave, .promotedToGroupAdmin:
             let participantsChangedCell = ConversationParticipantsChangedSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData
