@@ -26,16 +26,22 @@ import WireCountly
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
+    // MARK: - Private properties
+
     private let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
-    let pushTokenService = PushTokenService()
     private let appStateCalculator = AppStateCalculator()
 
-    private lazy var voIPPushManager: VoIPPushManager = .init(
+    private lazy var voIPPushManager = VoIPPushManager(
         application: UIApplication.shared,
         pushTokenService: pushTokenService
     )
 
+    // MARK: - Public properties
+
+    let pushTokenService = PushTokenService()
     private(set) var appRootRouter: AppRootRouter?
+
+    // MARK: - UISceneDelegate
 
     var window: UIWindow?
 
