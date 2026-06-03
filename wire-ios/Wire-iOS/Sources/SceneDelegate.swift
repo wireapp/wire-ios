@@ -76,7 +76,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
-        WireLogger.appDelegate.info("sceneWillResignActive")
+        WireLogger.appDelegate.info(
+            "sceneWillResignActive: (activationState = \(scene.activationState))",
+            attributes: .safePublic
+        )
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {

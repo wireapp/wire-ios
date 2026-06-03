@@ -250,13 +250,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    func applicationWillResignActive(_ application: UIApplication) {
-        WireLogger.appDelegate.info(
-            "applicationWillResignActive: (applicationState = \(application.applicationState))",
-            attributes: .safePublic
-        )
-    }
-
     func applicationDidEnterBackground(_ application: UIApplication) {
         WireLogger.appDelegate.info(
             "applicationDidEnterBackground: (applicationState = \(application.applicationState))",
