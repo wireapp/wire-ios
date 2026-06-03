@@ -94,7 +94,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
         return try ResponseParser()
             .success(code: .ok, type: TeamMemberListResponseV0.self)
-            .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParmeter)
+            .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParameter)
             .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
             .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
             .parse(code: response.statusCode, data: data)
@@ -133,7 +133,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    // MARK: - Invite memeber to Team
+    // MARK: - Invite member to Team
 
     func inviteMemberToTeam(
         access_token: String,
@@ -161,10 +161,26 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: false)
 
         let payload = try ResponseParser()
-            .success(code: .created, type: InviteMemeberToTeamResponseV0.self)
+            .success(code: .created, type: InviteMemberToTeamResponseV0.self)
             .parse(code: response.statusCode, data: data)
 
         return payload.id
+    }
+
+    // MARK: - Get apps
+
+    func getApps(
+        for teamID: Team.ID
+    ) async throws -> [User] {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    // MARK: - Get collaborators
+
+    func getCollaborators(
+        for teamID: Team.ID
+    ) async throws -> [CollaboratorInfo] {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 
     // MARK: - Get whitelisted bots
@@ -301,7 +317,7 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
 
 }
 
-struct InviteMemeberToTeamResponseV0: Decodable, ToAPIModelConvertible {
+struct InviteMemberToTeamResponseV0: Decodable, ToAPIModelConvertible {
 
     let id: UUID
 

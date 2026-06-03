@@ -43,4 +43,46 @@ final class WireAuthenticationTests: WireUITestCase {
         XCTAssertTrue(loginPage.nextButton.waitForExistence(timeout: 2.0))
         XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
+
+    @MainActor
+    func testLogout_TC_8946() async throws {
+        // Login user A
+        let userA = try await UserHelper.default.createPersonalUser()
+        _ = try app
+            .loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+
+        // Login to user B
+        let userB = try await UserHelper.default.createPersonalUser()
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app
+            .loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
+
+        // Verify that user B is logged in and selected
+        let accountSettingsB = try ConversationsPage()
+            .openSettings()
+            .openAccountSettings()
+        XCTAssertEqual(accountSettingsB.getAccountName(), userB.name, "User B should be selected")
+
+        // Logout user B
+        try accountSettingsB
+            .logout()
+            .enterPassword(userB.password, expectWelcomePage: false)
+
+        // Verify that user A is logged in and selected
+        let accountSettingsA = try ConversationsPage()
+            .openSettings()
+            .openAccountSettings()
+        XCTAssertEqual(accountSettingsA.getAccountName(), userA.name, "User A should be selected")
+
+        // Logout user A
+        try accountSettingsA
+            .logout()
+            .enterPassword(userA.password, expectWelcomePage: true)
+    }
+
 }

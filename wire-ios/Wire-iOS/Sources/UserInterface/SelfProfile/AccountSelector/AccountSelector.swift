@@ -23,6 +23,15 @@ protocol AccountSelector {
 
     var currentAccount: Account? { get }
 
-    func switchTo(account: Account) async
+    func switchTo(account: Account)
+    func switchTo(account: Account, completion: ((UserSession?) -> Void)?)
+
+}
+
+extension AccountSelector {
+
+    func switchTo(account: Account) {
+        switchTo(account: account, completion: .none)
+    }
 
 }

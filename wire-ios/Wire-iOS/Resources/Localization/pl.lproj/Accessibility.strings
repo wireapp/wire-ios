@@ -130,6 +130,7 @@
 "sketch.drawButton.hint" = "Double tap to enable or disable";
 "sketch.selectEmojiButton.description" = "Select emoji";
 "sketch.sendButton.description" = "Wyślij";
+"sketch.confirmButton.description" = "Potwierdź";
 "sketch.undoButton.description" = "Undo last step";
 "sketch.closeButton.description" = "Close sketch";
 
@@ -152,6 +153,7 @@
 "settings.deviceCount.hint" = "%@ urządzenia w użyciu";
 "settings.closeButton.description" = "Zamknij ustawienia";
 "settings.backButton.description" = "Wróć do ustawień";
+"settings.shareDebugInfoBanner.arrow" = "Double tap to open more options";
 
 "accountSettings.backButton.description" = "Wróć do Ustawień konta";
 

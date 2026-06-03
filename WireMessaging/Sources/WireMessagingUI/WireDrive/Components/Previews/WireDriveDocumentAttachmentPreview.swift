@@ -37,6 +37,7 @@ struct WireDriveDocumentAttachmentPreview: View {
     let state: WireDriveFileUITracker.State
     let isDraftPreview: Bool
     var minHeight: CGFloat?
+    let isAvailableOffline: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -48,7 +49,8 @@ struct WireDriveDocumentAttachmentPreview: View {
                 labelText: labelText,
                 isDraftPreview: isDraftPreview,
                 state: state,
-                minHeight: minHeight
+                minHeight: minHeight,
+                isAvailableOffline: isAvailableOffline
             )
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
@@ -57,14 +59,27 @@ struct WireDriveDocumentAttachmentPreview: View {
 
 #Preview {
     VStack {
-        WireDriveDocumentAttachmentPreview(
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            state: .loading(progress: 0.7, isLargeFile: false),
-            isDraftPreview: false,
-            minHeight: nil
-        )
+        Group {
+            WireDriveDocumentAttachmentPreview(
+                headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                headerText: "PDF (336 KB)",
+                labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
+                state: .loading(progress: 0.7, isLargeFile: false),
+                isDraftPreview: false,
+                minHeight: nil,
+                isAvailableOffline: false
+            )
+
+            WireDriveDocumentAttachmentPreview(
+                headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                headerText: "PDF (336 KB)",
+                labelText: "Filename",
+                state: .loading(progress: 0.7, isLargeFile: false),
+                isDraftPreview: false,
+                minHeight: nil,
+                isAvailableOffline: true
+            )
+        }
         .frame(width: 222)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)

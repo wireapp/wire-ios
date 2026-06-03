@@ -81,7 +81,7 @@ private struct UserListResponseV15: Decodable, ToAPIModelConvertible {
 
 }
 
-private struct UserResponseV15: Decodable, ToAPIModelConvertible {
+struct UserResponseV15: Decodable, ToAPIModelConvertible {
 
     let id: QualifiedIDV0
     let name: String
@@ -139,7 +139,7 @@ private struct UserResponseV15: Decodable, ToAPIModelConvertible {
 
 }
 
-private struct UserAppV15: Decodable, ToAPIModelConvertible {
+struct UserAppV15: Decodable, ToAPIModelConvertible {
 
     let category: String
     let description: String

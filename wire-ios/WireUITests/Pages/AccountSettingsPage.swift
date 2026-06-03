@@ -22,15 +22,27 @@ import XCTest
 class AccountSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        nameField
+        accountHeader
+    }
+
+    var accountHeader: XCUIElement {
+        app.navigationBars[Locators.AccountSettingsPage.accountHeader.rawValue]
     }
 
     var nameField: XCUIElement {
         app.textFields[Locators.AccountSettingsPage.nameField.rawValue]
     }
 
+    var nameFieldDisabled: XCUIElement {
+        app.textFields[Locators.AccountSettingsPage.nameFieldDisabled.rawValue]
+    }
+
     var usernameField: XCUIElement {
         app.staticTexts[Locators.AccountSettingsPage.usernameField.rawValue]
+    }
+
+    var usernameFieldDisabled: XCUIElement {
+        app.textFields[Locators.AccountSettingsPage.usernameFieldDisabled.rawValue]
     }
 
     var emailField: XCUIElement {
@@ -95,6 +107,22 @@ class AccountSettingsPage: PageModel {
         return try EmailUpdatePage()
     }
 
+    func tapNameField() throws -> AccountSettingsPage {
+        nameField.tap()
+        return self
+    }
+
+    func tapUsernameField() throws -> UsernameUpdatePage {
+        usernameField.tap()
+        return try UsernameUpdatePage()
+    }
+
+    func updateName() throws -> AccountSettingsPage {
+        nameField.tap()
+        nameField.typeText("-updated")
+        return self
+    }
+
     @discardableResult
     func logout() throws -> LogOutPage {
         logoutButton.tap()
@@ -122,5 +150,4 @@ class AccountSettingsPage: PageModel {
         resetPasswordButton.tap()
         return try WebViewPage()
     }
-
 }

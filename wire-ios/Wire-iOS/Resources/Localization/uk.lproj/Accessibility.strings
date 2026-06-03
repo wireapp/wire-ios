@@ -130,6 +130,7 @@
 "sketch.drawButton.hint" = "Торкніться двічі, щоб увімкнути або вимкнути";
 "sketch.selectEmojiButton.description" = "Виберіть смайлик";
 "sketch.sendButton.description" = "Надіслати";
+"sketch.confirmButton.description" = "Підтвердити";
 "sketch.undoButton.description" = "Скасувати останній крок";
 "sketch.closeButton.description" = "Закрити ескіз";
 
@@ -152,6 +153,7 @@
 "settings.deviceCount.hint" = "%@ пристроїв в користуванні";
 "settings.closeButton.description" = "Закрити налаштування";
 "settings.backButton.description" = "Повернутися до налаштувань";
+"settings.shareDebugInfoBanner.arrow" = "Double tap to open more options";
 
 "accountSettings.backButton.description" = "Повернутися до розділу Акаунт";
 

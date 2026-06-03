@@ -1949,10 +1949,10 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     public var coreCrypto_Invocations: [Void] = []
     public var coreCrypto_MockError: Error?
-    public var coreCrypto_MockMethod: (() async throws -> CoreCryptoProtocol)?
-    public var coreCrypto_MockValue: CoreCryptoProtocol?
+    public var coreCrypto_MockMethod: (() async throws -> SafeCoreCrypto)?
+    public var coreCrypto_MockValue: SafeCoreCrypto?
 
-    public func coreCrypto() async throws -> CoreCryptoProtocol {
+    public func coreCrypto() async throws -> SafeCoreCrypto {
         coreCrypto_Invocations.append(())
 
         if let error = coreCrypto_MockError {
@@ -5625,6 +5625,30 @@ public class MockRemoveCoreCryptoKeysUseCaseProtocol: RemoveCoreCryptoKeysUseCas
         }
 
         try mock(userID)
+    }
+
+}
+
+public class MockRemoveEARKeysUseCaseProtocol: RemoveEARKeysUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeAccountID_Invocations: [UUID] = []
+    public var invokeAccountID_MockMethod: ((UUID) -> Void)?
+
+    public func invoke(accountID: UUID) {
+        invokeAccountID_Invocations.append(accountID)
+
+        guard let mock = invokeAccountID_MockMethod else {
+            fatalError("no mock for `invokeAccountID`")
+        }
+
+        mock(accountID)
     }
 
 }

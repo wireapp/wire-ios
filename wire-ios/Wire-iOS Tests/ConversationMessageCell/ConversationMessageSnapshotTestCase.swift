@@ -48,7 +48,7 @@ func XCTAssertArrayEqual(
 class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     var userSession: UserSessionMock!
-    var forceRecord: Bool = false
+    var forceRecord: Bool?
     var mockUserDefaults = UserDefaultsProtocolMock()
 
     override func setUp() {
@@ -210,6 +210,11 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             let delay = Date().addingTimeInterval(1)
             RunLoop.main.run(until: delay)
         }
+
+        // Strip any sublayer animations (e.g. SpinnerButton's rotation in
+        // .selected state) so snapshots render at a deterministic frame
+        // instead of a wall-clock-driven phase.
+        stackView.removeAllAnimationsRecursively()
 
         return stackView
 

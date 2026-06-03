@@ -10,6 +10,17 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.135.0
+
+* added `conversationName` attribute on the WireCellsLocalAsset entity
+* added `ownerName` attribute on the WireCellsLocalAsset entity
+* added `modified` attribute on the WireCellsLocalAsset entity
+* added `isAvailableOffline` attribute on the WireCellsLocalAsset entity
+
+### 2.134.0
+
+* added `AppInfo` entity
+
 ### 2.133.0
 
 * removed `senderID` attribute from the Message entity

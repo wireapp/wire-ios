@@ -72,16 +72,31 @@ class MockAccountSelector: AccountSelector {
     // MARK: - switchTo
 
     var switchToAccount_Invocations: [Account] = []
-    var switchToAccount_MockMethod: ((Account) async -> Void)?
+    var switchToAccount_MockMethod: ((Account) -> Void)?
 
-    func switchTo(account: Account) async {
+    func switchTo(account: Account) {
         switchToAccount_Invocations.append(account)
 
         guard let mock = switchToAccount_MockMethod else {
             fatalError("no mock for `switchToAccount`")
         }
 
-        await mock(account)
+        mock(account)
+    }
+
+    // MARK: - switchTo
+
+    var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
+    var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
+
+    func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
+        switchToAccountCompletion_Invocations.append((account: account, completion: completion))
+
+        guard let mock = switchToAccountCompletion_MockMethod else {
+            fatalError("no mock for `switchToAccountCompletion`")
+        }
+
+        mock(account, completion)
     }
 
 }
@@ -456,6 +471,60 @@ class MockConversationUserClientDetailsActions: ConversationUserClientDetailsAct
         }
 
         mock()
+    }
+
+}
+
+class MockCreateDebugReportUseCaseProtocol: CreateDebugReportUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockError: Error?
+    var invoke_MockMethod: (() async throws -> URL)?
+    var invoke_MockValue: URL?
+
+    func invoke() async throws -> URL {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+    // MARK: - invokeData
+
+    var invokeData_Invocations: [Void] = []
+    var invokeData_MockError: Error?
+    var invokeData_MockMethod: (() async throws -> Data)?
+    var invokeData_MockValue: Data?
+
+    func invokeData() async throws -> Data {
+        invokeData_Invocations.append(())
+
+        if let error = invokeData_MockError {
+            throw error
+        }
+
+        if let mock = invokeData_MockMethod {
+            return try await mock()
+        } else if let mock = invokeData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeData`")
+        }
     }
 
 }
@@ -1425,98 +1494,6 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
         } else {
             fatalError("no mock for `buildMainCoordinator`")
         }
-    }
-
-}
-
-class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - presentMailComposer
-
-    var presentMailComposer_Invocations: [Void] = []
-    var presentMailComposer_MockMethod: (() -> Void)?
-
-    @MainActor
-    func presentMailComposer() {
-        presentMailComposer_Invocations.append(())
-
-        guard let mock = presentMailComposer_MockMethod else {
-            fatalError("no mock for `presentMailComposer`")
-        }
-
-        mock()
-    }
-
-    // MARK: - presentFallbackAlert
-
-    var presentFallbackAlertSender_Invocations: [UIView] = []
-    var presentFallbackAlertSender_MockMethod: ((UIView) -> Void)?
-
-    func presentFallbackAlert(sender: UIView) {
-        presentFallbackAlertSender_Invocations.append(sender)
-
-        guard let mock = presentFallbackAlertSender_MockMethod else {
-            fatalError("no mock for `presentFallbackAlertSender`")
-        }
-
-        mock(sender)
-    }
-
-    // MARK: - presentShareViewController
-
-    var presentShareViewControllerDestinationsDebugReport_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport)] = []
-    var presentShareViewControllerDestinationsDebugReport_MockMethod: (([ZMConversation], ShareableDebugReport) -> Void)?
-
-    func presentShareViewController(destinations: [ZMConversation], debugReport: ShareableDebugReport) {
-        presentShareViewControllerDestinationsDebugReport_Invocations.append((destinations: destinations, debugReport: debugReport))
-
-        guard let mock = presentShareViewControllerDestinationsDebugReport_MockMethod else {
-            fatalError("no mock for `presentShareViewControllerDestinationsDebugReport`")
-        }
-
-        mock(destinations, debugReport)
-    }
-
-}
-
-class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - sendReport
-
-    var sendReportSender_Invocations: [UIView] = []
-    var sendReportSender_MockMethod: ((UIView) -> Void)?
-
-    func sendReport(sender: UIView) {
-        sendReportSender_Invocations.append(sender)
-
-        guard let mock = sendReportSender_MockMethod else {
-            fatalError("no mock for `sendReportSender`")
-        }
-
-        mock(sender)
-    }
-
-    // MARK: - shareReport
-
-    var shareReport_Invocations: [Void] = []
-    var shareReport_MockMethod: (() async -> Void)?
-
-    func shareReport() async {
-        shareReport_Invocations.append(())
-
-        guard let mock = shareReport_MockMethod else {
-            fatalError("no mock for `shareReport`")
-        }
-
-        await mock()
     }
 
 }

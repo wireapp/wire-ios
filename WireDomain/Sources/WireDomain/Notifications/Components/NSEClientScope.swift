@@ -21,7 +21,6 @@ import NeedleFoundation
 import WireDataModel
 import WireLogging
 import WireNetwork
-import WireUtilitiesPackage
 
 protocol NSEClientScopeDependency: Dependency {
 
@@ -209,6 +208,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var authenticationManager: AuthenticationManager {
         shared {
             AuthenticationManager(
+                userID: dependency.accountID,
                 clientID: clientID,
                 cookieStorage: dependency.cookieStorage,
                 networkService: restNetworkService,

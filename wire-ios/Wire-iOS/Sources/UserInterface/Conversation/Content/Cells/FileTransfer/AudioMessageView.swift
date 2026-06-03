@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 import WireLogging
 
@@ -94,7 +95,7 @@ final class AudioMessageView: UIView, TransferView {
         backgroundColor = SemanticColors.View.backgroundCollectionCell
 
         playButton.addTarget(self, action: #selector(AudioMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
-        playButton.accessibilityIdentifier = "AudioActionButton"
+        playButton.accessibilityIdentifier = Locators.ActiveConversationPage.playAudioFile.rawValue
         playButton.layer.masksToBounds = true
 
         downloadProgressView.isUserInteractionEnabled = false
@@ -181,6 +182,7 @@ final class AudioMessageView: UIView, TransferView {
 
     func setUserSession(userSession: UserSession) {
         guard self.userSession !== userSession else { return }
+        self.userSession = userSession
 
         if let userSession = userSession as? ZMUserSession {
             callStateObserverToken = WireCallCenterV3.addCallStateObserver(

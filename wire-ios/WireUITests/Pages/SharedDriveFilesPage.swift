@@ -38,12 +38,8 @@ class SharedDriveFilesPage: PageModel {
         app.images.matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0)).firstMatch
     }
 
-    var sentBy: XCUIElement {
-        fileTexts.element(boundBy: 1)
-    }
-
-    var fileName: XCUIElement {
-        fileTexts.element(boundBy: 0)
+    private var fileMetadataText: XCUIElement {
+        fileTexts.firstMatch
     }
 
     var deleteOnMenuContext: XCUIElement {
@@ -51,7 +47,7 @@ class SharedDriveFilesPage: PageModel {
     }
 
     var deleteOptionOnBottomSheet: XCUIElement {
-        app.buttons[Locators.WireDrive.FilesPage.deleteOnBottomSheet.rawValue]
+        app.buttons[Locators.WireDrive.FilesItemPage.confirmDeleteButton.rawValue].firstMatch
     }
 
     var moreOptionOnSharedDrive: XCUIElement {
@@ -62,26 +58,34 @@ class SharedDriveFilesPage: PageModel {
         app.buttons[Locators.WireDrive.FilesPage.recycleBin.rawValue]
     }
 
+    var createFolderButton: XCUIElement {
+        app.buttons[Locators.WireDrive.FilesPage.createFolder.rawValue]
+    }
+
     var moreButton: XCUIElement {
         app.buttons
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
             .firstMatch
     }
 
+    var numberOfFilesInList: Int {
+        fileTexts.count
+    }
+
     @discardableResult
     func verifyFileTypeAndMetadata(
-        username: String,
+        name: String,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> SharedDriveFilesPage {
         XCTAssertTrue(fileIcon.exists, file: file, line: line)
-        XCTAssertTrue(fileName.label.contains(".png"), file: file, line: line)
-        XCTAssertTrue(sentBy.label.contains(username), file: file, line: line)
+        XCTAssertTrue(fileMetadataText.label.contains(".png"), file: file, line: line)
+        XCTAssertTrue(fileMetadataText.label.contains(name), file: file, line: line)
         return try SharedDriveFilesPage()
     }
 
     var fileNameText: String {
-        fileName.label
+        fileMetadataText.label
     }
 
     func openMoreOptionsOnFileAndDelete()  throws -> SharedDriveFilesPage {
@@ -96,5 +100,26 @@ class SharedDriveFilesPage: PageModel {
         openRecycleBinButton.tap()
         return try RecycleBinPage()
 
+    }
+
+    func verifyFileMovedToSharedDrive(fileName: String) -> Bool {
+        fileMetadataText.label.contains(fileName)
+    }
+
+    func createFolder() throws -> FolderPage {
+        moreOptionOnSharedDrive.tap()
+        createFolderButton.tap()
+        return try FolderPage()
+    }
+
+    func verifyFolderIsCreated(folderName: String) -> Bool {
+        app.staticTexts
+            .matching(identifier: folderName)
+            .element
+            .waitForExistence(timeout: 2)
+    }
+
+    var searchTextField: XCUIElement {
+        app.searchFields.firstMatch
     }
 }

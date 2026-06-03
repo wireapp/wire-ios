@@ -679,6 +679,34 @@ final class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+    func testThatClosingAnMLSOneOnOneCallDoesNotLeaveTheSubconversation() throws {
+        // Given
+        let conversationID = try XCTUnwrap(oneOnOneConversationID)
+        oneOnOneConversation.messageProtocol = .mls
+        oneOnOneConversation.mlsGroupID = .random()
+
+        let mlsService = MockMLSServiceInterface()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        var didLeaveSubconversation = false
+        mlsService
+            .leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+                didLeaveSubconversation = true
+            }
+
+        // When
+        sut.closeCall(conversationId: conversationID)
+
+        // Then
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertFalse(
+            didLeaveSubconversation,
+            "leaveSubconversation should not be called for 1-1 MLS calls"
+        )
+    }
+
     func testThatItLeavesSubconversationIfNeededOnIncoming() throws {
         // Given
         groupConversation.messageProtocol = .mls
@@ -2746,6 +2774,111 @@ extension WireCallCenterV3Tests {
 
         // Then
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+    }
+
+}
+
+// MARK: - TimesOut
+
+extension WireCallCenterV3Tests {
+
+    func testThatItEndsTheMLSConferenceCall_WhenJoiningSubgroupTimesOut() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let mlsService = MockMLSServiceInterface()
+
+        mlsService.createOrJoinSubgroupParentQualifiedIDParentID_MockMethod = { _, _ in
+            try await Task.sleep(for: .seconds(2))
+            return MLSGroupID(Data.random())
+        }
+
+        let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+            didLeaveSubconversation.fulfill()
+        }
+
+        syncMOC.performAndWait { syncMOC.mlsService = mlsService }
+
+        sut.mlsConferenceSetupTimeout = .milliseconds(200)
+
+        customExpectation(
+            forNotification: WireCallCenterCallStateNotification.notificationName,
+            object: nil
+        ) { wrappedNote in
+            guard let note = wrappedNote
+                .userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
+                note.conversationId == self.groupConversationID,
+                case .terminating(reason: .unknown) = note.callState
+            else { return false }
+            return true
+        }
+
+        // When
+        try sut.startCall(in: groupConversation, isVideo: false)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 1.0))
+
+        XCTAssertNil(
+            mockAVSWrapper.startCallArguments,
+            "AVS startCall must not be invoked when subgroup join times out"
+        )
+        XCTAssertEqual(
+            sut.callState(conversationId: groupConversationID),
+            .none,
+            "Snapshot should be cleared after the timeout terminates the call"
+        )
+    }
+
+    func testThatItEndsTheMLSConferenceCall_WhenJoiningSubgroupFails() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        struct JoinSubgroupError: Error {}
+
+        let mlsService = MockMLSServiceInterface()
+
+        mlsService.createOrJoinSubgroupParentQualifiedIDParentID_MockMethod = { _, _ in
+            throw JoinSubgroupError()
+        }
+
+        let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+            didLeaveSubconversation.fulfill()
+        }
+
+        syncMOC.performAndWait { syncMOC.mlsService = mlsService }
+
+        customExpectation(
+            forNotification: WireCallCenterCallStateNotification.notificationName,
+            object: nil
+        ) { wrappedNote in
+            guard let note = wrappedNote
+                .userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
+                note.conversationId == self.groupConversationID,
+                case .terminating(reason: .unknown) = note.callState
+            else { return false }
+            return true
+        }
+
+        // When
+        try sut.startCall(in: groupConversation, isVideo: false)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 1.0))
+
+        XCTAssertNil(
+            mockAVSWrapper.startCallArguments,
+            "AVS startCall must not be invoked when subgroup join fails"
+        )
+        XCTAssertEqual(
+            sut.callState(conversationId: groupConversationID),
+            .none,
+            "Snapshot should be cleared after the failure terminates the call"
+        )
     }
 
 }

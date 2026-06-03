@@ -24,11 +24,36 @@ final class AccountManagementTests: WireUITestCase {
     var teamMember: UserInfo!
 
     @MainActor
+    func testUpdateNameAndUsernameInfo_TC_8932_TC_8934() async throws {
+
+        let user = try await UserHelper.default.createPersonalUser()
+
+        let accountSettingPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+            .openSettings()
+            .openAccountSettings()
+            .tapNameField()
+            .updateName()
+            .tapUsernameField()
+            .updateUsernameAndSave()
+
+        XCTAssertTrue(
+            (accountSettingPage.nameField.value as? String)?.contains("-updated") == true,
+            "Updated name was not visible"
+        )
+
+        XCTAssertTrue(
+            accountSettingPage.usernameField.label.contains("@\(user.username)-updated"),
+            "Updated username was not visible"
+        )
+    }
+
+    @MainActor
     func testAccountManagementLockWithPasscode_TC_8950() async throws {
 
         let passcode = UserGenerator.generateAppPasscode()
 
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let page = try await app.loginUser(email: user.email, password: user.password)
             .acceptPopup()
@@ -47,13 +72,12 @@ final class AccountManagementTests: WireUITestCase {
 
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8796
     @MainActor
     func testAccountManagementUpdateEmailAndResetPassword_TC_8933_TC_8931() async throws {
 
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let verifyEmailPage = try app.loginUser(email: user.email, password: user.password)
             .acceptPopup()
@@ -73,4 +97,5 @@ final class AccountManagementTests: WireUITestCase {
         XCTAssertTrue(webViewPage.webViewOpened(), "WebView didn't open")
 
     }
+
 }

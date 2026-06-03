@@ -79,7 +79,6 @@ jobs:
     needs: generate-framework-list
     if: ${{ needs.generate-framework-list.outputs.schemes != '[]' && needs.generate-framework-list.outputs.schemes != '' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
-    timeout-minutes: 20
     permissions:
       contents: read
       pull-requests: write
@@ -105,10 +104,9 @@ jobs:
 
       - name: Setup test environment
         uses: ./.github/actions/setup-test-environment
-        with:
-          scheme: ${{ matrix.scheme }}
 
       - name: "Test ${{ matrix.scheme }}"
+        timeout-minutes: 15
         run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
 
       - name: Check for duplicate symbol implementations
@@ -126,7 +124,7 @@ jobs:
       - name: Analyze .xcresult
         if: ${{ always() && steps.find-xcresult.outputs.path != '' }}
         continue-on-error: true
-        uses: wireapp/analyze-xcoderesults-action@v1.0.0
+        uses: wireapp/analyze-xcoderesults-action@228125b6d1488f02b1d80e2040cbfac88c2b1cb3
         with:
           results: ${{ steps.find-xcresult.outputs.path }}
           warningAnnotations: true

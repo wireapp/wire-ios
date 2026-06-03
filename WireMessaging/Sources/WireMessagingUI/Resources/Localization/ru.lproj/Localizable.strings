@@ -82,6 +82,7 @@
 "conversation.creationForm.guests.description" = "Открыть эту беседу для пользователей, не входящих в вашу команду или сервис.";
 "conversation.creationForm.appsDisabled.title" = "Ваша команда еще не использует приложения";
 "conversation.creationForm.appsDisabled.message" = "Для улучшения рабочего процесса с приложениями, вашей команде требуется настройка. Пожалуйста, свяжитесь с администратором вашей команды.";
+"conversation.creationForm.appsDisabledAsAdmin.message" = "Чтобы оптимизировать рабочий процесс с приложениями, вашей команде необходимо их настроить.";
 
 "conversation.creationForm.readReceipts.toggle" = "Отчеты о прочтении";
 "conversation.creationForm.readReceipts.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
@@ -121,6 +122,7 @@
 "conversation.wireCells.allFiles.item.subtitle" = "%@ в %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.item.menu.open" = "Открыть";
+"conversation.wireCells.files.item.menu.cancelDownload" = "Отменить загрузку...";
 "conversation.wireCells.files.item.menu.shareLink" = "Поделится";
 "conversation.wireCells.files.item.menu.download" = "Скачать";
 "conversation.wireCells.files.item.menu.editFile" = "Изменить файл";
@@ -129,6 +131,8 @@
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Добавить или удалить теги";
 "conversation.wireCells.files.item.menu.delete" = "Удалить навсегда";
 "conversation.wireCells.files.item.menu.versionHistory" = "История версий";
+"conversation.wireCells.files.item.menu.makeAvailableOffline" = "Сделать доступным оффлайн";
+"conversation.wireCells.files.item.menu.removeAvailableOffline" = "Удалить оффлайн доступ";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Это приведет к необратимому удалению файла %@ для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Удалить навсегда";
 "conversation.wireCells.files.item.menu.delete" = "Удалить";
@@ -141,6 +145,7 @@
 "conversation.wireCells.allFiles.noData.title" = "Пока файлов нет";
 "conversation.wireCells.allFiles.noData.message" = "Для бесед, в которых используется общий диск, все файлы можно найти здесь.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Подробнее";
+"conversation.wireCells.files.emptyFolder.message" = "Добавляйте файлы в эту папку, чтобы сохранять порядок.";
 "conversation.wireCells.files.noSearchResults.title" = "Ничего не найдено";
 "conversation.wireCells.files.noSearchResults.message" = "Попробуйте изменить поиск.";
 "conversation.wireCells.files.pendingCells.title" = "Файлы загружаются";
@@ -160,7 +165,10 @@
 "conversation.wireCells.files.newFolder.title" = "Название папки";
 "conversation.wireCells.files.newFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Создать папку";
-"conversation.wireCells.files.newFile.navigationTitle" = "Создать файл %@";
+"conversation.wireCells.files.newFile.navigationTitle" = "Создать %@ (%@)";
+"conversation.wireCells.files.newFile.presentation" = "презентация";
+"conversation.wireCells.files.newFile.spreadsheet" = "таблица";
+"conversation.wireCells.files.newFile.document" = "документ";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
 "conversation.wireCells.files.fileName.title" = "Название файла";
@@ -175,9 +183,17 @@
 "conversation.wireCells.files.renameFile.placeholder" = "Введите название файла";
 "conversation.wireCells.files.renameFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.openRecycleBin" = "Открыть корзину";
+"conversation.wireCells.files.readyToOpenAfterDownload" = "Готов к открытию";
+"conversation.wireCells.files.tapToCancelDownload" = "Нажмите, чтобы отменить загрузку";
+"conversation.wireCells.files.downloadFailed" = "Не удалось загрузить, повторите попытку";
+"conversation.wireCells.files.downloadingFile" = "Загрузка файла...";
+"conversation.wireCells.files.offlineModeHint" = "Вы по-прежнему можете получить доступ к своим файлам в режиме оффлайн.";
+
+// MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Подробнее о корзине";
 "conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
+"conversation.wireCells.recycleBin.emptyFolder.message" = "Эта папка пуста.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Удалить навсегда";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Удалить навсегда";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "Это приведет к необратимому удалению файла \"%@\"  для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
@@ -189,30 +205,6 @@
 "conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "Эта папка \"%@\" будет восстановлена со всеми файлами и подпапками и снова станет доступной для всех участников этой беседы.";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Восстановить родительскую папку";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Вы не можете восстановить папки или файлы из удаленной папки. Чтобы восстановить нужный элемент, вы должны восстановить его родительскую папку.\n\n Папка \"%@\" будет восстановлена со всеми файлами и подпапками и станет доступной всем участникам этой беседы.";
-"conversation.wireCells.filter.clearAll" = "Очистить все";
-"conversation.wireCells.filter.tags.navigationTitle" = "Фильтровать по тегам";
-"conversation.wireCells.filter.tags.emptyTitle" = "Теги еще не созданы.";
-"conversation.wireCells.filter.tags.notFoundBySearch" = "Теги не найдены.";
-"conversation.wireCells.filter.tags.searchPrompt" = "Поиск тегов";
-"conversation.wireCells.filter.conversation.navigationTitle" = "Фильтровать по беседе";
-"conversation.wireCells.filter.owner.navigationTitle" = "Фильтровать по владельцу";
-"conversation.wireCells.filter.sharedLink.navigationTitle" = "Фильтровать по ссылке";
-"conversation.wireCells.filter.sharedLink.option.withLink" = "С публичной ссылкой";
-"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Опубликовано мной за пределами Wire";
-"conversation.wireCells.filter.sharedLink.option.withoutLink" = "Нет публичной ссылки";
-"conversation.wireCells.filter.fileType.navigationTitle" = "Фильтровать по типу файла";
-"conversation.wireCells.filter.fileType.typeName.pdf" = "PDF-файлы";
-"conversation.wireCells.filter.fileType.typeName.doc" = "Документы";
-"conversation.wireCells.filter.fileType.typeName.image" = "Изображения";
-"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Таблицы";
-"conversation.wireCells.filter.fileType.typeName.presentation" = "Презентации";
-"conversation.wireCells.filter.fileType.typeName.video" = "Видео";
-"conversation.wireCells.filter.fileType.typeName.audio" = "Аудиофайлы";
-"conversation.wireCells.filter.fileType.typeName.folder" = "Папки";
-"conversation.wireCells.filter.fileType.typeName.other" = "Прочие";
-"conversation.wireCells.filter.fileType.typeName.code" = "Код";
-"conversation.wireCells.filter.fileType.typeName.archive" = "Архивы";
-"conversation.wireCells.filter.fileType.typeName.text" = "Текстовые файлы";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Добавить или удалить теги";
@@ -313,3 +305,28 @@
 "conversation.wireCells.filtering.owner" = "Создано";
 "conversation.wireCells.filtering.sharedLink" = "Поделились по ссылке";
 "conversation.wireCells.filtering.removeAllFilters" = "Убрать все фильтры";
+
+"conversation.wireCells.filter.clearAll" = "Очистить все";
+"conversation.wireCells.filter.tags.navigationTitle" = "Фильтровать по тегам";
+"conversation.wireCells.filter.tags.emptyTitle" = "Теги еще не созданы.";
+"conversation.wireCells.filter.tags.notFoundBySearch" = "Теги не найдены.";
+"conversation.wireCells.filter.tags.searchPrompt" = "Поиск тегов";
+"conversation.wireCells.filter.conversation.navigationTitle" = "Фильтровать по беседе";
+"conversation.wireCells.filter.owner.navigationTitle" = "Фильтровать по владельцу";
+"conversation.wireCells.filter.sharedLink.navigationTitle" = "Фильтровать по ссылке";
+"conversation.wireCells.filter.sharedLink.option.withLink" = "С публичной ссылкой";
+"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Опубликовано мной за пределами Wire";
+"conversation.wireCells.filter.sharedLink.option.withoutLink" = "Нет публичной ссылки";
+"conversation.wireCells.filter.fileType.navigationTitle" = "Фильтровать по типу файла";
+"conversation.wireCells.filter.fileType.typeName.pdf" = "PDF-файлы";
+"conversation.wireCells.filter.fileType.typeName.doc" = "Документы";
+"conversation.wireCells.filter.fileType.typeName.image" = "Изображения";
+"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Таблицы";
+"conversation.wireCells.filter.fileType.typeName.presentation" = "Презентации";
+"conversation.wireCells.filter.fileType.typeName.video" = "Видео";
+"conversation.wireCells.filter.fileType.typeName.audio" = "Аудиофайлы";
+"conversation.wireCells.filter.fileType.typeName.folder" = "Папки";
+"conversation.wireCells.filter.fileType.typeName.other" = "Прочие";
+"conversation.wireCells.filter.fileType.typeName.code" = "Код";
+"conversation.wireCells.filter.fileType.typeName.archive" = "Архивы";
+"conversation.wireCells.filter.fileType.typeName.text" = "Текстовые файлы";

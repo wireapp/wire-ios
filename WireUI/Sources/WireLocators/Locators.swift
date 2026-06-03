@@ -60,6 +60,7 @@ public enum Locators {
 
         case bottomBarRecentListButton
         case bottomBarSettingsButton
+        case bottomBarDriveButton
         case createGroupOrSearchButton
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
@@ -89,6 +90,28 @@ public enum Locators {
 
         case accountCell
         case optionsCell
+        case shareDebugBanner
+    }
+
+    public enum ShareDebugReportPage: String {
+
+        case actionSheet = "Having trouble?"
+        case shareViaWireButton = "ShareDebugReportPage.shareViaWireButton"
+        case sendEmailButton = "ShareDebugReportPage.sendEmailButton"
+        case shareButton = "ShareDebugReportPage.shareButton"
+        case cancelButton = "ShareDebugReportPage.cancelButton"
+    }
+
+    public enum ShareViaWirePage: AutoPrefixedEnum {
+
+        case sendButton
+        case closeButton
+    }
+
+    public enum ActivitySheetPage: String {
+
+        case sheet = "ActivityListView"
+        case saveToFiles = "Save to Files"
     }
 
     public enum AccountSettingsPage: String {
@@ -96,9 +119,13 @@ public enum Locators {
         // TODO: [WPB-21952] Improve these identifiers later.
         // We are keeping the current title+field identifiers for now to avoid
         // changing existing references across the app.
+        case accountHeader = "Account"
         case nameField = "NameField"
+        case nameFieldDisabled = "NameFieldDisabled"
         case usernameField = "UsernameField"
+        case usernameFieldDisabled = "UsernameFieldDisabled"
         case emailField = "EmailField"
+        case emailFieldDisabled = "EmailFieldDisabled"
         case domainFieldDisabled = "DomainFieldDisabled"
         case backuporRestoreField = "Back up or RestoreField"
         case resetPasswordField = "Reset Password"
@@ -120,7 +147,9 @@ public enum Locators {
         case sharedDriveButton
         case ephemeralTimeSelectionButton
         case message
-        case imageCell = "ImageCell"
+        case imageCell
+        case videoCell
+        case videoPlayButton
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
@@ -130,9 +159,24 @@ public enum Locators {
         case sketchButton
         case canvas
         case canvasSendButton
+        case canvasConfirmButton
         case attachmentImagePreview
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
+        case photoButton
+        case allowFullAccess = "Allow Full Access"
+        case ok = "OK"
+        case audioButton
+        case startRecording = "Start recording"
+        case stopRecording = "Stop recording"
+        case helium = "Helium"
+        case sendAudio = "Send"
+        case playAudioFile
+        case recordingTime
+        case showOtherRowButton
+        case pingButton
+        case guestsArePresent = "Guests are present"
+
     }
 
     public enum BackupOrRestorePage: String {
@@ -140,6 +184,7 @@ public enum Locators {
         case backUpNow
         case restoreFromBackupButton
         case browse = "Browse"
+        case historyRestoredAlert = "Your history is restored."
     }
 
     public enum CreatingBackupPage: AutoPrefixedEnum {
@@ -182,6 +227,7 @@ public enum Locators {
         case manageTeamButton
         case addAccountOrTeamButton
         case userProfilePicture
+        case close
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
@@ -214,6 +260,14 @@ public enum Locators {
         case save
     }
 
+    public enum UsernameUpdatePage: String {
+
+        case usernameField
+        case save = "Save"
+        case username = "Username"
+        case handleTextField
+    }
+
     public enum NewConversationPage: String {
 
         case createNewGroupButton
@@ -222,6 +276,7 @@ public enum Locators {
         case cancel
         case usernameCell
         case createNewChannelButton
+        case userCellInContactList
     }
 
     public enum OnMyiPhonePage: String {
@@ -235,6 +290,7 @@ public enum Locators {
     public enum OptionsOnSettingsPage: String {
 
         case lockWithPasscode = "Lock With Passcode"
+        case createLinkPreviews = "Create Link Previews"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {
@@ -277,6 +333,13 @@ public enum Locators {
         case confirmUsernameButton
     }
 
+    public enum ManageDevicesPage: String {
+
+        case manageDevices
+        case removeDevice = "minus.circle.fill"
+        case deleteDevice = "Delete"
+    }
+
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
 
         case checkbox
@@ -288,11 +351,11 @@ public enum Locators {
 
     public enum UserDetailsPage: String {
 
-        case close
         case connectLeftButton
         case moreOptionRightButton
         case removeUserFromConversationConfirmation
         case removeFromConversation = "Remove From Conversation…"
+        case close
     }
 
     public enum VerificationCodePage: AutoPrefixedEnum {
@@ -324,6 +387,11 @@ public enum Locators {
 
         case acceptCall = "Accept"
         case turnOffMicrophone = "Microphone"
+    }
+
+    public enum FileVersioningPage: AutoPrefixedEnum {
+
+        case closeButton
     }
 
     public enum OngoingCallPage: String {
@@ -381,6 +449,7 @@ public enum Locators {
 
         public enum FileMenu: String {
             case deleteToRecycleBin
+            case restore
 
             public var identifier: String {
                 "fileMenu.\(rawValue)"
@@ -416,7 +485,9 @@ public enum Locators {
             case close
         }
 
+        /// UI elements for both file or folder creation.
         public enum CreateFilePage: String {
+            case createFolderPageHeader = "Create folder"
             case cancelButton
             case createButton
         }
@@ -463,5 +534,22 @@ public enum Locators {
             case confirmDeleteButton
             case confirmRestoreButton
         }
+
+        public enum RecycleBinPage: String {
+            case deletePermanently = "Delete Permanently"
+        }
+    }
+
+    public enum BlockerPage: String {
+
+        case mainContent
+        case clientObsoleteAlertTitle = "Update required"
+
+    }
+
+    public enum SSOWebLoginPage: String {
+        case username = "Username"
+        case signInButton = "Sign In"
+
     }
 }

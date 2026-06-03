@@ -130,6 +130,7 @@
 "sketch.drawButton.hint" = " Zum Aktivieren oder Deaktivieren doppeltippen";
 "sketch.selectEmojiButton.description" = "Emoji auswählen";
 "sketch.sendButton.description" = "Senden";
+"sketch.confirmButton.description" = "Bestätigen";
 "sketch.undoButton.description" = "Letzten Schritt rückgängig machen";
 "sketch.closeButton.description" = "Skizze schließen";
 
@@ -152,6 +153,7 @@
 "settings.deviceCount.hint" = "%@ verwendete Geräte";
 "settings.closeButton.description" = "Einstellungen schließen";
 "settings.backButton.description" = "Zurück zu Einstellungen";
+"settings.shareDebugInfoBanner.arrow" = "Doppeltippen, um weitere Optionen zu öffnen";
 
 "accountSettings.backButton.description" = "Zurück zum Benutzerkonto";
 

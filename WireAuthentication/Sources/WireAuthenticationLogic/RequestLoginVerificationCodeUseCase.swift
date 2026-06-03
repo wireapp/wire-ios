@@ -34,6 +34,11 @@ package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCode
             try await authenticationAPI.requestVerificationCode(for: email)
         } catch AuthenticationAPIError.invalidEmail {
             throw RequestLoginVerificationCodeUseCaseFailure.invalidEmail
+        } catch let AuthenticationAPIError.tooManyRequests(message, retryAfter) {
+            throw RequestLoginVerificationCodeUseCaseFailure.tooManyRequests(
+                message: message,
+                retryAfter: retryAfter
+            )
         }
     }
 

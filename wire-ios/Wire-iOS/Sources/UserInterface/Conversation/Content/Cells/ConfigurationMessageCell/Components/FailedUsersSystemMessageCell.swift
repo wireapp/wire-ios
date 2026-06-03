@@ -155,7 +155,6 @@ final class FailedUsersSystemMessageCell<
             imageContainer.topAnchor.constraint(equalTo: stackView.topAnchor),
             imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor),
 
-            // imageView
             imageView.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: imageContainer.centerYAnchor)
         ])

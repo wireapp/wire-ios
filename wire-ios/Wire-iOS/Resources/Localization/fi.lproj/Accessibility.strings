@@ -130,6 +130,7 @@
 "sketch.drawButton.hint" = "Double tap to enable or disable";
 "sketch.selectEmojiButton.description" = "Select emoji";
 "sketch.sendButton.description" = "Lähetä";
+"sketch.confirmButton.description" = "Vahvista";
 "sketch.undoButton.description" = "Undo last step";
 "sketch.closeButton.description" = "Close sketch";
 
@@ -152,6 +153,7 @@
 "settings.deviceCount.hint" = "%@ devices in use";
 "settings.closeButton.description" = "Close settings";
 "settings.backButton.description" = "Go back to Settings";
+"settings.shareDebugInfoBanner.arrow" = "Double tap to open more options";
 
 "accountSettings.backButton.description" = "Go back to Account";
 
