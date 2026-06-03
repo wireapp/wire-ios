@@ -19,22 +19,33 @@
 import Foundation
 import WireSyncEngine
 
+enum PromotionState: Equatable {
+    case idle
+    case inProgress
+    case succeeded
+    case failed
+}
+
 @MainActor
 final class AdminSelectionViewModel: ObservableObject {
 
     @Published var searchQuery = ""
     @Published var selectedUser: UserType?
+    @Published var promotionState: PromotionState = .idle
+    @Published var showPromotionError = false
 
     let userSession: UserSession
     private let candidates: [UserType]
-    let onPromote: (UserType) -> Void
+    private let onPromote: @MainActor (UserType) async throws -> Void
 
-    var canPromote: Bool { selectedUser != nil }
+    var canPromote: Bool {
+        guard case .inProgress = promotionState else { return selectedUser != nil }
+        return false
+    }
 
     var filteredCandidates: [UserType] {
         guard !searchQuery.isEmpty else { return candidates }
         let query = searchQuery.lowercased()
-        // Strip "@" prefix so "@alice" matches handle "alice"
         let handleQuery = query.hasPrefix("@") ? String(query.dropFirst()) : query
         return candidates.filter {
             ($0.name?.lowercased().contains(query) ?? false) ||
@@ -45,10 +56,21 @@ final class AdminSelectionViewModel: ObservableObject {
     init(
         candidates: [UserType],
         userSession: UserSession,
-        onPromote: @escaping (UserType) -> Void
+        onPromote: @escaping @MainActor (UserType) async throws -> Void
     ) {
         self.userSession = userSession
         self.onPromote = onPromote
         self.candidates = candidates
+    }
+
+    func promote(user: UserType) async {
+        promotionState = .inProgress
+        do {
+            try await onPromote(user)
+            promotionState = .succeeded
+        } catch {
+            promotionState = .failed
+            showPromotionError = true
+        }
     }
 }

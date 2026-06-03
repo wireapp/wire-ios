@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireSyncEngine
 
 struct AdminSelectionView: View {
@@ -70,12 +71,17 @@ struct AdminSelectionView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(L10n.Localizable.AdminSelection.promote) {
                         if let user = viewModel.selectedUser {
-                            viewModel.onPromote(user)
-                            dismiss()
+                            Task { await viewModel.promote(user: user) }
                         }
                     }
                     .disabled(!viewModel.canPromote)
                 }
+            }
+            .onChange(of: viewModel.promotionState) { _, state in
+                if state == .succeeded { dismiss() }
+            }
+            .alert(L10n.Localizable.AdminSelection.promotionError, isPresented: $viewModel.showPromotionError) {
+                Button(L10n.Localizable.General.ok) {}
             }
         }
     }
@@ -134,10 +140,32 @@ private struct AdminCandidateRow: View {
 
             Spacer()
 
-            Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
-                .foregroundStyle(isSelected ? Color.accentColor : .secondary)
-                .imageScale(.large)
+            CheckmarkIcon(isSelected: isSelected)
         }
         .padding(.vertical, 4)
+    }
+}
+
+private struct CheckmarkIcon: View {
+
+    let isSelected: Bool
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(isSelected ? Color.accentColor : Color(ColorTheme.Backgrounds.surface))
+                .overlay(
+                    Circle().strokeBorder(
+                        isSelected ? Color.clear : Color(ColorTheme.Strokes.outline),
+                        lineWidth: 2
+                    )
+                )
+            if isSelected {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(Color(ColorTheme.Base.onPrimary))
+            }
+        }
+        .frame(width: 24, height: 24)
     }
 }
