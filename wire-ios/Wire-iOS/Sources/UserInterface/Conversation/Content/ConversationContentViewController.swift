@@ -29,8 +29,6 @@ import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "ConversationContentViewController")
-
 /// The main conversation view controller
 final class ConversationContentViewController: UIViewController {
 
@@ -393,7 +391,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     override func didReceiveMemoryWarning() {
-        zmLog.warn("Received system memory warning.")
+        WireLogger.system.warn("Received system memory warning.")
         super.didReceiveMemoryWarning()
     }
 

@@ -19,7 +19,7 @@
 import Foundation
 import WireSystem
 
-enum Logging {
+enum Logging { // TODO: delete
 
     static let messageProcessing = ZMSLog(tag: "message-processing")
     static let backendEnvironment = ZMSLog(tag: "backend-environment")
