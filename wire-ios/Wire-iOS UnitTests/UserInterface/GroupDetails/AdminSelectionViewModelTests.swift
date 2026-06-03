@@ -113,7 +113,6 @@ struct AdminSelectionViewModelTests {
         let sut = Scaffolding.makeViewModel(onPromote: { _ in throw TestError.failed })
         await sut.promote(user: Scaffolding.candidates[0])
         #expect(sut.promotionState == .failed)
-        #expect(sut.showPromotionError)
     }
 }
 

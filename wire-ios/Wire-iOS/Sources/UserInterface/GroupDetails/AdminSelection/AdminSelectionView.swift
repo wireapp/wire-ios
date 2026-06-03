@@ -25,6 +25,13 @@ struct AdminSelectionView: View {
     @StateObject var viewModel: AdminSelectionViewModel
     @Environment(\.dismiss) private var dismiss
 
+    private var isShowingError: Binding<Bool> {
+        Binding(
+            get: { viewModel.promotionState == .failed },
+            set: { if !$0 { viewModel.promotionState = .idle } }
+        )
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -80,7 +87,7 @@ struct AdminSelectionView: View {
             .onChange(of: viewModel.promotionState) { _, state in
                 if state == .succeeded { dismiss() }
             }
-            .alert(L10n.Localizable.AdminSelection.promotionError, isPresented: $viewModel.showPromotionError) {
+            .alert(L10n.Localizable.AdminSelection.promotionError, isPresented: isShowingError) {
                 Button(L10n.Localizable.General.ok) {}
             }
         }

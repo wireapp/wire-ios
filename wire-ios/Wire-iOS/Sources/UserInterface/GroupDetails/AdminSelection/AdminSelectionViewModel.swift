@@ -32,7 +32,6 @@ final class AdminSelectionViewModel: ObservableObject {
     @Published var searchQuery = ""
     @Published var selectedUser: UserType?
     @Published var promotionState: PromotionState = .idle
-    @Published var showPromotionError = false
 
     let userSession: UserSession
     private let candidates: [UserType]
@@ -70,7 +69,6 @@ final class AdminSelectionViewModel: ObservableObject {
             promotionState = .succeeded
         } catch {
             promotionState = .failed
-            showPromotionError = true
         }
     }
 }
