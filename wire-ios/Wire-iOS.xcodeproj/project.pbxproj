@@ -638,6 +638,7 @@
 				ConversationMessageCell/ConversationMessageSnapshotTestCase.swift,
 				ConversationMessageCell/ConversationPingMessageTests.swift,
 				ConversationMessageCell/ConversationReactionMessageTests.swift,
+				ConversationMessageCell/ConversationReplyWithTextCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSenderMessageDetailsCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSystemMessageTests.swift,
 				ConversationMessageCell/ConversationTextMessageTests.swift,
@@ -649,8 +650,6 @@
 				ConversationMessageCell/ReadReceiptSystemMessage/ReadReceiptViewModelTests.swift,
 				ConversationMessageCell/SimpleChatBubblesSnapshotTests.swift,
 				ConversationOptionsViewControllerTests.swift,
-				ConversationReplyCellDescriptionTests.swift,
-				ConversationReplyCellTests.swift,
 				ConversationServicesOptionsViewControllerTests.swift,
 				ConversationStatusTests.swift,
 				"ConversationStatusTests+Icon.swift",
@@ -806,6 +805,7 @@
 				SwitchBackendConfirmationViewModelTests.swift,
 				SwitchBackendConfirmationViewTests.swift,
 				TeamMetadataRefresherTests.swift,
+				TestingAppDelegate.swift,
 				ThumbnailCreationTests.swift,
 				Token/TokenFieldTests.swift,
 				Token/TokenSeparatorAttachmentSnapshotTests.swift,
@@ -862,6 +862,7 @@
 				DeviceManagement/MockContextProvider.swift,
 				"Settings/Debug Report/CreateDebugReportUseCaseTests.swift",
 				Settings/SettingsPropertyTests.swift,
+				TestingAppDelegate.swift,
 			);
 			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
 		};

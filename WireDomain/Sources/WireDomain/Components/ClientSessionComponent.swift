@@ -546,7 +546,8 @@ public final class ClientSessionComponent {
     private lazy var conversationMemberUpdateEventProcessor = ConversationMemberUpdateEventProcessor(
         conversationRepository: conversationRepository,
         userRepository: userRepository,
-        localStore: conversationLocalStore
+        localStore: conversationLocalStore,
+        messageLocalStore: messageLocalStore
     )
 
     private lazy var conversationMessageTimerUpdateEventProcessor = ConversationMessageTimerUpdateEventProcessor(
