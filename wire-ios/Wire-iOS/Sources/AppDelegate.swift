@@ -45,9 +45,9 @@ extension Notification.Name {
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    // MARK: - Private Property
+    // MARK: - Private properties
 
-    private var launchOperations: [LaunchSequenceOperation] = [
+    private let launchOperations: [LaunchSequenceOperation] = [
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
         PerformanceDebuggerOperation(),
@@ -62,7 +62,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var cancellables = Set<AnyCancellable>()
 
-    // MARK: - Private Set Property
+    private var sceneDelegate: SceneDelegate {
+        UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }[0]
+    }
+
+    // MARK: - Public properties
 
     var appRootRouter: AppRootRouter? {
         sceneDelegate.appRootRouter
@@ -70,22 +74,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private(set) var launchType: ApplicationLaunchType = .unknown
 
-    // MARK: - Public Set Property
-
     var mainWindow: UIWindow! {
         sceneDelegate.window!
     }
 
-    private var sceneDelegate: SceneDelegate {
-        UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }[0]
-    }
-
-    // Singletons
-    var unauthenticatedSession: UnauthenticatedSession? {
-        SessionManager.shared?.unauthenticatedSession
-    }
-
-    var launchOptions: LaunchOptions = [:]
+    private var launchOptions: LaunchOptions = [:]
 
     // TODO: [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
@@ -101,7 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         true
     }
 
-    let temporaryFilesService = TemporaryFileService()
+    // MARK: - UIApplicationDelegate lifecycle
 
     func application(
         _ application: UIApplication,
@@ -140,73 +133,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    #if DEBUG
-        private func resetApp() {
-            let arguments = ProcessInfo.processInfo.arguments
-            if arguments.contains("-resetData") {
-                resetFileSystem()
-                resetUserDefaults()
-                resetKeychain()
-                print("app reset done")
-            }
-        }
-    #endif
-
-    // MARK: - Reset
-
-    private func resetUserDefaults() {
-        if let bundleID = Bundle.main.bundleIdentifier {
-            UserDefaults.standard.removePersistentDomain(forName: bundleID)
-            UserDefaults.standard.synchronize()
-        }
-    }
-
-    private func resetKeychain() {
-        let secItemClasses = [
-            kSecClassGenericPassword,
-            kSecClassInternetPassword,
-            kSecClassCertificate,
-            kSecClassKey,
-            kSecClassIdentity
-        ]
-        for itemClass in secItemClasses {
-            let query: [String: Any] = [kSecClass as String: itemClass]
-            SecItemDelete(query as CFDictionary)
-        }
-    }
-
-    private func resetFileSystem() {
-        guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
-            preconditionFailure("Unable to get shared container URL")
-        }
-        AccountManager.delete(at: rootURL)
-        let fileManager = FileManager.default
-        let directories: [FileManager.SearchPathDirectory] = [
-            .documentDirectory,
-            .cachesDirectory,
-            .applicationSupportDirectory
-        ]
-
-        for dir in directories {
-            if let url = fileManager.urls(for: dir, in: .userDomainMask).first {
-                try? fileManager.removeItem(at: url)
-            }
-        }
-    }
-
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        WireLogger.push.info(
-            "application did register for remote notifications, storing standard token",
-            attributes: .safePublic
-        )
-        sceneDelegate.pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
-    }
-
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        temporaryFilesService.removeTemporaryData()
+        TemporaryFileService().removeTemporaryData()
 
         WireLogger.appDelegate
             .info(
@@ -243,19 +174,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    @objc
-    func userSessionDidBecomeAvailable(_ notification: Notification?) {
-        launchType = .direct
-        if launchOptions[UIApplication.LaunchOptionsKey.url] != nil {
-            launchType = .url
-        }
-
-        if launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] != nil {
-            launchType = .push
-        }
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        WireLogger.push.info(
+            "application did register for remote notifications, storing standard token",
+            attributes: .safePublic
+        )
+        sceneDelegate.pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
     }
-
-    // MARK: - BackgroundUpdates
 
     func application(
         _ application: UIApplication,
@@ -304,7 +229,61 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sceneDelegate.createAppRootRouter()
     }
 
-    // MARK: - Lifecycle notifications
+    // MARK: - Reset
+
+    #if DEBUG
+    private func resetApp() {
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("-resetData") {
+            resetFileSystem()
+            resetUserDefaults()
+            resetKeychain()
+            print("app reset done")
+        }
+    }
+
+    private func resetUserDefaults() {
+        if let bundleID = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            UserDefaults.standard.synchronize()
+        }
+    }
+
+    private func resetKeychain() {
+        let secItemClasses = [
+            kSecClassGenericPassword,
+            kSecClassInternetPassword,
+            kSecClassCertificate,
+            kSecClassKey,
+            kSecClassIdentity
+        ]
+        for itemClass in secItemClasses {
+            let query: [String: Any] = [kSecClass as String: itemClass]
+            SecItemDelete(query as CFDictionary)
+        }
+    }
+
+    private func resetFileSystem() {
+        guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
+            preconditionFailure("Unable to get shared container URL")
+        }
+        AccountManager.delete(at: rootURL)
+        let fileManager = FileManager.default
+        let directories: [FileManager.SearchPathDirectory] = [
+            .documentDirectory,
+            .cachesDirectory,
+            .applicationSupportDirectory
+        ]
+
+        for dir in directories {
+            if let url = fileManager.urls(for: dir, in: .userDomainMask).first {
+                try? fileManager.removeItem(at: url)
+            }
+        }
+    }
+    #endif
+
+    // MARK: - Notifications
 
     private func observeLifecycleNotifications() {
         let center = NotificationCenter.default
@@ -320,6 +299,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         center.publisher(for: UIApplication.didEnterBackgroundNotification).sink { [unowned self] _ in
             launchType = .unknown
         }.store(in: &cancellables)
+    }
+
+    @objc
+    func userSessionDidBecomeAvailable(_ notification: Notification?) {
+        launchType = .direct
+        if launchOptions[UIApplication.LaunchOptionsKey.url] != nil {
+            launchType = .url
+        }
+
+        if launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] != nil {
+            launchType = .push
+        }
     }
 
     // MARK: - Complete Initialization
