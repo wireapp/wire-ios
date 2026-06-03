@@ -28,8 +28,6 @@ import WireReusableUIComponents
 import WireSyncEngine
 import WireUtilities
 
-private let zmLog = ZMSLog(tag: "StartUIViewController")
-
 final class StartUIViewController: UIViewController {
 
     // MARK: - Properties
