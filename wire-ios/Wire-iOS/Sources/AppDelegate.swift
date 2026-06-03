@@ -243,13 +243,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        WireLogger.appDelegate.info(
-            "applicationWillEnterForeground: (applicationState = \(application.applicationState)",
-            attributes: .safePublic
-        )
-    }
-
     func application(
         _ app: UIApplication,
         open url: URL,

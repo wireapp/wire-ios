@@ -83,7 +83,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-        WireLogger.appDelegate.info("sceneWillEnterForeground")
+        WireLogger.appDelegate.info(
+            "sceneWillEnterForeground: (activationState = \(scene.activationState))",
+            attributes: .safePublic
+        )
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
