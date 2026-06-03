@@ -262,18 +262,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    // MARK: - URL handling
-
-    func application(
-        _ application: UIApplication,
-        continue userActivity: NSUserActivity,
-        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
-    ) -> Bool {
-        WireLogger.appDelegate.info("application:continueUserActivity:restorationHandler: \(userActivity)")
-
-        return SessionManager.shared?.continueUserActivity(userActivity) ?? false
-    }
-
     // MARK: - BackgroundUpdates
 
     func application(

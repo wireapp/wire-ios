@@ -101,13 +101,20 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         guard let url = urlContexts.first?.url else { return }
 
-        if appRootRouter?.openDeepLinkURL(url) == false {
+        if appRootRouter?.openDeepLinkURL(url) != true {
             WireLogger.appDelegate.warn("scene(_:openURLContexts:) failed to open url", attributes: .safePublic)
         }
     }
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        WireLogger.appDelegate.info("scene(_:continue:) \(userActivity)")
+        WireLogger.appDelegate.info("scene(_:continue:): \(userActivity)", attributes: .safePublic)
+
+        if SessionManager.shared?.continueUserActivity(userActivity) != true {
+            WireLogger.appDelegate.warn(
+                "scene(_:continue:) failed to continue user activity \(userActivity)",
+                attributes: .safePublic
+            )
+        }
     }
 
     // MARK: - Public
