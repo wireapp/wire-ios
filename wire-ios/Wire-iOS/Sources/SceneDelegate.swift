@@ -59,13 +59,17 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         setNavigationAppearance(isRightToLeft: window.isRightToLeft)
 
-        (UIApplication.shared.delegate as? AppDelegate)?.sceneDidFinishConnecting(self)
+        // TODO: [WPB-24600] Use method on CookieStorage instead of ZMKeychain.
+        if UIApplication.shared.isProtectedDataAvailable || ZMKeychain.hasAccessibleAccountData() {
+            createAppRootRouter()
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
-        WireLogger.appDelegate.info("sceneDidDisconnect")
-
-        
+        WireLogger.appDelegate.info(
+            "sceneDidDisconnect: (activationState = \(scene.activationState)",
+            attributes: .safePublic
+        )
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
@@ -148,6 +152,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 availabilityChecker: .default
             )
         )
+
+        (UIApplication.shared.delegate as? AppDelegate)?.queueInitializationOperations()
     }
 
 

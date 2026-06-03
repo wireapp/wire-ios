@@ -101,7 +101,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         true
     }
 
-    var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
+    let temporaryFilesService = TemporaryFileService()
 
     func application(
         _ application: UIApplication,
@@ -151,16 +151,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     #endif
-
-
-    // MARK: - Post scene connection
-
-    func sceneDidFinishConnecting(_ sceneDelegate: SceneDelegate) {
-        // TODO: [WPB-24600] Use method on CookieStorage instead of ZMKeychain.
-        if UIApplication.shared.isProtectedDataAvailable || ZMKeychain.hasAccessibleAccountData() {
-            createAppRootRouterAndInitializeOperations(launchOptions)
-        }
-    }
 
     // MARK: - Reset
 
@@ -238,6 +228,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = NSAttributedString.paragraphStyle
 
         DeveloperOverrides.storage = .shared()
+        VoIPPushHelperOperation().execute()
 
         WireLogger.appDelegate
             .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
@@ -307,10 +298,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
         WireLogger.appDelegate.info("applicationProtectedDataDidBecomeAvailable", attributes: .safePublic)
         guard sceneDelegate.appRootRouter == nil else {
-            WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter nil")
+            WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter not nil")
             return
         }
-        createAppRootRouterAndInitializeOperations(launchOptions)
+        sceneDelegate.createAppRootRouter()
     }
 
     // MARK: - Lifecycle notifications
@@ -330,25 +321,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             launchType = .unknown
         }.store(in: &cancellables)
     }
-}
 
-// MARK: - Private Helpers
+    // MARK: - Complete Initialization
 
-private extension AppDelegate {
-
-    private func createAppRootRouterAndInitializeOperations(_ launchOptions: LaunchOptions) {
-        // Fix: set the applicationGroup so updating the callkit enable is set to NSE
-        VoIPPushHelperOperation().execute() // FIXME: Move this to launch method
-        sceneDelegate.createAppRootRouter()
-        queueInitializationOperations(launchOptions: launchOptions)
-    }
-
-    private func queueInitializationOperations(launchOptions: LaunchOptions) {
+    func queueInitializationOperations() {
         var operations = launchOperations.map {
             BlockOperation(block: $0.execute)
         }
 
-        operations.append(BlockOperation {
+        operations.append(BlockOperation { [launchOptions] in
             self.startAppRouter(launchOptions: launchOptions)
         })
 
@@ -358,5 +339,4 @@ private extension AppDelegate {
     private func startAppRouter(launchOptions: LaunchOptions) {
         sceneDelegate.appRootRouter?.start(launchOptions: launchOptions)
     }
-
 }
