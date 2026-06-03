@@ -22,10 +22,6 @@ package import Foundation
 /// Repository for accessing Meetings
 package protocol MeetingsRepositoryProtocol: Sendable {
 
-    func fetchOngoingMeetings(at date: Date) -> [Meeting] // TODO: remove
-
-    func fetchMeetingsEnding(before date: Date) -> [Meeting]
-
     func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
 
     func hasUpcomingMeetings(after date: Date) -> Bool

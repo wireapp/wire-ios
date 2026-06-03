@@ -16,11 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
-package typealias GroupedMeetings = [(day: Date, meetings: [Meeting])]
-
-package struct PaginatedGroupedMeetings {
+package struct PaginatedMeetings {
 
     package let meetings: [Meeting]
     package let hasMore: Bool

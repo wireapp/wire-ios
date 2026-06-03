@@ -27,17 +27,6 @@ package final class MeetingsRepository: MeetingsRepositoryProtocol {
         self.meetingsSource = meetings
     }
 
-    // TODO: remove
-    package func fetchOngoingMeetings(at date: Date) -> [Meeting] {
-        meetingsSource().filter { $0.start <= date && $0.end > date }
-    }
-
-    // TODO: do we need?
-    package func fetchMeetingsEnding(before date: Date) -> [Meeting] {
-        meetingsSource().filter { $0.end <= date }
-    }
-
-    // TODO: do we need?
     package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
         let allFuture = meetingsSource()
             .filter { $0.start > date }

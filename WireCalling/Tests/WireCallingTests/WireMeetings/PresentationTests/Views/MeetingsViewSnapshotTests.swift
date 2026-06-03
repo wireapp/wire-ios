@@ -116,15 +116,11 @@ final class MeetingsViewSnapshotTests: XCTestCase {
 
     private func createEmptyViewModel() -> MeetingsViewModel {
         let mockRepository = MockMeetingsRepositoryProtocol()
-        mockRepository.fetchOngoingMeetingsAt_MockValue = []
         mockRepository.hasUpcomingMeetingsAfter_MockValue = false
 
-//        let pastMeetingsUseCase = MockFetchPastMeetingsUseCaseProtocol()
-//        pastMeetingsUseCase.invoke_MockValue = []
-
         let upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockValue = PaginatedGroupedMeetings(
-            groups: [],
+        upcomingMeetingsUseCase.invokePageSizeOffset_MockValue = PaginatedMeetings(
+            meetings: [],
             hasMore: false,
             nextOffset: 0
         )
@@ -133,7 +129,6 @@ final class MeetingsViewSnapshotTests: XCTestCase {
             repository: mockRepository,
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-            // pastMeetingsUseCase: pastMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
     }

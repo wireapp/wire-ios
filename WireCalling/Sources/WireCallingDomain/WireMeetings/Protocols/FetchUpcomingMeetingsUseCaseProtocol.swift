@@ -22,6 +22,6 @@ import Foundation
 /// Fetches upcoming meetings
 package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
 
-    func invoke(pageSize: Int, offset: Int) -> PaginatedGroupedMeetings
+    func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings
 
 }

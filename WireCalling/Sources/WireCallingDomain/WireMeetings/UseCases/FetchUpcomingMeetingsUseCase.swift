@@ -31,7 +31,7 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
         self.currentDateProvider = currentDateProvider
     }
 
-    package func invoke(pageSize: Int, offset: Int) -> PaginatedGroupedMeetings {
+    package func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings {
         let now = currentDateProvider.now
         let meetings = repository.fetchMeetingsStarting(
             after: now,
@@ -42,7 +42,7 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
         let hasMore = meetings.count > pageSize
         let page = hasMore ? Array(meetings.prefix(pageSize)) : meetings
 
-        return PaginatedGroupedMeetings(
+        return PaginatedMeetings(
             meetings: page,
             hasMore: hasMore,
             nextOffset: offset + page.count
