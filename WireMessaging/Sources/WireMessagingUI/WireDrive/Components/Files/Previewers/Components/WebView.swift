@@ -19,14 +19,11 @@
 import SwiftUI
 import WebKit
 
-struct DocumentView: UIViewRepresentable {
+struct WebView: UIViewRepresentable {
     let url: URL
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
-        webView.allowsBackForwardNavigationGestures = false
-        webView.scrollView.bounces = true
-        return webView
+        WKWebView()
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {

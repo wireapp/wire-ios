@@ -19,6 +19,7 @@
 import AVKit
 import PDFKit
 import SwiftUI
+import WebKit
 import WireMessagingDomain
 
 /// A read-only file preview screen used in Drive conversations.
@@ -61,14 +62,12 @@ struct FilePreviewView: View {
                     ImageView(url: url)
                 case .audio:
                     AudioPlayerView(url: url)
-                case .document:
-                    DocumentView(url: url)
-                case .presentation:
-                    PresentationView(url: url)
                 case .archive:
                     ZipView(url: url)
+                case .document, .presentation, .spreadsheet:
+                    WebView(url: url)
                 default:
-                    DocumentView(url: url)
+                    WebView(url: url)
                 }
             }
             .navigationTitle(name)

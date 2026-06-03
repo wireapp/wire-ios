@@ -73,9 +73,7 @@ final class FilesItemViewModel: ObservableObject {
     let isInRecycleBin: Bool
 
     // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
-    var isDrivePermissionsFlagEnabled: Bool {
-        UserDefaults.standard.bool(forKey: "enableDrivePermissions")
-    }
+    var isDrivePermissionsFlagEnabled: Bool = UserDefaults.standard.bool(forKey: "enableDrivePermissions")
 
     var showReadOnlyIcon: Bool {
         isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
