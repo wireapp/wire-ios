@@ -128,8 +128,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             attributes: .safePublic
         )
 
-        observeLifecycleNotifications()
-
         return true
     }
 
@@ -147,19 +145,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // set internal name to lower layers like SyncEngine
         Bundle.mainAppInternalName = Bundle.main.appInternalName
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(userSessionDidBecomeAvailable(_:)),
-            name: Notification.Name.ZMUserSessionDidBecomeAvailable,
-            object: nil
-        )
-
         self.launchOptions = launchOptions ?? [:]
 
         _ = NSAttributedString.paragraphStyle
 
         DeveloperOverrides.storage = .shared()
         VoIPPushHelperOperation().execute()
+
+        observeNotifications()
 
         WireLogger.appDelegate
             .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
@@ -285,24 +278,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Notifications
 
-    private func observeLifecycleNotifications() {
+    private func observeNotifications() {
         let center = NotificationCenter.default
         center.publisher(for: UIApplication.didBecomeActiveNotification).sink { [unowned self] _ in
-            switch launchType {
-            case .url, .push:
-                break
-            default:
-                launchType = .direct
-            }
+            handleDidBecomeActiveNotification()
         }.store(in: &cancellables)
 
         center.publisher(for: UIApplication.didEnterBackgroundNotification).sink { [unowned self] _ in
-            launchType = .unknown
+            handleDidEnterBackgroundNotification()
+        }.store(in: &cancellables)
+
+        center.publisher(for: .ZMUserSessionDidBecomeAvailable).sink { [unowned self] _ in
+            handleUserSessionDidBecomeAvailableNotification()
         }.store(in: &cancellables)
     }
 
-    @objc
-    func userSessionDidBecomeAvailable(_ notification: Notification?) {
+    private func handleDidBecomeActiveNotification() {
+        switch launchType {
+        case .url, .push:
+            break
+        default:
+            launchType = .direct
+        }
+    }
+
+    private func handleDidEnterBackgroundNotification() {
+        launchType = .unknown
+    }
+
+    private func handleUserSessionDidBecomeAvailableNotification() {
         launchType = .direct
         if launchOptions[UIApplication.LaunchOptionsKey.url] != nil {
             launchType = .url
