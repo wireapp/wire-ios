@@ -33,6 +33,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
+    case preventAdminlessGroups
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
@@ -79,6 +80,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .newRegistration:
             "Turn on to use the new registration flow"
+
+        case .preventAdminlessGroups:
+            "Treat the preventAdminlessGroups feature as enabled, bypassing the server config."
 
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
