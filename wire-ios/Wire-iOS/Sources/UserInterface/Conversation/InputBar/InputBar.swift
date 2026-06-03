@@ -600,6 +600,13 @@ final class InputBar: UIView {
                         .resolvedColor(with: traitCollection),
                     for: .normal
                 )
+
+            button
+                .setBackgroundImageColor(
+                    ColorTheme.Buttons.Secondary.disabled.resolvedColor(with: traitCollection),
+                    for: .disabled
+                )
+
             button.setBorderColor(
                 SemanticColors.Button.borderInputBarItemEnabled.resolvedColor(with: traitCollection),
                 for: .normal
