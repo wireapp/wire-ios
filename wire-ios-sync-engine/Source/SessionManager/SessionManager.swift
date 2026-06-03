@@ -167,6 +167,13 @@ public protocol SessionManagerSwitchingDelegate: AnyObject {
     func confirmSwitchingAccount(completion: @escaping (Bool) -> Void)
 }
 
+public extension Notification.Name {
+    /// Posted by `SessionManager` after the active user session changes. The notification's
+    /// `object` is the new active `ZMUserSession?` (may be `nil`).
+    static let sessionManagerActiveUserSessionDidChange = Notification
+        .Name("SessionManagerActiveUserSessionDidChange")
+}
+
 @objc
 public protocol ForegroundNotificationResponder: AnyObject {
     @MainActor
@@ -295,6 +302,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             requireInternal(oldSession === $0.activeUserSession, "Invalid state updating active user session")
             $0.activeUserSession = newSession
         }
+
+        NotificationCenter.default.post(
+            name: .sessionManagerActiveUserSessionDidChange,
+            object: newSession
+        )
     }
 
     public var backgroundUserSessions: [UUID: ZMUserSession] {
