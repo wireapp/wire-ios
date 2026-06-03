@@ -26,6 +26,7 @@ struct OtherUserDeviceDetailsView: View {
 
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State private var isCertificateViewPresented: Bool = false
+    @State private var didResetSession = false
 
     private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
@@ -136,6 +137,9 @@ struct OtherUserDeviceDetailsView: View {
                 dismiss()
             }
         }
+        .onReceive(viewModel.$showResetSessionSuccess, perform: { showSuccess in
+            didResetSession = showSuccess
+        })
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
@@ -145,6 +149,14 @@ struct OtherUserDeviceDetailsView: View {
                     performDownload: viewModel.downloadE2EIdentityCertificate,
                     performCopy: viewModel.copyToClipboard
                 )
+            }
+        }
+        .alert(
+            L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success,
+            isPresented: $didResetSession
+        ) {
+            Button(L10n.Localizable.General.ok) {
+                viewModel.showResetSessionSuccess = false
             }
         }
     }
