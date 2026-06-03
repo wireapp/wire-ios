@@ -44,7 +44,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
-        WireLogger.appDelegate.info("scene(_:willConnectTo:options:)")
+        WireLogger.sceneDelegate.info("scene(_:willConnectTo:options:)")
 
         voIPPushManager.registerForVoIPPushes()
 
@@ -66,55 +66,55 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
-        WireLogger.appDelegate.info(
+        WireLogger.sceneDelegate.info(
             "sceneDidDisconnect: (activationState = \(scene.activationState)",
             attributes: .safePublic
         )
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        WireLogger.appDelegate.info(
+        WireLogger.sceneDelegate.info(
             "sceneDidBecomeActive: (activationState = \(scene.activationState)",
             attributes: .safePublic
         )
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
-        WireLogger.appDelegate.info(
+        WireLogger.sceneDelegate.info(
             "sceneWillResignActive: (activationState = \(scene.activationState))",
             attributes: .safePublic
         )
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-        WireLogger.appDelegate.info(
+        WireLogger.sceneDelegate.info(
             "sceneWillEnterForeground: (activationState = \(scene.activationState))",
             attributes: .safePublic
         )
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-        WireLogger.appDelegate.info(
+        WireLogger.sceneDelegate.info(
             "sceneDidEnterBackground: (activationState = \(scene.activationState))",
             attributes: .safePublic
         )
     }
 
     func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {
-        WireLogger.appDelegate.info("scene(_:openURLContexts:)", attributes: .safePublic)
+        WireLogger.sceneDelegate.info("scene(_:openURLContexts:)", attributes: .safePublic)
 
         guard let url = urlContexts.first?.url else { return }
 
         if appRootRouter?.openDeepLinkURL(url) != true {
-            WireLogger.appDelegate.warn("scene(_:openURLContexts:) failed to open url", attributes: .safePublic)
+            WireLogger.sceneDelegate.warn("scene(_:openURLContexts:) failed to open url", attributes: .safePublic)
         }
     }
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        WireLogger.appDelegate.info("scene(_:continue:): \(userActivity)", attributes: .safePublic)
+        WireLogger.sceneDelegate.info("scene(_:continue:): \(userActivity)", attributes: .safePublic)
 
         if SessionManager.shared?.continueUserActivity(userActivity) != true {
-            WireLogger.appDelegate.warn(
+            WireLogger.sceneDelegate.warn(
                 "scene(_:continue:) failed to continue user activity \(userActivity)",
                 attributes: .safePublic
             )
@@ -137,7 +137,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
 
         guard let window else {
-            WireLogger.appDelegate.critical("no window this should not be possible at this point")
+            WireLogger.sceneDelegate.critical("no window this should not be possible at this point")
             assertionFailure("no window this should not be possible at this point")
             return
         }
