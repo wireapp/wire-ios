@@ -75,7 +75,7 @@ struct MeetingsView: View {
                 .listRowBackground(Color.clear)
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.grouped)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
@@ -139,14 +139,38 @@ private struct MeetingRow: View {
                     )
                     .frame(width: 31, height: 31)
 
-                Image(systemName: "calendar").font(.system(size: 15))
+                Image(systemName: "calendar")
+                    .font(.system(size: 15))
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(meeting.title)
-                    .font(for: .body2)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    .lineLimit(2)
+                HStack(alignment: .firstTextBaseline) {
+                    Text(meeting.title)
+                        .font(for: .body2)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        .lineLimit(2)
+
+                    Spacer()
+
+                    Menu {
+                        Button {
+                            onEdit()
+                        } label: {
+                            Label(Strings.Actions.edit, systemImage: "pencil")
+                        }
+
+                        Button(role: .destructive) {
+                            onDelete()
+                        } label: {
+                            Label(Strings.Actions.delete, systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .rotationEffect(.degrees(90))
+                            .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+                            .contentShape(Rectangle())
+                    }
+                }
 
                 Text(formatTimeRange(meeting))
                     .font(for: .subline1)
@@ -159,29 +183,7 @@ private struct MeetingRow: View {
                 }
                 .padding(.top, 2)
             }
-
-            Spacer()
-
-            Menu {
-                Button {
-                    onEdit()
-                } label: {
-                    Label(Strings.Actions.edit, systemImage: "pencil")
-                }
-
-                Button(role: .destructive) {
-                    onDelete()
-                } label: {
-                    Label(Strings.Actions.delete, systemImage: "trash")
-                }
-            } label: {
-                Image(systemName: "ellipsis")
-                    .rotationEffect(.degrees(90))
-                    .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-            }
         }
-        .contentShape(Rectangle())
-        .padding(.vertical, 6)
     }
 }
 
