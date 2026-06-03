@@ -16,20 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct TeamNotificationDecodingProxyError: Error, CustomStringConvertible {
-
-    /// The type of the notification being decoded.
-
-    public let notificationType: String
-
-    /// The error that occurred when decoding.
-
-    public let decodingError: any Error
-
-    /// A textual representation of the error.
-
-    public var description: String {
-        "failed to decode notification '\(notificationType)': \(decodingError)"
-    }
-
+public enum CollaboratorPermission: String {
+    case createTeamConversation = "create_team_conversation"
+    case implicitConnection = "implicit_connection"
 }

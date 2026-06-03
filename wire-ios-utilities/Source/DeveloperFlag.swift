@@ -42,7 +42,9 @@ public enum DeveloperFlag: String, CaseIterable {
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
+    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     case enableDrivePermissions
+    case unSafeLogsForPublic
 
     public var description: String {
         switch self {
@@ -108,6 +110,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .enableDrivePermissions:
             "Turn on to enable drive permissions"
+
+        case .unSafeLogsForPublic:
+            "Turn on to write all logs (including debug and non-public) to disk in release builds"
         }
     }
 
