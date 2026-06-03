@@ -182,8 +182,17 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     private func predicateForValidConversations() -> NSPredicate {
-        let basePredicate = ZMConversation.predicateForFilteringResults()
-        return .all(of: [basePredicate, isProtocolReady(), isValidConversation()])
+        .all(of: [filteringResultsPredicate(), isProtocolReady(), isValidConversation()])
+    }
+
+    /// Mirror of `ZMConversation.predicateForFilteringResults()` filtering on the persisted
+    /// `effectiveConversationType` instead of the computed `conversationType`. Keeps both the store-backed fetch and
+    /// the in-memory `predicateMatchesConversation` path off the computed getter (which walks participants).
+    private func filteringResultsPredicate() -> NSPredicate {
+        let selfType = ZMConversationType(rawValue: 1)!
+        return NSPredicate(
+            format: "\(ZMConversationEffectiveConversationTypeKey) != \(ZMConversationType.invalid.rawValue) AND \(ZMConversationEffectiveConversationTypeKey) != \(selfType.rawValue) AND \(#keyPath(ZMConversation.isDeletedRemotely)) == NO"
+        )
     }
 
     private func isProtocolReady() -> NSPredicate {
