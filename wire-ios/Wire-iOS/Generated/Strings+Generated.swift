@@ -1254,6 +1254,8 @@ internal enum L10n {
       internal static let infoBanner = L10n.tr("Localizable", "admin_selection.info_banner", fallback: "After you promoted a new admin, you will leave the group.")
       /// Promote
       internal static let promote = L10n.tr("Localizable", "admin_selection.promote", fallback: "Promote")
+      /// Failed to promote user to admin.
+      internal static let promotionError = L10n.tr("Localizable", "admin_selection.promotion_error", fallback: "Failed to promote user to admin.")
       /// New admin
       internal static let title = L10n.tr("Localizable", "admin_selection.title", fallback: "New admin")
     }

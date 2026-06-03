@@ -985,6 +985,7 @@
 "admin_selection.title" = "New admin";
 "admin_selection.promote" = "Promote";
 "admin_selection.info_banner" = "After you promoted a new admin, you will leave the group.";
+"admin_selection.promotion_error" = "Failed to promote user to admin.";
 
 // Last admin leave flow
 "last_admin_leave.title" = "Leave \"%@\"?";
