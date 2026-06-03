@@ -97,7 +97,7 @@ final class TwoLineTitleView: UIView {
         let accessibilityText = [
             originalTitle.string,
             originalSubtitle?.string
-        ].compactMap { $0 }.joined(separator: ", ")
+        ].compactMap(\.self).joined(separator: ", ")
 
         accessibilityLabel = accessibilityText
     }

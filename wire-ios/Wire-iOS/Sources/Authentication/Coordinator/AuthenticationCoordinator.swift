@@ -207,7 +207,7 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
                     viewControllers.prefix { !milestone.shouldRewind(to: $0) },
                     [rewindedController],
                     [stepViewController]
-                ].flatMap { $0 }
+                ].flatMap(\.self)
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
                 presenter.setViewControllers([stepViewController], animated: true)

@@ -184,7 +184,7 @@ public extension MockUser {
 
     @objc
     func removeLegacyPictures() {
-        [smallProfileImage, mediumImage].compactMap { $0 }.forEach(managedObjectContext!.delete)
+        [smallProfileImage, mediumImage].compactMap(\.self).forEach(managedObjectContext!.delete)
     }
 
 }

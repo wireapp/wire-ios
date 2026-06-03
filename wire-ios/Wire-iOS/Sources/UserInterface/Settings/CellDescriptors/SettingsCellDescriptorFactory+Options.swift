@@ -44,7 +44,7 @@ extension SettingsCellDescriptorFactory {
             isAppLockAvailable ? appLockSection : nil,
             SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
             collapseSelfMessageSection
-        ].compactMap { $0 }
+        ].compactMap(\.self)
 
         return SettingsGroupCellDescriptor(
             items: descriptors,

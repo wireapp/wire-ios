@@ -63,7 +63,7 @@ final class ConversationCreationController: UIViewController {
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
-        ].compactMap { $0 }
+        ].compactMap(\.self)
 
         if let firstSection = sections.first {
             firstSection.headerTitle = L10n.Localizable.Conversation.Create.Options.title

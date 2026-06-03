@@ -1450,7 +1450,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
             let memberLeavePayload = Payload.UpdateConverationMemberLeave(
                 userIDs: .none,
-                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap { $0 },
+                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap(\.self),
                 reason: .userDeleted
             )
             let conversationEvent = Payload.ConversationEvent(
