@@ -152,6 +152,11 @@ public protocol SessionManagerType: AnyObject {
     /// Switch account and and ask UI to navigate to the conversation list
     func showConversationList(in session: ZMUserSession)
 
+    /// Switch to the given session's account without triggering any in-app navigation.
+    /// Use when post-activation flows (e.g. presenting an incoming-call UI) should drive
+    /// what the user sees next, rather than navigating to a specific conversation.
+    func activateAccount(of session: ZMUserSession)
+
     /// ask UI to open the profile of a user
     func showUserProfile(user: WireDataModel.UserType)
 
@@ -165,6 +170,13 @@ public protocol SessionManagerType: AnyObject {
 @objc
 public protocol SessionManagerSwitchingDelegate: AnyObject {
     func confirmSwitchingAccount(completion: @escaping (Bool) -> Void)
+}
+
+public extension Notification.Name {
+    /// Posted by `SessionManager` after the active user session changes. The notification's
+    /// `object` is the new active `ZMUserSession?` (may be `nil`).
+    static let sessionManagerActiveUserSessionDidChange = Notification
+        .Name("SessionManagerActiveUserSessionDidChange")
 }
 
 @objc
@@ -295,6 +307,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             requireInternal(oldSession === $0.activeUserSession, "Invalid state updating active user session")
             $0.activeUserSession = newSession
         }
+
+        NotificationCenter.default.post(
+            name: .sessionManagerActiveUserSessionDidChange,
+            object: newSession
+        )
     }
 
     public var backgroundUserSessions: [UUID: ZMUserSession] {
