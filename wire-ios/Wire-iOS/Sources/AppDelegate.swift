@@ -135,6 +135,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             attributes: .safePublic
         )
 
+        observeLifecycleNotifications()
+
         return true
     }
 
