@@ -66,7 +66,7 @@ public final class ConversationPredicateFactory: NSObject {
         let basePredicate = ZMConversation.predicateForFilteringResults()
         let pendingConversationPredicate =
             NSPredicate(
-                format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue) AND \(ZMConversationOneOnOneUserKey).connection.status == \(ZMConnectionStatus.pending.rawValue)"
+                format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.connection.rawValue) AND \(ZMConversationOneOnOneUserKey).connection.status == \(ZMConnectionStatus.pending.rawValue)"
             )
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, pendingConversationPredicate])
@@ -101,7 +101,7 @@ public final class ConversationPredicateFactory: NSObject {
     @objc(predicateForGroupConversations)
     public func predicateForGroupConversations() -> NSPredicate {
         let isGroupConversationType =
-            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let isNotChannelGroupType =
             NSPredicate(format: "\(ZMConversationGroupTypeKey) != \(ConversationGroupType.channel.rawValue)")
         let isNotDeletedUserTeamOneOnOne = NSCompoundPredicate(
@@ -120,7 +120,7 @@ public final class ConversationPredicateFactory: NSObject {
     @objc(predicateForChannelConversations)
     public func predicateForChannelConversations() -> NSPredicate {
         let isGroupConversationType =
-            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let isChannelGroupType =
             NSPredicate(format: "\(ZMConversationGroupTypeKey) == \(ConversationGroupType.channel.rawValue)")
 
@@ -206,7 +206,7 @@ public final class ConversationPredicateFactory: NSObject {
 
     private func isValidConnection() -> NSPredicate {
         let isConnection =
-            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
 
         let isActive = NSPredicate(format: "NOT \(ZMConversationOneOnOneUserKey).connection.status IN %@", [
             NSNumber(value: ZMConnectionStatus.pending.rawValue),
@@ -219,7 +219,7 @@ public final class ConversationPredicateFactory: NSObject {
 
     private func isValidOneOnOne() -> NSPredicate {
         let isOneOnOne =
-            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let hasOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) != NULL")
         let isConnectionAccepted =
             NSPredicate(
@@ -250,7 +250,7 @@ public final class ConversationPredicateFactory: NSObject {
 
     private func isValidGroup() -> NSPredicate {
         let isGroup =
-            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         // Fake 1:1 conversations are actually groups, so we check
         // whether this group has a one on one user to filter it out.
         let hasNoOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) == NULL")
@@ -259,13 +259,13 @@ public final class ConversationPredicateFactory: NSObject {
 
     private func predicateForOneToOneConversation() -> NSPredicate {
         let isOneOnOne =
-            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let hasOneOnOneUser = NSPredicate(format: "\(ZMConversationOneOnOneUserKey) != NULL")
         return NSCompoundPredicate(andPredicateWithSubpredicates: [isOneOnOne, hasOneOnOneUser])
     }
 
     private func predicateForUnconnectedConversations() -> NSPredicate {
-        NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+        NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
     }
 
 }
