@@ -107,238 +107,443 @@ package extension MeetingsRepository {
                 id: UUID(),
                 title: "Sprint planning",
                 start: day(1, hour: 7),
-                end: day(1, hour: 8)
+                end: day(1, hour: 8),
+                members: [Member(qualifiedID: nil, id: nil, name: "User1")]
             ),
             Meeting(
                 id: UUID(),
                 title: "Daily sync",
                 start: day(1, hour: 7),
-                end: day(1, hour: 7, min: 20)
+                end: day(1, hour: 7, min: 20),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "Architecture Forum",
                 start: day(1, hour: 13),
-                end: day(1, hour: 14)
+                end: day(1, hour: 14),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3")
+                ]
             ),
-
-            // AFTER TOMORROW — ensures "Show All" appears in the Next tab
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(3, hour: 11),
-                end: day(3, hour: 12)
+                end: day(3, hour: 12),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(3, hour: 12),
-                end: day(3, hour: 13)
+                end: day(3, hour: 13),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4"),
+                    Member(qualifiedID: nil, id: nil, name: "User5"),
+                    Member(qualifiedID: nil, id: nil, name: "User6")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(3, hour: 14),
-                end: day(3, hour: 15)
+                end: day(3, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4"),
+                    Member(qualifiedID: nil, id: nil, name: "User5"),
+                    Member(qualifiedID: nil, id: nil, name: "User6"),
+                    Member(qualifiedID: nil, id: nil, name: "User7"),
+                    Member(qualifiedID: nil, id: nil, name: "User8"),
+                    Member(qualifiedID: nil, id: nil, name: "User9")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(3, hour: 16),
-                end: day(3, hour: 17)
+                end: day(3, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(4, hour: 14),
-                end: day(4, hour: 15)
+                end: day(4, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(4, hour: 16),
-                end: day(4, hour: 17)
+                end: day(4, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
 
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(5, hour: 12),
-                end: day(5, hour: 13)
+                end: day(5, hour: 13),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(5, hour: 14),
-                end: day(5, hour: 15)
+                end: day(5, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(5, hour: 16),
-                end: day(5, hour: 17)
+                end: day(5, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(6, hour: 14),
-                end: day(6, hour: 15)
+                end: day(6, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(6, hour: 16),
-                end: day(6, hour: 17)
+                end: day(6, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(7, hour: 12),
-                end: day(7, hour: 13)
+                end: day(7, hour: 13),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4"),
+                    Member(qualifiedID: nil, id: nil, name: "User5"),
+                    Member(qualifiedID: nil, id: nil, name: "User6"),
+                    Member(qualifiedID: nil, id: nil, name: "User7"),
+                    Member(qualifiedID: nil, id: nil, name: "User8"),
+                    Member(qualifiedID: nil, id: nil, name: "User9")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(7, hour: 14),
-                end: day(7, hour: 15)
+                end: day(7, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(7, hour: 16),
-                end: day(7, hour: 17)
+                end: day(7, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(8, hour: 14),
-                end: day(8, hour: 15)
+                end: day(8, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4"),
+                    Member(qualifiedID: nil, id: nil, name: "User5"),
+                    Member(qualifiedID: nil, id: nil, name: "User6"),
+                    Member(qualifiedID: nil, id: nil, name: "User7"),
+                    Member(qualifiedID: nil, id: nil, name: "User8"),
+                    Member(qualifiedID: nil, id: nil, name: "User9")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(8, hour: 16),
-                end: day(8, hour: 17)
+                end: day(8, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(9, hour: 12),
-                end: day(9, hour: 13)
+                end: day(9, hour: 13),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(9, hour: 14),
-                end: day(9, hour: 15)
+                end: day(9, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4"),
+                    Member(qualifiedID: nil, id: nil, name: "User5"),
+                    Member(qualifiedID: nil, id: nil, name: "User6"),
+                    Member(qualifiedID: nil, id: nil, name: "User7"),
+                    Member(qualifiedID: nil, id: nil, name: "User8"),
+                    Member(qualifiedID: nil, id: nil, name: "User9")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(9, hour: 16),
-                end: day(9, hour: 17)
+                end: day(9, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(10, hour: 14),
-                end: day(10, hour: 15)
+                end: day(10, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(10, hour: 16),
-                end: day(10, hour: 17)
+                end: day(10, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(11, hour: 12),
-                end: day(11, hour: 13)
+                end: day(11, hour: 13),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(11, hour: 14),
-                end: day(11, hour: 15)
+                end: day(11, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(11, hour: 16),
-                end: day(11, hour: 17)
+                end: day(11, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(12, hour: 14),
-                end: day(12, hour: 15)
+                end: day(12, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(12, hour: 16),
-                end: day(12, hour: 17)
+                end: day(12, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4"),
+                    Member(qualifiedID: nil, id: nil, name: "User5"),
+                    Member(qualifiedID: nil, id: nil, name: "User6"),
+                    Member(qualifiedID: nil, id: nil, name: "User7"),
+                    Member(qualifiedID: nil, id: nil, name: "User8"),
+                    Member(qualifiedID: nil, id: nil, name: "User9")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(13, hour: 12),
-                end: day(13, hour: 13)
+                end: day(13, hour: 13),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(13, hour: 14),
-                end: day(13, hour: 15)
+                end: day(13, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(13, hour: 16),
-                end: day(13, hour: 17)
+                end: day(13, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(14, hour: 14),
-                end: day(14, hour: 15)
+                end: day(14, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(14, hour: 16),
-                end: day(14, hour: 17)
+                end: day(14, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(15, hour: 12),
-                end: day(15, hour: 13)
+                end: day(15, hour: 13),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4"),
+                    Member(qualifiedID: nil, id: nil, name: "User5"),
+                    Member(qualifiedID: nil, id: nil, name: "User6"),
+                    Member(qualifiedID: nil, id: nil, name: "User7"),
+                    Member(qualifiedID: nil, id: nil, name: "User8"),
+                    Member(qualifiedID: nil, id: nil, name: "User9")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(15, hour: 14),
-                end: day(15, hour: 15)
+                end: day(15, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(15, hour: 16),
-                end: day(15, hour: 17)
+                end: day(15, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(16, hour: 14),
-                end: day(16, hour: 15)
+                end: day(16, hour: 15),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "All hands",
                 start: day(16, hour: 16),
-                end: day(16, hour: 17)
+                end: day(16, hour: 17),
+                members: [
+                    Member(qualifiedID: nil, id: nil, name: "User1"),
+                    Member(qualifiedID: nil, id: nil, name: "User2"),
+                    Member(qualifiedID: nil, id: nil, name: "User3"),
+                    Member(qualifiedID: nil, id: nil, name: "User4"),
+                    Member(qualifiedID: nil, id: nil, name: "User5"),
+                    Member(qualifiedID: nil, id: nil, name: "User6"),
+                    Member(qualifiedID: nil, id: nil, name: "User7"),
+                    Member(qualifiedID: nil, id: nil, name: "User8"),
+                    Member(qualifiedID: nil, id: nil, name: "User9")
+                ]
             )
         ]
 

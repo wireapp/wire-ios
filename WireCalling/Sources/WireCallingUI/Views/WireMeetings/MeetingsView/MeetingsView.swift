@@ -175,14 +175,61 @@ private struct MeetingRow: View {
                     .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                HStack(spacing: 6) {
-                    Label("Design", systemImage: "person.3.fill")
+                if !meeting.members.isEmpty {
+                    ParticipantsView(members: meeting.members)
+                        .padding(.top, 2)
+                }
+            }
+        }
+    }
+}
+
+private struct ParticipantsView: View {
+    let members: [Member]
+
+    private let maxVisible = 5
+    private let circleSize: CGFloat = 24
+    private let overlap: CGFloat = 8
+
+    var body: some View {
+        if members.count == 1 {
+            HStack(spacing: 6) {
+                circle(index: 0)
+
+                if let name = members[0].name, !name.isEmpty {
+                    Text(name)
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        .lineLimit(1)
+                }
+            }
+        } else {
+            let overflow = members.count - maxVisible
+
+            HStack(spacing: 6) {
+                HStack(spacing: -overlap) {
+                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, _ in
+                        circle(index: index)
+                            .zIndex(Double(maxVisible - index))
+                    }
+                }
+
+                if overflow > 0 {
+                    Text("+\(overflow)")
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
-                .padding(.top, 2)
             }
         }
+    }
+
+    private func circle(index: Int) -> some View {
+        Circle()
+            .fill(Color.gray.opacity(0.35))
+            .frame(width: circleSize, height: circleSize)
+            .overlay(
+                Circle().strokeBorder(ColorTheme.Backgrounds.surface.color, lineWidth: 2)
+            )
     }
 }
 

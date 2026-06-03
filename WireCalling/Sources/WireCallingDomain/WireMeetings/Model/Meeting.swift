@@ -25,6 +25,8 @@ public import Foundation
 /// categorized as past, ongoing, or upcoming based on their start and end times
 /// relative to the current time.
 
+public import WireFoundation
+
 public struct Meeting: Equatable, Sendable {
 
     public let id: UUID
@@ -37,18 +39,39 @@ public struct Meeting: Equatable, Sendable {
 
     public let repeatOption: RepeatOption
 
+    public let members: [Member]
+
     public init(
         id: UUID,
         title: String,
         start: Date,
         end: Date,
-        repeatOption: RepeatOption = .never
+        repeatOption: RepeatOption = .never,
+        members: [Member] = []
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
         self.repeatOption = repeatOption
+        self.members = members
+    }
+
+}
+
+public typealias QualifiedID = WireFoundation.QualifiedID
+
+// TODO: [WPB-20278]: Update the model
+public struct Member: Equatable, Sendable {
+
+    public let qualifiedID: QualifiedID?
+    public let id: UUID?
+    public let name: String?
+
+    public init(qualifiedID: QualifiedID?, id: UUID?, name: String?) {
+        self.qualifiedID = qualifiedID
+        self.id = id
+        self.name = name
     }
 
 }
