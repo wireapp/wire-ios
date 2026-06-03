@@ -24,8 +24,8 @@ import WireFoundationSupport
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
-//@Suite("MeetingsViewModel Tests")
-//struct MeetingsViewModelTests {
+// @Suite("MeetingsViewModel Tests")
+// struct MeetingsViewModelTests {
 //
 //    private let mockRepository: MockMeetingsRepositoryProtocol
 //    private let mockDateProvider: CurrentDateProvidingMock
@@ -312,4 +312,4 @@ import WireFoundationSupport
 //        #expect(viewModel.groupedNextMeetings[0].timeSlots[0].meetings.count == 2)
 //    }
 //
-//}
+// }

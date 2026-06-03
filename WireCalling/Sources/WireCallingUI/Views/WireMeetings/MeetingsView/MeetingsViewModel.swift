@@ -24,18 +24,8 @@ package final class MeetingsViewModel: ObservableObject {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @Published var showAll: Bool = false {
-        didSet {
-            if oldValue != showAll {
-                futureOffset = 0
-                upcomingMeetings = []
-                loadUpcomingMeetings()
-            }
-        }
-    }
-
-    @Published private(set) var showMoreButton: Bool = false
-    @Published private(set) var upcomingMeetings: GroupedMeetings = []
+    @Published private(set) var loadedMeetings: [Meeting] = []
+    @Published private(set) var hasMore: Bool = false
 
     private let repository: any MeetingsRepositoryProtocol
     private let formatter: MeetingsFormatter
@@ -43,8 +33,11 @@ package final class MeetingsViewModel: ObservableObject {
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
 
     private var futureOffset: Int = 0
-    private let pageSize: Int = 50
-    private let calendar = Calendar.current
+    private let initialPageSize: Int = 10
+    private let pageSize: Int = 5
+    private var isLoading: Bool = false
+
+    private let grouper = MeetingsGrouper()
 
     package init(
         repository: any MeetingsRepositoryProtocol,
@@ -61,15 +54,20 @@ package final class MeetingsViewModel: ObservableObject {
     // MARK: - Public Interface
 
     var groupedUpcomingMeetings: GroupedMeetings {
-        upcomingMeetings
+        // upcomingMeetings
+        grouper.group(loadedMeetings)
     }
 
     func loadInitialData() {
-        loadUpcomingMeetings()
+        futureOffset = 0
+        loadedMeetings = []
+        hasMore = false
+        load(pageSize: initialPageSize)
     }
 
-    func loadMoreUpcomingMeetings() {
-        loadUpcomingMeetings()
+    func loadMoreIfNeeded() {
+        guard hasMore, !isLoading else { return }
+        load(pageSize: pageSize)
     }
 
     func formatDay(_ date: Date) -> String {
@@ -82,50 +80,19 @@ package final class MeetingsViewModel: ObservableObject {
 
     // MARK: - Private Methods
 
-    private func loadUpcomingMeetings() {
-        let isLimited = !showAll
-        let result = upcomingMeetingsUseCase.invoke(
-            pageSize: pageSize,
-            offset: futureOffset
-        )
+    private func load(pageSize: Int) {
+        isLoading = true
+        let result = upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
 
         if futureOffset == 0 {
-            upcomingMeetings = result.groups
+            loadedMeetings = result.meetings
         } else {
-            upcomingMeetings = mergeGroups(existing: upcomingMeetings, new: result.groups)
+            loadedMeetings += result.meetings
         }
 
         futureOffset = result.nextOffset
-
-        if isLimited {
-            showMoreButton = calendar.todayAndTomorrowRange(using: currentDateProvider)
-                .map { repository.hasUpcomingMeetings(after: $0.end) } ?? false
-        } else {
-            showMoreButton = result.hasMore
-        }
-    }
-
-    private func mergeGroups(existing: GroupedMeetings, new: GroupedMeetings) -> GroupedMeetings {
-        var mergedDict: [Date: [Meeting]] = [:]
-
-        for group in existing + new {
-            mergedDict[group.day, default: []] += group.meetings
-        }
-
-        return mergedDict
-            .sorted { $0.key < $1.key }
-            .map { (day: $0.key, meetings: sortMeetings($0.value)) }
-    }
-
-    // TODO: maybe add helper
-    private func sortMeetings(_ meetings: [Meeting]) -> [Meeting] {
-        meetings.sorted {
-            if $0.start != $1.start {
-                $0.start < $1.start
-            } else {
-                $0.title < $1.title
-            }
-        }
+        hasMore = result.hasMore
+        isLoading = false
     }
 
 }

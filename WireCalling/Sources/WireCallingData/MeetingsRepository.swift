@@ -39,7 +39,15 @@ package final class MeetingsRepository: MeetingsRepositoryProtocol {
 
     // TODO: do we need?
     package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
-        let allFuture = meetingsSource().filter { $0.start > date }
+        let allFuture = meetingsSource()
+            .filter { $0.start > date }
+            .sorted {
+                if $0.start != $1.start {
+                    $0.start < $1.start
+                } else {
+                    $0.title < $1.title
+                }
+            }
         let start = min(offset, allFuture.count)
         let end = min(offset + limit, allFuture.count)
         return Array(allFuture[start ..< end])
@@ -101,8 +109,8 @@ package extension MeetingsRepository {
             Meeting(
                 id: UUID(),
                 title: "Design review",
-                start: day(0, hour: 12),
-                end: day(0, hour: 13)
+                start: day(0, hour: 17),
+                end: day(0, hour: 18)
             ),
 
             // TOMORROW — again two meetings at 7:00 AM to group
@@ -131,6 +139,217 @@ package extension MeetingsRepository {
                 title: "All hands",
                 start: day(3, hour: 11),
                 end: day(3, hour: 12)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(3, hour: 12),
+                end: day(3, hour: 13)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(3, hour: 14),
+                end: day(3, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(3, hour: 16),
+                end: day(3, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(4, hour: 14),
+                end: day(4, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(4, hour: 16),
+                end: day(4, hour: 17)
+            ),
+
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(5, hour: 12),
+                end: day(5, hour: 13)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(5, hour: 14),
+                end: day(5, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(5, hour: 16),
+                end: day(5, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(6, hour: 14),
+                end: day(6, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(6, hour: 16),
+                end: day(6, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(7, hour: 12),
+                end: day(7, hour: 13)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(7, hour: 14),
+                end: day(7, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(7, hour: 16),
+                end: day(7, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(8, hour: 14),
+                end: day(8, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(8, hour: 16),
+                end: day(8, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(9, hour: 12),
+                end: day(9, hour: 13)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(9, hour: 14),
+                end: day(9, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(9, hour: 16),
+                end: day(9, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(10, hour: 14),
+                end: day(10, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(10, hour: 16),
+                end: day(10, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(11, hour: 12),
+                end: day(11, hour: 13)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(11, hour: 14),
+                end: day(11, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(11, hour: 16),
+                end: day(11, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(12, hour: 14),
+                end: day(12, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(12, hour: 16),
+                end: day(12, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(13, hour: 12),
+                end: day(13, hour: 13)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(13, hour: 14),
+                end: day(13, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(13, hour: 16),
+                end: day(13, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(14, hour: 14),
+                end: day(14, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(14, hour: 16),
+                end: day(14, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(15, hour: 12),
+                end: day(15, hour: 13)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(15, hour: 14),
+                end: day(15, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(15, hour: 16),
+                end: day(15, hour: 17)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(16, hour: 14),
+                end: day(16, hour: 15)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(16, hour: 16),
+                end: day(16, hour: 17)
             )
         ]
 

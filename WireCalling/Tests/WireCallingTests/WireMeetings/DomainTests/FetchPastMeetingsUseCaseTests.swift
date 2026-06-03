@@ -39,7 +39,8 @@ struct FetchPastMeetingsUseCaseTests {
 //        components.minute = 0
 //
 //        guard let currentDate = calendar.date(from: components),
-//              let yesterdayStart = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: currentDate)),
+//              let yesterdayStart = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for:
+//              currentDate)),
 //              let yesterdayMeeting = calendar.date(byAdding: .hour, value: 2, to: yesterdayStart),
 //              let todayMeeting = calendar.date(byAdding: .hour, value: -2, to: currentDate)
 //        else {
@@ -77,7 +78,8 @@ struct FetchPastMeetingsUseCaseTests {
 //
 //        guard let currentDate = calendar.date(from: components),
 //              let twoDaysAgo = calendar.date(byAdding: .day, value: -2, to: calendar.startOfDay(for: currentDate)),
-//              let yesterdayStart = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: currentDate)),
+//              let yesterdayStart = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for:
+//              currentDate)),
 //              let yesterdayMeeting = calendar.date(byAdding: .hour, value: 2, to: yesterdayStart)
 //        else {
 //            return

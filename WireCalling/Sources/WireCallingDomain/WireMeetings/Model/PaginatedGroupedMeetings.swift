@@ -22,7 +22,7 @@ package typealias GroupedMeetings = [(day: Date, meetings: [Meeting])]
 
 package struct PaginatedGroupedMeetings {
 
-    package let groups: GroupedMeetings
+    package let meetings: [Meeting]
     package let hasMore: Bool
     package let nextOffset: Int
 

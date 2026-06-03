@@ -16,24 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 package import WireFoundation
 
 package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
 
     private let repository: any MeetingsRepositoryProtocol
     private let currentDateProvider: any CurrentDateProviding
-    private let grouper: MeetingsGrouper
-    private let calendar = Calendar.current
 
     package init(
         repository: any MeetingsRepositoryProtocol,
-        currentDateProvider: any CurrentDateProviding,
-        grouper: MeetingsGrouper = MeetingsGrouper()
+        currentDateProvider: any CurrentDateProviding
     ) {
         self.repository = repository
         self.currentDateProvider = currentDateProvider
-        self.grouper = grouper
     }
 
     package func invoke(pageSize: Int, offset: Int) -> PaginatedGroupedMeetings {
@@ -41,17 +36,16 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
         let meetings = repository.fetchMeetingsStarting(
             after: now,
             offset: offset,
-            limit: pageSize
+            limit: pageSize + 1
         )
 
         let hasMore = meetings.count > pageSize
-        let paginatedMeetings = hasMore ? Array(meetings.prefix(pageSize)) : meetings
-        let groups = grouper.group(paginatedMeetings)
+        let page = hasMore ? Array(meetings.prefix(pageSize)) : meetings
 
         return PaginatedGroupedMeetings(
-            groups: groups,
+            meetings: page,
             hasMore: hasMore,
-            nextOffset: offset + pageSize
+            nextOffset: offset + page.count
         )
     }
 

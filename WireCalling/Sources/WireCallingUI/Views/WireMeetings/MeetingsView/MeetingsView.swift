@@ -44,14 +44,14 @@ struct MeetingsView: View {
 
     @ViewBuilder private var content: some View {
 
-            if viewModel.groupedUpcomingMeetings.isEmpty {
-                MeetingsEmptyStateView(
-                    title: Strings.EmptyState.Next.title,
-                    subtitle: Strings.EmptyState.Next.subtitle
-                )
-            } else {
-                meetingsList
-            }
+        if viewModel.groupedUpcomingMeetings.isEmpty {
+            MeetingsEmptyStateView(
+                title: Strings.EmptyState.Next.title,
+                subtitle: Strings.EmptyState.Next.subtitle
+            )
+        } else {
+            meetingsList
+        }
     }
 
     @ViewBuilder private var meetingsList: some View {
@@ -60,26 +60,25 @@ struct MeetingsView: View {
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
                 formatTimeRange: viewModel.formatTimeRange(for:),
-                onEdit: {_ in },
-                onDelete: {_ in }
+                onEdit: { _ in },
+                onDelete: { _ in }
             )
 
-            if viewModel.showMoreButton {
-                Button {
-                    viewModel.showAll = true
-                } label: {
-                    Text(Strings.Actions.showAll)
-                        .font(for: .buttonBig)
+            if viewModel.hasMore {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
                 }
-                .wireButtonStyle(.secondary)
                 .listRowBackground(Color.clear)
+                .onAppear { viewModel.loadMoreIfNeeded() }
             }
         }
         .listStyle(.grouped)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
-            viewModel.showAll = false
+            viewModel.loadInitialData()
         }
     }
 

@@ -133,7 +133,7 @@ final class MeetingsViewSnapshotTests: XCTestCase {
             repository: mockRepository,
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-           // pastMeetingsUseCase: pastMeetingsUseCase,
+            // pastMeetingsUseCase: pastMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
     }
