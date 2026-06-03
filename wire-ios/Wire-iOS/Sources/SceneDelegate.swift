@@ -87,7 +87,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-        WireLogger.appDelegate.info("sceneDidEnterBackground")
+        WireLogger.appDelegate.info(
+            "sceneDidEnterBackground: (activationState = \(scene.activationState))",
+            attributes: .safePublic
+        )
     }
 
     func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {

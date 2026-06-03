@@ -250,15 +250,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        WireLogger.appDelegate.info(
-            "applicationDidEnterBackground: (applicationState = \(application.applicationState))",
-            attributes: .safePublic
-        )
-
-        launchType = .unknown
-    }
-
     func application(
         _ app: UIApplication,
         open url: URL,
@@ -354,7 +345,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Lifecycle notifications
 
     private func observeLifecycleNotifications() {
-        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification).sink { [unowned self] _ in
+        let center = NotificationCenter.default
+        center.publisher(for: UIApplication.didBecomeActiveNotification).sink { [unowned self] _ in
             switch launchType {
             case .url, .push:
                 break
@@ -363,7 +355,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }.store(in: &cancellables)
 
-
+        center.publisher(for: UIApplication.didEnterBackgroundNotification).sink { [unowned self] _ in
+            launchType = .unknown
+        }.store(in: &cancellables)
     }
 }
 
