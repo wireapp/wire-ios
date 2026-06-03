@@ -59,6 +59,10 @@ final class SoundEventListener: NSObject {
     var callStateObserverToken: Any?
     var networkAvailabilityObserverToken: Any?
 
+    // Tracks whether THIS listener started a ringtone, so that stop calls don't
+    // silence ringtones started by another session's listener (AVSMediaManager is a singleton).
+    private var didStartRingtone = false
+
     init(userSession: ZMUserSession) {
         self.userSession = userSession
         super.init()
@@ -85,6 +89,12 @@ final class SoundEventListener: NSObject {
             name: UIApplication.didEnterBackgroundNotification,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(activeUserSessionDidChange(_:)),
+            name: .sessionManagerActiveUserSessionDidChange,
+            object: nil
+        )
 
         soundEventWatchDog.startIgnoreDate = Date()
         soundEventWatchDog.isMuted = UIApplication.shared.applicationState == .background
@@ -93,6 +103,70 @@ final class SoundEventListener: NSObject {
     func playSoundIfAllowed(_ mediaManagerSound: MediaManagerSound) {
         guard soundEventWatchDog.outputAllowed else { return }
         AVSMediaManager.sharedInstance()?.play(sound: mediaManagerSound)
+    }
+
+    private func startRingtone(_ sound: MediaManagerSound) {
+        playSoundIfAllowed(sound)
+        didStartRingtone = true
+    }
+
+    private func stopRingtonesIfStarted() {
+        guard didStartRingtone else { return }
+        let mediaManager = AVSMediaManager.sharedInstance()
+        mediaManager?.stop(sound: .ringingFromThemInCallSound)
+        mediaManager?.stop(sound: .ringingFromThemSound)
+        didStartRingtone = false
+    }
+
+    private func startRingtoneIfAppropriate(
+        for session: ZMUserSession,
+        conversation: ZMConversation,
+        conversationId: AVSIdentifier,
+        callCenter: WireCallCenterV3
+    ) {
+        // Only ring in-app for the active session. For inactive accounts the
+        // system notification's sound is the audible signal.
+        guard let sessionManager = SessionManager.shared,
+              conversation.mutedMessageTypesIncludingAvailability == .none,
+              session === sessionManager.activeUserSession
+        else { return }
+
+        let otherNonIdleCalls = callCenter.nonIdleCalls.filter { (key: AVSIdentifier, _) -> Bool in
+            return key != conversationId
+        }
+
+        if !otherNonIdleCalls.isEmpty {
+            startRingtone(.ringingFromThemInCallSound)
+        } else if sessionManager.callNotificationStyle != .callKit {
+            startRingtone(.ringingFromThemSound)
+        }
+    }
+
+    @objc
+    private func activeUserSessionDidChange(_ notification: Notification) {
+        guard let userSession else { return }
+        let newActiveSession = notification.object as? ZMUserSession
+
+        if newActiveSession === userSession {
+            // This session just became active — start the ringtone if a call is ringing.
+            guard let callCenter = userSession.callCenter else { return }
+            let ringingConversation = callCenter.nonIdleCallConversations(in: userSession).first { conversation in
+                guard case .incoming(_, shouldRing: true, _) = conversation.voiceChannel?.state else { return false }
+                return conversation.mutedMessageTypesIncludingAvailability == .none
+            }
+            guard let conversation = ringingConversation,
+                  let conversationId = conversation.avsIdentifier
+            else { return }
+            startRingtoneIfAppropriate(
+                for: userSession,
+                conversation: conversation,
+                conversationId: conversationId,
+                callCenter: callCenter
+            )
+        } else if didStartRingtone {
+            // This session is no longer active — stop the ringtone we started.
+            stopRingtonesIfStarted()
+        }
     }
 
     func provideHapticFeedback(for message: ZMConversationMessage) {
@@ -165,8 +239,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
         previousCallState: CallState?
     ) {
 
-        guard let mediaManager = AVSMediaManager.sharedInstance(),
-              let userSession,
+        guard let userSession,
               let callCenter = userSession.callCenter,
               let conversationId = conversation.avsIdentifier
         else {
@@ -178,21 +251,14 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
 
         switch callState {
         case .incoming(isVideo: _, shouldRing: true, degraded: _):
-            guard let sessionManager = SessionManager.shared,
-                  conversation.mutedMessageTypesIncludingAvailability == .none else { return }
-
-            let otherNonIdleCalls = callCenter.nonIdleCalls.filter { (key: AVSIdentifier, _) -> Bool in
-                return key != conversationId
-            }
-
-            if !otherNonIdleCalls.isEmpty {
-                playSoundIfAllowed(.ringingFromThemInCallSound)
-            } else if sessionManager.callNotificationStyle != .callKit {
-                playSoundIfAllowed(.ringingFromThemSound)
-            }
+            startRingtoneIfAppropriate(
+                for: userSession,
+                conversation: conversation,
+                conversationId: conversationId,
+                callCenter: callCenter
+            )
         case .incoming(isVideo: _, shouldRing: false, degraded: _):
-            mediaManager.stop(sound: .ringingFromThemInCallSound)
-            mediaManager.stop(sound: .ringingFromThemSound)
+            stopRingtonesIfStarted()
         case let .terminating(reason: reason):
             switch reason {
             case .normal, .canceled:
@@ -212,8 +278,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
                 return
             }
 
-            mediaManager.stop(sound: .ringingFromThemInCallSound)
-            mediaManager.stop(sound: .ringingFromThemSound)
+            stopRingtonesIfStarted()
         }
 
     }
