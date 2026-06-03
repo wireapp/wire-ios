@@ -256,6 +256,5 @@ private enum SessionManagerSetupError: Error {
     case missingCurrentBuildVersion
     case missingConfiguration
     case missingMediaManager
-    case initializationFailed(any Error)
 
 }
