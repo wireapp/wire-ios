@@ -18,30 +18,16 @@
 
 public import Foundation
 
-/// An event where a user joined the team.
+public struct CollaboratorInfo: Equatable {
 
-public struct TeamMemberJoinNotification: Equatable, Sendable {
+    public var userID: UUID
+    public var teamID: UUID
+    public var permissions: [CollaboratorPermission]
 
-    /// The team id.
-
-    public let teamID: UUID
-
-    /// The id of the member who joined.
-
-    public let userID: UUID
-
-    /// The time at which the member joined.
-
-    public let time: Date
-
-    public init(
-        teamID: UUID,
-        userID: UUID,
-        time: Date
-    ) {
-        self.teamID = teamID
+    public init(userID: UUID, teamID: UUID, permissions: [CollaboratorPermission]) {
         self.userID = userID
-        self.time = time
+        self.teamID = teamID
+        self.permissions = permissions
     }
 
 }
