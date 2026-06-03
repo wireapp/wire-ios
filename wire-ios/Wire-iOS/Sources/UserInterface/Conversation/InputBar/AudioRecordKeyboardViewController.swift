@@ -83,25 +83,17 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - Life Cycle
 
     convenience init(userSession: UserSession) {
-        let audioRecorder: AudioRecorderType
+        var audioRecorder: AudioRecorderType = AudioRecorder(
+            format: .wav,
+            maxRecordingDuration: userSession.maxAudioMessageLength,
+            maxFileSize: userSession.maxUploadFileSize,
+            userSession: userSession
+        )
+
         #if DEBUG
             if UITestConfig.environment.useMockAudioRecorder {
                 audioRecorder = UITestAudioRecorder()
-            } else {
-                audioRecorder = AudioRecorder(
-                    format: .wav,
-                    maxRecordingDuration: userSession.maxAudioMessageLength,
-                    maxFileSize: userSession.maxUploadFileSize,
-                    userSession: userSession
-                )
             }
-        #else
-            audioRecorder = AudioRecorder(
-                format: .wav,
-                maxRecordingDuration: userSession.maxAudioMessageLength,
-                maxFileSize: userSession.maxUploadFileSize,
-                userSession: userSession
-            )
         #endif
 
         self.init(
