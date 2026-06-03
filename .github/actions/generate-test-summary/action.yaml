@@ -74,14 +74,7 @@ runs:
         TMP_DIR="$(mktemp -d)"
         trap 'rm -rf "$TMP_DIR"' EXIT
         SUMMARY_FILE="$TMP_DIR/summaries.jsonl"
-        TEST_NAME_MAP_FILE="$TMP_DIR/test-name-map.json"
         : > "$SUMMARY_FILE"
-
-        if command -v python3 >/dev/null 2>&1; then
-          python3 -c 'import json,pathlib,re; m={}; [m.setdefault(re.sub(r"[^A-Za-z0-9]", "", n), n) for p in pathlib.Path("wire-ios/WireUITests").rglob("*.swift") for n in re.findall(r"\bfunc\s+(test[A-Za-z0-9_]+)\s*\(", p.read_text(errors="ignore"))]; print(json.dumps(m))' > "$TEST_NAME_MAP_FILE" || echo "{}" > "$TEST_NAME_MAP_FILE"
-        else
-          echo "{}" > "$TEST_NAME_MAP_FILE"
-        fi
 
         for XCRESULT in "${XCRESULTS[@]}"; do
           RESULT_JSON="$TMP_DIR/result-$(basename "$XCRESULT").json"
@@ -90,25 +83,12 @@ runs:
             continue
           fi
 
-          jq -c --slurpfile test_name_map "$TEST_NAME_MAP_FILE" '
+          jq -c '
             def normalize:
               tostring | gsub("[[:space:]]+"; " ") | .[0:240];
 
-            def compact_test_name:
-              tostring | gsub("\\(\\)$"; "") | gsub("[^A-Za-z0-9]"; "");
-
-            def normalized_test_name:
-              . as $raw
-              | ($raw | compact_test_name) as $key
-              | ($test_name_map[0][$key] // null) as $source_name
-              | if $source_name == null then
-                  $raw
-                else
-                  $source_name + (if ($raw | tostring | test("\\(\\)$")) then "()" else "" end)
-                end;
-
             def failure_title:
-              ([.targetName?, (.testName? | normalized_test_name)] | map(select(. != null and . != "")) | join(" > ")) as $title
+              ([.targetName?, .testName?] | map(select(. != null and . != "")) | join(" > ")) as $title
               | if $title == "" then "Unknown test" else $title end;
 
             def failures:
