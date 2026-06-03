@@ -33,9 +33,8 @@ import WireMessagingDomain
 /// - Video → `VideoPlayer`
 /// - Image → `ImageView`
 /// - Audio → `AudioPlayerView`
-/// - Document → `DocumentView`
-/// - Presentation → `PresentationView`
 /// - Archive → `ZipView`
+/// - Other → `WebView`
 struct FilePreviewView: View {
     @Environment(\.dismiss) private var dismiss
 
