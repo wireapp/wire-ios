@@ -43,6 +43,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case shakeToReport
     case showNSEErrors
     case simulateMainAppRequiredError
+    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     case enableDrivePermissions
     case unSafeLogsForPublic
 
