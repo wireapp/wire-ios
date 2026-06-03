@@ -636,7 +636,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             case .cells:
                 storeCells(.init())
 
-            case .assetAuditLog, .cellsInternal, .simplifiedUserConnectionRequestQRCode:
+            case .assetAuditLog, .cellsInternal, .simplifiedUserConnectionRequestQRCode, .preventAdminlessGroups:
                 // No op: not supported in legacy repository.
                 break
             }
