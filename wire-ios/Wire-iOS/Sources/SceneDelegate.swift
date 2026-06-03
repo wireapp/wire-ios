@@ -16,10 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import UIKit
 import WireLogging
+import WireNetwork
+import WireSyncEngine
+import WireCommonComponents
+import WireCountly
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+
+    private let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
+    let pushTokenService = PushTokenService()
+    private let appStateCalculator = AppStateCalculator()
+
+    private lazy var voIPPushManager: VoIPPushManager = .init(
+        application: UIApplication.shared,
+        pushTokenService: pushTokenService
+    )
+
+    private(set) var appRootRouter: AppRootRouter?
 
     var window: UIWindow?
 
@@ -29,6 +45,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         WireLogger.appDelegate.info("scene(_:willConnectTo:options:)")
+
+        voIPPushManager.registerForVoIPPushes()
 
         guard let windowScene = scene as? UIWindowScene else { return }
 
@@ -74,6 +92,40 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         WireLogger.appDelegate.info("scene(_:continue:) \(userActivity)")
     }
 
+    // MARK: - Public
+
+    func createAppRootRouter() {
+        let defaultEnvironment = fetchDefaultEnvironment()
+
+        let sessionManager: SessionManager
+        do {
+            sessionManager = try createSessionManager(
+                defaultEnvironment: defaultEnvironment,
+                cookieStorage: cookieStorage
+            )
+        } catch {
+            fatalError("sessionManager is not created")
+        }
+
+        guard let window else {
+            WireLogger.appDelegate.critical("no window this should not be possible at this point")
+            assertionFailure("no window this should not be possible at this point")
+            return
+        }
+
+        appRootRouter = AppRootRouter(
+            defaultEnvironment: defaultEnvironment,
+            mainWindow: window,
+            sessionManager: sessionManager,
+            appStateCalculator: appStateCalculator,
+            trackingManager: TrackingManager(
+                sessionManager: sessionManager,
+                availabilityChecker: .default
+            )
+        )
+    }
+
+
     // MARK: - Private
 
     private func setNavigationAppearance(isRightToLeft: Bool) {
@@ -81,4 +133,98 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         UINavigationBar.appearance().backIndicatorImage = backIndicator
         UINavigationBar.appearance().backIndicatorTransitionMaskImage = backIndicator
     }
+
+    private func fetchDefaultEnvironment() -> BackendEnvironment2 {
+        let env = ProcessInfo.processInfo.arguments.contains("--useEnvStaging") ? "staging" : "default"
+        guard let path = Bundle.backendBundle.path(
+            forResource: env,
+            ofType: "json"
+        ) else {
+            fatalError("\(env).json missing in Backend.bundle")
+        }
+
+        do {
+            let data = try Data(contentsOf: URL(filePath: path))
+            return try BackendEnvironment2.fromJSON(data, environmentType: .default)
+        } catch {
+            fatalError("unable to fetch default environment: \(error)")
+        }
+    }
+
+    private func createSessionManager(
+        defaultEnvironment: BackendEnvironment2,
+        cookieStorage: CookieStorage
+    ) throws -> SessionManager {
+        let infoDictionary = Bundle.main.infoDictionary
+
+        guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
+            throw SessionManagerSetupError.missingCurrentAppVersion
+        }
+
+        guard let currentBuildNumber = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+            throw SessionManagerSetupError.missingCurrentBuildVersion
+        }
+
+        guard
+            let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
+            let configuration = SessionManagerConfiguration.load(from: url)
+        else {
+            throw SessionManagerSetupError.missingConfiguration
+        }
+
+        guard let mediaManager = AVSMediaManager.sharedInstance() else {
+            throw SessionManagerSetupError.missingMediaManager
+        }
+
+        configuration.blacklistDownloadInterval = Settings.shared.blacklistDownloadInterval
+        let jailbreakDetector = JailbreakDetector()
+
+        // Get maxNumberAccounts form SecurityFlags or SessionManager.defaultMaxNumberAccounts if no MAX_NUMBER_ACCOUNTS
+        // flag defined
+        let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
+
+        func deleteAllAccountsLogs() { // we don't have per account logging yet
+            let fileManager = FileManager.default
+            if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+               let logsDirectory = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+                try? fileManager.removeItem(at: logsDirectory)
+            }
+        }
+
+        let sessionManager = try SessionManager(
+            maxNumberAccounts: maxNumberAccounts,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
+            cookieStorage: cookieStorage,
+            mediaManager: mediaManager,
+            delegate: appStateCalculator,
+            application: UIApplication.shared,
+            defaultEnvironment: defaultEnvironment,
+            environment: BackendEnvironment.shared,
+            configuration: configuration,
+            detector: jailbreakDetector,
+            pushTokenService: pushTokenService,
+            callKitManager: voIPPushManager.callKitManager,
+            isDeveloperModeEnabled: Bundle.developerModeEnabled,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+            deleteUserLogs: deleteAllAccountsLogs,
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
+            countlyProvider: { CountlyWrapper() },
+            logFilesProvider: LogFilesProvider()
+        )
+
+        voIPPushManager.delegate = sessionManager
+        return sessionManager
+    }
+}
+
+private enum SessionManagerSetupError: Error {
+
+    case missingCurrentAppVersion
+    case missingCurrentBuildVersion
+    case missingConfiguration
+    case missingMediaManager
+    case initializationFailed(any Error)
+
 }

@@ -46,14 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Private Property
 
-    private let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
-
-    private lazy var voIPPushManager: VoIPPushManager = .init(
-        application: UIApplication.shared,
-        pushTokenService: pushTokenService
-    )
-
-    private let pushTokenService = PushTokenService()
     private var launchOperations: [LaunchSequenceOperation] = [
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
@@ -66,17 +58,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FontSchemeOperation(),
         CleanUpDebugStateOperation()
     ]
-    private var appStateCalculator = AppStateCalculator()
 
     // MARK: - Private Set Property
 
-    private(set) var appRootRouter: AppRootRouter?
+    var appRootRouter: AppRootRouter? {
+        sceneDelegate.appRootRouter
+    }
+
     private(set) var launchType: ApplicationLaunchType = .unknown
 
     // MARK: - Public Set Property
 
     var mainWindow: UIWindow! {
-        UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }[0].window!
+        sceneDelegate.window!
+    }
+
+    private var sceneDelegate: SceneDelegate {
+        UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }[0]
     }
 
     // Singletons
@@ -89,7 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // TODO: [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
-        appRootRouter?.zClientViewController?.mediaPlaybackManager
+        sceneDelegate.appRootRouter?.zClientViewController?.mediaPlaybackManager
     }
 
     // When running production code, this should always be true to ensure that we set the self user provider
@@ -206,15 +204,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             "application did register for remote notifications, storing standard token",
             attributes: .safePublic
         )
-        pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
+        sceneDelegate.pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
     }
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        voIPPushManager.registerForVoIPPushes()
-
         temporaryFilesService.removeTemporaryData()
 
         WireLogger.appDelegate
@@ -291,7 +287,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             "application:openURL:options",
             attributes: .safePublic
         )
-        return appRootRouter?.openDeepLinkURL(url) ?? false
+        return sceneDelegate.appRootRouter?.openDeepLinkURL(url) ?? false
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -350,7 +346,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )
 
-        guard let appRootRouter else {
+        guard let appRootRouter = sceneDelegate.appRootRouter else {
             WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
             completionHandler()
             return
@@ -367,7 +363,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
         WireLogger.appDelegate.info("applicationProtectedDataDidBecomeAvailable", attributes: .safePublic)
-        guard appRootRouter == nil else {
+        guard sceneDelegate.appRootRouter == nil else {
             WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter nil")
             return
         }
@@ -381,107 +377,9 @@ private extension AppDelegate {
 
     private func createAppRootRouterAndInitializeOperations(_ launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
-        VoIPPushHelperOperation().execute()
-        createAppRootRouter()
+        VoIPPushHelperOperation().execute() // FIXME: Move this to launch method
+        sceneDelegate.createAppRootRouter()
         queueInitializationOperations(launchOptions: launchOptions)
-    }
-
-    private func createAppRootRouter() {
-        let defaultEnvironment = fetchDefaultEnvironment()
-
-        let sessionManager: SessionManager
-        do {
-            sessionManager = try createSessionManager(
-                defaultEnvironment: defaultEnvironment,
-                cookieStorage: cookieStorage
-            )
-        } catch {
-            fatalError("sessionManager is not created")
-        }
-
-        guard mainWindow != nil else {
-            WireLogger.appDelegate.critical("no mainWindow this should not be possible at this point")
-            assertionFailure("no mainWindow this should not be possible at this point")
-            return
-        }
-
-        appRootRouter = AppRootRouter(
-            defaultEnvironment: defaultEnvironment,
-            mainWindow: mainWindow,
-            sessionManager: sessionManager,
-            appStateCalculator: appStateCalculator,
-            trackingManager: TrackingManager(
-                sessionManager: sessionManager,
-                availabilityChecker: .default
-            )
-        )
-    }
-
-    private func createSessionManager(
-        defaultEnvironment: BackendEnvironment2,
-        cookieStorage: CookieStorage
-    ) throws -> SessionManager {
-        let infoDictionary = Bundle.main.infoDictionary
-
-        guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
-            throw SessionManagerSetupError.missingCurrentAppVersion
-        }
-
-        guard let currentBuildNumber = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
-            throw SessionManagerSetupError.missingCurrentBuildVersion
-        }
-
-        guard
-            let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
-            let configuration = SessionManagerConfiguration.load(from: url)
-        else {
-            throw SessionManagerSetupError.missingConfiguration
-        }
-
-        guard let mediaManager = AVSMediaManager.sharedInstance() else {
-            throw SessionManagerSetupError.missingMediaManager
-        }
-
-        configuration.blacklistDownloadInterval = Settings.shared.blacklistDownloadInterval
-        let jailbreakDetector = JailbreakDetector()
-
-        // Get maxNumberAccounts form SecurityFlags or SessionManager.defaultMaxNumberAccounts if no MAX_NUMBER_ACCOUNTS
-        // flag defined
-        let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
-
-        func deleteAllAccountsLogs() { // we don't have per account logging yet
-            let fileManager = FileManager.default
-            if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
-               let logsDirectory = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
-                try? fileManager.removeItem(at: logsDirectory)
-            }
-        }
-
-        let sessionManager = try SessionManager(
-            maxNumberAccounts: maxNumberAccounts,
-            currentAppVersion: currentAppVersion,
-            currentBuildNumber: currentBuildNumber,
-            cookieStorage: cookieStorage,
-            mediaManager: mediaManager,
-            delegate: appStateCalculator,
-            application: UIApplication.shared,
-            defaultEnvironment: defaultEnvironment,
-            environment: BackendEnvironment.shared,
-            configuration: configuration,
-            detector: jailbreakDetector,
-            pushTokenService: pushTokenService,
-            callKitManager: voIPPushManager.callKitManager,
-            isDeveloperModeEnabled: Bundle.developerModeEnabled,
-            sharedUserDefaults: .applicationGroup,
-            minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: deleteAllAccountsLogs,
-            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
-            countlyProvider: { CountlyWrapper() },
-            logFilesProvider: LogFilesProvider()
-        )
-
-        voIPPushManager.delegate = sessionManager
-        return sessionManager
     }
 
     private func queueInitializationOperations(launchOptions: LaunchOptions) {
@@ -497,34 +395,7 @@ private extension AppDelegate {
     }
 
     private func startAppRouter(launchOptions: LaunchOptions) {
-        appRootRouter?.start(launchOptions: launchOptions)
+        sceneDelegate.appRootRouter?.start(launchOptions: launchOptions)
     }
-
-    private func fetchDefaultEnvironment() -> BackendEnvironment2 {
-        let env = ProcessInfo.processInfo.arguments.contains("--useEnvStaging") ? "staging" : "default"
-        guard let path = Bundle.backendBundle.path(
-            forResource: env,
-            ofType: "json"
-        ) else {
-            fatalError("\(env).json missing in Backend.bundle")
-        }
-
-        do {
-            let data = try Data(contentsOf: URL(filePath: path))
-            return try BackendEnvironment2.fromJSON(data, environmentType: .default)
-        } catch {
-            fatalError("unable to fetch default environment: \(error)")
-        }
-    }
-
-}
-
-private enum SessionManagerSetupError: Error {
-
-    case missingCurrentAppVersion
-    case missingCurrentBuildVersion
-    case missingConfiguration
-    case missingMediaManager
-    case initializationFailed(any Error)
 
 }
