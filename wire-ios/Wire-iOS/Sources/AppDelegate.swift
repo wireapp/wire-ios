@@ -243,18 +243,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func application(
-        _ app: UIApplication,
-        open url: URL,
-        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-    ) -> Bool {
-        WireLogger.appDelegate.info(
-            "application:openURL:options",
-            attributes: .safePublic
-        )
-        return sceneDelegate.appRootRouter?.openDeepLinkURL(url) ?? false
-    }
-
     func applicationWillTerminate(_ application: UIApplication) {
         WireLogger.appDelegate.info(
             "applicationWillTerminate: (applicationState = \(application.applicationState))",

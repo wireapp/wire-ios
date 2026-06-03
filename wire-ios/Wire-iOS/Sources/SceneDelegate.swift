@@ -97,7 +97,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {
-        WireLogger.appDelegate.info("scene(_:openURLContexts:) count=\(urlContexts.count)")
+        WireLogger.appDelegate.info("scene(_:openURLContexts:)", attributes: .safePublic)
+
+        guard let url = urlContexts.first?.url else { return }
+
+        if appRootRouter?.openDeepLinkURL(url) == false {
+            WireLogger.appDelegate.warn("scene(_:openURLContexts:) failed to open url", attributes: .safePublic)
+        }
     }
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
