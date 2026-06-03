@@ -19,6 +19,7 @@
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
 import avs
+import Combine
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
@@ -58,6 +59,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FontSchemeOperation(),
         CleanUpDebugStateOperation()
     ]
+
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Private Set Property
 
@@ -247,21 +250,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        WireLogger.appDelegate.info(
-            "applicationDidBecomeActive (applicationState = \(application.applicationState))",
-            attributes: .safePublic
-        )
-
-        switch launchType {
-        case .url,
-             .push:
-            break
-        default:
-            launchType = .direct
-        }
-    }
-
     func applicationWillResignActive(_ application: UIApplication) {
         WireLogger.appDelegate.info(
             "applicationWillResignActive: (applicationState = \(application.applicationState))",
@@ -368,6 +356,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         createAppRootRouterAndInitializeOperations(launchOptions)
+    }
+
+    // MARK: - Lifecycle notifications
+
+    private func observeLifecycleNotifications() {
+        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification).sink { [unowned self] _ in
+            switch launchType {
+            case .url, .push:
+                break
+            default:
+                launchType = .direct
+            }
+        }.store(in: &cancellables)
+
+
     }
 }
 
