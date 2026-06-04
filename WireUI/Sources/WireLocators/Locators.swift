@@ -323,7 +323,7 @@ public enum Locators {
         case classificationBanner = "ClassificationBanner"
 
     }
-    
+
     public enum BlockerPage: String {
 
         case mainContent
