@@ -36,10 +36,10 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    // MARK: - Next Tab Empty State
+    // MARK: - Empty State
 
     @MainActor
-    func testEmptyNextTabColorSchemeVariants() {
+    func testEmptyStateColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
@@ -56,50 +56,11 @@ final class MeetingsViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testEmptyNextTabDynamicTypeVariants() {
+    func testEmptyStateDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
             MeetingsView(viewModel: createEmptyViewModel())
-        }
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-    // MARK: - Past Tab Empty State
-
-    @MainActor
-    func testEmptyPastTabColorSchemeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let viewModel = createEmptyViewModel()
-
-        let view = NavigationStack {
-            MeetingsView(viewModel: viewModel)
-        }
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testEmptyPastTabDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let viewModel = createEmptyViewModel()
-
-        let view = NavigationStack {
-            MeetingsView(viewModel: viewModel)
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
