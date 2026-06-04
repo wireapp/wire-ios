@@ -311,10 +311,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if launchOptions[UIApplication.LaunchOptionsKey.url] != nil {
             launchType = .url
         }
-
-        if launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] != nil {
-            launchType = .push
-        }
     }
 
     // MARK: - Complete Initialization
