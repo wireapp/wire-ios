@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLocators
 import WireLogging
 import WireSyncEngine
@@ -81,13 +82,21 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - Life Cycle
 
     convenience init(userSession: UserSession) {
+        var audioRecorder: AudioRecorderType = AudioRecorder(
+            format: .wav,
+            maxRecordingDuration: userSession.maxAudioMessageLength,
+            maxFileSize: userSession.maxUploadFileSize,
+            userSession: userSession
+        )
+
+        #if DEBUG
+            if UITestConfig.environment.useMockAudioRecorder {
+                audioRecorder = UITestAudioRecorder()
+            }
+        #endif
+
         self.init(
-            audioRecorder: AudioRecorder(
-                format: .wav,
-                maxRecordingDuration: userSession.maxAudioMessageLength,
-                maxFileSize: userSession.maxUploadFileSize,
-                userSession: userSession
-            ),
+            audioRecorder: audioRecorder,
             userSession: userSession
         )
     }
