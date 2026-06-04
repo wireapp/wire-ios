@@ -130,7 +130,7 @@ struct DeviceDetailsView: View {
             L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success,
             isPresented: $viewModel.showResetSessionSuccess
         ) {
-            Button(L10n.Localizable.General.ok) {}
+            Button(L10n.Localizable.General.ok) { /* dismisses automatically */ }
         }
     }
 
