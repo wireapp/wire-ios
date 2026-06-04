@@ -137,6 +137,13 @@ public enum FeatureConfig: Equatable, Sendable, Hashable {
 
     case assetAuditLog(AssetAuditLogFeatureConfig)
 
+    /// Config for the **Prevent Adminless Groups** feature.
+    ///
+    /// When enabled, the last admin of a group is prompted to assign a
+    /// replacement admin before leaving the conversation.
+
+    case preventAdminlessGroups(PreventAdminlessGroupsFeatureConfig)
+
     /// An unknown feature.
 
     case unknown(featureName: String)

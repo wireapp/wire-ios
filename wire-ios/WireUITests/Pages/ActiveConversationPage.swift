@@ -339,16 +339,12 @@ class ActiveConversationPage: PageModel {
         }
         startRecording.waitAndTap()
         XCTAssertTrue(
-            recordingTimeLabel.waitForExistence(timeout: 2),
+            stopRecording.waitForExistence(timeout: 5),
             "Audio recording not started"
         )
 
-        try? await Task.sleep(for: .seconds(1))
-
-        if stopRecording.waitForExistence(timeout: 2), stopRecording.isHittable {
-            stopRecording.tap()
-        }
-        heliumButton.tap()
+        stopRecording.waitAndTap()
+        heliumButton.waitAndTap()
         sendAudioButton.waitAndTap()
         return self
     }

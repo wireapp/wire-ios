@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 import WireLogging
 import WireSystem
+import WireUtilities
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
 final class CocoaLumberjackLogger: LoggerProtocol {
@@ -77,7 +78,8 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         }
 
         let isSafe = mergedAttributes[.public] as? Bool == true
-        guard isDebug || isSafe else {
+        let unSafeLogsForPublic = DeveloperFlag.unSafeLogsForPublic.isOn
+        guard isDebug || isSafe || unSafeLogsForPublic else {
             // skips logs in production builds with non redacted info
             return
         }
@@ -95,6 +97,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         // DDLogLevelAll  1..11111 UInt.max
         guard
             isDebug ||
+            unSafeLogsForPublic ||
             (level.rawValue >= DDLogLevel.error.rawValue && level.rawValue <= DDLogLevel.info.rawValue)
         else { return }
 

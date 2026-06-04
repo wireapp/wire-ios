@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireNetwork
@@ -142,7 +143,10 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .text(TextItem(title: "App version", value: appVersion)),
                 .text(TextItem(title: "Build number", value: buildNumber)),
                 .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier)),
-                .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None"))
+                .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None")),
+                .destination(DestinationItem(title: "CoreCrypto", makeView: {
+                    AnyView(CoreCryptoMetadataView())
+                }))
             ]
         ))
     }
