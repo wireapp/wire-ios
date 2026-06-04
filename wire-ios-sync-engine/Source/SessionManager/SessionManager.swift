@@ -152,6 +152,11 @@ public protocol SessionManagerType: AnyObject {
     /// Switch account and and ask UI to navigate to the conversation list
     func showConversationList(in session: ZMUserSession)
 
+    /// Switch to the given session's account without triggering any in-app navigation.
+    /// Use when post-activation flows (e.g. presenting an incoming-call UI) should drive
+    /// what the user sees next, rather than navigating to a specific conversation.
+    func activateAccount(of session: ZMUserSession)
+
     /// ask UI to open the profile of a user
     func showUserProfile(user: WireDataModel.UserType)
 
