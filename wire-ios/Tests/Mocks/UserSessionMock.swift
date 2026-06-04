@@ -304,6 +304,7 @@ final class UserSessionMock: UserSession {
         mock.invokeUserClient_MockMethod = { _ in }
         return mock
     }()
+
     var resetProteusSession: ResetProteusSessionUseCaseProtocol {
         mockResetProteusSession
     }
@@ -487,4 +488,3 @@ extension UserSessionMock: ContextProvider {
 }
 
 class MockNotificationContext: NSObject, NotificationContext {}
-
