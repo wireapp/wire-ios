@@ -40,6 +40,7 @@ final class AppRootRouter {
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
     private var authenticatedRouter: AuthenticatedRouter?
+    private let sceneConnectionOptions: UIScene.ConnectionOptions
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -51,8 +52,6 @@ final class AppRootRouter {
 
     private let mainWindow: UIWindow
     private let screenCurtainWindow = ScreenCurtainWindow()
-
-    private var lastLaunchOptions: LaunchOptions?
 
     private var rootViewController: UIViewController {
         mainWindow.rootViewController!
@@ -71,7 +70,8 @@ final class AppRootRouter {
         mainWindow: UIWindow,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator,
-        trackingManager: TrackingManager
+        trackingManager: TrackingManager,
+        sceneConnectionOptions: UIScene.ConnectionOptions
     ) {
         self.defaultEnvironment = defaultEnvironment
         self.mainWindow = mainWindow
@@ -85,6 +85,7 @@ final class AppRootRouter {
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
         self.trackingManager = trackingManager
+        self.sceneConnectionOptions = sceneConnectionOptions
 
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
@@ -106,9 +107,8 @@ final class AppRootRouter {
     // MARK: - Public implementation
 
     @MainActor
-    func start(launchOptions: LaunchOptions) {
-        lastLaunchOptions = launchOptions
-        showInitial(launchOptions: launchOptions)
+    func start() {
+        showInitial()
     }
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
@@ -327,10 +327,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     // MARK: - Navigation Helpers
 
-    private func showInitial(launchOptions: LaunchOptions) {
-        enqueueTransition(to: .headless) { [weak self] in
+    private func showInitial() {
+        enqueueTransition(to: .headless) { [weak self, sceneConnectionOptions] in
             Task { @MainActor in
-                await self?.sessionManager.start(launchOptions: launchOptions)
+                await self?.sessionManager.start(connectionOptions: sceneConnectionOptions)
             }
         }
     }
@@ -476,11 +476,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     @MainActor
     private func retryStart(completion: @escaping () -> Void) {
-        guard let launchOptions = lastLaunchOptions else { return }
         completion()
-        enqueueTransition(to: .headless) { [weak self] in
+        enqueueTransition(to: .headless) { [weak self, sceneConnectionOptions] in
             Task { @MainActor in
-                await self?.sessionManager.start(launchOptions: launchOptions)
+                await self?.sessionManager.start(connectionOptions: sceneConnectionOptions)
             }
         }
     }

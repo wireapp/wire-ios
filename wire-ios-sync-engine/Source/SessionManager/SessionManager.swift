@@ -634,9 +634,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @MainActor
-    public func start(launchOptions: LaunchOptions) async {
+    public func start(connectionOptions: UIScene.ConnectionOptions) async {
         if
-            let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL,
+            let url = connectionOptions.urlContexts.first?.url, // Currently we only support one URL
             let urlAction = try? URLAction(url: url),
             urlAction.causesLogout {
             // If a logout is coming, then no need to start.

@@ -324,14 +324,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             BlockOperation(block: $0.execute)
         }
 
-        operations.append(BlockOperation { [launchOptions] in
-            self.startAppRouter(launchOptions: launchOptions)
+        operations.append(BlockOperation {
+            self.sceneDelegate.startAppRouter()
         })
 
         OperationQueue.main.addOperations(operations, waitUntilFinished: false)
-    }
-
-    private func startAppRouter(launchOptions: LaunchOptions) {
-        sceneDelegate.appRootRouter?.start(launchOptions: launchOptions)
     }
 }

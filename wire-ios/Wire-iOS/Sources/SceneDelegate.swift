@@ -40,6 +40,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     let pushTokenService = PushTokenService()
     private(set) var appRootRouter: AppRootRouter?
+    private var connectionOptions: UIScene.ConnectionOptions?
 
     // MARK: - UISceneDelegate
 
@@ -52,6 +53,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         WireLogger.sceneDelegate.info("scene(_:willConnectTo:options:)")
 
+        self.connectionOptions = connectionOptions
         voIPPushManager.registerForVoIPPushes()
 
         guard let windowScene = scene as? UIWindowScene else { return }
@@ -148,6 +150,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
 
+        guard let connectionOptions else {
+            WireLogger.sceneDelegate.critical("no connectionOptions this should not be possible at this point")
+            assertionFailure("no connectionOptions this should not be possible at this point")
+            return
+        }
+
         appRootRouter = AppRootRouter(
             defaultEnvironment: defaultEnvironment,
             mainWindow: window,
@@ -155,11 +163,16 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             appStateCalculator: appStateCalculator,
             trackingManager: TrackingManager(
                 sessionManager: sessionManager,
-                availabilityChecker: .default
-            )
+                availabilityChecker: .default,
+            ),
+            sceneConnectionOptions: connectionOptions
         )
 
         (UIApplication.shared.delegate as? AppDelegate)?.queueInitializationOperations()
+    }
+
+    func startAppRouter() {
+        appRootRouter?.start()
     }
 
 
