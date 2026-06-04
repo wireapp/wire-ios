@@ -39,7 +39,7 @@ if echo "$BOOTED_SIMULATORS" | grep -q "$IOS_SIM_ID"; then
 else
   echo "Booting simulator $IOS_SIM_ID"
   xcrun simctl boot "$IOS_SIM_ID" || true
-  if ! xcrun simctl bootstatus "$IOS_SIM_ID" -b; then
+  if ! xcrun simctl bootstatus "$IOS_SIM_ID" -b >/dev/null 2>&1; then
     echo "::warning::Simulator $IOS_SIM_ID did not finish booting."
   fi
 fi

@@ -983,7 +983,7 @@ platform :ios do
         UI.message("Booting #{simulators.count} WireUITests shard simulator(s)")
         run_simulator_tasks(simulators, "boot") do |simulator_id|
             system("xcrun", "simctl", "boot", simulator_id, out: File::NULL, err: File::NULL)
-            unless system("xcrun", "simctl", "bootstatus", simulator_id, "-b")
+            unless system("xcrun", "simctl", "bootstatus", simulator_id, "-b", out: File::NULL, err: File::NULL)
                 raise "Failed waiting for simulator #{simulator_id} to boot"
             end
         end
