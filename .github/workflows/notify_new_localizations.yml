@@ -1,0 +1,123 @@
+name: Notify New Localizations
+
+# When a PR is merged into develop that adds new localization keys, post a
+# Wire notification listing the keys that still need translation. This gives
+# the localization team a heads-up before the next Crowdin sync (crowdin.yml).
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  notify-new-localizations:
+    # Only run for PRs that were actually merged (not just closed).
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-24.04
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_LOCALIZATION_WEBHOOK }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect new localization keys
+        id: detect
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          set -Eeuo pipefail
+
+          # Localization *source* files (English keys translators work from):
+          #   - legacy:  **/Base.lproj/*.strings and *.stringsdict
+          #   - modern:  **/*.xcstrings  (sourceLanguage: "en")
+          git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
+            | grep -E '(Base\.lproj/.*\.(strings|stringsdict)$|\.xcstrings$)' \
+            > loc_files.txt || true
+
+          : > new_keys.txt
+
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            case "$f" in
+              *.xcstrings)
+                # String catalogs are JSON; compare the set of top-level keys
+                # so we only report genuinely new keys (not keys that merely
+                # gained translations).
+                base_keys=$(git show "$BASE_SHA:$f" 2>/dev/null | jq -r '.strings | keys[]' 2>/dev/null | sort -u || true)
+                head_keys=$(git show "$HEAD_SHA:$f" 2>/dev/null | jq -r '.strings | keys[]' 2>/dev/null | sort -u || true)
+                comm -13 <(printf '%s\n' "$base_keys") <(printf '%s\n' "$head_keys") \
+                  | sed '/^$/d' \
+                  | sed "s#^#$f → #" >> new_keys.txt || true
+                ;;
+              *.strings|*.stringsdict)
+                # Legacy .strings: collect keys from added "key" = ... lines.
+                git diff "$BASE_SHA" "$HEAD_SHA" -- "$f" \
+                  | grep -E '^\+' | grep -vE '^\+\+\+' \
+                  | grep -oE '^\+[[:space:]]*"[^"]+"[[:space:]]*=' \
+                  | grep -oE '"[^"]+"' \
+                  | sed "s#^#$f → #" >> new_keys.txt || true
+                ;;
+            esac
+          done < loc_files.txt
+
+          # De-duplicate while keeping order.
+          if [ -s new_keys.txt ]; then
+            awk '!seen[$0]++' new_keys.txt > new_keys.dedup.txt
+            mv new_keys.dedup.txt new_keys.txt
+          fi
+
+          COUNT=$(grep -c . new_keys.txt || true)
+          echo "Found $COUNT new localization key(s)."
+
+          if [ "${COUNT:-0}" -gt 0 ]; then
+            echo "has_new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_new=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Nothing more to do if there are no new keys.
+          [ "${COUNT:-0}" -gt 0 ] || exit 0
+
+          # Cap the list so the message stays readable.
+          MAX=50
+          KEYS=$(head -n "$MAX" new_keys.txt | sed 's/^/• /')
+          if [ "$COUNT" -gt "$MAX" ]; then
+            KEYS="${KEYS}
+… and $((COUNT - MAX)) more"
+          fi
+
+          # Build the notification body and expose it as a multiline output.
+          {
+            echo "message<<NOTIFY_EOF"
+            echo "**🌍 New localizations merged to develop**"
+            echo ""
+            echo "**PR:** [#${PR_NUMBER}](${PR_URL}) — ${PR_TITLE} (by @${PR_AUTHOR})"
+            echo ""
+            echo "**${COUNT} key(s) need translation:**"
+            echo "${KEYS}"
+            echo "NOTIFY_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Notify Wire
+        if: steps.detect.outputs.has_new == 'true'
+        uses: ./.github/actions/notify-wire
+        with:
+          notify: always
+          status: success
+          label: "New localizations"
+          text: ${{ steps.detect.outputs.message }}

@@ -119,6 +119,15 @@
          location = "group:playground.yml">
       </FileRef>
       <FileRef
+         location = "group:ios_release_status.yml">
+      </FileRef>
+      <FileRef
+         location = "group:notify_new_localizations.yml">
+      </FileRef>
+      <FileRef
+         location = "group:sbom.yml">
+      </FileRef>
+      <FileRef
          location = "group:pr-author-assigner.yml">
       </FileRef>
       <FileRef

@@ -10,11 +10,16 @@ inputs:
     required: true
   branch:
     description: "Sanitized branch name"
-    required: true
+    required: false
+    default: ""
   label:
     description: "Short label shown in the notification title (e.g. 'Tests', 'Tests (parallel)')"
     required: false
     default: "Tests"
+  text:
+    description: "Custom message body. When set, it overrides the default commit/build body. Useful for non-build notifications."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -25,8 +30,16 @@ runs:
         echo "WIRE_NOTIFY_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
         echo "WIRE_NOTIFY_MSG=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
 
+    - name: Notify (custom text)
+      if: ${{ inputs.text != '' && inputs.notify != 'never' }}
+      continue-on-error: true
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ inputs.status }}
+        text: ${{ inputs.text }}
+
     - name: Notify (always)
-      if: ${{ inputs.notify == 'always' }}
+      if: ${{ inputs.text == '' && inputs.notify == 'always' }}
       continue-on-error: true
       uses: 8398a7/action-slack@v3
       with:
@@ -40,7 +53,7 @@ runs:
           **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
     - name: Notify (failure only)
-      if: ${{ inputs.notify == 'failure' && (inputs.status == 'failure' || inputs.status == 'cancelled') }}
+      if: ${{ inputs.text == '' && inputs.notify == 'failure' && (inputs.status == 'failure' || inputs.status == 'cancelled') }}
       continue-on-error: true
       uses: 8398a7/action-slack@v3
       with:
