@@ -326,8 +326,9 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @MainActor
     @discardableResult
-    func recordAudioAndSend() throws -> ActiveConversationPage {
+    func recordAudioAndSend() async throws -> ActiveConversationPage {
         audioButton.waitAndTap()
         app.dismissAllowIfPresent()
 
@@ -342,12 +343,15 @@ class ActiveConversationPage: PageModel {
             "Audio recording not started"
         )
 
-        let predicate = NSPredicate(format: "label != %@ AND label != %@", "0:00", "")
-        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: recordingTimeLabel)
+        let predicate = NSPredicate(format: "value != %@", "0:00")
+        let expectation = XCTNSPredicateExpectation(
+            predicate: predicate,
+            object: recordingTimeLabel
+        )
+        let result = await XCTWaiter().fulfillment(of: [expectation], timeout: 5)
         XCTAssertEqual(
-            XCTWaiter.wait(for: [expectation], timeout: 5),
-            .completed,
-            "Recording did not reach minimum duration"
+            result, .completed,
+            "Audio did not recorded — timer still on 0:00"
         )
 
         if stopRecording.waitForExistence(timeout: 2), stopRecording.isHittable {
