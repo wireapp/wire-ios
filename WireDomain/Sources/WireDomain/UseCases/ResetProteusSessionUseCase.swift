@@ -26,11 +26,7 @@ public protocol ResetProteusSessionUseCaseProtocol {
     /// Resets the proteus session between the self client and the given client.
     ///
     /// The local session is deleted and the client is marked so that the other party's
-    /// clients get notified about the reset. When such a notification is expected (i.e. there is
-    /// a one-to-one conversation), the call only returns once the other clients have been notified,
-    /// so callers can keep a loading indicator visible for the whole operation.
-    ///
-    /// Can be called several times without issues.
+    /// clients get notified about the reset.
     func invoke(userClient: UserClient) async
 }
 
