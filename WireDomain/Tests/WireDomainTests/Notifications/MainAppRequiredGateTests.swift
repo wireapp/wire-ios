@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import Testing
 import WireSystem
 @testable import WireDomain
 
 struct MainAppRequiredGateTests {
     private let userDefaults = UserDefaults.temporary()
+    private let accountID = UUID()
 
     private var sut: MainAppRequiredGate {
         MainAppRequiredGate(userDefaults: userDefaults)
@@ -29,35 +31,50 @@ struct MainAppRequiredGateTests {
 
     @Test("It notifies on first main-app-required error")
     func notifiesOnFirstMainAppRequiredError() {
-        let error = NSEUserScope.Failure.mainAppRequired(message: "test")
-
-        #expect(sut.shouldNotify(error, now: Date(timeIntervalSince1970: 1000)))
+        #expect(sut.shouldNotify(accountID: accountID, now: Date(timeIntervalSince1970: 1000)))
     }
 
     @Test("It suppresses notifications within one hour")
     func suppressesNotificationsWithinOneHour() {
         let now = Date(timeIntervalSince1970: 2000)
-        let error = NSEUserScope.Failure.mainAppRequired(message: "test")
 
-        sut.markNotified(now: now)
+        sut.markNotified(accountID: accountID, now: now)
 
-        #expect(!sut.shouldNotify(error, now: now.addingTimeInterval(3599)))
+        #expect(!sut.shouldNotify(accountID: accountID, now: now.addingTimeInterval(3599)))
     }
 
     @Test("It notifies again after one hour")
     func notifiesAgainAfterOneHour() {
         let now = Date(timeIntervalSince1970: 2000)
-        let error = NSEUserScope.Failure.mainAppRequired(message: "test")
 
-        sut.markNotified(now: now)
+        sut.markNotified(accountID: accountID, now: now)
 
-        #expect(sut.shouldNotify(error, now: now.addingTimeInterval(3600)))
+        #expect(sut.shouldNotify(accountID: accountID, now: now.addingTimeInterval(3600)))
+    }
+
+    @Test("It scopes notifications by account")
+    func scopesNotificationsByAccount() {
+        let now = Date(timeIntervalSince1970: 2000)
+        let otherAccountID = UUID()
+
+        sut.markNotified(accountID: accountID, now: now)
+
+        // The marked account is suppressed, but a different account still notifies.
+        #expect(!sut.shouldNotify(accountID: accountID, now: now.addingTimeInterval(3599)))
+        #expect(sut.shouldNotify(accountID: otherAccountID, now: now.addingTimeInterval(3599)))
+    }
+
+    @Test("It extracts the account ID from a main-app-required error")
+    func extractsAccountIDFromMainAppRequiredError() {
+        let error = NSEUserScope.Failure.mainAppRequired(message: "test", accountID: accountID)
+
+        #expect(MainAppRequiredGate.isMainAppRequiredErrorFoAccount(error) == accountID)
     }
 
     @Test("It ignores non main-app-required errors")
     func ignoresNonMainAppRequiredErrors() {
         let error = TestError(message: "test")
 
-        #expect(!sut.shouldNotify(error, now: Date(timeIntervalSince1970: 1000)))
+        #expect(MainAppRequiredGate.isMainAppRequiredErrorFoAccount(error) == nil)
     }
 }
