@@ -133,12 +133,10 @@ final class OneOnOneMessagingTests: WireUITestCase {
 
         let imageURL = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
-            .deletingLastPathComponent()
             .appendingPathComponent("TestServicesData/Img/testImage.jpg")
         let imageExtension = imageURL.pathExtension
 
         let videoURL = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
             .deletingLastPathComponent()
             .appendingPathComponent("TestServicesData/Video/testVideo.mp4")
         let videoExtension = videoURL.pathExtension

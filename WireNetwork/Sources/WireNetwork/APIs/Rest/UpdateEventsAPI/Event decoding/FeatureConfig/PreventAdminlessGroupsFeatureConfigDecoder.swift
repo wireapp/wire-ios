@@ -18,42 +18,29 @@
 
 import Foundation
 
-struct TeamMemberJoinNotificationDecoder {
+struct PreventAdminlessGroupsFeatureConfigDecoder {
 
     func decode(
-        from container: KeyedDecodingContainer<TeamNotificationCodingKeys>
-    ) throws -> TeamMemberJoinNotification {
-        let teamID = try container.decode(
-            UUID.self,
-            forKey: .teamID
-        )
-
-        let time = try container.decodeIfPresent(
-            UTCTime.self,
-            forKey: .time
-        )
-
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> PreventAdminlessGroupsFeatureConfig {
         let payload = try container.decode(
-            Payload.self,
+            FeatureWithConfig<Payload>.self,
             forKey: .payload
         )
 
-        return TeamMemberJoinNotification(
-            teamID: teamID,
-            userID: payload.userID,
-            time: time?.date ?? .now
+        return PreventAdminlessGroupsFeatureConfig(
+            status: payload.status.toAPIModel(),
+            promotionStrategy: payload.config.promotionStrategy,
+            deletionTimeout: payload.config.deletionTimeout,
+            reminderTimeouts: payload.config.reminderTimeouts
         )
     }
 
     private struct Payload: Decodable {
 
-        let userID: UUID
-
-        enum CodingKeys: String, CodingKey {
-
-            case userID = "user"
-
-        }
+        let promotionStrategy: String
+        let deletionTimeout: Int
+        let reminderTimeouts: [Int]
 
     }
 
