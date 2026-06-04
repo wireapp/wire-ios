@@ -19,8 +19,8 @@
 import SwiftUI
 import WireCoreCrypto
 
-final class CoreCryptoMetadataViewModel: ObservableObject {
-    var sections: [DeveloperToolsViewModel.Section]
+final class CoreCryptoMetadataViewModel {
+    let sections: [DeveloperToolsViewModel.Section]
 
     init() {
         let metadata = CoreCrypto.buildMetadata()

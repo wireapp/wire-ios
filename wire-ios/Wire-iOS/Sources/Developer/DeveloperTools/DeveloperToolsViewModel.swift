@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireNetwork
@@ -25,7 +26,6 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
 import WireViewsDebugUI
-import WireCoreCrypto
 
 final class DeveloperToolsViewModel: ObservableObject {
 
@@ -145,7 +145,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier)),
                 .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None")),
                 .destination(DestinationItem(title: "CoreCrypto", makeView: {
-                    AnyView(CoreCryptoMetadataView(viewModel: CoreCryptoMetadataViewModel()))
+                    AnyView(CoreCryptoMetadataView())
                 }))
             ]
         ))
@@ -212,7 +212,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             )
         }
     }
-    
+
     private func oneOnOneMLSConversationsCount() -> String {
         guard let context = userSession?.managedObjectContext else {
             return "-"

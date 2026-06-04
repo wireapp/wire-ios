@@ -19,7 +19,7 @@
 import SwiftUI
 
 struct CoreCryptoMetadataView: View {
-    @StateObject var viewModel: CoreCryptoMetadataViewModel
+    var viewModel: CoreCryptoMetadataViewModel = .init()
 
     // MARK: - Views
 
