@@ -327,12 +327,22 @@ final class AuthenticationInterfaceBuilder {
             ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
-            registrationAnalyticsTracker: registrationAnalyticsTracker
+            registrationAnalyticsTracker: registrationAnalyticsTracker,
+            overrideAllowEmailLoginOnly: overrideAllowEmailLoginOnly
         )
 
         return (
             view: view.environment(\.isClipboardEnabled, SecurityFlags.clipboard.isEnabled),
             bridge: bridge
         )
+    }
+
+    private var overrideAllowEmailLoginOnly: Bool {
+        // Build time override to only allow login via email.
+        #if ALLOW_ONLY_EMAIL_LOGIN
+        return true
+        #else
+        return false
+        #endif
     }
 }

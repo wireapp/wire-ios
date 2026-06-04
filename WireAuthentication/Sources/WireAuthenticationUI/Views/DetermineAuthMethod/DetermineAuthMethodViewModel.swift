@@ -42,12 +42,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var existsAnotherAccount: Bool
 
     var isNextButtonEnabled: Bool {
-        !isValidEmailOrSSOCode()
+        if overrideAllowEmailLoginOnly {
+            isValidEmail
+        } else {
+            isValidEmail || isValidSSOCode
+        }
     }
 
     var isOnPremiseBackend: Bool {
         environment.environmentType != .default
     }
+
+    let overrideAllowEmailLoginOnly: Bool
 
     // MARK: - Dependencies
 
@@ -67,6 +73,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
         isLoading: Bool = false,
+        overrideAllowEmailLoginOnly: Bool
     ) {
         self.factory = factory
         self.router = router
@@ -75,6 +82,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
+        self.overrideAllowEmailLoginOnly = overrideAllowEmailLoginOnly
 
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
@@ -96,6 +104,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         isLoading = true
         defer {
             isLoading = false
+        }
+
+        // TODO: validate email first
+        if overrideAllowEmailLoginOnly {
+            router.navigate(to: DetermineAuthMethodDestination.login(
+                email: emailOrSSOCode,
+                didDetectDomainConflict: false,
+                environment: environment
+            ))
+            return
         }
 
         do {
@@ -270,14 +288,33 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
-    private func isValidEmailOrSSOCode() -> Bool {
+    private var isValidEmail: Bool {
         do {
-            let useCase = factory.validateEmailOrSSOCodeUseCase()
-            _ = try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
-            return true
+            if case .email = try validateEmailOrSSOCode() {
+                return true
+            } else {
+                return false
+            }
         } catch {
             return false
         }
+    }
+
+    private var isValidSSOCode: Bool {
+        do {
+            if case .ssoCode = try validateEmailOrSSOCode() {
+                return true
+            } else {
+                return false
+            }
+        } catch {
+            return false
+        }
+    }
+
+    private func validateEmailOrSSOCode() throws -> ValidatedEmailOrSSOCode {
+        let useCase = factory.validateEmailOrSSOCodeUseCase()
+        return try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
     }
 
 }
