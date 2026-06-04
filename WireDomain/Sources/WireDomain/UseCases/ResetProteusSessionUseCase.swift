@@ -37,9 +37,14 @@ public protocol ResetProteusSessionUseCaseProtocol {
 public struct ResetProteusSessionUseCase: ResetProteusSessionUseCaseProtocol {
 
     private let syncContext: NSManagedObjectContext
+    private let proteusService: any ProteusServiceInterface
 
-    public init(syncContext: NSManagedObjectContext) {
+    public init(
+        syncContext: NSManagedObjectContext,
+        proteusService: any ProteusServiceInterface
+    ) {
         self.syncContext = syncContext
+        self.proteusService = proteusService
     }
 
     public func invoke(userClient: UserClient) async {
@@ -70,22 +75,20 @@ public struct ResetProteusSessionUseCase: ResetProteusSessionUseCaseProtocol {
     private func deleteProteusSession(objectID: NSManagedObjectID) async {
         let context = syncContext
 
-        let session: (id: ProteusSessionID, service: any ProteusServiceInterface)? = await context.perform {
+        let sessionID: ProteusSessionID? = await context.perform {
             guard
                 let client = (try? context.existingObject(with: objectID)) as? UserClient,
-                !client.isSelfClient(),
-                let sessionID = client.proteusSessionID,
-                let proteusService = context.proteusService
+                !client.isSelfClient()
             else {
                 return nil
             }
-            return (sessionID, proteusService)
+            return client.proteusSessionID
         }
 
-        guard let session else { return }
+        guard let sessionID else { return }
 
         do {
-            try await session.service.deleteSession(id: session.id)
+            try await proteusService.deleteSession(id: sessionID)
         } catch {
             WireLogger.proteus.error("Failed to delete session while resetting: \(error)")
         }

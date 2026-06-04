@@ -39,11 +39,10 @@ final class ResetProteusSessionUseCaseTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         proteusService = MockProteusServiceInterface()
 
-        await context.perform { [self] in
-            context.proteusService = proteusService
-        }
-
-        sut = ResetProteusSessionUseCase(syncContext: context)
+        sut = ResetProteusSessionUseCase(
+            syncContext: context,
+            proteusService: proteusService
+        )
     }
 
     override func tearDown() async throws {

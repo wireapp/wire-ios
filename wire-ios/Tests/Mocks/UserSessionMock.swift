@@ -22,6 +22,7 @@ import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
 import WireDomain
+import WireDomainSupport
 import WireFoundation
 import WireRequestStrategySupport
 import WireSyncEngine
@@ -298,8 +299,13 @@ final class UserSessionMock: UserSession {
         mockGetUserClientFingerprintUseCaseProtocol
     }
 
+    lazy var mockResetProteusSession: MockResetProteusSessionUseCaseProtocol = {
+        let mock = MockResetProteusSessionUseCaseProtocol()
+        mock.invokeUserClient_MockMethod = { _ in }
+        return mock
+    }()
     var resetProteusSession: ResetProteusSessionUseCaseProtocol {
-        MockResetProteusSessionUseCase()
+        mockResetProteusSession
     }
 
     lazy var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol = {
@@ -482,6 +488,3 @@ extension UserSessionMock: ContextProvider {
 
 class MockNotificationContext: NSObject, NotificationContext {}
 
-private struct MockResetProteusSessionUseCase: ResetProteusSessionUseCaseProtocol {
-    func invoke(userClient: UserClient) async {}
-}

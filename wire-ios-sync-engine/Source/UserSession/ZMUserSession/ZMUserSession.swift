@@ -298,7 +298,10 @@ public final class ZMUserSession: NSObject {
     }
 
     public var resetProteusSession: ResetProteusSessionUseCaseProtocol {
-        ResetProteusSessionUseCase(syncContext: coreDataStack.syncContext)
+        ResetProteusSessionUseCase(
+            syncContext: coreDataStack.syncContext,
+            proteusService: proteusService
+        )
     }
 
     lazy var e2eiRepository: E2EIRepositoryInterface = {
