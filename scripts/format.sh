@@ -111,7 +111,7 @@ git -C "$REPO_ROOT" add -u
 git -C "$REPO_ROOT" commit -m "chore: fix format"
 
 BRANCH=$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD)
-echo "🚀 Pushing to origin/$BRANCH…"
+echo "🚀 Pushing to origin/${BRANCH}…"
 git -C "$REPO_ROOT" push origin "$BRANCH"
 
 echo "✅ Done."
