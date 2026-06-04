@@ -50,8 +50,6 @@ protocol AssetCreationRequestProtocol: AnyObject {
 extension PHAssetChangeRequest: AssetChangeRequestProtocol {}
 extension PHAssetCreationRequest: AssetCreationRequestProtocol {}
 
-private let logger = WireLogger.ui
-
 final class SavableImage: NSObject {
 
     enum Source {
@@ -83,7 +81,7 @@ final class SavableImage: NSObject {
         do {
             try data.write(to: url, options: .atomic)
         } catch {
-            logger.error("SavableImage: error writing image data to \(url): \(error)")
+            WireLogger.ui.error("SavableImage: error writing image data to \(url): \(error)")
         }
 
         return url
@@ -138,7 +136,7 @@ final class SavableImage: NSObject {
     }
 
     private func warnAboutError(_ error: Error) {
-        logger.error("SavableImage: error saving image: \(error)")
+        WireLogger.ui.error("SavableImage: error saving image: \(error)")
 
         let alert = UIAlertController(
             title: L10n.Localizable.Library.Alert.PermissionWarning.title,

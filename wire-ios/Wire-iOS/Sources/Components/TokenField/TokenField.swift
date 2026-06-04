@@ -22,8 +22,6 @@ import WireDesign
 import WireLogging
 import WireSystem
 
-private let logger = WireLogger.ui
-
 final class TokenField: UIView {
     let accessoryButtonSize: CGFloat = 32
 
@@ -789,7 +787,7 @@ extension TokenField: UITextViewDelegate {
     }
 
     func textViewDidChangeSelection(_ textView: UITextView) {
-        logger.debug("TokenField: Selection changed: NSStringFromRange(textView.selectedRange)")
+        WireLogger.ui.debug("TokenField: Selection changed: NSStringFromRange(textView.selectedRange)")
 
         var modifiedSelectionRange = NSRange(location: 0, length: 0)
         var hasModifiedSelection = false
@@ -803,7 +801,7 @@ extension TokenField: UITextViewDelegate {
                     modifiedSelectionRange = (hasModifiedSelection ? modifiedSelectionRange : range).union(range)
                     hasModifiedSelection = true
                 }
-                logger.info(
+                WireLogger.ui.info(
                     "TokenField:     person attachement: \(tokenAttachment.token.title) at range: \(range) selected: \(tokenAttachment.isSelected)"
                 )
             }

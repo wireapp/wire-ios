@@ -38,8 +38,6 @@ enum MediaManagerSound: String {
     case someoneLeavesVoiceChannelSound = "talk_later"
 }
 
-private let logger = WireLogger.avs
-
 extension AVSMediaManager {
     private static var MediaManagerSoundConfig: [AnyHashable: Any]?
 
@@ -70,7 +68,7 @@ extension AVSMediaManager {
             let soundConfig = NSDictionary(contentsOfFile: path) as? [AnyHashable: Any]
 
             if soundConfig == nil {
-                logger.error("CustomSounds: Couldn't load sound config file: \(path)")
+                WireLogger.avs.error("CustomSounds: Couldn't load sound config file: \(path)")
                 return
             }
 

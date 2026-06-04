@@ -19,8 +19,6 @@
 import WireLogging
 import WireSyncEngine
 
-private let logger = WireLogger.ui
-
 final class CallHapticsController {
 
     private var lastCallState: CallState?
@@ -42,11 +40,11 @@ final class CallHapticsController {
         guard lastCallState != newCallState else { return }
 
         if lastCallState?.isEnding == false || lastCallState == nil, newCallState.isEnding {
-            logger.debug("Haptics: triggering end event")
+            WireLogger.ui.debug("Haptics: triggering end event")
             hapticGenerator.trigger(event: .end)
         }
         if lastCallState?.isEstablished == false || lastCallState == nil, newCallState.isEstablished {
-            logger.debug("Haptics: triggering start event")
+            WireLogger.ui.debug("Haptics: triggering start event")
             hapticGenerator.trigger(event: .start)
         }
     }
@@ -75,21 +73,21 @@ final class CallHapticsController {
         let removed = !participantsHashes.subtracting(updatedHashes).isEmpty
         let added = !updatedHashes.subtracting(participantsHashes).isEmpty
 
-        logger.debug("Haptics: updating participants list: \(newParticipants), old: \(participants)")
+        WireLogger.ui.debug("Haptics: updating participants list: \(newParticipants), old: \(participants)")
 
         if removed {
-            logger.debug("Haptics: triggering leave event")
+            WireLogger.ui.debug("Haptics: triggering leave event")
             hapticGenerator.trigger(event: .leave)
         }
         if added {
-            logger.debug("Haptics: triggering join event")
+            WireLogger.ui.debug("Haptics: triggering join event")
             hapticGenerator.trigger(event: .join)
         }
     }
 
     private func updateParticipantsVideoStateList(_ newParticipants: [CallParticipant]) {
         let newVideoStates = createVideoStateMap(using: newParticipants)
-        logger.debug("Haptics: updating video state map")
+        WireLogger.ui.debug("Haptics: updating video state map")
 
         let mappedNewVideoStates: [Int: Bool] = newVideoStates.reduce(into: .init()) { partialResult, item in
             partialResult[item.key.hashValue] = item.value
@@ -98,7 +96,7 @@ final class CallHapticsController {
         for (participant, wasSending) in videoStates {
 
             if let isSending = mappedNewVideoStates[participant.hashValue], isSending != wasSending {
-                logger.debug("Haptics: triggering toggle video event")
+                WireLogger.ui.debug("Haptics: triggering toggle video event")
                 hapticGenerator.trigger(event: .toggleVideo)
             }
         }
