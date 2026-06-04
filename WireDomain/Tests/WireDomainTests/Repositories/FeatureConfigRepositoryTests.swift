@@ -320,6 +320,14 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     status: .enabled,
                     backendURL: URL(string: "https://wire.com")!
                 )
+            ),
+            .preventAdminlessGroups(
+                .init(
+                    status: .enabled,
+                    promotionStrategy: "alphabetical",
+                    deletionTimeout: 30,
+                    reminderTimeouts: [7, 1]
+                )
             )
         ]
 

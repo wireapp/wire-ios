@@ -48,6 +48,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     // MARK: - Actions
 
+    @MainActor
     func enrollCertificate() {
         guard
             let session = userSession,
@@ -56,17 +57,65 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
         let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
         let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
+        let enrollmentFlow = E2EIEnrollmentFlow(
+            oauthUseCase: oauthUseCase,
+            targetVC: { topmostViewController }
+        )
 
-        Task {
+        Task { @MainActor in
+            enrollmentFlow.showActivityIndicator()
+            defer { enrollmentFlow.dismissActivityIndicator() }
             do {
                 let expirySec = UInt32(certificateExpirationTime)
-                _ = try await e2eiCertificateUseCase?.invoke(
-                    authenticate: oauthUseCase.invoke,
+                guard let certificateDetails = try await e2eiCertificateUseCase?.invoke(
+                    authenticate: enrollmentFlow.authenticate,
                     expirySec: expirySec
-                )
+                ) else { return }
+
+                enrollmentFlow.dismissActivityIndicator()
+
+                let successVC = SuccessfulCertificateEnrollmentViewController()
+                successVC.certificateDetails = certificateDetails
+                successVC.onOkTapped = { viewController in
+                    viewController.dismiss(animated: true)
+                }
+                successVC.presentOverAll()
             } catch {
                 WireLogger.e2ei.error("failed to enroll e2ei: \(error)")
             }
+        }
+    }
+
+    @MainActor
+    func showUpdateCertificateAlert(canRemindLater: Bool) {
+        typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
+
+        guard let developerToolsViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        else {
+            return
+        }
+
+        developerToolsViewController.dismiss(animated: true) {
+            guard let presentingViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+            else {
+                return
+            }
+
+            let alert = UIAlertController.alertForE2EIChangeWithActions(
+                title: E2EIUpdateStrings.title,
+                message: canRemindLater ? E2EIUpdateStrings.message : E2EIUpdateStrings.expiredMessage,
+                enrollButtonText: E2EIUpdateStrings.title,
+                canRemindLater: canRemindLater
+            ) { action in
+                switch action {
+                case .getCertificate:
+                    self.enrollCertificate()
+                case .remindLater, .learnMore:
+                    break
+                }
+            }
+
+            presentingViewController.present(alert, animated: true)
         }
     }
 

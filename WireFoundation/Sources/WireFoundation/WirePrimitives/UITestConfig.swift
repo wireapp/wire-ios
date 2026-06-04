@@ -32,6 +32,9 @@ public struct UITestConfig: Codable {
     /// On XCUITests, shake gesture is not available.
     public var useTripleTapForShakeGesture = false
 
+    /// When `true`, audio recording UI uses a deterministic mock recorder.
+    public var useMockAudioRecorder = false
+
     /// Developer flags to apply at launch, keyed by `DeveloperFlag.rawValue`.
     /// Overrides any flags already stored in `UserDefaults`.
     public var developerFlags: [String: Bool] = [:]
