@@ -98,9 +98,6 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             }
 
             do {
-                if DeveloperFlag.simulateMainAppRequiredError.isOn {
-                    throw NSEUserScope.Failure.mainAppRequired(message: "simulated developer flag")
-                }
 
                 let nseFlow = try NSEFlow(
                     currentAppVersion: currentAppVersion,
@@ -118,8 +115,10 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                 )
             } catch {
                 logError(error)
-                if mainAppRequiredGate.shouldNotify(error) {
-                    notificationContentHandler(mainAppRequiredNotification(for: request))
+                
+                if let accountID = MainAppRequiredGate.isMainAppRequiredErrorFoAccount(error), mainAppRequiredGate.shouldNotify(accountID: accountID) {
+                    
+                    notificationContentHandler(mainAppRequiredNotification(for: request, accountID: accountID))
                 } else if DeveloperFlag.showNSEErrors.isOn {
                     notificationContentHandler(errorNotification(for: error))
                 } else {
@@ -139,9 +138,10 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
 extension NotificationServiceExtension {
     private func mainAppRequiredNotification(
-        for request: UNNotificationRequest
+        for request: UNNotificationRequest,
+        accountID: UUID
     ) -> UNMutableNotificationContent {
-        mainAppRequiredGate.markNotified()
+        mainAppRequiredGate.markNotified(accountID: accountID)
 
         let content = UNMutableNotificationContent()
         content.title = String(localized: "notification_service_extension.error.open_app.title", bundle: .module)
@@ -223,7 +223,7 @@ extension NotificationServiceExtension {
     private func logUserError(_ error: NSEUserScope.Failure) {
         switch error {
         case let .mainAppRequired(message):
-            logger.error(
+            logger.warn(
                 "Main app required, need to open main app: \(message)",
                 attributes: .newNSE, .safePublic
             )

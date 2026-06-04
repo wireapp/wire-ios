@@ -17,6 +17,7 @@
 //
 
 import WireFoundation
+import Foundation
 
 /// A key that pairs a raw string with a specific value in
 /// the `Journal`.
@@ -135,5 +136,14 @@ public extension JournalKey where Value == Set<String> {
         "brokenMLSGroupIDs",
         defaultValue: []
     )
+
+}
+
+
+public extension JournalKey where Value == Date? {
+
+    /// Last notified date the user was notified to open the main app in NSE
+
+    static let mainAppRequiredNotificationLastNotifiedDate = Self("mainAppRequiredNotificationLastNotifiedDate", defaultValue: Optional<Date>.none)
 
 }

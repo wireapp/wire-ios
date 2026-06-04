@@ -21,7 +21,6 @@ import Foundation
 struct MainAppRequiredGate {
 
     static let defaultInterval: TimeInterval = 60 * 60
-    static let lastNotifiedDateKey = "mainAppRequiredNotificationLastNotifiedDate"
 
     private let userDefaults: UserDefaults
     private let interval: TimeInterval
@@ -34,28 +33,27 @@ struct MainAppRequiredGate {
         self.interval = interval
     }
 
-    func shouldNotify(_ error: any Error, now: Date = .now) -> Bool {
-        isMainAppRequiredError(error) && shouldNotify(now: now)
+    func markNotified(accountID: UUID, now: Date = .now) {
+        let journal = Journal(userID: accountID, storage: userDefaults)
+        journal[.mainAppRequiredNotificationLastNotifiedDate] = now
     }
 
-    func markNotified(now: Date = .now) {
-        userDefaults.set(now, forKey: Self.lastNotifiedDateKey)
-    }
+    func shouldNotify(accountID: UUID, now: Date = .now) -> Bool {
+        let journal = Journal(userID: accountID, storage: userDefaults)
 
-    private func shouldNotify(now: Date = .now) -> Bool {
-        guard let lastNotifiedDate = userDefaults.object(forKey: Self.lastNotifiedDateKey) as? Date else {
+        guard let lastNotifiedDate = journal[.mainAppRequiredNotificationLastNotifiedDate] else {
             return true
         }
 
         return now.timeIntervalSince(lastNotifiedDate) >= interval
     }
 
-    private func isMainAppRequiredError(_ error: any Error) -> Bool {
+    static func isMainAppRequiredErrorFoAccount(_ error: any Error) -> UUID? {
         guard let nseUserError = error as? NSEUserScope.Failure,
-              case .mainAppRequired = nseUserError else {
-            return false
+              case .mainAppRequired(_, let accountID) = nseUserError else {
+            return nil
         }
 
-        return true
+        return accountID
     }
 }
