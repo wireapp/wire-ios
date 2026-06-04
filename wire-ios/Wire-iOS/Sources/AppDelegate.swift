@@ -78,8 +78,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sceneDelegate.window!
     }
 
-    private var launchOptions: LaunchOptions = [:]
-
     // TODO: [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
@@ -144,8 +142,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // set internal name to lower layers like SyncEngine
         Bundle.mainAppInternalName = Bundle.main.appInternalName
-
-        self.launchOptions = launchOptions ?? [:]
 
         _ = NSAttributedString.paragraphStyle
 
@@ -308,7 +304,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func handleUserSessionDidBecomeAvailableNotification() {
         launchType = .direct
-        if launchOptions[UIApplication.LaunchOptionsKey.url] != nil {
+
+        if sceneDelegate.connectionOptions?.urlContexts.first != nil {
             launchType = .url
         }
     }

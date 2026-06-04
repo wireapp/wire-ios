@@ -40,7 +40,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     let pushTokenService = PushTokenService()
     private(set) var appRootRouter: AppRootRouter?
-    private var connectionOptions: UIScene.ConnectionOptions?
+    private(set) var connectionOptions: UIScene.ConnectionOptions?
 
     // MARK: - UISceneDelegate
 

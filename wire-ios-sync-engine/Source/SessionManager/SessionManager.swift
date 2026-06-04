@@ -32,8 +32,6 @@ import WireRequestStrategy
 import WireTransport
 import WireUtilities
 
-public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
-
 public extension Bundle {
     @objc var appGroupIdentifier: String? {
         bundleIdentifier.map { "group." + $0 }
