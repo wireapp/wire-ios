@@ -651,7 +651,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         if let account = accountManager.selectedAccount {
             if let session = await loadSession(for: account) {
                 updateCurrentAccount(in: session.managedObjectContext)
-                session.application(application, didFinishLaunching: launchOptions)
+                session.startEphemeralTimers()
             } else {
                 WireLogger.sessionManager.critical("Failed to load session for selected account")
             }
