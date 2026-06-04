@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
 import Foundation
+import WireFoundation
 
 /// A key that pairs a raw string with a specific value in
 /// the `Journal`.
@@ -139,11 +139,13 @@ public extension JournalKey where Value == Set<String> {
 
 }
 
-
 public extension JournalKey where Value == Date? {
 
     /// Last notified date the user was notified to open the main app in NSE
 
-    static let mainAppRequiredNotificationLastNotifiedDate = Self("mainAppRequiredNotificationLastNotifiedDate", defaultValue: Optional<Date>.none)
+    static let mainAppRequiredNotificationLastNotifiedDate = Self(
+        "mainAppRequiredNotificationLastNotifiedDate",
+        defaultValue: Date?.none
+    )
 
 }

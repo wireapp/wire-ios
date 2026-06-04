@@ -50,7 +50,7 @@ struct MainAppRequiredGate {
 
     static func isMainAppRequiredErrorFoAccount(_ error: any Error) -> UUID? {
         guard let nseUserError = error as? NSEUserScope.Failure,
-              case .mainAppRequired(_, let accountID) = nseUserError else {
+              case let .mainAppRequired(_, accountID) = nseUserError else {
             return nil
         }
 

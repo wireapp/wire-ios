@@ -100,11 +100,11 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         eventID: UUID,
         contentHandler: @escaping (UNNotificationContent) -> Void
     ) async throws {
-        
+
         if DeveloperFlag.simulateMainAppRequiredError.isOn {
             throw NSEUserScope.Failure.mainAppRequired(message: "simulated developer flag", accountID: accountID)
         }
-        
+
         // Set up network stack.
         guard let environment = try fetchBackendEnvironment() else {
             throw Failure.mainAppRequired(message: "no stored backend for account", accountID: accountID)

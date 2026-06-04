@@ -115,9 +115,10 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                 )
             } catch {
                 logError(error)
-                
-                if let accountID = MainAppRequiredGate.isMainAppRequiredErrorFoAccount(error), mainAppRequiredGate.shouldNotify(accountID: accountID) {
-                    
+
+                if let accountID = MainAppRequiredGate.isMainAppRequiredErrorFoAccount(error),
+                   mainAppRequiredGate.shouldNotify(accountID: accountID) {
+
                     notificationContentHandler(mainAppRequiredNotification(for: request, accountID: accountID))
                 } else if DeveloperFlag.showNSEErrors.isOn {
                     notificationContentHandler(errorNotification(for: error))

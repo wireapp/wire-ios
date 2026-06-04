@@ -88,7 +88,7 @@ public struct Journal: JournalProtocol {
             storage.set(Array(newValue), forKey: rawKey(for: key))
         }
     }
-    
+
     /// Get or set an optional date value.
 
     public subscript(_ key: JournalKey<Date?>) -> Date? {
