@@ -24,8 +24,6 @@ import WireLocators
 import WireLogging
 import WireSyncEngine
 
-private let logger = WireLogger.ui
-
 final class AudioMessageView: UIView, TransferView {
 
     typealias AudioMessage = L10n.Accessibility.AudioMessage
@@ -354,7 +352,7 @@ final class AudioMessageView: UIView, TransferView {
                     let earliestEndDate = Date(timeIntervalSinceNow: duration)
                     self?.extendEphemeralTimerIfNeeded(to: earliestEndDate)
                 } else {
-                    logger.warn("Cannot load track \(track): \(String(describing: error))")
+                    WireLogger.ui.warn("Cannot load track \(track): \(String(describing: error))")
                 }
             }
         } else {
@@ -481,7 +479,7 @@ final class AudioMessageView: UIView, TransferView {
                 AVSMediaManager.sharedInstance().playbackRoute = .speaker
             }
         } catch {
-            logger.error("Cannot set AVAudioSession category: \(error)")
+            WireLogger.ui.error("Cannot set AVAudioSession category: \(error)")
         }
     }
 

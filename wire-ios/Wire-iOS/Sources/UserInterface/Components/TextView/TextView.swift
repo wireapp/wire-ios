@@ -21,8 +21,6 @@ import WireCommonComponents
 import WireLogging
 import WireSystem
 
-private let logger = WireLogger.ui
-
 protocol InformalTextViewDelegate: AnyObject {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset)
     func textView(_ textView: UITextView, firstResponderChanged resigned: Bool)
@@ -155,7 +153,7 @@ class TextView: UITextView {
 
     override func paste(_ sender: Any?) {
         let pasteboard = UIPasteboard.general
-        logger.debug("TextView: types available: \(pasteboard.types)")
+        WireLogger.ui.debug("TextView: types available: \(pasteboard.types)")
 
         if pasteboard.hasImages,
            let image = UIPasteboard.general.mediaAsset() {

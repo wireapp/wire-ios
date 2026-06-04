@@ -21,8 +21,6 @@ import UIKit
 import WireLogging
 import WireSystem
 
-private let logger = WireLogger.ui
-
 final class CameraController {
 
     private(set) var currentCamera: SettingsCamera
@@ -109,7 +107,7 @@ final class CameraController {
             canSwitchInputs = true
 
         default:
-            logger.error("CameraController could not add any inputs.")
+            WireLogger.ui.error("CameraController could not add any inputs.")
             setupResult = .failed
             return
         }
@@ -119,7 +117,7 @@ final class CameraController {
         // SETUP OUTPUTS
 
         guard session.canAddOutput(photoOutput) else {
-            logger.error("CameraController could not add photo capture output.")
+            WireLogger.ui.error("CameraController could not add photo capture output.")
             setupResult = .failed
             return
         }
@@ -265,7 +263,7 @@ final class CameraController {
             defer { completion() }
 
             if let error {
-                logger
+                WireLogger.ui
                     .error(
                         "PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)"
                     )

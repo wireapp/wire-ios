@@ -22,8 +22,6 @@ import WireFoundation
 import WireLogging
 import WireReusableUIComponents
 
-private let logger = WireLogger.ui
-
 struct TextMarker<A> {
 
     let replacementText: String
@@ -133,7 +131,7 @@ extension NSMutableAttributedString {
             let mentionRange = mutableString.range(of: textObject.token)
 
             guard mentionRange.location != NSNotFound else {
-                logger.error("Cannot process mention: \(textObject)")
+                WireLogger.ui.error("Cannot process mention: \(textObject)")
                 return
             }
 
