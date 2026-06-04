@@ -18,9 +18,9 @@
 
 import avs
 import Foundation
+import WireLogging
 import WireSyncEngine
 import WireSystem
-import WireLogging
 
 /// An object that observes changes in the media playback manager.
 protocol MediaPlaybackManagerChangeObserver: AnyObject {

@@ -18,8 +18,8 @@
 
 import UIKit
 import WireCommonComponents
-import WireSystem
 import WireLogging
+import WireSystem
 
 final class FileBackupExcluder: BackupExcluder {
 

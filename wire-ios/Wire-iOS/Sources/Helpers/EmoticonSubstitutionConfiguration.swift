@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystem
 import WireLogging
+import WireSystem
 
 final class EmoticonSubstitutionConfiguration {
 

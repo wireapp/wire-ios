@@ -23,7 +23,6 @@ import WireLogging
 import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
-import WireLogging
 
 /// Provides and asks for context when registering users.
 

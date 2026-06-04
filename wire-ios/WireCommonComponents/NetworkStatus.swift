@@ -19,8 +19,8 @@
 import CoreTelephony
 import Foundation
 import SystemConfiguration
-import WireUtilities
 import WireLogging
+import WireUtilities
 
 public enum ServerReachability {
     /// Backend can be reached.

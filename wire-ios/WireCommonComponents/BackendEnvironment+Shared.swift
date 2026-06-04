@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireLogging
+import WireTransport
 
 public extension BackendEnvironment {
     static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")

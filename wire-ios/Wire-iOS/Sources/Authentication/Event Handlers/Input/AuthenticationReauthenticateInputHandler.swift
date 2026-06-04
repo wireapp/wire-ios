@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireLogging
+import WireSystem
 
 /// Handles input in the reauthentication phase.
 

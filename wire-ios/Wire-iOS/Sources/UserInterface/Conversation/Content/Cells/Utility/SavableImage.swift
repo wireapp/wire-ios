@@ -18,9 +18,9 @@
 
 import Photos
 import UIKit
+import WireLogging
 import WireSystem
 import WireUtilities
-import WireLogging
 
 protocol PhotoLibraryProtocol {
     func performChanges(_ changeBlock: @escaping () -> Swift.Void, completionHandler: ((Bool, Error?) -> Swift.Void)?)

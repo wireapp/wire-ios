@@ -19,9 +19,9 @@
 import Foundation
 import WireAuthenticationAPI
 import WireDataModel
+import WireLogging
 import WireNetwork
 import WireSystem
-import WireLogging
 
 /// Provides information to the event responder chain and executes actions.
 
@@ -263,7 +263,8 @@ final class AuthenticationEventResponderChain {
     /// Start handling the event with the specified context, using the given handlers and delegate.
     private func handleEvent<Context>(with handlers: [AnyAuthenticationEventHandler<Context>], context: Context) {
         guard let delegate else {
-            WireLogger.authentication.error("The event will not be handled because the responder chain does not have a delegate.")
+            WireLogger.authentication
+                .error("The event will not be handled because the responder chain does not have a delegate.")
             return
         }
 

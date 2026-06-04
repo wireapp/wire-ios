@@ -19,8 +19,8 @@
 import Foundation
 import WireDataModel
 import WireFoundation
-import WireReusableUIComponents
 import WireLogging
+import WireReusableUIComponents
 
 private let logger = WireLogger.ui
 

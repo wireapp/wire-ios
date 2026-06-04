@@ -19,10 +19,10 @@
 import AVKit
 import Foundation
 import PassKit
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireSyncEngine
-import WireLogging
 
 private let logger = WireLogger.ui
 

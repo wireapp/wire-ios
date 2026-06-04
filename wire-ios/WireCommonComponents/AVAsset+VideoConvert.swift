@@ -18,8 +18,8 @@
 
 import AVFoundation
 import Foundation
-import WireUtilities
 import WireLogging
+import WireUtilities
 
 // MARK: - audio convert
 
@@ -43,7 +43,8 @@ public extension AVAsset {
         exportSession.exportAsynchronously { [unowned exportSession] in
             switch exportSession.status {
             case .failed:
-                WireLogger.ui.error("Cannot transcode \(inPath) to \(outPath): \(String(describing: exportSession.error))")
+                WireLogger.ui
+                    .error("Cannot transcode \(inPath) to \(outPath): \(String(describing: exportSession.error))")
                 DispatchQueue.main.async {
                     completion?(false)
                 }

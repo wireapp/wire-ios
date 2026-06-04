@@ -18,8 +18,8 @@
 
 import AVFoundation
 import UIKit
-import WireSystem
 import WireLogging
+import WireSystem
 
 private let logger = WireLogger.ui
 

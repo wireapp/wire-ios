@@ -48,7 +48,8 @@ final class ConversationInputBarSendController: NSObject {
                 )
                 self.feedbackGenerator.impactOccurred()
             } catch {
-                WireLogger.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+                WireLogger.messageProcessing
+                    .warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
         } completionHandler: {
             completionHandler?()
@@ -90,7 +91,8 @@ final class ConversationInputBarSendController: NSObject {
                     )
                 }
             } catch {
-                WireLogger.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
+                WireLogger.messageProcessing
+                    .warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }
         }
     }

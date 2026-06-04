@@ -21,8 +21,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireLocators
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 private let logger = WireLogger.ui
 

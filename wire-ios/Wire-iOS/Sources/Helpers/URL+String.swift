@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireLogging
+import WireSystem
 
 extension URL {
     func decode<T>(_ type: T.Type) throws -> T where T: Decodable {

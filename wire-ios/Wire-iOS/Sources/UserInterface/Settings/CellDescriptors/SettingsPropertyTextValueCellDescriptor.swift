@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireUtilities
 import WireLogging
+import WireUtilities
 
 final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTextCell.self

@@ -19,9 +19,9 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 import WireSystem
-import WireLogging
 
 enum MediaManagerSound: String {
     case outgoingKnockSound = "ping_from_me"

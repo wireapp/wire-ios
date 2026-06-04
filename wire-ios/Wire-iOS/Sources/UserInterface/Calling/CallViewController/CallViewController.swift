@@ -19,8 +19,8 @@
 import avs
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 protocol CallViewControllerDelegate: AnyObject {
     func callViewControllerDidDisappear(

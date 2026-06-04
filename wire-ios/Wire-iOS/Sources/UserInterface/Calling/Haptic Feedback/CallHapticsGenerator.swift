@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireUtilities
 import WireLogging
+import WireUtilities
 
 protocol CallHapticsGeneratorType {
     func trigger(event: CallHapticsEvent)

@@ -19,8 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 protocol CallInfoViewControllerDelegate: AnyObject {
     func infoViewController(_ viewController: CallInfoViewController, perform action: CallAction)

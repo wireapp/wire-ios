@@ -19,8 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSystem
 import WireLogging
+import WireSystem
 
 private let logger = WireLogger.ui
 
