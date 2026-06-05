@@ -87,7 +87,6 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         )
 
         return MeetingsViewModel(
-            repository: mockRepository,
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: upcomingMeetingsUseCase

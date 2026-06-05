@@ -27,20 +27,17 @@ import WireFoundationSupport
 @Suite("MeetingsViewModel Tests")
 struct MeetingsViewModelTests {
 
-    private let mockRepository: MockMeetingsRepositoryProtocol
     private let mockDateProvider: CurrentDateProvidingMock
     private let formatter: MeetingsFormatter
     private let upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol
     private let viewModel: MeetingsViewModel
 
     init() throws {
-        self.mockRepository = MockMeetingsRepositoryProtocol()
         self.mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
         self.upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
         self.viewModel = MeetingsViewModel(
-            repository: mockRepository,
             currentDateProvider: mockDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
