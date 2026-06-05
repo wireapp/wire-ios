@@ -65,7 +65,7 @@ final class ShareExtensionTests: WireUITestCase {
         try photosApp
             .openFirstImage()
             .shareImageToWire()
-            .chooseConversationAndSend(name: conversationName, accountName: accountName)
+            .chooseConversationAndSend(name: conversationName)
 
         try await switchBackToWireApp()
     }
@@ -77,7 +77,7 @@ final class ShareExtensionTests: WireUITestCase {
         let filesApp = try FilesAppPage(filesApp: filesAppBundleId)
         try filesApp
             .shareFileToWire(named: fileName)
-            .chooseConversationAndSend(name: conversationName, accountName: accountName)
+            .chooseConversationAndSend(name: conversationName)
 
         try await switchBackToWireApp()
     }
@@ -94,15 +94,22 @@ final class ShareExtensionTests: WireUITestCase {
     @MainActor
     private func setupSenderAndReceiverAccountsAndSwitchToSender(
         receiver: UserInfo,
-        sender: UserInfo
+        sender: UserInfo,
+        openOneOnOneConversation: Bool = false
     ) throws -> ConversationsPage {
         let firstTimePage = try app.loginUser(email: sender.email, password: sender.password)
 
-        _ = try firstTimePage.acceptPopup()
-            .tapPlusButtonToCreateGroup()
-            .openUserDetailsInContactList()
-            .tapStartConversationButton()
-            .goBackToConversationPage()
+        var senderConversationsPage = try firstTimePage.acceptPopup()
+
+        if openOneOnOneConversation {
+            senderConversationsPage = try senderConversationsPage
+                .tapPlusButtonToCreateGroup()
+                .openUserDetailsInContactList()
+                .tapStartConversationButton()
+                .goBackToConversationPage()
+        }
+
+        _ = try senderConversationsPage
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
@@ -127,7 +134,8 @@ final class ShareExtensionTests: WireUITestCase {
 
         let senderConversationsPage = try setupSenderAndReceiverAccountsAndSwitchToSender(
             receiver: receiver,
-            sender: sender
+            sender: sender,
+            openOneOnOneConversation: true
         )
 
         XCTAssertTrue(

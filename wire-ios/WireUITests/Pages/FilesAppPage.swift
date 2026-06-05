@@ -194,18 +194,21 @@ class FilesAppPage: PageModel {
         return self
     }
 
-    func chooseConversationAndSend(name: String, accountName: String? = nil) throws {
+    func chooseConversationAndSend(name: String) throws {
+        XCTAssertTrue(
+            chooseConversation.waitForExistence(timeout: timeout),
+            "chooseConversation, didn't show up"
+        )
+        chooseConversation.tap()
 
-        if chooseConversation.waitForExistence(timeout: timeout) {
-            chooseConversation.tap()
-        }
+        let conversationToSend = selectConversation(name: name)
+        XCTAssertTrue(
+            conversationToSend.waitForExistence(timeout: timeout),
+            "Tap to chooseConversation, didn't pass"
+        )
+        conversationToSend.waitAndTap()
 
-        try selectConversation(name: name)
-
-        if sendButton.waitForExistence(timeout: timeout) {
-            sendButton.waitAndTap()
-        }
-
-        _ = filesApp.wait(for: .runningForeground, timeout: 10)
+        XCTAssertTrue(sendButton.waitForExistence(timeout: timeout), "Send button didn't show up")
+        sendButton.tap()
     }
 }
