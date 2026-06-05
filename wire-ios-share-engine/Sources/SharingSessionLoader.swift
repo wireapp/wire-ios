@@ -335,7 +335,8 @@ public struct SharingSessionLoader {
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskManager: nil
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
