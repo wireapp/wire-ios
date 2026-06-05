@@ -92,28 +92,31 @@ final class ShareExtensionTests: WireUITestCase {
     }
 
     @MainActor
-    private func loginReceiverThenSender(
+    private func setupSenderAndReceiverAccountsAndSwitchToSender(
         receiver: UserInfo,
         sender: UserInfo
     ) throws -> ConversationsPage {
-        let firstTimePage = try app.loginUser(email: receiver.email, password: receiver.password)
+        let firstTimePage = try app.loginUser(email: sender.email, password: sender.password)
 
-        let conversationPage = try firstTimePage.acceptPopup()
+        _ = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
             .openUserDetailsInContactList()
             .tapStartConversationButton()
             .goBackToConversationPage()
-
-        _ = try conversationPage
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        _ = try app.loginUser(email: sender.email, password: sender.password)
+        let receiverConversationsPage = try app.loginUser(
+            email: receiver.email,
+            password: receiver.password
+        )
+        .acceptPopup()
 
-        let senderConversationsPage = try firstTimePage.acceptPopup()
+        try receiverConversationsPage.letTheSyncFinish()
 
-        try senderConversationsPage.letTheSyncFinish()
-        return senderConversationsPage
+        return try receiverConversationsPage
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: sender.name)
     }
 
     @MainActor
@@ -122,7 +125,7 @@ final class ShareExtensionTests: WireUITestCase {
         let sender = try XCTUnwrap(teamMembers.first)
         let receiver = teamOwner
 
-        let senderConversationsPage = try loginReceiverThenSender(
+        let senderConversationsPage = try setupSenderAndReceiverAccountsAndSwitchToSender(
             receiver: receiver,
             sender: sender
         )
@@ -143,10 +146,9 @@ final class ShareExtensionTests: WireUITestCase {
 
     @MainActor
     private func createTeamShareScenario(conversation: CreateConversationOption) async throws -> ShareScenario {
-        let conversationName: String
-        switch conversation {
+        let conversationName: String = switch conversation {
         case let .group(name), let .channel(name):
-            conversationName = name
+            name
         }
 
         let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(
@@ -154,7 +156,7 @@ final class ShareExtensionTests: WireUITestCase {
             conversation: conversation
         )
         let receiver = try XCTUnwrap(teamMembers.first)
-        let senderConversationsPage = try loginReceiverThenSender(
+        let senderConversationsPage = try setupSenderAndReceiverAccountsAndSwitchToSender(
             receiver: receiver,
             sender: teamOwner
         )
@@ -270,14 +272,14 @@ final class ShareExtensionTests: WireUITestCase {
             named: scenario.conversationName,
             on: scenario.senderConversationsPage
         )
-            .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
+        .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
 
         try logOutSenderAndOpenReceiverConversation(
             from: activeConversationPage,
             sender: scenario.sender,
             conversationName: scenario.receiverConversationName
         )
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
     @MainActor
@@ -327,14 +329,14 @@ final class ShareExtensionTests: WireUITestCase {
             named: scenario.conversationName,
             on: scenario.senderConversationsPage
         )
-            .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
+        .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
 
         try logOutSenderAndOpenReceiverConversation(
             from: activeConversationPage,
             sender: scenario.sender,
             conversationName: scenario.receiverConversationName
         )
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
     @MainActor
@@ -384,13 +386,13 @@ final class ShareExtensionTests: WireUITestCase {
             named: scenario.conversationName,
             on: scenario.senderConversationsPage
         )
-            .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
+        .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
 
         try logOutSenderAndOpenReceiverConversation(
             from: activeConversationPage,
             sender: scenario.sender,
             conversationName: scenario.receiverConversationName
         )
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 }

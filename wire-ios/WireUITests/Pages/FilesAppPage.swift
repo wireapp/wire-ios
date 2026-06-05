@@ -24,7 +24,6 @@ class FilesAppPage: PageModel {
     private let filesApp: XCUIApplication
     private let timeout: TimeInterval = 5
 
-
     override var pageMainElement: XCUIElement {
         filesApp.windows.firstMatch
     }
@@ -140,34 +139,10 @@ class FilesAppPage: PageModel {
         return Array(labels.map(\.label).filter { !$0.isEmpty }.prefix(20))
     }
 
-    func selectAccountIfNeeded(name: String) throws {
-        if !accountPicker.waitForExistence(timeout: 1) {
-            return
-        }
-
-        if accountCell(named: name).exists {
-            return
-        }
-
-        accountPicker.tap()
-        let account = accountCell(named: name)
-        if account.waitForExistence(timeout: timeout) {
-            account.tap()
-            _ = chooseConversation.waitForExistence(timeout: timeout)
-        }
-    }
-
-    func selectConversation(name: String) throws {
-        var conversation = conversationCell(named: name)
-        if !conversation.waitForExistence(timeout: 1), shareExtensionSearchField.waitForExistence(timeout: timeout) {
-            _ = try? shareExtensionSearchField.tapIfKeyboardNotFocused()
-            shareExtensionSearchField.typeText(name)
-            conversation = conversationCell(named: name)
-        }
-
-        if conversation.waitForExistence(timeout: timeout) {
-            conversation.tap()
-        }
+    func selectConversation(name: String) -> XCUIElement {
+        let conversationCell = photosApp.staticTexts[name]
+        XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
+        return conversationCell.firstMatch
     }
 
     @discardableResult
@@ -220,9 +195,6 @@ class FilesAppPage: PageModel {
     }
 
     func chooseConversationAndSend(name: String, accountName: String? = nil) throws {
-        if let accountName {
-            try selectAccountIfNeeded(name: accountName)
-        }
 
         if chooseConversation.waitForExistence(timeout: timeout) {
             chooseConversation.tap()

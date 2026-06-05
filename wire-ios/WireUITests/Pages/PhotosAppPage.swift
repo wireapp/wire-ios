@@ -21,15 +21,7 @@ import XCTest
 
 class PhotosAppPage: PageModel {
     private let photosApp: XCUIApplication
-    private let timeout: TimeInterval = 2
-    private let shareExtensionTimeout: TimeInterval = 5
-
-    private enum Error: Swift.Error {
-        case missingAccount
-        case missingChooseConversation
-        case missingConversation
-        case missingSendButton
-    }
+    private let timeout: TimeInterval = 5
 
     override var pageMainElement: XCUIElement {
         photosApp.windows.firstMatch
@@ -107,41 +99,10 @@ class PhotosAppPage: PageModel {
         return Array(labels.map(\.label).filter { !$0.isEmpty }.prefix(20))
     }
 
-    func selectAccountIfNeeded(name: String) throws {
-        guard accountPicker.waitForExistence(timeout: 1) else {
-            return
-        }
-
-        if accountCell(named: name).exists {
-            return
-        }
-
-        accountPicker.tap()
-        let account = accountCell(named: name)
-        guard account.waitForExistence(timeout: shareExtensionTimeout) else {
-            XCTFail("Account '\(name)' was not available in the Wire share extension. " +
-                "Visible labels: \(visibleShareExtensionLabels())")
-            throw Error.missingAccount
-        }
-        account.tap()
-        _ = chooseConversation.waitForExistence(timeout: shareExtensionTimeout)
-    }
-
-    func selectConversation(name: String) throws {
-        var conversation = conversationCell(named: name)
-        if !conversation.waitForExistence(timeout: 1),
-           shareExtensionSearchField.waitForExistence(timeout: shareExtensionTimeout) {
-            _ = try? shareExtensionSearchField.tapIfKeyboardNotFocused()
-            shareExtensionSearchField.typeText(name)
-            conversation = conversationCell(named: name)
-        }
-
-        guard conversation.waitForExistence(timeout: shareExtensionTimeout) else {
-            XCTFail("Conversation '\(name)' was not available in the Wire share extension. " +
-                "Visible labels: \(visibleShareExtensionLabels())")
-            throw Error.missingConversation
-        }
-        conversation.tap()
+    func selectConversation(name: String) -> XCUIElement {
+        let conversationCell = photosApp.staticTexts[name]
+        XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
+        return conversationCell.firstMatch
     }
 
     @discardableResult
@@ -156,7 +117,10 @@ class PhotosAppPage: PageModel {
     func openFirstImage() throws -> PhotosAppPage {
         try continueWhatsNewIfPresent()
         XCTAssertTrue(firstImageTile.waitForExistence(timeout: 10))
-        firstImageTile.tap()
+        // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
+        firstImageTile
+            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+            .tap()
         return self
     }
 
@@ -171,22 +135,9 @@ class PhotosAppPage: PageModel {
     func chooseConversationAndSend(name: String, accountName: String? = nil) throws {
         defer { photosApp.terminate() }
 
-        if let accountName {
-            try selectAccountIfNeeded(name: accountName)
-        }
-
-        guard chooseConversation.waitForExistence(timeout: shareExtensionTimeout) else {
-            XCTFail("Choose conversation control was not available in the Wire share extension")
-            throw Error.missingChooseConversation
-        }
-        chooseConversation.tap()
+        chooseConversation.waitAndTap()
 
         try selectConversation(name: name)
-
-        guard sendButton.waitForExistence(timeout: shareExtensionTimeout) else {
-            XCTFail("Send button was not available in the Wire share extension")
-            throw Error.missingSendButton
-        }
         sendButton.waitAndTap()
 
         XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
