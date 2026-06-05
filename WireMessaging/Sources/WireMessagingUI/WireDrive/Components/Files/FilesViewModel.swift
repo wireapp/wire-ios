@@ -85,6 +85,8 @@ package final class FilesViewModel: ObservableObject {
         } else {
             if isRecycleBin {
                 Strings.RecycleBin.navigationTitle
+            } else if isBrowsing {
+                Strings.AllFiles.navigationTitle
             } else {
                 Strings.Files.navigationTitle
             }

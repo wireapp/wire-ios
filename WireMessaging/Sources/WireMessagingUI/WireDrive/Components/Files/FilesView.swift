@@ -52,7 +52,6 @@ package struct FilesView: View {
             viewModel: viewModel,
             isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.background.color,
-            navigationTitle: viewModel.navigationTitle,
             toolbarContent: { toolbarContent },
             sheetContent: { sheetContent($0) }
         )
