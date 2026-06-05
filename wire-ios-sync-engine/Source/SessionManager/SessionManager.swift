@@ -1737,7 +1737,10 @@ extension SessionManager: WireCallCenterCallStateObserver {
 
             for (_, session) in backgroundUserSessions
                 where session.managedObjectContext == moc && activeUserSession != session {
-                showConversation(conversation, at: nil, in: session)
+                // Switch to the call's account without navigating to the conversation.
+                // The post-activation flow (AppRootRouter `.authenticated` →
+                // updateActiveCallPresentationState) presents the in-app call UI.
+                activateAccount(of: session)
             }
         default:
             return
