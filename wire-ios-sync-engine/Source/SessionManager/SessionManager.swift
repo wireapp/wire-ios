@@ -1730,7 +1730,7 @@ extension SessionManager: WireCallCenterCallStateObserver {
         guard let moc = conversation.managedObjectContext else { return }
 
         switch callState {
-        case .answered:
+        case .answered, .outgoing:
             let (backgroundUserSessions, activeUserSession) = state.withLockUnchecked { state in
                 (state.backgroundUserSessions, state.activeUserSession)
             }
