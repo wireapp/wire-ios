@@ -184,6 +184,7 @@ class FilesAppPage: PageModel {
             file.press(forDuration: 1.0)
         }
 
+        // FIX REQUIRED: Takes hell lot of time to press share button due to animations
         if shareButton.waitForExistence(timeout: timeout) {
             shareButton.tap()
         }

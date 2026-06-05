@@ -202,20 +202,17 @@ final class ShareExtensionTests: WireUITestCase {
     }
 
     @MainActor
-    private func logOutSenderAndOpenReceiverConversation(
+    private func switchToReceiverEndConversation(
         from activeConversationPage: ActiveConversationPage,
-        sender: UserInfo,
-        conversationName: String
+        name: String
     ) throws -> ActiveConversationPage {
         _ = try activeConversationPage
             .goBackToConversationPage()
-            .openSettings()
-            .openAccountSettings()
-            .logout()
-            .enterPassword(sender.password, expectWelcomePage: false)
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: name)
+            .openConversation()
 
-        let receiverConversationsPage = try ConversationsPage()
-        return try openConversation(named: conversationName, on: receiverConversationsPage)
+        return try ActiveConversationPage()
     }
 
     private func assertImageShared(on activeConversationPage: ActiveConversationPage) {
@@ -280,13 +277,14 @@ final class ShareExtensionTests: WireUITestCase {
             named: scenario.conversationName,
             on: scenario.senderConversationsPage
         )
+        
         .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
-
-        try logOutSenderAndOpenReceiverConversation(
+        
+        try switchToReceiverEndConversation(
             from: activeConversationPage,
-            sender: scenario.sender,
-            conversationName: scenario.receiverConversationName
+            name: scenario.receiver.name
         )
+        // Needs fixing 
         .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
@@ -339,10 +337,9 @@ final class ShareExtensionTests: WireUITestCase {
         )
         .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
 
-        try logOutSenderAndOpenReceiverConversation(
+        try switchToReceiverEndConversation(
             from: activeConversationPage,
-            sender: scenario.sender,
-            conversationName: scenario.receiverConversationName
+            name: scenario.receiver.name
         )
         .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
@@ -396,10 +393,9 @@ final class ShareExtensionTests: WireUITestCase {
         )
         .verifySharedFile(name: "TESTFILE", type: "PDF", timeout: fileUploadTimeout, requireReady: true)
 
-        try logOutSenderAndOpenReceiverConversation(
+        try switchToReceiverEndConversation(
             from: activeConversationPage,
-            sender: scenario.sender,
-            conversationName: scenario.receiverConversationName
+            name: scenario.receiver.name
         )
         .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
