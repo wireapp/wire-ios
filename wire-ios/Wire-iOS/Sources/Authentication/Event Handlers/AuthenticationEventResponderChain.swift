@@ -293,7 +293,7 @@ final class AuthenticationEventResponderChain {
             return
         }
 
-        WireLogger.authentication.info("Handing event using \(name), and \(actions.count) actions.")
+        WireLogger.authentication.info("Handling event using \(name), and \(actions.count) actions.")
         delegate.executeActions(actions)
     }
 

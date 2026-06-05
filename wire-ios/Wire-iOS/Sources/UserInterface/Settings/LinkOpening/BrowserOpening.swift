@@ -60,7 +60,7 @@ enum BrowserOpeningOption: Int, LinkOpeningOption {
 extension URL {
 
     func openAsLink() -> Bool {
-        WireLogger.ui.debug("Trying to open \"\(self)\" in thrid party browser")
+        WireLogger.ui.debug("Trying to open \"\(self)\" in third party browser")
         let saved = BrowserOpeningOption.storedPreference
         WireLogger.ui.debug("Saved option to open a regular link: \(saved.displayString)")
         let app = UIApplication.shared

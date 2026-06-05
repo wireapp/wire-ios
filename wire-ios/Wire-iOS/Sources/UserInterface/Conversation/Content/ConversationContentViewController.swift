@@ -391,7 +391,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     override func didReceiveMemoryWarning() {
-        WireLogger.system.warn("Received system memory warning.")
+        WireLogger.system.warn("Received system memory warning.", attributes: .safePublic)
         super.didReceiveMemoryWarning()
     }
 

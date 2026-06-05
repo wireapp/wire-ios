@@ -93,7 +93,7 @@ extension ConversationInputBarViewController {
     ) {
         guard let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL else {
             parent?.dismiss(animated: true)
-            WireLogger.ui.error("Video not provided form \(picker): info \(info)")
+            WireLogger.ui.error("Video not provided from \(picker): info \(info)")
             return
         }
         guard let selfUser = ZMUser.selfUser() else {

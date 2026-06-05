@@ -749,7 +749,7 @@ extension AuthenticationCoordinator {
         case let .enterActivationCode(credential, user):
             sendActivationCode(credential, user, isResend: true)
         default:
-            logger.error("Cannot send verification code in the current state (\(stateController.currentStep)")
+            logger.error("Cannot send verification code in the current state (\(stateController.currentStep))")
         }
     }
 
@@ -764,7 +764,7 @@ extension AuthenticationCoordinator {
         case let .enterActivationCode(unverifiedEmail, user):
             activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code)
         default:
-            logger.error("Cannot continue flow with user code in the current state (\(stateController.currentStep)")
+            logger.error("Cannot continue flow with user code in the current state (\(stateController.currentStep))")
         }
     }
 

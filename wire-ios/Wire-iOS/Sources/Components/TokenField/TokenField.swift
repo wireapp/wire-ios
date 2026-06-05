@@ -787,8 +787,6 @@ extension TokenField: UITextViewDelegate {
     }
 
     func textViewDidChangeSelection(_ textView: UITextView) {
-        WireLogger.ui.debug("TokenField: Selection changed: NSStringFromRange(textView.selectedRange)")
-
         var modifiedSelectionRange = NSRange(location: 0, length: 0)
         var hasModifiedSelection = false
 
@@ -802,7 +800,7 @@ extension TokenField: UITextViewDelegate {
                     hasModifiedSelection = true
                 }
                 WireLogger.ui.info(
-                    "TokenField:     person attachement: \(tokenAttachment.token.title) at range: \(range) selected: \(tokenAttachment.isSelected)"
+                    "TokenField:     person attachment: \(tokenAttachment.token.title) at range: \(range) selected: \(tokenAttachment.isSelected)"
                 )
             }
         }
