@@ -41,7 +41,12 @@ public struct BackendMLSPublicKeys: Equatable {
             removal.p521
         }
 
+<<<<<<< HEAD
         return [externalSenderData].compactMap(\.self).map(ExternalSenderKey.init)
+=======
+        return [externalSender]
+            .compactMap(\.self)
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
     }
 
     public struct MLSPublicKeys: Equatable {

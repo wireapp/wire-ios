@@ -25,6 +25,10 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
     fileprivate static let path: String = "/self"
     public static let userDeletionInitiatedKey: String = "ZMUserDeletionInitiatedKey"
     fileprivate(set) var deleteSync: ZMSingleRequestSync!
+<<<<<<< HEAD
+=======
+    let cookieStorage: ZMPersistentCookieStorage
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
 
     public override init(
         withManagedObjectContext moc: NSManagedObjectContext,

@@ -24,7 +24,11 @@ import WireDataModel
 public protocol AppendImageMessageUseCaseProtocol {
 
     func invoke(
+<<<<<<< HEAD
         image: SendableImage,
+=======
+        withImageData imageData: Data,
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
         in conversation: some MessageAppendableConversation
     ) throws
 }

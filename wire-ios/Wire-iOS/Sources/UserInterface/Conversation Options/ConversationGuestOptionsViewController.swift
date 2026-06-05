@@ -173,7 +173,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     ) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingGuests(completion)
         if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = sourceView.superview!
+            popoverPresentationController.sourceView = sourceView.superview
             popoverPresentationController.sourceRect = sourceView.frame
         }
         present(alertController, animated: true)

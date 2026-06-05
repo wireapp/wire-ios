@@ -18,9 +18,14 @@ let package = Package(
         .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
+<<<<<<< HEAD
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "25.4.3"),
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
         .package(path: "../WireFoundation"),
+=======
+        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
         .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
     ],

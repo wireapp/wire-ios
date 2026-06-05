@@ -41,10 +41,15 @@ extension SettingsCellDescriptorFactory {
             popularDemandSendButtonSection,
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
+<<<<<<< HEAD
             SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil
             // temporarily hiding this section because it conflicts with chat bubbles.
             // https://wearezeta.atlassian.net/browse/WPB-18939
 //            collapseSelfMessageSection
+=======
+            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
+            collapseSelfMessageSection
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
         ].compactMap(\.self)
 
         return SettingsGroupCellDescriptor(

@@ -36,9 +36,15 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
     typealias DownloadCompletion = (OpenGraphData?) -> Void
 
+<<<<<<< HEAD
     var containerByTaskID = ThreadSafeDictionary<Int, MetaStreamContainer>()
     var completionByURL = ThreadSafeDictionary<URL, DownloadCompletion>()
     var cancelledTaskIDs = OSAllocatedUnfairLock(initialState: Set<Int>())
+=======
+    var containerByTaskID = [Int: MetaStreamContainer]()
+    var completionByURL = [URL: DownloadCompletion]()
+    var cancelledTaskIDs = Set<Int>()
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
     var session: URLSessionType!
     let resultsQueue: OperationQueue
     let parsingQueue: OperationQueue

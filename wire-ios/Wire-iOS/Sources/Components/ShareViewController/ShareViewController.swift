@@ -32,8 +32,13 @@ protocol ShareDestination: Hashable {
 
 protocol Shareable {
     associatedtype I: ShareDestination
+<<<<<<< HEAD
     func share(to: [some Any], userSession: UserSession)
     func previewView(userSession: UserSession) -> UIView?
+=======
+    func share(to: [some Any])
+    func previewView() -> UIView?
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
 }
 
 final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,

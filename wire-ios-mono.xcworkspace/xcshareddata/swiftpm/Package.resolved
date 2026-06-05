@@ -168,8 +168,13 @@
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
+<<<<<<< HEAD
           "revision": "8c61e5e38e9f737dd68512ed1ea5ab081244ad65",
           "version": "1.12.0"
+=======
+          "revision": "0254f941c646b1ed17b243654723d0f071e990d0",
+          "version": "1.12.2"
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
         }
       },
       {

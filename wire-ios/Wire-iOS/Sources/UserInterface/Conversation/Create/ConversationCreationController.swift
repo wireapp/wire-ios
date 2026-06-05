@@ -74,8 +74,12 @@ final class ConversationCreationController: UIViewController {
             (values.encryptionProtocol == .mls || areLegacyBotsAvailable) ? appsSection : nil,
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
+<<<<<<< HEAD
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
             userSession.isWireDriveEnabled ? fileManagementSection : nil
+=======
+            shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
         ].compactMap(\.self)
 
         if let firstSection = sections.first {

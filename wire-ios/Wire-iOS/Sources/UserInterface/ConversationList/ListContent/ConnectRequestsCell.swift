@@ -19,7 +19,29 @@
 import WireLocators
 import WireSyncEngine
 
+<<<<<<< HEAD
 final class ConnectRequestsCell: UICollectionViewCell {
+=======
+protocol SectionListCellType: AnyObject {
+    var sectionName: String? { get set }
+    var obfuscatedSectionName: String? { get set }
+    var cellIdentifier: String? { get set }
+}
+
+extension SectionListCellType {
+
+    var identifier: String {
+        [obfuscatedSectionName ?? sectionName, cellIdentifier]
+            .compactMap(\.self)
+            .joined(separator: " - ")
+    }
+}
+
+final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
+    var sectionName: String?
+    var obfuscatedSectionName: String?
+    var cellIdentifier: String?
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
 
     let itemView = ConversationListItemView()
 

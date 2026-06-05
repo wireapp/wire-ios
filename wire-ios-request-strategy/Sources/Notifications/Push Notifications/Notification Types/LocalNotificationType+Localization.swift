@@ -207,6 +207,34 @@ extension LocalNotificationType {
         return nil
     }
 
+<<<<<<< HEAD
+=======
+    public func alertTitleText(team: Team?) -> String? {
+        guard case let .availabilityBehaviourChangeAlert(availability) = self,
+              availability.isOne(of: .away, .busy) else { return nil }
+
+        let teamName = team?.name
+        let teamKey = teamName != nil ? TeamKey : nil
+        let availabilityKey = availability == .away ? "away" : "busy"
+        let localizationKey = [baseKey, availabilityKey, "title", teamKey].compactMap(\.self).joined(separator: ".")
+        return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: [teamName].compactMap(\.self))
+    }
+
+    public func alertMessageBodyText() -> String {
+        guard case let .availabilityBehaviourChangeAlert(availability) = self,
+              availability.isOne(of: .away, .busy) else { return "" }
+
+        let availabilityKey = availability == .away ? "away" : "busy"
+        let localizationKey = [baseKey, availabilityKey, "message"].compactMap(\.self).joined(separator: ".")
+        return .localizedStringWithFormat(localizationKey.pushFormatString)
+    }
+
+    func bundledMessagesBodyText(messageCount: Int) -> String {
+        guard case .bundledMessages = self else { return "" }
+        return .localizedStringWithFormat(baseKey.pushFormatString, arguments: [messageCount])
+    }
+
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
     func messageBodyText(senderName: String?) -> String {
         if case let LocalNotificationType.event(eventType) = self {
             messageBodyText(eventType: eventType, senderName: senderName)

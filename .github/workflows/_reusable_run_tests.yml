@@ -53,11 +53,14 @@ jobs:
   run-tests:
     name: Run tests
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+<<<<<<< HEAD
     timeout-minutes: 90
     permissions:
       contents: read
       pull-requests: write
       checks: write
+=======
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:

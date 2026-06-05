@@ -28,6 +28,66 @@ public extension MockTransportSession {
     private func ascendingCreationDate(first: MockTeam, second: MockTeam) -> Bool {
         first.createdAt < second.createdAt
     }
+<<<<<<< HEAD
+=======
+
+    @objc(pushEventsForTeamsWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
+    func pushEventsForTeams(
+        inserted: Set<NSManagedObject>,
+        updated: Set<NSManagedObject>,
+        deleted: Set<NSManagedObject>,
+        shouldSendEventsToSelfUser: Bool
+    ) -> [MockPushEvent] {
+        guard shouldSendEventsToSelfUser else { return [] }
+
+        let updatedEvents = updated
+            .compactMap { $0 as? MockTeam }
+            .sorted(by: ascendingCreationDate)
+            .flatMap { self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
+
+        let deletedEvents = deleted
+            .compactMap { $0 as? MockTeam }
+            .sorted(by: ascendingCreationDate)
+            .filter(selfUserPartOfTeam)
+            .map(MockTeamEvent.deleted)
+            .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+
+        return updatedEvents + deletedEvents
+    }
+
+    private func pushEventForUpdatedTeam(team: MockTeam, insertedObjects: Set<NSManagedObject>) -> [MockPushEvent] {
+        var allEvents = [MockPushEvent]()
+        let changedValues = team.changedValues()
+        if let teamUpdateEvent = MockTeamEvent.updated(team: team, changedValues: changedValues) {
+            allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false))
+        }
+
+        let membersEvents = MockTeamMemberEvent.createIfNeeded(
+            team: team,
+            changedValues: team.changedValues(),
+            selfUser: selfUser
+        )
+        let membersPushEvents = membersEvents.compactMap(\.self).map { MockPushEvent(
+            with: $0.payload,
+            uuid: UUID.create(),
+            isTransient: false
+        ) }
+        allEvents.append(contentsOf: membersPushEvents)
+
+        let conversationsEvents = MockTeamConversationEvent.createIfNeeded(
+            team: team,
+            changedValues: team.changedValues()
+        )
+        let conversationsPushEvents = conversationsEvents.compactMap(\.self).map { MockPushEvent(
+            with: $0.payload,
+            uuid: UUID.create(),
+            isTransient: false
+        ) }
+        allEvents.append(contentsOf: conversationsPushEvents)
+
+        return allEvents
+    }
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
 }
 
 // MARK: - Conversations

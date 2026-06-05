@@ -38,6 +38,10 @@ for target in package.targets {
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableUpcomingFeature("StrictMemorySafety"),
+<<<<<<< HEAD
         isCI ? .unsafeFlags(["-warnings-as-errors"]) : nil
     ].compactMap(\.self)
+=======
+    ]
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
 }

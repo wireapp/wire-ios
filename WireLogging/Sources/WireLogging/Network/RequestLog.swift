@@ -101,6 +101,7 @@ public extension URL {
 
         components?.queryItems = queryComponents
 
+<<<<<<< HEAD:WireLogging/Sources/WireLogging/Network/RequestLog.swift
         var endpoint = [
             "\(components?.scheme ?? ""):/",
             components?.host,
@@ -109,6 +110,12 @@ public extension URL {
         .compactMap(\.self)
         .filter { !$0.isEmpty }
         .joined(separator: "/")
+=======
+        var endpoint = [components?.host, components?.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))]
+            .compactMap(\.self)
+            .filter { !$0.isEmpty }
+            .joined(separator: "/")
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803)):wire-ios-transport/Source/Logging/RequestLog.swift
         endpoint.append(components?.query?.isEmpty == false ? "?\(components!.query!)" : "")
         return endpoint
     }

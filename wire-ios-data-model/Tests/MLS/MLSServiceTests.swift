@@ -1906,6 +1906,15 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             Set([group1, group2])
         )
 
+<<<<<<< HEAD
+=======
+        // Then we didn't process any events.
+        XCTAssertEqual(
+            mockConversationEventProcessor.processConversationEvents_Invocations.flatMap(\.self),
+            []
+        )
+
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
         // Then we updated the last check date.
         XCTAssertEqual(
             sut.lastKeyMaterialUpdateCheck.timeIntervalSinceNow,
@@ -3041,6 +3050,14 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(addedMembers.count, 1)
         XCTAssertEqual(addedMembers.first?.keyPackages, [keyPackage])
         XCTAssertEqual(addedMembers.first?.mlsGroupID, mlsGroupID)
+<<<<<<< HEAD
+=======
+
+        // And processed the update event.
+        let processConversationEventsCalls = mockConversationEventProcessor.processConversationEvents_Invocations
+        XCTAssertEqual(processConversationEventsCalls.flatMap(\.self).count, 1)
+        XCTAssertEqual(processConversationEventsCalls.flatMap(\.self).first, updateEvent)
+>>>>>>> 5c3a638178 (chore: update to Xcode 26 - WPB-25711 (#4803))
     }
 
     func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() async throws {
