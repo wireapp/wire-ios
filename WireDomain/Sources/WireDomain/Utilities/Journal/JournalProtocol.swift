@@ -15,11 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import Foundation
 
 public protocol JournalProtocol {
 
     subscript(_ key: JournalKey<Bool>) -> Bool { get nonmutating set }
     subscript(_ key: JournalKey<String?>) -> String? { get nonmutating set }
+    subscript(_ key: JournalKey<Date?>) -> Date? { get nonmutating set }
     subscript(_ key: JournalKey<Set<String>>) -> Set<String> { get nonmutating set }
     nonmutating func erase()
 

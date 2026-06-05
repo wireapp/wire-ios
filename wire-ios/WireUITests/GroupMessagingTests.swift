@@ -60,7 +60,6 @@ final class GroupMessagingTests: WireUITestCase {
     private func fixtureMediaURLs() -> MediaURLs {
         let testDataDirectory = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
-            .deletingLastPathComponent()
             .appendingPathComponent("TestServicesData")
 
         let imageURL = testDataDirectory.appendingPathComponent("Img/testImage.jpg")
