@@ -198,7 +198,7 @@ private struct ParticipantsView: View {
     var body: some View {
         if members.count == 1 {
             HStack(spacing: 6) {
-                circle(index: 0)
+                circle()
 
                 if let name = members[0].name, !name.isEmpty {
                     Text(name)
@@ -213,7 +213,7 @@ private struct ParticipantsView: View {
             HStack(spacing: 6) {
                 HStack(spacing: -overlap) {
                     ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, _ in
-                        circle(index: index)
+                        circle()
                             .zIndex(Double(maxVisible - index))
                     }
                 }
@@ -227,7 +227,7 @@ private struct ParticipantsView: View {
         }
     }
 
-    private func circle(index: Int) -> some View {
+    private func circle() -> some View {
         Circle()
             .fill(Color.gray.opacity(0.35))
             .frame(width: circleSize, height: circleSize)

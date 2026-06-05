@@ -61,7 +61,7 @@ public struct Meeting: Equatable, Sendable {
 
 public typealias QualifiedID = WireFoundation.QualifiedID
 
-// TODO: [WPB-20278]: Update the model
+// TODO: [WPB-20278] Update the model
 public struct Member: Equatable, Sendable {
 
     public let qualifiedID: QualifiedID?
