@@ -57,6 +57,12 @@ jobs:
 
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
+          # This repo uses Git LFS, whose post-checkout hook aborts (exit 2) when
+          # git-lfs isn't on PATH. For checkout/switch the hook's exit status becomes
+          # the command's exit status, so under `set -e` it would kill this step. We
+          # don't need LFS objects here, so disable hooks for the duration of the step.
+          git config --global core.hooksPath /dev/null
+
           # The crowdin action restores the original checkout (develop) after pushing
           # translations to $HEAD_BRANCH, so switch to it before trimming and diffing.
           git checkout "$HEAD_BRANCH"
@@ -78,8 +84,7 @@ jobs:
           fi
 
           # abort if the pr already exists
-          apt update && apt install -y gh git-lfs
-          git lfs install || git lfs update --force
+          apt update && apt install -y gh
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
           if [ -n "$PR_EXISTS" ]; then
             echo "A PR already exists, aborting."
