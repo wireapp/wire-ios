@@ -98,7 +98,8 @@ class PhotosAppPage: PageModel {
         let labels = photosApp.staticTexts.allElementsBoundByIndex + photosApp.cells.allElementsBoundByIndex
         return Array(labels.map(\.label).filter { !$0.isEmpty }.prefix(20))
     }
-
+    
+    @discardableResult
     func selectConversation(name: String) -> XCUIElement {
         let conversationCell = photosApp.staticTexts[name]
         XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
@@ -134,10 +135,19 @@ class PhotosAppPage: PageModel {
 
     func chooseConversationAndSend(name: String, accountName: String? = nil) throws {
         defer { photosApp.terminate() }
-
-        chooseConversation.waitAndTap()
-
-        try selectConversation(name: name)
+        
+        XCTAssertTrue(
+            chooseConversation.waitForExistence(timeout: timeout),
+                  "chooseConversation, didn't show up"
+              )
+        chooseConversation.tap()
+        
+        let conversationToSend = selectConversation(name: name)
+            XCTAssertTrue(
+                conversationToSend.waitForExistence(timeout: timeout),
+                "Tap to chooseConversation, didn't pass"
+            )
+        conversationToSend.waitAndTap()
         sendButton.waitAndTap()
 
         XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))

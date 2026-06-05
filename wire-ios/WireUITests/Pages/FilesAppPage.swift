@@ -140,7 +140,7 @@ class FilesAppPage: PageModel {
     }
 
     func selectConversation(name: String) -> XCUIElement {
-        let conversationCell = photosApp.staticTexts[name]
+        let conversationCell = filesApp.staticTexts[name]
         XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
         return conversationCell.firstMatch
     }
