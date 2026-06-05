@@ -36,7 +36,6 @@ package final class AllMeetingsViewModel: ObservableObject {
     private let isContextMenuAllowed: Bool
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
@@ -44,7 +43,6 @@ package final class AllMeetingsViewModel: ObservableObject {
         isContextMenuAllowed: Bool
     ) {
         self.meetingsViewModel = MeetingsViewModel(
-            repository: repository,
             currentDateProvider: currentDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase

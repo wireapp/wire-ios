@@ -239,7 +239,6 @@ private struct ParticipantsView: View {
 
 #Preview {
     MeetingsView(viewModel: MeetingsViewModel(
-        repository: MockMeetingsRepositoryProtocol(),
         currentDateProvider: .system,
         formatter: MeetingsFormatter(),
         upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol()

@@ -27,7 +27,6 @@ package final class MeetingsViewModel: ObservableObject {
     @Published private(set) var loadedMeetings: [Meeting] = []
     @Published private(set) var hasMore: Bool = false
 
-    private let repository: any MeetingsRepositoryProtocol
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
@@ -40,12 +39,10 @@ package final class MeetingsViewModel: ObservableObject {
     private let grouper = MeetingsGrouper()
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     ) {
-        self.repository = repository
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
@@ -54,7 +51,6 @@ package final class MeetingsViewModel: ObservableObject {
     // MARK: - Public Interface
 
     var groupedUpcomingMeetings: GroupedMeetings {
-        // upcomingMeetings
         grouper.group(loadedMeetings)
     }
 
