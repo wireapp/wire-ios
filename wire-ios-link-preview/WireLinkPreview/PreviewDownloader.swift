@@ -37,7 +37,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     var containerByTaskID = [Int: MetaStreamContainer]()
     var completionByURL = [URL: DownloadCompletion]()
     var cancelledTaskIDs = Set<Int>()
-    var session: URLSessionType! = nil
+    var session: URLSessionType!
     let resultsQueue: OperationQueue
     let parsingQueue: OperationQueue
 

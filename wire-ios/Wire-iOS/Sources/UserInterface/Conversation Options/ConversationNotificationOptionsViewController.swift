@@ -27,7 +27,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
 
     private let conversation: ZMConversation
     private let userSession: ZMUserSession
-    private var observerToken: Any! = nil
+    private var observerToken: Any!
 
     private let collectionViewLayout = UICollectionViewFlowLayout()
 

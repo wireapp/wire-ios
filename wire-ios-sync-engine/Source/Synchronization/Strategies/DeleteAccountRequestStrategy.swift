@@ -24,7 +24,7 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
 
     fileprivate static let path: String = "/self"
     public static let userDeletionInitiatedKey: String = "ZMUserDeletionInitiatedKey"
-    fileprivate(set) var deleteSync: ZMSingleRequestSync! = nil
+    fileprivate(set) var deleteSync: ZMSingleRequestSync!
     let cookieStorage: ZMPersistentCookieStorage
 
     public init(

@@ -28,7 +28,7 @@ extension SectionListCellType {
 
     var identifier: String {
         [obfuscatedSectionName ?? sectionName, cellIdentifier]
-            .compactMap { $0 }
+            .compactMap(\.self)
             .joined(separator: " - ")
     }
 }

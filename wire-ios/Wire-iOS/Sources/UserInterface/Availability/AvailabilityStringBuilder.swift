@@ -72,12 +72,12 @@ enum AvailabilityStringBuilder {
         guard let textColor = color, let iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         var attributedText = IconStringsBuilder.iconString(
-            leadingIcons: [icon].compactMap { $0 },
+            leadingIcons: [icon].compactMap(\.self),
             title: title,
             trailingIcons: [
                 isE2EICertified ? e2eiCertifiedShield : nil,
                 isProteusVerified ? proteusVerifiedShield : nil
-            ].compactMap { $0 },
+            ].compactMap(\.self),
             interactive: false,
             color: textColor
         )

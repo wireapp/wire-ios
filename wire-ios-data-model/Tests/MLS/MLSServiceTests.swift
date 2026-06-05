@@ -1971,7 +1971,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we didn't process any events.
         XCTAssertEqual(
-            mockConversationEventProcessor.processConversationEvents_Invocations.flatMap { $0 },
+            mockConversationEventProcessor.processConversationEvents_Invocations.flatMap(\.self),
             []
         )
 
@@ -3148,8 +3148,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // And processed the update event.
         let processConversationEventsCalls = mockConversationEventProcessor.processConversationEvents_Invocations
-        XCTAssertEqual(processConversationEventsCalls.flatMap { $0 }.count, 1)
-        XCTAssertEqual(processConversationEventsCalls.flatMap { $0 }.first, updateEvent)
+        XCTAssertEqual(processConversationEventsCalls.flatMap(\.self).count, 1)
+        XCTAssertEqual(processConversationEventsCalls.flatMap(\.self).first, updateEvent)
     }
 
     func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() async throws {

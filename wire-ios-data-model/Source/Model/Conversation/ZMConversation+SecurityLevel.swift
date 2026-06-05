@@ -595,7 +595,7 @@ extension ZMConversation {
             appendNewIsSecureSystemMessage(verified: userClients, for: users)
         case let .removedClients(userClients):
             let users = Set(userClients.keys)
-            let clients = Set(userClients.values.flatMap { $0 })
+            let clients = Set(userClients.values.flatMap(\.self))
             appendNewIsSecureSystemMessage(verified: clients, for: users)
         default:
             // no-op: the conversation is not secure in other cases

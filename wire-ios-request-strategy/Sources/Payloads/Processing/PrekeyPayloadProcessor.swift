@@ -176,7 +176,7 @@ extension Payload.ClientListByQualifiedUserID {
 
                 return [user: Array(userClients)]
             }
-        }.flatMap { $0 }
+        }.flatMap(\.self)
 
         return [ZMUser: [UserClient]](userClientsByUserTuples, uniquingKeysWith: +)
     }
@@ -206,7 +206,7 @@ extension Payload.ClientListByQualifiedUserID {
 
                 return [user: userClients]
             }
-        }.flatMap { $0 }
+        }.flatMap(\.self)
 
         return [ZMUser: [UserClient]](userClientsByUserTuples, uniquingKeysWith: +)
     }

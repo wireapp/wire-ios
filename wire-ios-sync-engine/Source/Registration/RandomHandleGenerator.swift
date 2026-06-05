@@ -56,17 +56,17 @@ enum RandomHandleGenerator {
             .append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(
                 numberOfDigits: 2,
                 variations: 2
-            ) }.flatMap { $0 })
+            ) }.flatMap(\.self))
         possibleHandles
             .append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 3).appendRandomDigits(
                 numberOfDigits: 3,
                 variations: 2
-            ) }.flatMap { $0 })
+            ) }.flatMap(\.self))
         possibleHandles
             .append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 4).appendRandomDigits(
                 numberOfDigits: 4,
                 variations: 2
-            ) }.flatMap { $0 })
+            ) }.flatMap(\.self))
 
         return possibleHandles
     }

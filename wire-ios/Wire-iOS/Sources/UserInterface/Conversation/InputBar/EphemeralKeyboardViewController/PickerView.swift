@@ -29,7 +29,7 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
     // MARK: - Properties
 
     var selectorColor: UIColor?
-    var tapRecognizer: UIGestureRecognizer! = nil
+    var tapRecognizer: UIGestureRecognizer!
     var didTapViewClosure: (() -> Void)?
 
     // MARK: - Initialization

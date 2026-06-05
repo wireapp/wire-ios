@@ -22,6 +22,7 @@ import XCTest
 
 @testable import Wire
 
+@MainActor
 final class ChangeHandleViewControllerTests: XCTestCase {
 
     // MARK: - Properties
@@ -32,8 +33,7 @@ final class ChangeHandleViewControllerTests: XCTestCase {
 
     // MARK: - setUp
 
-    @MainActor
-    override func setUp() async throws {
+    override func setUp() {
         settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
         snapshotHelper = SnapshotHelper()
         accentColor = .blue

@@ -157,7 +157,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) {
         _conversationListUI = conversationListUI
 
-        let viewControllers = [conversationListUI].compactMap { $0 }
+        let viewControllers = [conversationListUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
@@ -165,7 +165,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setArchiveUI(_ archiveUI: ArchiveUI?, animated: Bool) {
         _archiveUI = archiveUI
 
-        let viewControllers = [archiveUI].compactMap { $0 }
+        let viewControllers = [archiveUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
@@ -173,7 +173,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
         _settingsUI = settingsUI
 
-        let viewControllers = [settingsUI].compactMap { $0 }
+        let viewControllers = [settingsUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
@@ -181,7 +181,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) {
         _conversationUI = conversationUI
 
-        let viewControllers = [conversationUI ?? noConversationPlaceholder].compactMap { $0 }
+        let viewControllers = [conversationUI ?? noConversationPlaceholder].compactMap(\.self)
         splitLayoutContainer.secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }
@@ -189,7 +189,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setSettingsContentUI(_ settingsContentUI: UIViewController?, animated: Bool) {
         _settingsContentUI = settingsContentUI
 
-        let viewControllers = [settingsContentUI].compactMap { $0 }
+        let viewControllers = [settingsContentUI].compactMap(\.self)
         splitLayoutContainer.secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }

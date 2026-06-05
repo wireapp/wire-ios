@@ -39,8 +39,8 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationImagesViewController! = nil
-    private var navigatorController: UINavigationController! = nil
+    private var sut: ConversationImagesViewController!
+    private var navigatorController: UINavigationController!
     private var userSession: UserSessionMock!
     private var mockMainCoordinator: AnyMainCoordinator!
 
