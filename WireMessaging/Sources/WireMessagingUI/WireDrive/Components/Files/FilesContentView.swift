@@ -40,7 +40,6 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
     @ViewBuilder let sheetContent: (FilesViewModel.SheetNavigation) -> Sheet
 
     @State private var isSearchFocused = false
-    @State private var hideViewerAccessBanner = false
 
     package var body: some View {
         ZStack {
