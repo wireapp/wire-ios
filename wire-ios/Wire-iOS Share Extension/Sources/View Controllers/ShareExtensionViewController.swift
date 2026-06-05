@@ -138,6 +138,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func setup() {
         DeveloperOverrides.storage = .shared()
+        DeveloperFlag.storage = .applicationGroup
         setUpObserver()
         setUpDatadog()
     }
@@ -153,6 +154,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func setUpDatadog() {
         WireAnalytics.setup(for: .shareExtension)
+        CoreCrypto.registerLogger()
     }
 
     override func viewDidLoad() {
@@ -221,6 +223,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue
         )
+
+        if DeveloperFlag.simulateMainAppRequiredError.isOn {
+            throw SharingSessionLoader.Failure.mainAppRequired(message: "simulated developer flag")
+        }
+
         sharingSession = try await loader.load()
     }
 

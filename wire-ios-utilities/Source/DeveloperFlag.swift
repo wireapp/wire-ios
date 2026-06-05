@@ -39,6 +39,13 @@ public enum DeveloperFlag: String, CaseIterable {
     case useWireAuthentication
     case wireMeetings
     case lowKeyPackageCount
+    case enabledCCDebugLogs
+    case shakeToReport
+    case showNSEErrors
+    case simulateMainAppRequiredError
+    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
+    case enableDrivePermissions
+    case unSafeLogsForPublic
 
     public var description: String {
         switch self {
@@ -92,6 +99,24 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
+
+        case .enabledCCDebugLogs:
+            "Turn on to enable Core Crypto debug logs"
+
+        case .shakeToReport:
+            "Turn on to enable default shake gesture to present debug report share sheet. Shake again to present DeveloperTools once debug report share sheet presented"
+
+        case .showNSEErrors:
+            "Turn on to show Notification Service Extension errors as notifications"
+
+        case .simulateMainAppRequiredError:
+            "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
+
+        case .enableDrivePermissions:
+            "Turn on to enable drive permissions"
+
+        case .unSafeLogsForPublic:
+            "Turn on to write all logs (including debug and non-public) to disk in release builds"
         }
     }
 

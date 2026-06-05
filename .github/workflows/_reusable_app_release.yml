@@ -24,7 +24,9 @@ on:
       notify_secret:
         type: string
         required: true
-
+      produce_debug_builds:
+        type: boolean
+        default: false
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -36,8 +38,6 @@ on:
       WIRE_INTERNAL_GITHUB_USER:
         required: true
       WIRE_INTERNAL_GITHUB_TOKEN:
-        required: true
-      APPCENTER_API_TOKEN:
         required: true
       AWS_ACCESS_KEY_ID:
         required: true
@@ -96,8 +96,6 @@ jobs:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
       WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
-      APPCENTER_OWNER_NAME: "Wire"
       S3_BUCKET: "z-lohika"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
@@ -122,8 +120,7 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
-      UI_TEST_LOGIN_EMAIL: "test@example.com"
-      UI_TEST_LOGIN_PASSWORD: "12345"
+      DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
 
     steps:
       - name: Add Masks
@@ -157,18 +154,8 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
-         # Restore Swift Package Dependencies Cache
-      - name: Restore Swift Package Dependencies Cache
-        id: cache-swift-packages
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.PACKAGES_DIR }}
-          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_COUNTLY }}-${{ env.ENABLE_DATADOG }}
-
-        # Resolve Swift Package Dependencies
-      - name: Resolve Swift Package Dependencies
-        run: |
-          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+      - name: Cache Swift Packages
+        uses: ./.github/actions/cache-swift-packages
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -192,6 +179,10 @@ jobs:
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
+      - name: Check for duplicate symbol implementations
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check_duplicate_classes.sh .
       - name: Archiving Logs
         uses: actions/upload-artifact@v4
         if: failure()

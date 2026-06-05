@@ -67,11 +67,10 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
         canPerformMigration: Bool = false,
         contexts: [NSManagedObjectContext]? = nil
     ) async -> EARService {
-        let sut = await EARService(
+        let sut = EARService(
             accountID: userID,
             keyRepository: keyRepository,
             keyEncryptor: keyEncryptor,
-            databaseContexts: contexts ?? [uiMOC, syncMOC],
             coreDataStack: coreDataStack,
             canPerformKeyMigration: canPerformMigration,
             earStorage: earStorage,
@@ -79,7 +78,9 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
             migrator: migrator,
             authenticationContext: MockAuthenticationContextProtocol()
         )
-
+        await sut.setupDatabaseContexts(
+            databaseContexts: contexts ?? [uiMOC, syncMOC]
+        )
         sut.delegate = self
         return sut
     }
@@ -391,11 +392,10 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
         let messageEncryptionService = EARMessageEncryptionService(earStorage: earStorage)
         let migrator = EARMigrator(messageEncryptionService: messageEncryptionService)
 
-        let sut = await EARService(
+        let sut = EARService(
             accountID: userID,
             keyRepository: EARKeyRepository(),  // Real keychain access
             keyEncryptor: EARKeyEncryptor(),    // Real crypto
-            databaseContexts: [uiMOC],
             coreDataStack: coreDataStack,
             canPerformKeyMigration: false,
             earStorage: earStorage,
@@ -403,6 +403,7 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
             migrator: migrator,
             authenticationContext: MockAuthenticationContextProtocol()
         )
+        await sut.setupDatabaseContexts(databaseContexts: [uiMOC])
         sut.delegate = self
 
         let oldDatabaseKey = try sut.generateKeys()

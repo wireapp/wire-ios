@@ -178,7 +178,7 @@ private struct PaginatedWhitelistedBotProfileResponseV5: Decodable, ToAPIModelCo
         .init(
             element: services.map { $0.toAPIModel() },
             hasMore: hasMore ?? false,
-            nextStart: services.last?.id.uuidString ?? ""
+            nextStart: services.last?.id.transportString() ?? ""
         )
     }
 

@@ -92,6 +92,7 @@
 "verification_code.message" = "输入我们发送到 %@ 的验证码";
 "verification_code.confirm" = "确认";
 "verification_code.resend_code" = "重新发送代码";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "这是您第一次在此设备使用Wire。";
 "authentication.no_history.message" = "基于隐私考虑，您的历史聊天记录将不会被显示。";

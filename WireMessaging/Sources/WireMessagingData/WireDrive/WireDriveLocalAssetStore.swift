@@ -46,6 +46,40 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
         }
     }
 
+    package func offlineAssets(
+        conversationName: String?,
+        assetsPath: String?
+    ) async throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        let context = contextProvider.newBackgroundContext()
+        return try await context.perform {
+            let managedAssets = try context.fetchLocalOfflineAssets(
+                conversationName: conversationName,
+                assetsPath: assetsPath
+            )
+
+            return managedAssets.compactMap { managed in
+                let cacheKey = WireDriveLocalAsset.cacheKey(
+                    nodeID: managed.nodeID,
+                    eTag: managed.eTag,
+                    path: managed.path
+                )
+
+                return WireDriveLocalAsset(
+                    nodeID: managed.nodeID,
+                    eTag: managed.eTag,
+                    path: managed.path,
+                    contentType: managed.contentType,
+                    size: managed.size >= 0 ? UInt64(managed.size) : nil,
+                    conversationName: managed.conversationName,
+                    ownerName: managed.ownerName,
+                    modified: managed.modified,
+                    isAvailableOffline: managed.isAvailableOffline,
+                    downloadState: .downloaded(cacheKey: cacheKey)
+                )
+            }
+        }
+    }
+
     package func upsertAsset(_ asset: WireMessagingDomain.WireDriveLocalAsset) throws {
         guard assets[asset.nodeID] != asset else { return }
 
@@ -55,20 +89,21 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
 
         if let oldAsset, asset.hasEqualMetadata(to: oldAsset) { return }
 
-        let context = contextProvider.newBackgroundContext()
         Task.detached {
-            try await context.perform {
-                let stored = try context.fetchLocalAsset(nodeID: asset.nodeID) ?? ManagedLocalAsset(context: context)
-                stored.nodeID = asset.nodeID
-                stored.eTag = asset.eTag
-                stored.path = asset.path
-                stored.contentType = asset.contentType
-                stored.size = asset.size.map { Int64($0) } ?? -1
-                stored.isDownloaded = asset.isDownloaded
-
-                try context.save()
-            }
+            try await self.storeAsset(asset)
         }
+    }
+
+    package func upsertAssetAsync(_ asset: WireMessagingDomain.WireDriveLocalAsset) async throws {
+        guard assets[asset.nodeID] != asset else { return }
+
+        let oldAsset = assets[asset.nodeID]
+        assets[asset.nodeID] = asset
+        updates.send((asset.nodeID, asset))
+
+        if let oldAsset, asset.hasEqualMetadata(to: oldAsset) { return }
+
+        try await storeAsset(asset)
     }
 
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireDriveLocalAsset?, Never> {
@@ -80,11 +115,6 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
     }
 
     package func deleteAssets(nodeIDs: [UUID]) async throws {
-        for nodeID in nodeIDs {
-            assets[nodeID] = nil
-            updates.send((nodeID, nil))
-        }
-
         let context = contextProvider.newBackgroundContext()
         try await Task.detached {
             try await context.perform {
@@ -96,9 +126,34 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
                 try context.save()
             }
         }.value
+
+        for nodeID in nodeIDs {
+            assets[nodeID] = nil
+            updates.send((nodeID, nil))
+        }
     }
 
     // MARK: Helpers
+
+    private func storeAsset(_ asset: WireMessagingDomain.WireDriveLocalAsset) async throws {
+        let context = contextProvider.newBackgroundContext()
+
+        try await context.perform {
+            let stored = try context.fetchLocalAsset(nodeID: asset.nodeID) ?? ManagedLocalAsset(context: context)
+            stored.nodeID = asset.nodeID
+            stored.eTag = asset.eTag
+            stored.path = asset.path
+            stored.contentType = asset.contentType
+            stored.size = asset.size.map { Int64($0) } ?? -1
+            stored.conversationName = asset.conversationName
+            stored.ownerName = asset.ownerName
+            stored.modified = asset.modified
+            stored.isAvailableOffline = asset.isAvailableOffline
+            stored.isDownloaded = asset.isDownloaded
+
+            try context.save()
+        }
+    }
 
     private func storedAsset(nodeID: UUID) throws -> WireMessagingDomain.WireDriveLocalAsset? {
         let context = contextProvider.viewContext
@@ -115,6 +170,10 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
                     path: managed.path,
                     contentType: managed.contentType,
                     size: managed.size >= 0 ? UInt64(managed.size) : nil,
+                    conversationName: managed.conversationName,
+                    ownerName: managed.ownerName,
+                    modified: managed.modified,
+                    isAvailableOffline: managed.isAvailableOffline,
                     downloadState: managed.isDownloaded ? .downloaded(cacheKey: cacheKey) : .pending
                 )
             }
@@ -142,6 +201,10 @@ private extension WireMessagingDomain.WireDriveLocalAsset {
             && contentType == other.contentType
             && size == other.size
             && isDownloaded == other.isDownloaded
+            && conversationName == other.conversationName
+            && modified == other.modified
+            && ownerName == other.ownerName
+            && isAvailableOffline == other.isAvailableOffline
     }
 
 }
@@ -153,6 +216,30 @@ private extension NSManagedObjectContext {
         request.predicate = NSPredicate(format: "nodeID == %@", nodeID as any CVarArg)
         request.fetchLimit = 1
         return try fetch(request).first
+    }
+
+    func fetchLocalOfflineAssets(conversationName: String?, assetsPath: String?) throws -> [ManagedLocalAsset] {
+        let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
+        let isAvailableOfflinePredicate = NSPredicate(format: "isAvailableOffline == YES")
+        let isDownloadedPredicate =
+            NSPredicate(format: "isDownloaded == YES") // assets available offline should always be downloaded, this is
+        // just a safety measure.
+
+        var predicates: [NSPredicate] = [
+            isAvailableOfflinePredicate,
+            isDownloadedPredicate
+        ]
+
+        if let conversationName {
+            predicates.append(NSPredicate(format: "conversationName == %@", conversationName))
+        }
+
+        if let assetsPath {
+            predicates.append(NSPredicate(format: "path BEGINSWITH %@", assetsPath))
+        }
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        return try fetch(request)
     }
 
 }

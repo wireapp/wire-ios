@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MessageUI
 import UIKit
+import WireLocators
 import WireLogging
 import WireMultiBackendUI
 import WireSyncEngine
@@ -37,6 +37,7 @@ final class BlockerViewController: LaunchImageViewController {
     private var context: BlockerViewControllerContext = .blacklist
     private var error: Error?
     private var sessionManager: SessionManager?
+    private let shareDebugPresenter = ShareDebugReportPresenter()
 
     private var observerTokens = [Any]()
 
@@ -54,6 +55,7 @@ final class BlockerViewController: LaunchImageViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.accessibilityIdentifier = Locators.BlockerPage.mainContent.rawValue
         setupApplicationNotifications()
     }
 
@@ -129,20 +131,8 @@ final class BlockerViewController: LaunchImageViewController {
                 title: Strings.sendLogs,
                 style: .default
             ) { [weak self] _ in
-                guard let self else {
-                    return
-                }
-                DebugLogSender.sendLogsByEmail(
-                    message: debugLogMessage,
-                    presentingViewController: self,
-                    fallbackActivityPopoverConfiguration: .sourceView(
-                        sourceView: view,
-                        sourceRect: .init(
-                            origin: view.safeAreaLayoutGuide.layoutFrame.origin,
-                            size: .zero
-                        )
-                    )
-                )
+                guard let self else { return }
+                shareDebugPresenter.present(from: self)
             }
         )
 
@@ -262,11 +252,7 @@ final class BlockerViewController: LaunchImageViewController {
             style: .default
         ) { [weak self] _ in
             guard let self else { return }
-            let fallbackActivityPopoverConfiguration = PopoverPresentationControllerConfiguration.sourceView(
-                sourceView: view,
-                sourceRect: .init(origin: view.safeAreaLayoutGuide.layoutFrame.origin, size: .zero)
-            )
-            presentMailComposer(fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration)
+            shareDebugPresenter.present(from: self)
         }
 
         databaseFailureAlert.addAction(reportError)
@@ -323,17 +309,6 @@ final class BlockerViewController: LaunchImageViewController {
         present(deleteDatabaseConfirmationAlert, animated: true)
     }
 
-    func mailComposeController(
-        _ controller: MFMailComposeViewController,
-        didFinishWith result: MFMailComposeResult,
-        error: Error?
-    ) {
-        // shown after sending report logs, we should show other choices again
-        // in order not to be stuck on black screen
-        controller.presentingViewController?.dismiss(animated: true) {
-            self.showDatabaseFailureMessage()
-        }
-    }
 }
 
 // MARK: - Application state observing
@@ -347,8 +322,6 @@ extension BlockerViewController: ApplicationStateObserving {
         showAlert()
     }
 }
-
-extension BlockerViewController: SendTechnicalReportPresenter {}
 
 // MARK: - Certificate enrollment
 
@@ -380,17 +353,30 @@ extension BlockerViewController {
         }
 
         let oauthUseCase = OAuthUseCase(targetViewController: { rootViewController })
+        let enrollmentFlow = E2EIEnrollmentFlow(
+            oauthUseCase: oauthUseCase,
+            targetVC: { rootViewController }
+        )
 
-        let certificateChain = try await activeUserSession
-            .enrollE2EICertificate
-            .invoke(authenticate: oauthUseCase.invoke)
+        enrollmentFlow.showActivityIndicator()
 
-        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
-        successEnrollmentViewController.certificateDetails = certificateChain
-        successEnrollmentViewController.onOkTapped = { viewController in
-            viewController.dismiss(animated: true)
+        do {
+            let certificateChain = try await activeUserSession
+                .enrollE2EICertificate
+                .invoke(authenticate: enrollmentFlow.authenticate)
+
+            enrollmentFlow.dismissActivityIndicator()
+
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+            successEnrollmentViewController.certificateDetails = certificateChain
+            successEnrollmentViewController.onOkTapped = { viewController in
+                viewController.dismiss(animated: true)
+            }
+            successEnrollmentViewController.presentOverAll()
+        } catch {
+            enrollmentFlow.dismissActivityIndicator()
+            throw error
         }
-        successEnrollmentViewController.presentOverAll()
     }
 
 }

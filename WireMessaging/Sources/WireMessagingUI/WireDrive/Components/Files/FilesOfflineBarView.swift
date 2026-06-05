@@ -17,29 +17,54 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct FilesOfflineBarView: View {
+    @ScaledMetric private var scale: CGFloat = 1
+
     var body: some View {
-        Group {
-            Text(
-                L10n.Localizable.General.NoInternet.title.uppercased()
-            )
-            .font(for: .subline2)
-            .foregroundColor(.white)
+        VStack(spacing: 8) {
+            bar()
+            hint()
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: 25)
-        .background(Color(
-            red: 254.0 / 255.0,
-            green: 191.0 / 255.0,
-            blue: 2.0 / 255.0,
-            opacity: 1
-        ))
-        .cornerRadius(6)
         .padding(.horizontal, 16)
+        .padding(.bottom, 4)
+    }
+
+    @ViewBuilder
+    private func bar() -> some View {
+        Text(L10n.Localizable.General.NoInternet.title.uppercased())
+            .font(for: .subline2)
+            .multilineTextAlignment(.center)
+            .foregroundColor(ColorTheme.Base.onWarning.color)
+            .frame(maxWidth: .infinity)
+            .padding(4)
+            .background(ColorTheme.Base.warning.color)
+            .cornerRadius(6 * scale)
+    }
+
+    @ViewBuilder
+    private func hint() -> some View {
+        Text(L10n.Localizable.Conversation.WireCells.Files.offlineModeHint)
+            .font(for: .subline1)
+            .multilineTextAlignment(.center)
     }
 }
 
 #Preview {
-    FilesOfflineBarView()
+    VStack(spacing: 0) {
+        Text("content above the bar")
+            .opacity(0.5)
+            .padding()
+
+        Divider()
+
+        FilesOfflineBarView()
+
+        Divider()
+
+        Text("content below the bar")
+            .opacity(0.5)
+            .padding()
+    }
 }

@@ -29,25 +29,34 @@ extension ConversationContentViewController {
             return
         }
 
-        var headerView: UIView?
+        let headerView: UIView?
 
-        let otherParticipant: ZMUser? = if conversation.conversationType == .connection {
+        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation
+            .conversationType == .oneOnOne
+
+        let otherParticipant: ZMUser? = if connectionOrOneOnOne {
             conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser
         } else {
             conversation.firstActiveParticipantOtherThanSelf
         }
 
-        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation
-            .conversationType == .oneOnOne
-
         if connectionOrOneOnOne, let otherParticipant {
-            connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)
-            headerView = connectionViewController?.view
+            if !otherParticipant.isConnected {
+                otherParticipant.refreshData()
+            }
+            headerView = OneOnOneConversationHeaderView(user: otherParticipant, userSession: userSession)
+        } else {
+            let groupHeaderView = GroupConversationHeaderView(
+                conversation: conversation,
+                selfUser: userSession.selfUser
+            )
+            groupHeaderView.delegate = self
+            headerView = groupHeaderView
         }
 
         if let headerView {
-            headerView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-            setConversationHeaderView(headerView)
+            let isConnection = conversation.conversationType == .connection
+            setConversationHeaderView(headerView, compressedHeight: !isConnection)
         } else {
             tableView.tableHeaderView = nil
         }

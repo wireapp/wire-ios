@@ -35,15 +35,15 @@ final class ZClientControllerBuilder {
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
-    private lazy var wireDriveBackendURL: URL? = {
+    private var wireDriveBackendURL: URL? {
         let contextProvider = userSession.contextProvider
-        let syncContext = contextProvider.syncContext
-        let featureRepository = LegacyFeatureRepository(context: syncContext)
+        let viewContext = contextProvider.viewContext
+        let featureRepository = LegacyFeatureRepository(context: viewContext)
 
-        return syncContext.performAndWait {
+        return viewContext.performAndWait {
             featureRepository.fetchCellsInternal()?.config.backend.url
         }
-    }()
+    }
 
     init(
         account: Account,
@@ -156,10 +156,18 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                     let participants: [WireDriveConversation.Participant] = conversation.participants
                         .compactMap { item -> WireDriveConversation.Participant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
+                            // TODO: [WPB-25941] Remove developer flag when feature is complete
+                            let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
+                            let role: WireDriveConversation.Participant.Role = if isDrivePermissionsEnabled {
+                                item.isGuest(in: conversation) ? .viewer : .editor
+                            } else {
+                                .editor
+                            }
 
                             return .init(
                                 handle: item.handle ?? "-",
                                 displayName: item.name ?? "-",
+                                role: role,
                                 isSelfUser: item.isSelfUser,
                                 id: id.uuidString + "@" + domain,
                                 iconData: WireDriveConversation.Participant.IconData(

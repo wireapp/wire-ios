@@ -52,14 +52,14 @@ final class ShareExtensionTests: WireUITestCase {
     @MainActor
     func testShareImageOnetoOne_TC_8915() async throws {
 
-        let user1 = try await userHelper.createPersonalUser()
-        let user2 = try await userHelper.createPersonalUser()
+        let user1 = try await UserHelper.default.createPersonalUser()
+        let user2 = try await UserHelper.default.createPersonalUser()
         let domain = BackendTarget.staging.domainInfo
 
-        try await userHelper.sendConnectionRequestToUser(domain: domain, userId: user1.id)
-        try await userHelper.acceptConnectionRequestFromUser(domain: domain, user1: user1, userId: user2.id)
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: user1.id)
+        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: user1, userId: user2.id)
         let firstTimePage = try app.loginUser(email: user1.email, password: user1.password)
-        let conversationsPage = try  firstTimePage.acceptPopup(with: self)
+        let conversationsPage = try  firstTimePage.acceptPopup()
         XCTAssertTrue(
             conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
             "Conversation Cell did not show up after login"
@@ -78,10 +78,10 @@ final class ShareExtensionTests: WireUITestCase {
     @MainActor
     func testShareImageToGroupConversation_TC_8919() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
@@ -91,21 +91,21 @@ final class ShareExtensionTests: WireUITestCase {
         var qualifiedIds: [QualifiedID] = []
 
         for _ in 0 ..< countOfMembers {
-            let (qualifiedId, _) = try await userHelper.registerUsersAsTeamMember(
+            let (qualifiedId, _) = try await UserHelper.default.registerUsersAsTeamMember(
                 ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
             qualifiedIds.append(qualifiedId)
         }
 
-        try await userHelper.createGroupConversations(
+        try await UserHelper.default.createGroupConversations(
             qualifiedIds: qualifiedIds,
             owner: teamOwner,
             groupName: groupName
         )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
         XCTAssertTrue(
             conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
             "Conversation Cell did not show up after login"

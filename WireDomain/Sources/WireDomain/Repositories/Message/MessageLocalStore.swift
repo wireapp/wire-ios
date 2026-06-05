@@ -960,12 +960,50 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
+
+        case let .userDeleted(sender: (id, domain)):
+            guard let sender = await fetchUser(
+                id: id,
+                domain: domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .userRemovedFromTeam,
+                sender: sender,
+            )
+
+            return [systemMessage]
+
+        case let .promotedToGroupAdmin(user: (userID, userDomain), sender: (senderID, senderDomain), date):
+            guard
+                let sender = await fetchUser(
+                    id: senderID,
+                    domain: senderDomain
+                ),
+                let user = await fetchUser(
+                    id: userID,
+                    domain: userDomain
+                )
+            else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .promotedToGroupAdmin,
+                sender: sender,
+                users: Set([user]),
+                timestamp: date
+            )
+
+            return [systemMessage]
         }
     }
 
     private func createSystemMessage(
         messageType: ZMSystemMessageType,
-        sender: ZMUser,
+        sender: ZMUser?,
         users: Set<ZMUser>? = nil,
         addedUsers: Set<ZMUser> = Set(),
         clients: Set<UserClient>? = nil,

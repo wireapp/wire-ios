@@ -93,6 +93,8 @@
 		5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
 		5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
+		599C05B12F583D3600DACB07 /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 599C05B02F583D3600DACB07 /* WireNetworkSupport */; };
+		599C05B32F583D3F00DACB07 /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 599C05B22F583D3F00DACB07 /* WireNetworkSupport */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
 		59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C612C89CD3D00EA7999 /* WireTestingPackage */; };
 		59B768432D2D58BE007B5F1E /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B768422D2D58BE007B5F1E /* WireFoundationSupport */; };
@@ -102,10 +104,13 @@
 		59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
 		59C951C22E2B67E3002C0A3E /* WireLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59C951C12E2B67E3002C0A3E /* WireLoggingSupport */; };
 		59C951C42E2B67E8002C0A3E /* WireLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59C951C32E2B67E8002C0A3E /* WireLoggingSupport */; };
+		59CB3F1F2F6AEB66003616C7 /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = 59CB3F1E2F6AEB66003616C7 /* WireData */; };
+		59CB3F212F6AEB6D003616C7 /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = 59CB3F202F6AEB6D003616C7 /* WireData */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
 		76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */; };
 		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
+		76E40EDF2FA365DB005B3080 /* OktaSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 76E40EDE2FA365DB005B3080 /* OktaSdk */; };
 		76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 76ED41EB2E053E3200A286F4 /* WireNetwork */; };
 		76EF748C2E9E6012006A1579 /* WireLocators in Frameworks */ = {isa = PBXBuildFile; productRef = 76EF748B2E9E6012006A1579 /* WireLocators */; };
 		76EF748E2E9E6366006A1579 /* WireLocators in Frameworks */ = {isa = PBXBuildFile; productRef = 76EF748D2E9E6366006A1579 /* WireLocators */; };
@@ -522,6 +527,7 @@
 				AudioRecordViewControllerTests.swift,
 				Authentication/AuthenticationInterfaceBuilderTests.swift,
 				Authentication/AuthenticationStateControllerTests.swift,
+				Authentication/CookieStorageTests.swift,
 				Authentication/Helpers/RegistrationAnalyticsTrackerTests.swift,
 				Authentication/MockAuthenticationFeatureProvider.swift,
 				AvailabilityLabelTests.swift,
@@ -584,10 +590,10 @@
 				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageChannelHistoryDepthSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageMlsSupportSnapshotTests.swift,
+				ConversationCell/GroupConversationHeaderViewSnapshotTests.swift,
 				ConversationCell/LocationMessageCellTests.swift,
 				ConversationCell/MarkDownSnapshotTests.swift,
 				ConversationCell/MultiParagraphSnapshotTests.swift,
-				ConversationCell/StartedConversationCellTests.swift,
 				ConversationCell/TextMessageMentionsTests.swift,
 				ConversationCell/UnknownMessageContentTypeReceivedCellTests.swift,
 				ConversationContentViewControllerTests.swift,
@@ -632,9 +638,9 @@
 				ConversationMessageCell/ConversationMessageSnapshotTestCase.swift,
 				ConversationMessageCell/ConversationPingMessageTests.swift,
 				ConversationMessageCell/ConversationReactionMessageTests.swift,
+				ConversationMessageCell/ConversationReplyWithTextCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSenderMessageDetailsCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSystemMessageTests.swift,
-				ConversationMessageCell/ConversationTextMessageCellTests.swift,
 				ConversationMessageCell/ConversationTextMessageTests.swift,
 				ConversationMessageCell/ConversationVideoMessageCellTests.swift,
 				ConversationMessageCell/EmoliRepositoryTests.swift,
@@ -644,8 +650,6 @@
 				ConversationMessageCell/ReadReceiptSystemMessage/ReadReceiptViewModelTests.swift,
 				ConversationMessageCell/SimpleChatBubblesSnapshotTests.swift,
 				ConversationOptionsViewControllerTests.swift,
-				ConversationReplyCellDescriptionTests.swift,
-				ConversationReplyCellTests.swift,
 				ConversationServicesOptionsViewControllerTests.swift,
 				ConversationStatusTests.swift,
 				"ConversationStatusTests+Icon.swift",
@@ -679,6 +683,7 @@
 				"EmoticonSubstitution/NSMutableAttributedString+ReplaceEmojiTests.swift",
 				"EmoticonSubstitution/NSString+EmoticonSubstitutionTests.swift",
 				"EmoticonSubstitution/XCTestCase+EmoticonSubstitutionConfiguration.swift",
+				EmptyAppsSearchResultViewSnapshotTests.swift,
 				EmptySearchResultsViewTests.swift,
 				EphemeralKeyboardViewControllerTests.swift,
 				EphemeralTimeoutFormatterTests.swift,
@@ -740,6 +745,7 @@
 				NetworkStatusView/NetworkStatusViewTests.swift,
 				"NSAttributedString+DownTests.swift",
 				NSAttributedStringHighlightTests.swift,
+				OneOnOneConversationHeaderViewSnapshotTests.swift,
 				OtherUserDeviceDetailsViewTests.swift,
 				PasswordRules/PasswordRuleSetTests.swift,
 				PreBackendSwitchViewControllerSnapshotTests.swift,
@@ -782,8 +788,6 @@
 				SecurityLevel/SecurityLevelViewTests.swift,
 				SelfProfileViewControllerTests.swift,
 				"Settings/Debug Report/LogFilesProviderTests.swift",
-				"Settings/Debug Report/SettingsDebugReportViewControllerSnapshotTests.swift",
-				"Settings/Debug Report/SettingsDebugReportViewModelTests.swift",
 				Settings/SettingsTests.swift,
 				"Settings+Reset.swift",
 				SettingsTableViewControllerSnapshotTests.swift,
@@ -801,6 +805,7 @@
 				SwitchBackendConfirmationViewModelTests.swift,
 				SwitchBackendConfirmationViewTests.swift,
 				TeamMetadataRefresherTests.swift,
+				TestingAppDelegate.swift,
 				ThumbnailCreationTests.swift,
 				Token/TokenFieldTests.swift,
 				Token/TokenSeparatorAttachmentSnapshotTests.swift,
@@ -815,7 +820,6 @@
 				URLWireLocaleTests.swift,
 				UserCellTests.swift,
 				UserClientCellTests.swift,
-				UserConnectionViewSnapshotTests.swift,
 				UserImageViewContainerSnapshotTests.swift,
 				UserInterface/ConversationList/ArchivedList/ArchivedListViewControllerSnapshotTests.swift,
 				UserInterface/ConversationList/ArchivedList/ArchivedListViewModelTests.swift,
@@ -856,7 +860,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				DeviceManagement/MockContextProvider.swift,
+				"Settings/Debug Report/CreateDebugReportUseCaseTests.swift",
 				Settings/SettingsPropertyTests.swift,
+				TestingAppDelegate.swift,
 			);
 			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
 		};
@@ -901,6 +907,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76E40EDF2FA365DB005B3080 /* OktaSdk in Frameworks */,
 				76EF748C2E9E6012006A1579 /* WireLocators in Frameworks */,
 				D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */,
 				76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */,
@@ -998,6 +1005,8 @@
 				CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */,
 				59B7684B2D2D5A17007B5F1E /* WireFoundationSupport in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
+				59CB3F1F2F6AEB66003616C7 /* WireData in Frameworks */,
+				599C05B12F583D3600DACB07 /* WireNetworkSupport in Frameworks */,
 				3438C5592E5C518900D6FB5C /* WireNetwork in Frameworks */,
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
@@ -1014,6 +1023,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				599C05B32F583D3F00DACB07 /* WireNetworkSupport in Frameworks */,
 				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
 				59C951C42E2B67E8002C0A3E /* WireLoggingSupport in Frameworks */,
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
@@ -1023,6 +1033,7 @@
 				597D9BEF2DA7DA7B000031DE /* WireUtilitiesSupport.framework in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
+				59CB3F212F6AEB6D003616C7 /* WireData in Frameworks */,
 				59B768432D2D58BE007B5F1E /* WireFoundationSupport in Frameworks */,
 				591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 			);
@@ -1270,6 +1281,7 @@
 				D0E258142DDC864100959FB9 /* WireFoundation */,
 				76ED41EB2E053E3200A286F4 /* WireNetwork */,
 				76EF748B2E9E6012006A1579 /* WireLocators */,
+				76E40EDE2FA365DB005B3080 /* OktaSdk */,
 			);
 			productName = WireUITests;
 			productReference = 01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */;
@@ -1422,6 +1434,8 @@
 				595BE7A32E32367F00ED9088 /* WireAnalyticsSupport */,
 				3438C5582E5C518900D6FB5C /* WireNetwork */,
 				76EF748F2E9E6380006A1579 /* WireLocators */,
+				599C05B02F583D3600DACB07 /* WireNetworkSupport */,
+				59CB3F1E2F6AEB66003616C7 /* WireData */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -1450,6 +1464,8 @@
 				59C951C32E2B67E8002C0A3E /* WireLoggingSupport */,
 				595BE7A52E32368500ED9088 /* WireAnalyticsSupport */,
 				3438C55A2E5C51A700D6FB5C /* WireNetwork */,
+				599C05B22F583D3F00DACB07 /* WireNetworkSupport */,
+				59CB3F202F6AEB6D003616C7 /* WireData */,
 			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
@@ -1605,6 +1621,7 @@
 				E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
 				CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */,
 				59703B262DD4A42000B45773 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				76E40EDD2FA3659C005B3080 /* XCRemoteSwiftPackageReference "okta-sdk-swift" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
@@ -2783,6 +2800,14 @@
 				minimumVersion = 0.9.0;
 			};
 		};
+		76E40EDD2FA3659C005B3080 /* XCRemoteSwiftPackageReference "okta-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/okta/okta-sdk-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/wireapp/Down";
@@ -2951,6 +2976,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
 		};
+		599C05B02F583D3600DACB07 /* WireNetworkSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetworkSupport;
+		};
+		599C05B22F583D3F00DACB07 /* WireNetworkSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetworkSupport;
+		};
 		59B48C612C89CD3D00EA7999 /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireTestingPackage;
@@ -2979,6 +3012,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLoggingSupport;
 		};
+		59CB3F1E2F6AEB66003616C7 /* WireData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireData;
+		};
+		59CB3F202F6AEB6D003616C7 /* WireData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireData;
+		};
 		59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireReusableUIComponents;
@@ -2994,6 +3035,10 @@
 		76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireIndividualToTeamMigrationUI;
+		};
+		76E40EDE2FA365DB005B3080 /* OktaSdk */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OktaSdk;
 		};
 		76ED41EB2E053E3200A286F4 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;

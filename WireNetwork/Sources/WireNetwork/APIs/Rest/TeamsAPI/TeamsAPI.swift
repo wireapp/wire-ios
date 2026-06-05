@@ -95,12 +95,19 @@ public protocol TeamsAPI {
         ) async throws -> UUID
     #endif
 
-    /// Fetches details of an app in a team by app id.
+    /// Fetches details of all apps in a team.
 
-    func getApp(
-        for teamID: Team.ID,
-        with id: UUID
-    ) async throws -> TmpApp
+    func getApps(
+        for teamID: Team.ID
+    ) async throws -> [User]
+
+    /// Fetches collaborators.
+
+    func getCollaborators(
+        for teamID: Team.ID
+    ) async throws -> [CollaboratorInfo]
+
+    /// Fetches legacy services (bots) in a team.
 
     func getWhitelistedBots(
         for teamID: Team.ID,

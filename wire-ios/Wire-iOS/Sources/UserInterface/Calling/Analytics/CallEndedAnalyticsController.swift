@@ -105,7 +105,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
     private func handleCallEstablished(_ conversation: ZMConversation) {
         if eventInfos[conversation.remoteIdentifier] == nil {
-            logger.error("handleCallEstablished: expected eventInfo to be non-nil")
+            logger.debug("handleCallEstablished: no eventInfo to track — call joined after establishment")
             eventInfos[conversation.remoteIdentifier] = .init(callStart: currentDateProvider.now)
         }
 
@@ -135,8 +135,11 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         _ conversation: ZMConversation,
         _ reason: CallClosedReason
     ) {
-        if eventInfos[conversation.remoteIdentifier] == nil {
-            logger.error("handleCallTerminating: expected eventInfo to be non-nil")
+        guard eventInfos[conversation.remoteIdentifier] != nil else {
+            logger
+                .debug(
+                    "handleCallTerminating: no eventInfo to flush (reason: \(reason)) — call ended before this client engaged"
+                )
             return
         }
 
@@ -247,7 +250,8 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         case let .incoming(isVideoCall, true, _):
             handleIncomingCall(conversation, isVideoCall)
         case .answered:
-            handleIncomingCall(conversation, false)
+            // tracking already started by .incoming; .established will mark callStart
+            break
         case let .outgoing(isVideoCall, _):
             handleOutgoingCall(conversation, isVideoCall)
         case .established:

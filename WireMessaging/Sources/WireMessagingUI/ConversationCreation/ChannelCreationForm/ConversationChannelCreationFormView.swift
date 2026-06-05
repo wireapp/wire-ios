@@ -19,6 +19,7 @@
 public import SwiftUI
 
 import WireDesign
+import WireLocators
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -96,6 +97,7 @@ public struct ConversationChannelCreationForm: View {
                     Text(Strings.CreationForm.ChannelName.label)
                 }
             )
+            .accessibilityIdentifier(Locators.CreateChannelPage.channelNameField.rawValue)
         }
     }
 
@@ -191,7 +193,9 @@ public struct ConversationChannelCreationForm: View {
             } else {
                 InfoBannerView(
                     title: Strings.CreationForm.AppsDisabled.title,
-                    message: Strings.CreationForm.AppsDisabled.message
+                    message: viewModel.isTeamAdmin
+                        ? Strings.CreationForm.AppsDisabledAsAdmin.message
+                        : Strings.CreationForm.AppsDisabled.message
                 )
                 .foregroundStyle(Color.primary)
                 .padding(.horizontal, -16)
@@ -210,6 +214,7 @@ public struct ConversationChannelCreationForm: View {
     var fileManagementSection: some View {
         Section(content: {
             Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.fileManagementEnabled)
+                .accessibilityIdentifier(Locators.CreateChannelPage.sharedDriveSwitch.rawValue)
         }, footer: {
             Text(footerText)
         })
@@ -232,6 +237,7 @@ public struct ConversationChannelCreationForm: View {
             channelName: "",
             channelInvitePolicy: .admins,
             channelHistoryOption: .off,
+            isTeamAdmin: true,
             areAppsSupported: true,
             appsAllowed: true,
             guestsAllowed: true,
@@ -244,12 +250,32 @@ public struct ConversationChannelCreationForm: View {
     )
 }
 
-#Preview("apps not supported") {
+#Preview("apps not supported [admin]") {
     ConversationChannelCreationForm(
         viewModel: ConversationChannelCreationFormViewModel(
             channelName: "",
             channelInvitePolicy: .admins,
             channelHistoryOption: .off,
+            isTeamAdmin: true,
+            areAppsSupported: false,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
+            isUserPremium: false,
+            isWireDriveEnabled: true,
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
+    )
+}
+
+#Preview("apps not supported [non-admin]") {
+    ConversationChannelCreationForm(
+        viewModel: ConversationChannelCreationFormViewModel(
+            channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            isTeamAdmin: false,
             areAppsSupported: false,
             appsAllowed: true,
             guestsAllowed: true,

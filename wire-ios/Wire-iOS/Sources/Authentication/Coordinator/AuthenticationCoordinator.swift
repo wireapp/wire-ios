@@ -329,7 +329,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 let userInfo = UserInfo(
                     identifier: result.userID,
-                    cookieData: HTTPCookie.extractData(from: result.cookies)!,
                     cookies: result.cookies
                 )
 
@@ -865,7 +864,8 @@ extension AuthenticationCoordinator {
 
         Task { @MainActor in
             do {
-                let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+                let certificateChain = try await e2eiCertificateUseCase
+                    .invoke(authenticate: { try await oauthUseCase.invoke(parameters: $0) })
                 executeActions([
                     .hideLoadingView,
                     .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)

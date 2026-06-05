@@ -23,10 +23,10 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func testMigratePersonalUserToTeam_TC_9452() async throws {
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let conversationPage = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openUserProfilePage()
             .tapCreateTeamButton()
             .tapContinue()
@@ -43,23 +43,23 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func testPersonalUserInvitedToTeam_TC_9453() async throws {
-        let teamOwner = try await userHelper.createPersonalUser()
-        let teamID = try await userHelper.upgradePersonalToTeam(
+        let teamOwner = try await UserHelper.default.createPersonalUser()
+        let teamID = try await UserHelper.default.upgradePersonalToTeam(
             teamName: teamOwner.teamName
         )
 
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
 
-        let (_, memberUser) = try await userHelper.registerUsersAsTeamMember(
+        let (_, memberUser) = try await UserHelper.default.registerUsersAsTeamMember(
             ownerAccessToken: ownerAccessToken.token,
             teamID: teamID
         )
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
-        let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
+        let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(memberUser.username)
             .openUserProfilePage()
 
@@ -76,15 +76,15 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func testTeamOwnerGroupCreatedAndSendMessage_TC_9454() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
 
-        let teamMemberNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
+        let teamMemberNames = try await UserHelper.default.registerTeamWith2Members(teamOwner: teamOwner)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
@@ -95,7 +95,7 @@ final class TeamManageTests: WireUITestCase {
         let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
 
-        let sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
@@ -105,9 +105,9 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func testGroupAdminRemoveAndAddParticipantFromGroup_TC_9455() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
@@ -118,7 +118,7 @@ final class TeamManageTests: WireUITestCase {
         var teamMembers: [UserInfo] = []
 
         for _ in 0 ..< countOfMembers {
-            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+            let (qualifiedId, teamMember) = try await UserHelper.default.registerUsersAsTeamMember(
                 ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
@@ -126,14 +126,14 @@ final class TeamManageTests: WireUITestCase {
             teamMembers.append(teamMember)
         }
 
-        try await userHelper.createGroupConversations(
+        try await UserHelper.default.createGroupConversations(
             qualifiedIds: qualifiedIds,
             owner: teamOwner,
             groupName: groupName
         )
 
         let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
             .openConversationDetails()
             .openUserDetailsPage(byName: teamMembers[0].name)
@@ -163,14 +163,14 @@ final class TeamManageTests: WireUITestCase {
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     @MainActor
     func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
 
-        let teamNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
+        let teamNames = try await UserHelper.default.registerTeamWith2Members(teamOwner: teamOwner)
 
         let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
@@ -190,19 +190,19 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func testMentionUserInGroup_TC_8865() async throws {
 
-        let (teamOwner, teamMembers, _, _) = try await userHelper
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 4,
-                groupName: UserGenerator.generateRandomGroupName()
+                conversation: .group(UserGenerator.generateRandomConversationName())
             )
 
         _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
         let conversationPage = try app.loginUser(email: teamMembers[1].email, password: teamMembers[1].password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openUserProfilePage()
             .switchUserAccountForUser(withName: teamOwner.name)
             .openConversation()
@@ -219,7 +219,7 @@ final class TeamManageTests: WireUITestCase {
 
         let activeConversationPage = try conversationPage.openConversation()
 
-        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let fetchMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             fetchMessages.contains(where: { $0.contains("@") && $0.contains(teamMembers[1].name) }),
             "Expected mention '@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"

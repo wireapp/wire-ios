@@ -475,6 +475,60 @@ class MockConversationUserClientDetailsActions: ConversationUserClientDetailsAct
 
 }
 
+class MockCreateDebugReportUseCaseProtocol: CreateDebugReportUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockError: Error?
+    var invoke_MockMethod: (() async throws -> URL)?
+    var invoke_MockValue: URL?
+
+    func invoke() async throws -> URL {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+    // MARK: - invokeData
+
+    var invokeData_Invocations: [Void] = []
+    var invokeData_MockError: Error?
+    var invokeData_MockMethod: (() async throws -> Data)?
+    var invokeData_MockValue: Data?
+
+    func invokeData() async throws -> Data {
+        invokeData_Invocations.append(())
+
+        if let error = invokeData_MockError {
+            throw error
+        }
+
+        if let mock = invokeData_MockMethod {
+            return try await mock()
+        } else if let mock = invokeData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeData`")
+        }
+    }
+
+}
+
 class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConversationViewControllerBuilderProtocol {
 
     // MARK: - Life cycle
@@ -915,6 +969,37 @@ class MockNetworkStatusViewDelegate: NetworkStatusViewDelegate {
 
 }
 
+class MockOAuthUseCaseInterface: OAuthUseCaseInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_Invocations: [(parameters: OAuthParameters, onWebViewPresenting: (@MainActor () -> Void)?, onWebViewDismissed: (@MainActor () -> Void)?)] = []
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockError: Error?
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockMethod: ((OAuthParameters, (@MainActor () -> Void)?, (@MainActor () -> Void)?) async throws -> OAuthResponse)?
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue: OAuthResponse?
+
+    func invoke(parameters: OAuthParameters, onWebViewPresenting: (@MainActor () -> Void)?, onWebViewDismissed: (@MainActor () -> Void)?) async throws -> OAuthResponse {
+        invokeParametersOnWebViewPresentingOnWebViewDismissed_Invocations.append((parameters: parameters, onWebViewPresenting: onWebViewPresenting, onWebViewDismissed: onWebViewDismissed))
+
+        if let error = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockError {
+            throw error
+        }
+
+        if let mock = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockMethod {
+            return try await mock(parameters, onWebViewPresenting, onWebViewDismissed)
+        } else if let mock = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeParametersOnWebViewPresentingOnWebViewDismissed`")
+        }
+    }
+
+}
+
 class MockProfileActionsFactoryProtocol: ProfileActionsFactoryProtocol {
 
     // MARK: - Life cycle
@@ -1342,17 +1427,17 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
     // MARK: - transitionToListAndEnqueue
 
-    var transitionToListAndEnqueueLeftViewControllerRevealed_Invocations: [(leftViewControllerRevealed: Bool, block: () -> Void)] = []
-    var transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod: ((Bool, @escaping () -> Void) -> Void)?
+    var transitionToListAndEnqueue_Invocations: [() -> Void] = []
+    var transitionToListAndEnqueue_MockMethod: ((@escaping () -> Void) -> Void)?
 
-    func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void) {
-        transitionToListAndEnqueueLeftViewControllerRevealed_Invocations.append((leftViewControllerRevealed: leftViewControllerRevealed, block: block))
+    func transitionToListAndEnqueue(_ block: @escaping () -> Void) {
+        transitionToListAndEnqueue_Invocations.append(block)
 
-        guard let mock = transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod else {
-            fatalError("no mock for `transitionToListAndEnqueueLeftViewControllerRevealed`")
+        guard let mock = transitionToListAndEnqueue_MockMethod else {
+            fatalError("no mock for `transitionToListAndEnqueue`")
         }
 
-        mock(leftViewControllerRevealed, block)
+        mock(block)
     }
 
     // MARK: - setConversationTransitionClosure
@@ -1440,98 +1525,6 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
         } else {
             fatalError("no mock for `buildMainCoordinator`")
         }
-    }
-
-}
-
-class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - presentMailComposer
-
-    var presentMailComposer_Invocations: [Void] = []
-    var presentMailComposer_MockMethod: (() -> Void)?
-
-    @MainActor
-    func presentMailComposer() {
-        presentMailComposer_Invocations.append(())
-
-        guard let mock = presentMailComposer_MockMethod else {
-            fatalError("no mock for `presentMailComposer`")
-        }
-
-        mock()
-    }
-
-    // MARK: - presentFallbackAlert
-
-    var presentFallbackAlertSender_Invocations: [UIView] = []
-    var presentFallbackAlertSender_MockMethod: ((UIView) -> Void)?
-
-    func presentFallbackAlert(sender: UIView) {
-        presentFallbackAlertSender_Invocations.append(sender)
-
-        guard let mock = presentFallbackAlertSender_MockMethod else {
-            fatalError("no mock for `presentFallbackAlertSender`")
-        }
-
-        mock(sender)
-    }
-
-    // MARK: - presentShareViewController
-
-    var presentShareViewControllerDestinationsDebugReport_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport)] = []
-    var presentShareViewControllerDestinationsDebugReport_MockMethod: (([ZMConversation], ShareableDebugReport) -> Void)?
-
-    func presentShareViewController(destinations: [ZMConversation], debugReport: ShareableDebugReport) {
-        presentShareViewControllerDestinationsDebugReport_Invocations.append((destinations: destinations, debugReport: debugReport))
-
-        guard let mock = presentShareViewControllerDestinationsDebugReport_MockMethod else {
-            fatalError("no mock for `presentShareViewControllerDestinationsDebugReport`")
-        }
-
-        mock(destinations, debugReport)
-    }
-
-}
-
-class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - sendReport
-
-    var sendReportSender_Invocations: [UIView] = []
-    var sendReportSender_MockMethod: ((UIView) -> Void)?
-
-    func sendReport(sender: UIView) {
-        sendReportSender_Invocations.append(sender)
-
-        guard let mock = sendReportSender_MockMethod else {
-            fatalError("no mock for `sendReportSender`")
-        }
-
-        mock(sender)
-    }
-
-    // MARK: - shareReport
-
-    var shareReport_Invocations: [Void] = []
-    var shareReport_MockMethod: (() async -> Void)?
-
-    func shareReport() async {
-        shareReport_Invocations.append(())
-
-        guard let mock = shareReport_MockMethod else {
-            fatalError("no mock for `shareReport`")
-        }
-
-        await mock()
     }
 
 }

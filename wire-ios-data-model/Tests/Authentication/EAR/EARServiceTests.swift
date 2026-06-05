@@ -61,11 +61,10 @@ final class EARServiceTests: EARServiceTestsBase, @MainActor EARServiceDelegate 
     func createSUT(
         canPerformMigration: Bool = false
     ) async -> EARService {
-        let sut = await EARService(
+        let sut = EARService(
             accountID: userID,
             keyRepository: keyRepository,
             keyEncryptor: keyEncryptor,
-            databaseContexts: [uiMOC, syncMOC],
             coreDataStack: coreDataStack,
             canPerformKeyMigration: canPerformMigration,
             earStorage: earStorage,
@@ -74,6 +73,9 @@ final class EARServiceTests: EARServiceTestsBase, @MainActor EARServiceDelegate 
             authenticationContext: MockAuthenticationContextProtocol()
         )
 
+        await sut.setupDatabaseContexts(
+            databaseContexts: [uiMOC, syncMOC]
+        )
         sut.delegate = self
         return sut
     }

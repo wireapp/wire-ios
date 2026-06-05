@@ -56,6 +56,77 @@ final class MessageLocalStoreTests: XCTestCase {
 
     // MARK: - Tests
 
+    func testAddSystemMessage_PromotedToGroupAdmin_StoresSender() async throws {
+        // Given
+
+        let (selfUser, sender) = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(id: Scaffolding.userID, in: context)
+            let sender = modelHelper.createUser(id: Scaffolding.otherUserID, domain: Scaffolding.domain1, in: context)
+            return (selfUser, sender)
+        }
+
+        let conversation = await makeConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain1,
+            creator: selfUser
+        )
+
+        // When
+
+        await sut.addSystemMessage(
+            messageType: .promotedToGroupAdmin(
+                user: (id: Scaffolding.userID, domain: Scaffolding.domain1),
+                sender: (id: Scaffolding.otherUserID, domain: Scaffolding.domain1),
+                date: Scaffolding.date
+            ),
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: Scaffolding.domain1
+        )
+
+        // Then
+
+        await context.perform {
+            let systemMessage = conversation.lastMessage as? ZMSystemMessage
+            XCTAssertEqual(systemMessage?.sender?.remoteIdentifier, Scaffolding.otherUserID)
+        }
+    }
+
+    func testAddSystemMessage_PromotedToGroupAdmin_StoresPromotedUserInUsersSet() async throws {
+        // Given
+
+        let selfUser = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(id: Scaffolding.userID, in: context)
+            modelHelper.createUser(id: Scaffolding.otherUserID, domain: Scaffolding.domain1, in: context)
+            return selfUser
+        }
+
+        let conversation = await makeConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain1,
+            creator: selfUser
+        )
+
+        // When
+
+        await sut.addSystemMessage(
+            messageType: .promotedToGroupAdmin(
+                user: (id: Scaffolding.userID, domain: Scaffolding.domain1),
+                sender: (id: Scaffolding.otherUserID, domain: Scaffolding.domain1),
+                date: Scaffolding.date
+            ),
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: Scaffolding.domain1
+        )
+
+        // Then
+
+        await context.perform {
+            let systemMessage = conversation.lastMessage as? ZMSystemMessage
+            let userIDs = systemMessage?.users.compactMap(\.remoteIdentifier)
+            XCTAssertEqual(userIDs, [Scaffolding.userID])
+        }
+    }
+
     func testAddTextMessage_It_Adds_Message_To_Conversation() async throws {
         // Mock
 
@@ -231,6 +302,10 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.sessionReset])
         case .channelHistoryDepthModified:
             (messagesCount: 1, [.channelHistoryDepthModified])
+        case let .userDeleted(sender: sender):
+            (messagesCount: 1, [.userRemovedFromTeam])
+        case .promotedToGroupAdmin:
+            (messagesCount: 1, [.promotedToGroupAdmin])
         }
     }
 
@@ -276,7 +351,12 @@ final class MessageLocalStoreTests: XCTestCase {
             ),
             .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
             .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date),
-            .channelHistoryDepthModified(sender: .init(id: userID, domain: domain1))
+            .channelHistoryDepthModified(sender: .init(id: userID, domain: domain1)),
+            .promotedToGroupAdmin(
+                user: (id: userID, domain: domain1),
+                sender: (id: userID, domain: domain1),
+                date: date
+            )
         ]
     }
 

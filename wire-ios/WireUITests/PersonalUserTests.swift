@@ -37,7 +37,7 @@ final class PersonalUsersTests: WireUITestCase {
             .tapContinueButton()
             .tapAcceptButton()
 
-        let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
+        let verificationCode = try await InbucketClient.getVerificationCode(email: user.email, backend: .staging)
 
         let setUsernamePage = try verificationPage
             .enterVerificationCodeAndConfirm(verificationCode)
@@ -59,10 +59,10 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     func testLoginAsExistingPersonalUser_TC_8804() async throws {
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        _ = try  firstTimePage.acceptPopup(with: self)
+        _ = try  firstTimePage.acceptPopup()
             .openSettings()
             .openAccountSettings()
             .logout()
@@ -71,12 +71,12 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     func testPersonalAccountLifecycle_TC_8807_TC_8810_TC_8819_TC_8826_TC_8867_TC_9450() async throws {
-        let userA = try await userHelper.createPersonalUser()
-        let userB = try await userHelper.createPersonalUser()
+        let userA = try await UserHelper.default.createPersonalUser()
+        let userB = try await UserHelper.default.createPersonalUser()
         let messageFromUserB = "Hello from \(userB.name)"
 
         let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapSearchBox()
             .searchUserByUserHandle(userB.username)
@@ -91,7 +91,7 @@ final class PersonalUsersTests: WireUITestCase {
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openPendingRequest()
 
         let userNameA = try XCTUnwrap(connectionRequestsPage.getUserName())
@@ -112,7 +112,7 @@ final class PersonalUsersTests: WireUITestCase {
 
         let activeConversationPage = try conversationsPage.openConversation()
 
-        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let fetchMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             fetchMessages.contains(messageFromUserB),
             "Expected message '\(messageFromUserB)' not found in sent messages: \(fetchMessages)"
@@ -135,16 +135,16 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_AddConversationAsFavourite_TC_8869() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
-        let (teamOwner, _, _, _) = try await userHelper
+    func testAddConversationAsFavourite_TC_8869() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, _, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 1,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .longPressForMoreOptionOnConversation()
             .markConversationAsFavourite()
             .longPressForMoreOptionOnConversation()
@@ -156,16 +156,16 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_FilterConversationByFavourite_TC_8874() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
-        let (teamOwner, _, _, _) = try await userHelper
+    func testFilterConversationByFavourite_TC_8874() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, _, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 1,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .longPressForMoreOptionOnConversation()
             .markConversationAsFavourite()
             .filterConversationByFavourite()

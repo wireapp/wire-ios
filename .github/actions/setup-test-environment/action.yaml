@@ -1,0 +1,72 @@
+name: "Setup Test Environment"
+description: "Configure Xcode, restore caches, install dependencies, and prepare the simulator for running tests. Requires checkout to have already run."
+
+outputs:
+  xcode-version:
+    description: "The Xcode version read from .xcode-version"
+    value: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+  sanitized-branch:
+    description: "Sanitized branch name safe for artifact names"
+    value: ${{ steps.sanitize-branch.outputs.SANITIZED_BRANCH }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Sanitize branch name
+      id: sanitize-branch
+      shell: bash
+      env:
+        GH_EVENT_NAME: ${{ github.event_name }}
+        GH_HEAD_REF: ${{ github.head_ref }}
+      run: |
+        if [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
+          BRANCH="$GH_HEAD_REF"
+        else
+          BRANCH="${GITHUB_REF#refs/heads/}"
+        fi
+        SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+        echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a "$GITHUB_ENV"
+        echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> "$GITHUB_OUTPUT"
+
+    - name: Retrieve Xcode version
+      id: xcode-version
+      shell: bash
+      run: echo "XCODE_VERSION=$(cat .xcode-version)" >> "$GITHUB_OUTPUT"
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1.6.0
+      with:
+        xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+
+    - name: Load .env file
+      uses: xom9ikk/dotenv@v2
+      with:
+        path: fastlane/
+
+    - name: Restore Carthage Cache
+      uses: actions/cache@v4
+      id: cache-carthage
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
+
+    - name: Bootstrap Carthage if no cache
+      if: steps.cache-carthage.outputs.cache-hit != 'true'
+      shell: bash
+      run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+
+    - name: Cache Swift Packages
+      uses: ./.github/actions/cache-swift-packages
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+
+    - name: Setup workspace
+      shell: bash
+      run: ./setup.sh --test-only
+
+    - name: Setup simulator
+      shell: bash
+      run: bundle exec fastlane prepare_for_tests

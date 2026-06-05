@@ -36,22 +36,22 @@ struct WireDriveAttachmentsPreviewItemView: View {
     }
 
     var body: some View {
-        HStack {
+        Group {
             switch (viewModel.fileCategory, viewModel.displayStyle) {
             case (.image, .small):
                 WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
-                    progress: viewModel.progress,
-                    isAssetDownloadError: viewModel.isAssetDownloadError,
-                    canShowNoPreviewMessage: false
+                    state: viewModel.fileTracker.state,
+                    isLargePreview: false,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .frame(width: 120, height: 120)
             case (.image, .large):
                 WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
-                    progress: viewModel.progress,
-                    isAssetDownloadError: viewModel.isAssetDownloadError,
-                    canShowNoPreviewMessage: true
+                    state: viewModel.fileTracker.state,
+                    isLargePreview: true,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .aspectRatio(viewModel.previewAspectRatio, contentMode: .fit)
                 .frame(
@@ -64,20 +64,17 @@ struct WireDriveAttachmentsPreviewItemView: View {
             case (.video, .small):
                 WireDriveSmallVideoPreviewView(
                     url: viewModel.imagePreviewURL,
-                    progress: viewModel.progress,
-                    downloadError: viewModel.isAssetDownloadError,
+                    state: viewModel.fileTracker.state,
                     duration: viewModel.attachmentDuration,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
             case (.video, .large):
                 WireDriveLargeVideoPreviewView(
-                    headerIcon: Image(viewModel.icon),
-                    headerText: viewModel.headerText,
-                    labelText: viewModel.fileName,
-                    progress: viewModel.progress,
-                    downloadError: viewModel.isAssetDownloadError,
                     url: viewModel.imagePreviewURL,
                     imageAspectRatio: viewModel.previewAspectRatio,
                     duration: viewModel.attachmentDuration,
+                    state: viewModel.fileTracker.state,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .frame(idealWidth: 288)
             case (.document, .small):
@@ -85,19 +82,20 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
-                    progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    state: viewModel.fileTracker.state,
+                    isDraftPreview: false,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
-                .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.document, .large):
                 WireDriveLargeDocumentPreviewView(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
-                    progress: viewModel.progress,
-                    downloadError: viewModel.isAssetDownloadError,
                     url: viewModel.imagePreviewURL,
+                    state: viewModel.fileTracker.state,
+                    isDraftPreview: false,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
                 .frame(idealWidth: 288)
             case (.audio, .small), (.audio, .large):
@@ -105,33 +103,37 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
-                    progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    state: viewModel.fileTracker.state,
+                    isDraftPreview: false,
+                    isAvailableOffline: viewModel.isAvailableOffline
                 )
-                .frame(height: 74)
                 .frame(idealWidth: 288)
             }
         }
         .contentShape(Rectangle()) // Constrains the tappable content area of the view.
         .onAppear(perform: viewModel.startPolling)
         .onDisappear(perform: viewModel.stopPolling)
-        .onTapGesture(perform: open)
+        .onTapGesture(perform: onTap)
     }
 
     private func refresh() {
         Task { await viewModel.refresh() }
     }
 
-    private func open() {
-        Task { await viewModel.open() }
+    private func onTap() {
+        Task { await viewModel.handleAsset() }
     }
-
 }
 
 // MARK: - Preview
 
 #Preview {
-    WireDriveAttachmentsPreviewItemView(
-        viewModel: WireDriveAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
-    )
+    VStack {
+        WireDriveAttachmentsPreviewItemView(
+            viewModel: WireDriveAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
+        )
+    }
+    .padding()
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.gray)
 }

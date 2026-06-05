@@ -51,7 +51,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let featureRepository: LegacyFeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
-    private var coreCrypto: CoreCryptoProtocol {
+    private var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -145,6 +145,10 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         }
 
         try await coreCrypto.transaction { coreCryptoContext in
+            try await coreCryptoContext.deleteStaleKeyPackages(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite
+            )
+
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
                 ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 credentialType: .x509,
@@ -157,9 +161,6 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
                 ciphersuite: ciphersuite
             )
             try await action.perform(in: self.context.notificationContext)
-            try await coreCryptoContext.deleteStaleKeyPackages(
-                ciphersuite: ciphersuite.coreCryptoCipherSuite
-            )
         }
     }
 

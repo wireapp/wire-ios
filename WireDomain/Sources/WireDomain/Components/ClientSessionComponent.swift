@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireNetwork
 
@@ -54,7 +55,7 @@ public final class ClientSessionComponent {
 
     private let isMLSEnabled: Bool
 
-    private let cookieStorage: any CookieStorageProtocol
+    private let cookieStorage: any WireNetwork.CookieStorageProtocol
     private let sharedContainerURL: URL?
     private let sharedUserDefaults: UserDefaults
     private let syncContext: NSManagedObjectContext
@@ -76,7 +77,7 @@ public final class ClientSessionComponent {
         websocketNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         isMLSEnabled: Bool,
-        cookieStorage: any CookieStorageProtocol,
+        cookieStorage: any WireNetwork.CookieStorageProtocol,
         sharedContainerURL: URL?,
         sharedUserDefaults: UserDefaults,
         syncContext: NSManagedObjectContext,
@@ -110,6 +111,7 @@ public final class ClientSessionComponent {
     }
 
     public private(set) lazy var authenticationManager = AuthenticationManager(
+        userID: selfUserID,
         clientID: selfClientID,
         cookieStorage: cookieStorage,
         networkService: restNetworkService,
@@ -544,7 +546,8 @@ public final class ClientSessionComponent {
     private lazy var conversationMemberUpdateEventProcessor = ConversationMemberUpdateEventProcessor(
         conversationRepository: conversationRepository,
         userRepository: userRepository,
-        localStore: conversationLocalStore
+        localStore: conversationLocalStore,
+        messageLocalStore: messageLocalStore
     )
 
     private lazy var conversationMessageTimerUpdateEventProcessor = ConversationMessageTimerUpdateEventProcessor(
@@ -785,16 +788,11 @@ public final class ClientSessionComponent {
         )
     }
 
-    public func createInitiateResetMLSConversationUseCase() -> some InitiateResetMLSConversationUseCaseProtocol {
-        InitiateResetMLSConversationUseCase(
-            api: mlsAPI,
-            mlsService: mlsService,
-            conversationLocalStore: conversationLocalStore,
-            conversationRepository: conversationRepository,
-            lockRepository: ResetMLSConversationLockRepository(
-                userID: selfUserID
-            ),
-            selfDomain: backendMetadata.domain
+    public func clearConversationContentUseCase(conversationID: WireDataModel
+        .QualifiedID) -> ClearConversationContentUseCaseProtocol {
+        ClearConversationContentUseCase(
+            conversationID: conversationID,
+            syncContext: syncContext
         )
     }
 
@@ -870,10 +868,21 @@ public final class ClientSessionComponent {
         }
     )
 
+    public lazy var invalidMLSGroupGenerator: IncrementalGeneratorProtocol = InvalidMLSGroupGenerator(
+        context: syncContext,
+        mlsService: mlsService,
+        conversationLocalStore: conversationLocalStore,
+        onInvalidMLSGroup: { [weak self] workItem in
+
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
     public lazy var generatorsDirectory = GeneratorsDirectory(
         generators: [
             conversationUpdatesGenerator,
-            commitPendingProposalsGenerator
+            commitPendingProposalsGenerator,
+            invalidMLSGroupGenerator
         ],
         syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
     )

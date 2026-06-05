@@ -49,7 +49,7 @@ final class ConversationMessageFailedRecipientsTests: ConversationMessageSnapsho
         // GIVEN, WHEN
         let message = MockMessageFactory.textMessage(withText: "Hello")
         message.conversationLike = coreDataFixture.otherUserConversation
-        let serviceUser = coreDataFixture.createServiceUser()
+        let serviceUser = coreDataFixture.createBot()
         message.failedToSendUsers = [coreDataFixture.otherUser, serviceUser]
         message.conversation?.domain = "anta.wire.link"
 

@@ -480,13 +480,16 @@ final class ConversationViewController: UIViewController {
     private func setupTitleViewTap() {
         var actions = [UIAction]()
 
-        // uncomment code when feature prod ready
-        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
+        // All users (including guests) may access the shared drive if enabled on a conversation even if Drive is not
+        // enabled on their team.
+        let isSharedDriveAvailable = conversation.isWireDriveEnabled && userSession.wireDriveBackendURL != nil
+
+        if isSharedDriveAvailable {
             let filesAction = UIAction(
                 title: L10n.Localizable.Conversation.Action.files,
                 image: UIImage(resource: .files),
                 handler: { [weak self] _ in
-                    self?.onFilesButtonPressed(nil)
+                    self?.onSharedDriveButtonPressed(nil)
                 }
             )
             filesAction.accessibilityIdentifier = Locators.ActiveConversationPage.sharedDriveButton.rawValue
@@ -784,6 +787,10 @@ extension ConversationViewController: UserObserving {
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
             setupNavigationItem(isAfterTitleRelatedDataChanged: true)
         }
+        if changeInfo.user.isAccountDeleted {
+            // updates UI since conversation should be readonly
+            update(conversation: conversation)
+        }
     }
 }
 
@@ -906,7 +913,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     @objc
-    func onFilesButtonPressed(_ sender: AnyObject?) {
+    func onSharedDriveButtonPressed(_ sender: AnyObject?) {
         let selfUserColorRawValue = userSession.selfUser.accentColorValue
 
         let filesView = wireMessagingFactory

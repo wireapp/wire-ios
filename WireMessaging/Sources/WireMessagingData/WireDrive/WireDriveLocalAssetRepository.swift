@@ -64,6 +64,14 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
         try store.asset(nodeID: nodeID)
     }
 
+    @MainActor
+    package func offlineAssets(
+        conversationName: String?,
+        assetsPath: String?
+    ) async throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        try await store.offlineAssets(conversationName: conversationName, assetsPath: assetsPath)
+    }
+
     /// Refreshes the local asset metadata for a given `nodeID` and deletes any cached file if necessary.
     ///
     /// The metadata (name etc) and file associated with a given `nodeID` may change. This method fetches the latest
@@ -79,13 +87,13 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     /// This method first refreshes the assets metadata - see `refreshMetadata(nodeID:)`.
     /// The download can be observed via the `observeAsset(nodeID:)` method.
     @MainActor
-    package func downloadAsset(nodeID: UUID) async throws {
+    package func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         if let existingTask = downloadTasks[nodeID] {
             try await existingTask.value
         } else {
             defer { downloadTasks[nodeID] = nil }
 
-            let task = Task { try await _downloadAsset(nodeID: nodeID) }
+            let task = Task { try await _downloadAsset(nodeID: nodeID, isAvailableOffline: isAvailableOffline) }
             downloadTasks[nodeID] = task
             try await task.value
         }
@@ -103,44 +111,87 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
         downloadTasks[nodeID]?.cancel()
     }
 
+    @MainActor
+    package func updateAsset(_ asset: WireDriveLocalAsset) throws {
+        try store.upsertAsset(asset)
+    }
+
+    @MainActor
+    package func updateAssetAsync(_ asset: WireDriveLocalAsset) async throws {
+        try await store.upsertAssetAsync(asset)
+    }
+
+    @MainActor
+    package func deleteAsset(nodeID: UUID) async throws {
+        guard let asset = try store.asset(nodeID: nodeID),
+              let cacheKey = asset.downloadState.cacheKey else {
+            return
+        }
+
+        try await store.deleteAssets(nodeIDs: [nodeID])
+        try await fileCache.deleteFile(forKey: cacheKey)
+    }
+
     // MARK: - Private
 
     @MainActor
-    private func _downloadAsset(nodeID: UUID) async throws {
+    private func _downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         do {
             let node = try await getNode(nodeID: nodeID)
             let (downloadURL, eTag) = try node.downloadInfo
 
-            try store.upsertAsset(
+            try updateAsset(
                 WireDriveLocalAsset(
                     nodeID: nodeID,
                     eTag: eTag,
                     path: node.path,
                     contentType: node.mimeType,
                     size: node.size,
+                    conversationName: node.conversation?.name,
+                    ownerName: node.ownerUserName,
+                    modified: node.modified,
+                    isAvailableOffline: isAvailableOffline,
                     downloadState: .pending
                 )
             )
 
-            let (progress, download) = fileDownloader.download(from: downloadURL)
-            for await progress in progress {
-                var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
-                asset.downloadState = .downloading(progress: progress)
-                try store.upsertAsset(asset)
+            let (progress, urlDownloadTask) = fileDownloader.download(from: downloadURL)
+
+            var fileSize: WireDriveLocalAsset.FileSize = .small
+
+            let timerTask = Task {
+                try await Task.sleep(for: .seconds(1))
+                fileSize = .large
             }
 
-            let (tempURL, _) = try await download.value
+            for try await progress in progress {
+                var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
+                asset.downloadState = .downloading(progress: progress)
+                asset.fileSize = fileSize
+                try updateAsset(asset)
+            }
+
+            timerTask.cancel()
+
+            if Task.isCancelled {
+                urlDownloadTask.cancel()
+                try Task.checkCancellation()
+            }
+
+            let (tempURL, _) = try await urlDownloadTask.value
             let key = WireDriveLocalAsset.cacheKey(nodeID: nodeID, eTag: eTag, path: node.path)
             try await fileCache.saveFile(at: tempURL, key: key)
 
             var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: key)
 
-            try store.upsertAsset(asset)
+            try updateAsset(asset)
         } catch {
             // We don't care about the eTag when setting download state to failed.
             if var asset = try store.asset(nodeID: nodeID) {
-                asset.downloadState = .failed(error: error)
+                // On cancellation error, resets the asset to its initial download state.
+                asset.downloadState = (error is CancellationError) ? .pending : .failed(error: error)
+                asset.isAvailableOffline = false
                 try store.upsertAsset(asset)
             }
 
@@ -170,6 +221,10 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             path: node.path,
             contentType: node.mimeType,
             size: node.size,
+            conversationName: node.conversation?.name,
+            ownerName: node.ownerUserName,
+            modified: node.modified,
+            isAvailableOffline: false,
             downloadState: .pending
         )
 
@@ -188,7 +243,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
         asset.size = node.size
         asset.downloadState = downloadState
 
-        try store.upsertAsset(asset)
+        try updateAsset(asset)
 
         return (node, asset)
     }

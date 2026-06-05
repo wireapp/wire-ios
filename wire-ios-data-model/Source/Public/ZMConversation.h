@@ -68,7 +68,7 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
 @property (readonly, nonatomic, nullable) NSDate *lastModifiedDate;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *allMessages;
 @property (readonly, nonatomic, nonnull) NSArray<ZMUser *> *sortedActiveParticipants;
-@property (readonly, nonatomic, nonnull) ZMUser *creator;
+@property (readonly, nonatomic, nullable) ZMUser *creator;
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadCount;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadSelfMentionCount;
@@ -98,16 +98,6 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
 
 /// If that conversation exists, it is returned, @c nil otherwise.
 + (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ZMContextProvider> )session;
-
-@end
-
-@interface ZMConversation (History)
-
-/// This will reset the message history to the last message in the conversation.
-- (void)clearMessageHistory;
-
-/// UI should call this method on opening cleared conversation.
-- (void)revealClearedConversation;
 
 @end
 

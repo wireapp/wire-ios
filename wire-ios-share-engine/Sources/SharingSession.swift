@@ -244,7 +244,8 @@ public final class SharingSession {
             featureRepository: featureRepository
         )
         let contextStorage = LAContextStorage()
-        let earService = await EARService(
+
+        let earService = await EARServiceFactory.createEARService(
             accountID: accountIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
@@ -291,9 +292,7 @@ public final class SharingSession {
         let networkServices = try await networkStack.networkServices
         let metadata = try await networkStack.resolvedBackendMetadata()
         let cookieStorage = CookieStorage(
-            userID: accountIdentifier,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         let isMLSEnabled = journal[.isBackendMLSEnabled]

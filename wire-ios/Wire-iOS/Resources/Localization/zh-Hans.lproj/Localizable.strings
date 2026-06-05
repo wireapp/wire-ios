@@ -93,6 +93,11 @@
 "peoplepicker.no_matching_results.message.apps" = "无结果。";
 "peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "应用是可以改善您的工作流程的助手。";
 "peoplepicker.no_matching_results.message.apps_not_enabled" = "应用是可以改善您工作流程的助手。要启用它们，请咨询您的管理员。";
+"peoplepicker.no_apps_added.title" = "Your team hasn’t added apps yet";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps are helpers that can improve your workflow. To use them, ask your team admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.";
+"peoplepicker.app_details.created_by" = "Created by %@";
+"peoplepicker.app_details.description" = "Description";
 
 "peoplepicker.send_invitation.dialog.title" = "邀请已送出";
 "peoplepicker.send_invitation.dialog.message" = "邀请两周内有效。如果过期，请发送新的邀请。";
@@ -363,6 +368,7 @@
 "conversation.create.apps.subtitle" = "开启与应用的对话。";
 "conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
 "conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.create.apps_disabled_as_admin.message" = "To improve your workflow with apps, your team needs configuration.";
 "conversation.create.receipts.title" = "已读回执";
 "conversation.create.receipts.subtitle" = "当这启用时，参与者可以看到他们在此对话中的消息何时已阅读。";
 "conversation.create.mls.title" = "协议";
@@ -1015,11 +1021,11 @@
 "profile.connection_request_dialog.button_cancel" = "取消";
 "profile.connection_request_dialog.button_connect" = "新增好友";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "删除群组对话？";
-"conversation.delete_request_dialog.message" = "该操作将删除本群组和所有设备上的所有参与者的所有内容。该操作无法以任何方式恢复。该操作将通知所有参与者。";
-"conversation.delete_request_error_dialog.title" = "删除组 %@时发生错误。请再试一次。";
-"conversation.delete_request_error_dialog.button_delete_group" = "删除群组";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Delete conversation?";
+"conversation.delete_request_dialog.message" = "This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.";
+"conversation.delete_request_error_dialog.title" = "An error occurred while trying to delete the conversation %@. Please try again.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Delete Conversation";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "取消请求？";
@@ -1047,7 +1053,7 @@
 "profile.read_receipts_disabled_memo.header" = "您已经关闭了已读回执";
 "profile.read_receipts_memo.body" = "如果双方都打开已读回执，你可以查看消息的阅读时间。\n\n您可以在帐户设置中更改此选项。";
 
-"profile.group_admin_status_memo.body" = "开启该项后，管理员可以添加或移除用户或应用，更新群组设置，更改参与者角色。";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "信息";
 
@@ -1058,8 +1064,8 @@
 "profile.details.partner" = "外部合作者";
 "profile.details.federated" = "联邦";
 "profile.details.blocking_reason" = "由于合法保留，此用户已被屏蔽。[进一步了解](%@)";
-"profile.details.identity_warning" = "连接前确定 %@ 的身份。";
-"profile.details.requested_identity_warning" = "请在接受连接请求之前验证此人的身份。";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.title.unavailable" = "名称不可用";
 
 // Device list
@@ -1430,16 +1436,41 @@
 "self.settings.technical_report_section.title" = "调试报告";
 "self.settings.technical_report.send_report" = "发送报告";
 "self.settings.technical_report.share_report" = "通过 Wire 分享报告";
-"self.settings.technical_report.mail.subject" = "Wire调试报告";
+"self.settings.technical_report.mail.subject" = "Issue report";
 "self.settings.technical_report.include_log" = "包括详细的日志";
 "self.settings.technical_report.info" = "如果您在使用 Wire 时遇到意外行为或错误，您可以从此处向我们的支持团队发送错误报告。错误报告可能包含个人信息。\n\n您还可以通过 Wire 直接与团队管理员分享您的调试日志。";
 "self.settings.technical_report.privacy_warning" = "详细的日志将包含个人数据";
 "self.settings.technical_report.no_mail_alert" = "没有电邮程式。点击“确定”并手动将日志发送到：";
 
-"self.settings.technical_report.mail_body.firstline" = "请填写以下内容";
-"self.settings.technical_report.mail_body.section1" = "问题发生的日期和时间：";
-"self.settings.technical_report.mail_body.section2" = "发生了什么：";
-"self.settings.technical_report.mail_body.section3" = "重现步骤（如果相关）：";
+"self.settings.technical_report.mail_body.firstline" = "Explain what happened so that we can understand and reproduce the problem:";
+"self.settings.technical_report.mail_body.section1" = "What Happened?";
+"self.settings.technical_report.mail_body.section2" = "When did it happen?";
+"self.settings.technical_report.mail_body.section3" = "Add steps to reproduce (if relevant):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Having trouble?";
+"self.settings.share_debug_report.banner.message" = "To improve Wire's quality, please send us your feedback and let us know about any problems.";
+"self.settings.share_debug_report.creating_report" = "Creating debug report...";
+"self.settings.share_debug_report.action_sheet.title" = "Having trouble?";
+"self.settings.share_debug_report.action_sheet.message" = "You can send your report to Wire support, share it with your administrator directly via Wire or any other app.";
+"self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
+"self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
+"self.settings.share_debug_report.action_sheet.share" = "Share";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "No unread conversation";
+"settings.debugging_tools.unread_conversations.found" = "Found an unread conversation:";
+"settings.debugging_tools.unread_conversations.action_copy" = "复制";
+"settings.debugging_tools.debug_command.title" = "Debug command";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Command not recognized";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Error: Repair use case not available";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Faulty MLS Removal Keys Repair";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Repair Failed";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Error: %@";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "重设密码";
 

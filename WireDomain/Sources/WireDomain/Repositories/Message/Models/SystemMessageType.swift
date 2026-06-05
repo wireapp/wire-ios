@@ -120,4 +120,14 @@ public enum SystemMessageType: Sendable {
     case channelHistoryDepthModified(
         sender: QualifiedID
     )
+
+    case userDeleted(
+        sender: (id: UUID, domain: String?)
+    )
+
+    case promotedToGroupAdmin(
+        user: (id: UUID, domain: String?),
+        sender: (id: UUID, domain: String?),
+        date: Date
+    )
 }

@@ -44,6 +44,20 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    func conversationCell(named name: String) -> XCUIElement {
+        app.buttons.matching(
+            NSPredicate(
+                format: "identifier == %@ AND label == %@",
+                Locators.ConversationsPage.conversationCell.rawValue,
+                name
+            )
+        ).firstMatch
+    }
+
+    var unreadMessagesCount: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.unreadMessageCount.rawValue]
+    }
+
     var textFilteredByFavourites: XCUIElement {
         app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
     }
@@ -54,6 +68,10 @@ class ConversationsPage: PageModel {
 
     var blockButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
+    }
+
+    var clearButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.clearOptionOnContextMenu.rawValue]
     }
 
     var addFavouriteButtonOnMoreOptions: XCUIElement {
@@ -80,6 +98,10 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue].firstMatch
     }
 
+    var clearButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue].firstMatch
+    }
+
     var videoCallButton: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
@@ -98,6 +120,10 @@ class ConversationsPage: PageModel {
 
     var loadBar: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
+    }
+
+    func getGroupName() -> String? {
+        conversationCell.label
     }
 
     func openSettings() throws -> SettingsPage {
@@ -133,6 +159,14 @@ class ConversationsPage: PageModel {
         return try ConnectionRequestsPage()
     }
 
+    func verifyDriveTabButtonIsHidden() {
+        XCTAssertFalse(
+            app.tabBars.buttons[Locators.ConversationsPage.bottomBarDriveButton.rawValue]
+                .waitForExistence(timeout: 2)
+        )
+    }
+
+    @discardableResult
     func openConversation() throws -> ActiveConversationPage {
         try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
@@ -143,12 +177,45 @@ class ConversationsPage: PageModel {
         while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
             if conversationCell.isHittable {
                 conversationCell.tap()
+                break
             }
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }
         return try ActiveConversationPage()
     }
 
+    @discardableResult
+    func openConversationWithGuest(groupName: String) throws -> ActiveConversationPage {
+        try letTheSyncFinish()
+        let groupConversationWithGuestCell = app.buttons
+            .matching(
+                NSPredicate(
+                    format: "identifier == %@ AND label CONTAINS[c] %@",
+                    Locators.ConversationsPage.conversationCell.rawValue,
+                    groupName
+                )
+            )
+            .firstMatch
+
+        XCTAssertTrue(
+            groupConversationWithGuestCell.waitForExistence(timeout: 5),
+            "Group conversation with guest cell did not appear"
+        )
+
+        let maxDuration: TimeInterval = 10
+        let start = Date()
+
+        while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
+            if groupConversationWithGuestCell.isHittable {
+                groupConversationWithGuestCell.tap()
+                break
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        }
+        return try ActiveConversationPage()
+    }
+
+    @discardableResult
     func longPressForMoreOptionOnConversation() throws -> ConversationsPage {
         conversationCell.press(forDuration: 1.0)
         return try ConversationsPage()
@@ -157,6 +224,13 @@ class ConversationsPage: PageModel {
     func blockUser() throws -> ConversationsPage {
         blockButtonOnMoreOptions.tap()
         blockButtonOnBottomSheet.tap()
+        return self
+    }
+
+    @discardableResult
+    func clearContent() throws -> ConversationsPage {
+        clearButtonOnMoreOptions.tap()
+        clearButtonOnBottomSheet.tap()
         return self
     }
 
@@ -188,6 +262,10 @@ class ConversationsPage: PageModel {
         filterConversationsButton.tap()
         filterByOneOnOneConversation.tap()
         return self
+    }
+
+    func getUnreadMessageCountValue() throws -> String {
+        unreadMessagesCount.value as! String
     }
 
     enum Error: Swift.Error {

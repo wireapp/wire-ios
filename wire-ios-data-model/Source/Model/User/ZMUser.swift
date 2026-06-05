@@ -19,6 +19,7 @@
 import Foundation
 import WireData
 import WireFoundation
+import WireLogging
 import WireSystem
 import WireTransport
 import WireUtilities
@@ -531,8 +532,15 @@ public extension ZMUser {
         }
 
         conversations.forEach { conversation in
+            WireLogger.conversation.debug("inserting message for user removal")
             conversation.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
+
+            if conversation.messageProtocol.isOne(of: .mls, .mixed) {
+                conversation.mlsStatus = .invalid
+            }
+            conversation.removeParticipantAndUpdateConversationState(user: self, initiatingUser: self)
         }
+
     }
 
 }

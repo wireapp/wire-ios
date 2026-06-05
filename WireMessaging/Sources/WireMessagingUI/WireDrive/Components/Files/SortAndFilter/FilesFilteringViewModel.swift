@@ -23,7 +23,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
 
 final class FilesFilteringViewModel: ObservableObject {
 
-    enum Filtering: CaseIterable {
+    enum Filtering: String, CaseIterable {
         case tags
         case type
         case conversation

@@ -40,17 +40,13 @@ public enum TeamsAPIError: Error {
 
     case teamMemberNotFound
 
-    /// A requested app could not be found.
-
-    case appNotFound
-
     /// A request could not be generated.
 
     case failedToGenerateRequest
 
     /// An invalid query parameter was used.
 
-    case invalidQueryParmeter
+    case invalidQueryParameter
 
     /// A request was deemed invalid by the server.
 

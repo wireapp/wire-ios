@@ -19,6 +19,10 @@ on:
       run_critical_flows:
         type: boolean
         required: true
+      kalium_ref:
+        type: string
+        required: false
+        default: ''
       testiny_run_name:
         type: string
         required: false
@@ -33,10 +37,6 @@ on:
         required: true
       DD_API_KEY:
         required: true
-      UI_TEST_LOGIN_EMAIL:
-        required: true
-      UI_TEST_LOGIN_PASSWORD:
-        required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
 
@@ -45,8 +45,9 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LANG: en_US.UTF-8
   REPO_ROOT: ${{ github.workspace }}
   PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
-  UI_TEST_LOGIN_EMAIL: ${{ secrets.UI_TEST_LOGIN_EMAIL }}
-  UI_TEST_LOGIN_PASSWORD: ${{ secrets.UI_TEST_LOGIN_PASSWORD }}
+  UI_TEST_LOGIN_EMAIL: "foo@example.com" # can be removed after 4.17 is released
+  UI_TEST_LOGIN_PASSWORD: "123456" # can be removed after 4.17 is released
+
 
 jobs:
   run-tests:
@@ -72,11 +73,15 @@ jobs:
           lfs: 'true'
 
       - name: Sanitize branch name
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
         run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$GH_HEAD_REF"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi
@@ -108,28 +113,13 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
-        # Restore Swift Package Dependencies Cache
-      - name: Restore Swift Package Dependencies Cache
-        id: cache-swift-packages
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.PACKAGES_DIR }}
-          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-false
-
-        # Resolve Swift Package Dependencies
-      - name: Resolve Swift Package Dependencies
-        run: |
-          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+      - name: Cache Swift Packages
+        uses: ./.github/actions/cache-swift-packages
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-
-      - name: Install ImageMagick
-        uses: gerlero/brew-install@v1
-        with:
-          packages: imagemagick ghostscript freetype
 
       - name: Display all fastlane lanes
         if: ${{ contains(inputs.folders, 'fastlane') || inputs.all }}
@@ -153,11 +143,22 @@ jobs:
         run: |
           bundle exec fastlane generate_env
 
+      - name: Setup Kalium Testservice
+        if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        uses: ./.github/actions/kalium-testservice/setup
+        with:
+          kalium_ref: ${{ inputs.kalium_ref }}
+
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane run_uitests
 
+      - name: Stop Kalium Testservice
+        if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        uses: ./.github/actions/kalium-testservice/stop
+        with:
+          print_logs_on_failure: ${{ job.status != 'success' }}
 
       - name: Upload XCResult results to Testiny
         if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name }}
@@ -194,6 +195,11 @@ jobs:
         run: |
           bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
 
+      - name: Check for duplicate symbol implementations
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check_duplicate_classes.sh .
+
       - name: Find all .xcresult files
         if: ${{ always() && github.event_name == 'pull_request' }}
         id: find-xcresults
@@ -204,6 +210,13 @@ jobs:
       - name: Debug Print xcresult files
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+
+      - name: Extract test summary
+        if: ${{ always() }}
+        id: test-summary
+        uses: ./.github/actions/generate-test-summary
+        with:
+          xcresult_search_path: artifacts
 
       - name: Upload .xcresult files as artifact
         if: always()
@@ -222,7 +235,7 @@ jobs:
 
       - name: Upload Failed snapshots
         uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
@@ -251,11 +264,32 @@ jobs:
           comment_title: "Test Results"
 
       - name: Publish test results + Allure report
+        id: allure-report
         if: always()
         uses: ./.github/actions/allure-reporting
         with:
           allure_artifact_name: "html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}"
           xcresult_search_path: "artifacts"
+
+      - name: Resolve HTML report link
+        id: html-report-link
+        if: ${{ always() && env.ALLURE_REPORT_AVAILABLE == 'true' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ALLURE_ARTIFACT_NAME: html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}
+        run: |
+          set -euo pipefail
+
+          ARTIFACT_ID="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
+            --jq ".artifacts[] | select(.name == \"${ALLURE_ARTIFACT_NAME}\") | .id" \
+            | head -n 1 || true)"
+
+          if [ -n "${ARTIFACT_ID}" ] && [ "${ARTIFACT_ID}" != "null" ]; then
+            echo "html_report_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts/${ARTIFACT_ID}" >> "$GITHUB_OUTPUT"
+          else
+            echo "html_report_url=" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Add Allure Report to Job Summary
         if: ${{ always() && env.ALLURE_REPORT_AVAILABLE == 'true' }}
@@ -286,9 +320,10 @@ jobs:
             echo "⚠️ No \`.xcresult\` found under \`artifacts\`. Allure report was not generated.";
           } >> "$GITHUB_STEP_SUMMARY"
 
+
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
@@ -297,25 +332,31 @@ jobs:
 
       - name: Get Commit Info
         if: always()
-        id: get_commit_sha
+        env:
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
         run: |
-            echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
-            echo "commit_message=$(git log -1 --pretty=format:"%s")" >> $GITHUB_ENV
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "commit_message=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
 
       - name: Always Notify on Wire
         uses: 8398a7/action-slack@v3
         continue-on-error: true
-        if:  ${{ inputs.notify == 'always'  && always() }}
+        if: ${{ inputs.notify == 'always' && always() }}
         with:
           status: ${{ job.status }}
           text: |
-            **Tests for ${{ env.SANITIZED_BRANCH }}**
+            📋 **XCTest Run Summary for ${{ env.SANITIZED_BRANCH }}**
 
+            **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
-            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      
+            ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
+
+            ${{ steps.test-summary.outputs.report_message }}
+
       - name: Only Notify on Wire failures
         uses: 8398a7/action-slack@v3
         continue-on-error: true
@@ -323,17 +364,21 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **🚨 Tests for ${{ env.SANITIZED_BRANCH }} failed 🆘**
+            📋 **🚨 XCTest Run Summary for ${{ env.SANITIZED_BRANCH }} failed 🆘**
 
+            **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
+
+            ${{ steps.test-summary.outputs.report_message }}
 
   analyze-xcresults:
     needs: run-tests
     name: Analyze xcresults
-    if: ${{ always() && github.event_name == 'pull_request' }}
+    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' && needs.run-tests.outputs.xcresult_files != '' && needs.run-tests.outputs.xcresult_files != '[]' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     strategy:
       matrix:
@@ -362,7 +407,8 @@ jobs:
         run: ls -R
       
       - name: Analyze .xcresult file
-        uses: wireapp/analyze-xcoderesults-action@v1
+        continue-on-error: true
+        uses: wireapp/analyze-xcoderesults-action@228125b6d1488f02b1d80e2040cbfac88c2b1cb3
         with:
           results: ${{ matrix.xcresult_file }}
           warningAnnotations: true
@@ -372,7 +418,7 @@ jobs:
     name: Upload to Datadog
     runs-on: ubuntu-24.04
     needs: run-tests
-    if: always()
+    if: ${{ always() && needs.run-tests.result != 'skipped' }}
     steps:
       - name: Sanitize branch name
         run: |
@@ -386,20 +432,22 @@ jobs:
           SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
           echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'false'
+          sparse-checkout: .github/actions
+
       - name: Download tests results
+        id: download-test-results
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
-      - uses: actions/setup-node@v3
+
+      - name: Upload JUnit results to Datadog
+        if: steps.download-test-results.outcome == 'success'
+        uses: ./.github/actions/upload-datadog-junit
         with:
-          node-version: 18
-      - name: Install datadog-ci
-        run: npm install -g @datadog/datadog-ci
-      - name: "Upload results"
-        env:
-          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_ENV: ci
-          DATADOG_SITE: datadoghq.eu
-        run: |
-          find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
+          api_key: ${{ secrets.DD_API_KEY }}
+

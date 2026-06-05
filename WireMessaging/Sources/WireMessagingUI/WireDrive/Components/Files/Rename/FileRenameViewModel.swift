@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
 import SwiftUI
 import WireLogging
@@ -33,11 +32,17 @@ final class FileRenameViewModel: ObservableObject {
         let filepath: String
     }
 
-    @Published var filenameInput: String
+    @Published var filenameInput: String {
+        didSet {
+            validate()
+        }
+    }
+
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
-    @Published var didRename: Bool = false
+
+    let onRenamed: () -> Void
 
     var isSaveDisabled: Bool {
         errorMessage != nil || !isInputValid
@@ -46,8 +51,7 @@ final class FileRenameViewModel: ObservableObject {
     private let renameNodeUseCase: any WireDriveRenameNodeUseCaseProtocol
     private let model: Model
     private let kind: FilesViewItem.Kind
-    private var subscriptions = Set<AnyCancellable>()
-    private let filenameValidator = FilenameValidator()
+    private let validator = TextValidator()
     private var isInputValid = true
 
     var title: String {
@@ -95,21 +99,21 @@ final class FileRenameViewModel: ObservableObject {
         }
     }
 
-    private let trimmedInput: (String) -> String = {
+    private let trimmed: (String) -> String = {
         $0.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     init(
         renameNodeUseCase: any WireDriveRenameNodeUseCaseProtocol,
         model: Model,
-        kind: FilesViewItem.Kind
+        kind: FilesViewItem.Kind,
+        onRenamed: @escaping () -> Void
     ) {
         self.renameNodeUseCase = renameNodeUseCase
         self.filenameInput = kind == .folder ? model.filename : Self.removeFileExtension(from: model.filename)
         self.model = model
         self.kind = kind
-
-        bindTextInput()
+        self.onRenamed = onRenamed
     }
 
     func save() async -> Bool {
@@ -120,14 +124,21 @@ final class FileRenameViewModel: ObservableObject {
             let nodeID = model.nodeID
             let nodeFilePath = model.filepath
 
-            try await renameNodeUseCase.invoke(
-                nodeID: nodeID,
-                nodeFilepath: nodeFilePath,
-                newFilename: trimmedInput(filenameInput),
-                isFolder: kind == .folder
-            )
+            let originalFilename = URL(fileURLWithPath: model.filename).deletingPathExtension().lastPathComponent
 
-            didRename = true
+            // The backend doesn't allow to only change the case so we consider case changes as no changes.
+            let fileNameChanged = originalFilename.caseInsensitiveCompare(filenameInput) != .orderedSame
+
+            if fileNameChanged {
+                try await renameNodeUseCase.invoke(
+                    nodeID: nodeID,
+                    nodeFilepath: nodeFilePath,
+                    newFilename: trimmed(filenameInput),
+                    isFolder: kind == .folder
+                )
+
+                onRenamed()
+            }
 
             return true
 
@@ -151,39 +162,20 @@ final class FileRenameViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func bindTextInput() {
-        $filenameInput
-            .compactMap { [weak self] in
-                self?.filenameValidator.validate(self?.trimmedInput($0) ?? "")
-            }
-            .flatMap(\.self)
-            .sink { [weak self] result in
-                self?.handleValidationResult(result)
-            }.store(in: &subscriptions)
-
-    }
-
-    private func handleValidationResult(_ result: Result<Void, FilenameValidator.Failure>) {
-        switch result {
-        case .success:
-            isInputValid = true
-            errorMessage = nil
-        case let .failure(failure):
-            isInputValid = false
-            switch failure {
-            case .tooLong:
-                errorMessage = inputTooLongErrorMessage
-            case .invalidCharacters, .dotPrefix:
-                let formattedCharacters = FilenameValidator.Constants.invalidCharacters.map { String($0) }
-                    .joined(separator: " ")
-                errorMessage = Strings.Files.RenameFile.wrongCharacterError.replacingOccurrences(
-                    of: "{0}",
-                    with: formattedCharacters
-                )
-            case .empty:
-                errorMessage = nil
-            }
+    private func validate() {
+        let validatorKind: TextValidator.Kind = switch kind {
+        case .file: .fileName
+        case .folder: .folderName
         }
+
+        let validationResult = validator.validate(trimmed(filenameInput), for: validatorKind)
+
+        isInputValid = switch validationResult {
+        case .valid: true
+        case .invalid: false
+        }
+
+        errorMessage = validationResult.firstLocalizedViolationMessage(for: validatorKind)
     }
 
     // MARK: - Helpers

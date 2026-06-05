@@ -1074,6 +1074,137 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.teamMembers.first?.teamRole, .admin)
     }
 
+    // MARK: Apps search
+
+    func testThatItListsAllAppsAndCollaboratorApps() async throws {
+        // given
+        let request = SearchRequest(
+            query: "",
+            searchDomain: "wire.com",
+            searchOptions: [.apps]
+        )
+        let task = makeSearchTask(request: request, apiVersion: .v15)
+        let qualifiedID0 = QualifiedID(uuid: UUID(), domain: "wire.com")
+        let appResult = User(
+            id: UserID(qualifiedID0),
+            name: "app",
+            handle: "a",
+            teamID: teamIdentifier,
+            type: .app,
+            accentID: 2,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: .init(category: "cat0", description: "desc0"),
+            service: nil,
+            supportedProtocols: [.mls],
+            legalholdStatus: .noConsent
+        )
+        let qualifiedID1 = QualifiedID(uuid: UUID(), domain: "")
+        let otherTeamID = UUID()
+        let collaboratorAppResult = User(
+            id: UserID(qualifiedID1),
+            name: "collaborator app",
+            handle: "ca",
+            teamID: otherTeamID,
+            type: .app,
+            accentID: 1,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: .init(category: "cat1", description: "desc1"),
+            service: nil,
+            supportedProtocols: [.mls],
+            legalholdStatus: .noConsent
+        )
+
+        let expectation = XCTestExpectation()
+        expectation.expectedFulfillmentCount = 3
+
+        teamsAPIMock.getAppsFor_MockMethod = { [teamIdentifier] teamID in
+            XCTAssertEqual(teamID, teamIdentifier)
+            expectation.fulfill()
+            return [appResult]
+        }
+
+        teamsAPIMock.getCollaboratorsFor_MockMethod = { [teamIdentifier] teamID in
+            XCTAssertEqual(teamID, teamIdentifier)
+            expectation.fulfill()
+            return [
+                CollaboratorInfo(
+                    userID: qualifiedID1.uuid,
+                    teamID: otherTeamID,
+                    permissions: [.createTeamConversation]
+                )
+            ]
+        }
+        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+            XCTAssertEqual(userIDs, [UserID(qualifiedID1)])
+            expectation.fulfill()
+            return UserList(found: [collaboratorAppResult], failed: [])
+        }
+
+        // when
+        let result = await task.start()
+
+        // then
+        await fulfillment(of: [expectation], timeout: 1)
+        XCTAssertEqual(result.apps.count, 2)
+        XCTAssertEqual(result.apps.first?.qualifiedID(localDomain: "-"), qualifiedID0)
+        XCTAssertEqual(result.apps.first?.name, "app")
+        XCTAssertEqual(result.apps.first?.handle, "a")
+        XCTAssertEqual(result.apps.first?.teamIdentifier, teamIdentifier)
+        XCTAssertEqual(result.apps.first?.zmAccentColor?.rawValue, 2)
+        XCTAssertEqual(result.apps.last?.qualifiedID(localDomain: "-"), qualifiedID1)
+        XCTAssertEqual(result.apps.last?.name, "collaborator app")
+        XCTAssertEqual(result.apps.last?.handle, "ca")
+        XCTAssertEqual(result.apps.last?.teamIdentifier, otherTeamID)
+        XCTAssertEqual(result.apps.last?.zmAccentColor?.rawValue, 1)
+    }
+
+    func testThatItSendsASearchAppsRequest() async throws {
+        // given
+        let request = SearchRequest(
+            query: "Steve O'Hara & Söhne",
+            searchDomain: "wire.com",
+            searchOptions: [.apps]
+        )
+        let task = makeSearchTask(request: request, apiVersion: .v5)
+        let qualifiedID = QualifiedID(id: UUID(), domain: "wire.com")
+        let searchResult = ContactSearchResult.Contact(
+            id: qualifiedID.id,
+            qualifiedID: qualifiedID,
+            name: "Steve",
+            handle: "o",
+            team: teamIdentifier,
+            accentID: 2,
+            type: .app
+        )
+
+        let expectation = XCTestExpectation()
+        searchAPIMock.searchContactsQueryDomainType_MockMethod = { query, domain, userType in
+            XCTAssertEqual(query, "steve o'hara & söhne")
+            XCTAssertEqual(domain, "wire.com")
+            XCTAssertEqual(userType, .app)
+            expectation.fulfill()
+            return ContactSearchResult(documents: [searchResult])
+        }
+
+        // when
+        let result = await task.start()
+
+        // then
+        await fulfillment(of: [expectation])
+        XCTAssertEqual(result.apps.count, 1)
+        XCTAssertEqual(result.apps.first?.qualifiedID(localDomain: "-").map { .init($0) }, qualifiedID)
+        XCTAssertEqual(result.apps.first?.name, "Steve")
+        XCTAssertEqual(result.apps.first?.handle, "o")
+        XCTAssertEqual(result.apps.first?.teamIdentifier, teamIdentifier)
+        XCTAssertEqual(result.apps.first?.zmAccentColor?.rawValue, 2)
+    }
+
     // MARK: Bots search
 
     func testThatItSendsASearchServicesRequest() async throws {
@@ -1088,7 +1219,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         // when
-        _ = try await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForBots()
 
         // then
         await fulfillment(of: [expectation])
@@ -1100,7 +1231,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = try await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForBots()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1135,7 +1266,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = try await task.performRemoteSearchForServices()
+        let resultAggregator = try await task.performRemoteSearchForBots()
         resultAggregator(&result)
 
         // then

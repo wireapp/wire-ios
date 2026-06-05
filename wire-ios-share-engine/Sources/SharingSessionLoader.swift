@@ -246,7 +246,7 @@ public struct SharingSessionLoader {
             api: api
         )
 
-        return await useCase.invoke()
+        return await useCase.invoke().isBuildBlacklisted
     }
 
     private func makeSharingSession(
@@ -260,12 +260,11 @@ public struct SharingSessionLoader {
         coreDataStack: CoreDataStack
     ) async throws -> SharingSession {
         let legacyEnvironment = BackendEnvironment(environment)
-        // Don't cache the cookie because if the user logs out and back in again in the main app
-        // process, then the cached cookie will be invalid.
-        let legacyCookieStorage = ZMPersistentCookieStorage(
-            forServerName: legacyEnvironment.backendURL.host!,
+        let legacyCookieStorage = LegacyCookieStorage(
             userIdentifier: accountID,
-            useCache: false
+            cookieStorage: CookieStorage(
+                cookieEncryptionKey: UserDefaults.cookiesKey()
+            )
         )
         guard legacyCookieStorage.hasAuthenticationCookie else {
             throw Failure.mainAppRequired(message: "no authentication cookie")
@@ -318,7 +317,7 @@ public struct SharingSessionLoader {
             transportSession: transportSession
         )
         let contextStorage = LAContextStorage()
-        let earService = await EARService(
+        let earService = await EARServiceFactory.createEARService(
             accountID: accountID,
             databaseContexts: [
                 coreDataStack.viewContext,
@@ -358,9 +357,7 @@ public struct SharingSessionLoader {
             localDomain: backendMetadata.domain
         )
         let cookieStorage = CookieStorage(
-            userID: accountID,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: buildNumber,

@@ -21,6 +21,9 @@ import WireDesign
 import WireFoundation
 import WireMessagingDomain
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
 struct WireDriveLargeVideoPreviewView: View {
     private static let errorMessage = L10n.Localizable.Conversation.Message
         .Attachment.previewNotAvailable
@@ -31,52 +34,36 @@ struct WireDriveLargeVideoPreviewView: View {
     private static let defaultAspectRatio = CGFloat(16.0 / 9.0)
     private static let previewCornerRadius = 10.0
 
-    let headerIcon: Image
-    let headerText: String
-    let labelText: String
-    let progress: Double?
-    let downloadError: Bool
+    @ScaledMetric private var scale: CGFloat = 1
+
     let url: URL?
     var imageAspectRatio: CGFloat = defaultAspectRatio
     let duration: String?
+    let state: WireDriveFileUITracker.State
+    let isAvailableOffline: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: downloadError
-                ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
-            VStack(spacing: 0) {
-                WireDriveDocumentHeaderView(
-                    headerIcon: headerIcon,
-                    headerText: headerText,
-                    labelText: labelText,
-                    progress: progress,
-                    isError: downloadError
-                )
-                .background(ColorTheme.Backgrounds.surfaceVariant.color)
-                .frame(height: 74)  // This might break the UI if text font is too big
-                .frame(maxWidth: .infinity)
-
-                previewContainer {
-                    if downloadError {
-                        errorView(text: Self.downloadErrorMessage)
-                    } else {
-                        if let url {
-                            asyncImage(url: url)
-                        } else {
-                            errorView(text: Self.errorMessage)
-                        }
-                    }
+        WireDriveAttachmentPreview {
+            previewContainer {
+                if let url {
+                    asyncImage(url: url)
+                } else {
+                    errorView(text: Self.errorMessage)
                 }
-                .overlay(alignment: .bottom) {
-                    if let duration {
-                        durationView(duration: duration)
-                    }
+            }
+            .overlay(alignment: .bottom) {
+                if let duration {
+                    durationView(duration: duration)
                 }
-            }.background(ColorTheme.Backgrounds.surfaceVariant.color)
+            }
+            .overlay(alignment: .topTrailing) {
+                if isAvailableOffline {
+                    availableOfflineIcon()
+                }
+            }
+            .background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
     }
 
@@ -91,14 +78,46 @@ struct WireDriveLargeVideoPreviewView: View {
                     .resizable()
                     .aspectRatio(imageAspectRatio, contentMode: .fit)
                     .overlay {
-                        PlayIcon()
-                            .disabled(false)
+                        switch state {
+                        case .notLoaded, .loaded:
+                            PlayIcon()
+                                .disabled(false)
+                        case let .loading(progress, _):
+                            darkBackgroundPlayIconView {
+                                ProgressView(value: progress)
+                                    .progressViewStyle(.wireDriveAsset(strokeColor: .white))
+                                    .frame(height: 30)
+
+                                Text(Strings.Files.tapToCancelDownload)
+                                    .font(for: .subline1)
+                                    .lineLimit(1)
+                                    .foregroundStyle(.white)
+                                    .padding(.top, 65) // workaround so text shows up below the play icon view
+                            }
+                        case .failed:
+                            darkBackgroundPlayIconView {
+                                Text(Strings.Files.downloadFailed)
+                                    .font(for: .subline1)
+                                    .lineLimit(1)
+                                    .foregroundStyle(.white)
+                                    .padding(.top, 65)
+                            }
+                        }
                     }
             case .failure:
                 loadingView(text: Self.loadingMessage)
             @unknown default:
                 EmptyView()
             }
+        }
+    }
+
+    @ViewBuilder
+    private func darkBackgroundPlayIconView(@ViewBuilder content: () -> some View) -> some View {
+        ZStack {
+            PlayIcon()
+            Color.black.opacity(0.7)
+            content()
         }
     }
 
@@ -153,20 +172,62 @@ struct WireDriveLargeVideoPreviewView: View {
                 )
             )
     }
+
+    @ViewBuilder
+    private func availableOfflineIcon() -> some View {
+        Image(systemName: "arrow.down.circle.fill")
+            .resizable()
+            .frame(width: 12 * scale, height: 11 + scale)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color, .white)
+            .accessibilityLabel(Accessibility.Files.availableOffline)
+            .padding(6)
+    }
 }
 
 #Preview {
-    WireDriveLargeVideoPreviewView(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        progress: 0.7,
-        downloadError: false,
-        url: URL(
-            string:
-            "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
+    let previewCases: [(
+        url: URL?,
+        state: WireDriveFileUITracker.State
+    )] = [
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .loading(progress: 0.7, isLargeFile: false)
         ),
-        imageAspectRatio: CGFloat(16.0 / 9.0),
-        duration: "02:34",
-    )
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .loaded(showReadyToOpen: true)
+        ),
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .loaded(showReadyToOpen: false)
+        ),
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .notLoaded
+        ),
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .failed
+        ),
+        (
+            url: URL?.none,
+            state: .loaded(showReadyToOpen: true)
+        )
+    ]
+    ScrollView {
+        VStack {
+            ForEach(0 ..< previewCases.count, id: \.self) { index in
+                let data = previewCases[index]
+
+                WireDriveLargeVideoPreviewView(
+                    url: data.url,
+                    imageAspectRatio: CGFloat(16.0 / 9.0),
+                    duration: "02:34",
+                    state: data.state,
+                    isAvailableOffline: true
+                )
+                .padding(.horizontal)
+            }
+        }
+    }
 }

@@ -53,6 +53,7 @@ struct ShareLinkView: View {
                     .padding()
                     .padding(.bottom, 80) // Space for the bottom button
                 }
+                .accessibilitySortPriority(1)
 
                 VStack {
                     if viewModel.isPasswordEnabled, let password = viewModel.getPassword() {
@@ -123,6 +124,8 @@ struct ShareLinkView: View {
             }
             .tint(wireAccentColor.color)
             .disabled(!viewModel.isLinkToggleEnabled)
+            // We need this so VoiceOver reads the correct state AFTER it changes!
+            .accessibilityAddTraits(.updatesFrequently)
         }
     }
 
@@ -311,6 +314,7 @@ struct ShareLinkView: View {
         isEditable: false,
         publicLinkID: UUID().uuidString,
         conversationName: "Conversation 1",
+        isReadOnly: false,
         size: nil
     )
 
@@ -342,6 +346,10 @@ struct ShareLinkView: View {
     )
 
     ShareLinkView(
-        viewModel: .init(fileItem: item, useCases: useCases)
+        viewModel: .init(
+            fileItem: item,
+            useCases: useCases,
+            onLinkStateChanged: { _ in }
+        )
     )
 }

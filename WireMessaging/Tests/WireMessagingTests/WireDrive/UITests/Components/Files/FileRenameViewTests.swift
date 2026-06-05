@@ -132,6 +132,7 @@ final class FileRenameViewTests: XCTestCase {
             let (viewModel, view) = makeView(kind: kind)
             renameNodeUseCase.invokeNodeIDNodeFilepathNewFilenameIsFolder_MockError = WireDriveRenameNodeError
                 .fileAlreadyExists
+            viewModel.filenameInput = "new name"
             _ = await viewModel.save()
             let name = kind == .file ? ".file." : ".folder."
 
@@ -172,7 +173,10 @@ final class FileRenameViewTests: XCTestCase {
         let viewModel = FileRenameViewModel(
             renameNodeUseCase: renameNodeUseCase,
             model: model,
-            kind: kind
+            kind: kind,
+            onRenamed: {
+                // do nothing
+            }
         )
 
         let view = FileRenameView(viewModel: viewModel)

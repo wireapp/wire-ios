@@ -29,9 +29,18 @@ class NewConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.NewConversationPage.createNewGroupButton.rawValue].firstMatch
     }
 
+    var newChannelButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.NewConversationPage.createNewChannelButton.rawValue].firstMatch
+    }
+
     func tapNewGroupButton() throws -> CreateGroupPage {
         newGroupButton.tap()
         return try CreateGroupPage()
+    }
+
+    func tapNewChannelButton() throws -> CreateChannelPage {
+        newChannelButton.tap()
+        return try CreateChannelPage()
     }
 
     var searchByNameOrUsernameSearchBox: XCUIElement {
@@ -46,6 +55,10 @@ class NewConversationPage: PageModel {
         app.buttons[Locators.NewConversationPage.cancel.rawValue]
     }
 
+    var userCellInContactList: XCUIElement {
+        app.descendants(matching: .any)[Locators.NewConversationPage.userCellInContactList.rawValue].firstMatch
+    }
+
     func tapSearchBox() -> NewConversationPage {
         searchByNameOrUsernameSearchBox.tap()
         return self
@@ -53,6 +66,18 @@ class NewConversationPage: PageModel {
 
     var searchedUserCell: XCUIElement {
         app.descendants(matching: .any)[Locators.NewConversationPage.usernameCell.rawValue].firstMatch
+    }
+
+    func searchedUserCell(handle: String) -> XCUIElement {
+        app.descendants(matching: .any)
+            .matching(identifier: Locators.NewConversationPage.usernameCell.rawValue)
+            .matching(NSPredicate(format: "label CONTAINS %@", handle))
+            .firstMatch
+    }
+
+    func tapSearchedUserCell(handle: String) throws -> UserDetailsPage {
+        searchedUserCell(handle: handle).waitAndTap()
+        return try UserDetailsPage()
     }
 
     func searchUserByUserHandle(_ handle: String) throws -> NewConversationPage {
@@ -65,9 +90,16 @@ class NewConversationPage: PageModel {
         return try UserDetailsPage()
     }
 
+    @discardableResult
     func closeNewConversationPage() throws -> ConversationsPage {
         cancelButtonOnSearchedUserPage.tap()
         cancelButtonOnNewConversation.tap()
         return try ConversationsPage()
+    }
+
+    func openUserDetailsInContactList() throws -> UserDetailsPage {
+        userCellInContactList.tap()
+        return try UserDetailsPage()
+
     }
 }

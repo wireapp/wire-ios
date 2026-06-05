@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireDomain
+import WireLocators
 import WireLogging
 import WireMessagingDomain
 import WireMessagingUI
@@ -35,6 +36,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         channelName: "",
         channelInvitePolicy: .admins,
         channelHistoryOption: .off,
+        isTeamAdmin: userSession.selfUser.canManageTeam,
         areAppsSupported: values.isAppsFeatureEnabled,
         appsAllowed: true,
         guestsAllowed: true,
@@ -123,7 +125,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
                 attemptToProceedToParticipants()
             }
         )
-        nextButton.accessibilityIdentifier = "button.newchannel.next"
+        nextButton.accessibilityIdentifier = Locators.CreateChannelPage.newChannelNextButton.rawValue
         navigationItem.rightBarButtonItem = nextButton
         nextButton.isEnabled = viewModel.isFormValid
     }

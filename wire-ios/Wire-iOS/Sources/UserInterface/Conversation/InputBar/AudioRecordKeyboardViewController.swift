@@ -20,6 +20,8 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
+import WireLocators
 import WireSyncEngine
 import WireSystem
 
@@ -81,13 +83,21 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - Life Cycle
 
     convenience init(userSession: UserSession) {
+        var audioRecorder: AudioRecorderType = AudioRecorder(
+            format: .wav,
+            maxRecordingDuration: userSession.maxAudioMessageLength,
+            maxFileSize: userSession.maxUploadFileSize,
+            userSession: userSession
+        )
+
+        #if DEBUG
+            if UITestConfig.environment.useMockAudioRecorder {
+                audioRecorder = UITestAudioRecorder()
+            }
+        #endif
+
         self.init(
-            audioRecorder: AudioRecorder(
-                format: .wav,
-                maxRecordingDuration: userSession.maxAudioMessageLength,
-                maxFileSize: userSession.maxUploadFileSize,
-                userSession: userSession
-            ),
+            audioRecorder: audioRecorder,
             userSession: userSession
         )
     }
@@ -247,8 +257,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         typealias AudioRecord = L10n.Accessibility.AudioRecord
 
         recordButton.accessibilityLabel = AudioRecord.StartButton.description
+        recordButton.accessibilityIdentifier = Locators.ActiveConversationPage.startRecording.rawValue
         stopRecordButton.accessibilityLabel = AudioRecord.StopButton.description
+        stopRecordButton.accessibilityIdentifier = Locators.ActiveConversationPage.stopRecording.rawValue
         confirmButton.accessibilityLabel = AudioRecord.SendButton.description
+        confirmButton.accessibilityIdentifier = Locators.ActiveConversationPage.sendAudio.rawValue
         redoButton.accessibilityLabel = AudioRecord.RedoButton.description
         cancelButton.accessibilityLabel = AudioRecord.CancelButton.description
     }

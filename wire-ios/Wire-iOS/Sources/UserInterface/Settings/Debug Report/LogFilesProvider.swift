@@ -18,43 +18,25 @@
 
 import UIKit
 import WireCommonComponents
+import WireCoreCrypto
 import WireDomain
 import WireLogging
-import WireSyncEngine
 import WireSystem
-import ZIPFoundation
 
-/// Generates log files archives.
+/// Provides raw log file URLs and device/app info for building debug archives.
 ///
-/// All logs are stored at the `NSTemporaryDirectory` URL (`tmp`) in the folder `/<uuid>/logs/`.
-///
-/// When generating the logs archive, we create a unique directory for the archive in `/<uuid>/logs/<uuid>/logs.zip`.
-///
-/// The logs folder `/<uuid>/logs/` is cleared:
-///  - after `generateLogFilesData()` returns
-///  - when calling `generateLogFilesZip()`, before the archive is created
-///  - when calling `clearLogsDirectory()`
-///
-/// In each logs archive, an extra file `info.txt` is added. It contains general information about the app.
-///
+/// Archiving (ZIP creation) is handled by `CreateDebugReportUseCase`.
 struct LogFilesProvider: LogFilesProviding {
-
-    // MARK: - Types
-
-    enum Error: Swift.Error {
-        case noLogs(description: String)
-    }
 
     // MARK: - Properties
 
     private let logsDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         .appendingPathComponent("logs", isDirectory: true)
 
-    private var logFilesURLs: [URL] {
+    var logFileURLs: [URL] {
         let fileManager = FileManager.default
         var urls = ZMSLog.pathsForExistingLogs
 
-        // add the root directory of the app, NSE and SE logs
         if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
            let sharedLogsDirectoryURL = fileManager.sharedLogsDirectoryURL(for: appGroupIdentifier) {
             let targetLogDirectories = try? fileManager.contentsOfDirectory(
@@ -67,52 +49,43 @@ struct LogFilesProvider: LogFilesProviding {
         return urls
     }
 
-    // MARK: - Interface
+    // MARK: - LogFilesProviding
 
-    func generateLogFilesData() throws -> Data {
-        let fileManager = FileManager.default
-        defer {
-            try? clearLogsDirectory(fileManager: fileManager)
+    func info(selfUserID: UUID?) -> String {
+        var body = """
+        App Version: \(Bundle.main.appInfo.fullVersion)
+        Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
+        Device: \(UIDevice.current.zm_model())
+        iOS version: \(UIDevice.current.systemVersion)
+        Date: \(Date().transportString())
+        """
+
+        if let selfUserID {
+            let journal = Journal(userID: selfUserID, storage: UserDefaults.shared())
+            let entries = journal.values().compactMap { "\($0): \($1)" }.joined(separator: "\n")
+            body += "\n\nJournal:\n\(entries)"
         }
 
-        let logFilesURL = try generateLogFilesZip()
-        return try Data(contentsOf: logFilesURL)
-    }
-
-    func generateLogFilesZip() throws -> URL {
-        let fileManager = FileManager.default
-        try? clearLogsDirectory(fileManager: fileManager)
-
-        // Determine files to export
-        let logFilesURLs = logFilesURLs
-        guard !logFilesURLs.isEmpty else {
-            throw Error.noLogs(description: logFilesURLs.description)
+        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
+            body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
 
-        // Re-create the base directory
-        try fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
+        let metadata = CoreCrypto.buildMetadata()
+        body += """
+        \n
+        CoreCrypto:
+        Timestamp: \(metadata.timestamp)
+        Cargo debug: \(metadata.cargoDebug)
+        Cargo features: \(metadata.cargoFeatures)
+        Optimization level: \(metadata.optLevel)
+        Target triple: \(metadata.targetTriple)
+        Git branch: \(metadata.gitBranch)
+        Git describe: \(metadata.gitDescribe)
+        Git SHA: \(metadata.gitSha)
+        Git dirty: \(metadata.gitDirty)
+        """
 
-        // Create a subfolder for the current session
-        let archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
-        try fileManager.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
-
-        // Create the info file
-        _ = try createInfoFile(at: archiveFolder)
-
-        // Copy files to be zipped
-        for logFilesURL in logFilesURLs {
-            let copy = archiveFolder.appending(path: logFilesURL.lastPathComponent, directoryHint: .notDirectory)
-            try fileManager.copyItem(at: logFilesURL, to: copy)
-        }
-
-        // Create the zip file
-        let zipURL = logsDirectory.appendingPathComponent("logs.zip")
-        try fileManager.zipItem(at: archiveFolder, to: zipURL, shouldKeepParent: false, compressionMethod: .deflate)
-
-        // Clean up
-        try fileManager.removeItem(at: archiveFolder)
-
-        return zipURL
+        return body
     }
 
     func clearLogsDirectory(fileManager: FileManager) throws {
@@ -122,63 +95,11 @@ struct LogFilesProvider: LogFilesProviding {
     }
 
     func removeLogFiles(fileManager: FileManager) throws {
-        for fileURL in logFilesURLs {
+        for fileURL in logFileURLs {
             try fileManager.removeItem(at: fileURL)
         }
     }
 
-    // MARK: - Helpers
-
-    func info(includingJournal: Bool = false) -> String {
-        let date = Date()
-
-        var body = """
-        App Version: \(Bundle.main.appInfo.fullVersion)
-        Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
-        Device: \(UIDevice.current.zm_model())
-        iOS version: \(UIDevice.current.systemVersion)
-        Date: \(date.transportString())
-        """
-
-        if includingJournal {
-            body += "\n\nJournal:\n\(journalInfos())"
-        }
-
-        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
-            // display only when enabled
-            body.append("\nDatadog ID: \(datadogUserIdentifier)")
-        }
-        return body
-    }
-
-    private func journalInfos() -> String {
-        guard let selfUserID = ZMUserSession.shared()?.selfUser.remoteIdentifier else {
-            return "Not Available"
-        }
-
-        let journal = Journal(
-            userID: selfUserID,
-            storage: UserDefaults.shared()
-        )
-
-        return journal.values().compactMap { "\($0): \($1)" }.joined(separator: "\n")
-    }
-
-    private func createInfoFile(at url: URL) throws -> URL {
-        let infoFileURL = url.appendingPathComponent("info.txt")
-
-        let info = self.info(includingJournal: true)
-        try info.write(
-            to: infoFileURL,
-            atomically: true,
-            encoding: .utf8
-        )
-
-        return infoFileURL
-    }
-
-    /// Deletes all log-related archives and folders created in the temp directory.
-    /// This includes any leftover directories that match the pattern used in `logsDirectory`.
     func removeLegacyLogArchives() throws {
         let tempDir = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         let fileManager = FileManager.default
@@ -186,7 +107,6 @@ struct LogFilesProvider: LogFilesProviding {
         let contents = try fileManager.contentsOfDirectory(at: tempDir, includingPropertiesForKeys: nil)
 
         for url in contents {
-            // The `logsDirectory` structure is /tmp/<UUID>/logs
             let logsSubdir = url.appendingPathComponent("logs")
             var isDirectory: ObjCBool = false
 
@@ -196,5 +116,4 @@ struct LogFilesProvider: LogFilesProviding {
             }
         }
     }
-
 }

@@ -28,7 +28,7 @@
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
 
 // MARK: Conversation Files View
-"conversation.wireCells.files.close" = "Close files";
+"conversation.wireCells.files.close" = "Chiudi";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.noData.title" = "There are no files or folders yet";
 "conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here";
@@ -39,10 +39,10 @@
 "conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
 "conversation.wireCells.files.error.title" = "Can't load files";
 "conversation.wireCells.files.error.message" = "Something went wrong while loading. Please try again.";
-"conversation.wireCells.files.error.retry" = "Retry";
+"conversation.wireCells.files.error.retry" = "Riprova";
 "conversation.wireCells.files.error.noConnection.title" = "Unable to load files";
 "conversation.wireCells.files.error.noConnection.message" = "Your list of files could not be loaded. Please check your Internet connection and try again.";
-"conversation.wireCells.files.error.noConnection.retry" = "Try again";
+"conversation.wireCells.files.error.noConnection.retry" = "Riprova";
 "conversation.wireCells.files.moreActionsButton" = "More";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
 "conversation.wireCells.files.moveToFolder.move" = "Move here";
@@ -52,5 +52,21 @@
 "conversation.wireCells.tags.addTag" = "Add tag {0}";
 
 // MARK: - Share Link View
-"conversation.wireCells.shareLink.hidePassword" = "Hide password";
-"conversation.wireCells.shareLink.showPassword" = "Show password";
+"conversation.wireCells.shareLink.hidePassword" = "Nascondi password";
+"conversation.wireCells.shareLink.showPassword" = "Mostra password";
+
+// MARK: - Accessibility File Icon Labels
+"conversation.wireCells.files.filetype" = "File type, {0}";
+"conversation.wireCells.files.archive" = "Archivia";
+"conversation.wireCells.files.audio" = "Audio";
+"conversation.wireCells.files.code" = "Code";
+"conversation.wireCells.files.document" = "Documento";
+"conversation.wireCells.files.image" = "Immagine";
+"conversation.wireCells.files.other" = "Altri";
+"conversation.wireCells.files.pdf" = "Pdf";
+"conversation.wireCells.files.presentation" = "Presentazione";
+"conversation.wireCells.files.spreadsheet" = "Spreadsheet";
+"conversation.wireCells.files.video" = "Video";
+"conversation.wireCells.files.folder" = "Folder";
+"conversation.wireCells.files.text" = "Text";
+"conversation.wireCells.files.availableOffline" = "Available offline";

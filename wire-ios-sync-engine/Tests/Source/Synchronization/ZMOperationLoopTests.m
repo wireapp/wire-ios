@@ -25,13 +25,15 @@
 #import "ZMSyncStrategy+ManagedObjectChanges.h"
 #import "ZMOperationLoopTests.h"
 
+@import WireTransportSupport;
+
 @implementation ZMOperationLoopTests;
 
 - (void)setUp
 {
     [super setUp];
     
-    self.cookieStorage = [[FakeCookieStorage alloc] init];
+    self.cookieStorage = [[LegacyCookieStorage alloc] initWithTestingWithUserIdentifier:[[NSUUID alloc] init]];
     self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage];
             
     self.mockRequestStrategy = [[MockRequestStrategy alloc] init];

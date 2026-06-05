@@ -22,7 +22,7 @@ import WireTransport
 @objcMembers
 class RecordingMockTransportSession: NSObject, TransportSessionType {
 
-    var cookieStorage: ZMPersistentCookieStorage
+    var cookieStorage: LegacyCookieStorage
     var requestLoopDetectionCallback: ((String) -> Void)?
 
     let mockReachability = MockReachability()
@@ -30,7 +30,7 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         mockReachability
     }
 
-    init(cookieStorage: ZMPersistentCookieStorage) {
+    init(cookieStorage: LegacyCookieStorage) {
         self.cookieStorage = cookieStorage
 
         super.init()

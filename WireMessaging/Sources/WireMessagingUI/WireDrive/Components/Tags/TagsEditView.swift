@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
@@ -55,8 +56,9 @@ struct TagsEditView: View {
                         Button {
                             dismiss()
                         } label: {
-                            Text(L10n.Localizable.General.close)
+                            Text(L10n.Localizable.General.cancel)
                         }
+                        .accessibilityIdentifier(Locators.WireDrive.TagsEditPage.closeButton)
                     }
 
                     ToolbarItem(placement: .topBarTrailing) {
@@ -74,6 +76,7 @@ struct TagsEditView: View {
                                     .bold()
                             }
                             .disabled(!viewModel.isSaveEnabled)
+                            .accessibilityIdentifier(Locators.WireDrive.TagsEditPage.saveButton)
                         }
                     }
 
@@ -159,13 +162,13 @@ struct TagsEditView: View {
 
     @ViewBuilder
     private func tagNameValidationError() -> some View {
-        if let message = viewModel.validationErrorMessage(for: viewModel.validationState) {
+        if let message = viewModel.validationErrorMessage {
             validationText(message)
         }
     }
 
     private func addEnteredTag() {
-        if viewModel.validationState == .valid {
+        if viewModel.validationResult == .valid {
             withAnimation {
                 viewModel.addTag(viewModel.enteredTag)
                 viewModel.enteredTag = ""
@@ -222,6 +225,7 @@ struct TagsEditView: View {
             .font(for: .body1)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityIdentifier(Locators.WireDrive.TagsEditPage.textInputField)
     }
 
     @ViewBuilder
@@ -266,6 +270,7 @@ struct TagsEditView: View {
             }
         }
         .accessibilityLabel(Text(Accessibility.Tags.removeTag.replacingOccurrences(of: "{0}", with: tag)))
+        .accessibilityIdentifier(Locators.WireDrive.TagsEditPage.currentTag(tag))
         .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
     }
 
@@ -296,6 +301,7 @@ struct TagsEditView: View {
             .padding(.vertical, 1)
         }
         .accessibilityLabel(Text(Accessibility.Tags.addTag.replacingOccurrences(of: "{0}", with: tag)))
+        .accessibilityIdentifier(Locators.WireDrive.TagsEditPage.suggestedTag(tag))
         .foregroundStyle(.primary)
     }
 }
@@ -314,6 +320,7 @@ struct TagsEditView: View {
         isEditable: false,
         publicLinkID: nil,
         conversationName: "Conversation 1",
+        isReadOnly: false,
         size: nil
     )
 

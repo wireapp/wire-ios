@@ -18,6 +18,7 @@
 
 import Combine
 import CoreData
+import GenericMessageProtocol
 import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
@@ -309,7 +310,7 @@ final class IncrementalSyncTests: XCTestCase {
 
         let token = try await sut.perform()
         await token.task.value
-        wait(for: [expectation])
+        wait(for: [expectation], timeout: 5)
 
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
@@ -521,6 +522,183 @@ final class IncrementalSyncTests: XCTestCase {
         )
     }
 
+    func test_processEventEnvelopes_databaseLocksAfterFirstEnvelope_partialCommitAndAbort() async throws {
+        // Given: database is initially unlocked
+        earService.underlyingIsLocked = false
+
+        let objectID1 = NSManagedObjectID()
+        let objectID2 = NSManagedObjectID()
+        var storedEnvelopes: [(UpdateEventEnvelope, NSManagedObjectID)] = [
+            (Scaffolding.event1, objectID1),
+            (Scaffolding.event2, objectID2)
+        ]
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
+            defer { storedEnvelopes = [] }
+            return storedEnvelopes
+        }
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+        databaseSaver.save_MockMethod = {}
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
+        setupPushChannel()
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
+
+        // Simulate lock occurring while processing the first envelope's events
+        processor.processEvent_MockMethod = { [weak self] _ in
+            self?.earService.underlyingIsLocked = true
+        }
+
+        // When/Then: sync aborts with databaseLocked
+        await XCTAssertThrowsErrorAsync(IncrementalSync.Failure.databaseLocked) {
+            _ = try await self.sut.perform()
+        }
+
+        // Only the first envelope's events were processed
+        XCTAssertEqual(processor.processEvent_Invocations.count, Scaffolding.event1.events.count)
+
+        // Only the first envelope was committed to deletion
+        XCTAssertEqual(
+            updateEventsStore.deleteNextPendingEventsWith_Invocations,
+            [[objectID1]]
+        )
+    }
+
+    func test_processStoredEvents_databaseLocksBeforeSecondBatch_commitsFirstBatchAndAborts() async throws {
+        // Given: database starts unlocked, two separate batches
+        earService.underlyingIsLocked = false
+
+        let objectID1 = NSManagedObjectID()
+        let objectID2 = NSManagedObjectID()
+        var batches: [[(UpdateEventEnvelope, NSManagedObjectID)]] = [
+            [(Scaffolding.event1, objectID1)],
+            [(Scaffolding.event2, objectID2)]
+        ]
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
+            batches.isEmpty ? [] : batches.removeFirst()
+        }
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+        processor.processEvent_MockMethod = { _ in }
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
+        setupPushChannel()
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
+
+        // Simulate the database locking after batch 1 is saved (between batches)
+        databaseSaver.save_MockMethod = { [weak self] in
+            self?.earService.underlyingIsLocked = true
+        }
+
+        // When/Then: sync aborts with databaseLocked
+        await XCTAssertThrowsErrorAsync(IncrementalSync.Failure.databaseLocked) {
+            _ = try await self.sut.perform()
+        }
+
+        // Only batch 1's events were processed
+        XCTAssertEqual(processor.processEvent_Invocations.count, Scaffolding.event1.events.count)
+
+        // Only batch 1 was committed to deletion
+        XCTAssertEqual(
+            updateEventsStore.deleteNextPendingEventsWith_Invocations,
+            [[objectID1]]
+        )
+    }
+
+    func test_processLiveEvents_databaseLocked_skipsNonBackgroundAccessibleEvent() async throws {
+        // Given: database starts unlocked, no stored events
+        earService.underlyingIsLocked = false
+        setPendingEvents(envelopes: [])
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+        databaseSaver.save_MockMethod = {}
+
+        // Lock the database between stored-event phase and live-event phase
+        mlsGroupRepairAgent.repairConversations_MockMethod = { [weak self] in
+            self?.earService.underlyingIsLocked = true
+        }
+
+        var indices = [Int64(10)]
+        updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ in }
+        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
+        updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            .init(events: envelope.events, brokenMLSGroupIDs: [])
+        }
+        processor.processEvent_MockMethod = { _ in }
+
+        let pushChannel = MockPushChannelProtocol()
+        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(Scaffolding.event1) // non-background-accessible
+                continuation.finish()
+            }
+        }
+        pushChannel.close_MockMethod = {}
+        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+
+        // When
+        let token = try await sut.perform()
+        await token.task.value
+
+        // Then: event was persisted to the store...
+        XCTAssertEqual(updateEventsStore.persistEventEnvelopeIndexPublicKeys_Invocations.count, 1)
+
+        // ...but NOT processed
+        XCTAssertEqual(processor.processEvent_Invocations.count, 0)
+
+        // ...and NOT deleted (stays in DB for post-unlock reprocessing)
+        XCTAssertEqual(updateEventsStore.deleteEventEnvelopeAtIndex_Invocations.count, 0)
+    }
+
+    func test_processLiveEvents_databaseLocked_processesBackgroundAccessibleEvent() async throws {
+        // Given: database starts unlocked, no stored events
+        earService.underlyingIsLocked = false
+        setPendingEvents(envelopes: [])
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+        databaseSaver.save_MockMethod = {}
+
+        // Lock the database between stored-event phase and live-event phase
+        mlsGroupRepairAgent.repairConversations_MockMethod = { [weak self] in
+            self?.earService.underlyingIsLocked = true
+        }
+
+        var indices = [Int64(10)]
+        updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ in }
+        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
+        updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            .init(events: envelope.events, brokenMLSGroupIDs: [])
+        }
+        processor.processEvent_MockMethod = { _ in }
+
+        let callingEnvelope = Scaffolding.createCallingEnvelope()
+
+        let pushChannel = MockPushChannelProtocol()
+        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(callingEnvelope) // background-accessible calling event
+                continuation.finish()
+            }
+        }
+        pushChannel.close_MockMethod = {}
+        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+
+        // When
+        let token = try await sut.perform()
+        await token.task.value
+
+        // Then: event was persisted...
+        XCTAssertEqual(updateEventsStore.persistEventEnvelopeIndexPublicKeys_Invocations.count, 1)
+
+        // ...AND processed despite the lock (background-accessible)
+        XCTAssertEqual(processor.processEvent_Invocations.count, 1)
+
+        // ...AND deleted from store after processing
+        XCTAssertEqual(updateEventsStore.deleteEventEnvelopeAtIndex_Invocations, [11])
+    }
+
     // MARK: - Helper Methods
 
     private func setPendingEvents(envelopes: [UpdateEventEnvelope]) {
@@ -601,6 +779,31 @@ private enum Scaffolding {
             id: UUID(),
             events: [.conversation(.proteusMessageAdd(event))],
             isTransient: isTransient
+        )
+    }
+
+    static func createCallingEnvelope() -> UpdateEventEnvelope {
+        let callingMessage = GenericMessage(
+            content: Calling(content: "calling", conversationId: .init(uuid: UUID(), domain: "")),
+            nonce: UUID()
+        )
+        let callingData = try! callingMessage.serializedData().base64String()
+        let event = ConversationProteusMessageAddEvent(
+            conversationID: ConversationID(id: UUID(), domain: "example.com"),
+            senderID: UserID(id: UUID(), domain: "example.com"),
+            timestamp: Date(),
+            message: MessageContent(
+                encryptedMessage: "encrypted",
+                decryptedMessage: callingData
+            ),
+            externalData: nil,
+            messageSenderClientID: "senderClientID",
+            messageRecipientClientID: selfClientID
+        )
+        return UpdateEventEnvelope(
+            id: UUID(),
+            events: [.conversation(.proteusMessageAdd(event))],
+            isTransient: false
         )
     }
 

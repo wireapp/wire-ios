@@ -65,7 +65,7 @@ struct FileVersioningView: View, Identifiable {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarContent }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .quickLookPreview($viewModel.viewingURL)
             .refreshable { await viewModel.fetch() }
             .alert(
                 item: $viewModel.alert,
@@ -137,7 +137,7 @@ private extension FileVersioningView {
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
-        .accessibilityIdentifier(Locators.FileVersioningPage.closeButton.rawValue)
+        .accessibilityIdentifier(Locators.WireDrive.FileVersioningPage.closeButton)
     }
 }
 

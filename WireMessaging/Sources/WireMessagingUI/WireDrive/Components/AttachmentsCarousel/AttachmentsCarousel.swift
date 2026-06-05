@@ -19,6 +19,7 @@
 public import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 public struct AttachmentsCarousel: View {
 
@@ -78,6 +79,7 @@ private struct AttachmentsCarouselItemView: View {
         ZStack {
             ZStack {
                 content
+                    .contentShape(Rectangle()) // Constrains the tappable content area of the view.
                     .onTapGesture(perform: onTap)
             }
             .aspectRatio(item.aspectRatio, contentMode: .fill)
@@ -101,25 +103,33 @@ private struct AttachmentsCarouselItemView: View {
         case let .image(thumbnail):
             WireDriveImageAttachmentPreview(
                 thumbnail: thumbnail.map { Image(uiImage: $0) },
-                progress: item.state.progress,
-                isError: item.state.isFailed
+                state: fileTrackerState(for: item)
             )
+            .accessibilityIdentifier(Locators.ActiveConversationPage.attachmentImagePreview.rawValue)
         case let .video(thumbnail):
             WireDriveVideoAttachmentPreview(
                 thumbnail: thumbnail.map { Image(uiImage: $0) },
-                progress: item.state.progress,
-                isError: item.state.isFailed,
+                state: fileTrackerState(for: item),
                 canPlay: false
             )
+            .accessibilityIdentifier(Locators.ActiveConversationPage.attachmentVideoPreview.rawValue)
         case .audio, .document:
             WireDriveDocumentAttachmentPreview(
                 headerIcon: Image(item.fileIcon.imageResource),
                 headerText: item.fileExtension.map { "\($0.uppercased()) (\(item.size))" } ?? item.size,
                 labelText: item.name,
-                progress: item.state.progress,
-                isError: item.state.isFailed
+                state: fileTrackerState(for: item),
+                isDraftPreview: true,
+                minHeight: 72,
+                isAvailableOffline: false
             )
         }
+    }
+
+    private func fileTrackerState(for item: AttachmentsCarouselItem) -> WireDriveFileUITracker.State {
+        let fileTracker = WireDriveFileUITracker()
+        fileTracker.handleDownloadState(fromCarouselItem: item)
+        return fileTracker.state
     }
 
     // TODO: [WPB-17604] Add missing accessibility labels
@@ -182,16 +192,6 @@ private extension AttachmentsCarouselItem.State {
         }
     }
 
-    var progress: Double? {
-        switch self {
-        case let .uploading(progress):
-            progress
-        case .uploaded:
-            nil
-        case .failed:
-            1 // When failed we show a full red progress bar
-        }
-    }
 }
 
 private struct CornerButtonStyle: ButtonStyle {

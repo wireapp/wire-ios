@@ -93,7 +93,7 @@ final class ConversationTableViewDataSource: NSObject {
     var searchQueries: [String] = [] {
         didSet {
             calculateSections { [weak self] sections in
-                self?.reloadSections(newSections: sections)
+                self?.reloadSections(newSections: sections, animated: true)
             }
         }
     }
@@ -650,14 +650,14 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         debouncer.call(id: nil) { [weak self] in
             self?.calculateSections { sections in
-                self?.reloadSections(newSections: sections)
+                self?.reloadSections(newSections: sections, animated: true)
             }
         }
     }
 
-    func reloadSections(newSections: [Section]) {
+    func reloadSections(newSections: [Section], animated: Bool) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
-        tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
+        tableView.reload(using: stagedChangeset, with: animated ? .fade : .none) { currentSections = $0 }
     }
 
 }
@@ -675,7 +675,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
             messages: allMessages
         )
         sectionController.didSelect()
-        reloadSections(newSections: calculateSections(updating: sectionController))
+        reloadSections(newSections: calculateSections(updating: sectionController), animated: true)
     }
 
     func deselect(indexPath: IndexPath) {
@@ -685,7 +685,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
             messages: allMessages
         )
         sectionController.didDeselect()
-        reloadSections(newSections: calculateSections(updating: sectionController))
+        reloadSections(newSections: calculateSections(updating: sectionController), animated: true)
     }
 
     func highlight(message: ZMConversationMessage) {
@@ -775,12 +775,13 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
 
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
-        didRequestRefreshForMessage message: ZMConversationMessage
+        didRequestRefreshForMessage message: ZMConversationMessage,
+        animated: Bool
     ) {
         guard let nonce = message.nonce else { return }
         debouncer.call(id: nonce) { [weak self] in
             guard let self else { return }
-            reloadSections(newSections: calculateSections(updating: controller))
+            reloadSections(newSections: calculateSections(updating: controller), animated: animated)
         }
     }
 
@@ -1018,7 +1019,6 @@ extension ConversationTableViewDataSource {
             cellDescription is ConversationFileMessageCellDescription ||
             cellDescription is ConversationImageMessageCellDescription ||
             cellDescription is ConversationVideoMessageCellDescription ||
-            cellDescription is ConversationReplyCellDescription ||
             cellDescription is ConversationCollapsedMessageCellDescription {
             // no stack cell description and no sender is shown, so collapse the space if needed
             true

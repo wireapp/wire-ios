@@ -43,7 +43,7 @@ package struct WireDriveGetAssetUseCase {
             return fileURL
         }
 
-        try await localAssetRepository.downloadAsset(nodeID: nodeID)
+        try await localAssetRepository.downloadAsset(nodeID: nodeID, isAvailableOffline: false)
         guard let cacheKey = try await localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey else {
             throw Failure.invalidDownloadState
         }
@@ -53,6 +53,15 @@ package struct WireDriveGetAssetUseCase {
         }
 
         return fileURL
+    }
+
+    package func downloadState(nodeID: UUID) async throws -> WireDriveLocalAsset.DownloadState? {
+        let asset = try await localAssetRepository.asset(nodeID: nodeID)
+        return asset?.downloadState
+    }
+
+    package func cancelDownload(nodeID: UUID) async {
+        await localAssetRepository.cancelDownload(nodeID: nodeID)
     }
 
     // MARK: - Private helpers

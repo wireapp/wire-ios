@@ -39,7 +39,7 @@ class UserProfilePage: PageModel {
     }
 
     var teamNameOnAccountPage: XCUIElement {
-        app.descendants(matching: .any)[Locators.UserProfilePage.teamName.rawValue].firstMatch
+        app.descendants(matching: .staticText)[Locators.UserProfilePage.teamName.rawValue].firstMatch
     }
 
     var manageTeamButton: XCUIElement {
@@ -47,7 +47,7 @@ class UserProfilePage: PageModel {
     }
 
     var closeButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.ConversationDetailsPage.close.rawValue].firstMatch
+        app.descendants(matching: .button)[Locators.UserProfilePage.close.rawValue].firstMatch
     }
 
     var addAccountOrTeamButton: XCUIElement {

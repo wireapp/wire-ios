@@ -58,12 +58,21 @@ struct MoveToFolderPage<ViewModel>: View where ViewModel: MoveToFolderPageViewMo
                 }
                 .listStyle(.plain)
                 .refreshable { await viewModel.reload() }
-            case let .empty(title, message, showsReload):
-                MoveToFolderEmptyStateView(
-                    title: title,
-                    message: message,
-                    onReload: showsReload ? { Task { await viewModel.reload() } } : nil
-                ).frame(maxWidth: .infinity, maxHeight: .infinity)
+            case .empty:
+                FilesInfoView(
+                    scope: .moveToFolder,
+                    kind: .empty
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case let .error(isConnectionError):
+                FilesInfoView(
+                    scope: .moveToFolder,
+                    kind: .error(isConnectionError: isConnectionError),
+                    onRetry: {
+                        Task { await viewModel.reload() }
+                    }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
             CreateFolderCTA(action: viewModel.createFolder)
@@ -175,54 +184,6 @@ private struct CreateFolderCTA: View {
     }
 }
 
-// TODO: [WPB-21903] - Unify with FilesInfoView
-package struct MoveToFolderEmptyStateView: View {
-
-    let title: String?
-    let message: String
-    let onReload: (() -> Void)?
-
-    var body: some View {
-        VStack(spacing: 25) {
-            if let title {
-                Text(title)
-                    .font(.title3.weight(.semibold))
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(SemanticColors.Label.textDefault.color)
-            }
-
-            Text(message)
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
-
-            if let onReload {
-                Button {
-                    onReload()
-                } label: {
-                    Text(Strings.Files.Error.retry)
-                        .padding()
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(SemanticColors.Label.textDefault.color)
-                        .frame(maxHeight: 35)
-                        .background(
-                            RoundedRectangle(
-                                cornerRadius: 10,
-                                style: .continuous
-                            )
-                            .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
-
-                        )
-                }
-                .accessibilityLabel(Strings.Files.Error.retry)
-                .accessibilityIdentifier("retryButton")
-            }
-        }
-        .frame(maxWidth: 420)
-        .padding()
-    }
-}
-
 private struct MoveToFolderItemView: View {
 
     @ScaledMetric private var imageHeight: CGFloat = 28
@@ -318,11 +279,27 @@ private func makePreview(
 #Preview("Empty") {
     WireMessagingUI.makePreview(
         title: "Files",
-        content: .empty(
-            title: "Foo",
-            message: "There are no subfolders in this folder.",
-            showsReload: true
-        ),
+        content: .empty,
+        moveButtonState: .loading,
+        isNewFolderEnabled: true,
+        navigationMenuOptions: [],
+    )
+}
+
+#Preview("Error (unknown)") {
+    WireMessagingUI.makePreview(
+        title: "Files",
+        content: .error(isConnectionError: false),
+        moveButtonState: .loading,
+        isNewFolderEnabled: false,
+        navigationMenuOptions: [],
+    )
+}
+
+#Preview("Error (connection)") {
+    WireMessagingUI.makePreview(
+        title: "Files",
+        content: .error(isConnectionError: true),
         moveButtonState: .loading,
         isNewFolderEnabled: false,
         navigationMenuOptions: [],

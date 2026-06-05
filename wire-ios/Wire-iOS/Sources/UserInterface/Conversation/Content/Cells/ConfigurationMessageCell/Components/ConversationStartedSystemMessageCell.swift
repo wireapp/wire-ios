@@ -25,13 +25,14 @@ final class ConversationStartedSystemMessageCell<
 
     struct Configuration {
         let title: NSAttributedString?
-        let message: NSAttributedString
+        let message: NSAttributedString?
         var selectedUsers: [UserType]
         let icon: UIImage?
     }
 
     private let titleLabel = UILabel()
     private var selectedUsers: [UserType] = []
+    private var imageContainerZeroHeightConstraint: NSLayoutConstraint?
 
     override func configureSubviews() {
         super.configureSubviews()
@@ -54,6 +55,16 @@ final class ConversationStartedSystemMessageCell<
         imageView.isAccessibilityElement = false
         selectedUsers = object.selectedUsers
         accessibilityLabel = object.title?.string
+
+        let hasMessage = object.message != nil
+        imageContainer.isHidden = !hasMessage
+        lineView.isHidden = !hasMessage
+        textLabel.isHidden = !hasMessage
+        imageContainerHeightConstraint.isActive = hasMessage
+        if imageContainerZeroHeightConstraint == nil {
+            imageContainerZeroHeightConstraint = imageContainer.heightAnchor.constraint(equalToConstant: 0)
+        }
+        imageContainerZeroHeightConstraint?.isActive = !hasMessage
     }
 
     // MARK: - UITextViewDelegate

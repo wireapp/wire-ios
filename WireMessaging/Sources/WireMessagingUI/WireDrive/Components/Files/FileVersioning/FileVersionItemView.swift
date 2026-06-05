@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -27,7 +28,6 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FileVersionItemView: View {
     @StateObject private var viewModel: FileVersionItemViewModel
-    @Environment(\.wireAccentColor) private var wireAccentColor
     @State private var showRestoreVersionAlert = false
 
     init(
@@ -105,6 +105,7 @@ struct FileVersionItemView: View {
 
             }
         )
+        .accessibilityIdentifier(Locators.WireDrive.FileVersioningPage.restoreButton)
     }
 
 }

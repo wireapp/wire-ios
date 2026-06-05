@@ -189,6 +189,30 @@ public class MockCalculateSupportedProtocolsUseCaseProtocol: CalculateSupportedP
 
 }
 
+public class MockClearConversationContentUseCaseProtocol: ClearConversationContentUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() async -> Void)?
+
+    public func invoke() async {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -832,24 +856,19 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - wipeMLSGroup
+    // MARK: - clearMLSGroupID
 
-    public var wipeMLSGroupGroupID_Invocations: [WireDataModel.MLSGroupID] = []
-    public var wipeMLSGroupGroupID_MockError: Error?
-    public var wipeMLSGroupGroupID_MockMethod: ((WireDataModel.MLSGroupID) async throws -> Void)?
+    public var clearMLSGroupIDMlsGroupID_Invocations: [MLSGroupID] = []
+    public var clearMLSGroupIDMlsGroupID_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func wipeMLSGroup(groupID: WireDataModel.MLSGroupID) async throws {
-        wipeMLSGroupGroupID_Invocations.append(groupID)
+    public func clearMLSGroupID(mlsGroupID: MLSGroupID) async {
+        clearMLSGroupIDMlsGroupID_Invocations.append(mlsGroupID)
 
-        if let error = wipeMLSGroupGroupID_MockError {
-            throw error
+        guard let mock = clearMLSGroupIDMlsGroupID_MockMethod else {
+            fatalError("no mock for `clearMLSGroupIDMlsGroupID`")
         }
 
-        guard let mock = wipeMLSGroupGroupID_MockMethod else {
-            fatalError("no mock for `wipeMLSGroupGroupID`")
-        }
-
-        try await mock(groupID)
+        await mock(mlsGroupID)
     }
 
     // MARK: - removeParticipantFromAllGroupConversations
@@ -2597,6 +2616,33 @@ public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSCo
         }
 
         await mock(groupID, epoch)
+    }
+
+}
+
+public class MockIsBuildBlacklistedUseCase: IsBuildBlacklistedUseCase, @unchecked Sendable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() async -> (isBuildBlacklisted: Bool, error: Error?))?
+    public var invoke_MockValue: (isBuildBlacklisted: Bool, error: Error?)?
+
+    public func invoke() async -> (isBuildBlacklisted: Bool, error: Error?) {
+        invoke_Invocations.append(())
+
+        if let mock = invoke_MockMethod {
+            return await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
     }
 
 }
@@ -4547,6 +4593,38 @@ public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
         }
 
         try await mock()
+    }
+
+}
+
+public class MockUpdateBackendMetadataUseCaseProtocol: UpdateBackendMetadataUseCaseProtocol, @unchecked Sendable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> ResolvedBackendMetadata)?
+    public var invoke_MockValue: ResolvedBackendMetadata?
+
+    public func invoke() async throws -> ResolvedBackendMetadata {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
     }
 
 }

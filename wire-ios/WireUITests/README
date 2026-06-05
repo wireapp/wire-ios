@@ -8,3 +8,39 @@ op inject -i wire-ios/WireUITests/env.xcconfig.tpl -o wire-ios/WireUITests/env.x
 ```
 
 Note: the xcconfig cannot handle "//", so take care when adding values
+
+
+### Run Testservice UI tests (e.g., `*MessagingTests`) locally
+
+#### Prerequisites
+
+- Java 17
+
+#### Install Java 17 (Temurin)
+
+```bash
+brew install --cask temurin@17
+```
+
+#### Verify Java 17
+
+```bash
+/usr/libexec/java_home -v 17
+java -version
+```
+
+#### Deploy and Start Kalium Testservice
+
+```bash
+./scripts/setup-local-testservice.sh
+```
+
+#### Verify Testservice is running
+
+Look for the following line in the logs:
+
+```text
+✅ Kalium Testservice reachable
+```
+
+Once the service is up, run the relevant UI tests locally.

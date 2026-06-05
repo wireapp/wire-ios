@@ -42,7 +42,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.wireAccentColor ?? .default
-            let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
+            let ownMessageColor = ColorTheme.OwnChatBubbles.primary(userColor)
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
 
             configureTextColor(forOwnMessage: isOwnMessage)
@@ -288,8 +288,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
-        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
+        let ownColor = ColorTheme.OwnChatBubbles.onPrimary
+        let otherColor = ColorTheme.OthersChatBubbles.onPrimary
         messageTextView.textColor = ownMessage ? ownColor : otherColor
     }
 

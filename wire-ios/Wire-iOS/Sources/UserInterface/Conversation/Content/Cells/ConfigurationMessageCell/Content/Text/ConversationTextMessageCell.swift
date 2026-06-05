@@ -22,47 +22,24 @@ import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView, ConversationMessageCell {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
         let isObfuscated: Bool
         let userSession: UserSession?
-        let mentions: [Mention]
-        let detectedLinks: [NSTextCheckingResult]
-        init(
-            attributedText: NSAttributedString,
-            isObfuscated: Bool,
-            userSession: UserSession? = nil,
-            mentions: [Mention],
-            detectedLinks: [NSTextCheckingResult]
-        ) {
-            self.attributedText = attributedText
-            self.isObfuscated = isObfuscated
-            self.userSession = userSession
-            self.mentions = mentions
-            self.detectedLinks = detectedLinks
-        }
 
         static func == (
             lhs: ConversationTextMessageCell.Configuration,
             rhs: ConversationTextMessageCell.Configuration
         ) -> Bool {
             lhs.isObfuscated == rhs.isObfuscated &&
-                lhs.attributedText.isEqual(to: rhs.attributedText) &&
-                lhs.mentions.elementsEqual(
-                    rhs.mentions,
-                    by: {
-                        $0.range.location == $1.range.location && $0.range.length == $1.range.length && $0.user
-                            .isEqual($1.user)
-                    }
-                ) &&
-                lhs.detectedLinks.elementsEqual(rhs.detectedLinks, by: { $0.range == $1.range && $0.url == $1.url })
+                lhs.attributedText.isEqual(to: rhs.attributedText)
         }
     }
 
-    lazy var messageTextView: LinkInteractionTextView = {
-        let view = LinkInteractionTextView()
+    private lazy var messageTextView: LinkInteractionTextView = {
+        let view = LinkInteractionTextView.withBlockquoteBars()
 
         view.isEditable = false
         view.isSelectable = true
@@ -73,9 +50,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell {
         view.isUserInteractionEnabled = true
         view.accessibilityIdentifier = "Message"
         view.accessibilityElementsHidden = false
-        view.dataDetectorTypes = []
-        view.linkTextAttributes = [:]
-
+        view.dataDetectorTypes = [.link, .address, .phoneNumber]
+        view.linkTextAttributes = [.foregroundColor: UIColor.accent()]
         view.setContentHuggingPriority(.required, for: .vertical)
         view.setContentCompressionResistancePriority(.required, for: .vertical)
         view.interactionDelegate = self
@@ -86,7 +62,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell {
     }()
 
     private var container: ConversationMessageContainerView?
-    private var currentConfiguration: Configuration?
 
     var isSelected = false
 
@@ -95,12 +70,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell {
             guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.wireAccentColor ?? .default
-            let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
+            let ownMessageColor = ColorTheme.OwnChatBubbles.primary(userColor)
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
-
-            if let currentConfig = currentConfiguration {
-                configure(with: currentConfig, animated: false)
-            }
+            configureTextColor(forOwnMessage: isOwnMessage)
         }
     }
 
@@ -143,107 +115,35 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell {
         messageTextView.fitIn(view: self, insets: insets)
     }
 
-    func configure(with object: Configuration, animated: Bool) {
-        currentConfiguration = object
+    private func configureTextColor(forOwnMessage ownMessage: Bool) {
+        let ownColor = ColorTheme.OwnChatBubbles.onPrimary
+        let otherColor = ColorTheme.OthersChatBubbles.onPrimary
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.firstLineHeadIndent = 0
-        paragraphStyle.lineSpacing = 3
+        let textForegroundColor: UIColor = ownMessage ? ownColor : otherColor
+        let linkForegroundColor: UIColor = ownMessage ? ownColor : UIColor.accent()
 
-        let isOwnMessage = message?.isSentBySelfUser ?? false
-        let baseTextColor: UIColor = isOwnMessage ?
-            SemanticColors.ChatBubble.foregroundOwnMessage :
-            SemanticColors.ChatBubble.foregroundOtherMessage
-
-        let baseAttributes: [NSAttributedString.Key: Any] = [
-            .paragraphStyle: paragraphStyle,
-            .foregroundColor: baseTextColor
-        ]
-
-        let mutableAttributedText = NSMutableAttributedString(attributedString: object.attributedText)
-        mutableAttributedText.addAttributes(
-            baseAttributes,
-            range: NSRange(location: 0, length: mutableAttributedText.length)
-        )
-
-        let mentionForegroundColor: UIColor
-        let detectedLinkForegroundColor: UIColor
-
-        if isOwnMessage {
-            mentionForegroundColor = SemanticColors.ChatBubble.foregroundOwnMessage
-            detectedLinkForegroundColor = SemanticColors.ChatBubble.foregroundOwnMessage
+        let linkTextAttributes: [NSAttributedString.Key: Any] = if ownMessage {
+            [
+                .foregroundColor: linkForegroundColor,
+                .underlineColor: linkForegroundColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue
+            ]
         } else {
-            mentionForegroundColor = UIColor.accent()
-            detectedLinkForegroundColor = UIColor.accent()
+            [
+                .foregroundColor: linkForegroundColor
+            ]
         }
 
-        // Create a set of mention ranges for quick lookup to avoid applying underline to mentions
-        let mentionRanges: Set<NSRange> = Set(object.mentions.map(\.range))
+        messageTextView.textColor = textForegroundColor
+        messageTextView.linkTextAttributes = linkTextAttributes
+        messageTextView.applyMarkdownColors(textForegroundColor)
+    }
 
-        // Apply styling for Mentions (NO UNDERLINE)
-        for mention in object.mentions {
-            let mentionRange = mention.range
-            guard mentionRange.location + mentionRange.length <= mutableAttributedText.length else { continue }
+    func configure(with object: Configuration, animated: Bool) {
+        let mutableText = NSMutableAttributedString(attributedString: object.attributedText)
+        mutableText.mergeLineSpacing(3)
 
-            let mentionURL = mention.link
-
-            mutableAttributedText.addAttributes([
-                .foregroundColor: mentionForegroundColor,
-                .underlineStyle: NSUnderlineStyle(rawValue: 0).rawValue,
-                .link: mentionURL
-            ], range: mentionRange)
-        }
-        // Apply styling for other detected links (WITH UNDERLINE)
-        for result in object.detectedLinks {
-            let linkRange = result.range
-            guard linkRange.location + linkRange.length <= mutableAttributedText.length else { continue }
-
-            let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
-
-            let url: URL?
-            switch result.resultType {
-            case .address:
-                let addressQuery = result.addressComponents?.values.joined(separator: "+")
-                let encoded = addressQuery?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                url = URL(string: "http://maps.apple.com/?q=\(encoded)")
-            case .phoneNumber:
-                url = result.phoneNumber.flatMap { URL(string: "tel:\($0)") }
-            default:
-                url = result.url
-            }
-
-            if let url, !isOverlappingMention {
-                mutableAttributedText.addAttributes([
-                    .foregroundColor: detectedLinkForegroundColor,
-                    .underlineStyle: NSUnderlineStyle.single.rawValue,
-                    .link: url
-                ], range: linkRange)
-            }
-        }
-
-        mutableAttributedText.enumerateAttribute(
-            .link,
-            in: NSRange(location: 0, length: mutableAttributedText.length),
-            options: []
-        ) { value, range, _ in
-            guard let link = value as? URL else {
-                return
-            }
-
-            let isCoveredByMention = mentionRanges.contains { NSIntersectionRange(range, $0).length > 0 }
-
-            guard !isCoveredByMention else {
-                return
-            }
-
-            mutableAttributedText.addAttributes([
-                .foregroundColor: detectedLinkForegroundColor,
-                .underlineStyle: NSUnderlineStyle.single.rawValue,
-                .link: link
-            ], range: range)
-        }
-
-        messageTextView.attributedText = mutableAttributedText
+        messageTextView.attributedText = mutableText
 
         if object.isObfuscated {
             messageTextView.accessibilityIdentifier = "Obfuscated message"
@@ -253,6 +153,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell {
 
         container?.isBubble = true
         updateContainerStyle()
+        configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
         addAccentColorChangeObserver(userSession: object.userSession)
         setupAccessibility(accessibilityLabel: messageTextView.attributedText.string)
     }
@@ -261,9 +162,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell {
         guard accentColorChangeHandler == nil, let userSession else { return }
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(userSession: userSession) { [weak self] _ in
-                if let config = self?.currentConfiguration {
-                    self?.configure(with: config, animated: false)
-                }
+                self?.configureTextColor(forOwnMessage: self?.message?.isSentBySelfUser ?? false)
             }
     }
 
@@ -271,34 +170,13 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell {
         guard let message else { return }
         let isOwnMessage = message.isSentBySelfUser
         let userColor = message.senderUser?.wireAccentColor ?? .default
-        let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
+        let ownMessageColor = ColorTheme.OwnChatBubbles.primary(userColor)
         container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
-
+        container?.layer.maskedCorners = [
+            .layerMinXMinYCorner, .layerMaxXMinYCorner,
+            .layerMinXMaxYCorner, .layerMaxXMaxYCorner
+        ]
     }
-
-    func openMention(_ mention: Mention) -> Bool {
-        delegate?.conversationMessageWantsToOpenUserDetails(
-            self,
-            user: mention.user,
-            sourceView: messageTextView,
-            frame: selectionRect
-        )
-        return true
-    }
-
-    private func setupAccessibility(accessibilityLabel: String) {
-        typealias Conversation = L10n.Accessibility.Conversation
-
-        isAccessibilityElement = false
-        container?.isAccessibilityElement = true
-        container?.accessibilityLabel = accessibilityLabel
-        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
-    }
-}
-
-// MARK: - TextViewInteractionDelegate
-
-extension ConversationTextMessageCell: TextViewInteractionDelegate {
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
         // Open mention link
@@ -315,6 +193,16 @@ extension ConversationTextMessageCell: TextViewInteractionDelegate {
         return url.open()
     }
 
+    func openMention(_ mention: Mention) -> Bool {
+        delegate?.conversationMessageWantsToOpenUserDetails(
+            self,
+            user: mention.user,
+            sourceView: messageTextView,
+            frame: selectionRect
+        )
+        return true
+    }
+
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
@@ -324,6 +212,15 @@ extension ConversationTextMessageCell: TextViewInteractionDelegate {
             }
         }
     }
+
+    private func setupAccessibility(accessibilityLabel: String) {
+        typealias Conversation = L10n.Accessibility.Conversation
+
+        isAccessibilityElement = false
+        container?.isAccessibilityElement = true
+        container?.accessibilityLabel = accessibilityLabel
+        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
+    }
 }
 
 // MARK: - Description
@@ -331,7 +228,7 @@ extension ConversationTextMessageCell: TextViewInteractionDelegate {
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -348,16 +245,12 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     init(
         attributedString: NSAttributedString,
         isObfuscated: Bool,
-        userSession: UserSession?,
-        mentions: [Mention],
-        detectedLinks: [NSTextCheckingResult]
+        userSession: UserSession?
     ) {
         self.configuration = View.Configuration(
             attributedText: attributedString,
             isObfuscated: isObfuscated,
-            userSession: userSession,
-            mentions: mentions,
-            detectedLinks: detectedLinks
+            userSession: userSession
         )
     }
 }
@@ -417,14 +310,6 @@ extension ConversationTextMessageCellDescription {
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
 
-        var allDetectedLinks: [NSTextCheckingResult] = []
-
-        let embeddedLinks = ConversationTextMessageCellDescription.findEmbeddedLinks(in: textMessageData)
-        allDetectedLinks.append(contentsOf: embeddedLinks)
-
-        let autoDetectedLinks = ConversationTextMessageCellDescription.findDetectedLinks(in: messageText)
-        allDetectedLinks.append(contentsOf: autoDetectedLinks)
-
         // Search queries
         if !searchQueries.isEmpty {
             let highlightStyle: [NSAttributedString.Key: AnyObject] = [.backgroundColor: UIColor.accentDarken]
@@ -436,29 +321,34 @@ extension ConversationTextMessageCellDescription {
             )
         }
 
-        // Quote
-        if let quotedMessage = textMessageData.quoteMessage {
+        // Use the protobuf-backed flag so the reply box is preserved even when the
+        // quoted message is deleted (which nullifies the Core Data relationship).
+        let quotedMessage = textMessageData.quoteMessage
+        let hasQuote = textMessageData.hasQuote
+        let hasText = !messageText.string.isEmpty
+
+        if hasQuote, hasText {
+            // quotedMessage may be nil when the original was deleted.
             let viewModel = MessageReplyAttachmentsViewModel(
                 fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
                 fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
             )
-
-            let quoteCell = ConversationReplyCellDescription(
+            let combinedCell = ConversationReplyWithTextCellDescription(
                 quotedMessage: quotedMessage,
                 accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
-                messageReplyAttachmentsViewModel: viewModel
+                messageReplyAttachmentsViewModel: viewModel,
+                attributedText: messageText,
+                isObfuscated: message.isObfuscated,
+                userSession: userSession,
+                isSentBySelfUser: message.isSentBySelfUser,
+                senderAccentColor: message.senderUser?.wireAccentColor ?? .blue
             )
-            cells.append(AnyConversationMessageCellDescription(quoteCell))
-        }
-
-        // Text
-        if !messageText.string.isEmpty {
+            cells.append(AnyConversationMessageCellDescription(combinedCell))
+        } else if hasText {
             let textCell = ConversationTextMessageCellDescription(
                 attributedString: messageText,
                 isObfuscated: message.isObfuscated,
-                userSession: userSession,
-                mentions: textMessageData.mentions,
-                detectedLinks: allDetectedLinks
+                userSession: userSession
             )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
@@ -499,36 +389,6 @@ extension ConversationTextMessageCellDescription {
             options: [],
             range: scanRange
         )
-    }
-
-    static func findEmbeddedLinks(in textMessageData: TextMessageData) -> [NSTextCheckingResult] {
-        guard let messageTextString = textMessageData.messageText else {
-            return []
-        }
-        guard let linkPreview = textMessageData.linkPreview,
-              let originalURLString = textMessageData.linkPreview?.originalURLString,
-              let url = URL(string: originalURLString),
-              let scheme = url.scheme,
-              ["http", "https"].contains(scheme.lowercased()) else {
-            return []
-        }
-        let expectedRange = NSRange(
-            location: linkPreview.characterOffsetInText,
-            length: linkPreview.textLengthInMessage
-        )
-        guard expectedRange.location >= 0,
-              expectedRange.length >= 0,
-              expectedRange.location + expectedRange.length <= messageTextString.count else {
-            return []
-        }
-
-        let nsMessageText = messageTextString as NSString
-        let textAtRange = nsMessageText.substring(with: expectedRange)
-        guard textAtRange == originalURLString else {
-            return []
-        }
-        let linkResult = NSTextCheckingResult.linkCheckingResult(range: expectedRange, url: url)
-        return [linkResult]
     }
 }
 

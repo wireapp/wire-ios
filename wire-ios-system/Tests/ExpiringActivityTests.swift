@@ -28,7 +28,7 @@ class ExpiringActivityTests: XCTestCase {
 
         // given
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager(api: api)
+        let sut = ExpiringActivityManager<Void>(api: api)
 
         api.method = { _, block in
             self.concurrentQueue.async {
@@ -55,7 +55,7 @@ class ExpiringActivityTests: XCTestCase {
 
         // given
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager(api: api)
+        let sut = ExpiringActivityManager<Void>(api: api)
 
         api.method = { _, block in
             self.concurrentQueue.async {
@@ -75,11 +75,112 @@ class ExpiringActivityTests: XCTestCase {
         } catch {}
     }
 
+    func testThatWorkIsCancelled_WhenOuterTaskIsCancelled() async throws {
+
+        // given
+        let api = MockExpiringActivityAPI()
+        let sut = ExpiringActivityManager<Void>(api: api)
+
+        api.method = { _, block in
+            self.concurrentQueue.async {
+                block(false)
+            }
+        }
+
+        let workStarted = expectation(description: "work started")
+
+        // when
+        let outerTask = Task {
+            try await sut.withExpiringActivity(reason: "test activity") {
+                workStarted.fulfill()
+                while true {
+                    await Task.yield()
+                    try Task.checkCancellation()
+                }
+            }
+        }
+
+        await fulfillment(of: [workStarted], timeout: 1)
+        outerTask.cancel()
+
+        // then
+        do {
+            try await outerTask.value
+            XCTFail("Expected a cancellation error to be thrown")
+        } catch {}
+    }
+
+    // MARK: - Regression tests for stop/expiry races
+
+    /// When outer-task cancellation and OS expiry both fire, `stopWork()` is
+    /// invoked twice. The caller must see the inner task's `CancellationError`
+    /// (not `ExpiringActivityNotAllowedToRun` from the late expiry), and the
+    /// continuation must not be resumed twice.
+    func testCancellationErrorIsThrown_WhenExpiryFiresAfterOuterTaskCancellation() async throws {
+        let api = MockExpiringActivityAPI()
+        let sut = ExpiringActivityManager<Void>(api: api)
+
+        let workStarted = expectation(description: "work started")
+        let expiryFired = expectation(description: "expiry fired")
+
+        api.method = { _, block in
+            self.concurrentQueue.async { block(false) }
+            // Expiry fires after work has started, racing with the outer cancellation below.
+            self.concurrentQueue.asyncAfter(deadline: .now() + 0.05) {
+                expiryFired.fulfill()
+                block(true)
+            }
+        }
+
+        let outerTask = Task {
+            try await sut.withExpiringActivity(reason: "regression test") {
+                workStarted.fulfill()
+                while true {
+                    await Task.yield()
+                    try Task.checkCancellation()
+                }
+            }
+        }
+
+        await fulfillment(of: [workStarted], timeout: 1)
+        outerTask.cancel()
+        await fulfillment(of: [expiryFired], timeout: 1)
+
+        do {
+            try await outerTask.value
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // expected
+        } catch {
+            XCTFail("Expected CancellationError, got \(error)")
+        }
+    }
+
+    /// When the expiry callback reaches the actor before `startWork` has run,
+    /// the subsequent successful completion of `startWork` must not resume the
+    /// continuation a second time. Both `ExpiringActivityNotAllowedToRun` and
+    /// `CancellationError` are valid outcomes of the race — the only failure
+    /// mode being guarded against here is a crash.
+    func testNoCrash_WhenExpiryCallbackFiresBeforeWorkStarts() async throws {
+        let api = MockExpiringActivityAPI()
+        let sut = ExpiringActivityManager<Void>(api: api)
+
+        api.method = { _, block in
+            // Deliver expiry before start to maximise the chance of the race.
+            self.concurrentQueue.async { block(true) }
+            self.concurrentQueue.async { block(false) }
+        }
+
+        // Must not crash. The error (ExpiringActivityNotAllowedToRun or
+        // CancellationError) is an expected outcome of the race.
+        do { try await sut.withExpiringActivity(reason: "regression test") {} } catch {}
+    }
+
     func testThatTaskEndsWithoutError_WhenActivityCompletes() async throws {
 
         // given
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager(api: api)
+        let sut = ExpiringActivityManager<Void>(api: api)
 
         api.method = { _, block in
             self.concurrentQueue.async {

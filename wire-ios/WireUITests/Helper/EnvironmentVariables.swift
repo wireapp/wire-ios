@@ -18,7 +18,7 @@
 import Foundation
 
 struct EnvironmentVariables {
-    enum Failure: Error {
+    enum Failure: LocalizedError {
         case missingBackendURL
         case missingInbucketURL
         case missingInbucketUsername
@@ -30,6 +30,30 @@ struct EnvironmentVariables {
         case missingCallingBackend
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
+        case missingOktaApiKey
+        case missingSSOClaimedUserEmail
+        case missingSSOClaimedUserPassword
+        case missingSSOClaimedDomainCode
+
+        var errorDescription: String? {
+            switch self {
+            case .missingBackendURL: "Missing env var: BACKEND_URL"
+            case .missingInbucketURL: "Missing env var: INBUCKET_URL / ANTA_INBUCKET_URL / BELLA_INBUCKET_URL"
+            case .missingInbucketUsername: "Missing env var: INBUCKET_USERNAME"
+            case .missingInbucketPassword: "Missing env var: INBUCKET_PASSWORD"
+            case .missingDeepLinkURL: "Missing env var: ANTA_DEEPLINK_URL / BELLA_DEEPLINK_URL"
+            case .missingCallingServiceURL: "Missing env var: CALLINGSERVICE_URL"
+            case .missingCallingServiceUsername: "Missing env var: CALLINGSERVICE_USERNAME"
+            case .missingCallingServicePassword: "Missing env var: CALLINGSERVICE_PASSWORD"
+            case .missingCallingBackend: "Missing env var: PREDEFINED_BACKEND"
+            case .missingCallingInstanceTypeName: "Missing env var: CALLING_INSTANCE_TYPE_NAME"
+            case .missingCallingInstanceTypeVersion: "Missing env var: CALLING_INSTANCE_TYPE_VERSION"
+            case .missingOktaApiKey: "Missing env var: OKTA_API_KEY_IOS"
+            case .missingSSOClaimedUserEmail: "Missing env var: SSO_CLAIMED_USER_EMAIL"
+            case .missingSSOClaimedUserPassword: "Missing env var: SSO_CLAIMED_USER_PASSWORD"
+            case .missingSSOClaimedDomainCode: "Missing env var: SSO_CLAIMED_DOMAIN_CODE"
+            }
+        }
     }
 
     private let stagingBackendURL: URL
@@ -51,6 +75,10 @@ struct EnvironmentVariables {
     let callingBackend: String
     let callingInstanceTypeName: String
     let callingInstanceTypeVersion: String
+    let oktaApiKey: String
+    let ssoClaimedUserEmail: String
+    let ssoClaimedUserPassword: String
+    let ssoClaimedDomainCode: String
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -133,6 +161,26 @@ struct EnvironmentVariables {
             throw Failure.missingCallingInstanceTypeVersion
         }
 
+        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
+              !oktaApiKey.isEmpty else {
+            throw Failure.missingOktaApiKey
+        }
+
+        guard let ssoClaimedUserEmail = ProcessInfo.processInfo.environment["SSO_CLAIMED_USER_EMAIL"],
+              !ssoClaimedUserEmail.isEmpty else {
+            throw Failure.missingSSOClaimedUserEmail
+        }
+
+        guard let ssoClaimedUserPassword = ProcessInfo.processInfo.environment["SSO_CLAIMED_USER_PASSWORD"],
+              !ssoClaimedUserPassword.isEmpty else {
+            throw Failure.missingSSOClaimedUserPassword
+        }
+
+        guard let ssoClaimedDomainCode = ProcessInfo.processInfo.environment["SSO_CLAIMED_DOMAIN_CODE"],
+              !ssoClaimedDomainCode.isEmpty else {
+            throw Failure.missingSSOClaimedDomainCode
+        }
+
         self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
@@ -149,10 +197,14 @@ struct EnvironmentVariables {
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
+        self.oktaApiKey = oktaApiKey
+        self.ssoClaimedUserEmail = ssoClaimedUserEmail
+        self.ssoClaimedUserPassword = ssoClaimedUserPassword
+        self.ssoClaimedDomainCode = ssoClaimedDomainCode
     }
 
-    var inbucketURL: URL {
-        switch BackendContext.current {
+    func inbucketURL(for target: BackendTarget) -> URL {
+        switch target {
         case .anta:
             antaInbucketURL
         case .staging:
@@ -162,8 +214,8 @@ struct EnvironmentVariables {
         }
     }
 
-    var backendURL: URL {
-        switch BackendContext.current {
+    func backendURL(for target: BackendTarget) -> URL {
+        switch target {
         case .anta:
             antaBackendURL
         case .staging:

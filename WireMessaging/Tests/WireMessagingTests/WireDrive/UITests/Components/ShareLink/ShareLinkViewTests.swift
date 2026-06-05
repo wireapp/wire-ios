@@ -53,7 +53,10 @@ final class ShareLinkViewTests: XCTestCase {
         viewModel = .init(
             fileItem: .fixture(),
             context: (Locale(identifier: "en_US_POSIX"), Calendar(identifier: .gregorian), TimeZone.gmt),
-            useCases: useCases
+            useCases: useCases,
+            onLinkStateChanged: { _ in
+                // do nothing
+            }
         )
     }
 

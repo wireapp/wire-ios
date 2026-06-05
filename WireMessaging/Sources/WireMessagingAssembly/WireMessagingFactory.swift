@@ -162,9 +162,9 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
-                fileCache: fileCache,
-                accentColorProvider: accentColorProvider
-            ).environment(\.wireAccentColor, accentColorProvider())
+                fileCache: fileCache
+            )
+            .environment(\.wireAccentColor, accentColorProvider())
         )
     }
 
@@ -198,7 +198,7 @@ public extension WireMessagingFactory {
                         ),
                         updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                        createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
+                        createFile: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
                         fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
                         restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                             repository: nodesAPI,
@@ -206,7 +206,7 @@ public extension WireMessagingFactory {
                             nodeCache: nodeCache
                         ),
                         getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                        getAssetUseCase: WireDriveGetAssetUseCase(
+                        getAsset: WireDriveGetAssetUseCase(
                             localAssetRepository: localAssetRepository,
                             fileCache: fileCache
                         ),
@@ -215,16 +215,25 @@ public extension WireMessagingFactory {
                         deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
                         updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                         updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                        getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
+                        getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
+                        getFileTemplates: WireDriveFetchFileTemplatesUseCase(repository: nodesAPI),
+                        makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
+                            localAssetRepository: localAssetRepository
+                        ),
+                        removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                            localAssetRepository: localAssetRepository
+                        ),
+                        getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
+                            localAssetRepository: localAssetRepository
+                        )
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
-                    fileCache: fileCache,
-                    isBrowsing: true,
-                    accentColorProvider: accentColorProvider
+                    isBrowsing: true
                 )
-            ).environment(\.wireAccentColor, accentColorProvider())
+            )
+            .environment(\.wireAccentColor, accentColorProvider())
         )
     }
 

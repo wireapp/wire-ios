@@ -17,6 +17,7 @@
 //
 
 import AVFoundation
+import PhotosUI
 import UIKit
 import WireSyncEngine
 
@@ -43,29 +44,41 @@ extension ConversationInputBarViewController {
         }
 
         let presentController = { [self] in
+            // Allows multiple media selection on Wire drive conversations.
+            if useWireDrive(), sourceType != .camera {
+                // As per Apple's doc, we shouldn't use the empty initializer if we need the asset identifiers to be
+                // non-nil.
+                var config = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
+                config.selectionLimit = 0
+                config.filter = .any(of: [.images, .videos])
 
-            let pickerController = UIImagePickerController()
-            pickerController.sourceType = sourceType
-            pickerController.preferredContentSize = .IPadPopover.preferredContentSize
-            pickerController.delegate = self
-            pickerController.allowsEditing = allowsEditing
-            pickerController.mediaTypes = mediaTypes
-            pickerController.videoMaximumDuration = userSession.maxVideoLength
-            pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
-            if sourceType == .camera {
-                let settingsCamera: SettingsCamera? = Settings.shared[.preferredCamera]
-                pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
+                let picker = PHPickerViewController(configuration: config)
+                picker.delegate = self
+                present(picker, animated: true)
+            } else {
+                let pickerController = UIImagePickerController()
+                pickerController.sourceType = sourceType
+                pickerController.preferredContentSize = .IPadPopover.preferredContentSize
+                pickerController.delegate = self
+                pickerController.allowsEditing = allowsEditing
+                pickerController.mediaTypes = mediaTypes
+                pickerController.videoMaximumDuration = userSession.maxVideoLength
+                pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
+                if sourceType == .camera {
+                    let settingsCamera: SettingsCamera? = Settings.shared[.preferredCamera]
+                    pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
+                }
+
+                if sourceType != .camera,
+                   let popoverPresentationController = pickerController.popoverPresentationController {
+                    popoverPresentationController.sourceView = pointToView.superview
+                    popoverPresentationController.sourceRect = pointToView.frame
+                    popoverPresentationController.backgroundColor = .white
+                    popoverPresentationController.permittedArrowDirections = .down
+                }
+
+                present(pickerController, animated: true)
             }
-
-            if sourceType != .camera,
-               let popoverPresentationController = pickerController.popoverPresentationController {
-                popoverPresentationController.sourceView = pointToView.superview
-                popoverPresentationController.sourceRect = pointToView.frame
-                popoverPresentationController.backgroundColor = .white
-                popoverPresentationController.permittedArrowDirections = .down
-            }
-
-            present(pickerController, animated: true)
         }
 
         if sourceType == .camera {

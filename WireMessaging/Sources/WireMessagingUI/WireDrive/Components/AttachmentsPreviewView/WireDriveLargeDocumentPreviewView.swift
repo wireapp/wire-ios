@@ -31,38 +31,35 @@ struct WireDriveLargeDocumentPreviewView: View {
     let headerIcon: Image
     let headerText: String
     let labelText: String
-    let progress: Double?
-    let downloadError: Bool
     let url: URL?
+    let state: WireDriveFileUITracker.State
+    let isDraftPreview: Bool
+    let isAvailableOffline: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: downloadError
-                ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
+        WireDriveAttachmentPreview {
             VStack(spacing: 0) {
                 WireDriveDocumentHeaderView(
                     headerIcon: headerIcon,
                     headerText: headerText,
                     labelText: labelText,
-                    progress: progress,
-                    isError: downloadError
+                    isDraftPreview: isDraftPreview,
+                    state: state,
+                    isAvailableOffline: isAvailableOffline
                 )
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
-                .frame(height: 74) // This might break the UI if text font is too big
                 .frame(maxWidth: .infinity)
 
-                previewContainer {
-                    if downloadError {
+                if case .failed = state {
+                    previewContainer {
                         errorView(text: Self.downloadErrorMessage)
-                    } else {
-                        if let url {
+                    }
+                } else {
+                    if let url {
+                        previewContainer {
                             asyncImage(url: url)
-                        } else {
-                            errorView(text: Self.errorMessage)
                         }
                     }
                 }
@@ -127,15 +124,92 @@ struct WireDriveLargeDocumentPreviewView: View {
 }
 
 #Preview {
-    WireDriveLargeDocumentPreviewView(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        progress: 0.7,
-        downloadError: false,
-        url: URL(
-            string:
-            "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
+    let headerIcon = Image(WireDriveFileType.pdf.imageResource)
+    let url = URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg")
+    let headerText = "PDF (336 KB)"
+    let labelText = "CDR_20220120 Accessibility Review Reviewed Final Plus"
+
+    let previewCases: [(
+        headerIcon: Image,
+        headerText: String,
+        labelText: String,
+        url: URL?,
+        state: WireDriveFileUITracker.State,
+        isDraftPreview: Bool,
+        isAvailableOffline: Bool
+    )] = [
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .loading(progress: 0.7, isLargeFile: false),
+            isDraftPreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .loaded(showReadyToOpen: true),
+            isDraftPreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .loaded(showReadyToOpen: true),
+            isDraftPreview: false,
+            isAvailableOffline: true
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .failed,
+            isDraftPreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .loaded(showReadyToOpen: false),
+            isDraftPreview: false,
+            isAvailableOffline: false
+        ),
+        (
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText,
+            url: url,
+            state: .notLoaded,
+            isDraftPreview: false,
+            isAvailableOffline: false
         )
-    )
+    ]
+    ScrollView {
+        VStack {
+            ForEach(0 ..< previewCases.count, id: \.self) { index in
+                let data = previewCases[index]
+
+                WireDriveLargeDocumentPreviewView(
+                    headerIcon: data.headerIcon,
+                    headerText: data.headerText,
+                    labelText: data.labelText,
+                    url: data.url,
+                    state: data.state,
+                    isDraftPreview: data.isDraftPreview,
+                    isAvailableOffline: data.isAvailableOffline
+                )
+                .padding(.horizontal)
+            }
+        }
+        .padding(.vertical)
+    }
 }

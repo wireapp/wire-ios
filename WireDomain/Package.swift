@@ -38,8 +38,7 @@ let package = Package(
             name: "WireDomainPackageTests",
             dependencies: [
                 "WireDomainPackage",
-                "WireDomainPackageSupport",
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
+                "WireDomainPackageSupport"
             ]
         ),
         .target(

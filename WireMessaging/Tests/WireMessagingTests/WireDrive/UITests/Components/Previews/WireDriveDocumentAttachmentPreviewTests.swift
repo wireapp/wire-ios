@@ -40,28 +40,55 @@ final class WireDriveDocumentAttachmentPreviewTests: XCTestCase {
 
     @MainActor
     func testConfigurationVariations() async throws {
-        let testCases: [(headerIcon: Image, headerText: String, labelText: String, progress: Double?, isError: Bool)] =
+        let testCases: [(
+            headerIcon: Image,
+            headerText: String,
+            labelText: String,
+            state: WireDriveFileUITracker.State,
+            isAvailableOffline: Bool
+        )] =
             [
                 (
                     headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "short file name",
-                    progress: nil,
-                    isError: false
+                    state: .notLoaded,
+                    isAvailableOffline: false
                 ),
                 (
                     headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "this is a file with a medium name that wraps",
-                    progress: 0.5,
-                    isError: false
+                    state: .loading(progress: 0.5, isLargeFile: true),
+                    isAvailableOffline: false
                 ),
                 (
                     headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "this is a file with a long name that wraps and doesn't fit into the two lines of text",
-                    progress: 1,
-                    isError: true
+                    state: .loaded(showReadyToOpen: false),
+                    isAvailableOffline: false
+                ),
+                (
+                    headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                    headerText: "PDF (336 KB)",
+                    labelText: "short file name",
+                    state: .loaded(showReadyToOpen: true),
+                    isAvailableOffline: false
+                ),
+                (
+                    headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                    headerText: "PDF (336 KB)",
+                    labelText: "short file name",
+                    state: .failed,
+                    isAvailableOffline: false
+                ),
+                (
+                    headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                    headerText: "PDF (336 KB)",
+                    labelText: "file available offline",
+                    state: .loaded(showReadyToOpen: true),
+                    isAvailableOffline: true
                 )
             ]
 
@@ -70,8 +97,9 @@ final class WireDriveDocumentAttachmentPreviewTests: XCTestCase {
                 headerIcon: testCase.headerIcon,
                 headerText: testCase.headerText,
                 labelText: testCase.labelText,
-                progress: testCase.progress,
-                isError: testCase.isError
+                state: testCase.state,
+                isDraftPreview: false,
+                isAvailableOffline: testCase.isAvailableOffline
             )
             .frame(width: 222, height: 74)
             snapshotHelper

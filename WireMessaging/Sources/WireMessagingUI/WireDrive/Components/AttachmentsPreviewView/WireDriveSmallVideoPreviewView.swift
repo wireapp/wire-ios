@@ -20,30 +20,32 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
 struct WireDriveSmallVideoPreviewView: View {
 
+    @ScaledMetric private var scale: CGFloat = 1
+
     let url: URL?
-    let progress: Double?
-    let downloadError: Bool
+    let state: WireDriveFileUITracker.State
     let duration: String?
+    let isAvailableOffline: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: downloadError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color,
-        ) {
+        WireDriveAttachmentPreview {
             ZStack(alignment: .center) {
                 if let url {
                     asyncImage(url: url)
                 }
 
-                if url == nil, !downloadError {
+                if url == nil, case .loading = state {
                     ProgressView()
                 }
 
-                if downloadError {
+                if case .failed = state {
                     WireDriveAttachmentPreviewErrorCircle()
                 }
             }
@@ -54,6 +56,11 @@ struct WireDriveSmallVideoPreviewView: View {
             .overlay(alignment: .bottom) {
                 if let duration {
                     durationView(duration: duration)
+                }
+            }
+            .overlay(alignment: .topTrailing) {
+                if isAvailableOffline {
+                    availableOfflineIcon()
                 }
             }
         }
@@ -70,9 +77,22 @@ struct WireDriveSmallVideoPreviewView: View {
                     .resizable()
                     .scaledToFill()
                     .overlay {
-                        if !downloadError {
+                        switch state {
+                        case .notLoaded, .loaded:
                             PlayIcon()
                                 .disabled(false)
+                        case let .loading(progress, _):
+                            ZStack {
+                                PlayIcon()
+
+                                Color.black.opacity(0.7)
+
+                                ProgressView(value: progress)
+                                    .progressViewStyle(.wireDriveAsset(strokeColor: .white))
+                                    .frame(height: 30)
+                            }
+                        case .failed:
+                            EmptyView()
                         }
                     }
             case .failure:
@@ -91,16 +111,62 @@ struct WireDriveSmallVideoPreviewView: View {
             .frame(maxWidth: .infinity)
             .padding(.bottom, 6)
     }
+
+    @ViewBuilder
+    private func availableOfflineIcon() -> some View {
+        Image(systemName: "arrow.down.circle.fill")
+            .resizable()
+            .frame(width: 12 * scale, height: 11 + scale)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color, .white)
+            .accessibilityLabel(Accessibility.Files.availableOffline)
+            .padding(6)
+    }
 }
 
 #Preview {
-    WireDriveSmallVideoPreviewView(
-        url: URL(
-            string:
-            "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
+    let url = URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg")
+    let previewCases: [(
+        url: URL?,
+        state: WireDriveFileUITracker.State
+    )] = [
+        (
+            url: url,
+            state: .loading(progress: 0.7, isLargeFile: false)
         ),
-        progress: 0.7,
-        downloadError: false,
-        duration: "2:22",
-    )
+        (
+            url: url,
+            state: .loaded(showReadyToOpen: true)
+        ),
+        (
+            url: url,
+            state: .loaded(showReadyToOpen: false)
+        ),
+        (
+            url: url,
+            state: .notLoaded
+        ),
+        (
+            url: url,
+            state: .failed
+        ),
+        (
+            url: URL?.none,
+            state: .loaded(showReadyToOpen: true)
+        )
+    ]
+    ScrollView {
+        VStack {
+            ForEach(0 ..< previewCases.count, id: \.self) { index in
+                let data = previewCases[index]
+
+                WireDriveSmallVideoPreviewView(
+                    url: data.url,
+                    state: data.state,
+                    duration: "02:34",
+                    isAvailableOffline: true
+                )
+                .padding(.horizontal)
+            }
+        }
+    }
 }

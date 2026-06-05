@@ -47,6 +47,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     @Published private var asset: WireDriveLocalAsset?
     @Published private var node: WireDriveNode?
     @Published private var isDeleted: Bool
+    @Published var fileTracker: WireDriveFileUITracker
 
     init(
         attachment: WireDriveMessageAttachment,
@@ -69,6 +70,11 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         self.localAssetRepository = localAssetRepository
         self._displayStyle = displayStyle
         self.isDeleted = false
+        self.fileTracker = .init()
+        fileTracker.onSmallFileLoaded = { [weak self] in
+            guard let asset = self?.asset, !asset.isAvailableOffline else { return }
+            Task { await self?.handleAsset() }
+        }
 
         setupBindings()
 
@@ -122,28 +128,8 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         preview?.url
     }
 
-    var progress: Double {
-        switch asset?.downloadState {
-        case let .downloading(progress):
-            progress
-        case .failed:
-            1 // We show a full red progress bar on failure
-        default:
-            0
-        }
-    }
-
-    var isAssetDownloadError: Bool {
-        switch asset?.downloadState {
-        case .failed:
-            true
-        default:
-            false
-        }
-    }
-
     private var preview: WireDriveNodePreview? {
-        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last
+        node?.previews.max(by: { $0.dimension < $1.dimension })
     }
 
     private var isProcessing: Bool {
@@ -192,19 +178,23 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         pollingTask = nil
     }
 
-    func open() async {
-        guard !isDeleted, !isDownloading else { return }
-
-        lastOpenRequest.nodeID = nodeID
+    func handleAsset() async {
+        guard !isDeleted else { return }
 
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
-            if lastOpenRequest.nodeID == nodeID {
+            switch fileTracker.state {
+            case .notLoaded, .failed:
+                _ = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
+            case .loaded:
+                let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
                 QuickLookPreviewPresenter.present(url: url)
+            case .loading:
+                await getAssetUseCase.cancelDownload(nodeID: nodeID)
             }
         } catch {
             WireLogger.wireDrive.error("Failed to open file with node ID: \(nodeID), error: \(error)")
         }
+
     }
 
     private var previewSize: CGSize? {
@@ -238,6 +228,18 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
         let duration = Duration.milliseconds(durationInMS)
         return duration.formatted(.time(pattern: .minuteSecond))
+    }
+
+    var isAvailableOffline: Bool {
+        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isDownloaded = switch fileTracker.state {
+        case .loaded:
+            true
+        default:
+            false
+        }
+
+        return isAvailableOffline && isDownloaded
     }
 
     // MARK: - Private
@@ -274,10 +276,6 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         return fileSize.map { $0.formatted(.byteCount(style: .decimal)) }
     }
 
-    private var isDownloading: Bool {
-        asset?.downloadState.isDownloading == true
-    }
-
     private func setupBindings() {
         nodeRenameNotifier.publisher
             .sink { [weak self] nodeID in
@@ -294,6 +292,9 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         localAssetRepository.observeAsset(nodeID: attachment.nodeID)
             .sink { [weak self] asset in
                 self?.asset = asset
+                if let asset {
+                    self?.fileTracker.handleDownloadState(fromAsset: asset)
+                }
             }.store(in: &cancellables)
     }
 

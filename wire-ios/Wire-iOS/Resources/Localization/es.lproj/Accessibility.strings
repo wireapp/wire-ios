@@ -131,6 +131,7 @@
 "sketch.drawButton.hint" = "Doble toque para activar o desactivar";
 "sketch.selectEmojiButton.description" = "Seleccionar emoji";
 "sketch.sendButton.description" = "Enviar";
+"sketch.confirmButton.description" = "Confirmar";
 "sketch.undoButton.description" = "Deshacer el último paso";
 "sketch.closeButton.description" = "Cerrar croquis";
 
@@ -153,6 +154,7 @@
 "settings.deviceCount.hint" = "%@ dispositivos en uso";
 "settings.closeButton.description" = "Cerrar ajustes";
 "settings.backButton.description" = "Volver a Ajustes";
+"settings.shareDebugInfoBanner.arrow" = "Double tap to open more options";
 
 "accountSettings.backButton.description" = "Volver a Cuenta";
 

@@ -235,27 +235,10 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         message.backingTextMessageData.linkPreviewHasImage = true
 
         let previewView = try XCTUnwrap(message.replyPreview(userSession: UserSessionMock()))
+
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(
-                matching: previewView.prepareForSnapshot(),
-                named: "LightTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
-            )
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(
-                matching: previewView.prepareForSnapshot(),
-                named: "DarkTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
-            )
+        verifyViewInAllThemes(previewView)
     }
 
     func testThatItRendersImageMessagePreview() throws {
@@ -294,25 +277,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let previewView = message.replyPreview(userSession: UserSessionMock())!
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(
-                matching: previewView.prepareForSnapshot(),
-                named: "LightTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
-            )
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(
-                matching: previewView.prepareForSnapshot(),
-                named: "DarkTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
-            )
+        verifyViewInAllThemes(previewView)
     }
 
     // MARK: - Unit Test
@@ -325,6 +290,30 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     }
 
     // MARK: - Helper method
+
+    private func verifyViewInAllThemes(
+        _ view: UIView,
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        testName: String = #function
+    ) {
+        let themes: [(style: UIUserInterfaceStyle, name: String)] = [
+            (.light, "LightTheme"),
+            (.dark, "DarkTheme")
+        ]
+
+        for theme in themes {
+            snapshotHelper
+                .withUserInterfaceStyle(theme.style)
+                .verify(
+                    matching: view.prepareForSnapshot(),
+                    named: theme.name,
+                    file: file,
+                    testName: testName,
+                    line: line
+                )
+        }
+    }
 
     private func mentionMessage() -> MockMessage {
         let message = MockMessageFactory.messageTemplate()
