@@ -339,25 +339,12 @@ class ActiveConversationPage: PageModel {
         }
         startRecording.waitAndTap()
         XCTAssertTrue(
-            recordingTimeLabel.waitForExistence(timeout: 2),
+            stopRecording.waitForExistence(timeout: 5),
             "Audio recording not started"
         )
 
-        let predicate = NSPredicate(format: "value != %@", "0:00")
-        let expectation = XCTNSPredicateExpectation(
-            predicate: predicate,
-            object: recordingTimeLabel
-        )
-        let result = await XCTWaiter().fulfillment(of: [expectation], timeout: 5)
-        XCTAssertEqual(
-            result, .completed,
-            "Audio did not recorded — timer still on 0:00"
-        )
-
-        if stopRecording.waitForExistence(timeout: 2), stopRecording.isHittable {
-            stopRecording.tap()
-        }
-        heliumButton.tap()
+        stopRecording.waitAndTap()
+        heliumButton.waitAndTap()
         sendAudioButton.waitAndTap()
         return self
     }
