@@ -17,36 +17,44 @@
 //
 
 import Foundation
+import WireLogging
 import ZIPFoundation
 
 enum ZipExtractor {
     static func extractEntry(
         _ path: String,
         from archiveURL: URL
-    ) async throws -> URL {
-
-        let archive = try Archive(
-            url: archiveURL,
-            accessMode: .read
-        )
-
-        guard let entry =
-            archive[path] else {
-            throw CocoaError(.fileNoSuchFile)
-        }
-
-        let destination =
-            FileManager.default.temporaryDirectory.appendingPathComponent(
-                UUID().uuidString
-            ).appendingPathExtension(
-                URL(filePath: path).pathExtension
+    ) -> URL? {
+        do {
+            let archive = try Archive(
+                url: archiveURL,
+                accessMode: .read
             )
 
-        _ = try archive.extract(
-            entry,
-            to: destination
-        )
+            guard let entry =
+                archive[path] else {
+                throw CocoaError(.fileNoSuchFile)
+            }
 
-        return destination
+            let destination =
+                FileManager.default.temporaryDirectory.appendingPathComponent(
+                    UUID().uuidString
+                ).appendingPathExtension(
+                    URL(filePath: path).pathExtension
+                )
+
+            _ = try archive.extract(
+                entry,
+                to: destination
+            )
+
+            return destination
+        } catch {
+            WireLogger.wireDrive.error(
+                "Unabled to extract entry from archived file, archiveURL: \(archiveURL), entry: \(path)"
+            )
+
+            return nil
+        }
     }
 }

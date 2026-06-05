@@ -40,13 +40,13 @@ struct QuickPreviewItem: Equatable {
 extension QuickPreviewItem {
     static func fromNode(_ node: WireDriveNode?, url: URL) -> QuickPreviewItem? {
         guard let node else { return nil }
-        let selfUser = node.conversation?.participants.first(where: \.isSelfUser)
 
-        if selfUser == nil {
+        guard let selfUser = node.conversation?.participants.first(where: \.isSelfUser) else {
             WireLogger.wireDrive.error("Self user not found - cannot establish file permission - discarding item")
+            return nil
         }
 
-        let isReadOnly = (selfUser?.role ?? .viewer) == .viewer
+        let isReadOnly = selfUser.role == .viewer
         let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
 
         return QuickPreviewItem(

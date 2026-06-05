@@ -18,7 +18,6 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
-import WireLogging
 import WireMessagingDomain
 
 struct ZipBrowserView: View {
@@ -59,24 +58,18 @@ struct ZipBrowserView: View {
     private func previewButton(child: ZipNode) -> some View {
         Button {
             Task {
-                do {
-                    let url = try await ZipExtractor.extractEntry(
-                        child.path,
-                        from: archiveURL
-                    )
+                guard let url = ZipExtractor.extractEntry(
+                    child.path,
+                    from: archiveURL
+                ) else { return }
 
-                    quickPreviewItem = QuickPreviewItem(
-                        url: url,
-                        fileType: fileType(for: child),
-                        filename: child.name,
-                        isReadOnly: true,
-                        openFrom: .drive // we don't really mind where it's open from.
-                    )
-                } catch {
-                    WireLogger.wireDrive.error(
-                        "Unabled to extract entry from archived file, archiveURL: \(archiveURL), entry: \(child.name)"
-                    )
-                }
+                quickPreviewItem = QuickPreviewItem(
+                    url: url,
+                    fileType: fileType(for: child),
+                    filename: child.name,
+                    isReadOnly: true,
+                    openFrom: .drive // we don't really mind where it's open from.
+                )
             }
         } label: {
             Label(
