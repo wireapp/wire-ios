@@ -60,8 +60,12 @@ struct MeetingsView: View {
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
                 formatTimeRange: viewModel.formatTimeRange(for:),
-                onEdit: { _ in },
-                onDelete: { _ in }
+                onEdit: { _ in
+                    // TODO: [WPB-25501] Implement UI
+                },
+                onDelete: { _ in
+                    // TODO: [WPB-25514] Implement UI
+                }
             )
 
             if viewModel.hasMore {
