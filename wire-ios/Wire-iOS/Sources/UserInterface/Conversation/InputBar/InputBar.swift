@@ -266,7 +266,7 @@ final class InputBar: UIView {
                 $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
                 $0.clipsToBounds = true
             }
-            
+
         }
 
         inputContainer.addArrangedSubview(upperContainer)
@@ -700,7 +700,7 @@ final class InputBar: UIView {
             editingView.confirmButton.isEnabled = hasChanges
         }
     }
-    
+
     private func onDriveViewerAccessBannerClosed() {
         inputContainer.removeArrangedSubview(driveViewerAccessBanner)
         driveViewerAccessBanner.removeFromSuperview()

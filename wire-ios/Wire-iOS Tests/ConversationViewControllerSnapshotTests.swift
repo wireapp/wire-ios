@@ -185,7 +185,7 @@ extension ConversationViewControllerSnapshotTests {
         // then
         snapshotHelper.verify(matching: sut)
     }
-    
+
     func testThatViewerAccessBannerIsVisibleForAGuestInAWireDriveConversation() {
         // given
         let mockConversation = createTeamGroupConversation()
