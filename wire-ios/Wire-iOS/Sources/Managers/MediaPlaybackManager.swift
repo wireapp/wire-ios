@@ -18,10 +18,9 @@
 
 import avs
 import Foundation
+import WireLogging
 import WireSyncEngine
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "MediaPlaybackManager")
 
 /// An object that observes changes in the media playback manager.
 protocol MediaPlaybackManagerChangeObserver: AnyObject {
@@ -125,7 +124,7 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
 
 extension MediaPlaybackManager: MediaPlayerDelegate {
     func mediaPlayer(_ mediaPlayer: MediaPlayer, didChangeTo state: MediaPlayerState) {
-        zmLog.debug("mediaPlayer changed state: \(state)")
+        WireLogger.ui.debug("mediaPlayer changed state: \(state)")
 
         changeObserver?.activeMediaPlayerStateDidChange()
 
