@@ -114,7 +114,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             type: Feature.CellsInternal.Config.self
         )
     }
-    
+
     public func fetchE2EIConfig() async throws -> LocalFeature<Feature.E2EI.Config> {
         try await fetchFeatureConfig(
             name: .e2ei,

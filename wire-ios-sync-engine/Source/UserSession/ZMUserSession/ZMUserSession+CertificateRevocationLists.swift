@@ -17,8 +17,9 @@
 //
 
 import Foundation
-import WireLogging
 import WireDomain
+import WireLogging
+
 extension ZMUserSession {
 
     func setupCertificateRevocationLists() {
@@ -53,11 +54,11 @@ extension ZMUserSession {
 
     func checkExpiredCertificateRevocationLists() async {
         guard await isE2EIFeatureEnabled() else { return }
-        
+
         guard let cRLsChecker else {
             WireLogger.e2ei.error("requires 'cRLsChecker' to check expired CRLs!", attributes: .safePublic)
             return
-        }    
+        }
         await cRLsChecker.checkExpiredCRLs()
     }
 }

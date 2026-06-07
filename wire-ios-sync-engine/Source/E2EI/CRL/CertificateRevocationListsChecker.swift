@@ -115,7 +115,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
-        let e2eiFeatureConfig = await self.fetchE2EIFeatureConfig()
+        let e2eiFeatureConfig = await fetchE2EIFeatureConfig()
         let crlURLBuilder = CRLURLBuilder(
             shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
             proxyURLString: e2eiFeatureConfig?.crlProxy
