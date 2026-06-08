@@ -124,8 +124,8 @@ platform :ios do
 
     desc "List UITest identifiers and their comment tags"
     lane :list_uitest_tags do |options|
-        tests = ui_test_tests_matching_tags(
-            tags: normalize_ui_test_tags(options[:tags]),
+        tests = ui_test_tests_matching_tag_groups(
+            tag_groups: parse_ui_test_tag_expression(options[:tags]),
             excluded_tags: normalize_ui_test_tags(options[:exclude_tags])
         )
 
@@ -622,24 +622,25 @@ platform :ios do
     end
 
     def ui_test_filter_options(options)
-        tags = normalize_ui_test_tags(options[:tags])
-        return {} if tags.empty?
+        tag_groups = parse_ui_test_tag_expression(options[:tags])
+        return {} if tag_groups.empty?
 
-        selected_tests = ui_test_tests_matching_tags(tags: tags)
-        UI.user_error!("No UI tests matched tags: #{tags.join(',')}") if selected_tests.empty?
+        tag_expression = format_ui_test_tag_expression(tag_groups)
+        selected_tests = ui_test_tests_matching_tag_groups(tag_groups: tag_groups)
+        UI.user_error!("No UI tests matched tags: #{tag_expression}") if selected_tests.empty?
 
         identifiers = selected_tests.map { |test| test[:identifier] }
-        UI.message("Running #{identifiers.count} UI tests matching tags: #{tags.join(',')}")
+        UI.message("Running #{identifiers.count} UI tests matching tags: #{tag_expression}")
         { only_testing: identifiers }
     end
 
-    def ui_test_tests_matching_tags(tags:, excluded_tags: [])
-        requested_tags = tags.to_set
+    def ui_test_tests_matching_tag_groups(tag_groups:, excluded_tags: [])
         blocked_tags = excluded_tags.to_set
 
         ui_test_metadata.select do |test|
             test_tags = test[:tags].to_set
-            requested_tags.subset?(test_tags) && (blocked_tags & test_tags).empty?
+            tag_groups.all? { |group| group.any? { |tag| test_tags.include?(tag) } } &&
+                (blocked_tags & test_tags).empty?
         end
     end
 
@@ -702,6 +703,17 @@ platform :ios do
         return [] unless match
 
         normalize_ui_test_tags(match[1])
+    end
+
+    def parse_ui_test_tag_expression(value)
+        Array(value)
+            .flat_map { |tag_expression| tag_expression.to_s.split(",") }
+            .map { |group| normalize_ui_test_tags(group.split("|")) }
+            .reject(&:empty?)
+    end
+
+    def format_ui_test_tag_expression(tag_groups)
+        tag_groups.map { |group| group.join("|") }.join(",")
     end
 
     def normalize_ui_test_tags(value)
