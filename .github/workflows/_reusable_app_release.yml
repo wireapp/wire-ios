@@ -83,7 +83,8 @@ jobs:
     uses: ./.github/workflows/changelog.yml
     with:
       is_cloud_build: ${{ inputs.is_cloud_build }}
-      
+    secrets: inherit
+
   build_and_release:
     if: always()
     timeout-minutes: 60

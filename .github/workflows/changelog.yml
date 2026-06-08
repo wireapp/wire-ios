@@ -69,6 +69,70 @@ jobs:
           cat CHANGELOG.md | grep -v '🍒' > CHANGELOG1.md
           mv CHANGELOG1.md CHANGELOG.md
 
+      # Replace each commit subject with the title (summary) of its JIRA ticket,
+      # so the changelog reads like release notes instead of raw commit messages.
+      # Lines without a WPB-xxxx key, or tickets we can't fetch, are left as-is.
+      - name: 'Resolve JIRA titles'
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          JIRA_BASE_URL: https://wearezeta.atlassian.net
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'CHANGELOG.md';
+            const base = process.env.JIRA_BASE_URL;
+            const token = process.env.JIRA_TOKEN;
+            if (!token) {
+              core.warning('JIRA_TOKEN not set — keeping commit titles');
+              return;
+            }
+            const auth = `Basic ${Buffer.from(token).toString('base64')}`;
+            const cache = new Map();
+            const titleFor = async (key) => {
+              if (cache.has(key)) return cache.get(key);
+              let summary = null;
+              try {
+                const res = await fetch(`${base}/rest/api/3/issue/${key}?fields=summary`, {
+                  headers: { Authorization: auth, Accept: 'application/json' },
+                });
+                if (res.ok) {
+                  const json = await res.json();
+                  summary = json.fields && json.fields.summary;
+                  // Tickets are often prefixed with a platform tag like "[iOS] " — drop it.
+                  if (summary) summary = summary.replace(/^\s*\[[^\]]*\]\s*/, '');
+                } else {
+                  core.warning(`Jira ${key}: ${res.status} ${await res.text()}`);
+                }
+              } catch (e) {
+                core.warning(`Jira ${key}: ${e.message}`);
+              }
+              cache.set(key, summary);
+              return summary;
+            };
+
+            const lines = fs.readFileSync(path, 'utf8').split('\n');
+            const out = [];
+            for (const line of lines) {
+              const keyMatch = line.match(/WPB-\d+/i);
+              if (!line.startsWith('*') || !keyMatch) {
+                out.push(line);
+                continue;
+              }
+              const key = keyMatch[0].toUpperCase();
+              const summary = await titleFor(key);
+              if (!summary) {
+                out.push(line);
+                continue;
+              }
+              // Preserve the trailing commit-sha link that generate-changelog appends.
+              const tail = (line.match(/(\s*\[[0-9a-f]{6,}\]\([^)]+\))\s*$/i) || [, ''])[1];
+              out.push(`* ${summary} ([${key}](${base}/browse/${key}))${tail}`);
+            }
+            fs.writeFileSync(path, out.join('\n'));
+            core.info(`Resolved ${cache.size} JIRA ticket(s) in the changelog.`);
+
       - name: 'Set date variable'
         id: date
         run: echo "date=$(date +%s%N)" >> $GITHUB_OUTPUT
