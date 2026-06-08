@@ -59,8 +59,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sceneDelegate?.appRootRouter
     }
 
-    var mainWindow: UIWindow! {
-        sceneDelegate?.window!
+    var mainWindow: UIWindow? {
+        sceneDelegate?.window
     }
 
     // TODO: [WPB-9867]: remove this property
