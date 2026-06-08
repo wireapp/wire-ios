@@ -218,8 +218,8 @@ public enum Locators {
         case leaveConversation
     }
 
-    public enum LastAdminLeaveAlert: String {
-        case promoteNewAdmin = "Promote new admin"
+    public enum LastAdminLeaveAlert: AutoPrefixedEnum {
+        case promoteNewAdmin
     }
 
     public enum AdminSelectionPage: AutoPrefixedEnum {
