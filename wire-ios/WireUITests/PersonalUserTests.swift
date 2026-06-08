@@ -18,8 +18,10 @@
 
 import XCTest
 
+/// core
 final class PersonalUsersTests: WireUITestCase {
 
+    /// critical
     @MainActor
     func testRegisterAsPersonalUser_TC_8971() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
@@ -57,6 +59,7 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
     }
 
+    /// critical
     @MainActor
     func testLoginAsExistingPersonalUser_TC_8804() async throws {
         let user = try await UserHelper.default.createPersonalUser()
@@ -69,6 +72,7 @@ final class PersonalUsersTests: WireUITestCase {
             .enterPassword(user.password)
     }
 
+    /// critical
     @MainActor
     func testPersonalAccountLifecycle_TC_8807_TC_8810_TC_8819_TC_8826_TC_8867_TC_9450() async throws {
         let userA = try await UserHelper.default.createPersonalUser()

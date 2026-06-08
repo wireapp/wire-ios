@@ -20,6 +20,7 @@ import WireFoundation
 import WireLocators
 import XCTest
 
+/// core
 final class ShareExtensionTests: WireUITestCase {
 
     private let photosAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
@@ -49,6 +50,7 @@ final class ShareExtensionTests: WireUITestCase {
         }
     }
 
+    /// critical
     @MainActor
     func testShareImageOnetoOne_TC_8915() async throws {
 
@@ -75,6 +77,7 @@ final class ShareExtensionTests: WireUITestCase {
         )
     }
 
+    /// critical
     @MainActor
     func testShareImageToGroupConversation_TC_8919() async throws {
 

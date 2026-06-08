@@ -19,6 +19,7 @@
 import WireFoundation
 import XCTest
 
+/// core
 final class AccountManagementTests: WireUITestCase {
 
     var teamMember: UserInfo!

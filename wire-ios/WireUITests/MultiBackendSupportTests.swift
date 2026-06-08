@@ -18,6 +18,7 @@
 
 import XCTest
 
+/// core
 final class MultiBackendSupportTests: WireUITestCase {
 
     @MainActor
@@ -43,6 +44,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         return (accountPage, user)
     }
 
+    /// critical
     @MainActor
     func testAddMultiBackendAccounts_TC_8940() async throws {
 
