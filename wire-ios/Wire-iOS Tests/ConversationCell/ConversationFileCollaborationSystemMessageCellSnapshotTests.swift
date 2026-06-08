@@ -17,6 +17,7 @@
 //
 
 import WireDesign
+import WireMessagingDomain
 import WireTestingPackage
 import XCTest
 
@@ -47,30 +48,38 @@ final class ConversationFileCollaborationSystemMessageCellSnapshotTests: XCTestC
 
     // MARK: - Snapshot Tests
 
-    func testFileCollaboration_LightTheme() {
-        let view = makeSut()
+    func testFileCollaboration_Editor_Role() {
+        let view = makeSut(selfUserRole: .editor)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view)
-    }
-
-    func testFileCollaboration_DarkTheme() {
-        let view = makeSut()
+            .verify(matching: view, named: "light")
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view)
+            .verify(matching: view, named: "dark")
+    }
+
+    func testFileCollaboration_Viewer_Role() {
+        let view = makeSut(selfUserRole: .viewer)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
     }
 
     // MARK: - Helpers
 
-    private func makeSut() -> UIView {
-        sut = ConversationFileCollaborationSystemMessageCellDescription()
+    private func makeSut(selfUserRole: WireDriveConversation.Participant.Role) -> UIView {
+        sut = ConversationFileCollaborationSystemMessageCellDescription(selfUserRole: selfUserRole)
         let view = sut.makeView()
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
-        let wrapperView = UIView(frame: .init(x: 0, y: 0, width: 375, height: 30))
-        wrapperView.backgroundColor = SemanticColors.View.backgroundConversationList
+        view.backgroundColor = ColorTheme.Backgrounds.background
+        let wrapperView = UIView(frame: .init(x: 0, y: 0, width: 375, height: 70))
+        wrapperView.backgroundColor = ColorTheme.Backgrounds.background
         wrapperView.addSubview(view)
         view.frame = wrapperView.bounds
 
