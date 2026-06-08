@@ -24,7 +24,7 @@ import WireSyncEngine
 ///
 /// - warning: This is really only intended to be accessed by App delegates and scene delegates. In other places,
 /// dependencies should be injected.
-struct AppDependencies {
+enum AppDependencies {
 
     static let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
     static let pushTokenService = PushTokenService()

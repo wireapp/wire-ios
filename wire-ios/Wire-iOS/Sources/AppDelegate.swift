@@ -200,55 +200,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Reset
 
     #if DEBUG
-    private func resetApp() {
-        let arguments = ProcessInfo.processInfo.arguments
-        if arguments.contains("-resetData") {
-            resetFileSystem()
-            resetUserDefaults()
-            resetKeychain()
-            print("app reset done")
-        }
-    }
-
-    private func resetUserDefaults() {
-        if let bundleID = Bundle.main.bundleIdentifier {
-            UserDefaults.standard.removePersistentDomain(forName: bundleID)
-            UserDefaults.standard.synchronize()
-        }
-    }
-
-    private func resetKeychain() {
-        let secItemClasses = [
-            kSecClassGenericPassword,
-            kSecClassInternetPassword,
-            kSecClassCertificate,
-            kSecClassKey,
-            kSecClassIdentity
-        ]
-        for itemClass in secItemClasses {
-            let query: [String: Any] = [kSecClass as String: itemClass]
-            SecItemDelete(query as CFDictionary)
-        }
-    }
-
-    private func resetFileSystem() {
-        guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
-            preconditionFailure("Unable to get shared container URL")
-        }
-        AccountManager.delete(at: rootURL)
-        let fileManager = FileManager.default
-        let directories: [FileManager.SearchPathDirectory] = [
-            .documentDirectory,
-            .cachesDirectory,
-            .applicationSupportDirectory
-        ]
-
-        for dir in directories {
-            if let url = fileManager.urls(for: dir, in: .userDomainMask).first {
-                try? fileManager.removeItem(at: url)
+        private func resetApp() {
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-resetData") {
+                resetFileSystem()
+                resetUserDefaults()
+                resetKeychain()
+                print("app reset done")
             }
         }
-    }
+
+        private func resetUserDefaults() {
+            if let bundleID = Bundle.main.bundleIdentifier {
+                UserDefaults.standard.removePersistentDomain(forName: bundleID)
+                UserDefaults.standard.synchronize()
+            }
+        }
+
+        private func resetKeychain() {
+            let secItemClasses = [
+                kSecClassGenericPassword,
+                kSecClassInternetPassword,
+                kSecClassCertificate,
+                kSecClassKey,
+                kSecClassIdentity
+            ]
+            for itemClass in secItemClasses {
+                let query: [String: Any] = [kSecClass as String: itemClass]
+                SecItemDelete(query as CFDictionary)
+            }
+        }
+
+        private func resetFileSystem() {
+            guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
+                preconditionFailure("Unable to get shared container URL")
+            }
+            AccountManager.delete(at: rootURL)
+            let fileManager = FileManager.default
+            let directories: [FileManager.SearchPathDirectory] = [
+                .documentDirectory,
+                .cachesDirectory,
+                .applicationSupportDirectory
+            ]
+
+            for dir in directories {
+                if let url = fileManager.urls(for: dir, in: .userDomainMask).first {
+                    try? fileManager.removeItem(at: url)
+                }
+            }
+        }
     #endif
 
     // MARK: - Complete Initialization

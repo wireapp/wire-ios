@@ -18,11 +18,11 @@
 
 import avs
 import UIKit
+import WireCommonComponents
+import WireCountly
 import WireLogging
 import WireNetwork
 import WireSyncEngine
-import WireCommonComponents
-import WireCountly
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -56,7 +56,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.makeKeyAndVisible()
 
         self.window = window
-
 
         setNavigationAppearance(isRightToLeft: window.isRightToLeft)
 
@@ -170,7 +169,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func startAppRouter() {
         appRootRouter?.start()
     }
-
 
     // MARK: - Private
 
