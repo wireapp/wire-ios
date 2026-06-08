@@ -30,10 +30,6 @@ import WireLogging
 import WireNetwork
 import WireSyncEngine
 
-extension Notification.Name {
-    static let ZMUserSessionDidBecomeAvailable = Notification.Name("ZMUserSessionDidBecomeAvailableNotification")
-}
-
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Private properties

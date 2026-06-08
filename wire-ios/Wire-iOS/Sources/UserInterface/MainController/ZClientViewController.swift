@@ -249,8 +249,6 @@ final class ZClientViewController: UIViewController {
                 .appendingPathComponent(remoteIdentifier.uuidString, isDirectory: true)
         }
 
-        NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
-
         let featureToken = NotificationCenter.default
             .addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
                 guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
