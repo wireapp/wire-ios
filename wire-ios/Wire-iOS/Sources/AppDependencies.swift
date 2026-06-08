@@ -20,7 +20,7 @@ import Foundation
 import WireNetwork
 import WireSyncEngine
 
-/// To level dependencies needed app wide.
+/// Top level dependencies needed app wide.
 ///
 /// - warning: This is really only intended to be accessed by App delegates and scene delegates. In other places,
 /// dependencies should be injected.
