@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "OK";
 "general.next" = "Weiter";
 "general.cancel" = "Abbrechen";
@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@ haben %@ entfernt";
 "content.system.conversation.you.removed.legalhold" = "%@ wurden aus dieser Unterhaltung entfernt, da die gesetzliche Aufbewahrung aktiviert wurde.";
 "content.system.conversation.you.left" = "%@ haben die Unterhaltung verlassen";
+"content.system.conversation.you.promoted" = "Sie wurden zum Gruppen-Admin ernannt";
 "content.system.conversation.team.member-leave" = "%@ wurde aus dem Team entfernt.";
 "content.system.conversation.guest.joined" = "%@ ist beigetreten";
 "content.system.conversation.guest.you_joined" = "Sie sind beigetreten";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Ursprüngliche Nachricht vom %@";
 "content.message.reply.original_timestamp.time" = "Ursprüngliche Nachricht von %@";
 "content.message.reply.broken_message" = "Diese Nachricht ist nicht sichtbar.";
+"content.message.reply.deleted_message" = "Gelöschte Nachricht";
 "content.message.reply.edited_message" = "Bearbeitet";
 
 "content.message.open_link_alert.title" = "Link öffnen";
@@ -1155,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Profil teilen";
 "qrcode.share_message" = "Teilen Sie Ihr Profil, um einfach mit anderen Personen in Kontakt zu treten. Sie müssen noch die Kontaktanfrage akzeptieren, bevor sie miteinander kommunizieren können.";
 "qrcode.share_profile_link.button.title" = "Profil-Link teilen";
