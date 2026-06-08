@@ -20,52 +20,85 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMessagingDomain
 
 final class ConversationFileCollaborationSystemMessageCellDescription: ConversationMessageCellDescription {
+    typealias WireDriveSelfUserRole = WireDriveConversation.Participant.Role
 
-    typealias View = ConversationWarningSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>
-    typealias LabelColors = SemanticColors.Label
-    typealias IconColors = SemanticColors.Icon
+    // MARK: Properties
 
+    typealias View = ConversationSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>
     let configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     let containsHighlightableContent: Bool = false
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String?
 
-    init() {
-        let fullText = L10n.Localizable.Content.System.FileCollaboration.enabled
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String? = nil
+
+    // MARK: initialization
+
+    init(selfUserRole: WireDriveSelfUserRole) {
+        let icon = UIImage(systemName: "rectangle.stack.fill")?
+            .withRenderingMode(.alwaysOriginal)
+            .withTintColor(ColorTheme.Base.secondaryText)
+
+        let title = Self.makeTitle(selfUserRole: selfUserRole)
+
+        self.configuration = View.Configuration(
+            icon: icon,
+            attributedText: title,
+            showLine: false,
+            resetLinkStyleForOverride: true
+        )
+
+        self.actionController = nil
+    }
+
+    init(configuration: View.Configuration) {
+        self.configuration = configuration
+    }
+
+    private static func makeTitle(selfUserRole: WireDriveSelfUserRole) -> NSAttributedString {
+        typealias FileCollaborationEnabled = L10n.Localizable.Content.System.FileCollaboration.Enabled
+
+        let driveAccessTitle = selfUserRole == .editor ? FileCollaborationEnabled
+            .editorAccess : FileCollaborationEnabled.viewerAccess
+        let spacer = " "
+        let fullText = L10n.Localizable.Content.System.FileCollaboration.enabled + "." + "\(spacer + driveAccessTitle)"
         var attributedText: NSMutableAttributedString
         let baseAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumFont,
-            .foregroundColor: LabelColors.textDefault
+            .foregroundColor: ColorTheme.Backgrounds.onSurface
         ]
-
-        let icon = UIImage(systemName: "rectangle.stack.fill")?
-            .withRenderingMode(.alwaysOriginal)
-            .withTintColor(IconColors.backgroundDefault)
 
         attributedText = .init(
             string: fullText,
             attributes: baseAttributes
         )
 
-        if let range = fullText.lowercased().range(of: "on", options: .backwards) {
+        if let range = fullText.lowercased().range(of: "on") {
             let nsRange = NSRange(range, in: fullText)
             attributedText.addAttribute(.font, value: UIFont.mediumSemiboldFont, range: nsRange)
         }
 
-        self.configuration = View.Configuration(
-            icon: icon,
-            topText: NSAttributedString(string: ""),
-            bottomText: attributedText,
-        )
-        self.accessibilityLabel = attributedText.string
-        self.actionController = nil
+        let learnMoreLabel = FileCollaborationEnabled.learnMore
+        let linkUrl = URL(string: "https://support.wire.com/hc/en-us/articles/36679600377373-File-permissions")!
+        let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+            .font: UIFont.mediumSemiboldFont,
+            .foregroundColor: ColorTheme.Backgrounds.onSurface,
+            .link: linkUrl as AnyObject,
+            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+            .underlineColor: ColorTheme.Backgrounds.onSurface
+        ]
+
+        let spaceBetweenParagraphs = "\n\n"
+        attributedText.append(.init(string: spaceBetweenParagraphs + learnMoreLabel, attributes: linkAttributes))
+
+        return attributedText
     }
 
 }

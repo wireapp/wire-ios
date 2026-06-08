@@ -87,7 +87,11 @@ final class GroupConversationHeaderView: UIView {
            selfUser.canAddUser(to: conversation),
            conversation.conversationType == .group,
            conversation.allowGuests {
-            let guestsView = GuestsAllowedView(isChannel: conversation.isChannel)
+            let guestsView = GuestsAllowedView(
+                isChannel: conversation.isChannel,
+                isWireDriveEnabled: conversation.isWireDriveEnabled
+            )
+
             guestsView.onInviteTapped = { [weak self] in
                 guard let self else { return }
                 delegate?.conversationMessageWantsToOpenGuestOptionsFromView(self, sourceView: guestsView)
@@ -111,9 +115,10 @@ final class GroupConversationHeaderView: UIView {
         }
 
         if conversation.isWireDriveEnabled {
-            let fileCollabDesc = ConversationFileCollaborationSystemMessageCellDescription()
-            let fileCollabCell =
-                ConversationWarningSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>()
+            let fileCollabDesc = ConversationFileCollaborationSystemMessageCellDescription(
+                selfUserRole: selfUser.isGuest(in: conversation) ? .viewer : .editor
+            )
+            let fileCollabCell = ConversationFileCollaborationSystemMessageCellDescription.View()
             fileCollabCell.configure(with: fileCollabDesc.configuration, animated: false)
             stackView.addArrangedSubview(fileCollabCell)
 
