@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
+package import WireCallingDomain
+
+package typealias GroupedMeetings = [(day: Date, meetings: [Meeting])]
 
 package struct MeetingsGrouper {
 
@@ -25,9 +28,7 @@ package struct MeetingsGrouper {
     package init() {}
 
     package func group(
-        _ meetings: [Meeting],
-        byHours: Bool,
-        sort: SortOrder
+        _ meetings: [Meeting]
     ) -> GroupedMeetings {
         let sortMeetings: ([Meeting]) -> [Meeting] = { meetings in
             meetings.sorted {
@@ -39,37 +40,9 @@ package struct MeetingsGrouper {
             }
         }
 
-        let groupedByDay = Dictionary(grouping: meetings) { calendar.startOfDay(for: $0.start) }
+        return Dictionary(grouping: meetings) { calendar.startOfDay(for: $0.start) }
             .map { (day: $0.key, meetings: sortMeetings($0.value)) }
-
-        let sortedDays: [(day: Date, meetings: [Meeting])] = switch sort {
-        case .ascending:  groupedByDay.sorted { $0.day < $1.day }
-        case .descending: groupedByDay.sorted { $0.day > $1.day }
-        }
-
-        guard byHours else {
-            return sortedDays.map { (day: $0.day, timeSlots: [(time: $0.day, meetings: $0.meetings)]) }
-        }
-
-        return sortedDays.map { dayGroup in
-            let slots = Dictionary(grouping: dayGroup.meetings) { meeting in
-                calendar.date(
-                    bySettingHour: calendar.component(.hour, from: meeting.start),
-                    minute: 0,
-                    second: 0,
-                    of: meeting.start
-                ) ?? meeting.start
-            }
-            .map { (time: $0.key, meetings: sortMeetings($0.value)) }
-            .sorted { $0.time < $1.time }
-
-            return (day: dayGroup.day, timeSlots: slots)
-        }
-    }
-
-    package enum SortOrder {
-        case ascending
-        case descending
+            .sorted { $0.day < $1.day }
     }
 
 }
