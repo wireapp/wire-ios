@@ -7,6 +7,11 @@ on:
         description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
         type: string
+      run_critical_uitests:
+        description: "Run critical UI tests only"
+        required: false
+        default: true
+        type: boolean
   push:
     branches:
       - 'develop'
@@ -25,8 +30,8 @@ jobs:
       all: false
       notify_secret: WIRE_IOS_QA_WEBHOOK
       test_dependencies: false
-      run_critical_flows: true
-      ui_test_tags: critical
+      run_critical_flows: ${{ inputs.run_critical_uitests }}
+      ui_test_tags: ${{ inputs.run_critical_uitests && 'critical' || '' }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
     secrets: inherit
