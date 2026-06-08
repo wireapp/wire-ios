@@ -36,11 +36,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         pushTokenService: pushTokenService
     )
 
+    private var connectionOptions: UIScene.ConnectionOptions?
+
     // MARK: - Public properties
 
     let pushTokenService = PushTokenService()
     private(set) var appRootRouter: AppRootRouter?
-    private(set) var connectionOptions: UIScene.ConnectionOptions?
 
     // MARK: - UISceneDelegate
 

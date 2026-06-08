@@ -30,15 +30,6 @@ import WireLogging
 import WireNetwork
 import WireSyncEngine
 
-enum ApplicationLaunchType {
-    case unknown
-    case direct
-    case push
-    case url
-    case registration
-    case passwordReset
-}
-
 extension Notification.Name {
     static let ZMUserSessionDidBecomeAvailable = Notification.Name("ZMUserSessionDidBecomeAvailableNotification")
 }
@@ -71,8 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var appRootRouter: AppRootRouter? {
         sceneDelegate.appRootRouter
     }
-
-    private(set) var launchType: ApplicationLaunchType = .unknown
 
     var mainWindow: UIWindow! {
         sceneDelegate.window!
@@ -148,8 +137,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DeveloperOverrides.storage = .shared()
         VoIPPushHelperOperation().execute()
 
-        observeNotifications()
-
         WireLogger.appDelegate
             .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
         WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
@@ -178,10 +165,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         WireLogger.appDelegate
             .info("application:didReceiveRemoteNotification:fetchCompletionHandler: notification: \(userInfo)")
-
-        launchType = (application.applicationState == .inactive || application.applicationState == .background) ?
-            .push :
-            .direct
     }
 
     func application(
@@ -271,44 +254,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     #endif
-
-    // MARK: - Notifications
-
-    private func observeNotifications() {
-        let center = NotificationCenter.default
-        center.publisher(for: UIApplication.didBecomeActiveNotification).sink { [unowned self] _ in
-            handleDidBecomeActiveNotification()
-        }.store(in: &cancellables)
-
-        center.publisher(for: UIApplication.didEnterBackgroundNotification).sink { [unowned self] _ in
-            handleDidEnterBackgroundNotification()
-        }.store(in: &cancellables)
-
-        center.publisher(for: .ZMUserSessionDidBecomeAvailable).sink { [unowned self] _ in
-            handleUserSessionDidBecomeAvailableNotification()
-        }.store(in: &cancellables)
-    }
-
-    private func handleDidBecomeActiveNotification() {
-        switch launchType {
-        case .url, .push:
-            break
-        default:
-            launchType = .direct
-        }
-    }
-
-    private func handleDidEnterBackgroundNotification() {
-        launchType = .unknown
-    }
-
-    private func handleUserSessionDidBecomeAvailableNotification() {
-        launchType = .direct
-
-        if sceneDelegate.connectionOptions?.urlContexts.first != nil {
-            launchType = .url
-        }
-    }
 
     // MARK: - Complete Initialization
 
