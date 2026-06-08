@@ -30,11 +30,10 @@ class AdminPromotionTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomConversationName()
 
         let (owner, teamMembers, _, _) = try await UserHelper.default.registerTeam(
-              withMemberCount: 1,
-              conversation: .group(groupName)
-          )
-          let member = teamMembers[0]
-        
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+        let member = teamMembers[0]
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()

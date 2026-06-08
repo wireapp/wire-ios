@@ -33,7 +33,7 @@ struct AdminSelectionViewModelTests {
             ("bob", 1),
             ("@bob", 1),
             ("zzz_no_match", 0),
-            ("@al", 1),
+            ("@al", 1)
         ] as [(String, Int)]
     )
     func filteredCandidates_count(query: String, expectedCount: Int) {
@@ -49,7 +49,7 @@ struct AdminSelectionViewModelTests {
             ("ALICE", "Alice"),
             ("bob", "Bob"),
             ("@bob", "Bob"),
-            ("@al", "Alice"),
+            ("@al", "Alice")
         ] as [(String, String)]
     )
     func filteredCandidates_firstCandidate(query: String, expectedName: String) {

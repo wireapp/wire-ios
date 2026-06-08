@@ -133,7 +133,10 @@ private struct AdminCandidateRow: View {
     var body: some View {
         HStack(spacing: 12) {
             UserImageViewRepresentable(user: user, userSession: userSession, size: .small)
-                .frame(width: CGFloat(UserImageView.Size.small.rawValue), height: CGFloat(UserImageView.Size.small.rawValue))
+                .frame(
+                    width: CGFloat(UserImageView.Size.small.rawValue),
+                    height: CGFloat(UserImageView.Size.small.rawValue)
+                )
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(user.name ?? "")

@@ -48,7 +48,7 @@ final class AdminSelectionViewModel: ObservableObject {
         let handleQuery = query.hasPrefix("@") ? String(query.dropFirst()) : query
         return candidates.filter {
             ($0.name?.lowercased().contains(query) ?? false) ||
-            (!handleQuery.isEmpty && ($0.handle?.lowercased().contains(handleQuery) ?? false))
+                (!handleQuery.isEmpty && ($0.handle?.lowercased().contains(handleQuery) ?? false))
         }
     }
 

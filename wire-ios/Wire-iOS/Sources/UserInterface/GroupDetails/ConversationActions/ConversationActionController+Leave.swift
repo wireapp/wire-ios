@@ -79,11 +79,10 @@ extension ConversationActionController {
     func requestLeave(for conversation: ZMConversation) {
         let session = userSession
         Task { @MainActor in
-            let isPreventAdminlessGroupsEnabled: Bool
-            if DeveloperFlag.preventAdminlessGroups.isOn {
-                isPreventAdminlessGroupsEnabled = true
+            let isPreventAdminlessGroupsEnabled: Bool = if DeveloperFlag.preventAdminlessGroups.isOn {
+                true
             } else {
-                isPreventAdminlessGroupsEnabled = await session.clientSessionComponent?
+                await session.clientSessionComponent?
                     .featureConfigRepository.isFeatureEnabled(.preventAdminlessGroups) ?? false
             }
 
@@ -102,7 +101,7 @@ extension ConversationActionController {
                 self.present(LastAdminLeaveAlert.deleteOnly(groupName: groupName) { [weak self] in
                     self?.requestDeleteGroupResult { [weak self] confirmed in
                         guard let self, confirmed else { return }
-                        self.handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
+                        handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
                     }
                 })
             } else {
@@ -111,7 +110,7 @@ extension ConversationActionController {
                 } onDelete: { [weak self] in
                     self?.requestDeleteGroupResult { [weak self] confirmed in
                         guard let self, confirmed else { return }
-                        self.handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
+                        handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
                     }
                 })
             }
@@ -151,9 +150,9 @@ extension ConversationActionController {
     private func eligibleAdminCandidates(in conversation: ZMConversation) -> [UserType] {
         conversation.localParticipantsExcludingSelf.filter {
             !$0.isGroupAdmin(in: conversation) &&
-            !$0.isFederated &&
-            !$0.isExternalPartner &&
-            !$0.isTemporaryUser
+                !$0.isFederated &&
+                !$0.isExternalPartner &&
+                !$0.isTemporaryUser
         }
     }
 
@@ -182,7 +181,7 @@ extension ConversationActionController {
                 conversation.updateRole(of: user, to: adminRole) { result in
                     switch result {
                     case .success: continuation.resume()
-                    case .failure(let error): continuation.resume(throwing: error)
+                    case let .failure(error): continuation.resume(throwing: error)
                     }
                 }
             }
