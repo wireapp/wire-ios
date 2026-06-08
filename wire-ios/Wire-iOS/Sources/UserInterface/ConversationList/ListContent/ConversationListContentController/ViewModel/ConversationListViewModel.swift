@@ -443,10 +443,6 @@ final class ConversationListViewModel: NSObject {
     }
 }
 
-// MARK: - ZMUserObserving
-
-private let log = ZMSLog(tag: "ConversationListViewModel")
-
 // MARK: - ConversationDirectoryObserver
 
 extension ConversationListViewModel: ConversationDirectoryObserver {

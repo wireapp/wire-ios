@@ -22,11 +22,10 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireFoundation
+import WireLogging
 import WireMessagingUI
 import WireReusableUIComponents
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "UI")
 
 // MARK: - CameraKeyboardViewControllerDelegate
 
@@ -391,7 +390,7 @@ class CameraKeyboardViewController: UIViewController {
                                     let data = image.jpegData(compressionQuality: 0.9)
                                     completeBlock(data, info?["PHImageFileUTIKey"] as? String)
                                 } else {
-                                    zmLog.error("Failure: cannot fetch image")
+                                    WireLogger.ui.error("Failure: cannot fetch image")
                                 }
                             }
                         )
@@ -419,7 +418,7 @@ class CameraKeyboardViewController: UIViewController {
                                 self.activityIndicator.stop()
                             }
                             guard let data else {
-                                zmLog.error("Failure: cannot fetch image")
+                                WireLogger.ui.error("Failure: cannot fetch image")
                                 return
                             }
 

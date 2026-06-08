@@ -92,7 +92,7 @@ extension ZMMessage: Shareable {
                             fetchLinkPreview: fetchLinkPreview
                         )
                     } catch {
-                        Logging.messageProcessing
+                        WireLogger.messageProcessing
                             .warn("Failed to append text message. Reason: \(error.localizedDescription)")
                     }
                 }

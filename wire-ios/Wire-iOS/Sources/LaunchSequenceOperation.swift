@@ -74,7 +74,7 @@ final class PerformanceDebuggerOperation: LaunchSequenceOperation {
     }
 }
 
-// MARK: - ZMSLogOperation
+// MARK: - AVSLoggingOperation
 
 final class AVSLoggingOperation: LaunchSequenceOperation {
     func execute() {

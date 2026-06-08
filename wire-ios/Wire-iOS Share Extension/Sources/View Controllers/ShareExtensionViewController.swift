@@ -35,7 +35,6 @@ import WireShareEngine
 import WireUtilities
 
 typealias Completion = () -> Void
-private let zmLog = ZMSLog(tag: "UI")
 
 /// The delay after which a progess view controller will be displayed if all messages are not yet sent.
 private let progressDisplayDelay: TimeInterval = 0.5
