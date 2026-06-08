@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import WireUtilities
-
-private let zmLog = ZMSLog(tag: "share extension")
 
 extension Error {
 
     func log(message: @autoclosure () -> String) {
-        zmLog.error(message() + " — Error: \(self)")
+        WireLogger.shareExtension.error(message() + " — Error: \(self)")
     }
 
 }

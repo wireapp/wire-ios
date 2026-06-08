@@ -36,19 +36,15 @@ package final class AllMeetingsViewModel: ObservableObject {
     private let isContextMenuAllowed: Bool
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         passwordValidator: any PasswordValidator,
         isContextMenuAllowed: Bool
     ) {
         self.meetingsViewModel = MeetingsViewModel(
-            repository: repository,
             currentDateProvider: currentDateProvider,
             formatter: formatter,
-            pastMeetingsUseCase: pastMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
         self.passwordValidator = passwordValidator
