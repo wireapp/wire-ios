@@ -27,289 +27,166 @@ import WireFoundationSupport
 @Suite("MeetingsViewModel Tests")
 struct MeetingsViewModelTests {
 
-    private let mockRepository: MockMeetingsRepositoryProtocol
     private let mockDateProvider: CurrentDateProvidingMock
     private let formatter: MeetingsFormatter
-    private let pastMeetingsUseCase: MockFetchPastMeetingsUseCaseProtocol
     private let upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol
     private let viewModel: MeetingsViewModel
 
     init() throws {
-        self.mockRepository = MockMeetingsRepositoryProtocol()
         self.mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
-        self.pastMeetingsUseCase = MockFetchPastMeetingsUseCaseProtocol()
         self.upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
         self.viewModel = MeetingsViewModel(
-            repository: mockRepository,
             currentDateProvider: mockDateProvider,
             formatter: formatter,
-            pastMeetingsUseCase: pastMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
     }
 
-    @Test("initial state has correct defaults")
+    // MARK: - Initial State
+
+    @Test("initial state is empty")
     func initialState() {
-        #expect(viewModel.selectedTab == .next)
-        #expect(viewModel.showAll == false)
-        #expect(viewModel.showMoreButton == false)
-        #expect(viewModel.ongoingMeetings.isEmpty)
-        #expect(viewModel.groupedPastMeetings.isEmpty)
-        #expect(viewModel.groupedNextMeetings.isEmpty)
+        #expect(viewModel.loadedMeetings.isEmpty)
+        #expect(viewModel.hasMore == false)
+        #expect(viewModel.groupedUpcomingMeetings.isEmpty)
     }
 
-    @Test("loadInitialData calls all use cases")
-    func loadInitialData() {
-        // Given
-        pastMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
-        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
-        mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
+    // MARK: - loadInitialData
 
-        let date1 = Date()
-        let meeting1 = Meeting.fixture(title: "Past 1", start: date1)
-        let groupedMeetings: GroupedMeetings = [
-            (day: date1, timeSlots: [(time: date1, meetings: [meeting1])])
-        ]
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, _ in
-            PaginatedGroupedMeetings(groups: groupedMeetings, hasMore: false, nextOffset: 0)
+    @Test("loadInitialData loads the first page using the initial page size and a zero offset")
+    func loadInitialData_loadsFirstPage() {
+        // Given
+        let meeting = Meeting.fixture(title: "Upcoming 1", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+            PaginatedMeetings(meetings: [meeting], hasMore: true, nextOffset: 10)
         }
 
         // When
         viewModel.loadInitialData()
 
         // Then
-        #expect(mockRepository.fetchOngoingMeetingsAt_Invocations.count == 1)
-        #expect(pastMeetingsUseCase.invoke_Invocations.count == 1)
-        #expect(upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_Invocations.count == 1)
+        #expect(viewModel.loadedMeetings.count == 1)
+        #expect(viewModel.loadedMeetings.first?.title == "Upcoming 1")
+        #expect(viewModel.hasMore == true)
+        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.count == 1)
+        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.first?.pageSize == 10)
+        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.first?.offset == 0)
     }
 
-    @Test("refreshOngoingMeetings fetches and updates ongoing meetings")
-    func refreshOngoingMeetings() {
+    @Test("loadInitialData replaces previously loaded meetings and resets the offset")
+    func loadInitialData_resetsState() {
         // Given
-        let meeting1 = Meeting.fixture(title: "Ongoing 1", start: Date())
-        let meeting2 = Meeting.fixture(title: "Ongoing 2", start: Date())
-        mockRepository.fetchOngoingMeetingsAt_MockValue = [meeting1, meeting2]
-
-        // When
-        viewModel.refreshOngoingMeetings()
-
-        // Then
-        #expect(viewModel.ongoingMeetings.count == 2)
-        #expect(viewModel.ongoingMeetings.contains { $0.title == "Ongoing 1" })
-        #expect(viewModel.ongoingMeetings.contains { $0.title == "Ongoing 2" })
-    }
-
-    @Test("refreshOngoingMeetings with empty result")
-    func refreshOngoingMeetings_EmptyResult() {
-        // Given
-        mockRepository.fetchOngoingMeetingsAt_MockValue = []
-
-        // When
-        viewModel.refreshOngoingMeetings()
-
-        // Then
-        #expect(viewModel.ongoingMeetings.isEmpty)
-    }
-
-    @Test("refreshPastMeetings fetches and updates past meetings")
-    func refreshPastMeetings() {
-        // Given
-        let date1 = Date()
-        let meeting1 = Meeting.fixture(title: "Past 1", start: date1)
-        let groupedMeetings: GroupedMeetings = [
-            (day: date1, timeSlots: [(time: date1, meetings: [meeting1])])
-        ]
-        pastMeetingsUseCase.invoke_MockValue = groupedMeetings
-
-        // When
-        viewModel.refreshPastMeetings()
-
-        // Then
-        #expect(viewModel.groupedPastMeetings.count == 1)
-        #expect(viewModel.groupedPastMeetings[0].timeSlots.count == 1)
-        #expect(viewModel.groupedPastMeetings[0].timeSlots[0].meetings[0].title == "Past 1")
-    }
-
-    @Test("refreshPastMeetings with empty result")
-    func refreshPastMeetings_EmptyResult() {
-        // Given
-        pastMeetingsUseCase.invoke_MockValue = []
-
-        // When
-        viewModel.refreshPastMeetings()
-
-        // Then
-        #expect(viewModel.groupedPastMeetings.isEmpty)
-    }
-
-    @Test("loadUpcomingMeetings loads first page")
-    func loadUpcomingMeetingsFirstPage() {
-        // Given
-        pastMeetingsUseCase.invoke_MockMethod = {
-            []
+        let first = Meeting.fixture(title: "First load", start: mockDateProvider.now.addingTimeInterval(3600))
+        let second = Meeting.fixture(title: "Second load", start: mockDateProvider.now.addingTimeInterval(7200))
+        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+            PaginatedMeetings(meetings: [first], hasMore: true, nextOffset: 10)
         }
-        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
-        mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
-        let date = Date()
-        let meeting = Meeting.fixture(title: "Upcoming 1", start: date)
-        let groups: GroupedMeetings = [
-            (day: date, timeSlots: [(time: date, meetings: [meeting])])
-        ]
-
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, _ in
-            PaginatedGroupedMeetings(groups: groups, hasMore: true, nextOffset: 50)
-        }
-
-        // When
         viewModel.loadInitialData()
 
-        // Then
-        #expect(viewModel.groupedNextMeetings.count == 1)
-    }
-
-    // MARK: - Show More Button Tests
-
-    @Test("showMoreButton is false when no more meetings in limited view")
-    func showMoreButton_False_WhenNoMore() {
-        // Given
-        pastMeetingsUseCase.invoke_MockMethod = {
-            []
+        // When — a second initial load returns a different page
+        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+            PaginatedMeetings(meetings: [second], hasMore: false, nextOffset: 10)
         }
-        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
-        mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, _ in
-            PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: 0)
-        }
-
-        // When
         viewModel.loadInitialData()
 
-        // Then
-        #expect(viewModel.showMoreButton == false)
+        // Then — meetings are replaced (not appended) and the offset is back to 0
+        #expect(viewModel.loadedMeetings.count == 1)
+        #expect(viewModel.loadedMeetings.first?.title == "Second load")
+        #expect(viewModel.hasMore == false)
+        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.last?.offset == 0)
     }
 
-    @Test("showMoreButton is true when more meetings exist beyond tomorrow in limited view")
-    func showMoreButton_True_WhenMoreExist() {
-        // Given
-        pastMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
-        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
-        mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in true }
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, _ in
-            PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: 0)
-        }
+    // MARK: - loadMoreIfNeeded
 
-        // When
-        viewModel.loadInitialData()
-
-        // Then
-        #expect(viewModel.showMoreButton == true)
-    }
-
-    // MARK: - Merge Groups Tests
-
-    @Test("merging groups combines meetings from different days")
-    func mergeGroups_DifferentDays() {
-        // Given
-        pastMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
-        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
-        mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
-        let date1 = Date()
-        let date2 = date1.addingTimeInterval(86_400)
-        let meeting1 = Meeting.fixture(title: "Meeting 1", start: date1)
-        let meeting2 = Meeting.fixture(title: "Meeting 2", start: date2)
-
-        let groups: GroupedMeetings = [
-            (day: date1, timeSlots: [(time: date1, meetings: [meeting1])]),
-            (day: date2, timeSlots: [(time: date2, meetings: [meeting2])])
-        ]
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, _ in
-            PaginatedGroupedMeetings(groups: groups, hasMore: true, nextOffset: 50)
-        }
-
-        // When
-        viewModel.loadInitialData()
-        viewModel.loadMoreUpcomingMeetings()
-
-        // Then
-        #expect(viewModel.groupedNextMeetings[0].day == date1)
-        #expect(viewModel.groupedNextMeetings[1].day == date2)
-    }
-
-    @Test("merging groups combines meetings from same day different times")
-    func mergeGroups_SameDay_DifferentTimes() {
-        // Given
-        pastMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
-        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
-        mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
-        let date = Date()
-        let time1 = date
-        let time2 = date.addingTimeInterval(3600)
-        let meeting1 = Meeting.fixture(title: "Meeting 1", start: time1)
-        let meeting2 = Meeting.fixture(title: "Meeting 2", start: time2)
-
-        let groups: GroupedMeetings = [
-            (day: date, timeSlots: [(time: time1, meetings: [meeting1])]),
-            (day: date, timeSlots: [(time: time2, meetings: [meeting2])])
-        ]
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, _ in
-            PaginatedGroupedMeetings(groups: groups, hasMore: true, nextOffset: 50)
-        }
-
-        // When
-        viewModel.loadInitialData()
-        viewModel.loadMoreUpcomingMeetings()
-
-        // Then
-        #expect(viewModel.groupedNextMeetings.count == 1)
-        #expect(viewModel.groupedNextMeetings[0].timeSlots.count == 2)
-    }
-
-    @Test("merging groups combines meetings at same time")
-    func mergeGroups_SameTime() {
-        // Given
-        pastMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
-        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
-        mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
-        let date = Date()
-        let meeting1 = Meeting.fixture(title: "Meeting 1", start: date)
-        let meeting2 = Meeting.fixture(title: "Meeting 2", start: date)
-
-        let firstPageGroups: GroupedMeetings = [
-            (day: date, timeSlots: [(time: date, meetings: [meeting1])])
-        ]
-
-        let secondPageGroups: GroupedMeetings = [
-            (day: date, timeSlots: [(time: date, meetings: [meeting2])])
-        ]
-
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, offset in
+    @Test("loadMoreIfNeeded appends the next page using the page size and the returned offset")
+    func loadMoreIfNeeded_appendsNextPage() {
+        // Given — page 1 at offset 0, page 2 at offset 10
+        let page1 = Meeting.fixture(title: "Page 1", start: mockDateProvider.now.addingTimeInterval(3600))
+        let page2 = Meeting.fixture(title: "Page 2", start: mockDateProvider.now.addingTimeInterval(2 * 86_400))
+        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, offset in
             if offset == 0 {
-                PaginatedGroupedMeetings(groups: firstPageGroups, hasMore: true, nextOffset: 50)
+                PaginatedMeetings(meetings: [page1], hasMore: true, nextOffset: 10)
             } else {
-                PaginatedGroupedMeetings(groups: secondPageGroups, hasMore: false, nextOffset: 100)
+                PaginatedMeetings(meetings: [page2], hasMore: false, nextOffset: 15)
             }
         }
 
         // When
         viewModel.loadInitialData()
-        viewModel.loadMoreUpcomingMeetings()
+        viewModel.loadMoreIfNeeded()
 
         // Then
-        #expect(viewModel.groupedNextMeetings.count == 1)
-        #expect(viewModel.groupedNextMeetings[0].timeSlots.count == 1)
-        #expect(viewModel.groupedNextMeetings[0].timeSlots[0].meetings.count == 2)
+        #expect(viewModel.loadedMeetings.count == 2)
+        #expect(viewModel.loadedMeetings.contains { $0.title == "Page 1" })
+        #expect(viewModel.loadedMeetings.contains { $0.title == "Page 2" })
+        #expect(viewModel.hasMore == false)
+        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.count == 2)
+        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.last?.pageSize == 5)
+        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.last?.offset == 10)
+    }
+
+    @Test("loadMoreIfNeeded does nothing when there are no more meetings")
+    func loadMoreIfNeeded_doesNothingWhenNoMore() {
+        // Given
+        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+            PaginatedMeetings(meetings: [], hasMore: false, nextOffset: 0)
+        }
+        viewModel.loadInitialData()
+        #expect(viewModel.hasMore == false)
+
+        // When
+        viewModel.loadMoreIfNeeded()
+
+        // Then — no extra fetch happened
+        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.count == 1)
+    }
+
+    // MARK: - Grouping
+
+    @Test("groupedUpcomingMeetings groups by day ascending and sorts within a day by start then title")
+    func groupedUpcomingMeetings_groupsAndSorts() {
+        // Given — same-day meetings (one tie on start time, broken by title) plus a later day,
+        // delivered out of order to prove the grouper sorts both days and time slots.
+        let earlyZebra = Meeting.fixture(title: "Zebra sync", start: mockDateProvider.now.addingTimeInterval(3600))
+        let earlyApple = Meeting.fixture(title: "Apple sync", start: mockDateProvider.now.addingTimeInterval(3600))
+        let later = Meeting.fixture(title: "Late", start: mockDateProvider.now.addingTimeInterval(7200))
+        let otherDay = Meeting.fixture(title: "Next day", start: mockDateProvider.now.addingTimeInterval(2 * 86_400))
+
+        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+            PaginatedMeetings(meetings: [later, otherDay, earlyZebra, earlyApple], hasMore: false, nextOffset: 10)
+        }
+
+        // When
+        viewModel.loadInitialData()
+
+        // Then
+        let groups = viewModel.groupedUpcomingMeetings
+        #expect(groups.count == 2)
+
+        // Days are sorted ascending
+        #expect(groups[0].day < groups[1].day)
+
+        // First day: sorted by start, ties broken by title
+        #expect(groups[0].meetings.map(\.title) == ["Apple sync", "Zebra sync", "Late"])
+
+        // Second day
+        #expect(groups[1].meetings.map(\.title) == ["Next day"])
+    }
+
+    // MARK: - Formatting
+
+    @Test("formatTimeRange delegates to the formatter")
+    func formatTimeRange() {
+        let meeting = Meeting.fixture(title: "Meeting", start: mockDateProvider.now)
+        #expect(viewModel.formatTimeRange(for: meeting) == formatter.timeRange(from: meeting.start, to: meeting.end))
+    }
+
+    @Test("formatDay delegates to the formatter")
+    func formatDay() {
+        let day = mockDateProvider.now
+        #expect(viewModel.formatDay(day) == formatter.dayHeader(for: day, now: mockDateProvider.now))
     }
 
 }

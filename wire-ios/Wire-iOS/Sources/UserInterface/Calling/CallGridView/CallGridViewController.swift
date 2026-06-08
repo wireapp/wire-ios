@@ -21,6 +21,7 @@ import DifferenceKit
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -342,7 +343,7 @@ final class CallGridViewController: UIViewController {
 
         // No stream to show. Update the capture state.
         guard let selfStream = stream(with: selfStreamId) else {
-            Log.calling.debug("updating capture state to \(configuration.videoState)")
+            WireLogger.calling.debug("updating capture state to \(configuration.videoState)")
             selfCallParticipantView?.updateCaptureState(with: configuration.videoState)
             return
         }
@@ -366,18 +367,18 @@ final class CallGridViewController: UIViewController {
     private func updateFloatingView(with stream: Stream?) {
         // No stream, remove floating video if there is any.
         guard let stream else {
-            Log.calling.debug("Removing self video from floating preview")
+            WireLogger.calling.debug("Removing self video from floating preview")
             return thumbnailViewController.removeCurrentThumbnailContentView()
         }
 
         // We only support the self preview in the floating overlay.
         guard stream.streamId == ZMUser.selfUser()?.selfStreamId else {
-            return Log.calling.error("Invalid operation: Non self preview in overlay")
+            return WireLogger.calling.error("Invalid operation: Non self preview in overlay")
         }
 
         // We have a stream but don't have a preview view yet.
         if thumbnailViewController.contentView == nil, let previewView = selfCallParticipantView {
-            Log.calling.debug("Adding self video to floating preview")
+            WireLogger.calling.debug("Adding self video to floating preview")
             thumbnailViewController.setThumbnailContentView(
                 previewView,
                 contentSize: .previewSize(for: traitCollection)

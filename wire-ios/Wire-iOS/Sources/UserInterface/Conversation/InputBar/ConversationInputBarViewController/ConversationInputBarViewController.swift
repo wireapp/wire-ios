@@ -766,7 +766,7 @@ final class ConversationInputBarViewController: UIViewController,
                 AVSMediaManager.sharedInstance().playKnockSound()
                 self.notificationFeedbackGenerator.notificationOccurred(.success)
             } catch {
-                Logging.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
+                WireLogger.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
             }
         }
 
