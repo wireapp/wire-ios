@@ -40,6 +40,7 @@ class WireUITestCase: XCTestCase {
         callingServiceClient = try CallingServiceClient()
         registerNotificationPermissionMonitor()
         uiTestConfig.useTripleTapForShakeGesture = true
+        uiTestConfig.useMockAudioRecorder = true
 
         let launchArguments = [
             "-resetData",
