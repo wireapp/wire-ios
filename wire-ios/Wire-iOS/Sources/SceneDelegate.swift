@@ -104,10 +104,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {
         WireLogger.sceneDelegate.info("scene(_:openURLContexts:)", attributes: .safePublic)
 
-        guard let url = urlContexts.first?.url else { return }
-
-        if appRootRouter?.openDeepLinkURL(url) != true {
-            WireLogger.sceneDelegate.warn("scene(_:openURLContexts:) failed to open url", attributes: .safePublic)
+        let didOpen = urlContexts.first.flatMap { appRootRouter?.openDeepLinkURL($0.url) }
+        if didOpen != true {
+            let hasRouter = appRootRouter != nil
+            WireLogger.sceneDelegate.warn(
+                "scene(_:openURLContexts:) failed - hasRouter: \(hasRouter), contextCount: \(urlContexts.count)",
+                attributes: .safePublic
+            )
         }
     }
 
