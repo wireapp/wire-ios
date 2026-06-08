@@ -53,11 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }.first
     }
 
-    // MARK: - Public properties
-
-    var appRootRouter: AppRootRouter? {
-        sceneDelegate?.appRootRouter
-    }
+    // MARK: - Public propertie
 
     var mainWindow: UIWindow? {
         sceneDelegate?.window
@@ -173,28 +169,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )
 
-        guard let appRootRouter = sceneDelegate?.appRootRouter else {
-            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
-            completionHandler()
-            return
-        }
-
-        appRootRouter.performWhenAuthenticated {
-            ZMUserSession.shared()?.application(
-                application,
-                handleEventsForBackgroundURLSession: identifier,
-                completionHandler: completionHandler
-            )
-        }
+        sceneDelegate?.application(
+            application,
+            handleEventsForBackgroundURLSession: identifier,
+            completionHandler: completionHandler
+        )
     }
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
         WireLogger.appDelegate.info("applicationProtectedDataDidBecomeAvailable", attributes: .safePublic)
-        guard sceneDelegate?.appRootRouter == nil else {
-            WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter not nil")
-            return
-        }
-        sceneDelegate?.createAppRootRouter()
+
+        sceneDelegate?.createAppRootRouterIfNeeded()
     }
 
     // MARK: - Reset

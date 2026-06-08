@@ -61,7 +61,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // TODO: [WPB-24600] Use method on CookieStorage instead of ZMKeychain.
         if UIApplication.shared.isProtectedDataAvailable || ZMKeychain.hasAccessibleAccountData() {
-            createAppRootRouter()
+            createAppRootRouterIfNeeded()
         }
     }
 
@@ -126,7 +126,30 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     // MARK: - Public
 
-    func createAppRootRouter() {
+    func application(
+        _ application: UIApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
+        guard let appRootRouter else {
+            WireLogger.sceneDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
+            completionHandler()
+            return
+        }
+
+        let sessionManager = appRootRouter.sessionManager
+        appRootRouter.performWhenAuthenticated {
+            sessionManager.activeUserSession?.application(
+                application,
+                handleEventsForBackgroundURLSession: identifier,
+                completionHandler: completionHandler
+            )
+        }
+    }
+
+    func createAppRootRouterIfNeeded() {
+        guard appRootRouter == nil else { return }
+
         let defaultEnvironment = fetchDefaultEnvironment()
 
         let sessionManager: SessionManager

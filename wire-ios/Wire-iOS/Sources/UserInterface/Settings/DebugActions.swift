@@ -202,7 +202,7 @@ enum DebugActions {
     }
 
     static func reloadUserInterface(_ type: any SettingsCellDescriptorType) {
-        guard let appRootRouter = (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter else {
+        guard let appRootRouter = UIApplication.shared.sceneDelegates.first?.appRootRouter else {
             return
         }
 
