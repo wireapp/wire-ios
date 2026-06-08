@@ -151,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             "application did register for remote notifications, storing standard token",
             attributes: .safePublic
         )
-        sceneDelegate?.pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
+        AppDependencies.pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
     }
 
     func application(

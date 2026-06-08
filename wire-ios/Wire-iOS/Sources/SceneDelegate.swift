@@ -28,19 +28,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     // MARK: - Private properties
 
-    private let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
     private let appStateCalculator = AppStateCalculator()
-
-    private lazy var voIPPushManager = VoIPPushManager(
-        application: UIApplication.shared,
-        pushTokenService: pushTokenService
-    )
-
     private var connectionOptions: UIScene.ConnectionOptions?
 
     // MARK: - Public properties
 
-    let pushTokenService = PushTokenService()
     private(set) var appRootRouter: AppRootRouter?
 
     // MARK: - UISceneDelegate
@@ -55,7 +47,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         WireLogger.sceneDelegate.info("scene(_:willConnectTo:options:)")
 
         self.connectionOptions = connectionOptions
-        voIPPushManager.registerForVoIPPushes()
+        AppDependencies.voIPPushManager.registerForVoIPPushes()
 
         guard let windowScene = scene as? UIWindowScene else { return }
 
@@ -139,7 +131,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         do {
             sessionManager = try createSessionManager(
                 defaultEnvironment: defaultEnvironment,
-                cookieStorage: cookieStorage
+                cookieStorage: AppDependencies.cookieStorage
             )
         } catch {
             fatalError("sessionManager is not created")
@@ -254,8 +246,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             environment: BackendEnvironment.shared,
             configuration: configuration,
             detector: jailbreakDetector,
-            pushTokenService: pushTokenService,
-            callKitManager: voIPPushManager.callKitManager,
+            pushTokenService: AppDependencies.pushTokenService,
+            callKitManager: AppDependencies.voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
@@ -265,7 +257,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             logFilesProvider: LogFilesProvider()
         )
 
-        voIPPushManager.delegate = sessionManager
+        AppDependencies.voIPPushManager.delegate = sessionManager
         return sessionManager
     }
 }
