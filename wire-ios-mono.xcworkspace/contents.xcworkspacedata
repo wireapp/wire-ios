@@ -137,6 +137,9 @@
          location = "group:swiftformat.yml">
       </FileRef>
       <FileRef
+         location = "group:ios_release_status.yml">
+      </FileRef>
+      <FileRef
          location = "group:swiftlint.yml">
       </FileRef>
       <FileRef
