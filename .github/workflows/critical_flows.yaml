@@ -26,6 +26,7 @@ jobs:
       notify_secret: WIRE_IOS_QA_WEBHOOK
       test_dependencies: false
       run_critical_flows: true
+      ui_test_tags: critical
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
     secrets: inherit

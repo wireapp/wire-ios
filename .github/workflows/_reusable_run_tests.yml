@@ -19,6 +19,10 @@ on:
       run_critical_flows:
         type: boolean
         required: true
+      ui_test_tags:
+        type: string
+        required: false
+        default: ''
       kalium_ref:
         type: string
         required: false
@@ -151,8 +155,14 @@ jobs:
 
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
+        env:
+          UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
         run: |
-          bundle exec fastlane run_uitests
+          if [ -n "$UI_TEST_TAGS" ]; then
+            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS"
+          else
+            bundle exec fastlane run_uitests
+          fi
 
       - name: Stop Kalium Testservice
         if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}

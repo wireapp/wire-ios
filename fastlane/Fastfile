@@ -2,6 +2,7 @@ require 'git'
 require 'base64'
 require 'httparty'
 require 'json'
+require 'set'
 require 'fastlane/action'
 require_relative 'framework'
 
@@ -50,7 +51,7 @@ platform :ios do
     end
 
     before_all do |lane|
-        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -62,7 +63,7 @@ platform :ios do
     end
 
     after_all do |lane|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
+        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
     end
     
     desc "Test frameworks given folders"
@@ -111,12 +112,26 @@ platform :ios do
         schemes = ["WireUITests"]
         options[:testplan] = "UITests"
         options[:number_of_retries] = 0 # no retries
+        ui_test_filter_options(options).each { |key, value| options[key] = value }
         begin
             run_tests_frameworks(schemes, options)
         rescue => e
             device_id = ENV['IOS_SIM_ID']
             sh "../scripts/zip_logs.sh 'com.wearezeta.zclient.alpha' 'group.com.wearezeta.zclient.alpha' 'app-group.zip' '#{device_id}'"
             UI.test_failure!("Failing running tests #{e.to_s}")
+        end
+    end
+
+    desc "List UITest identifiers and their comment tags"
+    lane :list_uitest_tags do |options|
+        tests = ui_test_tests_matching_tags(
+            tags: normalize_ui_test_tags(options[:tags]),
+            excluded_tags: normalize_ui_test_tags(options[:exclude_tags])
+        )
+
+        tests.each do |test|
+            tag_list = test[:tags].empty? ? "untagged" : test[:tags].join(",")
+            UI.message("#{test[:identifier]} [#{tag_list}]")
         end
     end
 
@@ -329,7 +344,7 @@ platform :ios do
         schemas.each do |scheme|
             write_tests_info_to_summary("🤖 Testing scheme #{scheme} with plan #{testplan}")
             begin
-                test_plan(build, scheme, testplan)
+                test_plan(build, scheme, testplan, options)
                 schema_errors[scheme] = false
             rescue => e
                 write_tests_info_to_summary("❌ Scheme: #{scheme} failed with errors: #{e.to_s}")
@@ -568,7 +583,7 @@ platform :ios do
         end
     end
 
-    def test_plan(build, scheme, testplan)
+    def test_plan(build, scheme, testplan, options = {})
         if ENV['IOS_SIM_ID'].nil?
             create_simulator_if_needed
         end
@@ -579,7 +594,7 @@ platform :ios do
 
         ci_args = is_running_on_ci ? "CI=1" : nil
 
-        run_tests(
+        run_tests_options = {
             step_name: "🧪 Running tests for scheme: #{scheme}",
             testplan: testplan,
             scheme: scheme,
@@ -599,7 +614,102 @@ platform :ios do
             skip_package_dependencies_resolution: true,
             number_of_retries: build.number_of_retries,
             xcargs: ci_args
-        )
+        }
+        run_tests_options[:only_testing] = options[:only_testing] if options[:only_testing]&.any?
+        run_tests_options[:skip_testing] = options[:skip_testing] if options[:skip_testing]&.any?
+
+        run_tests(run_tests_options)
+    end
+
+    def ui_test_filter_options(options)
+        tags = normalize_ui_test_tags(options[:tags])
+        return {} if tags.empty?
+
+        selected_tests = ui_test_tests_matching_tags(tags: tags)
+        UI.user_error!("No UI tests matched tags: #{tags.join(',')}") if selected_tests.empty?
+
+        identifiers = selected_tests.map { |test| test[:identifier] }
+        UI.message("Running #{identifiers.count} UI tests matching tags: #{tags.join(',')}")
+        { only_testing: identifiers }
+    end
+
+    def ui_test_tests_matching_tags(tags:, excluded_tags: [])
+        requested_tags = tags.to_set
+        blocked_tags = excluded_tags.to_set
+
+        ui_test_metadata.select do |test|
+            test_tags = test[:tags].to_set
+            requested_tags.subset?(test_tags) && (blocked_tags & test_tags).empty?
+        end
+    end
+
+    def ui_test_metadata
+        test_root = File.expand_path("../wire-ios/WireUITests", __dir__)
+
+        Dir.glob(File.join(test_root, "**/*.swift")).sort.flat_map do |file|
+            ui_test_metadata_for_file(file)
+        end
+    end
+
+    def ui_test_metadata_for_file(file)
+        current_class = nil
+        class_tags = []
+        pending_tags = []
+        tests = []
+
+        File.readlines(file).each_with_index do |line, index|
+            marker_tags = parse_ui_test_marker_tags(line)
+            if marker_tags.any?
+                pending_tags = (pending_tags + marker_tags).uniq
+                next
+            end
+
+            stripped_line = line.strip
+            if stripped_line.empty? || stripped_line.start_with?("//")
+                pending_tags = []
+                next
+            end
+
+            next if stripped_line.start_with?("@")
+
+            if (class_match = line.match(/\b(?:final\s+)?class\s+(\w+)\s*:\s*WireUITestCase\b/))
+                current_class = class_match[1]
+                class_tags = pending_tags
+                pending_tags = []
+                next
+            end
+
+            if current_class && !line.match?(/\bprivate\s+func\b/) &&
+               (test_match = line.match(/\bfunc\s+(test\w*)\s*\(\s*\)/))
+                method_name = test_match[1]
+                tags = (class_tags + pending_tags).uniq
+                tests << {
+                    identifier: "WireUITests/#{current_class}/#{method_name}",
+                    tags: tags,
+                    file: file,
+                    line: index + 1
+                }
+            end
+
+            pending_tags = []
+        end
+
+        tests
+    end
+
+    def parse_ui_test_marker_tags(line)
+        match = line.match(/\A\s*\/\/\/\s*([a-zA-Z][a-zA-Z0-9_-]*(?:\s*,\s*[a-zA-Z][a-zA-Z0-9_-]*)*)\s*\z/)
+        return [] unless match
+
+        normalize_ui_test_tags(match[1])
+    end
+
+    def normalize_ui_test_tags(value)
+        Array(value)
+            .flat_map { |tag| tag.to_s.split(",") }
+            .map { |tag| tag.strip.downcase }
+            .reject(&:empty?)
+            .uniq
     end
 
     def create_simulator_if_needed
