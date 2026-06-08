@@ -68,6 +68,9 @@ struct AdminSelectionView: View {
                 .background(Color(UIColor.systemBackground))
             }
             .background(Color(UIColor.systemBackground))
+            .onChange(of: viewModel.filteredCandidates.count) {
+                UIAccessibility.post(notification: .layoutChanged, argument: nil)
+            }
             .navigationTitle(L10n.Localizable.AdminSelection.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -104,6 +107,7 @@ private struct AdminSearchBar: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
 
             TextField(L10n.Localizable.Peoplepicker.searchPlaceholder, text: $text)
                 .autocorrectionDisabled()
@@ -116,6 +120,7 @@ private struct AdminSearchBar: View {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityLabel(L10n.Accessibility.AdminSelection.SearchBar.ClearButton.description)
             }
         }
         .padding(.horizontal, 10)
@@ -130,6 +135,12 @@ private struct AdminCandidateRow: View {
     let userSession: UserSession
     let isSelected: Bool
 
+    private var rowAccessibilityLabel: String {
+        [user.name, user.handle.map { "@\($0)" }]
+            .compactMap { $0 }
+            .joined(separator: ", ")
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             UserImageViewRepresentable(user: user, userSession: userSession, size: .small)
@@ -137,12 +148,12 @@ private struct AdminCandidateRow: View {
                     width: CGFloat(UserImageView.Size.small.rawValue),
                     height: CGFloat(UserImageView.Size.small.rawValue)
                 )
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(user.name ?? "")
                     .font(.body)
                     .fontWeight(.semibold)
-                    .accessibilityIdentifier(Locators.AdminSelectionPage.userCell.rawValue)
 
                 if let handle = user.handle {
                     Text("@\(handle)")
@@ -154,8 +165,14 @@ private struct AdminCandidateRow: View {
             Spacer()
 
             CheckmarkIcon(isSelected: isSelected)
+                .accessibilityHidden(true)
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .ignore)
+        .accessibilityIdentifier(Locators.AdminSelectionPage.userCell.rawValue)
+        .accessibilityLabel(rowAccessibilityLabel)
+        .accessibilityHint(L10n.Accessibility.AdminSelection.CandidateRow.hint)
+        .accessibilityAddTraits([.isButton, isSelected ? .isSelected : []])
     }
 }
 

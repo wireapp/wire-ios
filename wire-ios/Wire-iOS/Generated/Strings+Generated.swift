@@ -63,6 +63,18 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "addParticipantsConversationSettings.closeButton.description", fallback: "Close add participants option")
       }
     }
+    internal enum AdminSelection {
+      internal enum CandidateRow {
+        /// Double tap to select as new admin
+        internal static let hint = L10n.tr("Accessibility", "adminSelection.candidateRow.hint", fallback: "Double tap to select as new admin")
+      }
+      internal enum SearchBar {
+        internal enum ClearButton {
+          /// Clear search
+          internal static let description = L10n.tr("Accessibility", "adminSelection.searchBar.clearButton.description", fallback: "Clear search")
+        }
+      }
+    }
     internal enum AdvancedSettings {
       internal enum BackButton {
         /// Go back to Advanced
