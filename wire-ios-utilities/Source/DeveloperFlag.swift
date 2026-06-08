@@ -82,7 +82,7 @@ public enum DeveloperFlag: String, CaseIterable {
             "Turn on to use the new registration flow"
 
         case .preventAdminlessGroups:
-            "Treat the preventAdminlessGroups feature as enabled, bypassing the server config."
+            "Turn on to prevent last admins from leaving groups without promoting someone else"
 
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"

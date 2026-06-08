@@ -60,20 +60,20 @@ struct AdminSelectionViewModelTests {
 
     // MARK: - canPromote
 
-    @Test
+    @Test("canPromote is false when no user is selected")
     func canPromote_isFalse_initially() {
         let sut = Scaffolding.makeViewModel()
         #expect(sut.canPromote == false)
     }
 
-    @Test
+    @Test("canPromote is true when a user is selected")
     func canPromote_isTrue_whenUserSelected() {
         let sut = Scaffolding.makeViewModel()
         sut.selectedUser = Scaffolding.candidates.first
         #expect(sut.canPromote)
     }
 
-    @Test
+    @Test("canPromote is false after deselecting a user")
     func canPromote_isFalse_afterDeselectingUser() {
         let sut = Scaffolding.makeViewModel()
         sut.selectedUser = Scaffolding.candidates.first
@@ -81,7 +81,7 @@ struct AdminSelectionViewModelTests {
         #expect(sut.canPromote == false)
     }
 
-    @Test
+    @Test("canPromote is false while promotion is in progress")
     func canPromote_isFalse_whileInProgress() {
         let sut = Scaffolding.makeViewModel()
         sut.selectedUser = Scaffolding.candidates.first
@@ -91,7 +91,7 @@ struct AdminSelectionViewModelTests {
 
     // MARK: - promote
 
-    @Test
+    @Test("promote calls onPromote with the selected user")
     func promote_callsOnPromoteWithCorrectUser() async {
         var invokedUser: UserType?
         let sut = Scaffolding.makeViewModel(onPromote: { user in invokedUser = user })
@@ -100,14 +100,14 @@ struct AdminSelectionViewModelTests {
         #expect(invokedUser?.remoteIdentifier == user.remoteIdentifier)
     }
 
-    @Test
+    @Test("promote sets state to succeeded when onPromote succeeds")
     func promote_setsStateToSucceeded_onSuccess() async {
         let sut = Scaffolding.makeViewModel()
         await sut.promote(user: Scaffolding.candidates[0])
         #expect(sut.promotionState == .succeeded)
     }
 
-    @Test
+    @Test("promote sets state to failed when onPromote throws")
     func promote_setsStateToFailed_onFailure() async {
         enum TestError: Error { case failed }
         let sut = Scaffolding.makeViewModel(onPromote: { _ in throw TestError.failed })
