@@ -89,6 +89,12 @@
          location = "group:beta_app_release.yml">
       </FileRef>
       <FileRef
+         location = "group:create_release_branch.yml">
+      </FileRef>
+      <FileRef
+         location = "group:sbom.yml">
+      </FileRef>
+      <FileRef
          location = "group:c1_c2_c3_app_release_production.yml">
       </FileRef>
       <FileRef
