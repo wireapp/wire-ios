@@ -54,9 +54,10 @@ jobs:
 
     steps:
       - name: Validate version input
+        env:
+          VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
-          VERSION='${{ inputs.version }}'
           if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
             echo "::error::version must be Major.Minor (e.g. 4.21), got: $VERSION"
             exit 1
@@ -74,9 +75,10 @@ jobs:
           fetch-depth: 0
 
       - name: Resolve base ref to branch from
+        env:
+          INPUT_SHA: ${{ inputs.commit_sha }}
         run: |
           set -euo pipefail
-          INPUT_SHA='${{ inputs.commit_sha }}'
           if [[ -n "$INPUT_SHA" ]]; then
             if ! git cat-file -e "${INPUT_SHA}^{commit}" 2>/dev/null; then
               echo "::error::commit '$INPUT_SHA' not found in the repository"
@@ -116,9 +118,11 @@ jobs:
           echo "NEXT_VERSION=${MAJOR}.$((MINOR + 1)).0"   >> "$GITHUB_ENV"
 
       - name: Configure git author
+        env:
+          ACTOR: ${{ github.actor }}
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "$ACTOR"
+          git config user.email "${ACTOR}@users.noreply.github.com"
 
       - name: Create and push the release branch (triggers Beta build)
         run: |
@@ -210,10 +214,12 @@ jobs:
             --notes "$BODY"
 
       - name: Open Edge version-bump PR against develop
+        env:
+          TICKET: ${{ inputs.ticket }}
+          ACTOR: ${{ github.actor }}
         run: |
           set -euo pipefail
           BUMP_BRANCH="chore/bump-edge-version-${NEXT_VERSION}"
-          TICKET='${{ inputs.ticket }}'
 
           git checkout -b "$BUMP_BRANCH" origin/develop
           sed -i -E "s/^([[:space:]]*WIRE_SHORT_VERSION[[:space:]]*=[[:space:]]*).*/\1${NEXT_VERSION}/" "$XCCONFIG"
@@ -254,7 +260,7 @@ jobs:
             --title "chore: bump Edge version - ${TICKET}" \
             --body "$BODY" \
             --reviewer "$REVIEWER_TEAM" \
-            --assignee "${{ github.actor }}"
+            --assignee "$ACTOR"
 
       - name: Announce on Wire
         continue-on-error: true
