@@ -49,24 +49,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var cancellables = Set<AnyCancellable>()
 
-    private var sceneDelegate: SceneDelegate {
-        UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }[0]
+    private var sceneDelegate: SceneDelegate? {
+        UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }.first
     }
 
     // MARK: - Public properties
 
     var appRootRouter: AppRootRouter? {
-        sceneDelegate.appRootRouter
+        sceneDelegate?.appRootRouter
     }
 
     var mainWindow: UIWindow! {
-        sceneDelegate.window!
+        sceneDelegate?.window!
     }
 
     // TODO: [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
-        sceneDelegate.appRootRouter?.zClientViewController?.mediaPlaybackManager
+        sceneDelegate?.appRootRouter?.zClientViewController?.mediaPlaybackManager
     }
 
     // When running production code, this should always be true to ensure that we set the self user provider
@@ -151,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             "application did register for remote notifications, storing standard token",
             attributes: .safePublic
         )
-        sceneDelegate.pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
+        sceneDelegate?.pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
     }
 
     func application(
@@ -173,7 +173,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )
 
-        guard let appRootRouter = sceneDelegate.appRootRouter else {
+        guard let appRootRouter = sceneDelegate?.appRootRouter else {
             WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
             completionHandler()
             return
@@ -190,11 +190,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
         WireLogger.appDelegate.info("applicationProtectedDataDidBecomeAvailable", attributes: .safePublic)
-        guard sceneDelegate.appRootRouter == nil else {
+        guard sceneDelegate?.appRootRouter == nil else {
             WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter not nil")
             return
         }
-        sceneDelegate.createAppRootRouter()
+        sceneDelegate?.createAppRootRouter()
     }
 
     // MARK: - Reset
@@ -259,7 +259,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         operations.append(BlockOperation {
-            self.sceneDelegate.startAppRouter()
+            self.sceneDelegate?.startAppRouter()
         })
 
         OperationQueue.main.addOperations(operations, waitUntilFinished: false)
