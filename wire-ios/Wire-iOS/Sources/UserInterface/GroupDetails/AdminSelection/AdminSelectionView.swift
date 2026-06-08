@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 struct AdminSelectionView: View {
@@ -82,6 +83,7 @@ struct AdminSelectionView: View {
                         }
                     }
                     .disabled(!viewModel.canPromote)
+                    .accessibilityIdentifier(Locators.AdminSelectionPage.promoteButton.rawValue)
                 }
             }
             .onChange(of: viewModel.promotionState) { _, state in
@@ -137,6 +139,7 @@ private struct AdminCandidateRow: View {
                 Text(user.name ?? "")
                     .font(.body)
                     .fontWeight(.semibold)
+                    .accessibilityIdentifier(Locators.AdminSelectionPage.userCell.rawValue)
 
                 if let handle = user.handle {
                     Text("@\(handle)")

@@ -34,6 +34,7 @@ enum LastAdminLeaveAlert {
         alert.addAction(UIAlertAction(
             title: L10n.Localizable.LastAdminLeave.promoteNewAdmin,
             style: .default,
+            accessibilityIdentifier: Locators.LastAdminLeaveAlert.promoteNewAdmin.rawValue,
             handler: { _ in onPromote() }
         ))
         alert.addAction(UIAlertAction(

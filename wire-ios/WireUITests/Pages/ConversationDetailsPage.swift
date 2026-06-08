@@ -58,6 +58,27 @@ class ConversationDetailsPage: PageModel {
         app.staticTexts.matching(identifier: Locators.ConversationDetailsPage.userCellName.rawValue)
     }
 
+    func userCell(named name: String) -> XCUIElement {
+        let predicate = NSPredicate(format: "label == %@", name)
+        return userCells.matching(predicate).firstMatch
+    }
+
+    func adminCell(named name: String) -> XCUIElement {
+        let predicate = NSPredicate(format: "label CONTAINS %@", name)
+        return app.cells
+            .matching(identifier: Locators.ConversationDetailsPage.adminCell.rawValue)
+            .matching(predicate)
+            .firstMatch
+    }
+
+    func memberCell(named name: String) -> XCUIElement {
+        let predicate = NSPredicate(format: "label CONTAINS %@", name)
+        return app.cells
+            .matching(identifier: Locators.ConversationDetailsPage.memberCell.rawValue)
+            .matching(predicate)
+            .firstMatch
+    }
+
     func openUserDetailsPage(byName name: String) throws -> UserDetailsPage {
         let predicate = NSPredicate(format: "label == %@", name)
         userCells.matching(predicate).firstMatch.tap()
@@ -88,6 +109,11 @@ class ConversationDetailsPage: PageModel {
     func leaveOptionsConversationDetails() throws -> Self {
         leaveConversationOptionConversationDetailsButton.tap()
         return self
+    }
+
+    func tapPromoteNewAdmin() throws -> AdminSelectionPage {
+        app.buttons[Locators.LastAdminLeaveAlert.promoteNewAdmin.rawValue].firstMatch.waitAndTap()
+        return try AdminSelectionPage()
     }
 
     func appParticipantToConversation() throws -> SelectParticipantsPage {

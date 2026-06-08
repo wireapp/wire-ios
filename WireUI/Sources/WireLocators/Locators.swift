@@ -207,14 +207,24 @@ public enum Locators {
         case addParticipantsButton
         case moreOptionsButton
         case userCellName
+        case adminCell
+        case memberCell
         case close
-
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
         case archive
         case clearContent
         case leaveConversation
+    }
+
+    public enum LastAdminLeaveAlert: String {
+        case promoteNewAdmin = "Promote new admin"
+    }
+
+    public enum AdminSelectionPage: AutoPrefixedEnum {
+        case promoteButton
+        case userCell
     }
 
     public enum UserProfilePage: AutoPrefixedEnum {
