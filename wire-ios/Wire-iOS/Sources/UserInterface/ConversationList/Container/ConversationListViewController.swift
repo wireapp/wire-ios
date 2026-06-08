@@ -257,7 +257,7 @@ final class ConversationListViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        WireLogger.conversation.debug("🌄 Conversation list view did appear")
         if !isIPadRegular() {
             Settings.shared[.lastViewedScreen] = SettingsLastScreen.list
         }
