@@ -19,7 +19,6 @@
 import SwiftUI
 import WireCallingDomain
 import WireDesign
-import WireReusableUIComponents
 
 struct ScheduleMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -45,9 +44,6 @@ struct ScheduleMeetingView: View {
             titleSection
             scheduleSection
             participantsSection
-            Toggle(Strings.AllowGuests.title, isOn: $viewModel.allowGuests)
-            passwordSection
-            confirmedPasswordSection
         }
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.background.color)
@@ -96,34 +92,6 @@ struct ScheduleMeetingView: View {
 
             RepeatRow(
                 selectedOption: $viewModel.repeatOption
-            )
-        }
-    }
-
-    private var passwordSection: some View {
-        Section {
-            PasswordFieldWithToggle(
-                placeholder: Strings.Password.placeholder,
-                text: $viewModel.password,
-                isVisible: $isPasswordVisible,
-                errorMessage: viewModel.localizedPasswordRules,
-                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
-            )
-        } header: {
-            Text(Strings.SetupPassword.header)
-        }
-    }
-
-    private var confirmedPasswordSection: some View {
-        Section {
-            PasswordFieldWithToggle(
-                placeholder: Strings.ConfirmedPassword.placeholder,
-                text: $viewModel.confirmedPassword,
-                isVisible: $isConfirmedPasswordVisible,
-                errorMessage: Strings.ConfirmedPassword.error,
-                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
             )
         }
     }
@@ -195,7 +163,6 @@ private struct DateTimeRow: View {
 #Preview {
     ScheduleMeetingView(
         viewModel: ScheduleMeetingViewModel(
-            passwordValidator: MockPasswordValidator(),
             isContextMenuAllowed: true
         )
     )

@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 import WireCallingDomain
-import WireReusableUIComponents
 
 final class ScheduleMeetingViewModel: ObservableObject {
 
@@ -27,38 +25,20 @@ final class ScheduleMeetingViewModel: ObservableObject {
 
     // TODO: [WPB-21335] Implement Wire users and emails
     @Published var participants: String = ""
-    @Published var allowGuests: Bool = false
-    @Published var password: String = ""
-    @Published var confirmedPassword: String = ""
     @Published var startDate: Date = .init()
     @Published var endDate: Date = .init().addingTimeInterval(1800)
     @Published var repeatOption: RepeatOption = .never
 
     var isNextButtonEnabled: Bool {
         let hasValidTitle = !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        let hasValidPassword = password.isEmpty || (isPasswordValid && isConfirmedPasswordValid)
-        return hasValidTitle && hasValidPassword
+        return hasValidTitle // TODO: any participants?
     }
 
-    var isPasswordValid: Bool {
-        password.isEmpty || passwordValidator.isPasswordValid(password)
-    }
-
-    var isConfirmedPasswordValid: Bool {
-        confirmedPassword.isEmpty || password == confirmedPassword
-    }
-
-    var localizedPasswordRules: String {
-        passwordValidator.localizedRulesDescription ?? ""
-    }
-
-    private let passwordValidator: any PasswordValidator
     private(set) var isContextMenuAllowed: Bool
 
     // MARK: - Initialization
 
-    init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
-        self.passwordValidator = passwordValidator
+    init(isContextMenuAllowed: Bool) {
         self.isContextMenuAllowed = isContextMenuAllowed
     }
 

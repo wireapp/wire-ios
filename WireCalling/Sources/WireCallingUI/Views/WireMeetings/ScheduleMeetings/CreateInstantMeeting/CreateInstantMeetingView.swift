@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 import WireDesign
-import WireReusableUIComponents
 
 struct CreateInstantMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -44,9 +42,6 @@ struct CreateInstantMeetingView: View {
         Form {
             titleSection
             participantsSection
-            Toggle(Strings.AllowGuests.title, isOn: $viewModel.allowGuests)
-            passwordSection
-            confirmedPasswordSection
         }
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.background.color)
@@ -82,41 +77,12 @@ struct CreateInstantMeetingView: View {
         }
     }
 
-    private var passwordSection: some View {
-        Section {
-            PasswordFieldWithToggle(
-                placeholder: Strings.Password.placeholder,
-                text: $viewModel.password,
-                isVisible: $isPasswordVisible,
-                errorMessage: viewModel.localizedPasswordRules,
-                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
-            )
-        } header: {
-            Text(Strings.SetupPassword.header)
-        }
-    }
-
-    private var confirmedPasswordSection: some View {
-        Section {
-            PasswordFieldWithToggle(
-                placeholder: Strings.ConfirmedPassword.placeholder,
-                text: $viewModel.confirmedPassword,
-                isVisible: $isConfirmedPasswordVisible,
-                errorMessage: Strings.ConfirmedPassword.error,
-                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
-            )
-        }
-    }
-
 }
 
 // MARK: - Preview
 
 #Preview {
     CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel(
-        passwordValidator: MockPasswordValidator(),
         isContextMenuAllowed: true
     ))
 }
