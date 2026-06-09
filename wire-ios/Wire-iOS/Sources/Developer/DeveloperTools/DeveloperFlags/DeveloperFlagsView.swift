@@ -25,12 +25,23 @@ struct DeveloperFlagsView: View {
 
     @StateObject var viewModel: DeveloperFlagsViewModel
 
+    /// Flags whose value is read once at app launch and therefore only take effect after a
+    /// restart. Toggling one of these shows a heads-up alert so the change isn't silently ignored.
+    private static let flagsRequiringRestart: Set<DeveloperFlag> = [.unSafeLogsForPublic]
+
+    @State private var showRestartAlert = false
+
     // MARK: - Views
 
     var body: some View {
         List(viewModel.flags, id: \.self) { flag in
             cell(for: flag)
                 .padding([.top, .bottom])
+        }
+        .alert("Restart required", isPresented: $showRestartAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("This flag is read when the app launches. Restart the app for the change to take effect.")
         }
     }
 
@@ -44,10 +55,15 @@ struct DeveloperFlagsView: View {
     }
 
     private func binding(for flag: DeveloperFlag) -> Binding<Bool> {
-        var flag = flag
+        var mutableFlag = flag
         return Binding(
-            get: { flag.isOn },
-            set: { flag.isOn = $0 }
+            get: { mutableFlag.isOn },
+            set: { newValue in
+                mutableFlag.isOn = newValue
+                if Self.flagsRequiringRestart.contains(flag) {
+                    showRestartAlert = true
+                }
+            }
         )
     }
 }
