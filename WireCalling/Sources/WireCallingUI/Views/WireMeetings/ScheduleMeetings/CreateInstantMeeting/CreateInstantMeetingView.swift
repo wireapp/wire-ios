@@ -58,7 +58,7 @@ struct CreateInstantMeetingView: View {
             }
         }
         ToolbarItem(placement: .topBarTrailing) {
-            Button(Strings.Next.button) {
+            Button(Strings.Start.button) {
                 viewModel.createInstantMeeting()
             }
             .disabled(!viewModel.isNextButtonEnabled)
@@ -69,12 +69,14 @@ struct CreateInstantMeetingView: View {
         Section(Strings.SetupTitle.header) {
             TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
         }
+        .textCase(nil)
     }
 
     private var participantsSection: some View {
         Section(Strings.SetupParticipants.header) {
             TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
         }
+        .textCase(nil)
     }
 
 }
