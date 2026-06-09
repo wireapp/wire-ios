@@ -30,14 +30,6 @@ final class CreateInstantMeetingViewModel: ObservableObject {
         return hasValidTitle // TODO: any participants?
     }
 
-    private(set) var isContextMenuAllowed: Bool
-
-    // MARK: - Initialization
-
-    init(isContextMenuAllowed: Bool) {
-        self.isContextMenuAllowed = isContextMenuAllowed
-    }
-
     // MARK: - Public Interface
 
     func createInstantMeeting() {}

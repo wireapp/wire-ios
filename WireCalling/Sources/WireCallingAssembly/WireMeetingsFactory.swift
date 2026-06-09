@@ -24,26 +24,21 @@ import SwiftUI
 import WireCallingData
 
 public struct WireMeetingsFactory {
-    private let isContextMenuAllowed: Bool
 
     @MainActor
-    public init(isContextMenuAllowed: Bool) {
-        self.isContextMenuAllowed = isContextMenuAllowed
-    }
-}
+    public init() {}
 
-public extension WireMeetingsFactory {
     @MainActor
-    func makeMeetingsView() -> UIViewController {
+    public func makeMeetingsView() -> UIViewController {
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
-            ),
-            isContextMenuAllowed: isContextMenuAllowed
+            )
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
+
 }

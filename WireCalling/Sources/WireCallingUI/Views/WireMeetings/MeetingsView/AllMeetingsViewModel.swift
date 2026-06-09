@@ -31,20 +31,16 @@ package final class AllMeetingsViewModel: ObservableObject {
     @Published var isCreateInstantMeetingPresented: Bool = false
     @Published var isScheduleMeetingPresented: Bool = false
 
-    private let isContextMenuAllowed: Bool
-
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        isContextMenuAllowed: Bool
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
-        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     // MARK: - Public Interface
@@ -58,15 +54,11 @@ package final class AllMeetingsViewModel: ObservableObject {
     }
 
     func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel(
-            isContextMenuAllowed: isContextMenuAllowed
-        )
+        CreateInstantMeetingViewModel()
     }
 
     func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel(
-            isContextMenuAllowed: isContextMenuAllowed
-        )
+        ScheduleMeetingViewModel()
     }
 
 }

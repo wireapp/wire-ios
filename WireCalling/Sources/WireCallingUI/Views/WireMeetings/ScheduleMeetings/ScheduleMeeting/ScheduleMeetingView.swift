@@ -161,9 +161,5 @@ private struct DateTimeRow: View {
 // MARK: - Preview
 
 #Preview {
-    ScheduleMeetingView(
-        viewModel: ScheduleMeetingViewModel(
-            isContextMenuAllowed: true
-        )
-    )
+    ScheduleMeetingView(viewModel: ScheduleMeetingViewModel())
 }

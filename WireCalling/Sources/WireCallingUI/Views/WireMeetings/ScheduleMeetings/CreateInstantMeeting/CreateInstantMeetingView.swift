@@ -82,7 +82,5 @@ struct CreateInstantMeetingView: View {
 // MARK: - Preview
 
 #Preview {
-    CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel(
-        isContextMenuAllowed: true
-    ))
+    CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel())
 }

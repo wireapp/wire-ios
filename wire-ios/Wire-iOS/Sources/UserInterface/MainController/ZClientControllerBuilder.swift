@@ -114,9 +114,7 @@ final class ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory(
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
-        )
+        WireMeetingsFactory()
     }
 
 }
