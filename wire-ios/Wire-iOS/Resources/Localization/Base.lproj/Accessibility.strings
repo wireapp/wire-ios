@@ -348,3 +348,4 @@
 
 "adminSelection.searchBar.clearButton.description" = "Clear search";
 "adminSelection.candidateRow.hint" = "Double tap to select as new admin";
+"adminSelection.deleteGroupButton.hint" = "Deletes the group permanently";

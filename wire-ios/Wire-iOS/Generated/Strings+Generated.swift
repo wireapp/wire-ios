@@ -68,6 +68,10 @@ internal enum L10n {
         /// Double tap to select as new admin
         internal static let hint = L10n.tr("Accessibility", "adminSelection.candidateRow.hint", fallback: "Double tap to select as new admin")
       }
+      internal enum DeleteGroupButton {
+        /// Deletes the group permanently
+        internal static let hint = L10n.tr("Accessibility", "adminSelection.deleteGroupButton.hint", fallback: "Deletes the group permanently")
+      }
       internal enum SearchBar {
         internal enum ClearButton {
           /// Clear search

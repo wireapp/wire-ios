@@ -220,6 +220,7 @@ public enum Locators {
 
     public enum LastAdminLeaveAlert: AutoPrefixedEnum {
         case promoteNewAdmin
+        case deleteGroup
     }
 
     public enum AdminSelectionPage: AutoPrefixedEnum {

@@ -37,11 +37,7 @@ enum LastAdminLeaveAlert {
             accessibilityIdentifier: Locators.LastAdminLeaveAlert.promoteNewAdmin.rawValue,
             handler: { _ in onPromote() }
         ))
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.LastAdminLeave.deleteGroup,
-            style: .default,
-            handler: { _ in onDelete() }
-        ))
+        alert.addAction(makeDeleteGroupAction(onDelete: onDelete))
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel))
         return alert
     }
@@ -55,12 +51,18 @@ enum LastAdminLeaveAlert {
             message: L10n.Localizable.LastAdminLeave.noEligibleCandidatesMessage,
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.LastAdminLeave.deleteGroup,
-            style: .default,
-            handler: { _ in onDelete() }
-        ))
+        alert.addAction(makeDeleteGroupAction(onDelete: onDelete))
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel))
         return alert
+    }
+
+    private static func makeDeleteGroupAction(onDelete: @escaping () -> Void) -> UIAlertAction {
+        UIAlertAction(
+            title: L10n.Localizable.LastAdminLeave.deleteGroup,
+            style: .default,
+            accessibilityIdentifier: Locators.LastAdminLeaveAlert.deleteGroup.rawValue,
+            accessibilityHint: L10n.Accessibility.AdminSelection.DeleteGroupButton.hint,
+            handler: { _ in onDelete() }
+        )
     }
 }
