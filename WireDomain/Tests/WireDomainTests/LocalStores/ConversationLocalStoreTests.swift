@@ -544,6 +544,70 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
     }
 
+    func testStoreOneOnOne_GivenLinkedUserButNoSyncedParticipants_ItKeepsMLSConversationUsable() async throws {
+        // Given an established MLS 1:1 already linked to its one-on-one user.
+        let conversationID = Scaffolding.conversationID
+        await context.perform { [self] in
+            _ = modelHelper.createSelfUser(in: context)
+            let conversation = modelHelper.createMLSConversation(
+                id: conversationID,
+                domain: Scaffolding.domain,
+                mlsStatus: .ready,
+                conversationType: .oneOnOne,
+                in: context
+            )
+            let otherUser = modelHelper.createUser(id: Scaffolding.otherUserID, domain: Scaffolding.domain, in: context)
+            conversation.oneOnOneUser = otherUser
+        }
+
+        // When the backend syncs the 1:1 without the other member — as it does for the party that
+        // was blocked, which is never notified.
+        await sut.storeConversation(
+            Scaffolding.mlsOneOnOneConversation(id: conversationID, domain: Scaffolding.domain),
+            timestamp: .distantPast,
+            isFederationEnabled: false,
+            isMLSEnabled: true
+        )
+
+        // Then the MLS 1:1 is preserved and remains usable (not wiped, not read-only).
+        let local = await sut.fetchConversation(id: conversationID, domain: Scaffolding.domain)
+        await context.perform {
+            XCTAssertEqual(local?.mlsStatus, .ready)
+            XCTAssertEqual(local?.messageProtocol, .mls)
+            XCTAssertEqual(local?.isForcedReadOnly, false)
+        }
+    }
+
+    func testStoreOneOnOne_GivenNoLinkedUserAndNoParticipants_ItInvalidatesMLSConversation() async throws {
+        // Given an MLS 1:1 with no linked one-on-one user (a genuinely empty/malformed 1:1).
+        let conversationID = Scaffolding.conversationID
+        await context.perform { [self] in
+            _ = modelHelper.createSelfUser(in: context)
+            modelHelper.createMLSConversation(
+                id: conversationID,
+                domain: Scaffolding.domain,
+                mlsStatus: .ready,
+                conversationType: .oneOnOne,
+                in: context
+            )
+        }
+
+        // When the backend syncs the 1:1 without any member.
+        await sut.storeConversation(
+            Scaffolding.mlsOneOnOneConversation(id: conversationID, domain: Scaffolding.domain),
+            timestamp: .distantPast,
+            isFederationEnabled: false,
+            isMLSEnabled: true
+        )
+
+        // Then the MLS group is invalidated and the conversation forced read-only.
+        let local = await sut.fetchConversation(id: conversationID, domain: Scaffolding.domain)
+        await context.perform {
+            XCTAssertEqual(local?.mlsStatus, .invalid)
+            XCTAssertEqual(local?.isForcedReadOnly, true)
+        }
+    }
+
     private enum Scaffolding {
 
         static let selfUserId = UUID.mockID1
@@ -592,6 +656,30 @@ final class ConversationLocalStoreTests: XCTestCase {
             lastEvent: "",
             lastEventTime: nil
         )
+
+        static func mlsOneOnOneConversation(id: UUID, domain: String) -> Conversation {
+            Conversation(
+                id: id,
+                qualifiedID: .init(id: id, domain: domain),
+                teamID: nil,
+                type: .oneOnOne,
+                messageProtocol: .mls,
+                mlsGroupID: "",
+                cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                epoch: 1,
+                epochTimestamp: nil,
+                creator: .mockID3,
+                members: nil,
+                name: nil,
+                messageTimer: 0,
+                readReceiptMode: 0,
+                access: [.invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .team,
+                lastEvent: "",
+                lastEventTime: nil
+            )
+        }
 
     }
 
