@@ -96,6 +96,7 @@ struct NewCalendarEventView: View {
                 }
             }
             .contentMargins(.top, 0, for: .scrollContent)
+            .listSectionSpacing(.compact) // TODO: consider removing
             .navigationTitle("New")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
