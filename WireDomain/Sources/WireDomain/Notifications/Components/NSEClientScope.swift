@@ -87,7 +87,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         )
         return CallKitReportingCoordinator(
             accountID: dependency.accountID,
-            avsService: callingService
+            avsService: callingService,
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore,
+            context: conversationLocalStore.context
         )
     }()
 

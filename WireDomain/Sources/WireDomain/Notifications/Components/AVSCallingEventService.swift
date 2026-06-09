@@ -49,7 +49,7 @@ public enum CallClosedReason: Int32 {
 
 public protocol AVSCallingEventServiceProtocol: AnyObject {
 
-    var onIncomingCall: ((_ conversationId: String, _ shouldRing: Bool, _ isVideoCall: Bool) -> Void)? { get set }
+    var onIncomingCall: ((_ conversationId: String, _ userId: String, _ shouldRing: Bool, _ isVideoCall: Bool) -> Void)? { get set }
     var onMissedCall: ((_ conversationId: String, _ messageTime: Date, _ isVideoCall: Bool) -> Void)? { get set }
     var onCallClosed: ((_ reason: CallClosedReason, _ conversationId: String) -> Void)? { get set }
 
@@ -69,7 +69,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
 
     // MARK: - Closure properties (set by the caller in NSEClientScope)
 
-    public var onIncomingCall: ((_ conversationId: String, _ shouldRing: Bool, _ isVideoCall: Bool) -> Void)?
+    public var onIncomingCall: ((_ conversationId: String, _ userId: String, _ shouldRing: Bool, _ isVideoCall: Bool) -> Void)?
     public var onMissedCall: ((_ conversationId: String, _ messageTime: Date, _ isVideoCall: Bool) -> Void)?
     public var onCallClosed: ((_ reason: CallClosedReason, _ conversationId: String) -> Void)?
 
@@ -163,16 +163,18 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
         Int32,                   // shouldRing  (1 = true)
         Int32,                   // conversationType
         UnsafeMutableRawPointer? // contextRef → self
-    ) -> Void = { conversationIdPtr, _, _, _, isVideoCallFlag, shouldRingFlag, _, contextRef in
+    ) -> Void = { conversationIdPtr, _, userIdPtr, _, isVideoCallFlag, shouldRingFlag, _, contextRef in
         guard
             let contextRef,
-            let conversationId = conversationIdPtr.flatMap({ String(cString: $0) })
+            let conversationId = conversationIdPtr.flatMap({ String(cString: $0) }),
+            let userId = userIdPtr.flatMap({ String(cString: $0) })
         else { return }
 
         let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         WireLogger.mls.info("12345 \(service.onIncomingCall == nil), conversationId = \(conversationId)")
         service.onIncomingCall?(
             conversationId,
+            userId,
             shouldRingFlag == 1,
             isVideoCallFlag == 1
         )
