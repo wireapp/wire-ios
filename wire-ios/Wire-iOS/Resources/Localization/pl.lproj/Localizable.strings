@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "OK";
 "general.next" = "Dalej";
 "general.cancel" = "Anuluj";
@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@ usunął %@";
 "content.system.conversation.you.removed.legalhold" = "%@ zostało usunięte z tej rozmowy, ponieważ legalne przechowywanie zostało aktywowane.";
 "content.system.conversation.you.left" = "%@ wyszedł";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "Usunięto z zespołu użytkownika %@.";
 "content.system.conversation.guest.joined" = "%@ dołączył";
 "content.system.conversation.guest.you_joined" = "Dołączyłeś";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Oryginalna wiadomość od %@";
 "content.message.reply.original_timestamp.time" = "Oryginalna wiadomość od %@";
 "content.message.reply.broken_message" = "Nie możesz zobaczyć tej wiadomości.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Edytowane";
 
 "content.message.open_link_alert.title" = "Odwiedź stronę";
@@ -1155,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";
