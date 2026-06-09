@@ -95,6 +95,7 @@ struct NewCalendarEventView: View {
                     }
                 }
             }
+            .contentMargins(.top, 0, for: .scrollContent)
             .navigationTitle("New")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
