@@ -43,7 +43,7 @@ public actor WebSocket: WebSocketProtocol {
         return Stream { continuation in
             self.continuation = continuation
 
-            Task {
+            let task = Task {
                 var isAlive = true
 
                 while isAlive, connection.isOpen {
@@ -59,6 +59,12 @@ public actor WebSocket: WebSocketProtocol {
                 }
 
                 continuation.finish()
+            }
+
+            let onTermination = continuation.onTermination
+            continuation.onTermination = { termination in
+                task.cancel()
+                onTermination?(termination)
             }
         }
     }
