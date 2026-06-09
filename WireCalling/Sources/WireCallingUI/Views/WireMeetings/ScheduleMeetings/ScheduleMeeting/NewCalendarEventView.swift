@@ -35,6 +35,10 @@ struct NewCalendarEventView: View {
         var id: Self { self }
     }
 
+    private enum ExpandedField: Hashable {
+        case startDate, startTime, endDate, endTime
+    }
+
     @Environment(\.dismiss) private var dismiss
 
     @State private var kind: Kind = .event
@@ -44,6 +48,7 @@ struct NewCalendarEventView: View {
     @State private var startDate = Date()
     @State private var endDate = Date().addingTimeInterval(3600)
     @State private var travelTime: TravelTime = .none
+    @State private var expandedField: ExpandedField?
 
     var body: some View {
         NavigationStack {
@@ -66,17 +71,21 @@ struct NewCalendarEventView: View {
 
                 Section {
                     Toggle("All-day", isOn: $isAllDay)
+                        .onChange(of: isAllDay) { _, _ in
+                            withAnimation { expandedField = nil }
+                        }
 
-                    DatePicker(
-                        "Starts",
-                        selection: $startDate,
-                        displayedComponents: isAllDay ? [.date] : [.date, .hourAndMinute]
+                    dateTimeRow(
+                        label: "Starts",
+                        date: $startDate,
+                        dateField: .startDate,
+                        timeField: .startTime
                     )
-
-                    DatePicker(
-                        "Ends",
-                        selection: $endDate,
-                        displayedComponents: isAllDay ? [.date] : [.date, .hourAndMinute]
+                    dateTimeRow(
+                        label: "Ends",
+                        date: $endDate,
+                        dateField: .endDate,
+                        timeField: .endTime
                     )
 
                     Picker("Travel Time", selection: $travelTime) {
@@ -102,6 +111,66 @@ struct NewCalendarEventView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func dateTimeRow(
+        label: String,
+        date: Binding<Date>,
+        dateField: ExpandedField,
+        timeField: ExpandedField
+    ) -> some View {
+        HStack {
+            Text(label)
+            Spacer()
+            pill(
+                text: date.wrappedValue.formatted(.dateTime.day().month(.abbreviated).year()),
+                isSelected: expandedField == dateField
+            ) {
+                toggleExpansion(dateField)
+            }
+            if !isAllDay {
+                pill(
+                    text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
+                    isSelected: expandedField == timeField
+                ) {
+                    toggleExpansion(timeField)
+                }
+            }
+        }
+
+        if expandedField == dateField {
+            DatePicker("", selection: date, displayedComponents: .date)
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+        }
+        if expandedField == timeField {
+            DatePicker("", selection: date, displayedComponents: .hourAndMinute)
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+        }
+    }
+
+    private func pill(
+        text: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Text(text)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.15))
+                )
+                .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func toggleExpansion(_ field: ExpandedField) {
+        withAnimation { expandedField = expandedField == field ? nil : field }
     }
 }
 
