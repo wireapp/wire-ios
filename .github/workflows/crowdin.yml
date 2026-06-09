@@ -55,6 +55,11 @@ jobs:
           TITLE="chore: Update localization - WPB-15278"
           BODY="This PR pulls in the latest localization translations from Crowdin."
 
+          # Install git-lfs before any `git checkout` runs, otherwise the LFS
+          # post-checkout hook prints a warning about git-lfs not being on PATH.
+          apt update && apt install -y gh git-lfs
+          git lfs install || git lfs update --force
+
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
           # The crowdin action restores the original checkout (develop) after pushing
@@ -78,8 +83,6 @@ jobs:
           fi
 
           # abort if the pr already exists
-          apt update && apt install -y gh git-lfs
-          git lfs install || git lfs update --force
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
           if [ -n "$PR_EXISTS" ]; then
             echo "A PR already exists, aborting."
