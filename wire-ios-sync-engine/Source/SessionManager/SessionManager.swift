@@ -152,6 +152,11 @@ public protocol SessionManagerType: AnyObject {
     /// Switch account and and ask UI to navigate to the conversation list
     func showConversationList(in session: ZMUserSession)
 
+    /// Switch to the given session's account without triggering any in-app navigation.
+    /// Use when post-activation flows (e.g. presenting an incoming-call UI) should drive
+    /// what the user sees next, rather than navigating to a specific conversation.
+    func activateAccount(of session: ZMUserSession)
+
     /// ask UI to open the profile of a user
     func showUserProfile(user: WireDataModel.UserType)
 
@@ -1658,6 +1663,10 @@ extension SessionManager {
     private func applicationDidBecomeActive(_ note: Notification) {
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()
+
+        // In order to test the behaviour, assume here the user did open the main app
+        // and extensions are working again
+        DeveloperFlag.simulateMainAppRequiredError.enable(false)
     }
 
 }
@@ -1728,7 +1737,10 @@ extension SessionManager: WireCallCenterCallStateObserver {
 
             for (_, session) in backgroundUserSessions
                 where session.managedObjectContext == moc && activeUserSession != session {
-                showConversation(conversation, at: nil, in: session)
+                // Switch to the call's account without navigating to the conversation.
+                // The post-activation flow (AppRootRouter `.authenticated` →
+                // updateActiveCallPresentationState) presents the in-app call UI.
+                activateAccount(of: session)
             }
         default:
             return

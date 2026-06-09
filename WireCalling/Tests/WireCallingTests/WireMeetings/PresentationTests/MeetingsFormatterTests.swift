@@ -36,32 +36,6 @@ struct MeetingsFormatterTests {
         #expect(result.contains("Today"))
     }
 
-    @Test("dayHeader returns 'Tomorrow' for next day")
-    func testDayHeaderForTomorrow() {
-        let now = Date()
-        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: now) else {
-            Issue.record("Failed to create tomorrow date")
-            return
-        }
-
-        let result = formatter.dayHeader(for: tomorrow, now: now)
-
-        #expect(result.contains("Tomorrow"))
-    }
-
-    @Test("dayHeader returns 'Yesterday' for previous day")
-    func testDayHeaderForYesterday() {
-        let now = Date()
-        guard let yesterday = calendar.date(byAdding: .day, value: -1, to: now) else {
-            Issue.record("Failed to create yesterday date")
-            return
-        }
-
-        let result = formatter.dayHeader(for: yesterday, now: now)
-
-        #expect(result.contains("Yesterday"))
-    }
-
     @Test("dayHeader returns formatted date for other days")
     func testDayHeaderForOtherDays() {
         let now = Date()
@@ -73,30 +47,7 @@ struct MeetingsFormatterTests {
         let result = formatter.dayHeader(for: futureDate, now: now)
 
         #expect(!result.contains("Today"))
-        #expect(!result.contains("Tomorrow"))
-        #expect(!result.contains("Yesterday"))
         #expect(!result.isEmpty)
-    }
-
-    // MARK: - Time Header Tests
-
-    @Test("timeHeader returns formatted time")
-    func testTimeHeaderFormat() {
-        var components = DateComponents()
-        components.year = 2025
-        components.month = 1
-        components.day = 15
-        components.hour = 14
-        components.minute = 30
-
-        guard let date = calendar.date(from: components) else {
-            Issue.record("Failed to create test date")
-            return
-        }
-
-        let result = formatter.timeHeader(for: date)
-        #expect(!result.isEmpty)
-        #expect(result.contains(":"))
     }
 
 }

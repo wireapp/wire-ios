@@ -400,6 +400,19 @@ final class ConversationInputBarViewController: UIViewController,
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        if DeveloperFlag.enableDrivePermissions.isOn {
+            if conversation.isWireDriveEnabled, userSession.selfUser.isGuest(in: conversation) {
+                [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
+                    $0.isEnabled = false
+                    $0.setBackgroundImageColor(
+                        ColorTheme.Buttons.Secondary.disabled,
+                        for: .disabled
+                    )
+                }
+            }
+        }
+
         setupNotificationCenter()
         setupInputLanguageObserver()
         setupViews()
@@ -535,6 +548,7 @@ final class ConversationInputBarViewController: UIViewController,
         hourglassButton.layer.borderWidth = 1
         hourglassButton.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
         hourglassButton.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
+        hourglassButton.setBackgroundImageColor(ColorTheme.Buttons.Secondary.disabled, for: .disabled)
         hourglassButton.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
 
     }
@@ -746,7 +760,7 @@ final class ConversationInputBarViewController: UIViewController,
                 AVSMediaManager.sharedInstance().playKnockSound()
                 self.notificationFeedbackGenerator.notificationOccurred(.success)
             } catch {
-                Logging.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
+                WireLogger.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
             }
         }
 

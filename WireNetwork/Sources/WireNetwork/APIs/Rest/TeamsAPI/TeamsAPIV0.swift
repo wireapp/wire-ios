@@ -161,10 +161,26 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: false)
 
         let payload = try ResponseParser()
-            .success(code: .created, type: InviteMemeberToTeamResponseV0.self)
+            .success(code: .created, type: InviteMemberToTeamResponseV0.self)
             .parse(code: response.statusCode, data: data)
 
         return payload.id
+    }
+
+    // MARK: - Get apps
+
+    func getApps(
+        for teamID: Team.ID
+    ) async throws -> [User] {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    // MARK: - Get collaborators
+
+    func getCollaborators(
+        for teamID: Team.ID
+    ) async throws -> [CollaboratorInfo] {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 
     // MARK: - Get whitelisted bots
@@ -173,15 +189,6 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         for teamID: Team.ID,
         with prefix: String
     ) throws -> PayloadPager<[WhitelistedBotProfile]> {
-        throw TeamsAPIError.unsupportedEndpointForAPIVersion
-    }
-
-    // MARK: - Notifications
-
-    func getNotifications(
-        sinceNotificationID _: UUID?,
-        maxResults _: UInt
-    ) throws -> PayloadPager<[TeamNotification]> {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 
@@ -310,7 +317,7 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
 
 }
 
-struct InviteMemeberToTeamResponseV0: Decodable, ToAPIModelConvertible {
+struct InviteMemberToTeamResponseV0: Decodable, ToAPIModelConvertible {
 
     let id: UUID
 

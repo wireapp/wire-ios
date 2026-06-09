@@ -33,16 +33,6 @@ struct MeetingsView: View {
 
     var body: some View {
         VStack {
-            Picker("", selection: $viewModel.selectedTab) {
-                ForEach(MeetingsViewModel.Tab.allCases, id: \.self) { tab in
-                    Text(tab.title).tag(tab)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .accessibilityIdentifier("meetingsListPicker")
-
             content.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -50,89 +40,52 @@ struct MeetingsView: View {
         .onAppear {
             viewModel.loadInitialData()
         }
-        .onChange(of: viewModel.selectedTab) { _, newValue in
-            if newValue == .past {
-                viewModel.refreshPastMeetings()
-            } else {
-                viewModel.refreshOngoingMeetings()
-            }
-        }
     }
 
     @ViewBuilder private var content: some View {
-        if viewModel.selectedTab == .next {
-            if viewModel.ongoingMeetings.isEmpty, viewModel.groupedNextMeetings.isEmpty {
-                MeetingsEmptyStateView(
-                    title: Strings.EmptyState.Next.title,
-                    subtitle: Strings.EmptyState.Next.subtitle
-                )
-            } else {
-                nextTabContent
-            }
+
+        if viewModel.groupedUpcomingMeetings.isEmpty {
+            MeetingsEmptyStateView(
+                title: Strings.EmptyState.Next.title,
+                subtitle: Strings.EmptyState.Next.subtitle
+            )
         } else {
-            if viewModel.groupedPastMeetings.isEmpty {
-                MeetingsEmptyStateView(
-                    title: Strings.EmptyState.Past.title,
-                    subtitle: Strings.EmptyState.Past.subtitle
-                )
-            } else {
-                pastTabContent
-            }
+            meetingsList
         }
     }
 
-    @ViewBuilder private var nextTabContent: some View {
+    @ViewBuilder private var meetingsList: some View {
         List {
-            if !viewModel.ongoingMeetings.isEmpty {
-                Section {
-                    ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
-                        MeetingRow(meeting: meeting)
-                    }
-                } header: {
-                    SectionTitle(Strings.Header.ongoing)
-                }
-            }
             GroupedSections(
-                groups: viewModel.groupedNextMeetings,
+                groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
+                formatTimeRange: viewModel.formatTimeRange(for:),
+                onEdit: { _ in
+                    // TODO: [WPB-25501] Implement UI
+                },
+                onDelete: { _ in
+                    // TODO: [WPB-25514] Implement UI
+                }
             )
 
-            if viewModel.showMoreButton {
-                Button {
-                    viewModel.showAll = true
-                } label: {
-                    Text(Strings.Actions.showAll)
-                        .font(for: .buttonBig)
+            if viewModel.hasMore {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
                 }
-                .wireButtonStyle(.secondary)
                 .listRowBackground(Color.clear)
+                .onAppear { viewModel.loadMoreIfNeeded() }
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.grouped)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
-            viewModel.refreshOngoingMeetings()
-            viewModel.showAll = false
+            viewModel.loadInitialData()
         }
     }
 
-    @ViewBuilder private var pastTabContent: some View {
-        List {
-            GroupedSections(
-                groups: viewModel.groupedPastMeetings,
-                formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
-            )
-        }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(ColorTheme.Backgrounds.surface.color)
-        .refreshable {
-            viewModel.refreshPastMeetings()
-        }
-    }
 }
 
 @ViewBuilder
@@ -145,22 +98,22 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
-    let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
+    let groups: [(day: Date, meetings: [Meeting])]
     let formatDay: (Date) -> String
-    let formatTime: (Date) -> String
+    let formatTimeRange: (Meeting) -> String
+    let onEdit: (Meeting) -> Void
+    let onDelete: (Meeting) -> Void
+
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
-                ForEach(dayGroup.timeSlots, id: \.time) { slot in
-                    Section {
-                        ForEach(slot.meetings, id: \.id) { meeting in
-                            MeetingRow(meeting: meeting)
-                        }
-                    } header: {
-                        Text(formatTime(slot.time))
-                            .font(for: .subline1)
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    }
+                ForEach(dayGroup.meetings, id: \.id) { meeting in
+                    MeetingRow(
+                        meeting: meeting,
+                        formatTimeRange: formatTimeRange,
+                        onEdit: { onEdit(meeting) },
+                        onDelete: { onDelete(meeting) }
+                    )
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
@@ -169,59 +122,10 @@ private struct GroupedSections: View {
     }
 }
 
-// MARK: - Row
-
-private struct MeetingRow: View {
-    let meeting: Meeting
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(ColorTheme.Backgrounds.surface.color)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    )
-                    .frame(width: 31, height: 31)
-
-                Image(systemName: "video.fill").font(.system(size: 15))
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(meeting.title)
-                    .font(for: .body2)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    .lineLimit(2)
-
-                Text("Meeting date")
-                    .font(for: .subline1)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
-                HStack(spacing: 6) {
-                    Label("Design", systemImage: "person.3.fill")
-                        .font(for: .subline1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
-                .padding(.top, 2)
-            }
-
-            Spacer()
-
-            Image(systemName: "ellipsis")
-                .rotationEffect(.degrees(90))
-                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-        }
-        .contentShape(Rectangle())
-        .padding(.vertical, 6)
-    }
-}
-
 #Preview {
     MeetingsView(viewModel: MeetingsViewModel(
-        repository: MockMeetingsRepositoryProtocol(),
         currentDateProvider: .system,
         formatter: MeetingsFormatter(),
-        pastMeetingsUseCase: MockFetchPastMeetingsUseCaseProtocol(),
         upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol()
     )
     )
