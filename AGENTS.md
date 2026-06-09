@@ -116,7 +116,7 @@ Every new screen or UI element must pass the following checklist before merging:
 - Put all VoiceOver strings in `Accessibility.strings`, not `Localizable.strings`
 
 ### Traits
-- Assign the correct trait to every element: `.button`, `.header`, `.staticText`, `.link`, `.selected`, etc.
+- Assign the correct trait to every custom element (all native elements already have traits): `.button`, `.header`, `.staticText`, `.link`, `.selected`, etc.
 - Combine traits when needed (e.g. `.button` + `.selected` for a selected toggleable button)
 
 ### Hiding elements
@@ -125,7 +125,7 @@ Every new screen or UI element must pass the following checklist before merging:
 
 ### Navigation bar
 - All navigation bar buttons must have alternative text
-- Back buttons must describe the destination (e.g. "Go back to Settings", not just "Back")
+- Back buttons must describe the destination (e.g. "Go back to Settings", not just "Back") in the accessibilityLabel (no button's title visible)
 
 ### Dynamic content
 - When content changes dynamically (list updates, search results, state transitions), post a UIAccessibility notification:
