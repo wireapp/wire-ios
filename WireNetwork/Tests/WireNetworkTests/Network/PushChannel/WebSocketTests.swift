@@ -75,11 +75,53 @@ final class WebSocketTests: XCTestCase {
         // Then the stream finished successfully
         await fulfillment(of: [didFinishIterating], timeout: 1)
 
-        // Then the connection was cancelled
+        // Then the connection was cancelled (once by close(), once by onTermination)
         let invocations = connection.cancelWithReason_Invocations
-        try XCTAssertCount(invocations, count: 1)
+        try XCTAssertCount(invocations, count: 2)
         XCTAssertEqual(invocations[0].closeCode, .goingAway)
         XCTAssertNil(invocations[0].reason)
+        XCTAssertEqual(invocations[1].closeCode, .goingAway)
+        XCTAssertNil(invocations[1].reason)
+    }
+
+    func testWebSocketCancelsConnectionWhenStreamConsumerStops() async throws {
+        // Given we're iterating over the web socket
+        let sut = WebSocket(connection: connection)
+
+        connection.underlyingIsOpen = true
+        connection.receive_MockMethod = {
+            try await Task.sleep(nanoseconds: 500_000)
+            return .data(Data())
+        }
+
+        let didReceiveMessage = XCTestExpectation()
+        didReceiveMessage.assertForOverFulfill = false
+        let didCancelConnection = XCTestExpectation()
+        didCancelConnection.assertForOverFulfill = false
+        connection.cancelWithReason_MockMethod = { _, _ in
+            didCancelConnection.fulfill()
+        }
+
+        Task {
+            do {
+                for try await _ in try await sut.open() {
+                    didReceiveMessage.fulfill()
+                    // When the consumer stops iterating
+                    break
+                }
+            } catch {
+                XCTFail("unexpected error: \(error)")
+            }
+        }
+
+        // Wait for iteration to be in progress
+        await fulfillment(of: [didReceiveMessage], timeout: 1)
+
+        // Then the connection was cancelled via onTermination
+        await fulfillment(of: [didCancelConnection], timeout: 1)
+        let invocations = connection.cancelWithReason_Invocations
+        XCTAssertEqual(invocations.first?.closeCode, .goingAway)
+        XCTAssertNil(invocations.first?.reason)
     }
 
     func testWebSocketFinishesIfConnectionCloses() async throws {
