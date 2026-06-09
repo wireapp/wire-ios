@@ -2677,6 +2677,8 @@ internal enum L10n {
         internal enum FileManagement {
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "conversation.create.file_management.learnMore", fallback: "Learn more")
+          /// People outside your team can view files, not upload or edit.
+          internal static let sharedDriveAccess = L10n.tr("Localizable", "conversation.create.file_management.sharedDriveAccess", fallback: "People outside your team can view files, not upload or edit.")
           /// Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.")
           /// Shared Drive

@@ -387,6 +387,7 @@
 "conversation.create.file_management.title" = "Shared Drive";
 "conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.create.file_management.learnMore" = "Learn more";
+"conversation.create.file_management.sharedDriveAccess" = "People outside your team can view files, not upload or edit.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Ongoing call";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "You can’t record an audio message during a call.";
