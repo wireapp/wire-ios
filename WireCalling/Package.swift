@@ -7,7 +7,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireCalling",
     defaultLocalization: "en",
-    platforms: [.iOS("17.0"), .macOS(.v12)],
+    platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
