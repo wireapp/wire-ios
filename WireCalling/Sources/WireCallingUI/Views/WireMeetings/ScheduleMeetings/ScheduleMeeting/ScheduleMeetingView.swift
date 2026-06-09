@@ -24,46 +24,36 @@ struct ScheduleMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel: ScheduleMeetingViewModel
-    @State private var isPasswordVisible = false
-    @State private var isConfirmedPasswordVisible = false
-
-    init(viewModel: @autoclosure @escaping () -> ScheduleMeetingViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel())
-    }
+    @State private(set) var viewModel: ScheduleMeetingViewModel
 
     var body: some View {
         NavigationStack {
-            formContent
-                .listSectionSpacing(.compact)
-        }
-    }
+            Form {
+                titleSection
+                scheduleSection
+                participantsSection
+            }
+            .listSectionSpacing(.compact)
+            .scrollContentBackground(.hidden)
+            .background(ColorTheme.Backgrounds.background.color)
+            .navigationTitle(Strings.Future.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(Strings.Cancel.button) {
+                        dismiss()
+                    }
+                }
 
-    @ViewBuilder private var formContent: some View {
-        Form {
-            titleSection
-            scheduleSection
-            participantsSection
-        }
-        .scrollContentBackground(.hidden)
-        .background(ColorTheme.Backgrounds.background.color)
-        .navigationTitle(Strings.Future.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(Strings.Cancel.button) {
-                    dismiss()
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(Strings.Schedule.button) {
+                        viewModel.scheduleMeeting()
+                    }
+                    .disabled(!viewModel.isNextButtonEnabled)
                 }
             }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(Strings.Schedule.button) {
-                    viewModel.scheduleMeeting()
-                }
-                .disabled(!viewModel.isNextButtonEnabled)
-            }
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
         }
-        .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
     }
 
     private var titleSection: some View {

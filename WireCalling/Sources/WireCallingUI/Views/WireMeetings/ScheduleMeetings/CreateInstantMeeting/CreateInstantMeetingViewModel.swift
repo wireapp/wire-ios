@@ -18,12 +18,13 @@
 
 import SwiftUI
 
-final class CreateInstantMeetingViewModel: ObservableObject {
+@Observable
+final class CreateInstantMeetingViewModel {
 
-    @Published var meetingTitle: String = ""
+    var meetingTitle: String = ""
 
     // TODO: [WPB-21335] Implement Wire users and emails
-    @Published var participants: String = ""
+    var participants: String = ""
 
     var isNextButtonEnabled: Bool {
         let hasValidTitle = !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

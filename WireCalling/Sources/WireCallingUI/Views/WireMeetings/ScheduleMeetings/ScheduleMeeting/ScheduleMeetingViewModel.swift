@@ -19,15 +19,16 @@
 import SwiftUI
 import WireCallingDomain
 
-final class ScheduleMeetingViewModel: ObservableObject {
+@Observable
+final class ScheduleMeetingViewModel {
 
-    @Published var meetingTitle: String = ""
+    var meetingTitle: String = ""
 
     // TODO: [WPB-21335] Implement Wire users and emails
-    @Published var participants: String = ""
-    @Published var startDate: Date = .init()
-    @Published var endDate: Date = .init().addingTimeInterval(1800)
-    @Published var repeatOption: RepeatOption = .never
+    var participants: String = ""
+    var startDate: Date = .init()
+    var endDate: Date = .init().addingTimeInterval(1800)
+    var repeatOption: RepeatOption = .never
 
     var isNextButtonEnabled: Bool {
         let hasValidTitle = !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

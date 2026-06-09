@@ -23,32 +23,22 @@ struct CreateInstantMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel: CreateInstantMeetingViewModel
-    @State private var isPasswordVisible = false
-    @State private var isConfirmedPasswordVisible = false
-
-    init(viewModel: @autoclosure @escaping () -> CreateInstantMeetingViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel())
-    }
+    @State private(set) var viewModel: CreateInstantMeetingViewModel
 
     var body: some View {
         NavigationStack {
-            formContent
-                .listSectionSpacing(.compact)
+            Form {
+                titleSection
+                participantsSection
+            }
+            .listSectionSpacing(.compact)
+            .scrollContentBackground(.hidden)
+            .background(ColorTheme.Backgrounds.background.color)
+            .navigationTitle(Strings.Now.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbarContent }
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
         }
-    }
-
-    @ViewBuilder private var formContent: some View {
-        Form {
-            titleSection
-            participantsSection
-        }
-        .scrollContentBackground(.hidden)
-        .background(ColorTheme.Backgrounds.background.color)
-        .navigationTitle(Strings.Now.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar { toolbarContent }
-        .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
     }
 
     @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {
