@@ -70,12 +70,14 @@ struct ScheduleMeetingView: View {
         Section(Strings.SetupTitle.header) {
             TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
         }
+        .textCase(nil)
     }
 
     private var participantsSection: some View {
         Section(Strings.SetupParticipants.header) {
             TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
         }
+        .textCase(nil)
     }
 
     private var scheduleSection: some View {
