@@ -47,9 +47,13 @@ final class GuestsAllowedView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         // TODO: [WPB-25941] Remove developer flag when feature is complete
-        [titleLabel, inviteButton, isWireDriveEnabled && DeveloperFlag.enableDrivePermissions.isOn ? wireDriveViewerAccessLabel : nil]
-            .compactMap(\.self)
-            .forEach(stackView.addArrangedSubview)
+        [
+            titleLabel,
+            inviteButton,
+            isWireDriveEnabled && DeveloperFlag.enableDrivePermissions.isOn ? wireDriveViewerAccessLabel : nil
+        ]
+        .compactMap(\.self)
+        .forEach(stackView.addArrangedSubview)
 
         titleLabel.numberOfLines = 0
         titleLabel.textColor = SemanticColors.Label.textDefault

@@ -26,24 +26,24 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
     public let isSelfUser: Bool
     public let role: Role
     public let iconData: IconData?
-    
+
     public enum Role: String, Sendable {
         case editor = "Editor"
         case viewer = "Viewer"
     }
-    
+
     public struct IconData: Sendable, Hashable {
         public let initials: String
         public let color: UIColor
         public let image: UIImage?
-        
+
         public init(initials: String, color: UIColor, image: UIImage?) {
             self.initials = initials
             self.color = color
             self.image = image
         }
     }
-    
+
     public init(
         handle: String,
         displayName: String,
@@ -59,13 +59,13 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         self.id = id
         self.iconData = iconData
     }
-    
+
     // MARK: - Hashable
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-    
+
     public static func == (lhs: WireDriveParticipant, rhs: WireDriveParticipant) -> Bool {
         lhs.id == rhs.id
     }

@@ -23,17 +23,18 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationFileCollaborationSystemMessageCellSnapshotTests: XCTestCase {
+final class ConversationSharedDriveSystemMessageCellSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationFileCollaborationSystemMessageCellDescription!
+    private var sut: ConversationSharedDriveSystemMessageCellDescription!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        DeveloperFlag.enableDrivePermissions.enable(false)
         snapshotHelper = SnapshotHelper()
     }
 
@@ -48,7 +49,8 @@ final class ConversationFileCollaborationSystemMessageCellSnapshotTests: XCTestC
 
     // MARK: - Snapshot Tests
 
-    func testFileCollaboration_Editor_Role() {
+    func testSharedDrive_Editor_Role() {
+        DeveloperFlag.enableDrivePermissions.enable(true)
         let view = makeSut(selfUserRole: .editor)
 
         snapshotHelper
@@ -60,8 +62,21 @@ final class ConversationFileCollaborationSystemMessageCellSnapshotTests: XCTestC
             .verify(matching: view, named: "dark")
     }
 
-    func testFileCollaboration_Viewer_Role() {
+    func testSharedDrive_Viewer_Role() {
+        DeveloperFlag.enableDrivePermissions.enable(true)
         let view = makeSut(selfUserRole: .viewer)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    func testSharedDrive() {
+        let view = makeSut(selfUserRole: .editor)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -74,8 +89,8 @@ final class ConversationFileCollaborationSystemMessageCellSnapshotTests: XCTestC
 
     // MARK: - Helpers
 
-    private func makeSut(selfUserRole: WireDriveConversation.Participant.Role) -> UIView {
-        sut = ConversationFileCollaborationSystemMessageCellDescription(selfUserRole: selfUserRole)
+    private func makeSut(selfUserRole: WireDriveParticipant.Role) -> UIView {
+        sut = ConversationSharedDriveSystemMessageCellDescription(selfUserRole: selfUserRole)
         let view = sut.makeView()
         view.backgroundColor = ColorTheme.Backgrounds.background
         let wrapperView = UIView(frame: .init(x: 0, y: 0, width: 375, height: 70))

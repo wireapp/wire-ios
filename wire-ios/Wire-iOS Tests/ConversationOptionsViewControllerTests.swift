@@ -79,6 +79,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        DeveloperFlag.enableDrivePermissions.enable(false)
         snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation()
         mockUserSession = UserSessionMock()
@@ -471,6 +472,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     }
 
     func testThatItRendersWireDriveAccessSubtitle() throws {
+        DeveloperFlag.enableDrivePermissions.enable(true)
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.isDriveConversation = true
         let viewModel = makeViewModel(config: config)
