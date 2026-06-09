@@ -24,12 +24,10 @@ import SwiftUI
 import WireCallingData
 
 public struct WireMeetingsFactory {
-    private let passwordValidator: any PasswordValidator
     private let isContextMenuAllowed: Bool
 
     @MainActor
-    public init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
-        self.passwordValidator = passwordValidator
+    public init(isContextMenuAllowed: Bool) {
         self.isContextMenuAllowed = isContextMenuAllowed
     }
 }
@@ -43,7 +41,6 @@ public extension WireMeetingsFactory {
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
             ),
-            passwordValidator: passwordValidator,
             isContextMenuAllowed: isContextMenuAllowed
         )
 

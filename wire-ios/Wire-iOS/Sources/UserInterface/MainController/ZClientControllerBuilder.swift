@@ -115,7 +115,6 @@ final class ZClientControllerBuilder {
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
         WireMeetingsFactory(
-            passwordValidator: AuthenticationPasswordValidator(),
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
     }
