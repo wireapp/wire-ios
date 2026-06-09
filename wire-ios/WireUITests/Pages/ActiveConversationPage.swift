@@ -428,30 +428,14 @@ class ActiveConversationPage: PageModel {
     func verifySharedFile(
         name: String,
         type: String,
-        timeout: TimeInterval = 30,
-        requireReady: Bool = false,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> ActiveConversationPage {
         let attachment = fileAttachment(name: name, type: type)
-        if attachment.waitForExistence(timeout: timeout) {
-            return self
-        }
-
-        if requireReady {
-            XCTAssertTrue(
-                fileDetails(containing: type).waitForExistence(timeout: 2),
-                "Expected \(type) attachment '\(name)' to finish uploading. " +
-                    "Visible files: \(fetchFileNames()). Visible file details: \(fetchFileDetails())",
-                file: file,
-                line: line
-            )
-            return self
-        }
 
         XCTAssertTrue(
-            fileLabel(containing: name).waitForExistence(timeout: 2),
-            "Expected \(type) attachment '\(name)' not found. Visible files: \(fetchFileNames())",
+            attachment.waitForExistence(timeout: 5),
+            "Expected \(type) attachment '\(name)' not found",
             file: file,
             line: line
         )

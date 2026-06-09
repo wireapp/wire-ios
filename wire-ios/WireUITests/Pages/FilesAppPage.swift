@@ -50,6 +50,14 @@ class FilesAppPage: PageModel {
             ?? filesApp.searchFields[Locators.FilesAppPage.search.rawValue].firstMatch
     }
 
+    var moreOptionsOnFilesPage: XCUIElement {
+        filesApp.buttons["OverflowBarButtonItem"].firstMatch
+    }
+
+    var selectOptionOnFile: XCUIElement {
+        filesApp.buttons["Select"].firstMatch
+    }
+
     var shareButton: XCUIElement {
         filesApp.buttons[Locators.FilesAppPage.share.rawValue].firstMatch
     }
@@ -179,19 +187,30 @@ class FilesAppPage: PageModel {
     func shareFileToWire(named fileName: String) throws -> Self {
         openSeededFilesLocationIfNeeded(fileName: fileName)
 
-        let file = fileCell(named: fileName)
-        if file.waitForExistence(timeout: timeout) {
-            file.press(forDuration: 1.0)
-        }
+        XCTAssertTrue(
+            moreOptionsOnFilesPage.waitForExistence(timeout: timeout),
+            "More options button didn't show up"
+        )
+        moreOptionsOnFilesPage.tap()
+        selectOptionOnFile.tap()
 
-        // FIX REQUIRED: Takes hell lot of time to press share button due to animations
-        if shareButton.waitForExistence(timeout: timeout) {
-            shareButton.tap()
-        }
+        let file = fileCell(named: fileName)
+        XCTAssertTrue(
+            file.waitForExistence(timeout: timeout),
+            "Seeded file '\(fileName)' didn't show up"
+        )
+        file.tap()
+
+        XCTAssertTrue(
+            shareButton.waitForExistence(timeout: timeout),
+            "Share button didn't show up"
+        )
+        shareButton.tap()
 
         if shareToWireApp.waitForExistence(timeout: timeout) {
             shareToWireApp.tap()
         }
+
         return self
     }
 
