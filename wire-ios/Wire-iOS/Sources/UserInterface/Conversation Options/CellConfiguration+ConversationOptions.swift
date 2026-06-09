@@ -40,11 +40,19 @@ extension CellConfiguration {
     static func allowGuestsToogle(
         get: @escaping () -> Bool,
         set: @escaping (Bool, UIView) -> Void,
-        isEnabled: Bool
+        isEnabled: Bool,
+        isDriveConversation: Bool
     ) -> CellConfiguration {
-        .iconToggle(
+        let subtitle = if isDriveConversation {
+            L10n.Localizable.GuestRoom.AllowGuests.subtitle + "\n\n" + L10n.Localizable.GuestRoom.AllowGuests
+                .SharedDrive.subtitle
+        } else {
+            L10n.Localizable.GuestRoom.AllowGuests.subtitle
+        }
+
+        return .iconToggle(
             title: L10n.Localizable.GuestRoom.AllowGuests.title,
-            subtitle: L10n.Localizable.GuestRoom.AllowGuests.subtitle,
+            subtitle: subtitle,
             identifier: "toggle.guestoptions.allowguests",
             titleIdentifier: "label.guestoptions.description",
             icon: nil,

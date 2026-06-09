@@ -3978,6 +3978,10 @@ internal enum L10n {
         internal static let subtitle = L10n.tr("Localizable", "guest_room.allow_guests.subtitle", fallback: "Open this conversation to people outside your team.")
         /// Allow guests
         internal static let title = L10n.tr("Localizable", "guest_room.allow_guests.title", fallback: "Allow guests")
+        internal enum SharedDrive {
+          /// Guests can’t upload, edit, or manage files in Shared Drive.
+          internal static let subtitle = L10n.tr("Localizable", "guest_room.allow_guests.shared_drive.subtitle", fallback: "Guests can’t upload, edit, or manage files in Shared Drive.")
+        }
       }
       internal enum Create {
         internal enum LinkWithPassword {
