@@ -90,7 +90,7 @@ struct ScheduleMeetingView: View {
 
 }
 
-private struct RepeatRow: View {
+private struct RepeatRow: View { // TODO: try to use a picker
     @Binding var selectedOption: RepeatOption
 
     var body: some View {
@@ -120,7 +120,7 @@ private struct RepeatRow: View {
     }
 }
 
-private struct DateTimeRow: View {
+private struct DateTimeRow: View { // TODO: custom pill and expand inline date picker 
     let label: String
     @Binding var date: Date
 
@@ -148,6 +148,29 @@ private struct DateTimeRow: View {
             .fixedSize()
         }
     }
+}
+
+private extension RepeatOption {
+
+    typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
+
+    var title: String {
+        switch self {
+        case .never:
+            Strings.never
+        case .daily:
+            Strings.daily
+        case .weekly:
+            Strings.weekly
+        case .every2Weeks:
+            Strings.everyTwoWeeks
+        case .monthly:
+            Strings.monthly
+        case .yearly:
+            Strings.yearly
+        }
+    }
+
 }
 
 // MARK: - Preview

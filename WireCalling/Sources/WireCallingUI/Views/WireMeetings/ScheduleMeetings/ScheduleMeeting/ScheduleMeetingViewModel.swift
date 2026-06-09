@@ -40,26 +40,3 @@ final class ScheduleMeetingViewModel {
     func scheduleMeeting() {}
 
 }
-
-extension RepeatOption {
-
-    typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
-
-    var title: String {
-        switch self {
-        case .never:
-            Strings.never
-        case .daily:
-            Strings.daily
-        case .weekly:
-            Strings.weekly
-        case .every2Weeks:
-            Strings.everyTwoWeeks
-        case .monthly:
-            Strings.monthly
-        case .yearly:
-            Strings.yearly
-        }
-    }
-
-}
