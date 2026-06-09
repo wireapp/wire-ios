@@ -18,10 +18,11 @@
 
 import UIKit
 import WireDesign
+import WireUtilities
 
-final class ConversationCreateFileManagementSectionController: ConversationCreateSectionController {
+final class ConversationCreateSharedDriveSectionController: ConversationCreateSectionController {
 
-    typealias Cell = ConversationCreateFileManagementCell
+    typealias Cell = ConversationCreateSharedDriveCell
 
     var toggleAction: ((Bool) -> Void)?
 
@@ -32,7 +33,7 @@ final class ConversationCreateFileManagementSectionController: ConversationCreat
 
 }
 
-extension ConversationCreateFileManagementSectionController {
+extension ConversationCreateSharedDriveSectionController {
     override func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
@@ -85,8 +86,11 @@ extension ConversationCreateFileManagementSectionController {
             return assertionFailure("'Learn more' substring missing in subtitle")
         }
 
-        attributedText.append(NSAttributedString(string: "\n\n"))
-        attributedText.append(sharedDriveAccessAttributedString())
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        if DeveloperFlag.enableDrivePermissions.isOn {
+            attributedText.append(NSAttributedString(string: "\n\n"))
+            attributedText.append(sharedDriveAccessAttributedString())
+        }
 
         let fullRange = NSRange(location: 0, length: attributedText.length)
 

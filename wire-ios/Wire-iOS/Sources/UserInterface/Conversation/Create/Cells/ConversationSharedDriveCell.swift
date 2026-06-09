@@ -19,7 +19,7 @@
 import UIKit
 import WireLocators
 
-final class ConversationCreateFileManagementCell: IconToggleCell {
+final class ConversationCreateSharedDriveCell: IconToggleCell {
 
     override func setUp() {
         super.setUp()
@@ -30,8 +30,8 @@ final class ConversationCreateFileManagementCell: IconToggleCell {
     }
 }
 
-extension ConversationCreateFileManagementCell: ConversationCreationValuesConfigurable {
+extension ConversationCreateSharedDriveCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {
-        isOn = values.enableFileManagement
+        isOn = values.enableSharedDrive
     }
 }

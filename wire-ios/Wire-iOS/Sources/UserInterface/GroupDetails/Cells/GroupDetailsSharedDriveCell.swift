@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 
-final class GroupDetailsFileCollaborationCell: GroupDetailsDisclosureOptionsCell {
+final class GroupDetailsSharedDriveCell: GroupDetailsDisclosureOptionsCell {
 
     override func setUp() {
         super.setUp()
@@ -32,7 +32,6 @@ final class GroupDetailsFileCollaborationCell: GroupDetailsDisclosureOptionsCell
 
     func configure(with conversation: GroupDetailsConversationType) {
         status = L10n.Localizable.GroupDetails.FileCollaborationCell.subtitle
-        accessory = nil
     }
 
     override var isHighlighted: Bool {

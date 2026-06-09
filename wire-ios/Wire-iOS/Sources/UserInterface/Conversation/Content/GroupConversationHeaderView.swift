@@ -115,12 +115,12 @@ final class GroupConversationHeaderView: UIView {
         }
 
         if conversation.isWireDriveEnabled {
-            let fileCollabDesc = ConversationFileCollaborationSystemMessageCellDescription(
+            let sharedDriveDesc = ConversationSharedDriveSystemMessageCellDescription(
                 selfUserRole: selfUser.isGuest(in: conversation) ? .viewer : .editor
             )
-            let fileCollabCell = ConversationFileCollaborationSystemMessageCellDescription.View()
-            fileCollabCell.configure(with: fileCollabDesc.configuration, animated: false)
-            stackView.addArrangedSubview(fileCollabCell)
+            let sharedDriveCell = ConversationSharedDriveSystemMessageCellDescription.View()
+            sharedDriveCell.configure(with: sharedDriveDesc.configuration, animated: false)
+            stackView.addArrangedSubview(sharedDriveCell)
 
             let timerDescription = ConversationMessageTimerSystemMessageCellDescription(state: .unavailable)
             let timerCell = ConversationWarningSystemMessageCell<ConversationMessageTimerSystemMessageCellDescription>()

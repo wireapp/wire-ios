@@ -21,12 +21,12 @@ import XCTest
 
 @testable import Wire
 
-final class GroupDetailsFileCollaborationCellTests: CoreDataSnapshotTestCase {
+final class GroupDetailsSharedDriveCellTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var cell: GroupDetailsFileCollaborationCell!
+    private var cell: GroupDetailsSharedDriveCell!
     private var conversation: ZMConversation!
 
     // MARK: - setUp
@@ -34,7 +34,7 @@ final class GroupDetailsFileCollaborationCellTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        cell = GroupDetailsFileCollaborationCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
+        cell = GroupDetailsSharedDriveCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         conversation = createGroupConversation()
     }
 

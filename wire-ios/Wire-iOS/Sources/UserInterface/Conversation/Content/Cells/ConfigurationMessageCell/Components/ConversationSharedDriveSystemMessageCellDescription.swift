@@ -21,13 +21,14 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireMessagingDomain
+import WireUtilities
 
-final class ConversationFileCollaborationSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias WireDriveSelfUserRole = WireDriveConversation.Participant.Role
+final class ConversationSharedDriveSystemMessageCellDescription: ConversationMessageCellDescription {
+    typealias WireDriveSelfUserRole = WireDriveParticipant.Role
 
     // MARK: Properties
 
-    typealias View = ConversationSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>
+    typealias View = ConversationSystemMessageCell<ConversationSharedDriveSystemMessageCellDescription>
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -68,7 +69,9 @@ final class ConversationFileCollaborationSystemMessageCellDescription: Conversat
         let driveAccessTitle = selfUserRole == .editor ? FileCollaborationEnabled
             .editorAccess : FileCollaborationEnabled.viewerAccess
         let spacer = " "
-        let fullText = L10n.Localizable.Content.System.FileCollaboration.enabled + "." + "\(spacer + driveAccessTitle)"
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        let driveAccessText = DeveloperFlag.enableDrivePermissions.isOn ? "\(spacer + driveAccessTitle)" : ""
+        let fullText = L10n.Localizable.Content.System.FileCollaboration.enabled + "." + driveAccessText
         var attributedText: NSMutableAttributedString
         let baseAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumFont,
@@ -85,18 +88,21 @@ final class ConversationFileCollaborationSystemMessageCellDescription: Conversat
             attributedText.addAttribute(.font, value: UIFont.mediumSemiboldFont, range: nsRange)
         }
 
-        let learnMoreLabel = FileCollaborationEnabled.learnMore
-        let linkUrl = URL(string: "https://support.wire.com/hc/en-us/articles/36679600377373-File-permissions")!
-        let linkAttributes: [NSAttributedString.Key: AnyObject] = [
-            .font: UIFont.mediumSemiboldFont,
-            .foregroundColor: ColorTheme.Backgrounds.onSurface,
-            .link: linkUrl as AnyObject,
-            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
-            .underlineColor: ColorTheme.Backgrounds.onSurface
-        ]
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        if DeveloperFlag.enableDrivePermissions.isOn {
+            let learnMoreLabel = FileCollaborationEnabled.learnMore
+            let linkUrl = URL(string: "https://support.wire.com/hc/en-us/articles/36679600377373-File-permissions")!
+            let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+                .font: UIFont.mediumSemiboldFont,
+                .foregroundColor: ColorTheme.Backgrounds.onSurface,
+                .link: linkUrl as AnyObject,
+                .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+                .underlineColor: ColorTheme.Backgrounds.onSurface
+            ]
 
-        let spaceBetweenParagraphs = "\n\n"
-        attributedText.append(.init(string: spaceBetweenParagraphs + learnMoreLabel, attributes: linkAttributes))
+            let spaceBetweenParagraphs = "\n\n"
+            attributedText.append(.init(string: spaceBetweenParagraphs + learnMoreLabel, attributes: linkAttributes))
+        }
 
         return attributedText
     }

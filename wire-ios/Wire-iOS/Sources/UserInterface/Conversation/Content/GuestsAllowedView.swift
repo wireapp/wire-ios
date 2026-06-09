@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireUtilities
 
 final class GuestsAllowedView: UIView {
 
@@ -45,7 +46,8 @@ final class GuestsAllowedView: UIView {
         stackView.alignment = .leading
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
-        [titleLabel, inviteButton, isWireDriveEnabled ? wireDriveViewerAccessLabel : nil]
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        [titleLabel, inviteButton, isWireDriveEnabled && DeveloperFlag.enableDrivePermissions.isOn ? wireDriveViewerAccessLabel : nil]
             .compactMap(\.self)
             .forEach(stackView.addArrangedSubview)
 
@@ -58,7 +60,8 @@ final class GuestsAllowedView: UIView {
         inviteButton.setTitle(buttonTitle, for: .normal)
         inviteButton.addTarget(self, action: #selector(handleInviteTapped), for: .touchUpInside)
 
-        if isWireDriveEnabled {
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        if isWireDriveEnabled, DeveloperFlag.enableDrivePermissions.isOn {
             wireDriveViewerAccessLabel.text = System.FileCollaboration.DriveViewerAccess.title
             wireDriveViewerAccessLabel.numberOfLines = 0
             wireDriveViewerAccessLabel.textColor = ColorTheme.Backgrounds.onSurface

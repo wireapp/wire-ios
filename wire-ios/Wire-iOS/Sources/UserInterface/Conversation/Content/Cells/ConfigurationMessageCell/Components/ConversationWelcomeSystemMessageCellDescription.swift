@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationWelcomeSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>
+    typealias View = ConversationSystemMessageCell<ConversationSharedDriveSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
 

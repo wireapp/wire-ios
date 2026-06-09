@@ -17,7 +17,7 @@
 //
 
 import Foundation
-public import UIKit
+import UIKit
 
 /// A conversation with enabled Drive.
 /// Wire Drive file nodes are linked to one of this conversations.
@@ -25,13 +25,13 @@ public struct WireDriveConversation: Sendable, Hashable, Identifiable {
     public let id: String
     public let name: String
     public let kind: Kind?
-    public let participants: Set<Participant>
+    public let participants: Set<WireDriveParticipant>
 
     public init(
         id: String,
         name: String,
         kind: Kind? = nil,
-        participants: Set<Participant>
+        participants: Set<WireDriveParticipant>
     ) {
         self.id = id
         self.name = name
@@ -48,61 +48,6 @@ public extension WireDriveConversation {
 }
 
 public extension WireDriveConversation {
-    struct Participant: Sendable, Hashable, Identifiable {
-        public let handle: String
-        public let displayName: String
-        public let id: String
-        public let isSelfUser: Bool
-        public let role: Role
-
-        public enum Role: Sendable {
-            case editor
-            case viewer
-        }
-
-        public struct IconData: Sendable, Hashable {
-            public let initials: String
-            public let color: UIColor
-            public let image: UIImage?
-
-            public init(initials: String, color: UIColor, image: UIImage?) {
-                self.initials = initials
-                self.color = color
-                self.image = image
-            }
-        }
-
-        public let iconData: IconData?
-
-        public init(
-            handle: String,
-            displayName: String,
-            role: Role,
-            isSelfUser: Bool,
-            id: String,
-            iconData: IconData? = nil
-        ) {
-            self.handle = handle
-            self.isSelfUser = isSelfUser
-            self.displayName = displayName
-            self.role = role
-            self.id = id
-            self.iconData = iconData
-        }
-
-        // MARK: - Hashable
-
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(id)
-        }
-
-        public static func == (lhs: Participant, rhs: Participant) -> Bool {
-            lhs.id == rhs.id
-        }
-    }
-}
-
-public extension WireDriveConversation {
     static func mocked() -> Self {
         .init(id: UUID().uuidString, name: "Conversation 1", participants: [])
     }
@@ -114,46 +59,18 @@ public extension Collection<WireDriveConversation> {
             .init(
                 id: "1234",
                 name: "Conversation 1",
-                participants: Set([WireDriveConversation.Participant].mocked())
+                participants: Set([WireDriveParticipant].mocked())
             ),
             .init(
                 id: "5678",
                 name: "Conversation 2",
-                participants: Set([WireDriveConversation.Participant].mocked())
+                participants: Set([WireDriveParticipant].mocked())
             ),
             .init(
                 id: "5678",
                 name: "Conversation 3",
                 kind: .group,
-                participants: Set([WireDriveConversation.Participant].mocked())
-            )
-        ]
-    }
-}
-
-public extension Collection<WireDriveConversation.Participant> {
-    static func mocked() -> [Element] {
-        [
-            .init(
-                handle: "walterwhite",
-                displayName: "Heisenberg",
-                role: .editor,
-                isSelfUser: false,
-                id: UUID().uuidString
-            ),
-            .init(
-                handle: "jessepinkman",
-                displayName: "The Cook",
-                role: .editor,
-                isSelfUser: false,
-                id: UUID().uuidString
-            ),
-            .init(
-                handle: "tucosalamanca",
-                displayName: "Tuco",
-                role: .editor,
-                isSelfUser: false,
-                id: UUID().uuidString
+                participants: Set([WireDriveParticipant].mocked())
             )
         ]
     }

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireUtilities
 
 extension CellConfiguration {
 
@@ -43,7 +44,8 @@ extension CellConfiguration {
         isEnabled: Bool,
         isDriveConversation: Bool
     ) -> CellConfiguration {
-        let subtitle = if isDriveConversation {
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        let subtitle = if isDriveConversation, DeveloperFlag.enableDrivePermissions.isOn {
             L10n.Localizable.GuestRoom.AllowGuests.subtitle + "\n\n" + L10n.Localizable.GuestRoom.AllowGuests
                 .SharedDrive.subtitle
         } else {
