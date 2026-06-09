@@ -137,7 +137,7 @@ private struct AdminCandidateRow: View {
 
     private var rowAccessibilityLabel: String {
         [user.name, user.handle.map { "@\($0)" }]
-            .compactMap { $0 }
+            .compactMap(\.self)
             .joined(separator: ", ")
     }
 

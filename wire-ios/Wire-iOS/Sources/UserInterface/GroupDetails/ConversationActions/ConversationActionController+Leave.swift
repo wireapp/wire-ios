@@ -171,6 +171,7 @@ extension ConversationActionController {
         }
     }
 
+    @MainActor
     private func performAdminPromotion(user: UserType, in conversation: ZMConversation) async throws {
         let roles = conversation.getRoles()
         guard let adminRole = roles.first(where: { $0.name == ZMConversation.defaultAdminRoleName }) else {
