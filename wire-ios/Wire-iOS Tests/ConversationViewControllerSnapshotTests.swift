@@ -237,3 +237,21 @@ extension ConversationViewControllerSnapshotTests {
     }
 
 }
+
+// MARK: - Blocked user
+
+extension ConversationViewControllerSnapshotTests {
+
+    func testThatBlockedUserBarReplacesInputBar_WhenSelfBlockedTheOtherUser() {
+        // given
+        let mockConversation = createOneOnOneConversation(.blocked)
+
+        // when
+        createSut(conversation: mockConversation)
+
+        // then
+        XCTAssertTrue(sut.didBlockConnectedUser)
+        snapshotHelper.verify(matching: sut)
+    }
+
+}
