@@ -109,10 +109,15 @@ struct ParticipantSelectionView: View {
             toggleSelection(participant.id)
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: "person.crop.circle.fill")
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .foregroundStyle(.tertiary)
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.largeTitle)
+                    .hidden()
+                    .overlay {
+                        Image(systemName: "person.crop.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(.tertiary)
+                    }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(participant.name)
