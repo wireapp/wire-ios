@@ -52,14 +52,9 @@ final class IncomingConnectionView: UIView {
     var user: UserType {
         didSet {
             setupLabelText()
-            userImageView.showsInitialsOnly = Self.shouldHideProfilePicture(for: user)
+            userImageView.showsInitialsOnly = user.isOnPublicCloudDomain
             userImageView.user = user
         }
-    }
-
-    /// Hide the profile picture only for incoming requests from users on the public "wire.com" domain.
-    private static func shouldHideProfilePicture(for user: UserType) -> Bool {
-        user.domain == "wire.com"
     }
 
     var onAccept: UserAction?
@@ -105,7 +100,7 @@ final class IncomingConnectionView: UIView {
         userImageView.accessibilityLabel = "user image"
         userImageView.shouldDesaturate = false
         userImageView.size = .big
-        userImageView.showsInitialsOnly = Self.shouldHideProfilePicture(for: user)
+        userImageView.showsInitialsOnly = user.isOnPublicCloudDomain
         userImageView.user = user
 
         updateFederatedIndicator()
