@@ -20,7 +20,11 @@ jobs:
     steps:
       # Please look up the latest version from
       # https://github.com/amannn/action-semantic-pull-request/releases
+<<<<<<< HEAD
       - name: Run Semantic Commit Linter
+=======
+      - name: Run Semantic Commint Linter
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
         uses: amannn/action-semantic-pull-request@0723387faaf9b38adef4775cd42cfd5155ed6017 # v5.5.3
         with:
           # Configure which types are allowed.

@@ -113,14 +113,37 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
+<<<<<<< HEAD
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+=======
+        # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-false
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           bundler-cache: true
 
+<<<<<<< HEAD
+=======
+      - name: Install ImageMagick
+        uses: gerlero/brew-install@5e2f576b2a0ede9d50a5b08c0099c70fdda0b0b9 # v1.1.2
+        with:
+          packages: imagemagick ghostscript freetype
+
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
       - name: Display all fastlane lanes
         if: ${{ contains(inputs.folders, 'fastlane') || inputs.all }}
         run: |
@@ -235,7 +258,11 @@ jobs:
 
       - name: Upload Failed snapshots
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+<<<<<<< HEAD
         if: failure()
+=======
+        if: always()
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
         with:
           name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
@@ -323,7 +350,11 @@ jobs:
 
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+<<<<<<< HEAD
         if: failure()
+=======
+        if: always()
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
         with:
           name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
@@ -407,8 +438,12 @@ jobs:
         run: ls -R
       
       - name: Analyze .xcresult file
+<<<<<<< HEAD
         continue-on-error: true
         uses: wireapp/analyze-xcoderesults-action@228125b6d1488f02b1d80e2040cbfac88c2b1cb3
+=======
+        uses: wireapp/analyze-xcoderesults-action@6d612319f44cb3d1e3d3a9beaf9495670e7c4077 # v1.0.0
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
         with:
           results: ${{ matrix.xcresult_file }}
           warningAnnotations: true
@@ -439,15 +474,22 @@ jobs:
           sparse-checkout: .github/actions
 
       - name: Download tests results
+<<<<<<< HEAD
         id: download-test-results
+=======
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         continue-on-error: true
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+<<<<<<< HEAD
 
       - name: Upload JUnit results to Datadog
         if: steps.download-test-results.outcome == 'success'
         uses: ./.github/actions/upload-datadog-junit
+=======
+      - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
         with:
           api_key: ${{ secrets.DD_API_KEY }}
 

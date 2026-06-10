@@ -154,8 +154,23 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
+<<<<<<< HEAD
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+=======
+         # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_COUNTLY }}-${{ env.ENABLE_DATADOG }}
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+>>>>>>> b23062291c (chore: pin GitHub actions to specific hashes (4.16 branch) - WPB-24577 (#4842))
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
