@@ -27,9 +27,7 @@ struct CreateInstantMeetingViewModelTests {
     private let viewModel: CreateInstantMeetingViewModel
 
     init() {
-        self.viewModel = CreateInstantMeetingViewModel(
-            isContextMenuAllowed: true
-        )
+        self.viewModel = CreateInstantMeetingViewModel()
     }
 
     // MARK: - isNextButtonEnabled Tests

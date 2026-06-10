@@ -19,8 +19,8 @@
 package import WireCallingDomain
 package import WireFoundation
 
-import WireCallingDomainSupport
 import SwiftUI
+import WireCallingDomainSupport
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.

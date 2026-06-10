@@ -154,7 +154,10 @@ struct ScheduleMeetingView: View {
     }
 
     private enum ExpandedField: Hashable {
-        case startDate, startTime, endDate, endTime
+        case startDate
+        case startTime
+        case endDate
+        case endTime
     }
 
 }
