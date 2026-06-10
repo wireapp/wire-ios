@@ -16,25 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireMessagingDomain
 import WireTestingPackage
-import SwiftUI
 import XCTest
 
 @testable import WireMessagingUI
 
 final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
-    
+
     override func setUp() {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
-    
+
     override func tearDown() {
         snapshotHelper = nil
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_Editor() {
         let participants: [WireDriveParticipant] = [
@@ -47,12 +47,12 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 iconData: .init(initials: "JD", color: .brown, image: nil)
             )
         ]
-        
+
         let sut = makeView(participants)
-        
+
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_Available_Status() {
         let participants: [WireDriveParticipant] = [
@@ -63,16 +63,16 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: true,
                 id: UUID().uuidString,
                 availabilityStatus: .available,
-                verifications: [],
+                verificationBadges: [],
                 iconData: .init(initials: "JD", color: .brown, image: nil)
             )
         ]
-        
+
         let sut = makeView(participants)
-        
+
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_Verifications_Badges() {
         let participants: [WireDriveParticipant] = [
@@ -83,16 +83,16 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: true,
                 id: UUID().uuidString,
                 availabilityStatus: .busy,
-                verifications: [.e2EICertified, .proteusVerified],
+                verificationBadges: [.e2EICertified, .proteusVerified],
                 iconData: .init(initials: "JD", color: .brown, image: nil)
             )
         ]
-        
+
         let sut = makeView(participants)
-        
+
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_No_Avatar_Icon() {
         let participants: [WireDriveParticipant] = [
@@ -103,15 +103,15 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 availabilityStatus: .away,
-                verifications: [],
+                verificationBadges: [],
             )
         ]
-        
+
         let sut = makeView(participants)
-        
+
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_Long_Display_Name() {
         let participants: [WireDriveParticipant] = [
@@ -122,16 +122,16 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 availabilityStatus: .available,
-                verifications: [],
+                verificationBadges: [],
                 iconData: .init(initials: "JD", color: .brown, image: nil)
             )
         ]
-        
+
         let sut = makeView(participants)
-        
+
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     private func makeView(_ participants: [WireDriveParticipant]) -> some View {
         let viewModel = ConversationSharedDriveOptionsViewModel(participants: participants)

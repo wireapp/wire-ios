@@ -30,7 +30,7 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
 
     func blockedOrPendingApprovalAvatarIcon(for participant: WireDriveParticipant) -> UIImage? {
         switch participant.state {
-        case .active:
+        case .none:
             nil
         case .pendingApproval:
             StyleKitIcon.clock.makeImage(size: .tiny, color: .black).withRenderingMode(.alwaysTemplate)
@@ -53,7 +53,7 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
     }
 
     func trailingImages(for participant: WireDriveParticipant) -> [UIImage] {
-        participant.verifications.compactMap {
+        participant.verificationBadges.compactMap {
             switch $0 {
             case .e2EICertified:
                 UIImage(resource: .certificateValid)

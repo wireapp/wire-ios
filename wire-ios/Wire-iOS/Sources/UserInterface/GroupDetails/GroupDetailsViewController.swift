@@ -674,19 +674,19 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     func presentSharedDriveOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
         let wireDriveParticipants = getWireDriveParticipants(from: conversation)
-
+        
         let onCloseSharedDriveOptions: () -> Void = { [weak self] in
             self?.presentingViewController?.dismiss(animated: true)
         }
-
+        
         let sharedDriveOptionsView = wireMessagingFactory.makeConversationSharedDrivedOptionsView(
             participants: wireDriveParticipants,
             onClose: onCloseSharedDriveOptions
         )
-
+        
         navigationController?.pushViewController(sharedDriveOptionsView, animated: animated)
     }
-
+    
     private func getWireDriveParticipants(from conversation: ZMConversation) -> [WireDriveParticipant] {
         conversation.participants
             .compactMap { item -> WireDriveParticipant? in
@@ -698,37 +698,37 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
                 } else {
                     .editor
                 }
-
+                
                 let userStatus = userStatuses[item.remoteIdentifier] ?? UserStatus()
                 let availability: WireDriveParticipant.AvailabilityStatus = switch userStatus.availability {
                 case .available:
-                    .available
+                        .available
                 case .away:
-                    .away
+                        .away
                 case .busy:
-                    .busy
+                        .busy
                 case .none:
-                    .none
+                        .none
                 }
-
-                var verifications: [WireDriveParticipant.Verification] = []
-
+                
+                var verificationBadges: [WireDriveParticipant.VerificationBadge] = []
+                
                 if userStatus.isE2EICertified {
-                    verifications.append(.e2EICertified)
+                    verificationBadges.append(.e2EICertified)
                 }
-
+                
                 if userStatus.isProteusVerified {
-                    verifications.append(.proteusVerified)
+                    verificationBadges.append(.proteusVerified)
                 }
-
+                
                 let participantState: WireDriveParticipant.State = if item.isBlocked {
                     .blocked
                 } else if item.isPendingApproval {
                     .pendingApproval
                 } else {
-                    .active
+                    .none
                 }
-
+                
                 return .init(
                     handle: item.handle ?? "-",
                     displayName: item.name ?? "-",
@@ -736,7 +736,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
                     isSelfUser: item.isSelfUser,
                     id: id.uuidString + "@" + domain,
                     availabilityStatus: userSession.selfUser.hasTeam ? availability : .none,
-                    verifications: verifications,
+                    verificationBadges: verificationBadges,
                     state: participantState,
                     iconData: WireDriveParticipant.IconData(
                         initials: item.initials ?? "",

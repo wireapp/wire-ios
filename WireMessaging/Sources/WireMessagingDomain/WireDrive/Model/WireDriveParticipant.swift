@@ -26,7 +26,7 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
     public let isSelfUser: Bool
     public let role: Role
     public let availabilityStatus: AvailabilityStatus
-    public let verifications: [Verification]
+    public let verificationBadges: [VerificationBadge]
     public let state: State
     public let iconData: IconData?
 
@@ -37,7 +37,7 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         case away
     }
 
-    public enum Verification: Sendable, Hashable {
+    public enum VerificationBadge: Sendable, Hashable {
         case e2EICertified
         case proteusVerified
     }
@@ -48,7 +48,7 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
     }
 
     public enum State: Sendable, Hashable {
-        case active
+        case none
         case pendingApproval
         case blocked
     }
@@ -76,8 +76,8 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         isSelfUser: Bool,
         id: String,
         availabilityStatus: AvailabilityStatus = .none,
-        verifications: [Verification] = [],
-        state: State = .active,
+        verificationBadges: [VerificationBadge] = [],
+        state: State = .none,
         iconData: IconData? = nil
     ) {
         self.handle = handle
@@ -86,7 +86,7 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         self.role = role
         self.id = id
         self.availabilityStatus = availabilityStatus
-        self.verifications = verifications
+        self.verificationBadges = verificationBadges
         self.state = state
         self.iconData = iconData
     }
@@ -112,7 +112,7 @@ public extension Collection<WireDriveParticipant> {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 availabilityStatus: .available,
-                verifications: [.e2EICertified],
+                verificationBadges: [.e2EICertified],
                 iconData: .init(initials: "WW", color: .blue, image: nil)
             ),
             .init(
@@ -122,7 +122,7 @@ public extension Collection<WireDriveParticipant> {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 availabilityStatus: .busy,
-                verifications: [.e2EICertified, .proteusVerified],
+                verificationBadges: [.e2EICertified, .proteusVerified],
                 iconData: .init(initials: "JP", color: .brown, image: nil)
             ),
             .init(
