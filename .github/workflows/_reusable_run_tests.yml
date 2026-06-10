@@ -337,7 +337,7 @@ jobs:
         run: ls -R
       
       - name: Analyze .xcresult file
-        uses: wireapp/analyze-xcoderesults-action@v1
+        uses: wireapp/analyze-xcoderesults-action@6d612319f44cb3d1e3d3a9beaf9495670e7c4077 # v1.0.0
         with:
           results: ${{ matrix.xcresult_file }}
           warningAnnotations: true
@@ -366,7 +366,7 @@ jobs:
         continue-on-error: true
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
         with:
           node-version: 18
       - name: Install datadog-ci
