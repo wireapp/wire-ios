@@ -26,6 +26,7 @@ struct ScheduleMeetingView: View {
     @Environment(\.dismiss) private var dismiss
     @State private(set) var viewModel: ScheduleMeetingViewModel
     @State private var expandedField: ExpandedField?
+    @State private var selectedParticipants: [String] = []
 
     var body: some View {
         NavigationStack {
@@ -93,62 +94,34 @@ struct ScheduleMeetingView: View {
                 }
             }
 
-            Picker("Flavor", selection: $selectedFlavor) {
-                Text("Chocolate").tag(Flavor.chocolate)
-                Text("Vanilla").tag(Flavor.vanilla)
-                Text("Strawberry").tag(Flavor.strawberry)
+            NavigationLink {
+                ParticipantPickerView(selection: $selectedParticipants)
+            } label: {
+                HStack {
+                    Text("Participants")
+                    Spacer()
+                    Text(participantsSummary)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
             }
-            .pickerStyle(.automatic)
 
-            Picker("Flavor", selection: $selectedFlavor) {
-                Text("Chocolate").tag(Flavor.chocolate)
-                Text("Vanilla").tag(Flavor.vanilla)
-                Text("Strawberry").tag(Flavor.strawberry)
+            NavigationLink {
+                ParticipantPickerView(selection: $selectedParticipants)
+            } label: {
+                HStack {
+                    Text("Lorem, ipsum, dolor, sit, amet, consetetur, sadipscing, elitr, sed, diam, nonumy, eirmod, tempor, invidunt, ut labore, et dolore, magna aliquyam, erat")
+                        .lineLimit(1)
+                    Spacer()
+                    Text("18")
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
             }
-            .pickerStyle(.inline)
-
-            Picker("Flavor", selection: $selectedFlavor) {
-                Text("Chocolate").tag(Flavor.chocolate)
-                Text("Vanilla").tag(Flavor.vanilla)
-                Text("Strawberry").tag(Flavor.strawberry)
-            }
-            .pickerStyle(.menu)
-
-            Picker("Flavor", selection: $selectedFlavor) {
-                Text("Chocolate").tag(Flavor.chocolate)
-                Text("Vanilla").tag(Flavor.vanilla)
-                Text("Strawberry").tag(Flavor.strawberry)
-            }
-            .pickerStyle(.navigationLink)
-
-            Picker("Flavor", selection: $selectedFlavor) {
-                Text("Chocolate").tag(Flavor.chocolate)
-                Text("Vanilla").tag(Flavor.vanilla)
-                Text("Strawberry").tag(Flavor.strawberry)
-            }
-            .pickerStyle(.palette)
-
-            Picker("Flavor", selection: $selectedFlavor) {
-                Text("Chocolate").tag(Flavor.chocolate)
-                Text("Vanilla").tag(Flavor.vanilla)
-                Text("Strawberry").tag(Flavor.strawberry)
-            }
-            .pickerStyle(.segmented)
-
-            Picker("Flavor", selection: $selectedFlavor) {
-                Text("Chocolate").tag(Flavor.chocolate)
-                Text("Vanilla").tag(Flavor.vanilla)
-                Text("Strawberry").tag(Flavor.strawberry)
-            }
-            .pickerStyle(.wheel)
         }
     }
-
-    enum Flavor: String, CaseIterable, Identifiable {
-        case chocolate, vanilla, strawberry
-        var id: Self { self }
-    }
-    @State private var selectedFlavor: Flavor = .chocolate
 
     @ViewBuilder
     private func dateTimeRow(
@@ -208,6 +181,12 @@ struct ScheduleMeetingView: View {
         withAnimation { expandedField = expandedField == field ? nil : field }
     }
 
+    private var participantsSummary: String {
+        guard let first = selectedParticipants.first else { return "None" }
+        let extra = selectedParticipants.count - 1
+        return extra > 0 ? "\(first), + \(extra) more" : first
+    }
+
     private enum ExpandedField: Hashable {
         case startDate
         case startTime
@@ -215,6 +194,48 @@ struct ScheduleMeetingView: View {
         case endTime
     }
 
+}
+
+private struct ParticipantPickerView: View {
+    @Binding var selection: [String]
+
+    private let allParticipants = [
+        "Martina Koch-Johansen",
+        "Daniel Becker",
+        "Sophia Müller",
+        "Lucas Hoffmann",
+        "Anna Schmidt"
+    ]
+
+    var body: some View {
+        Form {
+            ForEach(allParticipants, id: \.self) { participant in
+                Button {
+                    toggle(participant)
+                } label: {
+                    HStack {
+                        Text(participant)
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        if selection.contains(participant) {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(Color.accentColor)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Participants")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func toggle(_ participant: String) {
+        if let index = selection.firstIndex(of: participant) {
+            selection.remove(at: index)
+        } else {
+            selection.append(participant)
+        }
+    }
 }
 
 private extension RepeatOption {
