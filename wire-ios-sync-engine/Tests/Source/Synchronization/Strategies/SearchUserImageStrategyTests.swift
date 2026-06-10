@@ -60,7 +60,9 @@ final class SearchUserImageStrategyTests: MessagingTest {
             handle: "foo",
             accentColor: .amber,
             remoteIdentifier: UUID(),
-            searchUsersCache: mockCache
+            providerIdentifier: nil,
+            searchUsersCache: mockCache,
+            type: nil
         )
     }
 
