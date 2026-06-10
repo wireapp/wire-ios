@@ -18,7 +18,7 @@
 
 import XCTest
 
-/// core
+/// core-messenger
 final class PersonalUsersTests: WireUITestCase {
 
     /// critical

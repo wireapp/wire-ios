@@ -18,7 +18,7 @@
 
 import XCTest
 
-/// core
+/// core-messenger
 final class SSOTests: WireUITestCase {
 
     private func registerTeamOwnerWithSSOEnabled() async throws -> UserInfo {

@@ -18,7 +18,7 @@
 
 import XCTest
 
-/// core
+/// core-messenger
 final class BlacklistTests: WireUITestCase {
 
     override func setUpWithError() throws {

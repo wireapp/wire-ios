@@ -72,11 +72,11 @@ Run selected UI tests through fastlane:
 
 ```bash
 bundle exec fastlane run_uitests tags:critical
-bundle exec fastlane run_uitests tags:"calling|core|collaboration"
-bundle exec fastlane run_uitests tags:"critical,calling|core|collaboration"
+bundle exec fastlane run_uitests tags:"calling|core-messenger|collaboration"
+bundle exec fastlane run_uitests tags:"critical,calling|core-messenger|collaboration"
 ```
 
 In the fastlane selector, `,` means AND and `|` means OR. For example,
-`tags:"critical,calling|core|collaboration"` runs tests tagged `critical`
-and also tagged with one of `calling`, `core`, or `collaboration`.
+`tags:"critical,calling|core-messenger|collaboration"` runs tests tagged `critical`
+and also tagged with one of `calling`, `core-messenger`, or `collaboration`.
 Quote selectors that contain `|` so the shell does not treat it as a pipe.

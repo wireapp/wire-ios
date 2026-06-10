@@ -20,7 +20,7 @@ import WireFoundation
 import WireLocators
 import XCTest
 
-/// core
+/// core-messenger
 final class ShareExtensionTests: WireUITestCase {
 
     private let photosAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")

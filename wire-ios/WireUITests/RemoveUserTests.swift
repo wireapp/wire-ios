@@ -18,7 +18,7 @@
 import WireFoundation
 import XCTest
 
-/// core
+/// core-messenger
 class RemoveUserTests: WireUITestCase {
 
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on the conversation list
