@@ -86,16 +86,6 @@ struct ScheduleMeetingView: View {
                 timeField: .endTime
             )
 
-            DateTimeRow(
-                label: L10n.Localizable.WireMeetings.Schedule.Time.starts,
-                date: $viewModel.startDate
-            )
-
-            DateTimeRow(
-                label: L10n.Localizable.WireMeetings.Schedule.Time.ends,
-                date: $viewModel.endDate
-            )
-
             Picker(L10n.Localizable.WireMeetings.Schedule.Time.repeats, selection: $viewModel.repeatOption) {
                 ForEach(RepeatOption.allCases, id: \.self) { option in
                     Text(option.title)
@@ -167,36 +157,6 @@ struct ScheduleMeetingView: View {
         case startDate, startTime, endDate, endTime
     }
 
-}
-
-private struct DateTimeRow: View { // TODO: custom pill and expand inline date picker 
-    let label: String
-    @Binding var date: Date
-
-    var body: some View {
-        HStack {
-            Text(label)
-                .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
-
-            Spacer()
-
-            DatePicker(
-                "",
-                selection: $date,
-                displayedComponents: .date
-            )
-            .labelsHidden()
-            .fixedSize()
-
-            DatePicker(
-                "",
-                selection: $date,
-                displayedComponents: .hourAndMinute
-            )
-            .labelsHidden()
-            .fixedSize()
-        }
-    }
 }
 
 private extension RepeatOption {
