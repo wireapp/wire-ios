@@ -128,7 +128,7 @@ struct ParticipantSelectionView: View {
                 Spacer()
 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.title2)
+                    .font(.title)
                     .foregroundStyle(isSelected ? Color.accentColor : Color.secondary.opacity(0.5))
             }
         }
