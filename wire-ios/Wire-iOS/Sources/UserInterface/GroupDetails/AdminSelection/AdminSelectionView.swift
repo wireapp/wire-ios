@@ -68,9 +68,6 @@ struct AdminSelectionView: View {
                 .background(Color(UIColor.systemBackground))
             }
             .background(Color(UIColor.systemBackground))
-            .onChange(of: viewModel.filteredCandidates.count) {
-                UIAccessibility.post(notification: .layoutChanged, argument: nil)
-            }
             .navigationTitle(L10n.Localizable.AdminSelection.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

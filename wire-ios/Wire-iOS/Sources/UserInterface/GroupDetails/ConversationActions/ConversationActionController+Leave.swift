@@ -163,7 +163,10 @@ extension ConversationActionController {
                 candidates: candidates,
                 userSession: session,
                 onPromote: { [weak self] user in
-                    try await self?.performAdminPromotion(user: user, in: conversation)
+                    guard let self else {
+                        throw CancellationError()
+                    }
+                    try await self.performAdminPromotion(user: user, in: conversation)
                 }
             )
             let hostingController = UIHostingController(rootView: AdminSelectionView(viewModel: viewModel))
