@@ -59,11 +59,7 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
             toggleCell.switchView.isOn = boolValue
             toggleCell.switchView.accessibilityLabel = identifier
             toggleCell.switchView.isEnabled = settingsProperty.enabled
-            if #available(iOS 17.0, *) {
-                toggleCell.accessibilityTraits = .toggleButton
-            } else {
-                toggleCell.accessibilityTraits = .button
-            }
+            toggleCell.accessibilityTraits = .toggleButton
         }
     }
 
