@@ -25,6 +25,7 @@ struct ScheduleMeetingView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private(set) var viewModel: ScheduleMeetingViewModel
+    @State private var expandedField: ExpandedField?
 
     var body: some View {
         NavigationStack {
@@ -72,6 +73,19 @@ struct ScheduleMeetingView: View {
 
     private var scheduleSection: some View {
         Section {
+            dateTimeRow(
+                label: "Starts",
+                date: $viewModel.startDate,
+                dateField: .startDate,
+                timeField: .startTime
+            )
+            dateTimeRow(
+                label: "Ends",
+                date: $viewModel.endDate,
+                dateField: .endDate,
+                timeField: .endTime
+            )
+
             DateTimeRow(
                 label: L10n.Localizable.WireMeetings.Schedule.Time.starts,
                 date: $viewModel.startDate
@@ -89,6 +103,68 @@ struct ScheduleMeetingView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func dateTimeRow(
+        label: String,
+        date: Binding<Date>,
+        dateField: ExpandedField,
+        timeField: ExpandedField
+    ) -> some View {
+        HStack {
+            Text(label)
+            Spacer()
+            pill(
+                text: date.wrappedValue.formatted(.dateTime.day().month(.abbreviated).year()),
+                isSelected: expandedField == dateField
+            ) {
+                toggleExpansion(dateField)
+            }
+            pill(
+                text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
+                isSelected: expandedField == timeField
+            ) {
+                toggleExpansion(timeField)
+            }
+        }
+
+        if expandedField == dateField {
+            DatePicker("", selection: date, displayedComponents: .date)
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+        }
+        if expandedField == timeField {
+            DatePicker("", selection: date, displayedComponents: .hourAndMinute)
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+        }
+    }
+
+    private func pill(
+        text: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Text(text)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.15))
+                )
+                .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func toggleExpansion(_ field: ExpandedField) {
+        withAnimation { expandedField = expandedField == field ? nil : field }
+    }
+
+    private enum ExpandedField: Hashable {
+        case startDate, startTime, endDate, endTime
     }
 
 }
