@@ -8,7 +8,7 @@ on:
         required: false
         type: string
       run_uitests:
-        description: "Run UI tests only"
+        description: "Run Critical UITests only"
         required: false
         default: true
         type: boolean
