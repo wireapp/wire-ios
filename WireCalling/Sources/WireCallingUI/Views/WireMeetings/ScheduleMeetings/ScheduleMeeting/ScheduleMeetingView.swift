@@ -82,42 +82,15 @@ struct ScheduleMeetingView: View {
                 date: $viewModel.endDate
             )
 
-            RepeatRow(
-                selectedOption: $viewModel.repeatOption
-            )
-        }
-    }
-
-}
-
-private struct RepeatRow: View { // TODO: try to use a picker
-    @Binding var selectedOption: RepeatOption
-
-    var body: some View {
-        HStack {
-            Text(L10n.Localizable.WireMeetings.Schedule.Time.repeats)
-                .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
-
-            Spacer()
-
-            Menu {
+            Picker(L10n.Localizable.WireMeetings.Schedule.Time.repeats, selection: $viewModel.repeatOption) {
                 ForEach(RepeatOption.allCases, id: \.self) { option in
-                    Button(option.title) {
-                        selectedOption = option
-                    }
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Text(selectedOption.title)
-                        .foregroundColor(ColorTheme.Base.secondaryText.color)
-
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.caption)
-                        .foregroundColor(ColorTheme.Base.secondaryText.color)
+                    Text(option.title)
+                        .tag(option)
                 }
             }
         }
     }
+
 }
 
 private struct DateTimeRow: View { // TODO: custom pill and expand inline date picker 
