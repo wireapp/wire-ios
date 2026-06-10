@@ -6133,6 +6133,41 @@ internal enum L10n {
       /// I’m on Wire. Visit get.wire.com to connect with me.
       internal static let text = L10n.tr("Localizable", "send_invitation_no_email.text", fallback: "I’m on Wire. Visit get.wire.com to connect with me.")
     }
+    internal enum Settings {
+      internal enum DebuggingTools {
+        internal enum DebugCommand {
+          /// Command not recognized
+          internal static let commandNotRecognized = L10n.tr("Localizable", "settings.debugging_tools.debug_command.command_not_recognized", fallback: "Command not recognized")
+          /// Debug command
+          internal static let title = L10n.tr("Localizable", "settings.debugging_tools.debug_command.title", fallback: "Debug command")
+        }
+        internal enum RepairMlsRemovalKeys {
+          /// Error: %@
+          internal static func failureMessage(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.failure_message", String(describing: p1), fallback: "Error: %@")
+          }
+          /// Repair Failed
+          internal static let failureTitle = L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.failure_title", fallback: "Repair Failed")
+          /// Found: %d faulty conversation(s)
+          /// Repaired: %d conversation(s)
+          internal static func successMessage(_ p1: Int, _ p2: Int) -> String {
+            return L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.success_message", p1, p2, fallback: "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)")
+          }
+          /// Faulty MLS Removal Keys Repair
+          internal static let successTitle = L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.success_title", fallback: "Faulty MLS Removal Keys Repair")
+          /// Error: Repair use case not available
+          internal static let useCaseUnavailable = L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable", fallback: "Error: Repair use case not available")
+        }
+        internal enum UnreadConversations {
+          /// Copy
+          internal static let actionCopy = L10n.tr("Localizable", "settings.debugging_tools.unread_conversations.action_copy", fallback: "Copy")
+          /// Found an unread conversation:
+          internal static let found = L10n.tr("Localizable", "settings.debugging_tools.unread_conversations.found", fallback: "Found an unread conversation:")
+          /// No unread conversation
+          internal static let notFound = L10n.tr("Localizable", "settings.debugging_tools.unread_conversations.not_found", fallback: "No unread conversation")
+        }
+      }
+    }
     internal enum ShareExtension {
       internal enum Voiceover {
         /// All clients verified.
