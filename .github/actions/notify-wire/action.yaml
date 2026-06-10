@@ -46,7 +46,7 @@ runs:
     - name: Notify (always)
       if: ${{ inputs.notify == 'always' }}
       continue-on-error: true
-      uses: 8398a7/action-slack@v3
+      uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
       with:
         status: ${{ inputs.status }}
         text: |
@@ -60,7 +60,7 @@ runs:
     - name: Notify (failure only)
       if: ${{ inputs.notify == 'failure' && (inputs.status == 'failure' || inputs.status == 'cancelled') }}
       continue-on-error: true
-      uses: 8398a7/action-slack@v3
+      uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
       with:
         status: failure
         text: |
