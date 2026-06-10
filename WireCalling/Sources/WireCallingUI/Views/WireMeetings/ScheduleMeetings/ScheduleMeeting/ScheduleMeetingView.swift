@@ -65,13 +65,6 @@ struct ScheduleMeetingView: View {
         .textCase(nil)
     }
 
-    private var participantsSection: some View {
-        Section(Strings.SetupParticipants.header) {
-            TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
-        }
-        .textCase(nil)
-    }
-
     private var scheduleSection: some View {
         Section {
             dateTimeRow(
@@ -87,11 +80,24 @@ struct ScheduleMeetingView: View {
                 timeField: .endTime
             )
 
-            Picker(L10n.Localizable.WireMeetings.Schedule.Time.repeats, selection: $viewModel.repeatOption) {
+            Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
                 ForEach(RepeatOption.allCases, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
                 }
+            }
+        }
+    }
+
+    private var participantsSection: some View {
+        Section(Strings.SetupParticipants.header) {
+            // TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
+
+            NavigationLink {
+                ParticipantPickerView(selection: $selectedParticipants)
+            } label: {
+                TextField(Strings.SetupParticipants.placeholder, text: .constant(""))
+                    .disabled(true)
             }
 
             NavigationLink {
@@ -121,7 +127,10 @@ struct ScheduleMeetingView: View {
                 }
             }
         }
+        .textCase(nil)
     }
+
+    // MARK: -
 
     @ViewBuilder
     private func dateTimeRow(
