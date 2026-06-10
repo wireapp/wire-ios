@@ -127,12 +127,10 @@ class WireUITestCase: XCTestCase {
         guard notificationPermissionMonitor == nil else { return }
 
         notificationPermissionMonitor =
-            addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
-                let notifPermission = "Would Like to Send You Notifications"
+            addUIInterruptionMonitor(withDescription: "System Permission Alert") { alertElement -> Bool in
                 let allowButton = alertElement.buttons["Allow"].firstMatch
 
-                guard alertElement.label.contains(notifPermission),
-                      allowButton.waitForExistence(timeout: 1) else {
+                guard allowButton.waitForExistence(timeout: 1) else {
                     return false
                 }
 

@@ -405,4 +405,10 @@ class ActiveConversationPage: PageModel {
         )
         return self
     }
+    
+    func initiateCall() throws -> OngoingCallPage {
+        videoCallButton.waitAndTap()
+        //need fixing here to handle notification accept.
+        return try OngoingCallPage()
+    }
 }

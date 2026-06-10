@@ -24,18 +24,18 @@ import XCTest
 /// alert keep showing
 final class ZCallingTests: WireUITestCase {
 
-    struct GroupCallSetupResponse {
+    struct GroupCallScenario {
         let conversationId: String
         let groupName: String
-        let allParticipants: [UserInfo]
-        let appUserWhoWillJoinTheCall: UserInfo
+        let teamOwner: UserInfo
+        let appUserReceivingCall: UserInfo
         let callingServiceUsers: [UserInfo]
     }
 
     private func makeTeamAndGroupCallSetup(
         memberCount: Int,
         groupName: String? = nil
-    ) async throws -> GroupCallSetupResponse {
+    ) async throws -> GroupCallScenario {
         let groupName = groupName ?? UserGenerator.generateRandomConversationName()
 
         let (teamOwner, teamMembers, _, conversationId) = try await UserHelper.default
@@ -46,18 +46,15 @@ final class ZCallingTests: WireUITestCase {
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil").uuidString.lowercased()
 
-        let allParticipants = [teamOwner] + teamMembers
-        let appUserWhoWillJoinTheCall = try XCTUnwrap(teamMembers.last)
+        let appUserReceivingCall = try XCTUnwrap(teamMembers.last)
+        let callingServiceUsers = [teamOwner] + teamMembers.dropLast()
 
-        let callingServiceAcceptingMembers = Array(teamMembers.dropLast(1))
-        let callingServiceUsers = [teamOwner] + callingServiceAcceptingMembers
-
-        return GroupCallSetupResponse(
+        return GroupCallScenario(
             conversationId: convId,
             groupName: groupName,
-            allParticipants: allParticipants,
-            appUserWhoWillJoinTheCall: appUserWhoWillJoinTheCall,
-            callingServiceUsers: callingServiceUsers
+            teamOwner: teamOwner,
+            appUserReceivingCall: appUserReceivingCall,
+            callingServiceUsers: Array(callingServiceUsers)
         )
     }
 
@@ -89,7 +86,7 @@ final class ZCallingTests: WireUITestCase {
         return ongoingCallPage
     }
 
-    /// Team Owner create group conversation and initiate a group call with members
+    /// Team Owner create group conversation and initiate a group call with members via calling service
     @MainActor
     func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
@@ -97,8 +94,8 @@ final class ZCallingTests: WireUITestCase {
             let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 
             let firstTimePage = try app.loginUser(
-                email: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.email,
-                password: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.password
+                email: teamAndGroupCallSetup.appUserReceivingCall.email,
+                password: teamAndGroupCallSetup.appUserReceivingCall.password
             )
             _ = try firstTimePage.acceptPopup()
 
@@ -123,11 +120,11 @@ final class ZCallingTests: WireUITestCase {
             let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
 
             let participantIdentifier = Locators.OngoingCallPage
-                .participantIdentifier(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name)
+                .participantIdentifier(teamAndGroupCallSetup.appUserReceivingCall.name)
 
             XCTAssertTrue(
                 app.buttons[participantIdentifier].waitForExistence(timeout: 15),
-                "Expected \(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name) to be in the call OR took more than 15 seconds to join"
+                "Expected \(teamAndGroupCallSetup.appUserReceivingCall.name) to be in the call OR took more than 15 seconds to join"
             )
 
             let conversationsPage = try ongoingCallPage.endOngoingCall()
@@ -138,5 +135,19 @@ final class ZCallingTests: WireUITestCase {
         } catch {
             throw XCTSkip("⚠️ [Flaky Test] due to Calling service fail to create instance..Skipping this test for now")
         }
+    }
+    
+    @MainActor
+    func testInitiateGroupCall_TC_8879() async throws {
+
+            let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+            let firstTimePage = try app.loginUser(
+                email: teamAndGroupCallSetup.teamOwner.email,
+                password: teamAndGroupCallSetup.teamOwner.password
+            )
+            _ = try firstTimePage.acceptPopup()
+            .openConversation()
+            .initiateCall()
     }
 }
