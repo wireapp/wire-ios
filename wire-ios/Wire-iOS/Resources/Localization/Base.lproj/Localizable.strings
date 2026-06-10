@@ -736,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Original message from %@";
 "content.message.reply.original_timestamp.time" = "Original message from %@";
 "content.message.reply.broken_message" = "You cannot see this message.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Edited";
 
 "content.message.open_link_alert.title" = "Visit Link";
@@ -1067,6 +1068,7 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list

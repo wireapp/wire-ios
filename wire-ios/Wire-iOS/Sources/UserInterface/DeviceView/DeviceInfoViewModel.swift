@@ -141,14 +141,12 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func enrollClient() async {
-        isActionInProgress = true
         do {
             let certificateChain = try await actionsHandler.enrollClient()
             showCertificateUpdateSuccess?(certificateChain)
         } catch {
             showEnrollmentCertificateError = true
         }
-        isActionInProgress = false
     }
 
     @MainActor

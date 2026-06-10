@@ -27,20 +27,24 @@ final class SSOTests: WireUITestCase {
         return teamOwner
     }
 
+    private func createSSOUser() async throws -> UserInfo {
+        let teamOwner = try await registerTeamOwnerWithSSOEnabled()
+        let ssoMember = UserGenerator.generateUniqueUserInfo()
+        return try await ssoHelper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
+    }
+
     @MainActor
     private func loginWithSSOCode(email: String, password: String, ssoCode: String) async throws -> FirstTimePage {
         try await WelcomePage()
             .enterSSOCode(ssoCode)
-            .oktaLogin(email: email, password: password)
+            .ssoWebLogin(email: email, password: password)
             .acceptFirstTimeAlert()
     }
 
     @MainActor
     func testSSOLoginWithSSOCodeAndNoResetPassword_TC_8966_TC_10850() async throws {
         // GIVEN
-        let teamOwner = try await registerTeamOwnerWithSSOEnabled()
-        let ssoMember = UserGenerator.generateUniqueUserInfo()
-        let ssoUser = try await ssoHelper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
+        let ssoUser = try await createSSOUser()
         let ssoCode = try ssoHelper.getSSOCode()
 
         // WHEN
@@ -62,12 +66,47 @@ final class SSOTests: WireUITestCase {
     }
 
     @MainActor
+    func testReloginSSO_TC_8970() async throws {
+        // GIVEN
+        let ssoUser = try await createSSOUser()
+        let ssoCode = try ssoHelper.getSSOCode()
+
+        // WHEN
+        _ = try await loginWithSSOCode(
+            email: ssoUser.email,
+            password: ssoUser.password,
+            ssoCode: ssoCode
+        )
+        .acceptPopupOnTeamMemberSetup()
+        .setUsername(ssoUser.username)
+        .openSettings()
+        .openAccountSettings()
+        .logoutWithoutPassword()
+
+        // AND Perform Relogin
+        let conversationsPage = try await loginWithSSOCode(
+            email: ssoUser.email,
+            password: ssoUser.password,
+            ssoCode: ssoCode
+        )
+        .acceptPopup()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.pageMainElement.exists,
+            "Conversations page did not appear after SSO relogin"
+        )
+    }
+
+    @MainActor
     func testSCIMManagedUserCannotChangeAccountFields_TC_10851() async throws {
 
         // GIVEN
         let teamOwner = try await registerTeamOwnerWithSSOEnabled()
-        let scimMember = UserGenerator.generateUniqueUserInfo()
-        let scimUser = try await ssoHelper.createSCIMManagedSSOUser(owner: teamOwner, ssoUser: scimMember)
+        let scimUser = try await ssoHelper.createSCIMManagedSSOUser(
+            owner: teamOwner,
+            ssoUser: UserGenerator.generateUniqueUserInfo()
+        )
         let ssoCode = try ssoHelper.getSSOCode()
 
         // WHEN
@@ -89,6 +128,30 @@ final class SSOTests: WireUITestCase {
         XCTAssertTrue(
             accountSettingsPage.usernameFieldDisabled.exists,
             "username field editable, shold be disabled"
+        )
+    }
+
+    @MainActor
+    func testSSOLoginWithClaimedDomain_TC_8967() async throws {
+
+        // GIVEN
+        let environmentVariables = try EnvironmentVariables()
+
+        // WHEN
+        _ = try await WelcomePage()
+            .enterSSOCode(environmentVariables.ssoClaimedUserEmail)
+            .ssoWebLogin(
+                email: environmentVariables.ssoClaimedUserEmail,
+                password: environmentVariables.ssoClaimedUserPassword
+            )
+            .acceptFirstTimeAlert()
+
+        // THEN
+        let conversationsPage = try ManagedDevicesPage().removeDeviceAndContinueIfShown()
+
+        XCTAssertTrue(
+            conversationsPage.pageMainElement.waitForExistence(timeout: 2),
+            "Conversations page did not appear after SSO login"
         )
     }
 }

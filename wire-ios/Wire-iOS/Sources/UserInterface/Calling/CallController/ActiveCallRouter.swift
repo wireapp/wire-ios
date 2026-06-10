@@ -119,6 +119,14 @@ final class ActiveCallRouter<TopOverlayPresenter>
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
+
+    func prepareForRootReplacement() {
+        // Do not rely on dismiss completion during root swap
+        presentedActiveCallViewController?.dismiss(animated: false)
+        isPresentingActiveCall = false
+        isActiveCallShown = false
+        presentedActiveCallViewController = nil
+    }
 }
 
 // MARK: - ActiveCallRouterProtocol
@@ -127,7 +135,23 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - ActiveCall
 
+    private func isCallUIActuallyPresented() -> Bool {
+        guard let presentedActiveCallViewController else { return false }
+        if mainWindow.rootViewController?.presentedViewController === presentedActiveCallViewController {
+            return true
+        }
+        return presentedActiveCallViewController.presentingViewController != nil
+    }
+
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
+        // During account/rootViewController switches, the call screen can be dismissed by UIKit
+        // while these flags still say it's shown/presenting. Reconcile with UIKit truth and reset
+        // stale state so this presentation attempt is not blocked by outdated bookkeeping.
+        if isActiveCallShown, !isCallUIActuallyPresented() {
+            isActiveCallShown = false
+            isPresentingActiveCall = false
+            presentedActiveCallViewController = nil
+        }
         guard
             !isPresentingActiveCall,
             !isActiveCallShown
