@@ -286,12 +286,25 @@ final class ConversationReplyWithTextCellSnapshotTests: ConversationMessageSnaps
         verify(message: reply, allColorSchemes: true)
     }
 
-    /// Reply to a message whose original was deleted (quoteMessage is nil but hasQuote is true).
+    /// Reply to a message whose original was deleted (quoteMessage is nil, hasQuote is true and
+    /// the deleted tombstone is resolvable). Shows "Deleted message".
     func testReplyToDeletedMessage() {
         let reply = MockMessageFactory.textMessage(withText: "Sorry, was that for me?")
         reply.senderUser = mockSelfUser
         reply.backingTextMessageData.hasQuote = true
         reply.backingTextMessageData.quoteMessage = nil
+        reply.backingTextMessageData.quotedMessageIsDeleted = true
+        verify(message: reply, allColorSchemes: true)
+    }
+
+    /// Reply to a message the user cannot see (quoteMessage is nil, hasQuote is true and the
+    /// original isn't in the user's copy of the conversation). Shows "You cannot see this message".
+    func testReplyToUnseenMessage() {
+        let reply = MockMessageFactory.textMessage(withText: "Sorry, was that for me?")
+        reply.senderUser = mockSelfUser
+        reply.backingTextMessageData.hasQuote = true
+        reply.backingTextMessageData.quoteMessage = nil
+        reply.backingTextMessageData.quotedMessageIsDeleted = false
         verify(message: reply, allColorSchemes: true)
     }
 

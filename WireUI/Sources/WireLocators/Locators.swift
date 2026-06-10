@@ -63,7 +63,8 @@ public enum Locators {
         case bottomBarDriveButton
         case createGroupOrSearchButton
         case conversationCell
-        case blockOptionOnContextMenu = "Block…"
+        case blockOptionOnContextMenu
+        case unblockOptionOnContextMenu
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
         case leaveButtonOnBottomSheet
@@ -167,10 +168,10 @@ public enum Locators {
         case allowFullAccess = "Allow Full Access"
         case ok = "OK"
         case audioButton
-        case startRecording = "Start recording"
-        case stopRecording = "Stop recording"
+        case startRecording
+        case stopRecording
         case helium = "Helium"
-        case sendAudio = "Send"
+        case sendAudio
         case playAudioFile
         case recordingTime
         case showOtherRowButton

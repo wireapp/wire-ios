@@ -24,10 +24,16 @@ import WireDesign
 final class WarningLabelView: UIView {
     private let stackView = UIStackView(axis: .vertical)
 
-    private let label = DynamicFontLabel(
-        style: .h5,
-        color: SemanticColors.Label.textErrorDefault
-    )
+    private let textView: UITextView = {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.backgroundColor = .clear
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.adjustsFontForContentSizeCategory = true
+        return textView
+    }()
 
     private static let paragraphStyle: NSParagraphStyle = {
         let style = NSMutableParagraphStyle()
@@ -53,8 +59,11 @@ final class WarningLabelView: UIView {
         addSubview(stackView)
         stackView.alignment = .center
         stackView.spacing = 10
-        label.numberOfLines = 0
-        stackView.addArrangedSubview(label)
+        textView.linkTextAttributes = [
+            .foregroundColor: SemanticColors.Label.textErrorDefault,
+            .underlineStyle: NSUnderlineStyle.single.rawValue
+        ]
+        stackView.addArrangedSubview(textView)
         NSLayoutConstraint.activate(
             NSLayoutConstraint.forView(
                 view: stackView,
@@ -68,17 +77,31 @@ final class WarningLabelView: UIView {
         typealias profileDetails = L10n.Localizable.Profile.Details
         if user.isPendingApprovalBySelfUser {
             isHidden = false
-            label.attributedText = attributedWarning(profileDetails.requestedIdentityWarning)
+            textView.attributedText = attributedWarning(profileDetails.requestedIdentityWarning)
         }
         guard let name = user.name else {
             isHidden = true
             return
         }
         isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
-        label.attributedText = attributedWarning(profileDetails.identityWarning(name))
+        textView.attributedText = attributedWarning(profileDetails.identityWarning(name))
     }
 
     private func attributedWarning(_ text: String) -> NSAttributedString {
-        NSAttributedString(string: text, attributes: [.paragraphStyle: Self.paragraphStyle])
+        let linkText = L10n.Localizable.Profile.Details.reportMisuse
+        let fullText = "\(text)\n\(linkText)"
+        let result = NSMutableAttributedString(
+            string: fullText,
+            attributes: [
+                .paragraphStyle: Self.paragraphStyle,
+                .font: UIFont.font(for: .h5),
+                .foregroundColor: SemanticColors.Label.textErrorDefault
+            ]
+        )
+        let linkRange = (fullText as NSString).range(of: linkText, options: .backwards)
+        if linkRange.location != NSNotFound {
+            result.addAttribute(.link, value: WireURLs.shared.reportAbuse, range: linkRange)
+        }
+        return result
     }
 }
