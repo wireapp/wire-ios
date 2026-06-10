@@ -5035,6 +5035,8 @@ internal enum L10n {
         }
         /// external
         internal static let partner = L10n.tr("Localizable", "profile.details.partner", fallback: "external")
+        /// Report misuse
+        internal static let reportMisuse = L10n.tr("Localizable", "profile.details.report_misuse", fallback: "Report misuse")
         /// Please verify the person's identity before accepting the connection request.
         /// Wire’s Support team will never reach out to you in the app.
         internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.")
