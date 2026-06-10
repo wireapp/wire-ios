@@ -92,8 +92,63 @@ struct ScheduleMeetingView: View {
                         .tag(option)
                 }
             }
+
+            Picker("Flavor", selection: $selectedFlavor) {
+                Text("Chocolate").tag(Flavor.chocolate)
+                Text("Vanilla").tag(Flavor.vanilla)
+                Text("Strawberry").tag(Flavor.strawberry)
+            }
+            .pickerStyle(.automatic)
+
+            Picker("Flavor", selection: $selectedFlavor) {
+                Text("Chocolate").tag(Flavor.chocolate)
+                Text("Vanilla").tag(Flavor.vanilla)
+                Text("Strawberry").tag(Flavor.strawberry)
+            }
+            .pickerStyle(.inline)
+
+            Picker("Flavor", selection: $selectedFlavor) {
+                Text("Chocolate").tag(Flavor.chocolate)
+                Text("Vanilla").tag(Flavor.vanilla)
+                Text("Strawberry").tag(Flavor.strawberry)
+            }
+            .pickerStyle(.menu)
+
+            Picker("Flavor", selection: $selectedFlavor) {
+                Text("Chocolate").tag(Flavor.chocolate)
+                Text("Vanilla").tag(Flavor.vanilla)
+                Text("Strawberry").tag(Flavor.strawberry)
+            }
+            .pickerStyle(.navigationLink)
+
+            Picker("Flavor", selection: $selectedFlavor) {
+                Text("Chocolate").tag(Flavor.chocolate)
+                Text("Vanilla").tag(Flavor.vanilla)
+                Text("Strawberry").tag(Flavor.strawberry)
+            }
+            .pickerStyle(.palette)
+
+            Picker("Flavor", selection: $selectedFlavor) {
+                Text("Chocolate").tag(Flavor.chocolate)
+                Text("Vanilla").tag(Flavor.vanilla)
+                Text("Strawberry").tag(Flavor.strawberry)
+            }
+            .pickerStyle(.segmented)
+
+            Picker("Flavor", selection: $selectedFlavor) {
+                Text("Chocolate").tag(Flavor.chocolate)
+                Text("Vanilla").tag(Flavor.vanilla)
+                Text("Strawberry").tag(Flavor.strawberry)
+            }
+            .pickerStyle(.wheel)
         }
     }
+
+    enum Flavor: String, CaseIterable, Identifiable {
+        case chocolate, vanilla, strawberry
+        var id: Self { self }
+    }
+    @State private var selectedFlavor: Flavor = .chocolate
 
     @ViewBuilder
     private func dateTimeRow(
