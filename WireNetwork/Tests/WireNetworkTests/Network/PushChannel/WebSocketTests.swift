@@ -75,13 +75,11 @@ final class WebSocketTests: XCTestCase {
         // Then the stream finished successfully
         await fulfillment(of: [didFinishIterating], timeout: 1)
 
-        // Then the connection was cancelled (once by close(), once by onTermination)
+        // Then the connection was cancelled
         let invocations = connection.cancelWithReason_Invocations
-        XCTAssertGreaterThanOrEqual(invocations.count, 1)
+        try XCTAssertCount(invocations, count: 1)
         XCTAssertEqual(invocations[0].closeCode, .goingAway)
         XCTAssertNil(invocations[0].reason)
-        XCTAssertEqual(invocations[1].closeCode, .goingAway)
-        XCTAssertNil(invocations[1].reason)
     }
 
     func testWebSocketCancelsConnectionWhenStreamConsumerStops() async throws {
