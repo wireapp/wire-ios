@@ -61,10 +61,10 @@ public actor WebSocket: WebSocketProtocol {
                 continuation.finish()
             }
 
-            continuation.onTermination = { [connection] termination in
+            continuation.onTermination = { [weak self] termination in
                 task.cancel()
                 if case .cancelled = termination {
-                    connection.cancel(with: .goingAway, reason: nil)
+                    Task { await self?.close() }
                 }
             }
         }
