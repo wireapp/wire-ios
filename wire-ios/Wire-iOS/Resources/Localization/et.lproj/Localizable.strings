@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "OK";
 "general.next" = "Järgmine";
 "general.cancel" = "Tühista";
@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@ eemaldas kasutaja %@";
 "content.system.conversation.you.removed.legalhold" = "%@ were removed from this conversation because legal hold has been activated.";
 "content.system.conversation.you.left" = "%@ lahkus";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ eemaldati tiimist.";
 "content.system.conversation.guest.joined" = "%@ liitus";
 "content.system.conversation.guest.you_joined" = "You joined";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Original message from %@";
 "content.message.reply.original_timestamp.time" = "Original message from %@";
 "content.message.reply.broken_message" = "Sa ei saa seda sõnumit näha.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Muudetud";
 
 "content.message.open_link_alert.title" = "Ava lehekülg";
@@ -1155,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";
