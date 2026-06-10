@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireNetwork",
-    platforms: [.iOS("17.0"), .macOS(.v12)],
+    platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireNetwork", targets: ["WireNetwork"]),
         .library(name: "WireNetworkSupport", targets: ["WireNetworkSupport"])
