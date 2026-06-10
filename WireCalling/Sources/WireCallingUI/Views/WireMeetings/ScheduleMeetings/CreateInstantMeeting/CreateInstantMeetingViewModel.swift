@@ -28,7 +28,7 @@ final class CreateInstantMeetingViewModel {
 
     var isNextButtonEnabled: Bool {
         let hasValidTitle = !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        return hasValidTitle // TODO: any participants?
+        return hasValidTitle // TODO: [WPB-21335] decide if button is enabled without any participants
     }
 
     // MARK: - Public Interface
