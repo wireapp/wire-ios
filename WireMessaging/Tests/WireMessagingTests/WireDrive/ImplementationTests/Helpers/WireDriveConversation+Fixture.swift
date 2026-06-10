@@ -26,7 +26,7 @@ extension WireDriveConversation {
             id: UUID().uuidString,
             name: name,
             participants: [
-                WireDriveConversation.Participant(
+                WireDriveParticipant(
                     handle: "bilbo",
                     displayName: "bilbo",
                     role: .editor,
