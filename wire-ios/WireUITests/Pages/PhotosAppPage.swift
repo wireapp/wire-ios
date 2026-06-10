@@ -33,25 +33,21 @@ class PhotosAppPage: PageModel {
     }
 
     var continueButtonOnWhatsNewPhotosApp: XCUIElement {
-        photosApp.buttons[Locators.ShareExtensionPage.continueButton.rawValue].firstMatch
+        photosApp.buttons[Locators.PhotosAppPage.continueButton.rawValue].firstMatch
     }
 
-    var firstImageTile: XCUIElement {
-        photosApp.images[Locators.ShareExtensionPage.imageTile.rawValue].firstMatch
+    var imageTile: XCUIElement {
+        photosApp.images[Locators.PhotosAppPage.imageTile.rawValue].firstMatch
     }
 
     var shareButton: XCUIElement {
         photosApp.buttons
-            .matching(identifier: Locators.ShareExtensionPage.shareButton.rawValue)
+            .matching(identifier: Locators.PhotosAppPage.shareButton.rawValue)
             .firstMatch
     }
 
     var shareToWireApp: XCUIElement {
         photosApp.cells[Locators.ShareExtensionPage.wire.rawValue].firstMatch
-    }
-
-    var accountPicker: XCUIElement {
-        photosApp.descendants(matching: .any)[Locators.ShareExtensionPage.account.rawValue].firstMatch
     }
 
     var chooseConversation: XCUIElement {
@@ -65,6 +61,10 @@ class PhotosAppPage: PageModel {
     var shareExtensionSearchField: XCUIElement {
         photosApp.searchFields.allElementsBoundByIndex.first(where: \.isHittable)
             ?? photosApp.searchFields.firstMatch
+    }
+
+    var selectImage: XCUIElement {
+        photosApp.buttons[Locators.PhotosAppPage.select.rawValue].firstMatch
     }
 
     func accountCell(named name: String) -> XCUIElement {
@@ -115,13 +115,15 @@ class PhotosAppPage: PageModel {
     }
 
     @discardableResult
-    func openFirstImage() throws -> PhotosAppPage {
+    func selectImageFromPhotos() throws -> PhotosAppPage {
         try continueWhatsNewIfPresent()
-        XCTAssertTrue(firstImageTile.waitForExistence(timeout: 10))
+        XCTAssertTrue(imageTile.waitForExistence(timeout: 10))
+        selectImage.tap()
         // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
-        firstImageTile
+        imageTile
             .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
             .tap()
+
         return self
     }
 
@@ -134,7 +136,6 @@ class PhotosAppPage: PageModel {
     }
 
     func chooseConversationAndSend(name: String) throws {
-        defer { photosApp.terminate() }
 
         XCTAssertTrue(
             chooseConversation.waitForExistence(timeout: timeout),
@@ -150,6 +151,8 @@ class PhotosAppPage: PageModel {
         conversationToSend.waitAndTap()
         sendButton.waitAndTap()
 
-        XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
+        XCTAssertFalse(
+            sendButton.waitForExistence(timeout: 5)
+        )
     }
 }

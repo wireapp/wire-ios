@@ -48,7 +48,7 @@ final class ShareExtensionTests: WireUITestCase {
 
         let photosApp = try PhotosAppPage(photosApp: photosAppBundleId)
         try photosApp
-            .openFirstImage()
+            .selectImageFromPhotos()
             .shareImageToWire()
             .chooseConversationAndSend(name: conversationName)
 
@@ -61,7 +61,7 @@ final class ShareExtensionTests: WireUITestCase {
 
         let filesApp = try FilesAppPage(filesApp: filesAppBundleId)
         try filesApp
-            .shareFileToWire(named: fileName)
+            .selectAndShareFileToWire(named: fileName)
             .chooseConversationAndSend(name: conversationName)
 
         try await switchBackToWireApp()

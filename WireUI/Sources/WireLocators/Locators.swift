@@ -295,7 +295,9 @@ public enum Locators {
         case onMyIPhone = "On My iPhone"
         case search = "Search"
         case share = "Share"
-        case nameContainsSearchToken = "Name Contains"
+        case nameContains = "Name Contains"
+        case moreOptions = "OverflowBarButtonItem"
+        case select = "Select"
     }
 
     public enum OptionsOnSettingsPage: String {
@@ -380,13 +382,18 @@ public enum Locators {
 
     public enum ShareExtensionPage: String {
 
-        case account = "Account:"
-        case imageTile = "PXGGridLayout-Info"
-        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
-        case chooseConversations = "Choose"
         case sendButtonOnShareExtension
-        case continueButton = "Continue"
         case wire = "Wire"
+        case chooseConversations = "Choose"
+    }
+
+    public enum PhotosAppPage: String {
+
+        case select = "Select"
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "Share"
+        case continueButton = "Continue"
+
     }
 
     public enum IncomingCallPage: String {

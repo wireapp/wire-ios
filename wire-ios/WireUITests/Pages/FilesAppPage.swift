@@ -37,25 +37,12 @@ class FilesAppPage: PageModel {
         filesApp.buttons[Locators.FilesAppPage.browse.rawValue].firstMatch
     }
 
-    var doneButton: XCUIElement {
-        filesApp.buttons[Locators.FilesAppPage.done.rawValue].firstMatch
-    }
-
-    var onMyIPhoneLocation: XCUIElement {
-        filesApp.staticTexts[Locators.FilesAppPage.onMyIPhone.rawValue].firstMatch
-    }
-
-    var searchField: XCUIElement {
-        filesApp.searchFields.allElementsBoundByIndex.first(where: \.isHittable)
-            ?? filesApp.searchFields[Locators.FilesAppPage.search.rawValue].firstMatch
-    }
-
     var moreOptionsOnFilesPage: XCUIElement {
-        filesApp.buttons["OverflowBarButtonItem"].firstMatch
+        filesApp.buttons[Locators.FilesAppPage.moreOptions.rawValue].firstMatch
     }
 
     var selectOptionOnFile: XCUIElement {
-        filesApp.buttons["Select"].firstMatch
+        filesApp.buttons[Locators.FilesAppPage.select.rawValue].firstMatch
     }
 
     var shareButton: XCUIElement {
@@ -66,21 +53,12 @@ class FilesAppPage: PageModel {
         filesApp.descendants(matching: .any)[Locators.ShareExtensionPage.wire.rawValue].firstMatch
     }
 
-    var accountPicker: XCUIElement {
-        filesApp.descendants(matching: .any)[Locators.ShareExtensionPage.account.rawValue].firstMatch
-    }
-
     var chooseConversation: XCUIElement {
         filesApp.descendants(matching: .any)[Locators.ShareExtensionPage.chooseConversations.rawValue].firstMatch
     }
 
     var sendButton: XCUIElement {
         filesApp.buttons[Locators.ShareExtensionPage.sendButtonOnShareExtension.rawValue].firstMatch
-    }
-
-    var shareExtensionSearchField: XCUIElement {
-        filesApp.searchFields.allElementsBoundByIndex.first(where: \.isHittable)
-            ?? filesApp.searchFields.firstMatch
     }
 
     private func displayedFileName(from fileName: String) -> String {
@@ -93,26 +71,9 @@ class FilesAppPage: PageModel {
 
     func fileCell(named fileName: String) -> XCUIElement {
         let displayedFileName = displayedFileName(from: fileName)
-        let fileNameText = filesApp.staticTexts[displayedFileName].firstMatch
-        if fileNameText.exists {
-            return fileNameText
-        }
+        let fileExtension = fileExtension(from: fileName)
 
-        let fileTile = filesApp.cells["\(displayedFileName), \(fileExtension(from: fileName))"].firstMatch
-        if fileTile.exists {
-            return fileTile
-        }
-
-        return filesApp.descendants(matching: .any)
-            .matching(
-                NSPredicate(
-                    format: "(label CONTAINS[c] %@ OR label CONTAINS[c] %@) AND NOT label BEGINSWITH[c] %@",
-                    fileName,
-                    displayedFileName,
-                    Locators.FilesAppPage.nameContainsSearchToken.rawValue
-                )
-            )
-            .firstMatch
+        return filesApp.cells["\(displayedFileName), \(fileExtension)"].firstMatch
     }
 
     func accountCell(named name: String) -> XCUIElement {
@@ -142,11 +103,6 @@ class FilesAppPage: PageModel {
             .firstMatch
     }
 
-    func visibleShareExtensionLabels() -> [String] {
-        let labels = filesApp.staticTexts.allElementsBoundByIndex + filesApp.cells.allElementsBoundByIndex
-        return Array(labels.map(\.label).filter { !$0.isEmpty }.prefix(20))
-    }
-
     func selectConversation(name: String) -> XCUIElement {
         let conversationCell = filesApp.staticTexts[name]
         XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
@@ -154,43 +110,12 @@ class FilesAppPage: PageModel {
     }
 
     @discardableResult
-    func openSeededFilesLocationIfNeeded(fileName: String) -> Self {
-        if doneButton.waitForExistence(timeout: 1) {
-            doneButton.tap()
-        }
+    func selectAndShareFileToWire(named fileName: String) throws -> Self {
 
-        if fileCell(named: fileName).waitForExistence(timeout: 2) {
-            return self
-        }
-
-        if browseButton.waitForExistence(timeout: 2) {
+        if browseButton.waitForExistence(timeout: timeout), !browseButton.isSelected {
             browseButton.tap()
         }
 
-        if onMyIPhoneLocation.waitForExistence(timeout: 2) {
-            onMyIPhoneLocation.tap()
-        }
-
-        if fileCell(named: fileName).waitForExistence(timeout: 2) {
-            return self
-        }
-
-        if searchField.waitForExistence(timeout: 2) {
-            _ = try? searchField.tapIfKeyboardNotFocused()
-            searchField.typeText(fileName)
-        }
-
-        return self
-    }
-
-    @discardableResult
-    func shareFileToWire(named fileName: String) throws -> Self {
-        openSeededFilesLocationIfNeeded(fileName: fileName)
-
-        XCTAssertTrue(
-            moreOptionsOnFilesPage.waitForExistence(timeout: timeout),
-            "More options button didn't show up"
-        )
         moreOptionsOnFilesPage.tap()
         selectOptionOnFile.tap()
 
@@ -229,6 +154,9 @@ class FilesAppPage: PageModel {
         conversationToSend.waitAndTap()
 
         XCTAssertTrue(sendButton.waitForExistence(timeout: timeout), "Send button didn't show up")
-        sendButton.tap()
+        sendButton.waitAndTap()
+        XCTAssertFalse(
+            sendButton.waitForExistence(timeout: timeout)
+        )
     }
 }
