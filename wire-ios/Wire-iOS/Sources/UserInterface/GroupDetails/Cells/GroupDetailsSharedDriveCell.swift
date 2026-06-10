@@ -18,20 +18,31 @@
 
 import UIKit
 import WireDesign
+import WireUtilities
 
 final class GroupDetailsSharedDriveCell: GroupDetailsDisclosureOptionsCell {
+
+    typealias Strings = L10n.Localizable.GroupDetails.FileCollaborationCell
 
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "cell.groupdetails.fileCollaboration"
-        title = L10n.Localizable.GroupDetails.FileCollaborationCell.title
+        title = Strings.title
 
         icon = UIImage(systemName: "rectangle.stack.fill")
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        status = L10n.Localizable.GroupDetails.FileCollaborationCell.subtitle
+        status = if DeveloperFlag.enableDrivePermissions.isOn {
+            conversation.isSelfAGuest ? Strings.Subtitle.viewerAccess : Strings.Subtitle.editorAccess
+        } else {
+            Strings.subtitle
+        }
+
+        if !DeveloperFlag.enableDrivePermissions.isOn {
+            accessory = nil
+        }
     }
 
     override var isHighlighted: Bool {

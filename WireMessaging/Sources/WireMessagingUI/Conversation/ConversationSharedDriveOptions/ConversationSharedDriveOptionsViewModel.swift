@@ -1,0 +1,65 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import SwiftUI
+import WireDesign
+public import WireMessagingDomain
+
+@MainActor
+public class ConversationSharedDriveOptionsViewModel: ObservableObject {
+    @Published var participants: [WireDriveParticipant]
+
+    public init(participants: [WireDriveParticipant]) {
+        self.participants = participants
+    }
+
+    func blockedOrPendingApprovalAvatarIcon(for participant: WireDriveParticipant) -> UIImage? {
+        switch participant.state {
+        case .active:
+            nil
+        case .pendingApproval:
+            StyleKitIcon.clock.makeImage(size: .tiny, color: .black).withRenderingMode(.alwaysTemplate)
+        case .blocked:
+            StyleKitIcon.block.makeImage(size: .tiny, color: .black).withRenderingMode(.alwaysTemplate)
+        }
+    }
+
+    func leadingImage(for participant: WireDriveParticipant) -> UIImage? {
+        switch participant.availabilityStatus {
+        case .none:
+            nil
+        case .available:
+            StyleKitIcon.statusAvailable.makeImage(size: .custom(12), color: ColorTheme.Base.primary(.green))
+        case .busy:
+            StyleKitIcon.statusBusy.makeImage(size: .custom(12), color: ColorTheme.Base.primary(.amber))
+        case .away:
+            StyleKitIcon.statusAway.makeImage(size: .custom(12), color: ColorTheme.Base.primary(.red))
+        }
+    }
+
+    func trailingImages(for participant: WireDriveParticipant) -> [UIImage] {
+        participant.verifications.compactMap {
+            switch $0 {
+            case .e2EICertified:
+                UIImage(resource: .certificateValid)
+            case .proteusVerified:
+                UIImage(resource: .verified)
+            }
+        }
+    }
+}

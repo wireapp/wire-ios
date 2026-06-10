@@ -70,3 +70,6 @@
 "conversation.wireCells.files.folder" = "Folder";
 "conversation.wireCells.files.text" = "Text";
 "conversation.wireCells.files.availableOffline" = "Available offline";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDrive.closeButton" = "Close conversation details";

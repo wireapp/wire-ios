@@ -164,7 +164,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
                 conversationCreationRepository: conversationCreationRepository,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
                 areLegacyBotsAvailable: areLegacyBotsAvailable,
-                isAppsFeatureEnabled: isAppsFeatureEnabled
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                wireMessagingFactory: wireMessagingFactory
             )
             let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
             groupDetailsViewController.presentGuestOptions(animated: false)

@@ -25,11 +25,32 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
     public let id: String
     public let isSelfUser: Bool
     public let role: Role
+    public let availabilityStatus: AvailabilityStatus
+    public let verifications: [Verification]
+    public let state: State
     public let iconData: IconData?
+
+    public enum AvailabilityStatus: Sendable, Hashable {
+        case none
+        case available
+        case busy
+        case away
+    }
+
+    public enum Verification: Sendable, Hashable {
+        case e2EICertified
+        case proteusVerified
+    }
 
     public enum Role: String, Sendable {
         case editor = "Editor"
         case viewer = "Viewer"
+    }
+
+    public enum State: Sendable, Hashable {
+        case active
+        case pendingApproval
+        case blocked
     }
 
     public struct IconData: Sendable, Hashable {
@@ -37,7 +58,11 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         public let color: UIColor
         public let image: UIImage?
 
-        public init(initials: String, color: UIColor, image: UIImage?) {
+        public init(
+            initials: String,
+            color: UIColor,
+            image: UIImage?
+        ) {
             self.initials = initials
             self.color = color
             self.image = image
@@ -50,6 +75,9 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         role: Role,
         isSelfUser: Bool,
         id: String,
+        availabilityStatus: AvailabilityStatus = .none,
+        verifications: [Verification] = [],
+        state: State = .active,
         iconData: IconData? = nil
     ) {
         self.handle = handle
@@ -57,6 +85,9 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         self.displayName = displayName
         self.role = role
         self.id = id
+        self.availabilityStatus = availabilityStatus
+        self.verifications = verifications
+        self.state = state
         self.iconData = iconData
     }
 
@@ -79,21 +110,28 @@ public extension Collection<WireDriveParticipant> {
                 displayName: "Heisenberg",
                 role: .editor,
                 isSelfUser: false,
-                id: UUID().uuidString
+                id: UUID().uuidString,
+                availabilityStatus: .available,
+                verifications: [.e2EICertified],
+                iconData: .init(initials: "WW", color: .blue, image: nil)
             ),
             .init(
                 handle: "jessepinkman",
                 displayName: "The Cook",
-                role: .editor,
+                role: .viewer,
                 isSelfUser: false,
-                id: UUID().uuidString
+                id: UUID().uuidString,
+                availabilityStatus: .busy,
+                verifications: [.e2EICertified, .proteusVerified],
+                iconData: .init(initials: "JP", color: .brown, image: nil)
             ),
             .init(
                 handle: "tucosalamanca",
                 displayName: "Tuco",
                 role: .editor,
-                isSelfUser: false,
-                id: UUID().uuidString
+                isSelfUser: true,
+                id: UUID().uuidString,
+                iconData: nil
             )
         ]
     }

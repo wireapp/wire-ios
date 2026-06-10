@@ -3924,6 +3924,12 @@ internal enum L10n {
         internal static let subtitle = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle", fallback: "On")
         /// Shared Drive
         internal static let title = L10n.tr("Localizable", "group_details.file_collaboration_cell.title", fallback: "Shared Drive")
+        internal enum Subtitle {
+          /// Editor access
+          internal static let editorAccess = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle.editor_access", fallback: "Editor access")
+          /// Viewer access
+          internal static let viewerAccess = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle.viewer_access", fallback: "Viewer access")
+        }
       }
       internal enum GuestOptionsCell {
         /// Off

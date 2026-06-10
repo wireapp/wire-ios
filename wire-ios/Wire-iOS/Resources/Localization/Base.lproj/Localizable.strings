@@ -1120,6 +1120,8 @@
 "group_details.channel_history_options_cell.title" = "Conversation history";
 "group_details.file_collaboration_cell.title" = "Shared Drive";
 "group_details.file_collaboration_cell.subtitle" = "On";
+"group_details.file_collaboration_cell.subtitle.editor_access" = "Editor access";
+"group_details.file_collaboration_cell.subtitle.viewer_access" = "Viewer access";
 "group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
 "group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
