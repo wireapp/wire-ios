@@ -26,7 +26,7 @@ class AdminPromotionTests: WireUITestCase {
     }
 
     @MainActor
-    func testLastAdmin_promotesNewAdmin_andLeavesGroup() async throws {
+    func testLastAdmin_promotesNewAdmin_andLeavesGroup_TC_11008() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
         let (owner, teamMembers, _, _) = try await UserHelper.default.registerTeam(
