@@ -58,8 +58,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let earService: EARServiceInterface
 
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
-    private var currentTask: Task<Void, any Error>?
-    private var monitoringTask: Task<Void, any Error>?
 
     init(
         parent: any Scope,
@@ -108,18 +106,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 throw Failure.pushChannelAlreadyOpened
             }
 
-            monitoringTask = Task { [weak self] in
-                let request = await self?.pushChannelCoordinator.listenForYieldRequests()
-                if Task.isCancelled {
-                    return
-                }
-                WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
-                self?.currentTask?.cancel()
-                request?.acknowledge()
-                WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
-            }
-
-            currentTask = Task {
+            let currentTask = Task<Void, any Error> {
                 do {
                     try Task.checkCancellation()
                     try await useCase.invoke()
@@ -136,17 +123,28 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 }
             }
 
+            let monitoringTask = Task<Void, any Error> { [pushChannelCoordinator] in
+                let request = await pushChannelCoordinator.listenForYieldRequests()
+                if Task.isCancelled {
+                    return
+                }
+                WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
+                currentTask.cancel()
+                request.acknowledge()
+                WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
+            }
+
             try await withTaskCancellationHandler {
-                try await currentTask?.value
-            } onCancel: { [currentTask] in
-                currentTask?.cancel()
+                try await currentTask.value
+            } onCancel: {
+                currentTask.cancel()
             }
 
             WireLogger.sync.debug("closing push channel")
             await pushChannelState.markAsClosed()
 
             // no need to monitor anymore let's cancel
-            monitoringTask?.cancel()
+            monitoringTask.cancel()
 
         } else {
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
