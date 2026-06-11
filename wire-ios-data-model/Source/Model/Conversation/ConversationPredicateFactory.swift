@@ -215,7 +215,9 @@ public final class ConversationPredicateFactory: NSObject {
 
     private func isValidConnection() -> NSPredicate {
         let isConnection =
-            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+            NSPredicate(
+                format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.connection.rawValue)"
+            )
 
         let isActive = NSPredicate(format: "NOT \(ZMConversationOneOnOneUserKey).connection.status IN %@", [
             NSNumber(value: ZMConnectionStatus.pending.rawValue),
@@ -228,7 +230,9 @@ public final class ConversationPredicateFactory: NSObject {
 
     private func isValidOneOnOne() -> NSPredicate {
         let isOneOnOne =
-            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+            NSPredicate(
+                format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)"
+            )
         let hasOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) != NULL")
         let isConnectionAcceptedOrBlocked =
             NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)).connection.status IN %@", [
@@ -269,13 +273,17 @@ public final class ConversationPredicateFactory: NSObject {
 
     private func predicateForOneToOneConversation() -> NSPredicate {
         let isOneOnOne =
-            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+            NSPredicate(
+                format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)"
+            )
         let hasOneOnOneUser = NSPredicate(format: "\(ZMConversationOneOnOneUserKey) != NULL")
         return NSCompoundPredicate(andPredicateWithSubpredicates: [isOneOnOne, hasOneOnOneUser])
     }
 
     private func predicateForUnconnectedConversations() -> NSPredicate {
-        NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+        NSPredicate(
+            format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.connection.rawValue)"
+        )
     }
 
 }

@@ -116,7 +116,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         )
 
         // when - simulate several incremental-sync cycles in quick succession
-        for _ in 0..<5 {
+        for _ in 0 ..< 5 {
             sut.operationMode = .economical
             sut.operationMode = .normal
         }
