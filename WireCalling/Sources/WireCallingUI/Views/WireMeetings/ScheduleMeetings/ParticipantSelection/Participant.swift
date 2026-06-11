@@ -19,7 +19,7 @@
 
 public import Foundation
 
-public struct Participant: Identifiable, Hashable, Sendable {
+public struct Participant: Identifiable, Hashable, Sendable { // TODO: replace with WireCallingDomain.Member
 
     public let id: UUID
     public var name: String
