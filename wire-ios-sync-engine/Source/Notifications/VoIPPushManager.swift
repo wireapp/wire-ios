@@ -124,6 +124,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             completion()
             return
         }
+
         let handle = CallHandle(
             accountID: accountID,
             conversationID: conversationID
