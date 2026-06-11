@@ -402,8 +402,13 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
+<<<<<<< HEAD
     private lazy var checkBlacklistWorker: Worker? = .checkBlacklist(
         useCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+=======
+    private lazy var checkBlacklistWorker: CheckBlacklistWorker? = .init(
+        isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+>>>>>>> 7eea73ba4b (fix: App cannot be started by user - WPB-24848 (#4777))
         onIsBuildBlacklisted: { [weak self] in
             guard let self else { return }
 
@@ -412,8 +417,11 @@ public final class ZMUserSession: NSObject {
         }
     )
 
+<<<<<<< HEAD
     private var updateBackendMetadataWorker: Worker?
 
+=======
+>>>>>>> 7eea73ba4b (fix: App cannot be started by user - WPB-24848 (#4777))
     let logFilesProvider: LogFilesProviding
 
     // MARK: Dependency Injection
@@ -697,7 +705,10 @@ public final class ZMUserSession: NSObject {
 
         await startWorkAgentAndGenerators()
         checkBlacklistWorker?.start()
+<<<<<<< HEAD
         updateBackendMetadataWorker?.start()
+=======
+>>>>>>> 7eea73ba4b (fix: App cannot be started by user - WPB-24848 (#4777))
     }
 
     private func startWorkAgentAndGenerators() async {
@@ -787,7 +798,10 @@ public final class ZMUserSession: NSObject {
         coreDataStack.close()
         contextStorage.clear()
         checkBlacklistWorker = nil
+<<<<<<< HEAD
         updateBackendMetadataWorker = nil
+=======
+>>>>>>> 7eea73ba4b (fix: App cannot be started by user - WPB-24848 (#4777))
 
         // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
         // are left to be cleaned up when ZMUserSession is deallocated to avoid

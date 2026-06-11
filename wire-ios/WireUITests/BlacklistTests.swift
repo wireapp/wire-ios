@@ -28,7 +28,11 @@ final class BlacklistTests: WireUITestCase {
 
     @MainActor
     func testBlacklistAfterLogin__TC_9483() async throws {
+<<<<<<< HEAD
         let user = try await UserHelper.default.createPersonalUser()
+=======
+        let user = try await userHelper.createPersonalUser()
+>>>>>>> 7eea73ba4b (fix: App cannot be started by user - WPB-24848 (#4777))
         _ = try app.loginUser(email: user.email, password: user.password)
 
         let blockerPage = try BlockerPage()

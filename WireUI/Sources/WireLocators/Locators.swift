@@ -411,6 +411,7 @@ public enum Locators {
 
     }
 
+<<<<<<< HEAD
     public enum WireDrive {
 
         public enum FilesFilterPage: String {
@@ -541,16 +542,21 @@ public enum Locators {
         }
     }
 
+=======
+>>>>>>> 7eea73ba4b (fix: App cannot be started by user - WPB-24848 (#4777))
     public enum BlockerPage: String {
 
         case mainContent
         case clientObsoleteAlertTitle = "Update required"
 
     }
+<<<<<<< HEAD
 
     public enum SSOWebLoginPage: String {
         case username = "Username"
         case signInButton = "Sign In"
 
     }
+=======
+>>>>>>> 7eea73ba4b (fix: App cannot be started by user - WPB-24848 (#4777))
 }

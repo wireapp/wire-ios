@@ -28,6 +28,7 @@ public struct UITestConfig: Codable {
 
     public var isBuildBlacklisted = false
 
+<<<<<<< HEAD
     /// When `true`, a triple-tap on the app window triggers the same action as the shake gesture.
     /// On XCUITests, shake gesture is not available.
     public var useTripleTapForShakeGesture = false
@@ -39,6 +40,8 @@ public struct UITestConfig: Codable {
     /// Overrides any flags already stored in `UserDefaults`.
     public var developerFlags: [String: Bool] = [:]
 
+=======
+>>>>>>> 7eea73ba4b (fix: App cannot be started by user - WPB-24848 (#4777))
     // MARK: - Init
 
     public init() {}
