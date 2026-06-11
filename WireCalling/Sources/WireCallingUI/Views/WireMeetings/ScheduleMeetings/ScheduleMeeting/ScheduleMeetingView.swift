@@ -19,7 +19,6 @@
 import SwiftUI
 import WireCallingDomain
 import WireDesign
-import WireReusableUIComponents
 
 struct ScheduleMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -30,12 +29,10 @@ struct ScheduleMeetingView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
+            Form {
                 titleSection
-                Form {
-                    scheduleSection
-                    participantsSection
-                }
+                scheduleSection
+                participantsSection
             }
             .listSectionSpacing(.compact)
             .scrollContentBackground(.hidden)
@@ -61,20 +58,15 @@ struct ScheduleMeetingView: View {
     }
 
     private var titleSection: some View {
-        LabeledTextField(
-            placeholder: Strings.SetupTitle.placeholder,
-            title: Strings.SetupTitle.header,
-            string: $viewModel.meetingTitle
-        )
+        Section(Strings.SetupTitle.header) {
+            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+        }
+        .textCase(nil)
     }
 
     private var participantsSection: some View {
-        Section {
-            TextField(
-                Strings.SetupParticipants.header,
-                text: $viewModel.participants,
-                prompt: Text(Strings.SetupParticipants.placeholder)
-            )
+        Section(Strings.SetupParticipants.header) {
+            TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
         }
         .textCase(nil)
     }

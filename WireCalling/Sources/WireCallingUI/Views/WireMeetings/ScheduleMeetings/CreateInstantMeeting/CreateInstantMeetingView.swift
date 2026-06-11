@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireDesign
-import WireReusableUIComponents
 
 struct CreateInstantMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -57,23 +56,15 @@ struct CreateInstantMeetingView: View {
     }
 
     private var titleSection: some View {
-        Section {
-            TextField(
-                Strings.SetupTitle.header,
-                text: $viewModel.meetingTitle,
-                prompt: Text(Strings.SetupTitle.placeholder)
-            )
+        Section(Strings.SetupTitle.header) {
+            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
         }
         .textCase(nil)
     }
 
     private var participantsSection: some View {
-        Section {
-            TextField(
-                Strings.SetupParticipants.header,
-                text: $viewModel.participants,
-                prompt: Text(Strings.SetupParticipants.placeholder)
-            )
+        Section(Strings.SetupParticipants.header) {
+            TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
         }
         .textCase(nil)
     }
