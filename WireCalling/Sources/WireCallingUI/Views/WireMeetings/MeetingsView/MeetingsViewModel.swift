@@ -24,157 +24,71 @@ package final class MeetingsViewModel: ObservableObject {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @Published var selectedTab: Tab = .next
-    @Published var showAll: Bool = false {
-        didSet {
-            if oldValue != showAll {
-                futureOffset = 0
-                upcomingMeetings = []
-                loadUpcomingMeetings()
-            }
-        }
-    }
+    @Published private(set) var loadedMeetings: [Meeting] = []
+    @Published private(set) var hasMore: Bool = false
 
-    @Published private(set) var showMoreButton: Bool = false
-    @Published private(set) var upcomingMeetings: GroupedMeetings = []
-    @Published private(set) var cachedOngoingMeetings: [Meeting] = []
-    @Published private(set) var cachedPastMeetings: GroupedMeetings = []
-
-    private let repository: any MeetingsRepositoryProtocol
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
-    private let pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
 
     private var futureOffset: Int = 0
-    private let pageSize: Int = 50
-    private let calendar = Calendar.current
+    private let initialPageSize: Int = 10
+    private let pageSize: Int = 5
+    private var isLoading: Bool = false
+
+    private let grouper = MeetingsGrouper()
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     ) {
-        self.repository = repository
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
-        self.pastMeetingsUseCase = pastMeetingsUseCase
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
     }
 
     // MARK: - Public Interface
 
-    var ongoingMeetings: [Meeting] {
-        cachedOngoingMeetings
-    }
-
-    var groupedPastMeetings: GroupedMeetings {
-        cachedPastMeetings
-    }
-
-    var groupedNextMeetings: GroupedMeetings {
-        upcomingMeetings
+    var groupedUpcomingMeetings: GroupedMeetings {
+        grouper.group(loadedMeetings)
     }
 
     func loadInitialData() {
-        refreshOngoingMeetings()
-        refreshPastMeetings()
-        loadUpcomingMeetings()
+        futureOffset = 0
+        loadedMeetings = []
+        hasMore = false
+        load(pageSize: initialPageSize)
     }
 
-    func loadMoreUpcomingMeetings() {
-        loadUpcomingMeetings()
-    }
-
-    func refreshOngoingMeetings() {
-        cachedOngoingMeetings = repository.fetchOngoingMeetings(at: currentDateProvider.now)
-    }
-
-    func refreshPastMeetings() {
-        cachedPastMeetings = pastMeetingsUseCase.invoke()
+    func loadMoreIfNeeded() {
+        guard hasMore, !isLoading else { return }
+        load(pageSize: pageSize)
     }
 
     func formatDay(_ date: Date) -> String {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
     }
 
-    func formatTime(_ date: Date) -> String {
-        formatter.timeHeader(for: date)
+    func formatTimeRange(for meeting: Meeting) -> String {
+        formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
     // MARK: - Private Methods
 
-    private func loadUpcomingMeetings() {
-        let isLimited = !showAll
-        let result = upcomingMeetingsUseCase.invoke(
-            limitToTwoDays: isLimited,
-            pageSize: pageSize,
-            offset: futureOffset
-        )
+    private func load(pageSize: Int) {
+        isLoading = true
+        let result = upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
 
         if futureOffset == 0 {
-            upcomingMeetings = result.groups
+            loadedMeetings = result.meetings
         } else {
-            upcomingMeetings = mergeGroups(existing: upcomingMeetings, new: result.groups)
+            loadedMeetings += result.meetings
         }
 
         futureOffset = result.nextOffset
-
-        if isLimited {
-            showMoreButton = calendar.todayAndTomorrowRange(using: currentDateProvider)
-                .map { repository.hasUpcomingMeetings(after: $0.end) } ?? false
-        } else {
-            showMoreButton = result.hasMore
-        }
+        hasMore = result.hasMore
+        isLoading = false
     }
 
-    private func mergeGroups(existing: GroupedMeetings, new: GroupedMeetings) -> GroupedMeetings {
-        var mergedDict: [Date: [MeetingTimeSlot]] = [:]
-
-        for group in existing + new {
-            var slots = mergedDict[group.day] ?? []
-            for newSlot in group.timeSlots {
-                if let index = slots.firstIndex(where: { $0.time == newSlot.time }) {
-                    let mergedMeetings = slots[index].meetings + newSlot.meetings
-                    slots[index] = (time: newSlot.time, meetings: mergedMeetings)
-                } else {
-                    slots.append(newSlot)
-                }
-            }
-            mergedDict[group.day] = slots.sorted { $0.time < $1.time }
-        }
-
-        return mergedDict.sorted { $0.key < $1.key }.map { (day: $0.key, timeSlots: $0.value) }
-    }
-
-}
-
-extension MeetingsViewModel {
-
-    enum Tab: Int, CaseIterable {
-        case next
-        case past
-
-        var title: String {
-            switch self {
-            case .next: Strings.Tabs.next
-            case .past: Strings.Tabs.past
-            }
-        }
-    }
-
-}
-
-private extension Sequence<MeetingTimeSlot> {
-    var meetingCount: Int {
-        reduce(0) { $0 + $1.meetings.count }
-    }
-}
-
-private extension Sequence<(day: Date, timeSlots: [MeetingTimeSlot])> {
-    var meetingCount: Int {
-        reduce(0) { $0 + $1.timeSlots.meetingCount }
-    }
 }
