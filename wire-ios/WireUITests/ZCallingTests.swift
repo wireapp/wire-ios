@@ -138,7 +138,7 @@ final class ZCallingTests: WireUITestCase {
     }
 
     @MainActor
-    func testGroupCallInitiateMinimizeMaximizeAndHangUp_TC_8879_TC_8835_TC_8889_TC_8890() async throws {
+    func testGroupCallInitiateMinimizeMaximizeAndHangUp_TC_8879_8889_8890_8885() async throws {
         // GIVEN
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
