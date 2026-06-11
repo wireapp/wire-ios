@@ -36,13 +36,8 @@ struct ScheduleMeetingView: View {
 
     var body: some View {
         NavigationStack {
-            if #available(iOS 17, *) {
-                formContent
-                    .listSectionSpacing(.compact)
-            } else {
-                formContent
-                    .listStyle(.insetGrouped)
-            }
+            formContent
+                .listSectionSpacing(.compact)
         }
     }
 
