@@ -41,6 +41,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case lowKeyPackageCount
     case enabledCCDebugLogs
     case shakeToReport
+    case allowRefreshRegisteredObjects
 
     public var description: String {
         switch self {
@@ -100,6 +101,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .shakeToReport:
             "Turn on to enable default shake gesture to present debug report share sheet. Shake again to present DeveloperTools once debug report share sheet presented"
+
+        case .allowRefreshRegisteredObjects:
+            "Turn on to refresh the viewContext's registered objects when the app enters the background"
         }
     }
 

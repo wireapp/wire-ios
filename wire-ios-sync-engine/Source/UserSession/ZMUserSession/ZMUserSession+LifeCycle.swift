@@ -60,7 +60,9 @@ public extension ZMUserSession {
         // Shed the viewContext's registered-objects set so long foreground
         // sessions don't make `internalFetchObjectWithRemoteIdentifier`'s
         // linear scan blow past the scene-update watchdog on resume.
-        managedObjectContext.refreshAllObjects()
+        if DeveloperFlag.allowRefreshRegisteredObjects.isOn {
+            managedObjectContext.refreshAllObjects()
+        }
     }
 
     @objc
