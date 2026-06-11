@@ -21,8 +21,8 @@ import WireTestingPackage
 import XCTest
 
 @testable import WireCallingDomain
-@testable import WireCallingUI
 @testable import WireCallingDomainSupport
+@testable import WireCallingUI
 
 final class MeetingsViewSnapshotTests: XCTestCase {
 
