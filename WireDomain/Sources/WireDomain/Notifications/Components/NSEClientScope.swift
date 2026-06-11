@@ -109,7 +109,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             }
 
             monitoringTask = Task { [weak self] in
-                var request = await self?.pushChannelCoordinator.listenForYieldRequests()
+                let request = await self?.pushChannelCoordinator.listenForYieldRequests()
                 if Task.isCancelled {
                     return
                 }
@@ -117,7 +117,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 self?.currentTask?.cancel()
                 request?.acknowledge()
                 WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
-            } // TODO
+            }
 
             currentTask = Task {
                 do {
@@ -134,8 +134,14 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                     )
                     await pushChannelState.markAsClosed()
                 }
-            } // TODO
-            try await currentTask?.value
+            }
+
+            try await withTaskCancellationHandler {
+                try await currentTask?.value
+            } onCancel: { [currentTask] in
+                currentTask?.cancel()
+            }
+
             WireLogger.sync.debug("closing push channel")
             await pushChannelState.markAsClosed()
 
