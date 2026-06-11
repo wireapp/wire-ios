@@ -31,7 +31,7 @@ import WireUtilitiesPackage
 ///
 /// These sequential steps represents the NSE dependency graph (using Needle).
 
-public final class NotificationServiceExtension: NotificationServiceProtocol {
+public final class NotificationServiceExtension {
 
     // MARK: - Properties
 
