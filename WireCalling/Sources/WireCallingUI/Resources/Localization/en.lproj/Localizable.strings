@@ -45,6 +45,7 @@
 "wireMeetings.schedule.future.title" = "New meeting";
 "wireMeetings.schedule.cancel.button" = "Cancel";
 "wireMeetings.schedule.schedule.button" = "Schedule";
+"wireMeetings.schedule.select.button" = "Select";
 "wireMeetings.schedule.start.button" = "Start";
 "wireMeetings.schedule.setupTitle.header" = "Title";
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
@@ -62,3 +63,9 @@
 "wireMeetings.schedule.time.everyTwoWeeks" = "Every 2 weeks";
 "wireMeetings.schedule.time.monthly" = "Monthly";
 "wireMeetings.schedule.time.yearly" = "Yearly";
+"wireMeetings.schedule.participants.title" = "Participants";
+"wireMeetings.schedule.participants.cancel.button" = "Cancel";
+"wireMeetings.schedule.participants.select.button" = "Select";
+"wireMeetings.schedule.participants.search.field.placeholder" = "Enter a name or email";
+"wireMeetings.schedule.participants.selected.title" = "Selected";
+"wireMeetings.schedule.participants.contacts.title" = "Contacts";

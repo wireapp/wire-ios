@@ -19,6 +19,7 @@
 import SwiftUI
 
 struct ParticipantSelectionView: View {
+    private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Participants
 
     @Environment(\.dismiss) private var dismiss
     @State private(set) var viewModel: ParticipantSelectionViewModel
@@ -33,7 +34,7 @@ struct ParticipantSelectionView: View {
                         }
                     } header: {
                         sectionHeader(
-                            title: "Selected (\(viewModel.selectedIDs.count))",
+                            title: "\(Strings.Selected.title) (\(viewModel.selectedIDs.count))",
                             isExpanded: $viewModel.isSelectedExpanded
                         )
                     }
@@ -45,7 +46,7 @@ struct ParticipantSelectionView: View {
                     }
                 } header: {
                     sectionHeader(
-                        title: "Contacts",
+                        title: Strings.Contacts.title,
                         isExpanded: $viewModel.isContactsExpanded
                     )
                 }
@@ -54,16 +55,18 @@ struct ParticipantSelectionView: View {
             .searchable(
                 text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Enter a name or email"
+                prompt: Strings.Search.Field.placeholder
             )
-            .navigationTitle("Meet Now")
+            .navigationTitle(Strings.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel", role: .cancel) { dismiss() }
+                    Button(Strings.Cancel.button, role: .cancel) {
+                        dismiss()
+                    }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Next") { dismiss() }
+                    Button(Strings.Select.button) { dismiss() }
                         .disabled(viewModel.selectedIDs.isEmpty)
                 }
             }
@@ -97,7 +100,7 @@ struct ParticipantSelectionView: View {
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.largeTitle)
+                    .font(.title)
                     .hidden()
                     .overlay {
                         Image(systemName: "person.crop.circle.fill")
