@@ -19,6 +19,7 @@
 // Methods to reset app or simulator caused issues, so instead
 // of using a script in the scheme, we delete the app using springboard
 
+import WireFoundation
 import XCTest
 
 class WireUITestCase: XCTestCase {
@@ -27,6 +28,8 @@ class WireUITestCase: XCTestCase {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     var userHelper: UserHelper!
     var callingServiceClient: CallingServiceClient!
+    var uiTestConfig = UITestConfig()
+    private var notificationPermissionMonitor: NSObjectProtocol?
 
     override func setUpWithError() throws {
         // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
@@ -43,6 +46,7 @@ class WireUITestCase: XCTestCase {
 
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
+        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
         app.launchArguments = launchArguments
         app.setDeveloperFlags([
             .useWireAuthentication: true
