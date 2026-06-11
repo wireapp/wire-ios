@@ -19,6 +19,7 @@
 import WireCoreCrypto
 import WireDataModel
 import WireLogging
+import WireUtilitiesPackage
 
 public enum MessageSendError: Error {
     case missingMessageProtocol
@@ -85,53 +86,57 @@ public final class MessageSender: MessageSenderInterface {
     private let apiVersion: WireTransport.APIVersion?
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
-        let logAttributes = await logAttributesBuilder.logAttributes(message)
-        WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
-
-        await incrementalSyncObserver.waitUntilCanSendMessage()
-
-        do {
-            guard let apiVersion else { throw MessageSendError.unresolvedApiVersion }
-            try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
-        } catch {
+        try await withExpiringActivity(reason: "broadcast Message") { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
-            WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logAttributes)
-            throw error
+            WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
+
+            await incrementalSyncObserver.waitUntilCanSendMessage()
+
+            do {
+                guard let apiVersion else { throw MessageSendError.unresolvedApiVersion }
+                try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
+            } catch {
+                let logAttributes = await logAttributesBuilder.logAttributes(message)
+                WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logAttributes)
+                throw error
+            }
         }
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
-        let logAttributes = await logAttributesBuilder.logAttributes(message)
-        WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
-
-        await incrementalSyncObserver.waitUntilCanSendMessage()
-
-        WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
-
-        do {
-            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-            WireLogger.messaging.debug(
-                "send message - resolve dependencies finished",
-                attributes: logAttributes
-            )
-            let timePoint = TimePoint(interval: 30, label: "attempt to send message")
-
-            try await attemptToSend(message: message)
-
-            WireLogger.messaging.debug(
-                "send message - attemptToSend duration: \(timePoint.elapsedTime)",
-                attributes: logAttributes
-            )
-
-        } catch {
+        try await withExpiringActivity(reason: "send Message") { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
-            WireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
-            throw error
-        }
+            WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
-        // Triggering request polling to re-evalute dependencies, other messages
-        // might have been waiting for this message to be sent.
-        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+            await incrementalSyncObserver.waitUntilCanSendMessage()
+
+            WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
+
+            do {
+                try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+                WireLogger.messaging.debug(
+                    "send message - resolve dependencies finished",
+                    attributes: logAttributes
+                )
+                let timePoint = TimePoint(interval: 30, label: "attempt to send message")
+
+                try await attemptToSend(message: message)
+
+                WireLogger.messaging.debug(
+                    "send message - attemptToSend duration: \(timePoint.elapsedTime)",
+                    attributes: logAttributes
+                )
+
+            } catch {
+                let logAttributes = await logAttributesBuilder.logAttributes(message)
+                WireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
+                throw error
+            }
+
+            // Triggering request polling to re-evalute dependencies, other messages
+            // might have been waiting for this message to be sent.
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        }
     }
 
     private func attemptToSend(message: any SendableMessage) async throws {

@@ -18,7 +18,7 @@
 
 /// Describes the current syncing state of the app.
 
-public enum SyncState: Equatable {
+public enum SyncState: Equatable, Sendable {
 
     /// The app is not syncing.
 
@@ -40,7 +40,7 @@ public enum SyncState: Equatable {
 
     case suspended
 
-    public enum InitialSyncState: Equatable {
+    public enum InitialSyncState: Equatable, Sendable {
 
         case pullLastEventID
         case pullResources
@@ -49,7 +49,7 @@ public enum SyncState: Equatable {
 
     }
 
-    public enum IncrementalSyncState: Equatable {
+    public enum IncrementalSyncState: Equatable, Sendable {
 
         case createPushChannel
         case openPushChannel
@@ -61,7 +61,7 @@ public enum SyncState: Equatable {
 
     }
 
-    public enum LiveSyncState: Equatable {
+    public enum LiveSyncState: Equatable, Sendable {
         case ongoing
         case finished
     }

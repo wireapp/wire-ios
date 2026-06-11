@@ -16,40 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
+import WireLocators
+import XCTest
 
-final class MockUserClient: NSObject, UserClientType {
-    var mlsThumbPrint: String?
+class BlockerPage: PageModel {
 
-    var e2eIdentityCertificate: WireDataModel.E2eIdentityCertificate?
-
-    var type: DeviceType = .permanent
-
-    var label: String?
-
-    var remoteIdentifier: String?
-
-    var activationDate: Date?
-
-    var model: String?
-
-    var fingerprint: Data?
-
-    var verified: Bool = false
-
-    var user: ZMUser?
-
-    var needsToNotifyUser: Bool = false
-
-    var deviceClass: DeviceClass? = .phone
-
-    func isSelfClient() -> Bool {
-        false
+    override var pageMainElement: XCUIElement {
+        mainContent
     }
 
-    func fetchFingerprintOrPrekeys() {
-        // No-op
+    var mainContent: XCUIElement {
+        app.otherElements[Locators.BlockerPage.mainContent.rawValue]
     }
 
+    var clientObsoleteAlert: XCUIElement {
+        app.alerts[Locators.BlockerPage.clientObsoleteAlertTitle.rawValue]
+    }
 }
