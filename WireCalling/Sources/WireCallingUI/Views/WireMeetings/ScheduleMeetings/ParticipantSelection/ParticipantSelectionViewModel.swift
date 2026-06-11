@@ -19,39 +19,98 @@
 import Foundation
 import Observation
 
+protocol ParticipantSource: Sendable {
+    func search(query: String) async throws -> [ParticipantSelectionViewModel.Participant]
+}
+
+@MainActor
 @Observable
 final class ParticipantSelectionViewModel {
 
-    struct Participant: Identifiable, Hashable {
+    struct Participant: Identifiable, Hashable, Sendable {
         let id: UUID
         var name: String
         var username: String?
     }
 
-    var searchText = ""
+    private let source: any ParticipantSource
+
+    var searchText: String = "" {
+        didSet { scheduleSearch() }
+    }
+    var searchResults: [Participant] = []
+    var selectedParticipants: [Participant] = []
+    var isSearching = false
     var isSelectedExpanded = true
     var isContactsExpanded = true
-    var selectedIDs: Set<Participant.ID> = []
 
-    // TODO: inject from caller
-    let allParticipants: [Participant] = .mock
+    private var searchTask: Task<Void, Never>?
 
-    var selectedParticipants: [Participant] {
-        allParticipants.filter { selectedIDs.contains($0.id) }
+    init(source: any ParticipantSource) {
+        self.source = source
+        scheduleSearch(debounce: .zero) // initial load is immediate
     }
+
+    // MARK: - Derived state
 
     var filteredUnselected: [Participant] {
-        let unselected = allParticipants.filter { !selectedIDs.contains($0.id) }
-        guard !searchText.isEmpty else { return unselected }
-        return unselected.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        let selectedIDs = Set(selectedParticipants.map(\.id))
+        return searchResults.filter { !selectedIDs.contains($0.id) }
     }
 
-    func toggleSelection(_ id: Participant.ID) {
-        if selectedIDs.contains(id) {
-            selectedIDs.remove(id)
+    func isSelected(_ participant: Participant) -> Bool {
+        selectedParticipants.contains { $0.id == participant.id }
+    }
+
+    // MARK: - Actions
+
+    func toggleSelection(_ participant: Participant) {
+        if let index = selectedParticipants.firstIndex(where: { $0.id == participant.id }) {
+            selectedParticipants.remove(at: index)
         } else {
-            selectedIDs.insert(id)
+            selectedParticipants.append(participant)
         }
+    }
+
+    // MARK: - Search
+
+    private func scheduleSearch(debounce: Duration = .milliseconds(300)) {
+        searchTask?.cancel()
+        let query = searchText
+        isSearching = true
+        searchTask = Task { [weak self] in
+            if debounce > .zero {
+                try? await Task.sleep(for: debounce)
+                guard !Task.isCancelled else { return }
+            }
+            guard let self else { return }
+            do {
+                let results = try await source.search(query: query)
+                guard !Task.isCancelled else { return }
+                searchResults = results
+            } catch is CancellationError {
+                return
+            } catch {
+                // TODO: surface error
+            }
+            isSearching = false
+        }
+    }
+}
+
+// MARK: - Mock
+
+struct MockParticipantSource: ParticipantSource {
+
+    let participants: [ParticipantSelectionViewModel.Participant]
+
+    init(participants: [ParticipantSelectionViewModel.Participant] = .mock) {
+        self.participants = participants
+    }
+
+    func search(query: String) async throws -> [ParticipantSelectionViewModel.Participant] {
+        guard !query.isEmpty else { return participants }
+        return participants.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
 }
 

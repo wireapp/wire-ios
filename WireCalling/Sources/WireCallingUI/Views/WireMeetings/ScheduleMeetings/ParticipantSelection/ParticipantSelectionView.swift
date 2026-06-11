@@ -27,15 +27,17 @@ struct ParticipantSelectionView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    if viewModel.isSelectedExpanded {
-                        ForEach(viewModel.selectedParticipants) { row(for: $0) }
+                if !viewModel.selectedParticipants.isEmpty {
+                    Section {
+                        if viewModel.isSelectedExpanded {
+                            ForEach(viewModel.selectedParticipants) { row(for: $0) }
+                        }
+                    } header: {
+                        sectionHeader(
+                            title: "\(Strings.Selected.title) (\(viewModel.selectedParticipants.count))",
+                            isExpanded: $viewModel.isSelectedExpanded
+                        )
                     }
-                } header: {
-                    sectionHeader(
-                        title: "\(Strings.Selected.title) (\(viewModel.selectedIDs.count))",
-                        isExpanded: $viewModel.isSelectedExpanded
-                    )
                 }
 
                 Section {
@@ -65,7 +67,7 @@ struct ParticipantSelectionView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(Strings.Select.button) { dismiss() }
-                        .disabled(viewModel.selectedIDs.isEmpty)
+                        .disabled(viewModel.selectedParticipants.isEmpty)
                 }
             }
         }
@@ -92,9 +94,9 @@ struct ParticipantSelectionView: View {
     }
 
     private func row(for participant: ParticipantSelectionViewModel.Participant) -> some View {
-        let isSelected = viewModel.selectedIDs.contains(participant.id)
+        let isSelected = viewModel.isSelected(participant)
         return Button {
-            viewModel.toggleSelection(participant.id)
+            viewModel.toggleSelection(participant)
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "checkmark.circle.fill")
@@ -132,5 +134,5 @@ struct ParticipantSelectionView: View {
 // MARK: - Preview
 
 #Preview {
-    ParticipantSelectionView(viewModel: ParticipantSelectionViewModel())
+    ParticipantSelectionView(viewModel: ParticipantSelectionViewModel(source: MockParticipantSource()))
 }
