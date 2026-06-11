@@ -332,7 +332,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             persistedUser.teamIdentifier = userInfo.teamID
             persistedUser.accentColorValue = Int16(userInfo.accentID)
             persistedUser.previewProfileAssetIdentifier = userInfo.previewAssetKey
-            persistedUser.previewProfileAssetIdentifier = userInfo.completeAssetKey
+            persistedUser.completeProfileAssetIdentifier = userInfo.completeAssetKey
             persistedUser.emailAddress = userInfo.email
             persistedUser.expiresAt = userInfo.expiresAt
             persistedUser.serviceIdentifier = userInfo.serviceID?.transportString()

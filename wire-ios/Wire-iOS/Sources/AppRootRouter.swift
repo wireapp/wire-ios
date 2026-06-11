@@ -251,6 +251,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showAppLock(userSession: userSession, completion: completion)
         case let .syncFailure(error, onRetry):
             presentSyncErrorAlert(error: error, onRetry: onRetry)
+            appStateTransitionGroup.leave()
         }
     }
 
@@ -268,9 +269,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             UIAlertAction(
                 title: L10n.Localizable.Content.System.FailedtosendMessage.retry, // reusing retry string
                 style: .default
-            ) { [weak self] _ in
+            ) { _ in
                 onRetry()
-                self?.appStateTransitionGroup.leave()
             }
         )
 
@@ -278,9 +278,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             UIAlertAction(
                 title: L10n.Localizable.General.cancel,
                 style: .destructive
-            ) { [weak self] _ in
-                self?.appStateTransitionGroup.leave()
-            }
+            ) { _ in }
         )
 
         rootViewController.present(alert, animated: true)
@@ -427,6 +425,18 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         userSession: UserSession,
         completion: @escaping () -> Void
     ) {
+        // Re-use the existing router when transitioning back from `.locked` (EAR unlock),
+        // so the current zClientViewController and its navigation focus are preserved.
+        if let existingRouter = authenticatedRouter {
+            let existingZClient = existingRouter.zClientViewController
+            if mainWindow.rootViewController === existingZClient {
+                completion()
+            } else {
+                replaceRootViewController(by: existingZClient, completion: completion)
+            }
+            return
+        }
+
         guard let authenticatedRouter = buildAuthenticatedRouter(
             account: userSession.contextProvider.account,
             userSession: userSession,
@@ -516,6 +526,13 @@ extension AppRootRouter {
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
+            // Hide the screen curtain proactively: by the time we reach this point
+            // the rootViewController is the unlocked content, so waiting for
+            // `UIApplication.didBecomeActiveNotification` (which can lag behind the
+            // EAR unlock by an entire sync cycle) just keeps the curtain visible
+            // longer than needed. `applicationWillResignActive` will re-show it if
+            // the app resigns active later.
+            screenCurtainWindow.isHidden = true
             // This is needed to display an ongoing call when coming from the background.
             authenticatedRouter?.updateActiveCallPresentationState()
             urlActionRouter.authenticatedRouter = authenticatedRouter
@@ -534,7 +551,9 @@ extension AppRootRouter {
 
     private func resetAuthenticatedRouterIfNeeded(for appState: AppState) {
         switch appState {
-        case .authenticated: break
+        // Keep the router alive across `.locked` so unlocking restores the
+        // existing zClientViewController instead of rebuilding the whole UI.
+        case .authenticated, .locked: break
         default:
             authenticatedRouter = nil
         }

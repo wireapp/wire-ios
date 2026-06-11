@@ -46,7 +46,7 @@ public final class ZMUserSession: NSObject {
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
-    public internal(set) var isBuildBlacklisted = false
+    public private(set) var isBuildBlacklisted = false
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -297,6 +297,13 @@ public final class ZMUserSession: NSObject {
         )
     }
 
+    public var resetProteusSession: ResetProteusSessionUseCaseProtocol {
+        ResetProteusSessionUseCase(
+            syncContext: coreDataStack.syncContext,
+            proteusService: proteusService
+        )
+    }
+
     lazy var e2eiRepository: E2EIRepositoryInterface = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl ?? ""
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
@@ -400,6 +407,16 @@ public final class ZMUserSession: NSObject {
     private lazy var mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
+    )
+
+    private lazy var checkBlacklistWorker: CheckBlacklistWorker? = .init(
+        isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+        onIsBuildBlacklisted: { [weak self] in
+            guard let self else { return }
+
+            isBuildBlacklisted = true
+            delegate?.userSessionDidDiscoverBuildIsBlacklisted()
+        }
     )
 
     let logFilesProvider: LogFilesProviding
@@ -682,6 +699,7 @@ public final class ZMUserSession: NSObject {
         }
 
         await startWorkAgentAndGenerators()
+        checkBlacklistWorker?.start()
     }
 
     private func startWorkAgentAndGenerators() async {
@@ -759,7 +777,7 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
-        syncAgent?.delegate = nil
+        syncAgent?.tearDown()
         syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
@@ -770,6 +788,7 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
+        checkBlacklistWorker = nil
 
         // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
         // are left to be cleaned up when ZMUserSession is deallocated to avoid
@@ -870,7 +889,6 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-        recurringActionService.registerAction(checkBuildBlacklistAction)
     }
 
     func startRequestLoopTracker() {

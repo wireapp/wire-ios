@@ -61,7 +61,21 @@ struct DeveloperE2eiView: View {
                     }
                 }
 
-                Button(String("Enroll"), action: { viewModel.enrollCertificate() })
+                VStack(alignment: .leading) {
+                    Button(String("Enroll"), action: { viewModel.enrollCertificate() })
+                    footNote(
+                        "Starts the enrollment flow with the selected expiration time."
+                    )
+                }
+
+                VStack(alignment: .leading) {
+                    Button(String("Show update certificate alert")) {
+                        viewModel.showUpdateCertificateAlert(canRemindLater: false)
+                    }
+                    footNote(
+                        "Manually triggers the \"Update Certificate\" popup. Tapping \"Update Certificate\" in the alert starts the enrollment flow with the selected expiration time."
+                    )
+                }
             }
 
             Section("Certificate Revocation Lists") {

@@ -97,7 +97,7 @@ class SnapshotCenterTests: BaseZMMessageTests {
         XCTAssertEqual(snapshot.toManyRelationships, expectedToManyRelationships)
     }
 
-    func testThatItSnapshotsSetValues() {
+    func testThatItSnapshotsSetValues() throws {
         // given
         let conv = ZMConversation.insertNewObject(in: uiMOC)
         conv.conversationType = .group
@@ -163,7 +163,7 @@ class SnapshotCenterTests: BaseZMMessageTests {
         ]
 
         let expectedToOneRelationships: [String: NSManagedObjectID] =
-            ["creator": conv.creator.objectID]
+            ["creator": try XCTUnwrap(conv.creator?.objectID)]
 
         expectedAttributes.forEach {
             XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1, "values for \($0) don't match")

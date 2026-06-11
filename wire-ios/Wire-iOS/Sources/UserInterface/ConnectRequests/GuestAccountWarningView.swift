@@ -68,11 +68,13 @@ final class GuestAccountWarningView: UIView {
 
         titleLabel.numberOfLines = 0
         titleLabel.text = title
+        titleLabel.isAccessibilityElement = true
 
         stackView.addArrangedSubview(titleLabel)
 
         messageLabel.numberOfLines = 0
         messageLabel.text = L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireOneOnOne
+        messageLabel.isAccessibilityElement = true
 
         stackView.addArrangedSubview(messageLabel)
 

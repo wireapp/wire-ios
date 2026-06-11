@@ -56,13 +56,14 @@ extension ConversationViewController {
             inputBarController.view
         ].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
+        let conversationBottomAnchor = conversationBarController.view.bottomAnchor
         NSLayoutConstraint.activate([
             conversationBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             conversationBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             conversationBarController.view.topAnchor.constraint(equalTo: view.topAnchor),
             exchangeableContentViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             exchangeableContentViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            exchangeableContentViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
+            exchangeableContentViewController.view.topAnchor.constraint(equalTo: conversationBottomAnchor)
         ])
 
         exchangeableContentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor)

@@ -2717,17 +2717,17 @@ internal enum L10n {
         }
       }
       internal enum DeleteRequestDialog {
-        /// This will delete the group and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.
-        internal static let message = L10n.tr("Localizable", "conversation.delete_request_dialog.message", fallback: "This will delete the group and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.")
-        /// Delete group conversation?
-        internal static let title = L10n.tr("Localizable", "conversation.delete_request_dialog.title", fallback: "Delete group conversation?")
+        /// This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.
+        internal static let message = L10n.tr("Localizable", "conversation.delete_request_dialog.message", fallback: "This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.")
+        /// Delete conversation?
+        internal static let title = L10n.tr("Localizable", "conversation.delete_request_dialog.title", fallback: "Delete conversation?")
       }
       internal enum DeleteRequestErrorDialog {
-        /// Delete Group
-        internal static let buttonDeleteGroup = L10n.tr("Localizable", "conversation.delete_request_error_dialog.button_delete_group", fallback: "Delete Group")
-        /// An error occurred while trying to delete the group %@. Please try again.
+        /// Delete Conversation
+        internal static let buttonDeleteGroup = L10n.tr("Localizable", "conversation.delete_request_error_dialog.button_delete_group", fallback: "Delete Conversation")
+        /// An error occurred while trying to delete the conversation %@. Please try again.
         internal static func title(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "conversation.delete_request_error_dialog.title", String(describing: p1), fallback: "An error occurred while trying to delete the group %@. Please try again.")
+          return L10n.tr("Localizable", "conversation.delete_request_error_dialog.title", String(describing: p1), fallback: "An error occurred while trying to delete the conversation %@. Please try again.")
         }
       }
       internal enum InputBar {
@@ -5050,8 +5050,8 @@ internal enum L10n {
         internal static let header = L10n.tr("Localizable", "profile.extended_metadata.header", fallback: "Information")
       }
       internal enum GroupAdminStatusMemo {
-        /// When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.
-        internal static let body = L10n.tr("Localizable", "profile.group_admin_status_memo.body", fallback: "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.")
+        /// When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.
+        internal static let body = L10n.tr("Localizable", "profile.group_admin_status_memo.body", fallback: "When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.")
       }
       internal enum Profile {
         internal enum GroupAdminOptions {
@@ -6132,6 +6132,41 @@ internal enum L10n {
     internal enum SendInvitationNoEmail {
       /// I’m on Wire. Visit get.wire.com to connect with me.
       internal static let text = L10n.tr("Localizable", "send_invitation_no_email.text", fallback: "I’m on Wire. Visit get.wire.com to connect with me.")
+    }
+    internal enum Settings {
+      internal enum DebuggingTools {
+        internal enum DebugCommand {
+          /// Command not recognized
+          internal static let commandNotRecognized = L10n.tr("Localizable", "settings.debugging_tools.debug_command.command_not_recognized", fallback: "Command not recognized")
+          /// Debug command
+          internal static let title = L10n.tr("Localizable", "settings.debugging_tools.debug_command.title", fallback: "Debug command")
+        }
+        internal enum RepairMlsRemovalKeys {
+          /// Error: %@
+          internal static func failureMessage(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.failure_message", String(describing: p1), fallback: "Error: %@")
+          }
+          /// Repair Failed
+          internal static let failureTitle = L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.failure_title", fallback: "Repair Failed")
+          /// Found: %d faulty conversation(s)
+          /// Repaired: %d conversation(s)
+          internal static func successMessage(_ p1: Int, _ p2: Int) -> String {
+            return L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.success_message", p1, p2, fallback: "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)")
+          }
+          /// Faulty MLS Removal Keys Repair
+          internal static let successTitle = L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.success_title", fallback: "Faulty MLS Removal Keys Repair")
+          /// Error: Repair use case not available
+          internal static let useCaseUnavailable = L10n.tr("Localizable", "settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable", fallback: "Error: Repair use case not available")
+        }
+        internal enum UnreadConversations {
+          /// Copy
+          internal static let actionCopy = L10n.tr("Localizable", "settings.debugging_tools.unread_conversations.action_copy", fallback: "Copy")
+          /// Found an unread conversation:
+          internal static let found = L10n.tr("Localizable", "settings.debugging_tools.unread_conversations.found", fallback: "Found an unread conversation:")
+          /// No unread conversation
+          internal static let notFound = L10n.tr("Localizable", "settings.debugging_tools.unread_conversations.not_found", fallback: "No unread conversation")
+        }
+      }
     }
     internal enum ShareExtension {
       internal enum Voiceover {
