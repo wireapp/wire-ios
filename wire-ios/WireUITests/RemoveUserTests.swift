@@ -18,17 +18,17 @@
 import WireFoundation
 import XCTest
 
-/// core-messenger
+/// [core-messenger]
 class RemoveUserTests: WireUITestCase {
 
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on the conversation list
-    /// critical
+    /// [critical]
     @MainActor
     func testRemoveTeamMemberAndConversationListUpdated_TC_9491() async throws {
         try await testRemoveTeamMember(testRemovalOnConversation: false)
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testUserDeletedForPersonalUser_TC_9490() async throws {
         // GIVEN

@@ -18,10 +18,10 @@
 
 import XCTest
 
-/// core-messenger
+/// [core-messenger]
 final class FederationTests: WireUITestCase {
 
-    /// critical
+    /// [critical]
     @MainActor
     func testConnectFederatedUsers_TC_9459() async throws {
 

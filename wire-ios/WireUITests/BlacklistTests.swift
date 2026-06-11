@@ -18,7 +18,7 @@
 
 import XCTest
 
-/// core-messenger
+/// [core-messenger]
 final class BlacklistTests: WireUITestCase {
 
     override func setUpWithError() throws {
@@ -27,7 +27,7 @@ final class BlacklistTests: WireUITestCase {
         try super.setUpWithError()
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testBlacklistAfterLogin__TC_9483() async throws {
         let user = try await UserHelper.default.createPersonalUser()

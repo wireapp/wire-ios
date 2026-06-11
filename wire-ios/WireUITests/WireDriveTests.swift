@@ -19,7 +19,7 @@
 import WireFoundation
 import XCTest
 
-/// collaboration
+/// [collaboration]
 final class WireDriveTests: WireUITestCase {
 
     private func createDriveEnabledConversation(
@@ -107,7 +107,7 @@ final class WireDriveTests: WireUITestCase {
             .openSharedDrive()
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testCreateGroupConversationWithDrive_TC_8955() async throws {
 
@@ -129,7 +129,7 @@ final class WireDriveTests: WireUITestCase {
         verifyDriveEnabledConversation(on: activeConversationPage)
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testCreateChannelConversationWithDrive_TC_8954() async throws {
 
@@ -151,7 +151,7 @@ final class WireDriveTests: WireUITestCase {
         verifyDriveEnabledConversation(on: activeConversationPage)
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testShareSketchImageWithTextMessageInDriveEnabledGroup_TC_8956() async throws {
 
@@ -170,7 +170,7 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertEqual(activeConversationPage.inputMessageField.value as? String, message)
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testAccessImageSharedInDriveEnabledGroup_TC_8957() async throws {
 
@@ -188,7 +188,7 @@ final class WireDriveTests: WireUITestCase {
             .verifyFileTypeAndMetadata(name: teamOwner.name)
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testDeletingFileFromDriveMovesFileToRecycleBin_TC_8958() async throws {
 
@@ -212,7 +212,7 @@ final class WireDriveTests: WireUITestCase {
 
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testRestoringFileFromRecycleBinToDrive_TC_8959() async throws {
 
@@ -236,7 +236,7 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertTrue(sharedDrivePage.verifyFileMovedToSharedDrive(fileName: sharedFileName))
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testDeletingFilePermanentelyFromRecycleBin_TC_8960() async throws {
 
@@ -264,7 +264,7 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertTrue(recycleBinPage.verifyRecycleBinIsEmpty())
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testCreatingFolder_TC_8961() async throws {
 
@@ -304,7 +304,7 @@ final class WireDriveTests: WireUITestCase {
         activeConversationPage.verifyCanAccessSharedDrive()
     }
 
-    /// critical, collaboration
+    /// [critical, collaboration]
     @MainActor
     func testSearchingForFileByName_TC_8962() async throws {
 

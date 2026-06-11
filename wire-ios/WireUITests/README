@@ -50,7 +50,7 @@ Once the service is up, run the relevant UI tests locally.
 Add comment tags directly above a UI test:
 
 ```swift
-/// critical
+/// [critical]
 @MainActor
 func testExample_TC_1234() async throws {
     ...
@@ -59,13 +59,13 @@ func testExample_TC_1234() async throws {
 
 or UI test class: this will make the whole set of tests for particular scope
 ```swift
-/// calling
+/// [calling]
 final class ZCallingTests: WireUITestCase {
     ...
 }
 ```
 
-Tags can be combined with commas, for example `/// critical, calling`.
+Tags can be combined inside the same bracketed marker, for example `/// [critical, calling]`.
 Class tags apply to every test in that class. Method tags are added to class tags.
 
 Run selected UI tests through fastlane:
@@ -76,7 +76,10 @@ bundle exec fastlane run_uitests tags:"calling|core-messenger|collaboration"
 bundle exec fastlane run_uitests tags:"critical,calling|core-messenger|collaboration"
 ```
 
-In the fastlane selector, `,` means AND and `|` means OR. For example,
-`tags:"critical,calling|core-messenger|collaboration"` runs tests tagged `critical`
-and also tagged with one of `calling`, `core-messenger`, or `collaboration`.
+In the fastlane selector, `,` means AND and `|` means OR. The selector syntax does not use brackets; brackets are only for Swift marker comments. For example,
+
+`tags:"critical,calling|core-messenger|collaboration"`
+
+runs tests that are tagged `critical` and also tagged with at least one of `calling`, `core-messenger`, or `collaboration`.
+
 Quote selectors that contain `|` so the shell does not treat it as a pipe.

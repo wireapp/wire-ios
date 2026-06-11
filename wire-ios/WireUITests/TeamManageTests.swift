@@ -19,10 +19,10 @@
 import WireFoundation
 import XCTest
 
-/// core-messenger
+/// [core-messenger]
 final class TeamManageTests: WireUITestCase {
 
-    /// critical
+    /// [critical]
     @MainActor
     func testMigratePersonalUserToTeam_TC_9452() async throws {
         let user = try await UserHelper.default.createPersonalUser()
@@ -43,7 +43,7 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertTrue(userProfilePage.manageTeamButton.exists, "Manage Team button is not visible")
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testPersonalUserInvitedToTeam_TC_9453() async throws {
         let teamOwner = try await UserHelper.default.createPersonalUser()
@@ -76,7 +76,7 @@ final class TeamManageTests: WireUITestCase {
             .enterPassword(memberUser.password)
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testTeamOwnerGroupCreatedAndSendMessage_TC_9454() async throws {
 
@@ -106,7 +106,7 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testGroupAdminRemoveAndAddParticipantFromGroup_TC_9455() async throws {
 
@@ -192,7 +192,7 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
     }
 
-    /// critical
+    /// [critical]
     @MainActor
     func testMentionUserInGroup_TC_8865() async throws {
 
