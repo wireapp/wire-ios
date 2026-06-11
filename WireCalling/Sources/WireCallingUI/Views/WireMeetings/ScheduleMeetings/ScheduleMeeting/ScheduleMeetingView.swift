@@ -58,15 +58,23 @@ struct ScheduleMeetingView: View {
     }
 
     private var titleSection: some View {
-        Section(Strings.SetupTitle.header) {
-            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+        Section {
+            TextField(
+                Strings.SetupTitle.header,
+                text: $viewModel.meetingTitle,
+                prompt: Text(Strings.SetupTitle.placeholder)
+            )
         }
         .textCase(nil)
     }
 
     private var participantsSection: some View {
-        Section(Strings.SetupParticipants.header) {
-            TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
+        Section {
+            TextField(
+                Strings.SetupParticipants.header,
+                text: $viewModel.participants,
+                prompt: Text(Strings.SetupParticipants.placeholder)
+            )
         }
         .textCase(nil)
     }
