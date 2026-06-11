@@ -16,9 +16,57 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import Observation
 
 @Observable
 final class ParticipantSelectionViewModel {
 
+    struct Participant: Identifiable, Hashable {
+        let id: UUID
+        var name: String
+        var username: String?
+    }
+
+    var searchText = ""
+    var isSelectedExpanded = true
+    var isContactsExpanded = true
+    var selectedIDs: Set<Participant.ID> = []
+
+    // TODO: inject from caller
+    let allParticipants: [Participant] = .mock
+
+    var selectedParticipants: [Participant] {
+        allParticipants.filter { selectedIDs.contains($0.id) }
+    }
+
+    var filteredUnselected: [Participant] {
+        let unselected = allParticipants.filter { !selectedIDs.contains($0.id) }
+        guard !searchText.isEmpty else { return unselected }
+        return unselected.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
+
+    func toggleSelection(_ id: Participant.ID) {
+        if selectedIDs.contains(id) {
+            selectedIDs.remove(id)
+        } else {
+            selectedIDs.insert(id)
+        }
+    }
+}
+
+private extension Array where Element == ParticipantSelectionViewModel.Participant {
+    static var mock: Self {
+        [
+            .init(id: UUID(), name: "Martin Koch-Johansen", username: "username"),
+            .init(id: UUID(), name: "Olga Heaney", username: "username"),
+            .init(id: UUID(), name: "Margarete Springer", username: "username"),
+            .init(id: UUID(), name: "Lorenzo Schmeler", username: nil),
+            .init(id: UUID(), name: "Jaqueline Olaho", username: nil),
+            .init(id: UUID(), name: "Katie Armstrong", username: "username"),
+            .init(id: UUID(), name: "Zachary Ratke", username: "username"),
+            .init(id: UUID(), name: "Marco Weissnat", username: "username"),
+            .init(id: UUID(), name: "Deborah Schoen", username: "username")
+        ]
+    }
 }

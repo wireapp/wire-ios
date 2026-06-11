@@ -20,53 +20,39 @@ import SwiftUI
 
 struct ParticipantSelectionView: View {
 
-    struct Participant: Identifiable, Hashable {
-        let id: UUID
-        var name: String
-        var username: String?
-    }
-
     @Environment(\.dismiss) private var dismiss
     @State private(set) var viewModel: ParticipantSelectionViewModel
-
-    @State private var searchText = ""
-    @State private var isSelectedExpanded = true
-    @State private var isContactsExpanded = true
-    @State private var selectedIDs: Set<Participant.ID> = []
-
-    // TODO: inject from caller / view model
-    private let allParticipants: [Participant] = .mock
 
     var body: some View {
         NavigationStack {
             List {
-                if !selectedParticipants.isEmpty {
+                if !viewModel.selectedParticipants.isEmpty {
                     Section {
-                        if isSelectedExpanded {
-                            ForEach(selectedParticipants) { row(for: $0) }
+                        if viewModel.isSelectedExpanded {
+                            ForEach(viewModel.selectedParticipants) { row(for: $0) }
                         }
                     } header: {
                         sectionHeader(
-                            title: "Selected (\(selectedIDs.count))",
-                            isExpanded: $isSelectedExpanded
+                            title: "Selected (\(viewModel.selectedIDs.count))",
+                            isExpanded: $viewModel.isSelectedExpanded
                         )
                     }
                 }
 
                 Section {
-                    if isContactsExpanded {
-                        ForEach(filteredUnselected) { row(for: $0) }
+                    if viewModel.isContactsExpanded {
+                        ForEach(viewModel.filteredUnselected) { row(for: $0) }
                     }
                 } header: {
                     sectionHeader(
                         title: "Contacts",
-                        isExpanded: $isContactsExpanded
+                        isExpanded: $viewModel.isContactsExpanded
                     )
                 }
             }
             .listStyle(.plain)
             .searchable(
-                text: $searchText,
+                text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),
                 prompt: "Enter a name or email"
             )
@@ -78,7 +64,7 @@ struct ParticipantSelectionView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Next") { dismiss() }
-                        .disabled(selectedIDs.isEmpty)
+                        .disabled(viewModel.selectedIDs.isEmpty)
                 }
             }
         }
@@ -104,10 +90,10 @@ struct ParticipantSelectionView: View {
         .textCase(nil)
     }
 
-    private func row(for participant: Participant) -> some View {
-        let isSelected = selectedIDs.contains(participant.id)
+    private func row(for participant: ParticipantSelectionViewModel.Participant) -> some View {
+        let isSelected = viewModel.selectedIDs.contains(participant.id)
         return Button {
-            toggleSelection(participant.id)
+            viewModel.toggleSelection(participant.id)
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "checkmark.circle.fill")
@@ -139,42 +125,6 @@ struct ParticipantSelectionView: View {
             }
         }
         .buttonStyle(.plain)
-    }
-
-    // MARK: - Derived state
-
-    private var selectedParticipants: [Participant] {
-        allParticipants.filter { selectedIDs.contains($0.id) }
-    }
-
-    private var filteredUnselected: [Participant] {
-        let unselected = allParticipants.filter { !selectedIDs.contains($0.id) }
-        guard !searchText.isEmpty else { return unselected }
-        return unselected.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-    }
-
-    private func toggleSelection(_ id: Participant.ID) {
-        if selectedIDs.contains(id) {
-            selectedIDs.remove(id)
-        } else {
-            selectedIDs.insert(id)
-        }
-    }
-}
-
-private extension Array where Element == ParticipantSelectionView.Participant {
-    static var mock: Self {
-        [
-            .init(id: UUID(), name: "Martin Koch-Johansen", username: "username"),
-            .init(id: UUID(), name: "Olga Heaney", username: "username"),
-            .init(id: UUID(), name: "Margarete Springer", username: "username"),
-            .init(id: UUID(), name: "Lorenzo Schmeler", username: nil),
-            .init(id: UUID(), name: "Jaqueline Olaho", username: nil),
-            .init(id: UUID(), name: "Katie Armstrong", username: "username"),
-            .init(id: UUID(), name: "Zachary Ratke", username: "username"),
-            .init(id: UUID(), name: "Marco Weissnat", username: "username"),
-            .init(id: UUID(), name: "Deborah Schoen", username: "username")
-        ]
     }
 }
 
