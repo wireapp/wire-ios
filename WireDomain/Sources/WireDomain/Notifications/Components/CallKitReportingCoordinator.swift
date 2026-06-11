@@ -21,203 +21,6 @@ import Foundation
 import WireLogging
 
 /// Coordinates CallKit reporting in response to AVS calling events.
-///
-/// This coordinator:
-/// - Sets up callbacks on AVSCallingEventService
-/// - Handles incoming call and call closed events
-/// - Reports to CallKit via CXProvider
-/// - Manages async task lifecycle for CallKit operations
-///
-/// **Lifecycle:** Owned by NSEClientScope, lives for the duration of notification processing.
-/// **Thread-safety:** All methods should be called from the same actor/queue.
-//final class CallKitReportingCoordinator {
-//
-//    // MARK: - Properties
-//
-//    private let accountID: UUID
-//    private var callKitReportTask: Task<Void, Never>?
-//    private var didReportIncomingCall: Bool = false
-//
-//    // MARK: - Initialization
-//
-//    /// Creates a coordinator and sets up AVS callbacks.
-//    ///
-//    /// - Parameters:
-//    ///   - accountID: The account identifier for CallKit content
-//    ///   - avsService: The AVS service to observe for calling events
-//    ///
-//    /// **Important:** This initializer sets callbacks on the AVS service that
-//    /// capture `self` strongly. This is safe because the coordinator doesn't
-//    /// own the service, preventing retain cycles.
-//    init(accountID: UUID, avsService: any AVSCallingEventServiceProtocol) {
-//        self.accountID = accountID
-//
-//        WireLogger.calling.debug(
-//            "CallKitReportingCoordinator: initializing for account \(accountID)",
-//            attributes: .newNSE, .safePublic
-//        )
-//
-//        // Set up callbacks - capturing self strongly is safe here
-//        // because we don't own avsService (no retain cycle)
-//        avsService.onIncomingCall = { [self] conversationId, shouldRing, isVideoCall in
-//            self.handleIncomingCall(
-//                conversationId: conversationId,
-//                shouldRing: shouldRing,
-//                isVideoCall: isVideoCall
-//            )
-//        }
-//
-//        avsService.onMissedCall = { conversationId, messageTime, isVideoCall in
-//            WireLogger.calling.info(
-//                "CallKitReportingCoordinator: onMissedCall fired",
-//                attributes: .newNSE, .safePublic
-//            )
-//            // Nothing to do here — the missed call text notification
-//            // is already built by ConversationCallingEventNotificationBuilder
-//            // from the same event in the event stream.
-//            WireLogger.calling.info(
-//                "AVS: missed call in conversation \(conversationId)",
-//                attributes: .newNSE, .safePublic
-//            )
-//        }
-//
-//        avsService.onCallClosed = { [self] reason, conversationId in
-//            self.handleCallClosed(reason: reason, conversationId: conversationId)
-//        }
-//    }
-//
-//    deinit {
-//        WireLogger.calling.debug(
-//            "CallKitReportingCoordinator: deallocating",
-//            attributes: .newNSE, .safePublic
-//        )
-//    }
-//
-//    // MARK: - Public API
-//
-//    /// Waits for any pending CallKit reporting tasks to complete.
-//    ///
-//    /// Call this before finishing notification processing to ensure
-//    /// CallKit has been properly notified.
-//    ///
-//    /// - Returns: Completes when the CallKit task finishes (or immediately if no task)
-//    func waitForCompletion() async {
-//        WireLogger.calling.debug(
-//            "CallKitReportingCoordinator: waiting for completion",
-//            attributes: .newNSE, .safePublic
-//        )
-//
-//        await callKitReportTask?.value
-//
-//        WireLogger.calling.debug(
-//            "CallKitReportingCoordinator: completion awaited",
-//            attributes: .newNSE, .safePublic
-//        )
-//    }
-//
-//    // MARK: - Private Callback Handlers
-//
-//    /// Handles incoming call events from AVS.
-//    private func handleIncomingCall(
-//        conversationId: String,
-//        shouldRing: Bool,
-//        isVideoCall: Bool
-//    ) {
-//        WireLogger.calling.info(
-//            "CallKitReportingCoordinator: onIncomingCall fired, conversationId=\(conversationId), shouldRing=\(shouldRing)",
-//            attributes: .newNSE, .safePublic
-//        )
-//
-//        guard let qualifiedID = QualifiedID(rawValue: conversationId) else {
-//            WireLogger.calling.error(
-//                "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
-//                attributes: .newNSE, .safePublic
-//            )
-//            return
-//        }
-//
-//        let callKitContent: [String: Any] = [
-//            "accountID": accountID.uuidString,
-//            "conversationID": qualifiedID.uuid.uuidString,
-//            "shouldRing": shouldRing,
-//            "hasVideo": isVideoCall,
-//            "callerName": ""
-//        ]
-//
-//        didReportIncomingCall = shouldRing
-//
-//        WireLogger.calling.debug(
-//            "CallKitReportingCoordinator: reporting to CallKit, content: \(callKitContent)",
-//            attributes: .newNSE, .safePublic
-//        )
-//
-//        callKitReportTask = Task {
-//            await withCheckedContinuation { continuation in
-//                CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
-//                    if let error {
-//                        WireLogger.calling.error(
-//                            "CallKitReportingCoordinator: reportNewIncomingVoIPPushPayload error: \(error)",
-//                            attributes: .newNSE, .safePublic
-//                        )
-//                    } else {
-//                        WireLogger.calling.info(
-//                            "CallKitReportingCoordinator: reportNewIncomingVoIPPushPayload done",
-//                            attributes: .newNSE, .safePublic
-//                        )
-//                    }
-//                    continuation.resume()
-//                }
-//            }
-//        }
-//    }
-//
-//    /// Handles call closed events from AVS.
-//    private func handleCallClosed(reason: CallClosedReason, conversationId: String) {
-//        WireLogger.calling.info(
-//            "CallKitReportingCoordinator: onCallClosed fired, reason=\(reason)",
-//            attributes: .newNSE, .safePublic
-//        )
-//
-//        guard didReportIncomingCall else {
-//            WireLogger.calling.debug(
-//                "CallKitReportingCoordinator: no incoming call was reported, skipping CallKit update",
-//                attributes: .newNSE, .safePublic
-//            )
-//            return
-//        }
-//
-//        // Stop ringing — only if we previously started it
-//        let callKitContent: [String: Any] = [
-//            "accountID": accountID.uuidString,
-//            "conversationID": conversationId,
-//            "shouldRing": false
-//        ]
-//
-//        didReportIncomingCall = false
-//
-//        WireLogger.calling.debug(
-//            "CallKitReportingCoordinator: stopping CallKit ring",
-//            attributes: .newNSE, .safePublic
-//        )
-//
-//        callKitReportTask = Task {
-//            do {
-//                try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
-//                WireLogger.calling.info(
-//                    "CallKitReportingCoordinator: CallKit ring stopped successfully",
-//                    attributes: .newNSE, .safePublic
-//                )
-//            } catch {
-//                WireLogger.calling.error(
-//                    "CallKitReportingCoordinator: error stopping CallKit ring: \(error)",
-//                    attributes: .newNSE, .safePublic
-//                )
-//            }
-//        }
-//    }
-//}
-
-/// Coordinates CallKit reporting in response to AVS calling events.
 /// Callback-based, no stream/bus abstraction.
 final class CallKitReportingCoordinator {
 
@@ -249,11 +52,6 @@ final class CallKitReportingCoordinator {
     ) {
         self.accountID = accountID
 
-        WireLogger.calling.debug(
-            "CallKitReportingCoordinator: initializing for account \(accountID)",
-            attributes: .newNSE
-        )
-
         avsService.onIncomingCall = { [self] conversationId, userId, shouldRing, isVideoCall in
             markCallbackReceived()
             handleIncomingCall(
@@ -266,23 +64,12 @@ final class CallKitReportingCoordinator {
 
         avsService.onMissedCall = { [self] conversationId, _, _ in
             markCallbackReceived()
-            WireLogger.calling.info(
-                "CallKitReportingCoordinator: onMissedCall fired, conversationId=\(conversationId)",
-                attributes: .newNSE, .safePublic
-            )
         }
 
         avsService.onCallClosed = { [self] reason, conversationId in
             markCallbackReceived()
             handleCallClosed(reason: reason, conversationId: conversationId)
         }
-    }
-
-    deinit {
-        WireLogger.calling.debug(
-            "CallKitReportingCoordinator: deallocating (callbackCount=\(callbackCount))",
-            attributes: .newNSE, .safePublic
-        )
     }
 
     // MARK: - Public API
@@ -302,10 +89,6 @@ final class CallKitReportingCoordinator {
     /// Wait for all callback-started CallKit tasks to finish.
     /// Does not wait for "future callbacks", only current outstanding tasks.
     func waitForCompletion() async {
-        WireLogger.calling.debug(
-            "CallKitReportingCoordinator: waiting for completion (callbackCount=\(callbackCount))",
-            attributes: .newNSE, .safePublic
-        )
 
         while true {
             let snapshot: [Task<Void, Never>] = {
@@ -320,11 +103,6 @@ final class CallKitReportingCoordinator {
                 await task.value
             }
         }
-
-        WireLogger.calling.debug(
-            "CallKitReportingCoordinator: completion awaited",
-            attributes: .newNSE, .safePublic
-        )
     }
 
     // MARK: - Private Helpers
@@ -373,13 +151,6 @@ final class CallKitReportingCoordinator {
         shouldRing: Bool,
         isVideoCall: Bool
     ) {
-        let incomingCallLogMessage = "CallKitReportingCoordinator: onIncomingCall fired, " +
-            "conversationId=\(conversationId), shouldRing=\(shouldRing)"
-        WireLogger.calling.info(
-            incomingCallLogMessage,
-            attributes: .newNSE, .safePublic
-        )
-
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else {
             WireLogger.calling.error(
                 "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
@@ -390,10 +161,6 @@ final class CallKitReportingCoordinator {
 
         didReportIncomingCall = shouldRing
         let callerName = callerName(for: conversationID)
-        WireLogger.calling.info(
-            "CallKitReportingCoordinator: callerName=\(callerName), conversationId=\(conversationId), userId=\(userId)",
-            attributes: .newNSE
-        )
 
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,
@@ -406,6 +173,7 @@ final class CallKitReportingCoordinator {
         let task = Task {
             await withCheckedContinuation { continuation in
                 CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
+                    // TODO: do we need these logs?
                     if let error {
                         WireLogger.calling.error(
                             "CallKitReportingCoordinator: report incoming failed: \(error)",
@@ -426,10 +194,6 @@ final class CallKitReportingCoordinator {
     }
 
     private func handleCallClosed(reason: CallClosedReason, conversationId: String) {
-        WireLogger.calling.info(
-            "CallKitReportingCoordinator: onCallClosed fired, reason=\(reason)",
-            attributes: .newNSE, .safePublic
-        )
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else {
             WireLogger.calling.error(
                 "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
@@ -474,6 +238,7 @@ final class CallKitReportingCoordinator {
     }
 }
 
+// TODO: where to move?
 private struct AVSIdentifier {
     let uuid: UUID
     let domain: String?
