@@ -34,7 +34,7 @@ struct ScheduleMeetingView: View {
                 scheduleSection
                 participantsSection
             }
-            .listSectionSpacing(.compact)
+            // .listSectionSpacing(.compact)
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
             .navigationTitle(Strings.Future.title)
@@ -58,15 +58,23 @@ struct ScheduleMeetingView: View {
     }
 
     private var titleSection: some View {
-        Section(Strings.SetupTitle.header) {
+        Section {
             TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+        } header: {
+            Text(Strings.SetupTitle.header)
+                .fontWeight(.regular)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
         .textCase(nil)
     }
 
     private var participantsSection: some View {
-        Section(Strings.SetupParticipants.header) {
+        Section {
             TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
+        } header: {
+            Text(Strings.SetupParticipants.header)
+                .fontWeight(.regular)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
         .textCase(nil)
     }
