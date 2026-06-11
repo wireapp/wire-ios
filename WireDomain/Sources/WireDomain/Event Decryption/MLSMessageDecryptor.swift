@@ -59,7 +59,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             id: conversationID.id,
             domain: conversationID.domain
         ) else {
-            WireLogger.mls.error("WOW NSE MLS: conversation not found for \(conversationID.id)")
             throw MLSMessageDecryptorError.conversationNotFound
         }
 
@@ -67,13 +66,10 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             conversation: mlsConversation
         ) else {
             // MLS conversation should have a group id.
-            WireLogger.mls.error("WOW NSE MLS: missing MLS group ID for conversation \(conversationID.id)")
             throw MLSMessageDecryptorError.missingMLSGroupID
         }
-        WireLogger.mls.info("WOW NSE MLS: decrypting for groupID=\(mlsGroupID), isMLSReady=\(isMLSReady), context=\(context != nil ? "present" : "nil")")
 
         guard isMLSReady else {
-            WireLogger.mls.error("WOW NSE MLS: MLS conversation not ready for \(conversationID.id)")
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
 
@@ -98,7 +94,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
             var decryptedEvent = eventData
             decryptedEvent.decryptedMessages = decryptedMessages
-            WireLogger.mls.info("WOW NSE MLS: decryptionResults count=\(decryptionResults.count) for groupID=\(mlsGroupID)")
 
             return decryptedEvent
         } catch let error as WireDataModel.MLSDecryptionService.MLSMessageDecryptionError {
