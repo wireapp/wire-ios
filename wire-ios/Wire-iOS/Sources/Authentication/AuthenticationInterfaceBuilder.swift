@@ -328,21 +328,12 @@ final class AuthenticationInterfaceBuilder {
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
             registrationAnalyticsTracker: registrationAnalyticsTracker,
-            overrideAllowEmailLoginOnly: overrideAllowEmailLoginOnly
+            overrideAllowEmailLoginOnly: featureProvider.allowOnlyEmailLogin
         )
 
         return (
             view: view.environment(\.isClipboardEnabled, SecurityFlags.clipboard.isEnabled),
             bridge: bridge
         )
-    }
-
-    private var overrideAllowEmailLoginOnly: Bool {
-        // Build time override to only allow login via email.
-        #if ALLOW_ONLY_EMAIL_LOGIN
-        return true
-        #else
-        return false
-        #endif
     }
 }

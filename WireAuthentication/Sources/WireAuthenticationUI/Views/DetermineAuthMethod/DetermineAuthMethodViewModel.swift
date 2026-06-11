@@ -106,10 +106,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             isLoading = false
         }
 
-        // TODO: validate email first
+        // When only email login is allowed, validate the input as an email before
+        // navigating to the login flow. An SSO code or otherwise invalid input is ignored
+        // (the submit button is also disabled for it).
         if overrideAllowEmailLoginOnly {
+            guard let validatedEmail else { return }
             router.navigate(to: DetermineAuthMethodDestination.login(
-                email: emailOrSSOCode,
+                email: validatedEmail,
                 didDetectDomainConflict: false,
                 environment: environment
             ))
@@ -289,15 +292,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     private var isValidEmail: Bool {
-        do {
-            if case .email = try validateEmailOrSSOCode() {
-                return true
-            } else {
-                return false
-            }
-        } catch {
-            return false
+        validatedEmail != nil
+    }
+
+    /// The trimmed, validated email entered by the user, or `nil` if the input is not a valid email.
+    private var validatedEmail: String? {
+        guard case let .email(email, _) = try? validateEmailOrSSOCode() else {
+            return nil
         }
+        return email
     }
 
     private var isValidSSOCode: Bool {
