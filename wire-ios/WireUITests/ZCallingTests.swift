@@ -136,18 +136,31 @@ final class ZCallingTests: WireUITestCase {
             throw XCTSkip("⚠️ [Flaky Test] due to Calling service fail to create instance..Skipping this test for now")
         }
     }
-    
+
     @MainActor
-    func testInitiateGroupCall_TC_8879() async throws {
+    func testGroupCallInitiateMinimizeMaximizeAndHangUp_TC_8879_TC_8835_TC_8889_TC_8890() async throws {
+        // GIVEN
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
-            let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.teamOwner.email,
+            password: teamAndGroupCallSetup.teamOwner.password
+        )
 
-            let firstTimePage = try app.loginUser(
-                email: teamAndGroupCallSetup.teamOwner.email,
-                password: teamAndGroupCallSetup.teamOwner.password
-            )
-            _ = try firstTimePage.acceptPopup()
+        // WHEN
+        let ongoingCallPage = try await firstTimePage.acceptPopup()
             .openConversation()
             .initiateCall()
+            .minimizeCallUI()
+            .backgroundAndResume(app: app, forDelay: 2)
+            .resumeCallUI()
+
+        // THEN
+        let activeConversationPage = try ongoingCallPage.hangUpOngoingCall()
+
+        XCTAssertTrue(
+            activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
+            "Ongoing call still visible after hanging up the call"
+        )
     }
 }

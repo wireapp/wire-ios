@@ -33,9 +33,26 @@ class OngoingCallPage: PageModel {
         app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue]
     }
 
-    func endOngoingCall() throws -> ConversationsPage {
+    var minimizeCallButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.minimizeCall.rawValue]
+    }
+
+    private func tapEndCallButton() {
         endCallButton.tap()
+    }
+
+    func endOngoingCall() throws -> ConversationsPage {
+        tapEndCallButton()
         return try ConversationsPage()
     }
 
+    func hangUpOngoingCall() throws -> ActiveConversationPage {
+        tapEndCallButton()
+        return try ActiveConversationPage()
+    }
+
+    func minimizeCallUI() throws -> ActiveConversationPage {
+        minimizeCallButton.tap()
+        return try ActiveConversationPage()
+    }
 }
