@@ -129,9 +129,13 @@ public final class NotificationServiceExtension {
         }
     }
 
-    public func serviceExtensionTimeWillExpire() {
-        logger.warn("new notification service will expire", attributes: .newNSE, .safePublic)
+    public var hasOnGoingTask: Bool {
+        onGoingTask != nil
+    }
+
+    public func cancel() async {
         onGoingTask?.cancel()
+        await onGoingTask?.value
     }
 }
 
