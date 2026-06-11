@@ -33,6 +33,10 @@ final class CreateInstantMeetingViewModel {
 
     // MARK: - Public Interface
 
+    func clearTitle() {
+        meetingTitle = ""
+    }
+
     func createInstantMeeting() {}
 
 }

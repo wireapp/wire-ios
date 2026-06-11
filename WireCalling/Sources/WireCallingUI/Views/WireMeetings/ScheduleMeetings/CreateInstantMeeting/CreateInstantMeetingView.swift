@@ -57,7 +57,16 @@ struct CreateInstantMeetingView: View {
 
     private var titleSection: some View {
         Section(Strings.SetupTitle.header) {
-            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+            HStack {
+                TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+                if !viewModel.meetingTitle.isEmpty {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(Color(.lightGray))
+                        .onTapGesture {
+                            viewModel.clearTitle()
+                        }
+                }
+            }
         }
         .textCase(nil)
     }

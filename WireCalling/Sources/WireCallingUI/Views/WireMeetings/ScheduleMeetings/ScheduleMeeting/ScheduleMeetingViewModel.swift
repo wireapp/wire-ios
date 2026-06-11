@@ -37,6 +37,10 @@ final class ScheduleMeetingViewModel {
 
     // MARK: - Public Interface
 
+    func clearTitle() {
+        meetingTitle = ""
+    }
+
     func scheduleMeeting() {}
 
 }

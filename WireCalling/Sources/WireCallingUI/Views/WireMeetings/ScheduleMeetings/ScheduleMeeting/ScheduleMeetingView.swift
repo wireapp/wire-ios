@@ -60,7 +60,16 @@ struct ScheduleMeetingView: View {
 
     private var titleSection: some View {
         Section(Strings.SetupTitle.header) {
-            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+            HStack {
+                TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+                if !viewModel.meetingTitle.isEmpty {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(Color(.lightGray))
+                        .onTapGesture {
+                            viewModel.clearTitle()
+                        }
+                }
+            }
         }
         .textCase(nil)
     }
@@ -68,13 +77,13 @@ struct ScheduleMeetingView: View {
     private var scheduleSection: some View {
         Section {
             dateTimeRow(
-                label: "Starts",
+                label: Strings.Time.starts,
                 date: $viewModel.startDate,
                 dateField: .startDate,
                 timeField: .startTime
             )
             dateTimeRow(
-                label: "Ends",
+                label: Strings.Time.ends,
                 date: $viewModel.endDate,
                 dateField: .endDate,
                 timeField: .endTime
