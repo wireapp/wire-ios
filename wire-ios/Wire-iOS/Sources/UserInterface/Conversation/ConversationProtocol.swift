@@ -112,7 +112,7 @@ protocol GroupDetailsConversation {
 
     var isE2EIEnabled: Bool { get }
 
-    var isSelfAGuest: Bool { get }
+    var isSelfADriveViewer: Bool { get }
 
 }
 
@@ -136,8 +136,8 @@ extension ZMConversation: GroupDetailsConversation {
         return feature.status == .enabled
     }
 
-    var isSelfAGuest: Bool {
-        SelfUser.provider?.providedSelfUser.isGuest(in: self) == true
+    var isSelfADriveViewer: Bool {
+        SelfUser.provider?.providedSelfUser.teamIdentifier != teamRemoteIdentifier
     }
 
 }

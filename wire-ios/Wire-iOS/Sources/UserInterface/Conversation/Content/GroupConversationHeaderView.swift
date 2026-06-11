@@ -116,7 +116,7 @@ final class GroupConversationHeaderView: UIView {
 
         if conversation.isWireDriveEnabled {
             let sharedDriveDesc = ConversationSharedDriveSystemMessageCellDescription(
-                selfUserRole: selfUser.isGuest(in: conversation) ? .viewer : .editor
+                selfUserRole: conversation.teamRemoteIdentifier == selfUser.teamIdentifier ? .editor : .viewer
             )
             let sharedDriveCell = ConversationSharedDriveSystemMessageCellDescription.View()
             sharedDriveCell.configure(with: sharedDriveDesc.configuration, animated: false)

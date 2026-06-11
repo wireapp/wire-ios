@@ -694,7 +694,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
                 // TODO: [WPB-25941] Remove developer flag when feature is complete
                 let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
                 let role: WireDriveParticipant.Role = if isDrivePermissionsEnabled {
-                    item.isGuest(in: conversation) ? .viewer : .editor
+                    conversation.teamRemoteIdentifier == item.teamIdentifier ? .editor : .viewer
                 } else {
                     .editor
                 }
@@ -709,6 +709,14 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
                         .busy
                 case .none:
                         .none
+                }
+                
+                let userType: WireDriveParticipant.UserType = if item.isFederated {
+                    .federated
+                } else if item.isExternalPartner {
+                    .external
+                } else {
+                    !item.isGuest(in: conversation) || item.isSelfUser ? .member : .guest
                 }
                 
                 var verificationBadges: [WireDriveParticipant.VerificationBadge] = []
@@ -735,6 +743,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
                     role: role,
                     isSelfUser: item.isSelfUser,
                     id: id.uuidString + "@" + domain,
+                    userType: userType,
                     availabilityStatus: userSession.selfUser.hasTeam ? availability : .none,
                     verificationBadges: verificationBadges,
                     state: participantState,

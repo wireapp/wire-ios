@@ -35,7 +35,7 @@ final class GroupDetailsSharedDriveCell: GroupDetailsDisclosureOptionsCell {
 
     func configure(with conversation: GroupDetailsConversationType) {
         status = if DeveloperFlag.enableDrivePermissions.isOn {
-            conversation.isSelfAGuest ? Strings.Subtitle.viewerAccess : Strings.Subtitle.editorAccess
+            conversation.isSelfADriveViewer ? Strings.Subtitle.viewerAccess : Strings.Subtitle.editorAccess
         } else {
             Strings.subtitle
         }

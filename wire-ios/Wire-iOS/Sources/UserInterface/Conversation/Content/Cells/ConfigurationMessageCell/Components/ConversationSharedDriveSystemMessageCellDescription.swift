@@ -70,8 +70,8 @@ final class ConversationSharedDriveSystemMessageCellDescription: ConversationMes
             .editorAccess : FileCollaborationEnabled.viewerAccess
         let spacer = " "
         // TODO: [WPB-25941] Remove developer flag when feature is complete
-        let driveAccessText = DeveloperFlag.enableDrivePermissions.isOn ? "\(spacer + driveAccessTitle)" : ""
-        let fullText = L10n.Localizable.Content.System.FileCollaboration.enabled + "." + driveAccessText
+        let driveAccessText = DeveloperFlag.enableDrivePermissions.isOn ? ".\(spacer + driveAccessTitle)" : ""
+        let fullText = L10n.Localizable.Content.System.FileCollaboration.enabled + driveAccessText
         var attributedText: NSMutableAttributedString
         let baseAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumFont,

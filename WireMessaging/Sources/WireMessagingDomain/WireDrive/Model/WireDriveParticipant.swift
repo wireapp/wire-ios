@@ -27,8 +27,16 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
     public let role: Role
     public let availabilityStatus: AvailabilityStatus
     public let verificationBadges: [VerificationBadge]
+    public let userType: UserType
     public let state: State
     public let iconData: IconData?
+    
+    public enum UserType: Sendable, Hashable {
+        case federated
+        case external
+        case member
+        case guest
+    }
 
     public enum AvailabilityStatus: Sendable, Hashable {
         case none
@@ -75,6 +83,7 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         role: Role,
         isSelfUser: Bool,
         id: String,
+        userType: UserType,
         availabilityStatus: AvailabilityStatus = .none,
         verificationBadges: [VerificationBadge] = [],
         state: State = .none,
@@ -85,6 +94,7 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
         self.displayName = displayName
         self.role = role
         self.id = id
+        self.userType = userType
         self.availabilityStatus = availabilityStatus
         self.verificationBadges = verificationBadges
         self.state = state
@@ -111,6 +121,7 @@ public extension Collection<WireDriveParticipant> {
                 role: .editor,
                 isSelfUser: false,
                 id: UUID().uuidString,
+                userType: .member,
                 availabilityStatus: .available,
                 verificationBadges: [.e2EICertified],
                 iconData: .init(initials: "WW", color: .blue, image: nil)
@@ -121,6 +132,7 @@ public extension Collection<WireDriveParticipant> {
                 role: .viewer,
                 isSelfUser: false,
                 id: UUID().uuidString,
+                userType: .member,
                 availabilityStatus: .busy,
                 verificationBadges: [.e2EICertified, .proteusVerified],
                 iconData: .init(initials: "JP", color: .brown, image: nil)
@@ -131,6 +143,7 @@ public extension Collection<WireDriveParticipant> {
                 role: .editor,
                 isSelfUser: true,
                 id: UUID().uuidString,
+                userType: .member,
                 iconData: nil
             )
         ]

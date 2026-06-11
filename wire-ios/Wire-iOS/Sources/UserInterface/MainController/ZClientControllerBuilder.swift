@@ -159,9 +159,17 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                             // TODO: [WPB-25941] Remove developer flag when feature is complete
                             let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
                             let role: WireDriveParticipant.Role = if isDrivePermissionsEnabled {
-                                item.isGuest(in: conversation) ? .viewer : .editor
+                                conversation.teamRemoteIdentifier == item.teamIdentifier ? .editor : .viewer
                             } else {
                                 .editor
+                            }
+                            
+                            let userType: WireDriveParticipant.UserType = if item.isFederated {
+                                .federated
+                            } else if item.isExternalPartner {
+                                .external
+                            } else {
+                                !item.isGuest(in: conversation) || item.isSelfUser ? .member : .guest
                             }
 
                             return .init(
@@ -170,6 +178,7 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                                 role: role,
                                 isSelfUser: item.isSelfUser,
                                 id: id.uuidString + "@" + domain,
+                                userType: userType,
                                 iconData: WireDriveParticipant.IconData(
                                     initials: item.initials ?? "",
                                     color: item.accentColor,

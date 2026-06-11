@@ -53,7 +53,7 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
     }
 
     func trailingImages(for participant: WireDriveParticipant) -> [UIImage] {
-        participant.verificationBadges.compactMap {
+        let verificationBadges = participant.verificationBadges.compactMap {
             switch $0 {
             case .e2EICertified:
                 UIImage(resource: .certificateValid)
@@ -61,5 +61,18 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
                 UIImage(resource: .verified)
             }
         }
+        
+        let userTypeBadge: UIImage? = switch participant.userType {
+        case .federated:
+            StyleKitIcon.federated.makeImage(size: .tiny, color: .black).withRenderingMode(.alwaysTemplate)
+        case .external:
+            StyleKitIcon.externalPartner.makeImage(size: .tiny, color: .black).withRenderingMode(.alwaysTemplate)
+        case .member:
+            nil
+        case .guest:
+            StyleKitIcon.guest.makeImage(size: .tiny, color: .black).withRenderingMode(.alwaysTemplate)
+        }
+        
+        return verificationBadges + [userTypeBadge].compactMap(\.self)
     }
 }
