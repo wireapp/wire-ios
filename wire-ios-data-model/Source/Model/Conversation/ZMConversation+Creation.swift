@@ -70,7 +70,7 @@ public extension ZMConversation {
         require(context.zm_isSyncContext, "Conversations are only allowed to be created on sync context")
         let domain: String? = context.isFederationEnabled ? domain : nil
 
-        if let conversation = fetch(with: remoteIdentifier, domain: domain, in: context) {
+        if let conversation = fetch(with: remoteIdentifier, domain: domain, in: context) {//
             return conversation
         } else {
             created.pointee = true

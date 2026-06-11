@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CallKit
+import Foundation
 import WireLogging
-import WireDataModel
+
 /// Coordinates CallKit reporting in response to AVS calling events.
 ///
 /// This coordinator:
@@ -225,9 +225,8 @@ final class CallKitReportingCoordinator {
 
     private let accountID: UUID
     private var didReportIncomingCall = false
-    private let conversationLocalStore: any ConversationLocalStoreProtocol
-    private let userLocalStore: any UserLocalStoreProtocol
-    private let context: NSManagedObjectContext
+    private let callerNamesLock = NSLock()
+    private var callerNamesByConversationID: [String: String] = [:]
 
     // Keep all callback-created async work so NSE can await it.
     private let pendingTasksLock = NSLock()
@@ -246,19 +245,13 @@ final class CallKitReportingCoordinator {
 
     init(
         accountID: UUID,
-        avsService: any AVSCallingEventServiceProtocol,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        userLocalStore: any UserLocalStoreProtocol,
-        context: NSManagedObjectContext
+        avsService: any AVSCallingEventServiceProtocol
     ) {
         self.accountID = accountID
-        self.conversationLocalStore = conversationLocalStore
-        self.userLocalStore = userLocalStore
-        self.context = context
 
         WireLogger.calling.debug(
             "CallKitReportingCoordinator: initializing for account \(accountID)",
-            attributes: .newNSE, .safePublic
+            attributes: .newNSE
         )
 
         avsService.onIncomingCall = { [self] conversationId, userId, shouldRing, isVideoCall in
@@ -293,6 +286,18 @@ final class CallKitReportingCoordinator {
     }
 
     // MARK: - Public API
+
+    func setCallerName(
+        _ callerName: String?,
+        for conversationId: String
+    ) {
+        guard let conversationID = AVSIdentifier(rawValue: conversationId) else { return }
+
+        callerNamesLock.lock()
+        defer { callerNamesLock.unlock() }
+
+        callerNamesByConversationID[conversationID.storageKey] = callerName
+    }
 
     /// Wait for all callback-started CallKit tasks to finish.
     /// Does not wait for "future callbacks", only current outstanding tasks.
@@ -346,6 +351,20 @@ final class CallKitReportingCoordinator {
         }
     }
 
+    private func callerName(for conversationID: AVSIdentifier) -> String? {
+        callerNamesLock.lock()
+        defer { callerNamesLock.unlock() }
+
+        return callerNamesByConversationID[conversationID.storageKey]
+    }
+
+    private func removeCallerName(for conversationID: AVSIdentifier) {
+        callerNamesLock.lock()
+        defer { callerNamesLock.unlock() }
+
+        callerNamesByConversationID.removeValue(forKey: conversationID.storageKey)
+    }
+
     // MARK: - Callback Handlers
 
     private func handleIncomingCall(
@@ -354,12 +373,14 @@ final class CallKitReportingCoordinator {
         shouldRing: Bool,
         isVideoCall: Bool
     ) {
+        let incomingCallLogMessage = "CallKitReportingCoordinator: onIncomingCall fired, " +
+            "conversationId=\(conversationId), shouldRing=\(shouldRing)"
         WireLogger.calling.info(
-            "CallKitReportingCoordinator: onIncomingCall fired, conversationId=\(conversationId), shouldRing=\(shouldRing)",
+            incomingCallLogMessage,
             attributes: .newNSE, .safePublic
         )
 
-        guard let qualifiedID = QualifiedID(rawValue: conversationId) else {
+        guard let conversationID = AVSIdentifier(rawValue: conversationId) else {
             WireLogger.calling.error(
                 "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
                 attributes: .newNSE, .safePublic
@@ -367,28 +388,22 @@ final class CallKitReportingCoordinator {
             return
         }
 
-        guard let senderID = QualifiedID(rawValue: userId) else { return }
         didReportIncomingCall = shouldRing
-
-       // let task = Task {
-//        let callerName = await resolveCallerName(conversationID: qualifiedID, senderID: senderID)
-        let callerName = resolveCallerNameSync(
-            conversationID: qualifiedID,
-            senderID: senderID
+        let callerName = callerName(for: conversationID)
+        WireLogger.calling.info(
+            "CallKitReportingCoordinator: callerName=\(callerName), conversationId=\(conversationId), userId=\(userId)",
+            attributes: .newNSE
         )
+
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,
-            "conversationID": qualifiedID.uuid.uuidString,
+            "conversationID": conversationID.uuid.uuidString,
             "shouldRing": shouldRing,
             "hasVideo": isVideoCall,
-            "callerName": callerName ?? "",
-
+            "callerName": callerName ?? ""
         ]
-        WireLogger.calling.info(
-             "‼️ CallKitReportingCoordinator: callerName=\(callerName)",
-            attributes: .newNSE, .safePublic
-        )
-            let task = Task {
+
+        let task = Task {
             await withCheckedContinuation { continuation in
                 CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
                     if let error {
@@ -410,140 +425,12 @@ final class CallKitReportingCoordinator {
         registerPendingTask(task)
     }
 
-//    private func resolveCallerNameSync(
-//        conversationID: QualifiedID,
-//        senderID: QualifiedID
-//    ) -> String? {
-//        let conversation = context.performAndWait {
-//            ZMConversation.fetch(
-//                with: conversationID.uuid,
-//                domain: conversationID.domain,
-//                in: context
-//            )
-//        }
-//        let caller = context.performAndWait {
-//            return ZMUser.fetch(with: senderID.uuid, in: context)
-//        }
-//        let selfUser = context.performAndWait {
-//            return ZMUser.selfUser(in: context)
-//        }
-//
-//        guard let conversation else { return nil }
-//        let isGroup = conversation.conversationType == .group
-//        let teamName = selfUser.teamName
-//        let conversationName = conversation.displayName
-//        let callerName = caller?.name
-//
-//        let format: NotificationTitle.MessageTitleDescriptor? = if isGroup, let conversationName {
-//            if let teamName { .conversationInTeam(conversation: conversationName, team: teamName) }
-//            else { .conversation(conversation: conversationName) }
-//        } else if let callerName {
-//            if let teamName { .senderInTeam(sender: callerName, team: teamName) }
-//            else { .sender(sender: callerName) }
-//        } else {
-//            nil
-//        }
-//
-//        return format.map { NotificationTitle.conversationMessage($0).make() }
-//    }
-
-    private func resolveCallerNameSync(
-        conversationID: QualifiedID,
-        senderID: QualifiedID
-    ) -> String? {
-        context.performAndWait {
-            guard let conversation = fetchByDomain(ZMConversation.self, qualifiedID: conversationID) else {
-                WireLogger.calling.info(
-                     "‼️ CallKitReportingCoordinator: no conversation",
-                    attributes: .newNSE, .safePublic
-                )
-                return nil
-            }
-            let caller = fetchByDomain(ZMUser.self, qualifiedID: senderID)
-
-            // All reads stay on the context queue.
-            let isGroup = conversation.conversationType == .group
-            let conversationName = conversation.displayName
-            let callerName = caller?.name
-            let teamName = conversation.team?.name
-
-            let format: NotificationTitle.MessageTitleDescriptor? = if isGroup, let conversationName {
-                if let teamName { .conversationInTeam(conversation: conversationName, team: teamName) }
-                else { .conversation(conversation: conversationName) }
-            } else if let callerName {
-                if let teamName { .senderInTeam(sender: callerName, team: teamName) }
-                else { .sender(sender: callerName) }
-            } else {
-                nil
-            }
-
-            guard let format else {
-                WireLogger.calling.info(
-                     "‼️ CallKitReportingCoordinator: no format",
-                    attributes: .newNSE, .safePublic
-                )
-                return nil
-            }
-            return NotificationTitle.conversationMessage(format).make()
-        }
-    }
-
-    /// Domain-aware fetch that mirrors `ZMManagedObject.fetch(with:domain:in:)`,
-    /// but derives the local domain from the context instead of `ZMUser.selfUser(in:)`
-    /// — selfUser is not a pure read (it can insert + save a session) and crashes in the NSE.
-//    private func fetchByDomain<T: ZMManagedObject>(
-//        _ type: T.Type,
-//        qualifiedID: QualifiedID
-//    ) -> T? {
-//        let effectiveDomain: String? =
-//            (context.isFederationEnabled && !qualifiedID.domain.isEmpty) ? qualifiedID.domain : nil
-//        let localDomain = context.localDomain
-//        let isSearchingLocalDomain =
-//            effectiveDomain == nil || localDomain == nil || localDomain == effectiveDomain
-//
-//        WireLogger.calling.info(
-//             "‼️ CallKitReportingCoordinator: fetchByDomain qualifiedID: \(qualifiedID.uuid), effectiveDomain: \(effectiveDomain), localDomain: \(localDomain), searchingLocalDomain: \(isSearchingLocalDomain)",
-//            attributes: .newNSE, .safePublic
-//        )
-//        return T.internalFetch(
-//            withRemoteIdentifier: qualifiedID.uuid,
-//            domain: effectiveDomain ?? localDomain,
-//            searchingLocalDomain: isSearchingLocalDomain,
-//            in: context
-//        )
-//    }
-
-    private func fetchByDomain<T: ZMManagedObject>(
-        _ type: T.Type,
-        qualifiedID: QualifiedID
-    ) -> T? {
-        let effectiveDomain: String? =
-            (context.isFederationEnabled && !qualifiedID.domain.isEmpty) ? qualifiedID.domain : nil
-
-        // No domain in the event → UUID-only fetch.
-        // Remote identifiers are globally unique, so this is unambiguous, and it
-        // won't be excluded by a local-domain predicate that doesn't match the
-        // conversation's stored domain.
-        guard let effectiveDomain else {
-            return T.internalFetch(withRemoteIdentifier: qualifiedID.uuid, in: context)
-        }
-
-        let localDomain = context.localDomain
-        let isSearchingLocalDomain = localDomain == nil || localDomain == effectiveDomain
-        return T.internalFetch(
-            withRemoteIdentifier: qualifiedID.uuid,
-            domain: effectiveDomain,
-            searchingLocalDomain: isSearchingLocalDomain,
-            in: context
-        )
-    }
-
     private func handleCallClosed(reason: CallClosedReason, conversationId: String) {
         WireLogger.calling.info(
             "CallKitReportingCoordinator: onCallClosed fired, reason=\(reason)",
             attributes: .newNSE, .safePublic
         )
-        guard let qualifiedID = QualifiedID(rawValue: conversationId) else {
+        guard let conversationID = AVSIdentifier(rawValue: conversationId) else {
             WireLogger.calling.error(
                 "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
                 attributes: .newNSE, .safePublic
@@ -561,11 +448,12 @@ final class CallKitReportingCoordinator {
         // Keep previous behavior: use raw conversationId on close.
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,
-            "conversationID": qualifiedID.uuid.uuidString,
+            "conversationID": conversationID.uuid.uuidString,
             "shouldRing": false
         ]
 
         didReportIncomingCall = false
+        removeCallerName(for: conversationID)
 
         let task = Task {
             do {
@@ -583,5 +471,34 @@ final class CallKitReportingCoordinator {
         }
 
         registerPendingTask(task)
+    }
+}
+
+private struct AVSIdentifier {
+    let uuid: UUID
+    let domain: String?
+
+    var storageKey: String {
+        "\(uuid.uuidString.lowercased())@\(domain?.lowercased() ?? "")"
+    }
+
+    init?(rawValue: String) {
+        let components = rawValue.split(
+            separator: "@",
+            omittingEmptySubsequences: false
+        ).map(String.init)
+
+        switch components.count {
+        case 1:
+            guard let uuid = UUID(uuidString: components[0]) else { return nil }
+            self.uuid = uuid
+            self.domain = nil
+        case 2:
+            guard let uuid = UUID(uuidString: components[0]) else { return nil }
+            self.uuid = uuid
+            self.domain = components[1].isEmpty ? nil : components[1]
+        default:
+            return nil
+        }
     }
 }

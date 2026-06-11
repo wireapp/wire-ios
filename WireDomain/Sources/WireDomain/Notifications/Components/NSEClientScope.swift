@@ -75,6 +75,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 callingService: callingService,
                 clientID: clientID,
                 conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore,
                 isFederationEnabled: isFederationEnabled,
                 accountID: dependency.accountID
             )
@@ -87,10 +88,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         )
         return CallKitReportingCoordinator(
             accountID: dependency.accountID,
-            avsService: callingService,
-            conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore,
-            context: conversationLocalStore.context
+            avsService: callingService
         )
     }()
 
