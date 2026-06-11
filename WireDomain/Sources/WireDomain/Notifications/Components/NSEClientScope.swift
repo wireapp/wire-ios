@@ -48,6 +48,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
     }
 
+    private let eventID: UUID
+    private let contentHandler: (UNNotificationContent) -> Void
     private let clientID: String
     private let restNetworkService: NetworkService
     private let webSocketNetworkService: NetworkService
@@ -60,6 +62,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
 
     init(
+        eventID: UUID,
+        contentHandler: @escaping (UNNotificationContent) -> Void,
         parent: any Scope,
         clientID: String,
         restNetworkService: NetworkService,
@@ -70,6 +74,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         coreDataStack: CoreDataStack,
         earService: EARServiceInterface
     ) {
+        self.eventID = eventID
+        self.contentHandler = contentHandler
         self.clientID = clientID
         self.restNetworkService = restNetworkService
         self.webSocketNetworkService = webSocketNetworkService
@@ -83,10 +89,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         super.init(parent: parent)
     }
 
-    func processPayload(
-        eventID: UUID,
-        contentHandler: @escaping (UNNotificationContent) -> Void
-    ) async throws {
+    func processPayload() async throws {
         // Pull pending update events.
         let eventStream: AsyncStream<[UpdateEvent]>
         let publicKeys = try earService.fetchPublicKeys()

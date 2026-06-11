@@ -167,6 +167,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
         // Continue with client.
         let clientScope = clientScope(
+            eventID: eventID,
+            contentHandler: contentHandler,
             clientID: clientID,
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
@@ -177,10 +179,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             earService: earService
         )
 
-        try await clientScope.processPayload(
-            eventID: eventID,
-            contentHandler: contentHandler
-        )
+        try await clientScope.processPayload()
     }
 
     private func fetchBackendEnvironment() throws -> BackendEnvironment2? {
@@ -309,6 +308,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     // MARK: - Children
 
     private func clientScope(
+        eventID: UUID,
+        contentHandler: @escaping (UNNotificationContent) -> Void,
         clientID: String,
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
@@ -319,6 +320,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         earService: EARServiceInterface
     ) -> NSEClientScope {
         NSEClientScope(
+            eventID: eventID,
+            contentHandler: contentHandler,
             parent: self,
             clientID: clientID,
             restNetworkService: restNetworkService,
