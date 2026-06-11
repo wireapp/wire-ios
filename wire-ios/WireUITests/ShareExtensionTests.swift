@@ -23,102 +23,276 @@ import XCTest
 final class ShareExtensionTests: WireUITestCase {
 
     private let photosAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
+    private let filesAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.DocumentsApp")
+    private let testFileName = "testFile.pdf"
+    private let testVideoName = "testVideo.mp4"
+    private let appLaunchTimeout: TimeInterval = 5
     private let timeout: TimeInterval = 2
 
     @MainActor
     private func launchPhotosApp() async throws {
         photosAppBundleId.launch()
-        XCTAssertTrue(photosAppBundleId.wait(for: .runningForeground, timeout: timeout))
+        XCTAssertTrue(photosAppBundleId.wait(for: .runningForeground, timeout: appLaunchTimeout))
     }
 
     @MainActor
-    private func shareFirstPhotoToWire(name: String) async throws {
+    private func launchFilesApp() async throws {
+        filesAppBundleId.terminate()
+        filesAppBundleId.launch()
+        XCTAssertTrue(filesAppBundleId.wait(for: .runningForeground, timeout: appLaunchTimeout))
+    }
+
+    @MainActor
+    private func shareFirstImageToWire(conversationName: String) async throws {
+        try await launchPhotosApp()
+
         let photosApp = try PhotosAppPage(photosApp: photosAppBundleId)
         try photosApp
-            .openFirstImage()
+            .selectImageFromPhotos()
             .shareImageToWire()
-            .chooseConversationAndSend(name: name)
+            .chooseConversationAndSend(name: conversationName)
+
+        try await switchBackToWireApp()
+    }
+
+    @MainActor
+    private func shareFixtureFileToWire(fileName: String, conversationName: String) async throws {
+        try await launchFilesApp()
+
+        let filesApp = try FilesAppPage(filesApp: filesAppBundleId)
+        try filesApp
+            .selectAndShareFileToWire(named: fileName)
+            .chooseConversationAndSend(name: conversationName)
+
+        try await switchBackToWireApp()
     }
 
     @MainActor
     private func switchBackToWireApp() async throws {
         app.activate()
-        if !app.wait(for: .runningForeground, timeout: timeout) {
+        if !app.wait(for: .runningForeground, timeout: appLaunchTimeout) {
             app.launch()
-            _ = app.wait(for: .runningForeground, timeout: timeout)
+            _ = app.wait(for: .runningForeground, timeout: appLaunchTimeout)
         }
+    }
+
+    @MainActor
+    private func createOneOnOneShareScenario() async throws -> String {
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
+        let member = try XCTUnwrap(teamMembers.first)
+
+        let firstTimePage = try app.loginUser(email: member.email, password: member.password)
+        let conversationsPage = try firstTimePage
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .openUserDetailsInContactList()
+            .tapStartConversationButton()
+            .goBackToConversationPage()
+
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: teamOwner.name).waitForExistence(timeout: timeout),
+            "Conversation '\(teamOwner.name)' did not show up after creating 1:1"
+        )
+
+        return teamOwner.name
+    }
+
+    @MainActor
+    private func createTeamShareScenario(conversation: CreateConversationOption) async throws -> String {
+        let conversationName: String = switch conversation {
+        case let .group(name), let .channel(name):
+            name
+        }
+
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: conversation
+        )
+        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationsPage = try firstTimePage.acceptPopup()
+
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: conversationName).waitForExistence(timeout: timeout),
+            "Conversation '\(conversationName)' did not show up after sender login"
+        )
+
+        return conversationName
+    }
+
+    @MainActor
+    private func openConversation(
+        named conversationName: String,
+        on conversationsPage: ConversationsPage
+    ) throws -> ActiveConversationPage {
+        try conversationsPage.letTheSyncFinish()
+        let conversationCell = conversationsPage.conversationCell(named: conversationName)
+        XCTAssertTrue(
+            conversationCell.waitForExistence(timeout: timeout),
+            "Conversation '\(conversationName)' did not show up"
+        )
+        XCTAssertTrue(
+            conversationCell.waitAndTap(timeout: 2),
+            "Conversation '\(conversationName)' was not tappable"
+        )
+        return try ActiveConversationPage()
+    }
+
+    private func assertImageShared(on activeConversationPage: ActiveConversationPage) {
+        XCTAssertTrue(
+            activeConversationPage.imageCell.waitForExistence(timeout: timeout),
+            "No Image cell found"
+        )
+    }
+
+    private func assertVideoShared(on activeConversationPage: ActiveConversationPage) {
+        XCTAssertTrue(
+            activeConversationPage.videoCell.waitForExistence(timeout: timeout),
+            "No Video cell found"
+        )
+        XCTAssertTrue(
+            activeConversationPage.videoPlayButton.waitForExistence(timeout: timeout),
+            "No Video play button found"
+        )
     }
 
     @MainActor
     func testShareImageOnetoOne_TC_8915() async throws {
+        let conversationName = try await createOneOnOneShareScenario()
 
-        let user1 = try await UserHelper.default.createPersonalUser()
-        let user2 = try await UserHelper.default.createPersonalUser()
-        let domain = BackendTarget.staging.domainInfo
+        try await shareFirstImageToWire(conversationName: conversationName)
 
-        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: user1.id)
-        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: user1, userId: user2.id)
-        let firstTimePage = try app.loginUser(email: user1.email, password: user1.password)
-        let conversationsPage = try  firstTimePage.acceptPopup()
-        XCTAssertTrue(
-            conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
-            "Conversation Cell did not show up after login"
+        let activeConversationPage = try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
         )
-        try await launchPhotosApp()
-        try await shareFirstPhotoToWire(name: user2.name)
-        try await switchBackToWireApp()
+        assertImageShared(on: activeConversationPage)
+    }
 
-        let activeConversationPage = try conversationsPage.openConversation()
+    @MainActor
+    func testShareVideoToOneOnOneConversation_TC_8916() async throws {
+        let conversationName = try await createOneOnOneShareScenario()
 
-        XCTAssertTrue(
-            activeConversationPage.imageCell.exists, "No Image cell found"
+        try await shareFixtureFileToWire(
+            fileName: testVideoName,
+            conversationName: conversationName
         )
+
+        let activeConversationPage = try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        assertVideoShared(on: activeConversationPage)
+    }
+
+    @MainActor
+    func testShareFileToOneOnOneConversation_TC_8917() async throws {
+        let conversationName = try await createOneOnOneShareScenario()
+
+        try await shareFixtureFileToWire(
+            fileName: testFileName,
+            conversationName: conversationName
+        )
+
+        try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
     @MainActor
     func testShareImageToGroupConversation_TC_8919() async throws {
-
         let groupName = UserGenerator.generateRandomConversationName()
+        let conversationName = try await createTeamShareScenario(conversation: .group(groupName))
 
-        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
-        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
+        try await shareFirstImageToWire(conversationName: conversationName)
+
+        let activeConversationPage = try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
         )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-        let countOfMembers = 2
+        assertImageShared(on: activeConversationPage)
+    }
 
-        var qualifiedIds: [QualifiedID] = []
+    @MainActor
+    func testShareVideoToGroupConversation_TC_8920() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let conversationName = try await createTeamShareScenario(conversation: .group(groupName))
 
-        for _ in 0 ..< countOfMembers {
-            let (qualifiedId, _) = try await UserHelper.default.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken.token,
-                teamID: teamID
-            )
-            qualifiedIds.append(qualifiedId)
-        }
-
-        try await UserHelper.default.createGroupConversations(
-            qualifiedIds: qualifiedIds,
-            owner: teamOwner,
-            groupName: groupName
+        try await shareFixtureFileToWire(
+            fileName: testVideoName,
+            conversationName: conversationName
         )
 
-        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
-        XCTAssertTrue(
-            conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
-            "Conversation Cell did not show up after login"
+        let activeConversationPage = try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        assertVideoShared(on: activeConversationPage)
+    }
+
+    @MainActor
+    func testShareFileToGroupConversation_TC_8921() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let conversationName = try await createTeamShareScenario(conversation: .group(groupName))
+
+        try await shareFixtureFileToWire(
+            fileName: testFileName,
+            conversationName: conversationName
         )
 
-        try await launchPhotosApp()
-        try await shareFirstPhotoToWire(name: groupName)
-        try await switchBackToWireApp()
-
-        let activeConversationPage = try conversationsPage.openConversation()
-
-        XCTAssertTrue(
-            activeConversationPage.imageCell.exists, "No Image cell found"
+        try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
         )
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+    }
+
+    @MainActor
+    func testShareImageToChannelConversation_TC_8923() async throws {
+        let channelName = UserGenerator.generateRandomConversationName()
+        let conversationName = try await createTeamShareScenario(conversation: .channel(channelName))
+
+        try await shareFirstImageToWire(conversationName: conversationName)
+
+        let activeConversationPage = try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        assertImageShared(on: activeConversationPage)
+    }
+
+    @MainActor
+    func testShareVideoToChannelConversation_TC_8924() async throws {
+        let channelName = UserGenerator.generateRandomConversationName()
+        let conversationName = try await createTeamShareScenario(conversation: .channel(channelName))
+
+        try await shareFixtureFileToWire(
+            fileName: testVideoName,
+            conversationName: conversationName
+        )
+
+        let activeConversationPage = try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        assertVideoShared(on: activeConversationPage)
+    }
+
+    @MainActor
+    func testShareFileToChannelConversation_TC_8925() async throws {
+        let channelName = UserGenerator.generateRandomConversationName()
+        let conversationName = try await createTeamShareScenario(conversation: .channel(channelName))
+
+        try await shareFixtureFileToWire(
+            fileName: testFileName,
+            conversationName: conversationName
+        )
+
+        try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 }
