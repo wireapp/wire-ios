@@ -32,6 +32,7 @@ final class NotificationService: UNNotificationServiceExtension {
     // MARK: - Properties
 
     var notificationService: NotificationService?
+    var notificationService: NotificationServiceExtension?
 
     override init() {
         super.init()
@@ -68,6 +69,7 @@ final class NotificationService: UNNotificationServiceExtension {
     }
 
     private func loadNotificationService(for request: UNNotificationRequest) -> NotificationService? {
+    private func loadNotificationService(for request: UNNotificationRequest) -> NotificationServiceExtension? {
         let info = Bundle.appMainBundle.infoDictionary
 
         guard let currentAppVersion = info?["CFBundleShortVersionString"] as? String else {
