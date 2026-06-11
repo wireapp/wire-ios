@@ -163,7 +163,7 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                             } else {
                                 .editor
                             }
-                            
+
                             let userType: WireDriveParticipant.UserType = if item.isFederated {
                                 .federated
                             } else if item.isExternalPartner {

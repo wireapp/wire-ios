@@ -174,7 +174,7 @@ package struct ConversationSharedDriveOptionsView: View {
                 } else if let image = iconData.image {
                     Image(uiImage: image)
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
+                        .aspectRatio(contentMode: .fill)
                 } else {
                     Color(uiColor: iconData.color)
 

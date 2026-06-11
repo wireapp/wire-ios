@@ -88,7 +88,11 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
     func testGroup_guestsAllowed_withDriveEnabled() {
         DeveloperFlag.enableDrivePermissions.enable(true)
         let selfUser = makeSelfUser(isTeamMember: true, canAddUsers: true)
-        let conversation = makeConversation(displayName: "Open Group", teamID: selfUser.teamIdentifier, participantNames: ["Alice"])
+        let conversation = makeConversation(
+            displayName: "Open Group",
+            teamID: selfUser.teamIdentifier,
+            participantNames: ["Alice"]
+        )
         conversation.allowGuests = true
         conversation.cellsState = .ready
         snapshotHelper
@@ -99,7 +103,11 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
     /// Group with Wire Drive enabled — shows the shared drive and message timer cells.
     func testGroup_wireDriveEnabled() {
         let selfUser = makeSelfUser(isTeamMember: true, canAddUsers: true)
-        let conversation = makeConversation(displayName: "Drive Group", teamID: selfUser.teamIdentifier, participantNames: ["Alice"])
+        let conversation = makeConversation(
+            displayName: "Drive Group",
+            teamID: selfUser.teamIdentifier,
+            participantNames: ["Alice"]
+        )
         conversation.cellsState = .ready
         snapshotHelper
             .withUserInterfaceStyle(.light)

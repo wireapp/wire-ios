@@ -30,7 +30,7 @@ public struct WireDriveParticipant: Sendable, Hashable, Identifiable {
     public let userType: UserType
     public let state: State
     public let iconData: IconData?
-    
+
     public enum UserType: Sendable, Hashable {
         case federated
         case external

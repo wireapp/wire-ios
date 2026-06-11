@@ -95,7 +95,7 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
 
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_UserTypeBadge() {
         [WireDriveParticipant.UserType.external, .guest, .federated].forEach {
@@ -118,7 +118,7 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
             snapshotHelper.verifyLightAndDark(matching: sut, named: "\($0).")
         }
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_AllBadgesAndStatus() {
         let participants: [WireDriveParticipant] = [
@@ -134,9 +134,9 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 iconData: .init(initials: "JD", color: .brown, image: nil)
             )
         ]
-        
+
         let sut = makeView(participants)
-        
+
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
 
@@ -180,7 +180,7 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
 
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_UserBlocked() {
         let participants: [WireDriveParticipant] = [
@@ -202,7 +202,7 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
 
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     func testSharedDriveOptionsView_UserPendingApproval() {
         let participants: [WireDriveParticipant] = [

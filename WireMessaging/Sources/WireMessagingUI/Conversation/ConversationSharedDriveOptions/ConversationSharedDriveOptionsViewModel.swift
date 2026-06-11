@@ -61,7 +61,7 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
                 UIImage(resource: .verified)
             }
         }
-        
+
         let userTypeBadge: UIImage? = switch participant.userType {
         case .federated:
             StyleKitIcon.federated.makeImage(size: .tiny, color: .black).withRenderingMode(.alwaysTemplate)
@@ -72,7 +72,7 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
         case .guest:
             StyleKitIcon.guest.makeImage(size: .tiny, color: .black).withRenderingMode(.alwaysTemplate)
         }
-        
+
         return verificationBadges + [userTypeBadge].compactMap(\.self)
     }
 }
