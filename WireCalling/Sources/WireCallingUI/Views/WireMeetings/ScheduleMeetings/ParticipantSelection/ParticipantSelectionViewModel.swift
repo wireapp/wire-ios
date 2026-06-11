@@ -19,10 +19,6 @@
 import Foundation
 import Observation
 
-protocol ParticipantSource: Sendable {
-    func search(query: String) async throws -> [ParticipantSelectionViewModel.Participant]
-}
-
 @MainActor
 @Observable
 final class ParticipantSelectionViewModel {
@@ -38,6 +34,7 @@ final class ParticipantSelectionViewModel {
     var searchText: String = "" {
         didSet { scheduleSearch() }
     }
+
     var searchResults: [Participant] = []
     var selectedParticipants: [Participant] = []
     var isSearching = false

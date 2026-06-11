@@ -27,17 +27,15 @@ struct ParticipantSelectionView: View {
     var body: some View {
         NavigationStack {
             List {
-                if !viewModel.selectedParticipants.isEmpty {
-                    Section {
-                        if viewModel.isSelectedExpanded {
-                            ForEach(viewModel.selectedParticipants) { row(for: $0) }
-                        }
-                    } header: {
-                        sectionHeader(
-                            title: "\(Strings.Selected.title) (\(viewModel.selectedParticipants.count))",
-                            isExpanded: $viewModel.isSelectedExpanded
-                        )
+                Section {
+                    if viewModel.isSelectedExpanded {
+                        ForEach(viewModel.selectedParticipants) { row(for: $0) }
                     }
+                } header: {
+                    sectionHeader(
+                        title: "\(Strings.Selected.title) (\(viewModel.selectedParticipants.count))",
+                        isExpanded: $viewModel.isSelectedExpanded
+                    )
                 }
 
                 Section {
