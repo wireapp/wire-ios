@@ -97,55 +97,50 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             let (useCase, stream) = syncEventsUseCase()
             eventStream = stream
 
-            // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
-            // cancel the task (not keeping any file lock in suspend mode)
-            try await withExpiringActivity(reason: "processPayload in NSE") { [weak self] in
-                guard let self else { return }
-                // make sure no pushChannel is open
-                let pushChannelState = PushChannelState(
-                    sharedContainerURL: dependency.appContainerURL,
-                    clientID: clientID
-                )
-                do {
-                    try await pushChannelState.markAsOpen()
-                } catch {
-                    throw Failure.pushChannelAlreadyOpened
-                }
-
-                monitoringTask = Task { [weak self] in
-                    var request = await self?.pushChannelCoordinator.listenForYieldRequests()
-                    if Task.isCancelled {
-                        return
-                    }
-                    WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
-                    self?.currentTask?.cancel()
-                    request?.acknowledge()
-                    WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
-                }
-
-                currentTask = Task {
-                    do {
-                        try Task.checkCancellation()
-                        try await useCase.invoke()
-                    } catch {
-                        // either we timeout during decrypting/storing events OR an issue
-                        // with the sync. In both cases, we end up with a stream of
-                        // notifications that has not been shown, so we need to continue
-                        // to show them.
-                        WireLogger.sync.warn(
-                            "syncing events via websocket: \(String(describing: error))",
-                            attributes: .incrementalSyncV3, .newNSE
-                        )
-                        await pushChannelState.markAsClosed()
-                    }
-                }
-                try await currentTask?.value
-                WireLogger.sync.debug("closing push channel")
-                await pushChannelState.markAsClosed()
-
-                // no need to monitor anymore let's cancel
-                monitoringTask?.cancel()
+            // make sure no pushChannel is open
+            let pushChannelState = PushChannelState(
+                sharedContainerURL: dependency.appContainerURL,
+                clientID: clientID
+            )
+            do {
+                try await pushChannelState.markAsOpen()
+            } catch {
+                throw Failure.pushChannelAlreadyOpened
             }
+
+            monitoringTask = Task { [weak self] in
+                var request = await self?.pushChannelCoordinator.listenForYieldRequests()
+                if Task.isCancelled {
+                    return
+                }
+                WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
+                self?.currentTask?.cancel()
+                request?.acknowledge()
+                WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
+            } // TODO
+
+            currentTask = Task {
+                do {
+                    try Task.checkCancellation()
+                    try await useCase.invoke()
+                } catch {
+                    // either we timeout during decrypting/storing events OR an issue
+                    // with the sync. In both cases, we end up with a stream of
+                    // notifications that has not been shown, so we need to continue
+                    // to show them.
+                    WireLogger.sync.warn(
+                        "syncing events via websocket: \(String(describing: error))",
+                        attributes: .incrementalSyncV3, .newNSE
+                    )
+                    await pushChannelState.markAsClosed()
+                }
+            } // TODO
+            try await currentTask?.value
+            WireLogger.sync.debug("closing push channel")
+            await pushChannelState.markAsClosed()
+
+            // no need to monitor anymore let's cancel
+            monitoringTask?.cancel()
 
         } else {
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
