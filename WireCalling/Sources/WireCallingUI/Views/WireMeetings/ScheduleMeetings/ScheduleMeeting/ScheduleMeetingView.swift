@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCallingDomain
 import WireDesign
+import WireReusableUIComponents
 
 struct ScheduleMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -29,10 +30,12 @@ struct ScheduleMeetingView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
+            VStack {
                 titleSection
-                scheduleSection
-                participantsSection
+                Form {
+                    scheduleSection
+                    participantsSection
+                }
             }
             .listSectionSpacing(.compact)
             .scrollContentBackground(.hidden)
@@ -58,14 +61,11 @@ struct ScheduleMeetingView: View {
     }
 
     private var titleSection: some View {
-        Section {
-            TextField(
-                Strings.SetupTitle.header,
-                text: $viewModel.meetingTitle,
-                prompt: Text(Strings.SetupTitle.placeholder)
-            )
-        }
-        .textCase(nil)
+        LabeledTextField(
+            placeholder: Strings.SetupTitle.placeholder,
+            title: Strings.SetupTitle.header,
+            string: $viewModel.meetingTitle
+        )
     }
 
     private var participantsSection: some View {
@@ -82,19 +82,19 @@ struct ScheduleMeetingView: View {
     private var scheduleSection: some View {
         Section {
             dateTimeRow(
-                label: L10n.Localizable.WireMeetings.Schedule.Time.starts,
+                label: Strings.Time.starts,
                 date: $viewModel.startDate,
                 dateField: .startDate,
                 timeField: .startTime
             )
             dateTimeRow(
-                label: L10n.Localizable.WireMeetings.Schedule.Time.ends,
+                label: Strings.Time.ends,
                 date: $viewModel.endDate,
                 dateField: .endDate,
                 timeField: .endTime
             )
 
-            Picker(L10n.Localizable.WireMeetings.Schedule.Time.repeats, selection: $viewModel.repeatOption) {
+            Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
                 ForEach(RepeatOption.allCases, id: \.self) { option in
                     Text(option.title)
                         .tag(option)

@@ -56,6 +56,7 @@ let package = Package(
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireReusableUIComponents", package: "WireUI"),
                 "WireFoundation"
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]

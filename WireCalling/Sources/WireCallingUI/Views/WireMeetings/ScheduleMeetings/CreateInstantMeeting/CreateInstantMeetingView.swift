@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireReusableUIComponents
 
 struct CreateInstantMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
