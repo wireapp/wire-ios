@@ -65,6 +65,21 @@ final class AudioEffectsPickerViewController: UIViewController {
     /// play or hand its (about-to-be-overwritten) file to the delegate.
     private var effectApplyGeneration = 0
 
+    typealias EffectApplier = (
+        _ effect: AVSAudioEffectType,
+        _ inputPath: String,
+        _ outputPath: String,
+        _ completion: @escaping () -> Void
+    ) -> Void
+
+    /// Applies an audio effect, writing the result to `outputPath` and calling `completion` on the main
+    /// thread once done. Injectable so tests can drive the completion deterministically: the real
+    /// `AVSAudioEffectType.apply` runs on a background queue and no-ops under tests, so the completion
+    /// (and the stale-completion guard around it) can't otherwise be exercised.
+    var applyEffect: EffectApplier = { effect, inputPath, outputPath, completion in
+        effect.apply(inputPath, outPath: outputPath, completion: completion)
+    }
+
     var selectedAudioEffect: AVSAudioEffectType = .none {
         didSet {
             if selectedAudioEffect == .reverse {
@@ -94,7 +109,7 @@ final class AudioEffectsPickerViewController: UIViewController {
 
                 let effectPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("effect.wav")
                 effectPath.deleteFileAtPath()
-                selectedAudioEffect.apply(recordingPath, outPath: effectPath) {
+                applyEffect(selectedAudioEffect, recordingPath, effectPath) {
                     // Ignore completions superseded by a newer effect change: the shared `effect.wav`
                     // they reference is being deleted/overwritten by the latest apply, so playing it
                     // would build an `AVAudioPlayer` from a corrupt file and silently stop playback.
