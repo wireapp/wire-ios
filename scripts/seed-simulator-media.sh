@@ -31,7 +31,7 @@ fi
 
 for FIXTURE_PATH in "$VIDEO_PATH" "$FILE_PATH"; do
   if [[ ! -f "$FIXTURE_PATH" ]]; then
-    echo "::error::Missing simulator media fixture: $FIXTURE_PATH"
+    echo "::error::Missing simulator media fixture: $FIXTURE_PATH" >&2
     exit 1
   fi
 done
@@ -48,13 +48,13 @@ echo "Seeding simulator media"
 if xcrun simctl addmedia "$IOS_SIM_ID" "$VIDEO_PATH"; then
   echo "Simulator media seeded successfully"
 else
-  echo "::error::Failed to seed simulator media with $VIDEO_PATH"
+  echo "::error::Failed to seed simulator media with $VIDEO_PATH" >&2
   exit 1
 fi
 
 echo "Seeding Files app fixtures"
 if ! FILES_CONTAINER="$(xcrun simctl get_app_container "$IOS_SIM_ID" com.apple.DocumentsApp data 2>/dev/null)"; then
-  echo "::error::Unable to locate Files app container for simulator $IOS_SIM_ID"
+  echo "::error::Unable to locate Files app container for simulator $IOS_SIM_ID" >&2
   exit 1
 fi
 
@@ -71,7 +71,7 @@ for METADATA_PATH in "$APP_GROUP_ROOT"/*/.com.apple.mobile_container_manager.met
 done
 
 if [[ -z "$LOCAL_STORAGE_DIR" ]]; then
-  echo "::error::Unable to locate Files local storage app group for simulator $IOS_SIM_ID"
+  echo "::error::Unable to locate Files local storage app group for simulator $IOS_SIM_ID" >&2
   exit 1
 fi
 
@@ -80,6 +80,6 @@ mkdir -p "$LOCAL_STORAGE_DIR"
 if cp "$FILE_PATH" "$VIDEO_PATH" "$LOCAL_STORAGE_DIR/"; then
   echo "Files app fixtures seeded successfully"
 else
-  echo "::error::Failed to copy $FILE_PATH and $VIDEO_PATH into $LOCAL_STORAGE_DIR"
+  echo "::error::Failed to copy $FILE_PATH and $VIDEO_PATH into $LOCAL_STORAGE_DIR" >&2
   exit 1
 fi
