@@ -31,7 +31,8 @@ extension WireDriveConversation {
                     displayName: "bilbo",
                     role: .editor,
                     isSelfUser: true,
-                    id: UUID().uuidString
+                    id: UUID().uuidString,
+                    userType: .member
                 )
             ]
         )

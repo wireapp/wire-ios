@@ -87,10 +87,10 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
     /// Group with drive enabled and guests allowed — shows the shared drive and message timer cells.
     func testGroup_guestsAllowed_withDriveEnabled() {
         DeveloperFlag.enableDrivePermissions.enable(true)
-        let conversation = makeConversation(displayName: "Open Group", participantNames: ["Alice"])
+        let selfUser = makeSelfUser(isTeamMember: true, canAddUsers: true)
+        let conversation = makeConversation(displayName: "Open Group", teamID: selfUser.teamIdentifier, participantNames: ["Alice"])
         conversation.allowGuests = true
         conversation.cellsState = .ready
-        let selfUser = makeSelfUser(isTeamMember: true, canAddUsers: true)
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: makeView(conversation: conversation, selfUser: selfUser))
@@ -98,11 +98,12 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
 
     /// Group with Wire Drive enabled — shows the shared drive and message timer cells.
     func testGroup_wireDriveEnabled() {
-        let conversation = makeConversation(displayName: "Drive Group", participantNames: ["Alice"])
+        let selfUser = makeSelfUser(isTeamMember: true, canAddUsers: true)
+        let conversation = makeConversation(displayName: "Drive Group", teamID: selfUser.teamIdentifier, participantNames: ["Alice"])
         conversation.cellsState = .ready
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: makeView(conversation: conversation))
+            .verify(matching: makeView(conversation: conversation, selfUser: selfUser))
     }
 
     /// Channel — uses channel-specific heading text.
@@ -136,12 +137,14 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
     private func makeConversation(
         displayName: String? = nil,
         creator: ZMUser? = nil,
+        teamID: UUID? = nil,
         participantNames: [String] = []
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
         conversation.conversationType = .group
         conversation.userDefinedName = displayName
+        conversation.teamRemoteIdentifier = teamID
 
         let creatorUser = creator ?? ZMUser.selfUser(in: uiMOC)
         // `creator` is readonly in the public API; use KVC to set it from tests.

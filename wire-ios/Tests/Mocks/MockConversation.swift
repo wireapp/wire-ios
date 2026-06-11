@@ -99,7 +99,7 @@ class SwiftMockConversation: NSObject, Conversation {
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
-    var isSelfAGuest: Bool = false
+    var isSelfADriveViewer: Bool = false
 
     var userDefinedName: String?
 
