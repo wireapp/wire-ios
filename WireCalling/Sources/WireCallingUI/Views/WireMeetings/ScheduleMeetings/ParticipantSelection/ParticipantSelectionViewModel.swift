@@ -38,6 +38,7 @@ final class ParticipantSelectionViewModel {
     var searchResults: [Participant] = []
     var selectedParticipants: [Participant] = []
     var isSearching = false
+    var errorMessage: String?
     var isSelectedExpanded = true
     var isContactsExpanded = true
 
@@ -69,6 +70,10 @@ final class ParticipantSelectionViewModel {
         }
     }
 
+    func retrySearch() {
+        scheduleSearch(debounce: .zero)
+    }
+
     // MARK: - Search
 
     private func scheduleSearch(debounce: Duration = .milliseconds(300)) {
@@ -85,44 +90,13 @@ final class ParticipantSelectionViewModel {
                 let results = try await source.search(query: query)
                 guard !Task.isCancelled else { return }
                 searchResults = results
+                errorMessage = nil
             } catch is CancellationError {
                 return
             } catch {
-                // TODO: surface error
+                errorMessage = L10n.Localizable.WireMeetings.Schedule.Participants.Error.message
             }
             isSearching = false
         }
-    }
-}
-
-// MARK: - Mock
-
-struct MockParticipantSource: ParticipantSource {
-
-    let participants: [ParticipantSelectionViewModel.Participant]
-
-    init(participants: [ParticipantSelectionViewModel.Participant] = .mock) {
-        self.participants = participants
-    }
-
-    func search(query: String) async throws -> [ParticipantSelectionViewModel.Participant] {
-        guard !query.isEmpty else { return participants }
-        return participants.filter { $0.name.localizedCaseInsensitiveContains(query) }
-    }
-}
-
-private extension Array where Element == ParticipantSelectionViewModel.Participant {
-    static var mock: Self {
-        [
-            .init(id: UUID(), name: "Martin Koch-Johansen", username: "username"),
-            .init(id: UUID(), name: "Olga Heaney", username: "username"),
-            .init(id: UUID(), name: "Margarete Springer", username: "username"),
-            .init(id: UUID(), name: "Lorenzo Schmeler", username: nil),
-            .init(id: UUID(), name: "Jaqueline Olaho", username: nil),
-            .init(id: UUID(), name: "Katie Armstrong", username: "username"),
-            .init(id: UUID(), name: "Zachary Ratke", username: "username"),
-            .init(id: UUID(), name: "Marco Weissnat", username: "username"),
-            .init(id: UUID(), name: "Deborah Schoen", username: "username")
-        ]
     }
 }

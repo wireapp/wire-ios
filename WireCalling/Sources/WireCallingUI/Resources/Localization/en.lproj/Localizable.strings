@@ -69,3 +69,5 @@
 "wireMeetings.schedule.participants.search.field.placeholder" = "Enter a name or email";
 "wireMeetings.schedule.participants.selected.title" = "Selected";
 "wireMeetings.schedule.participants.contacts.title" = "Contacts";
+"wireMeetings.schedule.participants.error.message" = "Couldn't load contacts. Try again.";
+"wireMeetings.schedule.participants.retry.button" = "Retry";

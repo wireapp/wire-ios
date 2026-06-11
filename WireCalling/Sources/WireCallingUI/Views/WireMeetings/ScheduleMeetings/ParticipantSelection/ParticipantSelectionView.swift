@@ -27,6 +27,10 @@ struct ParticipantSelectionView: View {
     var body: some View {
         NavigationStack {
             List {
+                if let errorMessage = viewModel.errorMessage {
+                    errorBanner(message: errorMessage)
+                }
+
                 Section {
                     if viewModel.isSelectedExpanded {
                         ForEach(viewModel.selectedParticipants) { row(for: $0) }
@@ -72,6 +76,22 @@ struct ParticipantSelectionView: View {
     }
 
     // MARK: - Subviews
+
+    private func errorBanner(message: String) -> some View {
+        Section {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                Text(message)
+                    .font(.subheadline)
+                Spacer()
+                Button(Strings.Retry.button) {
+                    viewModel.retrySearch()
+                }
+                .buttonStyle(.borderless)
+            }
+        }
+    }
 
     private func sectionHeader(title: String, isExpanded: Binding<Bool>) -> some View {
         Button {
@@ -131,6 +151,53 @@ struct ParticipantSelectionView: View {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("success") {
     ParticipantSelectionView(viewModel: ParticipantSelectionViewModel(source: MockParticipantSource()))
+}
+
+#Preview("failure") {
+    ParticipantSelectionView(
+        viewModel: ParticipantSelectionViewModel(source: MockParticipantSource(error: URLError(.badServerResponse)))
+    )
+}
+
+// MARK: - Mock
+
+struct MockParticipantSource: ParticipantSource {
+
+    let result: Result<[ParticipantSelectionViewModel.Participant], any Error>
+
+    init(participants: [ParticipantSelectionViewModel.Participant] = .mock) {
+        self.result = .success(participants)
+    }
+
+    init(error: any Error) {
+        self.result = .failure(error)
+    }
+
+    func search(query: String) async throws -> [ParticipantSelectionViewModel.Participant] {
+        switch result {
+        case .failure(let error):
+            throw error
+        case .success(let participants):
+            guard !query.isEmpty else { return participants }
+            return participants.filter { $0.name.localizedCaseInsensitiveContains(query) }
+        }
+    }
+}
+
+private extension Array where Element == ParticipantSelectionViewModel.Participant {
+    static var mock: Self {
+        [
+            .init(id: UUID(), name: "Martin Koch-Johansen", username: "username"),
+            .init(id: UUID(), name: "Olga Heaney", username: "username"),
+            .init(id: UUID(), name: "Margarete Springer", username: "username"),
+            .init(id: UUID(), name: "Lorenzo Schmeler", username: nil),
+            .init(id: UUID(), name: "Jaqueline Olaho", username: nil),
+            .init(id: UUID(), name: "Katie Armstrong", username: "username"),
+            .init(id: UUID(), name: "Zachary Ratke", username: "username"),
+            .init(id: UUID(), name: "Marco Weissnat", username: "username"),
+            .init(id: UUID(), name: "Deborah Schoen", username: "username")
+        ]
+    }
 }
