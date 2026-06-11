@@ -27,6 +27,7 @@ struct ParticipantSelectionView: View {
     }
 
     @Environment(\.dismiss) private var dismiss
+    @State private(set) var viewModel: ParticipantSelectionViewModel
 
     @State private var searchText = ""
     @State private var isSelectedExpanded = true
@@ -180,5 +181,5 @@ private extension Array where Element == ParticipantSelectionView.Participant {
 // MARK: - Preview
 
 #Preview {
-    ParticipantSelectionView()
+    ParticipantSelectionView(viewModel: ParticipantSelectionViewModel())
 }

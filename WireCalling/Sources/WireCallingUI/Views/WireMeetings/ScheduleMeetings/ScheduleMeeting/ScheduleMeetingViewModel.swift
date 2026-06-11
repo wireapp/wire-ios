@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import Observation
 import WireCallingDomain
 
 @Observable
