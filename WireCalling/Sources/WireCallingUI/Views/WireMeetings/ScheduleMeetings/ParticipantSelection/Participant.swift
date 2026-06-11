@@ -16,6 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ParticipantSource: Sendable {
-    func search(query: String) async throws -> [Participant]
+
+public import Foundation
+
+public struct Participant: Identifiable, Hashable, Sendable {
+
+    public let id: UUID
+    public var name: String
+    public var username: String?
+
+    public init(id: UUID, name: String, username: String?) { // TODO: non-optional username
+        self.id = id
+        self.name = name
+        self.username = username
+    }
+
 }

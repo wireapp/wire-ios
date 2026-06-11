@@ -111,7 +111,7 @@ struct ParticipantSelectionView: View {
         .textCase(nil)
     }
 
-    private func row(for participant: ParticipantSelectionViewModel.Participant) -> some View {
+    private func row(for participant: Participant) -> some View {
         let isSelected = viewModel.isSelected(participant)
         return Button {
             viewModel.toggleSelection(participant)
@@ -165,9 +165,9 @@ struct ParticipantSelectionView: View {
 
 struct MockParticipantSource: ParticipantSource {
 
-    let result: Result<[ParticipantSelectionViewModel.Participant], any Error>
+    let result: Result<[Participant], any Error>
 
-    init(participants: [ParticipantSelectionViewModel.Participant] = .mock) {
+    init(participants: [Participant] = .mock) {
         self.result = .success(participants)
     }
 
@@ -175,7 +175,7 @@ struct MockParticipantSource: ParticipantSource {
         self.result = .failure(error)
     }
 
-    func search(query: String) async throws -> [ParticipantSelectionViewModel.Participant] {
+    func search(query: String) async throws -> [Participant] {
         switch result {
         case .failure(let error):
             throw error
@@ -186,7 +186,7 @@ struct MockParticipantSource: ParticipantSource {
     }
 }
 
-private extension Array where Element == ParticipantSelectionViewModel.Participant {
+private extension Array where Element == Participant {
     static var mock: Self {
         [
             .init(id: UUID(), name: "Martin Koch-Johansen", username: "username"),

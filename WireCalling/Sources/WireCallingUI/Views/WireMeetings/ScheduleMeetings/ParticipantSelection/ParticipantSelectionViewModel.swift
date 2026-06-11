@@ -23,12 +23,6 @@ import Observation
 @Observable
 final class ParticipantSelectionViewModel {
 
-    struct Participant: Identifiable, Hashable, Sendable {
-        let id: UUID
-        var name: String
-        var username: String?
-    }
-
     private let source: any ParticipantSource
 
     var searchText: String = "" {
