@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireDataModel
 import WireLogging
 
@@ -110,7 +111,7 @@ public struct ResetProteusSessionUseCase: ResetProteusSessionUseCaseProtocol {
 /// user's clients have been notified about the session reset (i.e. `sessionHasBeenReset`).
 private final class SessionResetObserver: NSObject, UserClientObserver {
 
-    private let lock = NSLock()
+    private let lock = OSAllocatedUnfairLock()
     private var continuation: CheckedContinuation<Void, Never>?
     private var didReset = false
     private var token: NSObjectProtocol?
@@ -121,26 +122,25 @@ private final class SessionResetObserver: NSObject, UserClientObserver {
 
     func waitUntilReset() async {
         await withCheckedContinuation { continuation in
-            lock.lock()
-            if didReset {
-                lock.unlock()
-                continuation.resume()
-            } else {
+            let alreadyReset = lock.withLock {
+                if didReset { return true }
                 self.continuation = continuation
-                lock.unlock()
+                return false
             }
+            if alreadyReset { continuation.resume() }
         }
     }
 
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
         guard changeInfo.sessionHasBeenReset else { return }
 
-        lock.lock()
-        let continuation = continuation
-        self.continuation = nil
-        didReset = true
-        token = nil
-        lock.unlock()
+        let continuation = lock.withLock { () -> CheckedContinuation<Void, Never>? in
+            let continuation = self.continuation
+            self.continuation = nil
+            didReset = true
+            token = nil
+            return continuation
+        }
 
         continuation?.resume()
     }
