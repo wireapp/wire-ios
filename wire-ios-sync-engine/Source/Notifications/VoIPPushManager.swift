@@ -111,10 +111,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         payload: [AnyHashable: Any],
         completion: @escaping () -> Void
     ) {
-        WireLogger.calling.info(
-            "WOW did receive incoming push 1 payload: \(payload)",
-            attributes: .newNSE, .safePublic
-        )
         guard
             let accountIDString = payload["accountID"] as? String,
             let accountID = UUID(uuidString: accountIDString),
@@ -128,10 +124,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             completion()
             return
         }
-        WireLogger.calling.info(
-            "did receive incoming push 2",
-            attributes: .newNSE, .safePublic
-        )
         let handle = CallHandle(
             accountID: accountID,
             conversationID: conversationID
