@@ -180,6 +180,50 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
 
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
+    
+    @MainActor
+    func testSharedDriveOptionsView_UserBlocked() {
+        let participants: [WireDriveParticipant] = [
+            WireDriveParticipant(
+                handle: "johndoe",
+                displayName: "John Doe (oOo for three weeks)",
+                role: .editor,
+                isSelfUser: false,
+                id: UUID().uuidString,
+                userType: .member,
+                availabilityStatus: .none,
+                verificationBadges: [],
+                state: .blocked,
+                iconData: .init(initials: "JD", color: .brown, image: nil)
+            )
+        ]
+
+        let sut = makeView(participants)
+
+        snapshotHelper.verifyLightAndDark(matching: sut)
+    }
+    
+    @MainActor
+    func testSharedDriveOptionsView_UserPendingApproval() {
+        let participants: [WireDriveParticipant] = [
+            WireDriveParticipant(
+                handle: "johndoe",
+                displayName: "John Doe (oOo for three weeks)",
+                role: .editor,
+                isSelfUser: false,
+                id: UUID().uuidString,
+                userType: .member,
+                availabilityStatus: .none,
+                verificationBadges: [],
+                state: .pendingApproval,
+                iconData: .init(initials: "JD", color: .brown, image: nil)
+            )
+        ]
+
+        let sut = makeView(participants)
+
+        snapshotHelper.verifyLightAndDark(matching: sut)
+    }
 
     @MainActor
     private func makeView(_ participants: [WireDriveParticipant]) -> some View {

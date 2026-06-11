@@ -112,50 +112,52 @@ package struct ConversationSharedDriveOptionsView: View {
 
     @ViewBuilder
     private func participantRow(_ participant: WireDriveParticipant) -> some View {
-        HStack(spacing: 12) {
-            icon(participant)
-                .frame(width: iconSize, height: iconSize)
-
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 5) {
-                    if let leadingImage = viewModel.leadingImage(for: participant) {
-                        Image(uiImage: leadingImage)
-                    }
-
+        Label {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 5) {
-                        Text(participant.displayName)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                            .font(for: .body1)
-                            .fontWeight(.medium)
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        if let leadingImage = viewModel.leadingImage(for: participant) {
+                            Image(uiImage: leadingImage)
+                        }
 
-                        if participant.isSelfUser {
-                            Text("(\(Strings.SharedDriveAccessSection.you))")
+                        HStack(spacing: 5) {
+                            Text(participant.displayName)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
                                 .font(for: .body1)
                                 .fontWeight(.medium)
-                                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                            if participant.isSelfUser {
+                                Text("(\(Strings.SharedDriveAccessSection.you))")
+                                    .font(for: .body1)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                            }
+                        }
+
+                        ForEach(viewModel.trailingImages(for: participant), id: \.self) {
+                            Image(uiImage: $0)
                         }
                     }
 
-                    ForEach(viewModel.trailingImages(for: participant), id: \.self) {
-                        Image(uiImage: $0)
-                    }
+                    Text("@" + participant.handle)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
 
-                Text("@" + participant.handle)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+                Spacer()
+
+                Text(participant.role.rawValue)
                     .font(for: .subline1)
-                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
-            }
-
-            Spacer()
-
-            Text(participant.role.rawValue)
-                .font(for: .subline1)
-                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-        }.padding(.vertical, 2)
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+            }.padding(.vertical, 2)
+        } icon: {
+            icon(participant)
+                .frame(width: iconSize, height: iconSize)
+        }
     }
 
     @ViewBuilder
