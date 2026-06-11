@@ -223,7 +223,7 @@ extension NotificationServiceExtension {
 
     private func logUserError(_ error: NSEUserScope.Failure) {
         switch error {
-        case let .mainAppRequired(message):
+        case let .mainAppRequired(message, _):
             logger.warn(
                 "Main app required, need to open main app: \(message)",
                 attributes: .newNSE, .safePublic
