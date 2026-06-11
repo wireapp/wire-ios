@@ -19,10 +19,8 @@
 import Foundation
 import NeedleFoundation
 import WireDataModel
-//import GenericMessageProtocol
 import WireLogging
 import WireNetwork
-//import CallKit
 
 protocol NSEClientScopeDependency: Dependency {
 
@@ -62,13 +60,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
     private var currentTask: Task<Void, any Error>?
     private var monitoringTask: Task<Void, any Error>?
-//    private lazy var processCallingEventsUseCase: ProcessCallingEventsUseCase = ProcessCallingEventsUseCase(
-//        callingService: callingService,
-//        clientID: clientID,
-//        conversationLocalStore: conversationLocalStore,
-//        isFederationEnabled: isFederationEnabled,
-//        accountID: dependency.accountID
-//    )
     private var processCallingEventsUseCase: ProcessCallingEventsUseCase {
         shared {
             ProcessCallingEventsUseCase(
@@ -91,89 +82,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             avsService: callingService
         )
     }()
-
-    //private var callKitReportTask: Task<Void, Never>?
-
-//    private lazy var callingService: any AVSCallingEventServiceProtocol = {
-//        let service = AVSCallingEventService(
-//            userID: dependency.accountID.transportString(),
-//            clientID: clientID
-//        )
-//
-//        // Track whether we reported an incoming call to CallKit,
-//        // so onCallClosed knows whether it needs to stop ringing.
-//        var didReportIncomingCall = false
-//
-//        service.onIncomingCall = { [weak self] conversationId, shouldRing, isVideoCall in
-//            WireLogger.calling.info(
-//                "gagaga onIncomingCall, conversationId: \(conversationId)",
-//                attributes: .newNSE, .safePublic
-//            )
-//
-//            guard let self,
-//                  let qualifiedID = QualifiedID(rawValue: conversationId) else {
-//                return
-//            }
-//            let callKitContent: [String: Any] = [
-//                "accountID": self.dependency.accountID.uuidString,
-//                "conversationID": qualifiedID.uuid.uuidString,
-//                "shouldRing": shouldRing,
-//                "hasVideo": isVideoCall,
-//                "callerName": ""
-//            ]
-//            WireLogger.calling.info(
-//                "gagaga onIncomingCall, callKitContent \(callKitContent)",
-//                attributes: .newNSE, .safePublic
-//            )
-//            didReportIncomingCall = shouldRing
-//
-//            self.callKitReportTask = Task {
-//                await withCheckedContinuation { continuation in
-//                    CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
-//                        if let error {
-//                            WireLogger.calling.error("gagaga reportNewIncomingVoIPPushPayload error: \(error)", attributes: .newNSE, .safePublic)
-//                        } else {
-//                            WireLogger.calling.info("gagaga reportNewIncomingVoIPPushPayload done", attributes: .newNSE, .safePublic)
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        service.onMissedCall = { conversationId, messageTime, isVideoCall in
-//            WireLogger.calling.info(
-//                "gagaga onMissedCall",
-//                attributes: .newNSE, .safePublic
-//            )
-//            // Nothing to do here — the missed call text notification
-//            // is already built by ConversationCallingEventNotificationBuilder
-//            // from the same event in the event stream.
-//            WireLogger.calling.info(
-//                "AVS: missed call in conversation \(conversationId)",
-//                attributes: .newNSE, .safePublic
-//            )
-//        }
-//
-//        service.onCallClosed = { [weak self] reason, conversationId in
-//            WireLogger.calling.info(
-//                "gagaga onCallClosed",
-//                attributes: .newNSE, .safePublic
-//            )
-//            guard let self, didReportIncomingCall else { return }
-//            // Stop ringing — only if we previously started it
-//            let callKitContent: [String: Any] = [
-//                "accountID": self.dependency.accountID.uuidString,
-//                "conversationID": conversationId,
-//                "shouldRing": false
-//            ]
-//            didReportIncomingCall = false
-//            Task {
-//                try? await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
-//            }
-//        }
-//
-//        return service
-//    }()
 
     init(
         parent: any Scope,
@@ -198,7 +106,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         super.init(parent: parent)
     }
-    
+
     func processPayload(
         eventID: UUID,
         contentHandler: @escaping (UNNotificationContent) -> Void
@@ -271,85 +179,34 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         for await batch in upstream {
             eventBatches.append(batch)
         }
-        WireLogger.calling.info(
-            "WOW NSE: buffered \(eventBatches.count) batches, total events: \(eventBatches.flatMap { $0 }.count)",
-            attributes: .newNSE, .safePublic
-        )
+
         let isAvsReady = dependency.sharedUserDefaults.bool(forKey: "isAVSReady")
         let isCallKitAvailable = dependency.sharedUserDefaults.bool(forKey: "isCallKitAvailable")
-        WireLogger.calling.info("WOW NSE state: isAvsReady=\(isAvsReady), isCallKitAvailable=\(isCallKitAvailable)", attributes: .newNSE, .safePublic)
 
         // 3. Process calling events via AVS — CallKit is reported internally via callingService callbacks.
         _ = callKitReportingCoordinator
         await processCallingEventsUseCase.invoke(eventBatches: eventBatches, callKitReportingCoordinator: callKitReportingCoordinator)
         //await callKitReportingCoordinator.waitForCompletion()
 
-        // 4. Generate notifications from events.
-        let eventStream = AsyncStream<[UpdateEvent]> { continuation in
+            let eventStream = AsyncStream<[UpdateEvent]> { continuation in
             for batch in eventBatches { continuation.yield(batch) }
             continuation.finish()
         }
+
+        // Generate notifications from events.
         let notifications = try await generateNotificationsUseCase(
             eventID: eventID
         ).invoke(
             updateEvents: eventStream
         )
 
-        // 5. Show notifications.
+        // Show notifications.
         try await showNotificationsUseCase(
             contentHandler: contentHandler
         ).invoke(
             userNotifications: notifications
         )
-//        _ = await callKitReportTask?.value
     }
-
-//    private func teeCallingEvents(
-//        from upstream: AsyncStream<[UpdateEvent]>
-//    ) -> AsyncStream<[UpdateEvent]> {
-//        AsyncStream<[UpdateEvent]> { continuation in
-//            // Ensure end() even if downstream cancels early
-//            continuation.onTermination = { _ in
-//                self.callingService.end()
-//            }
-//
-//            // Start once, right before consumption begins
-//            callingService.start()
-//
-//            Task { [weak self] in
-//                guard let self else {
-//                    continuation.finish()
-//                    return
-//                }
-//
-//                for await batch in upstream {
-//                    if Task.isCancelled { break }
-//
-//                    // Only process calling events
-//                    for event in batch {
-//                        if let param = await self.avsParameters(from: event) {
-//                            callingService.process(
-//                                data: param.data,
-//                                currentTime: param.currentTime,
-//                                serverTime: param.serverTime,
-//                                conversationId: param.conversationId,
-//                                userId: param.userId,
-//                                clientId: clientID,
-//                                conversationType: param.conversationType
-//                            )
-//                        }
-//                    }
-//
-//                    // Forward batch to downstream consumer (normal notifications)
-//                    continuation.yield(batch)
-//                }
-//
-//                continuation.finish()
-//                callingService.end()
-//            }
-//        }
-//    }
-//
 
     // MARK: - Calling
 
@@ -361,16 +218,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             )
         }
     }
-
-//    private func processCallingEventsUseCase() -> ProcessCallingEventsUseCase {
-//        ProcessCallingEventsUseCase(
-//            callingService: callingService,
-//            clientID: clientID,
-//            conversationLocalStore: conversationLocalStore,
-//            isFederationEnabled: isFederationEnabled,
-//            accountID: dependency.accountID
-//        )
-//    }
 
     // MARK: - Pull events consumable notifications
 
