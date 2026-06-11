@@ -60,28 +60,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
     private var currentTask: Task<Void, any Error>?
     private var monitoringTask: Task<Void, any Error>?
-    private var processCallingEventsUseCase: ProcessCallingEventsUseCase {
-        shared {
-            ProcessCallingEventsUseCase(
-                callingService: callingService,
-                clientID: clientID,
-                conversationLocalStore: conversationLocalStore,
-                userLocalStore: userLocalStore,
-                isFederationEnabled: isFederationEnabled,
-                accountID: dependency.accountID
-            )
-        }
-    }
-    private lazy var callKitReportingCoordinator: CallKitReportingCoordinator = {
-        WireLogger.calling.debug(
-            "NSEClientScope: creating CallKitReportingCoordinator",
-            attributes: .newNSE, .safePublic
-        )
-        return CallKitReportingCoordinator(
-            accountID: dependency.accountID,
-            avsService: callingService
-        )
-    }()
 
     init(
         parent: any Scope,
@@ -211,12 +189,35 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     // MARK: - Calling
 
     private var callingService: any AVSCallingEventServiceProtocol {
+        // TODO: should it be shared?
         shared {
             AVSCallingEventService(
                 userID: dependency.accountID.transportString(),
                 clientID: clientID
             )
         }
+    }
+
+    private var processCallingEventsUseCase: ProcessCallingEventsUseCase {
+        // TODO: should it be shared?
+        shared {
+            ProcessCallingEventsUseCase(
+                callingService: callingService,
+                clientID: clientID,
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore,
+                isFederationEnabled: isFederationEnabled,
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var callKitReportingCoordinator: CallKitReportingCoordinator {
+        // TODO: should it be shared?
+        CallKitReportingCoordinator(
+            accountID: dependency.accountID,
+            avsService: callingService
+        )
     }
 
     // MARK: - Pull events consumable notifications
@@ -717,13 +718,3 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     }
 
 }
-
-private struct AVSCallParams {
-     let data: Data
-     let currentTime: UInt32
-     let serverTime: UInt32
-     let conversationId: String
-     let userId: String
-     let clientId: String
-     let conversationType: Int32
- }
