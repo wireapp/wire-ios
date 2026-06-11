@@ -74,13 +74,13 @@ struct ScheduleMeetingView: View {
     private var scheduleSection: some View {
         Section {
             dateTimeRow(
-                label: "Starts",
+                label: L10n.Localizable.WireMeetings.Schedule.Time.starts,
                 date: $viewModel.startDate,
                 dateField: .startDate,
                 timeField: .startTime
             )
             dateTimeRow(
-                label: "Ends",
+                label: L10n.Localizable.WireMeetings.Schedule.Time.ends,
                 date: $viewModel.endDate,
                 dateField: .endDate,
                 timeField: .endTime
