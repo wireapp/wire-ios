@@ -27,6 +27,8 @@ import WireCallingDomainSupport
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
 package final class AllMeetingsViewModel: ObservableObject {
 
+    let memberRepository: any MemberRepositoryProtocol
+
     package let meetingsViewModel: MeetingsViewModel
 
     @Published var isCreateInstantMeetingPresented: Bool = false
@@ -35,13 +37,15 @@ package final class AllMeetingsViewModel: ObservableObject {
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        memberRepository: any MemberRepositoryProtocol
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
+        self.memberRepository = memberRepository
     }
 
     // MARK: - Public Interface
@@ -55,11 +59,11 @@ package final class AllMeetingsViewModel: ObservableObject {
     }
 
     func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel()
+        CreateInstantMeetingViewModel(memberRepository: memberRepository)
     }
 
     func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel()
+        ScheduleMeetingViewModel(memberRepository: memberRepository)
     }
 
 }

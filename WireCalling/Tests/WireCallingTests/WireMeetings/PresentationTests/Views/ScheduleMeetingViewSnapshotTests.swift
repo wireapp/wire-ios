@@ -77,7 +77,7 @@ final class ScheduleMeetingViewSnapshotTests: XCTestCase {
     // MARK: - Helpers
 
     private func createViewModel() -> ScheduleMeetingViewModel {
-        let viewModel = ScheduleMeetingViewModel()
+        let viewModel = ScheduleMeetingViewModel(memberRepository: MemberRepositoryProtocolMock())
         viewModel.startDate = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
         viewModel.endDate = viewModel.startDate.addingTimeInterval(60 * 30) // 30 minutes
         return viewModel

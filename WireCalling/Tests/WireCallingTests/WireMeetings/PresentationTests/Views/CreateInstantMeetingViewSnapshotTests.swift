@@ -44,7 +44,7 @@ final class CreateInstantMeetingViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel())
+            CreateInstantMeetingView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +61,7 @@ final class CreateInstantMeetingViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel())
+            CreateInstantMeetingView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -72,6 +72,14 @@ final class CreateInstantMeetingViewSnapshotTests: XCTestCase {
                     named: "\(dynamicTypeSize)"
                 )
         }
+    }
+
+    // MARK: - Helpers
+
+    private func makeViewModel() -> CreateInstantMeetingViewModel {
+        CreateInstantMeetingViewModel(
+            memberRepository: MemberRepositoryProtocolMock()
+        )
     }
 
 }

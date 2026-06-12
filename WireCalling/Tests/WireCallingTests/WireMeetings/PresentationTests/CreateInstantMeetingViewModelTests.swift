@@ -18,6 +18,7 @@
 
 import SwiftUI
 import Testing
+import WireCallingDomainSupport
 
 @testable import WireCallingUI
 
@@ -27,7 +28,7 @@ struct CreateInstantMeetingViewModelTests {
     private let viewModel: CreateInstantMeetingViewModel
 
     init() {
-        self.viewModel = CreateInstantMeetingViewModel()
+        self.viewModel = CreateInstantMeetingViewModel(memberRepository: MemberRepositoryProtocolMock())
     }
 
     // MARK: - isNextButtonEnabled Tests

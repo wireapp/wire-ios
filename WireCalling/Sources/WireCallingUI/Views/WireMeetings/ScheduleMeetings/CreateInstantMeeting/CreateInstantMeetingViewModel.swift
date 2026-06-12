@@ -18,9 +18,12 @@
 
 import Foundation
 import Observation
+import WireCallingDomain
 
 @Observable
 final class CreateInstantMeetingViewModel {
+
+    let memberRepository: any MemberRepositoryProtocol
 
     var meetingTitle: String = ""
 
@@ -34,8 +37,18 @@ final class CreateInstantMeetingViewModel {
 
     // MARK: - Public Interface
 
+    init(
+        memberRepository: any MemberRepositoryProtocol
+    ) {
+        self.memberRepository = memberRepository
+    }
+
     func clearTitle() {
         meetingTitle = ""
+    }
+
+    @MainActor func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
+        MemberSelectionViewModel(source: memberRepository)
     }
 
     func createInstantMeeting() {}

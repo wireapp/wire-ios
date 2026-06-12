@@ -284,5 +284,15 @@ private extension RepeatOption {
 // MARK: - Preview
 
 #Preview {
-    ScheduleMeetingView(viewModel: ScheduleMeetingViewModel())
+    ScheduleMeetingView(
+        viewModel: ScheduleMeetingViewModel(
+            memberRepository: MemberRepositoryMock()
+        )
+    )
+}
+
+private struct MemberRepositoryMock: MemberRepositoryProtocol {
+    func search(query: String) async throws -> [Member] {
+        []
+    }
 }

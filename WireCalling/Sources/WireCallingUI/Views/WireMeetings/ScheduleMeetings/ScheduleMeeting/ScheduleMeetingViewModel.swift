@@ -23,6 +23,8 @@ import WireCallingDomain
 @Observable
 final class ScheduleMeetingViewModel {
 
+    let memberRepository: any MemberRepositoryProtocol
+
     var meetingTitle: String = ""
 
     // TODO: [WPB-21335] Implement Wire users and emails
@@ -38,8 +40,18 @@ final class ScheduleMeetingViewModel {
 
     // MARK: - Public Interface
 
+    init(
+        memberRepository: any MemberRepositoryProtocol
+    ) {
+        self.memberRepository = memberRepository
+    }
+
     func clearTitle() {
         meetingTitle = ""
+    }
+
+    @MainActor func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
+        MemberSelectionViewModel(source: memberRepository)
     }
 
     func scheduleMeeting() {}

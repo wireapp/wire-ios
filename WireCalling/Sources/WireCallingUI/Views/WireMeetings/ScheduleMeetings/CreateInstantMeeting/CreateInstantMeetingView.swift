@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireCallingDomain
 
 struct CreateInstantMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -83,5 +84,15 @@ struct CreateInstantMeetingView: View {
 // MARK: - Preview
 
 #Preview {
-    CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel())
+    CreateInstantMeetingView(
+        viewModel: CreateInstantMeetingViewModel(
+            memberRepository: MemberRepositoryMock()
+        )
+    )
+}
+
+private struct MemberRepositoryMock: MemberRepositoryProtocol {
+    func search(query: String) async throws -> [Member] {
+        []
+    }
 }

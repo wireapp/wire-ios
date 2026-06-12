@@ -18,7 +18,7 @@
 
 // sourcery: AutoMockable
 /// Repository for accessing Members
-package protocol MemberRepositoryProtocol: Sendable {
+public protocol MemberRepositoryProtocol: Sendable {
 
     func search(query: String) async throws -> [Member]
 

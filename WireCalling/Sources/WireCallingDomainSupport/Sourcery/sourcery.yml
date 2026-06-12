@@ -8,3 +8,4 @@ output:
 args:
   autoMockableImports: ["WireCallingData"]
   autoMockablePackageImports: ["Foundation", "WireCallingDomain"]
+  autoMockablePublicImports: ["WireCallingDomain"]
