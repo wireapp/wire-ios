@@ -122,7 +122,7 @@ platform :ios do
         end
     end
 
-    desc "List UITest identifiers and their comment tags"
+    desc "List UITest identifiers and their tags"
     lane :list_uitest_tags do |options|
         tests = ui_test_tests_matching_tag_groups(
             tag_groups: parse_ui_test_tag_expression(options[:tags]),
