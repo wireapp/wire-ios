@@ -118,6 +118,7 @@
 
 // MARK: - Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
+"conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Viewer access";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";

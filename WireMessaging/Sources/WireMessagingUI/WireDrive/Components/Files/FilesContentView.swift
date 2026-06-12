@@ -95,7 +95,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             }
             .animation(.easeInOut(duration: 0.25), value: viewModel.isOffline)
             .animation(.easeOut(duration: 0.25), value: isSearchFocused)
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .quickFilePreview($viewModel.quickPreviewItem)
             .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
