@@ -426,11 +426,6 @@ final class ConversationViewController: UIViewController {
         return true
     }
 
-    @objc
-    func onBackButtonPressed(_ backButton: UIButton?) {
-        mainCoordinator.hideConversation()
-    }
-
     private func setupContentViewController() {
         contentViewController?.delegate = self
         exchangeableContentViewController.view.translatesAutoresizingMaskIntoConstraints = false
