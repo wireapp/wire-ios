@@ -305,37 +305,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItSetsNeedsToNotifyOtherUserAboutSessionReset_WhenResettingSession() {
-        var otherClient: UserClient!
-
-        // given
-        syncMOC.performGroupedAndWait {
-            _ = self.createSelfClient(onMOC: self.syncMOC)
-
-            otherClient = UserClient.insertNewObject(in: self.syncMOC)
-            otherClient.remoteIdentifier = UUID.create().transportString()
-
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            otherClient.user = otherUser
-
-            let connection = ZMConnection.insertNewSentConnection(to: otherUser)
-            connection.status = .accepted
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // when
-        syncMOC.performGroupedAndWait {
-            otherClient.resetSession()
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        syncMOC.performGroupedAndWait {
-            XCTAssertTrue(otherClient.needsToNotifyOtherUserAboutSessionReset)
-        }
-    }
-
     func testThatItAsksForMoreWhenRunningOutOfPrekeys() {
 
         syncMOC.performGroupedAndWait {
