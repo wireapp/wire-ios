@@ -31,4 +31,13 @@ public extension ZMConversation {
 
         return teamRemoteIdentifier == selfUser.team?.remoteIdentifier && !isFederating(with: selfUser)
     }
+
+    /// Returns true if this conversation was created within the same team as the given user.
+    func matchesTeam(with user: any UserType) -> Bool {
+        guard let teamRemoteIdentifier, let userTeamID = user.teamIdentifier else {
+            return false
+        }
+
+        return teamRemoteIdentifier == userTeamID
+    }
 }
