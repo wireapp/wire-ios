@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SwiftUI
 package import WireCallingDomain
-import WireCallingDomainSupport
 package import WireFoundation
 package import WireReusableUIComponents
+
+import Combine
+import SwiftUI
+import WireCallingDomainSupport
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
