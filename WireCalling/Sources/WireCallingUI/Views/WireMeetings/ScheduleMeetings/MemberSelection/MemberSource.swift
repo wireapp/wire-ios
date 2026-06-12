@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ParticipantSource: Sendable {
-    func search(query: String) async throws -> [Participant]
+public import WireCallingDomain
+
+public protocol MemberSource: Sendable {
+    func search(query: String) async throws -> [Member]
 }

@@ -19,17 +19,17 @@
 public import Foundation
 
 // TODO: [WPB-20278] Update the model
-public struct Member: Equatable, Sendable {
+public struct Member: Equatable, Identifiable, Sendable {
 
     public let qualifiedID: QualifiedID?
-    public let id: UUID?
-    public let name: String?
+    public let id: UUID
+    public let name: String
     public let handle: String
 
     public init(
         qualifiedID: QualifiedID?,
-        id: UUID?,
-        name: String?,
+        id: UUID,
+        name: String,
         handle: String
     ) {
         self.qualifiedID = qualifiedID

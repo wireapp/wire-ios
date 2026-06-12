@@ -560,9 +560,10 @@ package extension MeetingsRepository {
 private extension Member {
 
     init (name: String) {
+        let id = UUID()
         self.init(
-            qualifiedID: nil,
-            id: nil,
+            qualifiedID: .init(id: id, domain: ""),
+            id: id,
             name: name,
             handle: name
                 .lowercased()

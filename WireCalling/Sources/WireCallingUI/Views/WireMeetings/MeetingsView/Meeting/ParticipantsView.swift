@@ -32,8 +32,8 @@ struct ParticipantsView: View {
             HStack(spacing: 6) {
                 circle()
 
-                if let name = members[0].name, !name.isEmpty {
-                    Text(name)
+                if !members[0].name.isEmpty {
+                    Text(members[0].name)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                         .lineLimit(1)

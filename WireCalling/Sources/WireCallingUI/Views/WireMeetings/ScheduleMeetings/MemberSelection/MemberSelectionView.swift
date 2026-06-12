@@ -17,12 +17,13 @@
 //
 
 import SwiftUI
+import WireCallingDomain
 
-struct ParticipantSelectionView: View {
-    private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Participants
+struct MemberSelectionView: View {
+    private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Members
 
     @Environment(\.dismiss) private var dismiss
-    @State private(set) var viewModel: ParticipantSelectionViewModel
+    @State private(set) var viewModel: MemberSelectionViewModel
 
     var body: some View {
         NavigationStack {
@@ -33,11 +34,11 @@ struct ParticipantSelectionView: View {
 
                 Section {
                     if viewModel.isSelectedExpanded {
-                        ForEach(viewModel.selectedParticipants) { row(for: $0) }
+                        ForEach(viewModel.selectedMembers) { row(for: $0) }
                     }
                 } header: {
                     sectionHeader(
-                        title: "\(Strings.Selected.title) (\(viewModel.selectedParticipants.count))",
+                        title: "\(Strings.Selected.title) (\(viewModel.selectedMembers.count))",
                         isExpanded: $viewModel.isSelectedExpanded
                     )
                 }
@@ -69,7 +70,7 @@ struct ParticipantSelectionView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(Strings.Select.button) { dismiss() }
-                        .disabled(viewModel.selectedParticipants.isEmpty)
+                        .disabled(viewModel.selectedMembers.isEmpty)
                 }
             }
         }
@@ -111,10 +112,10 @@ struct ParticipantSelectionView: View {
         .textCase(nil)
     }
 
-    private func row(for participant: Participant) -> some View {
-        let isSelected = viewModel.isSelected(participant)
+    private func row(for member: Member) -> some View {
+        let isSelected = viewModel.isSelected(member)
         return Button {
-            viewModel.toggleSelection(participant)
+            viewModel.toggleSelection(member)
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "checkmark.circle.fill")
@@ -128,11 +129,11 @@ struct ParticipantSelectionView: View {
                     }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(participant.name)
+                    Text(member.name)
                         .font(.body.weight(.semibold))
                         .foregroundStyle(.primary)
-                    if let username = participant.username {
-                        Text("@" + username)
+                    if !member.handle.isEmpty {
+                        Text("@" + member.handle)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -152,52 +153,69 @@ struct ParticipantSelectionView: View {
 // MARK: - Preview
 
 #Preview("success") {
-    ParticipantSelectionView(viewModel: ParticipantSelectionViewModel(source: MockParticipantSource()))
+    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockMemberSource()))
 }
 
 #Preview("failure") {
-    ParticipantSelectionView(
-        viewModel: ParticipantSelectionViewModel(source: MockParticipantSource(error: URLError(.badServerResponse)))
+    MemberSelectionView(
+        viewModel: MemberSelectionViewModel(source: MockMemberSource(error: URLError(.badServerResponse)))
     )
 }
 
 // MARK: - Mock
 
-struct MockParticipantSource: ParticipantSource {
+struct MockMemberSource: MemberSource {
 
-    let result: Result<[Participant], any Error>
+    let result: Result<[Member], any Error>
 
-    init(participants: [Participant] = .mock) {
-        self.result = .success(participants)
+    init(members: [Member] = .mock) {
+        self.result = .success(members)
     }
 
     init(error: any Error) {
         self.result = .failure(error)
     }
 
-    func search(query: String) async throws -> [Participant] {
+    func search(query: String) async throws -> [Member] {
         switch result {
         case .failure(let error):
             throw error
-        case .success(let participants):
-            guard !query.isEmpty else { return participants }
-            return participants.filter { $0.name.localizedCaseInsensitiveContains(query) }
+        case .success(let members):
+            guard !query.isEmpty else { return members }
+            return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
         }
     }
 }
 
-private extension Array where Element == Participant {
+private extension Array where Element == Member {
     static var mock: Self {
         [
-            .init(id: UUID(), name: "Martin Koch-Johansen", username: "username"),
-            .init(id: UUID(), name: "Olga Heaney", username: "username"),
-            .init(id: UUID(), name: "Margarete Springer", username: "username"),
-            .init(id: UUID(), name: "Lorenzo Schmeler", username: nil),
-            .init(id: UUID(), name: "Jaqueline Olaho", username: nil),
-            .init(id: UUID(), name: "Katie Armstrong", username: "username"),
-            .init(id: UUID(), name: "Zachary Ratke", username: "username"),
-            .init(id: UUID(), name: "Marco Weissnat", username: "username"),
-            .init(id: UUID(), name: "Deborah Schoen", username: "username")
+            .init(name: "Martin Koch-Johansen", handle: "username"),
+            .init(name: "Olga Heaney", handle: "username"),
+            .init(name: "Margarete Springer", handle: "username"),
+            .init(name: "Lorenzo Schmeler", handle: ""),
+            .init(name: "Jaqueline Olaho", handle: ""),
+            .init(name: "Katie Armstrong", handle: "username"),
+            .init(name: "Zachary Ratke", handle: "username"),
+            .init(name: "Marco Weissnat", handle: "username"),
+            .init(name: "Deborah Schoen", handle: "username")
         ]
     }
+}
+
+private extension Member {
+
+    init(
+        name: String,
+        handle: String
+    ) {
+        let id = UUID()
+        self.init(
+            qualifiedID: QualifiedID(id: id, domain: ""),
+            id: id,
+            name: name,
+            handle: handle
+        )
+    }
+
 }

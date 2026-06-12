@@ -18,19 +18,20 @@
 
 import Foundation
 import Observation
+import WireCallingDomain
 
 @MainActor
 @Observable
-final class ParticipantSelectionViewModel {
+final class MemberSelectionViewModel {
 
-    private let source: any ParticipantSource
+    private let source: any MemberSource
 
     var searchText: String = "" {
         didSet { scheduleSearch() }
     }
 
-    var searchResults: [Participant] = []
-    var selectedParticipants: [Participant] = []
+    var searchResults: [Member] = []
+    var selectedMembers: [Member] = []
     var isSearching = false
     var errorMessage: String?
     var isSelectedExpanded = true
@@ -38,29 +39,29 @@ final class ParticipantSelectionViewModel {
 
     private var searchTask: Task<Void, Never>?
 
-    init(source: any ParticipantSource) {
+    init(source: any MemberSource) {
         self.source = source
         scheduleSearch(debounce: .zero) // initial load is immediate
     }
 
     // MARK: - Derived state
 
-    var filteredUnselected: [Participant] {
-        let selectedIDs = Set(selectedParticipants.map(\.id))
+    var filteredUnselected: [Member] {
+        let selectedIDs = Set(selectedMembers.map(\.id))
         return searchResults.filter { !selectedIDs.contains($0.id) }
     }
 
-    func isSelected(_ participant: Participant) -> Bool {
-        selectedParticipants.contains { $0.id == participant.id }
+    func isSelected(_ member: Member) -> Bool {
+        selectedMembers.contains { $0.id == member.id }
     }
 
     // MARK: - Actions
 
-    func toggleSelection(_ participant: Participant) {
-        if let index = selectedParticipants.firstIndex(where: { $0.id == participant.id }) {
-            selectedParticipants.remove(at: index)
+    func toggleSelection(_ member: Member) {
+        if let index = selectedMembers.firstIndex(where: { $0.id == member.id }) {
+            selectedMembers.remove(at: index)
         } else {
-            selectedParticipants.append(participant)
+            selectedMembers.append(member)
         }
     }
 
@@ -88,7 +89,7 @@ final class ParticipantSelectionViewModel {
             } catch is CancellationError {
                 return
             } catch {
-                errorMessage = L10n.Localizable.WireMeetings.Schedule.Participants.Error.message
+                errorMessage = L10n.Localizable.WireMeetings.Schedule.Members.Error.message
             }
             isSearching = false
         }
