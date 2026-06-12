@@ -402,8 +402,7 @@ final class ConversationInputBarViewController: UIViewController,
 
         // TODO: [WPB-25941] Remove developer flag when feature is complete
         if DeveloperFlag.enableDrivePermissions.isOn {
-            if conversation.isWireDriveEnabled,
-               conversation.teamRemoteIdentifier != userSession.selfUser.teamIdentifier {
+            if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
                 [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
                     $0.isEnabled = false
                     $0.setBackgroundImageColor(
