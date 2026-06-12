@@ -286,6 +286,36 @@ final class FilesViewTests: XCTestCase {
     }
 
     @MainActor
+    func testFilesViewItemView_ReadOnly() {
+        let item = filesViewItem(readOnly: true)
+
+        let asset = WireDriveLocalAsset(
+            nodeID: item.id,
+            eTag: "eTag",
+            path: "some/path",
+            contentType: "some/content/type",
+            size: nil,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
+            downloadState: .downloaded(cacheKey: "")
+        )
+        let viewModel = FilesItemViewModel.make(item: item, asset: asset, isBrowsing: true)
+        // TODO: [WPB-25941] Remove when feature is complete
+        viewModel.isDrivePermissionsFlagEnabled = true
+        let view = FilesItemView(viewModel: viewModel)
+            .frame(width: 390)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
     func testFilesView_LoadingState() async {
         let view = makeFilesView(state: .loading)
 
@@ -337,7 +367,8 @@ final class FilesViewTests: XCTestCase {
         name: String = "image.jpg",
         ownedBy: String = "Natsuko Shiroi",
         icon: WireDriveFileType = .image,
-        tags: [String] = []
+        tags: [String] = [],
+        readOnly: Bool = false
     ) -> FilesViewItem {
         FilesViewItem(
             id: UUID(),
@@ -352,7 +383,7 @@ final class FilesViewTests: XCTestCase {
             isEditable: false,
             publicLinkID: nil,
             conversationName: "Conversation 1",
-            isReadOnly: false,
+            isReadOnly: readOnly,
             size: nil
         )
     }
@@ -420,7 +451,8 @@ private extension FilesItemViewModel {
 
     static func make(
         item: FilesViewItem,
-        asset: WireDriveLocalAsset? = nil
+        asset: WireDriveLocalAsset? = nil,
+        isBrowsing: Bool = false
     ) -> FilesItemViewModel {
         let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
         localAssetRepository.observeAssetNodeID_MockValue = CurrentValueSubject<WireDriveLocalAsset?, Never>(asset)
@@ -436,7 +468,7 @@ private extension FilesItemViewModel {
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt,
-            isBrowsing: false,
+            isBrowsing: isBrowsing,
             isInRecycleBin: false
         )
     }
