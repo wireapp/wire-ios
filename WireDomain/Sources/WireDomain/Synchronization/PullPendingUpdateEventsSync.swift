@@ -101,8 +101,9 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 )
 
                 var decryptedEnvelopes: [UpdateEventEnvelope] = []
-
+                var brokenMLSGroupIDs = Set<String>()
                 for envelope in envelopes {
+                    try Task.checkCancellation()
                     count += 1
 
                     WireLogger.sync.debug(
@@ -117,12 +118,15 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
                     events.append(contentsOf: decryptedEvents)
                     decryptedEnvelopes.append(decryptedEnvelope)
-                    journal.addValues(decryptionEventsResult.brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
+
+                    brokenMLSGroupIDs = brokenMLSGroupIDs.union(decryptionEventsResult.brokenMLSGroupIDs)
 
                     if !envelope.isTransient {
                         lastEnvelopeID = envelope.id
                     }
                 }
+
+                journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
 
                 WireLogger.sync.debug("persisting \(decryptedEnvelopes.count) decrypted event(s)")
 

@@ -16,40 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
+import XCTest
 
-final class MockUserClient: NSObject, UserClientType {
-    var mlsThumbPrint: String?
+final class BlacklistTests: WireUITestCase {
 
-    var e2eIdentityCertificate: WireDataModel.E2eIdentityCertificate?
+    override func setUpWithError() throws {
+        uiTestConfig.isBuildBlacklisted = true
 
-    var type: DeviceType = .permanent
-
-    var label: String?
-
-    var remoteIdentifier: String?
-
-    var activationDate: Date?
-
-    var model: String?
-
-    var fingerprint: Data?
-
-    var verified: Bool = false
-
-    var user: ZMUser?
-
-    var needsToNotifyUser: Bool = false
-
-    var deviceClass: DeviceClass? = .phone
-
-    func isSelfClient() -> Bool {
-        false
+        try super.setUpWithError()
     }
 
-    func fetchFingerprintOrPrekeys() {
-        // No-op
-    }
+    @MainActor
+    func testBlacklistAfterLogin__TC_9483() async throws {
+        let user = try await userHelper.createPersonalUser()
+        _ = try app.loginUser(email: user.email, password: user.password)
 
+        let blockerPage = try BlockerPage()
+
+        XCTAssertTrue(
+            blockerPage.clientObsoleteAlert.waitForExistence(timeout: 10),
+            "Client obsolete alert did not appear"
+        )
+    }
 }
