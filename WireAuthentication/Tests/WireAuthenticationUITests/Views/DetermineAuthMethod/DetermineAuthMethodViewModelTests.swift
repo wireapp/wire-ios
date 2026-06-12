@@ -174,7 +174,11 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         line: UInt = #line
     ) {
         guard case .switchBackendConfirmation = sut.modalDestination else {
-            XCTFail("expected switchBackendConfirmation, got \(String(describing: sut.modalDestination))", file: file, line: line)
+            XCTFail(
+                "expected switchBackendConfirmation, got \(String(describing: sut.modalDestination))",
+                file: file,
+                line: line
+            )
             return
         }
     }
