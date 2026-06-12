@@ -17,11 +17,33 @@
 //
 
 import WireCallingDomain
+import WireLogging
+import WireSyncEngine
 
-struct WireMeetingsMemberRepository: MemberRepositoryProtocol {
+struct WireMeetingsMemberRepository: MemberRepositoryProtocol, @unchecked Sendable {
 
-    func search(query: String) async throws -> [Member] {
-        []
+    var userSession: any UserSession
+
+    @MainActor
+    func search(query: String) async throws -> [WireCallingDomain.Member] {
+        guard let searchUsersUseCase = userSession.makeSearchUsersUseCase() else {
+            WireLogger.ui.error("userSession.makeSearchUsersUseCase() returned nil, can't search for meeting members", attributes: .safePublic)
+            return []
+        }
+
+        let searchOptions: SearchOptions = [
+            .contacts,
+            .teamMembers,
+            .directory,
+            // .federated // TODO: check if enabled?
+        ]
+
+        let result = await searchUsersUseCase.invoke(query: query, options: searchOptions, messageProtocol: .mls) // TODO: meetings always mls?
+        print(result)
+
+        // TODO: map
+
+        return []
     }
 
 }

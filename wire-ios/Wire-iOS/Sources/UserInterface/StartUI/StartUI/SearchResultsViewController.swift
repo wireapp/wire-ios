@@ -255,7 +255,7 @@ final class SearchResultsViewController: UIViewController {
         searchResultsView.emptyResultContainer.isHidden = true
 
         pendingSearchTask = Task {
-            var options = options
+            var options = options // TODO: see here
             options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
 
             let result = await searchUsersUseCase.invoke(
