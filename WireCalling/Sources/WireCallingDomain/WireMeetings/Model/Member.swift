@@ -17,23 +17,25 @@
 //
 
 public import Foundation
+public import WireFoundation
 
 // TODO: [WPB-20278] Update the model
 public struct Member: Equatable, Identifiable, Sendable {
 
-    public let qualifiedID: QualifiedID?
-    public let id: UUID
+    public let qualifiedID: QualifiedID
     public let name: String
     public let handle: String
 
+    public var id: UUID {
+        qualifiedID.id
+    }
+
     public init(
-        qualifiedID: QualifiedID?,
-        id: UUID,
+        qualifiedID: QualifiedID,
         name: String,
         handle: String
     ) {
         self.qualifiedID = qualifiedID
-        self.id = id
         self.name = name
         self.handle = handle
     }

@@ -210,10 +210,8 @@ private extension Member {
         name: String,
         handle: String
     ) {
-        let id = UUID()
         self.init(
-            qualifiedID: QualifiedID(id: id, domain: ""),
-            id: id,
+            qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
             handle: handle
         )
