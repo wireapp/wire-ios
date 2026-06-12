@@ -24,6 +24,7 @@ import WireMessagingDomainSupport
 
 private typealias Strings = L10n.Localizable.Conversation.Details
 private typealias Accessibility = L10n.Accessibility.Conversation.Details
+private typealias Locator = Locators.WireDrive.ConversationDetailsSharedDriveOptionsPage
 
 package struct ConversationSharedDriveOptionsView: View {
     @StateObject package var viewModel: ConversationSharedDriveOptionsViewModel
@@ -65,17 +66,20 @@ package struct ConversationSharedDriveOptionsView: View {
                     .font(for: .body1)
                     .fontWeight(.medium)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    .accessibilityIdentifier(Locator.toggleSectionTitle)
 
                 Spacer()
 
                 Toggle("", isOn: $isSharedDriveEnabled)
                     .labelsHidden()
                     .disabled(true)
+                    .accessibilityIdentifier(Locator.toggle)
             }
         } footer: {
             Text(Strings.SharedDriveToggleSection.Footer.title)
                 .font(for: .subline1)
                 .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                .accessibilityIdentifier(Locator.toggleSectionFooter)
         }
     }
 
@@ -88,14 +92,17 @@ package struct ConversationSharedDriveOptionsView: View {
             Text(Strings.SharedDriveAccessSection.Header.title.uppercased())
                 .font(for: .h4)
                 .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                .accessibilityIdentifier(Locator.participantsSectionHeader)
         } footer: {
             VStack(alignment: .leading, spacing: 8) {
                 Text(Strings.SharedDriveAccessSection.Footer.title)
                     .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    .accessibilityIdentifier(Locator.participantsSectionFooterTitle)
                 Text(Strings.SharedDriveAccessSection.Footer.subtitle)
                     .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    .accessibilityIdentifier(Locator.participantsSectionFooterSubtitle)
             }
         }
     }
@@ -123,6 +130,7 @@ package struct ConversationSharedDriveOptionsView: View {
                                 .font(for: .body1)
                                 .fontWeight(.medium)
                                 .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                                .accessibilityIdentifier(Locator.participantName)
 
                             if participant.isSelfUser {
                                 Text("(\(Strings.SharedDriveAccessSection.you))")
@@ -142,6 +150,7 @@ package struct ConversationSharedDriveOptionsView: View {
                         .truncationMode(.middle)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        .accessibilityIdentifier(Locator.participantHandle)
                 }
 
                 Spacer()
@@ -149,6 +158,7 @@ package struct ConversationSharedDriveOptionsView: View {
                 Text(participant.role.rawValue)
                     .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    .accessibilityIdentifier(Locator.participantRole)
             }.padding(.vertical, 2)
         } icon: {
             icon(participant)
