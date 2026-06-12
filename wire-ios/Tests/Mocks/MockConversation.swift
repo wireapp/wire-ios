@@ -99,7 +99,7 @@ class SwiftMockConversation: NSObject, Conversation {
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
-    var isSelfADriveViewer: Bool = false
+    var isSelfADriveEditor: Bool = false
 
     var userDefinedName: String?
 

@@ -55,27 +55,6 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testSharedDriveOptionsView_Available_Status() {
-        let participants: [WireDriveParticipant] = [
-            WireDriveParticipant(
-                handle: "johndoe",
-                displayName: "John Doe",
-                role: .viewer,
-                isSelfUser: true,
-                id: UUID().uuidString,
-                userType: .member,
-                availabilityStatus: .available,
-                verificationBadges: [],
-                iconData: .init(initials: "JD", color: .brown, image: nil)
-            )
-        ]
-
-        let sut = makeView(participants)
-
-        snapshotHelper.verifyLightAndDark(matching: sut)
-    }
-
-    @MainActor
     func testSharedDriveOptionsView_Verifications_Badges() {
         let participants: [WireDriveParticipant] = [
             WireDriveParticipant(
@@ -85,7 +64,6 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: true,
                 id: UUID().uuidString,
                 userType: .member,
-                availabilityStatus: .busy,
                 verificationBadges: [.e2EICertified, .proteusVerified],
                 iconData: .init(initials: "JD", color: .brown, image: nil)
             )
@@ -107,7 +85,6 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                     isSelfUser: false,
                     id: UUID().uuidString,
                     userType: $0,
-                    availabilityStatus: .available,
                     verificationBadges: [],
                     iconData: .init(initials: "JD", color: .brown, image: nil)
                 )
@@ -129,7 +106,6 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 userType: .guest,
-                availabilityStatus: .available,
                 verificationBadges: [.e2EICertified],
                 iconData: .init(initials: "JD", color: .brown, image: nil)
             )
@@ -150,7 +126,6 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 userType: .member,
-                availabilityStatus: .away,
                 verificationBadges: [],
             )
         ]
@@ -170,7 +145,6 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 userType: .member,
-                availabilityStatus: .available,
                 verificationBadges: [],
                 iconData: .init(initials: "JD", color: .brown, image: nil)
             )
@@ -191,7 +165,6 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 userType: .member,
-                availabilityStatus: .none,
                 verificationBadges: [],
                 state: .blocked,
                 iconData: .init(initials: "JD", color: .brown, image: nil)
@@ -213,7 +186,6 @@ final class ConversationSharedDriveOptionsViewSnapshotTests: XCTestCase {
                 isSelfUser: false,
                 id: UUID().uuidString,
                 userType: .member,
-                availabilityStatus: .none,
                 verificationBadges: [],
                 state: .pendingApproval,
                 iconData: .init(initials: "JD", color: .brown, image: nil)
