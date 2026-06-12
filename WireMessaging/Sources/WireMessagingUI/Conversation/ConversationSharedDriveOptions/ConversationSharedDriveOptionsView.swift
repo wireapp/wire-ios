@@ -116,10 +116,6 @@ package struct ConversationSharedDriveOptionsView: View {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 5) {
-                        if let leadingImage = viewModel.leadingImage(for: participant) {
-                            Image(uiImage: leadingImage)
-                        }
-
                         HStack(spacing: 5) {
                             Text(participant.displayName)
                                 .lineLimit(1)

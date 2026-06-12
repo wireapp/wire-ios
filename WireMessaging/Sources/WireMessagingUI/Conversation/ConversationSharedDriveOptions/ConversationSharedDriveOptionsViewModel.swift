@@ -39,19 +39,6 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
         }
     }
 
-    func leadingImage(for participant: WireDriveParticipant) -> UIImage? {
-        switch participant.availabilityStatus {
-        case .none:
-            nil
-        case .available:
-            StyleKitIcon.statusAvailable.makeImage(size: .custom(12), color: ColorTheme.Base.primary(.green))
-        case .busy:
-            StyleKitIcon.statusBusy.makeImage(size: .custom(12), color: ColorTheme.Base.primary(.amber))
-        case .away:
-            StyleKitIcon.statusAway.makeImage(size: .custom(12), color: ColorTheme.Base.primary(.red))
-        }
-    }
-
     func trailingImages(for participant: WireDriveParticipant) -> [UIImage] {
         let verificationBadges = participant.verificationBadges.compactMap {
             switch $0 {

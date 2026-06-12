@@ -17,7 +17,9 @@
 //
 
 import Foundation
-import UIKit
+public import UIKit
+
+public typealias WireDriveParticipant = WireDriveConversation.Participant
 
 /// A conversation with enabled Drive.
 /// Wire Drive file nodes are linked to one of this conversations.
@@ -38,6 +40,92 @@ public struct WireDriveConversation: Sendable, Hashable, Identifiable {
         self.kind = kind
         self.participants = participants
     }
+}
+
+public extension WireDriveConversation {
+    struct Participant: Sendable, Hashable, Identifiable {
+        public let handle: String
+        public let displayName: String
+        public let id: String
+        public let isSelfUser: Bool
+        public let role: Role
+        public let verificationBadges: [VerificationBadge]
+        public let userType: UserType
+        public let state: State
+        public let iconData: IconData?
+
+        public enum UserType: Sendable, Hashable {
+            case federated
+            case external
+            case member
+            case guest
+        }
+
+        public enum VerificationBadge: Sendable, Hashable {
+            case e2EICertified
+            case proteusVerified
+        }
+
+        public enum Role: String, Sendable {
+            case editor = "Editor"
+            case viewer = "Viewer"
+        }
+
+        public enum State: Sendable, Hashable {
+            case none
+            case pendingApproval
+            case blocked
+        }
+
+        public struct IconData: Sendable, Hashable {
+            public let initials: String
+            public let color: UIColor
+            public let image: UIImage?
+
+            public init(
+                initials: String,
+                color: UIColor,
+                image: UIImage?
+            ) {
+                self.initials = initials
+                self.color = color
+                self.image = image
+            }
+        }
+
+        public init(
+            handle: String,
+            displayName: String,
+            role: Role,
+            isSelfUser: Bool,
+            id: String,
+            userType: UserType,
+            verificationBadges: [VerificationBadge] = [],
+            state: State = .none,
+            iconData: IconData? = nil
+        ) {
+            self.handle = handle
+            self.isSelfUser = isSelfUser
+            self.displayName = displayName
+            self.role = role
+            self.id = id
+            self.userType = userType
+            self.verificationBadges = verificationBadges
+            self.state = state
+            self.iconData = iconData
+        }
+
+        // MARK: - Hashable
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+
+        public static func == (lhs: WireDriveParticipant, rhs: WireDriveParticipant) -> Bool {
+            lhs.id == rhs.id
+        }
+    }
+
 }
 
 public extension WireDriveConversation {
@@ -71,6 +159,42 @@ public extension Collection<WireDriveConversation> {
                 name: "Conversation 3",
                 kind: .group,
                 participants: Set([WireDriveParticipant].mocked())
+            )
+        ]
+    }
+}
+
+public extension Collection<WireDriveParticipant> {
+    static func mocked() -> [Element] {
+        [
+            .init(
+                handle: "walterwhite",
+                displayName: "Heisenberg",
+                role: .editor,
+                isSelfUser: false,
+                id: UUID().uuidString,
+                userType: .member,
+                verificationBadges: [.e2EICertified],
+                iconData: .init(initials: "WW", color: .blue, image: nil)
+            ),
+            .init(
+                handle: "jessepinkman",
+                displayName: "The Cook",
+                role: .viewer,
+                isSelfUser: false,
+                id: UUID().uuidString,
+                userType: .member,
+                verificationBadges: [.e2EICertified, .proteusVerified],
+                iconData: .init(initials: "JP", color: .brown, image: nil)
+            ),
+            .init(
+                handle: "tucosalamanca",
+                displayName: "Tuco",
+                role: .editor,
+                isSelfUser: true,
+                id: UUID().uuidString,
+                userType: .member,
+                iconData: nil
             )
         ]
     }

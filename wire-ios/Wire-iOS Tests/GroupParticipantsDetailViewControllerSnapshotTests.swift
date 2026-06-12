@@ -24,7 +24,7 @@ import XCTest
 @testable import Wire
 
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
-    var isSelfADriveViewer: Bool = false
+    var isSelfADriveEditor: Bool = false
 
     var userDefinedName: String?
 
