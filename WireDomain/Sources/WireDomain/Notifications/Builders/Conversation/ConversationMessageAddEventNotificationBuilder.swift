@@ -113,7 +113,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             conversationID: content.conversationID,
             senderID: content.senderID
         ) {
-            callingNotification //nil
+            callingNotification
         } else {
             await buildMessageContentNotification(
                 message: content.message,

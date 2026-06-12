@@ -90,14 +90,12 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         contentHandler: @escaping (UNNotificationContent) -> Void
     ) async throws {
         // Pull pending update events.
-//        let eventStream: AsyncStream<[UpdateEvent]>
+        let eventStream: AsyncStream<[UpdateEvent]>
         let publicKeys = try earService.fetchPublicKeys()
 
-        // 1. Pull pending update events.
-        let upstream: AsyncStream<[UpdateEvent]>
         if dependency.journal[.isConsumableNotificationsEnabled] {
             let (useCase, stream) = syncEventsUseCase()
-            upstream = stream
+            eventStream = stream
 
             // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
             // cancel the task (not keeping any file lock in suspend mode)
@@ -150,32 +148,32 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             }
 
         } else {
-            upstream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
-        }
-        // 2. Buffer all events (stream is finite in NSE).
-        var eventBatches: [[UpdateEvent]] = []
-        for await batch in upstream {
-            eventBatches.append(batch)
+            eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
         }
 
-        let isAvsReady = dependency.sharedUserDefaults.bool(forKey: "isAVSReady")
-        let isCallKitAvailable = dependency.sharedUserDefaults.bool(forKey: "isCallKitAvailable")
+        let notificationEventStream: AsyncStream<[UpdateEvent]>
+        if DeveloperFlag.enableNSEHelper.isOn {
+            var eventBatches: [[UpdateEvent]] = []
+            for await batch in eventStream {
+                eventBatches.append(batch)
+            }
 
-        // 3. Process calling events via AVS — CallKit is reported internally via callingService callbacks.
-        _ = callKitReportingCoordinator
-        await processCallingEventsUseCase.invoke(eventBatches: eventBatches, callKitReportingCoordinator: callKitReportingCoordinator)
-        //await callKitReportingCoordinator.waitForCompletion()
+            _ = callKitReportingCoordinator
+            await processCallingEventsUseCase.invoke(eventBatches: eventBatches, callKitReportingCoordinator: callKitReportingCoordinator)
 
-            let eventStream = AsyncStream<[UpdateEvent]> { continuation in
-            for batch in eventBatches { continuation.yield(batch) }
-            continuation.finish()
+            notificationEventStream = AsyncStream<[UpdateEvent]> { continuation in
+                for batch in eventBatches { continuation.yield(batch) }
+                continuation.finish()
+            }
+        } else {
+            notificationEventStream = eventStream
         }
 
         // Generate notifications from events.
         let notifications = try await generateNotificationsUseCase(
             eventID: eventID
         ).invoke(
-            updateEvents: eventStream
+            updateEvents: notificationEventStream
         )
 
         // Show notifications.
