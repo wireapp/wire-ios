@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireCallingDomain
+// sourcery: AutoMockable
+/// Repository for accessing Members
+package protocol MemberRepositoryProtocol: Sendable {
 
-public protocol MemberSource: Sendable {
     func search(query: String) async throws -> [Member]
+
 }

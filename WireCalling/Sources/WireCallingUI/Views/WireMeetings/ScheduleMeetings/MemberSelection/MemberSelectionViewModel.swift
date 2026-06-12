@@ -24,7 +24,7 @@ import WireCallingDomain
 @Observable
 final class MemberSelectionViewModel {
 
-    private let source: any MemberSource
+    private let source: any MemberRepositoryProtocol
 
     var searchText: String = "" {
         didSet { scheduleSearch() }
@@ -39,7 +39,7 @@ final class MemberSelectionViewModel {
 
     private var searchTask: Task<Void, Never>?
 
-    init(source: any MemberSource) {
+    init(source: any MemberRepositoryProtocol) {
         self.source = source
         scheduleSearch(debounce: .zero) // initial load is immediate
     }
