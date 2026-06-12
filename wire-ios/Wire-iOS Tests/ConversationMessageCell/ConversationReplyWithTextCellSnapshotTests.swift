@@ -80,6 +80,18 @@ final class ConversationReplyWithTextCellSnapshotTests: ConversationMessageSnaps
         verify(message: message, allColorSchemes: true)
     }
 
+    /// Inline code in the reply text must only highlight the code span itself,
+    /// not extend the background across the full line width.
+    func testReplyWithInlineCodeInReplyText() {
+        let message = makeReplyMessage(
+            replyText: "This is a test with a variable name `BACKEND_NAME` test here",
+            quoteText: "This is a quote without inline code",
+            quoteSender: mockOtherUser,
+            replySender: mockSelfUser
+        )
+        verify(message: message, allColorSchemes: true)
+    }
+
     /// Reply to a quote that contains an @-mention of another user.
     func testReplyToMessageWithOtherMention() {
         let quote = MockMessageFactory.textMessage(withText: "@Bruno is the annual report ready to go?")
