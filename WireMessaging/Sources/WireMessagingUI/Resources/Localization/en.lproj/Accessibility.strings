@@ -73,3 +73,4 @@
 
 // MARK: - Viewer access
 "conversation.wireCells.files.viewerAccess.banner.close" = "Close access info";
+"conversation.wireCells.files.readOnly" = "Read only";

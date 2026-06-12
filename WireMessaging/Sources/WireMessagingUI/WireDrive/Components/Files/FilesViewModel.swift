@@ -105,7 +105,7 @@ package final class FilesViewModel: ObservableObject {
 
     @Published var searchText = ""
     @Published var alert: AlertModel?
-    @Published var viewingURL: URL?
+    @Published var quickPreviewItem: QuickPreviewItem?
     @Published var sheetNavigation: SheetNavigation?
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
@@ -184,9 +184,17 @@ package final class FilesViewModel: ObservableObject {
             )
 
             let items: [FilesViewItem] = offlineAssets.map { asset in
-                .fromLocalAsset(
+                // TODO: [WPB-26057] When backend ready, remove this code, the self user role (editor/viewer) will come from the BE and will have to be stored locally in `WireDriveLocalAsset`
+                let selfUserRole = conversations
+                    .first(where: { $0.name == asset.conversationName })?
+                    .participants
+                    .first(where: { $0.isSelfUser })?
+                    .role
+
+                return .fromLocalAsset(
                     asset,
                     conversationName: conversationName,
+                    isReadOnly: (selfUserRole ?? .viewer) == .viewer,
                     assetsPath: assetsPath
                 )
             }
@@ -347,9 +355,9 @@ package final class FilesViewModel: ObservableObject {
             case .pending, .failed:
                 _ = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
             case .downloaded:
-                viewingURL = nil
+                quickPreviewItem = nil
                 let url = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
-                viewingURL = url
+                quickPreviewItem = QuickPreviewItem.fromFilesViewItem(item, url: url)
             case .downloading:
                 await useCases.getAsset.cancelDownload(nodeID: item.id)
             }
