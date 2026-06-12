@@ -44,7 +44,7 @@ final class ScheduleMeetingViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            ScheduleMeetingView(viewModel: ScheduleMeetingViewModel())
+            ScheduleMeetingView(viewModel: createViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +61,7 @@ final class ScheduleMeetingViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            ScheduleMeetingView(viewModel: ScheduleMeetingViewModel())
+            ScheduleMeetingView(viewModel: createViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -72,6 +72,15 @@ final class ScheduleMeetingViewSnapshotTests: XCTestCase {
                     named: "\(dynamicTypeSize)"
                 )
         }
+    }
+
+    // MARK: - Helpers
+
+    private func createViewModel() -> ScheduleMeetingViewModel {
+        let viewModel = ScheduleMeetingViewModel()
+        viewModel.startDate = try! Date.ISO8601FormatStyle().parse("2026-06-11T16:15:00+02:00")
+        viewModel.endDate = viewModel.startDate.addingTimeInterval(60 * 30) // 30 minutes
+        return viewModel
     }
 
 }
