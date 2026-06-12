@@ -63,7 +63,7 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         await sut.submitEmailOrSSOCode()
 
         // then the switch is blocked
-        XCTAssertEqual(sut.alert, .switchBackendFailed)
+        XCTAssertEqual(sut.alert, .switchBackendBlocked)
         XCTAssertNil(sut.modalDestination)
     }
 
@@ -132,7 +132,7 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         await sut.submitEmailOrSSOCode()
 
         // then the login is blocked
-        XCTAssertEqual(sut.alert, .switchBackendFailed)
+        XCTAssertEqual(sut.alert, .switchBackendBlocked)
         XCTAssertTrue(router.navigate_Invocations.isEmpty)
     }
 

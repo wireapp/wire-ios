@@ -162,7 +162,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             // handled below in handleOnPremLogin
         } else if isBackendBlockedByMultibackendPolicy(environment) {
             WireLogger.authentication.info("Blocking login: multibackend support disabled")
-            alert = .switchBackendFailed
+            alert = .switchBackendBlocked
             return
         }
 
@@ -251,7 +251,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
             if isBackendBlockedByMultibackendPolicy(environment) {
                 WireLogger.authentication.info("Blocking backend switch: multibackend support disabled")
-                alert = .switchBackendFailed
+                alert = .switchBackendBlocked
                 return
             }
 
