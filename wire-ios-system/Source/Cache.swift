@@ -16,6 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
+TODO: what about making ZMSLog a bridge to WireLogger/WireLoggerObjC instead of changing all call sites
+
+
 /// In memory cache with support for generics.
 public final class Cache<Key: Hashable, Value> {
     private var cache: [Key: EntryMetadata] = [:]
