@@ -124,10 +124,11 @@ private struct GroupedSections: View {
 }
 
 #Preview {
-    MeetingsView(viewModel: MeetingsViewModel(
-        currentDateProvider: .system,
-        formatter: MeetingsFormatter(),
-        upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock()
-    )
+    MeetingsView(
+        viewModel: MeetingsViewModel(
+            currentDateProvider: .system,
+            formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock()
+        )
     )
 }
