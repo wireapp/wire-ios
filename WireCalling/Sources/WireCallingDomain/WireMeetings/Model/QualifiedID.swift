@@ -16,13 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum RepeatOption: CaseIterable, Sendable {
+public import WireFoundation
 
-    case never
-    case daily
-    case weekly
-    case every2Weeks
-    case monthly
-    case yearly
-
-}
+public typealias QualifiedID = WireFoundation.QualifiedID

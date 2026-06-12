@@ -16,13 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum RepeatOption: CaseIterable, Sendable {
+public import Foundation
 
-    case never
-    case daily
-    case weekly
-    case every2Weeks
-    case monthly
-    case yearly
+// TODO: [WPB-20278] Update the model
+public struct Member: Equatable, Sendable {
+
+    public let qualifiedID: QualifiedID?
+    public let id: UUID?
+    public let name: String?
+    public let handle: String
+
+    public init(
+        qualifiedID: QualifiedID?,
+        id: UUID?,
+        name: String?,
+        handle: String
+    ) {
+        self.qualifiedID = qualifiedID
+        self.id = id
+        self.name = name
+        self.handle = handle
+    }
 
 }
