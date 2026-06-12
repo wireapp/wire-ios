@@ -41,6 +41,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
+        DeveloperFlag.enableDrivePermissions.enable(false)
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
     }
 
