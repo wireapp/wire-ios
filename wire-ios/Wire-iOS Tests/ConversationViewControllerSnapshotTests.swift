@@ -58,7 +58,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         serviceUser = nil
         coreDataFixture = nil
         getParticipantImageSourceUseCase = nil
-        
+
         super.tearDown()
     }
 
