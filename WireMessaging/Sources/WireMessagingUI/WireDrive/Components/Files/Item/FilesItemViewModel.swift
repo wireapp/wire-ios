@@ -73,6 +73,7 @@ final class FilesItemViewModel: ObservableObject {
     let isInRecycleBin: Bool
 
     // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
+    // TODO: [WPB-19065] Use DeveloperFlag from WireFoundation package when migrated
     var isDrivePermissionsFlagEnabled: Bool = UserDefaults.standard.bool(forKey: "enableDrivePermissions")
 
     var showReadOnlyIcon: Bool {

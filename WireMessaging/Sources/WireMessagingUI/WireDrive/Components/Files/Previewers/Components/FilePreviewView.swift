@@ -20,6 +20,7 @@ import AVKit
 import PDFKit
 import SwiftUI
 import WebKit
+import WireDesign
 import WireMessagingDomain
 
 /// A read-only file preview screen used in Drive conversations.
@@ -73,6 +74,18 @@ struct FilePreviewView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 0) {
+                        Text(name)
+                            .font(for: .h3)
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                        Text(L10n.Localizable.Conversation.WireCells.Files.ViewerAccess.navigationSubtitle)
+                            .font(for: .subline1)
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(L10n.Localizable.General.confirm) {
                         dismiss()
