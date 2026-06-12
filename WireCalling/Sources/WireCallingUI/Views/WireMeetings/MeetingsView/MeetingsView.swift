@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
+import WireFoundation
 
 struct MeetingsView: View {
 

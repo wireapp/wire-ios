@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireFoundation
 import WireTestingPackage
 import XCTest
 
@@ -77,11 +78,11 @@ final class MeetingsViewSnapshotTests: XCTestCase {
     // MARK: - Helpers
 
     private func createEmptyViewModel() -> MeetingsViewModel {
-        let mockRepository = MockMeetingsRepositoryProtocol()
-        mockRepository.hasUpcomingMeetingsAfter_MockValue = false
+        let mockRepository = MeetingsRepositoryProtocolMock()
+        mockRepository.hasUpcomingMeetingsAfterDateDateBoolReturnValue = false
 
-        let upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockValue = PaginatedMeetings(
+        let upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReturnValue = PaginatedMeetings(
             meetings: [],
             hasMore: false,
             nextOffset: 0

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCallingDomain
+import WireFoundation
 
 struct MemberSelectionView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Members
