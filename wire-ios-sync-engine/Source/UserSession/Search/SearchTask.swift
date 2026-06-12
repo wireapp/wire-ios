@@ -472,6 +472,12 @@ public final class SearchTask {
                 return { _ in }
             }
 
+            // The directory/users endpoint returns the profile picture asset keys; without this the
+            // restored SearchUserImageStrategy has no asset keys to fetch and the picture stays empty.
+            if let assetKeys = SearchUserAssetKeys(result.assets) {
+                searchUser.assetKeys = assetKeys
+            }
+
             let partialResult = SearchResult(
                 context: viewContext,
                 contacts: [],
@@ -650,6 +656,12 @@ public final class SearchTask {
                 }
             }
         }
+
+        try Task.checkCancellation()
+
+        // The contacts-search endpoint omits profile asset keys; enrich directory hits via the
+        // users endpoint so the restored SearchUserImageStrategy can download the pictures.
+        await enrichAssetKeys(for: searchUsers, on: viewContext)
 
         try Task.checkCancellation()
 
@@ -876,6 +888,55 @@ public final class SearchTask {
         }
 
         return { $0 = $0.union(withBotsResult: partialResult) }
+    }
+
+    // MARK: -
+
+    /// Fetches profile-picture asset keys for search hits that don't have them yet (i.e. directory
+    /// hits without a backing `ZMUser`). The contacts-search endpoint omits these keys, so without
+    /// this step `SearchUserImageStrategy` has nothing to download and the profile picture stays
+    /// empty.
+    private func enrichAssetKeys(
+        for searchUsers: [ZMSearchUser],
+        on viewContext: NSManagedObjectContext
+    ) async {
+        let userIDsToFetch: [UserID] = await viewContext.perform {
+            searchUsers.compactMap { searchUser -> UserID? in
+                guard searchUser.assetKeys == nil,
+                      searchUser.user == nil,
+                      let uuid = searchUser.remoteIdentifier,
+                      let domain = searchUser.domain,
+                      !domain.isEmpty
+                else { return nil }
+                return UserID(id: uuid, domain: domain)
+            }
+        }
+
+        guard !userIDsToFetch.isEmpty else { return }
+
+        let usersByID: [UUID: User]
+        do {
+            let userList = try await usersAPI.getUsers(userIDs: userIDsToFetch)
+            usersByID = Dictionary(
+                userList.found.map { ($0.id.id, $0) },
+                uniquingKeysWith: { first, _ in first }
+            )
+        } catch {
+            WireLogger.search.warn(
+                "failed to enrich search users with asset keys: \(String(describing: error))"
+            )
+            return
+        }
+
+        await viewContext.perform {
+            for searchUser in searchUsers where searchUser.assetKeys == nil {
+                guard let uuid = searchUser.remoteIdentifier,
+                      let user = usersByID[uuid],
+                      let assetKeys = SearchUserAssetKeys(user.assets)
+                else { continue }
+                searchUser.assetKeys = assetKeys
+            }
+        }
     }
 
 }

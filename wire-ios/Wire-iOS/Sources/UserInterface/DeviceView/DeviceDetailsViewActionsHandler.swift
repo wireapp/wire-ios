@@ -91,8 +91,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         }
     }
 
-    func resetSession() {
-        userClient.resetSession()
+    @MainActor
+    func resetSession() async {
+        isProcessing?(true)
+        await userSession.resetProteusSession.invoke(userClient: userClient)
+        isProcessing?(false)
     }
 
     @MainActor

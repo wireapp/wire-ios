@@ -702,16 +702,16 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
     // MARK: - resetSession
 
     var resetSession_Invocations: [Void] = []
-    var resetSession_MockMethod: (() -> Void)?
+    var resetSession_MockMethod: (() async -> Void)?
 
-    func resetSession() {
+    func resetSession() async {
         resetSession_Invocations.append(())
 
         guard let mock = resetSession_MockMethod else {
             fatalError("no mock for `resetSession`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - updateVerified
