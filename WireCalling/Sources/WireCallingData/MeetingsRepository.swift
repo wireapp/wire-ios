@@ -19,6 +19,8 @@
 package import Foundation
 package import WireCallingDomain
 
+import WireFoundation
+
 package final class MeetingsRepository: MeetingsRepositoryProtocol {
 
     private let meetingsSource: @Sendable () -> [Meeting]

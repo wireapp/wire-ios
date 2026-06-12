@@ -19,6 +19,7 @@
 package import WireCallingDomain
 package import WireFoundation
 
+import Combine
 import SwiftUI
 import WireCallingDomainSupport
 
