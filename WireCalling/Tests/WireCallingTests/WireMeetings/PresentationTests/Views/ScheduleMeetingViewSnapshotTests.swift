@@ -24,7 +24,7 @@ import XCTest
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
-final class MeetingsViewSnapshotTests: XCTestCase {
+final class ScheduleMeetingViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -44,7 +44,7 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            MeetingsView(viewModel: createEmptyViewModel())
+            ScheduleMeetingView(viewModel: createViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +61,7 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            MeetingsView(viewModel: createEmptyViewModel())
+            ScheduleMeetingView(viewModel: createViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -76,22 +76,11 @@ final class MeetingsViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func createEmptyViewModel() -> MeetingsViewModel {
-        let mockRepository = MockMeetingsRepositoryProtocol()
-        mockRepository.hasUpcomingMeetingsAfter_MockValue = false
-
-        let upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockValue = PaginatedMeetings(
-            meetings: [],
-            hasMore: false,
-            nextOffset: 0
-        )
-
-        return MeetingsViewModel(
-            currentDateProvider: .system,
-            formatter: MeetingsFormatter(),
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
-        )
+    private func createViewModel() -> ScheduleMeetingViewModel {
+        let viewModel = ScheduleMeetingViewModel()
+        viewModel.startDate = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
+        viewModel.endDate = viewModel.startDate.addingTimeInterval(60 * 30) // 30 minutes
+        return viewModel
     }
 
 }

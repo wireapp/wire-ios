@@ -24,7 +24,7 @@ import XCTest
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
-final class MeetingsViewSnapshotTests: XCTestCase {
+final class CreateInstantMeetingViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -44,7 +44,7 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            MeetingsView(viewModel: createEmptyViewModel())
+            CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +61,7 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            MeetingsView(viewModel: createEmptyViewModel())
+            CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -72,26 +72,6 @@ final class MeetingsViewSnapshotTests: XCTestCase {
                     named: "\(dynamicTypeSize)"
                 )
         }
-    }
-
-    // MARK: - Helpers
-
-    private func createEmptyViewModel() -> MeetingsViewModel {
-        let mockRepository = MockMeetingsRepositoryProtocol()
-        mockRepository.hasUpcomingMeetingsAfter_MockValue = false
-
-        let upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockValue = PaginatedMeetings(
-            meetings: [],
-            hasMore: false,
-            nextOffset: 0
-        )
-
-        return MeetingsViewModel(
-            currentDateProvider: .system,
-            formatter: MeetingsFormatter(),
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
-        )
     }
 
 }
