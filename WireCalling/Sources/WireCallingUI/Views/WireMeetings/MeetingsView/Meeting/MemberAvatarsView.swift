@@ -20,7 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 
-struct ParticipantsView: View { // TODO: is there a difference between Participant and Member?
+struct MemberAvatarsView: View {
     let members: [Member]
 
     private let maxVisible = 5
@@ -70,5 +70,5 @@ struct ParticipantsView: View { // TODO: is there a difference between Participa
 }
 
 #Preview {
-    ParticipantsView(members: [])
+    MemberAvatarsView(members: [])
 }

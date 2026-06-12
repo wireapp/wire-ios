@@ -76,7 +76,7 @@ struct MeetingRow: View {
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 if !meeting.members.isEmpty {
-                    ParticipantsView(members: meeting.members)
+                    MemberAvatarsView(members: meeting.members)
                         .padding(.top, 2)
                 }
             }
