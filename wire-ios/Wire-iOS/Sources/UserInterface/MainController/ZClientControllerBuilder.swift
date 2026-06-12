@@ -156,7 +156,7 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                             // TODO: [WPB-25941] Remove developer flag when feature is complete
                             let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
                             let role: WireDriveConversation.Participant.Role = if isDrivePermissionsEnabled {
-                                item.isGuest(in: conversation) ? .viewer : .editor
+                                conversation.matchesTeam(with: item) ? .editor : .viewer
                             } else {
                                 .editor
                             }
