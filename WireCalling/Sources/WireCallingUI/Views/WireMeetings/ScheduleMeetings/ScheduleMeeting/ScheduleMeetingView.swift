@@ -126,8 +126,10 @@ struct ScheduleMeetingView: View {
                 ParticipantPickerView(selection: $selectedParticipants)
             } label: {
                 HStack {
-                    Text("Lorem, ipsum, dolor, sit, amet, consetetur, sadipscing, elitr, sed, diam, nonumy, eirmod, tempor, invidunt, ut labore, et dolore, magna aliquyam, erat")
-                        .lineLimit(1)
+                    Text(
+                        "Lorem, ipsum, dolor, sit, amet, consetetur, sadipscing, elitr, sed, diam, nonumy, eirmod, tempor, invidunt, ut labore, et dolore, magna aliquyam, erat"
+                    )
+                    .lineLimit(1)
                     Spacer()
                     Text("18")
                         .foregroundStyle(.secondary)

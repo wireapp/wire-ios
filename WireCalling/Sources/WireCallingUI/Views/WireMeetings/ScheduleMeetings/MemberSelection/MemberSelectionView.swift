@@ -179,16 +179,16 @@ struct MockMemberSource: MemberRepositoryProtocol {
 
     func search(query: String) async throws -> [Member] {
         switch result {
-        case .failure(let error):
+        case let .failure(error):
             throw error
-        case .success(let members):
+        case let .success(members):
             guard !query.isEmpty else { return members }
             return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
         }
     }
 }
 
-private extension Array where Element == Member {
+private extension [Member] {
     static var mock: Self {
         [
             .init(name: "Martin Koch-Johansen", handle: "username"),

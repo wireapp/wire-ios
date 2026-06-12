@@ -561,7 +561,7 @@ package extension MeetingsRepository {
 
 private extension Member {
 
-    init (name: String) {
+    init(name: String) {
         let id = UUID()
         self.init(
             qualifiedID: .init(id: id, domain: ""),

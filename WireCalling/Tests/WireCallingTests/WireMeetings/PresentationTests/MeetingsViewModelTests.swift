@@ -72,8 +72,10 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.first?.title == "Upcoming 1")
         #expect(viewModel.hasMore == true)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
-        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?.pageSize == 10)
-        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?.offset == 0)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?
+            .pageSize == 10)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?
+            .offset == 0)
     }
 
     @Test("loadInitialData replaces previously loaded meetings and resets the offset")
@@ -96,7 +98,8 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.count == 1)
         #expect(viewModel.loadedMeetings.first?.title == "Second load")
         #expect(viewModel.hasMore == false)
-        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?.offset == 0)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
+            .offset == 0)
     }
 
     // MARK: - loadMoreIfNeeded
@@ -124,8 +127,10 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.contains { $0.title == "Page 2" })
         #expect(viewModel.hasMore == false)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
-        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?.pageSize == 5)
-        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?.offset == 10)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
+            .pageSize == 5)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
+            .offset == 10)
     }
 
     @Test("loadMoreIfNeeded does nothing when there are no more meetings")
