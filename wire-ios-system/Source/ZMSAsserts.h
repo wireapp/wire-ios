@@ -106,7 +106,7 @@
 #define ZMDebugAssertMessage(tag_, assertion, file_, line_) \
     do { \
         NSString *message = [NSString stringWithFormat:@"Assertion (%s) failed.", assertion]; \
-        [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull { \
+        [ZMSLog_ logWithLevel:ZMLogLevelError message:^NSString * _Nonnull { \
             return message; \
         } tag:tag_ file:[NSString stringWithUTF8String:file_] line:(NSUInteger)line_]; \
     } while (0)
@@ -115,7 +115,7 @@
     do { \
         NSString *prefix = [NSString stringWithFormat:@"Assertion (%s) failed. ", assertion]; \
         NSString *message = [prefix stringByAppendingFormat:format, ##__VA_ARGS__]; \
-        [ZMSLog logWithLevel:ZMLogLevelError message:^NSString * _Nonnull { \
+        [ZMSLog_ logWithLevel:ZMLogLevelError message:^NSString * _Nonnull { \
             return message; \
         } tag:tag_ file:[NSString stringWithUTF8String:file_] line:(NSUInteger)line_]; \
     } while (0)

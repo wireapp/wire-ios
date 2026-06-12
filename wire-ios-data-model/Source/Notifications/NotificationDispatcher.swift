@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import Foundation
 
 /// The `NotificationDispatcher` listens for changes to observable entities (e.g message, users, and conversations),
@@ -28,8 +27,6 @@ import Foundation
 
 @objcMembers
 public class NotificationDispatcher: NSObject, TearDownCapable {
-
-    static var log = ZMSLog(tag: "notifications")
 
     // MARK: - Public properties
 

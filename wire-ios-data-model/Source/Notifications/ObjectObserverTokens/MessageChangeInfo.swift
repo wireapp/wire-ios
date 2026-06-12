@@ -18,8 +18,6 @@
 
 import Foundation
 
-private var zmLog = ZMSLog(tag: "MessageChangeInfo")
-
 // MARK: Message observing
 
 enum MessageKey: String {

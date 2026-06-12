@@ -26,7 +26,7 @@ private var logTagToLevel: [String: ZMLogLevel] = [:]
 private var logTagToLogger: [String: OSLog] = [:]
 
 @objc
-extension ZMSLog {
+extension ZMSLog_ {
 
     /// Sets the minimum logging level for the tag
     /// - note: switches to the log queue
@@ -82,7 +82,7 @@ extension ZMSLog {
 
 // MARK: - Debugging
 
-extension ZMSLog {
+extension ZMSLog_ {
 
     static func debug_resetAllLevels() {
         logQueue.sync {

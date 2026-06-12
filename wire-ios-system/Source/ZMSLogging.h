@@ -27,7 +27,7 @@
 #define ZMLogWithLevelAndTag(level, tag_, format, ...) \
     do { \
         NSString *message = [[NSString alloc] initWithFormat:format, ##__VA_ARGS__]; \
-        [ZMSLog logWithLevel:level message:^NSString * _Nonnull { \
+        [ZMSLog_ logWithLevel:level message:^NSString * _Nonnull { \
             return message; \
         } tag:tag_ file:[NSString stringWithUTF8String:__FILE__] line:(NSUInteger)__LINE__]; \
     } while (0)
@@ -35,7 +35,7 @@
 #define ZMLogWithLevel(level, format, ...) \
     do { \
         NSString *message = [[NSString alloc] initWithFormat:format, ##__VA_ARGS__]; \
-        [ZMSLog logWithLevel:level message:^NSString * _Nonnull { \
+        [ZMSLog_ logWithLevel:level message:^NSString * _Nonnull { \
             return message; \
         } tag:0 file:[NSString stringWithUTF8String:__FILE__] line:(NSUInteger)__LINE__]; \
     } while (0)

@@ -18,6 +18,7 @@
 
 import Foundation
 import PINCache
+import WireLogging
 import WireTransport
 
 private let MEGABYTE = UInt(1 * 1000 * 1000)
@@ -61,8 +62,6 @@ public extension NSManagedObjectContext {
 
 @objcMembers
 open class UserImageLocalCache: NSObject {
-
-    fileprivate let log = ZMSLog(tag: "UserImageCache")
 
     /// Cache for large user profile image
     fileprivate let largeUserImageCache: any PINCaching
@@ -128,18 +127,16 @@ open class UserImageLocalCache: NSObject {
         case .preview:
             let stored = setImage(inCache: smallUserImageCache, cacheKey: key, data: imageData)
             if stored {
-                log
-                    .info(
-                        "Setting [\(user.name ?? "")] preview image [\(imageData)] cache key: \(String(describing: key))"
-                    )
+                WireLogger.ui.info(
+                    "Setting [\(user.name ?? "")] preview image [\(imageData)] cache key: \(String(describing: key))"
+                )
             }
         case .complete:
             let stored = setImage(inCache: largeUserImageCache, cacheKey: key, data: imageData)
             if stored {
-                log
-                    .info(
-                        "Setting [\(user.name ?? "")] complete image [\(imageData)] cache key: \(String(describing: key))"
-                    )
+                WireLogger.ui.info(
+                    "Setting [\(user.name ?? "")] complete image [\(imageData)] cache key: \(String(describing: key))"
+                )
             }
         }
     }
@@ -171,10 +168,9 @@ open class UserImageLocalCache: NSObject {
             largeUserImageCache.object(forKey: cacheKey) as? Data
         }
         if let data {
-            log
-                .info(
-                    "Getting [\(String(describing: user.name))] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]"
-                )
+            WireLogger.ui.info(
+                "Getting [\(String(describing: user.name))] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]"
+            )
         }
 
         return data

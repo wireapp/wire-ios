@@ -17,8 +17,7 @@
 //
 
 import Foundation
-
-private var zmLog = ZMSLog(tag: "ZMManagedObjectGrouping")
+import WireLogging
 
 // Describing the generic storage type that contains the data in the format of
 // Key => [Value,
@@ -95,7 +94,7 @@ extension NSManagedObjectContext {
     func findDuplicated<T: NSManagedObject, ValueForKey>(entityName: String, by keyPath: String) -> [ValueForKey: [T]] {
         if let storeURL = persistentStoreCoordinator?.persistentStores.first?.url,
            !storeURL.isFileURL {
-            zmLog.error("findDuplicated<T> does not support in-memory store")
+            WireLogger.localStorage.error("findDuplicated<T> does not support in-memory store")
             return [:]
         }
 

@@ -17,9 +17,8 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "SafeTypes")
 
 func lastCallstackFrames() -> String {
     let symbols = Thread.callStackSymbols
@@ -41,9 +40,9 @@ func objectWhichIsKindOfClass<T>(
         }
     }
     if let object = dictionary[key], !(object is NSNull) {
-        zmLog.error("\(object) is not a valid \(T.self) in \(dictionary). Callstack:\n \(lastCallstackFrames())")
+        WireLogger.system.error("\(object) is not a valid \(T.self) in \(dictionary). Callstack:\n \(lastCallstackFrames())")
     } else if required {
-        zmLog.error("nil values for \(key) in \(dictionary). Callstack:\n \(lastCallstackFrames())")
+        WireLogger.system.error("nil values for \(key) in \(dictionary). Callstack:\n \(lastCallstackFrames())")
     }
     return nil
 }

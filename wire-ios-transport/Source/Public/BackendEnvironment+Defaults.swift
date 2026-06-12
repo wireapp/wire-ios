@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireUtilities
 
 public extension BackendEnvironment {
@@ -32,17 +33,17 @@ public extension BackendEnvironment {
         switch environmentType {
         case .default, .staging, .anta, .bella, .chala, .diya, .elna, .foma:
             guard let path = configurationBundle.path(forResource: environmentType.stringValue, ofType: "json") else {
-                Logging.backendEnvironment.error("Could not find configuration for \(environmentType.stringValue)")
+                WireLogger.environment.error("Could not find configuration for \(environmentType.stringValue)")
                 return nil
             }
             guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else {
-                Logging.backendEnvironment.error("Could not read \(path)")
+                WireLogger.environment.error("Could not read \(path)")
                 return nil
             }
             self.init(environmentType: environmentType, data: data)
         case .custom:
             guard let data = userDefaults.data(forKey: BackendEnvironment.defaultsKey) else {
-                Logging.backendEnvironment.error("Could not read data from user defaults")
+                WireLogger.environment.error("Could not read data from user defaults")
                 return nil
             }
             self.init(environmentType: environmentType, data: data)

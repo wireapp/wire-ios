@@ -20,6 +20,8 @@ import XCTest
 
 @testable import WireSystem
 
+private typealias ZMSLog = ZMSLog_
+
 final class ZMLogTests: XCTestCase {
 
     override func setUp() {

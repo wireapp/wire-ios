@@ -18,6 +18,7 @@
 
 import Foundation
 import WireFoundation
+import WireLogging
 
 public enum EnvironmentType: Equatable {
     case `default`
@@ -89,7 +90,7 @@ public extension EnvironmentType {
         if let value = userDefaults.string(forKey: EnvironmentType.defaultsKey) {
             self.init(stringValue: value)
         } else {
-            Logging.backendEnvironment
+            WireLogger.environment
                 .error("Could not load environment type from user defaults, falling back to default")
             self = .default
         }
@@ -151,7 +152,7 @@ public final class BackendEnvironment: NSObject {
                 certificateTrust: certificateTrust
             )
         } catch {
-            Logging.backendEnvironment.error("Could not decode information from data: \(error)")
+            WireLogger.environment.error("Could not decode information from data: \(error)")
             return nil
         }
     }

@@ -214,8 +214,6 @@ public extension ZMUpdateEvent {
 
 }
 
-private let zmLog = ZMSLog(tag: "UpdateEvents")
-
 @objcMembers
 open class ZMUpdateEvent: NSObject {
 

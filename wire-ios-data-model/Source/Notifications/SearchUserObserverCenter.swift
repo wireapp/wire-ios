@@ -17,8 +17,7 @@
 //
 
 import Foundation
-
-private var zmLog = ZMSLog(tag: "SearchUserObserverCenter")
+import WireLogging
 
 extension NSManagedObjectContext {
 
@@ -120,7 +119,7 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
     public func addSearchUser(_ searchUser: ZMSearchUser) {
         guard let remoteID = searchUser.remoteIdentifier,
               let moc = managedObjectContext else {
-            zmLog.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
+            WireLogger.system.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
             return
         }
         snapshots[remoteID] = snapshots[remoteID] ?? SearchUserSnapshot(
@@ -141,7 +140,7 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
     /// Removes the snapshots for the specified searchUser
     public func removeSearchUser(_ searchUser: ZMSearchUser) {
         guard let remoteID = searchUser.remoteIdentifier else {
-            zmLog.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
+            WireLogger.system.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
             return
         }
         snapshots.removeValue(forKey: remoteID)

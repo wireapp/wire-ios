@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public final class ProxyCredentials: NSObject {
     public var username: String
@@ -64,7 +65,7 @@ public final class ProxyCredentials: NSObject {
             try Keychain.deleteItem(.usernameItem(for: proxy))
             try Keychain.deleteItem(.passwordItem(for: proxy))
         } catch {
-            Logging.backendEnvironment.error(error.localizedDescription)
+            WireLogger.environment.error(error.localizedDescription)
             return false
         }
         return true

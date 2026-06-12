@@ -17,8 +17,7 @@
 //
 
 import Foundation
-
-private var zmLog = ZMSLog(tag: "DependencyKeyStore")
+import WireLogging
 
 struct Observable {
 
@@ -130,7 +129,7 @@ class DependencyKeyStore {
         case ButtonState.entityName():
             return Set([#keyPath(ButtonState.stateValue), #keyPath(ButtonState.isExpired)])
         default:
-            zmLog.warn("There are no observable keys defined for \(classIdentifier)")
+            WireLogger.system.warn("There are no observable keys defined for \(classIdentifier)")
             return Set()
         }
     }
@@ -173,7 +172,7 @@ class DependencyKeyStore {
         case ButtonState.entityName():
             return observableKeys.mapToDictionary { ButtonState.keyPathsForValuesAffectingValue(forKey: $0) }
         default:
-            zmLog.warn("There is no path to affecting keys defined for \(classIdentifier)")
+            WireLogger.system.warn("There is no path to affecting keys defined for \(classIdentifier)")
             return [:]
         }
     }

@@ -20,8 +20,6 @@ import Foundation
 import WireLogging
 import WireUtilities
 
-private let log = ZMSLog(tag: "Backup")
-
 public extension CoreDataStack {
 
     private static let metadataFilename = "export.json"
@@ -69,7 +67,6 @@ public extension CoreDataStack {
                 guard fileManager.fileExists(atPath: url.path) else { return }
                 try fileManager.removeItem(at: url)
             } catch {
-                log.debug("error removing directory: \(error)")
                 WireLogger.localStorage.debug("backup: clearBackupDirectory got error removing directory: \(error)")
             }
         }
@@ -145,14 +142,14 @@ public extension CoreDataStack {
             let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
             try metadata.write(to: metadataURL)
 
-            log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
+            WireLogger.backupExport.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
             return BackupInfo(url: backupDirectory, metadata: metadata)
         }
 
         do {
             return try await task.value
         } catch {
-            log.debug("error backing up local store: \(error)")
+            WireLogger.backupExport.debug("error backing up local store: \(error)")
             throw BackupError.failedToWrite(error)
         }
     }
@@ -174,7 +171,7 @@ public extension CoreDataStack {
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "import backup") else {
             WireLogger.localStorage
                 .error("backup: error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
-            log.debug("error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
+            WireLogger.backupImport.debug("error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
             throw CoreDataStackError.noDatabaseActivity
         }
 

@@ -77,13 +77,13 @@
     }
     self.ignoreLogErrors = YES;
     block();
-    [ZMSLog sync];
+    [ZMSLog_ sync];
     self.ignoreLogErrors = NO;
 }
 
 - (void)disableZMLogError:(BOOL)disabled {
     if(!disabled) {
-        [ZMSLog sync];
+        [ZMSLog_ sync];
     }
     self.ignoreLogErrors = disabled;
 }
@@ -92,7 +92,7 @@
 {
     self.ignoreLogErrors = NO;
     ZM_WEAK(self);
-    self.logHookToken = [ZMSLog addEntryHookWithLogHook:^(ZMLogLevel level, NSString * _Nullable tag, ZMSLogEntry * _Nonnull entry, ZM_UNUSED BOOL isSafe ) {
+    self.logHookToken = [ZMSLog_ addEntryHookWithLogHook:^(ZMLogLevel level, NSString * _Nullable tag, ZMSLogEntry * _Nonnull entry, ZM_UNUSED BOOL isSafe ) {
         ZM_STRONG(self);
         if (!self.ignoreLogErrors && level == ZMLogLevelError) {
             XCTFail(@"Unexpected log error: [%@] %@", tag, entry.text);
@@ -104,7 +104,7 @@
 {
     self.ignoreLogErrors = NO;
     if (self.logHookToken != nil) {
-        [ZMSLog removeLogHookWithToken:_logHookToken];
+        [ZMSLog_ removeLogHookWithToken:_logHookToken];
         self.logHookToken = nil;
     }
 }

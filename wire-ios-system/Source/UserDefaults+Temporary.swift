@@ -37,7 +37,7 @@ public extension UserDefaults {
 
 // MARK: UserDefaults.temporary() helpers
 
-private let zmLog = ZMSLog(tag: "UserDefaults")
+private let zmLog = ZMSLog_(tag: "UserDefaults")
 
 private final class SuiteCleanUp {
 

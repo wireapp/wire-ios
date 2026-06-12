@@ -17,8 +17,7 @@
 //
 
 import Foundation
-
-private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
+import WireLogging
 
 extension Notification.Name {
     static let conversationListsDidReload = Notification.Name("conversationListsDidReloadNotification")
@@ -63,17 +62,11 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     @objc
     public func startObservingList(_ conversationList: ConversationList) {
         if listSnapshots[conversationList.identifier] == nil {
-            zmLog.debug("Adding conversationList with identifier \(conversationList.identifier)")
+            WireLogger.ui.debug(
+                    "[ConversationListObserverCenter] Adding conversationList with identifier \(conversationList.identifier)"
+                )
         } else {
-            zmLog.debug("Recreating snapshot for conversationList with identifier \(conversationList.identifier)")
-            zmLog.ifDebug {
-                conversationList.items.forEach {
-                    zmLog
-                        .debug(
-                            "Conversation in \(conversationList.identifier) includes: \(String(describing: $0.objectID)) with type: \($0.conversationType.rawValue)"
-                        )
-                }
-            }
+            WireLogger.ui.debug("[ConversationListObserverCenter] Recreating snapshot for conversationList with identifier \(conversationList.identifier)")
         }
         listSnapshots[conversationList.identifier] = ConversationListSnapshot(
             conversationList: conversationList,
@@ -84,7 +77,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     /// Removes the conversationList from the objects to observe
     @objc
     public func removeConversationList(_ conversationList: ConversationList) {
-        zmLog.debug("Removing conversationList with identifier \(conversationList.identifier)")
+        WireLogger.ui.debug("[ConversationListObserverCenter] Removing conversationList with identifier \(conversationList.identifier)")
         listSnapshots.removeValue(forKey: conversationList.identifier)
     }
 
@@ -170,7 +163,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
         guard hasChanged else { return }
 
-        zmLog.debug("conversationDidChange with changes \(changes.customDebugDescription)")
+        WireLogger.ui.debug("[ConversationListObserverCenter] conversationDidChange with changes \(changes.customDebugDescription)")
         forwardToSnapshots { $0.processConversationChanges(changes) }
     }
 
@@ -178,7 +171,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     func folderChanges(inserted: [Label], deleted: [Label]) {
         guard !inserted.isEmpty || !deleted.isEmpty else { return }
 
-        zmLog.debug("\(inserted.count) folder(s) inserted - \(deleted.count) folder(s) deleted")
+        WireLogger.ui.debug("[ConversationListObserverCenter] \(inserted.count) folder(s) inserted - \(deleted.count) folder(s) deleted")
 
         insertedLabels.append(contentsOf: inserted)
         deletedLabels.append(contentsOf: deleted)
@@ -187,12 +180,12 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     /// Stores inserted or deleted conversations temporarily until save / merge completes
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
         if deleted.isEmpty, inserted.isEmpty { return }
-        zmLog.debug("\(inserted.count) conversation inserted - \(deleted.count) conversation deleted")
+        WireLogger.ui.debug("[ConversationListObserverCenter] \(inserted.count) conversation inserted - \(deleted.count) conversation deleted")
         inserted.forEach {
-            zmLog.debug("Inserted: \($0.objectID) conversationType: \($0.conversationType.rawValue)")
+            WireLogger.ui.debug("[ConversationListObserverCenter] Inserted: \($0.objectID) conversationType: \($0.conversationType.rawValue)")
         }
         deleted.forEach {
-            zmLog.debug("Deleted: \($0.objectID) conversationType: \($0.conversationType.rawValue)")
+            WireLogger.ui.debug("[ConversationListObserverCenter] Deleted: \($0.objectID) conversationType: \($0.conversationType.rawValue)")
         }
         insertedConversations.append(contentsOf: inserted)
         deletedConversations.append(contentsOf: deleted)
@@ -217,13 +210,13 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         // We should always re-create the snapshots when re-entering the foreground
         // Therefore it would be safe to clear the snapshots here
         listSnapshots = [:]
-        zmLog.debug("\(#function), clearing listSnapshots")
+        WireLogger.ui.debug("[ConversationListObserverCenter] \(#function), clearing listSnapshots")
     }
 
     public func startObserving() {
         // list snapshots are automatically re-created when the lists are re-created and `recreateSnapshot(for
         // conversation:)` is called
-        zmLog.debug(#function)
+        WireLogger.ui.debug("[ConversationListObserverCenter] \(#function)")
 
         managedObjectContext.conversationListDirectory().refetchAllLists(in: managedObjectContext)
 
@@ -270,31 +263,31 @@ class ConversationListSnapshot: NSObject {
             needsToRecalculate = true
         } else if list.predicateMatchesConversation(conversation) {
             // list did not contain conversation and now it should
-            zmLog
+            WireLogger.ui
                 .debug(
-                    "Inserted conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) into list \(list.identifier)"
+                    "[ConversationListObserverCenter] Inserted conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) into list \(list.identifier)"
                 )
             list.insertConversations([conversation])
             needsToRecalculate = true
         }
 
-        zmLog.debug("Snapshot for list \(list.identifier) processed change, needsToRecalculate: \(needsToRecalculate)")
+        WireLogger.ui.debug("[ConversationListObserverCenter] Snapshot for list \(list.identifier) processed change, needsToRecalculate: \(needsToRecalculate)")
     }
 
     private func updateDidRemoveConversation(list: ConversationList, changes: ConversationChangeInfo) -> Bool {
         if !list.predicateMatchesConversation(changes.conversation) {
             list.removeConversations([changes.conversation])
-            zmLog
+            WireLogger.ui
                 .debug(
-                    "Removed conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) from list \(list.identifier)"
+                    "[ConversationListObserverCenter] Removed conversation: \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) from list \(list.identifier)"
                 )
             return true
         }
         if list.sortingIsAffected(byConversationKeys: changes.changedKeys) {
             list.resortConversation(changes.conversation)
-            zmLog
+            WireLogger.ui
                 .debug(
-                    "Resorted conversation \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) in list \(list.identifier)"
+                    "[ConversationListObserverCenter] Resorted conversation \(changes.conversation.objectID) with type: \(changes.conversation.conversationType.rawValue) in list \(list.identifier)"
                 )
         }
         return false
@@ -306,9 +299,9 @@ class ConversationListSnapshot: NSObject {
 
         let conversationsToInsert = Set(inserted.filter { list.predicateMatchesConversation($0) })
         let conversationsToRemove = Set(deleted.filter { list.items.contains($0) })
-        zmLog
+        WireLogger.ui
             .debug(
-                "List \(list.identifier) is inserting \(conversationsToInsert.count) and deletes \(conversationsToRemove.count) conversations"
+                "[ConversationListObserverCenter] List \(list.identifier) is inserting \(conversationsToInsert.count) and deletes \(conversationsToRemove.count) conversations"
             )
 
         list.insertConversations(conversationsToInsert)
@@ -317,15 +310,15 @@ class ConversationListSnapshot: NSObject {
         if !conversationsToInsert.isEmpty || !conversationsToRemove.isEmpty {
             needsToRecalculate = true
         }
-        zmLog
+        WireLogger.ui
             .debug(
-                "Snapshot for  list \(list.identifier) processed inserts and deletes, needsToRecalculate: \(needsToRecalculate)"
+                "[ConversationListObserverCenter] Snapshot for  list \(list.identifier) processed inserts and deletes, needsToRecalculate: \(needsToRecalculate)"
             )
     }
 
     func recalculateListAndNotify() {
         guard let list = conversationList, needsToRecalculate || !conversationChanges.isEmpty else {
-            zmLog.debug("List \(String(describing: conversationList?.identifier)) has no changes")
+            WireLogger.ui.debug("[ConversationListObserverCenter] List \(String(describing: conversationList?.identifier)) has no changes")
             return
         }
 
@@ -343,11 +336,11 @@ class ConversationListSnapshot: NSObject {
             newSet: list.toOrderedSetState()
         )
         else {
-            zmLog.debug("Recalculated list \(list.identifier), but old state is same as new state")
+            WireLogger.ui.debug("[ConversationListObserverCenter] Recalculated list \(list.identifier), but old state is same as new state")
             return
         }
 
-        zmLog.debug("Recalculated  list \(list.identifier) and updated snapshot")
+        WireLogger.ui.debug("[ConversationListObserverCenter] Recalculated  list \(list.identifier) and updated snapshot")
         state = newStateUpdate.newSnapshot
         listChange = ConversationListChangeInfo(setChangeInfo: newStateUpdate.changeInfo)
     }
@@ -366,7 +359,7 @@ class ConversationListSnapshot: NSObject {
             userInfo["conversationListChangeInfo"] = changes
         }
         guard !userInfo.isEmpty else {
-            zmLog.debug("No changes for conversationList \(String(describing: conversationList))")
+            WireLogger.ui.debug("[ConversationListObserverCenter] No changes for conversationList \(String(describing: conversationList))")
             return
         }
 
@@ -377,7 +370,7 @@ class ConversationListSnapshot: NSObject {
             userInfo: userInfo
         )
 
-        zmLog.debug(logMessage(for: conversationChanges, listChanges: listChanges))
+        WireLogger.ui.debug(logMessage(for: conversationChanges, listChanges: listChanges))
         notification.post()
     }
 
@@ -386,7 +379,7 @@ class ConversationListSnapshot: NSObject {
         listChanges: ConversationListChangeInfo?
     ) -> String {
         var message =
-            "Posting notification for list \(String(describing: conversationList?.identifier)) with conversationChanges: \n"
+            "[ConversationListObserverCenter] Posting notification for list \(String(describing: conversationList?.identifier)) with conversationChanges: \n"
         message.append(conversationChanges.map(\.customDebugDescription).joined(separator: "\n"))
 
         guard let changeInfo = listChanges else { return message }

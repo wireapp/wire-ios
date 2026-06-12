@@ -48,7 +48,7 @@ public final class ZMSLogEntry: NSObject {
 ///     zmLog.warn("A serious warning!")
 ///
 @objc
-public final class ZMSLog: NSObject, Sendable {
+public final class ZMSLog_: NSObject, Sendable {
 
     public typealias LogHook = (_ level: ZMLogLevel, _ tag: String?, _ message: String) -> Void
     public typealias LogEntryHook = (
@@ -71,7 +71,7 @@ public final class ZMSLog: NSObject, Sendable {
     public init(tag: String) {
         self.tag = tag
         logQueue.sync {
-            ZMSLog.register(tag: tag)
+            ZMSLog_.register(tag: tag)
         }
     }
 
@@ -86,7 +86,7 @@ public final class ZMSLog: NSObject, Sendable {
 
 // MARK: - Emit logs
 
-public extension ZMSLog {
+public extension ZMSLog_ {
 
     func safePublic(
         _ message: @autoclosure () -> SanitizedString,
@@ -96,23 +96,23 @@ public extension ZMSLog {
         line: UInt = #line
     ) {
         let entry = ZMSLogEntry(text: message().value, timestamp: Date())
-        ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, osLogOn: osLogOn, file: file, line: line)
+        ZMSLog_.logEntry(entry, level: level, isSafe: true, tag: tag, osLogOn: osLogOn, file: file, line: line)
     }
 
     func error(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
-        ZMSLog.logWithLevel(.error, message: message(), tag: tag, file: file, line: line)
+        ZMSLog_.logWithLevel(.error, message: message(), tag: tag, file: file, line: line)
     }
 
     func warn(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
-        ZMSLog.logWithLevel(.warn, message: message(), tag: tag, file: file, line: line)
+        ZMSLog_.logWithLevel(.warn, message: message(), tag: tag, file: file, line: line)
     }
 
     func info(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
-        ZMSLog.logWithLevel(.info, message: message(), tag: tag, file: file, line: line)
+        ZMSLog_.logWithLevel(.info, message: message(), tag: tag, file: file, line: line)
     }
 
     func debug(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
-        ZMSLog.logWithLevel(.debug, message: message(), tag: tag, file: file, line: line)
+        ZMSLog_.logWithLevel(.debug, message: message(), tag: tag, file: file, line: line)
     }
 }
 
@@ -125,25 +125,25 @@ public extension ZMSLog {
 //     // do expensive calculation of 'foo' here
 //     zmLog.error("foo: \(foo)")
 // }
-public extension ZMSLog {
+public extension ZMSLog_ {
 
     /// Executes the closure only if the log level is Warning or higher
     func ifWarn(_ closure: () -> Void) {
-        if ZMLogLevel.warn.rawValue <= ZMSLog.getLevel(tag: tag).rawValue {
+        if ZMLogLevel.warn.rawValue <= ZMSLog_.getLevel(tag: tag).rawValue {
             closure()
         }
     }
 
     /// Executes the closure only if the log level is Info or higher
     func ifInfo(_ closure: () -> Void) {
-        if ZMLogLevel.info.rawValue <= ZMSLog.getLevel(tag: tag).rawValue {
+        if ZMLogLevel.info.rawValue <= ZMSLog_.getLevel(tag: tag).rawValue {
             closure()
         }
     }
 
     /// Executes the closure only if the log level is Debug or higher
     func ifDebug(_ closure: () -> Void) {
-        if ZMLogLevel.debug.rawValue <= ZMSLog.getLevel(tag: tag).rawValue {
+        if ZMLogLevel.debug.rawValue <= ZMSLog_.getLevel(tag: tag).rawValue {
             closure()
         }
     }
@@ -169,7 +169,7 @@ public final class LogHookToken: NSObject {
 
 // MARK: - Hooks (log observing)
 
-public extension ZMSLog {
+public extension ZMSLog_ {
 
     /// Notify all hooks of a new log
     fileprivate static func notifyHooks(
@@ -222,7 +222,7 @@ public extension ZMSLog {
 
 // MARK: - Internal stuff
 
-extension ZMSLog {
+extension ZMSLog_ {
 
     @objc
     public static func logWithLevel(
@@ -250,7 +250,7 @@ extension ZMSLog {
             return
         #endif
         logQueue.async {
-            guard let tag, level.rawValue <= ZMSLog.getLevelNoLock(tag: tag).rawValue else {
+            guard let tag, level.rawValue <= ZMSLog_.getLevelNoLock(tag: tag).rawValue else {
                 return
             }
 
@@ -276,7 +276,7 @@ extension ZMSLog {
 
 // MARK: - Save on disk & file management
 
-public extension ZMSLog {
+public extension ZMSLog_ {
     private enum Constant {
         static let maxNumberOfLogFiles = 5
     }

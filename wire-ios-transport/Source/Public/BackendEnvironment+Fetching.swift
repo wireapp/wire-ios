@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public extension BackendEnvironment {
     enum FetchError: String, Error {
@@ -27,18 +28,18 @@ public extension BackendEnvironment {
     static func fetchEnvironment(url: URL, onCompletion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error {
-                Logging.backendEnvironment.error("Error fetching configuration from \(url): \(error)")
+                WireLogger.environment.error("Error fetching configuration from \(url): \(error)")
                 onCompletion(.failure(error))
             } else if let data {
                 if let environment = BackendEnvironment(environmentType: .custom(url: url), data: data) {
-                    Logging.backendEnvironment.info("Fetched custom configuration from \(url)")
+                    WireLogger.environment.info("Fetched custom configuration from \(url)")
                     onCompletion(.success(environment))
                 } else {
-                    Logging.backendEnvironment.info("Error parsing response from \(url)")
+                    WireLogger.environment.info("Error parsing response from \(url)")
                     onCompletion(.failure(FetchError.invalidResponse))
                 }
             } else {
-                Logging.backendEnvironment.info("Error fetching configuration from \(url)")
+                WireLogger.environment.info("Error fetching configuration from \(url)")
                 onCompletion(.failure(FetchError.requestFailed))
             }
         }.resume()

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 /// This object holds information about a message draft that has not yet been sent
 /// by the user but was put into the input field.
@@ -115,8 +116,6 @@ private struct StorableQuote: Codable {
 @objc
 extension ZMConversation {
 
-    private static let log = ZMSLog(tag: "EAR")
-
     /// Internal storage of the serialized `draftMessage`.
     @NSManaged var draftMessageData: Data?
 
@@ -153,7 +152,7 @@ extension ZMConversation {
                     draftMessageData = data
                     draftMessageNonce = nonce
                 } catch {
-                    Self.log.warn("Could not encrypt draft message data: \(error.localizedDescription)")
+                    WireLogger.ear.warn("Could not encrypt draft message data: \(error.localizedDescription)")
                 }
             } else {
                 draftMessageData = nil

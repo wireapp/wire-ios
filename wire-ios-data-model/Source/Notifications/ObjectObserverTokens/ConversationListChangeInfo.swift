@@ -17,9 +17,8 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
-
-private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 
 extension ConversationList {
 
@@ -80,9 +79,9 @@ public extension ConversationListChangeInfo {
     ) -> NSObjectProtocol {
 
         if let list {
-            zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
+            WireLogger.ui.debug("[ConversationListObserverCenter] Registering observer \(observer) for list \(list.identifier)")
         } else {
-            zmLog.debug("Registering observer \(observer) for all lists")
+            WireLogger.ui.debug("[ConversationListObserverCenter] Registering observer \(observer) for all lists")
         }
 
         return ManagedObjectObserverToken(
@@ -92,7 +91,7 @@ public extension ConversationListChangeInfo {
         ) { [weak observer] note in
             guard let observer, let aList = note.object as? ConversationList else { return }
 
-            zmLog.debug("Notifying registered observer \(observer) about changes in list: \(aList.identifier)")
+            WireLogger.ui.debug("[ConversationListObserverCenter] Notifying registered observer \(observer) about changes in list: \(aList.identifier)")
 
             if let changeInfo = note.userInfo["conversationListChangeInfo"] as? ConversationListChangeInfo {
                 observer.conversationListDidChange(changeInfo)

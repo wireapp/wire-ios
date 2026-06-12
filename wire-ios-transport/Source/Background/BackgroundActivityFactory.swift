@@ -226,9 +226,6 @@ public final class BackgroundActivityFactory: NSObject {
         activities.removeAll()
         if let currentBackgroundTask {
             if let activityManager {
-
-                // We might get killed pretty soon, let's flush the logs
-                ZMSLog.sync()
                 activityManager.endBackgroundTask(currentBackgroundTask)
             } else {
                 WireLogger.backgroundActivity.warn(
