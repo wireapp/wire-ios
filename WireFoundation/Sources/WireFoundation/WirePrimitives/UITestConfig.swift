@@ -51,14 +51,14 @@ public struct UITestConfig: Codable {
     }
 
     #if DEBUG
-        /// Returns `UITestConfig` decoded from base64 app environment or default config if none is set.
-        public static var environment: UITestConfig {
+        /// Returns `UITestConfig` decoded from base64 app environment if set.
+        public static var environment: UITestConfig? {
             guard
                 let value = ProcessInfo.processInfo.environment[environmentKey],
                 let data = Data(base64Encoded: value),
                 let config = try? JSONDecoder().decode(UITestConfig.self, from: data)
             else {
-                return UITestConfig() // Return default config is none set in the environment
+                return nil
             }
 
             return config
