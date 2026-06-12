@@ -516,9 +516,9 @@ private extension WireDriveGetNodesRequest {
                 text: lookupFilterTextSearch,
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
-            
+
             let isRecursive = searchTerm?.isEmpty == false || !metafilter.isEmpty
-            
+
             request.scope = RestLookupScope(
                 recursive: isRecursive,
                 root: RestNodeLocator(root)
