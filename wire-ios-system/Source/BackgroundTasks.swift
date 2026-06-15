@@ -20,7 +20,7 @@ public protocol BackgroundTaskExecuter {
     func execute<T>(name: String?, operation: () async throws -> T) async throws -> T
 }
 
-func withBackgroundTask<T>(
+public func withBackgroundTask<T>(
     name: String? = nil,
     executer: any BackgroundTaskExecuter,
     operation: sending @escaping @isolated(any) () async throws -> T
@@ -29,9 +29,11 @@ func withBackgroundTask<T>(
 }
 
 /// A `BackgroundTaskExecuter` that simply executes the operation without any background task management.
-struct PassthroughTaskExecuter: BackgroundTaskExecuter {
+public struct PassthroughTaskExecuter: BackgroundTaskExecuter {
 
-    func execute<T>(name: String?, operation: () async throws -> T) async throws -> T {
+    public init() {}
+
+    public func execute<T>(name: String?, operation: () async throws -> T) async throws -> T {
         try await operation()
     }
 
