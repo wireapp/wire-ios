@@ -34,7 +34,7 @@ struct WireMeetingsMemberRepository: MemberRepositoryProtocol, @unchecked Sendab
         let searchOptions: SearchOptions = [
             .contacts,
             .teamMembers,
-            .directory,
+            .directory, // TODO: check if enabled? needs to work in a large team
             // .federated // TODO: check if enabled?
         ]
 

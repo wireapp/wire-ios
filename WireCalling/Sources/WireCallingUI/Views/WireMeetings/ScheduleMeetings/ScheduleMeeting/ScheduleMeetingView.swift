@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCallingDomain
 import WireDesign
+import WireFoundation
 
 struct ScheduleMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -26,7 +27,7 @@ struct ScheduleMeetingView: View {
     @Environment(\.dismiss) private var dismiss
     @State private(set) var viewModel: ScheduleMeetingViewModel
     @State private var expandedField: ExpandedField?
-    @State private var selectedParticipants: [String] = []
+    @State private var selectedMembers: [Member] = []
 
     var body: some View {
         NavigationStack {
@@ -103,14 +104,14 @@ struct ScheduleMeetingView: View {
             // TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
 
             NavigationLink {
-                ParticipantPickerView(selection: $selectedParticipants)
+                ParticipantPickerView(selection: $selectedMembers)
             } label: {
                 TextField(Strings.SetupParticipants.placeholder, text: .constant(""))
                     .disabled(true)
             }
 
             NavigationLink {
-                ParticipantPickerView(selection: $selectedParticipants)
+                ParticipantPickerView(selection: $selectedMembers)
             } label: {
                 HStack {
                     Text("Participants")
@@ -123,7 +124,7 @@ struct ScheduleMeetingView: View {
             }
 
             NavigationLink {
-                ParticipantPickerView(selection: $selectedParticipants)
+                ParticipantPickerView(selection: $selectedMembers)
             } label: {
                 HStack {
                     Text(
@@ -202,9 +203,9 @@ struct ScheduleMeetingView: View {
     }
 
     private var participantsSummary: String {
-        guard let first = selectedParticipants.first else { return "None" }
-        let extra = selectedParticipants.count - 1
-        return extra > 0 ? "\(first), + \(extra) more" : first
+        guard let first = selectedMembers.first else { return "None" }
+        let extra = selectedMembers.count - 1
+        return extra > 0 ? "\(first.name), + \(extra) more" : first.name
     }
 
     private enum ExpandedField: Hashable {
@@ -217,7 +218,7 @@ struct ScheduleMeetingView: View {
 }
 
 private struct ParticipantPickerView: View {
-    @Binding var selection: [String]
+    @Binding var selection: [Member]
 
     private let allParticipants = [
         "Martina Koch-Johansen",
@@ -225,16 +226,18 @@ private struct ParticipantPickerView: View {
         "Sophia Müller",
         "Lucas Hoffmann",
         "Anna Schmidt"
-    ]
+    ].map { name in
+        Member(qualifiedID: QualifiedID(id: UUID(), domain: ""), name: name, handle: name)
+    }
 
     var body: some View {
         Form {
-            ForEach(allParticipants, id: \.self) { participant in
+            ForEach(allParticipants, id: \.qualifiedID) { participant in
                 Button {
                     toggle(participant)
                 } label: {
                     HStack {
-                        Text(participant)
+                        Text(participant.name)
                             .foregroundStyle(.primary)
                         Spacer()
                         if selection.contains(participant) {
@@ -249,7 +252,7 @@ private struct ParticipantPickerView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func toggle(_ participant: String) {
+    private func toggle(_ participant: Member) {
         if let index = selection.firstIndex(of: participant) {
             selection.remove(at: index)
         } else {

@@ -157,6 +157,10 @@ struct MemberSelectionView: View {
     MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockMemberSource()))
 }
 
+#Preview("empty") {
+    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockMemberSource(members: [])))
+}
+
 #Preview("failure") {
     MemberSelectionView(
         viewModel: MemberSelectionViewModel(source: MockMemberSource(error: URLError(.badServerResponse)))

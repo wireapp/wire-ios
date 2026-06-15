@@ -20,7 +20,7 @@ public import Foundation
 public import WireFoundation
 
 // TODO: [WPB-20278] Update the model
-public struct Member: Equatable, Identifiable, Sendable {
+public struct Member: Hashable, Identifiable, Sendable {
 
     public let qualifiedID: QualifiedID
     public let name: String
