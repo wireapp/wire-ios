@@ -126,4 +126,9 @@ class ConversationDetailsPage: PageModel {
         app.buttons[Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue].firstMatch
     }
 
+    func conversationDetailsView() throws -> ActiveConversationPage {
+        closeConversationDetailsButton.tap()
+        return try ActiveConversationPage()
+    }
+
 }
