@@ -18,7 +18,9 @@
 
 package import WireCallingDomain
 package import WireFoundation
-package import WireReusableUIComponents
+
+import SwiftUI
+import WireCallingDomainSupport
 
 import Combine
 import SwiftUI
@@ -33,23 +35,16 @@ package final class AllMeetingsViewModel: ObservableObject {
     @Published var isCreateInstantMeetingPresented: Bool = false
     @Published var isScheduleMeetingPresented: Bool = false
 
-    private let passwordValidator: any PasswordValidator
-    private let isContextMenuAllowed: Bool
-
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        passwordValidator: any PasswordValidator,
-        isContextMenuAllowed: Bool
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
-        self.passwordValidator = passwordValidator
-        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     // MARK: - Public Interface
@@ -63,17 +58,11 @@ package final class AllMeetingsViewModel: ObservableObject {
     }
 
     func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel(
-            passwordValidator: passwordValidator,
-            isContextMenuAllowed: isContextMenuAllowed
-        )
+        CreateInstantMeetingViewModel()
     }
 
     func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel(
-            passwordValidator: passwordValidator,
-            isContextMenuAllowed: isContextMenuAllowed
-        )
+        ScheduleMeetingViewModel()
     }
 
 }

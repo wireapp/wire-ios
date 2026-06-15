@@ -176,7 +176,13 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons, isWireDriveEnabled: conversation.isWireDriveEnabled)
+        let showDriveViewerBanner = conversation.isWireDriveEnabled && userSession.selfUser
+            .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
+        let inputBar = InputBar(
+            buttons: inputBarButtons,
+            isWireDriveEnabled: conversation.isWireDriveEnabled,
+            showDriveViewerBanner: showDriveViewerBanner
+        )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
