@@ -25,7 +25,7 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
     @Published var participants: [WireDriveParticipant]
 
     public init(participants: [WireDriveParticipant]) {
-        self.participants = participants
+        self.participants = participants.sorted(by: { $0.displayName < $1.displayName })
     }
 
     func blockedOrPendingApprovalAvatarIcon(for participant: WireDriveParticipant) -> UIImage? {
