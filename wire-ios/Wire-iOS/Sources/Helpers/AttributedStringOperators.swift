@@ -205,9 +205,9 @@ extension String {
     }
 
     func localized(pov pointOfView: PointOfView) -> String {
+        guard pointOfView != .none else { return localized }
         let povPath = self + "-" + pointOfView.suffix
         let povVersion = povPath.localized
-
         if povVersion != povPath, !povVersion.isEmpty {
             return povVersion
         } else {
