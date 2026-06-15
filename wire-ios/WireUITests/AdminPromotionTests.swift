@@ -33,7 +33,7 @@ class AdminPromotionTests: WireUITestCase {
             withMemberCount: 1,
             conversation: .group(groupName)
         )
-        let member = teamMembers[0]
+        let member = try XCTUnwrap(teamMembers.first)
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -47,7 +47,7 @@ class AdminPromotionTests: WireUITestCase {
 
         // Member is now in the admin section
         XCTAssertTrue(
-            conversationDetailsPage.adminCell(named: member.name).waitForExistence(timeout: 15),
+            conversationDetailsPage.adminCell(named: member.name).waitForExistence(timeout: 5),
             "Promoted member should appear in the admin section"
         )
 
@@ -61,7 +61,7 @@ class AdminPromotionTests: WireUITestCase {
         let activeConversationPage = try conversationDetailsPage.closeConversationDetails()
 
         XCTAssertTrue(
-            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 30),
+            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 5),
             "Expected 'you left' system message"
         )
         XCTAssertFalse(

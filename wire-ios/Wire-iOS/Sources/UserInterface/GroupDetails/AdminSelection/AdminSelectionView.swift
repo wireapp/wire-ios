@@ -26,6 +26,10 @@ struct AdminSelectionView: View {
     @StateObject var viewModel: AdminSelectionViewModel
     @Environment(\.dismiss) private var dismiss
 
+    private var backgroundColor: Color {
+        ColorTheme.Backgrounds.background.color
+    }
+
     private var isShowingError: Binding<Bool> {
         Binding(
             get: { viewModel.promotionState == .failed },
@@ -46,7 +50,7 @@ struct AdminSelectionView: View {
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                             .listRowSeparator(.hidden)
-                            .listRowBackground(Color(UIColor.systemBackground))
+                            .listRowBackground(backgroundColor)
                     }
                     Section {
                         ForEach(viewModel.filteredCandidates, id: \.remoteIdentifier) { user in
@@ -59,15 +63,15 @@ struct AdminSelectionView: View {
                             .onTapGesture {
                                 viewModel.selectedUser = user
                             }
-                            .listRowBackground(Color(UIColor.systemBackground))
+                            .listRowBackground(backgroundColor)
                         }
                     }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
-                .background(Color(UIColor.systemBackground))
+                .background(backgroundColor)
             }
-            .background(Color(UIColor.systemBackground))
+            .background(backgroundColor)
             .navigationTitle(L10n.Localizable.AdminSelection.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -122,7 +126,10 @@ private struct AdminSearchBar: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(Color(UIColor.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 10))
+        .background(
+            ColorTheme.Backgrounds.surfaceVariant.color,
+            in: RoundedRectangle(cornerRadius: 10)
+        )
     }
 }
 
@@ -180,17 +187,17 @@ private struct CheckmarkIcon: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(isSelected ? Color.accentColor : Color(ColorTheme.Backgrounds.surface))
+                .fill(isSelected ? Color.accentColor : ColorTheme.Backgrounds.surface.color)
                 .overlay(
                     Circle().strokeBorder(
-                        isSelected ? Color.clear : Color(ColorTheme.Strokes.outline),
+                        isSelected ? Color.clear : ColorTheme.Strokes.outline.color,
                         lineWidth: 2
                     )
                 )
             if isSelected {
                 Image(systemName: "checkmark")
                     .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(Color(ColorTheme.Base.onPrimary))
+                    .foregroundStyle(ColorTheme.Base.onPrimary.color)
             }
         }
         .frame(width: 24, height: 24)
