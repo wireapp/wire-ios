@@ -20,12 +20,13 @@ import SwiftUI
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
+import WireFoundation
 
 struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @ObservedObject private var viewModel: MeetingsViewModel
+    @State private var viewModel: MeetingsViewModel
 
     init(viewModel: MeetingsViewModel) {
         self.viewModel = viewModel
@@ -123,10 +124,11 @@ private struct GroupedSections: View {
 }
 
 #Preview {
-    MeetingsView(viewModel: MeetingsViewModel(
-        currentDateProvider: .system,
-        formatter: MeetingsFormatter(),
-        upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol()
-    )
+    MeetingsView(
+        viewModel: MeetingsViewModel(
+            currentDateProvider: .system,
+            formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock()
+        )
     )
 }

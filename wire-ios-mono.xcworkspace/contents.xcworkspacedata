@@ -270,6 +270,9 @@
       location = "group:WireBackup">
    </FileRef>
    <FileRef
+      location = "group:WireCalling">
+   </FileRef>
+   <FileRef
       location = "group:WireData">
    </FileRef>
    <FileRef
@@ -292,8 +295,5 @@
    </FileRef>
    <FileRef
       location = "group:WirePlugins">
-   </FileRef>
-   <FileRef
-      location = "group:WireCalling">
    </FileRef>
 </Workspace>

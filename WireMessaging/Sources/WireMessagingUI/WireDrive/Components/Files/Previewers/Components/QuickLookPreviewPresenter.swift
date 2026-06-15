@@ -23,7 +23,41 @@ import QuickLook
 /// on iPad, because it was presented from within a split presentation.
 /// This approach instead finds the currently presented view controller and presents the `QLPreviewController` manually
 /// on top of it via UIKit.
-enum QuickLookPreviewPresenter {
+final class QuickLookPreviewPresenter {
+    private var delegate: Delegate?
+
+    init(onDismiss: @escaping () -> Void) {
+        self.delegate = Delegate(onDismiss: onDismiss)
+    }
+
+    @MainActor
+    func present(url: URL) {
+        guard let topVC = topmostPresentedViewController() else { return }
+
+        let dataSource = DataSource(url: url)
+
+        let qlController = QLPreviewController()
+        qlController.dataSource = dataSource
+        qlController.delegate = delegate
+
+        topVC.present(qlController, animated: true)
+    }
+
+    @MainActor
+    private func topmostPresentedViewController() -> UIViewController? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
+        guard let rootVC = scene.windows.first?.rootViewController else { return nil }
+
+        var topVC = rootVC
+        while let presentedVC = topVC.presentedViewController {
+            topVC = presentedVC
+        }
+
+        return topVC
+    }
+}
+
+extension QuickLookPreviewPresenter {
     private class DataSource: NSObject, QLPreviewControllerDataSource {
         let url: URL
 
@@ -38,28 +72,15 @@ enum QuickLookPreviewPresenter {
         }
     }
 
-    @MainActor
-    static func present(url: URL) {
-        guard let topVC = topmostPresentedViewController() else { return }
+    class Delegate: NSObject, QLPreviewControllerDelegate {
+        let onDismiss: () -> Void
 
-        let dataSource = DataSource(url: url)
-
-        let qlController = QLPreviewController()
-        qlController.dataSource = dataSource
-
-        topVC.present(qlController, animated: true)
-    }
-
-    @MainActor
-    private static func topmostPresentedViewController() -> UIViewController? {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
-        guard let rootVC = scene.windows.first?.rootViewController else { return nil }
-
-        var topVC = rootVC
-        while let presentedVC = topVC.presentedViewController {
-            topVC = presentedVC
+        init(onDismiss: @escaping () -> Void) {
+            self.onDismiss = onDismiss
         }
 
-        return topVC
+        func previewControllerDidDismiss(_ controller: QLPreviewController) {
+            onDismiss()
+        }
     }
 }

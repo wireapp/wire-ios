@@ -176,7 +176,13 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons, isWireDriveEnabled: conversation.isWireDriveEnabled)
+        let showDriveViewerBanner = conversation.isWireDriveEnabled && userSession.selfUser
+            .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
+        let inputBar = InputBar(
+            buttons: inputBarButtons,
+            isWireDriveEnabled: conversation.isWireDriveEnabled,
+            showDriveViewerBanner: showDriveViewerBanner
+        )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
@@ -402,7 +408,7 @@ final class ConversationInputBarViewController: UIViewController,
 
         // TODO: [WPB-25941] Remove developer flag when feature is complete
         if DeveloperFlag.enableDrivePermissions.isOn {
-            if conversation.isWireDriveEnabled, userSession.selfUser.isGuest(in: conversation) {
+            if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
                 [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
                     $0.isEnabled = false
                     $0.setBackgroundImageColor(

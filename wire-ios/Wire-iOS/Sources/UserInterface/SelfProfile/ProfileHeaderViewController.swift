@@ -151,6 +151,7 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 
         imageView.initialsFont = .systemFont(ofSize: 55, weight: .semibold).monospaced()
+        imageView.showsInitialsOnly = options.contains(.showInitialsOnly)
         imageView.userSession = userSession
         imageView.user = user
 
@@ -481,6 +482,9 @@ final class ProfileHeaderViewController: UIViewController {
 
         /// Whether to allow the user to change their availability.
         static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
+
+        /// Whether to display only the user's initials instead of their profile picture.
+        static let showInitialsOnly = Options(rawValue: 1 << 6)
 
     }
 }
