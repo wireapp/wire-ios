@@ -174,6 +174,40 @@ final class OneOnOneMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testSendAndReceiveFileInOneOnOneConversation_TC_8823_8830() async throws {
+
+        // GIVEN
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
+        let member = try XCTUnwrap(teamMembers.first)
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let activeConversationPage = try app.loginUser(email: member.email, password: member.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .openUserDetailsInContactList()
+            .tapStartConversationButton()
+
+        // WHEN
+        activeConversationPage.uploadFile()
+
+        // THEN - file is sent
+        activeConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+
+        let receivedConversationPage = try activeConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
+
+        // THEN - file is received
+        receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+    }
+
+    @MainActor
     func testSendPingInOneOnOneConversation_TC_8824() async throws {
 
         // GIVEN

@@ -158,6 +158,25 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
     }
 
+    var uploadFileButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.uploadFileButton.rawValue].firstMatch
+    }
+
+    var browseFileOption: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.browse.rawValue].firstMatch
+    }
+
+    var openFileButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.open.rawValue].firstMatch
+    }
+
+    func fileCell(named fileName: String) -> XCUIElement {
+        let displayedFileName = (fileName as NSString).deletingPathExtension
+        let fileExtension = (fileName as NSString).pathExtension
+
+        return app.cells["\(displayedFileName), \(fileExtension)"].firstMatch
+    }
+
     var imageToChoose: XCUIElement {
         app.images.element(boundBy: 1).firstMatch
     }
@@ -347,6 +366,29 @@ class ActiveConversationPage: PageModel {
             "OK button did not appear after selecting media"
         )
         okToSend.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func uploadFile(named fileName: String = "testFile.pdf") -> ActiveConversationPage {
+        if !uploadFileButton.waitForExistence(timeout: 2) || !uploadFileButton.isHittable {
+            showOtherRowButton.waitAndTap()
+        }
+
+        uploadFileButton.waitAndTap()
+        browseFileOption.waitAndTap()
+
+        XCTAssertTrue(
+            fileCell(named: fileName).waitForExistence(timeout: 5),
+            "Seeded file '\(fileName)' didn't show up"
+        )
+        fileCell(named: fileName).waitAndTap()
+
+        XCTAssertTrue(
+            openFileButton.waitForExistence(timeout: 5),
+            "Open button didn't show up"
+        )
+        openFileButton.waitAndTap()
         return self
     }
 
