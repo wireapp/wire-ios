@@ -46,6 +46,7 @@ final class UserSessionLoader {
     private let flowManager: FlowManagerType
     private let logFilesProvider: LogFilesProviding
     private let isDeveloperModeEnabled: Bool
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     private let accountID: UUID
     private let backendStore: BackendEnvironmentStore
@@ -71,7 +72,8 @@ final class UserSessionLoader {
         flowManager: FlowManagerType,
         logFilesProvider: LogFilesProviding,
         isDeveloperModeEnabled: Bool,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws {
         self.account = account
         self.accountManager = accountManager
@@ -89,6 +91,7 @@ final class UserSessionLoader {
         self.flowManager = flowManager
         self.logFilesProvider = logFilesProvider
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
+        self.backgroundTaskExecuter = backgroundTaskExecuter
 
         self.accountID = account.userIdentifier
         let accountDataURL = AccountURLs(root: sharedContainerURL).accountData
@@ -429,8 +432,6 @@ final class UserSessionLoader {
         )
 
         let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
-
-        let backgroundTaskExecuter = PassthroughTaskExecuter()
 
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: account.userIdentifier,
