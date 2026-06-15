@@ -29,6 +29,7 @@ import SwiftUI
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
+import WireCallingDomain
 import WireMessagingDomain
 import WireMessagingUI
 import WireFoundation
