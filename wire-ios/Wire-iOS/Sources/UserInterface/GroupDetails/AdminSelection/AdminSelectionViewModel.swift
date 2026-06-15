@@ -38,8 +38,12 @@ final class AdminSelectionViewModel: ObservableObject {
     private let onPromote: @MainActor (UserType) async throws -> Void
 
     var canPromote: Bool {
-        guard case .inProgress = promotionState else { return selectedUser != nil }
-        return false
+        switch promotionState {
+        case .inProgress:
+            false:
+        default:
+            selectedUser != nil 
+        }
     }
 
     var filteredCandidates: [UserType] {
