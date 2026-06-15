@@ -20,14 +20,29 @@ import Foundation
 import WireCallingDomain
 
 @Observable
-final class CreateInstantMeetingViewModel {
+final class ScheduleMeetingFormViewModel {
 
+    enum Mode: Identifiable, Hashable {
+        case now
+        case scheduled
+
+        var id: Self { self }
+    }
+
+    let mode: Mode
     let memberRepository: any MemberRepositoryProtocol
 
     var meetingTitle: String = ""
+    var startDate: Date = .init()
+    var endDate: Date = .init().addingTimeInterval(1800)
+    var repeatOption: RepeatOption = .never
+    var selectedMembers: [Member] = []
 
-    // TODO: Implement Wire users and emails
-    var participants: String = ""
+    var selectedMembersSummary: String {
+        selectedMembers
+            .map(\.name)
+            .joined(separator: ", ")
+    }
 
     var isNextButtonEnabled: Bool {
         !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -36,8 +51,10 @@ final class CreateInstantMeetingViewModel {
     // MARK: - Public Interface
 
     init(
+        mode: Mode,
         memberRepository: any MemberRepositoryProtocol
     ) {
+        self.mode = mode
         self.memberRepository = memberRepository
     }
 
@@ -46,9 +63,26 @@ final class CreateInstantMeetingViewModel {
     }
 
     @MainActor func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
-        MemberSelectionViewModel(source: memberRepository)
+        MemberSelectionViewModel(
+            source: memberRepository,
+            initialSelection: selectedMembers,
+            onSelect: { [weak self] in self?.selectedMembers = $0 }
+        )
     }
 
-    func createInstantMeeting() {}
+    func submit() {
+        switch mode {
+        case .now:
+            createInstantMeeting()
+        case .scheduled:
+            scheduleMeeting()
+        }
+    }
+
+    // MARK: - Private
+
+    private func createInstantMeeting() {}
+
+    private func scheduleMeeting() {}
 
 }

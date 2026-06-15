@@ -21,24 +21,26 @@ import WireCallingDomain
 import WireDesign
 import WireFoundation
 
-struct ScheduleMeetingView: View {
+struct ScheduleMeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
-    @State private(set) var viewModel: ScheduleMeetingViewModel
+    @State private(set) var viewModel: ScheduleMeetingFormViewModel
     @State private var expandedField: ExpandedField?
 
     var body: some View {
         NavigationStack {
             Form {
                 titleSection
-                scheduleSection
+                if viewModel.mode == .scheduled {
+                    scheduleSection
+                }
                 participantsSection
             }
             .listSectionSpacing(.compact)
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
-            .navigationTitle(Strings.Future.title)
+            .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -47,13 +49,31 @@ struct ScheduleMeetingView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(Strings.Schedule.button) {
-                        viewModel.scheduleMeeting()
+                    Button(actionButtonLabel) {
+                        viewModel.submit()
                     }
                     .disabled(!viewModel.isNextButtonEnabled)
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+        }
+    }
+
+    private var navigationTitle: String {
+        switch viewModel.mode {
+        case .now:
+            Strings.Now.title
+        case .scheduled:
+            Strings.Future.title
+        }
+    }
+
+    private var actionButtonLabel: String {
+        switch viewModel.mode {
+        case .now:
+            Strings.Start.button
+        case .scheduled:
+            Strings.Schedule.button
         }
     }
 
@@ -98,10 +118,8 @@ struct ScheduleMeetingView: View {
 
     private var participantsSection: some View {
         Section(Strings.SetupParticipants.header) {
-
             if viewModel.selectedMembers.isEmpty {
                 NavigationLink {
-                    // TODO: what about $viewModel.selectedMembers ?
                     MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
                         .navigationBarBackButtonHidden(true)
                 } label: {
@@ -110,7 +128,6 @@ struct ScheduleMeetingView: View {
                 }
             } else {
                 NavigationLink {
-                    // TODO: what about $viewModel.selectedMembers ?
                     MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
                         .navigationBarBackButtonHidden(true)
                 } label: {
@@ -125,12 +142,11 @@ struct ScheduleMeetingView: View {
                     }
                 }
             }
-
         }
         .textCase(nil)
     }
 
-    // MARK: -
+    // MARK: - Date/time row helpers
 
     @ViewBuilder
     private func dateTimeRow(
@@ -190,62 +206,11 @@ struct ScheduleMeetingView: View {
         withAnimation { expandedField = expandedField == field ? nil : field }
     }
 
-    private var participantsSummary: String {
-        guard let first = viewModel.selectedMembers.first else { return "None" }
-        let extra = viewModel.selectedMembers.count - 1
-        return extra > 0 ? "\(first.name), + \(extra) more" : first.name
-    }
-
     private enum ExpandedField: Hashable {
         case startDate
         case startTime
         case endDate
         case endTime
-    }
-
-}
-
-private struct ParticipantPickerView: View { // TODO: delete
-    @Binding var selection: [Member]
-
-    private let allParticipants = [
-        "Martina Koch-Johansen",
-        "Daniel Becker",
-        "Sophia Müller",
-        "Lucas Hoffmann",
-        "Anna Schmidt"
-    ].map { name in
-        Member(qualifiedID: QualifiedID(id: UUID(), domain: ""), name: name, handle: name)
-    }
-
-    var body: some View {
-        Form {
-            ForEach(allParticipants, id: \.qualifiedID) { participant in
-                Button {
-                    toggle(participant)
-                } label: {
-                    HStack {
-                        Text(participant.name)
-                            .foregroundStyle(.primary)
-                        Spacer()
-                        if selection.contains(participant) {
-                            Image(systemName: "checkmark")
-                                .foregroundStyle(Color.accentColor)
-                        }
-                    }
-                }
-            }
-        }
-        .navigationTitle("Participants")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private func toggle(_ participant: Member) {
-        if let index = selection.firstIndex(of: participant) {
-            selection.remove(at: index)
-        } else {
-            selection.append(participant)
-        }
     }
 }
 
@@ -269,27 +234,35 @@ private extension RepeatOption {
             Strings.yearly
         }
     }
-
 }
 
 // MARK: - Preview
 
-#Preview("no selected members") {
-    ScheduleMeetingView(
-        viewModel: ScheduleMeetingViewModel(
+#Preview("Now mode") {
+    ScheduleMeetingFormView(
+        viewModel: ScheduleMeetingFormViewModel(
+            mode: .now,
             memberRepository: MockMemberSource()
         )
     )
 }
 
-#Preview("some selected members") {
-    let viewModel = ScheduleMeetingViewModel(
+#Preview("Scheduled mode") {
+    ScheduleMeetingFormView(
+        viewModel: ScheduleMeetingFormViewModel(
+            mode: .scheduled,
+            memberRepository: MockMemberSource()
+        )
+    )
+}
+
+#Preview("Scheduled mode with selected members") {
+    let viewModel = ScheduleMeetingFormViewModel(
+        mode: .scheduled,
         memberRepository: MockMemberSource()
     )
     viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
-    return ScheduleMeetingView(
-        viewModel: viewModel
-    )
+    return ScheduleMeetingFormView(viewModel: viewModel)
 }
 
 // MARK: - Mock
@@ -302,7 +275,6 @@ private struct MockMemberSource: MemberRepositoryProtocol {
         guard !query.isEmpty else { return members }
         return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
-
 }
 
 private extension [Member] {
@@ -333,5 +305,4 @@ private extension Member {
             handle: handle
         )
     }
-
 }

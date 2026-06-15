@@ -31,8 +31,7 @@ package final class AllMeetingsViewModel {
 
     package let meetingsViewModel: MeetingsViewModel
 
-    var isCreateInstantMeetingPresented: Bool = false
-    var isScheduleMeetingPresented: Bool = false
+    var presentedFormMode: ScheduleMeetingFormViewModel.Mode?
 
     package init(
         currentDateProvider: any CurrentDateProviding,
@@ -51,19 +50,15 @@ package final class AllMeetingsViewModel {
     // MARK: - Public Interface
 
     func createInstantMeetingTapped() {
-        isCreateInstantMeetingPresented = true
+        presentedFormMode = .now
     }
 
     func scheduleMeetingTapped() {
-        isScheduleMeetingPresented = true
+        presentedFormMode = .scheduled
     }
 
-    func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel(memberRepository: memberRepository)
-    }
-
-    func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel(memberRepository: memberRepository)
+    func makeMeetingFormViewModel(mode: ScheduleMeetingFormViewModel.Mode) -> ScheduleMeetingFormViewModel {
+        ScheduleMeetingFormViewModel(mode: mode, memberRepository: memberRepository)
     }
 
 }

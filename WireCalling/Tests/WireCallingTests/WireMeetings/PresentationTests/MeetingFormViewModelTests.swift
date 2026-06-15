@@ -22,13 +22,15 @@ import WireCallingDomainSupport
 
 @testable import WireCallingUI
 
-@Suite("CreateInstantMeetingViewModel Tests")
-struct CreateInstantMeetingViewModelTests {
+struct ScheduleMeetingFormViewModelTests {
 
-    private let viewModel: CreateInstantMeetingViewModel
+    private let viewModel: ScheduleMeetingFormViewModel
 
     init() {
-        self.viewModel = CreateInstantMeetingViewModel(memberRepository: MemberRepositoryProtocolMock())
+        self.viewModel = ScheduleMeetingFormViewModel(
+            mode: .now,
+            memberRepository: MemberRepositoryProtocolMock()
+        )
     }
 
     // MARK: - isNextButtonEnabled Tests

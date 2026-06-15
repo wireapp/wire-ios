@@ -24,7 +24,7 @@ import XCTest
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
-final class CreateInstantMeetingViewSnapshotTests: XCTestCase {
+final class ScheduleMeetingFormSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -44,7 +44,7 @@ final class CreateInstantMeetingViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateInstantMeetingView(viewModel: makeViewModel())
+            ScheduleMeetingFormView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +61,7 @@ final class CreateInstantMeetingViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateInstantMeetingView(viewModel: makeViewModel())
+            ScheduleMeetingFormView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -76,10 +76,14 @@ final class CreateInstantMeetingViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel(
+    private func makeViewModel() -> ScheduleMeetingFormViewModel {
+        let viewModel = ScheduleMeetingFormViewModel(
+            mode: .scheduled,
             memberRepository: MemberRepositoryProtocolMock()
         )
+        viewModel.startDate = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
+        viewModel.endDate = viewModel.startDate.addingTimeInterval(60 * 30) // 30 minutes
+        return viewModel
     }
 
 }
