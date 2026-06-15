@@ -46,7 +46,7 @@ final class NSEFlow: BootstrapComponent {
     // TODO: [WPB-19778] use to check app version migration
     private let currentAppVersion: String
     private var scopesByAccount = [Account: NSEUserScope]()
-    let backgroundTaskExecuter: any BackgroundTaskExecuter = PassthroughTaskExecuter()
+    private let backgroundTaskExecuter = PassthroughTaskExecuter()
 
     init(
         currentAppVersion: String,
