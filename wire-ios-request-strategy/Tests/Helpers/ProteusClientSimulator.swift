@@ -84,7 +84,8 @@ final class ProteusClientSimulator {
             coreCryptoKeyMigrationManager: mockKeyMigrationManager,
             allowCreation: true,
             localDomain: owningDomain,
-            backgroundTaskManager: nil
+            backgroundTaskManager: nil,
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
 
         // Initialize CoreCrypto

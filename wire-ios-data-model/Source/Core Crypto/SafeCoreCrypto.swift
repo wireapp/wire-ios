@@ -24,14 +24,17 @@ import WireLogging
 public final class SafeCoreCrypto {
 
     private let backgroundTaskManager: (any BackgroundTaskManager)?
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
     let coreCrypto: any CoreCryptoProtocol
 
     public init(
         backgroundTaskManager: (any BackgroundTaskManager)?,
-        coreCrypto: any CoreCryptoProtocol
+        coreCrypto: any CoreCryptoProtocol,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.backgroundTaskManager = backgroundTaskManager
         self.coreCrypto = coreCrypto
+        self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
     public func registerEpochObserver(_ epochObserver: any EpochObserver) async throws {
@@ -43,7 +46,7 @@ public final class SafeCoreCrypto {
     ) async throws -> Result {
         try await withBackgroundTask(
             name: "core crypto transaction",
-            executer: PassthroughTaskExecuter()
+            executer: backgroundTaskExecuter
         ) { [coreCrypto] in
             try await coreCrypto.transaction(block)
         }

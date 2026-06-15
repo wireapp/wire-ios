@@ -37,7 +37,8 @@ final class E2EIVerificationStatusServiceTests: XCTestCase {
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
             backgroundTaskManager: nil,
-            coreCrypto: mockCoreCrypto
+            coreCrypto: mockCoreCrypto,
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
         sut = E2EIVerificationStatusService(coreCryptoProvider: mockCoreCryptoProvider)
     }

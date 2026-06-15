@@ -58,6 +58,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let isFederationEnabled: Bool
     private let coreDataStack: CoreDataStack
     private let earService: EARServiceInterface
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
 
@@ -72,7 +73,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         localDomain: String,
         isFederationEnabled: Bool,
         coreDataStack: CoreDataStack,
-        earService: EARServiceInterface
+        earService: EARServiceInterface,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.eventID = eventID
         self.contentHandler = contentHandler
@@ -85,6 +87,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         self.coreDataStack = coreDataStack
         self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: clientID)
         self.earService = earService
+        self.backgroundTaskExecuter = backgroundTaskExecuter
 
         super.init(parent: parent)
     }
@@ -262,7 +265,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
                 localDomain: localDomain,
-                backgroundTaskManager: nil
+                backgroundTaskManager: nil,
+                backgroundTaskExecuter: backgroundTaskExecuter
             )
         }
     }

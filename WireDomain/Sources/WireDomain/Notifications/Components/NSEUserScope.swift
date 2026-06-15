@@ -61,6 +61,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         account.userIdentifier
     }
 
+    let backgroundTaskExecuter: any BackgroundTaskExecuter
+
     public var userAccountDataURL: URL {
         dependency.accountDataURL.appending(path: accountID.uuidString)
     }
@@ -90,9 +92,11 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
     init(
         parent: any Scope,
-        account: Account
+        account: Account,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.account = account
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         super.init(parent: parent)
     }
 
@@ -330,7 +334,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled,
             coreDataStack: coreDataStack,
-            earService: earService
+            earService: earService,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
     }
 

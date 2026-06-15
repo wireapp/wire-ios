@@ -64,7 +64,8 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
             backgroundTaskManager: nil,
-            coreCrypto: coreCrypto
+            coreCrypto: coreCrypto,
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
         journal = Journal(
             userID: UUID(),
@@ -91,6 +92,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
             createPushChannelState: {
                 self.pushChannelState
             },

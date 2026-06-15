@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol BackgroundTaskExecuter {
+public protocol BackgroundTaskExecuter: Sendable {
     func execute<T>(name: String?, operation: () async throws -> T) async throws -> T
 }
 

@@ -430,6 +430,8 @@ final class UserSessionLoader {
 
         let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
 
+        let backgroundTaskExecuter = PassthroughTaskExecuter()
+
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: account.userIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
@@ -438,7 +440,8 @@ final class UserSessionLoader {
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             localDomain: backendMetadata.domain,
-            backgroundTaskManager: UIApplication.shared
+            backgroundTaskManager: UIApplication.shared,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -559,7 +562,8 @@ final class UserSessionLoader {
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
             faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
-            updateBackendMetadataUseCase: updateBackendMetadataUseCase
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         userSession.setup(

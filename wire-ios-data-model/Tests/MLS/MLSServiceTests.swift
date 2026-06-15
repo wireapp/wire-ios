@@ -59,7 +59,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
             backgroundTaskManager: nil,
-            coreCrypto: mockCoreCrypto
+            coreCrypto: mockCoreCrypto,
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
         mockEncryptionService = MockMLSEncryptionServiceInterface()
         mockDecryptionService = MockMLSDecryptionServiceInterface()

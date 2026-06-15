@@ -76,6 +76,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let localDomain: String?
 
     private let backgroundTaskManager: (any BackgroundTaskManager)?
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     public init(
         selfUserID: UUID,
@@ -86,7 +87,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         allowCreation: Bool = true,
         localDomain: String?,
-        backgroundTaskManager: (any BackgroundTaskManager)?
+        backgroundTaskManager: (any BackgroundTaskManager)?,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
@@ -98,6 +100,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
         self.localDomain = localDomain
         self.backgroundTaskManager = backgroundTaskManager
+        self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
     public func coreCrypto() async throws -> SafeCoreCrypto {
@@ -105,7 +108,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         try await registerMlsTransportIfNecessary(with: coreCrypto)
         return SafeCoreCrypto(
             backgroundTaskManager: backgroundTaskManager,
-            coreCrypto: coreCrypto
+            coreCrypto: coreCrypto,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
     }
 
