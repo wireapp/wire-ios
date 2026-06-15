@@ -33,6 +33,7 @@ struct FilesItemView: View {
     private let iconSpaceWidth: CGFloat = 56 // this is explicitly not supposed to scale.
     @ScaledMetric private var iconSpaceHeight: CGFloat = 28
     @ScaledMetric private var iconHorizontalPadding: CGFloat = 7
+    @ScaledMetric private var scale: CGFloat = 1
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -141,8 +142,10 @@ struct FilesItemView: View {
             .resizable()
             .aspectRatio(contentMode: .fit)
             .overlay(alignment: .bottomTrailing) {
-                if viewModel.item.publicLinkID != nil {
-                    PublicLinkBadge(forIcon: viewModel.item.icon)
+                if viewModel.showReadOnlyIcon {
+                    FileIconBadge(iconName: "eye", for: viewModel.item.icon)
+                } else if viewModel.item.publicLinkID != nil {
+                    FileIconBadge(iconName: "link", for: viewModel.item.icon)
                 }
             }
             .padding(.horizontal, iconHorizontalPadding)
@@ -174,8 +177,9 @@ struct FilesItemView: View {
     private func availableOfflineIcon() -> some View {
         Image(systemName: "arrow.down.circle.fill")
             .resizable()
-            .frame(width: 10, height: 10)
+            .frame(width: 10 * scale, height: 10 * scale)
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            .accessibilityLabel(Accessibility.Files.availableOffline)
     }
 
     @ViewBuilder
@@ -387,15 +391,19 @@ struct FilesItemView: View {
 }
 
 extension FilesItemView {
-    struct PublicLinkBadge: View {
+    struct FileIconBadge: View {
         @ScaledMetric private var size: CGFloat = 10
         @ScaledMetric private var innerPadding: CGFloat = 2
         @ScaledMetric private var borderThickness: CGFloat = 1
         @ScaledMetric private var offsetX: CGFloat
         @ScaledMetric private var offsetY: CGFloat
 
-        init(forIcon icon: WireDriveFileType) {
-            switch icon {
+        private let iconName: String
+
+        init(iconName: String, for fileType: WireDriveFileType) {
+            self.iconName = iconName
+
+            switch fileType {
             case .folder:
                 _offsetX = .init(wrappedValue: 5)
                 _offsetY = .init(wrappedValue: 1)
@@ -406,7 +414,7 @@ extension FilesItemView {
         }
 
         var body: some View {
-            Image(systemName: "link")
+            Image(systemName: iconName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .fontWeight(.semibold)

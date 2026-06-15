@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "OK";
 "general.next" = "Далі";
 "general.cancel" = "Скасувати";
@@ -368,6 +368,7 @@
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
 "conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.create.apps_disabled_as_admin.message" = "To improve your workflow with apps, your team needs configuration.";
 "conversation.create.receipts.title" = "Звіти про перегляд";
 "conversation.create.receipts.subtitle" = "Якщо ця опція увімкнена, учасники розмови можуть бачити, коли їхні повідомлення в цій розмові були переглянуті.";
 "conversation.create.mls.title" = "Protocol";
@@ -567,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@ видалив(-ла) %@";
 "content.system.conversation.you.removed.legalhold" = "%@ були видалені з цієї розмови, тому що правовий режим було активовано.";
 "content.system.conversation.you.left" = "%@ вийшов(-ла)";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ був(-ла) видалений(-а) з команди.";
 "content.system.conversation.guest.joined" = "%@ приєднався(-лася)";
 "content.system.conversation.guest.you_joined" = "Ви приєдналися";
@@ -734,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Оригінальне повідомлення від %@";
 "content.message.reply.original_timestamp.time" = "Оригінальне повідомлення від %@";
 "content.message.reply.broken_message" = "Ви не можете бачити це повідомлення.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Відредаговано";
 
 "content.message.open_link_alert.title" = "Перейдіть за лінком";
@@ -1063,8 +1066,8 @@
 "profile.details.partner" = "зовнішній";
 "profile.details.federated" = "Федеративна система";
 "profile.details.blocking_reason" = "Цей користувач заблокований через правовий захист. [ДІЗНАТИСЯ БІЛЬШЕ](%@)";
-"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
-"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list
@@ -1154,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";
@@ -1455,6 +1458,20 @@
 "self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
 "self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
 "self.settings.share_debug_report.action_sheet.share" = "Share";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "No unread conversation";
+"settings.debugging_tools.unread_conversations.found" = "Found an unread conversation:";
+"settings.debugging_tools.unread_conversations.action_copy" = "Скопіювати";
+"settings.debugging_tools.debug_command.title" = "Debug command";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Command not recognized";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Error: Repair use case not available";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Faulty MLS Removal Keys Repair";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Repair Failed";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Error: %@";
 
 // Password reset
 "self.settings.password_reset_menu.title" = "Скинути пароль";

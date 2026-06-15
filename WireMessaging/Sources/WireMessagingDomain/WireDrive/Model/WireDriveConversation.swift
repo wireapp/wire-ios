@@ -53,6 +53,12 @@ public extension WireDriveConversation {
         public let displayName: String
         public let id: String
         public let isSelfUser: Bool
+        public let role: Role
+
+        public enum Role: Sendable {
+            case editor
+            case viewer
+        }
 
         public struct IconData: Sendable, Hashable {
             public let initials: String
@@ -71,6 +77,7 @@ public extension WireDriveConversation {
         public init(
             handle: String,
             displayName: String,
+            role: Role,
             isSelfUser: Bool,
             id: String,
             iconData: IconData? = nil
@@ -78,6 +85,7 @@ public extension WireDriveConversation {
             self.handle = handle
             self.isSelfUser = isSelfUser
             self.displayName = displayName
+            self.role = role
             self.id = id
             self.iconData = iconData
         }
@@ -101,10 +109,18 @@ public extension WireDriveConversation {
 }
 
 public extension Collection<WireDriveConversation> {
-    static func mocked() -> [Element] {
+    static func mocked(selfUserRole: WireDriveConversation.Participant.Role = .editor) -> [Element] {
         [
-            .init(id: "1234", name: "Conversation 1", participants: Set([WireDriveConversation.Participant].mocked())),
-            .init(id: "5678", name: "Conversation 2", participants: Set([WireDriveConversation.Participant].mocked())),
+            .init(
+                id: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
+                name: "Conversation 1",
+                participants: Set([WireDriveConversation.Participant].mocked(selfUserRole: selfUserRole))
+            ),
+            .init(
+                id: "5678",
+                name: "Conversation 2",
+                participants: Set([WireDriveConversation.Participant].mocked())
+            ),
             .init(
                 id: "5678",
                 name: "Conversation 3",
@@ -116,11 +132,29 @@ public extension Collection<WireDriveConversation> {
 }
 
 public extension Collection<WireDriveConversation.Participant> {
-    static func mocked() -> [Element] {
+    static func mocked(selfUserRole: WireDriveConversation.Participant.Role = .editor) -> [Element] {
         [
-            .init(handle: "walterwhite", displayName: "Heisenberg", isSelfUser: false, id: UUID().uuidString),
-            .init(handle: "jessepinkman", displayName: "The Cook", isSelfUser: false, id: UUID().uuidString),
-            .init(handle: "tucosalamanca", displayName: "Tuco", isSelfUser: false, id: UUID().uuidString)
+            .init(
+                handle: "walterwhite",
+                displayName: "Heisenberg",
+                role: selfUserRole,
+                isSelfUser: true,
+                id: UUID().uuidString
+            ),
+            .init(
+                handle: "jessepinkman",
+                displayName: "The Cook",
+                role: .editor,
+                isSelfUser: false,
+                id: UUID().uuidString
+            ),
+            .init(
+                handle: "tucosalamanca",
+                displayName: "Tuco",
+                role: .editor,
+                isSelfUser: false,
+                id: UUID().uuidString
+            )
         ]
     }
 }

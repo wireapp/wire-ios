@@ -40,6 +40,7 @@ class WireUITestCase: XCTestCase {
         callingServiceClient = try CallingServiceClient()
         registerNotificationPermissionMonitor()
         uiTestConfig.useTripleTapForShakeGesture = true
+        uiTestConfig.useMockAudioRecorder = true
 
         let launchArguments = [
             "-resetData",
@@ -66,6 +67,7 @@ class WireUITestCase: XCTestCase {
         app?.terminate()
         app = nil
         await callingServiceClient.destroyCreatedInstances()
+        await testServicesClient.deleteInstances()
         await UserHelper.deleteCreatedUsers()
         await ssoHelper.cleanUpOktaResources()
     }

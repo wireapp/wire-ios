@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "确定";
 "general.next" = "继续";
 "general.cancel" = "取消";
@@ -368,6 +368,7 @@
 "conversation.create.apps.subtitle" = "开启与应用的对话。";
 "conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
 "conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.create.apps_disabled_as_admin.message" = "To improve your workflow with apps, your team needs configuration.";
 "conversation.create.receipts.title" = "已读回执";
 "conversation.create.receipts.subtitle" = "当这启用时，参与者可以看到他们在此对话中的消息何时已阅读。";
 "conversation.create.mls.title" = "协议";
@@ -567,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@移除了%@";
 "content.system.conversation.you.removed.legalhold" = "%@ 已从此对话中移除，因为合法保留已被激活。";
 "content.system.conversation.you.left" = "%@ 离开了";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@从团队中被移除了";
 "content.system.conversation.guest.joined" = "%@已加入";
 "content.system.conversation.guest.you_joined" = "您已加入";
@@ -734,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "来自 %@ 的原始消息";
 "content.message.reply.original_timestamp.time" = "来自 %@ 的原始消息";
 "content.message.reply.broken_message" = "您不能看到此消息。";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "已编辑";
 
 "content.message.open_link_alert.title" = "打开链接";
@@ -1063,8 +1066,8 @@
 "profile.details.partner" = "外部合作者";
 "profile.details.federated" = "联邦";
 "profile.details.blocking_reason" = "由于合法保留，此用户已被屏蔽。[进一步了解](%@)";
-"profile.details.identity_warning" = "连接前确定 %@ 的身份。";
-"profile.details.requested_identity_warning" = "请在接受连接请求之前验证此人的身份。";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.title.unavailable" = "名称不可用";
 
 // Device list
@@ -1154,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "分享个人资料";
 "qrcode.share_message" = "分享您的个人资料以便与其他人轻松联系。您必须先接受联系请求，然后你们才能开始通信。";
 "qrcode.share_profile_link.button.title" = "分享个人资料链接";
@@ -1455,6 +1458,20 @@
 "self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
 "self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
 "self.settings.share_debug_report.action_sheet.share" = "Share";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "No unread conversation";
+"settings.debugging_tools.unread_conversations.found" = "Found an unread conversation:";
+"settings.debugging_tools.unread_conversations.action_copy" = "复制";
+"settings.debugging_tools.debug_command.title" = "Debug command";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Command not recognized";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Error: Repair use case not available";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Faulty MLS Removal Keys Repair";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Repair Failed";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Error: %@";
 
 // Password reset
 "self.settings.password_reset_menu.title" = "重设密码";

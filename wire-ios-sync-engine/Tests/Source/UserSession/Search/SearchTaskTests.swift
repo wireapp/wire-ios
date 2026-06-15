@@ -43,6 +43,8 @@ final class SearchTaskTests: DatabaseTest {
         searchAPIMock = .init()
         teamsAPIMock = .init()
         usersAPIMock = .init()
+        // Safe default for the asset-keys enrichment path; tests that exercise it override this.
+        usersAPIMock.getUsersUserIDs_MockValue = UserList(found: [], failed: [])
 
         performPretendingUIMocIsSyncMoc { [unowned self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -1076,6 +1078,94 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Apps search
 
+    func testThatItListsAllAppsAndCollaboratorApps() async throws {
+        // given
+        let request = SearchRequest(
+            query: "",
+            searchDomain: "wire.com",
+            searchOptions: [.apps]
+        )
+        let task = makeSearchTask(request: request, apiVersion: .v15)
+        let qualifiedID0 = QualifiedID(uuid: UUID(), domain: "wire.com")
+        let appResult = User(
+            id: UserID(qualifiedID0),
+            name: "app",
+            handle: "a",
+            teamID: teamIdentifier,
+            type: .app,
+            accentID: 2,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: .init(category: "cat0", description: "desc0"),
+            service: nil,
+            supportedProtocols: [.mls],
+            legalholdStatus: .noConsent
+        )
+        let qualifiedID1 = QualifiedID(uuid: UUID(), domain: "")
+        let otherTeamID = UUID()
+        let collaboratorAppResult = User(
+            id: UserID(qualifiedID1),
+            name: "collaborator app",
+            handle: "ca",
+            teamID: otherTeamID,
+            type: .app,
+            accentID: 1,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: .init(category: "cat1", description: "desc1"),
+            service: nil,
+            supportedProtocols: [.mls],
+            legalholdStatus: .noConsent
+        )
+
+        let expectation = XCTestExpectation()
+        expectation.expectedFulfillmentCount = 3
+
+        teamsAPIMock.getAppsFor_MockMethod = { [teamIdentifier] teamID in
+            XCTAssertEqual(teamID, teamIdentifier)
+            expectation.fulfill()
+            return [appResult]
+        }
+
+        teamsAPIMock.getCollaboratorsFor_MockMethod = { [teamIdentifier] teamID in
+            XCTAssertEqual(teamID, teamIdentifier)
+            expectation.fulfill()
+            return [
+                CollaboratorInfo(
+                    userID: qualifiedID1.uuid,
+                    teamID: otherTeamID,
+                    permissions: [.createTeamConversation]
+                )
+            ]
+        }
+        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+            XCTAssertEqual(userIDs, [UserID(qualifiedID1)])
+            expectation.fulfill()
+            return UserList(found: [collaboratorAppResult], failed: [])
+        }
+
+        // when
+        let result = await task.start()
+
+        // then
+        await fulfillment(of: [expectation], timeout: 1)
+        XCTAssertEqual(result.apps.count, 2)
+        XCTAssertEqual(result.apps.first?.qualifiedID(localDomain: "-"), qualifiedID0)
+        XCTAssertEqual(result.apps.first?.name, "app")
+        XCTAssertEqual(result.apps.first?.handle, "a")
+        XCTAssertEqual(result.apps.first?.teamIdentifier, teamIdentifier)
+        XCTAssertEqual(result.apps.first?.zmAccentColor?.rawValue, 2)
+        XCTAssertEqual(result.apps.last?.qualifiedID(localDomain: "-"), qualifiedID1)
+        XCTAssertEqual(result.apps.last?.name, "collaborator app")
+        XCTAssertEqual(result.apps.last?.handle, "ca")
+        XCTAssertEqual(result.apps.last?.teamIdentifier, otherTeamID)
+        XCTAssertEqual(result.apps.last?.zmAccentColor?.rawValue, 1)
+    }
+
     func testThatItSendsASearchAppsRequest() async throws {
         // given
         let request = SearchRequest(
@@ -1351,6 +1441,123 @@ final class SearchTaskTests: DatabaseTest {
 
         // then
         XCTAssertTrue(result.directory.isEmpty)
+    }
+
+    // MARK: Asset-keys enrichment
+
+    func testThatRemoteSearch_EnrichesDirectoryHitsWithProfilePictureAssetKeys() async throws {
+        // given
+        let userID = UUID()
+        let domain = "wire.com"
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(documents: [
+            .init(
+                id: userID,
+                qualifiedID: .init(id: userID, domain: domain),
+                name: "John Doe",
+                handle: nil,
+                team: nil,
+                accentID: nil,
+                type: .regular
+            )
+        ])
+        let getUsersExpectation = XCTestExpectation(description: "getUsers is called for enrichment")
+        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+            XCTAssertEqual(userIDs.map(\.id), [userID])
+            getUsersExpectation.fulfill()
+            return UserList(
+                found: [
+                    User(
+                        id: UserID(id: userID, domain: domain),
+                        name: "John Doe",
+                        handle: nil,
+                        teamID: nil,
+                        type: nil,
+                        accentID: 1,
+                        assets: [
+                            UserAsset(key: "preview-key", size: .preview, type: .image),
+                            UserAsset(key: "complete-key", size: .complete, type: .image)
+                        ],
+                        deleted: nil,
+                        email: nil,
+                        expiresAt: nil,
+                        app: nil,
+                        service: nil,
+                        supportedProtocols: nil,
+                        legalholdStatus: .disabled
+                    )
+                ],
+                failed: []
+            )
+        }
+
+        let searchRequest = SearchRequest(query: "john", searchOptions: .directory)
+        let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
+
+        // when
+        var result = SearchResult()
+        let resultAggregator = try await task.performRemoteSearch()
+        resultAggregator(&result)
+
+        // then
+        await fulfillment(of: [getUsersExpectation])
+        let directoryHit = try XCTUnwrap(result.directory.first)
+        XCTAssertEqual(directoryHit.assetKeys?.preview, "preview-key")
+        XCTAssertEqual(directoryHit.assetKeys?.complete, "complete-key")
+    }
+
+    func testThatRemoteSearch_DoesNotCallGetUsers_WhenNoDirectoryHitsRequireEnrichment() async throws {
+        // given
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(documents: [])
+        usersAPIMock.getUsersUserIDs_MockMethod = { _ in
+            XCTFail("getUsers should not be called when there are no hits to enrich")
+            return UserList(found: [], failed: [])
+        }
+
+        let searchRequest = SearchRequest(query: "john", searchOptions: .directory)
+        let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
+
+        // when
+        var result = SearchResult()
+        let resultAggregator = try await task.performRemoteSearch()
+        resultAggregator(&result)
+
+        // then
+        XCTAssertTrue(result.directory.isEmpty)
+    }
+
+    func testThatUserLookup_PopulatesAssetKeysFromUserResponse() async throws {
+        // given
+        let userID = UserID(id: UUID(), domain: "wire.com")
+        usersAPIMock.getUserFor_MockValue = User(
+            id: userID,
+            name: "User A",
+            handle: nil,
+            teamID: nil,
+            type: nil,
+            accentID: 1,
+            assets: [
+                UserAsset(key: "preview-key", size: .preview, type: .image),
+                UserAsset(key: "complete-key", size: .complete, type: .image)
+            ],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: nil,
+            service: nil,
+            supportedProtocols: nil,
+            legalholdStatus: .disabled
+        )
+        let task = makeSearchTask(lookupUserID: userID.id, domain: userID.domain)
+
+        // when
+        var result = SearchResult()
+        let resultAggregator = try await task.performUserLookup()
+        resultAggregator(&result)
+
+        // then
+        let directoryHit = try XCTUnwrap(result.directory.first)
+        XCTAssertEqual(directoryHit.assetKeys?.preview, "preview-key")
+        XCTAssertEqual(directoryHit.assetKeys?.complete, "complete-key")
     }
 
     // MARK: Combined results

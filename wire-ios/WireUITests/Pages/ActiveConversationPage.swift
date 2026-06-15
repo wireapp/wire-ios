@@ -89,6 +89,10 @@ class ActiveConversationPage: PageModel {
         app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileLabel.rawValue)
     }
 
+    var fileDetailLabels: XCUIElementQuery {
+        app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileDetailsLabel.rawValue)
+    }
+
     var fileTypeIcons: XCUIElementQuery {
         app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
@@ -97,6 +101,14 @@ class ActiveConversationPage: PageModel {
         app.buttons.containing(
             NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
         ).firstMatch
+    }
+
+    func fileLabel(containing name: String) -> XCUIElement {
+        fileLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
+    }
+
+    func fileDetails(containing text: String) -> XCUIElement {
+        fileDetailLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
     }
 
     var labelSharedDriveIsOn: XCUIElement {
@@ -129,6 +141,10 @@ class ActiveConversationPage: PageModel {
 
     var classifiedBanner: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
+    }
+
+    var guestsArePresentBanner: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
     }
 
     var userLeftSystemMessage: XCUIElement {
@@ -209,6 +225,15 @@ class ActiveConversationPage: PageModel {
         return files
     }
 
+    func fetchFileDetails() -> [String] {
+        var files: [String] = []
+        for i in 0 ..< fileDetailLabels.count {
+            let element = fileDetailLabels.element(boundBy: i)
+            files.append(element.label)
+        }
+        return files
+    }
+
     func sendMessage(_ message: String) throws -> ActiveConversationPage {
         try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
         sendButton.tap()
@@ -263,6 +288,11 @@ class ActiveConversationPage: PageModel {
         return try SharedDriveFilesPage()
     }
 
+    func verifyCanAccessSharedDrive() {
+        conversationTitleButton.waitAndTap()
+        XCTAssertTrue(sharedDriveButton.exists)
+    }
+
     func openPhotosAndGrantPermission() throws -> ActiveConversationPage {
         photoButton.waitAndTap()
 
@@ -290,7 +320,11 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectImageAndSend() throws -> ActiveConversationPage {
+        if !imageToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
         imageToChoose.waitAndTap()
+
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
             "OK button did not appear after selecting media"
@@ -300,7 +334,11 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectVideoAndSend() throws -> ActiveConversationPage {
+        if !videoToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
         videoToChoose.waitAndTap()
+
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
             "OK button did not appear after selecting media"
@@ -309,9 +347,9 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @MainActor
     @discardableResult
-    func recordAudioAndSend() throws -> ActiveConversationPage {
-
+    func recordAudioAndSend() async throws -> ActiveConversationPage {
         audioButton.waitAndTap()
         app.dismissAllowIfPresent()
 
@@ -322,14 +360,12 @@ class ActiveConversationPage: PageModel {
         }
         startRecording.waitAndTap()
         XCTAssertTrue(
-            recordingTimeLabel.waitForExistence(timeout: 2),
+            stopRecording.waitForExistence(timeout: 5),
             "Audio recording not started"
         )
 
-        if stopRecording.waitForExistence(timeout: 2), stopRecording.isHittable {
-            stopRecording.tap()
-        }
-        heliumButton.tap()
+        stopRecording.waitAndTap()
+        heliumButton.waitAndTap()
         sendAudioButton.waitAndTap()
         return self
     }
@@ -360,6 +396,49 @@ class ActiveConversationPage: PageModel {
                 NSPredicate(format: "label CONTAINS %@", "You pinged")
             ).firstMatch.waitForExistence(timeout: 2),
             "Expected ping message not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func verifyMessageSent(
+        _ message: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.textViews.matching(NSPredicate(format: "label == %@", message)).firstMatch.waitForExistence(timeout: 5),
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifySharedFile(
+        name: String,
+        type: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        let attachment = fileAttachment(name: name, type: type)
+
+        XCTAssertTrue(
+            attachment.waitForExistence(timeout: 5),
+            "Expected \(type) attachment '\(name)' not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func verifyLinkPreviewCell(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.cells["LinkPreviewCell"].firstMatch.waitForExistence(timeout: 10),
             file: file,
             line: line
         )

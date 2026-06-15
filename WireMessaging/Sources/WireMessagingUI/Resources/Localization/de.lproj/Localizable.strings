@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// MARK: - Navigation
 
+// MARK: - Navigation
 "general.loading" = "Wird geladen…";
 "general.confirm" = "OK";
 "general.failure" = "Ein Fehler ist aufgetreten";
@@ -82,6 +82,7 @@
 "conversation.creationForm.guests.description" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams oder für Dienste.";
 "conversation.creationForm.appsDisabled.title" = "Ihr Team verwendet noch keine Apps";
 "conversation.creationForm.appsDisabled.message" = "Um Ihren Workflow mit Apps zu verbessern, muss Ihr Team angepasst werden. Bitte wenden Sie sich an Ihren Team-Admin.";
+"conversation.creationForm.appsDisabledAsAdmin.message" = "Um Ihren Workflow mit Apps zu verbessern, muss Ihr Team angepasst werden.";
 
 "conversation.creationForm.readReceipts.toggle" = "Lesebestätigungen";
 "conversation.creationForm.readReceipts.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";

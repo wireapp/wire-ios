@@ -39,16 +39,11 @@ final class FolderPage: PageModel {
             .firstMatch
     }
 
-    func waitForPageToDisappear() {
-        XCTAssertFalse(pageMainElement.waitForExistence(timeout: 3))
-    }
-
-    func enterFolderNameAndValidate(name: String = "Test") -> String {
+    func enterFolderNameAndValidate(name: String) throws -> SharedDriveFilesPage {
         folderNameInputField.tap()
         folderNameInputField.typeText(name)
         createFolderButton.tap()
-        waitForPageToDisappear()
-        return name
+        return try SharedDriveFilesPage()
     }
 
 }

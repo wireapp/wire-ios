@@ -19,10 +19,10 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - name: Crowdin action
-        uses: crowdin/github-action@v2
+        uses: crowdin/github-action@8868a33591d21088edfc398968173a3b98d51706 # v2.16.2
         with:
           # For more info: https://github.com/crowdin/github-action/blob/master/action.yml
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
@@ -44,47 +44,53 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
 
       - name: Trim unused localizations from string catalogs and create PR
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         run: |
+          set -xEeuo pipefail
+
           BASE_BRANCH=${GITHUB_REF#refs/heads/}
           HEAD_BRANCH="chore/update-localization"
           TITLE="chore: Update localization - WPB-15278"
           BODY="This PR pulls in the latest localization translations from Crowdin."
 
+          # Install git-lfs before any `git checkout` runs, otherwise the LFS
+          # post-checkout hook prints a warning about git-lfs not being on PATH.
+          apt update && apt install -y gh git-lfs
+          git lfs install || git lfs update --force
+
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          # The crowdin action restores the original checkout (develop) after pushing
+          # translations to $HEAD_BRANCH, so switch to it before trimming and diffing.
+          git checkout "$HEAD_BRANCH"
 
           find . -name "*.xcstrings" | tee string-catalogs.txt
           xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
           xargs git add < string-catalogs.txt
 
-          # abort if there are no changes after trimming
-          if git diff --quiet && git diff --cached --quiet; then
-          echo "No changes to commit."
-          exit 0
-          fi
-
           # commit and push the changes
-          git commit --no-verify -m "chore: trim string catalogs"
+          if ! git diff --quiet || ! git diff --cached --quiet; then
+            git commit --no-verify -m "chore: trim string catalogs"
+          fi
           git push --no-verify origin "$HEAD_BRANCH"
 
           # abort if there no changes to be merged
           if git diff --quiet "origin/$BASE_BRANCH"; then
-          echo "No changes compared to the base branch, aborting."
-          exit 0
+            echo "No changes compared to the base branch, aborting."
+            exit 0
           fi
 
           # abort if the pr already exists
-          apt update && apt install -y gh git-lfs
-          git lfs install || git lfs update --force
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
           if [ -n "$PR_EXISTS" ]; then
-          echo "A PR already exists, aborting."
-          exit 0
+            echo "A PR already exists, aborting."
+            exit 0
           fi
 
           gh pr create --fill \
-          --base "$BASE_BRANCH" \
-          --head "$HEAD_BRANCH" \
-          --title "$TITLE" \
-          --body "$BODY" \
+            --base "$BASE_BRANCH" \
+            --head "$HEAD_BRANCH" \
+            --title "$TITLE" \
+            --body "$BODY" \

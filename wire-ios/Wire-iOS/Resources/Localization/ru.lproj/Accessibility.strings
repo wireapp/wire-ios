@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 /// Naming convention:
 ///
 /// The names of all accessibility strings should follow the format:
 ///
 ///  "<screen>.<component>.<usage>"
-
 
 "peoplepicker.upgrade_banner.close_button.label" = "Закрыть возможность создания команды";
 
@@ -131,6 +131,7 @@
 "sketch.drawButton.hint" = "Нажмите дважды для включения или отключения";
 "sketch.selectEmojiButton.description" = "Выбрать смайлик";
 "sketch.sendButton.description" = "Отправить";
+"sketch.confirmButton.description" = "Подтвердить";
 "sketch.undoButton.description" = "Отменить последний шаг";
 "sketch.closeButton.description" = "Закрыть скетч";
 

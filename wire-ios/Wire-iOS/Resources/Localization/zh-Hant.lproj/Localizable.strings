@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "確認";
 "general.next" = "下一步";
 "general.cancel" = "取消";
@@ -368,6 +368,7 @@
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
 "conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.create.apps_disabled_as_admin.message" = "To improve your workflow with apps, your team needs configuration.";
 "conversation.create.receipts.title" = "讀取回條";
 "conversation.create.receipts.subtitle" = "當這啓用時，參與者可以看到他們在此對話中的消息何時已閱讀。";
 "conversation.create.mls.title" = "Protocol";
@@ -567,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@移除了%@";
 "content.system.conversation.you.removed.legalhold" = "%@ were removed from this conversation because legal hold has been activated.";
 "content.system.conversation.you.left" = "%@離開了";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@從團隊中被移除了";
 "content.system.conversation.guest.joined" = "%@已加入";
 "content.system.conversation.guest.you_joined" = "您已經加入";
@@ -734,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "原訊息於%@";
 "content.message.reply.original_timestamp.time" = "來自%@的原始訊息";
 "content.message.reply.broken_message" = "您不能看見這則訊息";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "已編輯";
 
 "content.message.open_link_alert.title" = "瀏覽連結";
@@ -1063,8 +1066,8 @@
 "profile.details.partner" = "外部合作者";
 "profile.details.federated" = "聯邦";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
-"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
-"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list
@@ -1154,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";
@@ -1455,6 +1458,20 @@
 "self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
 "self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
 "self.settings.share_debug_report.action_sheet.share" = "Share";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "No unread conversation";
+"settings.debugging_tools.unread_conversations.found" = "Found an unread conversation:";
+"settings.debugging_tools.unread_conversations.action_copy" = "複製";
+"settings.debugging_tools.debug_command.title" = "Debug command";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Command not recognized";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Error: Repair use case not available";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Faulty MLS Removal Keys Repair";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Repair Failed";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Error: %@";
 
 // Password reset
 "self.settings.password_reset_menu.title" = "重設密碼";

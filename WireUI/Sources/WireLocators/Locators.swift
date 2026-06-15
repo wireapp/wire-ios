@@ -60,9 +60,11 @@ public enum Locators {
 
         case bottomBarRecentListButton
         case bottomBarSettingsButton
+        case bottomBarDriveButton
         case createGroupOrSearchButton
         case conversationCell
-        case blockOptionOnContextMenu = "Block…"
+        case blockOptionOnContextMenu
+        case unblockOptionOnContextMenu
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
         case leaveButtonOnBottomSheet
@@ -154,6 +156,7 @@ public enum Locators {
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
         case sharedFileLabel = "FileTransferTopLabel"
+        case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
         case sketchButton
         case canvas
@@ -166,14 +169,16 @@ public enum Locators {
         case allowFullAccess = "Allow Full Access"
         case ok = "OK"
         case audioButton
-        case startRecording = "Start recording"
-        case stopRecording = "Stop recording"
+        case startRecording
+        case stopRecording
         case helium = "Helium"
-        case sendAudio = "Send"
+        case sendAudio
         case playAudioFile
         case recordingTime
         case showOtherRowButton
         case pingButton
+        case guestsArePresent = "Guests are present"
+
     }
 
     public enum BackupOrRestorePage: String {
@@ -181,6 +186,7 @@ public enum Locators {
         case backUpNow
         case restoreFromBackupButton
         case browse = "Browse"
+        case historyRestoredAlert = "Your history is restored."
     }
 
     public enum CreatingBackupPage: AutoPrefixedEnum {
@@ -256,6 +262,14 @@ public enum Locators {
         case save
     }
 
+    public enum UsernameUpdatePage: String {
+
+        case usernameField
+        case save = "Save"
+        case username = "Username"
+        case handleTextField
+    }
+
     public enum NewConversationPage: String {
 
         case createNewGroupButton
@@ -275,9 +289,22 @@ public enum Locators {
 
     }
 
+    public enum FilesAppPage: String {
+
+        case browse = "Browse"
+        case done = "Done"
+        case onMyIPhone = "On My iPhone"
+        case search = "Search"
+        case share = "Share"
+        case nameContains = "Name Contains"
+        case moreOptions = "OverflowBarButtonItem"
+        case select = "Select"
+    }
+
     public enum OptionsOnSettingsPage: String {
 
         case lockWithPasscode = "Lock With Passcode"
+        case createLinkPreviews = "Create Link Previews"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {
@@ -320,6 +347,13 @@ public enum Locators {
         case confirmUsernameButton
     }
 
+    public enum ManageDevicesPage: String {
+
+        case manageDevices
+        case removeDevice = "minus.circle.fill"
+        case deleteDevice = "Delete"
+    }
+
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
 
         case checkbox
@@ -356,11 +390,18 @@ public enum Locators {
 
     public enum ShareExtensionPage: String {
 
-        case imageTile = "PXGGridLayout-Info"
-        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
-        case chooseConversations = "Choose"
         case sendButtonOnShareExtension
+        case wire = "Wire"
+        case chooseConversations = "Choose"
+    }
+
+    public enum PhotosAppPage: String {
+
+        case select = "Select"
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "Share"
         case continueButton = "Continue"
+
     }
 
     public enum IncomingCallPage: String {
@@ -524,6 +565,12 @@ public enum Locators {
 
         case mainContent
         case clientObsoleteAlertTitle = "Update required"
+
+    }
+
+    public enum SSOWebLoginPage: String {
+        case username = "Username"
+        case signInButton = "Sign In"
 
     }
 }

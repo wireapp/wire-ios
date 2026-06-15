@@ -43,18 +43,18 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ inputs.branch }}
           lfs: 'false'
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           bundler-cache: true
 
       - name: Load .env file
-        uses: xom9ikk/dotenv@v2
+        uses: xom9ikk/dotenv@d0a56edc74279820eabbe34477511327e710d0de # v2.4.0
         with:
           path: fastlane/
 
@@ -79,7 +79,6 @@ jobs:
     needs: generate-framework-list
     if: ${{ needs.generate-framework-list.outputs.schemes != '[]' && needs.generate-framework-list.outputs.schemes != '' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
-    timeout-minutes: 20
     permissions:
       contents: read
       pull-requests: write
@@ -98,17 +97,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ inputs.branch }}
           lfs: ${{ matrix.needs_lfs }}
 
       - name: Setup test environment
         uses: ./.github/actions/setup-test-environment
-        with:
-          scheme: ${{ matrix.scheme }}
 
       - name: "Test ${{ matrix.scheme }}"
+        timeout-minutes: 15
         run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
 
       - name: Check for duplicate symbol implementations
@@ -134,14 +132,14 @@ jobs:
 
       - name: Upload .xcresult as artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: "xcresult-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: artifacts/**/*.xcresult
 
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: "test-reports-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
@@ -150,7 +148,7 @@ jobs:
 
       - name: Upload failed snapshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: "snapshots-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
@@ -159,7 +157,7 @@ jobs:
 
       - name: Publish test results summary
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        uses: EnricoMi/publish-unit-test-result-action/macos@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         with:
           files: |
             build/reports/*.junit
@@ -169,7 +167,7 @@ jobs:
 
       - name: Archive DerivedData logs
         if: failure() || cancelled()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: "deriveddata-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
@@ -199,7 +197,7 @@ jobs:
           echo "SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')" >> "$GITHUB_ENV"
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ inputs.branch }}
           lfs: 'false'
@@ -214,7 +212,7 @@ jobs:
 
       - name: Download test results
         id: download-test-results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         continue-on-error: true
         with:
           pattern: "test-reports-*-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"

@@ -42,6 +42,10 @@ public enum DeveloperFlag: String, CaseIterable {
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
+    case simulateMainAppRequiredError
+    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
+    case enableDrivePermissions
+    case unSafeLogsForPublic
 
     public var description: String {
         switch self {
@@ -104,6 +108,15 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .showNSEErrors:
             "Turn on to show Notification Service Extension errors as notifications"
+
+        case .simulateMainAppRequiredError:
+            "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
+
+        case .enableDrivePermissions:
+            "Turn on to enable drive permissions"
+
+        case .unSafeLogsForPublic:
+            "Turn on to write all logs (including debug and non-public) to disk in release builds"
         }
     }
 

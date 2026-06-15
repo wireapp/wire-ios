@@ -69,3 +69,8 @@
 "conversation.wireCells.files.video" = "Video";
 "conversation.wireCells.files.folder" = "Folder";
 "conversation.wireCells.files.text" = "Text";
+"conversation.wireCells.files.availableOffline" = "Available offline";
+
+// MARK: - Viewer access
+"conversation.wireCells.files.viewerAccess.banner.close" = "Close access info";
+"conversation.wireCells.files.readOnly" = "Read only";

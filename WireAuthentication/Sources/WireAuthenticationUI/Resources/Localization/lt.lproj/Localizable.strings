@@ -92,6 +92,7 @@
 "verification_code.message" = "Įrašykite patvirtinimo kodą, kuris buvo išsiųstas į %@.";
 "verification_code.confirm" = "Patvirtinti";
 "verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code_after_seconds" = "Resend Code (wait: %@)";
 
 "authentication.no_history.title" = "Pirmą kartą naudojate „Wire“ šiame įrenginyje.";
 "authentication.no_history.message" = "Privatumo sumetimais, jūsų pokalbio istorija čia nebus rodoma.";

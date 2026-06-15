@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "OK";
 "general.next" = "Próximo";
 "general.cancel" = "Cancelar";
@@ -368,6 +368,7 @@
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
 "conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.create.apps_disabled_as_admin.message" = "To improve your workflow with apps, your team needs configuration.";
 "conversation.create.receipts.title" = "Recibos de Leitura";
 "conversation.create.receipts.subtitle" = "Quando isso está ativado, as pessoas podem ver quando suas mensagens nessa conversa são lidas.";
 "conversation.create.mls.title" = "Protocolo";
@@ -567,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@ removeu %@";
 "content.system.conversation.you.removed.legalhold" = "%@ foram removidos desta conversa porque a retenção legal foi ativada.";
 "content.system.conversation.you.left" = "%@ saiu";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ foi removido da equipe.";
 "content.system.conversation.guest.joined" = "%@ juntou-se";
 "content.system.conversation.guest.you_joined" = "Você entrou";
@@ -734,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Mensagem original de %@";
 "content.message.reply.original_timestamp.time" = "Mensagem original de %@";
 "content.message.reply.broken_message" = "Você não pode ver esta mensagem.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Editado";
 
 "content.message.open_link_alert.title" = "Visitar Link";
@@ -1063,8 +1066,8 @@
 "profile.details.partner" = "externo";
 "profile.details.federated" = "Federado";
 "profile.details.blocking_reason" = "Este usuário está bloqueado devido à retenção legal. [SAIBA MAIS](%@)";
-"profile.details.identity_warning" = "Tenha certeza sobre a identidade de %@ antes de se conectar.";
-"profile.details.requested_identity_warning" = "Verifique a identidade da pessoa antes de aceitar a solicitação de conexão.";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.title.unavailable" = "Nome indisponível";
 
 // Device list
@@ -1154,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Compartilhar perfil";
 "qrcode.share_message" = "Compartilhe seu perfil para se conectar facilmente com outras pessoas. Você ainda deve aceitar um pedido de conexão antes que vocês dois possam começar a se comunicar.";
 "qrcode.share_profile_link.button.title" = "Compartilhar Link de Perfil";
@@ -1455,6 +1458,20 @@
 "self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
 "self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
 "self.settings.share_debug_report.action_sheet.share" = "Share";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "No unread conversation";
+"settings.debugging_tools.unread_conversations.found" = "Found an unread conversation:";
+"settings.debugging_tools.unread_conversations.action_copy" = "Copiar";
+"settings.debugging_tools.debug_command.title" = "Debug command";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Command not recognized";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Error: Repair use case not available";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Faulty MLS Removal Keys Repair";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Repair Failed";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Error: %@";
 
 // Password reset
 "self.settings.password_reset_menu.title" = "Redefinir senha";

@@ -23,6 +23,8 @@
 /* Begin PBXBuildFile section */
 		0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */; };
 		0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
+		FADE000000000000000000A2 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A1 /* WireDomainSupport.framework */; };
+		FADE000000000000000000A3 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A1 /* WireDomainSupport.framework */; };
 		016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; };
 		016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01B71B952D6D2DAB002C5A38 /* RedactedScript-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71AA22D6D2DAB002C5A38 /* RedactedScript-Regular.ttf */; };
@@ -255,6 +257,7 @@
 /* Begin PBXFileReference section */
 		0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FADE000000000000000000A1 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		015DC1DC2D68DD85004EE8C9 /* iOS StyleKit.pcvd */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "iOS StyleKit.pcvd"; sourceTree = "<group>"; };
 		015DC1DD2D68DD85004EE8C9 /* SECURITY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SECURITY.md; sourceTree = "<group>"; };
 		015DC1DE2D68DD85004EE8C9 /* swiftgen.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
@@ -638,6 +641,7 @@
 				ConversationMessageCell/ConversationMessageSnapshotTestCase.swift,
 				ConversationMessageCell/ConversationPingMessageTests.swift,
 				ConversationMessageCell/ConversationReactionMessageTests.swift,
+				ConversationMessageCell/ConversationReplyWithTextCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSenderMessageDetailsCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSystemMessageTests.swift,
 				ConversationMessageCell/ConversationTextMessageTests.swift,
@@ -649,8 +653,6 @@
 				ConversationMessageCell/ReadReceiptSystemMessage/ReadReceiptViewModelTests.swift,
 				ConversationMessageCell/SimpleChatBubblesSnapshotTests.swift,
 				ConversationOptionsViewControllerTests.swift,
-				ConversationReplyCellDescriptionTests.swift,
-				ConversationReplyCellTests.swift,
 				ConversationServicesOptionsViewControllerTests.swift,
 				ConversationStatusTests.swift,
 				"ConversationStatusTests+Icon.swift",
@@ -806,6 +808,7 @@
 				SwitchBackendConfirmationViewModelTests.swift,
 				SwitchBackendConfirmationViewTests.swift,
 				TeamMetadataRefresherTests.swift,
+				TestingAppDelegate.swift,
 				ThumbnailCreationTests.swift,
 				Token/TokenFieldTests.swift,
 				Token/TokenSeparatorAttachmentSnapshotTests.swift,
@@ -862,6 +865,7 @@
 				DeviceManagement/MockContextProvider.swift,
 				"Settings/Debug Report/CreateDebugReportUseCaseTests.swift",
 				Settings/SettingsPropertyTests.swift,
+				TestingAppDelegate.swift,
 			);
 			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
 		};
@@ -1013,6 +1017,7 @@
 				598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
 				59C951C22E2B67E3002C0A3E /* WireLoggingSupport in Frameworks */,
 				591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */,
+				FADE000000000000000000A2 /* WireDomainSupport.framework in Frameworks */,
 				595BE7A42E32367F00ED9088 /* WireAnalyticsSupport in Frameworks */,
 				5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */,
 			);
@@ -1035,6 +1040,7 @@
 				59CB3F212F6AEB6D003616C7 /* WireData in Frameworks */,
 				59B768432D2D58BE007B5F1E /* WireFoundationSupport in Frameworks */,
 				591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */,
+				FADE000000000000000000A3 /* WireDomainSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1194,6 +1200,7 @@
 				EE33C48C296485FA00C058D1 /* WireShareEngine.framework */,
 				EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */,
 				0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */,
+				FADE000000000000000000A1 /* WireDomainSupport.framework */,
 				EEE25B4329719C950008B894 /* WireSystem.framework */,
 				598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */,
 				E6C25FC42AFFAAC300406A1C /* WireTesting.framework */,
@@ -1736,7 +1743,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n    \"$PROJECT_DIR/..\"\n\n# Lint\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --fix \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --strict \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n";
+			shellScript = "# Format & lint the whole repo (mirrors local `format --all`)\n\"$PROJECT_DIR/../scripts/format.sh\" --all\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;

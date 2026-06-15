@@ -32,6 +32,9 @@ public struct UITestConfig: Codable {
     /// On XCUITests, shake gesture is not available.
     public var useTripleTapForShakeGesture = false
 
+    /// When `true`, audio recording UI uses a deterministic mock recorder.
+    public var useMockAudioRecorder = false
+
     /// Developer flags to apply at launch, keyed by `DeveloperFlag.rawValue`.
     /// Overrides any flags already stored in `UserDefaults`.
     public var developerFlags: [String: Bool] = [:]
@@ -48,14 +51,14 @@ public struct UITestConfig: Codable {
     }
 
     #if DEBUG
-        /// Returns `UITestConfig` decoded from base64 app environment or default config if none is set.
-        public static var environment: UITestConfig {
+        /// Returns `UITestConfig` decoded from base64 app environment if set.
+        public static var environment: UITestConfig? {
             guard
                 let value = ProcessInfo.processInfo.environment[environmentKey],
                 let data = Data(base64Encoded: value),
                 let config = try? JSONDecoder().decode(UITestConfig.self, from: data)
             else {
-                return UITestConfig() // Return default config is none set in the environment
+                return nil
             }
 
             return config

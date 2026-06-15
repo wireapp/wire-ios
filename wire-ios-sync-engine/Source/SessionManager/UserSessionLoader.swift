@@ -367,14 +367,8 @@ final class UserSessionLoader {
             return
         }
 
-        let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
-            ActorBasedUpdateEventMigratorDAO(context: eventContext)
-        } else {
-            UpdateEventMigratorDAO(context: eventContext)
-        }
-
         let migrator = UpdateEventMigrator(
-            dao: dao,
+            dao: ActorBasedUpdateEventMigratorDAO(context: eventContext),
             localDomain: metadata.domain,
             earService: earService
         )
@@ -437,7 +431,8 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskManager: UIApplication.shared
         )
 
         let lastEventIDRepository = LastEventIDRepository(

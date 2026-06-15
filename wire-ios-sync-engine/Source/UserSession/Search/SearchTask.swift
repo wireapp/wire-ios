@@ -138,6 +138,16 @@ public final class SearchTask {
                     return { _ in }
                 }
             }
+            taskGroup.addTask {
+                do {
+                    return try await self.listAllAppsAndCollaboratorApps()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search
+                        .error("failed to list all apps and collaborators: \(String(describing: errorType))")
+                    return { _ in }
+                }
+            }
 
             var result = SearchResult()
             while let aggregator = await taskGroup.next() {
@@ -450,26 +460,22 @@ public final class SearchTask {
                 cachedSearchUser.user = localUser
                 searchUser = cachedSearchUser
             } else {
-                let accentColor = Int16(exactly: result.accentID).flatMap(AccentColor.init(rawValue:))
                 searchUser = ZMSearchUser(
                     viewContext: viewContext,
-                    name: result.name,
-                    handle: result.handle,
-                    accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
-                    remoteIdentifier: qualifiedID.uuid,
-                    domain: qualifiedID.domain,
-                    teamIdentifier: result.teamID,
-                    providerIdentifier: result.service?.provider.transportString(),
-                    user: localUser,
-                    searchUsersCache: searchUsersCache,
-                    type: localUser?.type,
-                    summary: localUser?.appInfo?.appDescription,
-                    isDeleted: result.deleted ?? false
+                    user: result,
+                    localUser: localUser,
+                    searchUsersCache: searchUsersCache
                 )
             }
 
             guard searchUser.user == nil || searchUser.user?.isTeamMember == false else {
                 return { _ in }
+            }
+
+            // The directory/users endpoint returns the profile picture asset keys; without this the
+            // restored SearchUserImageStrategy has no asset keys to fetch and the picture stays empty.
+            if let assetKeys = SearchUserAssetKeys(result.assets) {
+                searchUser.assetKeys = assetKeys
             }
 
             let partialResult = SearchResult(
@@ -485,6 +491,107 @@ public final class SearchTask {
             return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
 
+    }
+
+    /// If no search query is provided we cannot use the search API.
+    /// This func basically serves two purposes:
+    /// - Apps added to the team don't trigger events, so this allows apps being added right now (while the iOS client
+    /// is running) to be displayed in the search results.
+    /// - In large teams apps might not be discovered without this code (2000 members cap).
+    private func listAllAppsAndCollaboratorApps() async throws -> SearchResultAggregator {
+        guard
+            let apiVersion,
+            apiVersion >= .v10, // collaborators: v10, apps: v15
+            case let .search(searchRequest) = type,
+            searchRequest.query.string.isEmpty,
+            !searchRequest.searchOptions.contains(.localResultsOnly),
+            searchRequest.searchOptions.contains(.apps)
+        else { return { _ in } }
+
+        let searchContext = contextProvider.newBackgroundContext()
+        let (teamID, selfUserDomain) = await searchContext.perform {
+            let selfUser = ZMUser.selfUser(in: searchContext)
+            let teamID = selfUser.team?.remoteIdentifier
+            let domain = selfUser.domain ?? ""
+            return (teamID, domain)
+        }
+        guard let teamID else { return { _ in } }
+
+        let apps = if apiVersion >= .v15 {
+            try await teamsAPI.getApps(for: teamID)
+        } else { [] as [User] }
+
+        try Task.checkCancellation()
+
+        var collaboratorIDs = [UserID]()
+        do {
+            let appIDs = Set(apps.map(\.id.id))
+            collaboratorIDs = try await teamsAPI.getCollaborators(for: teamID)
+                .filter { collaboratorInfo in
+                    !appIDs.contains(collaboratorInfo.userID)
+                }
+                .map { collaboratorInfo in
+                    WireFoundation.QualifiedID(
+                        id: collaboratorInfo.userID,
+                        domain: selfUserDomain
+                    )
+                }
+        } catch let error as FailureResponse {
+            // at the time of writing this code there was a bug which forbid team members (except admins and owners) to
+            // browse/fetch collaborators: https://github.com/wireapp/wire-server/pull/5239 WPB-25521
+            if error.code == 403, error.label == "insufficient-permissions" {
+                WireLogger.network.warn(
+                    "Swallowing 403 error when getting collaborators, assuming it is bug WPB-25521",
+                    attributes: .safePublic
+                )
+            } else {
+                throw error
+            }
+        }
+
+        try Task.checkCancellation()
+
+        let collaborators = try await usersAPI.getUsers(userIDs: collaboratorIDs)
+        if !collaborators.failed.isEmpty {
+            WireLogger.network.warn("at least one collaborator's info couldn't be fetched", attributes: .safePublic)
+        }
+
+        try Task.checkCancellation()
+
+        let viewContext = contextProvider.viewContext
+        let searchUsers = await viewContext.perform { [searchUsersCache] in
+            var searchUsers = [ZMSearchUser]()
+            for app in apps + collaborators.found {
+                guard app.type == .app else { continue }
+                let localUser = ZMUser.fetch(with: app.id.id, domain: app.id.domain, in: viewContext)
+                let searchUser: ZMSearchUser
+                if let cachedSearchUser = searchUsersCache?.object(forKey: app.id.id as NSUUID) {
+                    cachedSearchUser.user = localUser
+                    searchUser = cachedSearchUser
+                } else {
+                    searchUser = ZMSearchUser(
+                        viewContext: viewContext,
+                        user: app,
+                        localUser: localUser,
+                        searchUsersCache: searchUsersCache
+                    )
+                }
+                searchUsers += [searchUser]
+            }
+            return searchUsers
+        }
+        let partialResult = SearchResult(
+            context: viewContext,
+            contacts: [],
+            teamMembers: [],
+            directory: [],
+            conversations: [],
+            apps: searchUsers,
+            bots: [],
+            searchUsersCache: searchUsersCache
+        )
+
+        return { $0 = $0.union(withAppsResult: partialResult) }
     }
 
     // MARK: -
@@ -549,6 +656,12 @@ public final class SearchTask {
                 }
             }
         }
+
+        try Task.checkCancellation()
+
+        // The contacts-search endpoint omits profile asset keys; enrich directory hits via the
+        // users endpoint so the restored SearchUserImageStrategy can download the pictures.
+        await enrichAssetKeys(for: searchUsers, on: viewContext)
 
         try Task.checkCancellation()
 
@@ -777,6 +890,55 @@ public final class SearchTask {
         return { $0 = $0.union(withBotsResult: partialResult) }
     }
 
+    // MARK: -
+
+    /// Fetches profile-picture asset keys for search hits that don't have them yet (i.e. directory
+    /// hits without a backing `ZMUser`). The contacts-search endpoint omits these keys, so without
+    /// this step `SearchUserImageStrategy` has nothing to download and the profile picture stays
+    /// empty.
+    private func enrichAssetKeys(
+        for searchUsers: [ZMSearchUser],
+        on viewContext: NSManagedObjectContext
+    ) async {
+        let userIDsToFetch: [UserID] = await viewContext.perform {
+            searchUsers.compactMap { searchUser -> UserID? in
+                guard searchUser.assetKeys == nil,
+                      searchUser.user == nil,
+                      let uuid = searchUser.remoteIdentifier,
+                      let domain = searchUser.domain,
+                      !domain.isEmpty
+                else { return nil }
+                return UserID(id: uuid, domain: domain)
+            }
+        }
+
+        guard !userIDsToFetch.isEmpty else { return }
+
+        let usersByID: [UUID: User]
+        do {
+            let userList = try await usersAPI.getUsers(userIDs: userIDsToFetch)
+            usersByID = Dictionary(
+                userList.found.map { ($0.id.id, $0) },
+                uniquingKeysWith: { first, _ in first }
+            )
+        } catch {
+            WireLogger.search.warn(
+                "failed to enrich search users with asset keys: \(String(describing: error))"
+            )
+            return
+        }
+
+        await viewContext.perform {
+            for searchUser in searchUsers where searchUser.assetKeys == nil {
+                guard let uuid = searchUser.remoteIdentifier,
+                      let user = usersByID[uuid],
+                      let assetKeys = SearchUserAssetKeys(user.assets)
+                else { continue }
+                searchUser.assetKeys = assetKeys
+            }
+        }
+    }
+
 }
 
 private extension SearchResult {
@@ -832,6 +994,35 @@ private extension TypeOfUser {
         case .bot:
             self = .bot
         }
+    }
+
+}
+
+private extension ZMSearchUser {
+
+    convenience init(
+        viewContext: NSManagedObjectContext,
+        user: WireNetwork.User,
+        localUser: ZMUser?,
+        searchUsersCache: SearchUsersCache?
+    ) {
+        let accentColor = Int16(exactly: user.accentID).flatMap(AccentColor.init(rawValue:))
+        let qualifiedID = WireDataModel.QualifiedID(uuid: user.id.id, domain: user.id.domain)
+        self.init(
+            viewContext: viewContext,
+            name: user.name,
+            handle: user.handle,
+            accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+            remoteIdentifier: qualifiedID.uuid,
+            domain: qualifiedID.domain,
+            teamIdentifier: user.teamID,
+            providerIdentifier: user.service?.provider.transportString(),
+            user: localUser,
+            searchUsersCache: searchUsersCache,
+            type: user.type.map(TypeOfUser.init) ?? localUser?.type,
+            summary: localUser?.appInfo?.appDescription,
+            isDeleted: user.deleted ?? false
+        )
     }
 
 }

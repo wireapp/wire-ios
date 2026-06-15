@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UserNotifications
 import WireDataModelSupport
 import XCTest
 
@@ -197,6 +198,39 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         // then
         XCTAssertTrue(callCenter.didCallRejectCall)
         XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
+    }
+
+    func testThatItActivatesAccountAndDoesNotShowConversation_ForDefaultTapOnIncomingCallNotification() {
+        // given
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            self.createSelfClient()
+        }
+
+        let userInfo = userInfoWithConversation()
+        let conversation = userInfo.conversation(in: uiMOC)!
+
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
+        simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
+
+        // when
+        handle(
+            action: UNNotificationDefaultActionIdentifier,
+            category: Category.incomingCall.rawValue,
+            userInfo: userInfo
+        )
+
+        // then
+        XCTAssertEqual(mockSessionManager.lastRequestToActivateAccount, sut)
+        XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
+        XCTAssertNil(mockSessionManager.lastRequestToShowConversationsList)
+        XCTAssertFalse(callCenter.didCallAnswerCall)
+        XCTAssertFalse(callCenter.didCallRejectCall)
     }
 
     func testThatItCallsShowConversationButDoesNotCallBack_ForPushNotificationCategoryMissedCallWithCallBackAction() {

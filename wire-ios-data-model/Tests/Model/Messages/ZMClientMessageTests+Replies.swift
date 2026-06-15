@@ -91,4 +91,69 @@ final class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         XCTAssertNotNil(sut)
         XCTAssertEqual(sut.quote, quotedMessage)
     }
+
+    // MARK: - quotedMessageIsDeleted
+
+    func testQuotedMessageIsDeletedIsTrueWhenQuotedMessageWasDeleted() {
+        // given
+        let quotedMessage = try! conversation.appendText(
+            content: "The sky is blue",
+            mentions: [],
+            replyingTo: nil,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        ) as! ZMClientMessage
+
+        let reply = try! conversation.appendText(
+            content: "I agree",
+            mentions: [],
+            replyingTo: quotedMessage,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        ) as! ZMClientMessage
+
+        XCTAssertEqual(reply.quoteMessage as? ZMMessage, quotedMessage)
+        XCTAssertFalse(reply.quotedMessageIsDeleted)
+
+        // when the quoted message is deleted (clears the reply's quote relationship and turns
+        // the quoted message into a hidden tombstone)
+        quotedMessage.removeClearingSender(true)
+        XCTAssertTrue(uiMOC.saveOrRollback())
+
+        // then
+        XCTAssertNil(reply.quoteMessage)
+        XCTAssertTrue(quotedMessage.hasBeenDeleted)
+        XCTAssertTrue(reply.quotedMessageIsDeleted)
+    }
+
+    func testQuotedMessageIsDeletedIsFalseWhenQuotedMessageIsNotInConversation() {
+        // given a reply whose quoted message is not present in our copy of the conversation
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        var text = Text(content: "I agree")
+        text.quote = Quote.with {
+            $0.quotedMessageID = UUID().transportString()
+            $0.quotedMessageSha256 = Data(repeating: 1, count: 32)
+        }
+        let replyMessage = GenericMessage(content: text)
+        let data = [
+            "sender": String.randomClientIdentifier(),
+            "text": try? replyMessage.serializedData().base64EncodedString()
+        ]
+        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
+        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
+
+        // when
+        var sut: ZMClientMessage! = nil
+        performPretendingUiMocIsSyncMoc {
+            sut = ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
+        }
+
+        // then the quote is unresolved but it was not deleted
+        XCTAssertNotNil(sut)
+        XCTAssertTrue(sut.hasQuote)
+        XCTAssertNil(sut.quote)
+        XCTAssertFalse(sut.quotedMessageIsDeleted)
+    }
 }
