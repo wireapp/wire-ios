@@ -70,8 +70,11 @@ struct MemberSelectionView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(Strings.Select.button) { dismiss() }
-                        .disabled(viewModel.selectedMembers.isEmpty)
+                    Button(Strings.Select.button) {
+                        viewModel.confirmSelection()
+                        dismiss()
+                    }
+                    // .disabled(viewModel.selectedMembers.isEmpty) // TODO: clean up? makes so sense to be unable to clear the selected members
                 }
             }
         }

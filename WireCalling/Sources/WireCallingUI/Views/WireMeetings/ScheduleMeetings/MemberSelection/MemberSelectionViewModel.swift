@@ -25,6 +25,7 @@ import WireCallingDomain
 final class MemberSelectionViewModel {
 
     private let source: any MemberRepositoryProtocol
+    private let onSelect: ([Member]) -> Void
 
     var searchText: String = "" {
         didSet { scheduleSearch() }
@@ -39,8 +40,14 @@ final class MemberSelectionViewModel {
 
     private var searchTask: Task<Void, Never>?
 
-    init(source: any MemberRepositoryProtocol) {
+    init(
+        source: any MemberRepositoryProtocol,
+        initialSelection: [Member] = [],
+        onSelect: @escaping ([Member]) -> Void = { _ in }
+    ) {
         self.source = source
+        self.selectedMembers = initialSelection
+        self.onSelect = onSelect
         scheduleSearch(debounce: .zero) // initial load is immediate
     }
 
@@ -63,6 +70,10 @@ final class MemberSelectionViewModel {
         } else {
             selectedMembers.append(member)
         }
+    }
+
+    func confirmSelection() {
+        onSelect(selectedMembers)
     }
 
     func retrySearch() {

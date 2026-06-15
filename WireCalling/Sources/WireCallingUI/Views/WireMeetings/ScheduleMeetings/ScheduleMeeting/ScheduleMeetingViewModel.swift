@@ -53,7 +53,11 @@ final class ScheduleMeetingViewModel {
     }
 
     @MainActor func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
-        MemberSelectionViewModel(source: memberRepository)
+        MemberSelectionViewModel(
+            source: memberRepository,
+            initialSelection: selectedMembers,
+            onSelect: { [weak self] in self?.selectedMembers = $0 }
+        )
     }
 
     func scheduleMeeting() {}
