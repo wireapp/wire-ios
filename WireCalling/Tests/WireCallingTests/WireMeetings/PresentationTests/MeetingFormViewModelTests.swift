@@ -22,13 +22,13 @@ import WireCallingDomainSupport
 
 @testable import WireCallingUI
 
-struct ScheduleMeetingFormViewModelTests {
+struct CreateMeetingFormViewModelTests {
 
-    private let viewModel: ScheduleMeetingFormViewModel
+    private let viewModel: CreateMeetingFormViewModel
 
     init() {
-        self.viewModel = ScheduleMeetingFormViewModel(
-            mode: .now,
+        self.viewModel = CreateMeetingFormViewModel(
+            mode: .instant,
             memberRepository: MemberRepositoryProtocolMock()
         )
     }

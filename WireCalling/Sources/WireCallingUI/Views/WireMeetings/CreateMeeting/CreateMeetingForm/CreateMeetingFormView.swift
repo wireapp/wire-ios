@@ -21,11 +21,11 @@ import WireCallingDomain
 import WireDesign
 import WireFoundation
 
-struct ScheduleMeetingFormView: View {
+struct CreateMeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
-    @State private(set) var viewModel: ScheduleMeetingFormViewModel
+    @State private(set) var viewModel: CreateMeetingFormViewModel
     @State private var expandedField: ExpandedField?
 
     var body: some View {
@@ -61,7 +61,7 @@ struct ScheduleMeetingFormView: View {
 
     private var navigationTitle: String {
         switch viewModel.mode {
-        case .now:
+        case .instant:
             Strings.Now.title
         case .scheduled:
             Strings.Future.title
@@ -70,7 +70,7 @@ struct ScheduleMeetingFormView: View {
 
     private var actionButtonLabel: String {
         switch viewModel.mode {
-        case .now:
+        case .instant:
             Strings.Start.button
         case .scheduled:
             Strings.Schedule.button
@@ -239,17 +239,17 @@ private extension RepeatOption {
 // MARK: - Preview
 
 #Preview("Now mode") {
-    ScheduleMeetingFormView(
-        viewModel: ScheduleMeetingFormViewModel(
-            mode: .now,
+    CreateMeetingFormView(
+        viewModel: CreateMeetingFormViewModel(
+            mode: .instant,
             memberRepository: MockMemberSource()
         )
     )
 }
 
 #Preview("Scheduled mode") {
-    ScheduleMeetingFormView(
-        viewModel: ScheduleMeetingFormViewModel(
+    CreateMeetingFormView(
+        viewModel: CreateMeetingFormViewModel(
             mode: .scheduled,
             memberRepository: MockMemberSource()
         )
@@ -257,12 +257,12 @@ private extension RepeatOption {
 }
 
 #Preview("Scheduled mode with selected members") {
-    let viewModel = ScheduleMeetingFormViewModel(
+    let viewModel = CreateMeetingFormViewModel(
         mode: .scheduled,
         memberRepository: MockMemberSource()
     )
     viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
-    return ScheduleMeetingFormView(viewModel: viewModel)
+    return CreateMeetingFormView(viewModel: viewModel)
 }
 
 // MARK: - Mock

@@ -74,7 +74,6 @@ struct MemberSelectionView: View {
                         viewModel.confirmSelection()
                         dismiss()
                     }
-                    // .disabled(viewModel.selectedMembers.isEmpty) // TODO: clean up? makes so sense to be unable to clear the selected members
                 }
             }
         }

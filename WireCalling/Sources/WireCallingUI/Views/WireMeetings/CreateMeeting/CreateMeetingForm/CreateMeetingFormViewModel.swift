@@ -20,10 +20,22 @@ import Foundation
 import WireCallingDomain
 
 @Observable
-final class ScheduleMeetingFormViewModel {
+final class CreateMeetingFormViewModel {
 
-    enum Mode: Identifiable, Hashable {
-        case now
+    /// Determines whether the meeting starts immediately on submit or is
+    /// scheduled for a future date and time. Drives the form layout
+    /// (schedule fields appear only in `.scheduled`), the navigation title,
+    /// and the primary action button's label and behavior.
+    enum Mode: Hashable, Identifiable {
+
+        /// Start the meeting immediately. The schedule section
+        /// (start/end/repeat) is hidden; the action button reads "Start" and
+        /// the screen is titled "Meet Now".
+        case instant
+
+        /// Schedule the meeting for a future date and time. The schedule
+        /// section is visible; the action button reads "Schedule" and the
+        /// screen is titled "Schedule a meeting".
         case scheduled
 
         var id: Self { self }
@@ -72,7 +84,7 @@ final class ScheduleMeetingFormViewModel {
 
     func submit() {
         switch mode {
-        case .now:
+        case .instant:
             createInstantMeeting()
         case .scheduled:
             scheduleMeeting()
