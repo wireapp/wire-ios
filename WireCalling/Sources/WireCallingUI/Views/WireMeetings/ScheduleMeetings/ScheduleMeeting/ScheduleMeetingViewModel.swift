@@ -25,12 +25,10 @@ final class ScheduleMeetingViewModel {
     let memberRepository: any MemberRepositoryProtocol
 
     var meetingTitle: String = ""
-
-    // TODO: Implement Wire users and emails
-    var participants: String = ""
     var startDate: Date = .init()
     var endDate: Date = .init().addingTimeInterval(1800)
     var repeatOption: RepeatOption = .never
+    var selectedMembers: [Member] = []
 
     var isNextButtonEnabled: Bool {
         // TODO: Decide if button is enabled without any participants

@@ -27,7 +27,6 @@ struct ScheduleMeetingView: View {
     @Environment(\.dismiss) private var dismiss
     @State private(set) var viewModel: ScheduleMeetingViewModel
     @State private var expandedField: ExpandedField?
-    @State private var selectedMembers: [Member] = []
 
     var body: some View {
         NavigationStack {
@@ -47,7 +46,6 @@ struct ScheduleMeetingView: View {
                         dismiss()
                     }
                 }
-
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(Strings.Schedule.button) {
                         viewModel.scheduleMeeting()
@@ -89,7 +87,6 @@ struct ScheduleMeetingView: View {
                 dateField: .endDate,
                 timeField: .endTime
             )
-
             Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
                 ForEach(RepeatOption.allCases, id: \.self) { option in
                     Text(option.title)
@@ -101,17 +98,16 @@ struct ScheduleMeetingView: View {
 
     private var participantsSection: some View {
         Section(Strings.SetupParticipants.header) {
-            // TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
 
             NavigationLink {
-                ParticipantPickerView(selection: $selectedMembers)
+                ParticipantPickerView(selection: $viewModel.selectedMembers)
             } label: {
                 TextField(Strings.SetupParticipants.placeholder, text: .constant(""))
                     .disabled(true)
             }
 
             NavigationLink {
-                ParticipantPickerView(selection: $selectedMembers)
+                ParticipantPickerView(selection: $viewModel.selectedMembers)
             } label: {
                 HStack {
                     Text("Participants")
@@ -124,7 +120,7 @@ struct ScheduleMeetingView: View {
             }
 
             NavigationLink {
-                ParticipantPickerView(selection: $selectedMembers)
+                ParticipantPickerView(selection: $viewModel.selectedMembers)
             } label: {
                 HStack {
                     Text(
@@ -203,8 +199,8 @@ struct ScheduleMeetingView: View {
     }
 
     private var participantsSummary: String {
-        guard let first = selectedMembers.first else { return "None" }
-        let extra = selectedMembers.count - 1
+        guard let first = viewModel.selectedMembers.first else { return "None" }
+        let extra = viewModel.selectedMembers.count - 1
         return extra > 0 ? "\(first.name), + \(extra) more" : first.name
     }
 
