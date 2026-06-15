@@ -26,7 +26,7 @@ struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @ObservedObject private var viewModel: MeetingsViewModel
+    @State private var viewModel: MeetingsViewModel
 
     init(viewModel: MeetingsViewModel) {
         self.viewModel = viewModel

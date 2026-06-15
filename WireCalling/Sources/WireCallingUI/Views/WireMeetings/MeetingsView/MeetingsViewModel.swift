@@ -19,15 +19,15 @@
 package import WireCallingDomain
 package import WireFoundation
 
-import Combine
 import Foundation
 
-package final class MeetingsViewModel: ObservableObject {
+@Observable
+package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @Published private(set) var loadedMeetings: [Meeting] = []
-    @Published private(set) var hasMore: Bool = false
+    private(set) var loadedMeetings: [Meeting] = []
+    private(set) var hasMore: Bool = false
 
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
