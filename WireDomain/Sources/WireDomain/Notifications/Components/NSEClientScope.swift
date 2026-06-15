@@ -192,7 +192,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     // MARK: - Calling
 
     private var callingService: any AVSCallingEventServiceProtocol {
-        // TODO: should it be shared?
         shared {
             AVSCallingEventService(
                 userID: dependency.accountID.transportString(),
@@ -202,7 +201,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     }
 
     private var processCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
-        // TODO: should it be shared?
         shared {
             ProcessCallingEventsUseCase(
                 callingService: callingService,
@@ -216,7 +214,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     }
 
     private var callKitReportingCoordinator: CallKitReportingCoordinator {
-        // TODO: should it be shared?
         CallKitReportingCoordinator(
             accountID: dependency.accountID,
             avsService: callingService

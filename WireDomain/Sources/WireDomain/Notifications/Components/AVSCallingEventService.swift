@@ -60,7 +60,6 @@ public enum CallClosedReason: Int32 {
 }
 
 public protocol AVSCallingEventServiceProtocol: AnyObject {
-
     var onIncomingCall: ((_ conversationId: String, _ userId: String, _ shouldRing: Bool, _ isVideoCall: Bool)
         -> Void)? { get set }
     var onMissedCall: ((_ conversationId: String, _ messageTime: Date, _ isVideoCall: Bool) -> Void)? { get set }
@@ -79,6 +78,18 @@ public protocol AVSCallingEventServiceProtocol: AnyObject {
     func end()
 }
 
+/// Bridges NSE calling-event processing to the AVS `wcall_event_*` API.
+///
+/// The service owns the AVS calling-event handle created with `wcall_event_create()`
+/// and reuses it for all subsequent batch-processing calls. It exposes Swift closures
+/// for the AVS callback results so callers can react to incoming, missed, and closed
+/// calls without dealing with C callback signatures directly.
+///
+/// A typical NSE flow is:
+/// - call `start()` before processing synchronized notification events
+/// - call `process(...)` for each call-related event
+/// - call `end()` after synchronization is complete, allowing AVS to evaluate the
+///   batch and invoke the registered callbacks
 public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
 
     // MARK: - Closure properties (set by the caller in NSEClientScope)
@@ -104,7 +115,6 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     }()
 
     public init(userID: String, clientID: String) {
-        // Self.avsInitialize
         self.handle = 0
         wcall_set_log_handler({ _, msgPtr, _ in
             guard let msg = msgPtr.flatMap({ String(cString: $0) }) else { return }
@@ -120,19 +130,12 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             Self.closedCallHandler,
             contextPointer
         )
-        WireLogger.calling.info(
-            "WOW NSE AVS: wcall_event_create handle=\(self.handle)",
-            attributes: .newNSE,
-            .safePublic
-        )
     }
 
     deinit {
         if let ptr = contextPointer {
             Unmanaged<AVSCallingEventService>.fromOpaque(ptr).release()
         }
-        WireLogger.calling.info("12345 caled DEINIT", attributes: .newNSE, .safePublic)
-
     }
 
     // MARK: - AVSCallingEventServiceProtocol
