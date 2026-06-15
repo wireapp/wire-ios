@@ -39,7 +39,7 @@ struct DeveloperFlagsView: View {
                 .padding([.top, .bottom])
         }
         .alert("Restart required", isPresented: $showRestartAlert) {
-            Button("OK", role: .cancel) {}
+            Button("Restart now", role: .destructive) { exit(0) }
         } message: {
             Text("This flag is read when the app launches. Restart the app for the change to take effect.")
         }
