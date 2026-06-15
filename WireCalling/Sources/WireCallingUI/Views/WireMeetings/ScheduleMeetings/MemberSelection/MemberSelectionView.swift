@@ -229,7 +229,7 @@ struct MemberSelectionView: View {
 
 // MARK: - Mock
 
-struct MockMemberSource: MemberRepositoryProtocol {
+private struct MockMemberSource: MemberRepositoryProtocol {
 
     let result: Result<[Member], any Error>
 
@@ -282,4 +282,3 @@ private extension Member {
     }
 
 }
-

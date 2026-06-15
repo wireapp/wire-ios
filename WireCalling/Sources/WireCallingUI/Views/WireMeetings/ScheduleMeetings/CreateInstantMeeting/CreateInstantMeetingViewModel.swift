@@ -30,7 +30,6 @@ final class CreateInstantMeetingViewModel {
     var participants: String = ""
 
     var isNextButtonEnabled: Bool {
-        // TODO: Decide if button is enabled without any participants
         !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 

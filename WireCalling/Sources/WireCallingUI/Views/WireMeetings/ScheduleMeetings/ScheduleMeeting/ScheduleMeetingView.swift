@@ -99,14 +99,16 @@ struct ScheduleMeetingView: View {
     private var participantsSection: some View {
         Section(Strings.SetupParticipants.header) {
 
-            NavigationLink {
-                ParticipantPickerView(selection: $viewModel.selectedMembers)
-            } label: {
-                TextField(Strings.SetupParticipants.placeholder, text: .constant(""))
-                    .disabled(true)
+            if viewModel.selectedMembers.isEmpty {
+                NavigationLink {
+                    ParticipantPickerView(selection: $viewModel.selectedMembers)
+                } label: {
+                    TextField(Strings.SetupParticipants.placeholder, text: .constant(""))
+                        .disabled(true)
+                }
             }
 
-            NavigationLink {
+            NavigationLink { // TODO: remove or keep?
                 ParticipantPickerView(selection: $viewModel.selectedMembers)
             } label: {
                 HStack {
@@ -123,12 +125,10 @@ struct ScheduleMeetingView: View {
                 ParticipantPickerView(selection: $viewModel.selectedMembers)
             } label: {
                 HStack {
-                    Text(
-                        "Lorem, ipsum, dolor, sit, amet, consetetur, sadipscing, elitr, sed, diam, nonumy, eirmod, tempor, invidunt, ut labore, et dolore, magna aliquyam, erat"
-                    )
-                    .lineLimit(1)
+                    Text(viewModel.selectedMembersSummary)
+                        .lineLimit(1)
                     Spacer()
-                    Text("18")
+                    Text("\(viewModel.selectedMembers.count)")
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -282,16 +282,64 @@ private extension RepeatOption {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("no selected members") {
     ScheduleMeetingView(
         viewModel: ScheduleMeetingViewModel(
-            memberRepository: MemberRepositoryMock()
+            memberRepository: MockMemberSource()
         )
     )
 }
 
-private struct MemberRepositoryMock: MemberRepositoryProtocol {
+#Preview("some selected members") {
+    let viewModel = ScheduleMeetingViewModel(
+        memberRepository: MockMemberSource()
+    )
+    viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
+    return ScheduleMeetingView(
+        viewModel: viewModel
+    )
+}
+
+// MARK: - Mock
+
+private struct MockMemberSource: MemberRepositoryProtocol {
+
+    let members: [Member] = .mock
+
     func search(query: String) async throws -> [Member] {
-        []
+        guard !query.isEmpty else { return members }
+        return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
+
+}
+
+private extension [Member] {
+    static var mock: Self {
+        [
+            .init(name: "Martin Koch-Johansen", handle: "username"),
+            .init(name: "Olga Heaney", handle: "username"),
+            .init(name: "Margarete Springer", handle: "username"),
+            .init(name: "Lorenzo Schmeler", handle: ""),
+            .init(name: "Jaqueline Olaho", handle: ""),
+            .init(name: "Katie Armstrong", handle: "username"),
+            .init(name: "Zachary Ratke", handle: "username"),
+            .init(name: "Marco Weissnat", handle: "username"),
+            .init(name: "Deborah Schoen", handle: "username")
+        ]
+    }
+}
+
+private extension Member {
+
+    init(
+        name: String,
+        handle: String
+    ) {
+        self.init(
+            qualifiedID: QualifiedID(id: UUID(), domain: ""),
+            name: name,
+            handle: handle
+        )
+    }
+
 }

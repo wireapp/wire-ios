@@ -30,8 +30,13 @@ final class ScheduleMeetingViewModel {
     var repeatOption: RepeatOption = .never
     var selectedMembers: [Member] = []
 
+    var selectedMembersSummary: String {
+        selectedMembers
+            .map(\.name)
+            .joined(separator: ", ")
+    }
+
     var isNextButtonEnabled: Bool {
-        // TODO: Decide if button is enabled without any participants
         !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
