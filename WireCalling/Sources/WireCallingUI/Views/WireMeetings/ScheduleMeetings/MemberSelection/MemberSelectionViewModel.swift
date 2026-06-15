@@ -33,7 +33,7 @@ final class MemberSelectionViewModel {
     var searchResults: [Member] = []
     var selectedMembers: [Member] = []
     var isSearching = false
-    var errorMessage: String?
+    var errorMessage: String? // TODO: can search even throw any error?
     var isSelectedExpanded = true
     var isContactsExpanded = true
 

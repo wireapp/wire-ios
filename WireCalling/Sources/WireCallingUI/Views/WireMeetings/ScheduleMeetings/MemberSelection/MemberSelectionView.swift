@@ -29,7 +29,7 @@ struct MemberSelectionView: View {
     var body: some View {
         NavigationStack {
             List {
-                if let errorMessage = viewModel.errorMessage {
+                if let errorMessage = viewModel.errorMessage, !viewModel.searchResults.isEmpty {
                     errorBanner(message: errorMessage)
                 }
 
@@ -46,7 +46,7 @@ struct MemberSelectionView: View {
 
                 Section {
                     if viewModel.isContactsExpanded {
-                        ForEach(viewModel.filteredUnselected) { row(for: $0) }
+                        contactsContent
                     }
                 } header: {
                     sectionHeader(
@@ -78,6 +78,66 @@ struct MemberSelectionView: View {
     }
 
     // MARK: - Subviews
+
+    @ViewBuilder
+    private var contactsContent: some View {
+        if !viewModel.filteredUnselected.isEmpty {
+            ForEach(viewModel.filteredUnselected) { row(for: $0) }
+        } else if viewModel.isSearching {
+            loadingPlaceholder
+        } else if let errorMessage = viewModel.errorMessage {
+            errorPlaceholder(message: errorMessage)
+        } else {
+            emptyPlaceholder
+        }
+    }
+
+    private var loadingPlaceholder: some View {
+        HStack {
+            Spacer()
+            ProgressView()
+            Spacer()
+        }
+        .padding(.vertical, 24)
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+    }
+
+    private var emptyPlaceholder: some View {
+        HStack {
+            Spacer()
+            // TODO: localize, optionally differentiate "no results for query" vs "no contacts"
+            Text("No contacts found")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Spacer()
+        }
+        .padding(.vertical, 20)
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+    }
+
+    private func errorPlaceholder(message: String) -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.title3)
+                .foregroundStyle(.orange)
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Button(Strings.Retry.button) {
+                viewModel.retrySearch()
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .padding(.top, 4)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+    }
 
     private func errorBanner(message: String) -> some View {
         Section {
@@ -223,4 +283,3 @@ private extension Member {
 
 }
 
-// TODO: empty screen!
