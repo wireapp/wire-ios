@@ -103,6 +103,7 @@ struct ScheduleMeetingView: View {
                 NavigationLink {
                     // TODO: what about $viewModel.selectedMembers ?
                     MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
+                        .navigationBarBackButtonHidden(true)
                 } label: {
                     TextField(Strings.SetupParticipants.placeholder, text: .constant(""))
                         .disabled(true)
@@ -111,6 +112,7 @@ struct ScheduleMeetingView: View {
                 NavigationLink {
                     // TODO: what about $viewModel.selectedMembers ?
                     MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
+                        .navigationBarBackButtonHidden(true)
                 } label: {
                     HStack {
                         Text(viewModel.selectedMembersSummary)
