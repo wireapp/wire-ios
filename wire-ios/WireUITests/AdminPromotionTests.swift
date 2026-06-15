@@ -26,7 +26,8 @@ class AdminPromotionTests: WireUITestCase {
     }
 
     @MainActor
-    func testLastAdmin_promotesNewAdmin_andLeavesGroup_TC_11008() async throws {
+    @MainActor
+    func testLastAdmin_promotesNewAdmin_andLeavesGroup_TC_11032() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
         let (owner, teamMembers, _, _) = try await UserHelper.default.registerTeam(
@@ -69,4 +70,62 @@ class AdminPromotionTests: WireUITestCase {
             "Input bar should not be available after leaving"
         )
     }
+
+    @MainActor
+    func testLastAdmin_deletesGroup_insteadOfPromoting_TC_11033() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+
+        let (owner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+
+        let conversationsPage = try app.loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openConversation()
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .tapDeleteConversationAndConfirm()
+
+        // We go back to the conversations list
+        XCTAssertTrue(
+            conversationsPage.conversationsButton.waitForExistence(timeout: 5),
+            "Expected to get back to conversations list"
+        )
+
+        // The conversation has been deleted
+        XCTAssertFalse(
+            conversationsPage.conversationCell(named: groupName).waitForNonExistence(timeout: 2),
+            "Conversation should be deleted"
+        )
+    }
+
+    @MainActor
+    func testLastAdmin_onlySeesDeleteGroupOption_whenNoEligibleMembers_TC_11034() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+
+        let (owner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 0,
+            conversation: .group(groupName)
+        )
+
+        let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openConversation()
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+
+        // We only see the delete button
+        XCTAssertTrue(
+            conversationDetailsPage.deleteConversationButton.waitForExistence(timeout: 5),
+            "Expected to see the delete button"
+        )
+        XCTAssertFalse(
+            conversationDetailsPage.promoteNewAdminButton.exists,
+            "Should not see the promote button"
+        )
+    }
+
 }

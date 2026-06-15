@@ -563,4 +563,8 @@ public enum Locators {
         case signInButton = "Sign In"
 
     }
+    
+    public enum AlertActions: AutoPrefixedEnum {
+        case confirm
+    }
 }
