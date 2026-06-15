@@ -73,9 +73,7 @@ final class AudioEffectsPickerViewController: UIViewController {
     ) -> Void
 
     /// Applies an audio effect, writing the result to `outputPath` and calling `completion` on the main
-    /// thread once done. Injectable so tests can drive the completion deterministically: the real
-    /// `AVSAudioEffectType.apply` runs on a background queue and no-ops under tests, so the completion
-    /// (and the stale-completion guard around it) can't otherwise be exercised.
+    /// thread once done.
     var applyEffect: EffectApplier = { effect, inputPath, outputPath, completion in
         effect.apply(inputPath, outPath: outputPath, completion: completion)
     }
