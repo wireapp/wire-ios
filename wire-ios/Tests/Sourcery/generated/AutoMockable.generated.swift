@@ -1699,20 +1699,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsViewMemberRepository_Invocations: [any MemberRepositoryProtocol] = []
-    var makeMeetingsViewMemberRepository_MockMethod: ((any MemberRepositoryProtocol) -> UIViewController)?
-    var makeMeetingsViewMemberRepository_MockValue: UIViewController?
+    var makeMeetingsView_Invocations: [Void] = []
+    var makeMeetingsView_MockMethod: (() -> UIViewController)?
+    var makeMeetingsView_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView(memberRepository: any MemberRepositoryProtocol) -> UIViewController {
-        makeMeetingsViewMemberRepository_Invocations.append(memberRepository)
+    func makeMeetingsView() -> UIViewController {
+        makeMeetingsView_Invocations.append(())
 
-        if let mock = makeMeetingsViewMemberRepository_MockMethod {
-            return mock(memberRepository)
-        } else if let mock = makeMeetingsViewMemberRepository_MockValue {
+        if let mock = makeMeetingsView_MockMethod {
+            return mock()
+        } else if let mock = makeMeetingsView_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsViewMemberRepository`")
+            fatalError("no mock for `makeMeetingsView`")
         }
     }
 
