@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 package import SwiftUI
+
 import WireDesign
 
 package struct AllMeetingsView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
 
-    @ObservedObject private var viewModel: AllMeetingsViewModel
+    @State private var viewModel: AllMeetingsViewModel
 
     package init(viewModel: AllMeetingsViewModel) {
         self.viewModel = viewModel
