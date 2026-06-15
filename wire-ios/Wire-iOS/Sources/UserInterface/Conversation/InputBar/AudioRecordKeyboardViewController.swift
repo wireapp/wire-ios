@@ -90,7 +90,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         )
 
         #if DEBUG
-            if UITestConfig.environment.useMockAudioRecorder {
+            if UITestConfig.environment?.useMockAudioRecorder == true {
                 audioRecorder = UITestAudioRecorder()
             }
         #endif

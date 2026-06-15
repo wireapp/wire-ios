@@ -70,3 +70,4 @@
 "conversation.wireCells.files.folder" = "Folder";
 "conversation.wireCells.files.text" = "Text";
 "conversation.wireCells.files.availableOffline" = "Available offline";
+"conversation.wireCells.files.readOnly" = "Read only";

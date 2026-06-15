@@ -96,6 +96,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var wireDriveCellName: String = ""
 
     var isWireDriveEnabled: Bool = false
+
+    var isTeamConversation: Bool = false
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
