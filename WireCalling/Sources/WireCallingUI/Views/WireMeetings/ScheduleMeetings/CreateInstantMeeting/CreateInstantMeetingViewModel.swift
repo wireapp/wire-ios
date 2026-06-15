@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import Observation
 import WireCallingDomain
 
 @Observable
