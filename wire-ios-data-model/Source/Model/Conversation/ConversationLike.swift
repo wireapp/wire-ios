@@ -66,6 +66,7 @@ public protocol ConversationLike: AnyObject {
     /// Whether Wire Drive is enabled for this conversation.
     var isWireDriveEnabled: Bool { get }
 
+    /// Whether this conversation was created within the same team as the self user.
     var isTeamConversation: Bool { get }
 }
 
