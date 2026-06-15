@@ -26,11 +26,11 @@ final class CreateInstantMeetingViewModel {
 
     var meetingTitle: String = ""
 
-    // TODO: [WPB-21335] Implement Wire users and emails
+    // TODO: Implement Wire users and emails
     var participants: String = ""
 
     var isNextButtonEnabled: Bool {
-        // TODO: [WPB-21335] decide if button is enabled without any participants
+        // TODO: Decide if button is enabled without any participants
         !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
