@@ -293,7 +293,7 @@ final class ShareExtensionTests: WireUITestCase {
         .switchUserAccountForUser(withName: member.name)
 
         try openConversation(
-            named: member.name,
+            named: teamOwner.name,
             on: try ConversationsPage()
         )
         // THEN - file is received
