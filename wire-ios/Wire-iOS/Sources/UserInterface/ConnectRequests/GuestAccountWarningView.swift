@@ -79,7 +79,7 @@ final class GuestAccountWarningView: UIView {
         stackView.addArrangedSubview(messageLabel)
 
         let linkText = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
-        let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
+        let linkUrl = WireURLs.shared.learnMoreAboutE2EE
 
         let linkAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumSemiboldFont,
