@@ -62,7 +62,7 @@ final class CallKitReportingCoordinator {
             )
         }
 
-        avsService.onMissedCall = { [self] conversationId, _, _ in
+        avsService.onMissedCall = { [self] _, _, _ in
             markCallbackReceived()
         }
 
@@ -123,9 +123,9 @@ final class CallKitReportingCoordinator {
         Task { [weak self] in
             await task.value
             guard let self else { return }
-            self.pendingTasksLock.lock()
-            self.pendingTasks.removeValue(forKey: id)
-            self.pendingTasksLock.unlock()
+            pendingTasksLock.lock()
+            pendingTasks.removeValue(forKey: id)
+            pendingTasksLock.unlock()
         }
     }
 

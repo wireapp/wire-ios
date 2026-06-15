@@ -159,10 +159,15 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             }
 
             _ = callKitReportingCoordinator
-            await processCallingEventsUseCase.invoke(eventBatches: eventBatches, callKitReportingCoordinator: callKitReportingCoordinator)
+            await processCallingEventsUseCase.invoke(
+                eventBatches: eventBatches,
+                callKitReportingCoordinator: callKitReportingCoordinator
+            )
 
             notificationEventStream = AsyncStream<[UpdateEvent]> { continuation in
-                for batch in eventBatches { continuation.yield(batch) }
+                for batch in eventBatches {
+                    continuation.yield(batch)
+                }
                 continuation.finish()
             }
         } else {
@@ -196,7 +201,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         }
     }
 
-    private var processCallingEventsUseCase: ProcessCallingEventsUseCase {
+    private var processCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         // TODO: should it be shared?
         shared {
             ProcessCallingEventsUseCase(

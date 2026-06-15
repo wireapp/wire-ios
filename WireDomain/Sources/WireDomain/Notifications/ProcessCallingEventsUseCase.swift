@@ -16,13 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import GenericMessageProtocol
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 import WireNetwork
 
-final class ProcessCallingEventsUseCase {
+/// Processes calling events collected during Notification Service Extension sync.
+///
+/// This use case opens an AVS calling-event batch, extracts call payloads from
+/// synchronized Proteus and MLS message-add events, and forwards each call-related
+/// event to `AVSCallingEventService`.
+///
+/// Once all event batches have been processed, it closes the AVS batch. AVS then
+/// evaluates the final state of each call and triggers the callbacks registered by
+/// `CallKitReportingCoordinator`, which reports the resulting actions to CallKit.
+///
+/// The use case waits for pending CallKit reporting work to complete before returning,
+/// so the NSE can continue with regular notification generation.
+final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
 
     private let callingService: any AVSCallingEventServiceProtocol
     private let clientID: String
@@ -76,14 +88,16 @@ final class ProcessCallingEventsUseCase {
         await callKitReportingCoordinator.waitForCompletion()
     }
 
+    // MARK: - Helpers
+
     private func avsParameters(from event: UpdateEvent) async -> AVSCallParams? {
         switch event {
-        case .conversation(.proteusMessageAdd(let e)):
-            return await avsParametersForProteus(e).first
-        case .conversation(.mlsMessageAdd(let e)):
-            return await avsParametersForMLS(e).first
+        case let .conversation(.proteusMessageAdd(e)):
+            await avsParametersForProteus(e).first
+        case let .conversation(.mlsMessageAdd(e)):
+            await avsParametersForMLS(e).first
         default:
-            return nil
+            nil
         }
     }
 
@@ -122,7 +136,7 @@ final class ProcessCallingEventsUseCase {
                 genericMessage.hasCalling,
                 let callingData = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
                 let clientID = decryptedMessage.senderClientID,
-                let timestamp = event.timestamp                  
+                let timestamp = event.timestamp
             else { continue }
 
             if let params = await buildParams(
@@ -150,7 +164,6 @@ final class ProcessCallingEventsUseCase {
         timestamp: Date,
         isMLS: Bool
     ) async -> AVSCallParams? {
-        // Prefer conversation ID embedded in the calling proto (mirrors WireCallCenterV3).
         let callingConvID = callingProto.qualifiedConversationID
         let conversationUUID: UUID
         let conversationDomain: String?
@@ -182,11 +195,11 @@ final class ProcessCallingEventsUseCase {
 
         // WCALL_CONV_TYPE: 0 = oneToOne, 1 = group (Proteus), 3 = conference_mls.
         let conversationType: Int32 = if !isGroup {
-            0 // WCALL_CONV_TYPE_ONEONONE
+            0
         } else if isMLS {
-            3 // WCALL_CONV_TYPE_CONFERENCE_MLS
+            3
         } else {
-            1 // WCALL_CONV_TYPE_GROUP
+            1
         }
 
         return AVSCallParams(

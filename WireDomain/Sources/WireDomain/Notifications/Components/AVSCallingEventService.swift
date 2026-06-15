@@ -16,15 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import avs
+import Foundation
 import WireLogging
 
 public enum CallClosedReason: Int32 {
-    case normal, canceled, answeredElsewhere, rejectedElsewhere
-    case timeout, lostMedia, internalError, inputOutputError
-    case stillOngoing, securityDegraded, outdatedClient
-    case datachannel, timeoutECONN, noOneJoined, everyoneLeft, unknown
+    case normal
+    case canceled
+    case answeredElsewhere
+    case rejectedElsewhere
+    case timeout
+    case lostMedia
+    case internalError
+    case inputOutputError
+    case stillOngoing
+    case securityDegraded
+    case outdatedClient
+    case datachannel
+    case timeoutECONN
+    case noOneJoined
+    case everyoneLeft
+    case unknown
 
     init(wcall_reason: Int32) {
         switch wcall_reason {
@@ -49,18 +61,20 @@ public enum CallClosedReason: Int32 {
 
 public protocol AVSCallingEventServiceProtocol: AnyObject {
 
-    var onIncomingCall: ((_ conversationId: String, _ userId: String, _ shouldRing: Bool, _ isVideoCall: Bool) -> Void)? { get set }
+    var onIncomingCall: ((_ conversationId: String, _ userId: String, _ shouldRing: Bool, _ isVideoCall: Bool)
+        -> Void)? { get set }
     var onMissedCall: ((_ conversationId: String, _ messageTime: Date, _ isVideoCall: Bool) -> Void)? { get set }
     var onCallClosed: ((_ reason: CallClosedReason, _ conversationId: String) -> Void)? { get set }
 
     func start()
-    func process(data: Data,
-                 currentTime: UInt32,
-                 serverTime: UInt32,
-                 conversationId: String,
-                 userId: String,
-                 clientId: String,
-                 conversationType: Int32
+    func process(
+        data: Data,
+        currentTime: UInt32,
+        serverTime: UInt32,
+        conversationId: String,
+        userId: String,
+        clientId: String,
+        conversationType: Int32
     )
     func end()
 }
@@ -69,7 +83,8 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
 
     // MARK: - Closure properties (set by the caller in NSEClientScope)
 
-    public var onIncomingCall: ((_ conversationId: String, _ userId: String, _ shouldRing: Bool, _ isVideoCall: Bool) -> Void)?
+    public var onIncomingCall: ((_ conversationId: String, _ userId: String, _ shouldRing: Bool, _ isVideoCall: Bool)
+        -> Void)?
     public var onMissedCall: ((_ conversationId: String, _ messageTime: Date, _ isVideoCall: Bool) -> Void)?
     public var onCallClosed: ((_ reason: CallClosedReason, _ conversationId: String) -> Void)?
 
@@ -79,6 +94,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     private var contextPointer: UnsafeMutableRawPointer?
 
     // MARK: - Init
+
     private static let avsInitialize: Void = {
         let result = wcall_init(WCALL_ENV_DEFAULT)
         if result != 0 {
@@ -88,9 +104,9 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     }()
 
     public init(userID: String, clientID: String) {
-        //Self.avsInitialize
+        // Self.avsInitialize
         self.handle = 0
-        wcall_set_log_handler({ level, msgPtr, _ in
+        wcall_set_log_handler({ _, msgPtr, _ in
             guard let msg = msgPtr.flatMap({ String(cString: $0) }) else { return }
             WireLogger.calling.debug(msg, attributes: .newNSE, .safePublic)
         }, nil)
@@ -104,8 +120,13 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             Self.closedCallHandler,
             contextPointer
         )
-        WireLogger.calling.info("WOW NSE AVS: wcall_event_create handle=\(self.handle)", attributes: .newNSE, .safePublic)
+        WireLogger.calling.info(
+            "WOW NSE AVS: wcall_event_create handle=\(self.handle)",
+            attributes: .newNSE,
+            .safePublic
+        )
     }
+
     deinit {
         if let ptr = contextPointer {
             Unmanaged<AVSCallingEventService>.fromOpaque(ptr).release()
@@ -150,6 +171,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     }
 
     // MARK: - Static C Callbacks
+
     //
     // These match the exact C function pointer signatures expected by wcall_create.
     // contextRef is the Unmanaged pointer to self, set during init.
