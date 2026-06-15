@@ -86,7 +86,7 @@ public final class MessageSender: MessageSenderInterface {
     private let apiVersion: WireTransport.APIVersion?
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
-        try await withExpiringActivity(reason: "broadcast Message") { [self] in
+        try await withBackgroundTask(name: "broadcast Message", executer: PassthroughTaskExecuter()) { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
             WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
@@ -104,7 +104,7 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
-        try await withExpiringActivity(reason: "send Message") { [self] in
+        try await withBackgroundTask(name: "send Message", executer: PassthroughTaskExecuter()) { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
             WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 

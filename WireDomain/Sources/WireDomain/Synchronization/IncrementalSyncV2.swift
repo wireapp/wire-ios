@@ -159,7 +159,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
-                try await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
+                try await withBackgroundTask(name: "processLiveStream IncrementalSyncV2", executer: PassthroughTaskExecuter()) {
                     await processLiveStream(
                         liveEventStream,
                         pushChannel: pushChannel,
