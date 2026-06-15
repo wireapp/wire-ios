@@ -19,6 +19,7 @@
 import SwiftUI
 import WireTestingPackage
 import XCTest
+
 @testable import WireCallingDomain
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
@@ -92,4 +93,5 @@ final class MeetingsViewSnapshotTests: XCTestCase {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
     }
+
 }
