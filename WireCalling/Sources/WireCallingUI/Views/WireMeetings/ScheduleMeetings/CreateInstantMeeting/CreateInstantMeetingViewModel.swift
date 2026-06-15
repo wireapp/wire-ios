@@ -16,49 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
-import WireReusableUIComponents
 
-final class CreateInstantMeetingViewModel: ObservableObject {
+@Observable
+final class CreateInstantMeetingViewModel {
 
-    @Published var meetingTitle: String = ""
+    var meetingTitle: String = ""
 
     // TODO: [WPB-21335] Implement Wire users and emails
-    @Published var participants: String = ""
-    @Published var allowGuests: Bool = false
-    @Published var password: String = ""
-    @Published var confirmedPassword: String = ""
+    var participants: String = ""
 
     var isNextButtonEnabled: Bool {
-        let hasValidTitle = !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        let hasValidPassword = password.isEmpty || (isPasswordValid && isConfirmedPasswordValid)
-        return hasValidTitle && hasValidPassword
-    }
-
-    var isPasswordValid: Bool {
-        password.isEmpty || passwordValidator.isPasswordValid(password)
-    }
-
-    var isConfirmedPasswordValid: Bool {
-        confirmedPassword.isEmpty || password == confirmedPassword
-    }
-
-    var localizedPasswordRules: String {
-        passwordValidator.localizedRulesDescription ?? ""
-    }
-
-    private let passwordValidator: any PasswordValidator
-    private(set) var isContextMenuAllowed: Bool
-
-    // MARK: - Initialization
-
-    init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
-        self.passwordValidator = passwordValidator
-        self.isContextMenuAllowed = isContextMenuAllowed
+        // TODO: [WPB-21335] decide if button is enabled without any participants
+        !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     // MARK: - Public Interface
+
+    func clearTitle() {
+        meetingTitle = ""
+    }
 
     func createInstantMeeting() {}
 
