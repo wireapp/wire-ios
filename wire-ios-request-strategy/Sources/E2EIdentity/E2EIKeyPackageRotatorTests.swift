@@ -37,9 +37,8 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: mockCoreCrypto,
-            backgroundTaskExecuter: PassthroughTaskExecuter()
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: mockCoreCrypto
         )
         mockLegacyFeatureRepository = .init()
 

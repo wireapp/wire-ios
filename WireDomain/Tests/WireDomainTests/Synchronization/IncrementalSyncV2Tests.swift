@@ -63,9 +63,8 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: coreCrypto,
-            backgroundTaskExecuter: PassthroughTaskExecuter()
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: coreCrypto
         )
         journal = Journal(
             userID: UUID(),

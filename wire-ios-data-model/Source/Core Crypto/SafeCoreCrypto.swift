@@ -20,21 +20,18 @@ import WireCoreCrypto
 import WireLogging
 
 /// A wrapper object for CoreCrypto that ensures transactions are executed
-/// within a background task (if a task manager is provided).
+/// within a background task managed by the given `BackgroundTaskExecuter`.
 public final class SafeCoreCrypto {
 
-    private let backgroundTaskManager: (any BackgroundTaskManager)?
     private let backgroundTaskExecuter: any BackgroundTaskExecuter
     let coreCrypto: any CoreCryptoProtocol
 
     public init(
-        backgroundTaskManager: (any BackgroundTaskManager)?,
-        coreCrypto: any CoreCryptoProtocol,
-        backgroundTaskExecuter: any BackgroundTaskExecuter
+        backgroundTaskExecuter: any BackgroundTaskExecuter,
+        coreCrypto: any CoreCryptoProtocol
     ) {
-        self.backgroundTaskManager = backgroundTaskManager
-        self.coreCrypto = coreCrypto
         self.backgroundTaskExecuter = backgroundTaskExecuter
+        self.coreCrypto = coreCrypto
     }
 
     public func registerEpochObserver(_ epochObserver: any EpochObserver) async throws {

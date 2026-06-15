@@ -157,9 +157,8 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: mockCoreCrypto,
-            backgroundTaskExecuter: PassthroughTaskExecuter()
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: mockCoreCrypto
         )
 
         let mockContextStorable = MockLAContextStorable()

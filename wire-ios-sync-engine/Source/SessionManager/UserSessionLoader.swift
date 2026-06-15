@@ -440,7 +440,6 @@ final class UserSessionLoader {
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             localDomain: backendMetadata.domain,
-            backgroundTaskManager: UIApplication.shared,
             backgroundTaskExecuter: backgroundTaskExecuter
         )
 

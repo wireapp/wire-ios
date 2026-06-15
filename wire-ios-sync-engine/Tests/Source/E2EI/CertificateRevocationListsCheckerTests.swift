@@ -44,9 +44,8 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         coreCrypto.mockTransaction(context: mockCoreCryptoContext)
         let provider = MockCoreCryptoProviderProtocol()
         provider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: coreCrypto,
-            backgroundTaskExecuter: PassthroughTaskExecuter()
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: coreCrypto
         )
 
         coreDataHelper = CoreDataStackHelper()

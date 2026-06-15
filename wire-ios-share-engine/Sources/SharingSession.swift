@@ -240,7 +240,6 @@ public final class SharingSession {
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: localDomain,
-            backgroundTaskManager: nil,
             backgroundTaskExecuter: backgroundTaskExecuter
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)

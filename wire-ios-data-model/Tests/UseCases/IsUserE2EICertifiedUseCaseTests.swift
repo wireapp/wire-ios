@@ -51,9 +51,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
-            coreCrypto: mockCoreCrypto,
-            backgroundTaskExecuter: PassthroughTaskExecuter()
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: mockCoreCrypto
         )
         mockLegacyFeatureRepository = .init()
         mockLegacyFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())

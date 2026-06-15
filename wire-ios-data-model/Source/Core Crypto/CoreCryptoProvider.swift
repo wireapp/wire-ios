@@ -75,7 +75,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
     private let localDomain: String?
 
-    private let backgroundTaskManager: (any BackgroundTaskManager)?
     private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     public init(
@@ -87,7 +86,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         allowCreation: Bool = true,
         localDomain: String?,
-        backgroundTaskManager: (any BackgroundTaskManager)?,
         backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.selfUserID = selfUserID
@@ -99,7 +97,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
         self.localDomain = localDomain
-        self.backgroundTaskManager = backgroundTaskManager
         self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
@@ -107,9 +104,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         let coreCrypto = try await getCoreCrypto()
         try await registerMlsTransportIfNecessary(with: coreCrypto)
         return SafeCoreCrypto(
-            backgroundTaskManager: backgroundTaskManager,
-            coreCrypto: coreCrypto,
-            backgroundTaskExecuter: backgroundTaskExecuter
+            backgroundTaskExecuter: backgroundTaskExecuter,
+            coreCrypto: coreCrypto
         )
     }
 

@@ -340,7 +340,6 @@ public struct SharingSessionLoader {
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: backendMetadata.domain,
-            backgroundTaskManager: nil,
             backgroundTaskExecuter: backgroundTaskExecuter
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
