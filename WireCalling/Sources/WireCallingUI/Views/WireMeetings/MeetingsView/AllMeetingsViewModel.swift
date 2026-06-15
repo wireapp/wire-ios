@@ -24,12 +24,13 @@ import WireCallingDomainSupport
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
-package final class AllMeetingsViewModel: ObservableObject {
+@Observable
+package final class AllMeetingsViewModel {
 
     package let meetingsViewModel: MeetingsViewModel
 
-    @Published var isCreateInstantMeetingPresented: Bool = false
-    @Published var isScheduleMeetingPresented: Bool = false
+    var isCreateInstantMeetingPresented: Bool = false
+    var isScheduleMeetingPresented: Bool = false
 
     package init(
         currentDateProvider: any CurrentDateProviding,
