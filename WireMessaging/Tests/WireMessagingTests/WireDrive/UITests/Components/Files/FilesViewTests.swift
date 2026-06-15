@@ -363,6 +363,18 @@ final class FilesViewTests: XCTestCase {
             .verify(matching: view, named: "dark", record: record)
     }
 
+    @MainActor
+    func testFilesView_ViewerOnlyBanner() async {
+        let view = makeFilesView(state: .received(items: []), isReadOnly: true)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
+    }
+
     private func filesViewItem(
         name: String = "image.jpg",
         ownedBy: String = "Natsuko Shiroi",
@@ -390,7 +402,9 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     private func makeFilesView(
-        state: FilesListStateController.State
+        state: FilesListStateController.State,
+        isBrowsing: Bool = false,
+        isReadOnly: Bool = false
     ) -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
@@ -430,12 +444,13 @@ final class FilesViewTests: XCTestCase {
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
             nodesRepository: nodesRepository,
-            isBrowsing: false,
+            isBrowsing: isBrowsing,
             networkMonitor: networkMonitor
         )
 
         filesViewModel.filesController.state = state
         filesViewModel.filesController.hasMore = false
+        filesViewModel.showReadOnlyBanner = isReadOnly
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)
