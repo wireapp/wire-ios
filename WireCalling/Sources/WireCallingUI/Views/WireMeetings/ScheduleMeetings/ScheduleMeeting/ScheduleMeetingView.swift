@@ -101,39 +101,29 @@ struct ScheduleMeetingView: View {
 
             if viewModel.selectedMembers.isEmpty {
                 NavigationLink {
-                    ParticipantPickerView(selection: $viewModel.selectedMembers)
+                    // TODO: what about $viewModel.selectedMembers ?
+                    MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
                 } label: {
                     TextField(Strings.SetupParticipants.placeholder, text: .constant(""))
                         .disabled(true)
                 }
-            }
-
-            NavigationLink { // TODO: remove or keep?
-                ParticipantPickerView(selection: $viewModel.selectedMembers)
-            } label: {
-                HStack {
-                    Text("Participants")
-                    Spacer()
-                    Text(participantsSummary)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
+            } else {
+                NavigationLink {
+                    // TODO: what about $viewModel.selectedMembers ?
+                    MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
+                } label: {
+                    HStack {
+                        Text(viewModel.selectedMembersSummary)
+                            .lineLimit(1)
+                        Spacer()
+                        Text("\(viewModel.selectedMembers.count)")
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
                 }
             }
 
-            NavigationLink {
-                ParticipantPickerView(selection: $viewModel.selectedMembers)
-            } label: {
-                HStack {
-                    Text(viewModel.selectedMembersSummary)
-                        .lineLimit(1)
-                    Spacer()
-                    Text("\(viewModel.selectedMembers.count)")
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                }
-            }
         }
         .textCase(nil)
     }
@@ -213,7 +203,7 @@ struct ScheduleMeetingView: View {
 
 }
 
-private struct ParticipantPickerView: View {
+private struct ParticipantPickerView: View { // TODO: delete
     @Binding var selection: [Member]
 
     private let allParticipants = [
