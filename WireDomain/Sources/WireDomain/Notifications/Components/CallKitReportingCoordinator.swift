@@ -20,8 +20,15 @@ import CallKit
 import Foundation
 import WireLogging
 
-/// Coordinates CallKit reporting in response to AVS calling events.
-/// Callback-based, no stream/bus abstraction.
+/// Coordinates CallKit reporting for AVS calling-event callback results.
+///
+/// `AVSCallingEventService` invokes its callbacks only after the NSE has finished
+/// processing a synchronized batch of calling events. This coordinator registers
+/// those callbacks, keeps the caller metadata needed for CallKit payloads, and
+/// reports the resulting incoming or closed-call actions to CallKit.
+///
+/// Callback-triggered CallKit work is tracked as pending tasks so the NSE can wait
+/// for reporting to finish before continuing with regular notification generation.
 final class CallKitReportingCoordinator {
 
     // MARK: - Properties
@@ -31,11 +38,9 @@ final class CallKitReportingCoordinator {
     private let callerNamesLock = NSLock()
     private var callerNamesByConversationID: [String: String] = [:]
 
-    // Keep all callback-created async work so NSE can await it.
     private let pendingTasksLock = NSLock()
     private var pendingTasks: [UUID: Task<Void, Never>] = [:]
 
-    // Non-blocking proof that callbacks were alive.
     private let callbackCountLock = NSLock()
     private var _callbackCount = 0
     var callbackCount: Int {
@@ -87,7 +92,6 @@ final class CallKitReportingCoordinator {
     }
 
     /// Wait for all callback-started CallKit tasks to finish.
-    /// Does not wait for "future callbacks", only current outstanding tasks.
     func waitForCompletion() async {
 
         while true {
@@ -173,7 +177,6 @@ final class CallKitReportingCoordinator {
         let task = Task {
             await withCheckedContinuation { continuation in
                 CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
-                    // TODO: do we need these logs?
                     if let error {
                         WireLogger.calling.error(
                             "CallKitReportingCoordinator: report incoming failed: \(error)",
@@ -209,7 +212,6 @@ final class CallKitReportingCoordinator {
             return
         }
 
-        // Keep previous behavior: use raw conversationId on close.
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,
             "conversationID": conversationID.uuid.uuidString,
@@ -222,10 +224,6 @@ final class CallKitReportingCoordinator {
         let task = Task {
             do {
                 try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
-                WireLogger.calling.info(
-                    "CallKitReportingCoordinator: stop ring done",
-                    attributes: .newNSE, .safePublic
-                )
             } catch {
                 WireLogger.calling.error(
                     "CallKitReportingCoordinator: stop ring failed: \(error)",
@@ -238,7 +236,6 @@ final class CallKitReportingCoordinator {
     }
 }
 
-// TODO: where to move?
 private struct AVSIdentifier {
     let uuid: UUID
     let domain: String?
