@@ -17,7 +17,7 @@
 //
 
 import Foundation
-
+import WireFoundation
 @testable import WireDataModel
 
 class ConversationListObserverTests: NotificationDispatcherTestBase {
@@ -107,8 +107,11 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func testThatItCoalescesRepeatedReloadsIntoASingleTrailingRebuild() {
         // given
-        // Shorten the trailing window before the debouncer is lazily created on the first `startObserving`.
-        uiMOC.conversationListObserverCenter.reloadCooldownTime = 0.2
+        let cooldownTime: TimeInterval = 0.2
+        uiMOC.userInfo[NSManagedObjectContext.conversationListObserverCenterKey] = ConversationListObserverCenter(
+            managedObjectContext: uiMOC,
+            debouncer: LeadingTrailingDebouncer(cooldownTime: cooldownTime)
+        )
         sut.operationMode = .normal
         token = ConversationListChangeInfo.addReloadObserver(
             testConversationListReloadObserver,

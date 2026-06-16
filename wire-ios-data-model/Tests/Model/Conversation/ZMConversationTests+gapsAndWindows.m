@@ -116,12 +116,6 @@
     XCTAssertNotEqual([fetchedConversations indexOfObjectIdenticalTo:pendingConnectionConversation], (NSUInteger) NSNotFound);
 }
 
-
-// NOTE: The previous `testThatItReturnsTheListOfAllConversationWithoutASave` was removed: the conversation lists now
-// filter on the persisted `effectiveConversationType` (populated in `-willSave`), so an inserted-but-unsaved
-// conversation is intentionally not listed. `testThatItReturnsTheListOfAllConversationWithASave` covers the
-// supported (saved) path.
-
 - (void)testThatItReturnsTheListOfAllConversationWithASave
 {
     // given

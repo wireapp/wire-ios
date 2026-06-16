@@ -56,18 +56,14 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     weak var managedObjectContext: NSManagedObjectContext!
 
-    /// Cooldown used to coalesce repeated `startObserving()` calls into a single list rebuild.
-    ///
-    /// At launch the `NotificationDispatcher` toggles between economical and normal operation modes once per
-    /// incremental-sync cycle, and each transition back to normal calls `startObserving()` -> `refetchAllLists`,
-    /// a full in-memory predicate rebuild of every list on the main thread. Coalescing collapses such a burst into
-    /// at most one leading + one trailing rebuild. Overridable so tests can shorten the trailing window.
-    var reloadCooldownTime: TimeInterval = 1.0
+    private let reloadDebouncer: LeadingTrailingDebouncer
 
-    private lazy var reloadDebouncer = LeadingTrailingDebouncer(cooldownTime: reloadCooldownTime)
-
-    fileprivate init(managedObjectContext: NSManagedObjectContext) {
+    init(
+        managedObjectContext: NSManagedObjectContext,
+        debouncer: LeadingTrailingDebouncer = LeadingTrailingDebouncer(cooldownTime: 1.0)
+    ) {
         self.managedObjectContext = managedObjectContext
+        self.reloadDebouncer = debouncer
     }
 
     /// Adds a conversationList to the objects to observe or replace any existing snapshot
