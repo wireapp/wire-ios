@@ -139,9 +139,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 }
             } catch is CancellationError {
                 // ignore error
-            } catch is ExpiringActivityNotAllowedToRun {
-                // ignore: the system denied or expired background time before
-                // sync could run. Sync resumes when the app returns to the foreground.
             } catch URLError.cancelled {
                 // ignore error, this is a result of cancelling the sync while a `URLSessionDataTask` is in progress,
                 // we treat it the same as a `CancellationError`
