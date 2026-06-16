@@ -77,8 +77,7 @@ struct MemberSelectionView: View {
 
     // MARK: - Subviews
 
-    @ViewBuilder
-    private var contactsContent: some View {
+    @ViewBuilder private var contactsContent: some View {
         if !viewModel.filteredUnselected.isEmpty {
             ForEach(viewModel.filteredUnselected) { row(for: $0) }
         } else if viewModel.isSearching {

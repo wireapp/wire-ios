@@ -29,7 +29,10 @@ struct WireMeetingsMemberRepository: MemberRepositoryProtocol, @unchecked Sendab
     @MainActor
     func search(query: String) async throws -> [Member] {
         guard let searchUsersUseCase = userSession.makeSearchUsersUseCase() else {
-            WireLogger.ui.error("userSession.makeSearchUsersUseCase() returned nil, can't search for meeting members", attributes: .safePublic)
+            WireLogger.ui.error(
+                "userSession.makeSearchUsersUseCase() returned nil, can't search for meeting members",
+                attributes: .safePublic
+            )
             return []
         }
 

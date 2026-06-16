@@ -74,7 +74,8 @@ final class CreateMeetingFormViewModel {
         meetingTitle = ""
     }
 
-    @MainActor func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
+    @MainActor
+    func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
         MemberSelectionViewModel(
             source: memberRepository,
             initialSelection: selectedMembers,
