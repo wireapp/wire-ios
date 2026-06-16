@@ -164,7 +164,7 @@ public final class ConversationList: NSObject {
         }
     }
 
-    /// Rebuilds the list by fetching the matching conversations from the store (SQLite-evaluated predicate).
+    /// Rebuilds the list by fetching the matching conversations from the store.
     func recreate(predicate: NSPredicate) {
         filteringPredicate = predicate
 
