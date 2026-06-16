@@ -16,188 +16,186 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 import WireCallingDomain
 import WireDesign
-import WireReusableUIComponents
 
 struct ScheduleMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel: ScheduleMeetingViewModel
-    @State private var isPasswordVisible = false
-    @State private var isConfirmedPasswordVisible = false
-
-    init(viewModel: @autoclosure @escaping () -> ScheduleMeetingViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel())
-    }
+    @State private(set) var viewModel: ScheduleMeetingViewModel
+    @State private var expandedField: ExpandedField?
 
     var body: some View {
         NavigationStack {
-            formContent
-                .listSectionSpacing(.compact)
-        }
-    }
+            Form {
+                titleSection
+                scheduleSection
+                participantsSection
+            }
+            .listSectionSpacing(.compact)
+            .scrollContentBackground(.hidden)
+            .background(ColorTheme.Backgrounds.background.color)
+            .navigationTitle(Strings.Future.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(Strings.Cancel.button) {
+                        dismiss()
+                    }
+                }
 
-    @ViewBuilder private var formContent: some View {
-        Form {
-            titleSection
-            scheduleSection
-            participantsSection
-            Toggle(Strings.AllowGuests.title, isOn: $viewModel.allowGuests)
-            passwordSection
-            confirmedPasswordSection
-        }
-        .scrollContentBackground(.hidden)
-        .background(ColorTheme.Backgrounds.background.color)
-        .navigationTitle(Strings.Future.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(Strings.Cancel.button) {
-                    dismiss()
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(Strings.Schedule.button) {
+                        viewModel.scheduleMeeting()
+                    }
+                    .disabled(!viewModel.isNextButtonEnabled)
                 }
             }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(Strings.Schedule.button) {
-                    viewModel.scheduleMeeting()
-                }
-                .disabled(!viewModel.isNextButtonEnabled)
-            }
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
         }
-        .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
     }
 
     private var titleSection: some View {
         Section(Strings.SetupTitle.header) {
-            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+            HStack {
+                TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+                if !viewModel.meetingTitle.isEmpty {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(Color(.lightGray))
+                        .onTapGesture {
+                            viewModel.clearTitle()
+                        }
+                }
+            }
         }
+        .textCase(nil)
     }
 
     private var participantsSection: some View {
         Section(Strings.SetupParticipants.header) {
             TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
         }
+        .textCase(nil)
     }
 
     private var scheduleSection: some View {
         Section {
-            DateTimeRow(
-                label: L10n.Localizable.WireMeetings.Schedule.Time.starts,
-                date: $viewModel.startDate
+            dateTimeRow(
+                label: Strings.Time.starts,
+                date: $viewModel.startDate,
+                dateField: .startDate,
+                timeField: .startTime
+            )
+            dateTimeRow(
+                label: Strings.Time.ends,
+                date: $viewModel.endDate,
+                dateField: .endDate,
+                timeField: .endTime
             )
 
-            DateTimeRow(
-                label: L10n.Localizable.WireMeetings.Schedule.Time.ends,
-                date: $viewModel.endDate
-            )
-
-            RepeatRow(
-                selectedOption: $viewModel.repeatOption
-            )
-        }
-    }
-
-    private var passwordSection: some View {
-        Section {
-            PasswordFieldWithToggle(
-                placeholder: Strings.Password.placeholder,
-                text: $viewModel.password,
-                isVisible: $isPasswordVisible,
-                errorMessage: viewModel.localizedPasswordRules,
-                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
-            )
-        } header: {
-            Text(Strings.SetupPassword.header)
-        }
-    }
-
-    private var confirmedPasswordSection: some View {
-        Section {
-            PasswordFieldWithToggle(
-                placeholder: Strings.ConfirmedPassword.placeholder,
-                text: $viewModel.confirmedPassword,
-                isVisible: $isConfirmedPasswordVisible,
-                errorMessage: Strings.ConfirmedPassword.error,
-                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
-            )
-        }
-    }
-
-}
-
-private struct RepeatRow: View {
-    @Binding var selectedOption: RepeatOption
-
-    var body: some View {
-        HStack {
-            Text(L10n.Localizable.WireMeetings.Schedule.Time.repeats)
-                .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
-
-            Spacer()
-
-            Menu {
+            Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
                 ForEach(RepeatOption.allCases, id: \.self) { option in
-                    Button(option.title) {
-                        selectedOption = option
-                    }
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Text(selectedOption.title)
-                        .foregroundColor(ColorTheme.Base.secondaryText.color)
-
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.caption)
-                        .foregroundColor(ColorTheme.Base.secondaryText.color)
+                    Text(option.title)
+                        .tag(option)
                 }
             }
         }
     }
-}
 
-private struct DateTimeRow: View {
-    let label: String
-    @Binding var date: Date
-
-    var body: some View {
+    @ViewBuilder
+    private func dateTimeRow(
+        label: String,
+        date: Binding<Date>,
+        dateField: ExpandedField,
+        timeField: ExpandedField
+    ) -> some View {
         HStack {
             Text(label)
-                .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
-
             Spacer()
+            pill(
+                text: date.wrappedValue.formatted(.dateTime.day().month(.abbreviated).year()),
+                isSelected: expandedField == dateField
+            ) {
+                toggleExpansion(dateField)
+            }
+            pill(
+                text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
+                isSelected: expandedField == timeField
+            ) {
+                toggleExpansion(timeField)
+            }
+        }
 
-            DatePicker(
-                "",
-                selection: $date,
-                displayedComponents: .date
-            )
-            .labelsHidden()
-            .fixedSize()
-
-            DatePicker(
-                "",
-                selection: $date,
-                displayedComponents: .hourAndMinute
-            )
-            .labelsHidden()
-            .fixedSize()
+        if expandedField == dateField {
+            DatePicker("", selection: date, displayedComponents: .date)
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+        }
+        if expandedField == timeField {
+            DatePicker("", selection: date, displayedComponents: .hourAndMinute)
+                .datePickerStyle(.wheel)
+                .labelsHidden()
         }
     }
+
+    private func pill(
+        text: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Text(text)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.15))
+                )
+                .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func toggleExpansion(_ field: ExpandedField) {
+        withAnimation { expandedField = expandedField == field ? nil : field }
+    }
+
+    private enum ExpandedField: Hashable {
+        case startDate
+        case startTime
+        case endDate
+        case endTime
+    }
+
+}
+
+private extension RepeatOption {
+
+    typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
+
+    var title: String {
+        switch self {
+        case .never:
+            Strings.never
+        case .daily:
+            Strings.daily
+        case .weekly:
+            Strings.weekly
+        case .every2Weeks:
+            Strings.everyTwoWeeks
+        case .monthly:
+            Strings.monthly
+        case .yearly:
+            Strings.yearly
+        }
+    }
+
 }
 
 // MARK: - Preview
 
 #Preview {
-    ScheduleMeetingView(
-        viewModel: ScheduleMeetingViewModel(
-            passwordValidator: MockPasswordValidator(),
-            isContextMenuAllowed: true
-        )
-    )
+    ScheduleMeetingView(viewModel: ScheduleMeetingViewModel())
 }

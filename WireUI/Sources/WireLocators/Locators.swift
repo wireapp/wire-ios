@@ -141,7 +141,6 @@ public enum Locators {
         case videoCallBarButton
         case inputField
         case sendButton
-        case conversationBackButton
         case authorName
         case conversationTitleButton
         case conversationDetailsButton
@@ -156,6 +155,7 @@ public enum Locators {
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
         case sharedFileLabel = "FileTransferTopLabel"
+        case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
         case sketchButton
         case canvas
@@ -289,6 +289,18 @@ public enum Locators {
 
     }
 
+    public enum FilesAppPage: String {
+
+        case browse = "Browse"
+        case done = "Done"
+        case onMyIPhone = "On My iPhone"
+        case search = "Search"
+        case share = "Share"
+        case nameContains = "Name Contains"
+        case moreOptions = "OverflowBarButtonItem"
+        case select = "Select"
+    }
+
     public enum OptionsOnSettingsPage: String {
 
         case lockWithPasscode = "Lock With Passcode"
@@ -378,11 +390,18 @@ public enum Locators {
 
     public enum ShareExtensionPage: String {
 
-        case imageTile = "PXGGridLayout-Info"
-        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
-        case chooseConversations = "Choose"
         case sendButtonOnShareExtension
+        case wire = "Wire"
+        case chooseConversations = "Choose"
+    }
+
+    public enum PhotosAppPage: String {
+
+        case select = "Select"
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "Share"
         case continueButton = "Continue"
+
     }
 
     public enum IncomingCallPage: String {
