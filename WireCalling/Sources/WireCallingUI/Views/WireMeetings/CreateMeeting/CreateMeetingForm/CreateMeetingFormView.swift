@@ -27,6 +27,7 @@ struct CreateMeetingFormView: View {
     @Environment(\.dismiss) private var dismiss
     @State private(set) var viewModel: CreateMeetingFormViewModel
     @State private var expandedField: ExpandedField?
+    @State private var isPresentingMemberSelection = false
 
     var body: some View {
         NavigationStack {
@@ -56,6 +57,9 @@ struct CreateMeetingFormView: View {
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+            .sheet(isPresented: $isPresentingMemberSelection) {
+                MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
+            }
         }
     }
 
@@ -118,21 +122,17 @@ struct CreateMeetingFormView: View {
 
     private var participantsSection: some View {
         Section(Strings.SetupParticipants.header) {
-            if viewModel.selectedMembers.isEmpty {
-                NavigationLink {
-                    MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
-                        .navigationBarBackButtonHidden(true)
-                } label: {
-                    TextField(Strings.SetupParticipants.placeholder, text: .constant(""))
-                        .disabled(true)
-                }
-            } else {
-                NavigationLink {
-                    MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
-                        .navigationBarBackButtonHidden(true)
-                } label: {
-                    HStack {
+            Button {
+                isPresentingMemberSelection = true
+            } label: {
+                HStack {
+                    if viewModel.selectedMembers.isEmpty {
+                        Text(Strings.SetupParticipants.placeholder)
+                            .foregroundStyle(.placeholder)
+                        Spacer()
+                    } else {
                         Text(viewModel.selectedMembersSummary)
+                            .foregroundStyle(.primary)
                             .lineLimit(1)
                         Spacer()
                         Text("\(viewModel.selectedMembers.count)")
@@ -140,8 +140,13 @@ struct CreateMeetingFormView: View {
                             .lineLimit(1)
                             .truncationMode(.tail)
                     }
+                    Image(systemName: "chevron.forward")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.tertiary)
                 }
+                .contentShape(.rect)
             }
+            .buttonStyle(.plain)
         }
         .textCase(nil)
     }
