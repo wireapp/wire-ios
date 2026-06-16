@@ -64,14 +64,15 @@ final class ConversationSharedDriveSystemMessageCellDescription: ConversationMes
     }
 
     private static func makeTitle(selfUserRole: WireDriveSelfUserRole) -> NSAttributedString {
-        typealias FileCollaborationEnabled = L10n.Localizable.Content.System.FileCollaboration.Enabled
+        typealias FileCollaboration = L10n.Localizable.Content.System.FileCollaboration
 
-        let driveAccessTitle = selfUserRole == .editor ? FileCollaborationEnabled
-            .editorAccess : FileCollaborationEnabled.viewerAccess
+        let driveAccessTitle = selfUserRole == .editor ? FileCollaboration.Enabled
+            .editorAccess : FileCollaboration.Enabled.viewerAccess
         let spacer = " "
         // TODO: [WPB-25941] Remove developer flag when feature is complete
         let driveAccessText = DeveloperFlag.enableDrivePermissions.isOn ? ".\(spacer + driveAccessTitle)" : ""
-        let fullText = L10n.Localizable.Content.System.FileCollaboration.enabled + driveAccessText
+        let enabledText = FileCollaboration.SharedDriveState.enabled
+        let fullText = L10n.Localizable.Content.System.FileCollaboration.sharedDriveState(enabledText) + driveAccessText
         var attributedText: NSMutableAttributedString
         let baseAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumFont,
@@ -83,14 +84,14 @@ final class ConversationSharedDriveSystemMessageCellDescription: ConversationMes
             attributes: baseAttributes
         )
 
-        if let range = fullText.lowercased().range(of: "on") {
+        if let range = fullText.range(of: enabledText, options: .caseInsensitive) {
             let nsRange = NSRange(range, in: fullText)
             attributedText.addAttribute(.font, value: UIFont.mediumSemiboldFont, range: nsRange)
         }
 
         // TODO: [WPB-25941] Remove developer flag when feature is complete
         if DeveloperFlag.enableDrivePermissions.isOn {
-            let learnMoreLabel = FileCollaborationEnabled.learnMore
+            let learnMoreLabel = FileCollaboration.Enabled.learnMore
             let linkUrl = WireURLs.shared.learnMoreAboutDrivePermissions
             let linkAttributes: [NSAttributedString.Key: AnyObject] = [
                 .font: UIFont.mediumSemiboldFont,

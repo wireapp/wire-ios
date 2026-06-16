@@ -2368,8 +2368,10 @@ internal enum L10n {
           }
         }
         internal enum FileCollaboration {
-          /// Shared Drive is on
-          internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.enabled", fallback: "Shared Drive is on")
+          /// Shared Drive is %@
+          internal static func sharedDriveState(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState", String(describing: p1), fallback: "Shared Drive is %@")
+          }
           internal enum DriveViewerAccess {
             /// Guests have view-only access to files in this conversation.
             internal static let title = L10n.tr("Localizable", "content.system.file_collaboration.drive_viewer_access.title", fallback: "Guests have view-only access to files in this conversation.")
@@ -2381,6 +2383,10 @@ internal enum L10n {
             internal static let learnMore = L10n.tr("Localizable", "content.system.file_collaboration.enabled.learn_more", fallback: "Learn more")
             /// You can view, but you can’t upload, edit, or manage files.
             internal static let viewerAccess = L10n.tr("Localizable", "content.system.file_collaboration.enabled.viewer_access", fallback: "You can view, but you can’t upload, edit, or manage files.")
+          }
+          internal enum SharedDriveState {
+            /// on
+            internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState.enabled", fallback: "on")
           }
         }
         internal enum MessageLegalHold {

@@ -23,6 +23,7 @@ public import WireMessagingDomain
 @MainActor
 public class ConversationSharedDriveOptionsViewModel: ObservableObject {
     @Published var participants: [WireDriveParticipant]
+    @Published var isSharedDriveEnabled = true
 
     public init(participants: [WireDriveParticipant]) {
         self.participants = participants.sorted(by: { $0.displayName < $1.displayName })

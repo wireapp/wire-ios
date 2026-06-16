@@ -28,7 +28,6 @@ private typealias Locator = Locators.WireDrive.ConversationDetailsSharedDriveOpt
 
 package struct ConversationSharedDriveOptionsView: View {
     @StateObject package var viewModel: ConversationSharedDriveOptionsViewModel
-    @State private var isSharedDriveEnabled = true
     @ScaledMetric private var iconSize: CGFloat = 26
 
     private let onClose: () -> Void
@@ -70,7 +69,7 @@ package struct ConversationSharedDriveOptionsView: View {
 
                 Spacer()
 
-                Toggle("", isOn: $isSharedDriveEnabled)
+                Toggle("", isOn: $viewModel.isSharedDriveEnabled)
                     .labelsHidden()
                     .disabled(true)
                     .accessibilityIdentifier(Locator.toggle)

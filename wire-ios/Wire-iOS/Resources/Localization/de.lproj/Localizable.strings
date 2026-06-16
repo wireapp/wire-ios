@@ -636,7 +636,8 @@
 "content.system.channel.guest.joined" = "%@ ist dem Channel beigetreten";
 "content.system.channel.guest.you_joined" = "Sie sind dem Channel beigetreten";
 
-"content.system.file_collaboration.enabled" = "Geteiltes Drive aktiv";
+"content.system.file_collaboration.sharedDriveState" = "Geteiltes Drive %@";
+"content.system.file_collaboration.sharedDriveState.enabled" = "aktiv";
 
 // read receipt
 
