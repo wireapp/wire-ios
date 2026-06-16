@@ -208,7 +208,7 @@ final class ShareExtensionTests: WireUITestCase {
             .appParticipantToConversation()
             .tapMemberCells(withLabelPrefixes: [memberName])
             .addSelectedParticipant()
-            .conversationDetailsView()
+            .closeConversationDetails()
             .goBackToConversationPage()
     }
 
