@@ -105,7 +105,7 @@ struct WireURLs: Codable {
 
     /// Link to an article about end to end encryption.
     let learnMoreAboutE2EE: URL
-    
+
     /// Link to an article explaining the Drive permissions.
     let learnMoreAboutDrivePermissions: URL
 
