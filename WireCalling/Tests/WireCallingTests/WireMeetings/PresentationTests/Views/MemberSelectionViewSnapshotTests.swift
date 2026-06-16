@@ -42,12 +42,12 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
 
     @MainActor
     func testLoadingStateColorSchemeVariants() {
-        verifyColorSchemeVariants(viewModel: makeLoadingViewModel())
+        verifyColorSchemeVariants(viewModel: makeLoadingViewModel(), testName: #function)
     }
 
     @MainActor
     func testLoadingStateDynamicTypeVariants() {
-        verifyDynamicTypeVariants(viewModel: makeLoadingViewModel())
+        verifyDynamicTypeVariants(viewModel: makeLoadingViewModel(), testName: #function)
     }
 
     // MARK: - Empty State
@@ -55,13 +55,13 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     @MainActor
     func testEmptyStateColorSchemeVariants() async {
         let viewModel = await makeSettledViewModel(searchResults: [])
-        verifyColorSchemeVariants(viewModel: viewModel)
+        verifyColorSchemeVariants(viewModel: viewModel, testName: #function)
     }
 
     @MainActor
     func testEmptyStateDynamicTypeVariants() async {
         let viewModel = await makeSettledViewModel(searchResults: [])
-        verifyDynamicTypeVariants(viewModel: viewModel)
+        verifyDynamicTypeVariants(viewModel: viewModel, testName: #function)
     }
 
     // MARK: - Populated State
@@ -69,19 +69,22 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     @MainActor
     func testPopulatedStateColorSchemeVariants() async {
         let viewModel = await makeSettledViewModel(searchResults: .mock)
-        verifyColorSchemeVariants(viewModel: viewModel)
+        verifyColorSchemeVariants(viewModel: viewModel, testName: #function)
     }
 
     @MainActor
     func testPopulatedStateDynamicTypeVariants() async {
         let viewModel = await makeSettledViewModel(searchResults: .mock)
-        verifyDynamicTypeVariants(viewModel: viewModel)
+        verifyDynamicTypeVariants(viewModel: viewModel, testName: #function)
     }
 
     // MARK: - Verification helpers
 
     @MainActor
-    private func verifyColorSchemeVariants(viewModel: MemberSelectionViewModel) {
+    private func verifyColorSchemeVariants(
+        viewModel: MemberSelectionViewModel,
+        testName: String = #function
+    ) {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
@@ -91,14 +94,17 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", testName: testName)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", testName: testName)
     }
 
     @MainActor
-    private func verifyDynamicTypeVariants(viewModel: MemberSelectionViewModel) {
+    private func verifyDynamicTypeVariants(
+        viewModel: MemberSelectionViewModel,
+        testName: String = #function
+    ) {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
@@ -110,7 +116,8 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
             snapshotHelper
                 .verify(
                     matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
+                    named: "\(dynamicTypeSize)",
+                    testName: testName
                 )
         }
     }
