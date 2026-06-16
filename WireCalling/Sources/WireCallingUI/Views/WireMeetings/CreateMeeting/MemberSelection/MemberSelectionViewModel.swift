@@ -19,6 +19,7 @@
 import Foundation
 import Observation
 import WireCallingDomain
+import WireLogging
 
 @MainActor
 @Observable
@@ -34,7 +35,6 @@ final class MemberSelectionViewModel {
     var searchResults: [Member] = []
     var selectedMembers: [Member] = []
     var isSearching = false
-    var errorMessage: String? // TODO: can search even throw any error?
     var isSelectedExpanded = true
     var isContactsExpanded = true
 
@@ -96,11 +96,11 @@ final class MemberSelectionViewModel {
                 let results = try await source.search(query: query)
                 guard !Task.isCancelled else { return }
                 searchResults = results
-                errorMessage = nil
             } catch is CancellationError {
                 return
             } catch {
-                errorMessage = L10n.Localizable.WireMeetings.Schedule.Members.Error.message
+                WireLogger.ui.warn("failed to search for meeting members to select", attributes: .safePublic)
+                WireLogger.ui.warn("\(error)")
             }
             isSearching = false
         }
