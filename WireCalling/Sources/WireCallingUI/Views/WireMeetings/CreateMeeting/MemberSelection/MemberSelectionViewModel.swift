@@ -86,23 +86,30 @@ final class MemberSelectionViewModel {
         searchTask?.cancel()
         let query = searchText
         isSearching = true
-        searchTask = Task { [weak self] in
-            if debounce > .zero {
-                try? await Task.sleep(for: debounce)
-                guard !Task.isCancelled else { return }
-            }
+
+        searchTask = Task { @MainActor [weak self] in
             guard let self else { return }
+
             do {
+                if debounce > .zero {
+                    try await Task.sleep(for: debounce)
+                }
+                try Task.checkCancellation()
+
                 let results = try await source.search(query: query)
-                guard !Task.isCancelled else { return }
+                try Task.checkCancellation()
+
                 searchResults = results
+                isSearching = false
             } catch is CancellationError {
+                // If we were cancelled (e.g. a new query arrived), keep `isSearching` true and let the latest task own it.
                 return
             } catch {
                 WireLogger.ui.warn("failed to search for meeting members to select", attributes: .safePublic)
                 WireLogger.ui.warn("\(error)")
+                searchResults = []
+                isSearching = false
             }
-            isSearching = false
         }
     }
 }
