@@ -21,8 +21,7 @@ import Foundation
 /// Backfills the `effectiveConversationType` attribute introduced in model version 2.136.0.
 ///
 /// `effectiveConversationType` is a persisted mirror of the computed `conversationType` (which promotes team-1:1 and
-/// service group conversations to `.oneOnOne`). It is maintained by `-[ZMConversation willSave]` going forward, but
-/// existing rows need a one-time population so the conversation lists are correct immediately after migrating.
+/// service group conversations to `.oneOnOne`).
 final class EffectiveConversationTypeMigrationAction: CoreDataMigrationAction {
 
     override func execute(in context: NSManagedObjectContext) throws {
