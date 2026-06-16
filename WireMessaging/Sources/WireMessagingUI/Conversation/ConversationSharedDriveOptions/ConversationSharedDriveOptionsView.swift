@@ -168,16 +168,16 @@ package struct ConversationSharedDriveOptionsView: View {
 
     @ViewBuilder
     private func icon(_ item: WireDriveParticipant) -> some View {
-        if let iconData = item.iconData {
-            ZStack {
-                if let blockedOrPendingApprovalAvatarIcon = viewModel.blockedOrPendingApprovalAvatarIcon(for: item) {
-                    Color(ColorTheme.Backgrounds.onBackground.color)
-                    Image(uiImage: blockedOrPendingApprovalAvatarIcon)
-                        .resizable()
-                        .frame(width: iconSize / 2, height: iconSize / 2)
-                        .foregroundStyle(ColorTheme.Backgrounds.onInverted.color)
+        ZStack {
+            if let blockedOrPendingApprovalAvatarIcon = viewModel.blockedOrPendingApprovalAvatarIcon(for: item) {
+                Color(ColorTheme.Backgrounds.onBackground.color)
+                Image(uiImage: blockedOrPendingApprovalAvatarIcon)
+                    .resizable()
+                    .frame(width: iconSize / 2, height: iconSize / 2)
+                    .foregroundStyle(ColorTheme.Backgrounds.onInverted.color)
 
-                } else if let image = iconData.image {
+            } else if let iconData = item.iconData {
+                if let image = iconData.image {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -192,13 +192,13 @@ package struct ConversationSharedDriveOptionsView: View {
                         .foregroundStyle(ColorTheme.Backgrounds.background.color)
                         .padding(4)
                 }
+            } else {
+                Image(.unavailableUser)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
             }
-            .clipShape(Circle())
-        } else {
-            Image(.unavailableUser)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
         }
+        .clipShape(Circle())
     }
 }
 
