@@ -141,7 +141,6 @@ public enum Locators {
         case videoCallBarButton
         case inputField
         case sendButton
-        case conversationBackButton
         case authorName
         case conversationTitleButton
         case conversationDetailsButton
@@ -178,6 +177,7 @@ public enum Locators {
         case showOtherRowButton
         case pingButton
         case guestsArePresent = "Guests are present"
+        case openOngoingCallButton
 
     }
 
@@ -419,6 +419,7 @@ public enum Locators {
 
         case endOngoingCallButton = "End call"
         case timeLabel
+        case minimizeCall
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"

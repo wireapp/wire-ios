@@ -38,7 +38,10 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationBackButton: XCUIElement {
-        app.buttons[Locators.ActiveConversationPage.conversationBackButton.rawValue]
+        // The conversation now uses the system back button (see `configureBackButton(hasUnread:)`),
+        // whose accessibility identifier is not exposed to XCUITest. Match it positionally, the same
+        // way `OptionsOnSettingsPage` taps the Settings back button.
+        app.navigationBars.buttons.element(boundBy: 0)
     }
 
     var senderNameLabel: XCUIElement {
@@ -201,6 +204,10 @@ class ActiveConversationPage: PageModel {
 
     var pingButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.pingButton.rawValue]
+    }
+
+    var openOngoingCallButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.openOngoingCallButton.rawValue]
     }
 
     func fetchMessages() -> [String] {
@@ -443,5 +450,16 @@ class ActiveConversationPage: PageModel {
             line: line
         )
         return self
+    }
+
+    func initiateCall() throws -> OngoingCallPage {
+        videoCallButton.waitAndTap()
+        app.dismissAllowIfPresent()
+        return try OngoingCallPage()
+    }
+
+    func resumeCallUI() throws -> OngoingCallPage {
+        openOngoingCallButton.waitAndTap()
+        return try OngoingCallPage()
     }
 }

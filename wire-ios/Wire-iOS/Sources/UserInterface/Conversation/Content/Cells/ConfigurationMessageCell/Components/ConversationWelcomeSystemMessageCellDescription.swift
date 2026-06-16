@@ -53,7 +53,7 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
         }
 
         let linkLabel = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
-        let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
+        let linkUrl = WireURLs.shared.learnMoreAboutE2EE
 
         let titleAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: FontSpec(.header, .semibold).font!,
