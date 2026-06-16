@@ -38,14 +38,20 @@ final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponent
     public let networkStack: NetworkStack
     public let didReauthenticate: Bool = false
     private let existsAnotherAccount: Bool
+    private let allowsMultipleBackends: Bool
+    private let existingBackendHosts: Set<String>
 
     init(
         parent: any Scope,
         networkStack: NetworkStack,
-        existsAnotherAccount: Bool
+        existsAnotherAccount: Bool,
+        allowsMultipleBackends: Bool,
+        existingBackendHosts: Set<String>
     ) {
         self.networkStack = networkStack
         self.existsAnotherAccount = existsAnotherAccount
+        self.allowsMultipleBackends = allowsMultipleBackends
+        self.existingBackendHosts = existingBackendHosts
         super.init(parent: parent)
     }
 
@@ -95,7 +101,9 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             router: dependency.router,
             bridge: dependency.bridge,
             environment: networkStack.backendEnvironment,
-            existsAnotherAccount: existsAnotherAccount
+            existsAnotherAccount: existsAnotherAccount,
+            allowsMultipleBackends: allowsMultipleBackends,
+            existingBackendHosts: existingBackendHosts
         )
     }
 
