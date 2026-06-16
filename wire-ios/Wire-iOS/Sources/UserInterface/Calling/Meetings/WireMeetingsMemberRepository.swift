@@ -36,7 +36,7 @@ struct WireMeetingsMemberRepository: MemberRepositoryProtocol, @unchecked Sendab
         let result = await searchUsersUseCase.invoke(
             query: query,
             options: [.contacts, .teamMembers], // in large teams find team members which are not yet known to us
-            messageProtocol: .mls // TODO: meetings always mls?
+            messageProtocol: .mls // meetings are always mls
         )
         return (result.contacts + result.teamMembers).compactMap { result in
             guard let qualifiedID = result.qualifiedID(localDomain: nil) else { return Member?.none }
