@@ -128,7 +128,7 @@ class WireUITestCase: XCTestCase {
 
         notificationPermissionMonitor =
             addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
-                let notifPermission = "Would Like to Send You Notifications"
+                let notifPermission = "Would Like to"
                 let allowButton = alertElement.buttons["Allow"].firstMatch
 
                 guard alertElement.label.contains(notifPermission),
