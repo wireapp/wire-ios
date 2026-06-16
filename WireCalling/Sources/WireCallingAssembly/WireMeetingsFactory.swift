@@ -22,6 +22,7 @@ import SwiftUI
 import WireCallingData
 import WireCallingDomain
 import WireCallingUI
+import WireFoundation
 
 public struct WireMeetingsFactory {
 
