@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// MARK: - Meetings List
 
+// MARK: - Meetings List
 
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Past";
@@ -25,13 +25,19 @@
 "wireMeetings.list.actions.scheduleMeeting" = "Schedule a Meeting";
 "wireMeetings.list.actions.showAll" = "Show All";
 "wireMeetings.list.emptyState.next.title" = "No upcoming meetings yet";
-"wireMeetings.list.emptyState.next.subtitle" = "Start a meeting with team members, guests, or external parties.";
+"wireMeetings.list.emptyState.next.subtitle" = "Start a meeting with team members";
 "wireMeetings.list.emptyState.past.title" = "No past meetings yet";
 "wireMeetings.list.emptyState.past.subtitle" = "You'll find all previous meetings here.";
 "wireMeetings.list.header.today" = "Today";
 "wireMeetings.list.header.tomorrow" = "Tomorrow";
 "wireMeetings.list.header.yesterday" = "Yesterday";
 "wireMeetings.list.header.ongoing" = "Ongoing";
+"wireMeetings.list.actions.edit" = "Edit meeting";
+"wireMeetings.list.actions.delete" = "Delete meeting for all";
+"wireMeetings.list.delete.alert.title" = "Delete meeting for all";
+"wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
+"wireMeetings.list.delete.alert.delete.button" = "刪除";
+"wireMeetings.list.delete.alert.cancel.button" = "取消";
 
 // MARK: - Schedule a meeting
 

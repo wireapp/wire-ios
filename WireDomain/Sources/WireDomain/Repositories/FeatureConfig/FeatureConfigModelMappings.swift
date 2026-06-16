@@ -140,3 +140,14 @@ extension WireNetwork.CellsInternalFeatureConfig {
         )
     }
 }
+
+extension WireNetwork.PreventAdminlessGroupsFeatureConfig {
+    func toDomainModel() -> Feature.PreventAdminlessGroups.Config {
+        .init(
+            promotionStrategy: Feature.PreventAdminlessGroups
+                .PromotionStrategy(rawValue: promotionStrategy) ?? .alphabetical,
+            deletionTimeout: deletionTimeout,
+            reminderTimeouts: reminderTimeouts
+        )
+    }
+}

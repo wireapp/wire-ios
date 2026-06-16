@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "確認";
 "general.next" = "下一步";
 "general.cancel" = "取消";
@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@移除了%@";
 "content.system.conversation.you.removed.legalhold" = "%@ were removed from this conversation because legal hold has been activated.";
 "content.system.conversation.you.left" = "%@離開了";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@從團隊中被移除了";
 "content.system.conversation.guest.joined" = "%@已加入";
 "content.system.conversation.guest.you_joined" = "您已經加入";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "原訊息於%@";
 "content.message.reply.original_timestamp.time" = "來自%@的原始訊息";
 "content.message.reply.broken_message" = "您不能看見這則訊息";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "已編輯";
 
 "content.message.open_link_alert.title" = "瀏覽連結";
@@ -1155,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";
