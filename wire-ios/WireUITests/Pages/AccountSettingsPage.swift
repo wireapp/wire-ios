@@ -218,7 +218,6 @@ class AccountSettingsPage: PageModel {
             "Choose from Library did not appear"
         )
         chooseFromLibraryButton.tap()
-        allowPhotoLibraryAccessIfNeeded()
         selectImageFromPhotoPicker()
 
         XCTAssertTrue(
@@ -304,23 +303,6 @@ class AccountSettingsPage: PageModel {
     func tapOnResetPasswordButton() throws -> WebViewPage {
         resetPasswordButton.tap()
         return try WebViewPage()
-    }
-
-    private func allowPhotoLibraryAccessIfNeeded() {
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let permissionButtons = [
-            "Allow Full Access",
-            "Allow Access to All Photos",
-            "Allow",
-            "OK"
-        ]
-
-        for application in [springboard, app] {
-            for buttonLabel in permissionButtons
-                where application.buttons[buttonLabel].firstMatch.waitAndTap(timeout: 1) {
-                return
-            }
-        }
     }
 
     private func selectImageFromPhotoPicker(

@@ -121,8 +121,8 @@ public enum Locators {
         // We are keeping the current title+field identifiers for now to avoid
         // changing existing references across the app.
         case accountHeader = "Account"
-        case pictureCell = "AccountSettingsPage.pictureCell"
-        case colorCell = "AccountSettingsPage.colorCell"
+        case pictureCell
+        case colorCell
         case conversationBackgroundSwitch = "ConversationBackgroundSwitch"
         case nameField = "NameField"
         case nameFieldDisabled = "NameFieldDisabled"
