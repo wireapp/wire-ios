@@ -40,7 +40,7 @@ final class AdminSelectionViewModel: ObservableObject {
     var canPromote: Bool {
         switch promotionState {
         case .inProgress:
-            false:
+            false
         default:
             selectedUser != nil 
         }
