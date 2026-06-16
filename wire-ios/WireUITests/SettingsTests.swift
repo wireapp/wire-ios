@@ -20,6 +20,109 @@ import XCTest
 
 final class SettingsTests: WireUITestCase {
 
+    private let profileColorWaitTimeout: TimeInterval = 5
+
+    @MainActor
+    func testChangeAppThemeToSystemDarkOrLight_TC_8945() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+
+        // WHEN
+        var optionsPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+            .openSettings()
+            .openOptionsMenu()
+            // THEN - system theme is selected by default
+            .verifyTheme(.system)
+
+        optionsPage = try optionsPage
+            .openThemeSettings()
+            .selectTheme(.dark)
+            .backToOptions()
+            // THEN - dark theme is selected
+            .verifyTheme(.dark)
+
+        _ = try optionsPage
+            .openThemeSettings()
+            .selectTheme(.light)
+            .backToOptions()
+            // THEN - light theme is selected
+            .verifyTheme(.light)
+    }
+
+    @MainActor
+    func testChangeProfileColor_TC_8942() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+        let profileColor = AccountSettingsPage.ProfileColor.purple
+
+        // WHEN
+        _ = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+            .openSettings()
+            .openAccountSettings()
+            .selectProfileColor(profileColor)
+
+        // THEN
+        try await waitForSelfUserAccentID(
+            profileColor.accentID,
+            timeout: profileColorWaitTimeout
+        )
+    }
+
+    @MainActor
+    func testAddAndViewDisplayPicture_TC_8939_8813() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+
+        // WHEN
+        let accountSettingsPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+            .openSettings()
+            .openAccountSettings()
+            .setProfilePictureFromLibrary()
+
+        // THEN
+        _ = try accountSettingsPage
+            .goBackToSettingsPage()
+            .switchToConversationsTab()
+            .openUserProfilePage()
+            .verifyProfilePictureIsSet()
+    }
+
+    @MainActor
+    func testConversationBackgroundColorMatchingProfileColor_TC_8943() async throws {
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+        let profileColor = AccountSettingsPage.ProfileColor.purple
+
+        // WHEN
+        let settingsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openSettings()
+            .openAccountSettings()
+            .selectProfileColor(profileColor)
+            .enableConversationBackground()
+            .goBackToSettingsPage()
+
+        // THEN - profile color is updated
+        try await waitForSelfUserAccentID(
+            profileColor.accentID,
+            timeout: profileColorWaitTimeout
+        )
+
+        // THEN - conversation background matches profile color
+        let activeConversationPage = try settingsPage
+            .switchToConversationsTab()
+            .openConversation()
+
+        activeConversationPage.verifyConversationBackgroundColor(profileColor)
+    }
+
     @MainActor
     func testCreateLinkPreviewsOption_TC_8951() async throws {
         let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
@@ -70,6 +173,31 @@ final class SettingsTests: WireUITestCase {
         _ = conversationPage
             .verifyMessageSent("Second link:")
             .verifyLinkPreviewCell()
+    }
+
+    private func waitForSelfUserAccentID(
+        _ expectedAccentID: Int,
+        timeout: TimeInterval,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        let deadline = Date().addingTimeInterval(timeout)
+        var lastAccentID: Int?
+
+        repeat {
+            let selfUser = try await UserHelper.default.selfUserAPI.getSelfUser()
+            lastAccentID = selfUser.accentID
+            if selfUser.accentID == expectedAccentID {
+                return
+            }
+            try await Task.sleep(for: .seconds(1))
+        } while Date() < deadline
+
+        XCTFail(
+            "Expected self user accent ID \(expectedAccentID), got \(String(describing: lastAccentID))",
+            file: file,
+            line: line
+        )
     }
 
 }

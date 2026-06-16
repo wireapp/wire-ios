@@ -121,6 +121,9 @@ public enum Locators {
         // We are keeping the current title+field identifiers for now to avoid
         // changing existing references across the app.
         case accountHeader = "Account"
+        case pictureCell = "AccountSettingsPage.pictureCell"
+        case colorCell = "AccountSettingsPage.colorCell"
+        case conversationBackgroundSwitch = "ConversationBackgroundSwitch"
         case nameField = "NameField"
         case nameFieldDisabled = "NameFieldDisabled"
         case usernameField = "UsernameField"
@@ -134,6 +137,13 @@ public enum Locators {
         case logOut = "Log Out"
         case ok = "OK"
 
+    }
+
+    public enum ThemeSettingsPage: AutoPrefixedEnum {
+
+        case lightOption
+        case darkOption
+        case systemOption
     }
 
     public enum ActiveConversationPage: String {
@@ -177,6 +187,7 @@ public enum Locators {
         case showOtherRowButton
         case pingButton
         case guestsArePresent = "Guests are present"
+        case conversationBackground
 
     }
 
@@ -302,6 +313,7 @@ public enum Locators {
 
     public enum OptionsOnSettingsPage: String {
 
+        case themeCell
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
     }

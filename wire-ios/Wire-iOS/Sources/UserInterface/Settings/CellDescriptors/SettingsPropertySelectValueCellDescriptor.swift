@@ -52,6 +52,9 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
 
     func featureCell(_ cell: SettingsCellType) {
         cell.titleText = title
+        if let valueCell = cell as? SettingsTableCell {
+            valueCell.accessibilityIdentifier = identifier
+        }
         if let valueCell = cell as? SettingsValueCell {
             valueCell.accessoryType = settingsProperty.value() == value ? .checkmark : .none
         }

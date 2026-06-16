@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
@@ -252,6 +253,7 @@ final class ConversationContentViewController: UIViewController {
         tableView.delaysContentTouches = false
         tableView.keyboardDismissMode = AutomationHelper.sharedHelper
             .disableInteractiveKeyboardDismissal ? .none : .interactive
+        tableView.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackground.rawValue
 
         setupMentionsResultsView()
 
@@ -296,9 +298,11 @@ final class ConversationContentViewController: UIViewController {
         }
         guard let color, userDefaults.bool(forKey: .conversationBackground) else {
             set(color: SemanticColors.View.backgroundConversationView)
+            tableView.accessibilityValue = "default"
             return
         }
         set(color: color.accentColor.conversationBackgroundColor)
+        tableView.accessibilityValue = color.accentColor.name
     }
 
     @objc

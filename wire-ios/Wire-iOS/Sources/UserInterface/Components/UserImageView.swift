@@ -148,6 +148,12 @@ class UserImageView: AvatarImageView, UserObserving {
         let updateBlock = {
             self.avatar = avatar
             self.container.backgroundColor = self.containerBackgroundColor(for: user)
+            self.accessibilityValue = switch avatar {
+            case .image:
+                "image"
+            case .text:
+                "initials"
+            }
         }
 
         if animated, !ProcessInfo.processInfo.isRunningTests {

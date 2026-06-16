@@ -19,6 +19,7 @@
 import LocalAuthentication
 import UIKit
 import WireCommonComponents
+import WireLocators
 import WireSettingsUI
 import WireSyncEngine
 
@@ -264,11 +265,20 @@ extension SettingsCellDescriptorFactory {
         userSession: UserSession
     ) -> SettingsCellDescriptorType {
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
+            let identifier = switch option {
+            case .light:
+                Locators.ThemeSettingsPage.lightOption.rawValue
+            case .dark:
+                Locators.ThemeSettingsPage.darkOption.rawValue
+            case .system:
+                Locators.ThemeSettingsPage.systemOption.rawValue
+            }
 
             return SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
-                title: option.displayString
+                title: option.displayString,
+                identifier: identifier
             )
         }
 
@@ -282,7 +292,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsGroupCellDescriptor(
             items: [section],
             title: property.propertyName.settingsPropertyLabelText,
-            identifier: nil,
+            identifier: Locators.OptionsOnSettingsPage.themeCell.rawValue,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,

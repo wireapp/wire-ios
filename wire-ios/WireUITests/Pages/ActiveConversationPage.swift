@@ -150,6 +150,10 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
     }
 
+    var conversationBackground: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.conversationBackground.rawValue].firstMatch
+    }
+
     var userLeftSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
@@ -294,6 +298,28 @@ class ActiveConversationPage: PageModel {
     func verifyCanAccessSharedDrive() {
         conversationTitleButton.waitAndTap()
         XCTAssertTrue(sharedDriveButton.exists)
+    }
+
+    @discardableResult
+    func verifyConversationBackgroundColor(
+        _ color: AccountSettingsPage.ProfileColor,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            conversationBackground.waitForExistence(timeout: 5),
+            "Conversation background element did not appear",
+            file: file,
+            line: line
+        )
+        XCTAssertEqual(
+            conversationBackground.value as? String,
+            color.displayName,
+            "Conversation background should match profile color \(color.displayName)",
+            file: file,
+            line: line
+        )
+        return self
     }
 
     func openPhotosAndGrantPermission() throws -> ActiveConversationPage {

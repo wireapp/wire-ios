@@ -46,12 +46,14 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
 
     init(
         text: String,
+        identifier: String? = .none,
         previewGenerator: PreviewGeneratorType? = .none,
         presentationStyle: PresentationStyle,
         presentationAction: @escaping (_ sender: UIView) -> UIViewController?,
         settingsCoordinator: AnySettingsCoordinator
     ) {
         self.text = text
+        self.identifier = identifier
         self.previewGenerator = previewGenerator
         self.presentationStyle = presentationStyle
         self.presentationAction = presentationAction
@@ -63,6 +65,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
     func featureCell(_ cell: SettingsCellType) {
         if let tableCell = cell as? SettingsAppearanceCell {
             tableCell.configure(with: .appearance(title: text))
+            tableCell.accessibilityIdentifier = identifier
 
             if let previewGenerator {
                 tableCell.type = previewGenerator(self)

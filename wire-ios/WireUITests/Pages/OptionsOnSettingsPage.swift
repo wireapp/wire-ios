@@ -37,6 +37,10 @@ class OptionsOnSettingsPage: PageModel {
         app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.createLinkPreviews.rawValue].firstMatch
     }
 
+    var themeCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.themeCell.rawValue].firstMatch
+    }
+
     var conversationsButton: XCUIElement {
         app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
@@ -44,6 +48,26 @@ class OptionsOnSettingsPage: PageModel {
     func enableLockWithPasscode() throws -> SetPasscodePage {
         lockWithPasscodeSwitch.tap()
         return try SetPasscodePage()
+    }
+
+    func openThemeSettings() throws -> ThemeSettingsPage {
+        themeCell.tap()
+        return try ThemeSettingsPage()
+    }
+
+    @discardableResult
+    func verifyTheme(
+        _ theme: ThemeSettingsPage.Theme,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> OptionsOnSettingsPage {
+        XCTAssertTrue(
+            (themeCell.value as? String)?.contains(theme.displayName) == true,
+            "Theme preview should show \(theme.displayName)",
+            file: file,
+            line: line
+        )
+        return self
     }
 
     func enterPasscode(_ passcode: String) throws -> ConversationsPage {
