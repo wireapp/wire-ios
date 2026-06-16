@@ -91,7 +91,7 @@ final class ConversationSharedDriveSystemMessageCellDescription: ConversationMes
         // TODO: [WPB-25941] Remove developer flag when feature is complete
         if DeveloperFlag.enableDrivePermissions.isOn {
             let learnMoreLabel = FileCollaborationEnabled.learnMore
-            let linkUrl = URL(string: "https://support.wire.com/hc/en-us/articles/36679600377373-File-permissions")!
+            let linkUrl = WireURLs.shared.learnMoreAboutDrivePermissions
             let linkAttributes: [NSAttributedString.Key: AnyObject] = [
                 .font: UIFont.mediumSemiboldFont,
                 .foregroundColor: ColorTheme.Backgrounds.onSurface,
