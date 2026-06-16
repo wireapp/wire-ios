@@ -74,7 +74,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
         allowsMultipleBackends: Bool = true,
-        existingBackendHosts: Set<String> = [],
+        existingBackendHosts: Set<String>,
         isLoading: Bool = false,
     ) {
         self.factory = factory
