@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireFoundation
 import WireTestingPackage
 import XCTest
 
@@ -37,14 +38,54 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
+    // MARK: - Loading State
+
+    @MainActor
+    func testLoadingStateColorSchemeVariants() {
+        verifyColorSchemeVariants(viewModel: makeLoadingViewModel())
+    }
+
+    @MainActor
+    func testLoadingStateDynamicTypeVariants() {
+        verifyDynamicTypeVariants(viewModel: makeLoadingViewModel())
+    }
+
     // MARK: - Empty State
 
     @MainActor
-    func testEmptyStateColorSchemeVariants() {
+    func testEmptyStateColorSchemeVariants() async {
+        let viewModel = await makeSettledViewModel(searchResults: [])
+        verifyColorSchemeVariants(viewModel: viewModel)
+    }
+
+    @MainActor
+    func testEmptyStateDynamicTypeVariants() async {
+        let viewModel = await makeSettledViewModel(searchResults: [])
+        verifyDynamicTypeVariants(viewModel: viewModel)
+    }
+
+    // MARK: - Populated State
+
+    @MainActor
+    func testPopulatedStateColorSchemeVariants() async {
+        let viewModel = await makeSettledViewModel(searchResults: .mock)
+        verifyColorSchemeVariants(viewModel: viewModel)
+    }
+
+    @MainActor
+    func testPopulatedStateDynamicTypeVariants() async {
+        let viewModel = await makeSettledViewModel(searchResults: .mock)
+        verifyDynamicTypeVariants(viewModel: viewModel)
+    }
+
+    // MARK: - Verification helpers
+
+    @MainActor
+    private func verifyColorSchemeVariants(viewModel: MemberSelectionViewModel) {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            MemberSelectionView(viewModel: makeViewModel())
+            MemberSelectionView(viewModel: viewModel)
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -57,11 +98,11 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testEmptyStateDynamicTypeVariants() {
+    private func verifyDynamicTypeVariants(viewModel: MemberSelectionViewModel) {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            MemberSelectionView(viewModel: makeViewModel())
+            MemberSelectionView(viewModel: viewModel)
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -74,13 +115,60 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - View model factories
 
+    /// Builds a view model whose initial search resolves to `searchResults` and
+    /// waits for the init-time async search to complete before returning.
     @MainActor
-    private func makeViewModel() -> MemberSelectionViewModel {
+    private func makeSettledViewModel(searchResults: [Member]) async -> MemberSelectionViewModel {
         let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = []
+        repository.searchQueryStringMemberReturnValue = searchResults
+        let viewModel = MemberSelectionViewModel(source: repository)
+        while viewModel.isSearching {
+            await Task.yield()
+        }
+        return viewModel
+    }
+
+    /// Builds a view model whose initial search never returns so the view
+    /// stays in the loading state when snapshotted.
+    @MainActor
+    private func makeLoadingViewModel() -> MemberSelectionViewModel {
+        let repository = MemberRepositoryProtocolMock()
+        repository.searchQueryStringMemberClosure = { _ in
+            try? await Task.sleep(for: .seconds(60))
+            return []
+        }
         return MemberSelectionViewModel(source: repository)
+    }
+}
+
+// MARK: - Mock fixtures
+
+private extension [Member] {
+    static var mock: Self {
+        [
+            .init(name: "Martin Koch-Johansen", handle: "username"),
+            .init(name: "Olga Heaney", handle: "username"),
+            .init(name: "Margarete Springer", handle: "username"),
+            .init(name: "Lorenzo Schmeler", handle: ""),
+            .init(name: "Jaqueline Olaho", handle: ""),
+            .init(name: "Katie Armstrong", handle: "username"),
+            .init(name: "Zachary Ratke", handle: "username"),
+            .init(name: "Marco Weissnat", handle: "username"),
+            .init(name: "Deborah Schoen", handle: "username")
+        ]
+    }
+}
+
+private extension Member {
+
+    init(name: String, handle: String) {
+        self.init(
+            qualifiedID: QualifiedID(id: UUID(), domain: ""),
+            name: name,
+            handle: handle
+        )
     }
 
 }
