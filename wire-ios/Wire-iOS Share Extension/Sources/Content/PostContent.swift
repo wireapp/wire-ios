@@ -105,20 +105,15 @@ final class PostContent {
 
         WireLogger.shareExtension.info("will cancel posting content", attributes: .safePublic)
 
-        let semaphore = DispatchSemaphore(value: 0)
+        let token = Process.registerUnsafeExpiringActivity("cancelling ongoing task", timeout: .now() + .seconds(30))
+        Task {
+            token.cancel()
+        }
+
         sendController.cancel {
             completion()
             WireLogger.shareExtension.info("did cancel posting content", attributes: .safePublic)
-            semaphore.signal()
-        }
-
-        // Keep the notification service alive until posting content is cancelled.
-        ProcessInfo.processInfo.performExpiringActivity(withReason: "cancelling ongoing task") { isExpired in
-            if isExpired {
-                semaphore.signal()
-            } else {
-                _ = semaphore.wait(wallTimeout: .now() + .seconds(30))
-            }
+            token.cancel()
         }
     }
 
