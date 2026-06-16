@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "OK";
 "general.next" = "Далі";
 "general.cancel" = "Скасувати";
@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@ видалив(-ла) %@";
 "content.system.conversation.you.removed.legalhold" = "%@ були видалені з цієї розмови, тому що правовий режим було активовано.";
 "content.system.conversation.you.left" = "%@ вийшов(-ла)";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ був(-ла) видалений(-а) з команди.";
 "content.system.conversation.guest.joined" = "%@ приєднався(-лася)";
 "content.system.conversation.guest.you_joined" = "Ви приєдналися";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Оригінальне повідомлення від %@";
 "content.message.reply.original_timestamp.time" = "Оригінальне повідомлення від %@";
 "content.message.reply.broken_message" = "Ви не можете бачити це повідомлення.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Відредаговано";
 
 "content.message.open_link_alert.title" = "Перейдіть за лінком";
@@ -1155,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";

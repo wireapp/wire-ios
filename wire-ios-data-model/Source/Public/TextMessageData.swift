@@ -38,6 +38,14 @@ public protocol TextMessageData: NSObjectProtocol {
     /// `true` if the message has a quote.
     var hasQuote: Bool { get }
 
+    /// `true` if the message quotes a message that exists locally but has been deleted.
+    ///
+    /// Deleting a message clears the `quote` relationship of every reply, so `quoteMessage`
+    /// becomes `nil` both when the quoted message was deleted and when it simply isn't in our
+    /// copy of the conversation. This resolves the quoted nonce to tell the two apart: a deleted
+    /// message survives as a hidden tombstone, whereas an unseen message has no local object.
+    var quotedMessageIsDeleted: Bool { get }
+
     /// Fetch linkpreview image data from disk on the given queue.
     @objc(fetchLinkPreviewImageDataWithQueue:completionHandler:)
     func fetchLinkPreviewImageData(

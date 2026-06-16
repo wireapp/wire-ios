@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireCoreCrypto
 import WireDomain
 import WireLogging
 import WireSystem
@@ -68,6 +69,21 @@ struct LogFilesProvider: LogFilesProviding {
         if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
+
+        let metadata = CoreCrypto.buildMetadata()
+        body += """
+        \n
+        CoreCrypto:
+        Timestamp: \(metadata.timestamp)
+        Cargo debug: \(metadata.cargoDebug)
+        Cargo features: \(metadata.cargoFeatures)
+        Optimization level: \(metadata.optLevel)
+        Target triple: \(metadata.targetTriple)
+        Git branch: \(metadata.gitBranch)
+        Git describe: \(metadata.gitDescribe)
+        Git SHA: \(metadata.gitSha)
+        Git dirty: \(metadata.gitDirty)
+        """
 
         return body
     }

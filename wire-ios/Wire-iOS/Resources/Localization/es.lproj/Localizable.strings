@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "De acuerdo";
 "general.next" = "Siguiente";
 "general.cancel" = "Cancelar";
@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@ eliminó a %@";
 "content.system.conversation.you.removed.legalhold" = "Se eliminó a%@ de este chat porque se ha activado la retención legal.";
 "content.system.conversation.you.left" = "%@ se fue";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ fue eliminado del equipo.";
 "content.system.conversation.guest.joined" = "%@ se ha unido";
 "content.system.conversation.guest.you_joined" = "Te has unido";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "Mensaje original de %@";
 "content.message.reply.original_timestamp.time" = "Mensaje original de %@";
 "content.message.reply.broken_message" = "No puedes ver este mensaje.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Editado";
 
 "content.message.open_link_alert.title" = "Abrir enlace";
@@ -1155,8 +1157,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Compartir perfil";
 "qrcode.share_message" = "Comparte tu perfil para conectarte fácilmente con otras personas. Debes aceptar una solicitud de conexión antes de que podáis empezar a comunicaros.";
 "qrcode.share_profile_link.button.title" = "Compartir enlace de perfil";

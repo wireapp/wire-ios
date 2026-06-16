@@ -16,43 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCallingDomain
-import WireCallingUI
 public import UIKit
+
 import SwiftUI
 import WireCallingData
-public import WireReusableUIComponents
+import WireCallingDomain
+import WireCallingUI
+import WireFoundation
 
 public struct WireMeetingsFactory {
-    private let passwordValidator: any PasswordValidator
-    private let isContextMenuAllowed: Bool
 
     @MainActor
-    public init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
-        self.passwordValidator = passwordValidator
-        self.isContextMenuAllowed = isContextMenuAllowed
-    }
-}
+    public init() {}
 
-public extension WireMeetingsFactory {
     @MainActor
-    func makeMeetingsView() -> UIViewController {
+    public func makeMeetingsView() -> UIViewController {
         let meetingsViewModel = AllMeetingsViewModel(
-            repository: MeetingsRepository.demo(),
             currentDateProvider: .system,
-            pastMeetingsUseCase: FetchPastMeetingsUseCase(
-                repository: MeetingsRepository.demo(),
-                currentDateProvider: .system
-            ),
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
-            ),
-            passwordValidator: passwordValidator,
-            isContextMenuAllowed: isContextMenuAllowed
+            )
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
+
 }

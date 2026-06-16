@@ -37,6 +37,7 @@ class SettingsPage: PageModel {
         app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
 
+    @discardableResult
     func openAccountSettings() throws -> AccountSettingsPage {
         XCTAssertTrue(accountSettingsMenu.waitForExistence(timeout: 3))
         accountSettingsMenu.tap()

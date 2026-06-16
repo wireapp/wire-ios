@@ -1895,6 +1895,24 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
         }
     }
 
+    // MARK: - isGroupConversation
+
+    public var isGroupConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var isGroupConversationIdDomain_MockMethod: ((UUID, String?) async -> Bool)?
+    public var isGroupConversationIdDomain_MockValue: Bool?
+
+    public func isGroupConversation(id: UUID, domain: String?) async -> Bool {
+        isGroupConversationIdDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = isGroupConversationIdDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = isGroupConversationIdDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isGroupConversationIdDomain`")
+        }
+    }
+
     // MARK: - deleteConversation
 
     public var deleteConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
@@ -4093,6 +4111,30 @@ public class MockResetMLSConversationLockRepositoryProtocol: ResetMLSConversatio
         }
 
         mock(conversationID)
+    }
+
+}
+
+public class MockResetProteusSessionUseCaseProtocol: ResetProteusSessionUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUserClient_Invocations: [UserClient] = []
+    public var invokeUserClient_MockMethod: ((UserClient) async -> Void)?
+
+    public func invoke(userClient: UserClient) async {
+        invokeUserClient_Invocations.append(userClient)
+
+        guard let mock = invokeUserClient_MockMethod else {
+            fatalError("no mock for `invokeUserClient`")
+        }
+
+        await mock(userClient)
     }
 
 }

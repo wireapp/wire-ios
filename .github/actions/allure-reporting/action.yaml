@@ -13,7 +13,7 @@ runs:
   steps:
     - name: Setup Node.js
       if: always()
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: 20
 
@@ -24,7 +24,7 @@ runs:
         
     - name: Upload Allure Report Artifact
       if: ${{ env.ALLURE_REPORT_AVAILABLE == 'true' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: ${{ inputs.allure_artifact_name }}
         path: allure-reports/

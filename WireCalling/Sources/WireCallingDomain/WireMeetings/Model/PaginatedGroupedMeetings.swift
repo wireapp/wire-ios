@@ -16,14 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+package struct PaginatedMeetings {
 
-package typealias MeetingTimeSlot = (time: Date, meetings: [Meeting])
-package typealias GroupedMeetings = [(day: Date, timeSlots: [MeetingTimeSlot])]
-
-package struct PaginatedGroupedMeetings {
-
-    package let groups: GroupedMeetings
+    package let meetings: [Meeting]
     package let hasMore: Bool
     package let nextOffset: Int
 

@@ -21,7 +21,7 @@ import XCTest
 final class SettingsTests: WireUITestCase {
 
     @MainActor
-    func testCreateLinkPreviewsOption_TC_25795() async throws {
+    func testCreateLinkPreviewsOption_TC_8951() async throws {
         let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
