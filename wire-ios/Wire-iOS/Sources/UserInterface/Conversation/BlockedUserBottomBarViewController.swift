@@ -25,19 +25,14 @@ final class BlockedUserBottomBarViewController: UIViewController {
 
     private static let verticalInset: CGFloat = 12
 
-    private let separator = UIView()
-    private let iconImageView = UIImageView()
-    private let label = UILabel()
+    private lazy var separator = UIView()
+    private lazy var iconImageView = UIImageView()
+    private lazy var label = UILabel()
 
-    init() {
-        super.init(nibName: nil, bundle: nil)
+    override func viewDidLoad() {
+        super.viewDidLoad()
         setupViews()
         createConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupViews() {
