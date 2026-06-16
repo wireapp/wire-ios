@@ -733,7 +733,93 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
+    // MARK: - V10
+
+    func testGetCollaborators_givenV10AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
+
+        for apiVersion in APIVersion.v10.andNextVersions {
+
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetCollaboratorsSuccessResponseV10")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let collaborators = try await sut.getCollaborators(for: Scaffolding.teamID)
+
+                // Then
+                let expectedCollaborators = [
+                    CollaboratorInfo(
+                        userID: UUID(uuidString: "c05922f8-2b42-45c6-911a-56394ab8474d")!,
+                        teamID: UUID(uuidString: "9f00f4e7-2426-4d6d-b2b1-9190b204556f")!,
+                        permissions: [.createTeamConversation, .implicitConnection]
+                    )
+                ]
+                XCTAssertEqual(collaborators, expectedCollaborators, "failed for apiVersion \(apiVersion)")
+            }
+        }
+
+    }
+
+    func testGetCollaborators_givenV10AndAbove_AndFailureResponse_403() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "insufficient-permissions"
+        )
+
+        let sut = TeamsAPIV10(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(FailureResponse(code: 403, label: "insufficient-permissions", message: "")) {
+            // When
+            try await sut.getCollaborators(for: Team.ID())
+        }
+    }
+
     // MARK: - V15
+
+    func testGetApps_givenV15AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
+
+        for apiVersion in APIVersion.v15.andNextVersions {
+
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetAppsSuccessResponseV15")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let apps = try await sut.getApps(for: Scaffolding.teamID)
+
+                // Then
+                let expectedApps = [
+                    User(
+                        id: UserID(
+                            id: UUID(uuidString: "fd96a484-d0c2-4fec-844e-a69cc3954811")!,
+                            domain: "staging.zinfra.io"
+                        ),
+                        name: "WPB-24947 App 0",
+                        handle: nil,
+                        teamID: UUID(uuidString: "9f00f4e7-2426-4d6d-b2b1-9190b204556f"),
+                        type: .app,
+                        accentID: 0,
+                        assets: [],
+                        deleted: nil,
+                        email: nil,
+                        expiresAt: nil,
+                        app: .init(category: "cat", description: "desc"),
+                        service: nil,
+                        supportedProtocols: [.mls],
+                        legalholdStatus: .noConsent
+                    )
+                ]
+                XCTAssertEqual(apps, expectedApps, "failed for apiVersion \(apiVersion)")
+            }
+        }
+
+    }
 
     func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
 

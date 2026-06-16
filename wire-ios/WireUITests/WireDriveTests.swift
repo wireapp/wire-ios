@@ -266,13 +266,12 @@ final class WireDriveTests: WireUITestCase {
 
         // WHEN
         let activeConversationPage = try loginAndOpenConversation(for: teamOwner)
+
+        let folderName = "Test"
         let sharedDrivePage = try activeConversationPage
             .openSharedDrive()
-
-        let createFolderPage = try sharedDrivePage
             .createFolder()
-
-        let folderName = createFolderPage.enterFolderNameAndValidate()
+            .enterFolderNameAndValidate(name: folderName)
 
         // THEN
         XCTAssertTrue(sharedDrivePage.verifyFolderIsCreated(folderName: folderName))
@@ -317,11 +316,15 @@ final class WireDriveTests: WireUITestCase {
         searchTextField.tap()
 
         searchTextField.typeText(positiveSearchTerm)
-        try? await Task.sleep(for: .seconds(1))
+        XCTAssertTrue(
+            sharedDrivePage.fileIcon.waitForExistence(timeout: 2)
+        )
         let positiveSearchResults = sharedDrivePage.numberOfFilesInList
 
         searchTextField.typeText(negativeSearchTerm)
-        try? await Task.sleep(for: .seconds(1))
+        XCTAssertTrue(
+            sharedDrivePage.fileIcon.waitForNonExistence(timeout: 2)
+        )
         let negativeSearchResults = sharedDrivePage.numberOfFilesInList
 
         // THEN

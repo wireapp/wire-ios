@@ -156,10 +156,17 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                     let participants: [WireDriveConversation.Participant] = conversation.participants
                         .compactMap { item -> WireDriveConversation.Participant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
+                            let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
+                            let role: WireDriveConversation.Participant.Role = if isDrivePermissionsEnabled {
+                                item.isGuest(in: conversation) ? .viewer : .editor
+                            } else {
+                                .editor
+                            }
 
                             return .init(
                                 handle: item.handle ?? "-",
                                 displayName: item.name ?? "-",
+                                role: role,
                                 isSelfUser: item.isSelfUser,
                                 id: id.uuidString + "@" + domain,
                                 iconData: WireDriveConversation.Participant.IconData(

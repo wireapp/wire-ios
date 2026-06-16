@@ -35,6 +35,40 @@ final class LinkInteractionTextView: UITextView {
     // URLs with these schemes should be handled by the os.
     fileprivate let dataDetectedURLSchemes = ["x-apple-data-detectors", "tel", "mailto"]
 
+    /// Creates a text view backed by a `BlockquoteLayoutManager` so that
+    /// markdown blockquotes render with a vertical accent bar on the left.
+    static func withBlockquoteBars() -> LinkInteractionTextView {
+        let storage = NSTextStorage()
+        let layoutManager = BlockquoteLayoutManager()
+        let container = NSTextContainer(size: CGSize(
+            width: CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        ))
+        container.widthTracksTextView = true
+        layoutManager.addTextContainer(container)
+        storage.addLayoutManager(layoutManager)
+        return LinkInteractionTextView(frame: .zero, textContainer: container)
+    }
+
+    private var blockquoteLayoutManager: BlockquoteLayoutManager? {
+        layoutManager as? BlockquoteLayoutManager
+    }
+
+    var blockquoteBarColor: UIColor? {
+        get { blockquoteLayoutManager?.barColor }
+        set { if let color = newValue { blockquoteLayoutManager?.barColor = color } }
+    }
+
+    var codeBackgroundColor: UIColor? {
+        get { blockquoteLayoutManager?.codeBackgroundColor }
+        set { if let color = newValue { blockquoteLayoutManager?.codeBackgroundColor = color } }
+    }
+
+    func applyMarkdownColors(_ baseColor: UIColor) {
+        blockquoteBarColor = baseColor.withAlphaComponent(0.6)
+        codeBackgroundColor = baseColor.withAlphaComponent(0.12)
+    }
+
     override init(
         frame: CGRect,
         textContainer: NSTextContainer?

@@ -299,7 +299,11 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectImageAndSend() throws -> ActiveConversationPage {
+        if !imageToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
         imageToChoose.waitAndTap()
+
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
             "OK button did not appear after selecting media"
@@ -309,7 +313,11 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectVideoAndSend() throws -> ActiveConversationPage {
+        if !videoToChoose.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
         videoToChoose.waitAndTap()
+
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
             "OK button did not appear after selecting media"
@@ -318,9 +326,9 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @MainActor
     @discardableResult
-    func recordAudioAndSend() throws -> ActiveConversationPage {
-
+    func recordAudioAndSend() async throws -> ActiveConversationPage {
         audioButton.waitAndTap()
         app.dismissAllowIfPresent()
 
@@ -334,6 +342,8 @@ class ActiveConversationPage: PageModel {
             recordingTimeLabel.waitForExistence(timeout: 2),
             "Audio recording not started"
         )
+
+        try? await Task.sleep(for: .seconds(1))
 
         if stopRecording.waitForExistence(timeout: 2), stopRecording.isHittable {
             stopRecording.tap()
@@ -369,6 +379,31 @@ class ActiveConversationPage: PageModel {
                 NSPredicate(format: "label CONTAINS %@", "You pinged")
             ).firstMatch.waitForExistence(timeout: 2),
             "Expected ping message not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func verifyMessageSent(
+        _ message: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.textViews.matching(NSPredicate(format: "label == %@", message)).firstMatch.waitForExistence(timeout: 5),
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func verifyLinkPreviewCell(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.cells["LinkPreviewCell"].firstMatch.waitForExistence(timeout: 10),
             file: file,
             line: line
         )
