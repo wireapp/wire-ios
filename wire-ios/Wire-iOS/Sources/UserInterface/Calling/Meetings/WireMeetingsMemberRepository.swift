@@ -24,7 +24,7 @@ struct WireMeetingsMemberRepository: MemberRepositoryProtocol, @unchecked Sendab
 
     typealias Member = WireCallingDomain.Member
 
-    var userSession: any UserSession
+    let userSession: any UserSession
 
     @MainActor
     func search(query: String) async throws -> [Member] {

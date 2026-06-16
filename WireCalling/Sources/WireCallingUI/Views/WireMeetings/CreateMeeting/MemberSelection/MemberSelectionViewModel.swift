@@ -76,10 +76,6 @@ final class MemberSelectionViewModel {
         onSelect(selectedMembers)
     }
 
-    func retrySearch() {
-        scheduleSearch(debounce: .zero)
-    }
-
     // MARK: - Search
 
     private func scheduleSearch(debounce: Duration = .milliseconds(300)) {
