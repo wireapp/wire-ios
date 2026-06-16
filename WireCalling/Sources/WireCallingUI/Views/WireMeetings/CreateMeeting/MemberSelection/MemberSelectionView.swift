@@ -29,6 +29,10 @@ struct MemberSelectionView: View {
     var body: some View {
         NavigationStack {
             List {
+                if let errorMessage = viewModel.errorMessage, !viewModel.searchResults.isEmpty {
+                    errorBanner(message: errorMessage)
+                }
+
                 Section {
                     if viewModel.isSelectedExpanded {
                         ForEach(viewModel.selectedMembers) { row(for: $0) }
@@ -82,6 +86,8 @@ struct MemberSelectionView: View {
             ForEach(viewModel.filteredUnselected) { row(for: $0) }
         } else if viewModel.isSearching {
             loadingPlaceholder
+        } else if let errorMessage = viewModel.errorMessage {
+            errorPlaceholder(message: errorMessage)
         } else {
             emptyPlaceholder
         }
@@ -109,6 +115,44 @@ struct MemberSelectionView: View {
         .padding(.vertical, 20)
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
+    }
+
+    private func errorPlaceholder(message: String) -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.title3)
+                .foregroundStyle(.orange)
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Button(Strings.Retry.button) {
+                viewModel.retrySearch()
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .padding(.top, 4)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+    }
+
+    private func errorBanner(message: String) -> some View {
+        Section {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                Text(message)
+                    .font(.subheadline)
+                Spacer()
+                Button(Strings.Retry.button) {
+                    viewModel.retrySearch()
+                }
+                .buttonStyle(.borderless)
+            }
+        }
     }
 
     private func sectionHeader(title: String, isExpanded: Binding<Bool>) -> some View {

@@ -68,5 +68,7 @@
 "wireMeetings.schedule.members.select.button" = "Select";
 "wireMeetings.schedule.members.search.field.placeholder" = "Enter a name";
 "wireMeetings.schedule.members.empty.title" = "No contacts found";
+"wireMeetings.schedule.members.error.message" = "Couldn't load contacts. Try again.";
+"wireMeetings.schedule.members.retry.button" = "Retry";
 "wireMeetings.schedule.members.selected.title" = "Selected";
 "wireMeetings.schedule.members.contacts.title" = "Contacts";
