@@ -128,7 +128,7 @@ struct CreateMeetingFormView: View {
                 HStack {
                     if viewModel.selectedMembers.isEmpty {
                         Text(Strings.SetupParticipants.placeholder)
-                            .foregroundStyle(.placeholder)
+                            .foregroundStyle(Color(.placeholderText))
                         Spacer()
                     } else {
                         Text(viewModel.selectedMembersSummary)
