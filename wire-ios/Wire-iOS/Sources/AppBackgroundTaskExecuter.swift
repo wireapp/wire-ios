@@ -22,7 +22,10 @@ import UIKit
 import WireLogging
 import WireSystem
 
-public struct AppTaskExecuter: BackgroundTaskExecuter {
+/// A `BackgroundTaskExecuter` that uses `UIApplication`'s background task APIs to execute the provided operation in
+/// the background.
+/// - warning: This executer should only be used from the main app.
+public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
     private final class TaskID: Sendable {
         let state = OSAllocatedUnfairLock(initialState: UIBackgroundTaskIdentifier.invalid)

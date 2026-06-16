@@ -400,7 +400,7 @@ private extension AppDelegate {
 
     private func createAppRootRouter() {
         let defaultEnvironment = fetchDefaultEnvironment()
-        let appTaskExecuter = AppTaskExecuter(application: .shared)
+        let appTaskExecuter = AppBackgroundTaskExecuter(application: .shared)
 
         let sessionManager: SessionManager
         do {
