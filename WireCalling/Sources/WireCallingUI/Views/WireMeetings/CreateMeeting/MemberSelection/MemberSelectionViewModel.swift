@@ -98,7 +98,8 @@ final class MemberSelectionViewModel {
                 searchResults = results
                 isSearching = false
             } catch is CancellationError {
-                // If we were cancelled (e.g. a new query arrived), keep `isSearching` true and let the latest task own it.
+                // If we were cancelled (e.g. a new query arrived), keep `isSearching` true and let the latest task own
+                // it.
                 return
             } catch {
                 WireLogger.ui.warn("failed to search for meeting members to select", attributes: .safePublic)
