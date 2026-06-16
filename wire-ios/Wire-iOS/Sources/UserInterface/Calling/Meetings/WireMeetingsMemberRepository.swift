@@ -33,17 +33,14 @@ struct WireMeetingsMemberRepository: MemberRepositoryProtocol, @unchecked Sendab
             return []
         }
 
-        let searchOptions: SearchOptions = [
-            .contacts,
-            .teamMembers,
-            .directory, // TODO: check if enabled? needs to work in a large team
-            // .federated // TODO: check if enabled?
-        ]
-
-        let result = await searchUsersUseCase.invoke(query: query, options: searchOptions, messageProtocol: .mls) // TODO: meetings always mls?
+        let result = await searchUsersUseCase.invoke(
+            query: query,
+            options: [.contacts, .teamMembers], // in large teams find team members which are not yet known to us
+            messageProtocol: .mls // TODO: meetings always mls?
+        )
         return (result.contacts + result.teamMembers).compactMap { result in
-            guard let user = result.user, let qualifiedID = user.qualifiedID else { return Member?.none }
-            return Member(qualifiedID: .init(qualifiedID), name: user.name ?? "", handle: user.handle ?? "")
+            guard let qualifiedID = result.qualifiedID(localDomain: nil) else { return Member?.none }
+            return Member(qualifiedID: .init(qualifiedID), name: result.name ?? "", handle: result.handle ?? "")
         }.sorted { $0.name < $1.name }
     }
 
