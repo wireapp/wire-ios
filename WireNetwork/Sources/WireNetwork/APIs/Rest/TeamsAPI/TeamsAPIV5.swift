@@ -160,6 +160,38 @@ class TeamsAPIV5: TeamsAPIV4 {
         }
     }
 
+    // MARK: - Notifications
+
+    override func getNotifications(
+        sinceNotificationID: UUID?,
+        maxResults: UInt
+    ) throws -> PayloadPager<[TeamNotification]> {
+        let resourcePath = "\(pathPrefix)/teams/notifications"
+
+        return PayloadPager(start: sinceNotificationID?.transportString()) { nextSince in
+            var requestBuilder = try URLRequestBuilder(path: resourcePath)
+                .withMethod(.get)
+                .withQueryItem(name: "size", value: "\(maxResults)")
+
+            if let nextSince {
+                requestBuilder = requestBuilder.withQueryItem(name: "since", value: nextSince)
+            }
+
+            let request = requestBuilder.build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
+            )
+
+            return try ResponseParser()
+                .success(code: .ok, type: PaginatedTeamNotificationsResponseV5.self)
+                .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParameter)
+                .failure(code: .notFound, error: TeamsAPIError.selfUserIsNotTeamMember)
+                .parse(code: response.statusCode, data: data)
+        }
+    }
+
 }
 
 private struct PaginatedWhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible {
