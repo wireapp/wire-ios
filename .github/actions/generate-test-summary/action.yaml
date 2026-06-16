@@ -101,7 +101,9 @@ runs:
                 | (.nodeIdentifierURL? // "") as $identifierURL
                 | (
                     if ($identifierURL | test("/[^/]+/[^/]+/[^/]+$")) then
-                      [($identifierURL | capture("/(?<target>[^/]+)/[^/]+/[^/]+$") | .target)]
+                      ($identifierURL | capture("/(?<target>[^/]+)/(?<class>[^/]+)/[^/]+$") | [.target, .class])
+                    elif ($identifier | test("/")) then
+                      ($identifier | split("/") | .[0:-1])
                     else
                       []
                     end
