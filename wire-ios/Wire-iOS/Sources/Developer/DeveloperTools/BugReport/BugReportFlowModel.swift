@@ -128,6 +128,8 @@ let bugReportMaxAttachmentSize = 25 * 1024 * 1024
 @MainActor
 final class BugReportFlowModel: ObservableObject {
 
+    private typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
+
     // Page 1 — Description
     @Published var summary = ""
     @Published var expectedBehavior = ""
@@ -148,6 +150,9 @@ final class BugReportFlowModel: ObservableObject {
 
     // Page 4 — Evidence & notes
     @Published var attachments: [BugReportAttachment] = []
+
+    // Conversation picker
+    @Published var conversations: [ZMConversation] = []
     @Published var relatedReports = ""
     @Published var additionalNotes = ""
 
@@ -185,13 +190,17 @@ final class BugReportFlowModel: ObservableObject {
 
     // MARK: - Submission
 
-    /// Builds the package, then presents the conversation picker (no pre-selection).
-    func submitViaWire() async {
-        guard let userSession, let mainCoordinator else {
+    func loadConversations() {
+        guard let userSession else { return }
+        conversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider).invoke()
+    }
+
+    /// Builds the package, sends it to the given conversation, then navigates into that conversation.
+    func submitViaWire(to conversation: ZMConversation) async {
+        guard let userSession else {
             errorMessage = L10n.Localizable.BugReport.Error.noSession
             return
         }
-        guard let presenter = topViewController() else { return }
 
         isSubmitting = true
         defer { isSubmitting = false }
@@ -199,22 +208,13 @@ final class BugReportFlowModel: ObservableObject {
         do {
             let url = try await buildPackage()
             let metadata = ZMFileMetadata(fileURL: url, name: BugReportPackage.fileName)
-            let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
-            let fetchConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
-            let conversations = fetchConversations.invoke()
-            let shareable = ShareableBugReport(fileMetadata: metadata, shareFile: shareFile)
-
-            let shareVC = ShareViewController<ZMConversation, ShareableBugReport>(
-                shareable: shareable,
-                destinations: conversations,
-                showPreview: false,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator
-            )
-            shareVC.onDismiss = { [weak self] controller, _ in
-                controller.dismiss(animated: true) { self?.requestClose?() }
+            ShareFileUseCase(contextProvider: userSession.contextProvider)
+                .invoke(fileMetadata: metadata, conversations: [conversation])
+            requestClose?()
+            if let coordinator = mainCoordinator as? MainCoordinator {
+                await coordinator.showConversationList(conversationFilter: nil)
+                coordinator.showConversation(conversation: conversation, message: nil)
             }
-            present(shareVC, from: presenter)
         } catch {
             WireLogger.system.error("failed to build bug report package: \(error)")
             errorMessage = L10n.Localizable.BugReport.Error.buildFailed

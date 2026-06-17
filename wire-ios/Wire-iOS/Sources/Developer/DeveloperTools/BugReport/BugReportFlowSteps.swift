@@ -21,6 +21,7 @@ import AVKit
 import PhotosUI
 import SwiftUI
 import UniformTypeIdentifiers
+import WireDataModel
 
 private typealias L = L10n.Localizable.BugReport
 
@@ -295,16 +296,13 @@ struct BugReportReviewStep: View {
             }
 
             Section {
-                Button {
-                    Task { await model.submitViaWire() }
+                NavigationLink {
+                    BugReportConversationPickerView(model: model)
                 } label: {
-                    HStack {
-                        if model.isSubmitting { ProgressView() }
-                        Text(L.Review.sendInWire).fontWeight(.semibold)
-                    }
-                    .frame(maxWidth: .infinity)
+                    Text(L.Review.sendInWire)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
                 }
-                .disabled(model.isSubmitting)
                 .accessibilityIdentifier("bugReport.sendInWire")
 
                 Button {
@@ -420,5 +418,102 @@ struct AttachmentFullscreenView: View {
             try? attachment.data.write(to: url)
             videoURL = url
         }
+    }
+}
+
+// MARK: - Conversation picker
+
+private typealias LP = L10n.Localizable.BugReport.ConversationPicker
+
+struct BugReportConversationPickerView: View {
+
+    @ObservedObject var model: BugReportFlowModel
+    @State private var searchText = ""
+    @State private var selectedConversation: ZMConversation?
+
+    private var filtered: [ZMConversation] {
+        guard !searchText.isEmpty else { return model.conversations }
+        return model.conversations.filter {
+            $0.displayNameWithFallback.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            List {
+                if filtered.isEmpty {
+                    Text(LP.noResults)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .listRowBackground(Color.clear)
+                }
+                ForEach(filtered, id: \.objectID) { conversation in
+                    Button {
+                        selectedConversation = conversation
+                    } label: {
+                        HStack(spacing: 12) {
+                            ConversationInitialsView(name: conversation.displayNameWithFallback)
+                                .frame(width: 40, height: 40)
+
+                            Text(conversation.displayNameWithFallback)
+                                .foregroundStyle(.primary)
+
+                            Spacer()
+
+                            Image(systemName: selectedConversation == conversation
+                                  ? "circle.inset.filled" : "circle")
+                                .foregroundStyle(selectedConversation == conversation
+                                                 ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .searchable(text: $searchText)
+
+            Divider()
+
+            Button {
+                guard let conversation = selectedConversation else { return }
+                Task { await model.submitViaWire(to: conversation) }
+            } label: {
+                HStack(spacing: 8) {
+                    if model.isSubmitting { ProgressView() }
+                    Text(LP.send).fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(selectedConversation == nil || model.isSubmitting)
+            .padding()
+        }
+        .navigationTitle(LP.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear { model.loadConversations() }
+        .alert(
+            L10n.Localizable.BugReport.Error.title,
+            isPresented: Binding(get: { model.errorMessage != nil }, set: { if !$0 { model.errorMessage = nil } })
+        ) {
+            Button(L10n.Localizable.BugReport.Error.ok, role: .cancel) { model.errorMessage = nil }
+        } message: {
+            Text(model.errorMessage ?? "")
+        }
+    }
+}
+
+// MARK: - Conversation avatar
+
+private struct ConversationInitialsView: View {
+    let name: String
+
+    var body: some View {
+        Circle()
+            .fill(.tint.opacity(0.15))
+            .overlay {
+                Text(String(name.prefix(1)).uppercased())
+                    .font(.headline)
+                    .foregroundStyle(.tint)
+            }
     }
 }

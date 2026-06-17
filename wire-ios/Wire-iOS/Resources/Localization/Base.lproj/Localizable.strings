@@ -1492,6 +1492,11 @@
 "bug_report.review.field.regression" = "Regression";
 "bug_report.review.field.last_working_version" = "Last working version";
 
+// Bug report — Conversation picker
+"bug_report.conversation_picker.title" = "Select conversation";
+"bug_report.conversation_picker.send" = "Send";
+"bug_report.conversation_picker.no_results" = "No conversations found";
+
 // Bug report — Errors
 "bug_report.error.title" = "Bug report";
 "bug_report.error.no_session" = "No active session — cannot share in Wire.";

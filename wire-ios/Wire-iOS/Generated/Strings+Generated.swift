@@ -1368,6 +1368,14 @@ internal enum L10n {
           internal static let header = L10n.tr("Localizable", "bug_report.classification.severity.header", fallback: "Severity")
         }
       }
+      internal enum ConversationPicker {
+        /// No conversations found
+        internal static let noResults = L10n.tr("Localizable", "bug_report.conversation_picker.no_results", fallback: "No conversations found")
+        /// Send
+        internal static let send = L10n.tr("Localizable", "bug_report.conversation_picker.send", fallback: "Send")
+        /// Select conversation
+        internal static let title = L10n.tr("Localizable", "bug_report.conversation_picker.title", fallback: "Select conversation")
+      }
       internal enum Description {
         /// Description
         internal static let title = L10n.tr("Localizable", "bug_report.description.title", fallback: "Description")
