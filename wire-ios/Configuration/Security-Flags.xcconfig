@@ -36,3 +36,9 @@ FORCE_ENCRYPTION_AT_REST_ENABLED=0
 
 MIN_TLS_VERSION=1.2
 OPEN_LINKS_EXTERNALLY=0
+
+// Whether accounts from more than one backend can be added in the same app.
+// When disabled, the user can still switch their single backend (e.g. via deeplink),
+// but cannot add an account from a backend different to the one already in use.
+
+MULTIBACKEND_SUPPORT=1

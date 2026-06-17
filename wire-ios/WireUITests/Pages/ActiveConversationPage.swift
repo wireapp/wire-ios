@@ -225,6 +225,10 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.pingButton.rawValue]
     }
 
+    var openOngoingCallButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.openOngoingCallButton.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -488,5 +492,16 @@ class ActiveConversationPage: PageModel {
             line: line
         )
         return self
+    }
+
+    func initiateCall() throws -> OngoingCallPage {
+        videoCallButton.waitAndTap()
+        app.dismissAllowIfPresent()
+        return try OngoingCallPage()
+    }
+
+    func resumeCallUI() throws -> OngoingCallPage {
+        openOngoingCallButton.waitAndTap()
+        return try OngoingCallPage()
     }
 }

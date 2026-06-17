@@ -73,6 +73,7 @@ class UserProfilePage: PageModel {
         return try WelcomePage()
     }
 
+    @discardableResult
     func switchUserAccountForUser(withName name: String) throws -> ConversationsPage {
         let predicate = NSPredicate(format: "label BEGINSWITH %@", name)
         let button = app.buttons.containing(predicate).firstMatch
