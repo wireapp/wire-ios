@@ -37,7 +37,7 @@ struct DeviceDetailsButtonsView: View {
                 Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
+            .contentShape(Rectangle( ))
         }
     }
 
