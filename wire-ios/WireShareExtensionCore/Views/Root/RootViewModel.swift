@@ -20,16 +20,10 @@ import Foundation
 import SwiftUI
 
 @MainActor
-public protocol RootViewModel {
-
-}
+public protocol RootViewModel {}
 
 @Observable
 @MainActor
-public final class RootViewModelImpl: RootViewModel {
+public final class RootViewModelImpl: RootViewModel {}
 
-}
-
-struct RootViewModelMock: RootViewModel {
-
-}
+struct RootViewModelMock: RootViewModel {}

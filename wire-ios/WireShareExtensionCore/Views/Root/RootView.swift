@@ -35,8 +35,8 @@ public struct RootView<
     public var body: some View {
         NavigationStack(path: $router.path) {
             makeHomeNode(HomeDestination())
-                .errorAlert($router.errorAlert)
         }
+        .errorAlert($router.errorAlert)
     }
 }
 
