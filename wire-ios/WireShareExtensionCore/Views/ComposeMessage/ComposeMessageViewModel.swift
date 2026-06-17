@@ -28,7 +28,7 @@ protocol ComposeMessageViewModel {
     var canSend: Bool { get }
     var isLoading: Bool { get }
 
-    func send()
+    func send() async
 
 }
 
@@ -36,6 +36,7 @@ protocol ComposeMessageViewModel {
 @MainActor
 public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
 
+    public let account: Account
     public let conversation: Conversation
     public let shareItem: ShareItem
     public var messageText: String = ""
@@ -45,17 +46,35 @@ public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
     }
 
     public var isLoading: Bool = false
+    private let onDone: () -> Void
+    private let sendMessage: SendMessageUseCase
 
     public init(
+        account: Account,
         conversation: Conversation,
-        shareItem: ShareItem
+        shareItem: ShareItem,
+        sendMessage: SendMessageUseCase,
+        onDone: @escaping () -> Void
     ) {
+        self.account = account
         self.conversation = conversation
         self.shareItem = shareItem
+        self.onDone = onDone
+        self.sendMessage = sendMessage
     }
 
-    public func send() {
-        print("Sending message to \(conversation.name): \(messageText)")
+    public func send() async {
+        let message = Message(
+            text: messageText,
+            shareItem: shareItem
+        )
+
+        do {
+            try await sendMessage(message, for: account, in: conversation)
+            onDone()
+        } catch {
+            // TODO: Handle
+        }
     }
 
 }

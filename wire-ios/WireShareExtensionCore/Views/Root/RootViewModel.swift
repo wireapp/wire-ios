@@ -27,13 +27,14 @@ public protocol RootViewModel {
 
     var searchQuery: String { get set }
     var conversations: [Conversation] { get }
-    var shareItem: ShareItem { get }
 
     var isLoading: Bool { get }
     var errorAlert: ErrorAlert? { get set }
 
     func start() async
     func reloadConversations()
+    func close()
+    func selectConversation(_ conversation: Conversation)
 
 }
 
@@ -45,7 +46,7 @@ public final class RootViewModelImpl: RootViewModel {
     public var selectedAccount: Account?
 
     public var searchQuery: String = ""
-    public let shareItem: ShareItem
+    private let shareItem: ShareItem
 
     public var errorAlert: ErrorAlert?
     public var isLoading: Bool = false
@@ -63,15 +64,21 @@ public final class RootViewModelImpl: RootViewModel {
 
     private let fetchAccounts: any FetchAccountsUseCase
     private let fetchConversations: any FetchConversationsUseCase
+    private let router: RootRouter
+    private let onClose: () -> Void
 
     public init(
         fetchAccounts: any FetchAccountsUseCase,
         fetchConversations: any FetchConversationsUseCase,
-        shareItem: ShareItem
+        shareItem: ShareItem,
+        router: RootRouter,
+        onClose: @escaping () -> Void
     ) {
         self.fetchAccounts = fetchAccounts
         self.fetchConversations = fetchConversations
         self.shareItem = shareItem
+        self.router = router
+        self.onClose = onClose
     }
 
     public func start() async {
@@ -111,6 +118,20 @@ public final class RootViewModelImpl: RootViewModel {
         }
     }
 
+    public func close() {
+        onClose()
+    }
+
+    public func selectConversation(_ conversation: Conversation) {
+        router.navigateTo(
+            ComposeMessageDestination(
+                account: selectedAccount!, // TODO: Make safe
+                conversation: conversation,
+                shareItem: shareItem
+            )
+        )
+    }
+
 }
 
 struct RootViewModelMock: RootViewModel {
@@ -144,4 +165,5 @@ struct RootViewModelMock: RootViewModel {
 
     func start() async {}
     func reloadConversations() {}
+    func close() {}
 }

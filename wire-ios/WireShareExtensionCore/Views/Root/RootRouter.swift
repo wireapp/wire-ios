@@ -19,26 +19,20 @@
 import Foundation
 import SwiftUI
 
-public enum ShareItemType: Hashable {
-    case image
-    case video
-    case file
-}
+@Observable
+@MainActor
+public final class RootRouter {
 
-public struct ShareItem: Identifiable, Hashable {
+    enum Destination: Hashable {
+        case home // TODO: Add associated type
+        case composeMessage(ComposeMessageDestination)
+    }
 
-    public let id: UUID
-    public let type: ShareItemType
-    public let fileName: String
+    var path: [Destination] = [.home]
 
-    public init(
-        id: UUID = UUID(),
-        type: ShareItemType,
-        fileName: String,
-    ) {
-        self.id = id
-        self.type = type
-        self.fileName = fileName
+    func navigateTo(_ destination: ComposeMessageDestination) {
+        precondition(path == [.home])
+        path.append(.composeMessage(destination))
     }
 
 }

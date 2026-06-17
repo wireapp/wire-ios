@@ -32,7 +32,9 @@ struct ComposeMessageView<
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Send") {
-                        viewModel.send()
+                        Task {
+                            await viewModel.send()
+                        }
                     }
                     .disabled(!viewModel.canSend)
                 }
@@ -132,6 +134,7 @@ struct ComposeMessageView<
     NavigationStack {
         ComposeMessageView(
             viewModel: ComposeMessageViewModelImpl(
+                account: .sam,
                 conversation: Conversation(
                     id: UUID(),
                     name: "Design Team"
@@ -140,7 +143,11 @@ struct ComposeMessageView<
                     type: .image,
                     fileName: "Screenshot.png",
                     thumbnailImage: Image(systemName: "photo")
-                )
+                ),
+                sendMessage: SendMessageUseCaseMock(),
+                onDone: {
+                    print("Message sent")
+                }
             )
         )
     }

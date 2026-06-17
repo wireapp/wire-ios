@@ -16,29 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 
-public enum ShareItemType: Hashable {
-    case image
-    case video
-    case file
+struct ComposeMessageDestination: Hashable {
+    let account: Account
+    let conversation: Conversation
+    let shareItem: ShareItem
 }
 
-public struct ShareItem: Identifiable, Hashable {
+struct ComposeMessageNode: View {
 
-    public let id: UUID
-    public let type: ShareItemType
-    public let fileName: String
+    let destination: ComposeMessageDestination
+    let onDone: () -> Void
 
-    public init(
-        id: UUID = UUID(),
-        type: ShareItemType,
-        fileName: String,
-    ) {
-        self.id = id
-        self.type = type
-        self.fileName = fileName
+    var body: some View {
+        ComposeMessageView(viewModel: makeViewModel())
     }
 
+    private func makeViewModel() -> ComposeMessageViewModelImpl {
+        ComposeMessageViewModelImpl(
+            account: destination.account,
+            conversation: destination.conversation,
+            shareItem: destination.shareItem,
+            sendMessage: SendMessageUseCaseMock(),
+            onDone: onDone
+        )
+    }
 }

@@ -19,11 +19,15 @@
 import SwiftUI
 
 public struct RootView<
-    ViewModel: RootViewModel
+    ViewModel: RootViewModel,
+    ComposeMessageView: View
 >: View {
 
     @State
     var viewModel: ViewModel
+
+    @ViewBuilder
+    let makeComposeMessageView: (Conversation) -> ComposeMessageView
 
     public var body: some View {
         NavigationStack {
@@ -32,19 +36,14 @@ public struct RootView<
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel", systemImage: "xmark") {
-                            print("Cancel")
+                        Button("Close", systemImage: "xmark") {
+                            viewModel.close()
                         }
                     }
                 }
                 .errorAlert($viewModel.errorAlert)
                 .navigationDestination(for: Conversation.self) { conversation in
-                    ComposeMessageView(
-                        viewModel: ComposeMessageViewModelImpl(
-                            conversation: conversation,
-                            shareItem: viewModel.shareItem
-                        )
-                    )
+                    makeComposeMessageView(conversation)
                 }
                 .task {
                     await viewModel.start()
@@ -60,20 +59,25 @@ public struct RootView<
     @ViewBuilder
     private var content: some View {
         Form {
-            Section {
-                Picker("Account", selection: $viewModel.selectedAccount) {
-                    ForEach(viewModel.accounts, id: \.self) { account in
-                        Text(account.name).tag(account)
+            if viewModel.accounts.count > 1 {
+                Section {
+                    Picker("Account", selection: $viewModel.selectedAccount) {
+                        ForEach(viewModel.accounts, id: \.self) { account in
+                            Text(account.name).tag(account)
+                        }
                     }
-                }
-                .onChange(of: viewModel.selectedAccount) { oldValue, newValue in
-                    guard oldValue != newValue else { return }
-                    viewModel.reloadConversations()
+                    .onChange(of: viewModel.selectedAccount) { oldValue, newValue in
+                        guard oldValue != newValue else { return }
+                        viewModel.reloadConversations()
+                    }
                 }
             }
 
             Section("Conversations") {
                 ForEach(viewModel.conversations, id: \.self) { conversation in
+                    ComposeMessageDestination(account: <#T##Account#>, conversation: <#T##Conversation#>, shareItem: <#T##ShareItem#>)
+
+
                     NavigationLink(value: conversation) {
                         Text(conversation.name)
                     }
@@ -101,6 +105,30 @@ public struct RootView<
     }
 }
 
+#Preview("Single account") {
+    RootView(
+        viewModel: RootViewModelMock(
+            accounts: [
+                .sam,
+            ],
+            conversations: [
+                Conversation(name: "🍏 iOS Team"),
+                Conversation(name: "[iOS] Discipline rituals"),
+                Conversation(name: "🚨 Security Channel"),
+                Conversation(name: "[iOS] Beta feedbacks]"),
+                Conversation(name: "[iOS] developers developers developers")
+            ],
+            shareItem: ShareItem(
+                type: .image,
+                fileName: "Screenshot.png"
+            )
+        ),
+        makeComposeMessageView: { _ in
+            Color.red
+        }
+    )
+}
+
 #Preview("View") {
     RootView(
         viewModel: RootViewModelMock(
@@ -119,7 +147,10 @@ public struct RootView<
                 type: .image,
                 fileName: "Screenshot.png"
             )
-        )
+        ),
+        makeComposeMessageView: { _ in
+            Color.red
+        }
     )
 }
 
@@ -131,7 +162,13 @@ public struct RootView<
             shareItem: ShareItem(
                 type: .image,
                 fileName: "Screenshot.png"
-            )
-        )
+            ),
+            onClose: {
+                print("Close")
+            }
+        ),
+        makeComposeMessageView: { _ in
+            Color.red
+        }
     )
 }
