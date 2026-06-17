@@ -16,6 +16,7 @@
 //
 
 public import SwiftUI
+import WireDesign
 
 // MARK: - Model
 
@@ -43,6 +44,7 @@ public struct ConversationSummary: Identifiable {
 
 public struct CatchUpView: View {
 
+    @Environment(\.wireAccentColor) private var accentColor
     @State private var summaries: [ConversationSummary]
 
     public init(summaries: [ConversationSummary] = ConversationSummary.mocks) {
@@ -90,7 +92,7 @@ public struct CatchUpView: View {
                             } label: {
                                 Label("Mark as Read", systemImage: "checkmark.circle")
                             }
-                            .tint(.green)
+                            .tint(Color(accentColor))
                         }
                 }
             } header: {
@@ -98,7 +100,7 @@ public struct CatchUpView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .textCase(nil)
-                    .padding(.bottom, 4)
+                    .padding(.bottom)
             }
         }
         .listStyle(.plain)
