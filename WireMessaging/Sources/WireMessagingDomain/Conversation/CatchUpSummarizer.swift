@@ -25,11 +25,16 @@ public struct CatchUpSummarizer {
 
     // MARK: - Mock data
 
-    public static let mockMessages: [String] = [
+    /// Recent messages that were already read — passed as `context:` to give the model background.
+    public static let mockContextMessages: [String] = [
         "Alice: Hey team, just a heads up — the server deployment is scheduled for Friday at 10pm.",
         "Bob: Sounds good. Will there be a maintenance window?",
         "Alice: Yes, about 30 minutes. We'll post updates in #status.",
-        "Carol: I'll make sure the on-call rotation is aware.",
+        "Carol: I'll make sure the on-call rotation is aware."
+    ]
+
+    /// New (unread) messages — passed as `messages:` to be summarized.
+    public static let mockMessages: [String] = [
         "Bob: Also, the iOS build broke this morning. Looks like a dependency issue with the new SDK.",
         "Dave: I looked into it — it's the FoundationModels import on older OS versions. Fixed in branch fix/foundation-models-import.",
         "Bob: Nice, I'll review that PR after standup.",
@@ -38,6 +43,12 @@ public struct CatchUpSummarizer {
         "Dave: Also — anyone looked at the new design specs for the catch-up feature?",
         "Bob: Yep, left some comments in Figma. The summary card looks great.",
         "Alice: Let's aim to demo it at the hackathon on Friday!"
+    ]
+
+    /// Trivial messages — exercises the short-transcript fallback (no model call).
+    public static let mockTrivialMessages: [String] = [
+        "Alice: Hi!",
+        "Bob: Hey, how's it going?"
     ]
 
     // MARK: - Constants
@@ -150,6 +161,26 @@ public struct CatchUpSummarizer {
 @available(iOS 26.0, *)
 #Playground {
     let summarizer = CatchUpSummarizer()
-    let summary = try await summarizer.summarize(messages: CatchUpSummarizer.mockMessages)
+
+    // Full flow: new messages + prior context (mirrors what CatchUpViewModel passes).
+    print("=== With context ===")
+    let summary = try await summarizer.summarize(
+        messages: CatchUpSummarizer.mockMessages,
+        context: CatchUpSummarizer.mockContextMessages
+    )
     print(summary)
+
+    // No context: should still produce a reasonable summary.
+    print("\n=== Without context ===")
+    let summaryNoContext = try await summarizer.summarize(
+        messages: CatchUpSummarizer.mockMessages
+    )
+    print(summaryNoContext)
+
+    // Trivial messages: should fall back to paraphrase without calling the model.
+    print("\n=== Trivial (paraphrase fallback) ===")
+    let trivial = try await summarizer.summarize(
+        messages: CatchUpSummarizer.mockTrivialMessages
+    )
+    print(trivial)
 }
