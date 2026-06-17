@@ -18,23 +18,25 @@
 
 import Foundation
 
-public struct Account: Hashable {
+public protocol SendMessageUseCase {
 
-    public let id: UUID
-    public let name: String
+    /// Send a message in a conversation.
+    func callAsFunction(
+        _ message: Message,
+        for account: Account,
+        in conversation: Conversation
+    ) async throws
 
-    public init(
-        id: UUID = UUID(),
-        name: String
-    ) {
-        self.id = id
-        self.name = name
-    }
 }
 
-extension Account {
+struct SendMessageUseCaseMock: SendMessageUseCase {
 
-    static let sam = Account(name: "Sam")
-    static let john = Account(name: "John")
+    func callAsFunction(
+        _ message: Message,
+        for account: Account,
+        in conversation: Conversation
+    ) async throws {
+        try await Task.sleep(for: .seconds(3))
+    }
 
 }

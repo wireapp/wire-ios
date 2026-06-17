@@ -23,13 +23,17 @@ import SwiftUI
 public protocol RootViewModel {
 
     var accounts: [Account] { get }
-    var selectedAccount: Account { get set }
+    var selectedAccount: Account? { get set }
 
     var searchQuery: String { get set }
     var conversations: [Conversation] { get }
     var shareItem: ShareItem { get }
 
     var isLoading: Bool { get }
+    var errorAlert: ErrorAlert? { get set }
+
+    func start() async
+    func reloadConversations()
 
 }
 
@@ -37,14 +41,16 @@ public protocol RootViewModel {
 @MainActor
 public final class RootViewModelImpl: RootViewModel {
 
-    public var accounts: [Account]
-    public var selectedAccount: Account
+    public var accounts: [Account] = []
+    public var selectedAccount: Account?
+
     public var searchQuery: String = ""
     public let shareItem: ShareItem
+
+    public var errorAlert: ErrorAlert?
     public var isLoading: Bool = false
 
-    private let allConversations: [Conversation]
-
+    private var allConversations: [Conversation] = []
     public var conversations: [Conversation] {
         if searchQuery.isEmpty {
             return allConversations
@@ -55,15 +61,54 @@ public final class RootViewModelImpl: RootViewModel {
         }
     }
 
+    private let fetchAccounts: any FetchAccountsUseCase
+    private let fetchConversations: any FetchConversationsUseCase
+
     public init(
-        accounts: [Account],
-        conversations: [Conversation],
+        fetchAccounts: any FetchAccountsUseCase,
+        fetchConversations: any FetchConversationsUseCase,
         shareItem: ShareItem
     ) {
-        self.accounts = accounts
-        self.selectedAccount = accounts[0]
-        self.allConversations = conversations
+        self.fetchAccounts = fetchAccounts
+        self.fetchConversations = fetchConversations
         self.shareItem = shareItem
+    }
+
+    public func start() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        let fetchAccountsTask = Task.detached { [self] in
+            try await fetchAccounts()
+        }
+
+        do {
+            accounts = try await fetchAccountsTask.value
+            selectedAccount = accounts.first
+        } catch {
+            errorAlert = .debug(message: "failed to fetch accounts: \(error)")
+        }
+    }
+
+    public func reloadConversations() {
+        Task {
+            await internalReloadConversations()
+        }
+    }
+
+    private func internalReloadConversations() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        let fetchConversationsTask = Task.detached { [self] in
+            try await fetchConversations(for: selectedAccount!)
+        }
+
+        do {
+            allConversations = try await fetchConversationsTask.value
+        } catch {
+            errorAlert = .debug(message: "failed to fetch conversations: \(error)")
+        }
     }
 
 }
@@ -71,11 +116,13 @@ public final class RootViewModelImpl: RootViewModel {
 struct RootViewModelMock: RootViewModel {
 
     var accounts: [Account]
-    var selectedAccount: Account
+    var selectedAccount: Account?
     var searchQuery: String
     var conversations: [Conversation]
     var shareItem: ShareItem
+
     var isLoading: Bool
+    var errorAlert: ErrorAlert?
 
     init(
         accounts: [Account],
@@ -83,14 +130,18 @@ struct RootViewModelMock: RootViewModel {
         searchQuery: String = "",
         conversations: [Conversation],
         shareItem: ShareItem,
-        isLoading: Bool = false
+        isLoading: Bool = false,
+        errorAlert: ErrorAlert? = nil
     ) {
         self.accounts = accounts
-        self.selectedAccount = selectedAccount ?? accounts[0]
+        self.selectedAccount = selectedAccount ?? accounts.first
         self.searchQuery = searchQuery
         self.conversations = conversations
         self.shareItem = shareItem
         self.isLoading = isLoading
+        self.errorAlert = errorAlert
     }
 
+    func start() async {}
+    func reloadConversations() {}
 }

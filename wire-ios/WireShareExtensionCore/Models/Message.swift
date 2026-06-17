@@ -18,23 +18,17 @@
 
 import Foundation
 
-public struct Account: Hashable {
+public struct Message {
 
-    public let id: UUID
-    public let name: String
+    public let text: String?
+    public let shareItem: ShareItem
 
     public init(
-        id: UUID = UUID(),
-        name: String
+        text: String?,
+        shareItem: ShareItem
     ) {
-        self.id = id
-        self.name = name
+        self.text = text
+        self.shareItem = shareItem
     }
-}
-
-extension Account {
-
-    static let sam = Account(name: "Sam")
-    static let john = Account(name: "John")
 
 }

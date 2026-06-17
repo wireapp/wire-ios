@@ -18,44 +18,57 @@
 
 import SwiftUI
 
-public struct RootView: View {
+public struct RootView<
+    ViewModel: RootViewModel
+>: View {
 
-    @Bindable var viewModel: RootViewModelImpl
-
-    public init(viewModel: RootViewModelImpl) {
-        self.viewModel = viewModel
-    }
+    @State
+    var viewModel: ViewModel
 
     public var body: some View {
         NavigationStack {
-            form.navigationDestination(for: Conversation.self) { conversation in
-                ComposeMessageView(
-                    viewModel: ComposeMessageViewModelImpl(
-                        conversation: conversation,
-                        shareItem: viewModel.shareItem
-                    )
-                )
-            }
-            .navigationTitle("Send to")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", systemImage: "xmark") {
-                        print("Cancel")
+            content
+                .navigationTitle("Send to")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel", systemImage: "xmark") {
+                            print("Cancel")
+                        }
                     }
                 }
-            }
+                .errorAlert($viewModel.errorAlert)
+                .navigationDestination(for: Conversation.self) { conversation in
+                    ComposeMessageView(
+                        viewModel: ComposeMessageViewModelImpl(
+                            conversation: conversation,
+                            shareItem: viewModel.shareItem
+                        )
+                    )
+                }
+                .task {
+                    await viewModel.start()
+                }
+                .overlay {
+                    if viewModel.isLoading {
+                        loadingIndicator
+                    }
+                }
         }
     }
 
     @ViewBuilder
-    private var form: some View {
+    private var content: some View {
         Form {
             Section {
                 Picker("Account", selection: $viewModel.selectedAccount) {
                     ForEach(viewModel.accounts, id: \.self) { account in
-                        Text(account.name)
+                        Text(account.name).tag(account)
                     }
+                }
+                .onChange(of: viewModel.selectedAccount) { oldValue, newValue in
+                    guard oldValue != newValue else { return }
+                    viewModel.reloadConversations()
                 }
             }
 
@@ -72,14 +85,28 @@ public struct RootView: View {
             prompt: "Search conversations"
         )
     }
+
+    private var loadingIndicator: some View {
+        ZStack {
+            Color.black.opacity(0.2)
+                .ignoresSafeArea()
+
+            ProgressView()
+                .progressViewStyle(.circular)
+                .scaleEffect(1.2)
+                .padding()
+                .background(.regularMaterial)
+                .cornerRadius(12)
+        }
+    }
 }
 
-#Preview {
+#Preview("View") {
     RootView(
-        viewModel: RootViewModelImpl(
+        viewModel: RootViewModelMock(
             accounts: [
-                Account(name: "Sam"),
-                Account(name: "John")
+                .sam,
+                .john
             ],
             conversations: [
                 Conversation(name: "🍏 iOS Team"),
@@ -88,6 +115,19 @@ public struct RootView: View {
                 Conversation(name: "[iOS] Beta feedbacks]"),
                 Conversation(name: "[iOS] developers developers developers")
             ],
+            shareItem: ShareItem(
+                type: .image,
+                fileName: "Screenshot.png"
+            )
+        )
+    )
+}
+
+#Preview("Model") {
+    RootView(
+        viewModel: RootViewModelImpl(
+            fetchAccounts: FetchAccountsUseCaseMock(),
+            fetchConversations: FetchConversationsUseCaseMock(),
             shareItem: ShareItem(
                 type: .image,
                 fileName: "Screenshot.png"

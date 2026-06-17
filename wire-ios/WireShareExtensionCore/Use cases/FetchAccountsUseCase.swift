@@ -18,23 +18,21 @@
 
 import Foundation
 
-public struct Account: Hashable {
+public protocol FetchAccountsUseCase {
 
-    public let id: UUID
-    public let name: String
+    /// Fetch the known accounts on this device.
+    func callAsFunction() async throws -> [Account]
 
-    public init(
-        id: UUID = UUID(),
-        name: String
-    ) {
-        self.id = id
-        self.name = name
-    }
 }
 
-extension Account {
+struct FetchAccountsUseCaseMock: FetchAccountsUseCase {
 
-    static let sam = Account(name: "Sam")
-    static let john = Account(name: "John")
+    func callAsFunction() async throws -> [Account] {
+        try await Task.sleep(
+            for: .milliseconds((500...1000).randomElement()!)
+        )
+
+        return [.sam, .john]
+    }
 
 }
