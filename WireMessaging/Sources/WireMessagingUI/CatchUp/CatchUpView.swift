@@ -78,21 +78,22 @@ public struct CatchUpView: View {
     // MARK: - List
 
     private var summaryList: some View {
-        List {
-            Section {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(verbatim: subtitle)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-            }
-            .listRowBackground(Color.clear)
+                    .padding(.horizontal)
+                    .padding(.vertical, 12)
 
-            ForEach(summaries) { summary in
-                ConversationSummaryRow(summary: summary)
+                Divider()
+
+                ForEach(summaries) { summary in
+                    ConversationSummaryRow(summary: summary)
+                    Divider()
+                }
             }
         }
-#if os(iOS)
-        .listStyle(.insetGrouped)
-#endif
     }
 
     private var subtitle: String {
@@ -120,20 +121,21 @@ private struct ConversationSummaryRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack {
+            HStack(alignment: .firstTextBaseline) {
                 Text(verbatim: summary.conversationName)
                     .font(.headline)
                 Spacer()
                 Text(verbatim: "\(summary.missedCount) missed")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.tertiary)
             }
             Text(verbatim: summary.summary)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-                .lineLimit(3)
+                .lineLimit(4)
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal)
+        .padding(.vertical, 14)
     }
 }
 
