@@ -1,0 +1,296 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+
+final class CallingManager {
+
+    private let client: CallingServiceClient
+
+    init(client: CallingServiceClient) {
+        self.client = client
+    }
+
+    func acceptNextCalls(
+        instanceIds: [String],
+        conversationId: String
+    ) async throws -> [String: CallResponse] {
+        try await acceptNextCalls(
+            instanceIds: instanceIds,
+            conversationId: conversationId,
+            acceptsVideoCall: false
+        )
+    }
+
+    func acceptNextVideoCalls(
+        instanceIds: [String],
+        conversationId: String
+    ) async throws -> [String: CallResponse] {
+        try await acceptNextCalls(
+            instanceIds: instanceIds,
+            conversationId: conversationId,
+            acceptsVideoCall: true
+        )
+    }
+
+    func waitForCurrentCallStatus(
+        instanceId: String,
+        expectedStatuses: Set<String>,
+        timeout: TimeInterval
+    ) async throws {
+        let deadline = Date().addingTimeInterval(timeout)
+        var currentStatus: String?
+        var currentCallId: String?
+
+        repeat {
+            if let call = try? await client.getCurrentCall(instanceId: instanceId),
+               let callId = try? requireCallId(call) {
+                currentCallId = callId
+
+                let currentCall = try await client.getCall(instanceId: instanceId, callId: callId)
+                currentStatus = currentCall.status
+                if expectedStatuses.containsStatus(currentStatus) {
+                    return
+                }
+            }
+
+            try await Task.sleep(for: .seconds(1))
+        } while Date() < deadline
+
+        throw RuntimeError(
+            "CallingService current call status \(currentStatus ?? "nil") for \(instanceId)/\(currentCallId ?? "nil") did not become \(expectedStatuses.sorted())"
+        )
+    }
+
+    func waitForCallStatus(
+        instanceId: String,
+        callId: String,
+        expectedStatuses: Set<String>,
+        timeout: TimeInterval
+    ) async throws {
+        let deadline = Date().addingTimeInterval(timeout)
+        var currentStatus: String?
+
+        repeat {
+            let call = try await client.getCall(instanceId: instanceId, callId: callId)
+            currentStatus = call.status
+            if expectedStatuses.containsStatus(currentStatus) {
+                return
+            }
+            try await Task.sleep(for: .seconds(1))
+        } while Date() < deadline
+
+        throw RuntimeError(
+            "CallingService call status \(currentStatus ?? "nil") for \(instanceId)/\(callId) did not become \(expectedStatuses.sorted())"
+        )
+    }
+
+    func switchVideoOn(instanceId: String) async throws -> CallResponse {
+        let callId = try await requireCurrentCallId(instanceId: instanceId)
+        return try await client.switchVideoOn(instanceId: instanceId, callId: callId)
+    }
+
+    func switchVideoOff(instanceId: String) async throws -> CallResponse {
+        let callId = try await requireCurrentCallId(instanceId: instanceId)
+        return try await client.switchVideoOff(instanceId: instanceId, callId: callId)
+    }
+
+    func verifyPeerConnections(
+        instanceIds: [String],
+        expectedCount: Int,
+        timeout: TimeInterval = 20
+    ) async throws {
+        for instanceId in instanceIds {
+            let deadline = Date().addingTimeInterval(timeout)
+            var flows: [CallFlow] = []
+
+            repeat {
+                flows = try await client.getFlows(instanceId: instanceId)
+                if flows.count == expectedCount {
+                    break
+                }
+                try await Task.sleep(for: .seconds(1))
+            } while Date() < deadline
+
+            guard flows.count == expectedCount else {
+                throw RuntimeError(
+                    "CallingService expected \(expectedCount) peer connections for \(instanceId), got \(flows.count)"
+                )
+            }
+        }
+    }
+
+    func verifySendAndReceiveAudio(instanceIds: [String]) async throws {
+        try await verifyPositiveFlowChange(
+            instanceIds: instanceIds,
+            checkAudioSent: true,
+            checkAudioReceived: true,
+            checkVideoSent: false,
+            checkVideoReceived: false
+        )
+    }
+
+    func verifySendAndReceiveAudioAndVideo(instanceIds: [String]) async throws {
+        try await verifyPositiveFlowChange(
+            instanceIds: instanceIds,
+            checkAudioSent: true,
+            checkAudioReceived: true,
+            checkVideoSent: true,
+            checkVideoReceived: true
+        )
+    }
+
+    func verifyReceiveAudioAndVideo(instanceIds: [String]) async throws {
+        try await verifyPositiveFlowChange(
+            instanceIds: instanceIds,
+            checkAudioSent: false,
+            checkAudioReceived: true,
+            checkVideoSent: false,
+            checkVideoReceived: true,
+            timeout: 30
+        )
+    }
+
+    private func acceptNextCalls(
+        instanceIds: [String],
+        conversationId: String,
+        acceptsVideoCall: Bool
+    ) async throws -> [String: CallResponse] {
+        precondition(!instanceIds.isEmpty, "No instance IDs provided")
+
+        return try await withThrowingTaskGroup(of: (String, CallResponse).self) { group in
+            for instanceId in instanceIds {
+                group.addTask {
+                    let request = CallRequest(
+                        conversationId: conversationId,
+                        timeout: CallingServiceClient.Constants.CALLING_RESPONSE_TIMEOUT
+                    )
+                    let response = if acceptsVideoCall {
+                        try await self.client.acceptNextVideo(instanceId: instanceId, request: request)
+                    } else {
+                        try await self.client.acceptNext(instanceId: instanceId, request: request)
+                    }
+                    return (instanceId, response)
+                }
+            }
+
+            var results: [String: CallResponse] = [:]
+            for try await (id, response) in group {
+                results[id] = response
+            }
+            return results
+        }
+    }
+
+    private func verifyPositiveFlowChange(
+        instanceIds: [String],
+        checkAudioSent: Bool,
+        checkAudioReceived: Bool,
+        checkVideoSent: Bool,
+        checkVideoReceived: Bool,
+        timeout: TimeInterval = 15
+    ) async throws {
+        for instanceId in instanceIds {
+            let flowsBefore = try await waitForFlows(instanceId: instanceId)
+
+            for flowBefore in flowsBefore {
+                try await assertPositiveFlowChange(
+                    instanceId: instanceId,
+                    flowBefore: flowBefore,
+                    checkAudioSent: checkAudioSent,
+                    checkAudioReceived: checkAudioReceived,
+                    checkVideoSent: checkVideoSent,
+                    checkVideoReceived: checkVideoReceived,
+                    timeout: timeout
+                )
+            }
+        }
+    }
+
+    private func waitForFlows(
+        instanceId: String,
+        minimumCount: Int = 1,
+        timeout: TimeInterval = 40
+    ) async throws -> [CallFlow] {
+        let deadline = Date().addingTimeInterval(timeout)
+        var flows: [CallFlow] = []
+
+        repeat {
+            flows = try await client.getFlows(instanceId: instanceId)
+            if flows.count >= minimumCount {
+                return flows
+            }
+            try await Task.sleep(for: .seconds(1))
+        } while Date() < deadline
+
+        throw RuntimeError(
+            "CallingService found \(flows.count) flows for \(instanceId), expected at least \(minimumCount)"
+        )
+    }
+
+    private func requireCurrentCallId(instanceId: String) async throws -> String {
+        let call = try await client.getCurrentCall(instanceId: instanceId)
+        return try requireCallId(call)
+    }
+
+    private func requireCallId(_ call: CallResponse) throws -> String {
+        guard let callId = call.id, !callId.isEmpty else {
+            throw RuntimeError("CallingService call id is nil or empty")
+        }
+        return callId
+    }
+
+    private func assertPositiveFlowChange(
+        instanceId: String,
+        flowBefore: CallFlow,
+        checkAudioSent: Bool,
+        checkAudioReceived: Bool,
+        checkVideoSent: Bool,
+        checkVideoReceived: Bool,
+        timeout: TimeInterval
+    ) async throws {
+        let deadline = Date().addingTimeInterval(timeout)
+        var flowAfter: CallFlow?
+
+        repeat {
+            flowAfter = try await client.getFlows(instanceId: instanceId)
+                .first { $0.remoteUserId == flowBefore.remoteUserId }
+
+            if let flowAfter,
+               !checkAudioSent || flowAfter.audioPacketsSent > flowBefore.audioPacketsSent,
+               !checkAudioReceived || flowAfter.audioPacketsReceived > flowBefore.audioPacketsReceived,
+               !checkVideoSent || flowAfter.videoPacketsSent > flowBefore.videoPacketsSent,
+               !checkVideoReceived || flowAfter.videoPacketsReceived > flowBefore.videoPacketsReceived {
+                return
+            }
+
+            try await Task.sleep(for: .seconds(1))
+        } while Date() < deadline
+
+        throw RuntimeError(
+            "CallingService no positive flow change for \(instanceId). Before: \(flowBefore). After: \(String(describing: flowAfter))"
+        )
+    }
+}
+
+private extension Set<String> {
+    func containsStatus(_ status: String?) -> Bool {
+        guard let status else { return false }
+        return contains { $0.caseInsensitiveCompare(status) == .orderedSame }
+    }
+}

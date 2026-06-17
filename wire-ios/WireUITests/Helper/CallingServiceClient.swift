@@ -318,6 +318,21 @@ final class CallingServiceClient {
         return try JSONDecoder().decode(CallResponse.self, from: data)
     }
 
+    private func performFlowsGet(instanceId: String) async throws -> [CallFlow] {
+        let endpoint = instanceEndpoint(instanceId: instanceId, path: "flows")
+        let (data, code) = try await sendHttpRequest(
+            endpoint: endpoint,
+            body: CallingServiceEmptyBody?.none,
+            method: .get
+        )
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "CallingService failed to get flows for \(instanceId): HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+        return try JSONDecoder().decode([CallFlow].self, from: data)
+    }
+
     func start(instanceId: String, request: StartCallBody) async throws -> CallResponse {
         try await performCall(instanceId: instanceId, path: "/call/start", request: request)
     }
@@ -328,6 +343,10 @@ final class CallingServiceClient {
 
     func acceptNext(instanceId: String, request: CallRequest) async throws -> CallResponse {
         try await performCall(instanceId: instanceId, path: "/call/acceptNext", request: request)
+    }
+
+    func acceptNextVideo(instanceId: String, request: CallRequest) async throws -> CallResponse {
+        try await performCall(instanceId: instanceId, path: "/call/acceptNextVideo", request: request)
     }
 
     func startCall(
@@ -352,30 +371,68 @@ final class CallingServiceClient {
         return try await startVideo(instanceId: instanceId, request: request)
     }
 
-    func acceptNextCalls(
-        instanceIds: [String],
-        conversationId: String
-    ) async throws -> [String: CallResponse] {
-        precondition(!instanceIds.isEmpty, "No instance IDs provided")
+    func getCall(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallGet(instanceId: instanceId, path: "/call/\(callId)/status")
+    }
 
-        return try await withThrowingTaskGroup(of: (String, CallResponse).self) { group in
-            for instanceId in instanceIds {
-                group.addTask {
-                    let request = CallRequest(
-                        conversationId: conversationId,
-                        timeout: Constants.CALLING_RESPONSE_TIMEOUT
-                    )
-                    let response = try await self.acceptNext(instanceId: instanceId, request: request)
-                    return (instanceId, response)
-                }
-            }
-
-            var results: [String: CallResponse] = [:]
-            for try await (id, response) in group {
-                results[id] = response
-            }
-            return results
+    func getCurrentCall(instanceId: String) async throws -> CallResponse {
+        let instance = try await getInstanceStatus(instanceIds: [instanceId]).first
+        guard let call = instance?.currentCall else {
+            throw RuntimeError("CallingService currentCall is nil for \(instanceId)")
         }
+        return call
+    }
+
+    func stopCall(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/stop")
+    }
+
+    func declineCall(instanceId: String, conversationId: String) async throws -> CallResponse {
+        let request = CallRequest(
+            conversationId: conversationId,
+            timeout: Constants.CALLING_RESPONSE_TIMEOUT
+        )
+        return try await performCall(instanceId: instanceId, path: "/call/decline", request: request)
+    }
+
+    func switchVideoOn(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchVideoOn")
+    }
+
+    func switchVideoOff(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchVideoOff")
+    }
+
+    func pauseVideoCall(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/pauseVideoCall")
+    }
+
+    func unpauseVideoCall(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/unpauseVideoCall")
+    }
+
+    func switchScreensharingOn(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchScreensharingOn")
+    }
+
+    func switchScreensharingOff(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchScreensharingOff")
+    }
+
+    func muteMicrophone(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/mute")
+    }
+
+    func unmuteMicrophone(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/unmute")
+    }
+
+    func maximiseCall(instanceId: String, callId: String) async throws -> CallResponse {
+        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/maximiseVideoCall")
+    }
+
+    func getFlows(instanceId: String) async throws -> [CallFlow] {
+        try await performFlowsGet(instanceId: instanceId).filter(\.isValid)
     }
 }
 
@@ -387,6 +444,7 @@ struct InstanceType: Encodable {
 struct CallingServiceInstance: Decodable {
     let id: String
     let instanceStatus: String?
+    let currentCall: CallResponse?
 }
 
 struct CreateInstanceBody: Encodable {
@@ -411,4 +469,20 @@ struct CallingServiceEmptyBody: Encodable {}
 struct CallResponse: Decodable {
     let id: String?
     let status: String?
+}
+
+struct CallFlow: Decodable, Equatable {
+    let audioPacketsReceived: Int
+    let audioPacketsSent: Int
+    let videoPacketsReceived: Int
+    let videoPacketsSent: Int
+    let remoteUserId: String
+
+    var isValid: Bool {
+        audioPacketsReceived != -1 ||
+            audioPacketsSent != -1 ||
+            videoPacketsReceived != -1 ||
+            videoPacketsSent != -1 ||
+            !remoteUserId.isEmpty
+    }
 }

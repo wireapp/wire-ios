@@ -37,6 +37,41 @@ class OngoingCallPage: PageModel {
         app.buttons[Locators.OngoingCallPage.minimizeCall.rawValue]
     }
 
+    var callVideoButton: XCUIElement {
+        app.buttons["CallVideoButton"].firstMatch
+    }
+
+    var turnOnCameraButton: XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Turn on camera")).firstMatch
+    }
+
+    var turnOffCameraButton: XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Turn off camera")).firstMatch
+    }
+
+    var flipCameraButton: XCUIElement {
+        app.buttons["CallFlipCameraButton"].firstMatch
+    }
+
+    func videoView(for participantName: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            NSPredicate(
+                format: """
+                (identifier BEGINSWITH %@ OR label CONTAINS[c] %@) AND
+                (identifier CONTAINS[c] %@ OR label CONTAINS[c] %@) AND
+                (identifier CONTAINS[c] %@ OR identifier CONTAINS[c] %@ OR label CONTAINS[c] %@)
+                """,
+                "videoView",
+                participantName,
+                participantName,
+                participantName,
+                "minimized",
+                "maximized",
+                "Camera on"
+            )
+        ).firstMatch
+    }
+
     private func tapEndCallButton() {
         endCallButton.tap()
     }
@@ -54,5 +89,29 @@ class OngoingCallPage: PageModel {
     func minimizeCallUI() throws -> ActiveConversationPage {
         minimizeCallButton.tap()
         return try ActiveConversationPage()
+    }
+
+    @discardableResult
+    func turnOnVideo() throws -> OngoingCallPage {
+        if turnOnCameraButton.waitAndTap(timeout: 5) {
+            app.dismissAllowIfPresent(timeout: 2)
+            return self
+        }
+
+        XCTAssertTrue(callVideoButton.waitAndTap(timeout: 5), "Call video button is not visible")
+        app.dismissAllowIfPresent(timeout: 2)
+        return self
+    }
+
+    @discardableResult
+    func flipCamera() throws -> OngoingCallPage {
+        XCTAssertTrue(flipCameraButton.waitAndTap(timeout: 5), "Flip camera button is not visible")
+        return self
+    }
+
+    @discardableResult
+    func turnOffVideo() throws -> OngoingCallPage {
+        XCTAssertTrue(turnOffCameraButton.waitAndTap(timeout: 5), "Turn off camera button is not visible")
+        return self
     }
 }

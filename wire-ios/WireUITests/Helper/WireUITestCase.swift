@@ -29,6 +29,7 @@ class WireUITestCase: XCTestCase {
     var ssoHelper: SSOHelper!
     let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
+    var callingManager: CallingManager!
     var uiTestConfig = UITestConfig()
     private var notificationPermissionMonitor: NSObjectProtocol?
 
@@ -38,6 +39,7 @@ class WireUITestCase: XCTestCase {
         XCUIApplication().dismissAllowIfPresent()
         XCUIApplication().terminate()
         callingServiceClient = try CallingServiceClient()
+        callingManager = CallingManager(client: callingServiceClient)
         registerNotificationPermissionMonitor()
         uiTestConfig.useTripleTapForShakeGesture = true
         uiTestConfig.useMockAudioRecorder = true
