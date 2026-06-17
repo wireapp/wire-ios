@@ -83,6 +83,10 @@ public struct User: Equatable, Sendable {
 
     public let legalholdStatus: LegalholdStatus
 
+    /// The custom text status of the user
+
+    public let textStatus: String?
+
     // MARK: -
 
     public init(
@@ -99,7 +103,8 @@ public struct User: Equatable, Sendable {
         app: AppInfo?,
         service: Service?,
         supportedProtocols: Set<MessageProtocol>?,
-        legalholdStatus: LegalholdStatus
+        legalholdStatus: LegalholdStatus,
+        textStatus: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -115,6 +120,7 @@ public struct User: Equatable, Sendable {
         self.service = service
         self.supportedProtocols = supportedProtocols
         self.legalholdStatus = legalholdStatus
+        self.textStatus = textStatus
     }
 
 }

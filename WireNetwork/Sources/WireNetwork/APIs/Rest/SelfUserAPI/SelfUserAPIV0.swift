@@ -86,6 +86,22 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    func updateTextStatus(_ textStatus: String) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(
+            UpdateTextStatusRequestBodyV0(textStatus: textStatus)
+        )
+
+        let request = try URLRequestBuilder(path: resourcePath)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        return try ResponseParser()
+            .success(code: .ok)
+            .parse(code: response.statusCode, data: data)
+    }
+
     func updateHandle(handle: String) async throws {
         let body = try JSONEncoder.defaultEncoder.encode(
             UpdateHandleRequestBodyV0(handle: handle)
@@ -122,6 +138,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
     let teamID: UUID?
+    let textStatus: String?
 
     enum CodingKeys: String, CodingKey {
         case accentID = "accent_id"
@@ -134,6 +151,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
         case service
         case ssoID = "sso_id"
         case teamID = "team"
+        case textStatus = "text_status"
     }
 
     func toAPIModel() -> SelfUser {
@@ -153,7 +171,8 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
             expiresAt: expiresAt?.date,
             app: nil, // introduced with API v15
             service: service?.toAPIModel(),
-            supportedProtocols: [.proteus] /// default to Proteus for api versions < v5
+            supportedProtocols: [.proteus], /// default to Proteus for api versions < v5
+            textStatus: textStatus
         )
     }
 }
@@ -198,6 +217,13 @@ private struct DeleteSelfRequestBodyV0: Encodable {
 
 private struct UpdateHandleRequestBodyV0: Encodable {
     var handle: String
+}
+
+private struct UpdateTextStatusRequestBodyV0: Encodable {
+    let textStatus: String
+    enum CodingKeys: String, CodingKey {
+        case textStatus = "text_status"
+    }
 }
 
 private struct DeleteTeamRequestBodyV0: Encodable {

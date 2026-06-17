@@ -96,6 +96,7 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
     let service: ServiceResponseV0?
     let supportedProtocols: Set<MessageProtocolV0>?
     let legalholdStatus: LegalholdStatusV0
+    let textStatus: String?
 
     enum CodingKeys: String, CodingKey {
 
@@ -111,6 +112,7 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
         case service
         case supportedProtocols = "supported_protocols"
         case legalholdStatus = "legalhold_status"
+        case textStatus = "text_status"
 
     }
 
@@ -130,7 +132,8 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
             app: nil,
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
-            legalholdStatus: legalholdStatus.toAPIModel()
+            legalholdStatus: legalholdStatus.toAPIModel(),
+            textStatus: textStatus
         )
     }
 

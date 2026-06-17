@@ -36,4 +36,5 @@ public struct NewUserInfo: Equatable, Sendable {
     let serviceID: UUID?
     let serviceProvider: UUID?
     let supportedProtocols: Set<WireDataModel.MessageProtocol>?
+    let textStatus: String?
 }

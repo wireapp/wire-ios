@@ -54,6 +54,9 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 /// The "@name" handle
 @property (nonatomic, readonly, nullable) NSString *handle;
 
+/// The custom text status
+@property (nonatomic, nullable) NSString *textStatus;
+
 ///// Is YES if we can send a connection request to this user.
 @property (nonatomic, readonly) BOOL canBeConnected;
 

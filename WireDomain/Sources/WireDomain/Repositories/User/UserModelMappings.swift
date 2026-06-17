@@ -165,7 +165,8 @@ extension WireNetwork.User {
             appCategory: app?.category,
             serviceID: service?.id,
             serviceProvider: service?.provider,
-            supportedProtocols: supportedProtocols?.toDomainModel()
+            supportedProtocols: supportedProtocols?.toDomainModel(),
+            textStatus: textStatus
         )
 
     }
@@ -195,7 +196,8 @@ extension WireNetwork.SelfUser {
             appCategory: app?.category,
             serviceID: service?.id,
             serviceProvider: service?.provider,
-            supportedProtocols: supportedProtocols?.toDomainModel()
+            supportedProtocols: supportedProtocols?.toDomainModel(),
+            textStatus: textStatus
         )
     }
 

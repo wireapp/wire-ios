@@ -88,4 +88,8 @@ public struct SelfUser: Equatable, Sendable {
 
     public let supportedProtocols: Set<MessageProtocol>?
 
+    /// The custom text status of the self user
+
+    public let textStatus: String?
+
 }

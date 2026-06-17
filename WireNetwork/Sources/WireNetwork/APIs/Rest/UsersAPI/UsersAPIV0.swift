@@ -85,6 +85,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let expiresAt: UTCTime?
     let service: ServiceResponseV0?
     let legalholdStatus: LegalholdStatusV0
+    let textStatus: String?
 
     enum CodingKeys: String, CodingKey {
 
@@ -99,6 +100,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
         case expiresAt = "expires_at"
         case service
         case legalholdStatus = "legalhold_status"
+        case textStatus = "text_status"
 
     }
 
@@ -117,7 +119,8 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
             app: nil,
             service: service?.toAPIModel(),
             supportedProtocols: [.proteus],
-            legalholdStatus: legalholdStatus.toAPIModel()
+            legalholdStatus: legalholdStatus.toAPIModel(),
+            textStatus: textStatus
         )
     }
 }

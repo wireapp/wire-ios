@@ -44,6 +44,10 @@ public protocol SelfUserAPI {
         func updateHandle(handle: String) async throws
     #endif
 
+    /// Update the custom text status for self user
+    /// - Parameter textStatus: the new text status
+    func updateTextStatus(_ textStatus: String) async throws
+
     /// Delete a team
     /// - Parameters:
     ///   - teamId: teamId fetched by user

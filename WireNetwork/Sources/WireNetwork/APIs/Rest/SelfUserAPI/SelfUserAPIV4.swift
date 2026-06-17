@@ -60,6 +60,7 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
     let ssoID: SSOIDV0?
     let supportedProtocols: Set<MessageProtocolV0>?
     let teamID: UUID?
+    let textStatus: String?
 
     enum CodingKeys: String, CodingKey {
         case accentID = "accent_id"
@@ -73,6 +74,7 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
         case ssoID = "sso_id"
         case teamID = "team"
         case supportedProtocols = "supported_protocols"
+        case textStatus = "text_status"
     }
 
     func toAPIModel() -> SelfUser {
@@ -93,7 +95,8 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
             expiresAt: expiresAt?.date,
             app: nil, // introduced with API v15
             service: service?.toAPIModel(),
-            supportedProtocols: Set(supportedProtocols)
+            supportedProtocols: Set(supportedProtocols),
+            textStatus: textStatus
         )
     }
 }

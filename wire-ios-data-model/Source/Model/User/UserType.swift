@@ -37,6 +37,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The "@name" handle
     var handle: String? { get }
 
+    /// The custom text status
+    var textStatus: String? { get }
+
     /// The initials e.g. "JS" for "John Smith"
     var initials: String? { get }
 

@@ -177,6 +177,9 @@ public class ZMSearchUser: NSObject, UserType {
     public var teamName: String? {
         user?.teamName
     }
+    public var textStatus: String? {
+        user?.textStatus
+    }
 
     public var isTeamMember: Bool {
         if let user {
