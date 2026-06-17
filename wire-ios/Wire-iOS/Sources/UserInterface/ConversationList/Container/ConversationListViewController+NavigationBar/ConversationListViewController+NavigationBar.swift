@@ -58,6 +58,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     func conversationListViewControllerViewModelDidReloadContent(_ viewModel: ViewModel) {
         configureEmptyPlaceholder()
+        updateCatchUpButtonVisibility()
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
@@ -191,6 +192,13 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         startConversationItem.accessibilityIdentifier = Locators.ConversationsPage.createGroupOrSearchButton.rawValue
         startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
             .description
+        let catchUpImage = UIImage(systemName: "sparkles", withConfiguration: symbolConfiguration)!
+        let catchUpAction = UIAction(image: catchUpImage) { [weak self] _ in self?.presentCatchUpUI() }
+        let catchUpButton = UIButton(primaryAction: catchUpAction)
+        catchUpButton.accessibilityLabel = "Catch-up summaries"
+        let catchUpItem = UIBarButtonItem(customView: catchUpButton)
+        catchUpBarButtonItem = catchUpItem
+
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
         let defaultFilterImage = UIImage(
@@ -300,11 +308,29 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         filterButton.menu = filterMenu
 
         navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
+        navigationItem.rightBarButtonItems?.append(catchUpItem)
+        updateCatchUpButtonVisibility()
 
         // Trigger a layout update to ensure the correct positioning
         // of the add conversation button and filter button
         // when the filter button is tapped.
         view.setNeedsLayout()
+    }
+
+    private func updateCatchUpButtonVisibility() {
+        let hasUnread = !viewModel.userSession.conversationDirectory.conversations(by: .unread).isEmpty
+        catchUpBarButtonItem?.customView?.isHidden = !hasUnread
+    }
+
+    @objc
+    private func presentCatchUpUI() {
+        let catchUpView = UIHostingController(rootView: CatchUpView())
+        catchUpView.modalPresentationStyle = .formSheet
+        if let sheet = catchUpView.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+        Task { await mainCoordinator.presentViewController(catchUpView) }
     }
 
     func setupRightNavigationBarButtonItems_SplitView() {

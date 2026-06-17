@@ -119,6 +119,7 @@ final class ConversationListViewController: UIViewController {
     let listContentController: ConversationListContentController
 
     weak var accountImageView: AccountImageView?
+    var catchUpBarButtonItem: UIBarButtonItem?
 
     let networkStatusViewController: NetworkStatusViewController
     private var emptyPlaceholderView: EmptyPlaceholderContainerView!
