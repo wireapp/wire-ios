@@ -79,23 +79,40 @@ extension VoiceChannel {
 
     func arrangeStreams(for selfStream: Stream?, participantsStreams: [Stream]) -> StreamArrangment {
         let streamsExcludingSelf = participantsStreams.filter { $0.streamId != selfStreamId }
-        let sortedStreamsList = sortByVideo(streamData: streamsExcludingSelf)
+        let sortedStreamsList = sortByPriority(streamData: streamsExcludingSelf)
         guard let selfStream else {
             return (nil, sortedStreamsList)
         }
         if callHasTwoParticipants, sortedStreamsList.count == 1 {
             return (selfStream, sortedStreamsList)
         } else {
-            return (nil, [selfStream] + sortedStreamsList)
+            let highPriority = sortedStreamsList.filter {
+                $0.videoState == .screenSharing || $0.activeSpeakerState != .inactive
+            }
+            let rest = sortedStreamsList.filter {
+                $0.videoState != .screenSharing && $0.activeSpeakerState == .inactive
+            }
+            return (nil, highPriority + [selfStream] + rest)
         }
     }
 
+    // TODO: Remove once sortByPriority is validated in production
     func sortByVideo(streamData: [Stream]) -> [Stream] {
         streamData.sorted {
             guard let videoStatusArgument0 = $0.videoState?.isSending else { return false }
             guard let videoStatusArgument1 = $1.videoState?.isSending else { return false }
             return videoStatusArgument0 && !videoStatusArgument1
         }
+    }
+
+    func sortByPriority(streamData: [Stream]) -> [Stream] {
+        streamData.sorted { streamPriority($0) < streamPriority($1) }
+    }
+
+    private func streamPriority(_ stream: Stream) -> Int {
+        if stream.videoState == .screenSharing { return 0 }
+        if stream.activeSpeakerState != .inactive { return 1 }
+        return 2
     }
 
     private var streamArrangementForNonEstablishedCall: StreamArrangment {

@@ -207,6 +207,7 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
 
     // MARK: - Video streams sorting
 
+    // TODO: Replace with a test for sortByPriority (screenshare → active speaker → rest) once sortByVideo is removed
     func testThatItReturnsSortedParticipantsInGrid_ByVideoState() {
         // GIVEN
         let participant1 = participantStub(for: mockUser1, videoEnabled: true)
