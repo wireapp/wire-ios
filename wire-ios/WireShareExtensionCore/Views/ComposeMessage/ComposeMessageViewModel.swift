@@ -26,6 +26,7 @@ protocol ComposeMessageViewModel {
     var shareItem: ShareItem { get }
     var messageText: String { get set }
     var canSend: Bool { get }
+    var isLoading: Bool { get }
 
     func send()
 
@@ -42,6 +43,8 @@ public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
     public var canSend: Bool {
         true
     }
+
+    public var isLoading: Bool = false
 
     public init(
         conversation: Conversation,

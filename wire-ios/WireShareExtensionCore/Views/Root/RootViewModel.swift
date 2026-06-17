@@ -29,6 +29,8 @@ public protocol RootViewModel {
     var conversations: [Conversation] { get }
     var shareItem: ShareItem { get }
 
+    var isLoading: Bool { get }
+
 }
 
 @Observable
@@ -39,6 +41,7 @@ public final class RootViewModelImpl: RootViewModel {
     public var selectedAccount: Account
     public var searchQuery: String = ""
     public let shareItem: ShareItem
+    public var isLoading: Bool = false
 
     private let allConversations: [Conversation]
 
