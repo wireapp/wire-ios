@@ -31,6 +31,22 @@ class CallingActionButton: IconLabelButton {
         subtitleTransformLabel.font = titleLabel?.font
         iconButton.setIcon(input.icon(forState: .normal), size: iconSize, for: .normal)
         iconButton.setIcon(input.icon(forState: .selected), size: iconSize, for: .selected)
+
+        hideLabel()
+    }
+
+    private func hideLabel() {
+        subtitleTransformLabel.isHidden = true
+        subtitleTransformLabel.text = nil
+        // Swap the label's bottom constraint for an iconButton.bottom constraint so
+        // the button height collapses to the icon size only.
+        constraints
+            .filter {
+                ($0.firstItem === subtitleTransformLabel && $0.firstAttribute == .bottom) ||
+                ($0.secondItem === subtitleTransformLabel && $0.secondAttribute == .bottom)
+            }
+            .forEach { $0.isActive = false }
+        iconButton.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
 
     override func apply(_ configuration: CallActionAppearance) {

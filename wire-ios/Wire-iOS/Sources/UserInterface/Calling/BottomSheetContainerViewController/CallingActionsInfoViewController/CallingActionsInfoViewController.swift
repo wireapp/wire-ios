@@ -159,9 +159,9 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
 
     private func calculateHeightConstant() -> CGFloat {
         var baseHeight: CGFloat = if UIDevice.current.twoDimensionOrientation.isLandscape {
-            128
+            107
         } else {
-            isIncomingCall ? 250 : 128
+            isIncomingCall ? 250 : 107
         }
 
         if !securityLevelView.isHidden {

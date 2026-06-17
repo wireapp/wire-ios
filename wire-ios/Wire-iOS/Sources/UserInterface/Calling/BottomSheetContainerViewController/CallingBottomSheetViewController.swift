@@ -77,7 +77,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         super.init(
             contentViewController: visibleVoiceChannelViewController,
             bottomSheetViewController: callingActionsInfoViewController,
-            bottomSheetConfiguration: .init(height: bottomSheetMaxHeight, initialOffset: 112.0)
+            bottomSheetConfiguration: .init(height: bottomSheetMaxHeight, initialOffset: 107.0)
         )
 
         callingActionsInfoViewController
