@@ -81,14 +81,9 @@ public struct CatchUpSummarizer {
     private func callModel(transcript: String) async throws -> String {
         let session = LanguageModelSession()
         let prompt = """
-        Summarize the following team chat for a colleague who was away.
+        A team member was away and wants to catch up on what they missed.
 
-        Rules:
-        - Output 3–5 bullet points, grouped by topic.
-        - Each bullet must be one sentence or less.
-        - Only include messages from real people. Ignore automated messages from bots, CI systems, GitHub, Jira, monitoring tools, or any other service integrations.
-        - Drop casual replies ("OK", "sounds good", "works for me", "+1") — only keep decisions, announcements, and action items.
-        - Do not invent anything not present in the messages.
+        Read the conversation below and write a catch-up summary as 3–5 short bullet points, grouped by topic. Each bullet point should be one sentence. Cover only decisions, announcements, and action items from real people. Brief acknowledgments ("OK", "sounds good", "+1") are not worth including. Messages from bots, CI pipelines, GitHub, Jira, or other automated tools are also not worth including.
 
         Conversation:
         \(transcript)
@@ -109,14 +104,9 @@ public struct CatchUpSummarizer {
             .joined(separator: "\n\n")
         let session = LanguageModelSession()
         let prompt = """
-        Merge the following partial chat summaries into one final summary for a colleague who was away.
+        A team member was away and wants to catch up on what they missed.
 
-        Rules:
-        - Output 3–5 bullet points, grouped by topic.
-        - Each bullet must be one sentence or less.
-        - Drop duplicates across parts.
-        - Exclude anything that originated from bots, CI systems, GitHub, Jira, monitoring tools, or other service integrations.
-        - Do not invent anything not present in the summaries.
+        The conversation was long, so it has been pre-summarised in parts below. Combine these partial summaries into one final catch-up summary as 3–5 short bullet points, grouped by topic. Each bullet point should be one sentence. Merge duplicate points across parts into one. Cover only decisions, announcements, and action items.
 
         \(combined)
         """
