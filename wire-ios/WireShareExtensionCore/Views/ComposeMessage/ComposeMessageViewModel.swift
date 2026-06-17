@@ -64,6 +64,9 @@ public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
     }
 
     public func send() async {
+        isLoading = true
+        defer { isLoading = false }
+        
         let message = Message(
             text: messageText,
             shareItem: shareItem

@@ -54,6 +54,24 @@ struct ComposeMessageView<
 
             Spacer()
         }
+        .overlay {
+            if viewModel.isLoading {
+                loadingIndicator
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var loadingIndicator: some View {
+        ZStack {
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+            
+            ProgressView()
+                .progressViewStyle(.circular)
+                .tint(.white)
+                .scaleEffect(1.5)
+        }
     }
 
     @ViewBuilder
