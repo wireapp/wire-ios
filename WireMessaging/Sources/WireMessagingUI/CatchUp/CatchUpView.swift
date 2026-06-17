@@ -21,9 +21,22 @@ public import SwiftUI
 
 public struct ConversationSummary: Identifiable {
     public let id = UUID()
-    let conversationName: String
-    let summary: String
-    let missedCount: Int
+    public let conversationName: String
+    public let summary: String
+    public let missedCount: Int
+    public let oldestMessageDate: Date?
+
+    public init(
+        conversationName: String,
+        summary: String,
+        missedCount: Int,
+        oldestMessageDate: Date? = nil
+    ) {
+        self.conversationName = conversationName
+        self.summary = summary
+        self.missedCount = missedCount
+        self.oldestMessageDate = oldestMessageDate
+    }
 }
 
 // MARK: - Root view
@@ -65,10 +78,37 @@ public struct CatchUpView: View {
     // MARK: - List
 
     private var summaryList: some View {
-        List(summaries) { summary in
-            ConversationSummaryRow(summary: summary)
+        List {
+            Section {
+                Text(verbatim: subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .listRowBackground(Color.clear)
+
+            ForEach(summaries) { summary in
+                ConversationSummaryRow(summary: summary)
+            }
         }
+#if os(iOS)
         .listStyle(.insetGrouped)
+#endif
+    }
+
+    private var subtitle: String {
+        let totalMissed = summaries.reduce(0) { $0 + $1.missedCount }
+        let count = summaries.count
+        let oldest = summaries.compactMap(\.oldestMessageDate).min()
+
+        var text = "You have \(totalMissed) unread message\(totalMissed == 1 ? "" : "s") across \(count) conversation\(count == 1 ? "" : "s")"
+
+        if let oldest {
+            let formatter = RelativeDateTimeFormatter()
+            formatter.unitsStyle = .full
+            text += ", the oldest \(formatter.localizedString(for: oldest, relativeTo: Date()))"
+        }
+
+        return text + "."
     }
 }
 
@@ -102,25 +142,29 @@ private struct ConversationSummaryRow: View {
 extension ConversationSummary {
 
     public static var mocks: [ConversationSummary] {
-        [
+        let calendar = Calendar.current
+        let now = Date()
+        return [
             ConversationSummary(
                 conversationName: "Engineering",
                 summary: "Dave fixed a FoundationModels import issue on older OS versions (branch fix/foundation-models-import). Sprint planning moved to Thursday 2pm in room Zurich.",
-                missedCount: 12
+                missedCount: 12,
+                oldestMessageDate: calendar.date(byAdding: .day, value: -10, to: now)
             ),
             ConversationSummary(
                 conversationName: "Design Team",
                 summary: "New design specs for the catch-up feature were reviewed. Bob left comments in Figma — the summary card was well received.",
-                missedCount: 7
+                missedCount: 7,
+                oldestMessageDate: calendar.date(byAdding: .day, value: -3, to: now)
             ),
             ConversationSummary(
                 conversationName: "Alice",
                 summary: "Alice asked whether you're joining the hackathon demo on Friday.",
-                missedCount: 3
+                missedCount: 3,
+                oldestMessageDate: calendar.date(byAdding: .day, value: -1, to: now)
             )
         ]
     }
-
 }
 
 // MARK: - Preview
