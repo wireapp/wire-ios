@@ -81,11 +81,9 @@ public struct CatchUpSummarizer {
     private func callModel(transcript: String) async throws -> String {
         let session = LanguageModelSession()
         let prompt = """
-        A team member was away and wants to catch up on what they missed.
+        List the key decisions, announcements, and action items from the chat transcript below. Write at most 5 bullet points, one sentence each. Skip greetings and casual replies. If there is nothing significant to report, write only: Nothing to summarize.
 
-        Read the conversation below and write a catch-up summary as 3–5 short bullet points, grouped by topic. Each bullet point should be one sentence. Cover only decisions, announcements, and action items from real people. Brief acknowledgments ("OK", "sounds good", "+1") are not worth including. Messages from bots, CI pipelines, GitHub, Jira, or other automated tools are also not worth including.
-
-        Conversation:
+        Transcript:
         \(transcript)
         """
         do {
@@ -104,9 +102,7 @@ public struct CatchUpSummarizer {
             .joined(separator: "\n\n")
         let session = LanguageModelSession()
         let prompt = """
-        A team member was away and wants to catch up on what they missed.
-
-        The conversation was long, so it has been pre-summarised in parts below. Combine these partial summaries into one final catch-up summary as 3–5 short bullet points, grouped by topic. Each bullet point should be one sentence. Merge duplicate points across parts into one. Cover only decisions, announcements, and action items.
+        Combine the partial chat summaries below into one list of bullet points. Keep only decisions, announcements, and action items. Merge duplicates. At most 5 bullet points, one sentence each. If there is nothing significant, write only: Nothing to summarize.
 
         \(combined)
         """
