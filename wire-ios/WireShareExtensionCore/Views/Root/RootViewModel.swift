@@ -75,19 +75,22 @@ struct RootViewModelMock: RootViewModel {
     var searchQuery: String
     var conversations: [Conversation]
     var shareItem: ShareItem
+    var isLoading: Bool
 
     init(
         accounts: [Account],
         selectedAccount: Account? = nil,
         searchQuery: String = "",
         conversations: [Conversation],
-        shareItem: ShareItem
+        shareItem: ShareItem,
+        isLoading: Bool = false
     ) {
         self.accounts = accounts
         self.selectedAccount = selectedAccount ?? accounts[0]
         self.searchQuery = searchQuery
         self.conversations = conversations
         self.shareItem = shareItem
+        self.isLoading = isLoading
     }
 
 }
