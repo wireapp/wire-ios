@@ -130,7 +130,9 @@ final class ProfileHeaderViewController: UIViewController {
         self.conversation = conversation
         self.options = options
         self.userStatusViewController = .init(
-            options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
+            options: options.contains(.allowEditingAvailability) ?
+                [.allowSettingStatus, .displayUpdateStatusButton] :
+                [.hideActionHint],
             settings: .shared
         )
         super.init(nibName: nil, bundle: nil)

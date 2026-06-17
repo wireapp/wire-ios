@@ -149,6 +149,9 @@ extension UserStatusView {
         /// Whether to use a large text font instead of the default small one.
         static let useLargeFont = Options(rawValue: 1 << 3)
 
+        /// Whether to show the self profile status label and update button layout.
+        static let displayUpdateStatusButton = Options(rawValue: 1 << 4)
+
         /// The default options for using the view in a title bar.
         static var header: Options = [.allowSettingStatus, .hideActionHint, .displayUserName, .useLargeFont]
     }

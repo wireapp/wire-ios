@@ -1941,7 +1941,13 @@ Enter your identity provider’s credentials in the next step to update the cert
 "compose.drafts.compose.dismiss.delete.action.title" = "Delete";
 
 "availability.message.cancel" = "Cancel";
+"availability.message.availability_section" = "Availibility";
+"availability.message.busy_footer" = "You will appear as Busy to other people. You will only receive notifications for mentions, replies, and calls in conversations that are not muted";
+"availability.message.current_status" = "Current status";
+"availability.message.custom_status_placeholder" = "Enter custom status message";
+"availability.message.custom_status_section" = "Custom status";
 "availability.message.set_status" = "Set a status";
+"availability.message.update_status" = "Update status";
 
 "availability.none" = "None";
 "availability.available" = "Available";

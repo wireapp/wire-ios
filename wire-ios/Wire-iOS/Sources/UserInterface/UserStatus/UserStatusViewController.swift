@@ -17,7 +17,10 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
+import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class UserStatusViewController: UIViewController {
@@ -30,7 +33,7 @@ final class UserStatusViewController: UIViewController {
     private let settings: Settings
 
     var userStatus = UserStatus() {
-        didSet { (viewIfLoaded as? UserStatusView)?.userStatus = userStatus }
+        didSet { (viewIfLoaded as? UserStatusDisplaying)?.userStatus = userStatus }
     }
 
     init(
@@ -48,32 +51,516 @@ final class UserStatusViewController: UIViewController {
     }
 
     override func loadView() {
-        let view = UserStatusView(options: options)
-        view.userStatus = userStatus
-        view.tapHandler = { [weak self] button in
-            self?.presentAvailabilityPicker(button)
+        if options.contains(.displayUpdateStatusButton) {
+            let view = UserStatusSummaryView()
+            view.userStatus = userStatus
+            view.updateStatusHandler = { [weak self] in
+                self?.presentAvailabilityPicker()
+            }
+            self.view = view
+        } else {
+            let view = UserStatusView(options: options)
+            view.userStatus = userStatus
+            view.tapHandler = { [weak self] _ in
+                self?.presentAvailabilityPicker()
+            }
+            self.view = view
         }
-        self.view = view
     }
 
-    private func presentAvailabilityPicker(_ sender: UIButton) {
-        let availabilityChangedHandler = { [weak self] (availability: Availability) in
+    private func presentAvailabilityPicker() {
+        let viewController = UserStatusPickerViewController(currentAvailability: userStatus.availability) {
+            [weak self] availability in
             guard let self else { return }
 
-            userStatus.availability = availability
-            delegate?.userStatusViewController(self, didSelect: availability)
-            feedbackGenerator.impactOccurred()
+            selectAvailability(availability)
+        }
 
-            if settings.shouldRemindUserWhenChanging(availability) {
-                present(UIAlertController.availabilityExplanation(availability), animated: true)
+        if let navigationController {
+            navigationController.pushViewController(viewController, animated: true)
+        } else {
+            let navigationController = UINavigationController(rootViewController: viewController)
+            viewController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+                action: UIAction { [weak self] _ in
+                    self?.dismiss(animated: true)
+                },
+                accessibilityLabel: L10n.Localizable.General.close
+            )
+            present(navigationController, animated: true)
+        }
+    }
+
+    private func selectAvailability(_ availability: Availability) {
+        userStatus.availability = availability
+        delegate?.userStatusViewController(self, didSelect: availability)
+        feedbackGenerator.impactOccurred()
+
+        if settings.shouldRemindUserWhenChanging(availability) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
+                guard let self else { return }
+
+                let presenter = navigationController?.topViewController ?? self
+                presenter.present(UIAlertController.availabilityExplanation(availability), animated: true)
             }
         }
-
-        let alertViewController = UIAlertController.availabilityPicker(availabilityChangedHandler)
-        if let popoverPresentationController = alertViewController.popoverPresentationController {
-            popoverPresentationController.sourceView = sender.superview
-            popoverPresentationController.sourceRect = sender.frame
-        }
-        present(alertViewController, animated: true)
     }
+}
+
+private protocol UserStatusDisplaying: AnyObject {
+    var userStatus: UserStatus { get set }
+}
+
+extension UserStatusView: UserStatusDisplaying {}
+
+private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
+
+    var updateStatusHandler: (() -> Void)?
+
+    var userStatus = UserStatus() {
+        didSet { updateStatusLabel() }
+    }
+
+    private let statusLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(style: .subline1, color: SemanticColors.Label.textDefault)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        return label
+    }()
+
+    private let updateStatusButton: SecondaryTextButton = {
+        let button = SecondaryTextButton()
+        button.accessibilityLabel = L10n.Localizable.Availability.Message.updateStatus
+        button.setTitle(L10n.Localizable.Availability.Message.updateStatus, for: .normal)
+        return button
+    }()
+
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [statusLabel, updateStatusButton])
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 8
+        return stackView
+    }()
+
+    init() {
+        super.init(frame: .zero)
+        updateStatusButton.addTarget(self, action: #selector(updateStatusButtonTapped), for: .touchUpInside)
+        addSubview(stackView)
+        createConstraints()
+        updateStatusLabel()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func createConstraints() {
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+
+    private func updateStatusLabel() {
+        statusLabel.text = userStatus.availability.localizedName
+        statusLabel.accessibilityLabel = L10n.Localizable.Availability.Message.currentStatus
+        statusLabel.accessibilityValue = userStatus.availability.localizedName
+    }
+
+    @objc
+    private func updateStatusButtonTapped() {
+        updateStatusHandler?()
+    }
+}
+
+private final class UserStatusPickerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+
+    private enum Section: Int, CaseIterable {
+        case availability
+        case customStatus
+    }
+
+    private let selectionHandler: (Availability) -> Void
+    private let tableView = UITableView(frame: .zero, style: .insetGrouped)
+    private var currentAvailability: Availability
+    private var customStatus = ""
+
+    init(
+        currentAvailability: Availability,
+        selectionHandler: @escaping (Availability) -> Void
+    ) {
+        self.currentAvailability = currentAvailability
+        self.selectionHandler = selectionHandler
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupNavigationBarTitle(L10n.Localizable.Availability.Message.setStatus)
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+        createTableView()
+        createConstraints()
+    }
+
+    private func createTableView() {
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = SemanticColors.View.backgroundDefault
+        tableView.clipsToBounds = true
+        tableView.tableFooterView = UIView()
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 56
+        tableView.register(
+            AvailabilityDropdownCell.self,
+            forCellReuseIdentifier: AvailabilityDropdownCell.reuseIdentifier
+        )
+        tableView.register(
+            CustomStatusInputCell.self,
+            forCellReuseIdentifier: CustomStatusInputCell.reuseIdentifier
+        )
+        view.addSubview(tableView)
+    }
+
+    private func createConstraints() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        Section.allCases.count
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        1
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch Section(rawValue: indexPath.section) {
+        case .availability:
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: AvailabilityDropdownCell.reuseIdentifier,
+                for: indexPath
+            ) as! AvailabilityDropdownCell
+            cell.configure(selectedAvailability: currentAvailability) { [weak self] availability in
+                guard let self, currentAvailability != availability else { return }
+
+                currentAvailability = availability
+                selectionHandler(availability)
+                tableView.reloadSections(IndexSet(integer: Section.availability.rawValue), with: .none)
+            }
+            return cell
+
+        case .customStatus:
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: CustomStatusInputCell.reuseIdentifier,
+                for: indexPath
+            ) as! CustomStatusInputCell
+            cell.configure(text: customStatus) { [weak self] text in
+                self?.customStatus = text
+            }
+            return cell
+
+        case .none:
+            return UITableViewCell()
+        }
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch Section(rawValue: section) {
+        case .availability:
+            nil
+        case .customStatus:
+            L10n.Localizable.Availability.Message.customStatusSection
+        case .none:
+            nil
+        }
+    }
+
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        switch Section(rawValue: section) {
+        case .availability:
+            footerText(for: currentAvailability)
+        case .customStatus, .none:
+            nil
+        }
+    }
+
+    private func footerText(for availability: Availability) -> String {
+        typealias AvailabilityReminderLocale = L10n.Localizable.Availability.Reminder
+
+        switch availability {
+        case .none:
+            return AvailabilityReminderLocale.None.message
+        case .available:
+            return AvailabilityReminderLocale.Available.message
+        case .busy:
+            return AvailabilityReminderLocale.Busy.message
+        case .away:
+            return AvailabilityReminderLocale.Away.message
+        }
+    }
+
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let headerFooterView = view as? UITableViewHeaderFooterView {
+            headerFooterView.textLabel?.textColor = SemanticColors.Label.textSectionHeader
+        }
+    }
+
+    func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        if let headerFooterView = view as? UITableViewHeaderFooterView {
+            headerFooterView.textLabel?.textColor = SemanticColors.Label.textSectionFooter
+        }
+    }
+}
+
+private final class AvailabilityDropdownCell: UITableViewCell {
+
+    static let reuseIdentifier = "AvailabilityDropdownCell"
+
+    private var selectedAvailability: Availability = .none
+    private var selectionHandler: ((Availability) -> Void)?
+
+    private let titleLabel: UILabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .normalSemiboldFont,
+            color: SemanticColors.Label.textDefault
+        )
+        label.text = L10n.Localizable.Availability.Message.availabilitySection
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
+        label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        return label
+    }()
+
+    private lazy var dropdownButton: UIButton = {
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = UIImage(systemName: "chevron.up.chevron.down")
+        configuration.imagePlacement = .trailing
+        configuration.imagePadding = 8
+        configuration.baseForegroundColor = SemanticColors.Label.textDefault
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in
+            var attributes = attributes
+            attributes.font = .font(for: .body1)
+            return attributes
+        }
+
+        let button = UIButton(type: .system)
+        button.configuration = configuration
+        button.contentHorizontalAlignment = .trailing
+        button.showsMenuAsPrimaryAction = true
+        button.titleLabel?.font = .font(for: .body1)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        return button
+    }()
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = SemanticColors.View.backgroundUserCell
+        contentView.backgroundColor = SemanticColors.View.backgroundUserCell
+        selectionStyle = .none
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(dropdownButton)
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure(
+        selectedAvailability: Availability,
+        selectionHandler: @escaping (Availability) -> Void
+    ) {
+        self.selectedAvailability = selectedAvailability
+        self.selectionHandler = selectionHandler
+        updateButton(for: selectedAvailability)
+    }
+
+    private func createConstraints() {
+        [titleLabel, dropdownButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+
+            dropdownButton.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor, constant: 8),
+            dropdownButton.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            dropdownButton.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+            dropdownButton.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
+
+            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 56)
+        ])
+    }
+
+    private func updateButton(for availability: Availability) {
+        var configuration = dropdownButton.configuration ?? .plain()
+        configuration.title = availability.localizedName
+        dropdownButton.configuration = configuration
+        dropdownButton.accessibilityLabel = L10n.Localizable.Availability.Message.availabilitySection
+        dropdownButton.accessibilityValue = availability.localizedName
+        dropdownButton.menu = UIMenu(children: availabilityActions())
+    }
+
+    private func availabilityActions() -> [UIAction] {
+        Availability.allCases.map { availability in
+            UIAction(
+                title: availability.localizedName,
+                image: availability.iconType?.makeImage(
+                    size: .tiny,
+                    color: AvailabilityStringBuilder.color(for: availability)
+                ),
+                state: availability == selectedAvailability ? .on : .off
+            ) { [weak self] _ in
+                guard let self else { return }
+
+                selectedAvailability = availability
+                updateButton(for: availability)
+                selectionHandler?(availability)
+            }
+        }
+    }
+}
+
+private final class CustomStatusInputCell: UITableViewCell {
+
+    static let reuseIdentifier = "CustomStatusInputCell"
+
+    private var textChangeHandler: ((String) -> Void)?
+    private var selectedEmoji: String?
+    private var parentViewController: UIViewController? {
+        var responder: UIResponder? = self
+        while let r = responder {
+            if let vc = r as? UIViewController { return vc }
+            responder = r.next
+        }
+        return nil
+    }
+
+    private lazy var textField: UITextField = {
+        let textField = UITextField()
+        textField.accessibilityLabel = L10n.Localizable.Availability.Message.customStatusSection
+        textField.adjustsFontForContentSizeCategory = true
+        textField.autocapitalizationType = .sentences
+        textField.borderStyle = .none
+        textField.clearButtonMode = .whileEditing
+        textField.font = .font(for: .body1)
+        textField.placeholder = L10n.Localizable.Availability.Message.customStatusPlaceholder
+        textField.textColor = SemanticColors.Label.textDefault
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        return textField
+    }()
+
+    private lazy var emojiButton: UIButton = {
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "face.smiling")
+        config.baseForegroundColor = SemanticColors.Label.textDefault
+//        config.background.backgroundColor = SemanticColors.View.backgroundDefault
+        config.background.cornerRadius = 15
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
+        let button = UIButton(configuration: config)
+        button.addTarget(self, action: #selector(emojiButtonTapped), for: .touchUpInside)
+//        button.layer.cornerRadius = 15
+//        button.clipsToBounds = true
+        return button
+    }()
+
+//    private lazy var emojiButtonWrapper: UIView = {
+//           let buttonSize: CGFloat = 30
+//           let wrapper = UIView(frame: CGRect(x: 0, y: 0, width: buttonSize + 8, height: buttonSize))
+//           wrapper.addSubview(emojiButton)
+//           emojiButton.translatesAutoresizingMaskIntoConstraints = false
+//           NSLayoutConstraint.activate([
+//               emojiButton.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor),
+//               emojiButton.centerYAnchor.constraint(equalTo: wrapper.centerYAnchor),
+//               emojiButton.widthAnchor.constraint(equalToConstant: buttonSize),
+//               emojiButton.heightAnchor.constraint(equalToConstant: buttonSize)
+//           ])
+//           return wrapper
+//       }()
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = SemanticColors.View.backgroundUserCell
+        contentView.backgroundColor = SemanticColors.View.backgroundUserCell
+        selectionStyle = .none
+        contentView.addSubview(textField)
+        textField.leftView = emojiButton
+        textField.leftViewMode = .always
+        createConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure(
+        text: String,
+        textChangeHandler: @escaping (String) -> Void
+    ) {
+        self.textChangeHandler = textChangeHandler
+
+        if textField.text != text {
+            textField.text = text
+        }
+    }
+
+    private func createConstraints() {
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            textField.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+            textField.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            textField.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+            textField.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
+            textField.heightAnchor.constraint(greaterThanOrEqualToConstant: 36)
+        ])
+    }
+
+    @objc private func emojiButtonTapped() {
+        let picker = EmojiKeyboardViewController()
+        picker.delegate = self
+        picker.modalPresentationStyle = .pageSheet
+        if let sheet = picker.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+        }
+        parentViewController?.present(picker, animated: true)
+    }
+
+    @objc
+    private func textFieldDidChange() {
+        textChangeHandler?(textField.text ?? "")
+    }
+}
+
+extension CustomStatusInputCell: EmojiPickerViewControllerDelegate {
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
+        selectedEmoji = emoji.value
+        var config = emojiButton.configuration ?? .plain()
+        config.image = nil
+        config.title = emoji.value
+        emojiButton.configuration = config
+        parentViewController?.dismiss(animated: true)
+    }
+
+    func emojiPickerDeleteTapped() {}
 }

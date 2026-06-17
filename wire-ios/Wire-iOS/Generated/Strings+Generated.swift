@@ -1303,10 +1303,22 @@ internal enum L10n {
       /// None
       internal static let `none` = L10n.tr("Localizable", "availability.none", fallback: "None")
       internal enum Message {
+        /// Availibility
+        internal static let availabilitySection = L10n.tr("Localizable", "availability.message.availability_section", fallback: "Availibility")
+        /// You will appear as Busy to other people. You will only receive notifications for mentions, replies, and calls in conversations that are not muted
+        internal static let busyFooter = L10n.tr("Localizable", "availability.message.busy_footer", fallback: "You will appear as Busy to other people. You will only receive notifications for mentions, replies, and calls in conversations that are not muted")
         /// Cancel
         internal static let cancel = L10n.tr("Localizable", "availability.message.cancel", fallback: "Cancel")
+        /// Current status
+        internal static let currentStatus = L10n.tr("Localizable", "availability.message.current_status", fallback: "Current status")
+        /// Enter custom status message
+        internal static let customStatusPlaceholder = L10n.tr("Localizable", "availability.message.custom_status_placeholder", fallback: "Enter custom status message")
+        /// Custom status
+        internal static let customStatusSection = L10n.tr("Localizable", "availability.message.custom_status_section", fallback: "Custom status")
         /// Set a status
         internal static let setStatus = L10n.tr("Localizable", "availability.message.set_status", fallback: "Set a status")
+        /// Update status
+        internal static let updateStatus = L10n.tr("Localizable", "availability.message.update_status", fallback: "Update status")
       }
       internal enum Reminder {
         internal enum Action {
