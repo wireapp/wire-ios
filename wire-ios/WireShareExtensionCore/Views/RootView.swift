@@ -31,10 +31,26 @@ public struct RootView: View {
     @State
     private var selectedAccount: Account
 
-    public init(accounts: [Account], conversations: [ConversationModel]) {
+    @State
+    private var searchText: String = ""
+
+    public init(
+        accounts: [Account],
+        conversations: [ConversationModel]
+    ) {
         self.accounts = accounts
         self.conversations = conversations
         self.selectedAccount = accounts[0]
+    }
+
+    private var filteredConversations: [ConversationModel] {
+        if searchText.isEmpty {
+            return conversations
+        } else {
+            return conversations.filter {
+                $0.name.localizedCaseInsensitiveContains(searchText)
+            }
+        }
     }
 
     public var body: some View {
@@ -66,13 +82,17 @@ public struct RootView: View {
             }
 
             Section("Conversations") {
-                ForEach(conversations, id: \.self) { conversation in
+                ForEach(filteredConversations, id: \.self) { conversation in
                     NavigationLink(value: conversation) {
                         Text(conversation.name)
                     }
                 }
             }
         }
+        .searchable(
+            text: $searchText,
+            prompt: "Search conversations"
+        )
     }
 }
 
