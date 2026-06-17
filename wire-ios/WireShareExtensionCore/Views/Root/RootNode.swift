@@ -18,16 +18,26 @@
 
 import SwiftUI
 
-struct RootNode: View {
+public struct RootNode: View {
 
     @State
-    var router = RootRouter()
+    private var router = RootRouter()
 
-    let shareItem: ShareItem
-    let onClose: () -> Void // TODO: Maybe Combine close / done into a single callback with an enum param to indicate the action
-    let onDone: () -> Void
+    public let shareItem: ShareItem
+    public let onClose: () -> Void // TODO: Maybe Combine close / done into a single callback with an enum param to indicate the action
+    public let onDone: () -> Void
 
-    var body: some View {
+    public init(
+        shareItem: ShareItem,
+        onClose: @escaping () -> Void,
+        onDone: @escaping () -> Void
+    ) {
+        self.shareItem = shareItem
+        self.onClose = onClose
+        self.onDone = onDone
+    }
+
+    public var body: some View {
         RootView(
             viewModel: makeViewModel(),
             router: router

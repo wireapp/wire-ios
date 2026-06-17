@@ -17,28 +17,43 @@
 //
 
 import Foundation
-import SwiftUI
 
+/// Type of content being shared
 public enum ShareItemType: Hashable {
     case image
     case video
     case file
 }
 
+/// Represents an item being shared through the share extension
 public struct ShareItem: Identifiable, Hashable {
 
-    public let id: UUID
+    public let id = UUID()
     public let type: ShareItemType
-    public let fileName: String
+    public let url: URL
+    public let name: String
+    public let mimeType: String
+    public let size: Int?
 
     public init(
-        id: UUID = UUID(),
         type: ShareItemType,
-        fileName: String,
+        url: URL,
+        name: String,
+        mimeType: String,
+        size: Int?
     ) {
-        self.id = id
         self.type = type
-        self.fileName = fileName
+        self.url = url
+        self.name = name
+        self.mimeType = mimeType
+        self.size = size
     }
 
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    public static func == (lhs: ShareItem, rhs: ShareItem) -> Bool {
+        lhs.id == rhs.id
+    }
 }

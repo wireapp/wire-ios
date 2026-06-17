@@ -26,8 +26,8 @@ import WireShareExtensionCore
 /// Handles extraction of shared content and presents the main node graph.
 class ShareViewController: UIViewController {
 
-    private var shareItems: [SharedItem] = []
-    private var hostingController: UIHostingController<RootView>?
+    private var shareItems: [ShareItem] = []
+    private var hostingController: UIHostingController<RootNode>?
 
     override init(
         nibName nibNameOrNil: String?,
@@ -66,7 +66,7 @@ class ShareViewController: UIViewController {
             return
         }
         
-        var items: [SharedItem] = []
+        var items: [ShareItem] = []
         
         for inputItem in inputItems {
             guard let attachments = inputItem.attachments else {
@@ -90,7 +90,7 @@ class ShareViewController: UIViewController {
     }
     
     /// Extracts a single item from an item provider.
-    private func extractItem(from provider: NSItemProvider) async -> SharedItem? {
+    private func extractItem(from provider: NSItemProvider) async -> ShareItem? {
         // Try image
         if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
             print("found image, extracting")
@@ -116,7 +116,13 @@ class ShareViewController: UIViewController {
     
     /// Presents the SwiftUI-based node graph.
     private func presentShareUI() {
-        let hostingController = UIHostingController(rootView: RootView())
+        let rootNode = RootNode(
+            shareItem: shareItems.first!, // TODO: make safe
+            onClose: cancelSharing,
+            onDone: completeSharing
+        )
+
+        let hostingController = UIHostingController(rootView: rootNode)
         self.hostingController = hostingController
         
         addChild(hostingController)

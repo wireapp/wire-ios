@@ -19,13 +19,13 @@
 import Foundation
 import UniformTypeIdentifiers
 
-extension SharedItem {
+extension ShareItem {
 
-    static func video(from provider: NSItemProvider) async -> SharedItem? {
+    public static func image(from provider: NSItemProvider) async -> ShareItem? {
         let url: URL
         do {
             let result = try await provider.loadItem(
-                forTypeIdentifier: UTType.movie.identifier,
+                forTypeIdentifier: UTType.image.identifier,
                 options: nil
             )
 
@@ -36,15 +36,15 @@ extension SharedItem {
                 return nil
             }
         } catch {
-            print("failed to load video: \(error)")
+            print("failed to load image: \(error)")
             return nil
         }
 
-        return SharedItem(
-            type: .video,
+        return ShareItem(
+            type: .image,
             url: url,
             name: url.lastPathComponent,
-            mimeType: "video/mp4",
+            mimeType: "image/jpeg",
             size: try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int
         )
     }

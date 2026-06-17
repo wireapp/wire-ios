@@ -66,7 +66,7 @@ struct ComposeMessageView<
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(viewModel.shareItem.fileName)
+                Text(viewModel.shareItem.name)
                     .font(.body)
                     .lineLimit(1)
 
@@ -135,7 +135,10 @@ struct ComposeMessageView<
                 ),
                 shareItem: ShareItem(
                     type: .image,
-                    fileName: "Screenshot.png"
+                    url: URL(string: "")!,
+                    name: "foo.jpg",
+                    mimeType: "jpg",
+                    size: nil
                 ),
                 sendMessage: SendMessageUseCaseMock(),
                 onDone: {

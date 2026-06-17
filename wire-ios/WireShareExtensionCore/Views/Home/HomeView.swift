@@ -112,11 +112,7 @@ struct HomeView<
                 Conversation(name: "🚨 Security Channel"),
                 Conversation(name: "[iOS] Beta feedbacks]"),
                 Conversation(name: "[iOS] developers developers developers")
-            ],
-            shareItem: ShareItem(
-                type: .image,
-                fileName: "Screenshot.png"
-            )
+            ]
         ),
         makeComposeMessageNode: { _ in Color.red }
     )
@@ -135,11 +131,7 @@ struct HomeView<
                 Conversation(name: "🚨 Security Channel"),
                 Conversation(name: "[iOS] Beta feedbacks]"),
                 Conversation(name: "[iOS] developers developers developers")
-            ],
-            shareItem: ShareItem(
-                type: .image,
-                fileName: "Screenshot.png"
-            )
+            ]
         ),
         makeComposeMessageNode: { _ in Color.red }
     )
@@ -157,7 +149,10 @@ struct HomeView<
                 fetchConversations: FetchConversationsUseCaseMock(),
                 shareItem: ShareItem(
                     type: .image,
-                    fileName: "Screenshot.png"
+                    url: URL(string: "")!,
+                    name: "foo.jpg",
+                    mimeType: "jpg",
+                    size: nil
                 ),
                 router: router,
                 onClose: {

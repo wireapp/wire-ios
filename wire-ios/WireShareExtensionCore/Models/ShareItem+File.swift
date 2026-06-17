@@ -19,9 +19,9 @@
 import Foundation
 import UniformTypeIdentifiers
 
-extension SharedItem {
+extension ShareItem {
 
-    static func file(from provider: NSItemProvider) async -> SharedItem? {
+    public static func file(from provider: NSItemProvider) async -> ShareItem? {
         let url: URL
         do {
             let result = try await provider.loadItem(
@@ -40,7 +40,7 @@ extension SharedItem {
             return nil
         }
 
-        return SharedItem(
+        return ShareItem(
             type: .file,
             url: url,
             name: url.lastPathComponent,

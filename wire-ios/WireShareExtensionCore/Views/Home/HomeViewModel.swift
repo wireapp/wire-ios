@@ -139,7 +139,6 @@ struct HomeViewModelMock: HomeViewModel {
     var selectedAccount: Account?
     var searchQuery: String
     var conversations: [Conversation]
-    var shareItem: ShareItem
 
     var isLoading: Bool
 
@@ -148,14 +147,12 @@ struct HomeViewModelMock: HomeViewModel {
         selectedAccount: Account? = nil,
         searchQuery: String = "",
         conversations: [Conversation],
-        shareItem: ShareItem,
         isLoading: Bool = false,
     ) {
         self.accounts = accounts
         self.selectedAccount = selectedAccount ?? accounts.first
         self.searchQuery = searchQuery
         self.conversations = conversations
-        self.shareItem = shareItem
         self.isLoading = isLoading
     }
 
