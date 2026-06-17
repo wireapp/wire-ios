@@ -30,4 +30,9 @@ struct CatchUpView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
+
+}
+
+#Preview {
+    CatchUpView()
 }
