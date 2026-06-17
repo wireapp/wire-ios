@@ -1426,10 +1426,10 @@ internal enum L10n {
           internal static let placeholder = L10n.tr("Localizable", "bug_report.evidence.related_reports.placeholder", fallback: "Links or references")
         }
         internal enum Screenshots {
-          /// Add screenshots
-          internal static let button = L10n.tr("Localizable", "bug_report.evidence.screenshots.button", fallback: "Add screenshots")
-          /// Screenshots (optional)
-          internal static let header = L10n.tr("Localizable", "bug_report.evidence.screenshots.header", fallback: "Screenshots (optional)")
+          /// Add screenshots / videos
+          internal static let button = L10n.tr("Localizable", "bug_report.evidence.screenshots.button", fallback: "Add screenshots / videos")
+          /// Attachments (optional)
+          internal static let header = L10n.tr("Localizable", "bug_report.evidence.screenshots.header", fallback: "Attachments (optional)")
         }
       }
       internal enum Impact {

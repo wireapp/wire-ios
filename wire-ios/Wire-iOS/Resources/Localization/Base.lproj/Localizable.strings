@@ -1462,8 +1462,8 @@
 
 // Bug report — Page 4: Evidence & Notes
 "bug_report.evidence.title" = "Evidence & notes";
-"bug_report.evidence.screenshots.header" = "Screenshots (optional)";
-"bug_report.evidence.screenshots.button" = "Add screenshots";
+"bug_report.evidence.screenshots.header" = "Attachments (optional)";
+"bug_report.evidence.screenshots.button" = "Add screenshots / videos";
 "bug_report.evidence.related_reports.header" = "Related reports / duplicates (optional)";
 "bug_report.evidence.related_reports.placeholder" = "Links or references";
 "bug_report.evidence.other_context.header" = "Other context (optional)";

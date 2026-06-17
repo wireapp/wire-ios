@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
+import AVKit
 import PhotosUI
 import SwiftUI
+import UniformTypeIdentifiers
 
 private typealias L = L10n.Localizable.BugReport
 
@@ -120,7 +123,7 @@ struct BugReportClassificationStep: View {
                     } label: {
                         HStack(alignment: .top, spacing: 12) {
                             Image(systemName: model.impact == option ? "circle.inset.filled" : "circle")
-                                .foregroundStyle(model.impact == option ? .tint : .secondary)
+                                .foregroundStyle(model.impact == option ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(option.label)
                                     .foregroundStyle(.primary)
@@ -142,7 +145,7 @@ struct BugReportClassificationStep: View {
                     } label: {
                         HStack(alignment: .top, spacing: 12) {
                             Image(systemName: model.severity == option ? "circle.inset.filled" : "circle")
-                                .foregroundStyle(model.severity == option ? .tint : .secondary)
+                                .foregroundStyle(model.severity == option ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(option.label)
                                     .foregroundStyle(.primary)
@@ -183,29 +186,18 @@ struct BugReportEvidenceStep: View {
 
     @ObservedObject var model: BugReportFlowModel
     @State private var pickerItems: [PhotosPickerItem] = []
+    @State private var fullscreenAttachment: BugReportAttachment?
 
     var body: some View {
         BugReportStepScaffold(stepIndex: 4, title: L.Evidence.title, model: model) {
             Section {
-                PhotosPicker(selection: $pickerItems, maxSelectionCount: 5, matching: .images) {
+                PhotosPicker(selection: $pickerItems, maxSelectionCount: 5, matching: .any(of: [.images, .videos])) {
                     Label(L.Evidence.Screenshots.button, systemImage: "photo.on.rectangle")
                 }
                 .accessibilityIdentifier("bugReport.addScreenshots")
 
                 if !model.attachments.isEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(model.attachments) { attachment in
-                                if let image = attachment.image {
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 64, height: 64)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                }
-                            }
-                        }
-                    }
+                    AttachmentCarousel(attachments: model.attachments, onTap: { fullscreenAttachment = $0 })
                 }
             } header: {
                 Text(L.Evidence.Screenshots.header)
@@ -226,16 +218,37 @@ struct BugReportEvidenceStep: View {
         .onChange(of: pickerItems) { items in
             Task { await loadAttachments(items) }
         }
+        .fullScreenCover(item: $fullscreenAttachment) { attachment in
+            AttachmentFullscreenView(attachment: attachment)
+        }
     }
 
     private func loadAttachments(_ items: [PhotosPickerItem]) async {
         var loaded: [BugReportAttachment] = []
-        for (index, item) in items.enumerated() {
-            if let data = try? await item.loadTransferable(type: Data.self) {
-                loaded.append(BugReportAttachment(filename: "screenshot-\(index + 1).png", data: data))
-            }
+        var imageIndex = 1
+        var videoIndex = 1
+        for item in items {
+            guard let data = try? await item.loadTransferable(type: Data.self) else { continue }
+            guard data.count <= bugReportMaxAttachmentSize else { continue }
+            let isVideo = item.supportedContentTypes.contains(where: { $0.conforms(to: .audiovisualContent) })
+            let thumbnailData = isVideo ? await videoThumbnail(from: data) : nil
+            let filename = isVideo ? "recording-\(videoIndex).mp4" : "screenshot-\(imageIndex).png"
+            loaded.append(BugReportAttachment(filename: filename, data: data, isVideo: isVideo, thumbnailData: thumbnailData))
+            if isVideo { videoIndex += 1 } else { imageIndex += 1 }
         }
         model.attachments = loaded
+    }
+
+    private func videoThumbnail(from data: Data) async -> Data? {
+        let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString + ".mp4")
+        guard (try? data.write(to: tempURL)) != nil else { return nil }
+        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let asset = AVURLAsset(url: tempURL)
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        guard let (cgImage, _) = try? await generator.image(at: .zero) else { return nil }
+        return UIImage(cgImage: cgImage).pngData()
     }
 }
 
@@ -244,6 +257,7 @@ struct BugReportEvidenceStep: View {
 struct BugReportReviewStep: View {
 
     @ObservedObject var model: BugReportFlowModel
+    @State private var fullscreenAttachment: BugReportAttachment?
 
     var body: some View {
         BugReportStepScaffold(stepIndex: 5, title: L.Review.title, model: model) {
@@ -270,19 +284,7 @@ struct BugReportReviewStep: View {
 
             if !model.attachments.isEmpty {
                 Section(L.Review.Screenshots.header) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(model.attachments) { attachment in
-                                if let image = attachment.image {
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 64, height: 64)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                }
-                            }
-                        }
-                    }
+                    AttachmentCarousel(attachments: model.attachments, onTap: { fullscreenAttachment = $0 })
                 }
             }
 
@@ -323,6 +325,9 @@ struct BugReportReviewStep: View {
         } message: {
             Text(model.errorMessage ?? "")
         }
+        .fullScreenCover(item: $fullscreenAttachment) { attachment in
+            AttachmentFullscreenView(attachment: attachment)
+        }
     }
 
     @ViewBuilder
@@ -331,6 +336,89 @@ struct BugReportReviewStep: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title).font(.caption).foregroundStyle(.secondary)
             Text(trimmed.isEmpty ? "—" : trimmed)
+        }
+    }
+}
+
+// MARK: - Shared attachment carousel
+
+struct AttachmentCarousel: View {
+    let attachments: [BugReportAttachment]
+    let onTap: (BugReportAttachment) -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(attachments) { attachment in
+                    Button { onTap(attachment) } label: {
+                        ZStack(alignment: .bottomTrailing) {
+                            if let thumbnail = attachment.thumbnail {
+                                Image(uiImage: thumbnail)
+                                    .resizable()
+                                    .scaledToFill()
+                            } else {
+                                Color.secondary.opacity(0.2)
+                            }
+                            if attachment.isVideo {
+                                Image(systemName: "play.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(.white)
+                                    .shadow(radius: 2)
+                                    .padding(4)
+                            }
+                        }
+                        .frame(width: 80, height: 80)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Fullscreen attachment viewer
+
+struct AttachmentFullscreenView: View {
+
+    let attachment: BugReportAttachment
+    @Environment(\.dismiss) private var dismiss
+    @State private var videoURL: URL?
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Color.black.ignoresSafeArea()
+
+            if attachment.isVideo {
+                if let url = videoURL {
+                    VideoPlayer(player: AVPlayer(url: url))
+                        .ignoresSafeArea()
+                } else {
+                    ProgressView().tint(.white)
+                }
+            } else if let image = attachment.thumbnail {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .ignoresSafeArea()
+            }
+
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title)
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.white, Color.black.opacity(0.4))
+                    .padding()
+            }
+        }
+        .task {
+            guard attachment.isVideo else { return }
+            let url = FileManager.default.temporaryDirectory
+                .appendingPathComponent(attachment.id.uuidString + ".mp4")
+            try? attachment.data.write(to: url)
+            videoURL = url
         }
     }
 }

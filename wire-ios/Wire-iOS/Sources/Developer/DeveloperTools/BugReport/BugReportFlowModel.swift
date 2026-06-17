@@ -106,13 +106,20 @@ enum WorkaroundStatus: String, CaseIterable, Identifiable {
     }
 }
 
-/// An optional image attachment selected by the user.
+/// An image or video attachment selected by the user.
 struct BugReportAttachment: Identifiable, Sendable {
     let id = UUID()
     let filename: String
     let data: Data
-    var image: UIImage? { UIImage(data: data) }
+    let isVideo: Bool
+    let thumbnailData: Data?
+    var thumbnail: UIImage? {
+        isVideo ? thumbnailData.flatMap { UIImage(data: $0) } : UIImage(data: data)
+    }
 }
+
+// 25 MB — conservative limit matching the personal account asset upload cap.
+let bugReportMaxAttachmentSize = 25 * 1024 * 1024
 
 // MARK: - Flow model
 
@@ -128,7 +135,7 @@ final class BugReportFlowModel: ObservableObject {
     @Published var timeframe = Date()
 
     // Page 2 — Reproduction
-    @Published var stepsToReproduce = ""
+    @Published var stepsToReproduce = "• \n• \n• "
     @Published var reproducibility: Reproducibility = .unknown
     @Published var workaroundStatus: WorkaroundStatus = .no
     @Published var workaroundDetail = ""
