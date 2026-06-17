@@ -43,10 +43,10 @@ public struct ConversationSummary: Identifiable {
 
 public struct CatchUpView: View {
 
-    private let summaries: [ConversationSummary]
+    @State private var summaries: [ConversationSummary]
 
     public init(summaries: [ConversationSummary] = ConversationSummary.mocks) {
-        self.summaries = summaries
+        self._summaries = State(initialValue: summaries)
     }
 
     public var body: some View {
@@ -78,22 +78,30 @@ public struct CatchUpView: View {
     // MARK: - List
 
     private var summaryList: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+        List {
+            Section {
+                ForEach(summaries) { summary in
+                    ConversationSummaryRow(summary: summary)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button {
+                                withAnimation {
+                                    summaries.removeAll { $0.id == summary.id }
+                                }
+                            } label: {
+                                Label("Mark as Read", systemImage: "checkmark.circle")
+                            }
+                            .tint(.green)
+                        }
+                }
+            } header: {
                 Text(verbatim: subtitle)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                    .padding(.horizontal)
-                    .padding(.vertical, 12)
-
-                Divider()
-
-                ForEach(summaries) { summary in
-                    ConversationSummaryRow(summary: summary)
-                    Divider()
-                }
+                    .textCase(nil)
+                    .padding(.bottom, 4)
             }
         }
+        .listStyle(.plain)
     }
 
     private var subtitle: String {
