@@ -53,7 +53,6 @@ final class CallingActionsView: UIView {
     private let microphoneButton = CallingActionButton.microphoneButton()
     private let cameraButton = CallingActionButton.cameraButton()
     private let speakerButton = CallingActionButton.speakerButton()
-    private let flipCameraButton = CallingActionButton.flipCameraButton()
     private let endCallButton = EndCallButton.endCallButton()
     private let handleView = AccessibilityActionView()
     private let handleContainerView = UIView()
@@ -65,7 +64,6 @@ final class CallingActionsView: UIView {
             microphoneButton,
             cameraButton,
             speakerButton,
-            flipCameraButton,
             endCallButton
         ]
     }
@@ -134,7 +132,6 @@ final class CallingActionsView: UIView {
         ].forEach(verticalStackView.addArrangedSubview)
 
         [
-            flipCameraButton,
             cameraButton,
             microphoneButton,
             speakerButton,
@@ -237,7 +234,6 @@ final class CallingActionsView: UIView {
         videoButtonDisabledTapRecognizer?.isEnabled = !input.canToggleMediaType
         cameraButton.isEnabled = input.canToggleMediaType
         cameraButton.isSelected = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
-        flipCameraButton.isEnabled = input.mediaState.isSendingVideo && input.permissions.canAcceptVideoCalls
         speakerButton.isSelected = input.mediaState.isSpeakerEnabled
         speakerButton.isEnabled = canToggleSpeakerButton(input)
         updateAccessibilityElements(with: input)
@@ -266,7 +262,6 @@ final class CallingActionsView: UIView {
         case cameraButton: .toggleVideoState
         case videoButtonDisabledTapRecognizer: .alertVideoUnavailable
         case speakerButton: .toggleSpeakerState
-        case flipCameraButton: .flipCamera
         case endCallButton, largeHangUpButton: .terminateCall
         case largePickUpButton: .acceptCall
         default: fatalError("Unexpected Button: \(button)")
@@ -285,8 +280,6 @@ final class CallingActionsView: UIView {
         endCallButton.accessibilityLabel = Calling.HangUpButton.description
         cameraButton.accessibilityLabel = input.mediaState.isSendingVideo ? Calling.VideoOffButton.description : Calling
             .VideoOnButton.description
-        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Calling.FlipCameraBackButton
-            .description : Calling.FlipCameraFrontButton.description
         largePickUpButton.accessibilityLabel = Calling.AcceptButton.description
         largeHangUpButton.accessibilityLabel = Calling.HangUpButton.description
     }

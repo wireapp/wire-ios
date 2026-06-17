@@ -362,6 +362,11 @@ final class CallGridViewController: UIViewController {
                 userSession: userSession
             )
         }
+
+        selfCallParticipantView?.onFlipCamera = { [weak self] in
+            guard let self else { return }
+            delegate?.callGridViewController(self, perform: .flipCamera)
+        }
     }
 
     private func updateFloatingView(with stream: Stream?) {

@@ -17,14 +17,25 @@
 //
 
 import avs
+import AVFoundation
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 final class SelfCallParticipantView: BaseCallParticipantView {
 
+    var onFlipCamera: (() -> Void)?
+
     weak var previewView: AVSVideoPreview?
 
     private weak var videoContainerView: AVSVideoContainerView?
+    private let flipCameraButton = UIButton(type: .system)
+
+    private static var canFlipCamera: Bool {
+        let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+        let back = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back)
+        return front != nil && back != nil
+    }
 
     override var stream: Stream {
         didSet {
@@ -51,6 +62,22 @@ final class SelfCallParticipantView: BaseCallParticipantView {
         scalableView.addSubview(videoContainerView)
         insertSubview(scalableView, belowSubview: userDetailsView)
         self.scalableView = scalableView
+
+        setupFlipCameraButton()
+    }
+
+    private func setupFlipCameraButton() {
+        let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .medium)
+        flipCameraButton.setImage(UIImage(systemName: "camera.rotate.fill", withConfiguration: config), for: .normal)
+        flipCameraButton.tintColor = ColorTheme.Backgrounds.inverted
+        flipCameraButton.backgroundColor = ColorTheme.Backgrounds.onInverted
+        flipCameraButton.layer.cornerRadius = 16
+        flipCameraButton.clipsToBounds = true
+        flipCameraButton.translatesAutoresizingMaskIntoConstraints = false
+        flipCameraButton.accessibilityLabel = L10n.Localizable.Call.Actions.Label.flipCamera
+        flipCameraButton.addTarget(self, action: #selector(flipCameraButtonTapped), for: .touchUpInside)
+        addSubview(flipCameraButton)
+        updateFlipCameraButtonVisibility()
     }
 
     override func createConstraints() {
@@ -63,6 +90,28 @@ final class SelfCallParticipantView: BaseCallParticipantView {
             $0?.translatesAutoresizingMaskIntoConstraints = false
             $0?.fitIn(view: self)
         }
+
+        NSLayoutConstraint.activate([
+            flipCameraButton.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            flipCameraButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            flipCameraButton.widthAnchor.constraint(equalToConstant: 32),
+            flipCameraButton.heightAnchor.constraint(equalToConstant: 32)
+        ])
+    }
+
+    @objc private func flipCameraButtonTapped() {
+        UIView.transition(
+            with: self,
+            duration: 0.5,
+            options: [.transitionFlipFromRight, .curveEaseInOut],
+            animations: nil,
+            completion: nil
+        )
+        onFlipCamera?()
+    }
+
+    private func updateFlipCameraButtonVisibility() {
+        flipCameraButton.isHidden = !(videoState == .started && Self.canFlipCamera)
     }
 
     override func updateUserDetails() {
@@ -93,6 +142,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
             stopCapture()
         }
         videoState = newVideoState
+        updateFlipCameraButtonVisibility()
     }
 
     func startCapture() {
