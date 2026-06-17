@@ -81,9 +81,13 @@ public struct CatchUpSummarizer {
     private func callModel(transcript: String) async throws -> String {
         let session = LanguageModelSession()
         let prompt = """
-        The following is a team chat conversation. Summarize what happened for a team member \
-        who was away. Be concise, group related topics together, and do not invent any content \
-        that is not present in the messages.
+        Summarize the following team chat for a colleague who was away.
+
+        Rules:
+        - Output 3–5 bullet points, grouped by topic.
+        - Each bullet must be one sentence or less.
+        - Drop casual replies ("OK", "sounds good", "works for me", "+1") — only keep decisions, announcements, and action items.
+        - Do not invent anything not present in the messages.
 
         Conversation:
         \(transcript)
@@ -104,9 +108,13 @@ public struct CatchUpSummarizer {
             .joined(separator: "\n\n")
         let session = LanguageModelSession()
         let prompt = """
-        The following are summaries of consecutive parts of a team chat conversation. \
-        Merge them into one coherent summary for a team member who was away. \
-        Be concise, group related topics, and do not invent content.
+        Merge the following partial chat summaries into one final summary for a colleague who was away.
+
+        Rules:
+        - Output 3–5 bullet points, grouped by topic.
+        - Each bullet must be one sentence or less.
+        - Drop duplicates across parts.
+        - Do not invent anything not present in the summaries.
 
         \(combined)
         """
