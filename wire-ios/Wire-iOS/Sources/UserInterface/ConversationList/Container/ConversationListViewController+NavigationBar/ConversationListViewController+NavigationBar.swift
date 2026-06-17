@@ -242,21 +242,18 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             isSelected: listContentController.listViewModel.selectedFilter?.folderData != nil
         )
 
-        // Catch-Up entry — shown as a separate inline section at the top of the menu
-        let catchUpAction = UIAction(
-            title: "Catch-Up",
-            image: UIImage(systemName: "sparkles")
-        ) { [weak self] _ in
-            self?.presentCatchUpUI()
+        // Catch-Up entry — only available on iOS 26+ (requires on-device Apple Intelligence)
+        var menuChildren: [UIMenuElement] = [allConversationsAction, favoritesAction]
+        if #available(iOS 26.0, *) {
+            let catchUpAction = UIAction(
+                title: "Catch-Up",
+                image: UIImage(systemName: "sparkles")
+            ) { [weak self] _ in
+                self?.presentCatchUpUI()
+            }
+            let catchUpSection = UIMenu(options: .displayInline, children: [catchUpAction])
+            menuChildren.insert(catchUpSection, at: 0)
         }
-        let catchUpSection = UIMenu(options: .displayInline, children: [catchUpAction])
-
-        // Create menu children array
-        var menuChildren: [UIMenuElement] = [
-            catchUpSection,
-            allConversationsAction,
-            favoritesAction
-        ]
 
         // Add unread, mentions and replies filters if developer flag is enabled
         if DeveloperFlag.showUnreadConversationsFilter.isOn {

@@ -51,6 +51,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     @Published var debugItems: [DeveloperDebugActionsDisplayModel.DebugItem] = []
     @Published var mlsGroupSearchItem: MLSGroupSearchItem?
     @Published var isAppVersionInputPresented = false
+    @Published var isUnreadTimeRangePickerPresented = false
 
     private let userSession: ZMUserSession?
     private let selfClient: UserClient?
@@ -96,7 +97,10 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Trigger 60s CC transaction", action: { [weak self] in
                 self?.simulateLongCCTransaction(seconds: 60)
             }),
-            .init(title: "Logout", action: logout)
+            .init(title: "Logout", action: logout),
+            .init(title: "Simulate unread messages (Catch-Up)…") { [weak self] in
+                self?.isUnreadTimeRangePickerPresented = true
+            }
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -483,6 +487,36 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     @MainActor
     private func showConversationInfo(results: [ConversationResult], term: String) {
         mlsGroupSearchItem = .result(results, term)
+    }
+
+    // MARK: - Simulate unread messages
+
+    /// Rolls back `lastReadServerTimeStamp` on every conversation so that messages
+    /// sent within the given interval appear as unread. Used to populate the Catch-Up feature for testing.
+    func markConversationsUnread(since interval: TimeInterval) {
+        guard let syncContext = userSession?.syncContext else { return }
+        isUnreadTimeRangePickerPresented = false
+
+        let cutoff = Date(timeIntervalSinceNow: -interval)
+
+        syncContext.perform {
+            let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+            request.predicate = NSPredicate(
+                format: "conversationType IN %@",
+                [ZMConversationType.group.rawValue, ZMConversationType.oneOnOne.rawValue]
+            )
+            guard let conversations = try? syncContext.fetch(request) else { return }
+
+            for conversation in conversations {
+                // Only roll back if the current read pointer is newer than the cutoff.
+                // This avoids re-marking conversations that were already fully unread.
+                guard let currentTimestamp = conversation.lastReadServerTimeStamp,
+                      currentTimestamp > cutoff else { continue }
+                conversation.lastReadServerTimeStamp = cutoff
+            }
+
+            try? syncContext.save()
+        }
     }
 
     // MARK: - Simulate long CC transaction

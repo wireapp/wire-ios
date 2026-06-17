@@ -41,6 +41,9 @@ struct DeveloperDebugActionsView: View {
         .sheet(isPresented: $viewModel.isAppVersionInputPresented) {
             appVersionInputView
         }
+        .sheet(isPresented: $viewModel.isUnreadTimeRangePickerPresented) {
+            unreadTimeRangePickerView
+        }
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
     }
@@ -85,6 +88,29 @@ struct DeveloperDebugActionsView: View {
         Task {
             await viewModel.findConversations(with: userInput.trim())
         }
+    }
+
+    @ViewBuilder private var unreadTimeRangePickerView: some View {
+        List {
+            Section("Mark messages as unread since…") {
+                ForEach(unreadTimeRangeOptions, id: \.label) { option in
+                    Button(option.label) {
+                        viewModel.markConversationsUnread(since: option.interval)
+                    }
+                }
+            }
+        }
+        .presentationDetents([.height(300)])
+        .presentationDragIndicator(.visible)
+    }
+
+    private var unreadTimeRangeOptions: [(label: String, interval: TimeInterval)] {
+        [
+            ("Last hour",    3_600),
+            ("Last day",    86_400),
+            ("Last week",  604_800),
+            ("Last 2 weeks", 1_209_600)
+        ]
     }
 
     @ViewBuilder private var appVersionInputView: some View {
