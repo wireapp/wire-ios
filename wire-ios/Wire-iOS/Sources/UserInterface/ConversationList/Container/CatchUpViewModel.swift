@@ -54,15 +54,41 @@ final class CatchUpViewModel: ObservableObject {
                 let senderName = message.sender?.name ?? "Unknown"
                 return "\(senderName): \(text)"
             }
+            let context = recentReadMessages(before: conversation)
 
             Task { [weak self] in
                 guard let self else { return }
-                await summarize(messages: messages, at: index)
+                await summarize(messages: messages, context: context, at: index)
             }
         }
     }
 
-    private func summarize(messages: [String], at index: Int) async {
+    /// Fetches the last 20 text messages that were already read in this conversation,
+    /// so the model has context for references in the new (unread) messages.
+    private func recentReadMessages(before conversation: ZMConversation) -> [String] {
+        guard
+            let moc = conversation.managedObjectContext,
+            let readBoundary = conversation.lastReadServerTimeStamp
+        else { return [] }
+
+        let request = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
+        request.predicate = NSPredicate(
+            format: "visibleInConversation == %@ AND serverTimestamp <= %@",
+            conversation,
+            readBoundary as NSDate
+        )
+        request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
+        request.fetchLimit = 20
+
+        guard let messages = try? moc.fetch(request) else { return [] }
+        return messages.reversed().compactMap { message in
+            guard let text = message.textMessageData?.messageText, !text.isEmpty else { return nil }
+            let senderName = message.sender?.name ?? "Unknown"
+            return "\(senderName): \(text)"
+        }
+    }
+
+    private func summarize(messages: [String], context: [String], at index: Int) async {
         guard index < summaries.count else { return }
 
         guard !messages.isEmpty else {
@@ -72,7 +98,7 @@ final class CatchUpViewModel: ObservableObject {
 
         if #available(iOS 26.0, *) {
             do {
-                let summary = try await CatchUpSummarizer().summarize(messages: messages)
+                let summary = try await CatchUpSummarizer().summarize(messages: messages, context: context)
                 update(at: index, summary: summary)
             } catch {
                 update(at: index, summary: "Could not generate summary.")

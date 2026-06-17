@@ -53,55 +53,69 @@ public struct CatchUpSummarizer {
 
     public init() {}
 
-    /// Returns a summary of the given messages for a user who was away.
+    /// Returns a summary of the new (unread) messages for a user who was away.
     ///
-    /// Long conversations are split into chunks and summarized hierarchically so that
-    /// the on-device context window is never exceeded.
-    public func summarize(messages: [String]) async throws -> String {
+    /// Pass recent already-read messages in `context` so the model can understand
+    /// references in the new messages. Long new-message lists are split and summarized
+    /// hierarchically so the on-device context window is never exceeded.
+    public func summarize(messages: [String], context: [String] = []) async throws -> String {
         let limit = SystemLanguageModel.default.contextSize - Self.reservedTokens
-        return try await summarize(messages: messages, tokenLimit: limit)
+        return try await summarize(messages: messages, context: context, tokenLimit: limit)
     }
 
     // MARK: - Internals
 
-    private func summarize(messages: [String], tokenLimit: Int) async throws -> String {
-        let transcript = messages.joined(separator: "\n")
+    private func summarize(messages: [String], context: [String], tokenLimit: Int) async throws -> String {
+        let newTranscript = messages.joined(separator: "\n")
 
         // Skip the model for trivial transcripts — avoid hallucination on near-empty input.
-        guard transcript.count >= Self.minimumTranscriptLength else {
+        guard newTranscript.count >= Self.minimumTranscriptLength else {
             return "Nothing to summarize."
         }
 
-        let estimatedTokens = transcript.count / Self.charsPerToken
+        // Context counts toward the token budget but is trimmed from the front, never split.
+        let contextTranscript = context.joined(separator: "\n")
+        let estimatedTokens = (contextTranscript.count + newTranscript.count) / Self.charsPerToken
 
         if estimatedTokens > tokenLimit, messages.count > 1 {
-            // Split the message list in half and summarize each part separately,
-            // then merge the two partial summaries into one.
+            // Split only the new messages in half; context is dropped on recursive calls
+            // because each chunk covers a narrow time window and doesn't need it.
             let mid = messages.count / 2
-            let firstSummary = try await summarize(messages: Array(messages[..<mid]), tokenLimit: tokenLimit)
-            let secondSummary = try await summarize(messages: Array(messages[mid...]), tokenLimit: tokenLimit)
+            let firstSummary = try await summarize(messages: Array(messages[..<mid]), context: [], tokenLimit: tokenLimit)
+            let secondSummary = try await summarize(messages: Array(messages[mid...]), context: [], tokenLimit: tokenLimit)
             return try await merge(summaries: [firstSummary, secondSummary])
         }
 
-        return try await callModel(transcript: transcript)
+        return try await callModel(newTranscript: newTranscript, contextTranscript: contextTranscript.isEmpty ? nil : contextTranscript)
     }
 
-    private func callModel(transcript: String) async throws -> String {
+    private func callModel(newTranscript: String, contextTranscript: String?) async throws -> String {
         let session = LanguageModelSession()
-        let prompt = """
-        Extract decisions, announcements, and action items from the transcript inside <transcript> tags. Write at most 5 bullet points, one sentence each. Every bullet point must be directly supported by text inside the transcript — do not add, infer, or invent anything. If the transcript contains no decisions, announcements, or action items, respond with only: Nothing to summarize.
 
-        <transcript>
-        \(transcript)
-        </transcript>
+        let contextSection = contextTranscript.map { """
+
+        <prior_conversation>
+        \($0)
+        </prior_conversation>
+        """ } ?? ""
+
+        let prompt = """
+        Extract decisions, announcements, and action items from the new messages inside <new_messages> tags. Write at most 5 bullet points, one sentence each. Every bullet point must be directly supported by text inside <new_messages> — do not add, infer, or invent anything. If there are no decisions, announcements, or action items, respond with only: Nothing to summarize.\(contextSection)
+
+        <new_messages>
+        \(newTranscript)
+        </new_messages>
         """
         do {
             let response = try await session.respond(to: prompt)
             return response.content
         } catch LanguageModelSession.GenerationError.exceededContextWindowSize {
             // Should not normally happen after the pre-check above, but if the estimate
-            // was off (e.g. non-Latin script) fall back to a single-message summary.
-            return try await callModel(transcript: String(transcript.prefix(transcript.count / 2)))
+            // was off (e.g. non-Latin script) drop context and retry with half the new transcript.
+            return try await callModel(
+                newTranscript: String(newTranscript.prefix(newTranscript.count / 2)),
+                contextTranscript: nil
+            )
         }
     }
 
