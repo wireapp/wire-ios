@@ -46,6 +46,8 @@ public struct CatchUpSummarizer {
     private static let charsPerToken = 4
     // Headroom reserved for the system prompt template and the model's response.
     private static let reservedTokens = 512
+    // Transcripts shorter than this are not worth sending to the model — it tends to hallucinate on sparse input.
+    private static let minimumTranscriptLength = 120
 
     // MARK: - Public API
 
@@ -64,6 +66,12 @@ public struct CatchUpSummarizer {
 
     private func summarize(messages: [String], tokenLimit: Int) async throws -> String {
         let transcript = messages.joined(separator: "\n")
+
+        // Skip the model for trivial transcripts — avoid hallucination on near-empty input.
+        guard transcript.count >= Self.minimumTranscriptLength else {
+            return "Nothing to summarize."
+        }
+
         let estimatedTokens = transcript.count / Self.charsPerToken
 
         if estimatedTokens > tokenLimit, messages.count > 1 {
@@ -81,10 +89,11 @@ public struct CatchUpSummarizer {
     private func callModel(transcript: String) async throws -> String {
         let session = LanguageModelSession()
         let prompt = """
-        List the key decisions, announcements, and action items from the chat transcript below. Write at most 5 bullet points, one sentence each. Skip greetings and casual replies. If there is nothing significant to report, write only: Nothing to summarize.
+        Extract decisions, announcements, and action items from the transcript inside <transcript> tags. Write at most 5 bullet points, one sentence each. Every bullet point must be directly supported by text inside the transcript — do not add, infer, or invent anything. If the transcript contains no decisions, announcements, or action items, respond with only: Nothing to summarize.
 
-        Transcript:
+        <transcript>
         \(transcript)
+        </transcript>
         """
         do {
             let response = try await session.respond(to: prompt)
@@ -102,9 +111,11 @@ public struct CatchUpSummarizer {
             .joined(separator: "\n\n")
         let session = LanguageModelSession()
         let prompt = """
-        Combine the partial chat summaries below into one list of bullet points. Keep only decisions, announcements, and action items. Merge duplicates. At most 5 bullet points, one sentence each. If there is nothing significant, write only: Nothing to summarize.
+        Combine the partial summaries inside <summaries> tags into one final list. Keep only decisions, announcements, and action items. Merge duplicates. At most 5 bullet points, one sentence each. Use only what is stated in the summaries — do not add anything. If there is nothing significant, respond with only: Nothing to summarize.
 
+        <summaries>
         \(combined)
+        </summaries>
         """
         let response = try await session.respond(to: prompt)
         return response.content
