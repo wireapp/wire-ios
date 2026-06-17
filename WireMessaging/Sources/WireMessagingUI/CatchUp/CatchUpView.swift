@@ -104,7 +104,7 @@ public struct CatchUpView: View {
             } header: {
                 Text(verbatim: subtitle)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
                     .textCase(nil)
                     .padding(.bottom)
             }
@@ -152,7 +152,7 @@ private struct ConversationSummaryRow: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Color(accentColor), in: Capsule())
+                        .background(.black, in: Capsule())
                 }
                 Text(verbatim: summary.summary)
                     .font(.subheadline)
