@@ -28,13 +28,19 @@ struct RootNode: View {
     let onDone: () -> Void
 
     var body: some View {
-        RootView(viewModel: makeViewModel()) { conversation in
-            ComposeMessageNode(
-                acc
-                conversation: conversation,
-                shareItem: shareItem,
-                onDone: onDone
-            )
+        RootView(
+            viewModel: makeViewModel(),
+            router: router
+        ) { destination in
+            switch destination {
+            case .home:
+                Color.red
+            case let .composeMessage(destination):
+                ComposeMessageNode(
+                    destination: destination,
+                    onDone: onDone
+                )
+            }
         }
     }
 
@@ -43,6 +49,7 @@ struct RootNode: View {
             fetchAccounts: FetchAccountsUseCaseMock(),
             fetchConversations: FetchConversationsUseCaseMock(),
             shareItem: shareItem,
+            router: router,
             onClose: onClose
         )
     }

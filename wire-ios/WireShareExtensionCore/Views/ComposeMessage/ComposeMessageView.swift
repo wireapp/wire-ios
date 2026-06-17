@@ -81,17 +81,11 @@ struct ComposeMessageView<
 
     @ViewBuilder
     private var thumbnailView: some View {
-        if let thumbnail = viewModel.shareItem.thumbnailImage {
-            thumbnail
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        } else {
-            Image(systemName: shareItemIcon)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .font(.title)
-                .foregroundStyle(.secondary)
-        }
+        Image(systemName: shareItemIcon)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .font(.title)
+            .foregroundStyle(.secondary)
     }
 
     private var shareItemIcon: String {
@@ -141,8 +135,7 @@ struct ComposeMessageView<
                 ),
                 shareItem: ShareItem(
                     type: .image,
-                    fileName: "Screenshot.png",
-                    thumbnailImage: Image(systemName: "photo")
+                    fileName: "Screenshot.png"
                 ),
                 sendMessage: SendMessageUseCaseMock(),
                 onDone: {

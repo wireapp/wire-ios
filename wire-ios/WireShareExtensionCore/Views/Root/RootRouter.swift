@@ -28,10 +28,10 @@ public final class RootRouter {
         case composeMessage(ComposeMessageDestination)
     }
 
-    var path: [Destination] = [.home]
+    var path: [Destination] = []
 
     func navigateTo(_ destination: ComposeMessageDestination) {
-        precondition(path == [.home])
+        precondition(path == [])
         path.append(.composeMessage(destination))
     }
 

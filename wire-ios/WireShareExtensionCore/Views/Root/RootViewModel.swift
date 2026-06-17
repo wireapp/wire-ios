@@ -33,8 +33,8 @@ public protocol RootViewModel {
 
     func start() async
     func reloadConversations()
-    func close()
     func selectConversation(_ conversation: Conversation)
+    func close()
 
 }
 
@@ -95,6 +95,8 @@ public final class RootViewModelImpl: RootViewModel {
         } catch {
             errorAlert = .debug(message: "failed to fetch accounts: \(error)")
         }
+
+        await internalReloadConversations()
     }
 
     public func reloadConversations() {
@@ -165,5 +167,6 @@ struct RootViewModelMock: RootViewModel {
 
     func start() async {}
     func reloadConversations() {}
+    func selectConversation(_ conversation: Conversation) {}
     func close() {}
 }

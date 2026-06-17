@@ -20,17 +20,20 @@ import SwiftUI
 
 public struct RootView<
     ViewModel: RootViewModel,
-    ComposeMessageView: View
+    DestinationNode: View
 >: View {
 
     @State
     var viewModel: ViewModel
 
+    @Bindable
+    var router: RootRouter
+
     @ViewBuilder
-    let makeComposeMessageView: (Conversation) -> ComposeMessageView
+    let makeDestinationNode: (RootRouter.Destination) -> DestinationNode
 
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.path) {
             content
                 .navigationTitle("Send to")
                 .navigationBarTitleDisplayMode(.inline)
@@ -42,8 +45,8 @@ public struct RootView<
                     }
                 }
                 .errorAlert($viewModel.errorAlert)
-                .navigationDestination(for: Conversation.self) { conversation in
-                    makeComposeMessageView(conversation)
+                .navigationDestination(for: RootRouter.Destination.self) {
+                    makeDestinationNode($0)
                 }
                 .task {
                     await viewModel.start()
@@ -75,11 +78,8 @@ public struct RootView<
 
             Section("Conversations") {
                 ForEach(viewModel.conversations, id: \.self) { conversation in
-                    ComposeMessageDestination(account: <#T##Account#>, conversation: <#T##Conversation#>, shareItem: <#T##ShareItem#>)
-
-
-                    NavigationLink(value: conversation) {
-                        Text(conversation.name)
+                    Text(conversation.name).onTapGesture {
+                        viewModel.selectConversation(conversation)
                     }
                 }
             }
@@ -123,7 +123,8 @@ public struct RootView<
                 fileName: "Screenshot.png"
             )
         ),
-        makeComposeMessageView: { _ in
+        router: RootRouter(),
+        makeDestinationNode: { _ in
             Color.red
         }
     )
@@ -148,14 +149,19 @@ public struct RootView<
                 fileName: "Screenshot.png"
             )
         ),
-        makeComposeMessageView: { _ in
+        router: RootRouter(),
+        makeDestinationNode: { _ in
             Color.red
         }
     )
 }
 
 #Preview("Model") {
-    RootView(
+    @Previewable
+    @State
+    var router = RootRouter()
+
+    return RootView(
         viewModel: RootViewModelImpl(
             fetchAccounts: FetchAccountsUseCaseMock(),
             fetchConversations: FetchConversationsUseCaseMock(),
@@ -163,11 +169,13 @@ public struct RootView<
                 type: .image,
                 fileName: "Screenshot.png"
             ),
+            router: router,
             onClose: {
                 print("Close")
             }
         ),
-        makeComposeMessageView: { _ in
+        router: router,
+        makeDestinationNode: { _ in
             Color.red
         }
     )
