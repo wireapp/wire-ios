@@ -189,6 +189,20 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
     private var currentAvailability: Availability
     private var customStatus = ""
 
+    private let buttonHeight: CGFloat = 48
+    private let buttonMargin: CGFloat = 16
+    private var buttonBottomConstraint: NSLayoutConstraint?
+
+    private let updateStatusButton: IconButton = {
+        let button = IconButton(fontSpec: .normalSemiboldFont)
+        button.applyStyle(.addParticipantsButtonStyle)
+        button.setTitle(L10n.Localizable.Availability.Message.updateStatus, for: .normal)
+        button.contentHorizontalAlignment = .center
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        return button
+    }()
+
     init(
         currentAvailability: Availability,
         selectionHandler: @escaping (Availability) -> Void
@@ -209,6 +223,7 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
         view.backgroundColor = SemanticColors.View.backgroundDefault
         createTableView()
         createConstraints()
+        setupKeyboardObserver()
     }
 
     private func createTableView() {
@@ -216,6 +231,7 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
+        tableView.keyboardDismissMode = .interactive
         tableView.clipsToBounds = true
         tableView.tableFooterView = UIView()
         tableView.rowHeight = UITableView.automaticDimension
@@ -228,17 +244,68 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
             CustomStatusInputCell.self,
             forCellReuseIdentifier: CustomStatusInputCell.reuseIdentifier
         )
+        tableView.contentInset.bottom = buttonHeight + buttonMargin * 2
         view.addSubview(tableView)
+        view.addSubview(updateStatusButton)
     }
 
     private func createConstraints() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        updateStatusButton.translatesAutoresizingMaskIntoConstraints = false
+
+        let bottomConstraint = updateStatusButton.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+            constant: -buttonMargin
+        )
+        buttonBottomConstraint = bottomConstraint
+
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            updateStatusButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: buttonMargin),
+            updateStatusButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -buttonMargin),
+            updateStatusButton.heightAnchor.constraint(equalToConstant: buttonHeight),
+            bottomConstraint
         ])
+    }
+
+    private func setupKeyboardObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillChangeFrame(_:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
+    }
+
+    @objc private func keyboardWillChangeFrame(_ notification: Notification) {
+        guard
+            let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
+            let curveRaw = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+        else { return }
+
+        let keyboardHeight = max(0, UIScreen.main.bounds.height - keyboardFrame.origin.y)
+        let safeAreaBottom = view.safeAreaInsets.bottom
+        let isKeyboardVisible = keyboardHeight > 0
+
+        buttonBottomConstraint?.constant = isKeyboardVisible
+            ? -(keyboardHeight - safeAreaBottom + buttonMargin)
+            : -buttonMargin
+        tableView.contentInset.bottom = isKeyboardVisible
+            ? keyboardHeight - safeAreaBottom + buttonHeight + buttonMargin * 2
+            : buttonHeight + buttonMargin * 2
+
+        UIView.animate(
+            withDuration: duration,
+            delay: 0,
+            options: UIView.AnimationOptions(rawValue: curveRaw << 16)
+        ) {
+            self.view.layoutIfNeeded()
+        }
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -466,6 +533,7 @@ private final class CustomStatusInputCell: UITableViewCell {
         textField.placeholder = L10n.Localizable.Availability.Message.customStatusPlaceholder
         textField.textColor = SemanticColors.Label.textDefault
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        textField.delegate = self
         return textField
     }()
 
@@ -473,29 +541,12 @@ private final class CustomStatusInputCell: UITableViewCell {
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "face.smiling")
         config.baseForegroundColor = SemanticColors.Label.textDefault
-//        config.background.backgroundColor = SemanticColors.View.backgroundDefault
         config.background.cornerRadius = 15
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
         let button = UIButton(configuration: config)
         button.addTarget(self, action: #selector(emojiButtonTapped), for: .touchUpInside)
-//        button.layer.cornerRadius = 15
-//        button.clipsToBounds = true
         return button
     }()
-
-//    private lazy var emojiButtonWrapper: UIView = {
-//           let buttonSize: CGFloat = 30
-//           let wrapper = UIView(frame: CGRect(x: 0, y: 0, width: buttonSize + 8, height: buttonSize))
-//           wrapper.addSubview(emojiButton)
-//           emojiButton.translatesAutoresizingMaskIntoConstraints = false
-//           NSLayoutConstraint.activate([
-//               emojiButton.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor),
-//               emojiButton.centerYAnchor.constraint(equalTo: wrapper.centerYAnchor),
-//               emojiButton.widthAnchor.constraint(equalToConstant: buttonSize),
-//               emojiButton.heightAnchor.constraint(equalToConstant: buttonSize)
-//           ])
-//           return wrapper
-//       }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -536,19 +587,48 @@ private final class CustomStatusInputCell: UITableViewCell {
     }
 
     @objc private func emojiButtonTapped() {
-        let picker = EmojiKeyboardViewController()
+        let picker = CompleteReactionPickerViewController(selectedReactions: [])
         picker.delegate = self
-        picker.modalPresentationStyle = .pageSheet
-        if let sheet = picker.sheetPresentationController {
-            sheet.detents = [.medium()]
+        let nav = UINavigationController(rootViewController: picker)
+        nav.modalPresentationStyle = .pageSheet
+        if let sheet = nav.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
         }
-        parentViewController?.present(picker, animated: true)
+        parentViewController?.present(nav, animated: true)
     }
 
     @objc
     private func textFieldDidChange() {
-        textChangeHandler?(textField.text ?? "")
+        let text = textField.text ?? ""
+        textChangeHandler?(text)
+
+        guard selectedEmoji == nil else { return }
+        var config = emojiButton.configuration ?? .plain()
+        if text.isEmpty {
+            config.image = UIImage(systemName: "face.smiling")
+            config.title = nil
+        } else {
+            config.image = nil
+            config.title = "💬"
+        }
+        emojiButton.configuration = config
+    }
+}
+
+extension CustomStatusInputCell: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        selectedEmoji = nil
+        var config = emojiButton.configuration ?? .plain()
+        config.title = nil
+        config.image = UIImage(systemName: "face.smiling")
+        emojiButton.configuration = config
+        return true
     }
 }
 
