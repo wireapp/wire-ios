@@ -15,11 +15,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
 
-struct CatchUpView: View {
+public struct CatchUpView: View {
 
-    var body: some View {
+    public var body: some View {
         NavigationView {
             ContentUnavailableView(
                 "Catch-Up Summaries",
@@ -30,6 +30,8 @@ struct CatchUpView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
+
+    public init() {}
 
 }
 
