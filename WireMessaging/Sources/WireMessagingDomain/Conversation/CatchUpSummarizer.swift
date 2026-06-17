@@ -69,8 +69,9 @@ public struct CatchUpSummarizer {
         let newTranscript = messages.joined(separator: "\n")
 
         // Skip the model for trivial transcripts — avoid hallucination on near-empty input.
+        // Show the raw messages directly instead so the user still sees what was said.
         guard newTranscript.count >= Self.minimumTranscriptLength else {
-            return "Nothing to summarize."
+            return paraphrase(messages: messages)
         }
 
         // Context counts toward the token budget but is trimmed from the front, never split.
@@ -108,6 +109,10 @@ public struct CatchUpSummarizer {
         """
         do {
             let response = try await session.respond(to: prompt)
+            // If the model found nothing worth reporting, show the raw messages instead.
+            if response.content.localizedCaseInsensitiveContains("nothing to summarize") {
+                return paraphrase(messages: newTranscript.components(separatedBy: "\n"))
+            }
             return response.content
         } catch LanguageModelSession.GenerationError.exceededContextWindowSize {
             // Should not normally happen after the pre-check above, but if the estimate
@@ -117,6 +122,12 @@ public struct CatchUpSummarizer {
                 contextTranscript: nil
             )
         }
+    }
+
+    /// Returns a compact plain-text representation of the messages without model involvement.
+    /// Used as a fallback when there is nothing meaningful to summarize (e.g. only greetings).
+    private func paraphrase(messages: [String]) -> String {
+        messages.prefix(5).joined(separator: "\n")
     }
 
     private func merge(summaries: [String]) async throws -> String {
