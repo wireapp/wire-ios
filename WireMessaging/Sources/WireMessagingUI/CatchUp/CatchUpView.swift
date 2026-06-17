@@ -51,10 +51,10 @@ public struct ConversationSummary: Identifiable {
 public struct CatchUpView: View {
 
     @Environment(\.wireAccentColor) private var accentColor
-    @State private var summaries: [ConversationSummary]
+    @Binding private var summaries: [ConversationSummary]
 
-    public init(summaries: [ConversationSummary] = ConversationSummary.mocks) {
-        self._summaries = State(initialValue: summaries)
+    public init(summaries: Binding<[ConversationSummary]> = .constant(ConversationSummary.mocks)) {
+        self._summaries = summaries
     }
 
     public var body: some View {
@@ -242,5 +242,5 @@ extension ConversationSummary {
 }
 
 #Preview("Empty") {
-    CatchUpView(summaries: [])
+    CatchUpView(summaries: .constant([]))
 }

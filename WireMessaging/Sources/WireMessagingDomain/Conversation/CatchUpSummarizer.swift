@@ -86,6 +86,7 @@ public struct CatchUpSummarizer {
         Rules:
         - Output 3–5 bullet points, grouped by topic.
         - Each bullet must be one sentence or less.
+        - Only include messages from real people. Ignore automated messages from bots, CI systems, GitHub, Jira, monitoring tools, or any other service integrations.
         - Drop casual replies ("OK", "sounds good", "works for me", "+1") — only keep decisions, announcements, and action items.
         - Do not invent anything not present in the messages.
 
@@ -114,6 +115,7 @@ public struct CatchUpSummarizer {
         - Output 3–5 bullet points, grouped by topic.
         - Each bullet must be one sentence or less.
         - Drop duplicates across parts.
+        - Exclude anything that originated from bots, CI systems, GitHub, Jira, monitoring tools, or other service integrations.
         - Do not invent anything not present in the summaries.
 
         \(combined)

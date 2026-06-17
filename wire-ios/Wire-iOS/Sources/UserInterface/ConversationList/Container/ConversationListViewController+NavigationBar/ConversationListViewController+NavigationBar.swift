@@ -552,9 +552,11 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     // MARK: - Catch-Up
 
     private func presentCatchUpUI() {
-        let catchUpView = CatchUpView()
-            .environment(\.wireAccentColor, viewModel.userSession.selfUser.wireAccentColor)
-        let catchUpViewController = UIHostingController(rootView: catchUpView)
+        let containerView = CatchUpContainerView(
+            userSession: viewModel.userSession as! ZMUserSession,
+            accentColor: viewModel.userSession.selfUser.wireAccentColor
+        )
+        let catchUpViewController = UIHostingController(rootView: containerView)
         catchUpViewController.modalPresentationStyle = .formSheet
         if let sheet = catchUpViewController.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
