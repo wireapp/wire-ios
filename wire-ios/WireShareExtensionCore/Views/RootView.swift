@@ -18,44 +18,16 @@
 
 import SwiftUI
 
-public struct RootView: View {
-
-    // Selected account
-
-    @State
-    private var conversations: [ConversationModel]
+public struct RootView<
+    ViewModel: RootViewModel
+>: View {
 
     @State
-    private var accounts: [Account]
-
-    @State
-    private var selectedAccount: Account
-
-    @State
-    private var searchText: String = ""
-
-    public init(
-        accounts: [Account],
-        conversations: [ConversationModel]
-    ) {
-        self.accounts = accounts
-        self.conversations = conversations
-        self.selectedAccount = accounts[0]
-    }
-
-    private var filteredConversations: [ConversationModel] {
-        if searchText.isEmpty {
-            return conversations
-        } else {
-            return conversations.filter {
-                $0.name.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-    }
+    var viewModel: ViewModel
 
     public var body: some View {
         NavigationStack {
-            form.navigationDestination(for: ConversationModel.self) { conversation in
+            form.navigationDestination(for: Conversation.self) { conversation in
                 ComposeMessageView()
             }
             .navigationTitle("Send to")
@@ -74,15 +46,15 @@ public struct RootView: View {
     private var form: some View {
         Form {
             Section {
-                Picker("Account", selection: $selectedAccount) {
-                    ForEach(accounts, id: \.self) { account in
+                Picker("Account", selection: $viewModel.selectedAccount) {
+                    ForEach(viewModel.accounts, id: \.self) { account in
                         Text(account.name)
                     }
                 }
             }
 
             Section("Conversations") {
-                ForEach(filteredConversations, id: \.self) { conversation in
+                ForEach(viewModel.conversations, id: \.self) { conversation in
                     NavigationLink(value: conversation) {
                         Text(conversation.name)
                     }
@@ -90,29 +62,26 @@ public struct RootView: View {
             }
         }
         .searchable(
-            text: $searchText,
+            text: $viewModel.searchQuery,
             prompt: "Search conversations"
         )
     }
 }
 
-public struct Account: Hashable {
-
-    let id: UUID
-    let name: String
-}
-
 #Preview {
-    RootView(
+    let viewModel = RootViewModelMock(
         accounts: [
-            Account(id: UUID(), name: "Sam"),
-            Account(id: UUID(), name: "John")
+            Account(name: "Sam"),
+            Account(name: "John")
         ],
         conversations: [
-        ConversationModel(id: UUID(), name: "One"),
-        ConversationModel(id: UUID(), name: "Two"),
-        ConversationModel(id: UUID(), name: "Three"),
-        ConversationModel(id: UUID(), name: "Four"),
-        ConversationModel(id: UUID(), name: "Five"),
-    ])
+            Conversation(name: "🍏 iOS Team"),
+            Conversation(name: "[iOS] Discipline rituals"),
+            Conversation(name: "🚨 Security Channel"),
+            Conversation(name: "[iOS] Beta feedbacks]"),
+            Conversation(name: "[iOS] developers developers developers")
+        ]
+    )
+
+    return RootView(viewModel: viewModel)
 }

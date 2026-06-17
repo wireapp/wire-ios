@@ -18,17 +18,16 @@
 
 import Foundation
 
-public struct ConversationModel: Hashable {
+public struct Account: Hashable {
 
-    public let id: UUID
-    public let name: String
+    let id: UUID
+    let name: String
 
     public init(
-        id: UUID,
+        id: UUID = UUID(),
         name: String
     ) {
         self.id = id
         self.name = name
     }
-
 }
