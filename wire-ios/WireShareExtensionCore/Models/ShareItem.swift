@@ -16,14 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import SwiftUI
 
-struct ComposeMessageView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+public enum ShareItemType {
+    case image
+    case video
+    case file
 }
 
-#Preview {
-    ComposeMessageView()
+public struct ShareItem: Identifiable {
+
+    public let id: UUID
+    public let type: ShareItemType
+    public let fileName: String
+    public let thumbnailImage: Image?
+
+    public init(
+        id: UUID = UUID(),
+        type: ShareItemType,
+        fileName: String,
+        thumbnailImage: Image? = nil
+    ) {
+        self.id = id
+        self.type = type
+        self.fileName = fileName
+        self.thumbnailImage = thumbnailImage
+    }
+
 }

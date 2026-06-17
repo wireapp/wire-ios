@@ -27,20 +27,22 @@ public protocol RootViewModel {
 
     var searchQuery: String { get set }
     var conversations: [Conversation] { get }
+    var shareItem: ShareItem { get }
 
 }
 
 @Observable
 @MainActor
-final class RootViewModelImpl: RootViewModel {
+public final class RootViewModelImpl: RootViewModel {
 
-    var accounts: [Account]
-    var selectedAccount: Account
-    var searchQuery: String = ""
+    public var accounts: [Account]
+    public var selectedAccount: Account
+    public var searchQuery: String = ""
+    public let shareItem: ShareItem
 
     private let allConversations: [Conversation]
 
-    var conversations: [Conversation] {
+    public var conversations: [Conversation] {
         if searchQuery.isEmpty {
             return allConversations
         } else {
@@ -50,13 +52,15 @@ final class RootViewModelImpl: RootViewModel {
         }
     }
 
-    init(
+    public init(
         accounts: [Account],
-        conversations: [Conversation]
+        conversations: [Conversation],
+        shareItem: ShareItem
     ) {
         self.accounts = accounts
         self.selectedAccount = accounts[0]
         self.allConversations = conversations
+        self.shareItem = shareItem
     }
 
 }
@@ -67,17 +71,20 @@ struct RootViewModelMock: RootViewModel {
     var selectedAccount: Account
     var searchQuery: String
     var conversations: [Conversation]
+    var shareItem: ShareItem
 
     init(
         accounts: [Account],
         selectedAccount: Account? = nil,
         searchQuery: String = "",
-        conversations: [Conversation]
+        conversations: [Conversation],
+        shareItem: ShareItem
     ) {
         self.accounts = accounts
         self.selectedAccount = selectedAccount ?? accounts[0]
         self.searchQuery = searchQuery
         self.conversations = conversations
+        self.shareItem = shareItem
     }
 
 }

@@ -1,0 +1,147 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import SwiftUI
+
+struct ComposeMessageView<
+    ViewModel: ComposeMessageViewModel
+>: View {
+
+    @State
+    var viewModel: ViewModel
+
+    var body: some View {
+        content
+            .navigationTitle(viewModel.conversation.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Send") {
+                        viewModel.send()
+                    }
+                    .disabled(!viewModel.canSend)
+                }
+            }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        VStack(spacing: 0) {
+            shareItemPreview
+                .padding()
+
+            Divider()
+
+            messageTextField
+                .padding()
+
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
+    private var shareItemPreview: some View {
+        HStack(spacing: 12) {
+            thumbnailView
+                .padding()
+                .frame(width: 60, height: 60)
+                .background(Color.gray.opacity(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(viewModel.shareItem.fileName)
+                    .font(.body)
+                    .lineLimit(1)
+
+                Text(shareItemTypeText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
+    private var thumbnailView: some View {
+        if let thumbnail = viewModel.shareItem.thumbnailImage {
+            thumbnail
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } else {
+            Image(systemName: shareItemIcon)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .font(.title)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private var shareItemIcon: String {
+        switch viewModel.shareItem.type {
+        case .image:
+            return "photo"
+        case .video:
+            return "video"
+        case .file:
+            return "doc"
+        }
+    }
+
+    private var shareItemTypeText: String {
+        switch viewModel.shareItem.type {
+        case .image:
+            return "Image"
+        case .video:
+            return "Video"
+        case .file:
+            return "File"
+        }
+    }
+
+    @ViewBuilder
+    private var messageTextField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Add a message (optional)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            TextField("Type a message", text: $viewModel.messageText, axis: .vertical)
+                .textFieldStyle(.roundedBorder)
+                .lineLimit(3...6)
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        ComposeMessageView(
+            viewModel: ComposeMessageViewModelImpl(
+                conversation: Conversation(
+                    id: UUID(),
+                    name: "Design Team"
+                ),
+                shareItem: ShareItem(
+                    type: .image,
+                    fileName: "Screenshot.png",
+                    thumbnailImage: Image(systemName: "photo")
+                )
+            )
+        )
+    }
+}

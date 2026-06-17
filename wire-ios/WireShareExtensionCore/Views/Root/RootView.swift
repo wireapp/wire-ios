@@ -18,17 +18,23 @@
 
 import SwiftUI
 
-public struct RootView<
-    ViewModel: RootViewModel
->: View {
+public struct RootView: View {
 
-    @State
-    var viewModel: ViewModel
+    @Bindable var viewModel: RootViewModelImpl
+
+    public init(viewModel: RootViewModelImpl) {
+        self.viewModel = viewModel
+    }
 
     public var body: some View {
         NavigationStack {
             form.navigationDestination(for: Conversation.self) { conversation in
-                ComposeMessageView()
+                ComposeMessageView(
+                    viewModel: ComposeMessageViewModelImpl(
+                        conversation: conversation,
+                        shareItem: viewModel.shareItem
+                    )
+                )
             }
             .navigationTitle("Send to")
             .navigationBarTitleDisplayMode(.inline)
@@ -69,19 +75,23 @@ public struct RootView<
 }
 
 #Preview {
-    let viewModel = RootViewModelMock(
-        accounts: [
-            Account(name: "Sam"),
-            Account(name: "John")
-        ],
-        conversations: [
-            Conversation(name: "🍏 iOS Team"),
-            Conversation(name: "[iOS] Discipline rituals"),
-            Conversation(name: "🚨 Security Channel"),
-            Conversation(name: "[iOS] Beta feedbacks]"),
-            Conversation(name: "[iOS] developers developers developers")
-        ]
+    RootView(
+        viewModel: RootViewModelImpl(
+            accounts: [
+                Account(name: "Sam"),
+                Account(name: "John")
+            ],
+            conversations: [
+                Conversation(name: "🍏 iOS Team"),
+                Conversation(name: "[iOS] Discipline rituals"),
+                Conversation(name: "🚨 Security Channel"),
+                Conversation(name: "[iOS] Beta feedbacks]"),
+                Conversation(name: "[iOS] developers developers developers")
+            ],
+            shareItem: ShareItem(
+                type: .image,
+                fileName: "Screenshot.png"
+            )
+        )
     )
-
-    return RootView(viewModel: viewModel)
 }

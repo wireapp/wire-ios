@@ -17,17 +17,42 @@
 //
 
 import Foundation
+import SwiftUI
 
-public struct Account: Hashable {
+@MainActor
+protocol ComposeMessageViewModel {
 
-    public let id: UUID
-    public let name: String
+    var conversation: Conversation { get }
+    var shareItem: ShareItem { get }
+    var messageText: String { get set }
+    var canSend: Bool { get }
+
+    func send()
+
+}
+
+@Observable
+@MainActor
+public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
+
+    public let conversation: Conversation
+    public let shareItem: ShareItem
+    public var messageText: String = ""
+
+    public var canSend: Bool {
+        true
+    }
 
     public init(
-        id: UUID = UUID(),
-        name: String
+        conversation: Conversation,
+        shareItem: ShareItem
     ) {
-        self.id = id
-        self.name = name
+        self.conversation = conversation
+        self.shareItem = shareItem
     }
+
+    public func send() {
+        print("Sending message to \(conversation.name): \(messageText)")
+    }
+
 }
