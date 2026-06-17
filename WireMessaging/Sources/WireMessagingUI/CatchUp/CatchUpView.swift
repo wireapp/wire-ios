@@ -25,14 +25,15 @@ import WireFoundation
 public struct ConversationSummary: Identifiable {
     public let id = UUID()
     public let conversationName: String
-    public let summary: String
+    /// `nil` while the AI summary is still being generated.
+    public let summary: String?
     public let missedCount: Int
     public let oldestMessageDate: Date?
     public let isGroup: Bool
 
     public init(
         conversationName: String,
-        summary: String,
+        summary: String? = nil,
         missedCount: Int,
         oldestMessageDate: Date? = nil,
         isGroup: Bool = true
@@ -154,10 +155,20 @@ private struct ConversationSummaryRow: View {
                         .padding(.vertical, 2)
                         .background(.black, in: Capsule())
                 }
-                Text(verbatim: summary.summary)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(3)
+                if let text = summary.summary {
+                    Text(verbatim: text)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(3)
+                } else {
+                    HStack(spacing: 6) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text(verbatim: "Summarizing…")
+                            .font(.subheadline)
+                            .foregroundStyle(.tertiary)
+                    }
+                }
             }
         }
         .padding(.vertical, 12)
@@ -211,6 +222,13 @@ extension ConversationSummary {
                 missedCount: 3,
                 oldestMessageDate: calendar.date(byAdding: .day, value: -1, to: now),
                 isGroup: false
+            ),
+            ConversationSummary(
+                conversationName: "Berlin Office",
+                summary: nil,
+                missedCount: 5,
+                oldestMessageDate: calendar.date(byAdding: .hour, value: -6, to: now),
+                isGroup: true
             )
         ]
     }
