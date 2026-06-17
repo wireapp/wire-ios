@@ -16,7 +16,9 @@
 //
 
 public import SwiftUI
+
 import WireDesign
+import WireFoundation
 
 // MARK: - Model
 
@@ -26,17 +28,20 @@ public struct ConversationSummary: Identifiable {
     public let summary: String
     public let missedCount: Int
     public let oldestMessageDate: Date?
+    public let isGroup: Bool
 
     public init(
         conversationName: String,
         summary: String,
         missedCount: Int,
-        oldestMessageDate: Date? = nil
+        oldestMessageDate: Date? = nil,
+        isGroup: Bool = true
     ) {
         self.conversationName = conversationName
         self.summary = summary
         self.missedCount = missedCount
         self.oldestMessageDate = oldestMessageDate
+        self.isGroup = isGroup
     }
 }
 
@@ -83,7 +88,8 @@ public struct CatchUpView: View {
         List {
             Section {
                 ForEach(summaries) { summary in
-                    ConversationSummaryRow(summary: summary)
+                    ConversationSummaryRow(summary: summary, accentColor: accentColor)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button {
                                 withAnimation {
@@ -128,24 +134,52 @@ public struct CatchUpView: View {
 private struct ConversationSummaryRow: View {
 
     let summary: ConversationSummary
+    let accentColor: WireAccentColor
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(verbatim: summary.conversationName)
-                    .font(.headline)
-                Spacer()
-                Text(verbatim: "\(summary.missedCount) missed")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+        HStack(alignment: .top, spacing: 16) {
+            ConversationSummaryAvatarView(isGroup: summary.isGroup)
+
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(verbatim: summary.conversationName)
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    Spacer()
+                    Text(verbatim: "\(summary.missedCount)")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color(accentColor), in: Capsule())
+                }
+                Text(verbatim: summary.summary)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(3)
             }
-            Text(verbatim: summary.summary)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .lineLimit(4)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 14)
+        .padding(.vertical, 12)
+        .alignmentGuide(.listRowSeparatorLeading) { d in d[.leading] + 48 }
+    }
+}
+
+// MARK: - Avatar
+
+private struct ConversationSummaryAvatarView: View {
+
+    let isGroup: Bool
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color(.quaternarySystemFill))
+            Image(systemName: isGroup ? "person.2.fill" : "person.fill")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Color(.systemGray))
+        }
+        .frame(width: 32, height: 32)
     }
 }
 
@@ -161,19 +195,22 @@ extension ConversationSummary {
                 conversationName: "Engineering",
                 summary: "Dave fixed a FoundationModels import issue on older OS versions (branch fix/foundation-models-import). Sprint planning moved to Thursday 2pm in room Zurich.",
                 missedCount: 12,
-                oldestMessageDate: calendar.date(byAdding: .day, value: -10, to: now)
+                oldestMessageDate: calendar.date(byAdding: .day, value: -10, to: now),
+                isGroup: true
             ),
             ConversationSummary(
                 conversationName: "Design Team",
                 summary: "New design specs for the catch-up feature were reviewed. Bob left comments in Figma — the summary card was well received.",
                 missedCount: 7,
-                oldestMessageDate: calendar.date(byAdding: .day, value: -3, to: now)
+                oldestMessageDate: calendar.date(byAdding: .day, value: -3, to: now),
+                isGroup: true
             ),
             ConversationSummary(
                 conversationName: "Alice",
                 summary: "Alice asked whether you're joining the hackathon demo on Friday.",
                 missedCount: 3,
-                oldestMessageDate: calendar.date(byAdding: .day, value: -1, to: now)
+                oldestMessageDate: calendar.date(byAdding: .day, value: -1, to: now),
+                isGroup: false
             )
         ]
     }
@@ -183,6 +220,7 @@ extension ConversationSummary {
 
 #Preview("With summaries") {
     CatchUpView()
+        .environment(\.wireAccentColor, .purple)
 }
 
 #Preview("Empty") {

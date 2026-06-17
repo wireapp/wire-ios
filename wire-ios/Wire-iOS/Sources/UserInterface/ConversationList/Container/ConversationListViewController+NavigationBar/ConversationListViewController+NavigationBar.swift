@@ -552,13 +552,15 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     // MARK: - Catch-Up
 
     private func presentCatchUpUI() {
-        let catchUpView = UIHostingController(rootView: CatchUpView())
-        catchUpView.modalPresentationStyle = .formSheet
-        if let sheet = catchUpView.sheetPresentationController {
+        let catchUpView = CatchUpView()
+            .environment(\.wireAccentColor, viewModel.userSession.selfUser.wireAccentColor)
+        let catchUpViewController = UIHostingController(rootView: catchUpView)
+        catchUpViewController.modalPresentationStyle = .formSheet
+        if let sheet = catchUpViewController.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
         }
-        Task { await mainCoordinator.presentViewController(catchUpView) }
+        Task { await mainCoordinator.presentViewController(catchUpViewController) }
     }
 
     // MARK: Folder Picker
