@@ -17,17 +17,5 @@
 //
 
 import Foundation
-import SwiftUI
 
-@Observable
-@MainActor
-public final class RootRouter {
-
-    var path = NavigationPath()
-    var errorAlert: ErrorAlert?
-
-    func navigateTo(_ destination: ComposeMessageDestination) {
-        path.append(destination)
-    }
-
-}
+struct HomeDestination: Hashable {}

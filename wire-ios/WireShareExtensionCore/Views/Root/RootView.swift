@@ -20,7 +20,7 @@ import SwiftUI
 
 public struct RootView<
     ViewModel: RootViewModel,
-    DestinationNode: View
+    HomeNode: View
 >: View {
 
     @State
@@ -30,153 +30,21 @@ public struct RootView<
     var router: RootRouter
 
     @ViewBuilder
-    let makeDestinationNode: (RootRouter.Destination) -> DestinationNode
+    let makeHomeNode: (HomeDestination) -> HomeNode
 
     public var body: some View {
         NavigationStack(path: $router.path) {
-            content
-                .navigationTitle("Send to")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Close", systemImage: "xmark") {
-                            viewModel.close()
-                        }
-                    }
-                }
-                .errorAlert($viewModel.errorAlert)
-                .navigationDestination(for: RootRouter.Destination.self) {
-                    makeDestinationNode($0)
-                }
-                .task {
-                    await viewModel.start()
-                }
-                .overlay {
-                    if viewModel.isLoading {
-                        loadingIndicator
-                    }
-                }
-        }
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        Form {
-            if viewModel.accounts.count > 1 {
-                Section {
-                    Picker("Account", selection: $viewModel.selectedAccount) {
-                        ForEach(viewModel.accounts, id: \.self) { account in
-                            Text(account.name).tag(account)
-                        }
-                    }
-                    .onChange(of: viewModel.selectedAccount) { oldValue, newValue in
-                        guard oldValue != newValue else { return }
-                        viewModel.reloadConversations()
-                    }
-                }
-            }
-
-            Section("Conversations") {
-                ForEach(viewModel.conversations, id: \.self) { conversation in
-                    Text(conversation.name).onTapGesture {
-                        viewModel.selectConversation(conversation)
-                    }
-                }
-            }
-        }
-        .searchable(
-            text: $viewModel.searchQuery,
-            prompt: "Search conversations"
-        )
-    }
-
-    private var loadingIndicator: some View {
-        ZStack {
-            Color.black.opacity(0.2)
-                .ignoresSafeArea()
-
-            ProgressView()
-                .progressViewStyle(.circular)
-                .scaleEffect(1.2)
-                .padding()
-                .background(.regularMaterial)
-                .cornerRadius(12)
+            makeHomeNode(HomeDestination())
+                .errorAlert($router.errorAlert)
         }
     }
 }
 
-#Preview("Single account") {
+#Preview {
     RootView(
-        viewModel: RootViewModelMock(
-            accounts: [
-                .sam,
-            ],
-            conversations: [
-                Conversation(name: "🍏 iOS Team"),
-                Conversation(name: "[iOS] Discipline rituals"),
-                Conversation(name: "🚨 Security Channel"),
-                Conversation(name: "[iOS] Beta feedbacks]"),
-                Conversation(name: "[iOS] developers developers developers")
-            ],
-            shareItem: ShareItem(
-                type: .image,
-                fileName: "Screenshot.png"
-            )
-        ),
-        router: RootRouter(),
-        makeDestinationNode: { _ in
-            Color.red
-        }
-    )
-}
-
-#Preview("View") {
-    RootView(
-        viewModel: RootViewModelMock(
-            accounts: [
-                .sam,
-                .john
-            ],
-            conversations: [
-                Conversation(name: "🍏 iOS Team"),
-                Conversation(name: "[iOS] Discipline rituals"),
-                Conversation(name: "🚨 Security Channel"),
-                Conversation(name: "[iOS] Beta feedbacks]"),
-                Conversation(name: "[iOS] developers developers developers")
-            ],
-            shareItem: ShareItem(
-                type: .image,
-                fileName: "Screenshot.png"
-            )
-        ),
-        router: RootRouter(),
-        makeDestinationNode: { _ in
-            Color.red
-        }
-    )
-}
-
-#Preview("Model") {
-    @Previewable
-    @State
-    var router = RootRouter()
-
-    return RootView(
-        viewModel: RootViewModelImpl(
-            fetchAccounts: FetchAccountsUseCaseMock(),
-            fetchConversations: FetchConversationsUseCaseMock(),
-            shareItem: ShareItem(
-                type: .image,
-                fileName: "Screenshot.png"
-            ),
-            router: router,
-            onClose: {
-                print("Close")
-            }
-        ),
-        router: router,
-        makeDestinationNode: { _ in
-            Color.red
-        }
-    )
+        viewModel: RootViewModelImpl(),
+        router: RootRouter()
+    ) { _ in
+        Color.red
+    }
 }

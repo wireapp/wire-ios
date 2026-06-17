@@ -16,18 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 
-@Observable
-@MainActor
-public final class RootRouter {
+struct HomeNode: View {
 
-    var path = NavigationPath()
-    var errorAlert: ErrorAlert?
+    let destination: HomeDestination
+    let shareItem: ShareItem
+    let router: RootRouter
+    let onClose: () -> Void
+    let onDone: () -> Void
 
-    func navigateTo(_ destination: ComposeMessageDestination) {
-        path.append(destination)
+    var body: some View {
+        HomeView(viewModel: makeViewModel()) { destination in
+            ComposeMessageNode(
+                destination: destination,
+                onDone: onDone
+            )
+        }
+    }
+
+    private func makeViewModel() -> HomeViewModelImpl {
+        HomeViewModelImpl(
+            fetchAccounts: FetchAccountsUseCaseMock(),
+            fetchConversations: FetchConversationsUseCaseMock(),
+            shareItem: shareItem,
+            router: router,
+            onClose: onClose
+        )
     }
 
 }

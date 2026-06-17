@@ -32,25 +32,18 @@ struct RootNode: View {
             viewModel: makeViewModel(),
             router: router
         ) { destination in
-            switch destination {
-            case .home:
-                Color.red
-            case let .composeMessage(destination):
-                ComposeMessageNode(
-                    destination: destination,
-                    onDone: onDone
-                )
-            }
+            HomeNode(
+                destination: destination,
+                shareItem: shareItem,
+                router: router,
+                onClose: onClose,
+                onDone: onDone
+            )
         }
     }
 
     private func makeViewModel() -> RootViewModelImpl {
-        RootViewModelImpl(
-            fetchAccounts: FetchAccountsUseCaseMock(),
-            fetchConversations: FetchConversationsUseCaseMock(),
-            shareItem: shareItem,
-            router: router,
-            onClose: onClose
-        )
+        RootViewModelImpl()
     }
+
 }
