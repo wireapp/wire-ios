@@ -40,15 +40,46 @@ public struct CatchUpSummarizer {
         "Alice: Let's aim to demo it at the hackathon on Friday!"
     ]
 
-    // MARK: - Summarization
+    // MARK: - Constants
 
-    private let session = LanguageModelSession()
+    // English text is roughly 4 characters per token.
+    private static let charsPerToken = 4
+    // Headroom reserved for the system prompt template and the model's response.
+    private static let reservedTokens = 512
+
+    // MARK: - Public API
 
     public init() {}
 
     /// Returns a summary of the given messages for a user who was away.
+    ///
+    /// Long conversations are split into chunks and summarized hierarchically so that
+    /// the on-device context window is never exceeded.
     public func summarize(messages: [String]) async throws -> String {
+        let limit = SystemLanguageModel.default.contextSize - Self.reservedTokens
+        return try await summarize(messages: messages, tokenLimit: limit)
+    }
+
+    // MARK: - Internals
+
+    private func summarize(messages: [String], tokenLimit: Int) async throws -> String {
         let transcript = messages.joined(separator: "\n")
+        let estimatedTokens = transcript.count / Self.charsPerToken
+
+        if estimatedTokens > tokenLimit, messages.count > 1 {
+            // Split the message list in half and summarize each part separately,
+            // then merge the two partial summaries into one.
+            let mid = messages.count / 2
+            let firstSummary = try await summarize(messages: Array(messages[..<mid]), tokenLimit: tokenLimit)
+            let secondSummary = try await summarize(messages: Array(messages[mid...]), tokenLimit: tokenLimit)
+            return try await merge(summaries: [firstSummary, secondSummary])
+        }
+
+        return try await callModel(transcript: transcript)
+    }
+
+    private func callModel(transcript: String) async throws -> String {
+        let session = LanguageModelSession()
         let prompt = """
         The following is a team chat conversation. Summarize what happened for a team member \
         who was away. Be concise, group related topics together, and do not invent any content \
@@ -56,6 +87,28 @@ public struct CatchUpSummarizer {
 
         Conversation:
         \(transcript)
+        """
+        do {
+            let response = try await session.respond(to: prompt)
+            return response.content
+        } catch LanguageModelSession.GenerationError.exceededContextWindowSize {
+            // Should not normally happen after the pre-check above, but if the estimate
+            // was off (e.g. non-Latin script) fall back to a single-message summary.
+            return try await callModel(transcript: String(transcript.prefix(transcript.count / 2)))
+        }
+    }
+
+    private func merge(summaries: [String]) async throws -> String {
+        let combined = summaries.enumerated()
+            .map { "Part \($0.offset + 1):\n\($0.element)" }
+            .joined(separator: "\n\n")
+        let session = LanguageModelSession()
+        let prompt = """
+        The following are summaries of consecutive parts of a team chat conversation. \
+        Merge them into one coherent summary for a team member who was away. \
+        Be concise, group related topics, and do not invent content.
+
+        \(combined)
         """
         let response = try await session.respond(to: prompt)
         return response.content
