@@ -314,6 +314,9 @@ final class DeveloperToolsViewModel: ObservableObject {
                         AnyView(DeveloperCoreCryptoKeysView(
                             viewModel: DeveloperCoreCryptoKeysViewModel()
                         ))
+                    })),
+                    .destination(DestinationItem(title: "Catch-Up Summarizer (AI)", makeView: {
+                        AnyView(CatchUpSummarizerDemoView())
                     }))
                 ]
             )
