@@ -18,8 +18,11 @@
 
 import SwiftUI
 
-struct RootView: View {
-    var body: some View {
+public struct RootView: View {
+
+    public init() {}
+
+    public var body: some View {
         Text("Hello, World!")
     }
 }

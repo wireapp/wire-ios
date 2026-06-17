@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import Social
 import UniformTypeIdentifiers
+import WireShareExtensionCore
 
 /// The main view controller for the Koi Share Extension.
 /// Handles extraction of shared content and presents the main node graph.

@@ -121,6 +121,10 @@
 		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
 		CB4E15122C81CC81005DDEC8 /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = CB4E15112C81CC81005DDEC8 /* Down */; };
+		CBA5A3E22FE2A27F00D6496C /* WireShareExtensionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBA5A3D92FE2A27F00D6496C /* WireShareExtensionCore.framework */; };
+		CBA5A3F12FE2A35400D6496C /* WireShareExtensionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBA5A3D92FE2A27F00D6496C /* WireShareExtensionCore.framework */; };
+		CBA5A3F62FE2A37400D6496C /* WireShareExtensionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBA5A3D92FE2A27F00D6496C /* WireShareExtensionCore.framework */; };
+		CBA5A3F72FE2A37400D6496C /* WireShareExtensionCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CBA5A3D92FE2A27F00D6496C /* WireShareExtensionCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CBE5BB862E2D4A9200AC731F /* WireMessagingAssembly in Frameworks */ = {isa = PBXBuildFile; productRef = CBE5BB852E2D4A9200AC731F /* WireMessagingAssembly */; };
 		D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = D0E258142DDC864100959FB9 /* WireFoundation */; };
 		E40050762D71A80100B7962B /* WireMessagingUI in Frameworks */ = {isa = PBXBuildFile; productRef = E40050752D71A80100B7962B /* WireMessagingUI */; };
@@ -193,6 +197,27 @@
 			remoteGlobalIDString = 8F42C537199244A700288E4D;
 			remoteInfo = "ZClient-iOS";
 		};
+		CBA5A3E32FE2A27F00D6496C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CBA5A3D82FE2A27F00D6496C;
+			remoteInfo = WireShareExtensionCore;
+		};
+		CBA5A3F32FE2A35400D6496C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CBA5A3D82FE2A27F00D6496C;
+			remoteInfo = WireShareExtensionCore;
+		};
+		CBA5A3F82FE2A37400D6496C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CBA5A3D82FE2A27F00D6496C;
+			remoteInfo = WireShareExtensionCore;
+		};
 		E6579E3A2AFF9B30004E7FD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F42C530199244A700288E4D /* Project object */;
@@ -237,6 +262,7 @@
 			files = (
 				5996E8A72C19D090007A52F0 /* WireSyncEngine.framework in Embed Frameworks */,
 				EE33C48E296485FA00C058D1 /* WireShareEngine.framework in Embed Frameworks */,
+				CBA5A3F72FE2A37400D6496C /* WireShareExtensionCore.framework in Embed Frameworks */,
 				EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */,
 				EEE25B4229719C750008B894 /* WireRequestStrategy.framework in Embed Frameworks */,
 				EEE25B3C29719C370008B894 /* WireLinkPreview.framework in Embed Frameworks */,
@@ -408,6 +434,8 @@
 		8FC853A0199245770008B66B /* Wire-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Wire-Info.plist"; path = "Wire-iOS/Wire-Info.plist"; sourceTree = "<group>"; };
 		BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBA5A3D92FE2A27F00D6496C /* WireShareExtensionCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareExtensionCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBA5A3E12FE2A27F00D6496C /* WireShareExtensionCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireShareExtensionCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS UnitTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E970F6E42CC90115007A2CEB /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -903,6 +931,8 @@
 		015DD59D2D68E261004EE8C9 /* Wire-iOS Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DD6E62D68E261004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DD6E72D68E261004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS Tests"; sourceTree = "<group>"; };
 		01B71BB42D6D2DB3002C5A38 /* Configuration */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (01B71BC62D6D2DC6002C5A38 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 01B71BC42D6D2DB3002C5A38 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Configuration; sourceTree = "<group>"; };
 		01DFC4322D7B4C6F00D1962A /* WireUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireUITests; sourceTree = "<group>"; };
+		CBA5A3DA2FE2A27F00D6496C /* WireShareExtensionCore */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireShareExtensionCore; sourceTree = "<group>"; };
+		CBA5A3E52FE2A27F00D6496C /* WireShareExtensionCoreTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireShareExtensionCoreTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -937,6 +967,7 @@
 				591B6E192C8B0960009F8A7B /* WireCommonComponents.framework in Frameworks */,
 				59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */,
 				346C755F2E74726600800769 /* WireFoundation in Frameworks */,
+				CBA5A3F12FE2A35400D6496C /* WireShareExtensionCore.framework in Frameworks */,
 				59537D932CFFA0DA00920B59 /* WireLogging in Frameworks */,
 				59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */,
 				5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */,
@@ -955,6 +986,7 @@
 				06EF6B552E8EBEF200A131A7 /* WireCallingUI in Frameworks */,
 				01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */,
 				CBE5BB862E2D4A9200AC731F /* WireMessagingAssembly in Frameworks */,
+				CBA5A3F62FE2A37400D6496C /* WireShareExtensionCore.framework in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
 				59BAEAFC2DBF483400B54AC4 /* WireBackup in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
@@ -1020,6 +1052,21 @@
 				FADE000000000000000000A2 /* WireDomainSupport.framework in Frameworks */,
 				595BE7A42E32367F00ED9088 /* WireAnalyticsSupport in Frameworks */,
 				5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBA5A3D62FE2A27F00D6496C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBA5A3DE2FE2A27F00D6496C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBA5A3E22FE2A27F00D6496C /* WireShareExtensionCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1240,6 +1287,8 @@
 				015DB12B2D68DB7B004EE8C9 /* WireCommonComponents */,
 				015DB15C2D68DB7F004EE8C9 /* Wire Notification Service Extension */,
 				01DFC4322D7B4C6F00D1962A /* WireUITests */,
+				CBA5A3DA2FE2A27F00D6496C /* WireShareExtensionCore */,
+				CBA5A3E52FE2A27F00D6496C /* WireShareExtensionCoreTests */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
 				8F42C539199244A700288E4D /* Products */,
 			);
@@ -1259,11 +1308,23 @@
 				065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */,
 				E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */,
 				01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */,
+				CBA5A3D92FE2A27F00D6496C /* WireShareExtensionCore.framework */,
+				CBA5A3E12FE2A27F00D6496C /* WireShareExtensionCoreTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CBA5A3D42FE2A27F00D6496C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		01DFC4302D7B4C6F00D1962A /* WireUITests */ = {
@@ -1327,6 +1388,7 @@
 			);
 			dependencies = (
 				F1FEA15721DCEC3D00790A54 /* PBXTargetDependency */,
+				CBA5A3F42FE2A35400D6496C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				015B25B72D68EAD000959185 /* Wire-iOS Share Extension */,
@@ -1364,6 +1426,7 @@
 				F1FEA15021DCEB1700790A54 /* PBXTargetDependency */,
 				168A16B21D9597C2005CFA6C /* PBXTargetDependency */,
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
+				CBA5A3F92FE2A37400D6496C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				015DA6092D68DA96004EE8C9 /* Generated */,
@@ -1447,6 +1510,52 @@
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		CBA5A3D82FE2A27F00D6496C /* WireShareExtensionCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBA5A3E82FE2A28000D6496C /* Build configuration list for PBXNativeTarget "WireShareExtensionCore" */;
+			buildPhases = (
+				CBA5A3D42FE2A27F00D6496C /* Headers */,
+				CBA5A3D52FE2A27F00D6496C /* Sources */,
+				CBA5A3D62FE2A27F00D6496C /* Frameworks */,
+				CBA5A3D72FE2A27F00D6496C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CBA5A3DA2FE2A27F00D6496C /* WireShareExtensionCore */,
+			);
+			name = WireShareExtensionCore;
+			packageProductDependencies = (
+			);
+			productName = WireShareExtensionCore;
+			productReference = CBA5A3D92FE2A27F00D6496C /* WireShareExtensionCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		CBA5A3E02FE2A27F00D6496C /* WireShareExtensionCoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBA5A3EB2FE2A28000D6496C /* Build configuration list for PBXNativeTarget "WireShareExtensionCoreTests" */;
+			buildPhases = (
+				CBA5A3DD2FE2A27F00D6496C /* Sources */,
+				CBA5A3DE2FE2A27F00D6496C /* Frameworks */,
+				CBA5A3DF2FE2A27F00D6496C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CBA5A3E42FE2A27F00D6496C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CBA5A3E52FE2A27F00D6496C /* WireShareExtensionCoreTests */,
+			);
+			name = WireShareExtensionCoreTests;
+			packageProductDependencies = (
+			);
+			productName = WireShareExtensionCoreTests;
+			productReference = CBA5A3E12FE2A27F00D6496C /* WireShareExtensionCoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E6579E3E2AFF9B30004E7FD8 /* Build configuration list for PBXNativeTarget "Wire-iOS UnitTests" */;
@@ -1508,7 +1617,7 @@
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftMigration = 0710;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = "Zeta Project Germany GmbH";
 				TargetAttributes = {
@@ -1549,6 +1658,12 @@
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Manual;
 						TestTargetID = 8F42C537199244A700288E4D;
+					};
+					CBA5A3D82FE2A27F00D6496C = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					CBA5A3E02FE2A27F00D6496C = {
+						CreatedOnToolsVersion = 26.1.1;
 					};
 					E6579E352AFF9B30004E7FD8 = {
 						CreatedOnToolsVersion = 15.0.1;
@@ -1641,6 +1756,8 @@
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
 				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
 				01DFC4302D7B4C6F00D1962A /* WireUITests */,
+				CBA5A3D82FE2A27F00D6496C /* WireShareExtensionCore */,
+				CBA5A3E02FE2A27F00D6496C /* WireShareExtensionCoreTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1698,6 +1815,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				01B71BA72D6D2DAB002C5A38 /* emoticons.min.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBA5A3D72FE2A27F00D6496C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBA5A3DF2FE2A27F00D6496C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1875,6 +2006,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CBA5A3D52FE2A27F00D6496C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBA5A3DD2FE2A27F00D6496C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E6579E322AFF9B30004E7FD8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1916,6 +2061,21 @@
 			isa = PBXTargetDependency;
 			target = 8F42C537199244A700288E4D /* Wire-iOS */;
 			targetProxy = BACB88571AF7C48900DDCDB0 /* PBXContainerItemProxy */;
+		};
+		CBA5A3E42FE2A27F00D6496C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CBA5A3D82FE2A27F00D6496C /* WireShareExtensionCore */;
+			targetProxy = CBA5A3E32FE2A27F00D6496C /* PBXContainerItemProxy */;
+		};
+		CBA5A3F42FE2A35400D6496C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CBA5A3D82FE2A27F00D6496C /* WireShareExtensionCore */;
+			targetProxy = CBA5A3F32FE2A35400D6496C /* PBXContainerItemProxy */;
+		};
+		CBA5A3F92FE2A37400D6496C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CBA5A3D82FE2A27F00D6496C /* WireShareExtensionCore */;
+			targetProxy = CBA5A3F82FE2A37400D6496C /* PBXContainerItemProxy */;
 		};
 		E6579E3B2AFF9B30004E7FD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2392,6 +2552,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = singlefile;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2498,6 +2659,328 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_WORKSPACE = NO;
+			};
+			name = Release;
+		};
+		CBA5A3E92FE2A28000D6496C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Zeta Project Germany GmbH. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareExtensionCore;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CBA5A3EA2FE2A28000D6496C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Zeta Project Germany GmbH. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareExtensionCore;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		CBA5A3EC2FE2A28000D6496C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareExtensionCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CBA5A3ED2FE2A28000D6496C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareExtensionCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -2749,6 +3232,24 @@
 			buildConfigurations = (
 				BACB885A1AF7C48900DDCDB0 /* Debug */,
 				BACB885B1AF7C48900DDCDB0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CBA5A3E82FE2A28000D6496C /* Build configuration list for PBXNativeTarget "WireShareExtensionCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBA5A3E92FE2A28000D6496C /* Debug */,
+				CBA5A3EA2FE2A28000D6496C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CBA5A3EB2FE2A28000D6496C /* Build configuration list for PBXNativeTarget "WireShareExtensionCoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBA5A3EC2FE2A28000D6496C /* Debug */,
+				CBA5A3ED2FE2A28000D6496C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
