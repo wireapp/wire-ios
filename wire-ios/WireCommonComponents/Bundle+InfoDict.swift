@@ -53,8 +53,8 @@ public extension Bundle {
     }
 
     struct Info: SafeForLoggingStringConvertible {
-        var version: String
-        var build: String
+        public var version: String
+        public var build: String
 
         public var safeForLoggingDescription: String {
             "Wire-ios version \(version) (\(build)))"

@@ -1389,6 +1389,115 @@
 "self.settings.developer_options.loggin.title" = "Options";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
 
+// Bug report flow — chrome
+"bug_report.step.progress" = "Step %1$d of %2$d";
+"bug_report.cancel" = "Cancel";
+"bug_report.next" = "Next";
+
+// Bug report — Page 1: Description
+"bug_report.description.title" = "Description";
+"bug_report.description.summary.header" = "Summary";
+"bug_report.description.summary.placeholder" = "Summary";
+"bug_report.description.summary.footer" = "Required. One or two sentences describing the bug.";
+"bug_report.description.expected_behavior.header" = "Expected behavior";
+"bug_report.description.expected_behavior.placeholder" = "What should have happened?";
+"bug_report.description.actual_behavior.header" = "Actual behavior";
+"bug_report.description.actual_behavior.placeholder" = "What happened instead?";
+"bug_report.description.timeframe.header" = "Timeframe";
+"bug_report.description.timeframe.label" = "When did it happen?";
+"bug_report.description.timeframe.footer" = "Required. When the bug occurred — distinct from the submission time.";
+
+// Bug report — Page 2: Reproduction
+"bug_report.reproduction.title" = "Reproduction";
+"bug_report.reproduction.steps.header" = "Steps to reproduce";
+"bug_report.reproduction.steps.placeholder" = "One step per line";
+"bug_report.reproduction.steps.footer" = "Enter each step on its own line.";
+"bug_report.reproduction.reproducibility.header" = "Reproducibility";
+"bug_report.reproduction.workaround.header" = "Known workaround";
+"bug_report.reproduction.workaround.placeholder" = "Describe the workaround";
+
+// Bug report — Reproducibility options
+"bug_report.reproducibility.always" = "Always";
+"bug_report.reproducibility.sometimes" = "Sometimes";
+"bug_report.reproducibility.once" = "Once";
+"bug_report.reproducibility.unknown" = "Unknown";
+
+// Bug report — Workaround status options
+"bug_report.workaround.no" = "No";
+"bug_report.workaround.unknown" = "Unknown";
+"bug_report.workaround.yes" = "Yes";
+
+// Bug report — TriState options
+"bug_report.tristate.yes" = "Yes";
+"bug_report.tristate.no" = "No";
+"bug_report.tristate.unknown" = "Unknown";
+
+// Bug report — Page 3: Classification
+"bug_report.classification.title" = "Classification";
+"bug_report.classification.impact.header" = "Impact";
+"bug_report.classification.severity.header" = "Severity";
+"bug_report.classification.regression.header" = "Regression";
+"bug_report.classification.regression.footer" = "Is this a new issue in this app version, or has it been there before?";
+"bug_report.classification.last_working_version.placeholder" = "Last known working version";
+
+// Bug report — Impact options
+"bug_report.impact.widespread" = "Widespread";
+"bug_report.impact.widespread.description" = "Backend / System wide";
+"bug_report.impact.broad" = "Broad";
+"bug_report.impact.broad.description" = "Affects all users in a company";
+"bug_report.impact.limited" = "Limited";
+"bug_report.impact.limited.description" = "Affects multiple users";
+"bug_report.impact.isolated" = "Isolated";
+"bug_report.impact.isolated.description" = "Affects single user";
+
+// Bug report — Severity options
+"bug_report.severity.s1" = "S1 - Entire Service Unusable";
+"bug_report.severity.s1.description" = "Core service unavailable with no workaround.";
+"bug_report.severity.s2" = "S2 - Partial Service Unusable";
+"bug_report.severity.s2.description" = "Key functionality unavailable with no workaround.";
+"bug_report.severity.s3" = "S3 - Service Degraded";
+"bug_report.severity.s3.description" = "Functionality impacted but a workaround exists.";
+"bug_report.severity.s4" = "S4 - Cosmetic / Low Disruption";
+"bug_report.severity.s4.description" = "Visual issue or minor inconvenience with little impact to functionality.";
+
+// Bug report — Page 4: Evidence & Notes
+"bug_report.evidence.title" = "Evidence & notes";
+"bug_report.evidence.screenshots.header" = "Screenshots (optional)";
+"bug_report.evidence.screenshots.button" = "Add screenshots";
+"bug_report.evidence.related_reports.header" = "Related reports / duplicates (optional)";
+"bug_report.evidence.related_reports.placeholder" = "Links or references";
+"bug_report.evidence.other_context.header" = "Other context (optional)";
+"bug_report.evidence.other_context.placeholder" = "Anything else";
+
+// Bug report — Page 5: Review & Send
+"bug_report.review.title" = "Review & send";
+"bug_report.review.description.header" = "Description";
+"bug_report.review.reproduction.header" = "Reproduction";
+"bug_report.review.classification.header" = "Classification";
+"bug_report.review.screenshots.header" = "Screenshots";
+"bug_report.review.auto_info" = "Logs and device info included automatically";
+"bug_report.review.send_in_wire" = "Send in Wire";
+"bug_report.review.share" = "Share…";
+"bug_report.review.send_footer" = "“Send in Wire” lets you pick the destination conversation. “Share” opens the system share sheet as a fallback.";
+
+// Bug report — Review row labels
+"bug_report.review.field.summary" = "Summary";
+"bug_report.review.field.expected" = "Expected";
+"bug_report.review.field.actual" = "Actual";
+"bug_report.review.field.timeframe" = "Timeframe";
+"bug_report.review.field.steps" = "Steps";
+"bug_report.review.field.reproducibility" = "Reproducibility";
+"bug_report.review.field.impact" = "Impact";
+"bug_report.review.field.severity" = "Severity";
+"bug_report.review.field.regression" = "Regression";
+"bug_report.review.field.last_working_version" = "Last working version";
+
+// Bug report — Errors
+"bug_report.error.title" = "Bug report";
+"bug_report.error.no_session" = "No active session — cannot share in Wire.";
+"bug_report.error.build_failed" = "Could not build the bug report package.";
+"bug_report.error.ok" = "OK";
+
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Options";
 

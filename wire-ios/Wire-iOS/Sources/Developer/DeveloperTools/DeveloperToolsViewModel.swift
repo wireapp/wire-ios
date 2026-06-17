@@ -281,6 +281,9 @@ final class DeveloperToolsViewModel: ObservableObject {
             Section(
                 header: "Actions",
                 items: [
+                    .destination(DestinationItem(title: "Report a Bug", makeView: { [weak self] in
+                        AnyView(BugReportFlowView(onClose: { self?.onDismiss {} }))
+                    })),
                     .destination(DestinationItem(title: "E2E Identity", makeView: { [weak self] in
                         AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel(userSession: self?.userSession)))
                     })),

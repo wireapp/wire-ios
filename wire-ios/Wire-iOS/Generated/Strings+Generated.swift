@@ -1341,6 +1341,254 @@ internal enum L10n {
         }
       }
     }
+    internal enum BugReport {
+      /// Cancel
+      internal static let cancel = L10n.tr("Localizable", "bug_report.cancel", fallback: "Cancel")
+      /// Next
+      internal static let next = L10n.tr("Localizable", "bug_report.next", fallback: "Next")
+      internal enum Classification {
+        /// Classification
+        internal static let title = L10n.tr("Localizable", "bug_report.classification.title", fallback: "Classification")
+        internal enum Impact {
+          /// Impact
+          internal static let header = L10n.tr("Localizable", "bug_report.classification.impact.header", fallback: "Impact")
+        }
+        internal enum LastWorkingVersion {
+          /// Last known working version
+          internal static let placeholder = L10n.tr("Localizable", "bug_report.classification.last_working_version.placeholder", fallback: "Last known working version")
+        }
+        internal enum Regression {
+          /// Is this a new issue in this app version, or has it been there before?
+          internal static let footer = L10n.tr("Localizable", "bug_report.classification.regression.footer", fallback: "Is this a new issue in this app version, or has it been there before?")
+          /// Regression
+          internal static let header = L10n.tr("Localizable", "bug_report.classification.regression.header", fallback: "Regression")
+        }
+        internal enum Severity {
+          /// Severity
+          internal static let header = L10n.tr("Localizable", "bug_report.classification.severity.header", fallback: "Severity")
+        }
+      }
+      internal enum Description {
+        /// Description
+        internal static let title = L10n.tr("Localizable", "bug_report.description.title", fallback: "Description")
+        internal enum ActualBehavior {
+          /// Actual behavior
+          internal static let header = L10n.tr("Localizable", "bug_report.description.actual_behavior.header", fallback: "Actual behavior")
+          /// What happened instead?
+          internal static let placeholder = L10n.tr("Localizable", "bug_report.description.actual_behavior.placeholder", fallback: "What happened instead?")
+        }
+        internal enum ExpectedBehavior {
+          /// Expected behavior
+          internal static let header = L10n.tr("Localizable", "bug_report.description.expected_behavior.header", fallback: "Expected behavior")
+          /// What should have happened?
+          internal static let placeholder = L10n.tr("Localizable", "bug_report.description.expected_behavior.placeholder", fallback: "What should have happened?")
+        }
+        internal enum Summary {
+          /// Required. One or two sentences describing the bug.
+          internal static let footer = L10n.tr("Localizable", "bug_report.description.summary.footer", fallback: "Required. One or two sentences describing the bug.")
+          /// Summary
+          internal static let header = L10n.tr("Localizable", "bug_report.description.summary.header", fallback: "Summary")
+          /// Summary
+          internal static let placeholder = L10n.tr("Localizable", "bug_report.description.summary.placeholder", fallback: "Summary")
+        }
+        internal enum Timeframe {
+          /// Required. When the bug occurred — distinct from the submission time.
+          internal static let footer = L10n.tr("Localizable", "bug_report.description.timeframe.footer", fallback: "Required. When the bug occurred — distinct from the submission time.")
+          /// Timeframe
+          internal static let header = L10n.tr("Localizable", "bug_report.description.timeframe.header", fallback: "Timeframe")
+          /// When did it happen?
+          internal static let label = L10n.tr("Localizable", "bug_report.description.timeframe.label", fallback: "When did it happen?")
+        }
+      }
+      internal enum Error {
+        /// Could not build the bug report package.
+        internal static let buildFailed = L10n.tr("Localizable", "bug_report.error.build_failed", fallback: "Could not build the bug report package.")
+        /// No active session — cannot share in Wire.
+        internal static let noSession = L10n.tr("Localizable", "bug_report.error.no_session", fallback: "No active session — cannot share in Wire.")
+        /// OK
+        internal static let ok = L10n.tr("Localizable", "bug_report.error.ok", fallback: "OK")
+        /// Bug report
+        internal static let title = L10n.tr("Localizable", "bug_report.error.title", fallback: "Bug report")
+      }
+      internal enum Evidence {
+        /// Evidence & notes
+        internal static let title = L10n.tr("Localizable", "bug_report.evidence.title", fallback: "Evidence & notes")
+        internal enum OtherContext {
+          /// Other context (optional)
+          internal static let header = L10n.tr("Localizable", "bug_report.evidence.other_context.header", fallback: "Other context (optional)")
+          /// Anything else
+          internal static let placeholder = L10n.tr("Localizable", "bug_report.evidence.other_context.placeholder", fallback: "Anything else")
+        }
+        internal enum RelatedReports {
+          /// Related reports / duplicates (optional)
+          internal static let header = L10n.tr("Localizable", "bug_report.evidence.related_reports.header", fallback: "Related reports / duplicates (optional)")
+          /// Links or references
+          internal static let placeholder = L10n.tr("Localizable", "bug_report.evidence.related_reports.placeholder", fallback: "Links or references")
+        }
+        internal enum Screenshots {
+          /// Add screenshots
+          internal static let button = L10n.tr("Localizable", "bug_report.evidence.screenshots.button", fallback: "Add screenshots")
+          /// Screenshots (optional)
+          internal static let header = L10n.tr("Localizable", "bug_report.evidence.screenshots.header", fallback: "Screenshots (optional)")
+        }
+      }
+      internal enum Impact {
+        /// Broad
+        internal static let broad = L10n.tr("Localizable", "bug_report.impact.broad", fallback: "Broad")
+        /// Isolated
+        internal static let isolated = L10n.tr("Localizable", "bug_report.impact.isolated", fallback: "Isolated")
+        /// Limited
+        internal static let limited = L10n.tr("Localizable", "bug_report.impact.limited", fallback: "Limited")
+        /// Widespread
+        internal static let widespread = L10n.tr("Localizable", "bug_report.impact.widespread", fallback: "Widespread")
+        internal enum Broad {
+          /// Affects all users in a company
+          internal static let description = L10n.tr("Localizable", "bug_report.impact.broad.description", fallback: "Affects all users in a company")
+        }
+        internal enum Isolated {
+          /// Affects single user
+          internal static let description = L10n.tr("Localizable", "bug_report.impact.isolated.description", fallback: "Affects single user")
+        }
+        internal enum Limited {
+          /// Affects multiple users
+          internal static let description = L10n.tr("Localizable", "bug_report.impact.limited.description", fallback: "Affects multiple users")
+        }
+        internal enum Widespread {
+          /// Backend / System wide
+          internal static let description = L10n.tr("Localizable", "bug_report.impact.widespread.description", fallback: "Backend / System wide")
+        }
+      }
+      internal enum Reproducibility {
+        /// Always
+        internal static let always = L10n.tr("Localizable", "bug_report.reproducibility.always", fallback: "Always")
+        /// Once
+        internal static let once = L10n.tr("Localizable", "bug_report.reproducibility.once", fallback: "Once")
+        /// Sometimes
+        internal static let sometimes = L10n.tr("Localizable", "bug_report.reproducibility.sometimes", fallback: "Sometimes")
+        /// Unknown
+        internal static let unknown = L10n.tr("Localizable", "bug_report.reproducibility.unknown", fallback: "Unknown")
+      }
+      internal enum Reproduction {
+        /// Reproduction
+        internal static let title = L10n.tr("Localizable", "bug_report.reproduction.title", fallback: "Reproduction")
+        internal enum Reproducibility {
+          /// Reproducibility
+          internal static let header = L10n.tr("Localizable", "bug_report.reproduction.reproducibility.header", fallback: "Reproducibility")
+        }
+        internal enum Steps {
+          /// Enter each step on its own line.
+          internal static let footer = L10n.tr("Localizable", "bug_report.reproduction.steps.footer", fallback: "Enter each step on its own line.")
+          /// Steps to reproduce
+          internal static let header = L10n.tr("Localizable", "bug_report.reproduction.steps.header", fallback: "Steps to reproduce")
+          /// One step per line
+          internal static let placeholder = L10n.tr("Localizable", "bug_report.reproduction.steps.placeholder", fallback: "One step per line")
+        }
+        internal enum Workaround {
+          /// Known workaround
+          internal static let header = L10n.tr("Localizable", "bug_report.reproduction.workaround.header", fallback: "Known workaround")
+          /// Describe the workaround
+          internal static let placeholder = L10n.tr("Localizable", "bug_report.reproduction.workaround.placeholder", fallback: "Describe the workaround")
+        }
+      }
+      internal enum Review {
+        /// Logs and device info included automatically
+        internal static let autoInfo = L10n.tr("Localizable", "bug_report.review.auto_info", fallback: "Logs and device info included automatically")
+        /// “Send in Wire” lets you pick the destination conversation. “Share” opens the system share sheet as a fallback.
+        internal static let sendFooter = L10n.tr("Localizable", "bug_report.review.send_footer", fallback: "“Send in Wire” lets you pick the destination conversation. “Share” opens the system share sheet as a fallback.")
+        /// Send in Wire
+        internal static let sendInWire = L10n.tr("Localizable", "bug_report.review.send_in_wire", fallback: "Send in Wire")
+        /// Share…
+        internal static let share = L10n.tr("Localizable", "bug_report.review.share", fallback: "Share…")
+        /// Review & send
+        internal static let title = L10n.tr("Localizable", "bug_report.review.title", fallback: "Review & send")
+        internal enum Classification {
+          /// Classification
+          internal static let header = L10n.tr("Localizable", "bug_report.review.classification.header", fallback: "Classification")
+        }
+        internal enum Description {
+          /// Description
+          internal static let header = L10n.tr("Localizable", "bug_report.review.description.header", fallback: "Description")
+        }
+        internal enum Field {
+          /// Actual
+          internal static let actual = L10n.tr("Localizable", "bug_report.review.field.actual", fallback: "Actual")
+          /// Expected
+          internal static let expected = L10n.tr("Localizable", "bug_report.review.field.expected", fallback: "Expected")
+          /// Impact
+          internal static let impact = L10n.tr("Localizable", "bug_report.review.field.impact", fallback: "Impact")
+          /// Last working version
+          internal static let lastWorkingVersion = L10n.tr("Localizable", "bug_report.review.field.last_working_version", fallback: "Last working version")
+          /// Regression
+          internal static let regression = L10n.tr("Localizable", "bug_report.review.field.regression", fallback: "Regression")
+          /// Reproducibility
+          internal static let reproducibility = L10n.tr("Localizable", "bug_report.review.field.reproducibility", fallback: "Reproducibility")
+          /// Severity
+          internal static let severity = L10n.tr("Localizable", "bug_report.review.field.severity", fallback: "Severity")
+          /// Steps
+          internal static let steps = L10n.tr("Localizable", "bug_report.review.field.steps", fallback: "Steps")
+          /// Summary
+          internal static let summary = L10n.tr("Localizable", "bug_report.review.field.summary", fallback: "Summary")
+          /// Timeframe
+          internal static let timeframe = L10n.tr("Localizable", "bug_report.review.field.timeframe", fallback: "Timeframe")
+        }
+        internal enum Reproduction {
+          /// Reproduction
+          internal static let header = L10n.tr("Localizable", "bug_report.review.reproduction.header", fallback: "Reproduction")
+        }
+        internal enum Screenshots {
+          /// Screenshots
+          internal static let header = L10n.tr("Localizable", "bug_report.review.screenshots.header", fallback: "Screenshots")
+        }
+      }
+      internal enum Severity {
+        /// S1 - Entire Service Unusable
+        internal static let s1 = L10n.tr("Localizable", "bug_report.severity.s1", fallback: "S1 - Entire Service Unusable")
+        /// S2 - Partial Service Unusable
+        internal static let s2 = L10n.tr("Localizable", "bug_report.severity.s2", fallback: "S2 - Partial Service Unusable")
+        /// S3 - Service Degraded
+        internal static let s3 = L10n.tr("Localizable", "bug_report.severity.s3", fallback: "S3 - Service Degraded")
+        /// S4 - Cosmetic / Low Disruption
+        internal static let s4 = L10n.tr("Localizable", "bug_report.severity.s4", fallback: "S4 - Cosmetic / Low Disruption")
+        internal enum S1 {
+          /// Core service unavailable with no workaround.
+          internal static let description = L10n.tr("Localizable", "bug_report.severity.s1.description", fallback: "Core service unavailable with no workaround.")
+        }
+        internal enum S2 {
+          /// Key functionality unavailable with no workaround.
+          internal static let description = L10n.tr("Localizable", "bug_report.severity.s2.description", fallback: "Key functionality unavailable with no workaround.")
+        }
+        internal enum S3 {
+          /// Functionality impacted but a workaround exists.
+          internal static let description = L10n.tr("Localizable", "bug_report.severity.s3.description", fallback: "Functionality impacted but a workaround exists.")
+        }
+        internal enum S4 {
+          /// Visual issue or minor inconvenience with little impact to functionality.
+          internal static let description = L10n.tr("Localizable", "bug_report.severity.s4.description", fallback: "Visual issue or minor inconvenience with little impact to functionality.")
+        }
+      }
+      internal enum Step {
+        /// Step %1$d of %2$d
+        internal static func progress(_ p1: Int, _ p2: Int) -> String {
+          return L10n.tr("Localizable", "bug_report.step.progress", p1, p2, fallback: "Step %1$d of %2$d")
+        }
+      }
+      internal enum Tristate {
+        /// No
+        internal static let no = L10n.tr("Localizable", "bug_report.tristate.no", fallback: "No")
+        /// Unknown
+        internal static let unknown = L10n.tr("Localizable", "bug_report.tristate.unknown", fallback: "Unknown")
+        /// Yes
+        internal static let yes = L10n.tr("Localizable", "bug_report.tristate.yes", fallback: "Yes")
+      }
+      internal enum Workaround {
+        /// No
+        internal static let no = L10n.tr("Localizable", "bug_report.workaround.no", fallback: "No")
+        /// Unknown
+        internal static let unknown = L10n.tr("Localizable", "bug_report.workaround.unknown", fallback: "Unknown")
+        /// Yes
+        internal static let yes = L10n.tr("Localizable", "bug_report.workaround.yes", fallback: "Yes")
+      }
+    }
     internal enum ButtonMessageCell {
       /// Your answer can't be sent, please retry.
       internal static let genericError = L10n.tr("Localizable", "button_message_cell.generic_error", fallback: "Your answer can't be sent, please retry.")
