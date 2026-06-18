@@ -17,16 +17,70 @@
 //
 
 import Foundation
+import WireShareEngine
 import WireShareExtensionCore
 
 struct SendMessageUseCaseImpl: SendMessageUseCase {
 
+    let sessionProvider: (Account) async throws -> SharingSession
+
+    // FIXME: this is just a temp workaround to work with existing
+    // code.
+    let attachments: [NSItemProvider]
+
+    private let postContent: PostContent
+
+    init(
+        sessionProvider: @escaping (
+            Account
+        ) async throws -> SharingSession,
+        attachments: [NSItemProvider]
+    ) {
+        self.sessionProvider = sessionProvider
+        self.attachments = attachments
+        postContent = PostContent(attachments: attachments)
+    }
+
     func callAsFunction(
         _ message: Message,
         for account: Account,
-        in conversation: Conversation
-    ) async throws {
-        
+        in conversation: WireShareExtensionCore.Conversation
+    ) async throws -> AsyncThrowingStream<MessageSendingProgress, Error> {
+        let session = try await sessionProvider(account)
+
+        guard let target = session.writeableNonArchivedConversations.first(where: {
+            $0.remoteIdentifier == conversation.id
+        }) else {
+            fatalError()
+        }
+
+        postContent.target = target
+
+        return AsyncThrowingStream { continuation in
+            postContent.send(
+                text: message.text ?? "",
+                sharingSession: session
+            ) {
+                switch $0 {
+                case .preparing:
+                    continuation.yield(.preparing)
+                case .startingSending:
+                    continuation.yield(.sending(0))
+                case let .sending(progress):
+                    continuation.yield(.sending(progress))
+                case .done:
+                    continuation.finish()
+                case .fileSharingRestriction:
+                    continuation.finish(throwing: MessageSendingError.fileSharingDisabled)
+                case .timedOut:
+                    continuation.finish(throwing: MessageSendingError.timedOut)
+                case .conversationDidDegrade:
+                    continuation.finish(throwing: MessageSendingError.conversationDegraded)
+                case let .error(error):
+                    continuation.finish(throwing: MessageSendingError.generic(error))
+                }
+            }
+        }
     }
 
 }

@@ -21,8 +21,10 @@ import SwiftUI
 public struct RootNode: View {
 
     public let shareItem: ShareItem
+
     public let fetchAccounts: any FetchAccountsUseCase
     public let fetchConversations: any FetchConversationsUseCase
+    public let sendMessage: any SendMessageUseCase
 
     // TODO: Maybe Combine close / done into a single callback
     // with an enum param to indicate the action
@@ -36,12 +38,14 @@ public struct RootNode: View {
         shareItem: ShareItem,
         fetchAccounts: any FetchAccountsUseCase,
         fetchConversations: any FetchConversationsUseCase,
+        sendMessage: any SendMessageUseCase,
         onClose: @escaping () -> Void,
         onDone: @escaping () -> Void
     ) {
         self.shareItem = shareItem
         self.fetchAccounts = fetchAccounts
         self.fetchConversations = fetchConversations
+        self.sendMessage = sendMessage
         self.onClose = onClose
         self.onDone = onDone
     }
@@ -56,6 +60,7 @@ public struct RootNode: View {
                 shareItem: shareItem,
                 fetchAccounts: fetchAccounts,
                 fetchConversations: fetchConversations,
+                sendMessage: sendMessage,
                 router: router,
                 onClose: onClose,
                 onDone: onDone

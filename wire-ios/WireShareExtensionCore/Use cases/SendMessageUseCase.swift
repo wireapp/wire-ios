@@ -25,7 +25,23 @@ public protocol SendMessageUseCase {
         _ message: Message,
         for account: Account,
         in conversation: Conversation
-    ) async throws
+    ) async throws -> AsyncThrowingStream<MessageSendingProgress, Error>
+
+}
+
+public enum MessageSendingProgress {
+
+    case preparing
+    case sending(Float)
+
+}
+
+public enum MessageSendingError: Error {
+
+    case timedOut
+    case conversationDegraded
+    case fileSharingDisabled
+    case generic(any Error)
 
 }
 
@@ -35,8 +51,13 @@ struct SendMessageUseCaseMock: SendMessageUseCase {
         _ message: Message,
         for account: Account,
         in conversation: Conversation
-    ) async throws {
-        try await Task.sleep(for: .seconds(3))
+    ) async throws -> AsyncThrowingStream<MessageSendingProgress, Error> {
+        AsyncThrowingStream { continuation in
+            continuation.yield(.preparing)
+            continuation.yield(.sending(0))
+            continuation.yield(.sending(0.5))
+            continuation.finish()
+        }
     }
 
 }

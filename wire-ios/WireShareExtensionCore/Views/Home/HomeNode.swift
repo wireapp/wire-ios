@@ -24,6 +24,7 @@ struct HomeNode: View {
     let shareItem: ShareItem
     let fetchAccounts: any FetchAccountsUseCase
     let fetchConversations: any FetchConversationsUseCase
+    let sendMessage: any SendMessageUseCase
     let router: RootRouter
     let onClose: () -> Void
     let onDone: () -> Void
@@ -33,6 +34,8 @@ struct HomeNode: View {
             ComposeMessageNode(
                 destination: destination,
                 shareItem: shareItem,
+                sendMessage: sendMessage,
+                router: router,
                 onDone: onDone
             )
         }

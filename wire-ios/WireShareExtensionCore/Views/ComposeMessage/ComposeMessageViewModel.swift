@@ -27,9 +27,16 @@ protocol ComposeMessageViewModel {
     var messageText: String { get set }
     var canSend: Bool { get }
     var isLoading: Bool { get }
+    var progressState: MessageProgressState? { get }
 
     func send() async
 
+}
+
+public enum MessageProgressState {
+    case preparing
+    case sending(Float)
+    case success
 }
 
 @Observable
@@ -46,19 +53,24 @@ public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
     }
 
     public var isLoading: Bool = false
-    private let onDone: () -> Void
+    public var progressState: MessageProgressState?
+
+    private let router: RootRouter
     private let sendMessage: SendMessageUseCase
+    private let onDone: () -> Void
 
     public init(
         account: Account,
         conversation: Conversation,
         shareItem: ShareItem,
+        router: RootRouter,
         sendMessage: SendMessageUseCase,
         onDone: @escaping () -> Void
     ) {
         self.account = account
         self.conversation = conversation
         self.shareItem = shareItem
+        self.router = router
         self.onDone = onDone
         self.sendMessage = sendMessage
     }
@@ -72,11 +84,51 @@ public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
             shareItem: shareItem
         )
 
+        let sendMessageTask = Task.detached { [self] in
+            try await sendMessage(
+                message,
+                for: account,
+                in: conversation
+            )
+        }
+
+        let progress: AsyncThrowingStream<MessageSendingProgress, any Error>
         do {
-            try await sendMessage(message, for: account, in: conversation)
-            onDone()
+            progress = try await sendMessageTask.value
         } catch {
-            // TODO: Handle
+            router.errorAlert = .generic(message: "failed to send: \(error)")
+            return
+        }
+
+        do {
+            for try await update in progress {
+                switch update {
+                case .preparing:
+                    progressState = .preparing
+                case let .sending(progress):
+                    progressState = .sending(progress)
+                }
+            }
+            
+            progressState = .success
+            
+            try await Task.sleep(for: .seconds(1))
+            
+            progressState = nil
+            onDone()
+        } catch let error as MessageSendingError {
+            switch error {
+            case .timedOut:
+                router.errorAlert = .generic(message: "Timed out")
+            case .conversationDegraded:
+                router.errorAlert = .generic(message: "Conversation is degraded")
+            case .fileSharingDisabled:
+                router.errorAlert = .generic(message: "File sharing is disabled")
+            case let .generic(error):
+                router.errorAlert = .generic(message: "Something went wrong")
+            }
+        } catch {
+            router.errorAlert = .generic(message: "Something went wrong")
         }
     }
 

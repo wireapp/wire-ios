@@ -27,6 +27,8 @@ struct ComposeMessageNode: View {
 
     let destination: ComposeMessageDestination
     let shareItem: ShareItem
+    let sendMessage: any SendMessageUseCase
+    let router: RootRouter
     let onDone: () -> Void
 
     var body: some View {
@@ -38,7 +40,8 @@ struct ComposeMessageNode: View {
             account: destination.account,
             conversation: destination.conversation,
             shareItem: shareItem,
-            sendMessage: SendMessageUseCaseMock(),
+            router: router,
+            sendMessage: sendMessage,
             onDone: onDone
         )
     }

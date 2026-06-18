@@ -194,11 +194,7 @@ class ShareViewController: UIViewController {
     
     /// Presents the SwiftUI-based node graph.
     private func presentShareUI() {
-        let fetchAccounts = FetchAccountsUseCaseImpl(
-            accountManager: accountManager,
-            cookieStorage: cookieStorage
-        )
-        let fetchConversations = FetchConversationsUseCaseImpl { [weak self] selectedAccount in
+        let sessionProvider: (WireShareExtensionCore.Account) async throws -> SharingSession = { [weak self] selectedAccount in
             guard
                 let self,
                 let accountManager,
@@ -207,10 +203,23 @@ class ShareViewController: UIViewController {
 
             return try await self.session(for: account)
         }
+
+        let fetchAccounts = FetchAccountsUseCaseImpl(
+            accountManager: accountManager,
+            cookieStorage: cookieStorage
+        )
+        let fetchConversations = FetchConversationsUseCaseImpl(
+            sessionProvider: sessionProvider
+        )
+        let sendMessage = SendMessageUseCaseImpl(
+            sessionProvider: sessionProvider,
+            attachments: extensionContext?.attachments ?? []
+        )
         let rootNode = RootNode(
             shareItem: shareItems.first!, // TODO: make safe
             fetchAccounts: fetchAccounts,
             fetchConversations: fetchConversations,
+            sendMessage: sendMessage,
             onClose: cancelSharing,
             onDone: completeSharing
         )

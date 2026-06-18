@@ -67,10 +67,50 @@ struct ComposeMessageView<
             Color.black.opacity(0.3)
                 .ignoresSafeArea()
             
-            ProgressView()
-                .progressViewStyle(.circular)
-                .tint(.white)
-                .scaleEffect(1.5)
+            VStack(spacing: 16) {
+                if let progressState = viewModel.progressState {
+                    switch progressState {
+                    case .preparing:
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(.white)
+                            .scaleEffect(1.5)
+                        
+                        Text("Preparing")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                        
+                    case .sending(let progress):
+                        ProgressView(value: progress, total: 1.0)
+                            .progressViewStyle(.linear)
+                            .tint(.white)
+                            .frame(width: 200)
+                        
+                        Text("Sending")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                        
+                    case .success:
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 48))
+                            .foregroundStyle(.green)
+                        
+                        Text("Sent Successfully")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                    }
+                } else {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(.white)
+                        .scaleEffect(1.5)
+                }
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.black.opacity(0.7))
+            )
         }
     }
 
@@ -152,6 +192,7 @@ struct ComposeMessageView<
                         size: 1048
                     )
                 ),
+                router: RootRouter(),
                 sendMessage: SendMessageUseCaseMock(),
                 onDone: {
                     print("Message sent")
