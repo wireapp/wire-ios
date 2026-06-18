@@ -184,6 +184,7 @@ extension ConversationViewController {
 
         let hostingController = UIHostingController(rootView: unlockView)
         hostingController.view.backgroundColor = .clear
+        hostingController.view.clipsToBounds = true
 
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
