@@ -95,6 +95,7 @@ final class ConversationViewController: UIViewController {
     var outgoingConnectionViewController: OutgoingConnectionViewController!
     let conversationBarController: BarController = .init()
     let guestsBarController: GuestsBarController = .init()
+    let confidentialityBarController: ConfidentialityBarController = .init()
     let invisibleInputAccessoryView: InvisibleInputAccessoryView = .init()
     private let mediaBarViewController: MediaBarViewController
 
@@ -357,11 +358,13 @@ final class ConversationViewController: UIViewController {
         super.viewWillAppear(animated)
         isAppearing = true
         updateGuestsBarVisibility()
+        updateConfidentialityBarVisibility()
     }
 
     override func didMove(toParent parent: UIViewController?) {
         super.didMove(toParent: parent)
         updateGuestsBarVisibility()
+        updateConfidentialityBarVisibility()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -546,7 +549,8 @@ final class ConversationViewController: UIViewController {
                         subtitle: Self.getConversationSubtitle(conversation),
                         isMLS: conversation.messageProtocol == .mls,
                         isVerified: conversation.isVerified,
-                        isUnderLegalHold: conversation.isUnderLegalHold
+                        isUnderLegalHold: conversation.isUnderLegalHold,
+                        confidentialityLevel: conversation.confidentialityLevel.rawValue
                     ))
             }
         } else {
@@ -557,7 +561,8 @@ final class ConversationViewController: UIViewController {
                 subtitle: Self.getConversationSubtitle(conversation),
                 isMLS: conversation.messageProtocol == .mls,
                 isVerified: conversation.isVerified,
-                isUnderLegalHold: conversation.isUnderLegalHold
+                isUnderLegalHold: conversation.isUnderLegalHold,
+                confidentialityLevel: conversation.confidentialityLevel.rawValue
             ))
         }
 
@@ -737,10 +742,15 @@ extension ConversationViewController: ZMConversationObserver {
             updateGuestsBarVisibility()
         }
 
+        if note.confidentialityLevelChanged {
+            updateConfidentialityBarVisibility()
+        }
+
         if note.nameChanged ||
             note.securityLevelChanged ||
             note.connectionStateChanged ||
-            note.legalHoldStatusChanged {
+            note.legalHoldStatusChanged ||
+            note.confidentialityLevelChanged {
             setupNavigationItem(isAfterTitleRelatedDataChanged: true)
         }
 

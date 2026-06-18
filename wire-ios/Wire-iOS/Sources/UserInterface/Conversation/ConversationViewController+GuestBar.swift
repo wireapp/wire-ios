@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 extension ConversationViewController {
 
@@ -101,6 +102,31 @@ extension ConversationViewController {
             conversationBarController.dismiss(bar: guestsBarController)
         } else {
             conversationBarController.present(bar: guestsBarController)
+        }
+    }
+
+    /// Updates the visibility of the confidentiality bar.
+    func updateConfidentialityBarVisibility() {
+        let level = conversation.confidentialityLevel
+
+        switch level {
+        case .sensitive:
+            let state = ConfidentialityBarController.State.visible(
+                color: ColorTheme.Base.warning,
+                text: "This is a sensitive conversation"
+            )
+            confidentialityBarController.state = state
+            conversationBarController.present(bar: confidentialityBarController)
+        case .highlySensitive:
+            let state = ConfidentialityBarController.State.visible(
+                color: ColorTheme.Base.error,
+                text: "This is a sensitive conversation"
+            )
+            confidentialityBarController.state = state
+            conversationBarController.present(bar: confidentialityBarController)
+        case .regular:
+            confidentialityBarController.state = .hidden
+            conversationBarController.dismiss(bar: confidentialityBarController)
         }
     }
 
