@@ -113,8 +113,12 @@ final class CatchUpViewModel: ObservableObject {
 
     func markAsRead(id: UUID) {
         guard let conversation = conversationByID[id] else { return }
-        conversation.markAsRead()
         conversationByID.removeValue(forKey: id)
+        // markAsRead() must be called on the view-context object. Internally it
+        // dispatches to the sync context and calls saveOrRollback() there, which
+        // updates the badge. Calling it on a sync-context object silently no-ops
+        // because enqueueMarkAsReadUpdate guards zm_isUserInterfaceContext.
+        conversation.markAsRead()
     }
 
     private func update(at index: Int, summary: String) {

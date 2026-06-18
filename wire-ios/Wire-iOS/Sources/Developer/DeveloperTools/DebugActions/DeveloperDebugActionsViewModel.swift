@@ -491,7 +491,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     // MARK: - Simulate unread messages
 
-    /// Rolls back `lastReadServerTimeStamp` on every conversation so that messages
+    /// Rolls back `lastReadServerTimeStamp` on every group/1:1 conversation so that messages
     /// sent within the given interval appear as unread. Used to populate the Catch-Up feature for testing.
     func markConversationsUnread(since interval: TimeInterval) {
         guard let syncContext = userSession?.syncContext else { return }
@@ -508,12 +508,16 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             guard let conversations = try? syncContext.fetch(request) else { return }
 
             for conversation in conversations {
-                // Only roll back if the current read pointer is newer than the cutoff.
-                // This avoids re-marking conversations that were already fully unread.
-                guard let currentTimestamp = conversation.lastReadServerTimeStamp,
-                      currentTimestamp > cutoff else { continue }
+                // Roll back the read pointer to the cutoff so messages after it become unread.
+                // Skip conversations whose read pointer is already before the cutoff — those
+                // already have at least as many unread messages as requested.
+                guard (conversation.lastReadServerTimeStamp ?? .distantPast) > cutoff else { continue }
                 conversation.lastReadServerTimeStamp = cutoff
             }
+
+            // Recompute internalEstimatedUnreadCount for all affected conversations so the
+            // badge in the conversation list updates immediately without needing a restart.
+            ZMConversation.recalculateUnreadMessages(in: syncContext)
 
             try? syncContext.save()
         }
