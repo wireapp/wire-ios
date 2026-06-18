@@ -18,6 +18,7 @@
 
 import Foundation
 import GenericMessageProtocol
+import WireLogging
 
 public extension ZMUser {
 
@@ -103,9 +104,15 @@ public extension ZMUser {
         }
 
         set {
-            // swiftlint:disable:next todo_requires_jira_link
-            guard isSelfUser else { return } // TODO: move this setter to ZMEditableUserType
+            WireLogger.userClient.info("Availability setter invoked: isSelfUser=\(isSelfUser), requestedAvailability=\(newValue.rawValue)")
 
+            // swiftlint:disable:next todo_requires_jira_link
+            guard !isSelfUser else { // TODO: move this setter to ZMEditableUserType
+                WireLogger.userClient.warn("Availability update skipped: user is self user, ignoring change")
+                return
+            }
+
+            WireLogger.userClient.info("Applying availability update to Core Data: \(newValue.rawValue)")
             updateAvailability(newValue)
         }
     }
