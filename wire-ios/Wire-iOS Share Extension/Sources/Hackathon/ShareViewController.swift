@@ -20,6 +20,10 @@ import SwiftUI
 import UIKit
 import Social
 import UniformTypeIdentifiers
+import WireCommonComponents
+import WireDataModel
+import WireDomain
+import WireShareEngine
 import WireShareExtensionCore
 
 /// The main view controller for the Koi Share Extension.
@@ -29,6 +33,9 @@ class ShareViewController: UIViewController {
     private var shareItems: [ShareItem] = []
     private var hostingController: UIHostingController<RootNode>?
 
+    private var accountManager: AccountManager!
+    private var sessionsByAccount = [WireDataModel.Account: SharingSession]()
+
     override init(
         nibName nibNameOrNil: String?,
         bundle nibBundleOrNil: Bundle?
@@ -37,6 +44,8 @@ class ShareViewController: UIViewController {
             nibName: nibNameOrNil,
             bundle: nibBundleOrNil
         )
+
+        setUpAccountManager()
     }
     
     required init?(coder: NSCoder) {
@@ -45,13 +54,68 @@ class ShareViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         Task {
             await extractSharedContent()
             presentShareUI()
         }
     }
-    
+
+    private func setUpAccountManager() {
+        guard
+            let currentAppVersion = Bundle.main.shortVersionString,
+            let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier
+        else {
+            fatalError()
+        }
+
+        let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+        let accountURLs = AccountURLs(root: sharedContainerURL)
+
+        do {
+            accountManager = try AccountManager(
+                currentAppVersion: currentAppVersion,
+                directory: accountURLs.accounts
+            )
+        } catch {
+            fatalError()
+        }
+    }
+
+    private func session(for account: WireDataModel.Account) async throws -> SharingSession {
+        if let cachedSession = sessionsByAccount[account] {
+            return cachedSession
+        }
+
+        guard
+            let appGroupID = Bundle.main.applicationGroupIdentifier,
+            let hostBundleID = Bundle.main.hostBundleIdentifier,
+            let bundleInfo = Bundle.main.infoDictionary,
+            let buildNumber = bundleInfo[kCFBundleVersionKey as String] as? String
+        else {
+            fatalError()
+        }
+
+        let appContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
+
+        let loader = try SharingSessionLoader(
+            account: account,
+            appContainerURL: appContainerURL,
+            appGroupID: appGroupID,
+            buildNumber: buildNumber,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
+
+        if DeveloperFlag.simulateMainAppRequiredError.isOn {
+            throw SharingSessionLoader.Failure.mainAppRequired(message: "simulated developer flag")
+        }
+
+        let session = try await loader.load()
+        sessionsByAccount[account] = session
+        return session
+    }
+
     // MARK: - Content Extraction
     
     /// Extracts shared content from the extension context.
