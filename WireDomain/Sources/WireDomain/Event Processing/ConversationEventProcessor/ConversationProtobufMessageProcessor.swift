@@ -26,15 +26,18 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
     let messageLocalStore: any MessageLocalStoreProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
+    let onCallReaction: ((CallReactionEvent) -> Void)?
 
     public init(
         messageLocalStore: any MessageLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        userLocalStore: any UserLocalStoreProtocol
+        userLocalStore: any UserLocalStoreProtocol,
+        onCallReaction: ((CallReactionEvent) -> Void)? = nil
     ) {
         self.messageLocalStore = messageLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
+        self.onCallReaction = onCallReaction
     }
 
     public func processProtobufMessage(
@@ -182,10 +185,13 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             // case not handled here, see `onProcessedCallEvent`
             break
 
-        case .inCallEmoji:
+        case let .inCallEmoji(inCallEmoji):
 
-            // Not supported yet, just discard. TODO: [WPB-11770] implement here
-            break
+            // TODO: [WPB-11770] add unit tests for inCallEmoji processing
+            for (emoji, _) in inCallEmoji.emojis {
+                WireLogger.calling.debug("Received in-call emoji reaction: \(emoji)", attributes: logAttributes)
+                onCallReaction?(CallReactionEvent(emoji: emoji, senderID: senderID.id, conversationID: conversationID.id))
+            }
 
         case .image, .asset:
 

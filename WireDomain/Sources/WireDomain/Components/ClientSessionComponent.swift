@@ -798,10 +798,13 @@ public final class ClientSessionComponent {
 
     // MARK: - Other
 
+    public let callReactionSubject = PassthroughSubject<CallReactionEvent, Never>()
+
     public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
         messageLocalStore: messageLocalStore,
         conversationLocalStore: conversationLocalStore,
-        userLocalStore: userLocalStore
+        userLocalStore: userLocalStore,
+        onCallReaction: { [callReactionSubject] event in callReactionSubject.send(event) }
     )
 
     public private(set) lazy var oneOnOneResolver = OneOnOneResolver(

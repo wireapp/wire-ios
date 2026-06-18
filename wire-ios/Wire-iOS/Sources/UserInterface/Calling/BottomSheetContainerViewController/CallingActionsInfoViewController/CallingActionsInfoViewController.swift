@@ -20,14 +20,12 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-protocol CallingActionsInfoViewControllerDelegate: AnyObject {
-    func actionsViewHeightChanged(to height: CGFloat)
-}
-
+/// Participants-list container used by `CallingActionsInfoRepresentable`.
+/// Renders security level banner, participants header, and scrollable participants list.
+/// Call action buttons are owned by `CallPanelView` in both portrait and landscape.
 final class CallingActionsInfoViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     private let participantsHeaderHeight: CGFloat = 42
     private let cellHeight: CGFloat = 56
-    private var topConstraint: NSLayoutConstraint?
     private let selfUser: UserType
 
     private var collectionView: CallParticipantsListView!
@@ -38,19 +36,6 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         fontSpec: .smallSemiboldFont,
         color: SemanticColors.Label.textSectionHeader
     )
-    private(set) var actionsViewHeightConstraint: NSLayoutConstraint!
-
-    weak var delegate: CallingActionsInfoViewControllerDelegate?
-    var isIncomingCall: Bool = false
-    let actionsView = CallingActionsView()
-
-    /// Hides the actions buttons row (used in landscape where buttons are rendered separately).
-    var actionsViewHidden: Bool = false {
-        didSet {
-            actionsView.isHidden = actionsViewHidden
-            actionsViewHeightConstraint?.constant = actionsViewHidden ? 0 : calculateHeightConstant()
-        }
-    }
 
     var participants: CallParticipantsList {
         didSet {
@@ -82,11 +67,6 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateRows()
-        updateActionViewHeight()
-    }
-
-    func setCallingActionsViewDelegate(actionsDelegate: CallingActionsViewDelegate?) {
-        actionsView.delegate = actionsDelegate
     }
 
     private func setupViews() {
@@ -96,6 +76,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         stackView.alignment = .center
         stackView.distribution = .fill
         stackView.spacing = 0
+
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionViewLayout.minimumInteritemSpacing = 12
@@ -116,7 +97,6 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
 
         [
             securityLevelView,
-            actionsView,
             participantsHeaderView,
             collectionView
         ].forEach(stackView.addArrangedSubview)
@@ -126,17 +106,11 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     private func createConstraints() {
-        actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: calculateHeightConstant())
-
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
-            actionsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            actionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            actionsViewHeightConstraint,
 
             participantsHeaderView.heightAnchor.constraint(equalToConstant: participantsHeaderHeight),
             participantsHeaderLabel.leadingAnchor.constraint(
@@ -151,40 +125,6 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
             participantsHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.widthAnchor.constraint(equalTo: stackView.widthAnchor)
         ])
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        updateActionViewHeight()
-    }
-
-    func updateActionViewHeight() {
-        let height = calculateHeightConstant()
-        actionsViewHeightConstraint.constant = height
-        delegate?.actionsViewHeightChanged(to: height)
-        actionsView.verticalStackView.alignment = determineStackViewAlignment()
-    }
-
-    private func calculateHeightConstant() -> CGFloat {
-        var baseHeight: CGFloat = if UIDevice.current.twoDimensionOrientation.isLandscape {
-            107
-        } else {
-            isIncomingCall ? 250 : 107
-        }
-
-        if !securityLevelView.isHidden {
-            baseHeight += SecurityLevelView.securityLevelViewHeight
-        }
-
-        return baseHeight + view.safeAreaInsets.bottom
-    }
-
-    private func determineStackViewAlignment() -> UIStackView.Alignment {
-        if UIDevice.current.twoDimensionOrientation.isLandscape {
-            .center
-        } else {
-            .fill
-        }
     }
 
     private func updateRows() {
@@ -206,18 +146,12 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         false
     }
-
 }
 
 // MARK: - CallInfoConfigurationObserver
 
 extension CallingActionsInfoViewController: CallInfoConfigurationObserver {
     func didUpdateConfiguration(configuration: CallInfoConfiguration) {
-        isIncomingCall = configuration.state.isIncoming
-        actionsView.isIncomingCall = isIncomingCall
-        actionsView.update(with: configuration)
         securityLevelView.configure(with: configuration.classification)
-
-        updateActionViewHeight()
     }
 }

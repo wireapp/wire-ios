@@ -19,37 +19,101 @@
 import SwiftUI
 import WireDesign
 
-/// Landscape side panel: handle | vertical buttons | participants list.
-/// Panel sits on the physical-bottom edge of the device. The buttons column is always
-/// visible; the participants column is revealed by dragging toward the screen centre.
-struct LandscapeCallPanelView: View {
+enum CallPanelLayout {
+    case portrait
+    case landscape(side: HorizontalEdge)
+}
 
+/// Unified call panel used in both portrait (bottom sheet) and landscape (side panel).
+/// Portrait: VStack — horizontal drag handle | horizontal buttons row | participants list.
+/// Landscape: HStack — vertical drag handle | vertical buttons column | participants list.
+struct CallPanelView: View {
+
+    // Landscape constants
     static let buttonsColumnWidth: CGFloat = 72
     static let participantsColumnWidth: CGFloat = 320
     static let handleWidth: CGFloat = 24
 
+    // Portrait constants (mirror landscape dimensions)
+    static let handleHeight: CGFloat = 24
+    static let buttonsRowHeight: CGFloat = 72
+
     @ObservedObject var viewModel: CallingContainerViewModel
     @Binding var isExpanded: Bool
-    var side: HorizontalEdge = .trailing
+    var layout: CallPanelLayout = .portrait
 
     var body: some View {
+        switch layout {
+        case .portrait:
+            portraitBody
+        case .landscape(let side):
+            landscapeBody(side: side)
+        }
+    }
+
+    // MARK: - Portrait layout
+
+    private var portraitBody: some View {
+        VStack(spacing: 0) {
+            portraitDragHandle
+            portraitCallButtonsRow
+            portraitParticipantsSection
+        }
+        .background(Color(SemanticColors.View.backgroundDefault))
+    }
+
+    private var portraitDragHandle: some View {
+        HStack {
+            Spacer()
+            RoundedRectangle(cornerRadius: 3)
+                .fill(Color(SemanticColors.View.backgroundCallDragBarIndicator))
+                .frame(width: 44, height: 5)
+            Spacer()
+        }
+        .frame(height: Self.handleHeight)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                isExpanded.toggle()
+            }
+        }
+    }
+
+    private var portraitCallButtonsRow: some View {
+        ActiveCallActionsView(
+            axis: .horizontal,
+            configuration: viewModel.callInfoConfiguration,
+            performAction: perform
+        )
+        .frame(height: Self.buttonsRowHeight)
+    }
+
+    private var portraitParticipantsSection: some View {
+        CallingActionsInfoRepresentable(
+            viewModel: viewModel,
+            isExpanded: $isExpanded,
+            hideActionsView: true
+        )
+    }
+
+    // MARK: - Landscape layout
+
+    private func landscapeBody(side: HorizontalEdge) -> some View {
         HStack(spacing: 0) {
             if side == .trailing {
-                dragHandle
+                landscapeDragHandle
                 callButtonsColumn
                 participantsColumn
             } else {
                 participantsColumn
                 callButtonsColumn
-                dragHandle
+                landscapeDragHandle
             }
         }
         .background(Color(SemanticColors.View.backgroundDefault))
     }
 
-    // MARK: - Handle
-
-    private var dragHandle: some View {
+    private var landscapeDragHandle: some View {
         VStack {
             Spacer()
             RoundedRectangle(cornerRadius: 3)
@@ -66,44 +130,14 @@ struct LandscapeCallPanelView: View {
         }
     }
 
-    // MARK: - Vertical call buttons
-
     private var callButtonsColumn: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            if let config = viewModel.callInfoConfiguration {
-                LandscapeCallButton(
-                    systemImage: config.isMuted ? "mic.slash.fill" : "mic.fill",
-                    isSelected: !config.isMuted,
-                    isDestructive: false
-                ) { perform(.toggleMuteState) }
-
-                LandscapeCallButton(
-                    systemImage: config.mediaState.isSendingVideo ? "video.fill" : "video.slash.fill",
-                    isSelected: config.mediaState.isSendingVideo && config.permissions.canAcceptVideoCalls,
-                    isDestructive: false,
-                    isEnabled: config.canToggleMediaType
-                ) { perform(.toggleVideoState) }
-
-                LandscapeCallButton(
-                    systemImage: config.mediaState.isSpeakerEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill",
-                    isSelected: config.mediaState.isSpeakerEnabled,
-                    isDestructive: false,
-                    isEnabled: config.mediaState.canSpeakerBeToggled
-                ) { perform(.toggleSpeakerState) }
-
-                LandscapeCallButton(
-                    systemImage: "phone.down.fill",
-                    isSelected: false,
-                    isDestructive: true
-                ) { perform(.terminateCall) }
-            }
-            Spacer()
-        }
+        ActiveCallActionsView(
+            axis: .vertical,
+            configuration: viewModel.callInfoConfiguration,
+            performAction: perform
+        )
         .frame(width: Self.buttonsColumnWidth)
     }
-
-    // MARK: - Participants list
 
     private var participantsColumn: some View {
         CallingActionsInfoRepresentable(
@@ -116,58 +150,5 @@ struct LandscapeCallPanelView: View {
 
     private func perform(_ action: CallAction) {
         viewModel.callViewController?.callingActionsViewPerformAction(action)
-    }
-}
-
-// MARK: - LandscapeCallButton
-
-private struct LandscapeCallButton: View {
-
-    let systemImage: String
-    let isSelected: Bool
-    let isDestructive: Bool
-    var isEnabled: Bool = true
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 20, weight: .medium))
-                .foregroundColor(iconColor)
-                .frame(width: 50, height: 50)
-                .background(
-                    Circle()
-                        .fill(backgroundColor)
-                        .overlay(
-                            Circle().stroke(borderColor, lineWidth: 1)
-                        )
-                )
-        }
-        .disabled(!isEnabled)
-    }
-
-    private var backgroundColor: Color {
-        if isDestructive {
-            return Color(SemanticColors.Button.backgroundLikeHighlighted)
-        }
-        return isSelected
-            ? Color(SemanticColors.Button.backgroundCallingSelected)
-            : Color(SemanticColors.Button.backgroundCallingNormal)
-    }
-
-    private var iconColor: Color {
-        if isDestructive {
-            return Color(SemanticColors.View.backgroundDefaultWhite)
-        }
-        return isSelected
-            ? Color(SemanticColors.Button.iconCallingSelected)
-            : Color(SemanticColors.Button.iconCallingNormal)
-    }
-
-    private var borderColor: Color {
-        if isDestructive { return .clear }
-        return isSelected
-            ? Color(SemanticColors.Button.borderCallingSelected)
-            : Color(SemanticColors.Button.borderCallingNormal)
     }
 }

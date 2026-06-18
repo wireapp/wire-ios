@@ -28,10 +28,10 @@ struct CallingContainerView: View {
     @State private var panelSide: HorizontalEdge = UIDevice.current.twoDimensionOrientation == .landscapeRight ? .leading : .trailing
 
     private var landscapePanelWidth: CGFloat {
-        LandscapeCallPanelView.handleWidth + LandscapeCallPanelView.buttonsColumnWidth + LandscapeCallPanelView.participantsColumnWidth
+        CallPanelView.handleWidth + CallPanelView.buttonsColumnWidth + CallPanelView.participantsColumnWidth
     }
     private var landscapeCollapsedWidth: CGFloat {
-        LandscapeCallPanelView.handleWidth + LandscapeCallPanelView.buttonsColumnWidth
+        CallPanelView.handleWidth + CallPanelView.buttonsColumnWidth
     }
 
     var body: some View {
@@ -49,7 +49,7 @@ struct CallingContainerView: View {
                     if isLandscape {
                         landscapePanel(geo: geo)
                     } else {
-                        portraitSheet(geo: geo)
+                        portraitPanel(geo: geo)
                     }
                 }
             }
@@ -66,18 +66,18 @@ struct CallingContainerView: View {
         }
     }
 
-    // MARK: - Portrait bottom sheet
+    // MARK: - Portrait panel
 
-    private func portraitSheet(geo: GeometryProxy) -> some View {
+    private func portraitPanel(geo: GeometryProxy) -> some View {
+        let peekHeight = CallPanelView.handleHeight + CallPanelView.buttonsRowHeight + geo.safeAreaInsets.bottom
         let maxHeight = geo.size.height * 0.7
-        let peekHeight = viewModel.peekHeight
         let travel = maxHeight - peekHeight
         let currentOffset = isExpanded ? 0 : travel
         let effectiveDrag = viewModel.isPanEnabled ? dragOffset : 0
 
         return VStack(spacing: 0) {
             Spacer()
-            CallingActionsInfoRepresentable(viewModel: viewModel, isExpanded: $isExpanded)
+            CallPanelView(viewModel: viewModel, isExpanded: $isExpanded, layout: .portrait)
                 .frame(height: maxHeight)
                 .offset(y: currentOffset + effectiveDrag)
                 .gesture(viewModel.isPanEnabled ? portraitDragGesture(travel: travel) : nil)
@@ -109,13 +109,13 @@ struct CallingContainerView: View {
     // MARK: - Landscape panel
 
     private func landscapePanel(geo: GeometryProxy) -> some View {
-        let travel = LandscapeCallPanelView.participantsColumnWidth
+        let travel = CallPanelView.participantsColumnWidth
         let currentOffset = isExpanded ? 0 : (panelSide == .trailing ? travel : -travel)
         let effectiveDrag = viewModel.isPanEnabled ? dragOffset : 0
 
         return HStack(spacing: 0) {
             if panelSide == .trailing { Spacer() }
-            LandscapeCallPanelView(viewModel: viewModel, isExpanded: $isExpanded, side: panelSide)
+            CallPanelView(viewModel: viewModel, isExpanded: $isExpanded, layout: .landscape(side: panelSide))
                 .frame(width: landscapePanelWidth, height: geo.size.height)
                 .offset(x: currentOffset + effectiveDrag)
                 .clipped()

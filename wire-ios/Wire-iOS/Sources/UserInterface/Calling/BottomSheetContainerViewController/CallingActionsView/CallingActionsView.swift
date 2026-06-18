@@ -155,7 +155,7 @@ final class CallingActionsView: UIView {
             handleView.topAnchor.constraint(equalTo: handleContainerView.topAnchor),
             handleView.bottomAnchor.constraint(equalTo: handleContainerView.bottomAnchor),
             handleView.heightAnchor.constraint(equalToConstant: 5),
-            handleView.widthAnchor.constraint(equalToConstant: 130),
+            handleView.widthAnchor.constraint(equalToConstant: CallPanelView.handleWidth),
             topStackView.leadingAnchor.constraint(equalTo: verticalStackView.leadingAnchor, constant: 14),
             topStackView.trailingAnchor.constraint(equalTo: verticalStackView.trailingAnchor, constant: -14),
             topStackView.heightAnchor.constraint(equalToConstant: 64).withPriority(.required)

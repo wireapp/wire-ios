@@ -26,7 +26,6 @@ final class CallingContainerViewModel: ObservableObject {
 
     @Published var callInfoConfiguration: CallInfoConfiguration?
     @Published var isIncomingCall: Bool = false
-    @Published var peekHeight: CGFloat = 107
     @Published var isPanEnabled: Bool = true
     @Published var participants: CallParticipantsList = []
     /// Bumped when the active voice channel changes; used as `.id` on CallViewControllerRepresentable to force recreation.

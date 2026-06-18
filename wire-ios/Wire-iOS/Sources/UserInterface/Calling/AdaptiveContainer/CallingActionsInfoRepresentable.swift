@@ -18,71 +18,27 @@
 
 import SwiftUI
 
+/// UIKit bridge that renders the participants list (security level + header + scrollable list).
+/// Always used with `hideActionsView: true`; call action buttons live in `CallPanelView`.
 struct CallingActionsInfoRepresentable: UIViewControllerRepresentable {
 
     let viewModel: CallingContainerViewModel
     @Binding var isExpanded: Bool
     var hideActionsView: Bool = false
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(viewModel: viewModel, isExpanded: $isExpanded, hideActionsView: hideActionsView)
-    }
-
     func makeUIViewController(context: Context) -> CallingActionsInfoViewController {
         let vc = CallingActionsInfoViewController(
             participants: viewModel.participants,
             selfUser: viewModel.userSession.selfUser
         )
-        vc.delegate = context.coordinator
-        vc.actionsView.bottomSheetScrollingDelegate = context.coordinator
         vc.additionalSafeAreaInsets = .zero
         return vc
     }
 
     func updateUIViewController(_ vc: CallingActionsInfoViewController, context: Context) {
         vc.participants = viewModel.participants
-        vc.actionsViewHidden = hideActionsView
         if let configuration = viewModel.callInfoConfiguration {
             vc.didUpdateConfiguration(configuration: configuration)
-        }
-        vc.setCallingActionsViewDelegate(actionsDelegate: viewModel.callViewController)
-    }
-}
-
-// MARK: - Coordinator
-
-extension CallingActionsInfoRepresentable {
-
-    final class Coordinator: NSObject, CallingActionsInfoViewControllerDelegate, BottomSheetScrollingDelegate {
-
-        private let viewModel: CallingContainerViewModel
-        private let isExpanded: Binding<Bool>
-        private let hideActionsView: Bool
-
-        init(viewModel: CallingContainerViewModel, isExpanded: Binding<Bool>, hideActionsView: Bool) {
-            self.viewModel = viewModel
-            self.isExpanded = isExpanded
-            self.hideActionsView = hideActionsView
-        }
-
-        // MARK: CallingActionsInfoViewControllerDelegate
-
-        func actionsViewHeightChanged(to height: CGFloat) {
-            // Only update peekHeight for portrait (where actions are shown in this VC)
-            guard !hideActionsView else { return }
-            viewModel.peekHeight = height
-        }
-
-        // MARK: BottomSheetScrollingDelegate
-
-        var isBottomSheetExpanded: Bool {
-            isExpanded.wrappedValue
-        }
-
-        func toggleBottomSheetVisibility() {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                isExpanded.wrappedValue.toggle()
-            }
         }
     }
 }
