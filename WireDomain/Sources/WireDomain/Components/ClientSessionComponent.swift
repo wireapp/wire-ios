@@ -691,6 +691,12 @@ public final class ClientSessionComponent {
         conversationLocalStore: conversationLocalStore,
         lockRepository: resetMLSConversationLockRepository
     )
+    
+    private lazy var descriptionUpdateEventProcessor = ConversationDescriptionUpdateEventProcessor(
+        conversationLocalStore: conversationLocalStore,
+        messageLocalStore: messageLocalStore,
+        mlsService: mlsService
+    )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
@@ -708,7 +714,8 @@ public final class ClientSessionComponent {
         renameEventProcessor: conversationRenameEventProcessor,
         typingEventProcessor: conversationTypingEventProcessor,
         addPermissionEventProcessor: addPermissionEventProcessor,
-        mlsResetEventProcessor: mlsResetEventProcessor
+        mlsResetEventProcessor: mlsResetEventProcessor,
+        descriptionUpdateEventProcessor: descriptionUpdateEventProcessor
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {
@@ -819,6 +826,14 @@ public final class ClientSessionComponent {
 
     private lazy var resetMLSConversationLockRepository = ResetMLSConversationLockRepository(
         userID: selfUserID
+    )
+    
+    public lazy var updateConversationDescriptionUsecase = UpdateGroupDescriptionUseCase(
+        mlsProvider: mlsProvider,
+        context: syncContext,
+        conversationsApi: conversationsAPI,
+        conversationLocalStore: conversationLocalStore,
+        messageLocalStore: messageLocalStore
     )
 
     public lazy var repairFaultyRemovalKeysUsecase = RepairRemovalKeysUseCase(

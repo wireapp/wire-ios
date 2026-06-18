@@ -67,7 +67,7 @@ public struct AccountsAPIBuilder {
             AccountsAPIV13(apiService: apiService)
         case .v14:
             AccountsAPIV14(apiService: apiService)
-        case .v15:
+        case .v15, .v16, .v17:
             AccountsAPIV15(apiService: apiService)
         }
     }

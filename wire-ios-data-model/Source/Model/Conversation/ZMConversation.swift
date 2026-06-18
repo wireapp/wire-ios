@@ -146,5 +146,11 @@ public extension ZMConversation {
             oldValue: otherConversation.silencedChangedTimestamp
         )
     }
+    
+    // MARK: - Encrypted metadata
+    
+    @NSManaged var groupDescription: String?
+    @NSManaged var metadataVersion: NSNumber?
+    @NSManaged var metadataSecret: Data?
 
 }

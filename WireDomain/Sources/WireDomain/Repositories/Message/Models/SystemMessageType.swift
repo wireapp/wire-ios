@@ -130,4 +130,10 @@ public enum SystemMessageType: Sendable {
         sender: (id: UUID, domain: String?),
         date: Date
     )
+    
+    case conversationDescriptionChanged(
+        sender: (id: UUID, domain: String?),
+        date: Date,
+        description: String
+    )
 }

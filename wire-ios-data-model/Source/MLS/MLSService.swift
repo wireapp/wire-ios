@@ -189,6 +189,17 @@ public final class MLSService: MLSServiceInterface {
             }
         }
     }
+    
+    // MARK: - Group metadata secret
+    
+    public func groupMetadataSecret(groupID: MLSGroupID) async throws -> (SecretKey, UInt64) {
+        return try await coreCrypto.transaction { context in
+            let epoch  = try await context.conversationEpoch(conversationId: groupID.conversationId)
+            let secret = try await context.exportSecretKey(conversationId: groupID.conversationId, keyLength: 32)
+            
+            return (secret, epoch)
+        }
+    }
 
     // MARK: - Conference info for subconversations
 

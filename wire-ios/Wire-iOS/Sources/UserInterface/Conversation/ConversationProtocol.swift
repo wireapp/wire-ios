@@ -90,6 +90,7 @@ extension ZMConversation: InputBarConversation {
 
 protocol GroupDetailsConversation {
     var userDefinedName: String? { get set }
+    var groupDescription: String? { get set }
 
     var sortedApps: [UserType] { get }
 

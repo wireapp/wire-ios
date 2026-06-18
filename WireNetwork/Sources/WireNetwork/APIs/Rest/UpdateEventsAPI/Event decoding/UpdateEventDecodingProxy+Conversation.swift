@@ -94,6 +94,10 @@ extension UpdateEventDecodingProxy {
         case .mlsReset:
             let event = try ConversationMLSResetEventDecoder().decode(from: container)
             updateEvent = .conversation(.mlsReset(event))
+            
+        case .descriptionUpdate:
+            let event = try ConversationDescriptionUpdateEventDecoder().decode(from: container)
+            updateEvent = .conversation(.descriptionUpdate(event))
         }
     }
 

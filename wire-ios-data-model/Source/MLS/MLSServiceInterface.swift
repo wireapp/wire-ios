@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCoreCrypto
+
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
 
@@ -414,6 +416,9 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Returns: A stream of epoch changes events
 
     func epochChanges() -> AsyncStream<MLSGroupID>
+    
+    
+    func groupMetadataSecret(groupID: MLSGroupID) async throws -> (SecretKey, UInt64)
 
     // MARK: - Conference info
 

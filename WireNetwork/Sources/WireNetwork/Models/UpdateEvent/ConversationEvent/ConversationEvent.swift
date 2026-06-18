@@ -89,6 +89,10 @@ public enum ConversationEvent: Equatable, Sendable {
     /// Event to fix broken MLS conversation by reseting it
 
     case mlsReset(ConversationMLSResetEvent)
+    
+    /// A conversation description was updated
+    
+    case descriptionUpdate(ConversationDescriptionUpdateEvent)
 
 }
 
@@ -130,6 +134,8 @@ extension ConversationEvent {
             "permissionUpdate"
         case .mlsReset:
             "mlsReset"
+        case .descriptionUpdate:
+            "descriptionUpdate"
         }
     }
 
@@ -168,6 +174,8 @@ extension ConversationEvent {
         case let .permissionUpdate(event):
             event.conversationID
         case let .mlsReset(event):
+            event.conversationID
+        case let .descriptionUpdate(event):
             event.conversationID
         }
     }

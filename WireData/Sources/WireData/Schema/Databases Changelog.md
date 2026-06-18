@@ -10,6 +10,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.136.0
+
+* added `description` attribute on 
+
 ### 2.135.0
 
 * added `conversationName` attribute on the WireCellsLocalAsset entity

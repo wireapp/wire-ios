@@ -115,5 +115,27 @@ extension ConversationLocalStore {
 
         localConversation.oneOnOneUser = otherUser
     }
+    
+    public func storeConversation(
+        description: String,
+        for localConversation: ZMConversation,
+        version: Int,
+        epoch: Int,
+        secret: Data
+    ) async {
+        await context.perform {
+            localConversation.groupDescription = description
+            localConversation.metadataVersion = NSNumber(integerLiteral: version)
+            localConversation.metadataSecret = secret
+        }
+    }
+    
+    public func conversationDescription(
+        conversation: ZMConversation
+    ) async -> (String?, Int?) {
+        await context.perform {
+            (conversation.groupDescription, conversation.metadataVersion?.intValue)
+        }
+    }
 
 }

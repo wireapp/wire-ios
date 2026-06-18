@@ -920,6 +920,28 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             return [systemMessage]
+            
+        case let .conversationDescriptionChanged(sender: sender, date: date, description: newDescription):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .conversationDescriptionChanged,
+                sender: sender,
+                timestamp: date
+            )
+
+            await context.perform {
+                systemMessage.text = newDescription
+                systemMessage.visibleInConversation = conversation
+                conversation.updateTimestampsAfterUpdatingMessage(systemMessage)
+            }
+
+            return [systemMessage]
 
         case let .readReceiptsStatus(isEnabled, sender, date):
             guard let sender = await fetchUser(

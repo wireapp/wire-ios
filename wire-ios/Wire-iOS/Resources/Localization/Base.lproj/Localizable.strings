@@ -611,6 +611,12 @@
 "content.system.renamed_conv.title-you" = "%@ renamed the conversation";
 "content.system.renamed_conv.title.you" = "You";
 
+"content.system.changed_description.title" = "%@ changed the group description";
+"content.system.changed_description.title-you" = "%@ changed the group description";
+"content.system.changed_description.title.you" = "You";
+"content.system.other_changed_description_to_nothing" = "%@ removed the group description";
+"content.system.you_changed_description_to_nothing" = "You removed the group description";
+
 "content.system.conversation.with_name.title" = "%@ started the conversation";
 "content.system.conversation.with_name.title-you" = "%@ started the conversation";
 
@@ -933,6 +939,8 @@
 "participants.section.settings" = "Options";
 "participants.footer.add_title" = "Add Participants";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
+"participants.section.description.title" = "Group Description";
+"participants.section.description.placeholder" = "Group Description";
 "participants.section.admins.footer" = "There are no admins.";
 "participants.section.members.footer" = "There are no members.";
 

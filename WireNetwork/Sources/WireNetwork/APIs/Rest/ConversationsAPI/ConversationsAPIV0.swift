@@ -243,6 +243,14 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         }
 
     }
+    
+    func updateConversationDescripton(conversationID: QualifiedID, currentVersion: Int, ciphertext: String) async throws {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
+    }
+    
+    func getConversationDescription(conversationID: QualifiedID) async throws -> ConversationDescription {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
+    }
 
 }
 

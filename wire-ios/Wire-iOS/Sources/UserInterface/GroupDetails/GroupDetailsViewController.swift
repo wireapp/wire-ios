@@ -39,6 +39,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     private var token: NSObjectProtocol?
     var actionController: ConversationActionController?
     private var renameGroupSectionController: RenameGroupSectionController?
+    private var groupDescriptionSectionController: GroupDescriptionSectionController?
     private var initialSyncToken: (any NSObjectProtocol)!
     let userSession: UserSession
     private var userStatuses = [UUID: UserStatus]()
@@ -198,6 +199,13 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         )
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
+
+        let groupDescriptionSectionController = GroupDescriptionSectionController(
+            conversation: conversation,
+            userSession: userSession
+        )
+        sections.append(groupDescriptionSectionController)
+        self.groupDescriptionSectionController = groupDescriptionSectionController
 
         let (participants, apps) = (conversation.sortedOtherParticipants, conversation.sortedApps)
         participants.forEach { user in

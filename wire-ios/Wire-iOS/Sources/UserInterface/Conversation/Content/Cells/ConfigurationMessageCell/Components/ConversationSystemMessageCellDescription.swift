@@ -57,6 +57,15 @@ enum ConversationSystemMessageCellDescription {
             )
             return [AnyConversationMessageCellDescription(renamedCell)]
 
+        case .conversationDescriptionChanged:
+            let descriptionChangedCell = ConversationDescriptionChangedSystemMessageCellDescription(
+                message: message,
+                data: systemMessageData,
+                sender: sender,
+                newDescription: systemMessageData.text
+            )
+            return [AnyConversationMessageCellDescription(descriptionChangedCell)]
+
         case .missedCall:
             let missedCallCell = ConversationMissedCallSystemMessageCellDescription(
                 message: message,

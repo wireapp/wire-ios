@@ -37,6 +37,7 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
     let typingEventProcessor: any ConversationTypingEventProcessorProtocol
     let addPermissionEventProcessor: any ConversationAddPermissionEventProcessorProtocol
     let mlsResetEventProcessor: any ConversationMLSResetEventProcessorProtocol
+    let descriptionUpdateEventProcessor: any ConversationDescriptionUpdateEventProcessorProtocol
 
     func processEvent(_ event: ConversationEvent) async throws {
         WireLogger.eventProcessing.info(
@@ -101,6 +102,9 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
 
         case let .mlsReset(event):
             try await mlsResetEventProcessor.processEvent(event)
+            
+        case let .descriptionUpdate(event):
+            try await descriptionUpdateEventProcessor.processEvent(event)
         }
     }
 

@@ -74,5 +74,20 @@ public protocol ConversationsAPI {
         allowGuests: Bool,
         allowApps: Bool
     ) async throws
+    
+    func updateConversationDescripton(
+        conversationID: QualifiedID,
+        currentVersion: Int,
+        ciphertext: String
+    ) async throws
+    
+    func getConversationDescription(
+        conversationID: QualifiedID,
+    ) async throws -> ConversationDescription
 
+}
+
+public struct ConversationDescription: Sendable, Equatable {
+    public let ciphertext: String
+    public let version: Int
 }

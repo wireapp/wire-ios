@@ -2055,6 +2055,10 @@ internal enum L10n {
         internal static func otherAddedYou(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.other_added_you", String(describing: p1), fallback: "%@ added you")
         }
+        /// %@ removed the group description
+        internal static func otherChangedDescriptionToNothing(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.other_changed_description_to_nothing", String(describing: p1), fallback: "%@ removed the group description")
+        }
         /// %@ left
         internal static func otherLeft(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.other_left", String(describing: p1), fallback: "%@ left")
@@ -2115,6 +2119,8 @@ internal enum L10n {
         internal static func youAddedParticipant(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.you_added_participant", String(describing: p1), fallback: "You added %@")
         }
+        /// You removed the group description
+        internal static let youChangedDescriptionToNothing = L10n.tr("Localizable", "content.system.you_changed_description_to_nothing", fallback: "You removed the group description")
         /// you
         internal static let youDative = L10n.tr("Localizable", "content.system.you_dative", fallback: "you")
         /// You left
@@ -2188,6 +2194,20 @@ internal enum L10n {
           }
           /// You can now decrypt messages from yourself. To recover lost messages, you need to resend them.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt_resolved.self", fallback: "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.")
+        }
+        internal enum ChangedDescription {
+          /// %@ changed the group description
+          internal static func title(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.changed_description.title", String(describing: p1), fallback: "%@ changed the group description")
+          }
+          /// %@ changed the group description
+          internal static func titleYou(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.changed_description.title-you", String(describing: p1), fallback: "%@ changed the group description")
+          }
+          internal enum Title {
+            /// You
+            internal static let you = L10n.tr("Localizable", "content.system.changed_description.title.you", fallback: "You")
+          }
         }
         internal enum Channel {
           internal enum Guest {
@@ -4747,6 +4767,12 @@ internal enum L10n {
         internal enum Admins {
           /// There are no admins.
           internal static let footer = L10n.tr("Localizable", "participants.section.admins.footer", fallback: "There are no admins.")
+        }
+        internal enum Description {
+          /// Group Description
+          internal static let placeholder = L10n.tr("Localizable", "participants.section.description.placeholder", fallback: "Group Description")
+          /// Group Description
+          internal static let title = L10n.tr("Localizable", "participants.section.description.title", fallback: "Group Description")
         }
         internal enum Members {
           /// There are no members.

@@ -214,6 +214,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
 
     }
+    
+    func updateConversationDescription(newDescription: String, id: UUID, domain: String?) async {
+        guard let conversation = await fetchConversation(id: id, domain: domain) else {
+            return
+        }
+        
+        // let (secret, epoch) = mlsProvider.service.metadataSecret()
+        let secret: Data! = nil
+        let ciphertext = Data(newDescription.utf8).zmEncryptPrefixingIV(key: secret)
+    }
 
     public func isGroupConversation(id: UUID, domain: String?) async -> Bool {
         guard let conversation = await fetchConversation(id: id, domain: domain) else {

@@ -374,6 +374,19 @@ public protocol ConversationLocalStoreProtocol {
     /// Fetches the current conversation name
     /// - parameter conversation: The conversation to fetch the name for.
     /// - returns: The conversation name
+    
+    func storeConversation(
+        description: String,
+        for localConversation: ZMConversation,
+        version: Int,
+        epoch: Int,
+        secret: Data
+    ) async
+    
+    func conversationDescription(
+        conversation: ZMConversation
+    ) async -> (String?, Int?)
+
 
     func conversationName(
         conversation: ZMConversation
