@@ -87,6 +87,8 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         maxVisualDrawerOffset = SwipeMenuCollectionCell.MaxVisualDrawerOffsetRevealDistance
         overscrollFraction = CGFloat.greatestFiniteMagnitude // Never overscroll
         clipsToBounds = true
+        contentView.backgroundColor = SemanticColors.View.backgroundUserCell
+        backgroundColor = SemanticColors.View.backgroundUserCell
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(onRightAccessorySelected(_:)))
         itemView.rightAccessory.addGestureRecognizer(tapGestureRecognizer)
