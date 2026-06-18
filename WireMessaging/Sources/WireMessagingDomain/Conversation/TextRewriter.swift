@@ -49,6 +49,12 @@ public struct TextRewriter {
 
     public init() {}
 
+    /// `true` when the on-device Apple Intelligence model is available.
+    /// Returns `false` on the simulator or when Apple Intelligence has not been set up.
+    public static var isAvailable: Bool {
+        SystemLanguageModel.default.isAvailable
+    }
+
     /// Returns the message rewritten in the given style, or throws on model error.
     public func rewrite(_ text: String, style: Style) async throws -> String {
         let session = LanguageModelSession()

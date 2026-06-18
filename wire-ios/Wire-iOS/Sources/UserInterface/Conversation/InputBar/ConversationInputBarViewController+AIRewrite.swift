@@ -30,7 +30,7 @@ extension ConversationInputBarViewController {
         editMenuForTextIn range: NSRange,
         suggestedActions: [UIMenuElement]
     ) -> UIMenu? {
-        guard #available(iOS 26.0, *) else {
+        guard #available(iOS 26.0, *), TextRewriter.isAvailable else {
             return UIMenu(children: suggestedActions)
         }
         guard !(textView.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
