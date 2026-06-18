@@ -21,7 +21,7 @@ import SwiftUI
 struct HomeNode: View {
 
     let destination: HomeDestination
-    let shareItem: ShareItem
+    let shareItems: [ShareItem]
     let fetchAccounts: any FetchAccountsUseCase
     let fetchConversations: any FetchConversationsUseCase
     let sendMessage: any SendMessageUseCase
@@ -33,7 +33,7 @@ struct HomeNode: View {
         HomeView(viewModel: makeViewModel()) { destination in
             ComposeMessageNode(
                 destination: destination,
-                shareItem: shareItem,
+                shareItems: shareItems,
                 sendMessage: sendMessage,
                 router: router,
                 onDone: onDone
@@ -45,7 +45,6 @@ struct HomeNode: View {
         HomeViewModelImpl(
             fetchAccounts: fetchAccounts,
             fetchConversations: fetchConversations,
-            shareItem: shareItem,
             router: router,
             onClose: onClose
         )

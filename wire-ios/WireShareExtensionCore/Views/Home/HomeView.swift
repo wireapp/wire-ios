@@ -147,17 +147,8 @@ struct HomeView<
             viewModel: HomeViewModelImpl(
                 fetchAccounts: FetchAccountsUseCaseMock(),
                 fetchConversations: FetchConversationsUseCaseMock(),
-                shareItem: .image(
-                    ImageShareItem(
-                        url: URL(string: "")!,
-                        name: "foo.jpg",
-                        size: 1048
-                    )
-                ),
                 router: router,
-                onClose: {
-                    print("Close")
-                }
+                onClose: { print("Close") }
             ),
             makeComposeMessageNode: { _ in Color.red }
         )

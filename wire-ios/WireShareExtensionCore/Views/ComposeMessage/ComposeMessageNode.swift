@@ -26,7 +26,7 @@ struct ComposeMessageDestination: Hashable {
 struct ComposeMessageNode: View {
 
     let destination: ComposeMessageDestination
-    let shareItem: ShareItem
+    let shareItems: [ShareItem]
     let sendMessage: any SendMessageUseCase
     let router: RootRouter
     let onDone: () -> Void
@@ -39,7 +39,7 @@ struct ComposeMessageNode: View {
         ComposeMessageViewModelImpl(
             account: destination.account,
             conversation: destination.conversation,
-            shareItem: shareItem,
+            shareItems: shareItems,
             router: router,
             sendMessage: sendMessage,
             onDone: onDone

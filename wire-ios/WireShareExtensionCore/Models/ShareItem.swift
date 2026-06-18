@@ -20,9 +20,33 @@ import Foundation
 import UniformTypeIdentifiers
 
 public enum ShareItem {
+
     case image(ImageShareItem)
     case video(VideoShareItem)
     case file(FileShareItem)
+
+    var url: URL {
+        switch self {
+        case let .image(item):
+            item.url
+        case let .video(item):
+            item.url
+        case let .file(item):
+            item.url
+        }
+    }
+
+    var systemIconName: String {
+        switch self {
+        case let .image(item):
+            "photo"
+        case let .video(item):
+            "video"
+        case let .file(item):
+            "document"
+        }
+    }
+
 }
 
 public struct ImageShareItem {

@@ -55,9 +55,9 @@ final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
 
     let account: Account
     let conversation: Conversation
-    let shareItem: ShareItem
+    let shareItems: [ShareItem]
     var messageText: String = ""
-    var thumbnails: [Thumbnail]
+    var thumbnails: [Thumbnail] = []
 
     var canSend: Bool {
         true
@@ -73,67 +73,56 @@ final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
     init(
         account: Account,
         conversation: Conversation,
-        shareItem: ShareItem,
+        shareItems: [ShareItem],
         router: RootRouter,
         sendMessage: SendMessageUseCase,
         onDone: @escaping () -> Void
     ) {
         self.account = account
         self.conversation = conversation
-        self.shareItem = shareItem
+        self.shareItems = shareItems
         self.router = router
         self.onDone = onDone
         self.sendMessage = sendMessage
-
-        // Generate thumbnail based on share item type
-        let thumbnailData: Data?
-        let systemIconName: String
-
-        switch shareItem {
-        case .image(let imageItem):
-            thumbnailData = try? Data(contentsOf: imageItem.url)
-            systemIconName = "photo"
-        case .video:
-            // For videos, you could generate a thumbnail from the first frame
-            // For now, we'll leave it as nil
-            thumbnailData = nil
-            systemIconName = "video"
-        case .file:
-            thumbnailData = nil
-            systemIconName = "document"
-        }
-
-        thumbnails = [Thumbnail(imageData: thumbnailData, systemIconName: systemIconName)]
     }
 
     func start() async {
-        switch shareItem {
-        case .image(let imageShareItem):
+        var thumbnails = [Thumbnail]()
+        let thumbnailGenerator = QLThumbnailGenerator()
+
+        for shareItem in shareItems {
             let request = QLThumbnailGenerator.Request(
-                fileAt: imageShareItem.url,
+                fileAt: shareItem.url,
                 size: CGSize(width: 75, height: 75),
                 scale: 1,
                 representationTypes: .thumbnail
             )
 
-            if let data = try? await QLThumbnailGenerator().generateBestRepresentation(for: request).uiImage.pngData() {
-                // FIXME: would be nice not to reset the array here.
-                thumbnails = [Thumbnail(imageData: data, systemIconName: "photo")]
-            }
+            let data = try? await thumbnailGenerator
+                .generateBestRepresentation(for: request)
+                .uiImage
+                .pngData()
 
-        default:
-            // TODO: generate thumbnails for other types.
-            break
+            thumbnails.append(
+                Thumbnail(
+                    imageData: data,
+                    systemIconName: shareItem.systemIconName
+                )
+            )
         }
+
+        self.thumbnails = thumbnails
+
     }
 
     func send() async {
         isLoading = true
         defer { isLoading = false }
-        
+
+        // FIXME: allow multiple share items
         let message = Message(
             text: messageText,
-            shareItem: shareItem
+            shareItem: shareItems.first!
         )
 
         let sendMessageTask = Task.detached { [self] in

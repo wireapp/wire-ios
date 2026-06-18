@@ -216,7 +216,7 @@ class ShareViewController: UIViewController {
             attachments: extensionContext?.attachments ?? []
         )
         let rootNode = RootNode(
-            shareItem: shareItems.first!, // TODO: make safe
+            shareItems: shareItems,
             fetchAccounts: fetchAccounts,
             fetchConversations: fetchConversations,
             sendMessage: sendMessage,

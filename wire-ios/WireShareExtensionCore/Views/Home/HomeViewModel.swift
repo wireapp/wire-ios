@@ -44,8 +44,6 @@ final class HomeViewModelImpl: HomeViewModel {
     var selectedAccount: Account?
 
     var searchQuery: String = ""
-    private let shareItem: ShareItem
-
     var isLoading: Bool = false
 
     private var allConversations: [Conversation] = []
@@ -67,13 +65,11 @@ final class HomeViewModelImpl: HomeViewModel {
     init(
         fetchAccounts: any FetchAccountsUseCase,
         fetchConversations: any FetchConversationsUseCase,
-        shareItem: ShareItem,
         router: RootRouter,
         onClose: @escaping () -> Void
     ) {
         self.fetchAccounts = fetchAccounts
         self.fetchConversations = fetchConversations
-        self.shareItem = shareItem
         self.router = router
         self.onClose = onClose
     }

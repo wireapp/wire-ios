@@ -20,7 +20,7 @@ import SwiftUI
 
 public struct RootNode: View {
 
-    public let shareItem: ShareItem
+    public let shareItems: [ShareItem]
 
     public let fetchAccounts: any FetchAccountsUseCase
     public let fetchConversations: any FetchConversationsUseCase
@@ -35,14 +35,14 @@ public struct RootNode: View {
     private var router = RootRouter()
 
     public init(
-        shareItem: ShareItem,
+        shareItems: [ShareItem],
         fetchAccounts: any FetchAccountsUseCase,
         fetchConversations: any FetchConversationsUseCase,
         sendMessage: any SendMessageUseCase,
         onClose: @escaping () -> Void,
         onDone: @escaping () -> Void
     ) {
-        self.shareItem = shareItem
+        self.shareItems = shareItems
         self.fetchAccounts = fetchAccounts
         self.fetchConversations = fetchConversations
         self.sendMessage = sendMessage
@@ -57,7 +57,7 @@ public struct RootNode: View {
         ) { destination in
             HomeNode(
                 destination: destination,
-                shareItem: shareItem,
+                shareItems: shareItems,
                 fetchAccounts: fetchAccounts,
                 fetchConversations: fetchConversations,
                 sendMessage: sendMessage,
