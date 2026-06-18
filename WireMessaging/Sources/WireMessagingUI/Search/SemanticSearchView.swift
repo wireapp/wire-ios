@@ -33,13 +33,17 @@ public struct SemanticSearchView: View {
 
     public var body: some View {
         NavigationView {
-            Group {
-                if viewModel.isIndexEmpty {
-                    emptyIndexView
-                } else if viewModel.results.isEmpty && !viewModel.query.isEmpty && !viewModel.isSearching {
-                    noResultsView
-                } else {
-                    resultsList
+            VStack(spacing: 0) {
+                indexingProgressBar
+
+                Group {
+                    if viewModel.isIndexEmpty && viewModel.indexingProgress == nil {
+                        emptyIndexView
+                    } else if viewModel.results.isEmpty && !viewModel.query.isEmpty && !viewModel.isSearching {
+                        noResultsView
+                    } else {
+                        resultsList
+                    }
                 }
             }
             .navigationTitle(Text(verbatim: "Search"))
@@ -52,6 +56,22 @@ public struct SemanticSearchView: View {
         }
         .searchable(text: $viewModel.query, prompt: "Search all conversations…")
         .onAppear { viewModel.onAppear() }
+    }
+
+    @ViewBuilder
+    private var indexingProgressBar: some View {
+        if let progress = viewModel.indexingProgress {
+            VStack(spacing: 2) {
+                ProgressView(value: progress)
+                    .tint(Color(accentColor))
+                Text(verbatim: "Building search index… \(Int(progress * 100))%")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 6)
+            .transition(.move(edge: .top).combined(with: .opacity))
+        }
     }
 
     // MARK: - States
@@ -133,13 +153,37 @@ private final class SemanticSearchViewModel: ObservableObject {
     @Published var results: [SemanticSearchResult] = []
     @Published var isSearching = false
     @Published var isIndexEmpty = false
+    /// Non-nil while background indexing is running. Value in 0...1.
+    @Published var indexingProgress: Double?
 
     private var searchTask: Task<Void, Never>?
+    private var progressObservation: NSObjectProtocol?
     private let embedder = MessageEmbedder()
     private let index = SemanticSearchIndex.shared
 
     func onAppear() {
         Task { isIndexEmpty = await index.indexedCount == 0 }
+        observeIndexingProgress()
+    }
+
+    private func observeIndexingProgress() {
+        progressObservation = NotificationCenter.default.addObserver(
+            forName: .semanticIndexingProgress,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self,
+                  let indexed = notification.userInfo?[SemanticSearchIndex.progressIndexedKey] as? Int,
+                  let total = notification.userInfo?[SemanticSearchIndex.progressTotalKey] as? Int,
+                  total > 0
+            else { return }
+            let fraction = Double(indexed) / Double(total)
+            self.indexingProgress = fraction < 1 ? fraction : nil
+            // Refresh the empty-index state once indexing finishes
+            if fraction >= 1 {
+                Task { self.isIndexEmpty = await self.index.indexedCount == 0 }
+            }
+        }
     }
 
     private func scheduleSearch() {

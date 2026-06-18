@@ -17,6 +17,16 @@
 
 import Accelerate
 public import Foundation
+import WireLogging
+
+// MARK: - Indexing progress notification
+
+public extension Notification.Name {
+    /// Posted on `NotificationCenter.default` while the semantic index is being built.
+    /// `userInfo` keys: `SemanticSearchIndex.progressIndexedKey` (Int) and
+    /// `SemanticSearchIndex.progressTotalKey` (Int).
+    static let semanticIndexingProgress = Notification.Name("wire.semanticIndexingProgress")
+}
 
 // MARK: - Result type
 
@@ -38,6 +48,9 @@ public struct SemanticSearchResult: Identifiable, Sendable {
 public actor SemanticSearchIndex {
 
     public static let shared = SemanticSearchIndex()
+
+    public static let progressIndexedKey = "indexed"
+    public static let progressTotalKey = "total"
 
     private struct Entry: Codable, Sendable {
         let uri: String
@@ -62,14 +75,19 @@ public actor SemanticSearchIndex {
         guard
             let data = try? Data(contentsOf: fileURL),
             let loaded = try? PropertyListDecoder().decode([Entry].self, from: data)
-        else { return }
+        else {
+            WireLogger.search.info("No existing semantic index found — starting fresh")
+            return
+        }
         entries = loaded
         indexedURIs = Set(loaded.map { $0.uri })
+        WireLogger.search.info("Loaded semantic index: \(loaded.count) entries")
     }
 
     public func save() throws {
         let data = try PropertyListEncoder().encode(entries)
         try data.write(to: fileURL, options: .atomic)
+        WireLogger.search.debug("Semantic index persisted: \(entries.count) entries, \(data.count / 1024) KB")
     }
 
     // MARK: - Indexing
@@ -99,7 +117,9 @@ public actor SemanticSearchIndex {
         let dim = queryEmbedding.count
         guard dim > 0 else { return [] }
 
-        return entries
+        WireLogger.search.debug("Searching \(entries.count) indexed entries (dim=\(dim))")
+
+        let results = entries
             .compactMap { entry -> (SemanticSearchResult, Float)? in
                 let floatCount = entry.embeddingData.count / MemoryLayout<Float>.size
                 guard floatCount == dim else { return nil }
@@ -116,6 +136,9 @@ public actor SemanticSearchIndex {
             .sorted { $0.1 > $1.1 }
             .prefix(limit)
             .map { $0.0 }
+
+        WireLogger.search.debug("Search returned \(results.count) results, top score: \(results.first.map { String(format: "%.2f", $0.score) } ?? "n/a")")
+        return results
     }
 
     // MARK: - Math

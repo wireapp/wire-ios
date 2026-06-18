@@ -17,6 +17,7 @@
 
 import CoreData
 import WireDataModel
+import WireLogging
 import WireMessagingDomain
 import WireSyncEngine
 
@@ -36,7 +37,11 @@ final class MessageIndexingService {
     }
 
     func startIndexingInBackground() {
-        guard embedder.isAvailable else { return }
+        guard embedder.isAvailable else {
+            WireLogger.search.warn("NLEmbedding sentence model unavailable — semantic indexing skipped")
+            return
+        }
+        WireLogger.search.info("Starting semantic message indexing")
         Task.detached(priority: .background) { [weak self] in
             guard let self else { return }
             await SemanticSearchIndex.shared.load()
@@ -55,16 +60,30 @@ final class MessageIndexingService {
         let syncContext = userSession.syncContext
 
         let since = lastIndexedDate
+        WireLogger.search.debug("Fetching messages newer than \(since)")
+
         let messages = await syncContext.perform { [self] in
             self.fetchMessages(newerThan: since, in: syncContext)
         }
-        guard !messages.isEmpty else { return }
+
+        guard !messages.isEmpty else {
+            WireLogger.search.info("No new messages to index")
+            return
+        }
+
+        let total = messages.count
+        WireLogger.search.info("Indexing \(total) messages")
+        postProgress(indexed: 0, total: total)
 
         var newestTimestamp = since
         var addedCount = 0
+        var skippedCount = 0
 
-        for msg in messages {
-            guard let embedding = embedder.embed(msg.text) else { continue }
+        for (i, msg) in messages.enumerated() {
+            guard let embedding = embedder.embed(msg.text) else {
+                skippedCount += 1
+                continue
+            }
             await SemanticSearchIndex.shared.add(
                 uri: msg.uri,
                 conversationName: msg.conversationName,
@@ -74,12 +93,35 @@ final class MessageIndexingService {
             )
             if msg.timestamp > newestTimestamp { newestTimestamp = msg.timestamp }
             addedCount += 1
+
+            if (i + 1).isMultiple(of: 50) || i + 1 == total {
+                postProgress(indexed: i + 1, total: total)
+            }
         }
+
+        WireLogger.search.info("Indexed \(addedCount) messages, skipped \(skippedCount)")
+        postProgress(indexed: total, total: total)
 
         if addedCount > 0 {
             lastIndexedDate = newestTimestamp
-            try? await SemanticSearchIndex.shared.save()
+            do {
+                try await SemanticSearchIndex.shared.save()
+                WireLogger.search.info("Index saved to disk")
+            } catch {
+                WireLogger.search.error("Failed to save index: \(error)")
+            }
         }
+    }
+
+    private func postProgress(indexed: Int, total: Int) {
+        NotificationCenter.default.post(
+            name: .semanticIndexingProgress,
+            object: nil,
+            userInfo: [
+                SemanticSearchIndex.progressIndexedKey: indexed,
+                SemanticSearchIndex.progressTotalKey: total
+            ]
+        )
     }
 
     private struct MessageRecord {
@@ -107,7 +149,7 @@ final class MessageIndexingService {
                 let conversationName = message.visibleInConversation?.displayName
             else { return nil }
             return MessageRecord(
-                uri: message.objectID.uriRepresentation().absoluteString,
+                uri: message.objectID.uriRepresentation().absoluteString, // TODO: use id?
                 conversationName: conversationName,
                 text: text,
                 timestamp: timestamp
