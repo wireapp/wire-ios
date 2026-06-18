@@ -191,7 +191,7 @@ extension ZMConversation.Action {
         case let .favorite(isFavorite: favorited):
             return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
         case .confidentialityRegular:
-            return "Regular"
+            return "Normal"
         case .confidentialitySensitive:
             return "Sensitive"
         case .confidentialityHighlySensitive:

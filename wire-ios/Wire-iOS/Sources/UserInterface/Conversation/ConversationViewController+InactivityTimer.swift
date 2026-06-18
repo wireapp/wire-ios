@@ -21,7 +21,6 @@ import UIKit
 import WireDesign
 
 private let inactivityTimeout: TimeInterval = 5
-private let countdownSeconds = 30
 
 // MARK: - Activity Observing Gesture Recognizer
 
@@ -63,7 +62,8 @@ extension ConversationViewController {
     }
 
     func startInactivityTimerIfNeeded() {
-        guard conversation.confidentialityLevel == .highlySensitive else { return }
+        let level = conversation.confidentialityLevel
+        guard level == .highlySensitive || level == .sensitive else { return }
         scheduleInactivityTimer()
         registerForForegroundNotification()
     }
@@ -93,8 +93,9 @@ extension ConversationViewController {
     }
 
     func resetInactivityTimerIfNeeded() {
-        guard inactivityOverlayHostingController == nil else { return }
-        guard conversation.confidentialityLevel == .highlySensitive else { return }
+        guard inactivityOverlayHostingController == nil, unlockHostingController == nil else { return }
+        let level = conversation.confidentialityLevel
+        guard level == .highlySensitive || level == .sensitive else { return }
         stopInactivityTimer()
         scheduleInactivityTimer()
     }
@@ -109,8 +110,18 @@ extension ConversationViewController {
     }
 
     private func showInactivityTimerOverlay() {
+        guard unlockHostingController == nil else { return }
+        if conversation.confidentialityLevel == .sensitive {
+            showUnlockView()
+            return
+        }
         guard inactivityOverlayHostingController == nil else { return }
 
+        let countdownSeconds = if let conversationID = conversation.remoteIdentifier {
+            Int(InactivityTimeout.stored(for: conversationID).rawValue)
+        } else {
+            Int(InactivityTimeout.thirtySeconds.rawValue)
+        }
         let overlayView = InactivityTimerOverlayView(
             initialSeconds: countdownSeconds,
             onTap: { [weak self] in
@@ -152,26 +163,43 @@ extension ConversationViewController {
     }
 
     func showUnlockView() {
+        guard unlockHostingController == nil else { return }
+        let isSensitive = conversation.confidentialityLevel == .sensitive
         let unlockView = SensitiveChatUnlockView(
             conversationName: conversation.displayName ?? "",
-            mainColor: ColorTheme.Base.error.color,
+            mainColor: isSensitive ? ColorTheme.Base.warning.color : ColorTheme.Base.error.color,
+            requiresAuthentication: !isSensitive,
             onUnlocked: { [weak self] in
-                self?.unlockHostingController?.dismiss(animated: true) {
-                    self?.unlockHostingController = nil
-                    self?.startInactivityTimerIfNeeded()
-                }
+                self?.dismissUnlockView()
+                self?.startInactivityTimerIfNeeded()
             },
             onDismiss: { [weak self] in
-                self?.unlockHostingController?.dismiss(animated: true) {
-                    self?.unlockHostingController = nil
-                    self?.showInactivityTimerOverlay()
-                }
+                self?.dismissUnlockView()
+                self?.showInactivityTimerOverlay()
             }
         )
 
         let hostingController = UIHostingController(rootView: unlockView)
-        hostingController.modalPresentationStyle = .fullScreen
+        hostingController.view.backgroundColor = .clear
+
+        addChild(hostingController)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(hostingController.view)
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: conversationBarController.view.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        hostingController.didMove(toParent: self)
         unlockHostingController = hostingController
-        present(hostingController, animated: true)
+    }
+
+    private func dismissUnlockView() {
+        guard let hostingController = unlockHostingController else { return }
+        hostingController.willMove(toParent: nil)
+        hostingController.view.removeFromSuperview()
+        hostingController.removeFromParent()
+        unlockHostingController = nil
     }
 }

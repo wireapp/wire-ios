@@ -23,8 +23,23 @@ import WireDesign
 struct SensitiveChatUnlockView: View {
     let conversationName: String
     let mainColor: Color
+    let requiresAuthentication: Bool
     let onUnlocked: () -> Void
     let onDismiss: () -> Void
+
+    init(
+        conversationName: String,
+        mainColor: Color,
+        requiresAuthentication: Bool = true,
+        onUnlocked: @escaping () -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        self.conversationName = conversationName
+        self.mainColor = mainColor
+        self.requiresAuthentication = requiresAuthentication
+        self.onUnlocked = onUnlocked
+        self.onDismiss = onDismiss
+    }
 
     @State private var authenticationFailed = false
 
@@ -108,20 +123,35 @@ struct SensitiveChatUnlockView: View {
                     .foregroundStyle(secondaryForegroundColor)
                     .padding(.bottom, 32)
 
-                // Unlock button — triggers the system device passcode prompt
-                Button {
-                    authenticateWithBiometrics()
-                } label: {
-                    Text("Unlock to View")
-                        .font(.headline)
-                        .foregroundStyle(ColorTheme.Base.onWarning.color)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .background(mainColor)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                if requiresAuthentication {
+                    Button {
+                        authenticateWithBiometrics()
+                    } label: {
+                        Text("Unlock to View")
+                            .font(.headline)
+                            .foregroundStyle(ColorTheme.Base.onWarning.color)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            .background(mainColor)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 12)
+                } else {
+                    Button {
+                        onUnlocked()
+                    } label: {
+                        Text("Show")
+                            .font(.headline)
+                            .foregroundStyle(ColorTheme.Base.onWarning.color)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            .background(mainColor)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 12)
                 }
-                .padding(.horizontal, 32)
-                .padding(.bottom, 12)
 
                 Spacer()
                     .frame(height: 40)

@@ -286,9 +286,16 @@ final class ConversationListContentController: UICollectionViewController {
                     return uiAction
                 }
 
+            let currentLevel = conversation.confidentialityLevel
             let confidentialityActions = conversation.listActions
                 .filter(isConfidentialityAction)
                 .map { action in
+                    let isSelected: Bool = switch action {
+                    case .confidentialityRegular: currentLevel == .regular
+                    case .confidentialitySensitive: currentLevel == .sensitive
+                    case .confidentialityHighlySensitive: currentLevel == .highlySensitive
+                    default: false
+                    }
                     let uiAction = UIAction(title: action.title, image: nil) { _ in
                         let actionController = ConversationActionController(
                             conversation: conversation,
@@ -298,6 +305,7 @@ final class ConversationListContentController: UICollectionViewController {
                         )
                         actionController.handleAction(action)
                     }
+                    uiAction.state = isSelected ? .on : .off
                     if let identifier = action.accessibilityIdentifier {
                         uiAction.accessibilityIdentifier = identifier
                     }
@@ -306,6 +314,7 @@ final class ConversationListContentController: UICollectionViewController {
 
             let confidentialityMenu = UIMenu(
                 title: "Confidentiatility level",
+                options: [.singleSelection],
                 children: confidentialityActions
             )
 

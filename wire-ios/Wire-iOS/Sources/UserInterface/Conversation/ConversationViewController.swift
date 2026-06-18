@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
@@ -28,7 +29,6 @@ import WireMessagingAssembly
 import WireMessagingDomain
 import WireMessagingUI
 import WireSyncEngine
-import SwiftUI
 
 final class ConversationViewController: UIViewController {
 

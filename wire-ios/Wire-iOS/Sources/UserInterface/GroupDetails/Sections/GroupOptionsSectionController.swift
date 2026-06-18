@@ -21,6 +21,7 @@ import WireDataModel
 
 protocol GroupOptionsSectionControllerDelegate: AnyObject {
     func presentTimeoutOptions(animated: Bool)
+    func presentInactivityTimeoutOptions(animated: Bool)
     func presentGuestOptions(animated: Bool)
     func presentServicesOptions(animated: Bool)
     func presentNotificationsOptions(animated: Bool)
@@ -38,6 +39,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case guests
         case services
         case timeout
+        case inactivityTimeout
         case fileCollaboration // keep at the last position
 
         /// Returns `true` if the option is presented to the user or `false` otherwise.
@@ -74,6 +76,8 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
                 }
             case .timeout:
                 return user.canModifyEphemeralSettings(in: conversation) && !conversation.isWireDriveEnabled
+            case .inactivityTimeout:
+                return (conversation as? ZMConversation)?.confidentialityLevel == .highlySensitive
             case .channelHistoryDepth:
                 if DeveloperFlag.channelsHistory.isOn {
                     return user.canModifyChannelHistoryDepthSettings(in: conversation)
@@ -88,6 +92,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .guests: GroupDetailsGuestOptionsCell.zm_reuseIdentifier
             case .services: GroupDetailsServicesCell.zm_reuseIdentifier
             case .timeout: GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
+            case .inactivityTimeout: GroupDetailsInactivityTimeoutCell.zm_reuseIdentifier
             case .notifications: GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
             case .fileCollaboration: GroupDetailsFileCollaborationCell.zm_reuseIdentifier
             case .channelAccess: GroupDetailsAccessOptionsCell.zm_reuseIdentifier
@@ -139,6 +144,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         collectionView.flatMap(GroupDetailsGuestOptionsCell.register)
         collectionView.flatMap(GroupDetailsServicesCell.register)
         collectionView.flatMap(GroupDetailsTimeoutOptionsCell.register)
+        collectionView.flatMap(GroupDetailsInactivityTimeoutCell.register)
         collectionView.flatMap(GroupDetailsNotificationOptionsCell.register)
         collectionView.flatMap(GroupDetailsAccessOptionsCell.register)
         collectionView.flatMap(GroupDetailsChannelHistoryOptionsCell.register)
@@ -187,6 +193,8 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             if !conversation.isWireDriveEnabled {
                 delegate?.presentTimeoutOptions(animated: true)
             }
+        case .inactivityTimeout:
+            delegate?.presentInactivityTimeoutOptions(animated: true)
         case .notifications:
             delegate?.presentNotificationsOptions(animated: true)
         case .channelAccess:

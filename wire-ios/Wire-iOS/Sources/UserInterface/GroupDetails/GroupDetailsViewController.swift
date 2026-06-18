@@ -599,6 +599,12 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         navigationController?.pushViewController(menu, animated: animated)
     }
 
+    func presentInactivityTimeoutOptions(animated: Bool) {
+        guard let conversation = conversation as? ZMConversation else { return }
+        let menu = ConversationInactivityTimeoutOptionsViewController(conversation: conversation)
+        navigationController?.pushViewController(menu, animated: animated)
+    }
+
     func presentNotificationsOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = userSession as? ZMUserSession else { return }
