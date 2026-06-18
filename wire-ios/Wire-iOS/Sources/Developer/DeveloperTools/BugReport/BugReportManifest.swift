@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Network
 import UIKit
 import WireAnalytics
 import WireCommonComponents
+import WireTransport
 
 /// Structured bug report, serialized as `manifest.json` inside `bug-report-package.zip`.
 ///
@@ -64,10 +66,7 @@ struct BugReportManifest: Codable, Sendable {
 extension BugReportManifest.Metadata {
 
     /// Gathers the technical context that does not require user input.
-    ///
-    /// `environment` (backend) and `connectionType` are placeholders for the POC and would be
-    /// wired to the backend environment provider and reachability before production.
-    static func harvested(selfUserID: UUID?) -> Self {
+    static func harvested(selfUserID: UUID?, environment: String) -> Self {
         Self(
             timestamp: BugReportDateFormatter.iso8601.string(from: Date()),
             appFlavor: Bundle.main.appInternalName ?? "development",
@@ -76,8 +75,8 @@ extension BugReportManifest.Metadata {
             deviceModel: deviceModelIdentifier(),
             osVersion: UIDevice.current.systemVersion,
             locale: Locale.current.identifier,
-            environment: "unknown",
-            connectionType: "unknown",
+            environment: environment,
+            connectionType: currentConnectionType(),
             datadogId: WireAnalytics.Datadog.userIdentifier
         )
     }
@@ -91,6 +90,38 @@ extension BugReportManifest.Metadata {
             result += String(UnicodeScalar(UInt8(value)))
         }
         return identifier.isEmpty ? UIDevice.current.model : identifier
+    }
+
+    /// Current network interface type using NWPathMonitor.
+    /// Waits for the first path update (up to 1 s) so currentPath is fully populated.
+    private static func currentConnectionType() -> String {
+        let monitor = NWPathMonitor()
+        let semaphore = DispatchSemaphore(value: 0)
+        var captured: NWPath?
+
+        monitor.pathUpdateHandler = { path in
+            captured = path
+            semaphore.signal()
+        }
+        monitor.start(queue: .global())
+        _ = semaphore.wait(timeout: .now() + 1)
+        monitor.cancel()
+
+        guard let path = captured, path.status == .satisfied else { return "none" }
+
+        let constrained = path.isConstrained  // Low Data Mode
+        let expensive = path.isExpensive      // cellular or personal hotspot
+
+        if path.usesInterfaceType(.wifi) {
+            return expensive ? "wifi_hotspot" : (constrained ? "wifi_low_data" : "wifi")
+        }
+        if path.usesInterfaceType(.cellular) {
+            return constrained ? "cellular_low_data" : "cellular"
+        }
+        if path.usesInterfaceType(.wiredEthernet) {
+            return "ethernet"
+        }
+        return "other"
     }
 }
 

@@ -253,10 +253,14 @@ final class BugReportFlowModel: ObservableObject {
         let filenames = [BugReportPackage.logsFileName] + attachments.map(\.filename)
         return BugReportManifest(
             schemaVersion: "1.0",
-            metadata: .harvested(selfUserID: selfUserID),
+            metadata: .harvested(selfUserID: selfUserID, environment: currentEnvironment()),
             report: makeReport(),
             attachments: filenames
         )
+    }
+
+    private func currentEnvironment() -> String {
+        BackendEnvironment.shared.backendURL.host ?? "unknown"
     }
 
     private func makeReport() -> BugReportManifest.Report {
@@ -353,6 +357,7 @@ enum BugReportPackage {
         try? fileManager.removeItem(at: contents)
         return zipURL
     }
+
 }
 
 // MARK: - Shareable
