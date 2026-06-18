@@ -86,6 +86,15 @@ public extension GenericMessage {
             $0.clientAction = action
         }
     }
+    
+    init(emoji: String, count: Int32 = 1) {
+        self = GenericMessage.with {
+            $0.inCallEmoji = .with {
+                $0.emojis = [emoji: count]
+            }
+        }
+    }
+    
 }
 
 public extension GenericMessage {

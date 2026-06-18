@@ -274,7 +274,15 @@ final class CallViewController: UIViewController {
             .eraseToAnyPublisher()
             ?? Empty().eraseToAnyPublisher()
 
-        let viewModel = CallReactionWallViewModel(publisher: publisher, conversationID: conversationID)
+        let selfUser = userSession.selfUser
+        let viewModel = CallReactionWallViewModel(
+            publisher: publisher,
+            conversationID: conversationID,
+            sendUseCase: userSession.makeSendCallReactionUseCase(),
+            conversation: conversation,
+            selfSenderID: selfUser.remoteIdentifier ?? UUID(),
+            selfSenderName: selfUser.name ?? ""
+        )
         callReactionWallViewModel = viewModel
         callGridViewController.reactionWallViewModel = viewModel
 
@@ -620,8 +628,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
             WireLogger.calling.debug("😄 request to toggle reactions tray")
             break
         case .sendReaction(let emoji):
-            // TODO: invoke SendCallReactionUseCase once implemented (WPB-11770)
-            WireLogger.calling.debug("😄 sendReaction: \(emoji)")
+            callReactionWallViewModel?.sendReaction(emoji: emoji)
         }
 
         updateConfiguration()

@@ -18,7 +18,9 @@
 
 import Combine
 import SwiftUI
+import WireDataModel
 import WireDomain
+import WireSyncEngine
 
 struct ReactionItem: Identifiable {
     let id: UUID
@@ -45,17 +47,50 @@ final class CallReactionWallViewModel {
     private var expiryWorkItems: [UUID: DispatchWorkItem] = [:]
     private let reactionsSubject = PassthroughSubject<[UUID: String], Never>()
 
+    private let conversationID: UUID
+    private let sendUseCase: SendCallReactionUseCaseProtocol?
+    private weak var conversation: ZMConversation?
+    private let selfSenderID: UUID
+    private let selfSenderName: String
+
     var reactionsPublisher: AnyPublisher<[UUID: String], Never> {
         reactionsSubject.eraseToAnyPublisher()
     }
 
-    init(publisher: AnyPublisher<CallReactionEvent, Never>, conversationID: UUID) {
+    init(
+        publisher: AnyPublisher<CallReactionEvent, Never>,
+        conversationID: UUID,
+        sendUseCase: SendCallReactionUseCaseProtocol? = nil,
+        conversation: ZMConversation? = nil,
+        selfSenderID: UUID = UUID(),
+        selfSenderName: String = ""
+    ) {
+        self.conversationID = conversationID
+        self.sendUseCase = sendUseCase
+        self.conversation = conversation
+        self.selfSenderID = selfSenderID
+        self.selfSenderName = selfSenderName
         cancellable = publisher
             .filter { $0.conversationID == conversationID }
             .receive(on: RunLoop.main)
             .sink { [weak self] event in
                 self?.add(event)
             }
+    }
+
+    func sendReaction(emoji: String) {
+        guard let useCase = sendUseCase, let conversation else { return }
+        addLocal(CallReactionEvent(
+            emoji: emoji,
+            senderID: selfSenderID,
+            senderName: selfSenderName,
+            conversationID: conversationID
+        ))
+        Task { try? await useCase.invoke(emoji: emoji, in: conversation) }
+    }
+
+    private func addLocal(_ event: CallReactionEvent) {
+        add(event)
     }
 
     private func add(_ event: CallReactionEvent) {

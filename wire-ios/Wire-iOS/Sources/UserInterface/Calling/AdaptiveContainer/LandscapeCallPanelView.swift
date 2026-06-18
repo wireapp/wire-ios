@@ -60,7 +60,6 @@ struct CallPanelView: View {
             portraitDragHandle
             if isReactionsTrayOpen {
                 CallReactionsTray(axis: .horizontal) { emoji in
-                    withAnimation(.easeInOut(duration: 0.2)) { isReactionsTrayOpen = false }
                     perform(.sendReaction(emoji: emoji))
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -138,7 +137,6 @@ struct CallPanelView: View {
 
     private var emojiColumn: some View {
         CallReactionsTray(axis: .vertical) { emoji in
-            withAnimation(.easeInOut(duration: 0.2)) { isReactionsTrayOpen = false }
             perform(.sendReaction(emoji: emoji))
         }
     }

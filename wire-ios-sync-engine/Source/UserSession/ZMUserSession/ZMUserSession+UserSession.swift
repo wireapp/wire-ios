@@ -401,6 +401,13 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public func makeSendCallReactionUseCase() -> SendCallReactionUseCaseProtocol? {
+        guard let messageSender = (strategyDirectory as? StrategyDirectory)?.messageSender else {
+            return nil
+        }
+        return SendCallReactionUseCase(messageSender: messageSender, context: syncContext)
+    }
+
     public var resolvedBackendMetadata: BackendMetadataProvider {
         let metadata = userSessionComponent.backendMetadata
         return BackendMetadataProvider(

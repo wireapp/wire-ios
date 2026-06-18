@@ -38,6 +38,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public private(set) var requestStrategies: [RequestStrategy]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
     public private(set) var clientContextChangeTrackers: [ZMContextChangeTracker] = []
+    public private(set) var messageSender: MessageSenderInterface?
 
     init(
         contextProvider: ContextProvider,
@@ -332,6 +333,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 featureRepository: LegacyFeatureRepository(context: syncContext),
                 apiVersion: metadata.apiVersion
             )
+            self.messageSender = messageSender
 
             let strategies: [Any] = [
                 AssetClientMessageRequestStrategy(

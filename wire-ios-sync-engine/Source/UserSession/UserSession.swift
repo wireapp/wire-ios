@@ -298,6 +298,8 @@ public protocol UserSession: AnyObject {
 
     func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol?
 
+    func makeSendCallReactionUseCase() -> SendCallReactionUseCaseProtocol?
+
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
     func resolveOneOnOneConversation(with userID: WireDataModel
