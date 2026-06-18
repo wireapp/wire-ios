@@ -129,12 +129,12 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: calculateHeightConstant())
 
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            actionsView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            actionsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             actionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             actionsViewHeightConstraint,
 
@@ -145,9 +145,9 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
             ),
             participantsHeaderLabel.centerYAnchor.constraint(equalTo: participantsHeaderView.centerYAnchor),
 
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            participantsHeaderView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            participantsHeaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             participantsHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.widthAnchor.constraint(equalTo: stackView.widthAnchor)
         ])

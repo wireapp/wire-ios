@@ -20,7 +20,7 @@ import SwiftUI
 import WireDesign
 
 /// Landscape side panel: handle | vertical buttons | participants list.
-/// The panel sits on the physical-bottom edge of the device. The buttons column is always
+/// Panel sits on the physical-bottom edge of the device. The buttons column is always
 /// visible; the participants column is revealed by dragging toward the screen centre.
 struct LandscapeCallPanelView: View {
 
