@@ -49,7 +49,7 @@ struct CallingContainerView: View {
                         .id(viewModel.voiceChannelRevision)
                         .ignoresSafeArea()
                     if isLandscape {
-                        landscapePanel(geo: geo)
+                        landscapePanel()
                     } else {
                         portraitPanel(geo: geo)
                     }
@@ -112,7 +112,7 @@ struct CallingContainerView: View {
 
     // MARK: - Landscape panel
 
-    private func landscapePanel(geo: GeometryProxy) -> some View {
+    private func landscapePanel() -> some View {
         let travel = CallPanelView.participantsColumnWidth
         let currentOffset = isExpanded ? 0 : (panelSide == .trailing ? travel : -travel)
         let effectiveDrag = viewModel.isPanEnabled ? dragOffset : 0
@@ -120,9 +120,8 @@ struct CallingContainerView: View {
         return HStack(spacing: 0) {
             if panelSide == .trailing { Spacer() }
             CallPanelView(viewModel: viewModel, isExpanded: $isExpanded, isReactionsTrayOpen: $isReactionsTrayOpen, layout: .landscape(side: panelSide))
-                .frame(width: landscapePanelWidth, height: geo.size.height)
+                .frame(width: landscapePanelWidth)
                 .offset(x: currentOffset + effectiveDrag)
-                .clipped()
                 .gesture(viewModel.isPanEnabled ? landscapeDragGesture(travel: travel) : nil)
             if panelSide == .leading { Spacer() }
         }

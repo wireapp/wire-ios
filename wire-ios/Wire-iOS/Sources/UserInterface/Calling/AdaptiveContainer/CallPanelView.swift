@@ -120,7 +120,6 @@ struct CallPanelView: View {
                 landscapeDragHandle
                 if isReactionsTrayOpen {
                     emojiColumn
-                        .frame(width: Self.buttonsColumnWidth)
                         .transition(.move(edge: .trailing).combined(with: .opacity))
                 }
                 callButtonsColumn
@@ -130,7 +129,6 @@ struct CallPanelView: View {
                 callButtonsColumn
                 if isReactionsTrayOpen {
                     emojiColumn
-                        .frame(width: Self.buttonsColumnWidth)
                         .transition(.move(edge: .leading).combined(with: .opacity))
                 }
                 landscapeDragHandle
@@ -141,11 +139,15 @@ struct CallPanelView: View {
     }
 
     private var emojiColumn: some View {
-        CallReactionsTray(axis: .vertical, onEmojiTap: { emoji in
+        CallReactionsTray(axis: .vertical,
+                          onEmojiTap: { emoji in
             perform(.sendReaction(emoji: emoji))
         }, onOpenPicker: {
             perform(.openEmojiPicker)
         })
+        .frame(width: Self.buttonsColumnWidth)
+        .frame(maxHeight: .infinity)
+        .ignoresSafeArea()
     }
 
     private var landscapeDragHandle: some View {
@@ -175,6 +177,8 @@ struct CallPanelView: View {
                 performAction: perform
             )
             .frame(width: Self.buttonsColumnWidth)
+            .frame(maxHeight: .infinity)
+            .ignoresSafeArea()
         }
     }
 

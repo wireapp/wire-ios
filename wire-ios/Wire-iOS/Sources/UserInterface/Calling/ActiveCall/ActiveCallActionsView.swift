@@ -45,7 +45,7 @@ extension CallActionsConfiguration {
 // MARK: - View
 
 /// Shared active-call button container used in both portrait (`.horizontal`) and
-/// landscape (`.vertical`) orientations. Incoming-call controls are handled separately.
+/// landscape (`.vertical`) orientations. See `CallActionsView` for Incoming-call controls.
 struct ActiveCallActionsView: View {
 
     let axis: Axis
@@ -55,20 +55,16 @@ struct ActiveCallActionsView: View {
 
     var body: some View {
         if axis == .vertical {
-            
-            VStack(spacing: 16) {
-                Spacer(minLength: 0)
-                muteButton
-                Spacer(minLength: 0)
-                videoButton
-                Spacer(minLength: 0)
-                speakerButton
-                Spacer(minLength: 0)
-                callReactionButton
-                Spacer(minLength: 0)
-                hangupButton
-                Spacer(minLength: 0)
+            VStack(spacing: 0) {
+                muteButton.frame(maxWidth: .infinity, maxHeight: .infinity)
+                videoButton.frame(maxWidth: .infinity, maxHeight: .infinity)
+                speakerButton.frame(maxWidth: .infinity, maxHeight: .infinity)
+                callReactionButton.frame(maxWidth: .infinity, maxHeight: .infinity)
+                hangupButton.frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea(.all)
+
         } else {
             VStack(spacing: 0) {
                 
@@ -155,18 +151,26 @@ private let previewConfig = CallActionsConfiguration(
     )
     .frame(height: 72)
     .background(Color(.systemBackground))
+    .previewInterfaceOrientation(.portrait)
 }
 
-#Preview("Landscape — vertical column") {
-    ActiveCallActionsView(
-        axis: .vertical,
-        isReactionsTrayOpen: true,
-        configuration: previewConfig,
-        performAction: { _ in }
-    )
-    .frame(width: 72)
-    .frame(maxHeight: .infinity)
-    .background(Color(.systemGray6))
+#Preview("Landscape — vertical column", traits: .landscapeRight) {
+    HStack {
+        Spacer()
+        ActiveCallActionsView(
+            axis: .vertical,
+            isReactionsTrayOpen: true,
+            configuration: previewConfig,
+            performAction: { _ in }
+        )
+        .frame(width: 72)
+        .frame(maxHeight: .infinity)
+        .background(Color(.systemGray6))
+        .padding(16)
+        .ignoresSafeArea()
+    }
+
+    .ignoresSafeArea(.all)
 }
 
 #Preview("Muted / video off / speaker on") {

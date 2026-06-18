@@ -762,8 +762,8 @@ extension CallViewController: EmojiPickerViewControllerDelegate {
         picker.delegate = self
         picker.modalPresentationStyle = .pageSheet
         if let sheet = picker.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = false
         }
         present(picker, animated: true)
     }

@@ -46,7 +46,7 @@ struct CallReactionsTray: View {
                     ForEach(allEmojis, id: \.self) { emojiTile($0) }
                     moreButton
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, 16)
             }
             .onAppear { loadRecentEmojis() }
         } else {
@@ -83,8 +83,9 @@ struct CallReactionsTray: View {
         } label: {
             Image(systemName: "face.smiling")
                 .font(.system(size: 32))
-                .foregroundStyle(.white)
+                .foregroundStyle(ColorTheme.Buttons.Secondary.enabledOutline.color)
                 .frame(width: 48, height: 48)
+            
         }
     }
 
