@@ -56,7 +56,7 @@ extension SettingsCellDescriptorFactory {
             sections.append(appearanceSection())
         }
 
-        sections.append(privacySection())
+        sections.append(contentsOf: privacySection())
 
         if Bundle.developerModeEnabled, !SecurityFlags.forceEncryptionAtRest.isEnabled {
             sections.append(encryptionAtRestSection())
@@ -155,12 +155,24 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func privacySection() -> SettingsSectionDescriptorType {
-        SettingsSectionDescriptor(
+    func privacySection() -> [SettingsSectionDescriptorType] {
+        let readReceipts = SettingsSectionDescriptor(
             cellDescriptors: [readReceiptsEnabledElement()],
             header: L10n.Localizable.Self.Settings.PrivacySectionGroup.title,
             footer: L10n.Localizable.Self.Settings.PrivacySectionGroup.subtitle
         )
+
+        let panicMode = SettingsSectionDescriptor(
+            cellDescriptors: [panicModeElement()],
+            header: nil,
+            footer: "Temporarily protect all sensitive conversations."
+        )
+
+        return [readReceipts, panicMode]
+    }
+
+    func panicModeElement() -> any SettingsCellDescriptorType {
+        SettingsPanicModeToggleCellDescriptor(userSession: userSession)
     }
 
     func personalInformationSection(isAnalyticsTrackingAvailable: Bool) -> SettingsSectionDescriptorType {
