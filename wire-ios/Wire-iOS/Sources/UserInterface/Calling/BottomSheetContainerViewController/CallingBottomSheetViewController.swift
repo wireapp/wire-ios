@@ -34,6 +34,7 @@ protocol CallInfoConfigurationObserver: AnyObject {
     func didUpdateConfiguration(configuration: CallInfoConfiguration)
 }
 
+@available(*, deprecated, renamed: "CallingContainerViewController")
 final class CallingBottomSheetViewController: BottomSheetContainerViewController {
     private let bottomSheetMaxHeight = UIScreen.main.bounds.height * 0.7
 
@@ -333,22 +334,7 @@ extension CallingBottomSheetViewController: CallingActionsInfoViewControllerDele
     }
 }
 
-private extension VoiceChannel {
-    func getParticipantsList() -> CallParticipantsList {
-        let sortedParticipants = participants(
-            ofKind: .all,
-            activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers
-        )
-
-        return sortedParticipants.map {
-            CallParticipantsListCellConfiguration.callParticipant(
-                user: HashBox(value: $0.user),
-                callParticipantState: $0.state,
-                activeSpeakerState: $0.activeSpeakerState
-            )
-        }
-    }
-}
+// VoiceChannel.getParticipantsList() is defined in CallingContainerViewModel.swift
 
 private final class PassThroughOpaqueView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {

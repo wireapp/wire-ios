@@ -18,6 +18,7 @@
 
 import UIKit
 
+@available(*, deprecated, renamed: "CallingContainerViewController")
 class BottomSheetContainerViewController: UIViewController {
 
     // MARK: - Configuration
