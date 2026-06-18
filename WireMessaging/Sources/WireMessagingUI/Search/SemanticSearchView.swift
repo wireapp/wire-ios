@@ -181,7 +181,9 @@ private final class SemanticSearchViewModel: ObservableObject {
             self.indexingProgress = fraction < 1 ? fraction : nil
             // Refresh the empty-index state once indexing finishes
             if fraction >= 1 {
-                Task { self.isIndexEmpty = await self.index.indexedCount == 0 }
+                Task { @MainActor in
+                    self.isIndexEmpty = await self.index.indexedCount == 0
+                }
             }
         }
     }
