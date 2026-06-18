@@ -17,14 +17,24 @@
 //
 
 import Foundation
+import WireShareEngine
 import WireShareExtensionCore
 
 struct FetchConversationsUseCaseImpl: FetchConversationsUseCase {
 
+    let sessionProvider: (Account) async throws -> SharingSession
+
     func callAsFunction(
         for account: Account
-    ) async throws -> [Conversation] {
-        []
+    ) async throws -> [WireShareExtensionCore.Conversation] {
+        let session = try await sessionProvider(account)
+        return session.writeableNonArchivedConversations.compactMap { conversation in
+            guard let name = conversation.name, let id = conversation.remoteIdentifier else { return nil }
+            return WireShareExtensionCore.Conversation(
+                id: id,
+                name: name
+            )
+        }
     }
 
 }

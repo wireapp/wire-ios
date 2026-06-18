@@ -188,7 +188,15 @@ class ShareViewController: UIViewController {
             accountManager: accountManager,
             cookieStorage: cookieStorage
         )
-        let fetchConversations = FetchConversationsUseCaseImpl()
+        let fetchConversations = FetchConversationsUseCaseImpl { [weak self] selectedAccount in
+            guard
+                let self,
+                let accountManager,
+                let account = accountManager.accounts.first(where: { $0.userIdentifier == selectedAccount.id })
+            else { fatalError() } // FIXME:
+
+            return try await self.session(for: account)
+        }
         let rootNode = RootNode(
             shareItem: shareItems.first!, // TODO: make safe
             fetchAccounts: fetchAccounts,

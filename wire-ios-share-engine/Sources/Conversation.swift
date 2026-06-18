@@ -23,6 +23,8 @@ import WireRequestStrategy
 /// A conversation
 public protocol Conversation: SharingTarget {
 
+    var remoteIdentifier: UUID! { get }
+
     /// User defined name for a group conversation, or standard name
     var name: String? { get }
 
