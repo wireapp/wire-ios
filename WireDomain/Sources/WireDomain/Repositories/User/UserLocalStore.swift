@@ -363,7 +363,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             persistedUser.serviceIdentifier = userInfo.serviceID?.transportString()
             persistedUser.providerIdentifier = userInfo.serviceProvider?.transportString()
             persistedUser.supportedProtocols = userInfo.supportedProtocols ?? [.proteus]
-            persistedUser.textStatus = userInfo.textStatus
+            persistedUser.textStatus = userInfo.textStatus?.trimmingCharacters(in: .whitespaces)
             persistedUser.needsToBeUpdatedFromBackend = false
             // `type` only exists in v12 or later
             let fallbackType: TypeOfUser = persistedUser.serviceIdentifier != nil ? .bot : .regular
@@ -422,8 +422,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
             user.supportedProtocols = userUpdateInfo.supportedProtocols ?? [.proteus]
 
-            if let textStatus = userUpdateInfo.textStatus {
-                user.textStatus = textStatus
+            if userUpdateInfo.isTextStatusPresent {
+                user.textStatus = userUpdateInfo.textStatus?.trimmingCharacters(in: .whitespaces)
             }
 
             user.isPendingMetadataRefresh = false

@@ -58,6 +58,12 @@ public struct UserUpdateEvent: Equatable, Sendable {
 
     public let textStatus: String?
 
+    /// Whether `text_status` key was present in the event payload.
+    /// `true` means the field was explicitly sent (even if empty/null) and should be applied.
+    /// `false` means the field was absent and the local value should be left unchanged.
+
+    public let isTextStatusPresent: Bool
+
     public init(
         userID: UUID,
         accentColorID: Int?,
@@ -67,7 +73,8 @@ public struct UserUpdateEvent: Equatable, Sendable {
         isSSOIDDeleted: Bool?,
         assets: [UserAsset]?,
         supportedProtocols: Set<MessageProtocol>?,
-        textStatus: String? = nil
+        textStatus: String? = nil,
+        isTextStatusPresent: Bool = false
     ) {
         self.userID = userID
         self.accentColorID = accentColorID
@@ -78,6 +85,7 @@ public struct UserUpdateEvent: Equatable, Sendable {
         self.assets = assets
         self.supportedProtocols = supportedProtocols
         self.textStatus = textStatus
+        self.isTextStatusPresent = isTextStatusPresent
     }
 
 }

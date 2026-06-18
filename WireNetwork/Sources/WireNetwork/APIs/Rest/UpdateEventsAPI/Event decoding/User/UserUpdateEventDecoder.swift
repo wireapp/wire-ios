@@ -38,7 +38,8 @@ struct UserUpdateEventDecoder {
             isSSOIDDeleted: payload.isSSOIDDeleted,
             assets: payload.assets?.map { $0.toAPIModel() },
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
-            textStatus: payload.textStatus
+            textStatus: payload.textStatus,
+            isTextStatusPresent: payload.isTextStatusPresent
         )
     }
 
@@ -53,6 +54,7 @@ struct UserUpdateEventDecoder {
         let assets: [UserAssetV0]?
         let supportedProtocols: Set<MessageProtocolV0>?
         let textStatus: String?
+        let isTextStatusPresent: Bool
 
         enum CodingKeys: String, CodingKey {
 
@@ -66,6 +68,20 @@ struct UserUpdateEventDecoder {
             case supportedProtocols = "supported_protocols"
             case textStatus = "text_status"
 
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            userID = try container.decode(UUID.self, forKey: .userID)
+            accentColorID = try container.decodeIfPresent(Int.self, forKey: .accentColorID)
+            name = try container.decodeIfPresent(String.self, forKey: .name)
+            handle = try container.decodeIfPresent(String.self, forKey: .handle)
+            email = try container.decodeIfPresent(String.self, forKey: .email)
+            isSSOIDDeleted = try container.decodeIfPresent(Bool.self, forKey: .isSSOIDDeleted)
+            assets = try container.decodeIfPresent([UserAssetV0].self, forKey: .assets)
+            supportedProtocols = try container.decodeIfPresent(Set<MessageProtocolV0>.self, forKey: .supportedProtocols)
+            isTextStatusPresent = container.contains(.textStatus)
+            textStatus = try container.decodeIfPresent(String.self, forKey: .textStatus)
         }
 
     }

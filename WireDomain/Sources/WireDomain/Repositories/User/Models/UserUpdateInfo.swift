@@ -29,4 +29,5 @@ public struct UserUpdateInfo: Sendable {
     let completeAssetKey: String?
     let supportedProtocols: Set<WireDataModel.MessageProtocol>?
     let textStatus: String?
+    let isTextStatusPresent: Bool
 }

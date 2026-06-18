@@ -297,15 +297,17 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
 
     @objc private func updateStatusButtonTapped() {
         let text = customStatus.trimmingCharacters(in: .whitespaces)
-        guard !text.isEmpty || selectedEmoji != nil else { return }
+        let emoji = selectedEmoji
 
         let combined: String
-        if let emoji = selectedEmoji, !text.isEmpty {
+        if let emoji, !text.isEmpty {
             combined = "\(emoji) \(text)"
-        } else if let emoji = selectedEmoji {
+        } else if let emoji {
             combined = emoji
-        } else {
+        } else if !text.isEmpty {
             combined = text
+        } else {
+            combined = " "
         }
 
         textStatusSaveHandler?(combined)
@@ -664,9 +666,13 @@ private final class CustomStatusInputCell: UITableViewCell {
         guard selectedEmoji == nil else { return }
         var config = emojiButton.configuration ?? .plain()
         if text.isEmpty {
+            selectedEmoji = nil
+            emojiChangeHandler?(nil)
             config.image = UIImage(systemName: "face.smiling")
             config.title = nil
         } else {
+            selectedEmoji = "💬"
+            emojiChangeHandler?("💬")
             config.image = nil
             config.title = "💬"
         }

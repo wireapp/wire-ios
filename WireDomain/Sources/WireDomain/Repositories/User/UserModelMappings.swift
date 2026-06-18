@@ -136,7 +136,8 @@ extension WireNetwork.UserUpdateEvent {
                 .first(where: { $0.size == .complete })
                 .map(\.key),
             supportedProtocols: supportedProtocols?.toDomainModel(),
-            textStatus: textStatus
+            textStatus: textStatus,
+            isTextStatusPresent: isTextStatusPresent
         )
     }
 
