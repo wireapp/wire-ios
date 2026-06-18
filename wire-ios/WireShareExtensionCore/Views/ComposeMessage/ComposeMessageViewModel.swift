@@ -125,9 +125,11 @@ public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
             case .fileSharingDisabled:
                 router.errorAlert = .generic(message: "File sharing is disabled")
             case let .generic(error):
+                print("failed sending message: \(error)")
                 router.errorAlert = .generic(message: "Something went wrong")
             }
         } catch {
+            print("failed sending message: \(error)")
             router.errorAlert = .generic(message: "Something went wrong")
         }
     }
