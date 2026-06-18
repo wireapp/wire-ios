@@ -112,6 +112,7 @@ final class ChannelMessagingTests: WireUITestCase {
             .appParticipantToConversation()
             .tapMemberCells(withLabelPrefixes: [teamWithChannelConversation.teamMember.name])
             .addSelectedParticipant()
+            .closeConversationDetails()
 
         // WHEN
         activeConversationPage.uploadFile()
