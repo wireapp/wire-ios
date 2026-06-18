@@ -67,6 +67,8 @@ public actor SemanticSearchIndex {
     private init() {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         fileURL = support.appendingPathComponent("wire-semantic-index.bin")
+        let directory = fileURL.deletingLastPathComponent()
+        try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     }
 
     // MARK: - Persistence
