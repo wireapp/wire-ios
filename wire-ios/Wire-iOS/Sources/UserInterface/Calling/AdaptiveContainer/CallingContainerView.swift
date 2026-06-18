@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
+import UIKit
 
 struct CallingContainerView: View {
 
     @ObservedObject var viewModel: CallingContainerViewModel
     @State private var isExpanded: Bool = false
     @State private var dragOffset: CGFloat = 0
+    @State private var panelSide: HorizontalEdge = UIDevice.current.twoDimensionOrientation == .landscapeRight ? .leading : .trailing
 
     private var landscapePanelWidth: CGFloat {
         LandscapeCallPanelView.handleWidth + LandscapeCallPanelView.buttonsColumnWidth + LandscapeCallPanelView.participantsColumnWidth
@@ -56,6 +59,9 @@ struct CallingContainerView: View {
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            panelSide = UIDevice.current.twoDimensionOrientation == .landscapeRight ? .leading : .trailing
+        }
     }
 
     // MARK: - Portrait bottom sheet
@@ -98,21 +104,21 @@ struct CallingContainerView: View {
             }
     }
 
-    // MARK: - Landscape right panel
+    // MARK: - Landscape panel
 
     private func landscapePanel(geo: GeometryProxy) -> some View {
-        // travel = participantsColumnWidth: dragging left reveals participants, right collapses
         let travel = LandscapeCallPanelView.participantsColumnWidth
-        let currentOffset = isExpanded ? 0 : travel
+        let currentOffset = isExpanded ? 0 : (panelSide == .trailing ? travel : -travel)
         let effectiveDrag = viewModel.isPanEnabled ? dragOffset : 0
 
         return HStack(spacing: 0) {
-            Spacer()
-            LandscapeCallPanelView(viewModel: viewModel, isExpanded: $isExpanded)
+            if panelSide == .trailing { Spacer() }
+            LandscapeCallPanelView(viewModel: viewModel, isExpanded: $isExpanded, side: panelSide)
                 .frame(width: landscapePanelWidth, height: geo.size.height)
                 .offset(x: currentOffset + effectiveDrag)
                 .clipped()
                 .gesture(viewModel.isPanEnabled ? landscapeDragGesture(travel: travel) : nil)
+            if panelSide == .leading { Spacer() }
         }
         .ignoresSafeArea()
     }
@@ -121,16 +127,20 @@ struct CallingContainerView: View {
         DragGesture()
             .onChanged { value in
                 let t = value.translation.width
-                dragOffset = isExpanded ? max(0, min(travel, t)) : max(-travel, min(0, t))
+                if panelSide == .trailing {
+                    dragOffset = isExpanded ? max(0, min(travel, t)) : max(-travel, min(0, t))
+                } else {
+                    dragOffset = isExpanded ? max(-travel, min(0, t)) : max(0, min(travel, t))
+                }
             }
             .onEnded { value in
                 let t = value.translation.width
                 let velocity = value.predictedEndTranslation.width - value.translation.width
                 let shouldExpand: Bool
-                if isExpanded {
-                    shouldExpand = t < travel / 2 && velocity < 1000
+                if panelSide == .trailing {
+                    shouldExpand = isExpanded ? (t < travel / 2 && velocity < 1000) : (t < -(travel / 2) || velocity < -1000)
                 } else {
-                    shouldExpand = t < -(travel / 2) || velocity < -1000
+                    shouldExpand = isExpanded ? (t > -(travel / 2) && velocity > -1000) : (t > travel / 2 || velocity > 1000)
                 }
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     isExpanded = shouldExpand

@@ -19,8 +19,9 @@
 import SwiftUI
 import WireDesign
 
-/// Landscape right-side panel: handle | vertical buttons | participants list.
-/// The buttons column is always visible; the participants column is revealed by dragging left.
+/// Landscape side panel: handle | vertical buttons | participants list.
+/// The panel sits on the physical-bottom edge of the device. The buttons column is always
+/// visible; the participants column is revealed by dragging toward the screen centre.
 struct LandscapeCallPanelView: View {
 
     static let buttonsColumnWidth: CGFloat = 72
@@ -29,12 +30,19 @@ struct LandscapeCallPanelView: View {
 
     @ObservedObject var viewModel: CallingContainerViewModel
     @Binding var isExpanded: Bool
+    var side: HorizontalEdge = .trailing
 
     var body: some View {
         HStack(spacing: 0) {
-            dragHandle
-            callButtonsColumn
-            participantsColumn
+            if side == .trailing {
+                dragHandle
+                callButtonsColumn
+                participantsColumn
+            } else {
+                participantsColumn
+                callButtonsColumn
+                dragHandle
+            }
         }
         .background(Color(SemanticColors.View.backgroundDefault))
     }
