@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireMessagingAssembly
 import WireSyncEngine
 
@@ -37,7 +38,21 @@ final class ConversationGroupAvatarView: UIView {
             return
         }
 
-        let iconView = if conversation.isChannel {
+        let iconView = if conversation.confidentialityLevel == .sensitive {
+            UIImageView(
+                image: UIImage(
+                    systemName: "lock.circle.fill",
+                    withConfiguration: UIImage.SymbolConfiguration(paletteColors: [ColorTheme.Base.warning])
+                )!
+            )
+        } else if conversation.confidentialityLevel == .highlySensitive {
+            UIImageView(
+                image: UIImage(
+                    systemName: "lock.circle.fill",
+                    withConfiguration: UIImage.SymbolConfiguration(paletteColors: [ColorTheme.Base.error])
+                )!
+            )
+        } else if conversation.isChannel {
             // TODO: [WPB-16527] Pass in correct `isPrivateChannel` when we implement public channels
             ConversationChannelIconFactory().createUIKit(conversationID: id, isPrivateChannel: true)
         } else {

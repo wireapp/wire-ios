@@ -294,7 +294,7 @@ final class ConversationListItemView: UIView {
         let subtitleString = subtitle.string
 
         // Configure the title and status
-        let title: NSAttributedString?
+        var title: NSAttributedString?
 
         if let selfUser = SelfUser.provider?.providedSelfUser,
            selfUser.isTeamMember,
@@ -316,8 +316,8 @@ final class ConversationListItemView: UIView {
             labelsStack.accessibilityLabel = conversation.displayName
         }
 
-        if !subtitleString.isEmpty {
-            statusComponents.append(subtitleString)
+        if conversation.confidentialityLevel == .highlySensitive {
+            title = NSAttributedString(string: "Sensitive conversation")
         }
 
         // Configure the avatar

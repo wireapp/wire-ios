@@ -71,8 +71,8 @@ final class ConversationActionController {
         alertController = controller
     }
 
-    func enqueue(_ block: @escaping () -> Void) {
-        userSession.enqueue(block)
+    func enqueue(_ block: @escaping () -> Void, completionHandler: (() -> Void)? = nil) {
+        userSession.enqueue(block, completionHandler: completionHandler)
     }
 
     func transitionToListAndEnqueue(_ block: @escaping () -> Void) {
@@ -131,6 +131,18 @@ final class ConversationActionController {
         case let .favorite(isFavorite: isFavorite):
             enqueue {
                 conversation.isFavorite = !isFavorite
+            }
+        case .confidentialityRegular:
+            enqueue {
+                conversation.confidentialityLevel = .regular
+            }
+        case .confidentialitySensitive:
+            enqueue {
+                conversation.confidentialityLevel = .sensitive
+            }
+        case .confidentialityHighlySensitive:
+            enqueue {
+                conversation.confidentialityLevel = .highlySensitive
             }
         case .remove: fatalError()
         }

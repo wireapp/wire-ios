@@ -37,6 +37,9 @@ extension ZMConversation {
         case markUnread
         case remove
         case favorite(isFavorite: Bool)
+        case confidentialityRegular
+        case confidentialitySensitive
+        case confidentialityHighlySensitive
     }
 
     var listActions: [Action] {
@@ -113,6 +116,11 @@ extension ZMConversation {
         }
 
         actions.append(.archive(isArchived: isArchived))
+        actions.append(contentsOf: [
+            .confidentialityRegular,
+            .confidentialitySensitive,
+            .confidentialityHighlySensitive
+        ])
 
         if !isArchived {
             actions.append(.favorite(isFavorite: isFavorite))
@@ -182,6 +190,12 @@ extension ZMConversation.Action {
             return blocked ? ProfileLocale.unblockButtonTitle : ProfileLocale.blockButtonTitle
         case let .favorite(isFavorite: favorited):
             return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
+        case .confidentialityRegular:
+            return "Regular"
+        case .confidentialitySensitive:
+            return "Sensitive"
+        case .confidentialityHighlySensitive:
+            return "Highly sensitive"
         }
     }
 

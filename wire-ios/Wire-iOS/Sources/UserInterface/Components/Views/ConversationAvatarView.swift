@@ -53,6 +53,9 @@ final class ConversationAvatarView: UIView {
         switch context {
         case let .connect(users: users):
             configureForOneOnOne(users)
+        case let .conversation(conversation: conversation)
+            where conversation.confidentialityLevel == .sensitive || conversation.confidentialityLevel == .sensitive:
+            configureForGroup(conversation)
         case let .conversation(conversation: conversation) where conversation.conversationType == .group:
             configureForGroup(conversation)
         case let .conversation(conversation: conversation) where conversation.conversationType == .oneOnOne:

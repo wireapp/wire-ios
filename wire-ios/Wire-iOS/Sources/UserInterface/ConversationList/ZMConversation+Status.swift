@@ -822,7 +822,17 @@ extension ConversationStatus {
             return "" && [:]
         }
         let allStrings = allMatchers.compactMap { $0.description(with: self, conversation: conversation) }
-        return allStrings.joined(separator: " | " && CallingMatcher.regularStyle)
+
+        switch conversation.confidentialityLevel {
+        case .highlySensitive, .sensitive:
+            let str = "Open to see content" && [
+                NSAttributedString.Key.font: FontSpec(.medium, .none).font!,
+                .foregroundColor: UIColor(white: 1.0, alpha: 0.64)
+            ]
+            return [str].joined(separator: " | " && CallingMatcher.regularStyle)
+        case .regular:
+            return allStrings.joined(separator: " | " && CallingMatcher.regularStyle)
+        }
     }
 
     func icon(for conversation: MatcherConversation) -> ConversationStatusIcon? {

@@ -17,6 +17,7 @@
 //
 
 import DifferenceKit
+import SwiftUI
 import UIKit
 import WireConversationListUI
 import WireDataModel
@@ -53,6 +54,7 @@ final class ConversationListContentController: UICollectionViewController {
 
     let userSession: UserSession
     private let wireMessagingFactory: any WireMessagingFactoryProtocol
+    private var unlockHostingController: UIHostingController<SensitiveChatUnlockView>?
 
     init<ConversationListCoordinator>(
         userSession: UserSession,
@@ -260,24 +262,54 @@ final class ConversationListContentController: UICollectionViewController {
             return nil
         }
 
-        let actionProvider: UIContextMenuActionProvider = { _ in
-            let actions = conversation.listActions.map { action in
-                let uiAction = UIAction(title: action.title, image: nil) { _ in
-                    let actionController = ConversationActionController(
-                        conversation: conversation,
-                        target: self,
-                        sourceView: collectionView.cellForItem(at: indexPath)!,
-                        userSession: self.userSession
-                    )
-                    actionController.handleAction(action)
-                }
-                if let identifier = action.accessibilityIdentifier {
-                    uiAction.accessibilityIdentifier = identifier
-                }
-                return uiAction
-            }
+        func isConfidentialityAction(_ action: ZMConversation.Action) -> Bool {
+            action == .confidentialityRegular || action == .confidentialitySensitive || action ==
+                .confidentialityHighlySensitive
+        }
 
-            return UIMenu(title: conversation.displayNameWithFallback, children: actions)
+        let actionProvider: UIContextMenuActionProvider = { _ in
+            let actions = conversation.listActions
+                .filter(!isConfidentialityAction)
+                .map { action in
+                    let uiAction = UIAction(title: action.title, image: nil) { _ in
+                        let actionController = ConversationActionController(
+                            conversation: conversation,
+                            target: self,
+                            sourceView: collectionView.cellForItem(at: indexPath)!,
+                            userSession: self.userSession
+                        )
+                        actionController.handleAction(action)
+                    }
+                    if let identifier = action.accessibilityIdentifier {
+                        uiAction.accessibilityIdentifier = identifier
+                    }
+                    return uiAction
+                }
+
+            let confidentialityActions = conversation.listActions
+                .filter(isConfidentialityAction)
+                .map { action in
+                    let uiAction = UIAction(title: action.title, image: nil) { _ in
+                        let actionController = ConversationActionController(
+                            conversation: conversation,
+                            target: self,
+                            sourceView: collectionView.cellForItem(at: indexPath)!,
+                            userSession: self.userSession
+                        )
+                        actionController.handleAction(action)
+                    }
+                    if let identifier = action.accessibilityIdentifier {
+                        uiAction.accessibilityIdentifier = identifier
+                    }
+                    return uiAction
+                }
+
+            let confidentialityMenu = UIMenu(
+                title: "Confidentiatility level",
+                children: confidentialityActions
+            )
+
+            return UIMenu(title: conversation.displayNameWithFallback, children: actions + [confidentialityMenu])
         }
 
         return UIContextMenuConfiguration(
@@ -317,6 +349,7 @@ final class ConversationListContentController: UICollectionViewController {
             listCell.delegate = self
             listCell.mutuallyExclusiveSwipeIdentifier = "ConversationList"
             listCell.conversation = item as? ZMConversation
+            listCell.updateAppearance()
 
             cell = listCell
         } else {
@@ -369,13 +402,26 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             return
         }
 
+        let savedScrollToMessage = scrollToMessageOnNextSelection
+        let savedFocusOnNext = focusOnNextSelection
+
         Task {
             if let conversation = item as? ZMConversation {
-                await conversationListCoordinator.showConversation(
-                    conversation: conversation,
-                    scrolledTo: scrollToMessageOnNextSelection
-                )
-                contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
+
+                switch conversation.confidentialityLevel {
+                case .highlySensitive:
+                    presentSensitiveChatUnlockView(
+                        conversation: conversation,
+                        savedScrollToMessage: savedScrollToMessage,
+                        savedFocusOnNext: savedFocusOnNext
+                    )
+                case .regular, .sensitive:
+                    await conversationListCoordinator.showConversation(
+                        conversation: conversation,
+                        scrolledTo: savedScrollToMessage
+                    )
+                    contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !savedFocusOnNext)
+                }
             } else if item is ConversationListConnectRequestsItem {
                 zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
             } else {
@@ -384,6 +430,44 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             // Make sure the correct item is selected in the list, without triggering a collection view callback
             ensureCurrentSelection()
         }
+    }
+
+    private func presentSensitiveChatUnlockView(
+        conversation: ZMConversation,
+        savedScrollToMessage: (any ZMConversationMessage)?,
+        savedFocusOnNext: Bool
+    ) {
+        let unlockView = SensitiveChatUnlockView(
+            conversationName: conversation.displayName ?? "",
+            mainColor: conversation.confidentialityLevel == .sensitive ? ColorTheme.Base.warning.color : ColorTheme.Base
+                .error.color,
+            onUnlocked: { [weak self] in
+                guard let self else { return }
+                unlockHostingController?.dismiss(animated: true) {
+                    Task {
+                        await self.conversationListCoordinator.showConversation(
+                            conversation: conversation,
+                            scrolledTo: savedScrollToMessage
+                        )
+                        self.contentDelegate?.conversationList(
+                            self,
+                            didSelect: conversation,
+                            focusOnView: !savedFocusOnNext
+                        )
+                        self.unlockHostingController = nil
+                    }
+                }
+            },
+            onDismiss: { [weak self] in
+                self?.unlockHostingController?.dismiss(animated: true)
+                self?.unlockHostingController = nil
+            }
+        )
+
+        let hostingController = UIHostingController(rootView: unlockView)
+        hostingController.modalPresentationStyle = .fullScreen
+        unlockHostingController = hostingController
+        zClientViewController?.present(hostingController, animated: true)
     }
 
     func listViewModelShouldBeReloaded() {
