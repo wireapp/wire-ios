@@ -17,43 +17,126 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 
-/// Type of content being shared
-public enum ShareItemType: Hashable {
-    case image
-    case video
-    case file
+public enum ShareItem {
+    case image(ImageShareItem)
+    case video(VideoShareItem)
+    case file(FileShareItem)
 }
 
-/// Represents an item being shared through the share extension
-public struct ShareItem: Identifiable, Hashable {
+public struct ImageShareItem {
 
-    public let id = UUID()
-    public let type: ShareItemType
+    public let url: URL
+    public let name: String
+    public let size: Int?
+
+    public static func from(_ provider: NSItemProvider) async throws -> ImageShareItem? {
+        guard provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) else {
+            return nil
+        }
+
+        let url: URL
+        do {
+            let result = try await provider.loadItem(
+                forTypeIdentifier: UTType.image.identifier,
+                options: nil
+            )
+
+            if let urlResult = result as? URL {
+                url = urlResult
+            } else {
+                print("no url found, skipping")
+                return nil
+            }
+        } catch {
+            print("failed to load image: \(error)")
+            throw error
+        }
+
+        return ImageShareItem(
+            url: url,
+            name: url.lastPathComponent,
+            size: try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int
+        )
+    }
+
+}
+
+public struct VideoShareItem {
+
+    public let url: URL
+    public let name: String
+    public let size: Int?
+
+    public static func from(_ provider: NSItemProvider) async throws -> VideoShareItem? {
+        guard provider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) else {
+            return nil
+        }
+
+        let url: URL
+        do {
+            let result = try await provider.loadItem(
+                forTypeIdentifier: UTType.movie.identifier,
+                options: nil
+            )
+
+            if let urlResult = result as? URL {
+                url = urlResult
+            } else {
+                print("no url found, skipping")
+                return nil
+            }
+        } catch {
+            print("failed to load video: \(error)")
+            throw error
+        }
+
+        return VideoShareItem(
+            url: url,
+            name: url.lastPathComponent,
+            size: try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int
+        )
+    }
+
+}
+
+public struct FileShareItem {
+
     public let url: URL
     public let name: String
     public let mimeType: String
     public let size: Int?
 
-    public init(
-        type: ShareItemType,
-        url: URL,
-        name: String,
-        mimeType: String,
-        size: Int?
-    ) {
-        self.type = type
-        self.url = url
-        self.name = name
-        self.mimeType = mimeType
-        self.size = size
+    public static func from(_ provider: NSItemProvider) async throws -> FileShareItem? {
+        guard provider.hasItemConformingToTypeIdentifier(UTType.data.identifier) else {
+            return nil
+        }
+
+        let url: URL
+        do {
+            let result = try await provider.loadItem(
+                forTypeIdentifier: UTType.data.identifier,
+                options: nil
+            )
+
+            if let urlResult = result as? URL {
+                url = urlResult
+            } else {
+                print("no url found, skipping")
+                return nil
+            }
+        } catch {
+            print("failed to load data: \(error)")
+            throw error
+        }
+
+        return FileShareItem(
+            url: url,
+            name: url.lastPathComponent,
+            mimeType: "application/octet-stream",
+            size: try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int
+        )
     }
 
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
-    public static func == (lhs: ShareItem, rhs: ShareItem) -> Bool {
-        lhs.id == rhs.id
-    }
 }

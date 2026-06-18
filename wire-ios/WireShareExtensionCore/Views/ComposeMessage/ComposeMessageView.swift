@@ -83,15 +83,9 @@ struct ComposeMessageView<
                 .background(Color.gray.opacity(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(viewModel.shareItem.name)
-                    .font(.body)
-                    .lineLimit(1)
-
-                Text(shareItemTypeText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            Text(shareItemTypeText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
             Spacer()
         }
@@ -107,7 +101,7 @@ struct ComposeMessageView<
     }
 
     private var shareItemIcon: String {
-        switch viewModel.shareItem.type {
+        switch viewModel.shareItem {
         case .image:
             return "photo"
         case .video:
@@ -118,7 +112,7 @@ struct ComposeMessageView<
     }
 
     private var shareItemTypeText: String {
-        switch viewModel.shareItem.type {
+        switch viewModel.shareItem {
         case .image:
             return "Image"
         case .video:
@@ -151,12 +145,12 @@ struct ComposeMessageView<
                     id: UUID(),
                     name: "Design Team"
                 ),
-                shareItem: ShareItem(
-                    type: .image,
-                    url: URL(string: "")!,
-                    name: "foo.jpg",
-                    mimeType: "jpg",
-                    size: nil
+                shareItem: .image(
+                    ImageShareItem(
+                        url: URL(string: "")!,
+                        name: "foo.jpg",
+                        size: 1048
+                    )
                 ),
                 sendMessage: SendMessageUseCaseMock(),
                 onDone: {

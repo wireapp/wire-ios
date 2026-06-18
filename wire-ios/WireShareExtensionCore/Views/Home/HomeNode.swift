@@ -32,6 +32,7 @@ struct HomeNode: View {
         HomeView(viewModel: makeViewModel()) { destination in
             ComposeMessageNode(
                 destination: destination,
+                shareItem: shareItem,
                 onDone: onDone
             )
         }

@@ -125,8 +125,7 @@ final class HomeViewModelImpl: HomeViewModel {
         router.navigateTo(
             ComposeMessageDestination(
                 account: selectedAccount!, // TODO: Make safe
-                conversation: conversation,
-                shareItem: shareItem
+                conversation: conversation
             )
         )
     }

@@ -21,12 +21,12 @@ import SwiftUI
 struct ComposeMessageDestination: Hashable {
     let account: Account
     let conversation: Conversation
-    let shareItem: ShareItem
 }
 
 struct ComposeMessageNode: View {
 
     let destination: ComposeMessageDestination
+    let shareItem: ShareItem
     let onDone: () -> Void
 
     var body: some View {
@@ -37,7 +37,7 @@ struct ComposeMessageNode: View {
         ComposeMessageViewModelImpl(
             account: destination.account,
             conversation: destination.conversation,
-            shareItem: destination.shareItem,
+            shareItem: shareItem,
             sendMessage: SendMessageUseCaseMock(),
             onDone: onDone
         )

@@ -147,12 +147,12 @@ struct HomeView<
             viewModel: HomeViewModelImpl(
                 fetchAccounts: FetchAccountsUseCaseMock(),
                 fetchConversations: FetchConversationsUseCaseMock(),
-                shareItem: ShareItem(
-                    type: .image,
-                    url: URL(string: "")!,
-                    name: "foo.jpg",
-                    mimeType: "jpg",
-                    size: nil
+                shareItem: .image(
+                    ImageShareItem(
+                        url: URL(string: "")!,
+                        name: "foo.jpg",
+                        size: 1048
+                    )
                 ),
                 router: router,
                 onClose: {

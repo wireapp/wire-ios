@@ -160,23 +160,33 @@ class ShareViewController: UIViewController {
     /// Extracts a single item from an item provider.
     private func extractItem(from provider: NSItemProvider) async -> ShareItem? {
         // Try image
-        if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-            print("found image, extracting")
-            return await .image(from: provider)
+        do {
+            if let image = try await ImageShareItem.from(provider) {
+                return .image(image)
+            }
+        } catch {
+            print("failed to extract image")
         }
-        
+
         // Try video
-        if provider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) {
-            print("found video, extracting")
-            return await .video(from: provider)
+        do {
+            if let video = try await VideoShareItem.from(provider) {
+                return .video(video)
+            }
+        } catch {
+            print("failed to extract video")
         }
-        
+
         // Try generic file
-        if provider.hasItemConformingToTypeIdentifier(UTType.data.identifier) {
-            print("found data, extracting")
-            return await .file(from: provider)
+        do {
+            if let file = try await FileShareItem.from(provider) {
+                return .file(file)
+            }
+        } catch {
+            print("failed to extract file")
         }
-        
+
+        print("no items found for provider")
         return nil
     }
 
