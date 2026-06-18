@@ -165,7 +165,7 @@ private struct ConversationSummaryRow: View {
                     Text(verbatim: text)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                        .lineLimit(3)
+                        .lineLimit(20)
                 } else {
                     HStack(spacing: 6) {
                         ProgressView()
