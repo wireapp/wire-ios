@@ -68,6 +68,9 @@ public protocol ConversationLike: AnyObject {
 
     /// Whether this conversation was created within the same team as the self user.
     var isTeamConversation: Bool { get }
+
+    /// The confidentiality level of this conversation.
+    var confidentialityLevel: ConfidentialityLevel { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
