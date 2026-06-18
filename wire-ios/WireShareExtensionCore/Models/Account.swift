@@ -22,19 +22,22 @@ public struct Account: Hashable {
 
     public let id: UUID
     public let name: String
+    public let isAuthenticated: Bool
 
     public init(
-        id: UUID = UUID(),
-        name: String
+        id: UUID,
+        name: String,
+        isAuthenticated: Bool
     ) {
         self.id = id
         self.name = name
+        self.isAuthenticated = isAuthenticated
     }
 }
 
 extension Account {
 
-    static let sam = Account(name: "Sam")
-    static let john = Account(name: "John")
+    static let sam = Account(id: UUID(), name: "Sam", isAuthenticated: true)
+    static let john = Account(id: UUID(), name: "John", isAuthenticated: true)
 
 }

@@ -17,11 +17,26 @@
 //
 
 import Foundation
+import WireDomain
+import WireNetwork
+import WireTransport
+import WireShareExtensionCore
 
 struct FetchAccountsUseCaseImpl: FetchAccountsUseCase {
 
+    let accountManager: AccountManager
+    let backendEnvironmentProvider: BackendEnvironmentProvider
+
     func callAsFunction() async throws -> [Account] {
-        []
+        let accounts = accountManager.accounts
+        return accounts.map { account in
+            WireShareExtensionCore.Account(
+                id: account.userIdentifier,
+                name: account.userName,
+                isAuthenticated: backendEnvironmentProvider.isAuthenticated(account)
+            )
+        }
+
     }
 
 }

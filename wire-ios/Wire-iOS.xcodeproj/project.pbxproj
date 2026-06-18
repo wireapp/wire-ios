@@ -917,19 +917,10 @@
 			);
 			target = 8F42C537199244A700288E4D /* Wire-iOS */;
 		};
-		34FBA6BD2FE3E3CB004ED5FE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Sources/Hackathon/FetchAccountsUseCaseImpl.swift,
-				Sources/Hackathon/FetchConversationsUseCase.swift,
-				Sources/Hackathon/SendMessageUseCase.swift,
-			);
-			target = CBA5A3D82FE2A27F00D6496C /* WireShareExtensionCore */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		015B25B72D68EAD000959185 /* Wire-iOS Share Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015B25D32D68EAD000959185 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 34FBA6BD2FE3E3CB004ED5FE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS Share Extension"; sourceTree = "<group>"; };
+		015B25B72D68EAD000959185 /* Wire-iOS Share Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015B25D32D68EAD000959185 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS Share Extension"; sourceTree = "<group>"; };
 		015D91E72D68D481004EE8C9 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
 		015DA6092D68DA96004EE8C9 /* Generated */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = Generated; path = "Wire-iOS/Generated"; sourceTree = "<group>"; };
 		015DAB7D2D68DAB0004EE8C9 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB0212D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB0222D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); name = Sources; path = "Wire-iOS/Sources"; sourceTree = "<group>"; };
