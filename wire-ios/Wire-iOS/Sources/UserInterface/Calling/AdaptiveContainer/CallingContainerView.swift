@@ -38,8 +38,10 @@ struct CallingContainerView: View {
         GeometryReader { geo in
             let isLandscape = geo.size.width > geo.size.height
             VStack(spacing: 0) {
-                CallHeaderBarRepresentable(viewModel: viewModel)
-                    .fixedSize(horizontal: false, vertical: true)
+                CallHeaderBar(
+                    configuration: viewModel.callInfoConfiguration,
+                    onMinimize: viewModel.onHideCallView
+                )
                 ZStack(alignment: .topLeading) {
                     CallViewControllerRepresentable(viewModel: viewModel)
                         .id(viewModel.voiceChannelRevision)

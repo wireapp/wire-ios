@@ -29,6 +29,10 @@ protocol CallViewControllerDelegate: AnyObject {
     )
 }
 
+protocol CallInfoConfigurationObserver: AnyObject {
+    func didUpdateConfiguration(configuration: CallInfoConfiguration)
+}
+
 final class CallViewController: UIViewController {
 
     weak var delegate: CallViewControllerDelegate?

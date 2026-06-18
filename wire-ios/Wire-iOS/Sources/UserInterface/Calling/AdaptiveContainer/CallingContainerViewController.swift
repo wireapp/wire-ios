@@ -17,7 +17,15 @@
 //
 
 import SwiftUI
+import UIKit
 import WireDataModel
+
+protocol ActiveCallViewControllerDelegate: AnyObject {
+    func activeCallViewControllerDidDisappear(
+        _ activeCallViewController: UIViewController,
+        for conversation: ZMConversation?
+    )
+}
 
 final class CallingContainerViewController: UIHostingController<CallingContainerView> {
 
