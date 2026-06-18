@@ -18,39 +18,42 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 /// Shared active-call button container used in both portrait (`.horizontal`) and
 /// landscape (`.vertical`) orientations. Incoming-call controls are handled separately.
 struct ActiveCallActionsView: View {
 
     let axis: Axis
-    var showDragHandle: Bool = false
     let configuration: CallInfoConfiguration?
     let performAction: (CallAction) -> Void
     var onDragHandleTap: () -> Void = {}
 
     var body: some View {
         if axis == .vertical {
-            VStack(spacing: 16) {
-                Spacer()
-                if let config = configuration {
+            if let config = configuration {
+                VStack(spacing: 16) {
+                    Spacer(minLength: 0)
                     muteButton(config)
+                    Spacer(minLength: 0)
                     videoButton(config)
+                    Spacer(minLength: 0)
                     speakerButton(config)
+                    Spacer(minLength: 0)
+                    callReactionButton
+                    Spacer(minLength: 0)
                     hangupButton
+                    Spacer(minLength: 0)
                 }
-                Spacer()
             }
         } else {
             VStack(spacing: 0) {
-                if showDragHandle {
-                    dragHandle
-                }
                 if let config = configuration {
                     HStack(spacing: 0) {
                         muteButton(config).frame(maxWidth: .infinity)
                         videoButton(config).frame(maxWidth: .infinity)
                         speakerButton(config).frame(maxWidth: .infinity)
+                        callReactionButton.frame(maxWidth: .infinity)
                         hangupButton.frame(maxWidth: .infinity)
                     }
                     .padding(.horizontal, 14)
@@ -90,6 +93,16 @@ struct ActiveCallActionsView: View {
         ) { performAction(.toggleSpeakerState) }
     }
 
+    private var callReactionButton: some View {
+        CallActionButton(
+            systemImage: "face.smiling",
+            isSelected: false,
+            isDestructive: false
+        ) { performAction(.toggleReactionsTray) }
+        .accessibilityIdentifier(Locators.OngoingCallPage.callReactionButton)
+        .accessibilityLabel(L10n.Localizable.Voice.CallReactionButton.title)
+    }
+
     private var hangupButton: some View {
         CallActionButton(
             systemImage: "phone.down.fill",
@@ -97,16 +110,33 @@ struct ActiveCallActionsView: View {
             isDestructive: true
         ) { performAction(.terminateCall) }
     }
+}
 
-    // MARK: - Drag handle (portrait only)
+// MARK: - Previews
 
-    private var dragHandle: some View {
-        RoundedRectangle(cornerRadius: 3)
-            .fill(Color(SemanticColors.View.backgroundCallDragBarIndicator))
-            .frame(width: 130, height: 5)
-            .padding(.bottom, 8)
-            .contentShape(Rectangle().inset(by: -8))
-            .onTapGesture(perform: onDragHandleTap)
-            .frame(maxWidth: .infinity)
+#Preview("Landscape — vertical column") {
+    HStack {
+        _PreviewVerticalButtons()
+            .background(Color.yellow.opacity(0.15))
+            .ignoresSafeArea()
+    }
+    .background(Color(.systemGray5))
+    .ignoresSafeArea()
+}
+
+/// Mirrors the vertical branch of `ActiveCallActionsView` for layout debugging.
+private struct _PreviewVerticalButtons: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            CallActionButton(systemImage: "mic.fill", isSelected: true, isDestructive: false) {}
+            CallActionButton(systemImage: "video.slash.fill", isSelected: false, isDestructive: false) {}
+            CallActionButton(systemImage: "speaker.slash.fill", isSelected: false, isDestructive: false) {}
+            CallActionButton(systemImage: "face.smiling", isSelected: false, isDestructive: false) {}
+            CallActionButton(systemImage: "phone.down.fill", isSelected: false, isDestructive: true) {}
+            Spacer()
+        }
+        .frame(maxHeight: .infinity)
     }
 }
+

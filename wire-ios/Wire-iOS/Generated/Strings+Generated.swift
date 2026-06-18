@@ -6561,6 +6561,10 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "voice.call_error.unsupported_version.title", fallback: "Please update Wire")
         }
       }
+      internal enum CallReactionButton {
+        /// Emoji
+        internal static let title = L10n.tr("Localizable", "voice.call_reaction_button.title", fallback: "Emoji")
+      }
       internal enum Calling {
         /// Calling...
         internal static let title = L10n.tr("Localizable", "voice.calling.title", fallback: "Calling...")

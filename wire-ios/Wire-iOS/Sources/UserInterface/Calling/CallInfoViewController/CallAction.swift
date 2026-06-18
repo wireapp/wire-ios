@@ -33,4 +33,5 @@ enum CallAction {
     case minimizeOverlay
     case showParticipantsList
     case updateVideoGridPresentationMode(_ mode: VideoGridPresentationMode)
+    case toggleReactionsTray
 }

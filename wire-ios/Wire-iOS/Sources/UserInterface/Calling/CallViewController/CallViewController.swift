@@ -616,6 +616,9 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         case .flipCamera: toggleCameraAnimated()
         case .showParticipantsList: return // Handled in `CallInfoRootViewController`, we don't want to update.
         case let .updateVideoGridPresentationMode(mode): voiceChannel.videoGridPresentationMode = mode
+        case .toggleReactionsTray:
+            WireLogger.calling.debug("😄 request to toggle reactions tray")
+            break
         }
 
         updateConfiguration()

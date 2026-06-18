@@ -815,6 +815,7 @@
 "voice.video_button.title" = "Camera";
 "voice.flip_video_button.title" = "Switch camera";
 "voice.speaker_button.title" = "Speaker";
+"voice.call_reaction_button.title" = "Emoji";
 "voice.cancel_button.title" = "Cancel";
 "voice.call_button.title" = "Call";
 "voice.end_call_button.title" = "End Call";
