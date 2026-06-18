@@ -22,6 +22,7 @@ protocol CallConversationProvider {
     var priorityCallConversation: ZMConversation? { get }
     var ongoingCallConversation: ZMConversation? { get }
     var ringingCallConversation: ZMConversation? { get }
+    var establishedCallConversations: [ZMConversation] { get }
 }
 
 extension ZMUserSession: CallConversationProvider {}
@@ -60,6 +61,21 @@ extension ZMUserSession {
 
             switch callState {
             case .answered, .established, .establishedDataChannel, .outgoing:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
+    var establishedCallConversations: [ZMConversation] {
+        guard let callCenter else { return [] }
+
+        return callCenter.nonIdleCallConversations(in: self).filter { conversation in
+            guard let callState = conversation.voiceChannel?.state else { return false }
+
+            switch callState {
+            case .established, .establishedDataChannel:
                 return true
             default:
                 return false

@@ -24,11 +24,17 @@ final class CallController: NSObject {
     // MARK: - Public Implentation
 
     weak var router: ActiveCallRouterProtocol?
-    var callConversationProvider: CallConversationProvider?
+    var callConversationProvider: CallConversationProvider? {
+        didSet {
+            callStatusAutoUpdateController.callConversationProvider = callConversationProvider
+            callStatusAutoUpdateController.syncWithCurrentCallState()
+        }
+    }
 
     // MARK: - Private Implentation
 
     private let userSession: UserSession
+    private let callStatusAutoUpdateController: CallStatusAutoUpdateController
     private var observerTokens: [Any] = []
     private var minimizedCall: ZMConversation?
 
@@ -43,6 +49,7 @@ final class CallController: NSObject {
 
     init(userSession: UserSession) {
         self.userSession = userSession
+        self.callStatusAutoUpdateController = .init(userSession: userSession)
         super.init()
         addObservers(userSession: userSession)
     }
@@ -154,6 +161,10 @@ extension CallController: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
+        callStatusAutoUpdateController.handleCallStateChange(
+            callState: callState,
+            previousCallState: previousCallState
+        )
 
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
