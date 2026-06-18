@@ -17,8 +17,11 @@
 //
 
 import avs
+import Combine
+import SwiftUI
 import UIKit
 import WireCommonComponents
+import WireDomain
 import WireLogging
 import WireSyncEngine
 
@@ -59,6 +62,7 @@ final class CallViewController: UIViewController {
     private var doubleTapRecognizer: UITapGestureRecognizer!
 
     private var isInteractiveDismissal = false
+    private var callReactionWallViewModel: CallReactionWallViewModel?
 
     let userSession: UserSession
 
@@ -260,6 +264,33 @@ final class CallViewController: UIViewController {
         }
 
         view.backgroundColor = .clear
+        setupCallReactionWall()
+    }
+
+    private func setupCallReactionWall() {
+        guard let conversationID = conversation?.remoteIdentifier else { return }
+
+        let publisher = userSession.clientSessionComponent?.callReactionSubject
+            .eraseToAnyPublisher()
+            ?? Empty().eraseToAnyPublisher()
+
+        let viewModel = CallReactionWallViewModel(publisher: publisher, conversationID: conversationID)
+        callReactionWallViewModel = viewModel
+
+        let wall = CallReactionWall(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: wall)
+        hostingController.view.backgroundColor = .clear
+
+        addChild(hostingController)
+        view.insertSubview(hostingController.view, aboveSubview: callGridViewController.view)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: callGridViewController.view.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: callGridViewController.view.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: callGridViewController.view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: callGridViewController.view.trailingAnchor)
+        ])
+        hostingController.didMove(toParent: self)
     }
 
     private func createConstraints() {

@@ -21,11 +21,13 @@ import Foundation
 public struct CallReactionEvent: Sendable {
     public let emoji: String
     public let senderID: UUID
+    public let senderName: String
     public let conversationID: UUID
 
-    public init(emoji: String, senderID: UUID, conversationID: UUID) {
+    public init(emoji: String, senderID: UUID, senderName: String, conversationID: UUID) {
         self.emoji = emoji
         self.senderID = senderID
+        self.senderName = senderName
         self.conversationID = conversationID
     }
 }

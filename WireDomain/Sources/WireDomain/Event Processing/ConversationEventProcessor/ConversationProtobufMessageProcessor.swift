@@ -188,9 +188,11 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         case let .inCallEmoji(inCallEmoji):
 
             // TODO: [WPB-11770] add unit tests for inCallEmoji processing
+            let sender = await userLocalStore.fetchOrCreateUser(id: senderID.id, domain: senderID.domain)
+            let senderName = await userLocalStore.name(for: sender) ?? ""
             for (emoji, _) in inCallEmoji.emojis {
                 WireLogger.calling.debug("Received in-call emoji reaction: \(emoji)", attributes: logAttributes)
-                onCallReaction?(CallReactionEvent(emoji: emoji, senderID: senderID.id, conversationID: conversationID.id))
+                onCallReaction?(CallReactionEvent(emoji: emoji, senderID: senderID.id, senderName: senderName, conversationID: conversationID.id))
             }
 
         case .image, .asset:
