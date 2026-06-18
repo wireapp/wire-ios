@@ -22,9 +22,10 @@ struct CallingActionsInfoRepresentable: UIViewControllerRepresentable {
 
     let viewModel: CallingContainerViewModel
     @Binding var isExpanded: Bool
+    var hideActionsView: Bool = false
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(viewModel: viewModel, isExpanded: $isExpanded)
+        Coordinator(viewModel: viewModel, isExpanded: $isExpanded, hideActionsView: hideActionsView)
     }
 
     func makeUIViewController(context: Context) -> CallingActionsInfoViewController {
@@ -40,6 +41,7 @@ struct CallingActionsInfoRepresentable: UIViewControllerRepresentable {
 
     func updateUIViewController(_ vc: CallingActionsInfoViewController, context: Context) {
         vc.participants = viewModel.participants
+        vc.actionsViewHidden = hideActionsView
         if let configuration = viewModel.callInfoConfiguration {
             vc.didUpdateConfiguration(configuration: configuration)
         }
@@ -55,15 +57,19 @@ extension CallingActionsInfoRepresentable {
 
         private let viewModel: CallingContainerViewModel
         private let isExpanded: Binding<Bool>
+        private let hideActionsView: Bool
 
-        init(viewModel: CallingContainerViewModel, isExpanded: Binding<Bool>) {
+        init(viewModel: CallingContainerViewModel, isExpanded: Binding<Bool>, hideActionsView: Bool) {
             self.viewModel = viewModel
             self.isExpanded = isExpanded
+            self.hideActionsView = hideActionsView
         }
 
         // MARK: CallingActionsInfoViewControllerDelegate
 
         func actionsViewHeightChanged(to height: CGFloat) {
+            // Only update peekHeight for portrait (where actions are shown in this VC)
+            guard !hideActionsView else { return }
             viewModel.peekHeight = height
         }
 

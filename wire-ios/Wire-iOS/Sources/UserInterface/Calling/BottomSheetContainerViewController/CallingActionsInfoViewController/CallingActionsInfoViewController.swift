@@ -44,6 +44,14 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     var isIncomingCall: Bool = false
     let actionsView = CallingActionsView()
 
+    /// Hides the actions buttons row (used in landscape where buttons are rendered separately).
+    var actionsViewHidden: Bool = false {
+        didSet {
+            actionsView.isHidden = actionsViewHidden
+            actionsViewHeightConstraint?.constant = actionsViewHidden ? 0 : calculateHeightConstant()
+        }
+    }
+
     var participants: CallParticipantsList {
         didSet {
             updateRows()

@@ -24,8 +24,12 @@ struct CallingContainerView: View {
     @State private var isExpanded: Bool = false
     @State private var dragOffset: CGFloat = 0
 
-    private let landscapePanelWidth: CGFloat = 320
-    private let landscapeCollapsedWidth: CGFloat = 44
+    private var landscapePanelWidth: CGFloat {
+        LandscapeCallPanelView.handleWidth + LandscapeCallPanelView.buttonsColumnWidth + LandscapeCallPanelView.participantsColumnWidth
+    }
+    private var landscapeCollapsedWidth: CGFloat {
+        LandscapeCallPanelView.handleWidth + LandscapeCallPanelView.buttonsColumnWidth
+    }
 
     var body: some View {
         GeometryReader { geo in
@@ -76,7 +80,7 @@ struct CallingContainerView: View {
         DragGesture()
             .onChanged { value in
                 let t = value.translation.height
-                dragOffset = isExpanded ? max(0, t) : min(0, t)
+                dragOffset = isExpanded ? max(0, min(travel, t)) : max(-travel, min(0, t))
             }
             .onEnded { value in
                 let t = value.translation.height
@@ -97,24 +101,27 @@ struct CallingContainerView: View {
     // MARK: - Landscape right panel
 
     private func landscapePanel(geo: GeometryProxy) -> some View {
-        let travel = landscapePanelWidth - landscapeCollapsedWidth
+        // travel = participantsColumnWidth: dragging left reveals participants, right collapses
+        let travel = LandscapeCallPanelView.participantsColumnWidth
         let currentOffset = isExpanded ? 0 : travel
         let effectiveDrag = viewModel.isPanEnabled ? dragOffset : 0
 
         return HStack(spacing: 0) {
             Spacer()
-            CallingActionsInfoRepresentable(viewModel: viewModel, isExpanded: $isExpanded)
+            LandscapeCallPanelView(viewModel: viewModel, isExpanded: $isExpanded)
                 .frame(width: landscapePanelWidth, height: geo.size.height)
                 .offset(x: currentOffset + effectiveDrag)
+                .clipped()
                 .gesture(viewModel.isPanEnabled ? landscapeDragGesture(travel: travel) : nil)
         }
+        .ignoresSafeArea()
     }
 
     private func landscapeDragGesture(travel: CGFloat) -> some Gesture {
         DragGesture()
             .onChanged { value in
                 let t = value.translation.width
-                dragOffset = isExpanded ? max(0, t) : min(0, t)
+                dragOffset = isExpanded ? max(0, min(travel, t)) : max(-travel, min(0, t))
             }
             .onEnded { value in
                 let t = value.translation.width
