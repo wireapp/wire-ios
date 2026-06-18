@@ -52,9 +52,14 @@ public struct CatchUpView: View {
 
     @Environment(\.wireAccentColor) private var accentColor
     @Binding private var summaries: [ConversationSummary]
+    private let onMarkAsRead: (UUID) -> Void
 
-    public init(summaries: Binding<[ConversationSummary]> = .constant(ConversationSummary.mocks)) {
+    public init(
+        summaries: Binding<[ConversationSummary]> = .constant(ConversationSummary.mocks),
+        onMarkAsRead: @escaping (UUID) -> Void = { _ in }
+    ) {
         self._summaries = summaries
+        self.onMarkAsRead = onMarkAsRead
     }
 
     public var body: some View {
@@ -93,6 +98,7 @@ public struct CatchUpView: View {
                         .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button {
+                                onMarkAsRead(summary.id)
                                 withAnimation {
                                     summaries.removeAll { $0.id == summary.id }
                                 }

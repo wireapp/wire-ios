@@ -30,6 +30,7 @@ final class CatchUpViewModel: ObservableObject {
     @Published var summaries: [ConversationSummary] = []
 
     private let userSession: ZMUserSession
+    private var conversationByID: [UUID: ZMConversation] = [:]
 
     init(userSession: ZMUserSession) {
         self.userSession = userSession
@@ -39,13 +40,15 @@ final class CatchUpViewModel: ObservableObject {
         let conversations = userSession.conversationDirectory.conversations(by: .unread)
 
         summaries = conversations.map { conversation in
-            ConversationSummary(
+            let summary = ConversationSummary(
                 conversationName: conversation.displayName ?? "Unknown",
                 summary: nil,
                 missedCount: conversation.unreadMessages.count,
                 oldestMessageDate: conversation.unreadMessages.first?.serverTimestamp,
                 isGroup: conversation.conversationType == .group
             )
+            conversationByID[summary.id] = conversation
+            return summary
         }
 
         for (index, conversation) in conversations.enumerated() {
@@ -108,6 +111,12 @@ final class CatchUpViewModel: ObservableObject {
         }
     }
 
+    func markAsRead(id: UUID) {
+        guard let conversation = conversationByID[id] else { return }
+        conversation.markAsRead()
+        conversationByID.removeValue(forKey: id)
+    }
+
     private func update(at index: Int, summary: String) {
         guard index < summaries.count else { return }
         let existing = summaries[index]
@@ -135,7 +144,7 @@ struct CatchUpContainerView: View {
     }
 
     var body: some View {
-        CatchUpView(summaries: $viewModel.summaries)
+        CatchUpView(summaries: $viewModel.summaries, onMarkAsRead: viewModel.markAsRead)
             .environment(\.wireAccentColor, accentColor)
             .task { viewModel.load() }
     }
