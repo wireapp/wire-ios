@@ -122,7 +122,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         ].forEach(stackView.addArrangedSubview)
 
         CallParticipantsListCellConfiguration.prepare(collectionView)
-        view.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+        view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     private func createConstraints() {
@@ -131,11 +131,11 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
 
             actionsView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            actionsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            actionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             actionsViewHeightConstraint,
 
             participantsHeaderView.heightAnchor.constraint(equalToConstant: participantsHeaderHeight),
@@ -146,9 +146,9 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
             participantsHeaderLabel.centerYAnchor.constraint(equalTo: participantsHeaderView.centerYAnchor),
 
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             participantsHeaderView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            participantsHeaderView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            participantsHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.widthAnchor.constraint(equalTo: stackView.widthAnchor)
         ])
     }
