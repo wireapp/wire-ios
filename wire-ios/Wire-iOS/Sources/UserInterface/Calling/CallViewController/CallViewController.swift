@@ -629,6 +629,8 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
             break
         case .sendReaction(let emoji):
             callReactionWallViewModel?.sendReaction(emoji: emoji)
+        case .openEmojiPicker:
+            presentEmojiPicker()
         }
 
         updateConfiguration()
@@ -749,6 +751,29 @@ extension CallViewController {
         overlayTimer = nil
     }
 
+}
+
+// MARK: - Emoji picker
+
+extension CallViewController: EmojiPickerViewControllerDelegate {
+
+    func presentEmojiPicker() {
+        let picker = EmojiKeyboardViewController()
+        picker.delegate = self
+        picker.modalPresentationStyle = .pageSheet
+        if let sheet = picker.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+        present(picker, animated: true)
+    }
+
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
+        callReactionWallViewModel?.sendReaction(emoji: emoji.value)
+        dismiss(animated: true)
+    }
+
+    func emojiPickerDeleteTapped() {}
 }
 
 extension CallViewController {

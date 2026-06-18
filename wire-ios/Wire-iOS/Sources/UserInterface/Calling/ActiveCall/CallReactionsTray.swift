@@ -25,31 +25,48 @@ import WireDesign
 struct CallReactionsTray: View {
 
     static let presetEmojis = ["👍", "🎉", "❤️", "👏", "😊"]
+    private static let maxRecentCount = 5
 
     let axis: Axis
     var onEmojiTap: (String) -> Void
+    var onOpenPicker: () -> Void
+
+    @State private var recentEmojis: [String] = []
+
+    private var allEmojis: [String] {
+        let presets = Self.presetEmojis
+        let recents = recentEmojis.filter { !presets.contains($0) }.prefix(Self.maxRecentCount)
+        return presets + recents
+    }
 
     var body: some View {
         if axis == .vertical {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 8) {
-                    ForEach(Self.presetEmojis, id: \.self) { emojiTile($0) }
+                    ForEach(allEmojis, id: \.self) { emojiTile($0) }
+                    moreButton
                 }
                 .padding(.vertical, 8)
             }
+            .onAppear { loadRecentEmojis() }
         } else {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(Self.presetEmojis, id: \.self) { emojiTile($0) }
+                    ForEach(allEmojis, id: \.self) { emojiTile($0) }
+                    moreButton
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
             }
+            .onAppear { loadRecentEmojis() }
         }
     }
 
     private func emojiTile(_ emoji: String) -> some View {
-        Button { onEmojiTap(emoji) } label: {
+        Button {
+            registerRecent(emoji)
+            onEmojiTap(emoji)
+        } label: {
             Text(emoji)
                 .font(.system(size: 30))
                 .frame(width: 56, height: 56)
@@ -59,6 +76,34 @@ struct CallReactionsTray: View {
                 )
         }
     }
+
+    private var moreButton: some View {
+        Button {
+            onOpenPicker()
+        } label: {
+            Image(systemName: "face.smiling")
+                .font(.system(size: 26))
+                .foregroundStyle(.white)
+                .frame(width: 56, height: 56)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(ColorTheme.Buttons.Secondary.enabled.color)
+                )
+        }
+    }
+
+    private func loadRecentEmojis() {
+        guard recentEmojis.isEmpty else { return }
+        recentEmojis = EmojiRepository().fetchRecentlyUsedEmojis().map(\.value)
+    }
+
+    private func registerRecent(_ emoji: String) {
+        let repo = EmojiRepository()
+        var updated = [emoji] + recentEmojis.filter { $0 != emoji }
+        if updated.count > 15 { updated = Array(updated.prefix(15)) }
+        repo.registerRecentlyUsedEmojis(updated)
+        recentEmojis = updated
+    }
 }
 
 // MARK: - Preview
@@ -66,7 +111,7 @@ struct CallReactionsTray: View {
 #Preview("Horizontal (portrait)") {
     VStack {
         Spacer()
-        CallReactionsTray(axis: .horizontal) { print("tapped \($0)") }
+        CallReactionsTray(axis: .horizontal, onEmojiTap: { print("tapped \($0)") }, onOpenPicker: {})
         Spacer()
     }
     .background(Color(.systemGray5))
@@ -75,7 +120,7 @@ struct CallReactionsTray: View {
 #Preview("Vertical (landscape)") {
     HStack {
         Spacer()
-        CallReactionsTray(axis: .vertical) { print("tapped \($0)") }
+        CallReactionsTray(axis: .vertical, onEmojiTap: { print("tapped \($0)") }, onOpenPicker: {})
             .frame(width: 72)
             .background(Color(.systemBackground))
         Spacer()

@@ -59,9 +59,11 @@ struct CallPanelView: View {
         VStack(spacing: 0) {
             portraitDragHandle
             if isReactionsTrayOpen {
-                CallReactionsTray(axis: .horizontal) { emoji in
+                CallReactionsTray(axis: .horizontal, onEmojiTap: { emoji in
                     perform(.sendReaction(emoji: emoji))
-                }
+                }, onOpenPicker: {
+                    perform(.openEmojiPicker)
+                })
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
@@ -136,9 +138,11 @@ struct CallPanelView: View {
     }
 
     private var emojiColumn: some View {
-        CallReactionsTray(axis: .vertical) { emoji in
+        CallReactionsTray(axis: .vertical, onEmojiTap: { emoji in
             perform(.sendReaction(emoji: emoji))
-        }
+        }, onOpenPicker: {
+            perform(.openEmojiPicker)
+        })
     }
 
     private var landscapeDragHandle: some View {
