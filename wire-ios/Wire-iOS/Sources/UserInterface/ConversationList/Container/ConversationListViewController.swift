@@ -46,6 +46,7 @@ final class ConversationListViewController: UIViewController {
     private static let contentControllerBottomInset: CGFloat = 16
     private var userDefaultsObservation: NSKeyValueObservation?
     private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
+    private var messageIndexingService: MessageIndexingService?
 
     private lazy var filterContainerView = UIView()
 
@@ -246,6 +247,10 @@ final class ConversationListViewController: UIViewController {
         applyColorTheme()
 
         setContentScrollView(listContentController.collectionView)
+
+        let indexer = MessageIndexingService(userSession: viewModel.userSession as! ZMUserSession)
+        messageIndexingService = indexer
+        indexer.startIndexingInBackground()
     }
 
     override func viewWillAppear(_ animated: Bool) {

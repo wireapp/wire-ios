@@ -307,6 +307,12 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         filterButton.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterButton.description
         filterButton.menu = filterMenu
 
+        let searchImage = UIImage(systemName: "magnifyingglass", withConfiguration: symbolConfiguration)!
+        let searchAction = UIAction(image: searchImage) { [weak self] _ in self?.presentSemanticSearchUI() }
+        let searchButton = UIButton(primaryAction: searchAction)
+        searchButton.accessibilityLabel = "Semantic search"
+        navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: searchButton))
+
         navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
 
         // Trigger a layout update to ensure the correct positioning
@@ -544,6 +550,18 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
 
         ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .userAction)
+    }
+
+    // MARK: - Semantic Search
+
+    private func presentSemanticSearchUI() {
+        let searchViewController = UIHostingController(rootView: SemanticSearchView())
+        searchViewController.modalPresentationStyle = .formSheet
+        if let sheet = searchViewController.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+        Task { await mainCoordinator.presentViewController(searchViewController) }
     }
 
     // MARK: - Catch-Up
