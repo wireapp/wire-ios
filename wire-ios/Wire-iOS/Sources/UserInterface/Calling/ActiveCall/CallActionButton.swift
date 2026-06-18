@@ -19,54 +19,76 @@
 import SwiftUI
 import WireDesign
 
-/// A 50×50 pt circular button used for in-call actions (mute, video, speaker, hang up).
+/// A button used for in-call actions (mute, video, speaker, hang up).
 struct CallActionButton: View {
-
+    
     let systemImage: String
     let isSelected: Bool
     let isDestructive: Bool
     var isEnabled: Bool = true
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundColor(iconColor)
-                .frame(width: 50, height: 50)
+                .frame(width: 56, height: 40)
                 .background(
-                    Circle()
+                    RoundedRectangle(cornerSize: CGSize(width: 100, height: 100))
                         .fill(backgroundColor)
                         .overlay(
-                            Circle().stroke(borderColor, lineWidth: 1)
+                            RoundedRectangle(cornerSize: CGSize(width: 100, height: 100))
+                                .stroke(borderColor, lineWidth: 1)
                         )
                 )
         }
         .disabled(!isEnabled)
     }
-
+    
     private var backgroundColor: Color {
         if isDestructive {
             return Color(SemanticColors.Button.backgroundLikeHighlighted)
         }
         return isSelected
-            ? Color(SemanticColors.Button.backgroundCallingSelected)
-            : Color(SemanticColors.Button.backgroundCallingNormal)
+        ? Color(SemanticColors.Button.backgroundCallingSelected)
+        : Color(SemanticColors.Button.backgroundCallingNormal)
     }
-
+    
     private var iconColor: Color {
         if isDestructive {
             return Color(SemanticColors.View.backgroundDefaultWhite)
         }
         return isSelected
-            ? Color(SemanticColors.Button.iconCallingSelected)
-            : Color(SemanticColors.Button.iconCallingNormal)
+        ? Color(SemanticColors.Button.iconCallingSelected)
+        : Color(SemanticColors.Button.iconCallingNormal)
     }
-
+    
     private var borderColor: Color {
         if isDestructive { return .clear }
         return isSelected
-            ? Color(SemanticColors.Button.borderCallingSelected)
-            : Color(SemanticColors.Button.borderCallingNormal)
+        ? Color(SemanticColors.Button.borderCallingSelected)
+        : Color(SemanticColors.Button.borderCallingNormal)
     }
+}
+
+// MARK: - Preview
+
+#Preview("States") {
+    VStack(spacing: 16) {
+        HStack(spacing: 8) {
+            CallActionButton(systemImage: "mic.slash.fill", isSelected: false, isDestructive: false) {}
+            CallActionButton(systemImage: "mic.slash.fill", isSelected: true, isDestructive: false) {}
+            CallActionButton(systemImage: "mic.slash.fill", isSelected: false, isDestructive: false, isEnabled: false) {}
+        }
+        HStack(spacing: 8) {
+            CallActionButton(systemImage: "video.fill", isSelected: false, isDestructive: false) {}
+            CallActionButton(systemImage: "video.fill", isSelected: true, isDestructive: false) {}
+        }
+        HStack(spacing: 8) {
+            CallActionButton(systemImage: "phone.down.fill", isSelected: false, isDestructive: true) {}
+        }
+    }
+    .padding()
+    .background(Color(.systemGray6))
 }

@@ -91,14 +91,17 @@ struct CallPanelView: View {
         }
     }
 
+    @ViewBuilder
     private var portraitCallButtonsRow: some View {
-        ActiveCallActionsView(
-            axis: .horizontal,
-            isReactionsTrayOpen: isReactionsTrayOpen,
-            configuration: viewModel.callInfoConfiguration,
-            performAction: perform
-        )
-        .frame(height: Self.buttonsRowHeight)
+        if let configuration = viewModel.callInfoConfiguration {
+            ActiveCallActionsView(
+                axis: .horizontal,
+                isReactionsTrayOpen: isReactionsTrayOpen,
+                configuration: CallActionsConfiguration(configuration),
+                performAction: perform
+            )
+            .frame(height: Self.buttonsRowHeight)
+        }
     }
 
     private var portraitParticipantsSection: some View {
@@ -162,14 +165,17 @@ struct CallPanelView: View {
         }
     }
 
+    @ViewBuilder
     private var callButtonsColumn: some View {
-        ActiveCallActionsView(
-            axis: .vertical,
-            isReactionsTrayOpen: isReactionsTrayOpen,
-            configuration: viewModel.callInfoConfiguration,
-            performAction: perform
-        )
-        .frame(width: Self.buttonsColumnWidth)
+        if let configuration = viewModel.callInfoConfiguration {
+            ActiveCallActionsView(
+                axis: .vertical,
+                isReactionsTrayOpen: isReactionsTrayOpen,
+                configuration: CallActionsConfiguration(configuration),
+                performAction: perform
+            )
+            .frame(width: Self.buttonsColumnWidth)
+        }
     }
 
     private var participantsColumn: some View {

@@ -68,8 +68,8 @@ struct CallReactionsTray: View {
             onEmojiTap(emoji)
         } label: {
             Text(emoji)
-                .font(.system(size: 30))
-                .frame(width: 56, height: 56)
+                .font(.system(size: 32))
+                .frame(width: 48, height:48)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(ColorTheme.Buttons.Secondary.enabled.color)
@@ -82,13 +82,9 @@ struct CallReactionsTray: View {
             onOpenPicker()
         } label: {
             Image(systemName: "face.smiling")
-                .font(.system(size: 26))
+                .font(.system(size: 32))
                 .foregroundStyle(.white)
-                .frame(width: 56, height: 56)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(ColorTheme.Buttons.Secondary.enabled.color)
-                )
+                .frame(width: 48, height: 48)
         }
     }
 
