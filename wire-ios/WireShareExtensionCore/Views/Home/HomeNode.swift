@@ -23,6 +23,7 @@ struct HomeNode: View {
     let destination: HomeDestination
     let shareItem: ShareItem
     let fetchAccounts: any FetchAccountsUseCase
+    let fetchConversations: any FetchConversationsUseCase
     let router: RootRouter
     let onClose: () -> Void
     let onDone: () -> Void
@@ -39,7 +40,7 @@ struct HomeNode: View {
     private func makeViewModel() -> HomeViewModelImpl {
         HomeViewModelImpl(
             fetchAccounts: fetchAccounts,
-            fetchConversations: FetchConversationsUseCaseMock(),
+            fetchConversations: fetchConversations,
             shareItem: shareItem,
             router: router,
             onClose: onClose

@@ -22,6 +22,7 @@ public struct RootNode: View {
 
     public let shareItem: ShareItem
     public let fetchAccounts: any FetchAccountsUseCase
+    public let fetchConversations: any FetchConversationsUseCase
 
     // TODO: Maybe Combine close / done into a single callback
     // with an enum param to indicate the action
@@ -34,11 +35,13 @@ public struct RootNode: View {
     public init(
         shareItem: ShareItem,
         fetchAccounts: any FetchAccountsUseCase,
+        fetchConversations: any FetchConversationsUseCase,
         onClose: @escaping () -> Void,
         onDone: @escaping () -> Void
     ) {
         self.shareItem = shareItem
         self.fetchAccounts = fetchAccounts
+        self.fetchConversations = fetchConversations
         self.onClose = onClose
         self.onDone = onDone
     }
@@ -52,6 +55,7 @@ public struct RootNode: View {
                 destination: destination,
                 shareItem: shareItem,
                 fetchAccounts: fetchAccounts,
+                fetchConversations: fetchConversations,
                 router: router,
                 onClose: onClose,
                 onDone: onDone

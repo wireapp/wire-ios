@@ -188,9 +188,11 @@ class ShareViewController: UIViewController {
             accountManager: accountManager,
             cookieStorage: cookieStorage
         )
+        let fetchConversations = FetchConversationsUseCaseImpl()
         let rootNode = RootNode(
             shareItem: shareItems.first!, // TODO: make safe
             fetchAccounts: fetchAccounts,
+            fetchConversations: fetchConversations,
             onClose: cancelSharing,
             onDone: completeSharing
         )
