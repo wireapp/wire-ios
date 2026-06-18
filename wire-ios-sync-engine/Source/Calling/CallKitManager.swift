@@ -476,7 +476,9 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             if let error {
                 self?.logger.error("fail: report incoming call: \(error)", attributes: .safePublic)
                 self?.callRegister.unregisterCall(call)
-                conversation.voiceChannel?.leave()
+                conversation.managedObjectContext?.perform {
+                    conversation.voiceChannel?.leave()
+                }
             } else {
                 self?.logger.info("success: report incoming call", attributes: .safePublic)
                 self?.mediaManager?.setupAudioDevice()
