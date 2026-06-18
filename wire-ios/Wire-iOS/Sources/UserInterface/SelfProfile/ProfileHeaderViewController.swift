@@ -18,6 +18,7 @@
 
 import SwiftUI
 import UIKit
+import WireAccountImageUI
 import WireCommonComponents
 import WireDesign
 import WireLocators
@@ -282,8 +283,13 @@ final class ProfileHeaderViewController: UIViewController {
         userStatusViewController.userStatus = userStatus
 
         let status = userStatus.textStatus?.trimmingCharacters(in: .whitespaces)
-        customStatusLabel.text = (status?.isEmpty == false) ? status : nil
-        customStatusLabel.isHidden = customStatusLabel.text == nil
+        let hasStatus = !(status?.isEmpty ?? true)
+        if options.contains(.allowEditingAvailability) {
+            customStatusLabel.isHidden = true
+        } else {
+            customStatusLabel.text = hasStatus ? status : nil
+            customStatusLabel.isHidden = !hasStatus
+        }
     }
 
     private func combineUserNameWithIcons() -> NSAttributedString {

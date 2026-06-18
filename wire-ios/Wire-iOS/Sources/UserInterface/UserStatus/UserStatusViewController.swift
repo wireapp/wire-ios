@@ -120,12 +120,27 @@ private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
 
     var updateStatusHandler: (() -> Void)?
 
-    var userStatus = UserStatus()
+    var userStatus = UserStatus() {
+        didSet { updateButtonTitle() }
+    }
 
-    private let updateStatusButton: SecondaryTextButton = {
-        let button = SecondaryTextButton()
+    private let updateStatusButton: UIButton = {
+        let chevron = UIImage(
+            systemName: "chevron.down",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 11, weight: .semibold)
+        )
+        var config = UIButton.Configuration.plain()
+        config.image = chevron
+        config.imagePlacement = .trailing
+        config.imagePadding = 6
+        config.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 14, bottom: 7, trailing: 10)
+        config.baseForegroundColor = SemanticColors.Label.textDefault
+        config.background.backgroundColor = UIColor.systemGray6
+        config.background.strokeColor = UIColor.systemGray3
+        config.background.strokeWidth = 1
+        config.background.cornerRadius = 8
+        let button = UIButton(configuration: config)
         button.accessibilityLabel = L10n.Localizable.Availability.Message.updateStatus
-        button.setTitle(L10n.Localizable.Availability.Message.updateStatus, for: .normal)
         return button
     }()
 
@@ -139,6 +154,7 @@ private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
 
     init() {
         super.init(frame: .zero)
+        updateButtonTitle()
         updateStatusButton.addTarget(self, action: #selector(updateStatusButtonTapped), for: .touchUpInside)
         addSubview(stackView)
         createConstraints()
@@ -157,6 +173,15 @@ private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+
+    private func updateButtonTitle() {
+        let status = userStatus.textStatus?.trimmingCharacters(in: .whitespaces)
+        let hasStatus = !(status?.isEmpty ?? true)
+        var config = updateStatusButton.configuration ?? .plain()
+        config.title = hasStatus ? status : L10n.Localizable.Availability.Message.updateStatus
+        updateStatusButton.configuration = config
+        updateStatusButton.accessibilityValue = hasStatus ? status : nil
     }
 
     @objc
