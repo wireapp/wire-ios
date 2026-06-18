@@ -54,6 +54,10 @@ public struct UserUpdateEvent: Equatable, Sendable {
 
     public let supportedProtocols: Set<MessageProtocol>?
 
+    /// The new text status.
+
+    public let textStatus: String?
+
     public init(
         userID: UUID,
         accentColorID: Int?,
@@ -62,7 +66,8 @@ public struct UserUpdateEvent: Equatable, Sendable {
         email: String?,
         isSSOIDDeleted: Bool?,
         assets: [UserAsset]?,
-        supportedProtocols: Set<MessageProtocol>?
+        supportedProtocols: Set<MessageProtocol>?,
+        textStatus: String? = nil
     ) {
         self.userID = userID
         self.accentColorID = accentColorID
@@ -72,6 +77,7 @@ public struct UserUpdateEvent: Equatable, Sendable {
         self.isSSOIDDeleted = isSSOIDDeleted
         self.assets = assets
         self.supportedProtocols = supportedProtocols
+        self.textStatus = textStatus
     }
 
 }

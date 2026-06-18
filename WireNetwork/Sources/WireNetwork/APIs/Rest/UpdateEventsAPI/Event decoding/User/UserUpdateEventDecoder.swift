@@ -37,7 +37,8 @@ struct UserUpdateEventDecoder {
             email: payload.email,
             isSSOIDDeleted: payload.isSSOIDDeleted,
             assets: payload.assets?.map { $0.toAPIModel() },
-            supportedProtocols: supportedProtocols.flatMap { Set($0) }
+            supportedProtocols: supportedProtocols.flatMap { Set($0) },
+            textStatus: payload.textStatus
         )
     }
 
@@ -51,6 +52,7 @@ struct UserUpdateEventDecoder {
         let isSSOIDDeleted: Bool?
         let assets: [UserAssetV0]?
         let supportedProtocols: Set<MessageProtocolV0>?
+        let textStatus: String?
 
         enum CodingKeys: String, CodingKey {
 
@@ -62,6 +64,7 @@ struct UserUpdateEventDecoder {
             case isSSOIDDeleted = "sso_id_deleted"
             case assets
             case supportedProtocols = "supported_protocols"
+            case textStatus = "text_status"
 
         }
 

@@ -26,6 +26,8 @@ struct UserStatus {
 
     var availability = Availability.none
 
+    var textStatus: String?
+
     // TODO: [WPB-6770]: (tech dept) consider adding `UserLegalHoldStatus`
 
     /// `true` if the user has a valid certificate (MLS), `false` otherwise.
@@ -37,11 +39,13 @@ struct UserStatus {
     init(
         displayName: String,
         availability: Availability,
+        textStatus: String? = nil,
         isE2EICertified: Bool,
         isProteusVerified: Bool
     ) {
         self.displayName = displayName
         self.availability = availability
+        self.textStatus = textStatus
         self.isE2EICertified = isE2EICertified
         self.isProteusVerified = isProteusVerified
     }

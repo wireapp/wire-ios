@@ -149,7 +149,7 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
             entityName: ZMUser.entityName(),
             update: nil,
             filter: ZMUser.predicateForSelfUser(),
-            keysToSync: allProperties,
+            keysToSync: allProperties + ["textStatus"],
             managedObjectContext: managedObjectContext
         )
 
@@ -177,6 +177,12 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
         guard let selfUser = managedObject as? ZMUser else { return nil }
+
+        if keys.contains("textStatus") {
+            let payload = ["text_status": selfUser.textStatus ?? ""] as ZMTransportData
+            let request = ZMTransportRequest(path: "/self", method: .put, payload: payload, apiVersion: apiVersion.rawValue)
+            return ZMUpstreamRequest(keys: keys, transportRequest: request)
+        }
 
         let allProperties = Set(UserProperty.allCases.map(\.propertyName))
 

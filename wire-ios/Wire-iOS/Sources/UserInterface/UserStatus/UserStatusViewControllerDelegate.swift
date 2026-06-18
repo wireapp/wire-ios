@@ -22,4 +22,7 @@ protocol UserStatusViewControllerDelegate: AnyObject {
 
     /// Called when the user switched its availability.
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability)
+
+    /// Called when the user saves a text status.
+    func userStatusViewController(_ viewController: UserStatusViewController, didSelectTextStatus textStatus: String?)
 }

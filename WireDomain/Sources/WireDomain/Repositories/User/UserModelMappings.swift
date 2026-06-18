@@ -135,7 +135,8 @@ extension WireNetwork.UserUpdateEvent {
             completeAssetKey: assets?
                 .first(where: { $0.size == .complete })
                 .map(\.key),
-            supportedProtocols: supportedProtocols?.toDomainModel()
+            supportedProtocols: supportedProtocols?.toDomainModel(),
+            textStatus: textStatus
         )
     }
 

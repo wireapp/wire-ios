@@ -99,6 +99,10 @@ public protocol UserLocalStoreProtocol {
         isReadReceiptsEnabledChangedRemotely: Bool
     ) async
 
+    /// Update text status for self user locally and mark for upstream sync.
+
+    func updateSelfUserTextStatus(_ textStatus: String?) async
+
     /// Persist the supported protocols for the self user.
 
     func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async

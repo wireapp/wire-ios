@@ -69,11 +69,15 @@ final class UserStatusViewController: UIViewController {
     }
 
     private func presentAvailabilityPicker() {
-        let viewController = UserStatusPickerViewController(currentAvailability: userStatus.availability) {
+        let viewController = UserStatusPickerViewController(currentAvailability: userStatus.availability, currentTextStatus: userStatus.textStatus) {
             [weak self] availability in
             guard let self else { return }
 
             selectAvailability(availability)
+        }
+        viewController.textStatusSaveHandler = { [weak self] textStatus in
+            guard let self else { return }
+            delegate?.userStatusViewController(self, didSelectTextStatus: textStatus)
         }
 
         if let navigationController {
@@ -166,9 +170,10 @@ private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
     }
 
     private func updateStatusLabel() {
-        statusLabel.text = userStatus.availability.localizedName
+        let text = userStatus.textStatus ?? ""//userStatus.availability.localizedName
+        statusLabel.text = text
         statusLabel.accessibilityLabel = L10n.Localizable.Availability.Message.currentStatus
-        statusLabel.accessibilityValue = userStatus.availability.localizedName
+        statusLabel.accessibilityValue = text
     }
 
     @objc
@@ -185,9 +190,11 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
     }
 
     private let selectionHandler: (Availability) -> Void
+    var textStatusSaveHandler: ((String?) -> Void)?
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
     private var currentAvailability: Availability
     private var customStatus = ""
+    private var selectedEmoji: String?
 
     private let buttonHeight: CGFloat = 48
     private let buttonMargin: CGFloat = 16
@@ -205,11 +212,26 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
 
     init(
         currentAvailability: Availability,
+        currentTextStatus: String? = nil,
         selectionHandler: @escaping (Availability) -> Void
     ) {
         self.currentAvailability = currentAvailability
         self.selectionHandler = selectionHandler
+        let parsed = Self.parseTextStatus(currentTextStatus)
+        self.selectedEmoji = parsed.emoji
+        self.customStatus = parsed.text
         super.init(nibName: nil, bundle: nil)
+    }
+
+    private static func parseTextStatus(_ textStatus: String?) -> (emoji: String?, text: String) {
+        guard let textStatus, let first = textStatus.unicodeScalars.first,
+              first.properties.isEmoji, first.value > 0x238C else {
+            return (nil, textStatus ?? "")
+        }
+        let emoji = String(textStatus.prefix(1))
+        let rest = textStatus.dropFirst()
+        let text = rest.hasPrefix(" ") ? String(rest.dropFirst()) : String(rest)
+        return (emoji, text)
     }
 
     @available(*, unavailable)
@@ -224,6 +246,7 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
         createTableView()
         createConstraints()
         setupKeyboardObserver()
+        updateStatusButton.addTarget(self, action: #selector(updateStatusButtonTapped), for: .touchUpInside)
     }
 
     private func createTableView() {
@@ -270,6 +293,22 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
             updateStatusButton.heightAnchor.constraint(equalToConstant: buttonHeight),
             bottomConstraint
         ])
+    }
+
+    @objc private func updateStatusButtonTapped() {
+        let text = customStatus.trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty || selectedEmoji != nil else { return }
+
+        let combined: String
+        if let emoji = selectedEmoji, !text.isEmpty {
+            combined = "\(emoji) \(text)"
+        } else if let emoji = selectedEmoji {
+            combined = emoji
+        } else {
+            combined = text
+        }
+
+        textStatusSaveHandler?(combined)
     }
 
     private func setupKeyboardObserver() {
@@ -337,9 +376,16 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
                 withIdentifier: CustomStatusInputCell.reuseIdentifier,
                 for: indexPath
             ) as! CustomStatusInputCell
-            cell.configure(text: customStatus) { [weak self] text in
-                self?.customStatus = text
-            }
+            cell.configure(
+                text: customStatus,
+                emoji: selectedEmoji,
+                textChangeHandler: { [weak self] text in
+                    self?.customStatus = text
+                },
+                emojiChangeHandler: { [weak self] emoji in
+                    self?.selectedEmoji = emoji
+                }
+            )
             return cell
 
         case .none:
@@ -512,6 +558,7 @@ private final class CustomStatusInputCell: UITableViewCell {
     static let reuseIdentifier = "CustomStatusInputCell"
 
     private var textChangeHandler: ((String) -> Void)?
+    private var emojiChangeHandler: ((String?) -> Void)?
     private var selectedEmoji: String?
     private var parentViewController: UIViewController? {
         var responder: UIResponder? = self
@@ -566,12 +613,23 @@ private final class CustomStatusInputCell: UITableViewCell {
 
     func configure(
         text: String,
-        textChangeHandler: @escaping (String) -> Void
+        emoji: String? = nil,
+        textChangeHandler: @escaping (String) -> Void,
+        emojiChangeHandler: ((String?) -> Void)? = nil
     ) {
         self.textChangeHandler = textChangeHandler
+        self.emojiChangeHandler = emojiChangeHandler
 
         if textField.text != text {
             textField.text = text
+        }
+
+        if let emoji {
+            selectedEmoji = emoji
+            var config = emojiButton.configuration ?? .plain()
+            config.image = nil
+            config.title = emoji
+            emojiButton.configuration = config
         }
     }
 
@@ -624,6 +682,7 @@ extension CustomStatusInputCell: UITextFieldDelegate {
 
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
         selectedEmoji = nil
+        emojiChangeHandler?(nil)
         var config = emojiButton.configuration ?? .plain()
         config.title = nil
         config.image = UIImage(systemName: "face.smiling")
@@ -635,6 +694,7 @@ extension CustomStatusInputCell: UITextFieldDelegate {
 extension CustomStatusInputCell: EmojiPickerViewControllerDelegate {
     func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
         selectedEmoji = emoji.value
+        emojiChangeHandler?(emoji.value)
         var config = emojiButton.configuration ?? .plain()
         config.image = nil
         config.title = emoji.value

@@ -120,6 +120,14 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
+    public func updateSelfUserTextStatus(_ textStatus: String?) async {
+        let selfUser = await fetchSelfUser()
+        await context.perform {
+            selfUser.textStatus = textStatus
+            selfUser.setLocallyModifiedKeys(["textStatus"])
+        }
+    }
+
     public func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
@@ -413,6 +421,10 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             }
 
             user.supportedProtocols = userUpdateInfo.supportedProtocols ?? [.proteus]
+
+            if let textStatus = userUpdateInfo.textStatus {
+                user.textStatus = textStatus
+            }
 
             user.isPendingMetadataRefresh = false
         }

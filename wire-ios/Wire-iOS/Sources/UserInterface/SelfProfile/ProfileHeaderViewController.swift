@@ -502,6 +502,18 @@ extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
             self?.user.availability = availability
         }
     }
+
+    func userStatusViewController(_ viewController: UserStatusViewController, didSelectTextStatus textStatus: String?) {
+        guard viewController === userStatusViewController else { return }
+
+        userStatus.textStatus = textStatus
+
+        userSession.perform { [weak self] in
+            guard let zmUser = self?.user as? ZMUser else { return }
+            zmUser.textStatus = textStatus
+            zmUser.setLocallyModifiedKeys(["textStatus"])
+        }
+    }
 }
 
 // MARK: - ZMUserObserving
@@ -518,6 +530,7 @@ extension ProfileHeaderViewController: UserObserving {
         if changeInfo.availabilityChanged {
             updateAvailabilityVisibility()
             userStatus.availability = changeInfo.user.availability
+            userStatus.textStatus = changeInfo.user.textStatus
         }
         if changeInfo.trustLevelChanged {
             userStatus.isProteusVerified = changeInfo.user.isVerified
