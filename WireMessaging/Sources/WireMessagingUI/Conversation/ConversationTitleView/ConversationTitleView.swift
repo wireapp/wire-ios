@@ -30,6 +30,7 @@ public class ConversationTitleView: UIView {
     private let accountImageView = AccountImageView()
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
+    private let confidentialityImageView = UIImageView()
     private let legalHoldImage = UIImageView(image: UIImage(resource: .legalHold))
     private let verifiedImage = UIImageView(image: UIImage(resource: .verified))
     private let dropdownImage = UIImageView(image: .dropdown)
@@ -89,6 +90,19 @@ public class ConversationTitleView: UIView {
         legalHoldImage.isHidden = !source.isUnderLegalHold
         verifiedImage.isHidden = !source.isVerified
         verifiedImage.image = source.isMLS ? UIImage(resource: .certificateValid) : UIImage(resource: .verified)
+        configureConfidentialityIcon()
+    }
+
+    private func configureConfidentialityIcon() {
+        let level = source.confidentialityLevel
+        guard level == 1 || level == 2 else {
+            confidentialityImageView.isHidden = true
+            return
+        }
+        let color: UIColor = level == 1 ? ColorTheme.Base.warning : ColorTheme.Base.error
+        let config = UIImage.SymbolConfiguration(paletteColors: [color])
+        confidentialityImageView.image = UIImage(systemName: "lock.circle.fill", withConfiguration: config)
+        confidentialityImageView.isHidden = false
     }
 
     private func configureLayout() {
@@ -103,8 +117,15 @@ public class ConversationTitleView: UIView {
         let avatarAndNameStackView = UIStackView.horizontal(spacing: 4)
         avatarAndNameStackView.alignment = .center
 
-        [accountImageView, legalHoldImage, nameLabel, verifiedImage, dropdownImage.wrapInView(topInset: 4)]
-            .forEach(avatarAndNameStackView.addArrangedSubview)
+        [
+            accountImageView,
+            legalHoldImage,
+            confidentialityImageView,
+            nameLabel,
+            verifiedImage,
+            dropdownImage.wrapInView(topInset: 4)
+        ]
+        .forEach(avatarAndNameStackView.addArrangedSubview)
 
         [
             avatarAndNameStackView,
@@ -114,6 +135,7 @@ public class ConversationTitleView: UIView {
 
         accountImageView.constraintToSquare(sideLength: 26)
         legalHoldImage.constraintToSquare(sideLength: 16)
+        confidentialityImageView.constraintToSquare(sideLength: 16)
         verifiedImage.constraintToSquare(sideLength: 16)
         dropdownImage.constraintToSquare(sideLength: 16)
         stackView.heightAnchor.constraint(equalToConstant: 44).isActive = true

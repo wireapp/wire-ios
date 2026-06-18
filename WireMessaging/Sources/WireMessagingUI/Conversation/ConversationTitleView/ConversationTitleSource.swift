@@ -25,6 +25,8 @@ public struct ConversationTitleSource {
     public let isMLS: Bool
     public let isVerified: Bool
     public let isUnderLegalHold: Bool
+    /// Raw value matching ConfidentialityLevel: 0 = regular, 1 = sensitive, 2 = highlySensitive
+    public let confidentialityLevel: Int16
 
     public init(
         accountImageSource: AccountImageSource?,
@@ -32,7 +34,8 @@ public struct ConversationTitleSource {
         subtitle: String?,
         isMLS: Bool,
         isVerified: Bool,
-        isUnderLegalHold: Bool
+        isUnderLegalHold: Bool,
+        confidentialityLevel: Int16 = 0
     ) {
         self.accountImageSource = accountImageSource
         self.title = title
@@ -40,5 +43,6 @@ public struct ConversationTitleSource {
         self.isMLS = isMLS
         self.isVerified = isVerified
         self.isUnderLegalHold = isUnderLegalHold
+        self.confidentialityLevel = confidentialityLevel
     }
 }
