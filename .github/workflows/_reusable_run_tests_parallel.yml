@@ -78,7 +78,7 @@ jobs:
     name: "Test ${{ matrix.scheme }}"
     needs: generate-framework-list
     if: ${{ needs.generate-framework-list.outputs.schemes != '[]' && needs.generate-framework-list.outputs.schemes != '' }}
-    runs-on: macos-26
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     permissions:
       contents: read
       pull-requests: write
