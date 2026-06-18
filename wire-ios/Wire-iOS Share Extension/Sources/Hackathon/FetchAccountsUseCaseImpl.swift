@@ -25,18 +25,20 @@ import WireShareExtensionCore
 struct FetchAccountsUseCaseImpl: FetchAccountsUseCase {
 
     let accountManager: AccountManager
-    let backendEnvironmentProvider: BackendEnvironmentProvider
+    let cookieStorage: CookieStorage
 
     func callAsFunction() async throws -> [Account] {
-        let accounts = accountManager.accounts
-        return accounts.map { account in
-            WireShareExtensionCore.Account(
+        accountManager.accounts.map { account in
+            let legacyCookieStorage = LegacyCookieStorage(
+                userIdentifier: account.userIdentifier,
+                cookieStorage: cookieStorage
+            )
+            return WireShareExtensionCore.Account(
                 id: account.userIdentifier,
                 name: account.userName,
-                isAuthenticated: backendEnvironmentProvider.isAuthenticated(account)
+                isAuthenticated: legacyCookieStorage.hasAuthenticationCookie
             )
         }
-
     }
 
 }

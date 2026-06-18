@@ -23,6 +23,7 @@ import UniformTypeIdentifiers
 import WireCommonComponents
 import WireDataModel
 import WireDomain
+import WireNetwork
 import WireShareEngine
 import WireShareExtensionCore
 
@@ -35,6 +36,10 @@ class ShareViewController: UIViewController {
 
     private var accountManager: AccountManager!
     private var sessionsByAccount = [WireDataModel.Account: SharingSession]()
+
+    private lazy var cookieStorage = CookieStorage(
+        cookieEncryptionKey: UserDefaults.cookiesKey()
+    )
 
     override init(
         nibName nibNameOrNil: String?,
@@ -89,7 +94,6 @@ class ShareViewController: UIViewController {
 
         guard
             let appGroupID = Bundle.main.applicationGroupIdentifier,
-            let hostBundleID = Bundle.main.hostBundleIdentifier,
             let bundleInfo = Bundle.main.infoDictionary,
             let buildNumber = bundleInfo[kCFBundleVersionKey as String] as? String
         else {
@@ -180,8 +184,13 @@ class ShareViewController: UIViewController {
     
     /// Presents the SwiftUI-based node graph.
     private func presentShareUI() {
+        let fetchAccounts = FetchAccountsUseCaseImpl(
+            accountManager: accountManager,
+            cookieStorage: cookieStorage
+        )
         let rootNode = RootNode(
             shareItem: shareItems.first!, // TODO: make safe
+            fetchAccounts: fetchAccounts,
             onClose: cancelSharing,
             onDone: completeSharing
         )

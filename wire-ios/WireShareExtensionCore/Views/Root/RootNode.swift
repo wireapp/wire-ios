@@ -20,19 +20,25 @@ import SwiftUI
 
 public struct RootNode: View {
 
+    public let shareItem: ShareItem
+    public let fetchAccounts: any FetchAccountsUseCase
+
+    // TODO: Maybe Combine close / done into a single callback
+    // with an enum param to indicate the action
+    public let onClose: () -> Void
+    public let onDone: () -> Void
+
     @State
     private var router = RootRouter()
 
-    public let shareItem: ShareItem
-    public let onClose: () -> Void // TODO: Maybe Combine close / done into a single callback with an enum param to indicate the action
-    public let onDone: () -> Void
-
     public init(
         shareItem: ShareItem,
+        fetchAccounts: any FetchAccountsUseCase,
         onClose: @escaping () -> Void,
         onDone: @escaping () -> Void
     ) {
         self.shareItem = shareItem
+        self.fetchAccounts = fetchAccounts
         self.onClose = onClose
         self.onDone = onDone
     }
@@ -45,6 +51,7 @@ public struct RootNode: View {
             HomeNode(
                 destination: destination,
                 shareItem: shareItem,
+                fetchAccounts: fetchAccounts,
                 router: router,
                 onClose: onClose,
                 onDone: onDone
