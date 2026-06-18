@@ -34,6 +34,9 @@ final class MessageIndexingService {
 
     init(userSession: ZMUserSession) {
         self.userSession = userSession
+
+        lastIndexedDate = .distantPast
+        UserDefaults.standard.synchronize()
     }
 
     func startIndexingInBackground() {
