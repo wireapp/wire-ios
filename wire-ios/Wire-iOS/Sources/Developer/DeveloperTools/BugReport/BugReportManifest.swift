@@ -20,7 +20,6 @@ import Network
 import UIKit
 import WireAnalytics
 import WireCommonComponents
-import WireTransport
 
 /// Structured bug report, serialized as `manifest.json` inside `bug-report-package.zip`.
 ///
@@ -66,6 +65,8 @@ struct BugReportManifest: Codable, Sendable {
 extension BugReportManifest.Metadata {
 
     /// Gathers the technical context that does not require user input.
+    /// - Parameter environment: The domain of the self user, which reliably identifies
+    ///   the connected backend regardless of how `BackendEnvironment.shared` was initialized.
     static func harvested(selfUserID: UUID?, environment: String) -> Self {
         Self(
             timestamp: BugReportDateFormatter.iso8601.string(from: Date()),

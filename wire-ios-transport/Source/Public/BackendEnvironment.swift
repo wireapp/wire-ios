@@ -30,7 +30,7 @@ public enum EnvironmentType: Equatable {
     case foma
     case custom(url: URL)
 
-    var stringValue: String {
+    public var stringValue: String {
         switch self {
         case .default:
             "default"
@@ -107,7 +107,7 @@ public final class BackendEnvironment: NSObject {
     let endpoints: BackendEndpointsProvider
     let proxySettings: ProxySettingsProvider?
     let certificateTrust: BackendTrustProvider
-    let type: EnvironmentType
+    public let type: EnvironmentType
 
     public init(
         title: String,
