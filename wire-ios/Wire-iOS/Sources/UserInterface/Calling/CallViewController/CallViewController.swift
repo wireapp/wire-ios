@@ -290,6 +290,7 @@ final class CallViewController: UIViewController {
         let hostingController = UIHostingController(rootView: wall)
         hostingController.view.backgroundColor = .clear
         hostingController.view.isOpaque = false
+        hostingController.view.isUserInteractionEnabled = false
 
         addChild(hostingController)
         view.insertSubview(hostingController.view, aboveSubview: callGridViewController.view)
