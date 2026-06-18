@@ -24,9 +24,11 @@ struct InactivityTimerOverlayView: View {
     let onExpired: () -> Void
 
     @State private var secondsRemaining: Int
+    private let totalSeconds: Int
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     init(initialSeconds: Int, onTap: @escaping () -> Void, onExpired: @escaping () -> Void) {
+        self.totalSeconds = initialSeconds
         self._secondsRemaining = State(initialValue: initialSeconds)
         self.onTap = onTap
         self.onExpired = onExpired
@@ -59,16 +61,20 @@ struct InactivityTimerOverlayView: View {
                     Image(systemName: "lock.fill")
                         .font(.system(size: 40, weight: .semibold))
                         .foregroundStyle(ColorTheme.Base.error.color)
+                    Circle()
+                        .trim(from: 0, to: trimFraction)
+                        .stroke(
+                            ColorTheme.Base.error.color,
+                            style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                        )
+                        .frame(width: 114, height: 114)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.linear(duration: 1), value: trimFraction)
                 }
 
                 VStack(spacing: 12) {
                     Text("Conversation will auto-lock in")
                         .font(for: .h1)
-                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
-                    Text(formattedTime)
-                        .font(for: .largeTitle)
-                        .monospacedDigit()
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     Text("Tap to keep active")
@@ -92,7 +98,7 @@ struct InactivityTimerOverlayView: View {
         }
     }
 
-    private var formattedTime: String {
-        String(format: "%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
+    private var trimFraction: Double {
+        Double(secondsRemaining) / Double(totalSeconds)
     }
 }

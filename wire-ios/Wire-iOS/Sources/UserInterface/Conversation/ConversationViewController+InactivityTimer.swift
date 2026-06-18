@@ -20,7 +20,7 @@ import SwiftUI
 import UIKit
 import WireDesign
 
-private let inactivityTimeout: TimeInterval = 5
+private let inactivityTimeout: TimeInterval = 10
 
 // MARK: - Activity Observing Gesture Recognizer
 
@@ -96,7 +96,8 @@ extension ConversationViewController {
         guard inactivityOverlayHostingController == nil, unlockHostingController == nil else { return }
         let level = conversation.confidentialityLevel
         guard level == .highlySensitive || level == .sensitive else { return }
-        stopInactivityTimer()
+        inactivityTimer?.invalidate()
+        inactivityTimer = nil
         scheduleInactivityTimer()
     }
 
@@ -110,6 +111,7 @@ extension ConversationViewController {
     }
 
     private func showInactivityTimerOverlay() {
+        guard presentedViewController == nil else { return }
         guard unlockHostingController == nil else { return }
         if conversation.confidentialityLevel == .sensitive {
             showUnlockView()
@@ -163,6 +165,7 @@ extension ConversationViewController {
     }
 
     func showUnlockView() {
+        guard presentedViewController == nil else { return }
         guard unlockHostingController == nil else { return }
         let isSensitive = conversation.confidentialityLevel == .sensitive
         let unlockView = SensitiveChatUnlockView(
