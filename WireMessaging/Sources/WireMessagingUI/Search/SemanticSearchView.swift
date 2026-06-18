@@ -102,27 +102,19 @@ public struct SemanticSearchView: View {
                         resultRow(result)
                     }
                 } header: {
-                    if !viewModel.isSearching && !viewModel.isReranking {
-                        Text(verbatim: "\(viewModel.results.count) result\(viewModel.results.count == 1 ? "" : "s")")
-                            .font(.subheadline)
-                            .foregroundStyle(.primary)
-                            .textCase(nil)
-                    }
+                    Text(verbatim: "\(viewModel.results.count) result\(viewModel.results.count == 1 ? "" : "s")")
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                        .textCase(nil)
                 }
             }
         }
         .listStyle(.plain)
         .overlay {
-            if viewModel.isSearching || viewModel.isReranking {
-                HStack(spacing: 8) {
-                    ProgressView()
-                    Text(verbatim: viewModel.isReranking ? "Re-ranking with AI…" : "Searching…")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .padding()
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if viewModel.isSearching {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.background.opacity(0.6))
             }
         }
     }
@@ -160,7 +152,6 @@ private final class SemanticSearchViewModel: ObservableObject {
     }
     @Published var results: [SemanticSearchResult] = []
     @Published var isSearching = false
-    @Published var isReranking = false
     @Published var isIndexEmpty = false
     /// Non-nil while background indexing is running. Value in 0...1.
     @Published var indexingProgress: Double?
@@ -213,18 +204,10 @@ private final class SemanticSearchViewModel: ObservableObject {
 
     private func search(_ query: String) async {
         guard let embedding = embedder.embed(query) else { return }
-
         isSearching = true
-        let candidates = await index.search(queryEmbedding: embedding)
+        let found = await index.search(queryEmbedding: embedding)
+        results = found
         isSearching = false
-
-        if #available(iOS 26.0, *), !candidates.isEmpty {
-            isReranking = true
-            results = await MessageReranker().rerank(query: query, candidates: candidates)
-            isReranking = false
-        } else {
-            results = candidates
-        }
     }
 }
 

@@ -115,15 +115,11 @@ public actor SemanticSearchIndex {
 
     // MARK: - Search
 
-    public func search(
-        queryEmbedding: [Float],
-        limit: Int = 30,
-        minimumScore: Float = 0.35
-    ) -> [SemanticSearchResult] {
+    public func search(queryEmbedding: [Float], limit: Int = 20) -> [SemanticSearchResult] {
         let dim = queryEmbedding.count
         guard dim > 0 else { return [] }
 
-        WireLogger.search.debug("Searching \(entries.count) indexed entries (dim=\(dim), minScore=\(minimumScore))")
+        WireLogger.search.debug("Searching \(entries.count) indexed entries (dim=\(dim))")
 
         let results = entries
             .compactMap { entry -> (SemanticSearchResult, Float)? in
@@ -131,7 +127,6 @@ public actor SemanticSearchIndex {
                 guard floatCount == dim else { return nil }
                 let entryEmbedding = entry.embeddingData.withUnsafeBytes { Array($0.bindMemory(to: Float.self)) }
                 let score = cosineSimilarity(queryEmbedding, entryEmbedding)
-                guard score >= minimumScore else { return nil }
                 let result = SemanticSearchResult(
                     conversationName: entry.conversationName,
                     messageText: entry.messageText,
