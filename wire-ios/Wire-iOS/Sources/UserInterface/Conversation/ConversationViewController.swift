@@ -28,6 +28,7 @@ import WireMessagingAssembly
 import WireMessagingDomain
 import WireMessagingUI
 import WireSyncEngine
+import SwiftUI
 
 final class ConversationViewController: UIViewController {
 
@@ -113,6 +114,10 @@ final class ConversationViewController: UIViewController {
     private var userObservationToken: NSObjectProtocol?
     private var selfUserObservationToken: NSObjectProtocol?
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
+    var inactivityTimer: Timer?
+    var inactivityOverlayHostingController: UIHostingController<InactivityTimerOverlayView>?
+    var unlockHostingController: UIHostingController<SensitiveChatUnlockView>?
+    var foregroundObserverToken: (any NSObjectProtocol)?
 
     var participantsController: UIViewController? {
         get async {
@@ -245,8 +250,11 @@ final class ConversationViewController: UIViewController {
     }
 
     deinit {
+        inactivityTimer?.invalidate()
+        if let token = foregroundObserverToken {
+            NotificationCenter.default.removeObserver(token)
+        }
         dismissCollectionIfNecessary()
-
         hideAndDestroyParticipantsPopover()
         contentViewController?.delegate = nil
     }
@@ -322,6 +330,7 @@ final class ConversationViewController: UIViewController {
 
         resolveConversationIfOneOnOne()
         updateVerificationStatusIfNeeded()
+        setupActivityObserver()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -359,6 +368,7 @@ final class ConversationViewController: UIViewController {
         isAppearing = true
         updateGuestsBarVisibility()
         updateConfidentialityBarVisibility()
+        startInactivityTimerIfNeeded()
     }
 
     override func didMove(toParent parent: UIViewController?) {
@@ -369,6 +379,7 @@ final class ConversationViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        stopInactivityTimer()
         updateLeftNavigationBarItems()
         (userSession as? ZMUserSession)?.didClose(conversation: conversation)
     }
