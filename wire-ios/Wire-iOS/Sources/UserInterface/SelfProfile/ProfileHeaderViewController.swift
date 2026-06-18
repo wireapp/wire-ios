@@ -88,6 +88,13 @@ final class ProfileHeaderViewController: UIViewController {
     private let handleLabel = DynamicFontLabel(style: .subline1, color: LabelColors.textDefault)
     private let teamNameLabel = DynamicFontLabel(style: .h4, color: LabelColors.textDefault)
     private let remainingTimeLabel = DynamicFontLabel(style: .h5, color: LabelColors.textDefault)
+    private let customStatusLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(style: .h4, color: LabelColors.textDefault)
+        label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
+        label.textAlignment = .center
+        return label
+    }()
     let imageView = UserImageView(size: .big)
     private let userStatusViewController: UserStatusViewController
 
@@ -203,6 +210,7 @@ final class ProfileHeaderViewController: UIViewController {
                 nameHandleStack,
                 teamNameLabel,
                 imageView,
+                customStatusLabel,
                 userStatusViewController.view,
                 guestIndicatorStack,
                 externalIndicator,
@@ -217,7 +225,8 @@ final class ProfileHeaderViewController: UIViewController {
 
         stackView.wr_addCustomSpacing(32, after: nameHandleStack)
         stackView.wr_addCustomSpacing(32, after: teamNameLabel)
-        stackView.wr_addCustomSpacing(24, after: imageView)
+        stackView.wr_addCustomSpacing(12, after: imageView)
+        stackView.wr_addCustomSpacing(12, after: customStatusLabel)
         stackView.wr_addCustomSpacing(20, after: guestIndicatorStack)
         stackView.wr_addCustomSpacing(20, after: externalIndicator)
         stackView.wr_addCustomSpacing(20, after: federatedIndicator)
@@ -271,6 +280,10 @@ final class ProfileHeaderViewController: UIViewController {
         nameLabel.text = userStatus.displayName
         nameLabel.attributedText = combineUserNameWithIcons()
         userStatusViewController.userStatus = userStatus
+
+        let status = userStatus.textStatus?.trimmingCharacters(in: .whitespaces)
+        customStatusLabel.text = (status?.isEmpty == false) ? status : nil
+        customStatusLabel.isHidden = customStatusLabel.text == nil
     }
 
     private func combineUserNameWithIcons() -> NSAttributedString {
@@ -530,6 +543,8 @@ extension ProfileHeaderViewController: UserObserving {
         if changeInfo.availabilityChanged {
             updateAvailabilityVisibility()
             userStatus.availability = changeInfo.user.availability
+        }
+        if changeInfo.textStatusChanged {
             userStatus.textStatus = changeInfo.user.textStatus
         }
         if changeInfo.trustLevelChanged {

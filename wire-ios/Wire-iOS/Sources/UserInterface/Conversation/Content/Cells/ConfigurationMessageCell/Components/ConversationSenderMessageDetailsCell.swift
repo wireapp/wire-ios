@@ -99,6 +99,17 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         return label
     }()
 
+    private lazy var textStatusLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
+        label.font = .mediumSemiboldFont
+        label.textColor = SemanticColors.Label.textSectionHeader
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        return label
+    }()
+
     private var userObservation: NSObjectProtocol?
     private var currentConfiguration: Configuration?
 
@@ -129,6 +140,13 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         }
 
         configureAuthorLabel(object: object)
+        configureTextStatusLabel(user: object.sender)
+    }
+
+    private func configureTextStatusLabel(user: UserType) {
+        let status = user.textStatus?.trimmingCharacters(in: .whitespaces)
+        textStatusLabel.text = (status?.isEmpty == false) ? status : nil
+        textStatusLabel.isHidden = textStatusLabel.text == nil
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -148,6 +166,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         avatar.addSubview(availabilityIndicatorView)
         authorLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(authorLabel)
+        textStatusLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(textStatusLabel)
     }
 
     private func configureConstraints() {
@@ -169,8 +189,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
             authorLabel.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 12),
-            authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
+
+            textStatusLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
+            textStatusLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            textStatusLabel.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
@@ -402,6 +425,9 @@ extension ConversationSenderMessageDetailsCell: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.availabilityChanged {
             availabilityIndicatorView.availability = changeInfo.user.availability.mapToAccountImageAvailability()
+        }
+        if changeInfo.textStatusChanged {
+            configureTextStatusLabel(user: changeInfo.user)
         }
     }
 }

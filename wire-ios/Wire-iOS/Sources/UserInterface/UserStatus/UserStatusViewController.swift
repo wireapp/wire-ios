@@ -120,16 +120,7 @@ private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
 
     var updateStatusHandler: (() -> Void)?
 
-    var userStatus = UserStatus() {
-        didSet { updateStatusLabel() }
-    }
-
-    private let statusLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(style: .subline1, color: SemanticColors.Label.textDefault)
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        return label
-    }()
+    var userStatus = UserStatus()
 
     private let updateStatusButton: SecondaryTextButton = {
         let button = SecondaryTextButton()
@@ -139,7 +130,7 @@ private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
     }()
 
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [statusLabel, updateStatusButton])
+        let stackView = UIStackView(arrangedSubviews: [updateStatusButton])
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.spacing = 8
@@ -151,7 +142,6 @@ private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
         updateStatusButton.addTarget(self, action: #selector(updateStatusButtonTapped), for: .touchUpInside)
         addSubview(stackView)
         createConstraints()
-        updateStatusLabel()
     }
 
     @available(*, unavailable)
@@ -169,13 +159,6 @@ private final class UserStatusSummaryView: UIView, UserStatusDisplaying {
         ])
     }
 
-    private func updateStatusLabel() {
-        let text = userStatus.textStatus ?? ""//userStatus.availability.localizedName
-        statusLabel.text = text
-        statusLabel.accessibilityLabel = L10n.Localizable.Availability.Message.currentStatus
-        statusLabel.accessibilityValue = text
-    }
-
     @objc
     private func updateStatusButtonTapped() {
         updateStatusHandler?()
@@ -187,7 +170,14 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
     private enum Section: Int, CaseIterable {
         case availability
         case customStatus
+        case quickStatus
     }
+
+    private let quickStatuses: [(emoji: String, text: String)] = [
+        ("🎧", "In a meeting"),
+        ("🤕", "Out sick"),
+        ("📵", "Out of office")
+    ]
 
     private let selectionHandler: (Availability) -> Void
     var textStatusSaveHandler: ((String?) -> Void)?
@@ -252,7 +242,6 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
     private func createTableView() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.separatorStyle = .none
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
         tableView.keyboardDismissMode = .interactive
         tableView.clipsToBounds = true
@@ -267,6 +256,7 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
             CustomStatusInputCell.self,
             forCellReuseIdentifier: CustomStatusInputCell.reuseIdentifier
         )
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "QuickStatusCell")
         tableView.contentInset.bottom = buttonHeight + buttonMargin * 2
         view.addSubview(tableView)
         view.addSubview(updateStatusButton)
@@ -311,6 +301,13 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
         }
 
         textStatusSaveHandler?(combined)
+
+        // dismiss
+        if navigationController != nil {
+            navigationController?.popViewController(animated: true)
+        } else {
+            dismiss(animated: true)
+        }
     }
 
     private func setupKeyboardObserver() {
@@ -354,7 +351,10 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        switch Section(rawValue: section) {
+        case .quickStatus: quickStatuses.count
+        default: 1
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -371,6 +371,18 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
                 selectionHandler(availability)
                 tableView.reloadSections(IndexSet(integer: Section.availability.rawValue), with: .none)
             }
+            return cell
+
+        case .quickStatus:
+            let status = quickStatuses[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "QuickStatusCell", for: indexPath)
+            var content = cell.defaultContentConfiguration()
+            content.text = "\(status.emoji)  \(status.text)"
+            content.textProperties.font = .font(for: .body1)
+            content.textProperties.color = SemanticColors.Label.textDefault
+            cell.contentConfiguration = content
+            cell.backgroundColor = SemanticColors.View.backgroundUserCell
+            cell.selectionStyle = .default
             return cell
 
         case .customStatus:
@@ -395,10 +407,22 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
         }
     }
 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        guard Section(rawValue: indexPath.section) == .quickStatus else { return }
+
+        let status = quickStatuses[indexPath.row]
+        selectedEmoji = status.emoji
+        customStatus = status.text
+        tableView.reloadSections(IndexSet(integer: Section.customStatus.rawValue), with: .none)
+    }
+
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section) {
         case .availability:
             nil
+        case .quickStatus:
+            "Quick Status"
         case .customStatus:
             L10n.Localizable.Availability.Message.customStatusSection
         case .none:
@@ -410,7 +434,7 @@ private final class UserStatusPickerViewController: UIViewController, UITableVie
         switch Section(rawValue: section) {
         case .availability:
             footerText(for: currentAvailability)
-        case .customStatus, .none:
+        case .quickStatus, .customStatus, .none:
             nil
         }
     }
