@@ -97,6 +97,18 @@ final class ProfileHeaderViewController: UIViewController {
         return label
     }()
     let imageView = UserImageView(size: .big)
+
+    private lazy var availabilityIndicatorView: AvailabilityIndicatorView = {
+        let view = AvailabilityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        let design = AccountImageViewDesign().availabilityIndicator
+        view.availableColor = design.availableColor
+        view.awayColor = design.awayColor
+        view.busyColor = design.busyColor
+        view.backgroundViewColor = design.backgroundViewColor
+        return view
+    }()
+
     private let userStatusViewController: UserStatusViewController
 
     private let guestIndicatorStack = UIStackView()
@@ -164,6 +176,7 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.showsInitialsOnly = options.contains(.showInitialsOnly)
         imageView.userSession = userSession
         imageView.user = user
+        imageView.addSubview(availabilityIndicatorView)
 
         if !ProcessInfo.processInfo.isRunningTests, let session = userSession as? ZMUserSession {
             userObserver = UserChangeInfo.add(observer: self, for: user, in: session)
@@ -273,7 +286,12 @@ final class ProfileHeaderViewController: UIViewController {
             qrCodeButton.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
             qrCodeButton.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 8),
             qrCodeButton.heightAnchor.constraint(equalToConstant: 32),
-            qrCodeButton.widthAnchor.constraint(equalToConstant: 40)
+            qrCodeButton.widthAnchor.constraint(equalToConstant: 40),
+            // availability indicator — on the circle edge at bottom-right (~45°)
+            availabilityIndicatorView.widthAnchor.constraint(equalToConstant: 12),
+            availabilityIndicatorView.heightAnchor.constraint(equalToConstant: 12),
+            availabilityIndicatorView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -18),
+            availabilityIndicatorView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -18)
         ])
     }
 
@@ -281,6 +299,7 @@ final class ProfileHeaderViewController: UIViewController {
         nameLabel.text = userStatus.displayName
         nameLabel.attributedText = combineUserNameWithIcons()
         userStatusViewController.userStatus = userStatus
+        availabilityIndicatorView.availability = userStatus.availability.mapToAccountImageAvailability()
 
         let status = userStatus.textStatus?.trimmingCharacters(in: .whitespaces)
         let hasStatus = !(status?.isEmpty ?? true)
@@ -514,7 +533,7 @@ final class ProfileHeaderViewController: UIViewController {
 
 extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
 
-    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
+    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: WireDataModel.Availability) {
         guard viewController === userStatusViewController else { return }
 
         userSession.perform { [weak self] in
@@ -549,6 +568,7 @@ extension ProfileHeaderViewController: UserObserving {
         if changeInfo.availabilityChanged {
             updateAvailabilityVisibility()
             userStatus.availability = changeInfo.user.availability
+            availabilityIndicatorView.availability = changeInfo.user.availability.mapToAccountImageAvailability()
         }
         if changeInfo.textStatusChanged {
             userStatus.textStatus = changeInfo.user.textStatus
