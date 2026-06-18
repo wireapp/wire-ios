@@ -18,22 +18,32 @@
 
 import Foundation
 import SwiftUI
+@preconcurrency import QuickLookThumbnailing
+
+struct Thumbnail: Identifiable {
+
+    let id = UUID()
+    let imageData: Data?
+    let systemIconName: String
+
+}
 
 @MainActor
 protocol ComposeMessageViewModel {
 
     var conversation: Conversation { get }
-    var shareItem: ShareItem { get }
     var messageText: String { get set }
     var canSend: Bool { get }
     var isLoading: Bool { get }
     var progressState: MessageProgressState? { get }
+    var thumbnails: [Thumbnail] { get }
 
+    func start() async
     func send() async
 
 }
 
-public enum MessageProgressState {
+enum MessageProgressState {
     case preparing
     case sending(Float)
     case success
@@ -41,25 +51,26 @@ public enum MessageProgressState {
 
 @Observable
 @MainActor
-public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
+final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
 
-    public let account: Account
-    public let conversation: Conversation
-    public let shareItem: ShareItem
-    public var messageText: String = ""
+    let account: Account
+    let conversation: Conversation
+    let shareItem: ShareItem
+    var messageText: String = ""
+    var thumbnails: [Thumbnail]
 
-    public var canSend: Bool {
+    var canSend: Bool {
         true
     }
 
-    public var isLoading: Bool = false
-    public var progressState: MessageProgressState?
+    var isLoading: Bool = false
+    var progressState: MessageProgressState?
 
     private let router: RootRouter
     private let sendMessage: SendMessageUseCase
     private let onDone: () -> Void
 
-    public init(
+    init(
         account: Account,
         conversation: Conversation,
         shareItem: ShareItem,
@@ -73,9 +84,50 @@ public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
         self.router = router
         self.onDone = onDone
         self.sendMessage = sendMessage
+
+        // Generate thumbnail based on share item type
+        let thumbnailData: Data?
+        let systemIconName: String
+
+        switch shareItem {
+        case .image(let imageItem):
+            thumbnailData = try? Data(contentsOf: imageItem.url)
+            systemIconName = "photo"
+        case .video:
+            // For videos, you could generate a thumbnail from the first frame
+            // For now, we'll leave it as nil
+            thumbnailData = nil
+            systemIconName = "video"
+        case .file:
+            thumbnailData = nil
+            systemIconName = "document"
+        }
+
+        thumbnails = [Thumbnail(imageData: thumbnailData, systemIconName: systemIconName)]
     }
 
-    public func send() async {
+    func start() async {
+        switch shareItem {
+        case .image(let imageShareItem):
+            let request = QLThumbnailGenerator.Request(
+                fileAt: imageShareItem.url,
+                size: CGSize(width: 75, height: 75),
+                scale: 1,
+                representationTypes: .thumbnail
+            )
+
+            if let data = try? await QLThumbnailGenerator().generateBestRepresentation(for: request).uiImage.pngData() {
+                // FIXME: would be nice not to reset the array here.
+                thumbnails = [Thumbnail(imageData: data, systemIconName: "photo")]
+            }
+
+        default:
+            // TODO: generate thumbnails for other types.
+            break
+        }
+    }
+
+    func send() async {
         isLoading = true
         defer { isLoading = false }
         
@@ -133,5 +185,20 @@ public final class ComposeMessageViewModelImpl: ComposeMessageViewModel {
             router.errorAlert = .generic(message: "Something went wrong")
         }
     }
+
+}
+
+@MainActor
+struct ComposeMessageViewModelMock: ComposeMessageViewModel {
+
+    var conversation: Conversation
+    var messageText: String = ""
+    var canSend: Bool = true
+    var isLoading: Bool = false
+    var progressState: MessageProgressState?
+    var thumbnails: [Thumbnail] = []
+
+    func start() async {}
+    func send() async {}
 
 }

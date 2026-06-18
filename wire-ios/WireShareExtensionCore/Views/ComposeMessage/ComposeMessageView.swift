@@ -24,43 +24,108 @@ struct ComposeMessageView<
 
     @State
     var viewModel: ViewModel
+    
+    @FocusState
+    private var isTextFieldFocused: Bool
 
     var body: some View {
         content
             .navigationTitle(viewModel.conversation.name)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Send") {
-                        Task {
-                            await viewModel.send()
-                        }
-                    }
-                    .disabled(!viewModel.canSend)
-                }
+            .task {
+                await viewModel.start()
             }
     }
 
     @ViewBuilder
     private var content: some View {
-        VStack(spacing: 0) {
-            shareItemPreview
-                .padding()
-
-            Divider()
-
-            messageTextField
-                .padding()
-
+        VStack(spacing: 15) {
             Spacer()
+            thumbnails
+            inputBar
         }
+        .padding(.bottom, 16)
         .overlay {
             if viewModel.isLoading {
                 loadingIndicator
             }
         }
     }
+
+    @ViewBuilder
+    private var thumbnails: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(viewModel.thumbnails) { thumbnail in
+                    thumbnailView(for: thumbnail)
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
     
+    @ViewBuilder
+    private func thumbnailView(for thumbnail: Thumbnail) -> some View {
+        Group {
+            if let imageData = thumbnail.imageData,
+               let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 75, height: 75)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            } else {
+                placeholderView(for: thumbnail)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func placeholderView(for thumbnail: Thumbnail) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.gray.opacity(0.2))
+                .frame(width: 75, height: 75)
+            
+            Image(systemName: thumbnail.systemIconName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 35, height: 35)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var inputBar: some View {
+        HStack {
+            TextField("Add a comment", text: $viewModel.messageText)
+                .focused($isTextFieldFocused)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    Capsule()
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+                .onAppear {
+                    isTextFieldFocused = true
+                }
+
+            Button {
+                Task {
+                    await viewModel.send()
+                }
+            } label: {
+                Image(systemName: "paperplane.fill")
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+                    .background(Color.blue)
+                    .clipShape(Circle())
+            }
+            .disabled(!viewModel.canSend)
+        }
+        .padding(.horizontal)
+    }
+
     @ViewBuilder
     private var loadingIndicator: some View {
         ZStack {
@@ -114,89 +179,14 @@ struct ComposeMessageView<
         }
     }
 
-    @ViewBuilder
-    private var shareItemPreview: some View {
-        HStack(spacing: 12) {
-            thumbnailView
-                .padding()
-                .frame(width: 60, height: 60)
-                .background(Color.gray.opacity(0.2))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-
-            Text(shareItemTypeText)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Spacer()
-        }
-    }
-
-    @ViewBuilder
-    private var thumbnailView: some View {
-        Image(systemName: shareItemIcon)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .font(.title)
-            .foregroundStyle(.secondary)
-    }
-
-    private var shareItemIcon: String {
-        switch viewModel.shareItem {
-        case .image:
-            return "photo"
-        case .video:
-            return "video"
-        case .file:
-            return "doc"
-        }
-    }
-
-    private var shareItemTypeText: String {
-        switch viewModel.shareItem {
-        case .image:
-            return "Image"
-        case .video:
-            return "Video"
-        case .file:
-            return "File"
-        }
-    }
-
-    @ViewBuilder
-    private var messageTextField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Add a message (optional)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            TextField("Type a message", text: $viewModel.messageText, axis: .vertical)
-                .textFieldStyle(.roundedBorder)
-                .lineLimit(3...6)
-        }
-    }
 }
 
 #Preview {
     NavigationStack {
         ComposeMessageView(
-            viewModel: ComposeMessageViewModelImpl(
-                account: .sam,
-                conversation: Conversation(
-                    id: UUID(),
-                    name: "Design Team"
-                ),
-                shareItem: .image(
-                    ImageShareItem(
-                        url: URL(string: "")!,
-                        name: "foo.jpg",
-                        size: 1048
-                    )
-                ),
-                router: RootRouter(),
-                sendMessage: SendMessageUseCaseMock(),
-                onDone: {
-                    print("Message sent")
-                }
+            viewModel: ComposeMessageViewModelMock(
+                conversation: Conversation(name: "iOS Team"),
+                thumbnails: [Thumbnail(imageData: nil, systemIconName: "photo")]
             )
         )
     }
