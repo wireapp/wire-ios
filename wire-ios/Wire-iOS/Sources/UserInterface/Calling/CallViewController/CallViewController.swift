@@ -619,6 +619,9 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         case .toggleReactionsTray:
             WireLogger.calling.debug("😄 request to toggle reactions tray")
             break
+        case .sendReaction(let emoji):
+            // TODO: invoke SendCallReactionUseCase once implemented (WPB-11770)
+            WireLogger.calling.debug("😄 sendReaction: \(emoji)")
         }
 
         updateConfiguration()

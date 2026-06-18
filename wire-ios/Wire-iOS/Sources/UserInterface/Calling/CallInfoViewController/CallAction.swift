@@ -34,4 +34,5 @@ enum CallAction {
     case showParticipantsList
     case updateVideoGridPresentationMode(_ mode: VideoGridPresentationMode)
     case toggleReactionsTray
+    case sendReaction(emoji: String)
 }

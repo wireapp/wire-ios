@@ -25,6 +25,7 @@ import WireLocators
 struct ActiveCallActionsView: View {
 
     let axis: Axis
+    var isReactionsTrayOpen: Bool = false
     let configuration: CallInfoConfiguration?
     let performAction: (CallAction) -> Void
     var onDragHandleTap: () -> Void = {}
@@ -96,7 +97,7 @@ struct ActiveCallActionsView: View {
     private var callReactionButton: some View {
         CallActionButton(
             systemImage: "face.smiling",
-            isSelected: false,
+            isSelected: isReactionsTrayOpen,
             isDestructive: false
         ) { performAction(.toggleReactionsTray) }
         .accessibilityIdentifier(Locators.OngoingCallPage.callReactionButton)

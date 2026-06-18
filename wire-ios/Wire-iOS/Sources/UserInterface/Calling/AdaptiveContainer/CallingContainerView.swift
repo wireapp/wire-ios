@@ -26,9 +26,11 @@ struct CallingContainerView: View {
     @State private var isExpanded: Bool = false
     @State private var dragOffset: CGFloat = 0
     @State private var panelSide: HorizontalEdge = UIDevice.current.twoDimensionOrientation == .landscapeRight ? .leading : .trailing
+    @State private var isReactionsTrayOpen = false
 
     private var landscapePanelWidth: CGFloat {
-        CallPanelView.handleWidth + CallPanelView.buttonsColumnWidth + CallPanelView.participantsColumnWidth
+        let base = CallPanelView.handleWidth + CallPanelView.buttonsColumnWidth + CallPanelView.participantsColumnWidth
+        return base + (isReactionsTrayOpen ? CallPanelView.buttonsColumnWidth : 0)
     }
     private var landscapeCollapsedWidth: CGFloat {
         CallPanelView.handleWidth + CallPanelView.buttonsColumnWidth
@@ -57,6 +59,7 @@ struct CallingContainerView: View {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     isExpanded = false
                     dragOffset = 0
+                    isReactionsTrayOpen = false
                 }
             }
         }
@@ -72,12 +75,13 @@ struct CallingContainerView: View {
         let peekHeight = CallPanelView.handleHeight + CallPanelView.buttonsRowHeight + geo.safeAreaInsets.bottom
         let maxHeight = geo.size.height * 0.7
         let travel = maxHeight - peekHeight
-        let currentOffset = isExpanded ? 0 : travel
+        let trayShift = isReactionsTrayOpen ? CallPanelView.emojiTrayHeight : 0
+        let currentOffset = isExpanded ? 0 : (travel - trayShift)
         let effectiveDrag = viewModel.isPanEnabled ? dragOffset : 0
 
         return VStack(spacing: 0) {
             Spacer()
-            CallPanelView(viewModel: viewModel, isExpanded: $isExpanded, layout: .portrait)
+            CallPanelView(viewModel: viewModel, isExpanded: $isExpanded, isReactionsTrayOpen: $isReactionsTrayOpen, layout: .portrait)
                 .frame(height: maxHeight)
                 .offset(y: currentOffset + effectiveDrag)
                 .gesture(viewModel.isPanEnabled ? portraitDragGesture(travel: travel) : nil)
@@ -115,7 +119,7 @@ struct CallingContainerView: View {
 
         return HStack(spacing: 0) {
             if panelSide == .trailing { Spacer() }
-            CallPanelView(viewModel: viewModel, isExpanded: $isExpanded, layout: .landscape(side: panelSide))
+            CallPanelView(viewModel: viewModel, isExpanded: $isExpanded, isReactionsTrayOpen: $isReactionsTrayOpen, layout: .landscape(side: panelSide))
                 .frame(width: landscapePanelWidth, height: geo.size.height)
                 .offset(x: currentOffset + effectiveDrag)
                 .clipped()

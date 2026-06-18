@@ -37,9 +37,11 @@ struct CallPanelView: View {
     // Portrait constants (mirror landscape dimensions)
     static let handleHeight: CGFloat = 24
     static let buttonsRowHeight: CGFloat = 72
+    static let emojiTrayHeight: CGFloat = 72
 
     @ObservedObject var viewModel: CallingContainerViewModel
     @Binding var isExpanded: Bool
+    @Binding var isReactionsTrayOpen: Bool
     var layout: CallPanelLayout = .portrait
 
     var body: some View {
@@ -56,10 +58,19 @@ struct CallPanelView: View {
     private var portraitBody: some View {
         VStack(spacing: 0) {
             portraitDragHandle
+            if isReactionsTrayOpen {
+                CallReactionsTray(axis: .horizontal) { emoji in
+                    withAnimation(.easeInOut(duration: 0.2)) { isReactionsTrayOpen = false }
+                    perform(.sendReaction(emoji: emoji))
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
             portraitCallButtonsRow
             portraitParticipantsSection
         }
         .background(Color(SemanticColors.View.backgroundDefault))
+        .animation(.easeInOut(duration: 0.2), value: isReactionsTrayOpen)
     }
 
     private var portraitDragHandle: some View {
@@ -82,6 +93,7 @@ struct CallPanelView: View {
     private var portraitCallButtonsRow: some View {
         ActiveCallActionsView(
             axis: .horizontal,
+            isReactionsTrayOpen: isReactionsTrayOpen,
             configuration: viewModel.callInfoConfiguration,
             performAction: perform
         )
@@ -102,15 +114,33 @@ struct CallPanelView: View {
         HStack(spacing: 0) {
             if side == .trailing {
                 landscapeDragHandle
+                if isReactionsTrayOpen {
+                    emojiColumn
+                        .frame(width: Self.buttonsColumnWidth)
+                        .transition(.move(edge: .trailing).combined(with: .opacity))
+                }
                 callButtonsColumn
                 participantsColumn
             } else {
                 participantsColumn
                 callButtonsColumn
+                if isReactionsTrayOpen {
+                    emojiColumn
+                        .frame(width: Self.buttonsColumnWidth)
+                        .transition(.move(edge: .leading).combined(with: .opacity))
+                }
                 landscapeDragHandle
             }
         }
         .background(Color(SemanticColors.View.backgroundDefault))
+        .animation(.easeInOut(duration: 0.2), value: isReactionsTrayOpen)
+    }
+
+    private var emojiColumn: some View {
+        CallReactionsTray(axis: .vertical) { emoji in
+            withAnimation(.easeInOut(duration: 0.2)) { isReactionsTrayOpen = false }
+            perform(.sendReaction(emoji: emoji))
+        }
     }
 
     private var landscapeDragHandle: some View {
@@ -133,6 +163,7 @@ struct CallPanelView: View {
     private var callButtonsColumn: some View {
         ActiveCallActionsView(
             axis: .vertical,
+            isReactionsTrayOpen: isReactionsTrayOpen,
             configuration: viewModel.callInfoConfiguration,
             performAction: perform
         )
@@ -149,6 +180,11 @@ struct CallPanelView: View {
     }
 
     private func perform(_ action: CallAction) {
-        viewModel.callViewController?.callingActionsViewPerformAction(action)
+        switch action {
+        case .toggleReactionsTray:
+            withAnimation(.easeInOut(duration: 0.2)) { isReactionsTrayOpen.toggle() }
+        default:
+            viewModel.callViewController?.callingActionsViewPerformAction(action)
+        }
     }
 }
