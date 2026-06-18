@@ -17,6 +17,7 @@
 //
 
 import avs
+import Combine
 import DifferenceKit
 import UIKit
 import WireCommonComponents
@@ -64,6 +65,11 @@ final class CallGridViewController: UIViewController {
     private var viewCache = [AVSClient: OrientableView]()
     private var networkQualityObserverToken: Any?
     private var networkQuality: NetworkQuality
+    private var reactionsCancellable: AnyCancellable?
+
+    var reactionWallViewModel: CallReactionWallViewModel? {
+        didSet { subscribeToReactions() }
+    }
 
     private let mediaManager: AVSMediaManagerInterface
     private let voiceChannel: VoiceChannel
@@ -605,6 +611,31 @@ extension CallGridViewController {
     /// used by snapshot tests
     func hideHintView() {
         hintView.hideAndStopTimer()
+    }
+}
+
+// MARK: - Reaction Badges
+
+extension CallGridViewController {
+
+    private func subscribeToReactions() {
+        reactionsCancellable = reactionWallViewModel?.reactionsPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] reactions in
+                self?.updateReactionBadges(reactions)
+            }
+    }
+
+    private func updateReactionBadges(_ reactions: [UUID: String]) {
+        for (client, view) in viewCache {
+            let stream = configuration.streams.first { $0.streamId == client }
+                ?? (configuration.floatingStream?.streamId == client ? configuration.floatingStream : nil)
+            guard
+                let userID = stream?.user?.remoteIdentifier,
+                let participantView = view as? BaseCallParticipantView
+            else { continue }
+            participantView.showReaction(reactions[userID])
+        }
     }
 }
 

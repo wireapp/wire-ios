@@ -276,10 +276,12 @@ final class CallViewController: UIViewController {
 
         let viewModel = CallReactionWallViewModel(publisher: publisher, conversationID: conversationID)
         callReactionWallViewModel = viewModel
+        callGridViewController.reactionWallViewModel = viewModel
 
         let wall = CallReactionWall(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: wall)
         hostingController.view.backgroundColor = .clear
+        hostingController.view.isOpaque = false
 
         addChild(hostingController)
         view.insertSubview(hostingController.view, aboveSubview: callGridViewController.view)

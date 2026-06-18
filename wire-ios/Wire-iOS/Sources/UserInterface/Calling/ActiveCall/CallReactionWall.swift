@@ -37,12 +37,13 @@ struct CallReactionWall: View {
                             .foregroundStyle(.white)
                             .shadow(radius: 2)
                     }
-                    .padding(.leading, 16)
-                    .offset(y: item.yOffset)
+                    .offset(x: item.xOffset, y: item.yOffset)
                     .opacity(item.opacity)
                 }
             }
             .frame(width: geo.size.width, height: geo.size.height, alignment: .bottomLeading)
+            .onAppear { viewModel.containerHeight = geo.size.height }
+            .onChange(of: geo.size.height) { _, height in viewModel.containerHeight = height }
         }
         .allowsHitTesting(false)
     }

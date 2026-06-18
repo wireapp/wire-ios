@@ -67,6 +67,20 @@ class BaseCallParticipantView: OrientableView {
     var avatarView = UserImageView(size: .normal)
     private let userSession: UserSession
 
+    private let reactionBadgeLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 28)
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.45)
+        label.layer.cornerRadius = 22
+        label.layer.masksToBounds = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
+        label.alpha = 0
+        label.accessibilityIdentifier = "reactionBadge"
+        return label
+    }()
+
     private var borderLayer = CALayer()
 
     // MARK: - Private Properties
@@ -153,9 +167,26 @@ class BaseCallParticipantView: OrientableView {
         accessibilityHint = isMaximized ? Calling.UserCellMinimize.hint : Calling.UserCellFullscreen.hint
     }
 
+    func showReaction(_ emoji: String?) {
+        if let emoji {
+            reactionBadgeLabel.text = emoji
+            reactionBadgeLabel.isHidden = false
+            UIView.animate(withDuration: 0.2) {
+                self.reactionBadgeLabel.alpha = 1
+            }
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.reactionBadgeLabel.alpha = 0
+            } completion: { _ in
+                self.reactionBadgeLabel.isHidden = true
+            }
+        }
+    }
+
     func setupViews() {
         addSubview(avatarView)
         addSubview(userDetailsView)
+        addSubview(reactionBadgeLabel)
 
         backgroundColor = .graphite
         avatarView.user = stream.user
@@ -172,6 +203,13 @@ class BaseCallParticipantView: OrientableView {
 
     func createConstraints() {
         [avatarView, userDetailsView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        NSLayoutConstraint.activate([
+            reactionBadgeLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            reactionBadgeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            reactionBadgeLabel.widthAnchor.constraint(equalToConstant: 44),
+            reactionBadgeLabel.heightAnchor.constraint(equalToConstant: 44)
+        ])
 
         detailsConstraints = UserDetailsConstraints(
             view: userDetailsView,
