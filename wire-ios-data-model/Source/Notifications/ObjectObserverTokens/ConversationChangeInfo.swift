@@ -52,7 +52,8 @@ extension ZMConversation: ObjectInSnapshot {
             #keyPath(ZMConversation.isDeletedRemotely),
             ZMConversation.messageProtocolKey,
             #keyPath(ZMConversation.oneOnOneUser),
-            #keyPath(ZMConversation.draftMessageData)
+            #keyPath(ZMConversation.draftMessageData),
+            #keyPath(ZMConversation.confidentialityLevel)
         ]
     }
 
@@ -191,6 +192,10 @@ public final class ConversationChangeInfo: ObjectChangeInfo {
 
     public var draftMessageChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMConversation.draftMessageData))
+    }
+
+    public var confidentialityLevelChanged: Bool {
+        changedKeysContain(keys: #keyPath(ZMConversation.confidentialityLevel))
     }
 
     public var conversation: ZMConversation {

@@ -28,7 +28,8 @@ extension ConversationListCell: ZMConversationObserver {
               change.unreadCountChanged ||
               change.connectionStateChanged ||
               change.mutedMessageTypesChanged ||
-              change.messagesChanged else { return }
+              change.messagesChanged ||
+              change.confidentialityLevelChanged else { return }
 
         updateAppearance()
     }
