@@ -23,4 +23,5 @@ jobs:
       notify_secret: WIRE_IOS_NIGHTLY_WEBHOOK
       run_critical_flows: true
       notify: always
+      timeout_minutes: 120
     secrets: inherit
