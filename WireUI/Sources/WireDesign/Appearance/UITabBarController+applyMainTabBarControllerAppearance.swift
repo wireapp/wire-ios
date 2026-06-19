@@ -27,11 +27,9 @@ public extension UITabBarController {
         tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = ColorTheme.Base.secondaryText
 
         let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithDefaultBackground()
-        tabBarAppearance.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
+        tabBarAppearance.configureWithTransparentBackground()
         tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance
 
-        tabBar.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
         tabBar.unselectedItemTintColor = ColorTheme.Base.secondaryText
         tabBar.standardAppearance = tabBarAppearance
     }

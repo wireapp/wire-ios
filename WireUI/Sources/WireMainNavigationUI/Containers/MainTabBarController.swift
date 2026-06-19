@@ -247,7 +247,7 @@ public final class MainTabBarController<
         tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = UIColor.systemGray
 
         let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithDefaultBackground()
+        tabBarAppearance.configureWithTransparentBackground()
         tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance
 
         tabBar.standardAppearance = tabBarAppearance
