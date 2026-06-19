@@ -126,7 +126,11 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         // payloads, JSON) must be escaped — otherwise CocoaLumberjack interprets it as a
         // printf-style format specifier, producing garbage output or crashing.
         let escapedEntry = entry.replacingOccurrences(of: "%", with: "%%")
-        let formatedMessage = DDLogMessage(DDLogMessageFormat(stringLiteral: escapedEntry), level: level, flag: .from(level))
+        let formatedMessage = DDLogMessage(
+            DDLogMessageFormat(stringLiteral: escapedEntry),
+            level: level,
+            flag: .from(level)
+        )
         DDLog.log(asynchronous: true, message: formatedMessage)
     }
 
