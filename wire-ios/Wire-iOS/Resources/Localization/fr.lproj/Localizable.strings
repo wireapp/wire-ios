@@ -1068,6 +1068,7 @@
 "profile.details.blocking_reason" = "Cet utilisateur est bloqué en raison de la conservation à des fins juridiques. [PLUS D'INFOS](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list

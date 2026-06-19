@@ -87,6 +87,8 @@
 "switch_backend_confirmation.show_details" = "Show details";
 "switch_backend.error.title.logged_in" = "サーバを変更することができません";
 "switch_backend.error.message.logged_in" = "あなたはすでにログインしています。サーバを変更するには、すべてのアカウントでログアウトして、もう一度やり直してください";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "メール受信しました。";
 "verification_code.message" = "%@ に送信した認証コードを入力してください";
