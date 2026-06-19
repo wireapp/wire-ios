@@ -22,6 +22,12 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
+private final class FlipCameraButton: UIButton {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        bounds.insetBy(dx: -10, dy: -10).contains(point)
+    }
+}
+
 final class SelfCallParticipantView: BaseCallParticipantView {
 
     var onFlipCamera: (() -> Void)?
@@ -29,7 +35,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     weak var previewView: AVSVideoPreview?
 
     private weak var videoContainerView: AVSVideoContainerView?
-    private let flipCameraButton = UIButton(type: .system)
+    private let flipCameraButton = FlipCameraButton(type: .system)
 
     private static var canFlipCamera: Bool {
         let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
