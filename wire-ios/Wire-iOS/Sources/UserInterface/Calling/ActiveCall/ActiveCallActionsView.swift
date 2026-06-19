@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireLocators
+import WireUtilities
 
 // MARK: - Configuration
 
@@ -59,7 +60,9 @@ struct ActiveCallActionsView: View {
                 muteButton.frame(maxWidth: .infinity, maxHeight: .infinity)
                 videoButton.frame(maxWidth: .infinity, maxHeight: .infinity)
                 speakerButton.frame(maxWidth: .infinity, maxHeight: .infinity)
-                callReactionButton.frame(maxWidth: .infinity, maxHeight: .infinity)
+                if DeveloperFlag.inCallReactions.isOn {
+                    callReactionButton.frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
                 hangupButton.frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -67,12 +70,14 @@ struct ActiveCallActionsView: View {
 
         } else {
             VStack(spacing: 0) {
-                
+
                 HStack(spacing: 0) {
                     muteButton.frame(maxWidth: .infinity)
                     videoButton.frame(maxWidth: .infinity)
                     speakerButton.frame(maxWidth: .infinity)
-                    callReactionButton.frame(maxWidth: .infinity)
+                    if DeveloperFlag.inCallReactions.isOn {
+                        callReactionButton.frame(maxWidth: .infinity)
+                    }
                     hangupButton.frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, 14)

@@ -24,6 +24,7 @@ import WireCommonComponents
 import WireDomain
 import WireLogging
 import WireSyncEngine
+import WireUtilities
 
 protocol CallViewControllerDelegate: AnyObject {
     func callViewControllerDidDisappear(
@@ -268,7 +269,9 @@ final class CallViewController: UIViewController {
         }
 
         view.backgroundColor = .clear
-        setupCallReactionWall()
+        if DeveloperFlag.inCallReactions.isOn {
+            setupCallReactionWall()
+        }
     }
 
     private func setupCallReactionWall() {

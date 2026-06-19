@@ -46,6 +46,7 @@ public enum DeveloperFlag: String, CaseIterable {
     // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     case enableDrivePermissions
     case unSafeLogsForPublic
+    case inCallReactions
 
     public var description: String {
         switch self {
@@ -117,6 +118,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .unSafeLogsForPublic:
             "Turn on to write all logs (including debug and non-public) to disk in release builds"
+
+        case .inCallReactions:
+            "Turn on to enable in-call emoji reactions"
         }
     }
 
