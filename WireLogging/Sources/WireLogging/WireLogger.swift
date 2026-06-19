@@ -78,9 +78,7 @@ public struct WireLogger: LoggerProtocol, Sendable {
     // MARK: - Private Helpers
 
     /// Renders the message to its `String` description exactly once, returning `nil`
-    /// for empty messages so they can be skipped. Passing the rendered `String` down
-    /// avoids each backend logger recomputing `logDescription` (which can be expensive
-    /// for non-trivial `LogConvertible` values).
+    /// for empty messages so they can be skipped.
     private func render(_ message: any LogConvertible) -> String? {
         let rendered = message.logDescription
         return rendered.isEmpty ? nil : rendered
