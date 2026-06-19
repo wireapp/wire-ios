@@ -314,7 +314,7 @@ final class ConversationListViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(stackView)
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.topAnchor.constraint(equalTo: view.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -323,8 +323,7 @@ final class ConversationListViewController: UIViewController {
 
     func configureNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = ColorTheme.Backgrounds.surface
+        appearance.configureWithTransparentBackground()
 
         // Configure appearance for different states
         navigationController?.navigationBar.standardAppearance = appearance

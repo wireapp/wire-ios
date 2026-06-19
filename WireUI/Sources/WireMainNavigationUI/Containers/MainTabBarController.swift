@@ -116,7 +116,7 @@ public final class MainTabBarController<
 
     private func setupTabs() {
         let conversationListNavigationController = UINavigationController()
-        conversationListNavigationController.navigationBar.isTranslucent = false
+        conversationListNavigationController.navigationBar.isTranslucent = true
         self.conversationListNavigationController = conversationListNavigationController
 
         if showFiles {
