@@ -83,6 +83,11 @@ extension Alert {
         message: L10n.Localizable.SwitchBackend.Error.Message.loggedIn
     )
 
+    static let switchBackendBlocked = Alert(
+        title: L10n.Localizable.SwitchBackend.Error.Title.blocked,
+        message: L10n.Localizable.SwitchBackend.Error.Message.blocked
+    )
+
     static let unknownError = Alert(
         title: Title.general,
         message: Message.general
