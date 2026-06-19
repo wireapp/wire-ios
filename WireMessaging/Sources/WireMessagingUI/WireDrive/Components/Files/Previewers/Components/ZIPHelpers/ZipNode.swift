@@ -17,25 +17,11 @@
 //
 
 import Foundation
-import WireCallingDomain
-import WireReusableUIComponents
 
-/// Mock implementation of PasswordValidator for testing and previews
-package final class MockPasswordValidator: PasswordValidator {
-
-    var isPasswordValid_MockValue: Bool
-    var isPasswordValid_Invocations: [String] = []
-
-    init(isPasswordValid: Bool = true) {
-        self.isPasswordValid_MockValue = isPasswordValid
-    }
-
-    func isPasswordValid(_ password: String) -> Bool {
-        isPasswordValid_Invocations.append(password)
-        return isPasswordValid_MockValue
-    }
-
-    var localizedRulesDescription: String? {
-        "Password must be at least 8 characters"
-    }
+struct ZipNode: Identifiable {
+    let id = UUID()
+    let name: String
+    let path: String
+    var children: [ZipNode] = []
+    var isDirectory: Bool = false
 }
