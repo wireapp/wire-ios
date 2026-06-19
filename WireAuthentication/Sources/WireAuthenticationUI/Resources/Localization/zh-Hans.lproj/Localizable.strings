@@ -87,6 +87,8 @@
 "switch_backend_confirmation.show_details" = "显示详情";
 "switch_backend.error.title.logged_in" = "无法切换服务器";
 "switch_backend.error.message.logged_in" = "您已经登录。若要切换到这个服务器，请登出所有账户并重试。";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "您有新邮件";
 "verification_code.message" = "输入我们发送到 %@ 的验证码";
