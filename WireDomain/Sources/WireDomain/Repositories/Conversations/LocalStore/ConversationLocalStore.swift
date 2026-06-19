@@ -1347,6 +1347,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             block(conversation, context)
         }
     }
+    
+    public func conversationConfidentialityLevel(
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async -> ConfidentialityLevel {
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetch(with: conversationID, domain: conversationDomain, in: context)
+            return conversation?.confidentialityLevel ?? .regular
+        }
+    }
 }
 
 // MARK: - Private helpers

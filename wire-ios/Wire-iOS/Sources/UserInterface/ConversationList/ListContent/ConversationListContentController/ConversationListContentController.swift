@@ -418,13 +418,13 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             if let conversation = item as? ZMConversation {
 
                 switch conversation.confidentialityLevel {
-                case .highlySensitive:
+                case .highlySensitive, .sensitive:
                     presentSensitiveChatUnlockView(
                         conversation: conversation,
                         savedScrollToMessage: savedScrollToMessage,
                         savedFocusOnNext: savedFocusOnNext
                     )
-                case .regular, .sensitive:
+                case .regular:
                     await conversationListCoordinator.showConversation(
                         conversation: conversation,
                         scrolledTo: savedScrollToMessage
@@ -450,6 +450,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             conversationName: conversation.displayName ?? "",
             mainColor: conversation.confidentialityLevel == .sensitive ? ColorTheme.Base.warning.color : ColorTheme.Base
                 .error.color,
+            requiresAuthentication: conversation.confidentialityLevel != .sensitive,
             onUnlocked: { [weak self] in
                 guard let self else { return }
                 unlockHostingController?.dismiss(animated: true) {

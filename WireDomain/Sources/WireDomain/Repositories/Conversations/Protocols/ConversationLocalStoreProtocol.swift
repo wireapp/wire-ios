@@ -500,4 +500,8 @@ public protocol ConversationLocalStoreProtocol {
         block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
     ) async
 
+    func conversationConfidentialityLevel(
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async -> ConfidentialityLevel
 }

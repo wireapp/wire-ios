@@ -38,6 +38,9 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
         let isGroupConversation = await context.isGroupConversation(
             conversation: conversation
         )
+        let confidentialityLevel = await context.confidentialityLevel(
+            conversationID: conversationID
+        )
 
         let formattedText = text.content.removingExtremeCombiningCharacters
 
@@ -57,6 +60,7 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle(
+            confidentialityLevel: confidentialityLevel,
             isGroupConversation: isGroupConversation,
             teamName: teamName,
             conversationName: conversationName,
@@ -76,8 +80,15 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
         let body = NotificationBody.singleMessage(
             format
         )
+        
+        let bodyMessage: String = switch confidentialityLevel {
+        case .regular:
+            body.make()
+        case .sensitive, .highlySensitive:
+            "Open to see content"
+        }
 
-        content.body = body.make()
+        content.body = bodyMessage
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo(
@@ -107,6 +118,7 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
     // MARK: - Helpers
 
     private func makeTitle(
+        confidentialityLevel: ConfidentialityLevel,
         isGroupConversation: Bool,
         teamName: String?,
         conversationName: String?,
@@ -130,10 +142,14 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
         }
 
         guard let format else { return nil }
-
-        return NotificationTitle
-            .conversationMessage(format)
-            .make()
+        
+        if confidentialityLevel == .highlySensitive {
+            return "Sensitive conversation"
+        } else {
+            return NotificationTitle
+                .conversationMessage(format)
+                .make()
+        }
     }
 
     private func makeSound() -> UNNotificationSound {
@@ -167,6 +183,13 @@ extension ConversationTextMessageNotificationBuilder {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
         let messageLocalStore: any MessageLocalStoreProtocol
+        
+        func confidentialityLevel(conversationID: ConversationID) async -> ConfidentialityLevel {
+            await conversationLocalStore.conversationConfidentialityLevel(
+                conversationID: conversationID.id,
+                conversationDomain: conversationID.domain
+            )
+        }
 
         func getConversation(
             conversationID: ConversationID

@@ -81,7 +81,10 @@ extension ConversationViewController {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.showInactivityTimerOverlay()
+            // Defer so notification routing (which may present its own auth modal) runs first.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self?.showInactivityTimerOverlay()
+            }
         }
     }
 
@@ -110,8 +113,17 @@ extension ConversationViewController {
         }
     }
 
+    private func hasPresentedViewControllerInHierarchy() -> Bool {
+        var vc: UIViewController? = self
+        while let current = vc {
+            if current.presentedViewController != nil { return true }
+            vc = current.parent
+        }
+        return false
+    }
+
     private func showInactivityTimerOverlay() {
-        guard presentedViewController == nil else { return }
+        guard !hasPresentedViewControllerInHierarchy() else { return }
         guard unlockHostingController == nil else { return }
         if conversation.confidentialityLevel == .sensitive {
             showUnlockView()
@@ -165,8 +177,8 @@ extension ConversationViewController {
     }
 
     func showUnlockView() {
-        guard presentedViewController == nil else { return }
         guard unlockHostingController == nil else { return }
+        guard !hasPresentedViewControllerInHierarchy() else { return }
         let isSensitive = conversation.confidentialityLevel == .sensitive
         let unlockView = SensitiveChatUnlockView(
             conversationName: conversation.displayName ?? "",
