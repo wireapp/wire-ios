@@ -41,7 +41,7 @@ struct CallingContainerView: View {
             let isLandscape = geo.size.width > geo.size.height
             VStack(spacing: 0) {
                 CallHeaderBar(
-                    configuration: viewModel.callInfoConfiguration,
+                    state: viewModel.callHeaderState,
                     onMinimize: viewModel.onHideCallView
                 )
                 ZStack(alignment: .topLeading) {

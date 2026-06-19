@@ -20,35 +20,37 @@ import SwiftUI
 import WireDesign
 import WireLocators
 
+struct CallHeaderState: Equatable {
+    var title: String = ""
+    var statusString: String = ""
+    var shouldShowBitrateLabel: Bool = false
+    var isConstantBitRate: Bool = false
+}
+
 struct CallHeaderBar: View {
 
-    let configuration: (any CallStatusViewInputType)?
+    let state: CallHeaderState
     let onMinimize: () -> Void
-
-    @State private var now: Date = .init()
 
     var body: some View {
         ZStack(alignment: .leading) {
             VStack(spacing: 0) {
-                if let configuration {
-                    Text(configuration.title)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
-                        .accessibilityAddTraits(.isHeader)
+                Text(state.title)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
+                    .accessibilityAddTraits(.isHeader)
 
-                    Text(displayString(for: configuration))
+                Text(state.statusString)
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
+                    .accessibilityIdentifier(Locators.OngoingCallPage.timeLabel.rawValue)
+
+                if state.shouldShowBitrateLabel, BitRateStatus(state.isConstantBitRate) == .constant {
+                    Text(L10n.Localizable.Call.Status.constantBitrate)
                         .font(.system(size: 11, weight: .regular))
-                        .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
-                        .accessibilityIdentifier(Locators.OngoingCallPage.timeLabel.rawValue)
-
-                    if configuration.shouldShowBitrateLabel,
-                       BitRateStatus(configuration.isConstantBitRate) == .constant {
-                        Text(L10n.Localizable.Call.Status.constantBitrate)
-                            .font(.system(size: 11, weight: .regular))
-                            .foregroundColor(Color(uiColor: SemanticColors.Label.textCollectionSecondary))
-                            .accessibilityIdentifier("bitrate-indicator")
-                            .accessibilityValue(BitRateStatus.constant.rawValue)
-                    }
+                        .foregroundColor(Color(uiColor: SemanticColors.Label.textCollectionSecondary))
+                        .accessibilityIdentifier("bitrate-indicator")
+                        .accessibilityValue(BitRateStatus.constant.rawValue)
                 }
             }
             .frame(maxWidth: .infinity, minHeight: 32)
@@ -64,13 +66,5 @@ struct CallHeaderBar: View {
         .padding(.top, 10)
         .padding(.bottom, 6)
         .background(Color(uiColor: SemanticColors.View.backgroundDefault))
-        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { date in
-            now = date
-        }
-    }
-
-    private func displayString(for configuration: any CallStatusViewInputType) -> String {
-        _ = now
-        return configuration.displayString
     }
 }

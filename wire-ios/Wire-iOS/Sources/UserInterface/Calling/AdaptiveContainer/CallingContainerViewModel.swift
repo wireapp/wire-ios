@@ -17,7 +17,6 @@
 //
 
 import Combine
-import UIKit
 import WireDataModel
 import WireLogging
 import WireSyncEngine
@@ -25,6 +24,7 @@ import WireSyncEngine
 final class CallingContainerViewModel: ObservableObject {
 
     @Published var callInfoConfiguration: CallInfoConfiguration?
+    @Published var callHeaderState: CallHeaderState = .init()
     @Published var isIncomingCall: Bool = false
     @Published var isPanEnabled: Bool = true
     @Published var participants: CallParticipantsList = []
@@ -74,10 +74,20 @@ final class CallingContainerViewModel: ObservableObject {
             }
         }
         DispatchQueue.main.async { [weak self] in
-            self?.callInfoConfiguration = configuration
-            self?.isIncomingCall = configuration.state.isIncoming
-            self?.isPanEnabled = !configuration.state.isIncoming
+            self?.apply(configuration)
         }
+    }
+
+    private func apply(_ configuration: CallInfoConfiguration) {
+        callInfoConfiguration = configuration
+        callHeaderState = CallHeaderState(
+            title: configuration.title,
+            statusString: configuration.displayString,
+            shouldShowBitrateLabel: configuration.shouldShowBitrateLabel,
+            isConstantBitRate: configuration.isConstantBitRate
+        )
+        isIncomingCall = configuration.state.isIncoming
+        isPanEnabled = !configuration.state.isIncoming
     }
 
     func updateVoiceChannelIfNeeded() {
@@ -95,11 +105,11 @@ final class CallingContainerViewModel: ObservableObject {
 
     private func startCallDurationTimer() {
         stopCallDurationTimer()
-        callDurationTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+        callDurationTimer = .scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             guard let self,
                   let configuration = callInfoConfiguration,
                   case .established = configuration.state else { return }
-            callInfoConfiguration = configuration
+            callHeaderState.statusString = configuration.displayString
         }
     }
 
