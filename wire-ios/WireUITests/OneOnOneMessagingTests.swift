@@ -107,6 +107,10 @@ final class OneOnOneMessagingTests: WireUITestCase {
         )
 
         // THEN
+        XCTAssertTrue(
+            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 5),
+            "Expected at least one message to appear, but no message labels were found"
+        )
         let receivedMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             receivedMessages.contains(message),
