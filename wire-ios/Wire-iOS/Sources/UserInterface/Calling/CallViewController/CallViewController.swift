@@ -80,7 +80,11 @@ final class CallViewController: UIViewController {
         Settings.shared[.callingConstantBitRate] == true
     }
 
-    weak var configurationObserver: CallInfoConfigurationObserver?
+    weak var configurationObserver: CallInfoConfigurationObserver? {
+        didSet {
+            configurationObserver?.didUpdateConfiguration(configuration: callInfoConfiguration)
+        }
+    }
 
     init(
         voiceChannel: VoiceChannel,

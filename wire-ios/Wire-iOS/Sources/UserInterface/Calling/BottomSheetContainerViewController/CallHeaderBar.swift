@@ -25,6 +25,8 @@ struct CallHeaderBar: View {
     let configuration: (any CallStatusViewInputType)?
     let onMinimize: () -> Void
 
+    @State private var now: Date = .init()
+
     var body: some View {
         ZStack(alignment: .leading) {
             VStack(spacing: 0) {
@@ -34,7 +36,7 @@ struct CallHeaderBar: View {
                         .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                         .accessibilityAddTraits(.isHeader)
 
-                    Text(configuration.displayString)
+                    Text(displayString(for: configuration))
                         .font(.system(size: 11, weight: .regular))
                         .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                         .accessibilityIdentifier(Locators.OngoingCallPage.timeLabel.rawValue)
@@ -62,5 +64,13 @@ struct CallHeaderBar: View {
         .padding(.top, 10)
         .padding(.bottom, 6)
         .background(Color(uiColor: SemanticColors.View.backgroundDefault))
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { date in
+            now = date
+        }
+    }
+
+    private func displayString(for configuration: any CallStatusViewInputType) -> String {
+        _ = now
+        return configuration.displayString
     }
 }

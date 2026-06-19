@@ -73,9 +73,11 @@ final class CallingContainerViewModel: ObservableObject {
             default: break
             }
         }
-        callInfoConfiguration = configuration
-        isIncomingCall = configuration.state.isIncoming
-        isPanEnabled = !configuration.state.isIncoming
+        DispatchQueue.main.async { [weak self] in
+            self?.callInfoConfiguration = configuration
+            self?.isIncomingCall = configuration.state.isIncoming
+            self?.isPanEnabled = !configuration.state.isIncoming
+        }
     }
 
     func updateVoiceChannelIfNeeded() {
