@@ -127,13 +127,17 @@ struct SensitiveChatUnlockView: View {
                     Button {
                         authenticateWithBiometrics()
                     } label: {
-                        Text("Unlock to View")
-                            .font(.headline)
-                            .foregroundStyle(ColorTheme.Base.onWarning.color)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 48)
-                            .background(mainColor)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                        HStack(spacing: 8) {
+                            Image(systemName: biometricIconName)
+                                .font(.system(.headline, weight: .semibold))
+                            Text("Unlock to View")
+                                .font(.headline)
+                        }
+                        .foregroundStyle(ColorTheme.Base.onWarning.color)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(mainColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                     .padding(.horizontal, 32)
                     .padding(.bottom, 12)
@@ -156,6 +160,20 @@ struct SensitiveChatUnlockView: View {
                 Spacer()
                     .frame(height: 40)
             }
+        }
+    }
+
+    // MARK: - Biometrics
+
+    private var biometricIconName: String {
+        let context = LAContext()
+        var error: NSError?
+        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        switch context.biometryType {
+        case .faceID: return "faceid"
+        case .touchID: return "touchid"
+        case .opticID: return "opticid"
+        default: return "lock.fill"
         }
     }
 
