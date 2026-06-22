@@ -66,19 +66,16 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         }
 
         defer { endBackgroundTask(taskID) }
-        let result = try await withTaskCancellationHandler {
+        return try await withTaskCancellationHandler {
             try await task.value
         } onCancel: {
             task.cancel()
         }
-
-        return result
     }
-
 
     private nonisolated func endBackgroundTask(_ identifier: TaskID) {
         guard identifier.value != .invalid else { return }
-        
+
         application.endBackgroundTask(identifier.value)
         identifier.value = .invalid
     }
