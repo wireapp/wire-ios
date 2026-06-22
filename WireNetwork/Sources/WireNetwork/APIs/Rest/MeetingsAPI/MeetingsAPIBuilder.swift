@@ -69,6 +69,8 @@ public struct MeetingsAPIBuilder {
             MeetingsAPIV14(apiService: apiService)
         case .v15:
             MeetingsAPIV15(apiService: apiService)
+        case .v16:
+            MeetingsAPIV16(apiService: apiService)
         }
     }
 }
