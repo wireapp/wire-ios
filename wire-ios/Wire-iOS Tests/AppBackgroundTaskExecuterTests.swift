@@ -30,12 +30,12 @@ struct AppBackgroundTaskExecuterTests {
     let sut: AppBackgroundTaskExecuter
 
     init() {
-        application = MockBackgroundTaskApplication()
+        self.application = MockBackgroundTaskApplication()
         application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, _ in
             UIBackgroundTaskIdentifier(rawValue: 99)
         }
         application.endBackgroundTask_MockMethod = { _ in }
-        sut = AppBackgroundTaskExecuter(application: application)
+        self.sut = AppBackgroundTaskExecuter(application: application)
     }
 
     @Test
@@ -59,7 +59,7 @@ struct AppBackgroundTaskExecuterTests {
     @Test
     func `passes the provided name to beginBackgroundTask`() async throws {
         // given, when
-        _ = try await sut.execute(name: "my-task") { Void() }
+        _ = try await sut.execute(name: "my-task") { () }
 
         // then
         let names = application.beginBackgroundTaskWithNameExpirationHandler_Invocations.map(\.taskName)
@@ -69,7 +69,7 @@ struct AppBackgroundTaskExecuterTests {
     @Test
     func `defaults a nil name to "unnamed"`() async throws {
         // given, when
-        _ = try await sut.execute(name: nil) { Void() }
+        _ = try await sut.execute(name: nil) { () }
 
         // then
         let names = application.beginBackgroundTaskWithNameExpirationHandler_Invocations.map(\.taskName)
@@ -84,7 +84,7 @@ struct AppBackgroundTaskExecuterTests {
         }
 
         // when
-        _ = try await sut.execute(name: "task") { Void() }
+        _ = try await sut.execute(name: "task") { () }
 
         // then
         #expect(application.endBackgroundTask_Invocations == [UIBackgroundTaskIdentifier(rawValue: 10)])
@@ -131,7 +131,7 @@ struct AppBackgroundTaskExecuterTests {
                 try await withTaskCancellationHandler {
                     try await Task.sleep(for: .seconds(10))
                 } onCancel: {
-                    didCancel.withLock { $0 = true}
+                    didCancel.withLock { $0 = true }
                 }
             }
         }
