@@ -317,6 +317,7 @@
 "conversation.input_bar.verified" = "Verified";
 "conversation.input_bar.placeholder" = "Type a message";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Swipe up to send";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tap to send";
