@@ -22,6 +22,7 @@ package import WireFoundation
 import Foundation
 
 @Observable
+@MainActor
 package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
@@ -32,6 +33,7 @@ package final class MeetingsViewModel {
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+    private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
 
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 10
@@ -43,11 +45,13 @@ package final class MeetingsViewModel {
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
+        self.deleteMeetingUseCase = deleteMeetingUseCase
     }
 
     // MARK: - Public Interface
@@ -74,6 +78,11 @@ package final class MeetingsViewModel {
 
     func formatTimeRange(for meeting: Meeting) -> String {
         formatter.timeRange(from: meeting.start, to: meeting.end)
+    }
+
+    func deleteMeeting(_ meeting: Meeting) async throws {
+        try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
+        loadedMeetings.removeAll { $0.id == meeting.id }
     }
 
     // MARK: - Private Methods

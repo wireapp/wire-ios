@@ -63,8 +63,8 @@ struct MeetingsView: View {
                 onEdit: { _ in
                     // TODO: [WPB-25501] Implement UI
                 },
-                onDelete: { _ in
-                    // TODO: [WPB-25514] Implement UI
+                onDelete: { meeting in
+                    Task { try? await viewModel.deleteMeeting(meeting) }
                 }
             )
 
@@ -127,7 +127,8 @@ private struct GroupedSections: View {
         viewModel: MeetingsViewModel(
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase()
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
         )
     )
 }
@@ -139,5 +140,11 @@ private struct PreviewFetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase
     func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings {
         .init(meetings: meetings, hasMore: false, nextOffset: 0)
     }
+
+}
+
+private struct PreviewDeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
+
+    func invoke(meetingID: UUID) async throws {}
 
 }

@@ -31,12 +31,14 @@ public struct WireMeetingsFactory {
 
     @MainActor
     public func makeMeetingsView() -> UIViewController {
+        let repository = MeetingsRepository.demo()
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
-                repository: MeetingsRepository.demo(),
+                repository: repository,
                 currentDateProvider: .system
-            )
+            ),
+            deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository)
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))

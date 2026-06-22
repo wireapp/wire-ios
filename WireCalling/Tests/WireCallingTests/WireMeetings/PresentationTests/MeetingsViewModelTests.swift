@@ -25,12 +25,14 @@ import WireFoundationSupport
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
+@MainActor
 @Suite("MeetingsViewModel Tests")
 struct MeetingsViewModelTests {
 
     private let mockDateProvider: CurrentDateProvidingMock
     private let formatter: MeetingsFormatter
     private let upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock
+    private let deleteMeetingUseCase: DeleteMeetingUseCaseProtocolMock
     private let viewModel: MeetingsViewModel
 
     init() throws {
@@ -38,10 +40,12 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
         self.upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
+        self.deleteMeetingUseCase = DeleteMeetingUseCaseProtocolMock()
         self.viewModel = MeetingsViewModel(
             currentDateProvider: mockDateProvider,
             formatter: formatter,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase
         )
     }
 
@@ -179,6 +183,41 @@ struct MeetingsViewModelTests {
 
         // Second day
         #expect(groups[1].meetings.map(\.title) == ["Next day"])
+    }
+
+    // MARK: - deleteMeeting
+
+    @Test("deleteMeeting calls the use case with the correct ID and removes the meeting")
+    func deleteMeeting_callsUseCaseAndRemovesMeeting() async throws {
+        // Given
+        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [meeting], hasMore: false, nextOffset: 1)
+        }
+        viewModel.loadInitialData()
+        #expect(viewModel.loadedMeetings.count == 1)
+
+        // When
+        try await viewModel.deleteMeeting(meeting)
+
+        // Then
+        #expect(deleteMeetingUseCase.invokeMeetingIDUUIDCallsCount == 1)
+        #expect(deleteMeetingUseCase.invokeMeetingIDUUIDReceivedMeetingID == meeting.id)
+        #expect(viewModel.loadedMeetings.isEmpty)
+    }
+
+    @Test("deleteMeeting propagates errors from the use case")
+    func deleteMeeting_propagatesError() async {
+        // Given
+        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        struct DeleteError: Error {}
+        deleteMeetingUseCase.invokeMeetingIDUUIDThrowableError = DeleteError()
+
+        // When / Then
+        await #expect(throws: DeleteError.self) {
+            try await viewModel.deleteMeeting(meeting)
+        }
+        #expect(viewModel.loadedMeetings.isEmpty)
     }
 
     // MARK: - Formatting

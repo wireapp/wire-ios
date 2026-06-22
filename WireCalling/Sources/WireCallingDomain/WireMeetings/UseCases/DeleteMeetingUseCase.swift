@@ -18,14 +18,16 @@
 
 package import Foundation
 
-// sourcery: AutoMockable
-/// Repository for accessing Meetings
-package protocol MeetingsRepositoryProtocol: Sendable {
+package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
+    private let repository: any MeetingsRepositoryProtocol
 
-    func hasUpcomingMeetings(after date: Date) -> Bool
+    package init(repository: any MeetingsRepositoryProtocol) {
+        self.repository = repository
+    }
 
-    func deleteMeeting(meetingID: UUID) async throws
+    package func invoke(meetingID: UUID) async throws {
+        try await repository.deleteMeeting(meetingID: meetingID)
+    }
 
 }

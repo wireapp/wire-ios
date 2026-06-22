@@ -16,16 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
 // sourcery: AutoMockable
-/// Repository for accessing Meetings
-package protocol MeetingsRepositoryProtocol: Sendable {
+/// Deletes a meeting by its ID.
+package protocol DeleteMeetingUseCaseProtocol: Sendable {
 
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
-
-    func hasUpcomingMeetings(after date: Date) -> Bool
-
-    func deleteMeeting(meetingID: UUID) async throws
+    func invoke(meetingID: UUID) async throws
 
 }

@@ -29,7 +29,7 @@ public import WireFoundation
 
 public struct Meeting: Equatable, Sendable {
 
-    public let id: UUID
+    public let id: QualifiedID
 
     public let title: String
 
@@ -42,7 +42,7 @@ public struct Meeting: Equatable, Sendable {
     public let members: [Member]
 
     public init(
-        id: UUID,
+        id: QualifiedID,
         title: String,
         start: Date,
         end: Date,

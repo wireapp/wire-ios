@@ -46,6 +46,8 @@ package final class MeetingsRepository: MeetingsRepositoryProtocol {
         meetingsSource().contains { $0.start > date }
     }
 
+    package func deleteMeeting(meetingID: QualifiedID) async throws {}
+
 }
 
 package extension MeetingsRepository {

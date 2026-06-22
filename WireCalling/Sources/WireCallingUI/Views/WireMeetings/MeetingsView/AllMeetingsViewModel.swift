@@ -25,6 +25,7 @@ import WireCallingDomainSupport
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
 @Observable
+@MainActor
 package final class AllMeetingsViewModel {
 
     package let meetingsViewModel: MeetingsViewModel
@@ -35,12 +36,14 @@ package final class AllMeetingsViewModel {
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase
         )
     }
 
