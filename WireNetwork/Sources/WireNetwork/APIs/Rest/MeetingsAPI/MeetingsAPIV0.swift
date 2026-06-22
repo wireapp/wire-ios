@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
 
     let apiService: any APIServiceProtocol
@@ -32,7 +30,7 @@ class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
 
     // MARK: - Delete meeting
 
-    func deleteMeeting(meetingID: UUID) async throws {
+    func deleteMeeting(meetingID: QualifiedID) async throws {
         throw MeetingsAPIError.unsupportedEndpointForAPIVersion
     }
 

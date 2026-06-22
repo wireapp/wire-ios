@@ -36,4 +36,8 @@ public enum MeetingsAPIError: Error {
 
     case invalidRequest
 
+    /// The authenticated user does not have permission to perform this action.
+
+    case accessDenied
+
 }

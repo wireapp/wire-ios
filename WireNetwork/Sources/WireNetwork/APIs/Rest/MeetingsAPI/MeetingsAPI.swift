@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning meetings.
 public protocol MeetingsAPI {
@@ -26,6 +24,6 @@ public protocol MeetingsAPI {
     ///
     /// - Parameter meetingID: The id of the conference.
 
-    func deleteMeeting(meetingID: UUID) async throws
+    func deleteMeeting(meetingID: QualifiedID) async throws
 
 }
