@@ -33,7 +33,10 @@ public struct PassthroughTaskExecuter: BackgroundTaskExecuter {
 
     public init() {}
 
-    public func execute<T>(name: String?, operation: sending @escaping () async throws -> T) async throws -> T {
+    public func execute<T: Sendable>(
+        name: String?,
+        operation: sending @escaping () async throws -> T
+    ) async throws -> T {
         try await operation()
     }
 
