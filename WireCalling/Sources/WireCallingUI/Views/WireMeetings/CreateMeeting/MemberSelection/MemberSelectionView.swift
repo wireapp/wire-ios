@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCallingDomain
+import WireDesign
 import WireFoundation
 
 struct MemberSelectionView: View {
@@ -55,7 +56,9 @@ struct MemberSelectionView: View {
                     )
                 }
             }
-            .listStyle(.plain)
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(ColorTheme.Backgrounds.background.color)
             .searchable(
                 text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),
