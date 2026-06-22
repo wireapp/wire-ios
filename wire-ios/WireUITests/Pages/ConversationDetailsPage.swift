@@ -59,7 +59,7 @@ class ConversationDetailsPage: PageModel {
     }
 
     func userCell(named name: String) -> XCUIElement {
-        let predicate = NSPredicate(format: "label == %@", name)
+        let predicate = NSPredicate(format: "label CONTAINS %@", name)
         return userCells.matching(predicate).firstMatch
     }
 
