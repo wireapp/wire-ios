@@ -652,7 +652,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let proxy = environment.proxy else { return }
         proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
-            try proxyCredentials.persist()
+            try proxyCredentials?.persist()
             unauthenticatedSessionFactory.updateProxy(username: username, password: password)
         } catch {
             Logging.network.error("proxy credentials could not be saved - \(error.localizedDescription)")
