@@ -94,8 +94,8 @@ class AdminPromotionTests: WireUITestCase {
         )
 
         // The conversation has been deleted
-        XCTAssertFalse(
-            conversationsPage.conversationCell(named: groupName).waitForNonExistence(timeout: 2),
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: groupName).waitForNonExistence(timeout: 0.5),
             "Conversation should be deleted"
         )
     }
