@@ -56,7 +56,7 @@ struct MemberSelectionView: View {
                     )
                 }
             }
-            .listStyle(.insetGrouped)
+            .listStyle(.grouped)
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
             .searchable(
