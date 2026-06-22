@@ -22,6 +22,20 @@ import UIKit
 import WireLogging
 import WireSystem
 
+/// The subset of `UIApplication`'s background task APIs that `AppBackgroundTaskExecuter` depends on.
+// sourcery: AutoMockable
+public protocol BackgroundTaskApplication: AnyObject, Sendable {
+
+    nonisolated func beginBackgroundTask(
+        withName taskName: String?,
+        expirationHandler handler: (@MainActor @Sendable () -> Void)?
+    ) -> UIBackgroundTaskIdentifier
+
+    nonisolated func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier)
+}
+
+extension UIApplication: BackgroundTaskApplication {}
+
 /// A `BackgroundTaskExecuter` that uses `UIApplication`'s background task APIs to execute the provided operation in
 /// the background.
 /// - warning: This executer should only be used from the main app.
@@ -36,9 +50,9 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         }
     }
 
-    private let application: UIApplication
+    private let application: any BackgroundTaskApplication
 
-    public init(application: UIApplication) {
+    public init(application: any BackgroundTaskApplication) {
         self.application = application
     }
 
