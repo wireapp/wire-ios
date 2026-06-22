@@ -75,7 +75,7 @@ final class DetermineAuthMethodViewModelTests: XCTestCase {
 
         // then
         try XCTAssertCount(router.navigate_Invocations, count: 1)
-        let destination = try XCTUnwrap(router.navigate_Invocations[0] as? DetermineAuthMethodDestination)
+        let destination = try XCTUnwrap(router.navigate_Invocations.first as? DetermineAuthMethodDestination)
         XCTAssertEqual(
             destination,
             .login(email: "sam@example.com", didDetectDomainConflict: false, environment: environment)
