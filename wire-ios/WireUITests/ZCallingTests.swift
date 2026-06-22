@@ -138,6 +138,7 @@ final class ZCallingTests: WireUITestCase {
         }
     }
 
+    /// [critical]
     @MainActor
     func testGroupCallInitiateMinimizeMaximizeAndHangUp_TC_8879_8889_8890_8885() async throws {
         // GIVEN

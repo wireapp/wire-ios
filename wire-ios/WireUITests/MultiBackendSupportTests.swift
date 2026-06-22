@@ -76,6 +76,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testSwitchingAccounts_TC_8941() async throws {
         // Create user A on staging with a single conversation

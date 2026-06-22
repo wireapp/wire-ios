@@ -124,6 +124,7 @@ final class PersonalUsersTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testBlockAndDeleteUser_TC_8867_9450() async throws {
 
