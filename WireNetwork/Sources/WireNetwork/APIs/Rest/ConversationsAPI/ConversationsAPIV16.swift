@@ -16,45 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents the backend API versions implemented by the client.
+final class ConversationsAPIV16: ConversationsAPIV15 {
 
-@objc
-public enum APIVersion: Int32 {
-    case v0
-    case v1
-    case v2
-    case v3
-    case v4
-    case v5
-    case v6
-    case v7
-    case v8
-    case v9
-    case v10
-    case v11
-    case v12
-    case v13
-    case v14
-    case v15
-    case v16
-}
-
-// MARK: - CaseIterable
-
-extension APIVersion: CaseIterable {}
-
-// MARK: - Comparable
-
-extension APIVersion: Comparable {
-
-    public static func < (lhs: Self, rhs: Self) -> Bool {
-        lhs.rawValue < rhs.rawValue
+    override var apiVersion: APIVersion {
+        .v16
     }
 
-}
-
-public extension APIVersion {
-    var useQualifiedIds: Bool {
-        self != .v0
-    }
 }
