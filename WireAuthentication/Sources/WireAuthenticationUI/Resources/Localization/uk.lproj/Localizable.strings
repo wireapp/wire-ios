@@ -87,6 +87,8 @@
 "switch_backend_confirmation.show_details" = "Show details";
 "switch_backend.error.title.logged_in" = "Не вдалося переключити сервер";
 "switch_backend.error.message.logged_in" = "Ви вже увійшли. Вийдіть з усіх акаунтів та повторіть спробу, щоб переключитися на інший сервер.";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "Ви отримали нового листа";
 "verification_code.message" = "Введіть код, який ми вислали на %@.";

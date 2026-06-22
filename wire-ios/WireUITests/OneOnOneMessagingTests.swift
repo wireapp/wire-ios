@@ -109,6 +109,10 @@ final class OneOnOneMessagingTests: WireUITestCase {
         )
 
         // THEN
+        XCTAssertTrue(
+            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 5),
+            "Expected at least one message to appear, but no message labels were found"
+        )
         let receivedMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             receivedMessages.contains(message),
@@ -173,6 +177,40 @@ final class OneOnOneMessagingTests: WireUITestCase {
             activeConversationPage.fileAttachment(name: "TESTVIDEO", type: "MP4").waitForExistence(timeout: 5),
             "Expected MP4 video attachment not found"
         )
+    }
+
+    @MainActor
+    func testSendAndReceiveFileInOneOnOneConversation_TC_8823_8830() async throws {
+
+        // GIVEN
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
+        let member = try XCTUnwrap(teamMembers.first)
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let activeConversationPage = try app.loginUser(email: member.email, password: member.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .openUserDetailsInContactList()
+            .tapStartConversationButton()
+
+        // WHEN
+        activeConversationPage.uploadFile()
+
+        // THEN - file is sent
+        activeConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+
+        let receivedConversationPage = try activeConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
+
+        // THEN - file is received
+        receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
     @MainActor

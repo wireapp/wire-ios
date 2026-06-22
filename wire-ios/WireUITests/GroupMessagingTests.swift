@@ -301,6 +301,38 @@ final class GroupMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testSendAndReceiveFileInGroupConversation_TC_8837_8844() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+
+        _ = try login(user: groupTeam.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        // WHEN
+        let activeConversationPage = try app.loginUser(
+            email: groupTeam.teamMember.email,
+            password: groupTeam.teamMember.password
+        )
+        .acceptPopup()
+        .openConversation()
+        .uploadFile()
+
+        // THEN - file is sent
+        activeConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+
+        let receivedConversationPage = try activeConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: groupTeam.teamOwner.name)
+            .openConversation()
+
+        // THEN - file is received
+        receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+    }
+
+    @MainActor
     func testSendPingInGroupConversation_TC_8838() async throws {
 
         // GIVEN
