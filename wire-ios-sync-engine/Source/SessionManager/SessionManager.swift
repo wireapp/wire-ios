@@ -1248,32 +1248,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    // Creates the user session for @c account given, calls @c completion when done.
-    @MainActor
-    private func startBackgroundSession(
-        for account: Account,
-        with coreDataStack: CoreDataStack,
-        journal: Journal,
-        logFilesProvider: LogFilesProviding
-    ) async -> ZMUserSession {
-        guard let newSession = await createUserSession(
-            for: account,
-            with: coreDataStack,
-            journal: journal,
-            logFilesProvider: logFilesProvider
-        ) else {
-            preconditionFailure("Unable to create session for \(account)")
-        }
-
-        finishSettingUpUserSession(
-            account: account,
-            newSession: newSession,
-            coreDataStack: coreDataStack
-        )
-
-        return newSession
-    }
-
     @MainActor
     private func finishSettingUpUserSession(
         account: Account,
