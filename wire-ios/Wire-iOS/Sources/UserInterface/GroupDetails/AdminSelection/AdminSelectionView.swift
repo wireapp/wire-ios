@@ -171,7 +171,7 @@ private struct AdminCandidateRow: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(Locators.AdminSelectionPage.userCell.rawValue)
         .accessibilityHint(L10n.Accessibility.AdminSelection.CandidateRow.hint)
-        .accessibilityAddTraits([.isButton, isSelected ? .isSelected : []])
+        .accessibilityAddTraits([isSelected ? .isSelected : []])
     }
 }
 
