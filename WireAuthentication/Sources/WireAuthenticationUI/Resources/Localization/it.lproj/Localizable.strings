@@ -87,6 +87,8 @@
 "switch_backend_confirmation.show_details" = "Mostra dettagli";
 "switch_backend.error.title.logged_in" = "Impossibile cambiare server";
 "switch_backend.error.message.logged_in" = "Sei già loggato. Per connettersi a questo server, scollegati da tutti gli account e prova di nuovo.";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "C'è posta per te";
 "verification_code.message" = "Inserisci il codice di verifica che abbiamo inviato a %@.";
