@@ -112,7 +112,7 @@ final class PostContent {
             semaphore.signal()
         }
 
-        // Keep the notification service alive until posting content is cancelled.
+        // Keep the share extension alive until posting content is cancelled.
         ProcessInfo.processInfo.performExpiringActivity(withReason: "cancelling ongoing task") { isExpired in
             if isExpired {
                 semaphore.signal()
