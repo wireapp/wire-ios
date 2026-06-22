@@ -296,4 +296,7 @@
    <FileRef
       location = "group:WirePlugins">
    </FileRef>
+   <FileRef
+      location = "group:swagger.json">
+   </FileRef>
 </Workspace>
