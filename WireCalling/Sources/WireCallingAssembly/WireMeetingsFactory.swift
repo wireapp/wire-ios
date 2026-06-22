@@ -17,10 +17,10 @@
 //
 
 public import UIKit
+public import WireCallingDomain
 
 import SwiftUI
 import WireCallingData
-import WireCallingDomain
 import WireCallingUI
 import WireFoundation
 
@@ -30,7 +30,9 @@ public struct WireMeetingsFactory {
     public init() {}
 
     @MainActor
-    public func makeMeetingsView() -> UIViewController {
+    public func makeMeetingsView(
+        memberRepository: any MemberRepositoryProtocol
+    ) -> UIViewController {
         let repository = MeetingsRepository.demo()
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
@@ -39,6 +41,7 @@ public struct WireMeetingsFactory {
                 currentDateProvider: .system
             ),
             deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository)
+            memberRepository: memberRepository
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))

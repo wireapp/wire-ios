@@ -28,16 +28,18 @@ import WireCallingDomainSupport
 @MainActor
 package final class AllMeetingsViewModel {
 
+    let memberRepository: any MemberRepositoryProtocol
+
     package let meetingsViewModel: MeetingsViewModel
 
-    var isCreateInstantMeetingPresented: Bool = false
-    var isScheduleMeetingPresented: Bool = false
+    var presentedFormMode: CreateMeetingFormViewModel.Mode?
 
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        memberRepository: any MemberRepositoryProtocol
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
@@ -45,24 +47,21 @@ package final class AllMeetingsViewModel {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase
         )
+        self.memberRepository = memberRepository
     }
 
     // MARK: - Public Interface
 
     func createInstantMeetingTapped() {
-        isCreateInstantMeetingPresented = true
+        presentedFormMode = .instant
     }
 
     func scheduleMeetingTapped() {
-        isScheduleMeetingPresented = true
+        presentedFormMode = .scheduled
     }
 
-    func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel()
-    }
-
-    func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel()
+    func makeMeetingFormViewModel(mode: CreateMeetingFormViewModel.Mode) -> CreateMeetingFormViewModel {
+        CreateMeetingFormViewModel(mode: mode, memberRepository: memberRepository)
     }
 
 }
