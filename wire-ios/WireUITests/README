@@ -74,12 +74,16 @@ Run selected UI tests through fastlane:
 bundle exec fastlane run_uitests tags:critical
 bundle exec fastlane run_uitests tags:"calling|core-messenger|collaboration"
 bundle exec fastlane run_uitests tags:"critical,calling|core-messenger|collaboration"
+bundle exec fastlane run_uitests tags:"!critical"
 ```
 
-In the fastlane selector, `,` means AND and `|` means OR. The selector syntax does not use brackets; brackets are only for Swift marker comments. For example,
+In the fastlane selector, `,` means AND, `|` means OR, and `!` means exclude.
+The selector syntax does not use brackets; brackets are only for Swift marker comments. For example,
 
 `tags:"critical,calling|core-messenger|collaboration"`
 
 runs tests that are tagged `critical` and also tagged with at least one of `calling`, `core-messenger`, or `collaboration`.
 
-Quote selectors that contain `|` so the shell does not treat it as a pipe.
+`tags:"!critical"` runs all UI tests except tests tagged `critical`.
+
+Quote selectors that contain `|` or `!` so the shell does not treat them as special characters.

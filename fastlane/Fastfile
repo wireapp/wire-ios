@@ -124,10 +124,15 @@ platform :ios do
 
     desc "List UITest identifiers and their tags"
     lane :list_uitest_tags do |options|
-        tests = ui_test_tests_matching_tag_groups(
-            tag_groups: parse_ui_test_tag_expression(options[:tags]),
-            excluded_tags: normalize_ui_test_tags(options[:exclude_tags])
-        )
+        excluded_tags = excluded_ui_test_tags(options[:tags])
+        tests = if excluded_tags.any?
+                    ui_test_metadata.reject { |test| (excluded_tags.to_set & test[:tags].to_set).any? }
+                else
+                    ui_test_tests_matching_tag_groups(
+                        tag_groups: parse_ui_test_tag_expression(options[:tags]),
+                        excluded_tags: normalize_ui_test_tags(options[:exclude_tags])
+                    )
+                end
 
         tests.each do |test|
             tag_list = test[:tags].empty? ? "untagged" : test[:tags].join(",")
@@ -621,6 +626,14 @@ platform :ios do
     end
 
     def ui_test_filter_options(options)
+        excluded_tags = excluded_ui_test_tags(options[:tags])
+        if excluded_tags.any?
+            skipped_tests = ui_test_tests_matching_any_tag(excluded_tags)
+            identifiers = skipped_tests.map { |test| test[:identifier] }
+            UI.message("Running UI tests excluding tags: #{excluded_tags.map { |tag| "!#{tag}" }.join(',')}")
+            return identifiers.empty? ? {} : { skip_testing: identifiers }
+        end
+
         tag_groups = parse_ui_test_tag_expression(options[:tags])
         return {} if tag_groups.empty?
 
@@ -640,6 +653,14 @@ platform :ios do
             test_tags = test[:tags].to_set
             tag_groups.all? { |group| group.any? { |tag| test_tags.include?(tag) } } &&
                 (blocked_tags & test_tags).empty?
+        end
+    end
+
+    def ui_test_tests_matching_any_tag(tags)
+        requested_tags = tags.to_set
+
+        ui_test_metadata.select do |test|
+            (requested_tags & test[:tags].to_set).any?
         end
     end
 
@@ -709,6 +730,21 @@ platform :ios do
             .flat_map { |tag_expression| tag_expression.to_s.split(",") }
             .map { |group| normalize_ui_test_tags(group.split("|")) }
             .reject(&:empty?)
+    end
+
+    def excluded_ui_test_tags(value)
+        tags = Array(value)
+            .flat_map { |tag_expression| tag_expression.to_s.split(",") }
+            .flat_map { |group| group.split("|") }
+            .map { |tag| tag.strip.downcase }
+            .reject(&:empty?)
+
+        excluded_tags = tags.select { |tag| tag.start_with?("!") }
+        return [] if excluded_tags.empty?
+
+        UI.user_error!("Exclude UI test tags cannot be combined with included tags") if excluded_tags.count != tags.count
+
+        normalize_ui_test_tags(excluded_tags.map { |tag| tag.delete_prefix("!") })
     end
 
     def format_ui_test_tag_expression(tag_groups)
