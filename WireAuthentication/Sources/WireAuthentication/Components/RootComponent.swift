@@ -44,6 +44,7 @@ final class RootComponent: BootstrapComponent {
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    public let isAccountAlreadyLoggedIn: (UUID) -> Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -72,7 +73,8 @@ final class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool
     ) {
         self.authenticationType = authenticationType
         self.environment = environment
@@ -90,6 +92,7 @@ final class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
         self.registrationAnalyticsTracker = registrationAnalyticsTracker
+        self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
     }
 
     // MARK: - Children
@@ -107,7 +110,8 @@ final class RootComponent: BootstrapComponent {
             networkStack: networkStack,
             existsAnotherAccount: !accountsPublisher.value.isEmpty,
             allowsMultipleBackends: allowsMultipleBackends,
-            existingBackendHosts: existingBackendHosts
+            existingBackendHosts: existingBackendHosts,
+            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn
         )
     }
 
