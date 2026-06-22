@@ -47,7 +47,7 @@ struct MemberSelectionView: View {
 
                 Section {
                     if viewModel.isContactsExpanded {
-                        contactsContent
+                        ForEach(viewModel.filteredUnselected) { row(for: $0) }
                     }
                 } header: {
                     sectionHeader(
@@ -59,6 +59,7 @@ struct MemberSelectionView: View {
             .listStyle(.grouped)
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
+            .overlay { placeholderOverlay }
             .searchable(
                 text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),
@@ -84,62 +85,32 @@ struct MemberSelectionView: View {
 
     // MARK: - Subviews
 
-    @ViewBuilder private var contactsContent: some View {
-        if !viewModel.filteredUnselected.isEmpty {
-            ForEach(viewModel.filteredUnselected) { row(for: $0) }
-        } else if viewModel.isSearching {
-            loadingPlaceholder
-        } else if let errorMessage = viewModel.errorMessage {
-            errorPlaceholder(message: errorMessage)
-        } else {
-            emptyPlaceholder
-        }
-    }
-
-    private var loadingPlaceholder: some View {
-        HStack {
-            Spacer()
-            ProgressView()
-            Spacer()
-        }
-        .padding(.vertical, 24)
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-    }
-
-    private var emptyPlaceholder: some View {
-        HStack {
-            Spacer()
-            Text(Strings.Empty.title)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Spacer()
-        }
-        .padding(.vertical, 20)
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-    }
-
-    private func errorPlaceholder(message: String) -> some View {
-        VStack(spacing: 10) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.title3)
-                .foregroundStyle(.orange)
-            Text(message)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            Button(Strings.Retry.button) {
-                viewModel.retrySearch()
+    @ViewBuilder private var placeholderOverlay: some View {
+        if viewModel.filteredUnselected.isEmpty {
+            if viewModel.isSearching {
+                ProgressView()
+            } else if viewModel.errorMessage != nil {
+                ContentUnavailableView {
+                    Label(Strings.Error.title, systemImage: "exclamationmark.magnifyingglass")
+                } description: {
+                    Text(Strings.Error.description)
+                } actions: {
+                    Button {
+                        viewModel.retrySearch()
+                    } label: {
+                        Label(Strings.Retry.button, systemImage: "arrow.clockwise")
+                    }
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.capsule)
+                }
+            } else {
+                ContentUnavailableView {
+                    Label(Strings.Empty.title, systemImage: "magnifyingglass")
+                } description: {
+                    Text(Strings.Empty.description)
+                }
             }
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-            .padding(.top, 4)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
     }
 
     private func errorBanner(message: String) -> some View {
