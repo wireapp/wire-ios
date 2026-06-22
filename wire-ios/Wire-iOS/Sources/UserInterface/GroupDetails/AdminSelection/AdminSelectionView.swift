@@ -141,12 +141,6 @@ private struct AdminCandidateRow: View {
     let userSession: UserSession
     let isSelected: Bool
 
-    private var rowAccessibilityLabel: String {
-        [user.name, user.handle.map { "@\($0)" }]
-            .compactMap(\.self)
-            .joined(separator: ", ")
-    }
-
     var body: some View {
         HStack(spacing: 12) {
             UserImageViewRepresentable(user: user, userSession: userSession, size: .small)
@@ -174,9 +168,8 @@ private struct AdminCandidateRow: View {
                 .accessibilityHidden(true)
         }
         .padding(.vertical, 4)
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .combine)
         .accessibilityIdentifier(Locators.AdminSelectionPage.userCell.rawValue)
-        .accessibilityLabel(rowAccessibilityLabel)
         .accessibilityHint(L10n.Accessibility.AdminSelection.CandidateRow.hint)
         .accessibilityAddTraits([.isButton, isSelected ? .isSelected : []])
     }

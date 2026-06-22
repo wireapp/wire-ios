@@ -28,7 +28,7 @@ class AdminSelectionPage: PageModel {
     @discardableResult
     func selectUser(named name: String) -> Self {
         let predicate = NSPredicate(format: "label CONTAINS %@", name)
-        app.staticTexts
+        app.descendants(matching: .any)
             .matching(identifier: Locators.AdminSelectionPage.userCell.rawValue)
             .matching(predicate)
             .firstMatch
