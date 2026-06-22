@@ -30,10 +30,6 @@ struct MemberSelectionView: View {
     var body: some View {
         NavigationStack {
             List {
-                if let errorMessage = viewModel.errorMessage, !viewModel.searchResults.isEmpty {
-                    errorBanner(message: errorMessage)
-                }
-
                 Section {
                     if viewModel.isSelectedExpanded {
                         ForEach(viewModel.selectedMembers) { row(for: $0) }
@@ -96,7 +92,7 @@ struct MemberSelectionView: View {
             .padding(.vertical, 24)
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
-        } else if viewModel.errorMessage != nil {
+        } else if viewModel.hasSearchError {
             ContentUnavailableView {
                 Label {
                     Text(Strings.Error.title)
@@ -129,22 +125,6 @@ struct MemberSelectionView: View {
             }
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
-        }
-    }
-
-    private func errorBanner(message: String) -> some View {
-        Section {
-            HStack(spacing: 8) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
-                Text(message)
-                    .font(.subheadline)
-                Spacer()
-                Button(Strings.Retry.button) {
-                    viewModel.retrySearch()
-                }
-                .wireButtonStyle(.tertiary)
-            }
         }
     }
 

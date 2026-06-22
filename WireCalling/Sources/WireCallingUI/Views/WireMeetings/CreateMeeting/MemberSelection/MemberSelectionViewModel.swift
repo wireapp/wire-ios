@@ -35,7 +35,7 @@ final class MemberSelectionViewModel {
     var searchResults: [Member] = []
     var selectedMembers: [Member] = []
     var isSearching = false
-    var errorMessage: String?
+    var hasSearchError = false
     var isSelectedExpanded = true
     var isContactsExpanded = true
 
@@ -101,7 +101,7 @@ final class MemberSelectionViewModel {
                 try Task.checkCancellation()
 
                 searchResults = results
-                errorMessage = nil
+                hasSearchError = false
                 isSearching = false
             } catch is CancellationError {
                 // If we were cancelled (e.g. a new query arrived), keep `isSearching` true and let the latest task own
@@ -110,7 +110,8 @@ final class MemberSelectionViewModel {
             } catch {
                 WireLogger.ui.warn("failed to search for meeting members to select", attributes: .safePublic)
                 WireLogger.ui.warn("\(error)")
-                errorMessage = L10n.Localizable.WireMeetings.Schedule.Members.Error.message
+                searchResults = []
+                hasSearchError = true
                 isSearching = false
             }
         }

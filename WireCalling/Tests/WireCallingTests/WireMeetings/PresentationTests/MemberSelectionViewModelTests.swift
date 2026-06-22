@@ -173,11 +173,12 @@ struct MemberSelectionViewModelTests {
 
         // Then
         #expect(viewModel.searchResults.map(\.id) == [Member.alice, Member.bob].map(\.id))
+        #expect(viewModel.hasSearchError == false)
         #expect(viewModel.isSearching == false)
     }
 
-    @Test("search failure sets errorMessage and leaves searchResults empty")
-    func searchFailure_setsErrorMessage() async {
+    @Test("search failure sets hasSearchError and clears searchResults")
+    func searchFailure_setsHasSearchError() async {
         // Given
         let repository = MemberRepositoryProtocolMock()
         repository.searchQueryStringMemberThrowableError = TestError.failure
@@ -187,6 +188,7 @@ struct MemberSelectionViewModelTests {
         await waitForSearchToSettle(viewModel)
 
         // Then
+        #expect(viewModel.hasSearchError)
         #expect(viewModel.searchResults.isEmpty)
         #expect(viewModel.isSearching == false)
     }

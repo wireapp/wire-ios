@@ -71,7 +71,6 @@
 "wireMeetings.schedule.members.empty.description" = "Try to adjust your search";
 "wireMeetings.schedule.members.error.title" = "Something went wrong";
 "wireMeetings.schedule.members.error.description" = "Please try again";
-"wireMeetings.schedule.members.error.message" = "Couldn't load contacts. Try again.";
 "wireMeetings.schedule.members.retry.button" = "Retry";
 "wireMeetings.schedule.members.selected.title" = "Selected";
 "wireMeetings.schedule.members.contacts.title" = "Contacts";
