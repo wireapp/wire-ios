@@ -46,14 +46,18 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         name: String?,
         operation: sending @escaping () async throws -> T
     ) async throws -> T {
-        let task = Task { try await operation() }
+        let name = name ?? "unnamed"
+
+        let task = Task {
+            WireLogger.backgroundActivity.warn("will start background task: \(name)")
+            let result = try await operation()
+            WireLogger.backgroundActivity.warn("did end background task: \(name)")
+            return result
+        }
 
         let taskID = TaskID()
         taskID.value = application.beginBackgroundTask(withName: name) { [application] in
-            WireLogger.backgroundActivity.warn(
-                "Background task \(name ?? "unnamed") expiring soon. Cancelling...",
-                attributes: .safePublic
-            )
+            WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
 
             task.cancel()
 

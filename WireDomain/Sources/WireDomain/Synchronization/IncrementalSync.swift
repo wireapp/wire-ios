@@ -171,7 +171,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 do {
                     // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
                     // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
-                    try await withBackgroundTask(name: "processLiveStream IncrementalSync", executer: backgroundTaskExecuter) {
+                    try await withBackgroundTask(
+                        name: "processLiveStream IncrementalSync",
+                        executer: backgroundTaskExecuter
+                    ) {
                         await processLiveEvents(
                             liveEventStream: liveEventStream,
                             processedEnvelopeIDs: processedEnvelopeIDs,
