@@ -47,7 +47,7 @@ struct MemberSelectionView: View {
 
                 Section {
                     if viewModel.isContactsExpanded {
-                        ForEach(viewModel.filteredUnselected) { row(for: $0) }
+                        contactsContent
                     }
                 } header: {
                     sectionHeader(
@@ -59,7 +59,6 @@ struct MemberSelectionView: View {
             .listStyle(.grouped)
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
-            .overlay { placeholderOverlay }
             .searchable(
                 text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),
@@ -85,31 +84,52 @@ struct MemberSelectionView: View {
 
     // MARK: - Subviews
 
-    @ViewBuilder private var placeholderOverlay: some View {
-        if viewModel.filteredUnselected.isEmpty {
-            if viewModel.isSearching {
+    @ViewBuilder private var contactsContent: some View {
+        if !viewModel.filteredUnselected.isEmpty {
+            ForEach(viewModel.filteredUnselected) { row(for: $0) }
+        } else if viewModel.isSearching {
+            HStack {
+                Spacer()
                 ProgressView()
-            } else if viewModel.errorMessage != nil {
-                ContentUnavailableView {
-                    Label(Strings.Error.title, systemImage: "exclamationmark.magnifyingglass")
-                } description: {
-                    Text(Strings.Error.description)
-                } actions: {
-                    Button {
-                        viewModel.retrySearch()
-                    } label: {
-                        Label(Strings.Retry.button, systemImage: "arrow.clockwise")
-                    }
-                    .buttonStyle(.bordered)
-                    .buttonBorderShape(.capsule)
-                }
-            } else {
-                ContentUnavailableView {
-                    Label(Strings.Empty.title, systemImage: "magnifyingglass")
-                } description: {
-                    Text(Strings.Empty.description)
-                }
+                Spacer()
             }
+            .padding(.vertical, 24)
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+        } else if viewModel.errorMessage != nil {
+            ContentUnavailableView {
+                Label {
+                    Text(Strings.Error.title)
+                } icon: {
+                    Image(systemName: "exclamationmark.magnifyingglass")
+                        .foregroundStyle(.primary)
+                }
+            } description: {
+                Text(Strings.Error.description)
+            } actions: {
+                Button {
+                    viewModel.retrySearch()
+                } label: {
+                    Label(Strings.Retry.button, systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.bordered)
+                .buttonBorderShape(.capsule)
+            }
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+        } else {
+            ContentUnavailableView {
+                Label {
+                    Text(Strings.Empty.title)
+                } icon: {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.primary)
+                }
+            } description: {
+                Text(Strings.Empty.description)
+            }
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
         }
     }
 
