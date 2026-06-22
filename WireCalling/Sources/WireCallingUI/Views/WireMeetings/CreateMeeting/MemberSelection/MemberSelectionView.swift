@@ -110,10 +110,9 @@ struct MemberSelectionView: View {
                 Button {
                     viewModel.retrySearch()
                 } label: {
-                    Label(Strings.Retry.button, systemImage: "arrow.clockwise")
+                    Text(Strings.Retry.button)
                 }
-                .buttonStyle(.bordered)
-                .buttonBorderShape(.capsule)
+                .wireButtonStyle(.tertiary)
             }
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
@@ -144,7 +143,7 @@ struct MemberSelectionView: View {
                 Button(Strings.Retry.button) {
                     viewModel.retrySearch()
                 }
-                .buttonStyle(.borderless)
+                .wireButtonStyle(.tertiary)
             }
         }
     }
