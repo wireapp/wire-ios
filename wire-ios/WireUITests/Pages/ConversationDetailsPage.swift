@@ -115,17 +115,17 @@ class ConversationDetailsPage: PageModel {
         promoteNewAdminButton.waitAndTap()
         return try AdminSelectionPage()
     }
-    
+
     var promoteNewAdminButton: XCUIElement {
         app.buttons[Locators.LastAdminLeaveAlert.promoteNewAdmin.rawValue].firstMatch
     }
-    
+
     func tapDeleteConversationAndConfirm() throws -> ConversationsPage {
         deleteConversationButton.waitAndTap()
         app.buttons[Locators.AlertActions.confirm.rawValue].firstMatch.waitAndTap()
         return try ConversationsPage()
     }
-    
+
     var deleteConversationButton: XCUIElement {
         app.buttons[Locators.LastAdminLeaveAlert.deleteGroup.rawValue].firstMatch
     }

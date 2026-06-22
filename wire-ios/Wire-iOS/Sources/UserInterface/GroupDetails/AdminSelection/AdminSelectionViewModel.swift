@@ -42,7 +42,7 @@ final class AdminSelectionViewModel: ObservableObject {
         case .inProgress:
             false
         default:
-            selectedUser != nil 
+            selectedUser != nil
         }
     }
 

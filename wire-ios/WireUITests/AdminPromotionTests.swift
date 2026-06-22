@@ -26,7 +26,6 @@ class AdminPromotionTests: WireUITestCase {
     }
 
     @MainActor
-    @MainActor
     func testLastAdmin_promotesNewAdmin_andLeavesGroup_TC_11032() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
@@ -53,8 +52,8 @@ class AdminPromotionTests: WireUITestCase {
         )
 
         // Self user is no longer a participant
-        XCTAssertFalse(
-            conversationDetailsPage.userCell(named: owner.name).exists,
+        XCTAssertTrue(
+            conversationDetailsPage.userCell(named: owner.name).waitForNonExistence(timeout: 0.5),
             "Owner should not appear in participant list after leaving"
         )
 
