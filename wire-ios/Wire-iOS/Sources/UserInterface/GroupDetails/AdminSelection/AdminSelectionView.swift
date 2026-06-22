@@ -94,7 +94,9 @@ struct AdminSelectionView: View {
                 if state == .succeeded { dismiss() }
             }
             .alert(L10n.Localizable.AdminSelection.promotionError, isPresented: isShowingError) {
-                Button(L10n.Localizable.General.ok) {}
+                Button(L10n.Localizable.General.ok) {
+                    // empty block since we only dismiss the alert
+                }
             }
         }
     }

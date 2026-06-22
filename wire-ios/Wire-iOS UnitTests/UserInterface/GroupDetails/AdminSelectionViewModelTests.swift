@@ -137,7 +137,9 @@ private extension AdminSelectionViewModelTests {
 
         @MainActor
         static func makeViewModel(
-            onPromote: @escaping @MainActor (UserType) async throws -> Void = { _ in }
+            onPromote: @escaping @MainActor (UserType) async throws -> Void = { _ in
+                // no op
+            }
         ) -> AdminSelectionViewModel {
             AdminSelectionViewModel(
                 candidates: candidates,
