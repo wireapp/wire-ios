@@ -18,7 +18,7 @@
 
 /// Errors originating from `MeetingsAPI`.
 
-public enum MeetingsAPIError: Error {
+public enum MeetingsAPIError: Error, Equatable {
 
     /// Unsupported endpoint for API version.
 
