@@ -40,7 +40,7 @@ public struct WireMeetingsFactory {
                 repository: repository,
                 currentDateProvider: .system
             ),
-            deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository)
+            deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository),
             memberRepository: memberRepository
         )
 
