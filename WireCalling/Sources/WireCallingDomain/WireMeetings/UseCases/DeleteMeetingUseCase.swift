@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
 package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
     private let repository: any MeetingsRepositoryProtocol
@@ -26,7 +24,7 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
         self.repository = repository
     }
 
-    package func invoke(meetingID: UUID) async throws {
+    package func invoke(meetingID: QualifiedID) async throws {
         try await repository.deleteMeeting(meetingID: meetingID)
     }
 

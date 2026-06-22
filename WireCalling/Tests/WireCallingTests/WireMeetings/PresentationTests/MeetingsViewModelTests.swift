@@ -201,8 +201,8 @@ struct MeetingsViewModelTests {
         try await viewModel.deleteMeeting(meeting)
 
         // Then
-        #expect(deleteMeetingUseCase.invokeMeetingIDUUIDCallsCount == 1)
-        #expect(deleteMeetingUseCase.invokeMeetingIDUUIDReceivedMeetingID == meeting.id)
+        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 1)
+        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
         #expect(viewModel.loadedMeetings.isEmpty)
     }
 
@@ -211,7 +211,7 @@ struct MeetingsViewModelTests {
         // Given
         let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
         struct DeleteError: Error {}
-        deleteMeetingUseCase.invokeMeetingIDUUIDThrowableError = DeleteError()
+        deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidThrowableError = DeleteError()
 
         // When / Then
         await #expect(throws: DeleteError.self) {

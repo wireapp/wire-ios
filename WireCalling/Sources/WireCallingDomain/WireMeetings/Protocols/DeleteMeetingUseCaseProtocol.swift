@@ -22,6 +22,6 @@ import Foundation
 /// Deletes a meeting by its ID.
 package protocol DeleteMeetingUseCaseProtocol: Sendable {
 
-    func invoke(meetingID: UUID) async throws
+    func invoke(meetingID: QualifiedID) async throws
 
 }

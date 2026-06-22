@@ -145,6 +145,6 @@ private struct PreviewFetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase
 
 private struct PreviewDeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
-    func invoke(meetingID: UUID) async throws {}
+    func invoke(meetingID: QualifiedID) async throws {}
 
 }
