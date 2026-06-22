@@ -56,24 +56,30 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         }
 
         let taskID = TaskID()
-        taskID.value = application.beginBackgroundTask(withName: name) { [application] in
+        taskID.value = application.beginBackgroundTask(withName: name) {
             WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
 
             task.cancel()
 
             // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
-            application.endBackgroundTask(taskID.value)
-            taskID.value = .invalid
+            endBackgroundTask(taskID)
         }
 
+        defer { endBackgroundTask(taskID) }
         let result = try await withTaskCancellationHandler {
             try await task.value
         } onCancel: {
             task.cancel()
         }
-        application.endBackgroundTask(taskID.value)
 
         return result
     }
 
+
+    private nonisolated func endBackgroundTask(_ identifier: TaskID) {
+        guard identifier.value != .invalid else { return }
+        
+        application.endBackgroundTask(identifier.value)
+        identifier.value = .invalid
+    }
 }
