@@ -127,7 +127,7 @@ private struct GroupedSections: View {
         viewModel: MeetingsViewModel(
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock()
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase()
         )
     )
 }
