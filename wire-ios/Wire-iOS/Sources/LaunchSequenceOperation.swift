@@ -47,7 +47,7 @@ final class DeveloperFlagOperation: LaunchSequenceOperation {
             flag.enable(isOn)
         }
         #if DEBUG
-            for (key, value) in UITestConfig.environment.developerFlags {
+            for (key, value) in UITestConfig.environment?.developerFlags ?? [:] {
                 guard let flag = DeveloperFlag(rawValue: key) else { continue }
                 flag.enable(value)
             }
@@ -74,7 +74,7 @@ final class PerformanceDebuggerOperation: LaunchSequenceOperation {
     }
 }
 
-// MARK: - ZMSLogOperation
+// MARK: - AVSLoggingOperation
 
 final class AVSLoggingOperation: LaunchSequenceOperation {
     func execute() {

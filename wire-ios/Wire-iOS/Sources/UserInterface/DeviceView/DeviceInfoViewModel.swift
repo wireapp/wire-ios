@@ -30,7 +30,7 @@ protocol DeviceDetailsViewActions {
     /// - Returns: Certificate chain of all the clients
     func enrollClient() async throws -> String
     func removeDevice() async -> Bool
-    func resetSession()
+    func resetSession() async
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
     func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate)
@@ -97,6 +97,7 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
     @Published var showEnrollmentCertificateError = false
+    @Published var showResetSessionSuccess = false
 
     var actionsHandler: DeviceDetailsViewActions
     var conversationClientDetailsActions: ConversationUserClientDetailsActions
@@ -141,14 +142,12 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func enrollClient() async {
-        isActionInProgress = true
         do {
             let certificateChain = try await actionsHandler.enrollClient()
             showCertificateUpdateSuccess?(certificateChain)
         } catch {
             showEnrollmentCertificateError = true
         }
-        isActionInProgress = false
     }
 
     @MainActor
@@ -156,8 +155,10 @@ final class DeviceInfoViewModel: ObservableObject {
         shouldDismiss = await actionsHandler.removeDevice()
     }
 
-    func resetSession() {
-        actionsHandler.resetSession()
+    @MainActor
+    func resetSession() async {
+        await actionsHandler.resetSession()
+        showResetSessionSuccess = true
     }
 
     @MainActor

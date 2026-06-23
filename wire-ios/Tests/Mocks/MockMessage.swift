@@ -49,6 +49,7 @@ final class MockTextMessageData: NSObject, TextMessageData {
     var quoteMessage: ZMConversationMessage?
     var isQuotingSelf: Bool = false
     var hasQuote: Bool = false
+    var quotedMessageIsDeleted: Bool = false
 
     var linkPreview: LinkMetadata? {
         guard let linkPreview = backingLinkPreview, !linkPreview.isBlacklisted else { return nil }

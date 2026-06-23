@@ -28,7 +28,7 @@ class ExpiringActivityTests: XCTestCase {
 
         // given
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager<Void>(api: api)
+        let sut = ExpiringActivityManager(api: api)
 
         api.method = { _, block in
             self.concurrentQueue.async {
@@ -55,7 +55,7 @@ class ExpiringActivityTests: XCTestCase {
 
         // given
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager<Void>(api: api)
+        let sut = ExpiringActivityManager(api: api)
 
         api.method = { _, block in
             self.concurrentQueue.async {
@@ -79,7 +79,7 @@ class ExpiringActivityTests: XCTestCase {
 
         // given
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager<Void>(api: api)
+        let sut = ExpiringActivityManager(api: api)
 
         api.method = { _, block in
             self.concurrentQueue.async {
@@ -118,7 +118,7 @@ class ExpiringActivityTests: XCTestCase {
     /// continuation must not be resumed twice.
     func testCancellationErrorIsThrown_WhenExpiryFiresAfterOuterTaskCancellation() async throws {
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager<Void>(api: api)
+        let sut = ExpiringActivityManager(api: api)
 
         let workStarted = expectation(description: "work started")
         let expiryFired = expectation(description: "expiry fired")
@@ -163,7 +163,7 @@ class ExpiringActivityTests: XCTestCase {
     /// mode being guarded against here is a crash.
     func testNoCrash_WhenExpiryCallbackFiresBeforeWorkStarts() async throws {
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager<Void>(api: api)
+        let sut = ExpiringActivityManager(api: api)
 
         api.method = { _, block in
             // Deliver expiry before start to maximise the chance of the race.
@@ -180,7 +180,7 @@ class ExpiringActivityTests: XCTestCase {
 
         // given
         let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager<Void>(api: api)
+        let sut = ExpiringActivityManager(api: api)
 
         api.method = { _, block in
             self.concurrentQueue.async {

@@ -80,6 +80,18 @@ final class ConversationReplyWithTextCellSnapshotTests: ConversationMessageSnaps
         verify(message: message, allColorSchemes: true)
     }
 
+    /// Inline code in the reply text must only highlight the code span itself,
+    /// not extend the background across the full line width.
+    func testReplyWithInlineCodeInReplyText() {
+        let message = makeReplyMessage(
+            replyText: "This is a test with a variable name `BACKEND_NAME` test here",
+            quoteText: "This is a quote without inline code",
+            quoteSender: mockOtherUser,
+            replySender: mockSelfUser
+        )
+        verify(message: message, allColorSchemes: true)
+    }
+
     /// Reply to a quote that contains an @-mention of another user.
     func testReplyToMessageWithOtherMention() {
         let quote = MockMessageFactory.textMessage(withText: "@Bruno is the annual report ready to go?")
@@ -286,12 +298,25 @@ final class ConversationReplyWithTextCellSnapshotTests: ConversationMessageSnaps
         verify(message: reply, allColorSchemes: true)
     }
 
-    /// Reply to a message whose original was deleted (quoteMessage is nil but hasQuote is true).
+    /// Reply to a message whose original was deleted (quoteMessage is nil, hasQuote is true and
+    /// the deleted tombstone is resolvable). Shows "Deleted message".
     func testReplyToDeletedMessage() {
         let reply = MockMessageFactory.textMessage(withText: "Sorry, was that for me?")
         reply.senderUser = mockSelfUser
         reply.backingTextMessageData.hasQuote = true
         reply.backingTextMessageData.quoteMessage = nil
+        reply.backingTextMessageData.quotedMessageIsDeleted = true
+        verify(message: reply, allColorSchemes: true)
+    }
+
+    /// Reply to a message the user cannot see (quoteMessage is nil, hasQuote is true and the
+    /// original isn't in the user's copy of the conversation). Shows "You cannot see this message".
+    func testReplyToUnseenMessage() {
+        let reply = MockMessageFactory.textMessage(withText: "Sorry, was that for me?")
+        reply.senderUser = mockSelfUser
+        reply.backingTextMessageData.hasQuote = true
+        reply.backingTextMessageData.quoteMessage = nil
+        reply.backingTextMessageData.quotedMessageIsDeleted = false
         verify(message: reply, allColorSchemes: true)
     }
 

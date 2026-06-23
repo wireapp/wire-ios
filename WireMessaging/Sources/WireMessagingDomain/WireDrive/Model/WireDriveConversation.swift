@@ -109,12 +109,12 @@ public extension WireDriveConversation {
 }
 
 public extension Collection<WireDriveConversation> {
-    static func mocked() -> [Element] {
+    static func mocked(selfUserRole: WireDriveConversation.Participant.Role = .editor) -> [Element] {
         [
             .init(
-                id: "1234",
+                id: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
                 name: "Conversation 1",
-                participants: Set([WireDriveConversation.Participant].mocked())
+                participants: Set([WireDriveConversation.Participant].mocked(selfUserRole: selfUserRole))
             ),
             .init(
                 id: "5678",
@@ -132,13 +132,13 @@ public extension Collection<WireDriveConversation> {
 }
 
 public extension Collection<WireDriveConversation.Participant> {
-    static func mocked() -> [Element] {
+    static func mocked(selfUserRole: WireDriveConversation.Participant.Role = .editor) -> [Element] {
         [
             .init(
                 handle: "walterwhite",
                 displayName: "Heisenberg",
-                role: .editor,
-                isSelfUser: false,
+                role: selfUserRole,
+                isSelfUser: true,
                 id: UUID().uuidString
             ),
             .init(

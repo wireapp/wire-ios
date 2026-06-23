@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "Tamam";
 "general.next" = "İleri";
 "general.cancel" = "İptal";
@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@, %@'i sildi";
 "content.system.conversation.you.removed.legalhold" = "%@ were removed from this conversation because legal hold has been activated.";
 "content.system.conversation.you.left" = "%@ ayrıldı";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ takımdan çıkarıldı.";
 "content.system.conversation.guest.joined" = "%@ katıldı";
 "content.system.conversation.guest.you_joined" = "Katıldınız";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "%@ kaynağındaki orijinal mesaj";
 "content.message.reply.original_timestamp.time" = "%@ kaynağındaki orijinal mesaj";
 "content.message.reply.broken_message" = "Bu mesajı göremezsiniz.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Düzenlenen";
 
 "content.message.open_link_alert.title" = "Bağlantıyı Ziyaret Et";
@@ -1066,6 +1068,7 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list
@@ -1155,8 +1158,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";

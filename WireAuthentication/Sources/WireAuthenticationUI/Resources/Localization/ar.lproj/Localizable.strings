@@ -87,6 +87,8 @@
 "switch_backend_confirmation.show_details" = "Show details";
 "switch_backend.error.title.logged_in" = "Can’t switch servers";
 "switch_backend.error.message.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "وصلك بريد";
 "verification_code.message" = "أدخل رمز التحقق الذي أرسلناه إلى: %@.";

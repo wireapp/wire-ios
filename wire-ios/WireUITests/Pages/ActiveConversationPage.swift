@@ -38,7 +38,10 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationBackButton: XCUIElement {
-        app.buttons[Locators.ActiveConversationPage.conversationBackButton.rawValue]
+        // The conversation now uses the system back button (see `configureBackButton(hasUnread:)`),
+        // whose accessibility identifier is not exposed to XCUITest. Match it positionally, the same
+        // way `OptionsOnSettingsPage` taps the Settings back button.
+        app.navigationBars.buttons.element(boundBy: 0)
     }
 
     var senderNameLabel: XCUIElement {
@@ -89,6 +92,10 @@ class ActiveConversationPage: PageModel {
         app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileLabel.rawValue)
     }
 
+    var fileDetailLabels: XCUIElementQuery {
+        app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileDetailsLabel.rawValue)
+    }
+
     var fileTypeIcons: XCUIElementQuery {
         app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
@@ -97,6 +104,14 @@ class ActiveConversationPage: PageModel {
         app.buttons.containing(
             NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
         ).firstMatch
+    }
+
+    func fileLabel(containing name: String) -> XCUIElement {
+        fileLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
+    }
+
+    func fileDetails(containing text: String) -> XCUIElement {
+        fileDetailLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
     }
 
     var labelSharedDriveIsOn: XCUIElement {
@@ -141,6 +156,25 @@ class ActiveConversationPage: PageModel {
 
     var photoButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
+    }
+
+    var uploadFileButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.uploadFileButton.rawValue].firstMatch
+    }
+
+    var browseFileOption: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.browse.rawValue].firstMatch
+    }
+
+    var openFileButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.open.rawValue].firstMatch
+    }
+
+    func fileCell(named fileName: String) -> XCUIElement {
+        let displayedFileName = (fileName as NSString).deletingPathExtension
+        let fileExtension = (fileName as NSString).pathExtension
+
+        return app.cells["\(displayedFileName), \(fileExtension)"].firstMatch
     }
 
     var imageToChoose: XCUIElement {
@@ -191,6 +225,10 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.pingButton.rawValue]
     }
 
+    var openOngoingCallButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.openOngoingCallButton.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -208,6 +246,15 @@ class ActiveConversationPage: PageModel {
         var files: [String] = []
         for i in 0 ..< fileLabels.count {
             let element = fileLabels.element(boundBy: i)
+            files.append(element.label)
+        }
+        return files
+    }
+
+    func fetchFileDetails() -> [String] {
+        var files: [String] = []
+        for i in 0 ..< fileDetailLabels.count {
+            let element = fileDetailLabels.element(boundBy: i)
             files.append(element.label)
         }
         return files
@@ -326,6 +373,29 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
+    func uploadFile(named fileName: String = "testFile.pdf") -> ActiveConversationPage {
+        if !uploadFileButton.waitForExistence(timeout: 2) || !uploadFileButton.isHittable {
+            showOtherRowButton.waitAndTap()
+        }
+
+        uploadFileButton.waitAndTap()
+        browseFileOption.waitAndTap()
+
+        XCTAssertTrue(
+            fileCell(named: fileName).waitForExistence(timeout: 5),
+            "Seeded file '\(fileName)' didn't show up"
+        )
+        fileCell(named: fileName).waitAndTap()
+
+        XCTAssertTrue(
+            openFileButton.waitForExistence(timeout: 5),
+            "Open button didn't show up"
+        )
+        openFileButton.waitAndTap()
+        return self
+    }
+
     @MainActor
     @discardableResult
     func recordAudioAndSend() async throws -> ActiveConversationPage {
@@ -394,6 +464,24 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
+    func verifySharedFile(
+        name: String,
+        type: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        let attachment = fileAttachment(name: name, type: type)
+
+        XCTAssertTrue(
+            attachment.waitForExistence(timeout: 5),
+            "Expected \(type) attachment '\(name)' not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
     func verifyLinkPreviewCell(
         file: StaticString = #filePath,
         line: UInt = #line
@@ -404,5 +492,16 @@ class ActiveConversationPage: PageModel {
             line: line
         )
         return self
+    }
+
+    func initiateCall() throws -> OngoingCallPage {
+        videoCallButton.waitAndTap()
+        app.dismissAllowIfPresent()
+        return try OngoingCallPage()
+    }
+
+    func resumeCallUI() throws -> OngoingCallPage {
+        openOngoingCallButton.waitAndTap()
+        return try OngoingCallPage()
     }
 }

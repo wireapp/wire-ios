@@ -17,7 +17,7 @@ jobs:
        github.event.action == 'ready_for_review' ||
        (github.event.action == 'edited' && github.event.changes.title != null))
     steps:
-      - uses: cakeinpanic/jira-description-action@v0.8.0
+      - uses: cakeinpanic/jira-description-action@c414eafc7ea6960b2a7a00442a9653543e35e5bc # v0.8.0
         name: jira-description-action
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
