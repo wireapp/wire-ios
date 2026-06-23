@@ -35,7 +35,7 @@ public struct MeetingRecurrence: Encodable {
     public let interval: Int?
     public let until: Date?
 
-    public init(frequency: MeetingFrequency, interval: Int? = nil, until: Date? = nil) {
+    public init(frequency: MeetingFrequency, interval: Int?, until: Date?) {
         self.frequency = frequency
         self.interval = interval
         self.until = until
@@ -57,9 +57,9 @@ public struct MeetingRecurrence: Encodable {
     }
 }
 
-// MARK: - MeetingRecurrenceV0 (internal, for decoding)
+// MARK: - MeetingRecurrenceV16 (internal, for decoding)
 
-struct MeetingRecurrenceV0: Decodable {
+struct MeetingRecurrenceV16: Decodable {
 
     let frequency: MeetingFrequency
     let interval: Int?
@@ -117,15 +117,15 @@ public struct MeetingResponse {
     }
 }
 
-// MARK: - MeetingListResponseV0 (internal, for decoding an array response)
+// MARK: - MeetingListResponseV16 (internal, for decoding an array response)
 
-struct MeetingListResponseV0: Decodable, ToAPIModelConvertible {
+struct MeetingListResponseV16: Decodable, ToAPIModelConvertible {
 
-    private let meetings: [MeetingResponseV0]
+    private let meetings: [MeetingResponseV16]
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        meetings = try container.decode([MeetingResponseV0].self)
+        meetings = try container.decode([MeetingResponseV16].self)
     }
 
     func toAPIModel() -> [MeetingResponse] {
@@ -133,9 +133,9 @@ struct MeetingListResponseV0: Decodable, ToAPIModelConvertible {
     }
 }
 
-// MARK: - MeetingResponseV0 (internal, for decoding)
+// MARK: - MeetingResponseV16 (internal, for decoding)
 
-struct MeetingResponseV0: Decodable, ToAPIModelConvertible {
+struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
 
     let qualifiedID: QualifiedIDV0
     let title: String
@@ -147,7 +147,7 @@ struct MeetingResponseV0: Decodable, ToAPIModelConvertible {
     let trial: Bool
     let createdAt: UTCTime
     let updatedAt: UTCTime
-    let recurrence: MeetingRecurrenceV0?
+    let recurrence: MeetingRecurrenceV16?
 
     enum CodingKeys: String, CodingKey {
         case qualifiedID = "qualified_id"

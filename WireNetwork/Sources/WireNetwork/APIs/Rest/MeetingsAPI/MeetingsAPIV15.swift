@@ -41,7 +41,7 @@ class MeetingsAPIV15: MeetingsAPIV14 {
         )
 
         return try ResponseParser()
-            .success(code: .created, type: MeetingResponseV0.self)
+            .success(code: .created, type: MeetingResponseV16.self)
             .failure(code: .forbidden, label: "invalid-op", error: MeetingsAPIError.invalidOperation)
             .failure(code: .unreachable, error: MeetingsAPIError.unreachableBackends)
             .parse(code: response.statusCode, data: data)
@@ -64,7 +64,7 @@ class MeetingsAPIV15: MeetingsAPIV14 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: MeetingResponseV0.self)
+            .success(code: .ok, type: MeetingResponseV16.self)
             .failure(code: .forbidden, label: "invalid-op", error: MeetingsAPIError.invalidOperation)
             .failure(code: .forbidden, label: "access-denied", error: MeetingsAPIError.accessDenied)
             .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
