@@ -42,18 +42,18 @@ final class MeetingsAPITests: XCTestCase {
 
     // MARK: - Request generation
 
-    func testCreateMeeting_Request_Generation_V16() async throws {
+    func testCreateMeeting_Request_Generation_V15() async throws {
         let apiService = MockAPIServiceProtocol.withResponses([(.created, "MeetingResponse")])
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v16], apiService: apiService) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
             _ = try await sut.createMeeting(parameters: Scaffolding.createParameters)
         }
     }
 
-    func testUpdateMeeting_Request_Generation_V16() async throws {
+    func testUpdateMeeting_Request_Generation_V15() async throws {
         let apiService = MockAPIServiceProtocol.withResponses([(.ok, "MeetingResponse")])
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v16], apiService: apiService) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
             _ = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
         }
     }
@@ -66,12 +66,12 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
-    // MARK: - createMeeting V16
+    // MARK: - createMeeting V15+
 
-    func testCreateMeeting_SuccessResponse_201_V16() async throws {
+    func testCreateMeeting_SuccessResponse_201_V15() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([(.created, "MeetingResponse")])
-        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+        let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When
         let result = try await sut.createMeeting(parameters: Scaffolding.createParameters)
@@ -81,8 +81,8 @@ final class MeetingsAPITests: XCTestCase {
         XCTAssertEqual(result.title, "Engineering Sync")
     }
 
-    func testCreateMeeting_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
-        let unsupportedVersions = APIVersion.allCasesUpTo(.v15)
+    func testCreateMeeting_ThrowsUnsupportedEndpoint_V0_to_V14() async throws {
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v14)
 
         for version in unsupportedVersions {
             // Given
@@ -96,13 +96,13 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
-    func testCreateMeeting_ThrowsInvalidOperation_403_V16() async throws {
+    func testCreateMeeting_ThrowsInvalidOperation_403_V15() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "invalid-op"
         )
-        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+        let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.invalidOperation) {
@@ -110,10 +110,10 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
-    func testCreateMeeting_ThrowsUnreachableBackends_533_V16() async throws {
+    func testCreateMeeting_ThrowsUnreachableBackends_533_V15() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable)
-        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+        let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.unreachableBackends) {
@@ -121,12 +121,12 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
-    // MARK: - updateMeeting V16
+    // MARK: - updateMeeting V15+
 
-    func testUpdateMeeting_SuccessResponse_200_V16() async throws {
+    func testUpdateMeeting_SuccessResponse_200_V15() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([(.ok, "MeetingResponse")])
-        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+        let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When
         let result = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
@@ -136,8 +136,8 @@ final class MeetingsAPITests: XCTestCase {
         XCTAssertEqual(result.title, "Engineering Sync")
     }
 
-    func testUpdateMeeting_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
-        let unsupportedVersions = APIVersion.allCasesUpTo(.v15)
+    func testUpdateMeeting_ThrowsUnsupportedEndpoint_V0_to_V14() async throws {
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v14)
 
         for version in unsupportedVersions {
             // Given
@@ -151,13 +151,13 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
-    func testUpdateMeeting_ThrowsInvalidOperation_403_V16() async throws {
+    func testUpdateMeeting_ThrowsInvalidOperation_403_V15() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "invalid-op"
         )
-        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+        let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.invalidOperation) {
@@ -165,13 +165,13 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
-    func testUpdateMeeting_ThrowsAccessDenied_403_V16() async throws {
+    func testUpdateMeeting_ThrowsAccessDenied_403_V15() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "access-denied"
         )
-        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+        let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.accessDenied) {
@@ -179,13 +179,13 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
-    func testUpdateMeeting_ThrowsMeetingNotFound_404_V16() async throws {
+    func testUpdateMeeting_ThrowsMeetingNotFound_404_V15() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "meeting-not-found"
         )
-        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+        let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.meetingNotFound) {
