@@ -22,6 +22,7 @@ package import WireFoundation
 import Foundation
 
 @Observable
+@MainActor
 package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List

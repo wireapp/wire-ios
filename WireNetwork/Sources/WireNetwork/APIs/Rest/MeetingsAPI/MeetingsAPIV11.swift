@@ -16,16 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package struct PaginatedMeetings {
+class MeetingsAPIV11: MeetingsAPIV10 {
 
-    package let meetings: [Meeting]
-    package let hasMore: Bool
-    package let nextOffset: Int
-
-    package init(meetings: [Meeting], hasMore: Bool, nextOffset: Int) {
-        self.meetings = meetings
-        self.hasMore = hasMore
-        self.nextOffset = nextOffset
+    override var apiVersion: APIVersion {
+        .v11
     }
 
 }

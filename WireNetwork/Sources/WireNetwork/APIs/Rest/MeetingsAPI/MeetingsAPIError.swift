@@ -16,16 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package struct PaginatedMeetings {
+/// Errors originating from `MeetingsAPI`.
 
-    package let meetings: [Meeting]
-    package let hasMore: Bool
-    package let nextOffset: Int
+public enum MeetingsAPIError: Error, Equatable {
 
-    package init(meetings: [Meeting], hasMore: Bool, nextOffset: Int) {
-        self.meetings = meetings
-        self.hasMore = hasMore
-        self.nextOffset = nextOffset
-    }
+    /// Unsupported endpoint for API version.
+
+    case unsupportedEndpointForAPIVersion
+
+    /// The requested meeting does not exist.
+
+    case meetingNotFound
+
+    /// A request could not be generated.
+
+    case failedToGenerateRequest
+
+    /// A request was deemed invalid by the server.
+
+    case invalidRequest
+
+    /// The authenticated user does not have permission to perform this action.
+
+    case accessDenied
 
 }
