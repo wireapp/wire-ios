@@ -156,22 +156,27 @@ extension ConversationActionController {
         }
     }
 
+    @MainActor
     private func presentAdminSelection(for conversation: ZMConversation, candidates: [UserType]) {
         let session = userSession
-        Task { @MainActor in
-            let viewModel = AdminSelectionViewModel(
-                candidates: candidates,
-                userSession: session,
-                onPromote: { [weak self] user in
-                    guard let self else {
-                        throw CancellationError()
-                    }
-                    try await self.performAdminPromotion(user: user, in: conversation)
+        let viewModel = AdminSelectionViewModel(
+            candidates: candidates,
+            userSession: session,
+            onPromote: { [weak self] user in
+                guard let self else {
+                    throw CancellationError()
                 }
-            )
-            let hostingController = UIHostingController(rootView: AdminSelectionView(viewModel: viewModel))
-            self.present(hostingController)
-        }
+                do {
+                    try await performAdminPromotion(user: user, in: conversation)
+                } catch {
+                    WireLogger.conversation.warn("admin promotion failed: \(error)")
+                    // Re-throw so AdminSelectionViewModel can set `.failed`
+                    throw error
+                }
+            }
+        )
+        let hostingController = UIHostingController(rootView: AdminSelectionView(viewModel: viewModel))
+        present(hostingController)
     }
 
     @MainActor
