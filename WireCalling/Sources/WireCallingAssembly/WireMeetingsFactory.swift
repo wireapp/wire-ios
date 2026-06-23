@@ -23,6 +23,7 @@ import SwiftUI
 import WireCallingData
 import WireCallingUI
 import WireFoundation
+import WireNetwork
 
 public struct WireMeetingsFactory {
 
@@ -31,19 +32,51 @@ public struct WireMeetingsFactory {
 
     @MainActor
     public func makeMeetingsView(
+        meetingsAPI: any MeetingsAPI,
         memberRepository: any MemberRepositoryProtocol
     ) -> UIViewController {
-        let repository = MeetingsRepository.demo()
+        let repository = MeetingsRepository(
+            meetings: {
+                try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
+            },
+            deleteMeeting: { meetingID in
+                try await meetingsAPI.deleteMeeting(meetingID: meetingID)
+            }
+        )
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: repository,
                 currentDateProvider: .system
             ),
+            deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository),
             memberRepository: memberRepository
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
 
+}
+
+private extension MeetingResponse {
+    func toDomainMeeting() -> Meeting {
+        Meeting(
+            id: id,
+            title: title,
+            start: startTime,
+            end: endTime,
+            repeatOption: recurrence?.frequency.toDomainRepeatOption() ?? .never
+        )
+    }
+}
+
+private extension MeetingFrequency {
+    func toDomainRepeatOption() -> RepeatOption {
+        switch self {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+    }
 }

@@ -20,6 +20,6 @@
 /// Fetches upcoming meetings
 package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
 
-    func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings
+    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
 
 }

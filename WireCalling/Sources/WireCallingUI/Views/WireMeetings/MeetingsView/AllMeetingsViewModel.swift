@@ -43,7 +43,8 @@ package final class AllMeetingsViewModel {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase
         )
         self.memberRepository = memberRepository
     }

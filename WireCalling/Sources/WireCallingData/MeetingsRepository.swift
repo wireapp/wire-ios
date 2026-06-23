@@ -23,14 +23,19 @@ import WireFoundation
 
 package final class MeetingsRepository: MeetingsRepositoryProtocol {
 
-    private let meetingsSource: @Sendable () -> [Meeting]
+    private let meetingsSource: @Sendable () async throws -> [Meeting]
+    private let deleteMeetingHandler: @Sendable (QualifiedID) async throws -> Void
 
-    package init(meetings: @Sendable @escaping () -> [Meeting]) {
+    package init(
+        meetings: @Sendable @escaping () async throws -> [Meeting],
+        deleteMeeting: @Sendable @escaping (QualifiedID) async throws -> Void = { _ in }
+    ) {
         self.meetingsSource = meetings
+        self.deleteMeetingHandler = deleteMeeting
     }
 
-    package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
-        let allFuture = meetingsSource()
+    package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
+        let allFuture = try await meetingsSource()
             .filter { $0.start > date }
             .sorted {
                 if $0.start != $1.start {
@@ -44,8 +49,12 @@ package final class MeetingsRepository: MeetingsRepositoryProtocol {
         return Array(allFuture[start ..< end])
     }
 
-    package func hasUpcomingMeetings(after date: Date) -> Bool {
-        meetingsSource().contains { $0.start > date }
+    package func hasUpcomingMeetings(after date: Date) async throws -> Bool {
+        try await meetingsSource().contains { $0.start > date }
+    }
+
+    package func deleteMeeting(meetingID: QualifiedID) async throws {
+        try await deleteMeetingHandler(meetingID)
     }
 
 }
