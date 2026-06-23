@@ -28,6 +28,18 @@ class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
         .v0
     }
 
+    // MARK: - Create meeting
+
+    func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    // MARK: - Update meeting
+
+    func updateMeeting(meetingID: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Delete meeting
 
     func deleteMeeting(meetingID: QualifiedID) async throws {
