@@ -20,7 +20,7 @@ import Foundation
 
 // MARK: - MeetingFrequency
 
-public enum MeetingFrequency: String, Codable {
+public enum MeetingFrequency: String, Codable, Sendable {
     case daily
     case weekly
     case monthly
@@ -29,7 +29,7 @@ public enum MeetingFrequency: String, Codable {
 
 // MARK: - MeetingRecurrence
 
-public struct MeetingRecurrence: Encodable {
+public struct MeetingRecurrence: Encodable, Sendable {
 
     public let frequency: MeetingFrequency
     public let interval: Int?
