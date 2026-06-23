@@ -51,17 +51,23 @@ final class MeetingsAPITests: XCTestCase {
     }
 
     func testCreateMeeting_Request_Generation_V15() async throws {
-        let apiService = MockAPIServiceProtocol.withResponses([(.created, "MeetingResponse")])
+        let apiVersions = APIVersion.v15.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.created, "MeetingResponse"), count: apiVersions.count)
+        )
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             _ = try await sut.createMeeting(parameters: Scaffolding.createParameters)
         }
     }
 
     func testUpdateMeeting_Request_Generation_V15() async throws {
-        let apiService = MockAPIServiceProtocol.withResponses([(.ok, "MeetingResponse")])
+        let apiVersions = APIVersion.v15.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.ok, "MeetingResponse"), count: apiVersions.count)
+        )
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             _ = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
         }
     }
