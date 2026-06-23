@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 final class MeetingsAPIV16: MeetingsAPIV15 {
 
     override var apiVersion: APIVersion {
