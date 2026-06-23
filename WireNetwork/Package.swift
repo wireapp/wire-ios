@@ -50,6 +50,7 @@ let package = Package(
                 .process("APIs/Rest/ConnectionsAPI/Resources"),
                 .process("APIs/Rest/ConversationsAPI/Resources"),
                 .process("APIs/Rest/FeatureConfigsAPI/Resources"),
+                .process("APIs/Rest/MeetingsAPI/Resources"),
                 .process("APIs/Rest/MLSAPI/Resources"),
                 .process("APIs/Rest/Search/Resources"),
                 .process("APIs/Rest/SelfUserAPI/Resources"),
