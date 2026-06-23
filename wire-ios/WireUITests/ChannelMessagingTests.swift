@@ -19,6 +19,7 @@
 import WireFoundation
 import XCTest
 
+/// [core-messenger]
 final class ChannelMessagingTests: WireUITestCase {
 
     private typealias ReturnedTeam = (
@@ -50,6 +51,7 @@ final class ChannelMessagingTests: WireUITestCase {
             .acceptPopup()
     }
 
+    /// [critical]
     @MainActor
     func testSendText_Image_AudioInChannelConversation_TC_8847_8848_8849_8852() async throws {
 
