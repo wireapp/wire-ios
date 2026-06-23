@@ -22,8 +22,8 @@ import UIKit
 import WireLogging
 import WireSystem
 
-/// The subset of `UIApplication`'s background task APIs that `AppBackgroundTaskExecuter` depends on.
 // sourcery: AutoMockable
+/// The subset of `UIApplication`'s background task APIs that `AppBackgroundTaskExecuter` depends on.
 public protocol BackgroundTaskApplication: AnyObject, Sendable {
 
     nonisolated func beginBackgroundTask(
