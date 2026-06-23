@@ -23,10 +23,6 @@ on:
         type: string
         required: false
         default: ''
-      kalium_ref:
-        type: string
-        required: false
-        default: ''
       testiny_run_name:
         type: string
         required: false
@@ -152,10 +148,8 @@ jobs:
           bundle exec fastlane generate_env
 
       - name: Setup Kalium Testservice
-        if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        if: ${{ inputs.run_critical_flows }}
         uses: ./.github/actions/kalium-testservice/setup
-        with:
-          kalium_ref: ${{ inputs.kalium_ref }}
 
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
@@ -169,7 +163,7 @@ jobs:
           fi
 
       - name: Stop Kalium Testservice
-        if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        if: ${{ always() && inputs.run_critical_flows }}
         uses: ./.github/actions/kalium-testservice/stop
         with:
           print_logs_on_failure: ${{ job.status != 'success' }}
@@ -464,4 +458,3 @@ jobs:
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
-
