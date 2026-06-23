@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-final class DetermineAuthMethodViewModelTests: XCTestCase {
+final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodViewModel.Factory {
 
     private var router: MockRouter!
     private var sut: DetermineAuthMethodViewModel!
@@ -163,7 +163,7 @@ final class DetermineAuthMethodViewModelTests: XCTestCase {
         overrideAllowEmailLoginOnly: Bool = false
     ) {
         sut = DetermineAuthMethodViewModel(
-            factory: FakeDetermineAuthMethodFactory(),
+            factory: self,
             router: router,
             bridge: WireAuthenticationBridge(),
             environment: Self.backendEnvironment(host: "flow.example.com"),
