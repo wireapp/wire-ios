@@ -141,52 +141,6 @@ public class MockAcmeAPIInterface: AcmeAPIInterface {
     public init() {}
 
 
-    // MARK: - getACMEDirectory
-
-    public var getACMEDirectory_Invocations: [Void] = []
-    public var getACMEDirectory_MockError: Error?
-    public var getACMEDirectory_MockMethod: (() async throws -> Data)?
-    public var getACMEDirectory_MockValue: Data?
-
-    public func getACMEDirectory() async throws -> Data {
-        getACMEDirectory_Invocations.append(())
-
-        if let error = getACMEDirectory_MockError {
-            throw error
-        }
-
-        if let mock = getACMEDirectory_MockMethod {
-            return try await mock()
-        } else if let mock = getACMEDirectory_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getACMEDirectory`")
-        }
-    }
-
-    // MARK: - getACMENonce
-
-    public var getACMENoncePath_Invocations: [String] = []
-    public var getACMENoncePath_MockError: Error?
-    public var getACMENoncePath_MockMethod: ((String) async throws -> String)?
-    public var getACMENoncePath_MockValue: String?
-
-    public func getACMENonce(path: String) async throws -> String {
-        getACMENoncePath_Invocations.append(path)
-
-        if let error = getACMENoncePath_MockError {
-            throw error
-        }
-
-        if let mock = getACMENoncePath_MockMethod {
-            return try await mock(path)
-        } else if let mock = getACMENoncePath_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getACMENoncePath`")
-        }
-    }
-
     // MARK: - getTrustAnchor
 
     public var getTrustAnchor_Invocations: [Void] = []
@@ -230,75 +184,6 @@ public class MockAcmeAPIInterface: AcmeAPIInterface {
             return mock
         } else {
             fatalError("no mock for `getFederationCertificates`")
-        }
-    }
-
-    // MARK: - sendACMERequest
-
-    public var sendACMERequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
-    public var sendACMERequestPathRequestBody_MockError: Error?
-    public var sendACMERequestPathRequestBody_MockMethod: ((String, Data) async throws -> ACMEResponse)?
-    public var sendACMERequestPathRequestBody_MockValue: ACMEResponse?
-
-    public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
-        sendACMERequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
-
-        if let error = sendACMERequestPathRequestBody_MockError {
-            throw error
-        }
-
-        if let mock = sendACMERequestPathRequestBody_MockMethod {
-            return try await mock(path, requestBody)
-        } else if let mock = sendACMERequestPathRequestBody_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `sendACMERequestPathRequestBody`")
-        }
-    }
-
-    // MARK: - sendAuthorizationRequest
-
-    public var sendAuthorizationRequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
-    public var sendAuthorizationRequestPathRequestBody_MockError: Error?
-    public var sendAuthorizationRequestPathRequestBody_MockMethod: ((String, Data) async throws -> ACMEAuthorizationResponse)?
-    public var sendAuthorizationRequestPathRequestBody_MockValue: ACMEAuthorizationResponse?
-
-    public func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse {
-        sendAuthorizationRequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
-
-        if let error = sendAuthorizationRequestPathRequestBody_MockError {
-            throw error
-        }
-
-        if let mock = sendAuthorizationRequestPathRequestBody_MockMethod {
-            return try await mock(path, requestBody)
-        } else if let mock = sendAuthorizationRequestPathRequestBody_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `sendAuthorizationRequestPathRequestBody`")
-        }
-    }
-
-    // MARK: - sendChallengeRequest
-
-    public var sendChallengeRequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
-    public var sendChallengeRequestPathRequestBody_MockError: Error?
-    public var sendChallengeRequestPathRequestBody_MockMethod: ((String, Data) async throws -> ChallengeResponse)?
-    public var sendChallengeRequestPathRequestBody_MockValue: ChallengeResponse?
-
-    public func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse {
-        sendChallengeRequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
-
-        if let error = sendChallengeRequestPathRequestBody_MockError {
-            throw error
-        }
-
-        if let mock = sendChallengeRequestPathRequestBody_MockMethod {
-            return try await mock(path, requestBody)
-        } else if let mock = sendChallengeRequestPathRequestBody_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `sendChallengeRequestPathRequestBody`")
         }
     }
 
@@ -478,22 +363,42 @@ public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
 
     // MARK: - rotateKeysAndMigrateConversations
 
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollmentProtocol, certificateChain: String)] = []
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError: Error?
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod: ((E2eiEnrollmentProtocol, String) async throws -> Void)?
+    public var rotateKeysAndMigrateConversationsCredential_Invocations: [Credential] = []
+    public var rotateKeysAndMigrateConversationsCredential_MockError: Error?
+    public var rotateKeysAndMigrateConversationsCredential_MockMethod: ((Credential) async throws -> Void)?
 
-    public func rotateKeysAndMigrateConversations(enrollment: E2eiEnrollmentProtocol, certificateChain: String) async throws {
-        rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
+    public func rotateKeysAndMigrateConversations(credential: Credential) async throws {
+        rotateKeysAndMigrateConversationsCredential_Invocations.append(credential)
 
-        if let error = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError {
+        if let error = rotateKeysAndMigrateConversationsCredential_MockError {
             throw error
         }
 
-        guard let mock = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod else {
-            fatalError("no mock for `rotateKeysAndMigrateConversationsEnrollmentCertificateChain`")
+        guard let mock = rotateKeysAndMigrateConversationsCredential_MockMethod else {
+            fatalError("no mock for `rotateKeysAndMigrateConversationsCredential`")
         }
 
-        try await mock(enrollment, certificateChain)
+        try await mock(credential)
+    }
+
+    // MARK: - uploadNewKeyPackages
+
+    public var uploadNewKeyPackagesCredentialRef_Invocations: [CredentialRef] = []
+    public var uploadNewKeyPackagesCredentialRef_MockError: Error?
+    public var uploadNewKeyPackagesCredentialRef_MockMethod: ((CredentialRef) async throws -> Void)?
+
+    public func uploadNewKeyPackages(credentialRef: CredentialRef) async throws {
+        uploadNewKeyPackagesCredentialRef_Invocations.append(credentialRef)
+
+        if let error = uploadNewKeyPackagesCredentialRef_MockError {
+            throw error
+        }
+
+        guard let mock = uploadNewKeyPackagesCredentialRef_MockMethod else {
+            fatalError("no mock for `uploadNewKeyPackagesCredentialRef`")
+        }
+
+        try await mock(credentialRef)
     }
 
 }
