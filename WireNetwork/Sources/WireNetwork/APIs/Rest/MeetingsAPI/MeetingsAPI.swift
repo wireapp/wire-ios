@@ -20,6 +20,22 @@
 /// An API access object for endpoints concerning meetings.
 public protocol MeetingsAPI {
 
+    /// Create a new meeting.
+    ///
+    /// - Parameter parameters: The meeting creation parameters.
+    /// - Returns: The created meeting.
+
+    func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse
+
+    /// Update an existing meeting.
+    ///
+    /// - Parameters:
+    ///   - meetingID: The id of the meeting to update.
+    ///   - parameters: The meeting update parameters.
+    /// - Returns: The updated meeting.
+
+    func updateMeeting(meetingID: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse
+
     /// Delete a meeting for a given conference.
     ///
     /// - Parameter meetingID: The id of the conference.

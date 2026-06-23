@@ -40,4 +40,12 @@ public enum MeetingsAPIError: Error, Equatable {
 
     case accessDenied
 
+    /// The operation is not valid in the current state.
+
+    case invalidOperation
+
+    /// One or more federated backends could not be reached.
+
+    case unreachableBackends
+
 }
