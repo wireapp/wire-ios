@@ -103,8 +103,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
 
         mockMLSService = MockMLSServiceInterface()
-        mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
-            .eraseToAnyPublisher()
         mockMLSService.epochChanges_MockValue = .init { continuation in
             continuation.yield(MLSGroupID.random())
             continuation.finish()
