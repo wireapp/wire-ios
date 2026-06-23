@@ -137,7 +137,10 @@ final class MeetingsAPITests: XCTestCase {
         let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When
-        let result = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
+        let result = try await sut.updateMeeting(
+            meetingID: Scaffolding.meetingID,
+            parameters: Scaffolding.updateParameters
+        )
 
         // Then
         XCTAssertEqual(result.id, Scaffolding.meetingID)
@@ -154,7 +157,10 @@ final class MeetingsAPITests: XCTestCase {
 
             // When / Then
             await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
-                _ = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
+                _ = try await sut.updateMeeting(
+                    meetingID: Scaffolding.meetingID,
+                    parameters: Scaffolding.updateParameters
+                )
             }
         }
     }
@@ -292,17 +298,19 @@ final class MeetingsAPITests: XCTestCase {
     enum Scaffolding {
         static let meetingID = QualifiedID(
             id: UUID(uuidString: "9c2e5e1a-1234-5678-abcd-0123456789ab")!,
-            domain: "example.com"
+            domain: "wire.com"
         )
+        static let startTime = try! Date.ISO8601FormatStyle().parse("2025-06-25T10:00:00Z")
+        static let endTime = try! Date.ISO8601FormatStyle().parse("2025-06-25T11:00:00Z")
         static let createParameters = CreateMeetingParameters(
             title: "Engineering Sync",
-            startTime: Date(timeIntervalSince1970: 1_750_845_600), // 2025-06-25T10:00:00Z
-            endTime: Date(timeIntervalSince1970: 1_750_849_200)    // 2025-06-25T11:00:00Z
+            startTime: startTime,
+            endTime: endTime
         )
         static let updateParameters = UpdateMeetingParameters(
             title: "Engineering Sync (Updated)",
-            startTime: Date(timeIntervalSince1970: 1_750_845_600), // 2025-06-25T10:00:00Z
-            endTime: Date(timeIntervalSince1970: 1_750_849_200)    // 2025-06-25T11:00:00Z
+            startTime: startTime,
+            endTime: endTime
         )
     }
 

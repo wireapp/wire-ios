@@ -19,7 +19,7 @@
 import Foundation
 
 /// Parameters for updating a meeting via `PUT /meetings/{domain}/{id}`.
-public struct UpdateMeetingParameters: Encodable {
+public struct UpdateMeetingParameters: Encodable, Sendable {
 
     public let title: String?
     public let startTime: Date?

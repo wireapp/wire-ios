@@ -19,7 +19,7 @@
 import Foundation
 
 /// Parameters for creating a new meeting via `POST /meetings`.
-public struct CreateMeetingParameters: Encodable {
+public struct CreateMeetingParameters: Encodable, Sendable {
 
     public let title: String
     public let startTime: Date
