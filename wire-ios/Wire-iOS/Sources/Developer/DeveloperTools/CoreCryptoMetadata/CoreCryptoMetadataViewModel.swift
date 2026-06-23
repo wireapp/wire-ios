@@ -23,7 +23,7 @@ final class CoreCryptoMetadataViewModel {
     let sections: [DeveloperToolsViewModel.Section]
 
     init() {
-        let metadata = CoreCrypto.buildMetadata()
+        let metadata = WireCoreCrypto.buildMetadata()
 
         self.sections = [
             .init(
