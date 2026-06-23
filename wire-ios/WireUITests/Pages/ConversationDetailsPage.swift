@@ -165,5 +165,4 @@ class ConversationDetailsPage: PageModel {
     var leaveAndClearConversationButtonOnBottomSheet: XCUIElement {
         app.buttons[Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue].firstMatch
     }
-
 }

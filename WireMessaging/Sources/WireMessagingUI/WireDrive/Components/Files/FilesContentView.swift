@@ -29,14 +29,12 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 ///   - viewModel: viewModel reference
 ///   - isBrowsing: bool for when we are on browsing view
 ///   - backgroundColor: background color for the ZStack.
-///   - navigationTitle: title shown in the navigation bar.
 ///   - toolbarContent: toolbar content builder.
 ///   - sheetContent: sheet builder for navigation items.
 package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
     @ObservedObject package var viewModel: FilesViewModel
     package let isBrowsing: Bool
     package let backgroundColor: Color
-    package let navigationTitle: String
 
     @ToolbarContentBuilder package let toolbarContent: () -> Toolbar
     @ViewBuilder let sheetContent: (FilesViewModel.SheetNavigation) -> Sheet
@@ -62,6 +60,13 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                         .opacity(isFilterBarPresented ? 1 : 0)
                         .frame(height: isFilterBarPresented ? nil : 0)
                         .padding(.bottom, isFilterBarPresented ? 15 : 0)
+
+                        if viewModel.showReadOnlyBanner {
+                            ConversationViewerAccessBanner(backgroundColor: ColorTheme.Buttons.Secondary
+                                .disabledOutline) {
+                                    viewModel.showReadOnlyBanner = false
+                                }.padding(.bottom, 15)
+                        }
 
                         FilesSortingView(viewModel: viewModel.filesSortingViewModel())
                     }
@@ -95,8 +100,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             }
             .animation(.easeInOut(duration: 0.25), value: viewModel.isOffline)
             .animation(.easeOut(duration: 0.25), value: isSearchFocused)
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-            .navigationTitle(navigationTitle)
+            .quickFilePreview($viewModel.quickPreviewItem)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarBackground(backgroundColor, for: .navigationBar)

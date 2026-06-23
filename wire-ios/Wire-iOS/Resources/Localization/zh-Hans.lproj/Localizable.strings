@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "确定";
 "general.next" = "继续";
 "general.cancel" = "取消";
@@ -568,6 +568,7 @@
 "content.system.conversation.you.removed" = "%@移除了%@";
 "content.system.conversation.you.removed.legalhold" = "%@ 已从此对话中移除，因为合法保留已被激活。";
 "content.system.conversation.you.left" = "%@ 离开了";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@从团队中被移除了";
 "content.system.conversation.guest.joined" = "%@已加入";
 "content.system.conversation.guest.you_joined" = "您已加入";
@@ -735,6 +736,7 @@
 "content.message.reply.original_timestamp.date" = "来自 %@ 的原始消息";
 "content.message.reply.original_timestamp.time" = "来自 %@ 的原始消息";
 "content.message.reply.broken_message" = "您不能看到此消息。";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "已编辑";
 
 "content.message.open_link_alert.title" = "打开链接";
@@ -1066,6 +1068,7 @@
 "profile.details.blocking_reason" = "由于合法保留，此用户已被屏蔽。[进一步了解](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "名称不可用";
 
 // Device list
@@ -1155,8 +1158,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "分享个人资料";
 "qrcode.share_message" = "分享您的个人资料以便与其他人轻松联系。您必须先接受联系请求，然后你们才能开始通信。";
 "qrcode.share_profile_link.button.title" = "分享个人资料链接";

@@ -114,10 +114,7 @@ final class ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory(
-            passwordValidator: AuthenticationPasswordValidator(),
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
-        )
+        WireMeetingsFactory()
     }
 
 }
@@ -156,9 +153,10 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                     let participants: [WireDriveConversation.Participant] = conversation.participants
                         .compactMap { item -> WireDriveConversation.Participant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
+                            // TODO: [WPB-25941] Remove developer flag when feature is complete
                             let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
                             let role: WireDriveConversation.Participant.Role = if isDrivePermissionsEnabled {
-                                item.isGuest(in: conversation) ? .viewer : .editor
+                                conversation.matchesTeam(with: item) ? .editor : .viewer
                             } else {
                                 .editor
                             }

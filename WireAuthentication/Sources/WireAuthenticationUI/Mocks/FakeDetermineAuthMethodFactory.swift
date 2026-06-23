@@ -29,6 +29,8 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
     ValidateEmailOrSSOCodeUseCaseFactory {
 
     var existsAnotherAccount: Bool = false
+    var allowsMultipleBackends: Bool = true
+    var existingBackendHosts: Set<String> = []
     var emailOrSSOCode: String = ""
 
     var mockDependencies = MockDependencies()
@@ -39,7 +41,9 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
             router: FakeRootFactory().viewModel,
             bridge: WireAuthenticationBridge(),
             environment: mockDependencies.backendEnvironment,
-            existsAnotherAccount: existsAnotherAccount
+            existsAnotherAccount: existsAnotherAccount,
+            allowsMultipleBackends: allowsMultipleBackends,
+            existingBackendHosts: existingBackendHosts
         )
         viewModel.emailOrSSOCode = emailOrSSOCode
         return viewModel

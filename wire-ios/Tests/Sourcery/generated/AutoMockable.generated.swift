@@ -29,6 +29,7 @@ import SwiftUI
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
+import WireCallingDomain
 import WireMessagingDomain
 import WireMessagingUI
 import WireFoundation
@@ -702,16 +703,16 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
     // MARK: - resetSession
 
     var resetSession_Invocations: [Void] = []
-    var resetSession_MockMethod: (() -> Void)?
+    var resetSession_MockMethod: (() async -> Void)?
 
-    func resetSession() {
+    func resetSession() async {
         resetSession_Invocations.append(())
 
         guard let mock = resetSession_MockMethod else {
             fatalError("no mock for `resetSession`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - updateVerified
@@ -965,6 +966,37 @@ class MockNetworkStatusViewDelegate: NetworkStatusViewDelegate {
         }
 
         mock(networkStatusView, animated, state)
+    }
+
+}
+
+class MockOAuthUseCaseInterface: OAuthUseCaseInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_Invocations: [(parameters: OAuthParameters, onWebViewPresenting: (@MainActor () -> Void)?, onWebViewDismissed: (@MainActor () -> Void)?)] = []
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockError: Error?
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockMethod: ((OAuthParameters, (@MainActor () -> Void)?, (@MainActor () -> Void)?) async throws -> OAuthResponse)?
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue: OAuthResponse?
+
+    func invoke(parameters: OAuthParameters, onWebViewPresenting: (@MainActor () -> Void)?, onWebViewDismissed: (@MainActor () -> Void)?) async throws -> OAuthResponse {
+        invokeParametersOnWebViewPresentingOnWebViewDismissed_Invocations.append((parameters: parameters, onWebViewPresenting: onWebViewPresenting, onWebViewDismissed: onWebViewDismissed))
+
+        if let error = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockError {
+            throw error
+        }
+
+        if let mock = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockMethod {
+            return try await mock(parameters, onWebViewPresenting, onWebViewDismissed)
+        } else if let mock = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeParametersOnWebViewPresentingOnWebViewDismissed`")
+        }
     }
 
 }
@@ -1668,20 +1700,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsView_Invocations: [Void] = []
-    var makeMeetingsView_MockMethod: (() -> UIViewController)?
-    var makeMeetingsView_MockValue: UIViewController?
+    var makeMeetingsViewMemberRepository_Invocations: [any MemberRepositoryProtocol] = []
+    var makeMeetingsViewMemberRepository_MockMethod: ((any MemberRepositoryProtocol) -> UIViewController)?
+    var makeMeetingsViewMemberRepository_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView() -> UIViewController {
-        makeMeetingsView_Invocations.append(())
+    func makeMeetingsView(memberRepository: any MemberRepositoryProtocol) -> UIViewController {
+        makeMeetingsViewMemberRepository_Invocations.append(memberRepository)
 
-        if let mock = makeMeetingsView_MockMethod {
-            return mock()
-        } else if let mock = makeMeetingsView_MockValue {
+        if let mock = makeMeetingsViewMemberRepository_MockMethod {
+            return mock(memberRepository)
+        } else if let mock = makeMeetingsViewMemberRepository_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsView`")
+            fatalError("no mock for `makeMeetingsViewMemberRepository`")
         }
     }
 

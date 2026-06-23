@@ -20,11 +20,11 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLocators
+import WireLogging
 import WireSyncEngine
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "UI")
 
 final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBaseViewController {
 
@@ -82,13 +82,21 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - Life Cycle
 
     convenience init(userSession: UserSession) {
+        var audioRecorder: AudioRecorderType = AudioRecorder(
+            format: .wav,
+            maxRecordingDuration: userSession.maxAudioMessageLength,
+            maxFileSize: userSession.maxUploadFileSize,
+            userSession: userSession
+        )
+
+        #if DEBUG
+            if UITestConfig.environment?.useMockAudioRecorder == true {
+                audioRecorder = UITestAudioRecorder()
+            }
+        #endif
+
         self.init(
-            audioRecorder: AudioRecorder(
-                format: .wav,
-                maxRecordingDuration: userSession.maxAudioMessageLength,
-                maxFileSize: userSession.maxUploadFileSize,
-                userSession: userSession
-            ),
+            audioRecorder: audioRecorder,
             userSession: userSession
         )
     }
@@ -403,7 +411,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func openEffectsPicker() {
-        guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to add effect to audio file") }
+        guard let url = recorder.fileURL else {
+            return WireLogger.ui.warn("Nil url passed to add effect to audio file")
+        }
 
         let noizeReducePath = (NSTemporaryDirectory() as NSString).appendingPathComponent("noize-reduce.wav")
         noizeReducePath.deleteFileAtPath()
@@ -474,7 +484,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     @objc
     func confirmButtonPressed(_ button: UIButton?) {
         guard let audioPath = currentEffectFilePath else {
-            zmLog.error("No file to send")
+            WireLogger.ui.error("No file to send")
             return
         }
         guard let selfUser = ZMUser.selfUser() else {

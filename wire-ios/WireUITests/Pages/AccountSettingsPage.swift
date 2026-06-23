@@ -61,7 +61,7 @@ class AccountSettingsPage: PageModel {
         app.descendants(matching: .any)[Locators.AccountSettingsPage.deleteAccountField.rawValue].firstMatch
     }
 
-    var oKButtonOnDeleteAccountAlert: XCUIElement {
+    var oKButtonOnConfirmation: XCUIElement {
         app.buttons[Locators.AccountSettingsPage.ok.rawValue]
     }
 
@@ -129,9 +129,16 @@ class AccountSettingsPage: PageModel {
         return try LogOutPage()
     }
 
+    @discardableResult
+    func logoutWithoutPassword() throws -> WelcomePage {
+        logoutButton.tap()
+        oKButtonOnConfirmation.tap()
+        return try WelcomePage()
+    }
+
     func deleteAccount() throws -> ConversationsPage {
         deleteAccountButtonOnAccount.tap()
-        oKButtonOnDeleteAccountAlert.tap()
+        oKButtonOnConfirmation.tap()
         return try ConversationsPage()
     }
 

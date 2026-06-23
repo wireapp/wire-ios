@@ -297,6 +297,13 @@ public final class ZMUserSession: NSObject {
         )
     }
 
+    public var resetProteusSession: ResetProteusSessionUseCaseProtocol {
+        ResetProteusSessionUseCase(
+            syncContext: coreDataStack.syncContext,
+            proteusService: proteusService
+        )
+    }
+
     lazy var e2eiRepository: E2EIRepositoryInterface = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl ?? ""
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
@@ -1639,6 +1646,9 @@ extension ZMUserSession {
                 coreCryptoProvider: coreCryptoProvider
             ),
             AppVersionMigration_4_18_0(
+                coreDataStack: coreDataStack
+            ),
+            AppVersionMigration_4_22_0(
                 coreDataStack: coreDataStack
             )
         ]

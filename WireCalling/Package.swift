@@ -1,5 +1,6 @@
 // swift-tools-version: 6.2
 
+import Foundation
 import PackageDescription
 
 let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
@@ -7,7 +8,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireCalling",
     defaultLocalization: "en",
-    platforms: [.iOS("17.0"), .macOS(.v12)],
+    platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
@@ -56,7 +57,6 @@ let package = Package(
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
-                .product(name: "WireReusableUIComponents", package: "WireUI"),
                 "WireFoundation"
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
@@ -81,9 +81,17 @@ for target in package.targets {
     }
 }
 
-for target in package.targets {
+// open --env CI wire-ios-mono.xcworkspace
+// or
+// CI= swift build
+let isCI = ProcessInfo.processInfo.environment["CI"] != nil
+
+for target in package.targets where target.type != .binary {
     target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("ExistentialAny")
-    ]
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("StrictMemorySafety"),
+        isCI ? .unsafeFlags(["-warnings-as-errors"]) : nil
+    ].compactMap(\.self)
 }

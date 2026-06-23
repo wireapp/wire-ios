@@ -19,6 +19,7 @@
 import WireFoundation
 import XCTest
 
+/// [core-messenger]
 final class ChannelMessagingTests: WireUITestCase {
 
     private typealias ReturnedTeam = (
@@ -50,6 +51,7 @@ final class ChannelMessagingTests: WireUITestCase {
             .acceptPopup()
     }
 
+    /// [critical]
     @MainActor
     func testSendText_Image_AudioInChannelConversation_TC_8847_8848_8849_8852() async throws {
 
@@ -86,5 +88,47 @@ final class ChannelMessagingTests: WireUITestCase {
         )
 
         try activeConversationPage.verifyPingSent()
+    }
+
+    @MainActor
+    func testSendAndReceiveFileInChannelConversation_TC_8851_8858() async throws {
+
+        // GIVEN
+        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
+
+        _ = try login(user: teamWithChannelConversation.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: teamWithChannelConversation.teamMember.email,
+            password: teamWithChannelConversation.teamMember.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
+
+        let activeConversationPage = try ConversationsPage()
+            .openConversation()
+            .openConversationDetails()
+            .appParticipantToConversation()
+            .tapMemberCells(withLabelPrefixes: [teamWithChannelConversation.teamMember.name])
+            .addSelectedParticipant()
+            .closeConversationDetails()
+
+        // WHEN
+        activeConversationPage.uploadFile()
+
+        // THEN - file is sent
+        activeConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+
+        let receivedConversationPage = try activeConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamWithChannelConversation.teamMember.name)
+            .openConversation()
+
+        // THEN - file is received
+        receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 }

@@ -37,18 +37,22 @@ public struct Meeting: Equatable, Sendable {
 
     public let repeatOption: RepeatOption
 
+    public let members: [Member]
+
     public init(
         id: UUID,
         title: String,
         start: Date,
         end: Date,
-        repeatOption: RepeatOption = .never
+        repeatOption: RepeatOption = .never,
+        members: [Member] = []
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
         self.repeatOption = repeatOption
+        self.members = members
     }
 
 }
