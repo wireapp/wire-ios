@@ -19,6 +19,7 @@
 import WireFoundation
 import XCTest
 
+/// [core-messenger]
 final class GroupMessagingTests: WireUITestCase {
 
     private typealias ReturnedTeam = (
@@ -73,6 +74,7 @@ final class GroupMessagingTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testSendTextAndAudioInGroupConversation_TC_8833_8835() async throws {
 
@@ -219,6 +221,7 @@ final class GroupMessagingTests: WireUITestCase {
         }
     }
 
+    /// [critical]
     @MainActor
     func testSendImageAndVideoInGroupConversation_TC_8834_8836() async throws {
 
