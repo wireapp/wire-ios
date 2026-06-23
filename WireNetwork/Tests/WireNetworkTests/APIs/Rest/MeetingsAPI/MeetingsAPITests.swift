@@ -129,7 +129,10 @@ final class MeetingsAPITests: XCTestCase {
         let sut = APIVersion.v15.buildAPI(apiService: apiService)
 
         // When
-        let result = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
+        let result = try await sut.updateMeeting(
+            meetingID: Scaffolding.meetingID,
+            parameters: Scaffolding.updateParameters
+        )
 
         // Then
         XCTAssertEqual(result.id, Scaffolding.meetingID)
@@ -146,7 +149,10 @@ final class MeetingsAPITests: XCTestCase {
 
             // When / Then
             await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
-                _ = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
+                _ = try await sut.updateMeeting(
+                    meetingID: Scaffolding.meetingID,
+                    parameters: Scaffolding.updateParameters
+                )
             }
         }
     }

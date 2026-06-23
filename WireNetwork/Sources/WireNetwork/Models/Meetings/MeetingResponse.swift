@@ -125,7 +125,7 @@ struct MeetingListResponseV16: Decodable, ToAPIModelConvertible {
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        meetings = try container.decode([MeetingResponseV16].self)
+        self.meetings = try container.decode([MeetingResponseV16].self)
     }
 
     func toAPIModel() -> [MeetingResponse] {

@@ -49,7 +49,10 @@ class MeetingsAPIV15: MeetingsAPIV14 {
 
     // MARK: - Update meeting
 
-    override func updateMeeting(meetingID: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse {
+    override func updateMeeting(
+        meetingID: QualifiedID,
+        parameters: UpdateMeetingParameters
+    ) async throws -> MeetingResponse {
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)/meetings/\(meetingID.domain)/\(meetingID.id.uuidString.lowercased())"
 
