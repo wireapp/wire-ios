@@ -597,6 +597,8 @@ platform :ios do
             UI.user_error! "missing id for tests"
         end
 
+        ENV['TEST_RUNNER_CI'] = 'true'
+
         ci_args = is_running_on_ci ? "CI=1" : nil
 
         run_tests_options = {
