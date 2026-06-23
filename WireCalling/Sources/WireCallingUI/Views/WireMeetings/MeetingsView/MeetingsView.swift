@@ -37,8 +37,8 @@ struct MeetingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
-        .onAppear {
-            viewModel.loadInitialData()
+        .task {
+            await viewModel.loadInitialData()
         }
     }
 
@@ -75,14 +75,14 @@ struct MeetingsView: View {
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
-                .onAppear { viewModel.loadMoreIfNeeded() }
+                .task { await viewModel.loadMoreIfNeeded() }
             }
         }
         .listStyle(.grouped)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
-            viewModel.loadInitialData()
+            await viewModel.loadInitialData()
         }
     }
 
@@ -137,7 +137,7 @@ private struct PreviewFetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase
 
     var meetings = [Meeting]()
 
-    func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings {
+    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
         .init(meetings: meetings, hasMore: false, nextOffset: 0)
     }
 
