@@ -34,27 +34,16 @@ final class MLSTransportImpl: MlsTransport {
         self.conversationEventProcessor = conversationEventProcessor
     }
 
-    func sendCommitBundle(commitBundle: WireCoreCryptoUniffi.CommitBundle) async -> WireCoreCryptoUniffi
-        .MlsTransportResponse {
+    func sendCommitBundle(commitBundle: WireCoreCryptoUniffi.CommitBundle) async throws {
         let events: [UpdateEvent]
 
         do {
             events = try await mlsAPI.postCommitBundle(commitBundle.toAPIModel())
         } catch let error as MLSAPIError {
-            do {
-                let encoder = JSONEncoder()
-                encoder.outputFormatting = .sortedKeys
-                let encodableError = MLSTransportError(error)
-                let string = String(
-                    decoding: try encoder.encode(encodableError),
-                    as: UTF8.self
-                )
-                return .abort(reason: string)
-            } catch {
-                return .abort(reason: "failed to encode error")
-            }
+            let reason = (try? encodeErrorReason(error)) ?? "failed to encode error"
+            throw WireCoreCrypto.MlsTransportError.MessageRejected(reason: reason)
         } catch {
-            return .abort(reason: error.localizedDescription)
+            throw WireCoreCrypto.MlsTransportError.MessageRejected(reason: error.localizedDescription)
         }
 
         for event in events {
@@ -69,12 +58,17 @@ final class MLSTransportImpl: MlsTransport {
                     )
             }
         }
-
-        return .success
     }
 
-    func sendMessage(mlsMessage: Data) async -> WireCoreCryptoUniffi.MlsTransportResponse {
-        .abort(reason: "not implemented")
+    private func encodeErrorReason(_ error: MLSAPIError) throws -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        let encodableError = MLSTransportError(error)
+        return String(decoding: try encoder.encode(encodableError), as: UTF8.self)
+    }
+
+    func sendMessage(mlsMessage: Data) async throws {
+        throw WireCoreCrypto.MlsTransportError.MessageRejected(reason: "not implemented")
     }
 
     func prepareForTransport(historySecret: WireCoreCryptoUniffi.HistorySecret) async -> WireCoreCryptoUniffi
