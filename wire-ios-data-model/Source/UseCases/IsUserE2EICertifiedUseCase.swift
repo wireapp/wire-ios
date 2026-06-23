@@ -71,6 +71,7 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         // make the call to Core Crypto
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         let userIdentities = try await coreCrypto.transaction { context in
+            let userID = try WireCoreCrypto.Uuid(uuid: userID)
             // get MLS group members
             let allUserIdentities = try await context.getUserIdentities(
                 conversationId: mlsGroupID.conversationId,
@@ -100,6 +101,9 @@ extension IsUserE2EICertifiedUseCase {
         case conversationsManagedObjectContextNotSet
         case failedToGetMLSGroupID(_ conversationID: UUID)
         /// The list of identities cannot be retrieved from the result.
-        case failedToGetIdentitiesFromCoreCryptoResult(_ result: [String: [WireIdentity]], _ userID: String)
+        case failedToGetIdentitiesFromCoreCryptoResult(
+            _ result: [WireCoreCrypto.Uuid: [WireIdentity]],
+            _ userID: WireCoreCrypto.Uuid
+        )
     }
 }
