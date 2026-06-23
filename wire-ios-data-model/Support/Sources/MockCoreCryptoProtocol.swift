@@ -27,7 +27,7 @@ public extension MockCoreCryptoProtocol {
     }
 }
 
-final public class MockCoreCryptoProtocol: CoreCryptoProtocol {
+public final class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle
 
@@ -248,118 +248,156 @@ final public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             fatalError("no mock for `buildMetadata`")
         }
     }
-    
+
     // MARK: - findCredentials
-    
-    public var findCredentials_ClientId_Invocations: [(clientId: WireCoreCryptoUniffi.ClientId?, publicKey: Data?, cipherSuite: WireCoreCryptoUniffi.CipherSuite?, credentialType: WireCoreCryptoUniffi.CredentialType?, earliestValidity: UInt64?)] = []
+
+    public var findCredentials_ClientId_Invocations: [(
+        clientId: WireCoreCryptoUniffi.ClientId?,
+        publicKey: Data?,
+        cipherSuite: WireCoreCryptoUniffi.CipherSuite?,
+        credentialType: WireCoreCryptoUniffi.CredentialType?,
+        earliestValidity: UInt64?
+    )] = []
     public var findCredentials_ClientId_MockError: Error?
     public var findCredentials_ClientId_MockMethod: (
-        (_ clientId: WireCoreCryptoUniffi.ClientId?, _ publicKey: Data?, _ cipherSuite: WireCoreCryptoUniffi.CipherSuite?, _ credentialType: WireCoreCryptoUniffi.CredentialType?, _ earliestValidity: UInt64?) async throws
+        (
+            _ clientId: WireCoreCryptoUniffi.ClientId?,
+            _ publicKey: Data?,
+            _ cipherSuite: WireCoreCryptoUniffi.CipherSuite?,
+            _ credentialType: WireCoreCryptoUniffi.CredentialType?,
+            _ earliestValidity: UInt64?
+        ) async throws
             -> [WireCoreCryptoUniffi.CredentialRef]
     )?
     public var findCredentials_ClientId_MockValue: [CredentialRef]?
-    public func findCredentials(clientId: WireCoreCryptoUniffi.ClientId?, publicKey: Data?, cipherSuite: WireCoreCryptoUniffi.CipherSuite?, credentialType: WireCoreCryptoUniffi.CredentialType?, earliestValidity: UInt64?) async throws -> [WireCoreCryptoUniffi.CredentialRef] {
-        findCredentials_ClientId_Invocations.append((clientId, publicKey, cipherSuite, credentialType, earliestValidity))
-        
+    public func findCredentials(
+        clientId: WireCoreCryptoUniffi.ClientId?,
+        publicKey: Data?,
+        cipherSuite: WireCoreCryptoUniffi.CipherSuite?,
+        credentialType: WireCoreCryptoUniffi.CredentialType?,
+        earliestValidity: UInt64?
+    ) async throws -> [WireCoreCryptoUniffi.CredentialRef] {
+        findCredentials_ClientId_Invocations.append((
+            clientId,
+            publicKey,
+            cipherSuite,
+            credentialType,
+            earliestValidity
+        ))
+
         if let error = findCredentials_ClientId_MockError {
             throw error
         }
-        
+
         if let value = findCredentials_ClientId_MockValue {
             return value
         }
-        
+
         if let method = findCredentials_ClientId_MockMethod {
             return try await method(clientId, publicKey, cipherSuite, credentialType, earliestValidity)
         }
-        
+
         fatalError("no mock for `findCredentials`")
     }
-    
+
     // MARK: - Not implemented methods
 
-    public func conversationCipherSuite(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.CipherSuite {
+    public func conversationCipherSuite(conversationId: WireCoreCryptoUniffi
+        .ConversationId) async throws -> WireCoreCryptoUniffi.CipherSuite {
         fatalError("not implemented")
     }
-    
-    public func conversationCredential(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.CredentialRef {
+
+    public func conversationCredential(conversationId: WireCoreCryptoUniffi
+        .ConversationId) async throws -> WireCoreCryptoUniffi.CredentialRef {
         fatalError("not implemented")
     }
-    
+
     public func conversationEpoch(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> UInt64 {
         fatalError("not implemented")
     }
-    
+
     public func conversationExists(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> Bool {
         fatalError("not implemented")
     }
-    
-    public func e2eiConversationState(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.E2eiConversationState {
+
+    public func e2eiConversationState(conversationId: WireCoreCryptoUniffi
+        .ConversationId) async throws -> WireCoreCryptoUniffi.E2eiConversationState {
         fatalError("not implemented")
     }
-    
+
     public func e2eiIsEnabled(cipherSuite: WireCoreCryptoUniffi.CipherSuite) async throws -> Bool {
         fatalError("not implemented")
     }
-    
+
     public func e2eiIsPkiEnvSetup() async -> Bool {
         fatalError("not implemented")
     }
-    
-    public func exportSecretKey(conversationId: WireCoreCryptoUniffi.ConversationId, keyLength: UInt32) async throws -> WireCoreCryptoUniffi.SecretKey {
+
+    public func exportSecretKey(
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        keyLength: UInt32
+    ) async throws -> WireCoreCryptoUniffi.SecretKey {
         fatalError("not implemented")
     }
-        
-    public func getClientIds(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> [WireCoreCryptoUniffi.ClientId] {
+
+    public func getClientIds(conversationId: WireCoreCryptoUniffi
+        .ConversationId) async throws -> [WireCoreCryptoUniffi.ClientId] {
         fatalError("not implemented")
     }
-    
+
     public func getCredentials() async throws -> [WireCoreCryptoUniffi.CredentialRef] {
         fatalError("not implemented")
     }
-    
-    public func getDeviceIdentities(conversationId: WireCoreCryptoUniffi.ConversationId, deviceIds: [WireCoreCryptoUniffi.ClientId]) async throws -> [WireCoreCryptoUniffi.WireIdentity] {
+
+    public func getDeviceIdentities(
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        deviceIds: [WireCoreCryptoUniffi.ClientId]
+    ) async throws -> [WireCoreCryptoUniffi.WireIdentity] {
         fatalError("not implemented")
     }
-    
-    public func getExternalSender(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.ExternalSender {
+
+    public func getExternalSender(conversationId: WireCoreCryptoUniffi
+        .ConversationId) async throws -> WireCoreCryptoUniffi.ExternalSender {
         fatalError("not implemented")
     }
-    
+
     public func getPkiEnvironment() async -> WireCoreCryptoUniffi.PkiEnvironment? {
         fatalError("not implemented")
     }
-    
-    public func getUserIdentities(conversationId: WireCoreCryptoUniffi.ConversationId, userIds: [WireCoreCryptoUniffi.Uuid]) async throws -> [WireCoreCryptoUniffi.Uuid : [WireCoreCryptoUniffi.WireIdentity]] {
+
+    public func getUserIdentities(
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        userIds: [WireCoreCryptoUniffi.Uuid]
+    ) async throws -> [WireCoreCryptoUniffi.Uuid: [WireCoreCryptoUniffi.WireIdentity]] {
         fatalError("not implemented")
     }
-    
+
     public func proteusFingerprint() async throws -> String {
         fatalError("not implemented")
     }
-    
+
     public func proteusFingerprintLocal(sessionId: String) async throws -> String {
         fatalError("not implemented")
     }
-    
+
     public func proteusFingerprintRemote(sessionId: String) async throws -> String {
         fatalError("not implemented")
     }
-    
+
     public func proteusSessionExists(sessionId: String) async throws -> Bool {
         fatalError("not implemented")
     }
-    
+
     public func publicKey(credentialRef: WireCoreCryptoUniffi.CredentialRef) async throws -> Data {
         fatalError("not implemented")
     }
-    
+
     public func setPkiEnvironment(pkiEnvironment: WireCoreCryptoUniffi.PkiEnvironment?) async {
         fatalError("not implemented")
     }
-    
+
     public func transactionFfi(command: any WireCoreCryptoUniffi.CoreCryptoCommand) async throws {
         fatalError("not implemented")
     }
-    
+
 }
