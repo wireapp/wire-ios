@@ -50,8 +50,9 @@ final class ConversationTests: WireUITestCase {
         XCTAssertTrue(sentMessages.isEmpty)
     }
 
+    // TODO: [WPB-26543] Re-enable test after adding support to promote user as group admin
     @MainActor
-    func testLeaveGroup_TC_8861() async throws {
+    func disabled_testLeaveGroup_TC_8861() async throws {
         let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamOwner)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
@@ -79,8 +80,9 @@ final class ConversationTests: WireUITestCase {
         XCTAssertTrue(activeConversationPage.userLeftSystemMessage.exists, "the system message is missing")
     }
 
+    // TODO: [WPB-26543] Re-enable test after adding support to promote user as group admin
     @MainActor
-    func testLeaveAndClearGroup_TC_10525() async throws {
+    func disabled_testLeaveAndClearGroup_TC_10525() async throws {
         let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamOwner)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
