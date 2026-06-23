@@ -42,6 +42,14 @@ final class MeetingsAPITests: XCTestCase {
 
     // MARK: - Request generation
 
+    func testListMeetings_Request_Generation_V16() async throws {
+        let apiService = MockAPIServiceProtocol.withResponses([(.ok, "MeetingListResponse")])
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v16], apiService: apiService) { sut in
+            _ = try await sut.listMeetings()
+        }
+    }
+
     func testCreateMeeting_Request_Generation_V15() async throws {
         let apiService = MockAPIServiceProtocol.withResponses([(.created, "MeetingResponse")])
 
@@ -63,6 +71,38 @@ final class MeetingsAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v16], apiService: apiService) { sut in
             try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+        }
+    }
+
+    // MARK: - listMeetings V16
+
+    func testListMeetings_SuccessResponse_200_V16() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([(.ok, "MeetingListResponse")])
+        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+
+        // When
+        let result = try await sut.listMeetings()
+
+        // Then
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result[0].id, Scaffolding.meetingID)
+        XCTAssertEqual(result[0].title, "Engineering Sync")
+        XCTAssertEqual(result[1].title, "Design Review")
+    }
+
+    func testListMeetings_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v15)
+
+        for version in unsupportedVersions {
+            // Given
+            let apiService = MockAPIServiceProtocol()
+            let sut = version.buildAPI(apiService: apiService)
+
+            // When / Then
+            await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
+                _ = try await sut.listMeetings()
+            }
         }
     }
 
