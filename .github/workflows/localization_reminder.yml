@@ -1,0 +1,126 @@
+name: Localization Reminder
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**/en.lproj/*.strings'
+      - '**/*.xcstrings'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-localizations:
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - name: Collect new string keys and English values
+        id: check
+        run: |
+          BASE_SHA=${{ github.event.pull_request.base.sha }}
+          HEAD_SHA=${{ github.event.pull_request.head.sha }}
+
+          NEW_KEYS=""
+
+          # .strings files: extract "key" = "value" from added lines in en.lproj
+          CHANGED_STRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
+            | grep 'en\.lproj/.*\.strings$' \
+            | grep -v 'vendor/' \
+            | grep -v 'Carthage/')
+
+          if [ -n "$CHANGED_STRINGS" ]; then
+            KEYS=$(git diff "$BASE_SHA" "$HEAD_SHA" -- $CHANGED_STRINGS \
+              | grep '^+' | grep -v '^+++' \
+              | grep -E '^\+"[^"]+" *= *"' \
+              | sed 's/^+"\([^"]*\)" *= *"\(.*\)";.*/`\1` = "\2"/')
+            NEW_KEYS="$KEYS"
+          fi
+
+          # .xcstrings files: extract key + English value using jq on the current file
+          CHANGED_XCSTRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
+            | grep '\.xcstrings$' \
+            | grep -v 'vendor/' \
+            | grep -v 'Carthage/')
+
+          if [ -n "$CHANGED_XCSTRINGS" ]; then
+            for file in $CHANGED_XCSTRINGS; do
+              NEW_IN_FILE=$(git diff "$BASE_SHA" "$HEAD_SHA" -- "$file" \
+                | grep '^+' | grep -v '^+++' \
+                | grep -E '^\+    "[^"]+" : \{' \
+                | sed 's/^+    "\([^"]*\)".*/\1/')
+
+              while IFS= read -r key; do
+                [ -z "$key" ] && continue
+                EN_VALUE=$(jq -r --arg k "$key" \
+                  '.strings[$k].localizations.en.stringUnit.value // "(no English value)"' "$file")
+                ENTRY="\`$key\` = \"$EN_VALUE\""
+                if [ -n "$NEW_KEYS" ]; then
+                  NEW_KEYS="$NEW_KEYS
+$ENTRY"
+                else
+                  NEW_KEYS="$ENTRY"
+                fi
+              done <<< "$NEW_IN_FILE"
+            done
+          fi
+
+          if [ -n "$NEW_KEYS" ]; then
+            echo "has_new_strings=true" >> "$GITHUB_OUTPUT"
+            {
+              echo 'new_keys<<EOF'
+              echo "$NEW_KEYS"
+              echo EOF
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "has_new_strings=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post localization reminder
+        if: steps.check.outputs.has_new_strings == 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        env:
+          NEW_KEYS: ${{ steps.check.outputs.new_keys }}
+        with:
+          script: |
+            const MARKER = '<!-- localization-reminder -->'
+            const keys = process.env.NEW_KEYS.split('\n').filter(Boolean)
+            const bulletList = keys.map(k => `- ${k}`).join('\n')
+            const body = [
+              MARKER,
+              'Please make sure new localizations are translated once merged to develop.',
+              'We need 100% German translations before releasing.',
+              '',
+              '**New strings (English):**',
+              bulletList,
+            ].join('\n')
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+
+            const existing = comments.find(c => c.body.includes(MARKER))
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }
