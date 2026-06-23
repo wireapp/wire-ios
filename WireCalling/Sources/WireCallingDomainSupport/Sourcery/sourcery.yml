@@ -7,4 +7,5 @@ output:
   ${DERIVED_SOURCES_DIR}
 args:
   autoMockableImports: ["WireCallingData"]
-  autoMockablePackageImports: ["Foundation", "WireCallingDomain"]
+  autoMockablePackageImports: ["Foundation"]
+  autoMockablePublicImports: ["WireCallingDomain"]
