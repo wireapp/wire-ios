@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodViewModel.Factory {
+final class DetermineAuthMethodViewModelTests: XCTestCase {
 
     private var router: MockRouter!
     private var sut: DetermineAuthMethodViewModel!
@@ -157,20 +157,20 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
 
     @MainActor
     private func makeSUT(
-        emailOrSSOCode: String,
-        overrideAllowEmailLoginOnly: Bool
-    ) -> DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
-            factory: FakeDetermineAuthMethodFactory(),
-    private func makeSUT(allowsMultipleBackends: Bool, existingBackendHosts: Set<String>) {
+        allowsMultipleBackends: Bool,
+        existingBackendHosts: Set<String>,
+        emailOrSSOCode: String = "",
+        overrideAllowEmailLoginOnly: Bool = false
+    ) {
         sut = DetermineAuthMethodViewModel(
-            factory: self,
+            factory: FakeDetermineAuthMethodFactory(),
             router: router,
             bridge: WireAuthenticationBridge(),
             environment: Self.backendEnvironment(host: "flow.example.com"),
             existsAnotherAccount: !existingBackendHosts.isEmpty,
             allowsMultipleBackends: allowsMultipleBackends,
-            existingBackendHosts: existingBackendHosts
+            existingBackendHosts: existingBackendHosts,
+            overrideAllowEmailLoginOnly: overrideAllowEmailLoginOnly
         )
     }
 
