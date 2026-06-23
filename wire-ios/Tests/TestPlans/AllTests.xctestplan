@@ -29,10 +29,6 @@
         "value" : "failed"
       },
       {
-        "key" : "CI",
-        "value" : "${CI}"
-      },
-      {
         "key" : "IMAGE_DIFF_DIR",
         "value" : "$(SOURCE_ROOT)\/SnapshotResults"
       },
