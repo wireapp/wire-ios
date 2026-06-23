@@ -36,7 +36,7 @@ public struct SnapshotHelper {
         let CIEnv = ProcessInfo.processInfo.environment["CI"]
         let recordEnv = ProcessInfo.processInfo.environment["SNAPSHOT_TESTING_RECORD"]
 
-        if CIEnv == "true" || CIEnv == "1" {
+        if CIEnv == "true" {
             return .never
         } else if let recordEnv, let record = SnapshotTestingConfiguration.Record(rawValue: recordEnv) {
             return record
