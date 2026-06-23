@@ -117,6 +117,22 @@ public struct MeetingResponse {
     }
 }
 
+// MARK: - MeetingListResponseV0 (internal, for decoding an array response)
+
+struct MeetingListResponseV0: Decodable, ToAPIModelConvertible {
+
+    private let meetings: [MeetingResponseV0]
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        meetings = try container.decode([MeetingResponseV0].self)
+    }
+
+    func toAPIModel() -> [MeetingResponse] {
+        meetings.map { $0.toAPIModel() }
+    }
+}
+
 // MARK: - MeetingResponseV0 (internal, for decoding)
 
 struct MeetingResponseV0: Decodable, ToAPIModelConvertible {

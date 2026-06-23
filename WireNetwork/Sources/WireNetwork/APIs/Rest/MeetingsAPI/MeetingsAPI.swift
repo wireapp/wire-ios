@@ -20,6 +20,12 @@
 /// An API access object for endpoints concerning meetings.
 public protocol MeetingsAPI {
 
+    /// Fetch all meetings for the authenticated user.
+    ///
+    /// - Returns: The list of meetings.
+
+    func listMeetings() async throws -> [MeetingResponse]
+
     /// Create a new meeting.
     ///
     /// - Parameter parameters: The meeting creation parameters.

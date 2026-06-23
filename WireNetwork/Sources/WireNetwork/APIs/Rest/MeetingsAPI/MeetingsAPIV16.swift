@@ -22,6 +22,25 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
         .v16
     }
 
+    // MARK: - List meetings
+
+    override func listMeetings() async throws -> [MeetingResponse] {
+        let path = "\(pathPrefix)/meetings/list"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: MeetingListResponseV0.self)
+            .parse(code: response.statusCode, data: data)
+    }
+
     // MARK: - Delete meeting
 
     override func deleteMeeting(meetingID: QualifiedID) async throws {
