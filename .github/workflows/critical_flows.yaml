@@ -35,7 +35,21 @@ concurrency:
 
 
 jobs:
-  critical_flows:
+  critical_flows_push:
+    if: ${{ github.event_name == 'push' }}
+    uses: ./.github/workflows/_reusable_run_tests.yml
+    with:
+      all: false
+      notify_secret: WIRE_IOS_QA_WEBHOOK
+      test_dependencies: false
+      run_critical_flows: true
+      ui_test_tags: critical
+      notify: always
+      timeout_minutes: 90
+    secrets: inherit
+
+  critical_flows_manual:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
@@ -43,12 +57,12 @@ jobs:
       test_dependencies: false
       run_critical_flows: true
       # Logic:
-      # - default          => critical
       # - critical + scope => critical,<scope>
+      # - critical only    => critical
       # - scope only       => <scope>
-      # - all UI tests     => empty tag filter
-      ui_test_tags: ${{ inputs.run_uitests != false && inputs.ui_test_scope != '' && format('critical,{0}', inputs.ui_test_scope) || inputs.run_uitests != false && 'critical' || inputs.ui_test_scope }}
+      # - neither          => all tests (empty tag filter)
+      ui_test_tags: ${{ inputs.run_uitests && inputs.ui_test_scope != '' && format('critical,{0}', inputs.ui_test_scope) || inputs.run_uitests && 'critical' || inputs.ui_test_scope }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
-      timeout_minutes: ${{ github.event_name == 'workflow_dispatch' && 120 || 90 }}
+      timeout_minutes: 120
     secrets: inherit
