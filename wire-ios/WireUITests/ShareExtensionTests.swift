@@ -20,6 +20,7 @@ import WireFoundation
 import WireLocators
 import XCTest
 
+/// [core-messenger]
 final class ShareExtensionTests: WireUITestCase {
 
     private let photosAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
@@ -76,6 +77,7 @@ final class ShareExtensionTests: WireUITestCase {
         }
     }
 
+    /// [critical]
     @MainActor
     private func createTeamAndLoginAsOwner(
         conversation: CreateConversationOption? = nil
@@ -300,6 +302,7 @@ final class ShareExtensionTests: WireUITestCase {
         .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
+    /// [critical]
     @MainActor
     func testShareImageToGroupConversation_TC_8919() async throws {
         // GIVEN

@@ -18,6 +18,7 @@
 
 import XCTest
 
+/// [core-messenger]
 final class MultiBackendSupportTests: WireUITestCase {
 
     @MainActor
@@ -43,6 +44,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         return (accountPage, user)
     }
 
+    /// [critical]
     @MainActor
     func testAddMultiBackendAccounts_TC_8940() async throws {
 
@@ -74,6 +76,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testSwitchingAccounts_TC_8941() async throws {
         // Create user A on staging with a single conversation
