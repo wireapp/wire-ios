@@ -19,6 +19,7 @@
 import WireFoundation
 import XCTest
 
+/// [core-messenger]
 final class OneOnOneMessagingTests: WireUITestCase {
 
     @MainActor
@@ -46,6 +47,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testSendTextAndAudioInOneOnOneConversation_TC_8819_8821() async throws {
 
