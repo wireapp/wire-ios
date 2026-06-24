@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "只需输入您的电子邮件地址即可开始！";
 "authentication.identity.input.field.placeholder" = "电子邮件或 SSO 代码";
 "authentication.identity.input.field.title" = "电子邮件或 SSO 代码";
+"authentication.identity.input.field.email_only.placeholder" = "电邮箱地址";
+"authentication.identity.input.field.email_only.title" = "电邮箱地址";
 "authentication.identity.input.submit" = "继续";
 
 "cloud_user_login.title" = "键入密码来登录";
