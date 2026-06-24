@@ -44,7 +44,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       schemes: ${{ steps.list-schemes.outputs.schemes }}
-      batches: ${{ steps.bin-pack.outputs.batches }}
+      batches: ${{ steps.list-schemes.outputs.batches }}
 
     steps:
       - name: Checkout
