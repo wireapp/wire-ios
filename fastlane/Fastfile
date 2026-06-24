@@ -621,6 +621,7 @@ platform :ios do
             xcargs: ci_args
         }
         run_tests_options[:only_testing] = options[:only_testing] if options[:only_testing]&.any?
+        run_tests_options[:skip_testing] = options[:skip_testing] if options[:skip_testing]&.any?
 
         run_tests(run_tests_options)
     end
