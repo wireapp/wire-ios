@@ -210,6 +210,19 @@ platform :ios do
             { scheme: scheme_name, needs_lfs: fw&.needs_lfs || false }
         end
         File.write("/tmp/schemes.json", matrix_entries.to_json)
+
+        max_parallel = (options[:max_parallel] || 3).to_i
+        n = matrix_entries.length
+        bins = [[max_parallel, n].min, 1].max
+        if bins > 0
+            size = (n.to_f / bins).ceil
+            batches = matrix_entries.each_slice(size).each_with_index.map do |chunk, i|
+                { batch_index: i, schemes: chunk.map { |s| s[:scheme] }.join(' '), needs_lfs: chunk.any? { |s| s[:needs_lfs] } }
+            end
+        else
+            batches = []
+        end
+        File.write("/tmp/batches.json", batches.to_json)
     end
 
     desc "Prepare for tests"
