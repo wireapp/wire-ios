@@ -315,7 +315,8 @@ final class UserCellTests: XCTestCase {
             user: user,
             isE2EICertified: false,
             conversation: conversation,
-            showSeparator: true
+            showSeparator: true,
+            conversationRole: .member
         )
 
         // THEN
