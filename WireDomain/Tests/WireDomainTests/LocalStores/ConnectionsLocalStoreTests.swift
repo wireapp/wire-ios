@@ -169,6 +169,46 @@ final class ConnectionsLocalStoreTests: XCTestCase {
         }
     }
 
+    func testStoreConnection_GivenLinkedToEstablishedMLSOneOnOne_ItPreservesTheMLSLink() async throws {
+        // Given a stored connection whose user is linked to an established MLS one-on-one.
+        // The conversation is created directly as MLS, so `migratedToMLS` stays `false` — the
+        // case the previous `migratedToMLS`-only guard failed to protect.
+        try await sut.storeConnection(Scaffolding.connection)
+
+        let mlsConversationID = UUID()
+        try await context.perform { [context, modelHelper] in
+            let storedConnection = try XCTUnwrap(ZMConnection.fetch(
+                userID: Scaffolding.member2ID.uuid,
+                domain: Scaffolding.member2ID.domain,
+                in: context
+            ))
+            let mlsConversation = modelHelper!.createMLSConversation(
+                id: mlsConversationID,
+                mlsStatus: .ready,
+                conversationType: .oneOnOne,
+                in: context
+            )
+            storedConnection.to.oneOnOneConversation = mlsConversation
+            try context.save()
+        }
+
+        // When the backend reports the proteus connection conversation again (e.g. on a connection
+        // update such as a block, which the blocked side is never notified about).
+        try await sut.storeConnection(Scaffolding.connection)
+
+        // Then the MLS link is preserved instead of being overwritten by the proteus conversation.
+        try await context.perform { [context] in
+            let storedConnection = try XCTUnwrap(ZMConnection.fetch(
+                userID: Scaffolding.member2ID.uuid,
+                domain: Scaffolding.member2ID.domain,
+                in: context
+            ))
+            let relatedConversation = try XCTUnwrap(storedConnection.to.oneOnOneConversation)
+            XCTAssertEqual(relatedConversation.messageProtocol, .mls)
+            XCTAssertEqual(relatedConversation.remoteIdentifier, mlsConversationID)
+        }
+    }
+
     private enum Scaffolding {
         static let member1ID = WireDataModel.QualifiedID(
             uuid: .mockID1,

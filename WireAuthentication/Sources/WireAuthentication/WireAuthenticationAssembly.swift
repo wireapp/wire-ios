@@ -41,6 +41,8 @@ public struct WireAuthenticationAssembly {
         authenticationType: AuthenticationType,
         environment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
+        allowsMultipleBackends: Bool,
+        existingBackendHosts: Set<String>,
         preferredAPIVersion: APIVersion?,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
@@ -50,13 +52,16 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        overrideAllowEmailLoginOnly: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
             authenticationType: authenticationType,
             environment: environment,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
+            allowsMultipleBackends: allowsMultipleBackends,
+            existingBackendHosts: existingBackendHosts,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
             privacyPolicyURL: privacyPolicyURL,
@@ -65,7 +70,8 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
-            registrationAnalyticsTracker: registrationAnalyticsTracker
+            registrationAnalyticsTracker: registrationAnalyticsTracker,
+            overrideAllowEmailLoginOnly: overrideAllowEmailLoginOnly
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

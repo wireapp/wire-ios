@@ -21,6 +21,10 @@ import WireUtilities
 
 final class DeveloperFlagsViewModel: ObservableObject {
 
+    /// Flags whose value is read once at app launch and therefore only take effect after a
+    /// restart. Toggling one of these shows a heads-up alert so the change isn't silently ignored.
+    let flagsRequiringRestart: Set<DeveloperFlag> = [.unSafeLogsForPublic]
+
     // MARK: - State
 
     var flags = DeveloperFlag.allCases.sorted {

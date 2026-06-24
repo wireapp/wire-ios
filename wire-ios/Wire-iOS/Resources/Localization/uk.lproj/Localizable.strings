@@ -317,6 +317,7 @@
 "conversation.input_bar.verified" = "Верифікований";
 "conversation.input_bar.placeholder" = "Напишіть повідомлення";
 "conversation.input_bar.placeholder_ephemeral" = "Тимчасове повідомленя";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Проведіть вгору для надсилання";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Торкніться для надсилання";
@@ -1068,6 +1069,7 @@
 "profile.details.blocking_reason" = "Цей користувач заблокований через правовий захист. [ДІЗНАТИСЯ БІЛЬШЕ](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list

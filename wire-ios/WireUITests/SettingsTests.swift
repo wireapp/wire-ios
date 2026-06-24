@@ -18,6 +18,7 @@
 
 import XCTest
 
+/// [core-messenger]
 final class SettingsTests: WireUITestCase {
 
     @MainActor
