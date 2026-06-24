@@ -28,7 +28,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ) async throws
 
     /// Adds a `Credential` to this client.
-    /// 
+    ///
     /// Note that while an arbitrary number of credentials can be generated,
     /// those which are added to a CoreCrypto instance must be distinct in credential type,
     /// signature scheme, and the timestamp of creation. This timestamp has only
@@ -37,7 +37,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func addCredential(credential: WireCoreCryptoUniffi.Credential) async throws -> WireCoreCryptoUniffi.CredentialRef
 
     /// Check all X509 credentials for expiration and revocation
-    /// 
+    ///
     /// This function must be called at least once every 24 hours. It is recommended to do this during an idle period,
     /// because in case x509 credentials are used, HTTP requests are done to fetch new certificate revocation lists.
     func checkCredentials() async throws
@@ -88,7 +88,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func encryptMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws -> Data
 
     /// Derives and exports a secret of `key_length` bytes for the given conversation.
-    /// 
+    ///
     /// The secret is derived from the MLS key schedule's exporter mechanism (RFC 9420 §8.5),
     /// which produces output bound to the current group state and epoch. The exported value
     /// changes whenever the epoch advances.
@@ -96,9 +96,9 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
         -> WireCoreCryptoUniffi.SecretKey
 
     /// Generate a `KeyPackage` from the referenced credential.
-    /// 
+    ///
     /// Makes no attempt to look up or prune existing keypackages.
-    /// 
+    ///
     /// If `lifetime` is set, the keypackages will expire that span into the future.
     /// If it is unset, a default lifetime of approximately 3 months is used.
     func generateKeyPackage(credentialRef: WireCoreCryptoUniffi.CredentialRef, lifetime: TimeInterval?) async throws
@@ -137,7 +137,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ) async throws -> WireCoreCryptoUniffi.ConversationId
 
     /// Initializes the MLS client with the given client ID and message transport.
-    /// 
+    ///
     /// In general this method should be called at most once per core-crypto instance.
     /// Calling it multiple times with the same parameters should silently succeed, but this is not
     /// a supported or tested mode of operation.
@@ -153,9 +153,9 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func proteusDecrypt(sessionId: String, ciphertext: Data) async throws -> Data
 
     /// Decrypt a message whether or not the proteus session already exists, and saves the session.
-    /// 
+    ///
     /// This is intended to replace simple usages of `proteusDecrypt`.
-    /// 
+    ///
     /// However, when decrypting large numbers of messages in a single session, the existing methods
     /// may be more efficient.
     func proteusDecryptSafe(sessionId: String, ciphertext: Data) async throws -> Data
@@ -176,7 +176,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func proteusFingerprintRemote(sessionId: String) async throws -> String
 
     /// Initializes the Proteus client.
-    /// 
+    ///
     /// In general this method should be called at most once per core-crypto instance.
     /// Calling it multiple times with the same parameters should silently succeed, but this is not
     /// a supported or tested mode of operation.
@@ -188,12 +188,12 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func proteusLastResortPrekey() async throws -> Data
 
     /// Creates a new Proteus prekey with the given ID and returns its CBOR-serialized bundle.
-    /// 
+    ///
     /// Warning: the Proteus client must be initialized with `proteus_init` first or an error will be returned.
     func proteusNewPrekey(prekeyId: UInt16) async throws -> Data
 
     /// Creates a new Proteus prekey with an automatically assigned ID and returns its CBOR-serialized bundle.
-    /// 
+    ///
     /// Warning: the Proteus client must be initialized with `proteus_init` first or an error will be returned.
     func proteusNewPrekeyAuto() async throws -> WireCoreCryptoUniffi.ProteusAutoPrekeyBundle
 
@@ -210,7 +210,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func proteusSessionFromPrekey(sessionId: String, prekey: Data) async throws
 
     /// Saves the Proteus session with the given ID to the keystore.
-    /// 
+    ///
     /// Note: this is not usually needed, as sessions are persisted automatically when
     /// decrypting or encrypting messages and when initializing sessions.
     func proteusSessionSave(sessionId: String) async throws
@@ -240,7 +240,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ) async throws
 
     /// Stores arbitrary data to be used as a transaction checkpoint.
-    /// 
+    ///
     /// The stored data can be retrieved via `get_data`. Keep the data size reasonable;
     /// this is not a general-purpose key-value store.
     func setData(data: Data) async throws
