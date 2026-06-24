@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.field.email_only.placeholder" = "Adres e-mail";
+"authentication.identity.input.field.email_only.title" = "Adres e-mail";
 "authentication.identity.input.submit" = "Dalej";
 
 "cloud_user_login.title" = "Enter your password to log in";
