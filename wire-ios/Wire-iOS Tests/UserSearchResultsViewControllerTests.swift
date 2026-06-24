@@ -137,9 +137,8 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     func testThatHighlightedTopMostItemUpdatesAfterSelectedTopMostUser() {
         createSUT()
 
-        sut.users = mockSearchResultUsers()
-
-        let numberOfUsers = MockUserType.usernames.count
+        let numberOfUsers = 5
+        sut.users = Array(mockSearchResultUsers().prefix(5))
 
         for _ in 0 ..< numberOfUsers {
             sut.selectPreviousUser()
@@ -151,17 +150,16 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     func testThatHighlightedItemStaysAtMiddleAfterSelectedAnUserAtTheMiddle() {
         createSUT()
 
-        sut.users = mockSearchResultUsers()
-
-        let numberOfUsers = MockUserType.usernames.count
+        let numberOfUsers = 5
+        sut.users = Array(mockSearchResultUsers().prefix(5))
 
         // go to top most
-        for _ in 0 ..< numberOfUsers + 5 {
+        for _ in 0 ..< numberOfUsers {
             sut.selectPreviousUser()
         }
 
         // go to bottom most
-        for _ in 0 ..< numberOfUsers + 5 {
+        for _ in 0 ..< numberOfUsers {
             sut.selectNextUser()
         }
 
