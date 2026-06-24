@@ -230,7 +230,6 @@ jobs:
         continue-on-error: true
         run: ruby scripts/annotate_test_failures.rb
 
-<<<<<<< HEAD
       - name: Extract test summary
         if: ${{ always() }}
         id: test-summary
@@ -238,8 +237,6 @@ jobs:
         with:
           xcresult_search_path: artifacts
 
-=======
->>>>>>> eaa2b61476 (chore: inline xcresult analysis, remove per-framework macOS runners - WPB-26561 (#4913))
       - name: Upload .xcresult files as artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -395,11 +392,8 @@ jobs:
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
-<<<<<<< HEAD
             ${{ steps.test-summary.outputs.report_message }}
 
-=======
->>>>>>> eaa2b61476 (chore: inline xcresult analysis, remove per-framework macOS runners - WPB-26561 (#4913))
   upload-test-results-datadadog:
     name: Upload to Datadog
     runs-on: ubuntu-24.04
