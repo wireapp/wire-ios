@@ -19,7 +19,7 @@ on:
         default: 'failure' # values: always | failure | never
       max_parallel:
         type: number
-        default: 4
+        default: 3
         required: false
 
     secrets:
