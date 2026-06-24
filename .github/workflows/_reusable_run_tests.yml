@@ -19,6 +19,10 @@ on:
       run_critical_flows:
         type: boolean
         required: true
+      ui_test_tags:
+        type: string
+        required: false
+        default: ''
       kalium_ref:
         type: string
         required: false
@@ -155,8 +159,14 @@ jobs:
 
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
+        env:
+          UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
         run: |
-          bundle exec fastlane run_uitests
+          if [ -n "$UI_TEST_TAGS" ]; then
+            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS"
+          else
+            bundle exec fastlane run_uitests
+          fi
 
       - name: Stop Kalium Testservice
         if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
@@ -214,6 +224,11 @@ jobs:
       - name: Debug Print xcresult files
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+
+      - name: Annotate test failures
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        run: ruby scripts/annotate_test_failures.rb
 
       - name: Extract test summary
         if: ${{ always() }}
@@ -378,45 +393,6 @@ jobs:
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
             ${{ steps.test-summary.outputs.report_message }}
-
-  analyze-xcresults:
-    needs: run-tests
-    name: Analyze xcresults
-    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' && needs.run-tests.outputs.xcresult_files != '' && needs.run-tests.outputs.xcresult_files != '[]' }}
-    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
-    strategy:
-      matrix:
-        xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
-      fail-fast: false # avoid to fail one job
-    steps:
-      - name: Sanitize branch name
-        run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
-          else
-            BRANCH="${GITHUB_REF#refs/heads/}"
-          fi
-          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
-          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
-
-      - name: Download .xcresult files
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
-          path: ./artifacts
-
-      - name: Display downloaded files
-        run: ls -R
-      
-      - name: Analyze .xcresult file
-        continue-on-error: true
-        uses: wireapp/analyze-xcoderesults-action@228125b6d1488f02b1d80e2040cbfac88c2b1cb3
-        with:
-          results: ${{ matrix.xcresult_file }}
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-test-results-datadadog:
     name: Upload to Datadog
