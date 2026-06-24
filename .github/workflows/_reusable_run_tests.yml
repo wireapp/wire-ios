@@ -225,6 +225,27 @@ jobs:
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
 
+      - name: Annotate test failures
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        run: |
+          python3 -c "
+import xml.etree.ElementTree as ET, glob, sys
+files = glob.glob('build/reports/*.junit') + glob.glob('artifacts/**/*.junit', recursive=True)
+for f in files:
+    try:
+        for tc in ET.parse(f).iter('testcase'):
+            failure = tc.find('failure')
+            if failure is not None:
+                classname = tc.get('classname', '')
+                name = tc.get('name', 'Unknown')
+                msg = (failure.get('message') or failure.text or '').replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                title = f'{classname}.{name}'.replace(',', '')
+                print(f'::error title={title}::{msg}')
+    except Exception as e:
+        print(f'::warning::Cannot parse {f}: {e}', file=sys.stderr)
+"
+
       - name: Extract test summary
         if: ${{ always() }}
         id: test-summary
@@ -388,45 +409,6 @@ jobs:
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
             ${{ steps.test-summary.outputs.report_message }}
-
-  analyze-xcresults:
-    needs: run-tests
-    name: Analyze xcresults
-    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' && needs.run-tests.outputs.xcresult_files != '' && needs.run-tests.outputs.xcresult_files != '[]' }}
-    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
-    strategy:
-      matrix:
-        xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
-      fail-fast: false # avoid to fail one job
-    steps:
-      - name: Sanitize branch name
-        run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
-          else
-            BRANCH="${GITHUB_REF#refs/heads/}"
-          fi
-          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
-          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
-
-      - name: Download .xcresult files
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
-          path: ./artifacts
-
-      - name: Display downloaded files
-        run: ls -R
-      
-      - name: Analyze .xcresult file
-        continue-on-error: true
-        uses: wireapp/analyze-xcoderesults-action@228125b6d1488f02b1d80e2040cbfac88c2b1cb3
-        with:
-          results: ${{ matrix.xcresult_file }}
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-test-results-datadadog:
     name: Upload to Datadog
