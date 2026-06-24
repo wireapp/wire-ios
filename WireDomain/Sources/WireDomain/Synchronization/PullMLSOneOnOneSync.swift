@@ -59,7 +59,8 @@ public struct PullMLSOneOnOneSync: PullMLSOneOnOneSyncProtocol {
             conversation.toDomainModel(),
             timestamp: .now,
             isFederationEnabled: isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
+            isMLSEnabled: isMLSEnabled,
+            markAsRead: false
         )
 
         return (mlsGroupID, publicKeys)
