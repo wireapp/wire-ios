@@ -264,6 +264,22 @@ extension SettingsCellDescriptorFactory {
         settingsCoordinator: AnySettingsCoordinator,
         userSession: UserSession
     ) -> SettingsCellDescriptorType {
+        let accessibilityValue: AccessibilityValueGeneratorType = { _ in
+            let value = property.value().value() as? Int
+            let option = value.flatMap { SettingsColorScheme(rawValue: $0) } ?? .defaultPreference
+            #if DEBUG
+                let appliedStyle = UIApplication.shared.connectedScenes
+                    .compactMap { ($0 as? UIWindowScene)?.windows.first(where: \.isKeyWindow) }
+                    .first?
+                    .traitCollection
+                    .userInterfaceStyle
+
+                let appliedTheme = appliedStyle == .dark ? "dark" : "light"
+                return "\(option.keyValueString)|\(appliedTheme)"
+            #else
+                return option.displayString
+            #endif
+        }
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
             let identifier = switch option {
             case .light:
@@ -278,7 +294,8 @@ extension SettingsCellDescriptorFactory {
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
                 title: option.displayString,
-                identifier: identifier
+                identifier: identifier,
+                accessibilityValueGenerator: accessibilityValue
             )
         }
 
@@ -294,6 +311,7 @@ extension SettingsCellDescriptorFactory {
             title: property.propertyName.settingsPropertyLabelText,
             identifier: Locators.OptionsOnSettingsPage.themeCell.rawValue,
             previewGenerator: preview,
+            accessibilityValueGenerator: accessibilityValue,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator,

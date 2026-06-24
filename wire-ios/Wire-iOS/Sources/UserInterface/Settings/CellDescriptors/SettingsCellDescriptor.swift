@@ -76,6 +76,7 @@ func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) ->
 }
 
 typealias PreviewGeneratorType = (SettingsCellDescriptorType) -> SettingsCellPreview
+typealias AccessibilityValueGeneratorType = (SettingsCellDescriptorType) -> String?
 
 protocol SettingsGroupCellDescriptorType: SettingsCellDescriptorType {
     var viewController: UIViewController? { get set }
@@ -191,6 +192,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     let icon: StyleKitIcon?
 
     let previewGenerator: PreviewGeneratorType?
+    let accessibilityValueGenerator: AccessibilityValueGeneratorType?
 
     weak var group: (any SettingsGroupCellDescriptorType)?
 
@@ -210,6 +212,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         style: InternalScreenStyle = .grouped,
         identifier: String? = .none,
         previewGenerator: PreviewGeneratorType? = .none,
+        accessibilityValueGenerator: AccessibilityValueGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
         accessibilityBackButtonText: String,
         settingsTopLevelMenuItem: SettingsTopLevelMenuItem?,
@@ -221,6 +224,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.style = style
         self.identifier = identifier
         self.previewGenerator = previewGenerator
+        self.accessibilityValueGenerator = accessibilityValueGenerator
         self.icon = icon
         self.accessibilityBackButtonText = accessibilityBackButtonText
         self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
@@ -238,6 +242,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         if let cell = cell as? SettingsTableCell {
             cell.showDisclosureIndicatorAccessoryView()
             cell.accessibilityIdentifier = settingsTopLevelMenuItem?.accessibilityID ?? identifier
+            cell.accessibilityValue = accessibilityValueGenerator?(self)
             cell.accessibilityTraits = .button
         }
     }

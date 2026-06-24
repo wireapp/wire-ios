@@ -300,22 +300,38 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(sharedDriveButton.exists)
     }
 
+    @MainActor
     @discardableResult
     func verifyConversationBackgroundColor(
         _ color: AccountSettingsPage.ProfileColor,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> ActiveConversationPage {
+    ) async throws -> ActiveConversationPage {
+        let background = conversationBackground
         XCTAssertTrue(
-            conversationBackground.waitForExistence(timeout: 5),
+            background.waitForExistence(timeout: 5),
             "Conversation background element did not appear",
             file: file,
             line: line
         )
+        let backgroundColor = try XCTUnwrap(
+            background.value as? String,
+            "Conversation background color value did not appear",
+            file: file,
+            line: line
+        )
         XCTAssertEqual(
-            conversationBackground.value as? String,
+            backgroundColor,
             color.displayName,
             "Conversation background should match profile color \(color.displayName)",
+            file: file,
+            line: line
+        )
+        let selfUser = try await UserHelper.default.selfUserAPI.getSelfUser()
+        XCTAssertEqual(
+            selfUser.accentID,
+            color.accentID,
+            "Self user accent ID should match \(color.displayName)",
             file: file,
             line: line
         )

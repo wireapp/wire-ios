@@ -73,11 +73,12 @@ class UserProfilePage: PageModel {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> UserProfilePage {
-        let predicate = NSPredicate(format: "value == %@", "image")
-        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: userProfilePicture)
+        let actualValue = userProfilePicture.value as? String
+        let expectedValue = "image"
+
         XCTAssertEqual(
-            XCTWaiter().wait(for: [expectation], timeout: 10),
-            .completed,
+            actualValue,
+            expectedValue,
             "User profile picture did not show selected image",
             file: file,
             line: line

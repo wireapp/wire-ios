@@ -21,47 +21,11 @@ import XCTest
 
 class AccountSettingsPage: PageModel {
 
-    enum ProfileColor {
-        case blue
-        case green
-        case red
-        case amber
-        case turquoise
-        case purple
+    struct ProfileColor {
+        static let purple = ProfileColor(displayName: "Purple", accentID: 7)
 
-        var displayName: String {
-            switch self {
-            case .blue:
-                "Blue"
-            case .green:
-                "Green"
-            case .red:
-                "Red"
-            case .amber:
-                "Amber"
-            case .turquoise:
-                "Turquoise"
-            case .purple:
-                "Purple"
-            }
-        }
-
-        var accentID: Int {
-            switch self {
-            case .blue:
-                1
-            case .green:
-                2
-            case .red:
-                4
-            case .amber:
-                5
-            case .turquoise:
-                6
-            case .purple:
-                7
-            }
-        }
+        let displayName: String
+        let accentID: Int
     }
 
     override var pageMainElement: XCUIElement {
@@ -188,9 +152,7 @@ class AccountSettingsPage: PageModel {
         )
         colorOption.tap()
         backToPreviousPage.tap()
-        let accountSettingsPage = try AccountSettingsPage()
-        accountSettingsPage.verifyProfileColor(color)
-        return accountSettingsPage
+        return try AccountSettingsPage()
     }
 
     @discardableResult
@@ -296,7 +258,7 @@ class AccountSettingsPage: PageModel {
     }
 
     func goBackToSettingsPage() throws -> SettingsPage {
-        backToPreviousPage.tap()
+        backToPreviousPage.waitAndTap()
         return try SettingsPage()
     }
 

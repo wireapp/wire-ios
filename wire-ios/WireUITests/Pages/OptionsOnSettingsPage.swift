@@ -37,6 +37,10 @@ class OptionsOnSettingsPage: PageModel {
         app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.createLinkPreviews.rawValue].firstMatch
     }
 
+    var themeButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.theme.rawValue].firstMatch
+    }
+
     var themeCell: XCUIElement {
         app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.themeCell.rawValue].firstMatch
     }
@@ -51,7 +55,7 @@ class OptionsOnSettingsPage: PageModel {
     }
 
     func openThemeSettings() throws -> ThemeSettingsPage {
-        themeCell.tap()
+        themeButton.tap()
         return try ThemeSettingsPage()
     }
 
@@ -61,12 +65,28 @@ class OptionsOnSettingsPage: PageModel {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OptionsOnSettingsPage {
-        XCTAssertTrue(
-            (themeCell.value as? String)?.contains(theme.displayName) == true,
-            "Theme preview should show \(theme.displayName)",
+        let themeValues = (themeCell.value as? String)?.components(separatedBy: "|")
+        let actualTheme = themeValues?.first
+        let expectedTheme = theme.rawValue
+
+        XCTAssertEqual(
+            actualTheme,
+            expectedTheme,
+            "Theme setting should be \(expectedTheme)",
             file: file,
             line: line
         )
+
+        if theme != .system {
+            let appliedTheme = themeValues?.count == 2 ? themeValues?.last : nil
+            XCTAssertEqual(
+                appliedTheme,
+                theme.rawValue,
+                "Applied theme should be \(theme.rawValue)",
+                file: file,
+                line: line
+            )
+        }
         return self
     }
 

@@ -21,7 +21,7 @@ import XCTest
 
 class ThemeSettingsPage: PageModel {
 
-    enum Theme {
+    enum Theme: String {
         case light
         case dark
         case system
@@ -50,7 +50,7 @@ class ThemeSettingsPage: PageModel {
     }
 
     override var pageMainElement: XCUIElement {
-        optionLabel(.light)
+        option(.light)
     }
 
     var backToPreviousPage: XCUIElement {
@@ -68,23 +68,42 @@ class ThemeSettingsPage: PageModel {
     }
 
     func selectTheme(_ theme: Theme) throws -> ThemeSettingsPage {
-        var themeOption = option(theme)
-        if !themeOption.waitForExistence(timeout: 2) {
-            themeOption = optionLabel(theme)
-        }
-        if !themeOption.waitForExistence(timeout: 2) {
-            app.swipeUp()
-            themeOption = option(theme)
-        }
-        if !themeOption.waitForExistence(timeout: 2) {
-            themeOption = optionLabel(theme)
-        }
-
         XCTAssertTrue(
-            themeOption.waitForExistence(timeout: 5),
+            option(theme).exists,
             "\(theme.displayName) option did not appear"
         )
-        themeOption.tap()
+
+        option(theme).tap()
+        return self
+    }
+
+    @discardableResult
+    func verifyTheme(
+        _ theme: Theme,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ThemeSettingsPage {
+        let themeValues = (option(.light).value as? String)?.components(separatedBy: "|")
+        let actualTheme = themeValues?.first
+
+        XCTAssertEqual(
+            actualTheme,
+            theme.rawValue,
+            "Theme setting should be \(theme.rawValue)",
+            file: file,
+            line: line
+        )
+
+        if theme != .system {
+            let appliedTheme = themeValues?.count == 2 ? themeValues?.last : nil
+            XCTAssertEqual(
+                appliedTheme,
+                theme.rawValue,
+                "Applied theme should be \(theme.rawValue)",
+                file: file,
+                line: line
+            )
+        }
         return self
     }
 

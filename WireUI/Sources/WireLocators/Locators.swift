@@ -313,6 +313,7 @@ public enum Locators {
 
     public enum OptionsOnSettingsPage: String {
 
+        case theme = "Theme"
         case themeCell
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
