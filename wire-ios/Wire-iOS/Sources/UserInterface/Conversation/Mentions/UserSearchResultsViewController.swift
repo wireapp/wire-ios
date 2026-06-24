@@ -53,8 +53,6 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         }
     }
 
-    private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor
-        .constraint(equalToConstant: 0)
     private let rowHeight: CGFloat = 56.0
     private var isKeyboardCollapsedFirstCalled = true
 
@@ -144,10 +142,10 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     private func setupConstraints() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionViewHeight
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
 
@@ -171,16 +169,13 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     private func resizeTable() {
         let viewHeight = view.bounds.size.height
         let contentHeight = CGFloat(searchResults.count) * rowHeight
-        let minValue = min(viewHeight, contentHeight)
-        collectionViewHeight.constant = minValue
-        collectionView.isScrollEnabled = (contentHeight > viewHeight)
 
-        if searchResults.count == 1 {
-            let bottomInset = viewHeight - rowHeight
-            collectionView.contentInset = UIEdgeInsets(top: bottomInset, left: 0, bottom: 0, right: 0)
-        } else {
-            collectionView.contentInset = .zero
-        }
+        // If there are more rows that can fix on screen, enable scroll.
+        collectionView.isScrollEnabled = contentHeight > viewHeight
+
+        // Push the rows down to be flush with the bottom of the view.
+        let bottomInset = max(0, viewHeight - contentHeight)
+        collectionView.contentInset = UIEdgeInsets(top: bottomInset, left: 0, bottom: 0, right: 0)
     }
 
     private func scrollToLastItem() {
