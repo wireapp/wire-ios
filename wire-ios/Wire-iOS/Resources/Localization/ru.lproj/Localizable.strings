@@ -851,7 +851,7 @@
 "call.status.variable_bitrate" = "Переменный битрейт";
 
 "call.participants.show_all" = "Участников (%d)";
-"call.participants.list.title" = "Участники";
+"call.participants.list.title" = "Participants";
 
 "call.overlay.switch_to.speakers" = "СПЕКЕРЫ";
 "call.overlay.switch_to.all" = "ВСЕ";
