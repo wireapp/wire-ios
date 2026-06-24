@@ -18,12 +18,12 @@
 
 public import UIKit
 public import WireCallingDomain
+public import WireNetwork
 
 import SwiftUI
 import WireCallingData
 import WireCallingUI
 import WireFoundation
-import WireNetwork
 
 public struct WireMeetingsFactory {
 
@@ -38,9 +38,6 @@ public struct WireMeetingsFactory {
         let repository = MeetingsRepository(
             meetings: {
                 try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
-            },
-            deleteMeeting: { meetingID in
-                try await meetingsAPI.deleteMeeting(meetingID: meetingID)
             }
         )
         let meetingsViewModel = AllMeetingsViewModel(
@@ -49,7 +46,6 @@ public struct WireMeetingsFactory {
                 repository: repository,
                 currentDateProvider: .system
             ),
-            deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository),
             memberRepository: memberRepository
         )
 

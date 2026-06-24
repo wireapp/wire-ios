@@ -32,7 +32,6 @@ struct MeetingsViewModelTests {
     private let mockDateProvider: CurrentDateProvidingMock
     private let formatter: MeetingsFormatter
     private let upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock
-    private let deleteMeetingUseCase: DeleteMeetingUseCaseProtocolMock
     private let viewModel: MeetingsViewModel
 
     init() throws {
@@ -40,12 +39,10 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
         self.upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
-        self.deleteMeetingUseCase = DeleteMeetingUseCaseProtocolMock()
         self.viewModel = MeetingsViewModel(
             currentDateProvider: mockDateProvider,
             formatter: formatter,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
-            deleteMeetingUseCase: deleteMeetingUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
     }
 
