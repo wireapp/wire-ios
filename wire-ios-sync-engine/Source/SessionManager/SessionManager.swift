@@ -408,6 +408,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     private let mediaManager: MediaManagerType
     private let flowManager: FlowManager
 
+    private let mediaManager: MediaManagerType
+    private let flowManager: FlowManager
+
     // MARK: - Life cycle
 
     public override init() {
@@ -461,7 +464,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
+<<<<<<< HEAD
             cookieStorage: cookieStorage,
+=======
+>>>>>>> 338df6aa63 (chore: do not fetch backend metadata when loading user session 4.16 branch - WPB-24411 (#4885))
             mediaManager: mediaManager,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -526,7 +532,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
+<<<<<<< HEAD
         cookieStorage: CookieStorage,
+=======
+>>>>>>> 338df6aa63 (chore: do not fetch backend metadata when loading user session 4.16 branch - WPB-24411 (#4885))
         mediaManager: MediaManagerType,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -680,7 +689,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let proxy = environment.proxy else { return }
         let proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
+<<<<<<< HEAD
             try proxyCredentials.persist()
+=======
+            try proxyCredentials?.persist()
+>>>>>>> 338df6aa63 (chore: do not fetch backend metadata when loading user session 4.16 branch - WPB-24411 (#4885))
             unauthenticatedSessionFactory.updateProxy(username: username, password: password)
         } catch {
             Logging.network.error("proxy credentials could not be saved - \(error.localizedDescription)")

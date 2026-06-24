@@ -92,9 +92,23 @@ public actor Worker {
         AsyncStream { continuation in
             continuation.yield()
 
+<<<<<<< HEAD
             let isOnlineTrigger = Task {
                 let monitor = NWPathMonitor()
                 for await path in monitor where path.status == .satisfied {
+=======
+            // Differs from the cherry-picked commit: this branch targets iOS 16.4,
+            // where NWPathMonitor's AsyncSequence conformance is unavailable (iOS 17+),
+            // so we bridge pathUpdateHandler into an AsyncStream instead.
+            let isOnlineTrigger = Task {
+                let monitor = NWPathMonitor()
+                let pathStream = AsyncStream<NWPath> { pathContinuation in
+                    monitor.pathUpdateHandler = { pathContinuation.yield($0) }
+                    pathContinuation.onTermination = { _ in monitor.cancel() }
+                    monitor.start(queue: DispatchQueue(label: "Worker.NWPathMonitor"))
+                }
+                for await path in pathStream where path.status == .satisfied {
+>>>>>>> 338df6aa63 (chore: do not fetch backend metadata when loading user session 4.16 branch - WPB-24411 (#4885))
                     continuation.yield()
                 }
             }

@@ -477,7 +477,11 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
+<<<<<<< HEAD
         cookieStorage: any WireNetwork.CookieStorageProtocol,
+=======
+        cookieStorage: any CookieStorageProtocol,
+>>>>>>> 338df6aa63 (chore: do not fetch backend metadata when loading user session 4.16 branch - WPB-24411 (#4885))
         faultyMLSRemovalKeysByDomain: [String: [String]],
         updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol
     ) {
