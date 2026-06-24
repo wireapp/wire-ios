@@ -54,13 +54,16 @@ public protocol ConversationLocalStoreProtocol {
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
     /// - Parameter timestamp: The date the conversation was created or last modified.
-    /// - Parameter isFederationEnabled: A flag indicating whether a `Federation` is enabled.
+    /// - Parameter isFederationEnabled: A flag indicating whether federation is enabled.
+    /// - Parameter isMLSEnabled: A flag indicating whether MLS features are enabled (affects MLS status updates).
+    /// - Parameter markAsRead: When true, marks the conversation as read on initial fetch (e.g. during slow sync).
 
     func storeConversation(
         _ conversation: WireDomain.Conversation,
         timestamp: Date,
         isFederationEnabled: Bool,
-        isMLSEnabled: Bool
+        isMLSEnabled: Bool,
+        markAsRead: Bool
     ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
