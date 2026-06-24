@@ -87,7 +87,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 conversation.toDomainModel(),
                 timestamp: .now,
                 isFederationEnabled: isFederationEnabled,
-                isMLSEnabled: isMLSEnabled
+                isMLSEnabled: isMLSEnabled,
+                markAsRead: false
             )
         } else if conversationList.notFound.contains(qualifiedID) {
             throw ConversationRepositoryError.conversationNotFound
@@ -125,7 +126,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             conversation,
             timestamp: timestamp,
             isFederationEnabled: isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
+            isMLSEnabled: isMLSEnabled,
+            markAsRead: false
         )
     }
 
@@ -147,7 +149,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             mlsConversation.toDomainModel(),
             timestamp: .now,
             isFederationEnabled: isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
+            isMLSEnabled: isMLSEnabled,
+            markAsRead: false
         )
 
         return (mlsGroupID, mlsPublicKeys)
