@@ -228,23 +228,7 @@ jobs:
       - name: Annotate test failures
         if: ${{ always() && github.event_name == 'pull_request' }}
         continue-on-error: true
-        run: |
-          python3 -c "
-import xml.etree.ElementTree as ET, glob, sys
-files = glob.glob('build/reports/*.junit') + glob.glob('artifacts/**/*.junit', recursive=True)
-for f in files:
-    try:
-        for tc in ET.parse(f).iter('testcase'):
-            failure = tc.find('failure')
-            if failure is not None:
-                classname = tc.get('classname', '')
-                name = tc.get('name', 'Unknown')
-                msg = (failure.get('message') or failure.text or '').replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-                title = f'{classname}.{name}'.replace(',', '')
-                print(f'::error title={title}::{msg}')
-    except Exception as e:
-        print(f'::warning::Cannot parse {f}: {e}', file=sys.stderr)
-"
+        run: ruby scripts/annotate_test_failures.rb
 
       - name: Extract test summary
         if: ${{ always() }}
