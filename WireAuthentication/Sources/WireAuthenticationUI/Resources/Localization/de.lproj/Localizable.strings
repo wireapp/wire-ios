@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Geben Sie Ihre E-Mail-Adresse ein, um zu beginnen.";
 "authentication.identity.input.field.placeholder" = "E-Mail-Adresse oder SSO-Code";
 "authentication.identity.input.field.title" = "E-Mail-Adresse oder SSO-Code";
+"authentication.identity.input.field.email_only.placeholder" = "E-Mail";
+"authentication.identity.input.field.email_only.title" = "E-Mail";
 "authentication.identity.input.submit" = "Weiter";
 
 "cloud_user_login.title" = "Geben Sie Ihr Passwort ein, um sich anzumelden ";
@@ -87,6 +89,8 @@
 "switch_backend_confirmation.show_details" = "Details anzeigen";
 "switch_backend.error.title.logged_in" = "Serverwechsel nicht möglich";
 "switch_backend.error.message.logged_in" = "Sie sind bereits angemeldet. Um auf diesen Server zu wechseln, melden Sie sich von allen Konten ab und versuchen Sie es erneut.";
+"switch_backend.error.title.blocked" = "Wechseln der Backends ist gesperrt";
+"switch_backend.error.message.blocked" = "Derzeit können Sie sich nicht bei einem anderen Backend anmelden. Melden Sie sich zunächst ab und melden Sie sich dann bei einem anderen Backend an.";
 
 "verification_code.title" = "Posteingang prüfen";
 "verification_code.message" = "Geben Sie den Code ein, den wir an %@ gesendet haben.";

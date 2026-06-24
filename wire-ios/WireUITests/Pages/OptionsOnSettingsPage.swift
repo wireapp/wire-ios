@@ -46,7 +46,7 @@ class OptionsOnSettingsPage: PageModel {
         return try SetPasscodePage()
     }
 
-    func enterPasscode(_ passcode: String) throws -> ConversationsPage {
+    func enterPasscode(_ passcode: String) throws -> OptionsOnSettingsPage {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let passcodeField = springboard.secureTextFields["Passcode field"].firstMatch
 
@@ -63,7 +63,7 @@ class OptionsOnSettingsPage: PageModel {
         } else {
             springboard.typeText(XCUIKeyboardKey.return.rawValue)
         }
-        return try ConversationsPage()
+        return try OptionsOnSettingsPage()
     }
 
     func enableCreateLinkPreviews(

@@ -317,6 +317,7 @@
 "conversation.input_bar.verified" = "已验证";
 "conversation.input_bar.placeholder" = "键入一条消息";
 "conversation.input_bar.placeholder_ephemeral" = "自毁消息";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "向上滑动发送";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "点击发送";
@@ -1068,6 +1069,7 @@
 "profile.details.blocking_reason" = "由于合法保留，此用户已被屏蔽。[进一步了解](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "名称不可用";
 
 // Device list

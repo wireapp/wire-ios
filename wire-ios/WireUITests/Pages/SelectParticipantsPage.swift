@@ -50,8 +50,8 @@ class SelectParticipantsPage: PageModel {
         return try ActiveConversationPage()
     }
 
-    func addSelectedParticipant() throws -> ActiveConversationPage {
+    func addSelectedParticipant() throws -> ConversationDetailsPage {
         addParticipantsButton.tap()
-        return try ActiveConversationPage()
+        return try ConversationDetailsPage()
     }
 }

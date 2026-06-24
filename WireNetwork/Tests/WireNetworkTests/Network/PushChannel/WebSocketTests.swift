@@ -82,6 +82,46 @@ final class WebSocketTests: XCTestCase {
         XCTAssertNil(invocations[0].reason)
     }
 
+    func testWebSocketCancelsConnectionWhenStreamConsumerStops() async throws {
+        // Given we're iterating over the web socket
+        let sut = WebSocket(connection: connection)
+
+        connection.underlyingIsOpen = true
+        connection.receive_MockMethod = {
+            try await Task.sleep(nanoseconds: 500_000)
+            return .data(Data())
+        }
+
+        let didReceiveMessage = XCTestExpectation()
+        didReceiveMessage.assertForOverFulfill = false
+        let didCancelConnection = XCTestExpectation()
+        didCancelConnection.assertForOverFulfill = false
+        connection.cancelWithReason_MockMethod = { _, _ in
+            didCancelConnection.fulfill()
+        }
+
+        Task {
+            do {
+                for try await _ in try await sut.open() {
+                    didReceiveMessage.fulfill()
+                    // When the consumer stops iterating
+                    break
+                }
+            } catch {
+                XCTFail("unexpected error: \(error)")
+            }
+        }
+
+        // Wait for iteration to be in progress
+        await fulfillment(of: [didReceiveMessage], timeout: 1)
+
+        // Then the connection was cancelled via onTermination
+        await fulfillment(of: [didCancelConnection], timeout: 1)
+        let invocations = connection.cancelWithReason_Invocations
+        XCTAssertEqual(invocations.first?.closeCode, .goingAway)
+        XCTAssertNil(invocations.first?.reason)
+    }
+
     func testWebSocketFinishesIfConnectionCloses() async throws {
         // Given we're iterating over the web socket
         let sut = WebSocket(connection: connection)

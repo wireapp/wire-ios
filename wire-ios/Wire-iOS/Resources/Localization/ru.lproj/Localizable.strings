@@ -317,6 +317,7 @@
 "conversation.input_bar.verified" = "Верифицировано";
 "conversation.input_bar.placeholder" = "Введите сообщение";
 "conversation.input_bar.placeholder_ephemeral" = "Самоудаляющееся сообщение";
+"conversation.input_bar.blocked_user" = "Вы заблокировали этого пользователя";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Проведите вверх для отправки";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Нажмите для отправки";
@@ -850,7 +851,7 @@
 "call.status.variable_bitrate" = "Переменный битрейт";
 
 "call.participants.show_all" = "Участников (%d)";
-"call.participants.list.title" = "Участники";
+"call.participants.list.title" = "Participants";
 
 "call.overlay.switch_to.speakers" = "СПЕКЕРЫ";
 "call.overlay.switch_to.all" = "ВСЕ";
@@ -1068,6 +1069,7 @@
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
 "profile.details.identity_warning" = "Убедитесь в личности %@ перед началом общения.\nСлужба поддержки Wire никогда не свяжется с вами в приложении.";
 "profile.details.requested_identity_warning" = "Пожалуйста, подтвердите личность пользователя, прежде чем принимать запрос на общение.\nСлужба поддержки Wire никогда не свяжется с вами через приложение.";
+"profile.details.report_misuse" = "Сообщить о злоупотреблении";
 "profile.details.title.unavailable" = "Имя недоступно";
 
 // Device list

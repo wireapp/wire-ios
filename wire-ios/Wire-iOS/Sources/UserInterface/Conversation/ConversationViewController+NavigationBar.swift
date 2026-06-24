@@ -143,7 +143,6 @@ extension ConversationViewController {
             backItem.backButtonDisplayMode = .minimal
 
             let backButton = UIBarButtonItem()
-            backButton.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackButton.rawValue
             backButton.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
             backButton.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
             backItem.backBarButtonItem = backButton
