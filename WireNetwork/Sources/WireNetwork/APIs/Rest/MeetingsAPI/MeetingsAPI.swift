@@ -18,7 +18,7 @@
 
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning meetings.
-public protocol MeetingsAPI {
+public protocol MeetingsAPI: Sendable {
 
     /// Fetch all meetings for the authenticated user.
     ///

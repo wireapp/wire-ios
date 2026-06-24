@@ -30,7 +30,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
     private let calendar = Calendar.current
 
     @Test("invoke fetches upcoming meetings from repository")
-    func invokeFetchesMeetings() throws {
+    func invokeFetchesMeetings() async throws {
         // Given
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
@@ -45,7 +45,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
         )
 
         // When
-        let result = useCase.invoke(pageSize: 10, offset: 0)
+        let result = try await useCase.invoke(pageSize: 10, offset: 0)
 
         // Then
         #expect(result.meetings.count == 2)
@@ -54,7 +54,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
     }
 
     @Test("invoke returns empty result when no upcoming meetings")
-    func invoke_WithNoMeetings() throws {
+    func invoke_WithNoMeetings() async throws {
         // Given
         repository.fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue = []
         let mockDateProvider = CurrentDateProvidingMock()
@@ -66,7 +66,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
         )
 
         // When
-        let result = useCase.invoke(pageSize: 10, offset: 0)
+        let result = try await useCase.invoke(pageSize: 10, offset: 0)
 
         // Then
         #expect(result.meetings.isEmpty)
@@ -74,7 +74,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
     }
 
     @Test("invoke returns hasMore true when more meetings exist than pageSize")
-    func invoke_WithMoreMeetingsThanPageSize() throws {
+    func invoke_WithMoreMeetingsThanPageSize() async throws {
         // Given
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
@@ -93,7 +93,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
         )
 
         // When
-        let result = useCase.invoke(pageSize: 10, offset: 0)
+        let result = try await useCase.invoke(pageSize: 10, offset: 0)
 
         // Then
         #expect(result.hasMore)
@@ -101,7 +101,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
     }
 
     @Test("invoke returns hasMore false when meetings count equals pageSize")
-    func invoke_WithExactlyPageSizeMeetings() throws {
+    func invoke_WithExactlyPageSizeMeetings() async throws {
         // Given
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
@@ -120,7 +120,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
         )
 
         // When
-        let result = useCase.invoke(pageSize: 10, offset: 0)
+        let result = try await useCase.invoke(pageSize: 10, offset: 0)
 
         // Then
         #expect(!result.hasMore)

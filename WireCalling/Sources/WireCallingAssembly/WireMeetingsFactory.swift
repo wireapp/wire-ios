@@ -18,12 +18,12 @@
 
 public import UIKit
 public import WireCallingDomain
+public import WireNetwork
 
 import SwiftUI
 import WireCallingData
 import WireCallingUI
 import WireFoundation
-import WireNetwork
 
 public struct WireMeetingsFactory {
 
