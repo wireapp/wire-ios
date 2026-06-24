@@ -623,23 +623,22 @@ public final class ZMUserSession: NSObject {
         )
         let apiProvider = APIProvider(httpClient: httpClient)
 
-        guard
-            let apiVersion = resolvedBackendMetadata.apiVersion,
-            let e2eiAPI = apiProvider.e2eIAPI(apiVersion: apiVersion) else {
-            return
+        if let apiVersion = resolvedBackendMetadata.apiVersion,
+           let e2eiAPI = apiProvider.e2eIAPI(apiVersion: apiVersion) {
+
+            let hooks = PKIEnvironmentTransport(
+                selfClientId: clientID,
+                e2eiApi: e2eiAPI,
+                crlURLbuilder: CRLURLBuilder(
+                    shouldUseProxy: e2eiFeature.config.useProxyOnMobile ?? false,
+                    proxyURLString: e2eiFeature.config.crlProxy
+                ),
+                oauthAuthenticate: nil
+            )
+
+            coreCryptoProvider.registerPkiEnvironmentHooks(hooks)
         }
 
-        let hooks = PKIEnvironmentTransport(
-            selfClientId: clientID,
-            e2eiApi: e2eiAPI,
-            crlURLbuilder: CRLURLBuilder(
-                shouldUseProxy: e2eiFeature.config.useProxyOnMobile ?? false,
-                proxyURLString: e2eiFeature.config.crlProxy
-            ),
-            oauthAuthenticate: nil
-        )
-
-        coreCryptoProvider.registerPkiEnvironmentHooks(hooks)
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let syncAgent = SyncAgent(
