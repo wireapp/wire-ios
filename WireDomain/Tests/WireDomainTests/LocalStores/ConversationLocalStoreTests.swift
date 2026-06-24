@@ -85,7 +85,8 @@ final class ConversationLocalStoreTests: XCTestCase {
             groupConversation.toDomainModel(),
             timestamp: .distantPast,
             isFederationEnabled: false,
-            isMLSEnabled: true
+            isMLSEnabled: true,
+            markAsRead: false
         )
 
         // Then
