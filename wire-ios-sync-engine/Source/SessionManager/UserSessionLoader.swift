@@ -297,50 +297,30 @@ final class UserSessionLoader {
     }
 
     private func resolveBackendMetadata(with networkStack: NetworkStack) async throws -> ResolvedBackendMetadata {
-        // Get the last known metadata.
-        var prevMetadata: ResolvedBackendMetadata?
+        // Return the last stored metadata if available.
         if let storedMetadata = try backendStore.fetchBackendMetadata(accountID: accountID) {
-            prevMetadata = storedMetadata
-        } else if
-            let legacyAPIVersion = BackendInfo.apiVersion,
-            let legacyDomain = BackendInfo.domain {
-            // We're on the update path, use the legacy metadata.
-            prevMetadata = ResolvedBackendMetadata(
+            return storedMetadata
+        }
+
+        // Otherwise store and return legacy metadata if available.
+        if let legacyAPIVersion = BackendInfo.apiVersion, let legacyDomain = BackendInfo.domain {
+            // We're on the update path, use the legacy metadata
+            let legacyMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
                 isFederationEnabled: BackendInfo.isFederationEnabled
             )
+            try backendStore.storeBackendMetadata(legacyMetadata, for: accountID)
+            return legacyMetadata
         }
 
-        // Get new metadata.
+        // Otherwise fetch and store new metadata.
         let newMetadata: ResolvedBackendMetadata
         do {
-            let metadata = try await networkStack.resolvedBackendMetadata()
-            newMetadata = ResolvedBackendMetadata(
-                apiVersion: metadata.apiVersion,
-                domain: metadata.domain,
-                isFederationEnabled: metadata.isFederationEnabled
-            )
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            // To allow offline browsing fallback to previous metadata if possible.
-            if let prevMetadata {
-                newMetadata = prevMetadata
-            } else {
-                throw Failure.noResolvedBackendMetadataAvailable
-            }
+            newMetadata = try await networkStack.resolvedBackendMetadata()
+        } catch {
+            throw Failure.noResolvedBackendMetadataAvailable
         }
-
-        if let prevMetadata {
-            if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-                // Now that federation is enabled we'll start storing domains
-                // on entities in the database. We'll therefore need to add
-                // the local domain to all existing entities so they're
-                // fully qualified.
-                journal[.isFederationMigrationRequired] = true
-            }
-        }
-
-        // Store new metadata.
         do {
             try backendStore.storeBackendMetadata(
                 newMetadata,
@@ -349,7 +329,6 @@ final class UserSessionLoader {
         } catch {
             throw Failure.failedToStoreMetadata(error)
         }
-
         return newMetadata
     }
 
@@ -537,6 +516,19 @@ final class UserSessionLoader {
             )
         )
 
+        let resolveBackendMetadataUseCase = ResolveBackendMetadataUseCase(
+            backendMetadataAPI: BackendMetadataAPIBuilder(networkService: restNetworkService).makeAPI(),
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                WireNetwork.APIVersion($0)
+            }
+        )
+        let updateBackendMetadataUseCase = UpdateBackendMetadataUseCase(
+            resolveBackendMetadataUseCase: resolveBackendMetadataUseCase,
+            backendStore: backendStore,
+            journal: journal,
+            accountID: accountID
+        )
         let userSession = ZMUserSession(
             userId: accountID,
             restNetworkService: restNetworkService,
@@ -567,7 +559,8 @@ final class UserSessionLoader {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase
         )
 
         userSession.setup(
