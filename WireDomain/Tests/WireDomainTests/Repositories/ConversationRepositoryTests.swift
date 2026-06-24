@@ -427,7 +427,7 @@ final class ConversationRepositoryTests: XCTestCase {
         }
 
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationsLocalStore.addParticipantsAddedByAtDateConversation_MockMethod = { _, _, _, _, _ in }
+        conversationsLocalStore.addParticipantsAddedByAtDateConversation_MockMethod = { _, _, _, _ in }
 
         // When
 
