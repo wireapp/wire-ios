@@ -31,6 +31,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
+    var overrideAllowEmailLoginOnly: Bool { get }
 }
 
 final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
@@ -102,8 +103,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             bridge: dependency.bridge,
             environment: networkStack.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount,
-            allowsMultipleBackends: allowsMultipleBackends,
-            existingBackendHosts: existingBackendHosts
+            existingBackendHosts: existingBackendHosts,
+            overrideAllowEmailLoginOnly: dependency.overrideAllowEmailLoginOnly
         )
     }
 
