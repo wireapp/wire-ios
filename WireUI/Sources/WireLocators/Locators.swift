@@ -165,6 +165,9 @@ public enum Locators {
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
+        case uploadFileButton
+        case browse = "Browse"
+        case open = "Open"
         case allowFullAccess = "Allow Full Access"
         case ok = "OK"
         case audioButton

@@ -317,6 +317,7 @@
 "conversation.input_bar.verified" = "Verificado";
 "conversation.input_bar.placeholder" = "Digite uma mensagem";
 "conversation.input_bar.placeholder_ephemeral" = "Auto-exclusão de mensagem";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Puxe para cima para enviar";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Toque para enviar";
@@ -1068,6 +1069,7 @@
 "profile.details.blocking_reason" = "Este usuário está bloqueado devido à retenção legal. [SAIBA MAIS](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "Nome indisponível";
 
 // Device list

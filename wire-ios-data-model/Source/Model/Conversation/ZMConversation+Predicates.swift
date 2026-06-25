@@ -130,8 +130,11 @@ extension ZMConversation {
         //  3. It does not have a custom display name
 
         let isTeamConversation = NSPredicate(format: "team != NULL")
+        // Uses the persisted `effectiveConversationType` (not the computed `conversationType`) so the conversation-list
+        // predicates never trigger the participant-walking getter. A deleted-user 1:1 has a single participant, so it
+        // is never promoted to one-on-one and its effective type stays `.group`.
         let isGroupConversation =
-            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+            NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let hasNoUserDefinedName = NSPredicate(format: "\(ZMConversationUserDefinedNameKey) == NULL")
         let hasOnlyOneParticipant = NSPredicate(format: "\(ZMConversationParticipantRolesKey).@count == 1")
 

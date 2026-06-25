@@ -384,7 +384,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             conversation.toDomainModel(),
             timestamp: .now,
             isFederationEnabled: isFederationEnabled,
-            isMLSEnabled: true
+            isMLSEnabled: true,
+            markAsRead: false
         )
 
         let qualifiedID = conversation.qualifiedID?.id

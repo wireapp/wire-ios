@@ -22,6 +22,7 @@ import XCTest
 
 /// Prefixed 'Z' in the class name to run these tests at the end, just to avoid if this test may impact others due to
 /// alert keep showing
+/// [calling]
 final class ZCallingTests: WireUITestCase {
 
     struct GroupCallScenario {
@@ -131,6 +132,7 @@ final class ZCallingTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testGroupCallParticipantNameOrInitialsVisible_TC_8887() async throws {
         // GIVEN
