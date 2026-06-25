@@ -35,22 +35,7 @@ public struct WireMeetingsFactory {
         meetingsAPI: any MeetingsAPI,
         memberRepository: any MemberRepositoryProtocol
     ) -> UIViewController {
-        let repository = MeetingsRepository(
-            meetings: {
-                try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
-            }
-        )
-        let createMeetingUseCase = CreateMeetingUseCase { title, startTime, endTime, repeatOption in
-            let response = try await meetingsAPI.createMeeting(
-                parameters: CreateMeetingParameters(
-                    title: title,
-                    startTime: startTime,
-                    endTime: endTime,
-                    recurrence: repeatOption.toNetworkRecurrence()
-                )
-            )
-            return response.toDomainMeeting()
-        }
+        let repository = MeetingRepository(meetingsAPI: meetingsAPI)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
@@ -58,46 +43,10 @@ public struct WireMeetingsFactory {
                 currentDateProvider: .system
             ),
             memberRepository: memberRepository,
-            createMeetingUseCase: createMeetingUseCase
+            createMeetingUseCase: CreateMeetingUseCase(repository: repository)
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
 
-}
-
-private extension MeetingResponse {
-    func toDomainMeeting() -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: startTime,
-            end: endTime,
-            repeatOption: recurrence?.frequency.toDomainRepeatOption() ?? .never
-        )
-    }
-}
-
-private extension MeetingFrequency {
-    func toDomainRepeatOption() -> RepeatOption {
-        switch self {
-        case .daily: .daily
-        case .weekly: .weekly
-        case .monthly: .monthly
-        case .yearly: .yearly
-        }
-    }
-}
-
-private extension RepeatOption {
-    func toNetworkRecurrence() -> MeetingRecurrence? {
-        switch self {
-        case .never: nil
-        case .daily: MeetingRecurrence(frequency: .daily, interval: nil, until: nil)
-        case .weekly: MeetingRecurrence(frequency: .weekly, interval: nil, until: nil)
-        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2, until: nil)
-        case .monthly: MeetingRecurrence(frequency: .monthly, interval: nil, until: nil)
-        case .yearly: MeetingRecurrence(frequency: .yearly, interval: nil, until: nil)
-        }
-    }
 }

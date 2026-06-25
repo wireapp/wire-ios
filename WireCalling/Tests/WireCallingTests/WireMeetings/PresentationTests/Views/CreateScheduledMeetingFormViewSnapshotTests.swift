@@ -81,9 +81,7 @@ final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
         let viewModel = CreateMeetingFormViewModel(
             mode: .scheduled,
             memberRepository: MemberRepositoryProtocolMock(),
-            createMeetingUseCase: CreateMeetingUseCase { _, _, _, _ in
-                throw CancellationError()
-            }
+            createMeetingUseCase: CreateMeetingUseCase(repository: MeetingRepositoryProtocolMock())
         )
         viewModel.startDate = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
         viewModel.endDate = viewModel.startDate.addingTimeInterval(60 * 30) // 30 minutes

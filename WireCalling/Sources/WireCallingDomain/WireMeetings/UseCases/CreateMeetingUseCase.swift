@@ -20,10 +20,10 @@ package import Foundation
 
 package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
 
-    private let handler: @Sendable (String, Date, Date, RepeatOption) async throws -> Meeting
+    private let repository: any MeetingRepositoryProtocol
 
-    package init(handler: @Sendable @escaping (String, Date, Date, RepeatOption) async throws -> Meeting) {
-        self.handler = handler
+    package init(repository: any MeetingRepositoryProtocol) {
+        self.repository = repository
     }
 
     package func execute(
@@ -32,7 +32,12 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
         endTime: Date,
         repeatOption: RepeatOption
     ) async throws -> Meeting {
-        try await handler(title, startTime, endTime, repeatOption)
+        try await repository.createMeeting(
+            title: title,
+            startTime: startTime,
+            endTime: endTime,
+            repeatOption: repeatOption
+        )
     }
 
 }
