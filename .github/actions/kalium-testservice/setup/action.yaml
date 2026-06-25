@@ -20,12 +20,12 @@ runs:
         KALIUM_REF="$KALIUM_REF_INPUT"
 
         if [[ -z "$KALIUM_REF" ]]; then
-          echo "::error::Could not resolve Kalium testservice ref"
+          echo "::error::Could not resolve Kalium testservice ref" >&2
           exit 1
         fi
 
         if [[ ! "$KALIUM_REF" =~ ^test-service-v[0-9]+\.[0-9]+\.[0-9]+$ && ! "$KALIUM_REF" =~ ^[0-9a-f]{40}$ ]]; then
-          echo "::error::Invalid Kalium ref: $KALIUM_REF"
+          echo "::error::Invalid Kalium ref: $KALIUM_REF" >&2
           exit 1
         fi
 
@@ -97,7 +97,7 @@ runs:
         fi
 
         if [[ -z "$JAR" || ! -f "$JAR" ]]; then
-          echo "::error::Kalium fat jar not found in $LIBS_DIR"
+          echo "::error::Kalium fat jar not found in $LIBS_DIR" >&2
           ls -la "$LIBS_DIR" || true
           exit 1
         fi
@@ -119,8 +119,8 @@ runs:
         set -euo pipefail
 
         CONFIG="$GITHUB_WORKSPACE/testservice/testservice-config.yml"
-        [[ -f "$CONFIG" ]] || { echo "::error::Config not found: $CONFIG"; exit 1; }
-        [[ -n "${JAR:-}" && -f "$JAR" ]] || { echo "::error::JAR not found: '${JAR:-}'"; exit 1; }
+        [[ -f "$CONFIG" ]] || { echo "::error::Config not found: $CONFIG" >&2; exit 1; }
+        [[ -n "${JAR:-}" && -f "$JAR" ]] || { echo "::error::JAR not found: '${JAR:-}'" >&2; exit 1; }
 
         nohup java -jar "$JAR" server "$CONFIG" >"$RUNNER_TEMP/testservice.log" 2>&1 &
         echo $! > "$RUNNER_TEMP/testservice.pid"
@@ -133,6 +133,6 @@ runs:
           sleep 1
         done
 
-        echo "::error::Testservice not reachable"
+        echo "::error::Testservice not reachable" >&2
         tail -n 200 "$RUNNER_TEMP/testservice.log" || true
         exit 1

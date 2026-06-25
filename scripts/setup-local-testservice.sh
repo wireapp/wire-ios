@@ -134,7 +134,7 @@ echo "Log file: $LOG_FILE"
     sleep 1
   done
 
-  echo "ERROR: Testservice not reachable after 90s"
+  echo "ERROR: Testservice not reachable after 90s" >&2
   exit 1
 ) &
 READY_PID=$!
@@ -144,6 +144,6 @@ java -jar "$JAR_FILE" server "$CONFIG_PATH" 2>&1 | tee "$LOG_FILE"
 
 if ! wait "$READY_PID"; then
   READINESS_STATUS=$?
-  echo "ERROR: Kalium Testservice readiness check failed (exit code: $READINESS_STATUS)"
+  echo "ERROR: Kalium Testservice readiness check failed (exit code: $READINESS_STATUS)" >&2
   exit "$READINESS_STATUS"
 fi
