@@ -88,6 +88,7 @@ final class ZCallingTests: WireUITestCase {
     }
 
     /// Team Owner creates group conversation and initiates a group call with members via calling service
+    /// [critical]
     @MainActor
     func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
@@ -132,7 +133,6 @@ final class ZCallingTests: WireUITestCase {
         )
     }
 
-    /// [critical]
     @MainActor
     func testGroupCallParticipantNameOrInitialsVisible_TC_8887() async throws {
         // GIVEN
