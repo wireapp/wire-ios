@@ -275,7 +275,7 @@ struct FilesItemView: View {
                     Strings.Files.Item.Menu.shareLink,
                     systemImage: "square.and.arrow.up"
                 )
-            }
+            }.disabled(viewModel.disableShareLinkButton)
         }
 
         menuItem(.makeAvailableOffline) { item in
