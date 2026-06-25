@@ -31,7 +31,7 @@ import WireUtilitiesPackage
 ///
 /// These sequential steps represents the NSE dependency graph (using Needle).
 
-public final class NotificationServiceExtension: NotificationServiceProtocol {
+public final class NotificationServiceExtension {
 
     // MARK: - Properties
 
@@ -129,9 +129,13 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         }
     }
 
-    public func serviceExtensionTimeWillExpire() {
-        logger.warn("new notification service will expire", attributes: .newNSE, .safePublic)
+    public var hasOnGoingTask: Bool {
+        onGoingTask != nil
+    }
+
+    public func cancel() async {
         onGoingTask?.cancel()
+        await onGoingTask?.value
     }
 }
 
@@ -223,7 +227,7 @@ extension NotificationServiceExtension {
 
     private func logUserError(_ error: NSEUserScope.Failure) {
         switch error {
-        case let .mainAppRequired(message):
+        case let .mainAppRequired(message, _):
             logger.warn(
                 "Main app required, need to open main app: \(message)",
                 attributes: .newNSE, .safePublic
