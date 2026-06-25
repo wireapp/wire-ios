@@ -29,6 +29,7 @@ import WireCallingDomainSupport
 package final class AllMeetingsViewModel {
 
     let memberRepository: any MemberRepositoryProtocol
+    private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
 
     package let meetingsViewModel: MeetingsViewModel
 
@@ -40,6 +41,8 @@ package final class AllMeetingsViewModel {
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         memberRepository: any MemberRepositoryProtocol
+        memberRepository: any MemberRepositoryProtocol,
+        createMeetingUseCase: any CreateMeetingUseCaseProtocol
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
@@ -48,6 +51,7 @@ package final class AllMeetingsViewModel {
             deleteMeetingUseCase: deleteMeetingUseCase
         )
         self.memberRepository = memberRepository
+        self.createMeetingUseCase = createMeetingUseCase
     }
 
     // MARK: - Public Interface
@@ -61,7 +65,12 @@ package final class AllMeetingsViewModel {
     }
 
     func makeMeetingFormViewModel(mode: CreateMeetingFormViewModel.Mode) -> CreateMeetingFormViewModel {
-        CreateMeetingFormViewModel(mode: mode, memberRepository: memberRepository)
+        CreateMeetingFormViewModel(
+            mode: mode,
+            memberRepository: memberRepository,
+            createMeetingUseCase: createMeetingUseCase,
+            onSuccess: { [weak self] _ in self?.presentedFormMode = nil }
+        )
     }
 
 }

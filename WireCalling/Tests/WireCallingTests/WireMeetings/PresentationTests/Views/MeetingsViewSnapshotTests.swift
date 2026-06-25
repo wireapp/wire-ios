@@ -79,7 +79,7 @@ final class MeetingsViewSnapshotTests: XCTestCase {
 
     @MainActor
     private func createEmptyViewModel() -> MeetingsViewModel {
-        let mockRepository = MeetingsRepositoryProtocolMock()
+        let mockRepository = MeetingRepositoryProtocolMock()
         mockRepository.hasUpcomingMeetingsAfterDateDateBoolReturnValue = false
 
         let upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()

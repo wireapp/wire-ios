@@ -35,48 +35,19 @@ public struct WireMeetingsFactory {
         meetingsAPI: any MeetingsAPI,
         memberRepository: any MemberRepositoryProtocol
     ) -> UIViewController {
-        let repository = MeetingsRepository(
-            meetings: {
-                try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
-            },
-            deleteMeeting: { meetingID in
-                try await meetingsAPI.deleteMeeting(meetingID: meetingID)
-            }
-        )
+        let repository = MeetingRepository(meetingsAPI: meetingsAPI)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: repository,
                 currentDateProvider: .system
             ),
-            deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository),
-            memberRepository: memberRepository
+deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository),
+            memberRepository: memberRepository,
+            createMeetingUseCase: CreateMeetingUseCase(repository: repository)
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
 
-}
-
-private extension MeetingResponse {
-    func toDomainMeeting() -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: startTime,
-            end: endTime,
-            repeatOption: recurrence?.frequency.toDomainRepeatOption() ?? .never
-        )
-    }
-}
-
-private extension MeetingFrequency {
-    func toDomainRepeatOption() -> RepeatOption {
-        switch self {
-        case .daily: .daily
-        case .weekly: .weekly
-        case .monthly: .monthly
-        case .yearly: .yearly
-        }
-    }
 }

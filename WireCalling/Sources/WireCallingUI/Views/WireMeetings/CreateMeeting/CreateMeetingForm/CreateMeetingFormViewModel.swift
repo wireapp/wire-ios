@@ -20,6 +20,7 @@ import Foundation
 import WireCallingDomain
 
 @Observable
+@MainActor
 final class CreateMeetingFormViewModel {
 
     /// Determines whether the meeting starts immediately on submit or is
@@ -43,12 +44,16 @@ final class CreateMeetingFormViewModel {
 
     let mode: Mode
     let memberRepository: any MemberRepositoryProtocol
+    private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
+    private let onSuccess: (Meeting) -> Void
 
     var meetingTitle: String = ""
     var startDate: Date = .init()
     var endDate: Date = .init().addingTimeInterval(1800)
     var repeatOption: RepeatOption = .never
     var selectedMembers: [Member] = []
+    var isLoading = false
+    var error: (any Error)?
 
     var selectedMembersSummary: String {
         selectedMembers
@@ -64,17 +69,20 @@ final class CreateMeetingFormViewModel {
 
     init(
         mode: Mode,
-        memberRepository: any MemberRepositoryProtocol
+        memberRepository: any MemberRepositoryProtocol,
+        createMeetingUseCase: any CreateMeetingUseCaseProtocol,
+        onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
         self.memberRepository = memberRepository
+        self.createMeetingUseCase = createMeetingUseCase
+        self.onSuccess = onSuccess
     }
 
     func clearTitle() {
         meetingTitle = ""
     }
 
-    @MainActor
     func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
         MemberSelectionViewModel(
             source: memberRepository,
@@ -84,18 +92,52 @@ final class CreateMeetingFormViewModel {
     }
 
     func submit() {
-        switch mode {
-        case .instant:
-            createInstantMeeting()
-        case .scheduled:
-            scheduleMeeting()
+        guard !isLoading else { return }
+        Task {
+            switch mode {
+            case .instant:
+                await createInstantMeeting()
+            case .scheduled:
+                await scheduleMeeting()
+            }
         }
     }
 
     // MARK: - Private
 
-    private func createInstantMeeting() {}
+    private func createInstantMeeting() async {
+        isLoading = true
+        error = nil
+        defer { isLoading = false }
+        let now = Date()
+        do {
+            let meeting = try await createMeetingUseCase.execute(
+                title: meetingTitle,
+                startTime: now,
+                endTime: now.addingTimeInterval(1800),
+                repeatOption: .never
+            )
+            onSuccess(meeting)
+        } catch {
+            self.error = error
+        }
+    }
 
-    private func scheduleMeeting() {}
+    private func scheduleMeeting() async {
+        isLoading = true
+        error = nil
+        defer { isLoading = false }
+        do {
+            let meeting = try await createMeetingUseCase.execute(
+                title: meetingTitle,
+                startTime: startDate,
+                endTime: endDate,
+                repeatOption: repeatOption
+            )
+            onSuccess(meeting)
+        } catch {
+            self.error = error
+        }
+    }
 
 }
