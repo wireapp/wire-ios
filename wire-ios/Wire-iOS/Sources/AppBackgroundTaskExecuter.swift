@@ -63,9 +63,9 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         let name = name ?? "unnamed"
 
         let task = Task {
-            WireLogger.backgroundActivity.warn("will start background task: \(name)")
+            WireLogger.backgroundActivity.debug("will start background task: \(name)")
             let result = try await operation()
-            WireLogger.backgroundActivity.warn("did end background task: \(name)")
+            WireLogger.backgroundActivity.debug("did end background task: \(name)")
             return result
         }
 
