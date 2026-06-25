@@ -24,6 +24,7 @@ import WireDesign
 import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
+import WireSystem
 
 // MARK: - AppRootRouter
 
@@ -48,6 +49,7 @@ final class AppRootRouter {
     // MARK: - Private Set Property
 
     let sessionManager: SessionManager
+    let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     private let mainWindow: UIWindow
     private let screenCurtainWindow = ScreenCurtainWindow()
@@ -71,11 +73,13 @@ final class AppRootRouter {
         mainWindow: UIWindow,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator,
-        trackingManager: TrackingManager
+        trackingManager: TrackingManager,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.defaultEnvironment = defaultEnvironment
         self.mainWindow = mainWindow
         self.sessionManager = sessionManager
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         self.appStateCalculator = appStateCalculator
         self.urlActionRouter = URLActionRouter(
             viewController: mainWindow.rootViewController!,
