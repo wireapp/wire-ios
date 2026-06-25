@@ -23,6 +23,7 @@ import WireCallingDomainSupport
 
 @testable import WireCallingUI
 
+@MainActor
 struct CreateMeetingFormViewModelTests {
 
     private let viewModel: CreateMeetingFormViewModel

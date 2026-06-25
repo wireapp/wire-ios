@@ -76,6 +76,7 @@ final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeViewModel() -> CreateMeetingFormViewModel {
         let viewModel = CreateMeetingFormViewModel(
             mode: .scheduled,
