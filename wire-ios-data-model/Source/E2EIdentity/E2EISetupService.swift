@@ -55,7 +55,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     private let featureRepository: LegacyFeatureRepositoryInterface
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: CoreCryptoProtocol {
+    private var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }

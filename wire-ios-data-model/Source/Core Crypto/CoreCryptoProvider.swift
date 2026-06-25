@@ -27,7 +27,7 @@ public protocol CoreCryptoProviderProtocol {
     /// Retrieve the shared core crypto instance or create one if one does not yet exist.
     ///
     /// This function is safe to be called concurrently from multiple Tasks
-    func coreCrypto() async throws -> CoreCryptoProtocol
+    func coreCrypto() async throws -> SafeCoreCrypto
 
     /// Initialise a new MLS client with basic credentials
     ///
@@ -75,6 +75,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
     private let localDomain: String?
 
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
+
     public init(
         selfUserID: UUID,
         sharedContainerURL: URL,
@@ -83,7 +85,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         syncContext: NSManagedObjectContext,
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         allowCreation: Bool = true,
-        localDomain: String?
+        localDomain: String?,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
@@ -94,12 +97,16 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
         self.localDomain = localDomain
+        self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
-    public func coreCrypto() async throws -> CoreCryptoProtocol {
+    public func coreCrypto() async throws -> SafeCoreCrypto {
         let coreCrypto = try await getCoreCrypto()
         try await registerMlsTransportIfNecessary(with: coreCrypto)
-        return coreCrypto
+        return SafeCoreCrypto(
+            backgroundTaskExecuter: backgroundTaskExecuter,
+            coreCrypto: coreCrypto
+        )
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
@@ -143,7 +150,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func registerEpochObserverIfNecessary(with coreCrypto: CoreCryptoProtocol) async throws {
+    private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCrypto) async throws {
         guard let epochObserver, !hasRegisteredEpochObserver else {
             return
         }

@@ -18,6 +18,7 @@
 
 import Combine
 import CoreData
+import WireDataModel
 import XCTest
 @testable import WireDataModelSupport
 @testable import WireDomain
@@ -61,7 +62,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCrypto = MockCoreCryptoProtocol()
         coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+        coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: coreCrypto
+        )
         journal = Journal(
             userID: UUID(),
             storage: UserDefaults.temporary()
@@ -87,6 +91,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
             createPushChannelState: {
                 self.pushChannelState
             },

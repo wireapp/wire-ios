@@ -453,6 +453,7 @@
 		CBAEABE92DC8DA8A00C62C4E /* store2-126-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = CBAEABE82DC8DA8A00C62C4E /* store2-126-0.wiredatabase */; };
 		CBB648A52E33D18900FA52AA /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = CBB648A42E33D18900FA52AA /* WireData */; };
 		CBB67B6A2E33FA2200FA52AA /* store2-128-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = CBB67B692E33FA2200FA52AA /* store2-128-0.wiredatabase */; };
+		CBC68CA92FED2BBB00096BEF /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F2B2D09EBB20080DA37 /* WireCrypto */; };
 		CBF4F17F2D36935300C9638B /* ConnectionValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF4F17E2D36935300C9638B /* ConnectionValidator.swift */; };
 		CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4EDC081D6D9A3D002A20AA /* Reaction.swift */; };
@@ -3643,6 +3644,7 @@
 				069BCC5B2B30945500DF4EC2 /* E2EISetupService.swift in Sources */,
 				F920AE2A1E3A5FDD001BC14F /* Dictionary+Mapping.swift in Sources */,
 				347FA6002E70131700F34C6A /* NSManagedObjectContext+BackendMetadata.swift in Sources */,
+				CBC68CA92FED2BBB00096BEF /* SafeCoreCrypto.swift in Sources */,
 				F93265211D8950F10076AAD6 /* NSManagedObjectContext+FetchRequest.swift in Sources */,
 				01BDA3182C59210400675DCB /* CoreDataMigrationStep.swift in Sources */,
 				CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */,

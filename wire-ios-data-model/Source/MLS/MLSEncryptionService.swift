@@ -55,7 +55,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
         self.coreCryptoProvider = coreCryptoProvider
     }
 
-    var coreCrypto: CoreCryptoProtocol {
+    var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }

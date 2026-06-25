@@ -68,6 +68,7 @@ public final class ClientSessionComponent {
     private let completionHandlers: CompletionHandlers
 
     private let faultyMLSRemovalKeysByDomain: [String: [String]]
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     public init(
         selfUserID: UUID,
@@ -87,7 +88,8 @@ public final class ClientSessionComponent {
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         completionHandlers: CompletionHandlers,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -107,6 +109,7 @@ public final class ClientSessionComponent {
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
         self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
+        self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
     public private(set) lazy var authenticationManager = AuthenticationManager(
@@ -409,7 +412,8 @@ public final class ClientSessionComponent {
         liveBrokenGroupSubject: liveBrokenGroupSubject,
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent,
-        earService: earService
+        earService: earService,
+        backgroundTaskExecuter: backgroundTaskExecuter
     )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
@@ -428,6 +432,7 @@ public final class ClientSessionComponent {
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
+            backgroundTaskExecuter: backgroundTaskExecuter,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
             }

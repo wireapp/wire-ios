@@ -383,6 +383,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let mediaManager: MediaManagerType
     private let flowManager: FlowManager
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     // MARK: - Life cycle
 
@@ -412,7 +413,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         deleteUserLogs: @escaping () -> Void,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
         countlyProvider: @escaping () -> CountlyProtocol,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws {
         let reachability = environment.reachabilityWrapper()
 
@@ -456,7 +458,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             deleteUserLogs: deleteUserLogs,
             analyticsServiceConfiguration: analyticsServiceConfiguration,
             countlyProvider: countlyProvider,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         self.memoryWarningObserver = NotificationCenter.default.addObserver(
@@ -520,7 +523,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         deleteUserLogs: (() -> Void)? = nil,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
         countlyProvider: @escaping () -> CountlyProtocol,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
         self.defaultEnvironment = defaultEnvironment
@@ -542,6 +546,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.logFilesProvider = logFilesProvider
         self.mediaManager = mediaManager
         self.flowManager = FlowManager(mediaManager: mediaManager)
+        self.backgroundTaskExecuter = backgroundTaskExecuter
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -1010,7 +1015,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                     flowManager: flowManager,
                     logFilesProvider: logFilesProvider,
                     isDeveloperModeEnabled: isDeveloperModeEnabled,
-                    faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
+                    faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain,
+                    backgroundTaskExecuter: backgroundTaskExecuter
                 )
 
                 let userSession = try await loader.load(newEnvironment: newEnvironment)

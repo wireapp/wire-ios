@@ -30,7 +30,7 @@ public final class ProteusService: ProteusServiceInterface {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let logger = WireLogger.proteus
 
-    private var coreCrypto: CoreCryptoProtocol {
+    private var coreCrypto: SafeCoreCrypto {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }

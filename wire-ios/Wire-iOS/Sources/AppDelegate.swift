@@ -28,6 +28,7 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSyncEngine
+import WireSystem
 
 enum ApplicationLaunchType {
     case unknown
@@ -396,10 +397,14 @@ private extension AppDelegate {
 
     private func createAppRootRouter() {
         let defaultEnvironment = fetchDefaultEnvironment()
+        let appTaskExecuter = AppBackgroundTaskExecuter(application: UIApplication.shared)
 
         let sessionManager: SessionManager
         do {
-            sessionManager = try createSessionManager(defaultEnvironment: defaultEnvironment)
+            sessionManager = try createSessionManager(
+                defaultEnvironment: defaultEnvironment,
+                backgroundTaskExecuter: appTaskExecuter
+            )
         } catch {
             fatalError("sessionManager is not created")
         }
@@ -418,11 +423,15 @@ private extension AppDelegate {
             trackingManager: TrackingManager(
                 sessionManager: sessionManager,
                 availabilityChecker: .default
-            )
+            ),
+            backgroundTaskExecuter: appTaskExecuter
         )
     }
 
-    private func createSessionManager(defaultEnvironment: BackendEnvironment2) throws -> SessionManager {
+    private func createSessionManager(
+        defaultEnvironment: BackendEnvironment2,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
+    ) throws -> SessionManager {
         let infoDictionary = Bundle.main.infoDictionary
 
         guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
@@ -478,7 +487,8 @@ private extension AppDelegate {
             deleteUserLogs: deleteAllAccountsLogs,
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() },
-            logFilesProvider: LogFilesProvider()
+            logFilesProvider: LogFilesProvider(),
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         voIPPushManager.delegate = sessionManager

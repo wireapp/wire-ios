@@ -83,7 +83,8 @@ final class IncrementalSyncTests: XCTestCase {
             liveBrokenGroupSubject: liveBrokenGroupSubject,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
-            earService: earService
+            earService: earService,
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
     }
 

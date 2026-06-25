@@ -43,7 +43,10 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         let coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: mockCoreCrypto
+        )
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         let coreDataStack = try await createCoreDataStack()

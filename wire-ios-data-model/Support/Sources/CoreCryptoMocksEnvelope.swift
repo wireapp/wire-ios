@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
+
 public class CoreCryptoMocksEnvelope {
 
     // MARK: - Public attributes
@@ -35,7 +37,10 @@ public class CoreCryptoMocksEnvelope {
         self.coreCrypto = MockCoreCryptoProtocol()
         self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
 
-        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+        coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: coreCrypto
+        )
         coreCrypto.mockTransaction(context: coreCryptoContext)
     }
 
