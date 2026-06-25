@@ -40,13 +40,25 @@ public struct WireMeetingsFactory {
                 try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
             }
         )
+        let createMeetingUseCase = CreateMeetingUseCase { title, startTime, endTime, repeatOption in
+            let response = try await meetingsAPI.createMeeting(
+                parameters: CreateMeetingParameters(
+                    title: title,
+                    startTime: startTime,
+                    endTime: endTime,
+                    recurrence: repeatOption.toNetworkRecurrence()
+                )
+            )
+            return response.toDomainMeeting()
+        }
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: repository,
                 currentDateProvider: .system
             ),
-            memberRepository: memberRepository
+            memberRepository: memberRepository,
+            createMeetingUseCase: createMeetingUseCase
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
@@ -73,6 +85,19 @@ private extension MeetingFrequency {
         case .weekly: .weekly
         case .monthly: .monthly
         case .yearly: .yearly
+        }
+    }
+}
+
+private extension RepeatOption {
+    func toNetworkRecurrence() -> MeetingRecurrence? {
+        switch self {
+        case .never: nil
+        case .daily: MeetingRecurrence(frequency: .daily, interval: nil, until: nil)
+        case .weekly: MeetingRecurrence(frequency: .weekly, interval: nil, until: nil)
+        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2, until: nil)
+        case .monthly: MeetingRecurrence(frequency: .monthly, interval: nil, until: nil)
+        case .yearly: MeetingRecurrence(frequency: .yearly, interval: nil, until: nil)
         }
     }
 }

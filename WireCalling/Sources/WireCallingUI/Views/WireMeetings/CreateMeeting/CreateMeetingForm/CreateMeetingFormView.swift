@@ -53,12 +53,22 @@ struct CreateMeetingFormView: View {
                     Button(actionButtonLabel) {
                         viewModel.submit()
                     }
-                    .disabled(!viewModel.isNextButtonEnabled)
+                    .disabled(!viewModel.isNextButtonEnabled || viewModel.isLoading)
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .sheet(isPresented: $isPresentingMemberSelection) {
                 MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
+            }
+            .alert(isPresented: Binding(
+                get: { viewModel.error != nil },
+                set: { if !$0 { viewModel.error = nil } }
+            )) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text(viewModel.error?.localizedDescription ?? ""),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }
@@ -247,7 +257,8 @@ private extension RepeatOption {
     CreateMeetingFormView(
         viewModel: CreateMeetingFormViewModel(
             mode: .instant,
-            memberRepository: MockMemberSource()
+            memberRepository: MockMemberSource(),
+            createMeetingUseCase: MockCreateMeetingUseCase()
         )
     )
 }
@@ -256,7 +267,8 @@ private extension RepeatOption {
     CreateMeetingFormView(
         viewModel: CreateMeetingFormViewModel(
             mode: .scheduled,
-            memberRepository: MockMemberSource()
+            memberRepository: MockMemberSource(),
+            createMeetingUseCase: MockCreateMeetingUseCase()
         )
     )
 }
@@ -264,13 +276,20 @@ private extension RepeatOption {
 #Preview("Scheduled mode with selected members") {
     let viewModel = CreateMeetingFormViewModel(
         mode: .scheduled,
-        memberRepository: MockMemberSource()
+        memberRepository: MockMemberSource(),
+        createMeetingUseCase: MockCreateMeetingUseCase()
     )
     viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
     return CreateMeetingFormView(viewModel: viewModel)
 }
 
 // MARK: - Mock
+
+private struct MockCreateMeetingUseCase: CreateMeetingUseCaseProtocol {
+    func execute(title: String, startTime: Date, endTime: Date, repeatOption: RepeatOption) async throws -> Meeting {
+        Meeting(id: QualifiedID(id: UUID(), domain: ""), title: title, start: startTime, end: endTime)
+    }
+}
 
 private struct MockMemberSource: MemberRepositoryProtocol {
 

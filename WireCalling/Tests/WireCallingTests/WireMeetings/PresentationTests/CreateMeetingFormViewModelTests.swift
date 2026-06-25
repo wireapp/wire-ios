@@ -18,6 +18,7 @@
 
 import SwiftUI
 import Testing
+import WireCallingDomain
 import WireCallingDomainSupport
 
 @testable import WireCallingUI
@@ -29,7 +30,10 @@ struct CreateMeetingFormViewModelTests {
     init() {
         self.viewModel = CreateMeetingFormViewModel(
             mode: .instant,
-            memberRepository: MemberRepositoryProtocolMock()
+            memberRepository: MemberRepositoryProtocolMock(),
+            createMeetingUseCase: CreateMeetingUseCase { _, _, _, _ in
+                throw CancellationError()
+            }
         )
     }
 
