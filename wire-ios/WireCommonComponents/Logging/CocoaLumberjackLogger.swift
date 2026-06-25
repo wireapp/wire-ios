@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import os
 import WireLogging
 import WireSystem
 import WireUtilities
@@ -26,8 +27,15 @@ import WireUtilities
 final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger
-    private var tags = [LogAttributesKey: String]()
-    private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
+
+    /// Tags appended to every log entry. Guarded by a cheap unfair lock rather than a
+    /// concurrent `DispatchQueue`: reads happen on every log call (a frequent hot path)
+    /// and a GCD round-trip per call is far more expensive than an uncontended lock.
+    private let tags = OSAllocatedUnfairLock<[LogAttributesKey: String]>(initialState: [:])
+
+    /// Cached once at init: `DeveloperFlag.isOn` reads from `UserDefaults`, which we don't
+    /// want to do on every single log call (including ones that get filtered out).
+    private let unSafeLogsForPublic = DeveloperFlag.unSafeLogsForPublic.isOn
 
     /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
     /// provided URL.
@@ -78,7 +86,6 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         }
 
         let isSafe = mergedAttributes[.public] as? Bool == true
-        let unSafeLogsForPublic = DeveloperFlag.unSafeLogsForPublic.isOn
         guard isDebug || isSafe || unSafeLogsForPublic else {
             // skips logs in production builds with non redacted info
             return
@@ -104,10 +111,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         var entry =
             "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
-        var currentTags: [LogAttributesKey: String] = [:]
-        tagsQueue.sync {
-            currentTags = tags
-        }
+        let currentTags = tags.withLock { $0 }
 
         if !currentTags.isEmpty {
             let extraInfo = currentTags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
@@ -118,16 +122,24 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             entry = "[\(tag)] - \(entry)"
         }
 
-        let formatedMessage = DDLogMessage(DDLogMessageFormat(stringLiteral: entry), level: level, flag: .from(level))
+        // The entry is already fully formatted, so any `%` it contains (URLs, encoded
+        // payloads, JSON) must be escaped — otherwise CocoaLumberjack interprets it as a
+        // printf-style format specifier, producing garbage output or crashing.
+        let escapedEntry = entry.replacingOccurrences(of: "%", with: "%%")
+        let formatedMessage = DDLogMessage(
+            DDLogMessageFormat(stringLiteral: escapedEntry),
+            level: level,
+            flag: .from(level)
+        )
         DDLog.log(asynchronous: true, message: formatedMessage)
     }
 
     func addTag(_ key: LogAttributesKey, value: String?) {
-        tagsQueue.async(flags: .barrier) { [weak self] in
+        tags.withLock { tags in
             if let value {
-                self?.tags[key] = value
+                tags[key] = value
             } else {
-                self?.tags.removeValue(forKey: key)
+                tags.removeValue(forKey: key)
             }
         }
     }

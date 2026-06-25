@@ -16,26 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCallingDomain
-import WireReusableUIComponents
+final class UsersAPIV16: UsersAPIV15 {
 
-/// Mock implementation of PasswordValidator for testing and previews
-package final class MockPasswordValidator: PasswordValidator {
-
-    var isPasswordValid_MockValue: Bool
-    var isPasswordValid_Invocations: [String] = []
-
-    init(isPasswordValid: Bool = true) {
-        self.isPasswordValid_MockValue = isPasswordValid
+    override var apiVersion: APIVersion {
+        .v16
     }
 
-    func isPasswordValid(_ password: String) -> Bool {
-        isPasswordValid_Invocations.append(password)
-        return isPasswordValid_MockValue
-    }
-
-    var localizedRulesDescription: String? {
-        "Password must be at least 8 characters"
-    }
 }

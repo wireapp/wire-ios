@@ -48,14 +48,7 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             conversation.lastModifiedDate = connectionInfo.lastUpdate
             conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
-            // `ConnectionValidator` cleans up stale connections between users, so we normally (re)set this link here.
-            // But when the two users already have an established MLS conversation, we keep it: overwriting it with the
-            // Proteus connection conversation would break the link and hide the conversation from the list — which is
-            // what happens when blocking the user.
-            let existing = connection.to.oneOnOneConversation
-            if existing?.messageProtocol != .mls || existing?.migratedToMLS != true {
-                connection.to.oneOnOneConversation = conversation
-            }
+            connection.to.oneOnOneConversation = conversation
             connection.status = connectionInfo.status
             connection.lastUpdateDateInGMT = connectionInfo.lastUpdate
 

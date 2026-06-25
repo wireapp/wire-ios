@@ -16,49 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 import WireDesign
-import WireReusableUIComponents
 
 struct CreateInstantMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel: CreateInstantMeetingViewModel
-    @State private var isPasswordVisible = false
-    @State private var isConfirmedPasswordVisible = false
-
-    init(viewModel: @autoclosure @escaping () -> CreateInstantMeetingViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel())
-    }
+    @State private(set) var viewModel: CreateInstantMeetingViewModel
 
     var body: some View {
         NavigationStack {
-            if #available(iOS 17, *) {
-                formContent
-                    .listSectionSpacing(.compact)
-            } else {
-                formContent
-                    .listStyle(.insetGrouped)
+            Form {
+                titleSection
+                participantsSection
             }
+            .listSectionSpacing(.compact)
+            .scrollContentBackground(.hidden)
+            .background(ColorTheme.Backgrounds.background.color)
+            .navigationTitle(Strings.Now.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbarContent }
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
         }
-    }
-
-    @ViewBuilder private var formContent: some View {
-        Form {
-            titleSection
-            participantsSection
-            Toggle(Strings.AllowGuests.title, isOn: $viewModel.allowGuests)
-            passwordSection
-            confirmedPasswordSection
-        }
-        .scrollContentBackground(.hidden)
-        .background(ColorTheme.Backgrounds.background.color)
-        .navigationTitle(Strings.Now.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar { toolbarContent }
-        .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
     }
 
     @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {
@@ -68,7 +48,7 @@ struct CreateInstantMeetingView: View {
             }
         }
         ToolbarItem(placement: .topBarTrailing) {
-            Button(Strings.Next.button) {
+            Button(Strings.Start.button) {
                 viewModel.createInstantMeeting()
             }
             .disabled(!viewModel.isNextButtonEnabled)
@@ -77,42 +57,25 @@ struct CreateInstantMeetingView: View {
 
     private var titleSection: some View {
         Section(Strings.SetupTitle.header) {
-            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+            HStack {
+                TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+                if !viewModel.meetingTitle.isEmpty {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(Color(.lightGray))
+                        .onTapGesture {
+                            viewModel.clearTitle()
+                        }
+                }
+            }
         }
+        .textCase(nil)
     }
 
     private var participantsSection: some View {
         Section(Strings.SetupParticipants.header) {
             TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
         }
-    }
-
-    private var passwordSection: some View {
-        Section {
-            PasswordFieldWithToggle(
-                placeholder: Strings.Password.placeholder,
-                text: $viewModel.password,
-                isVisible: $isPasswordVisible,
-                errorMessage: viewModel.localizedPasswordRules,
-                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
-            )
-        } header: {
-            Text(Strings.SetupPassword.header)
-        }
-    }
-
-    private var confirmedPasswordSection: some View {
-        Section {
-            PasswordFieldWithToggle(
-                placeholder: Strings.ConfirmedPassword.placeholder,
-                text: $viewModel.confirmedPassword,
-                isVisible: $isConfirmedPasswordVisible,
-                errorMessage: Strings.ConfirmedPassword.error,
-                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
-            )
-        }
+        .textCase(nil)
     }
 
 }
@@ -120,8 +83,5 @@ struct CreateInstantMeetingView: View {
 // MARK: - Preview
 
 #Preview {
-    CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel(
-        passwordValidator: MockPasswordValidator(),
-        isContextMenuAllowed: true
-    ))
+    CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel())
 }

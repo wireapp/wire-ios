@@ -63,8 +63,7 @@ public enum Locators {
         case bottomBarDriveButton
         case createGroupOrSearchButton
         case conversationCell
-        case blockOptionOnContextMenu
-        case unblockOptionOnContextMenu
+        case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
         case leaveButtonOnBottomSheet
@@ -141,7 +140,6 @@ public enum Locators {
         case videoCallBarButton
         case inputField
         case sendButton
-        case conversationBackButton
         case authorName
         case conversationTitleButton
         case conversationDetailsButton
@@ -156,6 +154,7 @@ public enum Locators {
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
         case sharedFileLabel = "FileTransferTopLabel"
+        case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
         case sketchButton
         case canvas
@@ -165,6 +164,9 @@ public enum Locators {
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
+        case uploadFileButton
+        case browse = "Browse"
+        case open = "Open"
         case allowFullAccess = "Allow Full Access"
         case ok = "OK"
         case audioButton
@@ -177,6 +179,7 @@ public enum Locators {
         case showOtherRowButton
         case pingButton
         case guestsArePresent = "Guests are present"
+        case openOngoingCallButton
 
     }
 
@@ -288,6 +291,18 @@ public enum Locators {
 
     }
 
+    public enum FilesAppPage: String {
+
+        case browse = "Browse"
+        case done = "Done"
+        case onMyIPhone = "On My iPhone"
+        case search = "Search"
+        case share = "Share"
+        case nameContains = "Name Contains"
+        case moreOptions = "OverflowBarButtonItem"
+        case select = "Select"
+    }
+
     public enum OptionsOnSettingsPage: String {
 
         case lockWithPasscode = "Lock With Passcode"
@@ -377,11 +392,18 @@ public enum Locators {
 
     public enum ShareExtensionPage: String {
 
-        case imageTile = "PXGGridLayout-Info"
-        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
-        case chooseConversations = "Choose"
         case sendButtonOnShareExtension
+        case wire = "Wire"
+        case chooseConversations = "Choose"
+    }
+
+    public enum PhotosAppPage: String {
+
+        case select = "Select"
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "Share"
         case continueButton = "Continue"
+
     }
 
     public enum IncomingCallPage: String {
@@ -399,6 +421,7 @@ public enum Locators {
 
         case endOngoingCallButton = "End call"
         case timeLabel
+        case minimizeCall
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"
