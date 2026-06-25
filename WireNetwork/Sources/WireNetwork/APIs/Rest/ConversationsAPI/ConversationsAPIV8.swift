@@ -320,7 +320,6 @@ extension ConversationGroupType {
     }
 }
 
-
 // MARK: - Decodables
 
 struct ConversationV8: Decodable, ToAPIModelConvertible, DecodableConversation {
