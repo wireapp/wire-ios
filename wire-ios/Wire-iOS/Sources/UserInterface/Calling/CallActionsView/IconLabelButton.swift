@@ -47,6 +47,7 @@ class IconLabelButton: ButtonWithLargerHitArea {
         iconButton.setIcon(input.icon(forState: .normal), size: iconSize, for: .normal)
         iconButton.setIcon(input.icon(forState: .selected), size: iconSize, for: .selected)
         subtitleTransformLabel.text = input.label
+        accessibilityIdentifier = input.accessibilityIdentifier
     }
 
     @available(*, unavailable)
