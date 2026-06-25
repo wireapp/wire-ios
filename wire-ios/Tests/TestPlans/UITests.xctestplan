@@ -10,6 +10,18 @@
             "value" : "$(SSO_CLAIMED_DOMAIN_CODE)"
           },
           {
+            "key" : "CALLINGSERVICE_INTERNAL_URL",
+            "value" : "$(CALLINGSERVICE_INTERNAL_URL)"
+          },
+          {
+            "key" : "CALLINGSERVICE_INTERNAL_USERNAME",
+            "value" : "$(CALLINGSERVICE_INTERNAL_USERNAME)"
+          },
+          {
+            "key" : "CALLINGSERVICE_INTERNAL_PASSWORD",
+            "value" : "$(CALLINGSERVICE_INTERNAL_PASSWORD)"
+          },
+          {
             "key" : "SSO_CLAIMED_USER_PASSWORD",
             "value" : "$(SSO_CLAIMED_USER_PASSWORD)"
           },

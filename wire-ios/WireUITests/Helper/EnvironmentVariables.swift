@@ -185,15 +185,21 @@ struct EnvironmentVariables {
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
-        self.callingServiceUsername = callingServiceUsername
-        self.callingServicePassword = callingServicePassword
+        let callingServiceEnvironment = Self.callingServiceEnvironment(
+            defaultURLString: callingServiceURLString,
+            defaultUsername: callingServiceUsername,
+            defaultPassword: callingServicePassword
+        )
+
+        self.callingServiceUsername = callingServiceEnvironment.username
+        self.callingServicePassword = callingServiceEnvironment.password
         self.antaDeepLinkURL = URL(string: "https://\(antaDeeplinkURL)")!
         self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
         self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
         self.bellaDeepLinkURL = URL(string: "https://\(bellaDeeplinkURL)")!
         self.bellaInbucketURL = URL(string: "https://\(bellaInbucketURL)")!
         self.bellaBackendURL = URL(string: "https://\(backendURLBellaString)")!
-        self.callingServiceURL = URL(string: "https://\(callingServiceURLString)")!
+        self.callingServiceURL = callingServiceEnvironment.url
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
@@ -201,6 +207,43 @@ struct EnvironmentVariables {
         self.ssoClaimedUserEmail = ssoClaimedUserEmail
         self.ssoClaimedUserPassword = ssoClaimedUserPassword
         self.ssoClaimedDomainCode = ssoClaimedDomainCode
+    }
+
+    private static func callingServiceEnvironment(
+        defaultURLString: String,
+        defaultUsername: String,
+        defaultPassword: String
+    ) -> (url: URL, username: String, password: String) {
+        let environment = ProcessInfo.processInfo.environment
+        let isCI = environment["CI"]?.lowercased() == "true"
+
+        if !isCI,
+           let internalURLString = environment["CALLINGSERVICE_INTERNAL_URL"],
+           let internalUsername = environment["CALLINGSERVICE_INTERNAL_USERNAME"],
+           let internalPassword = environment["CALLINGSERVICE_INTERNAL_PASSWORD"],
+           !internalURLString.isEmpty,
+           !internalUsername.isEmpty,
+           !internalPassword.isEmpty {
+            return (
+                url: callingServiceURL(from: internalURLString, defaultScheme: "http"),
+                username: internalUsername,
+                password: internalPassword
+            )
+        }
+
+        return (
+            url: callingServiceURL(from: defaultURLString, defaultScheme: "https"),
+            username: defaultUsername,
+            password: defaultPassword
+        )
+    }
+
+    private static func callingServiceURL(from value: String, defaultScheme: String) -> URL {
+        if value.contains("://") {
+            URL(string: value)!
+        } else {
+            URL(string: "\(defaultScheme)://\(value)")!
+        }
     }
 
     func inbucketURL(for target: BackendTarget) -> URL {
