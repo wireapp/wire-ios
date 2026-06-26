@@ -117,15 +117,15 @@ public struct MeetingResponse {
     }
 }
 
-// MARK: - MeetingListResponseV16 (internal, for decoding an array response)
+// MARK: - MeetingListResponseV15 (internal, for decoding an array response)
 
-struct MeetingListResponseV16: Decodable, ToAPIModelConvertible {
+struct MeetingListResponseV15: Decodable, ToAPIModelConvertible {
 
-    private let meetings: [MeetingResponseV16]
+    private let meetings: [MeetingResponseV15]
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.meetings = try container.decode([MeetingResponseV16].self)
+        self.meetings = try container.decode([MeetingResponseV15].self)
     }
 
     func toAPIModel() -> [MeetingResponse] {
@@ -133,9 +133,9 @@ struct MeetingListResponseV16: Decodable, ToAPIModelConvertible {
     }
 }
 
-// MARK: - MeetingResponseV16 (internal, for decoding)
+// MARK: - MeetingResponseV15 (internal, for decoding)
 
-struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
+struct MeetingResponseV15: Decodable, ToAPIModelConvertible {
 
     let qualifiedID: QualifiedIDV0
     let title: String

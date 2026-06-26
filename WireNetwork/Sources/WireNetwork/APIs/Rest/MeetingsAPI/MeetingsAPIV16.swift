@@ -37,7 +37,7 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: MeetingListResponseV16.self)
+            .success(code: .ok, type: MeetingListResponseV15.self)
             .parse(code: response.statusCode, data: data)
     }
 
