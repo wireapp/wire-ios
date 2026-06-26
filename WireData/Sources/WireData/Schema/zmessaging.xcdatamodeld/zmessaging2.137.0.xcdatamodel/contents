@@ -172,7 +172,12 @@
     </entity>
     <entity name="Meeting" representedClassName="WireData.Meeting" syncable="YES" codeGenerationType="class">
         <attribute name="domain" optional="YES" attributeType="String"/>
+        <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="remoteIdentifier" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="repeatOptionRawValue" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="meetings" inverseEntity="User"/>
     </entity>
     <entity name="Member" representedClassName="WireDataModel.Member" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -367,6 +372,7 @@
         <relationship name="createdTeamMembers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="createdBy" inverseEntity="Member"/>
         <relationship name="createdTeams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Team" inverseName="creator" inverseEntity="Team"/>
         <relationship name="lastServerSyncedActiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="lastServerSyncedActiveParticipants" inverseEntity="Conversation"/>
+        <relationship name="meetings" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Meeting" inverseName="members" inverseEntity="Meeting"/>
         <relationship name="membership" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Member" inverseName="user" inverseEntity="Member"/>
         <relationship name="messagesFailedToSendRecipient" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="failedToSendRecipients" inverseEntity="Message"/>
         <relationship name="oneOnOneConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="oneOnOneUser" inverseEntity="Conversation"/>
