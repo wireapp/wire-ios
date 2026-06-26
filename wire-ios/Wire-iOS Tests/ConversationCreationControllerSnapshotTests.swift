@@ -34,6 +34,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
+        DeveloperFlag.enableDrivePermissions.enable(false)
         snapshotHelper = SnapshotHelper()
         accentColor = .purple
     }
@@ -55,6 +56,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     }
 
     func testTeamGroupOptions() async {
+        DeveloperFlag.enableDrivePermissions.enable(true)
         await createSut(isTeamMember: true)
 
         snapshotHelper
@@ -88,7 +90,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     private func createSut(
         isTeamMember: Bool,
-        messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus
+        messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus,
     ) async {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
