@@ -43,7 +43,7 @@ extension UIApplication: BackgroundTaskApplication {}
 /// - warning: This executer should only be used from the main app.
 public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
-    private final class Operation<T>: Sendable {
+    private final class OperationState<T>: Sendable {
         let _taskID = OSAllocatedUnfairLock(initialState: UIBackgroundTaskIdentifier.invalid)
         let _task = OSAllocatedUnfairLock(initialState: Optional<Task<T, any Error>>.none)
 
@@ -75,17 +75,17 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
             throw CancellationError()
         }
 
-        let backgroundOperation = Operation<T>()
-        backgroundOperation.taskID = application.beginBackgroundTask(withName: name) {
+        let operationState = OperationState<T>()
+        operationState.taskID = application.beginBackgroundTask(withName: name) {
             WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
 
-            backgroundOperation.task?.cancel()
+            operationState.task?.cancel()
 
             // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
-            endBackgroundTask(backgroundOperation)
+            endBackgroundTask(operationState)
         }
 
-        if backgroundOperation.taskID == .invalid {
+        if operationState.taskID == .invalid {
             WireLogger.backgroundActivity.error("begin background task returned .invalid ID for task: \(name)")
             throw CancellationError()
         }
@@ -97,9 +97,9 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
             WireLogger.backgroundActivity.debug("did end background task: \(name)")
             return result
         }
-        backgroundOperation.task = task
+        operationState.task = task
 
-        defer { endBackgroundTask(backgroundOperation) }
+        defer { endBackgroundTask(operationState) }
         return try await withTaskCancellationHandler {
             try await task.value
         } onCancel: {
@@ -107,10 +107,10 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         }
     }
 
-    private nonisolated func endBackgroundTask<T>(_ operation: Operation<T>) {
-        guard operation.taskID != .invalid else { return }
+    private nonisolated func endBackgroundTask<T>(_ operationState: OperationState<T>) {
+        guard operationState.taskID != .invalid else { return }
 
-        application.endBackgroundTask(operation.taskID)
-        operation.taskID = .invalid
+        application.endBackgroundTask(operationState.taskID)
+        operationState.taskID = .invalid
     }
 }
