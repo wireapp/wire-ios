@@ -1943,6 +1943,25 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         }
     }
 
+    // MARK: - makeConversationSharedDrivedOptionsView
+
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations: [(participants: [WireDriveParticipant], onClose: () -> Void)] = []
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod: (([WireDriveParticipant], @escaping () -> Void) -> UIViewController)?
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue: UIViewController?
+
+    @MainActor
+    func makeConversationSharedDrivedOptionsView(participants: [WireDriveParticipant], onClose: @escaping () -> Void) -> UIViewController {
+        makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations.append((participants: participants, onClose: onClose))
+
+        if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod {
+            return mock(participants, onClose)
+        } else if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeConversationSharedDrivedOptionsViewParticipantsOnClose`")
+        }
+    }
+
 }
 
 // swiftlint:enable variable_name
