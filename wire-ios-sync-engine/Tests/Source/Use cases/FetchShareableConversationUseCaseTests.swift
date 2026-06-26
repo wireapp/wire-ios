@@ -48,7 +48,7 @@ class FetchShareableConversationUseCaseTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testInvoke() {
+    func testInvoke() throws {
         // Given
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
 
@@ -58,6 +58,10 @@ class FetchShareableConversationUseCaseTests: XCTestCase {
 
         // create a non-shareable conversation
         createConversation()
+
+        // Save so -willSave fires and effectiveConversationType is persisted,
+        // which is what the ConversationList fetch predicates filter on.
+        try coreDataStack.viewContext.save()
 
         // When
         let result = sut.invoke()
