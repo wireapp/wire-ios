@@ -79,7 +79,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         environment: BackendEnvironment2,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
-        allowsMultipleBackends: Bool = true,
+        allowsMultipleBackends: Bool,
         existingBackendHosts: Set<String>,
         isLoading: Bool = false,
         overrideAllowEmailLoginOnly: Bool
