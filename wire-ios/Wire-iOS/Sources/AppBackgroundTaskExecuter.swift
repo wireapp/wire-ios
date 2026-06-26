@@ -71,8 +71,8 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         let name = name ?? "unnamed"
 
         guard application.applicationState != .background else {
-            WireLogger.backgroundActivity.debug("background task \(name) cannot be started in the background")
-            throw BackgroundTaskError.taskInstantiatedInBackground
+            WireLogger.backgroundActivity.debug("background task \(name) cannot begin in the background")
+            throw CancellationError()
         }
 
         let backgroundOperation = Operation<T>()
@@ -87,7 +87,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
         if backgroundOperation.taskID == .invalid {
             WireLogger.backgroundActivity.error("begin background task returned .invalid ID for task: \(name)")
-            throw BackgroundTaskError.invalidTaskIdentifier
+            throw CancellationError()
         }
 
         // Don't start the task until we have a valid background task ID.

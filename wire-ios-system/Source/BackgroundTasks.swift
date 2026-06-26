@@ -41,13 +41,3 @@ public struct PassthroughTaskExecuter: BackgroundTaskExecuter {
     }
 
 }
-
-public enum BackgroundTaskError: Error {
-
-    /// The background task was instantiated in while the app is int the background. This may not be allowed by a given
-    /// ``BackgroundTaskExecuter``.
-    case taskInstantiatedInBackground
-
-    /// The system returned `UIBackgroundTaskIdentifier.invalid` when beginning a background task.
-    case invalidTaskIdentifier
-}
