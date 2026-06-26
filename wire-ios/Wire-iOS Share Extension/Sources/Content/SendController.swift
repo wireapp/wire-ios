@@ -67,19 +67,19 @@ final class SendController {
     ) {
         var sendables: [UnsentSendable] = attachments.compactMap {
             if $0.hasGifImage {
-                return UnsentGifImageSendable(
+                UnsentGifImageSendable(
                     conversation: conversation,
                     sharingSession: sharingSession,
                     attachment: $0
                 )
             } else if $0.hasImage {
-                return UnsentImageSendable(conversation: conversation, sharingSession: sharingSession, attachment: $0)
+                UnsentImageSendable(conversation: conversation, sharingSession: sharingSession, attachment: $0)
             } else if $0.hasURL {
                 // If it's just a link, it should have already been fetched
                 // and included in `text`. Nothing more to add here.
-                return nil
+                nil
             } else {
-                return UnsentFileSendable(conversation: conversation, sharingSession: sharingSession, attachment: $0)
+                UnsentFileSendable(conversation: conversation, sharingSession: sharingSession, attachment: $0)
             }
         }
 
