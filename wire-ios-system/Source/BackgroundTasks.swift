@@ -28,7 +28,7 @@ public func withBackgroundTask<T: Sendable>(
     try await executer.execute(name: name, operation: operation)
 }
 
-/// A `BackgroundTaskExecuter` that simply executes the operation without any background task management.
+/// A ``BackgroundTaskExecuter`` that simply executes the operation without any background task management.
 public struct PassthroughTaskExecuter: BackgroundTaskExecuter {
 
     public init() {}
@@ -40,4 +40,14 @@ public struct PassthroughTaskExecuter: BackgroundTaskExecuter {
         try await operation()
     }
 
+}
+
+public enum BackgroundTaskError: Error {
+
+    /// The background task was instantiated in while the app is int the background. This may not be allowed by a given
+    /// ``BackgroundTaskExecuter``.
+    case taskInstantiatedInBackground
+
+    /// The system returned `UIBackgroundTaskIdentifier.invalid` when beginning a background task.
+    case invalidTaskIdentifier
 }
