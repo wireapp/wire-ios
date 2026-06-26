@@ -44,8 +44,7 @@ class RecycleBinPage: PageModel {
     }
 
     var closeRecycleBinButton: XCUIElement {
-        app.navigationBars[Locators.WireDrive.FilesPage.recycleBinPageheader.rawValue]
-            .buttons
+        app.descendants(matching: .any)
             .matching(identifier: Locators.WireDrive.FilesPage.close.rawValue)
             .firstMatch
     }
