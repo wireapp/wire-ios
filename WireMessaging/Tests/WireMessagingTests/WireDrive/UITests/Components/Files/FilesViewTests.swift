@@ -364,7 +364,7 @@ final class FilesViewTests: XCTestCase {
     func testFilesView_ViewerOnly() async {
         // Given
         let nodesApi = MockNodesAPIProtocol()
-        nodesApi.getDriveConversations_MockValue = .mocked(selfUserRole: .viewer)
+        nodesApi.getDriveConversations_MockValue = .mocked()
         driveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
 
         // When

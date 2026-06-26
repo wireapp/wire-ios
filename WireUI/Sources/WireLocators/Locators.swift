@@ -577,6 +577,18 @@ public enum Locators {
         public enum RecycleBinPage: String {
             case deletePermanently = "Delete Permanently"
         }
+
+        public enum ConversationDetailsSharedDriveOptionsPage: AutoPrefixedEnum {
+            case toggleSectionTitle
+            case toggle
+            case toggleSectionFooter
+            case participantsSectionHeader
+            case participantsSectionFooterTitle
+            case participantsSectionFooterSubtitle
+            case participantName
+            case participantHandle
+            case participantRole
+        }
     }
 
     public enum BlockerPage: String {
