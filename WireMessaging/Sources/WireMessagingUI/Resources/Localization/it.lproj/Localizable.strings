@@ -195,7 +195,6 @@
 "conversation.wireCells.recycleBin.navigationTitle" = "Cestino";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
-"conversation.wireCells.recycleBin.emptyFolder.message" = "This folder is empty.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Cancella permanentemente";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Cancella permanentemente";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "Questo cancellerà permanentemente il file \"%@\" per tutti i partecipanti. Nessuno avrà più accesso al file e non c'è modo di ripristinarlo.";

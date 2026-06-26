@@ -347,7 +347,8 @@ final class AuthenticationInterfaceBuilder {
             ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
-            registrationAnalyticsTracker: registrationAnalyticsTracker
+            registrationAnalyticsTracker: registrationAnalyticsTracker,
+            overrideAllowEmailLoginOnly: featureProvider.allowOnlyEmailLogin
         )
 
         return (

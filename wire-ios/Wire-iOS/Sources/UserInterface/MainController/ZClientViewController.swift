@@ -414,7 +414,8 @@ final class ZClientViewController: UIViewController {
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
 
-        let meetingsUI = wireMeetingsFactory.makeMeetingsView()
+        let memberRepository = WireMeetingsMemberRepository(userSession: userSession)
+        let meetingsUI = wireMeetingsFactory.makeMeetingsView(memberRepository: memberRepository)
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
