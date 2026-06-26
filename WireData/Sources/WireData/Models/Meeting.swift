@@ -25,7 +25,7 @@ import CoreData
 /// categorized as past, ongoing, or upcoming based on their start and end times
 /// relative to the current time.
 
-public final class Meeting: NSManagedObject {
+public final class Meeting_: NSManagedObject {
 
     /// The name of the associated Core Data entity.
 
