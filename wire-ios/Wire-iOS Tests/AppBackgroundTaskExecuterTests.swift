@@ -125,6 +125,51 @@ struct AppBackgroundTaskExecuterTests {
     }
 
     @Test
+    func `throws CancellationError when the app is in the background`() async throws {
+        // given
+        application.applicationState = .background
+        let didRunOperation = OSAllocatedUnfairLock(initialState: false)
+
+        // then
+        await #expect(throws: CancellationError.self) {
+            // when
+            try await sut.execute(name: "task") {
+                didRunOperation.withLock { $0 = true }
+            }
+        }
+        #expect(didRunOperation.withLock { $0 } == false)
+        #expect(application.beginBackgroundTaskWithNameExpirationHandler_Invocations.isEmpty)
+    }
+
+    @Test
+    func `does not throw when the app is inactive`() async throws {
+        // given
+        application.applicationState = .inactive
+
+        // when
+        let result = try await sut.execute(name: "task") { "result" }
+
+        // then
+        #expect(result == "result")
+    }
+
+    @Test
+    func `throws CancellationError when beginBackgroundTask returns invalid`() async throws {
+        // given
+        application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, _ in .invalid }
+        let didRunOperation = OSAllocatedUnfairLock(initialState: false)
+
+        // then
+        await #expect(throws: CancellationError.self) {
+            // when
+            try await sut.execute(name: "task") {
+                didRunOperation.withLock { $0 = true }
+            }
+        }
+        #expect(didRunOperation.withLock { $0 } == false)
+    }
+
+    @Test
     func `external cancellation cancels the operation and ends the background task`() async throws {
         // given
         let didCancel = OSAllocatedUnfairLock(initialState: false)
