@@ -19,10 +19,12 @@
 package import Foundation
 package import WireCallingDomain
 
+import WireFoundation
+
 package extension Meeting {
 
     static func fixture(
-        id: UUID = UUID(),
+        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
         title: String,
         start: Date,
         duration: TimeInterval = 3600

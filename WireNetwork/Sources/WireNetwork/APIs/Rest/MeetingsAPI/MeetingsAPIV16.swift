@@ -16,16 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package struct PaginatedMeetings {
+final class MeetingsAPIV16: MeetingsAPIV15 {
 
-    package let meetings: [Meeting]
-    package let hasMore: Bool
-    package let nextOffset: Int
+    override var apiVersion: APIVersion {
+        .v16
+    }
 
-    package init(meetings: [Meeting], hasMore: Bool, nextOffset: Int) {
-        self.meetings = meetings
-        self.hasMore = hasMore
-        self.nextOffset = nextOffset
+    // MARK: - List meetings
+
+    override func listMeetings() async throws -> [MeetingResponse] {
+        let path = "\(pathPrefix)/meetings/list"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: MeetingListResponseV15.self)
+            .parse(code: response.statusCode, data: data)
     }
 
 }
