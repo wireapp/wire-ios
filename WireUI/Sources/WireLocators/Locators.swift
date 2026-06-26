@@ -157,6 +157,7 @@ public enum Locators {
         case sharedDriveButton
         case ephemeralTimeSelectionButton
         case message
+        case linkPreviewCell = "LinkPreviewCell"
         case imageCell
         case videoCell
         case videoPlayButton

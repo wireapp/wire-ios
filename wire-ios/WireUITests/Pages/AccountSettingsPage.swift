@@ -97,7 +97,7 @@ class AccountSettingsPage: PageModel {
     }
 
     var chooseFromLibraryButton: XCUIElement {
-        app.buttons["Choose from Library"].firstMatch
+        app.sheets.firstMatch.buttons.element(boundBy: 0)
     }
 
     var confirmImageButton: XCUIElement {
@@ -151,7 +151,7 @@ class AccountSettingsPage: PageModel {
             "\(color.displayName) color option did not appear"
         )
         colorOption.tap()
-        backToPreviousPage.tap()
+        XCTAssertTrue(backToPreviousPage.waitAndTap(), "Failed to navigate back from the color picker")
         return try AccountSettingsPage()
     }
 

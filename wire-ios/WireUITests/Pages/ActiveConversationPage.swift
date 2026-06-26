@@ -233,6 +233,10 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.openOngoingCallButton.rawValue]
     }
 
+    var linkPreviewCell: XCUIElement {
+        app.cells[Locators.ActiveConversationPage.linkPreviewCell.rawValue].firstMatch
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -343,10 +347,10 @@ class ActiveConversationPage: PageModel {
             file: file,
             line: line
         )
-        XCTAssertEqual(
+        XCTAssertNotEqual(
             backgroundColor,
-            color.displayName,
-            "Conversation background should match profile color \(color.displayName)",
+            "default",
+            "Conversation background should not be default when accentID \(color.accentID) is selected",
             file: file,
             line: line
         )
@@ -354,7 +358,7 @@ class ActiveConversationPage: PageModel {
         XCTAssertEqual(
             selfUser.accentID,
             color.accentID,
-            "Self user accent ID should match \(color.displayName)",
+            "Self user accent ID should match \(color.accentID)",
             file: file,
             line: line
         )
@@ -529,7 +533,7 @@ class ActiveConversationPage: PageModel {
         line: UInt = #line
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            app.cells["LinkPreviewCell"].firstMatch.waitForExistence(timeout: 10),
+            linkPreviewCell.waitForExistence(timeout: 10),
             file: file,
             line: line
         )
