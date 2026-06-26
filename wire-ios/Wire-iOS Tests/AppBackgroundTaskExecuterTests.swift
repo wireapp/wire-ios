@@ -35,6 +35,8 @@ struct AppBackgroundTaskExecuterTests {
             UIBackgroundTaskIdentifier(rawValue: 99)
         }
         application.endBackgroundTask_MockMethod = { _ in }
+        application.applicationState = .active
+
         self.sut = AppBackgroundTaskExecuter(application: application)
     }
 

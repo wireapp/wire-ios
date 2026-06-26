@@ -32,6 +32,8 @@ public protocol BackgroundTaskApplication: AnyObject, Sendable {
     ) -> UIBackgroundTaskIdentifier
 
     nonisolated func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier)
+
+    var applicationState: UIApplication.State { get }
 }
 
 extension UIApplication: BackgroundTaskApplication {}
@@ -41,12 +43,18 @@ extension UIApplication: BackgroundTaskApplication {}
 /// - warning: This executer should only be used from the main app.
 public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
-    private final class TaskID: Sendable {
-        let state = OSAllocatedUnfairLock(initialState: UIBackgroundTaskIdentifier.invalid)
+    private final class Operation<T>: Sendable {
+        let _taskID = OSAllocatedUnfairLock(initialState: UIBackgroundTaskIdentifier.invalid)
+        let _task = OSAllocatedUnfairLock(initialState: Optional<Task<T, any Error>>.none)
 
-        var value: UIBackgroundTaskIdentifier {
-            get { state.withLock { $0 } }
-            set { state.withLock { $0 = newValue } }
+        var taskID: UIBackgroundTaskIdentifier {
+            get { _taskID.withLock { $0 } }
+            set { _taskID.withLock { $0 = newValue } }
+        }
+
+        var task: Task<T, any Error>? {
+            get { _task.withLock { $0 } }
+            set { _task.withLock { $0 = newValue } }
         }
     }
 
@@ -62,27 +70,36 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
     ) async throws -> T {
         let name = name ?? "unnamed"
 
+        guard application.applicationState != .background else {
+            WireLogger.backgroundActivity.debug("background task \(name) cannot be started in the background")
+            throw BackgroundTaskError.taskInstantiatedInBackground
+        }
+
+        let backgroundOperation = Operation<T>()
+        backgroundOperation.taskID = application.beginBackgroundTask(withName: name) {
+            WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
+
+            backgroundOperation.task?.cancel()
+
+            // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
+            endBackgroundTask(backgroundOperation)
+        }
+
+        if backgroundOperation.taskID == .invalid {
+            WireLogger.backgroundActivity.error("begin background task returned .invalid ID for task: \(name)")
+            throw BackgroundTaskError.invalidTaskIdentifier
+        }
+
+        // Don't start the task until we have a valid background task ID.
         let task = Task {
             WireLogger.backgroundActivity.debug("will start background task: \(name)")
             let result = try await operation()
             WireLogger.backgroundActivity.debug("did end background task: \(name)")
             return result
         }
+        backgroundOperation.task = task
 
-        let taskID = TaskID()
-        taskID.value = application.beginBackgroundTask(withName: name) {
-            WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
-
-            task.cancel()
-
-            // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
-            endBackgroundTask(taskID)
-        }
-        if taskID.value == .invalid {
-            WireLogger.backgroundActivity.error("begin background task returned .invalid ID for task: \(name)")
-        }
-
-        defer { endBackgroundTask(taskID) }
+        defer { endBackgroundTask(backgroundOperation) }
         return try await withTaskCancellationHandler {
             try await task.value
         } onCancel: {
@@ -90,10 +107,10 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         }
     }
 
-    private nonisolated func endBackgroundTask(_ identifier: TaskID) {
-        guard identifier.value != .invalid else { return }
+    private nonisolated func endBackgroundTask<T>(_ operation: Operation<T>) {
+        guard operation.taskID != .invalid else { return }
 
-        application.endBackgroundTask(identifier.value)
-        identifier.value = .invalid
+        application.endBackgroundTask(operation.taskID)
+        operation.taskID = .invalid
     }
 }
