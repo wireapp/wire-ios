@@ -1015,11 +1015,11 @@
 "profile.connection_request_dialog.button_cancel" = "Ignorieren";
 "profile.connection_request_dialog.button_connect" = "Kontaktanfrage";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "Gruppenunterhaltung löschen?";
-"conversation.delete_request_dialog.message" = "Dies wird die Gruppe und alle Inhalte für alle Teilnehmer auf allen Geräten löschen. Es gibt keine Möglichkeit, den Inhalt wiederherzustellen. Alle Teilnehmer werden darüber benachrichtigt.";
-"conversation.delete_request_error_dialog.title" = "Beim Löschen der Gruppe %@ ist ein Fehler aufgetreten. Bitte erneut versuchen.";
-"conversation.delete_request_error_dialog.button_delete_group" = "Gruppe löschen";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Unterhaltung löschen?";
+"conversation.delete_request_dialog.message" = "Dies wird die Unterhaltung und alle Inhalte für alle Teilnehmer auf allen Geräten löschen. Es gibt keine Möglichkeit, den Inhalt wiederherzustellen. Alle Teilnehmer werden darüber benachrichtigt.";
+"conversation.delete_request_error_dialog.title" = "Beim Löschen der Unterhaltung %@ ist ein Fehler aufgetreten. Bitte erneut versuchen.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Unterhaltung löschen";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Kontaktanfrage abbrechen?";
