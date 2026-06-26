@@ -146,12 +146,11 @@ jobs:
                             }
                         }
 
-                        return lines.join('\n');
+                        core.setOutput('result', lines.join('\n'));
 
             -   name: Post to Wire
                 continue-on-error: true
-                uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+                uses: ./.github/actions/notify-wire
                 with:
-                    status: custom
-                    custom_payload: |
-                        { "text": ${{ steps.build-summary.outputs.result }} }
+                    notify: custom
+                    text: ${{ steps.build-summary.outputs.result }}
