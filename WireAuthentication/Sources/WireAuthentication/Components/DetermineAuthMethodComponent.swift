@@ -103,6 +103,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             bridge: dependency.bridge,
             environment: networkStack.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount,
+            allowsMultipleBackends: allowsMultipleBackends,
             existingBackendHosts: existingBackendHosts,
             overrideAllowEmailLoginOnly: dependency.overrideAllowEmailLoginOnly
         )
