@@ -504,4 +504,13 @@ class ActiveConversationPage: PageModel {
         openOngoingCallButton.waitAndTap()
         return try OngoingCallPage()
     }
+
+    @discardableResult
+    func verifyNoCallOngoingAfterHangUp() throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            openOngoingCallButton.waitForNonExistence(timeout: 4),
+            "Ongoing call still visible after hanging up the call"
+        )
+        return self
+    }
 }
