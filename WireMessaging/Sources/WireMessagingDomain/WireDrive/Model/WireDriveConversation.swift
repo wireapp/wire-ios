@@ -147,7 +147,7 @@ public extension Collection<WireDriveConversation> {
             .init(
                 id: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
                 name: "Conversation 1",
-                participants: Set([WireDriveParticipant].mocked())
+                participants: Set([WireDriveParticipant].mocked(selfUserRole: selfUserRole))
             ),
             .init(
                 id: "5678",
@@ -170,8 +170,8 @@ public extension Collection<WireDriveParticipant> {
             .init(
                 handle: "walterwhite",
                 displayName: "Heisenberg",
-                role: .editor,
-                isSelfUser: false,
+                role: selfUserRole,
+                isSelfUser: true,
                 id: UUID().uuidString,
                 userType: .member,
                 verificationBadges: [.e2EICertified],
@@ -191,7 +191,7 @@ public extension Collection<WireDriveParticipant> {
                 handle: "tucosalamanca",
                 displayName: "Tuco",
                 role: .editor,
-                isSelfUser: true,
+                isSelfUser: false,
                 id: UUID().uuidString,
                 userType: .member,
                 iconData: nil
