@@ -43,7 +43,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
     private final class OperationState<T>: Sendable {
         let _taskID = OSAllocatedUnfairLock(initialState: UIBackgroundTaskIdentifier.invalid)
-        let _task = OSAllocatedUnfairLock(initialState: Optional<Task<T, any Error>>.none)
+        let _task = OSAllocatedUnfairLock(initialState: Task<T, any Error>?.none)
 
         var taskID: UIBackgroundTaskIdentifier {
             get { _taskID.withLock { $0 } }
@@ -88,7 +88,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
             operationState.task?.cancel()
 
             // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
-            self.endBackgroundTask(operationState)
+            endBackgroundTask(operationState)
         }
 
         if operationState.taskID == .invalid {
@@ -115,7 +115,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
     // MARK: - Private
 
-    private nonisolated func endBackgroundTask<T>(_ operationState: OperationState<T>) {
+    private nonisolated func endBackgroundTask(_ operationState: OperationState<some Any>) {
         guard operationState.taskID != .invalid else { return }
 
         application.endBackgroundTask(operationState.taskID)
@@ -126,10 +126,10 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 @MainActor
 private final class ApplicationState: AnyObject {
 
-    nonisolated private let _isInBackground: OSAllocatedUnfairLock<Bool>
+    private nonisolated let _isInBackground: OSAllocatedUnfairLock<Bool>
 
     init(isInBackground: Bool) {
-        _isInBackground = OSAllocatedUnfairLock(initialState: isInBackground)
+        self._isInBackground = OSAllocatedUnfairLock(initialState: isInBackground)
     }
 
     func startObservingLifecycleNotifications() {
