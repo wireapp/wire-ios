@@ -32,8 +32,6 @@ public protocol BackgroundTaskApplication: AnyObject, Sendable {
     ) -> UIBackgroundTaskIdentifier
 
     nonisolated func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier)
-
-    var applicationState: UIApplication.State { get }
 }
 
 extension UIApplication: BackgroundTaskApplication {}
@@ -59,9 +57,17 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
     }
 
     private let application: any BackgroundTaskApplication
+    private let applicationState: ApplicationState
 
-    public init(application: any BackgroundTaskApplication) {
+    @MainActor
+    public init(application: any BackgroundTaskApplication, isInBackground: Bool) {
         self.application = application
+        self.applicationState = ApplicationState(isInBackground: isInBackground)
+    }
+
+    @MainActor
+    public func startObservingLifecycleNotifications() {
+        applicationState.startObservingLifecycleNotifications()
     }
 
     public func execute<T: Sendable>(
@@ -70,7 +76,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
     ) async throws -> T {
         let name = name ?? "unnamed"
 
-        guard application.applicationState != .background else {
+        guard applicationState.isInBackground != true else {
             WireLogger.backgroundActivity.debug("background task \(name) cannot begin in the background")
             throw CancellationError()
         }
@@ -82,7 +88,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
             operationState.task?.cancel()
 
             // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
-            endBackgroundTask(operationState)
+            self.endBackgroundTask(operationState)
         }
 
         if operationState.taskID == .invalid {
@@ -107,10 +113,54 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         }
     }
 
+    // MARK: - Private
+
     private nonisolated func endBackgroundTask<T>(_ operationState: OperationState<T>) {
         guard operationState.taskID != .invalid else { return }
 
         application.endBackgroundTask(operationState.taskID)
         operationState.taskID = .invalid
+    }
+}
+
+@MainActor
+private final class ApplicationState: AnyObject {
+
+    nonisolated private let _isInBackground: OSAllocatedUnfairLock<Bool>
+
+    init(isInBackground: Bool) {
+        _isInBackground = OSAllocatedUnfairLock(initialState: isInBackground)
+    }
+
+    func startObservingLifecycleNotifications() {
+        let center = NotificationCenter.default
+        center.addObserver(
+            self,
+            selector: #selector(didEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        center.addObserver(
+            self,
+            selector: #selector(willEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+    }
+
+    nonisolated var isInBackground: Bool {
+        _isInBackground.withLock { $0 }
+    }
+
+    // MARK: - Notification Handling
+
+    @objc
+    private func didEnterBackground() {
+        _isInBackground.withLock { $0 = true }
+    }
+
+    @objc
+    private func willEnterForeground() {
+        _isInBackground.withLock { $0 = false }
     }
 }

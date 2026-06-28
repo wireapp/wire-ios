@@ -206,15 +206,6 @@ public class MockBackgroundTaskApplication: BackgroundTaskApplication, @unchecke
 
     public init() {}
 
-    // MARK: - applicationState
-
-    public var applicationState: UIApplication.State {
-        get { return underlyingApplicationState }
-        set(value) { underlyingApplicationState = value }
-    }
-
-    public var underlyingApplicationState: UIApplication.State!
-
 
     // MARK: - beginBackgroundTask
 

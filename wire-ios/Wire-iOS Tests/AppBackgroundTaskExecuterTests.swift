@@ -29,15 +29,15 @@ struct AppBackgroundTaskExecuterTests {
     let application: MockBackgroundTaskApplication
     let sut: AppBackgroundTaskExecuter
 
+    @MainActor
     init() {
         self.application = MockBackgroundTaskApplication()
         application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, _ in
             UIBackgroundTaskIdentifier(rawValue: 99)
         }
         application.endBackgroundTask_MockMethod = { _ in }
-        application.applicationState = .active
 
-        self.sut = AppBackgroundTaskExecuter(application: application)
+        self.sut = AppBackgroundTaskExecuter(application: application, isInBackground: false)
     }
 
     @Test
@@ -125,9 +125,10 @@ struct AppBackgroundTaskExecuterTests {
     }
 
     @Test
+    @MainActor
     func `throws CancellationError when the app is in the background`() async throws {
         // given
-        application.applicationState = .background
+        let sut = AppBackgroundTaskExecuter(application: application, isInBackground: true)
         let didRunOperation = OSAllocatedUnfairLock(initialState: false)
 
         // then
@@ -139,18 +140,6 @@ struct AppBackgroundTaskExecuterTests {
         }
         #expect(didRunOperation.withLock { $0 } == false)
         #expect(application.beginBackgroundTaskWithNameExpirationHandler_Invocations.isEmpty)
-    }
-
-    @Test
-    func `does not throw when the app is inactive`() async throws {
-        // given
-        application.applicationState = .inactive
-
-        // when
-        let result = try await sut.execute(name: "task") { "result" }
-
-        // then
-        #expect(result == "result")
     }
 
     @Test
