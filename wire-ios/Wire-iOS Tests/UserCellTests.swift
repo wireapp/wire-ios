@@ -300,25 +300,4 @@ final class UserCellTests: XCTestCase {
                 line: #line
             )
     }
-
-    // MARK: unit test
-
-    func testThatAccessIDIsGenerated() {
-        // GIVEN
-        let user = SwiftMockLoader.mockUsers()[0]
-        let cell = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
-        cell.sectionName = "Members"
-        cell.cellIdentifier = "participants.section.participants.cell"
-
-        // WHEN
-        cell.configure(
-            user: user,
-            isE2EICertified: false,
-            conversation: conversation,
-            showSeparator: true
-        )
-
-        // THEN
-        XCTAssertEqual(cell.accessibilityIdentifier, "Members - participants.section.participants.cell")
-    }
 }

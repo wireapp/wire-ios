@@ -75,7 +75,7 @@ final class ConversationCreationController: UIViewController {
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
-            userSession.isWireDriveEnabled ? fileManagementSection : nil
+            userSession.isWireDriveEnabled ? sharedDriveSection : nil
         ].compactMap(\.self)
 
         if let firstSection = sections.first {
@@ -146,11 +146,11 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var fileManagementSection = {
-        let section = ConversationCreateFileManagementSectionController(values: values)
+    private lazy var sharedDriveSection = {
+        let section = ConversationCreateSharedDriveSectionController(values: values)
 
-        section.toggleAction = { [unowned self] enableFileManagement in
-            values.enableFileManagement = enableFileManagement
+        section.toggleAction = { [unowned self] enableSharedDrive in
+            values.enableSharedDrive = enableSharedDrive
             updateOptions()
         }
 
@@ -322,7 +322,7 @@ final class ConversationCreationController: UIViewController {
         guestsSection.configure(with: values)
         appsSection.configure(with: values)
         encryptionProtocolSection.configure(with: values)
-        fileManagementSection.configure(with: values)
+        sharedDriveSection.configure(with: values)
     }
 }
 
@@ -410,7 +410,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableSharedDrive : nil,
                 isMLSEnabled: session.isBackendMLSEnabled
             )
 

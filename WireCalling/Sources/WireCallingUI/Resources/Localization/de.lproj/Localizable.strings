@@ -45,6 +45,7 @@
 "wireMeetings.schedule.future.title" = "Neues Meeting";
 "wireMeetings.schedule.cancel.button" = "Abbrechen";
 "wireMeetings.schedule.schedule.button" = "Planen";
+"wireMeetings.schedule.select.button" = "Auswählen";
 "wireMeetings.schedule.start.button" = "Start";
 "wireMeetings.schedule.setupTitle.header" = "Titel";
 "wireMeetings.schedule.setupTitle.placeholder" = "Meeting-Titel eingeben";
@@ -62,3 +63,14 @@
 "wireMeetings.schedule.time.everyTwoWeeks" = "Alle 2 Wochen";
 "wireMeetings.schedule.time.monthly" = "Monatlich";
 "wireMeetings.schedule.time.yearly" = "Jährlich";
+"wireMeetings.schedule.members.title" = "Teilnehmer";
+"wireMeetings.schedule.members.cancel.button" = "Abbrechen";
+"wireMeetings.schedule.members.select.button" = "Auswählen";
+"wireMeetings.schedule.members.search.field.placeholder" = "Namen eingeben";
+"wireMeetings.schedule.members.empty.title" = "Keine Ergebnisse gefunden";
+"wireMeetings.schedule.members.empty.description" = "Versuchen Sie, Ihre Suche anzupassen";
+"wireMeetings.schedule.members.error.title" = "Ein Fehler ist aufgetreten";
+"wireMeetings.schedule.members.error.description" = "Bitte erneut versuchen";
+"wireMeetings.schedule.members.retry.button" = "Wiederholen";
+"wireMeetings.schedule.members.selected.title" = "Ausgewählt";
+"wireMeetings.schedule.members.contacts.title" = "Kontakte";

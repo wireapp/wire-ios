@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "¡Simplemente introduce tu dirección de correo electrónico para empezar!";
 "authentication.identity.input.field.placeholder" = "Correo electrónico o código SSO";
 "authentication.identity.input.field.title" = "Correo electrónico o código SSO";
+"authentication.identity.input.field.email_only.placeholder" = "Email";
+"authentication.identity.input.field.email_only.title" = "Email";
 "authentication.identity.input.submit" = "Siguiente";
 
 "cloud_user_login.title" = "Introduce tu contraseña para iniciar sesión";

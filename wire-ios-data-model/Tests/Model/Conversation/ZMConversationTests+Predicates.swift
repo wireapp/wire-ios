@@ -50,6 +50,9 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.clearedTimeStamp = clearedTimestamp
             appendMessage(to: conversation) // new message after cleared
 
+            // The predicate filters on the persisted `effectiveConversationType`, populated in `-willSave`.
+            uiMOC.saveOrRollback()
+
             // when
             let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: uiMOC))
                 .predicateForConversationsIncludingArchived()
@@ -87,6 +90,9 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
 
             conversation.clearedTimeStamp = clearedTimestamp
             conversation.isArchived = false
+
+            // The predicate filters on the persisted `effectiveConversationType`, populated in `-willSave`.
+            uiMOC.saveOrRollback()
 
             // when
             let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: uiMOC))
@@ -152,6 +158,9 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.messageProtocol = .mls
             conversation.mlsStatus = .ready
 
+            // The predicate filters on the persisted `effectiveConversationType`, populated in `-willSave`.
+            syncMOC.saveOrRollback()
+
             // when
             let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC))
                 .predicateForConversationsIncludingArchived()
@@ -168,6 +177,9 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.conversationType = .group
             conversation.messageProtocol = .mls
             conversation.mlsStatus = .pendingJoin
+
+            // The predicate filters on the persisted `effectiveConversationType`, populated in `-willSave`.
+            syncMOC.saveOrRollback()
 
             // when
             let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC))
