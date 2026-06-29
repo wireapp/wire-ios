@@ -1,5 +1,0 @@
-curl \
-	--request PUT \
-	--header "Content-Type: application/json" \
-	--data "{\"end_time\":\"2025-06-25T11:00:00Z\",\"start_time\":\"2025-06-25T10:00:00Z\",\"title\":\"Engineering Sync (Updated)\"}" \
-	"/v15/meetings/wire.com/9c2e5e1a-1234-5678-abcd-0123456789ab"

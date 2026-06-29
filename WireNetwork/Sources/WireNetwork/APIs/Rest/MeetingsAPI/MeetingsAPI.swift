@@ -42,4 +42,10 @@ public protocol MeetingsAPI: Sendable {
 
     func updateMeeting(meetingID: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse
 
+    /// Delete a meeting for a given conference.
+    ///
+    /// - Parameter meetingID: The id of the conference.
+
+    func deleteMeeting(meetingID: QualifiedID) async throws
+
 }

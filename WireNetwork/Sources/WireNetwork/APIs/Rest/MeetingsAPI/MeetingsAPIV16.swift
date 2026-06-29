@@ -93,4 +93,25 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Delete meeting
+
+    override func deleteMeeting(meetingID: QualifiedID) async throws {
+        let path = "\(pathPrefix)/meetings/\(meetingID.domain)/\(meetingID.id.uuidString.lowercased())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.delete)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .forbidden, label: "access-denied", error: MeetingsAPIError.accessDenied)
+            .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
