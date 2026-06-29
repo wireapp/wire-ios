@@ -97,14 +97,10 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
             // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
             endBackgroundTask(operationState)
         }
+        defer { endBackgroundTask(operationState) }
 
-        if operationState.taskID == .invalid {
-            WireLogger.backgroundActivity.error("begin background task returned .invalid ID for task: \(name)")
-            throw CancellationError()
-        }
-
-        if operationState.isExpired {
-            WireLogger.backgroundActivity.debug("background task \(name) expired before starting")
+        if operationState.taskID == .invalid || operationState.isExpired {
+            WireLogger.backgroundActivity.warn("begin background task \(name) failed or expired before starting")
             throw CancellationError()
         }
 
@@ -117,7 +113,6 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         }
         operationState.task = task
 
-        defer { endBackgroundTask(operationState) }
         return try await withTaskCancellationHandler {
             try await task.value
         } onCancel: {
