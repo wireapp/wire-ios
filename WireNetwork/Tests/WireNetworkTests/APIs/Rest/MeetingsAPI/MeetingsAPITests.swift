@@ -95,8 +95,8 @@ final class MeetingsAPITests: XCTestCase {
         XCTAssertEqual(result.title, "Engineering Sync")
     }
 
-    func testCreateMeeting_ThrowsUnsupportedEndpoint_V0_to_V14() async throws {
-        let unsupportedVersions = APIVersion.allCasesUpTo(.v14)
+    func testCreateMeeting_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v16)
 
         for version in unsupportedVersions {
             // Given
@@ -153,8 +153,8 @@ final class MeetingsAPITests: XCTestCase {
         XCTAssertEqual(result.title, "Engineering Sync")
     }
 
-    func testUpdateMeeting_ThrowsUnsupportedEndpoint_V0_to_V14() async throws {
-        let unsupportedVersions = APIVersion.allCasesUpTo(.v14)
+    func testUpdateMeeting_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v16)
 
         for version in unsupportedVersions {
             // Given
@@ -230,7 +230,7 @@ final class MeetingsAPITests: XCTestCase {
         XCTAssertEqual(result[1].title, "Design Review")
     }
 
-    func testListMeetings_ThrowsUnsupportedEndpoint_V0_to_V16() async throws {
+    func testListMeetings_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
         let unsupportedVersions = APIVersion.allCasesUpTo(.v16)
 
         for version in unsupportedVersions {
@@ -256,7 +256,7 @@ final class MeetingsAPITests: XCTestCase {
         try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
     }
 
-    func testDeleteMeeting_ThrowsUnsupportedEndpoint_V0_to_V16() async throws {
+    func testDeleteMeeting_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
         let unsupportedVersions = APIVersion.allCasesUpTo(.v16)
 
         for version in unsupportedVersions {
