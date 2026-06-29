@@ -17,13 +17,6 @@
     {
       "target" : {
         "containerPath" : "container:WireCalling",
-        "identifier" : "WireCallingUITests",
-        "name" : "WireCallingUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireCalling",
         "identifier" : "WireCallingTests",
         "name" : "WireCallingTests"
       }

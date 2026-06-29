@@ -42,12 +42,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var existsAnotherAccount: Bool
 
     var isNextButtonEnabled: Bool {
-        !isValidEmailOrSSOCode()
+        if overrideAllowEmailLoginOnly {
+            isValidEmail
+        } else {
+            isValidEmail || isValidSSOCode
+        }
     }
 
     var isOnPremiseBackend: Bool {
         environment.environmentType != .default
     }
+
+    let overrideAllowEmailLoginOnly: Bool
 
     // MARK: - Dependencies
 
@@ -78,6 +84,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         existingBackendHosts: Set<String>,
         isLoading: Bool = false,
         isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false }
+        overrideAllowEmailLoginOnly: Bool
     ) {
         self.factory = factory
         self.router = router
@@ -89,6 +96,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.existingBackendHosts = existingBackendHosts
         self.isLoading = isLoading
         self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
+        self.overrideAllowEmailLoginOnly = overrideAllowEmailLoginOnly
 
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
@@ -110,6 +118,19 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         isLoading = true
         defer {
             isLoading = false
+        }
+
+        // When only email login is allowed, validate the input as an email before
+        // navigating to the login flow. An SSO code or otherwise invalid input is ignored
+        // (the submit button is also disabled for it).
+        if overrideAllowEmailLoginOnly {
+            guard let validatedEmail else { return }
+            router.navigate(to: DetermineAuthMethodDestination.login(
+                email: validatedEmail,
+                didDetectDomainConflict: false,
+                environment: environment
+            ))
+            return
         }
 
         do {
@@ -323,14 +344,33 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
-    private func isValidEmailOrSSOCode() -> Bool {
+    private var isValidEmail: Bool {
+        validatedEmail != nil
+    }
+
+    /// The trimmed, validated email entered by the user, or `nil` if the input is not a valid email.
+    private var validatedEmail: String? {
+        guard case let .email(email, _) = try? validateEmailOrSSOCode() else {
+            return nil
+        }
+        return email
+    }
+
+    private var isValidSSOCode: Bool {
         do {
-            let useCase = factory.validateEmailOrSSOCodeUseCase()
-            _ = try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
-            return true
+            if case .ssoCode = try validateEmailOrSSOCode() {
+                return true
+            } else {
+                return false
+            }
         } catch {
             return false
         }
+    }
+
+    private func validateEmailOrSSOCode() throws -> ValidatedEmailOrSSOCode {
+        let useCase = factory.validateEmailOrSSOCodeUseCase()
+        return try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
     }
 
 }

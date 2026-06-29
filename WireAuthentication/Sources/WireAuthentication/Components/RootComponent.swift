@@ -45,6 +45,7 @@ final class RootComponent: BootstrapComponent {
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     public let isAccountAlreadyLoggedIn: (UUID) -> Bool
+    public let overrideAllowEmailLoginOnly: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -75,6 +76,7 @@ final class RootComponent: BootstrapComponent {
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool
+        overrideAllowEmailLoginOnly: Bool
     ) {
         self.authenticationType = authenticationType
         self.environment = environment
@@ -93,6 +95,7 @@ final class RootComponent: BootstrapComponent {
         self.accountsPublisher = accountsPublisher
         self.registrationAnalyticsTracker = registrationAnalyticsTracker
         self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
+        self.overrideAllowEmailLoginOnly = overrideAllowEmailLoginOnly
     }
 
     // MARK: - Children

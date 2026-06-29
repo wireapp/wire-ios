@@ -165,6 +165,9 @@ public enum Locators {
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
+        case uploadFileButton
+        case browse = "Browse"
+        case open = "Open"
         case allowFullAccess = "Allow Full Access"
         case ok = "OK"
         case audioButton
@@ -209,14 +212,25 @@ public enum Locators {
         case addParticipantsButton
         case moreOptionsButton
         case userCellName
+        case adminCell
+        case memberCell
         case close
-
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
         case archive
         case clearContent
         case leaveConversation
+    }
+
+    public enum LastAdminLeaveAlert: AutoPrefixedEnum {
+        case promoteNewAdmin
+        case deleteGroup
+    }
+
+    public enum AdminSelectionPage: AutoPrefixedEnum {
+        case promoteButton
+        case userCell
     }
 
     public enum UserProfilePage: AutoPrefixedEnum {
@@ -560,6 +574,18 @@ public enum Locators {
         public enum RecycleBinPage: String {
             case deletePermanently = "Delete Permanently"
         }
+
+        public enum ConversationDetailsSharedDriveOptionsPage: AutoPrefixedEnum {
+            case toggleSectionTitle
+            case toggle
+            case toggleSectionFooter
+            case participantsSectionHeader
+            case participantsSectionFooterTitle
+            case participantsSectionFooterSubtitle
+            case participantName
+            case participantHandle
+            case participantRole
+        }
     }
 
     public enum BlockerPage: String {
@@ -573,5 +599,9 @@ public enum Locators {
         case username = "Username"
         case signInButton = "Sign In"
 
+    }
+
+    public enum AlertActions: AutoPrefixedEnum {
+        case confirm
     }
 }

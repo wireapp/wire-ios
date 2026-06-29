@@ -406,7 +406,10 @@
     ZMConversation *oneToOneConversation = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     ZMConversation *invalidConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     invalidConversation.conversationType = ZMConversationTypeInvalid;
-    
+
+    // The list predicates filter on the persisted `effectiveConversationType` (set in `-willSave`), so save first.
+    [self.uiMOC saveOrRollback];
+
     // when
     NSArray *conversationsInContext = [[ZMConversation conversationsIncludingArchivedInContext:self.uiMOC] items];
     
@@ -2832,7 +2835,10 @@
     
     XCTAssertTrue(conversation.isArchived);
     XCTAssertNil(conversation.clearedTimeStamp);
-    
+
+    // The predicate filters on the persisted `effectiveConversationType` (set in `-willSave`), so save first.
+    [self.uiMOC saveOrRollback];
+
     // when
     ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfUser:[ZMUser selfUserInContext:self.uiMOC] selfTeam:nil];
     NSPredicate *sut = [factory predicateForConversationsIncludingArchived];

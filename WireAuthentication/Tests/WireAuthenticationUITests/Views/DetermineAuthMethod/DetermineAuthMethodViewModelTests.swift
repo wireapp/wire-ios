@@ -232,7 +232,12 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
     // MARK: - Helpers
 
     @MainActor
-    private func makeSUT(allowsMultipleBackends: Bool, existingBackendHosts: Set<String>) {
+    private func makeSUT(
+        allowsMultipleBackends: Bool,
+        existingBackendHosts: Set<String>,
+        emailOrSSOCode: String = "",
+        overrideAllowEmailLoginOnly: Bool = false
+    ) {
         sut = DetermineAuthMethodViewModel(
             factory: self,
             router: router,
@@ -240,7 +245,8 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
             environment: Self.backendEnvironment(host: "flow.example.com"),
             existsAnotherAccount: !existingBackendHosts.isEmpty,
             allowsMultipleBackends: allowsMultipleBackends,
-            existingBackendHosts: existingBackendHosts
+            existingBackendHosts: existingBackendHosts,
+            overrideAllowEmailLoginOnly: overrideAllowEmailLoginOnly
         )
     }
 

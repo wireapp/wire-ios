@@ -351,6 +351,7 @@ final class AuthenticationInterfaceBuilder {
             isAccountAlreadyLoggedIn: { userID in
                 SessionManager.shared?.accountManager.accounts.contains { $0.userIdentifier == userID } ?? false
             }
+            overrideAllowEmailLoginOnly: featureProvider.allowOnlyEmailLogin
         )
 
         return (

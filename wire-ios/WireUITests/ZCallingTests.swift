@@ -22,6 +22,7 @@ import XCTest
 
 /// Prefixed 'Z' in the class name to run these tests at the end, just to avoid if this test may impact others due to
 /// alert keep showing
+/// [calling]
 final class ZCallingTests: WireUITestCase {
 
     struct GroupCallScenario {
@@ -137,6 +138,7 @@ final class ZCallingTests: WireUITestCase {
         }
     }
 
+    /// [critical]
     @MainActor
     func testGroupCallInitiateMinimizeMaximizeAndHangUp_TC_8879_8889_8890_8885() async throws {
         // GIVEN
@@ -156,11 +158,8 @@ final class ZCallingTests: WireUITestCase {
             .resumeCallUI()
 
         // THEN
-        let activeConversationPage = try ongoingCallPage.hangUpOngoingCall()
+        _ = try ongoingCallPage.hangUpOngoingCall()
+            .verifyNoCallOngoingAfterHangUp()
 
-        XCTAssertTrue(
-            activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
-            "Ongoing call still visible after hanging up the call"
-        )
     }
 }

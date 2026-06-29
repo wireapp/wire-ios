@@ -39,6 +39,7 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     var isCodeEnabled = true
     var areGuestPresent = true
     var isConversationFromSelfTeam = true
+    var isDriveConversation: Bool = false
 
     init(
         allowGuests: Bool,
@@ -78,6 +79,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        DeveloperFlag.enableDrivePermissions.enable(false)
         snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation()
         mockUserSession = UserSessionMock()
@@ -467,6 +469,16 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         }
         // THEN
         try verify(matching: sut)
+    }
+
+    func testThatItRendersWireDriveAccessSubtitle() throws {
+        DeveloperFlag.enableDrivePermissions.enable(true)
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        config.isDriveConversation = true
+        let viewModel = makeViewModel(config: config)
+        let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
+        // THEN
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     // MARK: - Unit Tests

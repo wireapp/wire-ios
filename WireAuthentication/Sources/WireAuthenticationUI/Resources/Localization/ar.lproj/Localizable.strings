@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.field.email_only.placeholder" = "البريد الإلكتروني";
+"authentication.identity.input.field.email_only.title" = "البريد الإلكتروني";
 "authentication.identity.input.submit" = "التالي";
 
 "cloud_user_login.title" = "Enter your password to log in";
