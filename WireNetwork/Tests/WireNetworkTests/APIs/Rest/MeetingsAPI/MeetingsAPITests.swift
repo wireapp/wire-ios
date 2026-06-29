@@ -72,6 +72,14 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
+    func testDeleteMeeting_Request_Generation_V16() async throws {
+        let apiService = MockAPIServiceProtocol.withResponses([(.ok, nil)])
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v16], apiService: apiService) { sut in
+            try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+        }
+    }
+
     // MARK: - createMeeting V15+
 
     func testCreateMeeting_SuccessResponse_201_V15() async throws {
@@ -234,6 +242,60 @@ final class MeetingsAPITests: XCTestCase {
             await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
                 _ = try await sut.listMeetings()
             }
+        }
+    }
+
+    // MARK: - deleteMeeting V16
+
+    func testDeleteMeeting_SuccessResponse_200_V16() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([(.ok, nil)])
+        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+
+        // When / Then - no throw expected
+        try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+    }
+
+    func testDeleteMeeting_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v15)
+
+        for version in unsupportedVersions {
+            // Given
+            let apiService = MockAPIServiceProtocol()
+            let sut = version.buildAPI(apiService: apiService)
+
+            // When / Then
+            await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
+                try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+            }
+        }
+    }
+
+    func testDeleteMeeting_ThrowsAccessDenied_403_V16() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "access-denied"
+        )
+        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+
+        // When / Then
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.accessDenied) {
+            try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+        }
+    }
+
+    func testDeleteMeeting_ThrowsMeetingNotFound_404_V16() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: "meeting-not-found"
+        )
+        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+
+        // When / Then
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.meetingNotFound) {
+            try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
         }
     }
 
