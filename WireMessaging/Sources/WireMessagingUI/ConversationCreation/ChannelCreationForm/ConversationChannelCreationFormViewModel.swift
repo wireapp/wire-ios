@@ -83,7 +83,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published var appsAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
-    @Published var fileManagementEnabled: Bool = false
+    @Published var sharedDriveEnabled: Bool = false
     @Published public private(set) var isFormValid: Bool
 
     let teamsURL: URL
@@ -213,7 +213,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
                     guestsAllowed: guestsAllowed,
                     readReceiptsEnabled: readReceiptsEnabled,
                     historyDepth: getHistoryDepth(),
-                    fileManagementEnabled: fileManagementEnabled
+                    sharedDriveEnabled: sharedDriveEnabled
                 )
             }
             .get()

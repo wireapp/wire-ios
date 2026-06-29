@@ -2394,8 +2394,26 @@ internal enum L10n {
           }
         }
         internal enum FileCollaboration {
-          /// Shared Drive is on
-          internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.enabled", fallback: "Shared Drive is on")
+          /// Shared Drive is %@
+          internal static func sharedDriveState(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState", String(describing: p1), fallback: "Shared Drive is %@")
+          }
+          internal enum DriveViewerAccess {
+            /// Guests have view-only access to files in this conversation.
+            internal static let title = L10n.tr("Localizable", "content.system.file_collaboration.drive_viewer_access.title", fallback: "Guests have view-only access to files in this conversation.")
+          }
+          internal enum Enabled {
+            /// You have editor access. People outside your team only have viewer access.
+            internal static let editorAccess = L10n.tr("Localizable", "content.system.file_collaboration.enabled.editor_access", fallback: "You have editor access. People outside your team only have viewer access.")
+            /// Learn more
+            internal static let learnMore = L10n.tr("Localizable", "content.system.file_collaboration.enabled.learn_more", fallback: "Learn more")
+            /// You can view, but you can’t upload, edit, or manage files.
+            internal static let viewerAccess = L10n.tr("Localizable", "content.system.file_collaboration.enabled.viewer_access", fallback: "You can view, but you can’t upload, edit, or manage files.")
+          }
+          internal enum SharedDriveState {
+            /// on
+            internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState.enabled", fallback: "on")
+          }
         }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
@@ -2691,6 +2709,8 @@ internal enum L10n {
         internal enum FileManagement {
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "conversation.create.file_management.learnMore", fallback: "Learn more")
+          /// People outside your team can view files, not upload or edit.
+          internal static let sharedDriveAccess = L10n.tr("Localizable", "conversation.create.file_management.sharedDriveAccess", fallback: "People outside your team can view files, not upload or edit.")
           /// Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.")
           /// Shared Drive
@@ -3938,6 +3958,12 @@ internal enum L10n {
         internal static let subtitle = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle", fallback: "On")
         /// Shared Drive
         internal static let title = L10n.tr("Localizable", "group_details.file_collaboration_cell.title", fallback: "Shared Drive")
+        internal enum Subtitle {
+          /// Editor access
+          internal static let editorAccess = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle.editor_access", fallback: "Editor access")
+          /// Viewer access
+          internal static let viewerAccess = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle.viewer_access", fallback: "Viewer access")
+        }
       }
       internal enum GuestOptionsCell {
         /// Off
@@ -3992,6 +4018,10 @@ internal enum L10n {
         internal static let subtitle = L10n.tr("Localizable", "guest_room.allow_guests.subtitle", fallback: "Open this conversation to people outside your team.")
         /// Allow guests
         internal static let title = L10n.tr("Localizable", "guest_room.allow_guests.title", fallback: "Allow guests")
+        internal enum SharedDrive {
+          /// Guests can’t upload, edit, or manage files in Shared Drive.
+          internal static let subtitle = L10n.tr("Localizable", "guest_room.allow_guests.shared_drive.subtitle", fallback: "Guests can’t upload, edit, or manage files in Shared Drive.")
+        }
       }
       internal enum Create {
         internal enum LinkWithPassword {

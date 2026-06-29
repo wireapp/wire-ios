@@ -42,6 +42,10 @@ final class ZMConversationListDirectoryTests_Labels: ZMBaseManagedObjectTest {
         conversation.moveToFolder(folder)
         XCTAssertEqual(sut.conversations(by: .folder(folder)).count, 0)
 
+        // Persist so the store-backed list fetch sees the conversation (and its populated
+        // `effectiveConversationType`) and folder label.
+        XCTAssertTrue(uiMOC.saveOrRollback())
+
         // when
         sut.refetchAllLists(in: uiMOC)
 

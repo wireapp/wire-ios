@@ -136,7 +136,8 @@ final class ConversationViewController: UIViewController {
                     conversationCreationRepository: conversationCreationRepository,
                     isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
                     areLegacyBotsAvailable: areLegacyBotsAvailable,
-                    isAppsFeatureEnabled: isAppsFeatureEnabled
+                    isAppsFeatureEnabled: isAppsFeatureEnabled,
+                    wireMessagingFactory: wireMessagingFactory
                 )
             case .`self`, .oneOnOne, .connection:
                 viewController = createUserDetailViewController()
