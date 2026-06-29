@@ -44,6 +44,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
     private final class OperationState<T>: Sendable {
         let _taskID = OSAllocatedUnfairLock(initialState: UIBackgroundTaskIdentifier.invalid)
         let _task = OSAllocatedUnfairLock(initialState: Task<T, any Error>?.none)
+        let _isExpired = OSAllocatedUnfairLock(initialState: false)
 
         var taskID: UIBackgroundTaskIdentifier {
             get { _taskID.withLock { $0 } }
@@ -53,6 +54,11 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         var task: Task<T, any Error>? {
             get { _task.withLock { $0 } }
             set { _task.withLock { $0 = newValue } }
+        }
+
+        var isExpired: Bool {
+            get { _isExpired.withLock { $0 } }
+            set { _isExpired.withLock { $0 = newValue } }
         }
     }
 
@@ -83,8 +89,9 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
         let operationState = OperationState<T>()
         operationState.taskID = application.beginBackgroundTask(withName: name) {
-            WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
+            operationState.isExpired = true
 
+            WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
             operationState.task?.cancel()
 
             // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
@@ -93,6 +100,11 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
         if operationState.taskID == .invalid {
             WireLogger.backgroundActivity.error("begin background task returned .invalid ID for task: \(name)")
+            throw CancellationError()
+        }
+
+        if operationState.isExpired {
+            WireLogger.backgroundActivity.debug("background task \(name) expired before starting")
             throw CancellationError()
         }
 
