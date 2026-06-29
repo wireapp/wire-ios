@@ -159,6 +159,26 @@ struct AppBackgroundTaskExecuterTests {
     }
 
     @Test
+    @MainActor
+    func `throws CancellationError when the expiration handler fires before the task starts`() async throws {
+        // given
+        let didRunOperation = OSAllocatedUnfairLock(initialState: false)
+        application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, handler in
+            handler?()
+            return UIBackgroundTaskIdentifier(rawValue: 30)
+        }
+
+        // then
+        await #expect(throws: CancellationError.self) {
+            // when
+            try await sut.execute(name: "task") {
+                didRunOperation.withLock { $0 = true }
+            }
+        }
+        #expect(didRunOperation.withLock { $0 } == false)
+    }
+
+    @Test
     func `external cancellation cancels the operation and ends the background task`() async throws {
         // given
         let didCancel = OSAllocatedUnfairLock(initialState: false)
