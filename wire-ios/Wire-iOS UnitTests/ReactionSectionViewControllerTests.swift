@@ -21,18 +21,19 @@ import XCTest
 
 final class ReactionSectionViewControllerTests: XCTestCase {
 
-    func testPanGestureTargetsInstance() {
+    @MainActor
+    func testPanGestureTargetsInstance() throws {
         // GIVEN
         let sut = ReactionSectionViewController(types: EmojiSectionType.allCases)
         _ = sut.view
 
         // WHEN
-        let pan = sut.view.gestureRecognizers?.first(where: { $0 is UIPanGestureRecognizer })
+        let pan = try XCTUnwrap(sut.view.gestureRecognizers?.first { $0 is UIPanGestureRecognizer } as? UIPanGestureRecognizer)
 
-        // THEN — target must be the instance, not the class; calling didPan: on the class crashes
-        let targets = pan?.value(forKey: "targets") as? [NSObject]
-        let target = targets?.first?.value(forKey: "target")
-        XCTAssert(target is ReactionSectionViewController, "pan gesture target must be an instance, not the class — sending didPan: to the class crashes (WPB-XXXX)")
+        // THEN — target must be the same instance, not the class; sending didPan: to the class crashes
+        let targets = try XCTUnwrap(pan.value(forKey: "targets") as? [NSObject])
+        let target = try XCTUnwrap(targets.first?.value(forKey: "target") as AnyObject?)
+        XCTAssertTrue(target === sut, "pan gesture target must be the ReactionSectionViewController instance — sending didPan: to the class crashes (WPB-26550)")
     }
 
 }
