@@ -317,6 +317,7 @@
 "conversation.input_bar.verified" = "Überprüft";
 "conversation.input_bar.placeholder" = "Eine Nachricht schreiben";
 "conversation.input_bar.placeholder_ephemeral" = "Selbstlöschende Nachricht";
+"conversation.input_bar.blocked_user" = "Sie haben diesen Nutzer blockiert";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Zum Senden nach oben Wischen";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Zum Senden tippen";
@@ -636,7 +637,8 @@
 "content.system.channel.guest.joined" = "%@ ist dem Channel beigetreten";
 "content.system.channel.guest.you_joined" = "Sie sind dem Channel beigetreten";
 
-"content.system.file_collaboration.enabled" = "Geteiltes Drive aktiv";
+"content.system.file_collaboration.sharedDriveState" = "Geteiltes Drive %@";
+"content.system.file_collaboration.sharedDriveState.enabled" = "aktiv";
 
 // read receipt
 
@@ -1068,6 +1070,7 @@
 "profile.details.blocking_reason" = "Dieser Nutzer ist aufgrund der gesetzlichen Aufbewahrung gesperrt. [MEHR ERFAHREN](%@)";
 "profile.details.identity_warning" = "Verschaffen Sie sich Gewissheit über die Identität von %@, bevor Sie den Kontakt hinzufügen.\nDas Support-Team von Wire wird Sie niemals über die App kontaktieren.";
 "profile.details.requested_identity_warning" = "Bitte überprüfen Sie die Identität der Person, bevor Sie die Kontaktanfrage annehmen.\nDas Support-Team von Wire wird Sie niemals über die App kontaktieren.";
+"profile.details.report_misuse" = "Missbrauch melden";
 "profile.details.title.unavailable" = "Name nicht verfügbar";
 
 // Device list

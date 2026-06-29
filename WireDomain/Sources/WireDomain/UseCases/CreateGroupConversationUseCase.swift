@@ -396,7 +396,8 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             conversation.toDomainModel(),
             timestamp: .now,
             isFederationEnabled: isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
+            isMLSEnabled: isMLSEnabled,
+            markAsRead: false
         )
 
         let qualifiedID = conversation.qualifiedID?.id

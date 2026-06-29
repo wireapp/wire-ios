@@ -23,8 +23,6 @@
 /* Begin PBXBuildFile section */
 		0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */; };
 		0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
-		FADE000000000000000000A2 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A1 /* WireDomainSupport.framework */; };
-		FADE000000000000000000A3 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A1 /* WireDomainSupport.framework */; };
 		016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; };
 		016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01B71B952D6D2DAB002C5A38 /* RedactedScript-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71AA22D6D2DAB002C5A38 /* RedactedScript-Regular.ttf */; };
@@ -155,6 +153,8 @@
 		EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4929719CDC0008B894 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; };
 		EEE25B5A29719DA80008B894 /* WireImages.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FADE000000000000000000A2 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A1 /* WireDomainSupport.framework */; };
+		FADE000000000000000000A3 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A1 /* WireDomainSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -257,7 +257,6 @@
 /* Begin PBXFileReference section */
 		0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		FADE000000000000000000A1 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		015DC1DC2D68DD85004EE8C9 /* iOS StyleKit.pcvd */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "iOS StyleKit.pcvd"; sourceTree = "<group>"; };
 		015DC1DD2D68DD85004EE8C9 /* SECURITY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SECURITY.md; sourceTree = "<group>"; };
 		015DC1DE2D68DD85004EE8C9 /* swiftgen.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
@@ -430,6 +429,7 @@
 		EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libPhoneNumberiOS.xcframework; path = ../Carthage/Build/libPhoneNumberiOS.xcframework; sourceTree = "<group>"; };
 		EEE25B5829719DA80008B894 /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCommonComponents.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FADE000000000000000000A1 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -588,8 +588,8 @@
 				ConversationCell/BurstTimestampSenderMessageCellDescriptionTests.swift,
 				ConversationCell/CompositeMessageCellTests.swift,
 				ConversationCell/ConversationChannelHistoryAvailableCellSnapshotTests.swift,
-				ConversationCell/ConversationFileCollaborationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationRenamedCellTests.swift,
+				ConversationCell/ConversationSharedDriveSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageChannelHistoryDepthSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageMlsSupportSnapshotTests.swift,
@@ -602,8 +602,8 @@
 				ConversationContentViewControllerTests.swift,
 				ConversationCreationControllerSnapshotTests.swift,
 				ConversationDetail/ConversationDetailsTests.swift,
-				ConversationDetail/GroupDetailsFileCollaborationCellTests.swift,
 				ConversationDetail/GroupDetailsReceiptOptionsCellTests.swift,
+				ConversationDetail/GroupDetailsSharedDriveCellTests.swift,
 				ConversationDetail/GroupDetailsTimeoutOptionsCellTests.swift,
 				ConversationDetail/GroupDetailsViewControllerSnapshotTests.swift,
 				ConversationDetail/ServiceDetailViewControllerSnapshotTests.swift,

@@ -141,7 +141,6 @@ public enum Locators {
         case videoCallBarButton
         case inputField
         case sendButton
-        case conversationBackButton
         case authorName
         case conversationTitleButton
         case conversationDetailsButton
@@ -166,6 +165,9 @@ public enum Locators {
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
+        case uploadFileButton
+        case browse = "Browse"
+        case open = "Open"
         case allowFullAccess = "Allow Full Access"
         case ok = "OK"
         case audioButton
@@ -178,6 +180,7 @@ public enum Locators {
         case showOtherRowButton
         case pingButton
         case guestsArePresent = "Guests are present"
+        case openOngoingCallButton
 
     }
 
@@ -419,6 +422,7 @@ public enum Locators {
 
         case endOngoingCallButton = "End call"
         case timeLabel
+        case minimizeCall
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"
@@ -558,6 +562,18 @@ public enum Locators {
 
         public enum RecycleBinPage: String {
             case deletePermanently = "Delete Permanently"
+        }
+
+        public enum ConversationDetailsSharedDriveOptionsPage: AutoPrefixedEnum {
+            case toggleSectionTitle
+            case toggle
+            case toggleSectionFooter
+            case participantsSectionHeader
+            case participantsSectionFooterTitle
+            case participantsSectionFooterSubtitle
+            case participantName
+            case participantHandle
+            case participantRole
         }
     }
 

@@ -48,7 +48,7 @@ final class BlockquoteLayoutManager: NSLayoutManager {
     // MARK: - Code block backgrounds
 
     private func drawCodeBackgrounds(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
-        guard let textStorage else { return }
+        guard let textStorage, let textContainer = textContainers.first else { return }
 
         let characterRange = characterRange(forGlyphRange: glyphsToShow, actualGlyphRange: nil)
         codeBackgroundColor.setFill()
@@ -56,14 +56,20 @@ final class BlockquoteLayoutManager: NSLayoutManager {
         textStorage.enumerateAttribute(.markdown, in: characterRange, options: []) { [weak self] value, range, _ in
             guard let self,
                   let markdown = value as? Markdown,
-                  markdown.contains(.code),
-                  let (minY, maxY) = yRange(forGlyphRange: glyphRange(
-                      forCharacterRange: range,
-                      actualCharacterRange: nil
-                  ))
+                  markdown.contains(.code)
             else { return }
 
-            UIRectFill(CGRect(x: origin.x, y: origin.y + minY, width: 10_000, height: maxY - minY))
+            // Fill only the rects that actually enclose the code glyphs so that
+            // inline code is highlighted just behind its text, rather than across
+            // the full line width.
+            let codeGlyphRange = glyphRange(forCharacterRange: range, actualCharacterRange: nil)
+            enumerateEnclosingRects(
+                forGlyphRange: codeGlyphRange,
+                withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0),
+                in: textContainer
+            ) { rect, _ in
+                UIRectFill(rect.offsetBy(dx: origin.x, dy: origin.y))
+            }
         }
     }
 

@@ -103,6 +103,12 @@ struct WireURLs: Codable {
     /// Link to an article about channels.
     let learnMoreAboutChannels: URL
 
+    /// Link to an article about end to end encryption.
+    let learnMoreAboutE2EE: URL
+
+    /// Link to an article explaining the Drive permissions.
+    let learnMoreAboutDrivePermissions: URL
+
     static var shared: WireURLs = {
         do {
             return try WireURLs(forResource: "url", withExtension: "json")
@@ -144,6 +150,8 @@ struct WireURLs: Codable {
         case howToChangeEmail
         case howToDeleteAccount
         case learnMoreAboutChannels
+        case learnMoreAboutE2EE
+        case learnMoreAboutDrivePermissions
     }
 
     enum WireURLsError: Error {
