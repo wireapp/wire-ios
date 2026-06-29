@@ -397,8 +397,17 @@ private extension AppDelegate {
         queueInitializationOperations(launchOptions: launchOptions)
     }
 
+    @MainActor
     private func createAppRootRouter() {
         let defaultEnvironment = fetchDefaultEnvironment()
+<<<<<<< HEAD
+=======
+        let appTaskExecuter = AppBackgroundTaskExecuter(
+            application: UIApplication.shared,
+            isInBackground: UIApplication.shared.applicationState == .background
+        )
+        appTaskExecuter.startObservingLifecycleNotifications()
+>>>>>>> c75ec90fdb (fix: background tasks starting in background - WPB-23511 (#4935))
 
         let sessionManager: SessionManager
         do {
