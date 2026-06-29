@@ -29,6 +29,8 @@ public struct Meeting: Equatable, Sendable {
 
     public let id: QualifiedID
 
+    // TODO: add conversationID (QualifiedID)
+
     public let title: String
 
     public let start: Date
@@ -37,7 +39,7 @@ public struct Meeting: Equatable, Sendable {
 
     public let repeatOption: RepeatOption
 
-    public let members: [Member]
+    public let members: [Member] // TODO: remove and use the conversation participants
 
     public init(
         id: QualifiedID,
