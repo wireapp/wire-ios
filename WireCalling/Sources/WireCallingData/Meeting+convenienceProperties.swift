@@ -16,22 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireLocators
+public import WireCallingDomain
+public import WireData
+public import WireFoundation
 
-final class ConversationCreateFileManagementCell: IconToggleCell {
+extension WireData.Meeting {
 
-    override func setUp() {
-        super.setUp()
-        title = L10n.Localizable.Conversation.Create.FileManagement.title
-        showSeparator = false
-        icon = nil
-        toggle.accessibilityIdentifier = Locators.CreateGroupPage.sharedDriveSwitch.rawValue
+    public var qualifiedID: QualifiedID? {
+        get {
+            guard let remoteIdentifier else { return nil }
+            return QualifiedID(id: remoteIdentifier, domain: domain ?? "")
+        }
+        set {
+            remoteIdentifier = newValue?.id
+            domain = newValue?.domain
+        }
     }
-}
 
-extension ConversationCreateFileManagementCell: ConversationCreationValuesConfigurable {
-    func configure(with values: ConversationCreationValues) {
-        isOn = values.enableFileManagement
+    public var repeatOption: RepeatOption {
+        get {
+            RepeatOption(rawValue: Int(repeatOptionRawValue)) ?? .never
+        }
+        set {
+            repeatOptionRawValue = Int16(newValue.rawValue)
+        }
     }
+
+//    public let members: [Member]
+
 }

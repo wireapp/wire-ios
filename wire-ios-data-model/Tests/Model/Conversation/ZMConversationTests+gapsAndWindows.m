@@ -65,9 +65,10 @@
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation1.conversationType = ZMConversationTypeGroup;
     [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC]; // this is used to make sure it doesn't return all objects
-    
-    [self.uiMOC processPendingChanges];
-    
+
+    // The conversation lists filter on the persisted `effectiveConversationType`, populated in `-willSave`.
+    XCTAssertTrue([self.uiMOC saveOrRollback]);
+
     // when
     NSArray *fetchedConversations = [[ZMConversationList conversationsInUserSession:self.coreDataStack] items];
 
@@ -103,8 +104,9 @@
     pendingConnection.status = ZMConnectionStatusPending;
     pendingConnection.to = otherUser2;
 
-    [self.uiMOC processPendingChanges];
-    
+    // The conversation lists filter on the persisted `effectiveConversationType`, populated in `-willSave`.
+    XCTAssertTrue([self.uiMOC saveOrRollback]);
+
     // when
     NSArray *fetchedConversations = [[ZMConversationList pendingConnectionConversationsInUserSession:self.coreDataStack] items];
 
@@ -112,29 +114,6 @@
     XCTAssertNotNil(fetchedConversations);
     XCTAssertEqual(1u, fetchedConversations.count);
     XCTAssertNotEqual([fetchedConversations indexOfObjectIdenticalTo:pendingConnectionConversation], (NSUInteger) NSNotFound);
-}
-
-
-- (void)testThatItReturnsTheListOfAllConversationWithoutASave
-{
-    // given
-    ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation1.userDefinedName = @"Foo++";
-    conversation1.conversationType = ZMConversationTypeGroup;
-    ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation2.userDefinedName = @"Bar--";
-    conversation2.conversationType = ZMConversationTypeGroup;
-    
-    [self.uiMOC processPendingChanges];
-
-    // when
-    NSArray *fetchedConversations = [[ZMConversationList conversationsIncludingArchivedInUserSession:self.coreDataStack] items];
-
-    // then
-    XCTAssertNotNil(fetchedConversations);
-    XCTAssertEqual(2u, fetchedConversations.count);
-    XCTAssertNotEqual([fetchedConversations indexOfObjectIdenticalTo:conversation1], (NSUInteger) NSNotFound);
-    XCTAssertNotEqual([fetchedConversations indexOfObjectIdenticalTo:conversation2], (NSUInteger) NSNotFound);
 }
 
 - (void)testThatItReturnsTheListOfAllConversationWithASave

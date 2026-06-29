@@ -2,9 +2,9 @@ name: "Setup Kalium Testservice"
 
 inputs:
   kalium_ref:
-    description: Optional Kalium tag to use. If empty, latest test-service-v* tag is resolved.
+    description: using commit SHA.
     required: false
-    default: ""
+    default: "5ec1c95b75daa7241e38c97f2916a06a2e40ce1b"
 
 runs:
   using: composite
@@ -17,29 +17,20 @@ runs:
       run: |
         set -euo pipefail
 
-        if [[ -n "${KALIUM_REF_INPUT:-}" ]]; then
-          KALIUM_REF="$KALIUM_REF_INPUT"
-        else
-          KALIUM_REF="$({
-            git ls-remote --tags --refs https://github.com/wireapp/kalium.git 'refs/tags/test-service-v*' \
-            | awk -F/ '{print $3}' \
-            | sort -V \
-            | tail -n 1
-          })"
-        fi
+        KALIUM_REF="$KALIUM_REF_INPUT"
 
         if [[ -z "$KALIUM_REF" ]]; then
-          echo "::error::Could not resolve Kalium testservice ref"
+          echo "::error::Could not resolve Kalium testservice ref" >&2
           exit 1
         fi
 
-        if [[ ! "$KALIUM_REF" =~ ^test-service-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "::error::Invalid Kalium ref: $KALIUM_REF"
+        if [[ ! "$KALIUM_REF" =~ ^test-service-v[0-9]+\.[0-9]+\.[0-9]+$ && ! "$KALIUM_REF" =~ ^[0-9a-f]{40}$ ]]; then
+          echo "::error::Invalid Kalium ref: $KALIUM_REF" >&2
           exit 1
         fi
 
         echo "ref=$KALIUM_REF" >> "$GITHUB_OUTPUT"
-        echo "Using Kalium ref: $KALIUM_REF"
+        echo "Using Kalium testservice ref: $KALIUM_REF"
 
     - name: Setup Java 17 for Kalium Testservice
       uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
@@ -73,9 +64,18 @@ runs:
       run: |
         set -euo pipefail
         KALIUM_DIR="$RUNNER_TEMP/kalium"
+        KALIUM_REF="${{ steps.kalium-ref.outputs.ref }}"
         rm -rf "$KALIUM_DIR"
-        git clone --depth 1 --branch "${{ steps.kalium-ref.outputs.ref }}" \
-          https://github.com/wireapp/kalium.git "$KALIUM_DIR"
+        if [[ "$KALIUM_REF" =~ ^[0-9a-f]{40}$ ]]; then
+          git init "$KALIUM_DIR"
+          git -C "$KALIUM_DIR" remote add origin https://github.com/wireapp/kalium.git
+          git -C "$KALIUM_DIR" fetch --depth 1 origin "$KALIUM_REF"
+          git -C "$KALIUM_DIR" checkout --detach FETCH_HEAD
+        else
+          git clone --depth 1 --branch "$KALIUM_REF" \
+            https://github.com/wireapp/kalium.git "$KALIUM_DIR"
+        fi
+        git -C "$KALIUM_DIR" rev-parse HEAD
 
     - name: Build or restore Kalium Testservice jar
       shell: bash
@@ -97,7 +97,7 @@ runs:
         fi
 
         if [[ -z "$JAR" || ! -f "$JAR" ]]; then
-          echo "::error::Kalium fat jar not found in $LIBS_DIR"
+          echo "::error::Kalium fat jar not found in $LIBS_DIR" >&2
           ls -la "$LIBS_DIR" || true
           exit 1
         fi
@@ -119,8 +119,8 @@ runs:
         set -euo pipefail
 
         CONFIG="$GITHUB_WORKSPACE/testservice/testservice-config.yml"
-        [[ -f "$CONFIG" ]] || { echo "::error::Config not found: $CONFIG"; exit 1; }
-        [[ -n "${JAR:-}" && -f "$JAR" ]] || { echo "::error::JAR not found: '${JAR:-}'"; exit 1; }
+        [[ -f "$CONFIG" ]] || { echo "::error::Config not found: $CONFIG" >&2; exit 1; }
+        [[ -n "${JAR:-}" && -f "$JAR" ]] || { echo "::error::JAR not found: '${JAR:-}'" >&2; exit 1; }
 
         nohup java -jar "$JAR" server "$CONFIG" >"$RUNNER_TEMP/testservice.log" 2>&1 &
         echo $! > "$RUNNER_TEMP/testservice.pid"
@@ -133,6 +133,6 @@ runs:
           sleep 1
         done
 
-        echo "::error::Testservice not reachable"
+        echo "::error::Testservice not reachable" >&2
         tail -n 200 "$RUNNER_TEMP/testservice.log" || true
         exit 1

@@ -566,7 +566,8 @@ final class ZClientViewController: UIViewController {
                 conversationCreationRepository: conversationCreationRepository,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
                 areLegacyBotsAvailable: areLegacyBotsAvailable,
-                isAppsFeatureEnabled: isAppsFeatureEnabled
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                wireMessagingFactory: wireMessagingFactory
             )
             let navController = UINavigationController(rootViewController: controller)
             navController.modalPresentationStyle = .formSheet

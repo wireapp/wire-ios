@@ -15,6 +15,7 @@ let package = Package(
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
     dependencies: [
+        .package(path: "../WireData"),
         .package(path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
@@ -41,6 +42,7 @@ let package = Package(
             name: "WireCallingData",
             dependencies: [
                 "WireCallingDomain",
+                "WireData",
                 "WireLogging",
                 "WireNetwork"
             ]

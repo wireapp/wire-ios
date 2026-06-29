@@ -10,6 +10,17 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.137.0
+
+* added `Meeting` entity
+
+### 2.136.0
+
+* added `effectiveConversationType` attribute on the Conversation entity (Integer 16, optional, default `0`).
+
+It is a persisted mirror of the computed `conversationType` (including the team-1:1 / service promotion), maintained in `-[ZMConversation willSave]`, so the conversation-list predicates can be evaluated by the store (SQLite) instead of in memory. 
+A custom migration action (`EffectiveConversationTypeMigrationAction`) backfills the value for existing conversations.
+
 ### 2.135.0
 
 * added `conversationName` attribute on the WireCellsLocalAsset entity

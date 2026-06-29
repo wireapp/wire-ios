@@ -54,6 +54,7 @@ NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
 NSString *const ZMNormalizedUserDefinedNameKey = @"normalizedUserDefinedName";
 NSString *const ZMConversationListIndicatorKey = @"conversationListIndicator";
 NSString *const ZMConversationConversationTypeKey = @"conversationType";
+NSString *const ZMConversationEffectiveConversationTypeKey = @"effectiveConversationType";
 NSString *const ZMConversationGroupTypeKey = @"groupType";
 NSString *const ZMConversationLastServerTimeStampKey = @"lastServerTimeStamp";
 NSString *const ZMConversationLastReadServerTimeStampKey = @"lastReadServerTimeStamp";
@@ -120,6 +121,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 @property (nonatomic) NSString *normalizedUserDefinedName;
 @property (nonatomic) ZMConversationType conversationType;
+@property (nonatomic) ZMConversationType effectiveConversationType;
 
 @property (nonatomic) NSTimeInterval lastReadTimestampSaveDelay;
 @property (nonatomic) int64_t lastReadTimestampUpdateCounter;
@@ -141,6 +143,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @property (nonatomic) NSDate *primitiveLastReadServerTimeStamp;
 @property (nonatomic) NSDate *primitiveLastServerTimeStamp;
 @property (nonatomic) NSNumber *primitiveConversationType;
+@property (nonatomic) NSNumber *primitiveEffectiveConversationType;
 @property (nonatomic) NSData *remoteIdentifier_data;
 
 @property (nonatomic) ZMConversationSecurityLevel securityLevel;
@@ -155,6 +158,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic creator;
 @dynamic normalizedUserDefinedName;
 @dynamic conversationType;
+@dynamic effectiveConversationType;
 @dynamic clearedTimeStamp;
 @dynamic lastReadServerTimeStamp;
 @dynamic lastServerTimeStamp;
@@ -305,6 +309,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         NSString * const KeysIgnoredForTrackingModifications[] = {
             ZMConversationOneOnOneUserKey,
             ZMConversationConversationTypeKey,
+            ZMConversationEffectiveConversationTypeKey,
             CreatorKey,
             DraftMessageDataKey,
             DraftMessageNonceKey,
@@ -461,12 +466,49 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     {
         conversationType = ZMConversationTypeOneOnOne;
     }
-    
+
     return conversationType;
 }
 
 - (BOOL)isSelfConversation {
     return self.conversationType == ZMConversationTypeSelf;
+}
+
+- (void)willSave
+{
+    [super willSave];
+    [self updateEffectiveConversationTypeIfNeeded];
+}
+
+/// Keeps the persisted `effectiveConversationType` in sync with the computed `conversationType`.
+///
+/// The conversation-list predicates filter on `effectiveConversationType` so SQLite (not an in-memory predicate
+/// walk) can evaluate them; this is the single place that mirror is updated. The equality guard keeps `-willSave`
+/// from re-dirtying the object indefinitely.
+- (void)updateEffectiveConversationTypeIfNeeded
+{
+    if (self.isDeleted) {
+        return;
+    }
+
+    // The attribute is absent while migrating through older model versions (< 2.136.0); skip until it exists.
+    if (self.entity.attributesByName[ZMConversationEffectiveConversationTypeKey] == nil) {
+        return;
+    }
+
+    ZMConversationType computed = self.conversationType;
+
+    [self willAccessValueForKey:ZMConversationEffectiveConversationTypeKey];
+    NSNumber *stored = [self primitiveEffectiveConversationType];
+    [self didAccessValueForKey:ZMConversationEffectiveConversationTypeKey];
+
+    if (stored != nil && (ZMConversationType)stored.shortValue == computed) {
+        return;
+    }
+
+    [self willChangeValueForKey:ZMConversationEffectiveConversationTypeKey];
+    [self setPrimitiveEffectiveConversationType:@(computed)];
+    [self didChangeValueForKey:ZMConversationEffectiveConversationTypeKey];
 }
 
 + (NSArray *)defaultSortDescriptors

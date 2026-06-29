@@ -53,6 +53,11 @@ protocol WireMessagingFactoryProtocol {
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol
 
+    @MainActor
+    func makeConversationSharedDrivedOptionsView(
+        participants: [WireDriveParticipant],
+        onClose: @escaping () -> Void
+    ) -> UIViewController
 }
 
 // sourcery: AutoMockable
@@ -77,6 +82,14 @@ extension WireMessagingFactory: @preconcurrency WireMessagingFactoryProtocol {
         // swiftformat:disable:next redundantProperty
         let provider: ConversationCellProvider = makeConversationCellProvider(insetsProvider: insetsProvider)
         return provider
+    }
+
+    @MainActor
+    func makeConversationSharedDrivedOptionsView(
+        participants: [WireDriveParticipant],
+        onClose: @escaping () -> Void
+    ) -> UIViewController {
+        makeConversationSharedDrivedOptionsViewController(participants: participants, onClose: onClose)
     }
 
 }
