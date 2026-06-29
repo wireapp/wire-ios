@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLocators
 import WireLogging
 import WireSyncEngine
 
@@ -153,7 +154,8 @@ extension UserCell {
         user: UserType,
         isE2EICertified: Bool,
         conversation: GroupDetailsConversationType,
-        showSeparator: Bool
+        showSeparator: Bool,
+        conversationRole: ConversationRole
     ) {
         guard let selfUser = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
@@ -168,7 +170,9 @@ extension UserCell {
             conversation: conversation as? ZMConversation
         )
         accessoryIconView.isHidden = user.isSelfUser
-        accessibilityIdentifier = identifier
+        accessibilityIdentifier = conversationRole == .admin
+            ? Locators.ConversationDetailsPage.adminCell.rawValue
+            : Locators.ConversationDetailsPage.memberCell.rawValue
         accessibilityHint = L10n.Accessibility.ConversationDetails.ParticipantCell.hint
         self.showSeparator = showSeparator
     }
@@ -280,7 +284,8 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
                 user: user,
                 isE2EICertified: isE2EICertified,
                 conversation: conversation,
-                showSeparator: showSeparator
+                showSeparator: showSeparator,
+                conversationRole: viewModel.conversationRole
             )
 
         case let .showAll(totalParticipantsCount):
