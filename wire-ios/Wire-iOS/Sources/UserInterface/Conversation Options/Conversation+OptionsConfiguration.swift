@@ -97,6 +97,10 @@ extension ZMConversation {
             conversation.areAppsPresent
         }
 
+        var isDriveConversation: Bool {
+            conversation.isWireDriveEnabled
+        }
+
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
             let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()!
             let context = conversation.managedObjectContext!

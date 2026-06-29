@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireUtilities
 
 final class GuestsAllowedView: UIView {
 
@@ -27,24 +28,32 @@ final class GuestsAllowedView: UIView {
     private let stackView = UIStackView()
     private let titleLabel = UILabel()
     let inviteButton = SecondaryTextButton()
+    private let wireDriveViewerAccessLabel = UILabel()
 
-    init(isChannel: Bool) {
+    init(isChannel: Bool, isWireDriveEnabled: Bool) {
         super.init(frame: .zero)
-        setupViews(isChannel: isChannel)
+        setupViews(isChannel: isChannel, isWireDriveEnabled: isWireDriveEnabled)
         createConstraints()
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) { fatalError() }
 
-    private func setupViews(isChannel: Bool) {
+    private func setupViews(isChannel: Bool, isWireDriveEnabled: Bool) {
         typealias System = L10n.Localizable.Content.System
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.alignment = .leading
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
-        [titleLabel, inviteButton].forEach(stackView.addArrangedSubview)
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        [
+            titleLabel,
+            inviteButton,
+            isWireDriveEnabled && DeveloperFlag.enableDrivePermissions.isOn ? wireDriveViewerAccessLabel : nil
+        ]
+        .compactMap(\.self)
+        .forEach(stackView.addArrangedSubview)
 
         titleLabel.numberOfLines = 0
         titleLabel.textColor = SemanticColors.Label.textDefault
@@ -54,6 +63,14 @@ final class GuestsAllowedView: UIView {
         let buttonTitle = isChannel ? System.Channel.Invite.button : System.Conversation.Invite.button
         inviteButton.setTitle(buttonTitle, for: .normal)
         inviteButton.addTarget(self, action: #selector(handleInviteTapped), for: .touchUpInside)
+
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        if isWireDriveEnabled, DeveloperFlag.enableDrivePermissions.isOn {
+            wireDriveViewerAccessLabel.text = System.FileCollaboration.DriveViewerAccess.title
+            wireDriveViewerAccessLabel.numberOfLines = 0
+            wireDriveViewerAccessLabel.textColor = ColorTheme.Backgrounds.onSurface
+            wireDriveViewerAccessLabel.font = FontSpec.mediumFont.font!
+        }
     }
 
     private func createConstraints() {

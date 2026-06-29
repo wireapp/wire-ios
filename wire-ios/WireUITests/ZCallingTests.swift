@@ -234,11 +234,8 @@ final class ZCallingTests: WireUITestCase {
             .resumeCallUI()
 
         // THEN
-        let activeConversationPage = try ongoingCallPage.hangUpOngoingCall()
+        _ = try ongoingCallPage.hangUpOngoingCall()
+            .verifyNoCallOngoingAfterHangUp()
 
-        XCTAssertTrue(
-            activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
-            "Ongoing call still visible after hanging up the call"
-        )
     }
 }

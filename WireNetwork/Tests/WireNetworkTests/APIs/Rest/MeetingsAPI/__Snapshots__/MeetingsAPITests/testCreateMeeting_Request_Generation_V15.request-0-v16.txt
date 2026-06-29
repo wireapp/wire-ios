@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"end_time\":\"2025-06-25T11:00:00Z\",\"start_time\":\"2025-06-25T10:00:00Z\",\"title\":\"Engineering Sync\"}" \
+	"/v16/meetings"

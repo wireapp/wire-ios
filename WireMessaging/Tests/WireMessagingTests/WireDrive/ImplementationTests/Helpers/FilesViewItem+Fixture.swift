@@ -35,6 +35,7 @@ extension FilesViewItem {
         tags: [String] = [],
         isEditable: Bool = false,
         publicLinkID: String? = nil,
+        isReadOnly: Bool = false,
         conversationName: String? = "Conversation 1"
     ) -> FilesViewItem {
         FilesViewItem(
@@ -50,7 +51,7 @@ extension FilesViewItem {
             isEditable: isEditable,
             publicLinkID: publicLinkID,
             conversationName: conversationName,
-            isReadOnly: false,
+            isReadOnly: isReadOnly,
             size: nil
         )
     }
