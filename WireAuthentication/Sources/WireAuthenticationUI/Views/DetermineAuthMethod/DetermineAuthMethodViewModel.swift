@@ -80,10 +80,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         environment: BackendEnvironment2,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
-        allowsMultipleBackends: Bool = true,
+        allowsMultipleBackends: Bool,
         existingBackendHosts: Set<String>,
         isLoading: Bool = false,
-        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false }
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false },
         overrideAllowEmailLoginOnly: Bool
     ) {
         self.factory = factory

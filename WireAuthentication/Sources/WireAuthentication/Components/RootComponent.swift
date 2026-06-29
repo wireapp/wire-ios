@@ -75,7 +75,7 @@ final class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool,
         overrideAllowEmailLoginOnly: Bool
     ) {
         self.authenticationType = authenticationType

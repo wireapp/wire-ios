@@ -236,7 +236,8 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         allowsMultipleBackends: Bool,
         existingBackendHosts: Set<String>,
         emailOrSSOCode: String = "",
-        overrideAllowEmailLoginOnly: Bool = false
+        overrideAllowEmailLoginOnly: Bool = false,
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false }
     ) {
         sut = DetermineAuthMethodViewModel(
             factory: self,
@@ -246,25 +247,8 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
             existsAnotherAccount: !existingBackendHosts.isEmpty,
             allowsMultipleBackends: allowsMultipleBackends,
             existingBackendHosts: existingBackendHosts,
+            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn,
             overrideAllowEmailLoginOnly: overrideAllowEmailLoginOnly
-        )
-    }
-
-    @MainActor
-    private func makeSUT(
-        allowsMultipleBackends: Bool,
-        existingBackendHosts: Set<String>,
-        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool
-    ) {
-        sut = DetermineAuthMethodViewModel(
-            factory: self,
-            router: router,
-            bridge: WireAuthenticationBridge(),
-            environment: Self.backendEnvironment(host: "flow.example.com"),
-            existsAnotherAccount: !existingBackendHosts.isEmpty,
-            allowsMultipleBackends: allowsMultipleBackends,
-            existingBackendHosts: existingBackendHosts,
-            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn
         )
     }
 

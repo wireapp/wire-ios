@@ -108,7 +108,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             existsAnotherAccount: existsAnotherAccount,
             allowsMultipleBackends: allowsMultipleBackends,
             existingBackendHosts: existingBackendHosts,
-            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn
+            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn,
             overrideAllowEmailLoginOnly: dependency.overrideAllowEmailLoginOnly
         )
     }
