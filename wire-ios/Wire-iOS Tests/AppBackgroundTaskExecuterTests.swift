@@ -176,6 +176,7 @@ struct AppBackgroundTaskExecuterTests {
             }
         }
         #expect(didRunOperation.withLock { $0 } == false)
+        #expect(application.endBackgroundTask_Invocations == [UIBackgroundTaskIdentifier(rawValue: 30)])
     }
 
     @Test
