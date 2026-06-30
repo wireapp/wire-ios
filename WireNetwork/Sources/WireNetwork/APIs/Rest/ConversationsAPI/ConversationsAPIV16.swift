@@ -131,11 +131,11 @@ extension ConversationGroupType {
     func toV16() -> ConversationGroupTypeV16 {
         switch self {
         case .group:
-                .group
+            .group
         case .channel:
-                .channel
+            .channel
         case .meeting:
-                .meeting
+            .meeting
         }
     }
 
