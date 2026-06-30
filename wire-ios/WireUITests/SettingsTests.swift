@@ -22,6 +22,27 @@ import XCTest
 final class SettingsTests: WireUITestCase {
 
     @MainActor
+    func testChangeAppLanguageToGerman_TC_8944() async throws {
+        let user = try await UserHelper.default.createPersonalUser()
+
+        // Relaunch the app forcing language as German
+        app.terminate()
+        app.launchArguments += ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
+        app.launch()
+
+        // Verify the Next button is localized in German
+        try WelcomePage()
+            .verifyStringInGerman("Weiter")
+
+        _ = try await loginToBackend(user: user)
+
+        // Verify the setting title in German
+        _ = try ConversationsPage()
+            .openSettings()
+            .verifyStringInGerman("Einstellungen")
+    }
+
+    @MainActor
     func testCreateLinkPreviewsOption_TC_8951() async throws {
         let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
