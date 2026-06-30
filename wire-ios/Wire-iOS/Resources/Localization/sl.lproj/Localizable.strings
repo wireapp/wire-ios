@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "V redu";
 "general.next" = "Next";
 "general.cancel" = "Prekliči";
@@ -317,6 +317,7 @@
 "conversation.input_bar.verified" = "Preverjena";
 "conversation.input_bar.placeholder" = "Napiši sporočilo";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Podrsajte navzgor za pošiljanje";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tapni za pošiljanje";
@@ -568,6 +569,7 @@
 "content.system.conversation.you.removed" = "%@ je odstranil(-a) %@";
 "content.system.conversation.you.removed.legalhold" = "%@ were removed from this conversation because legal hold has been activated.";
 "content.system.conversation.you.left" = "%@ je zapustil(-a) pogovor";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ je bil(-a) odstranjen(-a) iz ekipe.";
 "content.system.conversation.guest.joined" = "%@ joined";
 "content.system.conversation.guest.you_joined" = "You joined";
@@ -735,6 +737,7 @@
 "content.message.reply.original_timestamp.date" = "Original message from %@";
 "content.message.reply.original_timestamp.time" = "Original message from %@";
 "content.message.reply.broken_message" = "You cannot see this message.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Edited";
 
 "content.message.open_link_alert.title" = "Visit Link";
@@ -1066,6 +1069,7 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list
@@ -1155,8 +1159,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";

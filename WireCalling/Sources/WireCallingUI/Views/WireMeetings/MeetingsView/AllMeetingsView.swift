@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 package import SwiftUI
+
 import WireDesign
 
 package struct AllMeetingsView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
 
-    @ObservedObject private var viewModel: AllMeetingsViewModel
+    @State private var viewModel: AllMeetingsViewModel
 
     package init(viewModel: AllMeetingsViewModel) {
         self.viewModel = viewModel
@@ -57,11 +57,8 @@ package struct AllMeetingsView: View {
             }
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
-            .sheet(isPresented: $viewModel.isCreateInstantMeetingPresented) {
-                CreateInstantMeetingView(viewModel: viewModel.makeCreateInstantMeetingViewModel())
-            }
-            .sheet(isPresented: $viewModel.isScheduleMeetingPresented) {
-                ScheduleMeetingView(viewModel: viewModel.makeScheduleMeetingViewModel())
+            .sheet(item: $viewModel.presentedFormMode) { mode in
+                CreateMeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
             }
     }
 }

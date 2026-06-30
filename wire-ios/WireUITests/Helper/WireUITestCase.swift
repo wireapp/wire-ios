@@ -20,6 +20,7 @@
 // of using a script in the scheme, we delete the app using springboard
 
 import WireFoundation
+import WireUtilities
 import XCTest
 
 class WireUITestCase: XCTestCase {
@@ -52,9 +53,9 @@ class WireUITestCase: XCTestCase {
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
         app.launchArguments = launchArguments
-        app.setDeveloperFlags([
-            .useWireAuthentication: true
-        ])
+        var flags: [DeveloperFlag: Bool] = [.useWireAuthentication: true]
+        flags.merge(additionalDeveloperFlags()) { _, new in new }
+        app.setDeveloperFlags(flags)
         app.launch()
 
         // In UI tests it is usually best to stop immediately when a failure occurs
@@ -128,7 +129,7 @@ class WireUITestCase: XCTestCase {
 
         notificationPermissionMonitor =
             addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
-                let notifPermission = "Would Like to Send You Notifications"
+                let notifPermission = "Would Like to"
                 let allowButton = alertElement.buttons["Allow"].firstMatch
 
                 guard alertElement.label.contains(notifPermission),
@@ -140,6 +141,8 @@ class WireUITestCase: XCTestCase {
                 return true
             }
     }
+
+    func additionalDeveloperFlags() -> [DeveloperFlag: Bool] { [:] }
 
     func simulateShakeGesture() {
         app.tap(withNumberOfTaps: 3, numberOfTouches: 1)

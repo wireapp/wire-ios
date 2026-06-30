@@ -52,7 +52,6 @@ package struct FilesView: View {
             viewModel: viewModel,
             isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.background.color,
-            navigationTitle: viewModel.navigationTitle,
             toolbarContent: { toolbarContent },
             sheetContent: { sheetContent($0) }
         )
@@ -79,13 +78,27 @@ package struct FilesView: View {
 private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            VStack(spacing: 0) {
+                Text(viewModel.navigationTitle)
+                    .font(for: .h3)
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                if let navigationSubtitle = viewModel.navigationSubtitle {
+                    Text(navigationSubtitle)
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                }
+            }
+        }
+
         if !viewModel.folderMenuOptions.isEmpty {
             ToolbarTitleMenu {
                 toolBarTitleMenuContent()
             }
         }
 
-        if !viewModel.isRecycleBin, !viewModel.isOffline {
+        if showMoreActionsButton {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -105,6 +118,10 @@ private extension FilesView {
                 viewModel.selectFolderMenuOption(option)
             }
         }
+    }
+
+    var showMoreActionsButton: Bool {
+        !viewModel.isRecycleBin && !viewModel.isOffline && viewModel.selfUserRole == .editor
     }
 
     var closeButton: some View {
@@ -128,7 +145,7 @@ private extension FilesView {
                     Text(Strings.Files.List.createFolder)
                 } icon: {
                     Image(systemName: "folder.badge.plus")
-                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                        .tint(ColorTheme.Backgrounds.onBackground.color)
                 }
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFolder.rawValue)
@@ -142,7 +159,7 @@ private extension FilesView {
                             Text(template.kind.title)
                         } icon: {
                             Image(systemName: template.kind.systemImage)
-                                .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                                .tint(ColorTheme.Backgrounds.onBackground.color)
                         }
                     }
                 }
@@ -152,7 +169,7 @@ private extension FilesView {
                     Text(Strings.Files.List.createFile)
                 } icon: {
                     Image(systemName: "document.badge.plus")
-                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                        .tint(ColorTheme.Backgrounds.onBackground.color)
                 }
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
@@ -164,7 +181,7 @@ private extension FilesView {
                     Text(Strings.Files.openRecycleBin)
                 } icon: {
                     Image(systemName: "trash")
-                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                        .tint(ColorTheme.Backgrounds.onBackground.color)
                 }
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
@@ -247,8 +264,14 @@ private extension WireDriveFileTemplate.Kind {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Editor mode") {
     NavigationStack {
         FilesView(viewModel: .preview())
+    }
+}
+
+#Preview("Viewer mode") {
+    NavigationStack {
+        FilesView(viewModel: .preview(isBrowsing: false, selfUserRole: .viewer))
     }
 }

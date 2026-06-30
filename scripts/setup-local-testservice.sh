@@ -75,23 +75,31 @@ fi
 rm -f "$LOG_FILE" "$JAR_FILE"
 rm -rf "$KALIUM_DIR"
 
-echo "== Resolving latest Kalium testservice tag =="
-KALIUM_REF="$({
-  git ls-remote --tags --refs https://github.com/wireapp/kalium.git 'refs/tags/test-service-v*' \
-  | awk -F/ '{print $3}' \
-  | sort -V \
-  | tail -n 1
-})"
+echo "== Resolving Kalium testservice ref =="
+DEFAULT_KALIUM_REF="5ec1c95b75daa7241e38c97f2916a06a2e40ce1b"
+KALIUM_REF="${KALIUM_TESTSERVICE_REF:-$DEFAULT_KALIUM_REF}"
 
 if [[ -z "$KALIUM_REF" ]]; then
-  echo "ERROR: Could not resolve Kalium testservice tag"
+  echo "ERROR: Could not resolve Kalium testservice ref"
   exit 1
 fi
 
-echo "Using Kalium ref: $KALIUM_REF"
+if [[ ! "$KALIUM_REF" =~ ^test-service-v[0-9]+\.[0-9]+\.[0-9]+$ && ! "$KALIUM_REF" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "ERROR: Invalid Kalium testservice ref: $KALIUM_REF"
+  exit 1
+fi
+
+echo "Using Kalium testservice ref: $KALIUM_REF"
 
 echo "== Cloning Kalium =="
-git clone --depth 1 --branch "$KALIUM_REF" https://github.com/wireapp/kalium.git "$KALIUM_DIR"
+if [[ "$KALIUM_REF" =~ ^[0-9a-f]{40}$ ]]; then
+  git init "$KALIUM_DIR"
+  git -C "$KALIUM_DIR" remote add origin https://github.com/wireapp/kalium.git
+  git -C "$KALIUM_DIR" fetch --depth 1 origin "$KALIUM_REF"
+  git -C "$KALIUM_DIR" checkout --detach FETCH_HEAD
+else
+  git clone --depth 1 --branch "$KALIUM_REF" https://github.com/wireapp/kalium.git "$KALIUM_DIR"
+fi
 
 echo "== Kalium HEAD =="
 git -C "$KALIUM_DIR" rev-parse HEAD
@@ -126,7 +134,7 @@ echo "Log file: $LOG_FILE"
     sleep 1
   done
 
-  echo "ERROR: Testservice not reachable after 90s"
+  echo "ERROR: Testservice not reachable after 90s" >&2
   exit 1
 ) &
 READY_PID=$!
@@ -136,6 +144,6 @@ java -jar "$JAR_FILE" server "$CONFIG_PATH" 2>&1 | tee "$LOG_FILE"
 
 if ! wait "$READY_PID"; then
   READINESS_STATUS=$?
-  echo "ERROR: Kalium Testservice readiness check failed (exit code: $READINESS_STATUS)"
+  echo "ERROR: Kalium Testservice readiness check failed (exit code: $READINESS_STATUS)" >&2
   exit "$READINESS_STATUS"
 fi

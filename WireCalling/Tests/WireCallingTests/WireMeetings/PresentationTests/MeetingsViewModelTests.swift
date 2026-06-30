@@ -20,23 +20,25 @@ import Foundation
 import Testing
 import WireFoundation
 import WireFoundationSupport
+
 @testable import WireCallingDomain
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
+@MainActor
 @Suite("MeetingsViewModel Tests")
 struct MeetingsViewModelTests {
 
     private let mockDateProvider: CurrentDateProvidingMock
     private let formatter: MeetingsFormatter
-    private let upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol
+    private let upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock
     private let viewModel: MeetingsViewModel
 
     init() throws {
         self.mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
-        self.upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
+        self.upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
         self.viewModel = MeetingsViewModel(
             currentDateProvider: mockDateProvider,
             formatter: formatter,
@@ -59,7 +61,7 @@ struct MeetingsViewModelTests {
     func loadInitialData_loadsFirstPage() {
         // Given
         let meeting = Meeting.fixture(title: "Upcoming 1", start: mockDateProvider.now.addingTimeInterval(3600))
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [meeting], hasMore: true, nextOffset: 10)
         }
 
@@ -70,9 +72,11 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.count == 1)
         #expect(viewModel.loadedMeetings.first?.title == "Upcoming 1")
         #expect(viewModel.hasMore == true)
-        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.count == 1)
-        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.first?.pageSize == 10)
-        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.first?.offset == 0)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?
+            .pageSize == 10)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?
+            .offset == 0)
     }
 
     @Test("loadInitialData replaces previously loaded meetings and resets the offset")
@@ -80,13 +84,13 @@ struct MeetingsViewModelTests {
         // Given
         let first = Meeting.fixture(title: "First load", start: mockDateProvider.now.addingTimeInterval(3600))
         let second = Meeting.fixture(title: "Second load", start: mockDateProvider.now.addingTimeInterval(7200))
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [first], hasMore: true, nextOffset: 10)
         }
         viewModel.loadInitialData()
 
         // When — a second initial load returns a different page
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [second], hasMore: false, nextOffset: 10)
         }
         viewModel.loadInitialData()
@@ -95,7 +99,8 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.count == 1)
         #expect(viewModel.loadedMeetings.first?.title == "Second load")
         #expect(viewModel.hasMore == false)
-        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.last?.offset == 0)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
+            .offset == 0)
     }
 
     // MARK: - loadMoreIfNeeded
@@ -105,7 +110,7 @@ struct MeetingsViewModelTests {
         // Given — page 1 at offset 0, page 2 at offset 10
         let page1 = Meeting.fixture(title: "Page 1", start: mockDateProvider.now.addingTimeInterval(3600))
         let page2 = Meeting.fixture(title: "Page 2", start: mockDateProvider.now.addingTimeInterval(2 * 86_400))
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, offset in
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, offset in
             if offset == 0 {
                 PaginatedMeetings(meetings: [page1], hasMore: true, nextOffset: 10)
             } else {
@@ -122,15 +127,17 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.contains { $0.title == "Page 1" })
         #expect(viewModel.loadedMeetings.contains { $0.title == "Page 2" })
         #expect(viewModel.hasMore == false)
-        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.count == 2)
-        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.last?.pageSize == 5)
-        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.last?.offset == 10)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
+            .pageSize == 5)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
+            .offset == 10)
     }
 
     @Test("loadMoreIfNeeded does nothing when there are no more meetings")
     func loadMoreIfNeeded_doesNothingWhenNoMore() {
         // Given
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [], hasMore: false, nextOffset: 0)
         }
         viewModel.loadInitialData()
@@ -140,7 +147,7 @@ struct MeetingsViewModelTests {
         viewModel.loadMoreIfNeeded()
 
         // Then — no extra fetch happened
-        #expect(upcomingMeetingsUseCase.invokePageSizeOffset_Invocations.count == 1)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
     }
 
     // MARK: - Grouping
@@ -154,7 +161,7 @@ struct MeetingsViewModelTests {
         let later = Meeting.fixture(title: "Late", start: mockDateProvider.now.addingTimeInterval(7200))
         let otherDay = Meeting.fixture(title: "Next day", start: mockDateProvider.now.addingTimeInterval(2 * 86_400))
 
-        upcomingMeetingsUseCase.invokePageSizeOffset_MockMethod = { _, _ in
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [later, otherDay, earlyZebra, earlyApple], hasMore: false, nextOffset: 10)
         }
 

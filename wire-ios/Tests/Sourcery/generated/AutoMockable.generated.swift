@@ -29,6 +29,7 @@ import SwiftUI
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
+import WireCallingDomain
 import WireMessagingDomain
 import WireMessagingUI
 import WireFoundation
@@ -702,16 +703,16 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
     // MARK: - resetSession
 
     var resetSession_Invocations: [Void] = []
-    var resetSession_MockMethod: (() -> Void)?
+    var resetSession_MockMethod: (() async -> Void)?
 
-    func resetSession() {
+    func resetSession() async {
         resetSession_Invocations.append(())
 
         guard let mock = resetSession_MockMethod else {
             fatalError("no mock for `resetSession`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - updateVerified
@@ -1699,20 +1700,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsView_Invocations: [Void] = []
-    var makeMeetingsView_MockMethod: (() -> UIViewController)?
-    var makeMeetingsView_MockValue: UIViewController?
+    var makeMeetingsViewMemberRepository_Invocations: [any MemberRepositoryProtocol] = []
+    var makeMeetingsViewMemberRepository_MockMethod: ((any MemberRepositoryProtocol) -> UIViewController)?
+    var makeMeetingsViewMemberRepository_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView() -> UIViewController {
-        makeMeetingsView_Invocations.append(())
+    func makeMeetingsView(memberRepository: any MemberRepositoryProtocol) -> UIViewController {
+        makeMeetingsViewMemberRepository_Invocations.append(memberRepository)
 
-        if let mock = makeMeetingsView_MockMethod {
-            return mock()
-        } else if let mock = makeMeetingsView_MockValue {
+        if let mock = makeMeetingsViewMemberRepository_MockMethod {
+            return mock(memberRepository)
+        } else if let mock = makeMeetingsViewMemberRepository_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsView`")
+            fatalError("no mock for `makeMeetingsViewMemberRepository`")
         }
     }
 
@@ -1939,6 +1940,25 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeConversationCellProviderInsetsProvider`")
+        }
+    }
+
+    // MARK: - makeConversationSharedDrivedOptionsView
+
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations: [(participants: [WireDriveParticipant], onClose: () -> Void)] = []
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod: (([WireDriveParticipant], @escaping () -> Void) -> UIViewController)?
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue: UIViewController?
+
+    @MainActor
+    func makeConversationSharedDrivedOptionsView(participants: [WireDriveParticipant], onClose: @escaping () -> Void) -> UIViewController {
+        makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations.append((participants: participants, onClose: onClose))
+
+        if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod {
+            return mock(participants, onClose)
+        } else if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeConversationSharedDrivedOptionsViewParticipantsOnClose`")
         }
     }
 

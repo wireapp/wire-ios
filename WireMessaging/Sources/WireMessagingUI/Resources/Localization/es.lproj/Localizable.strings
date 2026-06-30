@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// MARK: - Navigation
 
+// MARK: - Navigation
 "general.loading" = "Cargando...";
 "general.confirm" = "OK";
 "general.failure" = "Algo salió mal";
@@ -117,7 +117,9 @@
 
 // MARK: - Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
+"conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Viewer access";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
+"conversation.wireCells.files.viewerAccess.banner" = "You have view access for Shared Drive. You can’t upload, edit, or manage files.";
 "conversation.wireCells.files.item.subtitle" = "%@ por %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ en %@";
 "conversation.wireCells.files.loadMore.title" = "Cargar más";
@@ -193,7 +195,6 @@
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
-"conversation.wireCells.recycleBin.emptyFolder.message" = "This folder is empty.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "This will permanently delete the file \"%@\" for all participants. Everyone will lose access and there is no way to recover the file.";

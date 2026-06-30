@@ -176,7 +176,13 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons, isWireDriveEnabled: conversation.isWireDriveEnabled)
+        let showDriveViewerBanner = conversation.isWireDriveEnabled && userSession.selfUser
+            .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
+        let inputBar = InputBar(
+            buttons: inputBarButtons,
+            isWireDriveEnabled: conversation.isWireDriveEnabled,
+            showDriveViewerBanner: showDriveViewerBanner
+        )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
@@ -402,7 +408,7 @@ final class ConversationInputBarViewController: UIViewController,
 
         // TODO: [WPB-25941] Remove developer flag when feature is complete
         if DeveloperFlag.enableDrivePermissions.isOn {
-            if conversation.isWireDriveEnabled, userSession.selfUser.isGuest(in: conversation) {
+            if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
                 [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
                     $0.isEnabled = false
                     $0.setBackgroundImageColor(
@@ -610,8 +616,17 @@ final class ConversationInputBarViewController: UIViewController,
         updateButtonStates()
     }
 
+    /// Hides the input bar when the self user has blocked the other user, so it can be replaced by
+    /// the "You blocked this user" bar. See `ConversationViewController`.
+    var isHiddenForBlockedUser = false {
+        didSet {
+            guard isHiddenForBlockedUser != oldValue else { return }
+            updateInputBarVisibility()
+        }
+    }
+
     func updateInputBarVisibility() {
-        view.isHidden = conversation.isReadOnly
+        view.isHidden = conversation.isReadOnly || isHiddenForBlockedUser
     }
 
     @objc
