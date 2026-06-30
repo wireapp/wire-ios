@@ -54,7 +54,8 @@ final class OneOnOneResolverTests: XCTestCase {
             userLocalStore: userLocalStore,
             conversationLocalStore: conversationLocalStore,
             pullMLSOneOnOneSync: pullMLSOneOnOneSync,
-            mlsProvider: MLSProvider(service: mlsService, isMLSEnabled: true)
+            mlsProvider: MLSProvider(service: mlsService, isMLSEnabled: true),
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
     }
 
