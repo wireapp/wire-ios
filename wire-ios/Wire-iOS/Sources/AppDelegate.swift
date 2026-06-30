@@ -398,14 +398,9 @@ private extension AppDelegate {
         queueInitializationOperations(launchOptions: launchOptions)
     }
 
-    @MainActor
     private func createAppRootRouter() {
         let defaultEnvironment = fetchDefaultEnvironment()
-        let appTaskExecuter = AppBackgroundTaskExecuter(
-            application: UIApplication.shared,
-            isInBackground: UIApplication.shared.applicationState == .background
-        )
-        appTaskExecuter.startObservingLifecycleNotifications()
+        let appTaskExecuter = AppBackgroundTaskExecuter(application: UIApplication.shared)
 
         let sessionManager: SessionManager
         do {
