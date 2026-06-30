@@ -18,7 +18,7 @@
 
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning meetings.
-public protocol MeetingsAPI {
+public protocol MeetingsAPI: Sendable {
 
     /// Fetch all meetings for the authenticated user.
     ///
@@ -41,5 +41,11 @@ public protocol MeetingsAPI {
     /// - Returns: The updated meeting.
 
     func updateMeeting(meetingID: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse
+
+    /// Delete a meeting.
+    ///
+    /// - Parameter meetingID: The id of the meeting to delete.
+
+    func deleteMeeting(meetingID: QualifiedID) async throws
 
 }
