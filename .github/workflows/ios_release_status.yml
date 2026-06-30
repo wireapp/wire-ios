@@ -331,13 +331,11 @@ jobs:
             const prodMsg = prodLines.join('\n');
             const ltsMsg  = ltsLines ? ltsLines.join('\n') : '';
 
-            // One Slack payload string per release. JSON.stringify so the value is a
-            // valid JSON string literal when interpolated into the action-slack payload.
             // LTS is '' when no LTS_RELEASE is configured — its post step is skipped.
-            core.setOutput('edge', JSON.stringify(edgeMsg));
-            core.setOutput('beta', JSON.stringify(betaMsg));
-            core.setOutput('prod', JSON.stringify(prodMsg));
-            core.setOutput('lts', ltsMsg ? JSON.stringify(ltsMsg) : '');
+            core.setOutput('edge', edgeMsg);
+            core.setOutput('beta', betaMsg);
+            core.setOutput('prod', prodMsg);
+            core.setOutput('lts', ltsMsg);
 
             await core.summary
               .addRaw([edgeMsg, betaMsg, prodMsg, ltsMsg].filter(Boolean).join('\n\n'))
