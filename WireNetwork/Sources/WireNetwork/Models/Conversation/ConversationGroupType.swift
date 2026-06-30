@@ -41,6 +41,20 @@ enum ConversationGroupTypeV8: String, Sendable, Codable, ToAPIModelConvertible {
 enum ConversationGroupTypeV15: String, Sendable, Codable, ToAPIModelConvertible {
     case group = "group_conversation"
     case channel
+
+    func toAPIModel() -> ConversationGroupType {
+        switch self {
+        case .group:
+            .group
+        case .channel:
+            .channel
+        }
+    }
+}
+
+enum ConversationGroupTypeV16: String, Sendable, Codable, ToAPIModelConvertible {
+    case group = "group_conversation"
+    case channel
     case meeting
 
     func toAPIModel() -> ConversationGroupType {
