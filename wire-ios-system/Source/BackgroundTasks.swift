@@ -28,7 +28,7 @@ public func withBackgroundTask<T: Sendable>(
     try await executer.execute(name: name, operation: operation)
 }
 
-/// A ``BackgroundTaskExecuter`` that simply executes the operation without any background task management.
+/// A `BackgroundTaskExecuter` that simply executes the operation without any background task management.
 public struct PassthroughTaskExecuter: BackgroundTaskExecuter {
 
     public init() {}
