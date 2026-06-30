@@ -50,7 +50,7 @@ class OngoingCallPage: PageModel {
     }
 
     func participant(named name: String) -> XCUIElement {
-        app.buttons.containing(NSPredicate(format: "identifier CONTAINS %@", ".\(name).")).firstMatch
+        app.buttons[Locators.OngoingCallPage.participantIdentifier(name)]
     }
 
     private func tapEndCallButton() {

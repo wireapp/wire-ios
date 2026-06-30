@@ -421,7 +421,7 @@ public enum Locators {
     public enum OngoingCallPage: String {
 
         case cameraButton = "CallVideoButton"
-        case endOngoingCallButton = "End call"
+        case endOngoingCallButton = "EndCallButton"
         case microphoneButton = "CallMuteButton"
         case speakerButton = "CallSpeakerButton"
         case timeLabel
