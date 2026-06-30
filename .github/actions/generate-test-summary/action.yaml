@@ -74,14 +74,43 @@ runs:
         TMP_DIR="$(mktemp -d)"
         trap 'rm -rf "$TMP_DIR"' EXIT
         SUMMARY_FILE="$TMP_DIR/summaries.jsonl"
+        EXACT_TESTS_JSON="$TMP_DIR/exact-tests.json"
         : > "$SUMMARY_FILE"
+        ruby -rjson -e '
+          tests = []
+          Dir.glob("**/*Tests.swift").each do |path|
+            test_class = nil
+            File.foreach(path) do |line|
+              if line =~ /^\s*(?:final\s+)?class\s+(\w+)\b/
+                test_class = Regexp.last_match(1)
+              elsif test_class && line =~ /^\s*func\s+(test[[:alnum:]_]+)\s*\(/
+                test_name = "#{Regexp.last_match(1)}()"
+                tests << {
+                  class: test_class,
+                  name: test_name,
+                  normalized: test_name.delete("_")
+                }
+              end
+            end
+          end
+          puts JSON.generate(tests)
+        ' > "$EXACT_TESTS_JSON"
 
         for XCRESULT in "${XCRESULTS[@]}"; do
           TESTS_JSON="$TMP_DIR/tests-$(basename "$XCRESULT").json"
           if xcrun xcresulttool get test-results tests --path "$XCRESULT" --compact > "$TESTS_JSON" 2>/dev/null; then
-            jq -c '
+            jq -c --slurpfile exact_tests "$EXACT_TESTS_JSON" '
               def normalize:
                 tostring | gsub("[[:space:]]+"; " ") | .[0:240];
+
+              def exact_test_name($class; $test):
+                ($test | gsub("_"; "")) as $normalized
+                | (
+                    $exact_tests[0]
+                    | map(select(.class == $class and .normalized == $normalized))
+                    | first
+                    | .name?
+                  ) // $test;
 
               def test_cases:
                 [.. | objects | select(.nodeType? == "Test Case")];
@@ -113,8 +142,10 @@ runs:
                     elif ($identifier | test("/")) then ($identifier | split("/") | last)
                     elif $identifier != "" then $identifier
                     else "Unknown test"
-                    end
-                  ) as $test
+                  end
+                ) as $reportedTest
+                | ($parents[-1] // "") as $class
+                | exact_test_name($class; $reportedTest) as $test
                 | ($parents + [$test] | map(select(. != null and . != "")) | join(" > "));
 
               {
