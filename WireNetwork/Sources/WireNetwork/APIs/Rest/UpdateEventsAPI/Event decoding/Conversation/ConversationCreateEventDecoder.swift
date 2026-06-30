@@ -96,7 +96,7 @@ struct ConversationCreateEventDecoder {
         let legacyAccessRole: ConversationAccessRoleLegacyV0?
         let lastEvent: String?
         let lastEventTime: UTCTime?
-        let groupType: ConversationGroupTypeV15?
+        let groupType: ConversationGroupTypeV16?
 
         enum CodingKeys: String, CodingKey {
 
