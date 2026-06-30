@@ -13,6 +13,9 @@ on:
         required: true
         type: boolean
         default: true
+    secrets:
+      JIRA_TOKEN:
+        required: false
     outputs:
       changelog-url:
         description: "The url of the changelog can be downloaded from"
@@ -93,15 +96,16 @@ jobs:
             const path = 'CHANGELOG.md';
             const base = process.env.JIRA_BASE_URL;
             const token = process.env.JIRA_TOKEN;
-            if (!token) {
-              core.warning('JIRA_TOKEN not set — keeping commit titles');
-              return;
-            }
-            const auth = `Basic ${Buffer.from(token).toString('base64')}`;
+            if (!token) core.warning('JIRA_TOKEN not set — keeping commit titles');
+            const auth = token ? `Basic ${Buffer.from(token).toString('base64')}` : null;
             const cache = new Map();
             const titleFor = async (key) => {
               if (cache.has(key)) return cache.get(key);
               let summary = null;
+              if (!auth) {
+                cache.set(key, summary);
+                return summary;
+              }
               try {
                 const res = await fetch(`${base}/rest/api/3/issue/${key}?fields=summary`, {
                   headers: { Authorization: auth, Accept: 'application/json' },

@@ -210,6 +210,14 @@ jobs:
       - name: Create draft GitHub release
         run: |
           set -euo pipefail
+          TICKET_SECTIONS="${TICKET_SECTIONS:-**New:**
+          •
+
+          **Improvements:**
+          •
+
+          **Fix:**
+          •}"
           RELEASE_NOTES_PR_LINK="${{ github.server_url }}/${BUILD_ASSETS_REPO}/compare?expand=1"
           echo "RELEASE_NOTES_PR_LINK=$RELEASE_NOTES_PR_LINK" >> "$GITHUB_ENV"
 
