@@ -17,8 +17,16 @@
 //
 
 import Foundation
+import SwiftUI
 import WireDataModel
 import WireLocators
+import WireLogging
+import WireSyncEngine
+import WireUtilities
+
+private enum AdminPromotionError: Error {
+    case adminRoleNotFound
+}
 
 enum LeaveResult: AlertResultConfiguration {
     case leave(delete: Bool)
@@ -68,8 +76,49 @@ enum LeaveResult: AlertResultConfiguration {
 
 extension ConversationActionController {
 
+    func requestLeave(for conversation: ZMConversation) {
+        let session = userSession
+        Task { @MainActor in
+            let isPreventAdminlessGroupsEnabled: Bool = if DeveloperFlag.preventAdminlessGroups.isOn {
+                true
+            } else {
+                await session.clientSessionComponent?
+                    .featureConfigRepository.isFeatureEnabled(.preventAdminlessGroups) ?? false
+            }
+
+            guard isPreventAdminlessGroupsEnabled, self.isLastAdmin(in: conversation) else {
+                self.request(LeaveResult.self) { result in
+                    self.handleLeaveResult(result, for: conversation)
+                }
+                return
+            }
+
+            guard let zmSession = session as? ZMUserSession else { return }
+
+            let eligibleCandidates = self.eligibleAdminCandidates(in: conversation)
+            let groupName = conversation.displayNameWithFallback
+            if eligibleCandidates.isEmpty {
+                self.present(LastAdminLeaveAlert.deleteOnly(groupName: groupName) { [weak self] in
+                    self?.requestDeleteGroupResult { [weak self] confirmed in
+                        guard let self, confirmed else { return }
+                        handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
+                    }
+                })
+            } else {
+                self.present(LastAdminLeaveAlert.promoteOrDelete(groupName: groupName) { [weak self] in
+                    self?.presentAdminSelection(for: conversation, candidates: eligibleCandidates)
+                } onDelete: { [weak self] in
+                    self?.requestDeleteGroupResult { [weak self] confirmed in
+                        guard let self, confirmed else { return }
+                        handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
+                    }
+                })
+            }
+        }
+    }
+
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
-        guard  case let .leave(delete: clearContent) = result else { return }
+        guard case let .leave(delete: clearContent) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
@@ -91,6 +140,66 @@ extension ConversationActionController {
                 }
             }
         }
+    }
+
+    private func isLastAdmin(in conversation: ZMConversation) -> Bool {
+        let admins = conversation.localParticipants.filter { $0.isGroupAdmin(in: conversation) }
+        return admins.count == 1 && admins.first?.isSelfUser == true
+    }
+
+    private func eligibleAdminCandidates(in conversation: ZMConversation) -> [UserType] {
+        conversation.localParticipantsExcludingSelf.filter {
+            !$0.isGroupAdmin(in: conversation) &&
+                !$0.isFederated &&
+                !$0.isExternalPartner &&
+                !$0.isTemporaryUser
+        }
+    }
+
+    @MainActor
+    private func presentAdminSelection(for conversation: ZMConversation, candidates: [UserType]) {
+        let session = userSession
+        let viewModel = AdminSelectionViewModel(
+            candidates: candidates,
+            userSession: session,
+            onPromote: { [weak self] user in
+                guard let self else {
+                    throw CancellationError()
+                }
+                do {
+                    try await performAdminPromotion(user: user, in: conversation)
+                } catch {
+                    WireLogger.conversation.warn("admin promotion failed: \(error)")
+                    // Re-throw so AdminSelectionViewModel can set `.failed`
+                    throw error
+                }
+            }
+        )
+        let hostingController = UIHostingController(rootView: AdminSelectionView(viewModel: viewModel))
+        present(hostingController)
+    }
+
+    @MainActor
+    private func performAdminPromotion(user: UserType, in conversation: ZMConversation) async throws {
+        let roles = conversation.getRoles()
+        guard let adminRole = roles.first(where: { $0.name == ZMConversation.defaultAdminRoleName }) else {
+            throw AdminPromotionError.adminRoleNotFound
+        }
+        do {
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                conversation.updateRole(of: user, to: adminRole) { result in
+                    switch result {
+                    case .success: continuation.resume()
+                    case let .failure(error): continuation.resume(throwing: error)
+                    }
+                }
+            }
+        } catch {
+            WireLogger.conversation.warn("admin promotion failed: \(error)")
+            throw error
+        }
+        guard let selfUser = SelfUser.provider?.providedSelfUser else { return }
+        conversation.removeOrShowError(participant: selfUser)
     }
 
 }
