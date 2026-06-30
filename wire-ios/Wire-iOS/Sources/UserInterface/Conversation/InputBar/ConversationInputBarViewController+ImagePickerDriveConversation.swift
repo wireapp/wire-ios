@@ -27,6 +27,14 @@ extension ConversationInputBarViewController: PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
         showCamera()
 
+        let draftsLocalIdentifiers = attachmentsCarouselViewModel.draftsLocalIdentifiers
+        let selectedIdentifiers = results.compactMap(\.assetIdentifier)
+        let deselectedDraftIdentifiers = draftsLocalIdentifiers.filter { !selectedIdentifiers.contains($0) }
+
+        for deselectedDraftIdentifier in deselectedDraftIdentifiers {
+            removeDraft(localIdentifier: deselectedDraftIdentifier)
+        }
+
         for result in results {
             let localIdentifier = result.assetIdentifier
             let provider = result.itemProvider

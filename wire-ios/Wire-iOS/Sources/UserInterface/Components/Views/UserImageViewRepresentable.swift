@@ -16,10 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class MeetingsAPIV15: MeetingsAPIV14 {
+import SwiftUI
+import WireSyncEngine
 
-    override var apiVersion: APIVersion {
-        .v15
+struct UserImageViewRepresentable: UIViewRepresentable {
+
+    let user: UserType
+    let userSession: UserSession
+    let size: UserImageView.Size
+
+    func makeUIView(context: Context) -> UserImageView {
+        UserImageView(size: size)
     }
 
+    func updateUIView(_ view: UserImageView, context: Context) {
+        view.userSession = userSession
+        view.user = user
+    }
 }
