@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Просто введите свой адрес электронной почты, чтобы начать!";
 "authentication.identity.input.field.placeholder" = "Email или код SSO";
 "authentication.identity.input.field.title" = "Email или код SSO";
+"authentication.identity.input.field.email_only.placeholder" = "Email";
+"authentication.identity.input.field.email_only.title" = "Email";
 "authentication.identity.input.submit" = "Вперед";
 
 "cloud_user_login.title" = "Введите пароль для входа";
@@ -87,6 +89,8 @@
 "switch_backend_confirmation.show_details" = "Подробнее";
 "switch_backend.error.title.logged_in" = "Невозможно переключить серверы";
 "switch_backend.error.message.logged_in" = "Вы уже авторизованы. Чтобы переключиться на этот сервер, выйдите из всех учетных записей и повторите попытку.";
+"switch_backend.error.title.blocked" = "Переключение бэкэндов заблокировано";
+"switch_backend.error.message.blocked" = "В данный момент вы не можете войти в другой бэкенд. Сначала необходимо осуществить выход, а затем войти в другой бэкенд.";
 
 "verification_code.title" = "Вам письмо";
 "verification_code.message" = "Введите код подтверждения, который мы отправили на %@.";

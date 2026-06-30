@@ -22,7 +22,7 @@ import WireMessagingDomain
 extension FilesFilterBy.OwnerView {
     @MainActor
     final class ViewModel: ObservableObject {
-        typealias Item = WireDriveConversation.Participant
+        typealias Item = WireDriveParticipant
 
         @Published var selectedItems: Set<Item> = []
         @Published var presentedItems: [Item] = []

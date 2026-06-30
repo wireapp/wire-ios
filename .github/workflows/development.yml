@@ -6,7 +6,11 @@ on:
     branches:
       - 'develop'
 
-permissions: 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
   checks: write
 
 jobs:

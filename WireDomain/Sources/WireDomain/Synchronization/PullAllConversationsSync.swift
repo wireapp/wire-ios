@@ -99,7 +99,8 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
                 conversation.toDomainModel(),
                 timestamp: conversation.lastEventTime ?? Date.distantPast,
                 isFederationEnabled: isFederationEnabled,
-                isMLSEnabled: isMLSEnabled
+                isMLSEnabled: isMLSEnabled,
+                markAsRead: true
             )
         }
 

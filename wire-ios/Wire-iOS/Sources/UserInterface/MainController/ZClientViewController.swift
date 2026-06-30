@@ -414,7 +414,8 @@ final class ZClientViewController: UIViewController {
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
 
-        let meetingsUI = wireMeetingsFactory.makeMeetingsView()
+        let memberRepository = WireMeetingsMemberRepository(userSession: userSession)
+        let meetingsUI = wireMeetingsFactory.makeMeetingsView(memberRepository: memberRepository)
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
@@ -562,7 +563,8 @@ final class ZClientViewController: UIViewController {
                 conversationCreationRepository: conversationCreationRepository,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
                 areLegacyBotsAvailable: areLegacyBotsAvailable,
-                isAppsFeatureEnabled: isAppsFeatureEnabled
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                wireMessagingFactory: wireMessagingFactory
             )
             let navController = UINavigationController(rootViewController: controller)
             navController.modalPresentationStyle = .formSheet

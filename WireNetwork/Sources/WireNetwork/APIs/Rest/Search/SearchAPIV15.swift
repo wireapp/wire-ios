@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class SearchAPIV15: SearchAPIV14 {
+class SearchAPIV15: SearchAPIV14 {
 
     override var apiVersion: APIVersion {
         .v15
