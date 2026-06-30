@@ -169,13 +169,31 @@ runs:
             continue
           fi
 
-          jq -c '
+          jq -c --slurpfile exact_tests "$EXACT_TESTS_JSON" '
             def normalize:
               tostring | gsub("[[:space:]]+"; " ") | .[0:240];
 
+            def exact_test_name($class; $test):
+              ($test | gsub("_"; "")) as $normalized
+              | (
+                  $exact_tests[0]
+                  | map(select(.class == $class and .normalized == $normalized))
+                  | first
+                  | .name?
+                ) // $test;
+
             def failure_title:
               ([.targetName?, .testName?] | map(select(. != null and . != "")) | join(" > ")) as $title
-              | if $title == "" then "Unknown test" else $title end;
+              | ($title | split(" > ")) as $parts
+              | if $title == "" then
+                  "Unknown test"
+                elif ($parts | length) >= 2 then
+                  ($parts[-2]) as $class
+                  | ($parts[-1]) as $test
+                  | (($parts[0:-1] + [exact_test_name($class; $test)]) | join(" > "))
+                else
+                  $title
+                end;
 
             def failures:
               if (.testFailures == null) then
