@@ -841,8 +841,8 @@ platform :ios do
             UI.error("TestFlight upload skipped: #{e.message}")
             export_env_path = "./.post_build/.env"
             FileUtils.mkdir_p("./.post_build")
-            error_line = e.message.tr("\n", ' ').strip
-            File.open(export_env_path, 'a') { |f| f.puts "TESTFLIGHT_ERROR=#{error_line}" }
+            error_line = e.message.tr("\n", ' ').strip.gsub('"', '\\"')
+            File.open(export_env_path, 'a') { |f| f.puts "TESTFLIGHT_ERROR=\"#{error_line}\"" }
         end
     end
 
