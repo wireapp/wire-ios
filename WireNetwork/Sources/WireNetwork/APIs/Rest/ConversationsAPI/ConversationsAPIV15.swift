@@ -17,5 +17,9 @@
 //
 
 class ConversationsAPIV15: ConversationsAPIV14 {
-    override var apiVersion: APIVersion { .v15 }
+
+    override var apiVersion: APIVersion {
+        .v15
+    }
+
 }
