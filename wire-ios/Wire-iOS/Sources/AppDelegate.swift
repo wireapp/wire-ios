@@ -399,6 +399,10 @@ private extension AppDelegate {
 
     private func createAppRootRouter() {
         let defaultEnvironment = fetchDefaultEnvironment()
+<<<<<<< HEAD
+=======
+        let appTaskExecuter = AppBackgroundTaskExecuter(application: UIApplication.shared)
+>>>>>>> 8db9d4e838 (revert: fix: background tasks starting in background - WPB-23511 (#4941))
 
         let sessionManager: SessionManager
         do {
