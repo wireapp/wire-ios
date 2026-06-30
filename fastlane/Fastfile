@@ -678,15 +678,23 @@ platform :ios do
             groups += options[:extra_distribution_groups]
         end
 
-        upload_to_testflight(
-            api_key_path: appstoreconnect_api_key_file_path,
-            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
-            skip_waiting_for_build_processing: false,
-            distribute_external: true,
-            groups: groups,
-            submit_beta_review: true,
-            changelog: changelog(build)
-        )
+        begin
+            upload_to_testflight(
+                api_key_path: appstoreconnect_api_key_file_path,
+                ipa: "#{build.artifact_path(with_filename: true)}.ipa",
+                skip_waiting_for_build_processing: false,
+                distribute_external: true,
+                groups: groups,
+                submit_beta_review: true,
+                changelog: changelog(build)
+            )
+        rescue Spaceship::UnexpectedResponse => e
+            UI.error("TestFlight upload skipped: #{e.message}")
+            export_env_path = "./.post_build/.env"
+            FileUtils.mkdir_p("./.post_build")
+            error_line = e.message.tr("\n", ' ').strip.gsub('"', '\\"')
+            File.open(export_env_path, 'a') { |f| f.puts "TESTFLIGHT_ERROR=\"#{error_line}\"" }
+        end
     end
 
     # Changelog for current build
