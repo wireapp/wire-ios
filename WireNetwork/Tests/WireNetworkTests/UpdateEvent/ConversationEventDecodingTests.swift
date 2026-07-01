@@ -95,7 +95,7 @@ final class ConversationEventDecodingTests: XCTestCase {
         ).updateEvent
 
         // Then
-        guard case .conversation(.create(let event)) = decodedEvent else {
+        guard case let .conversation(.create(event)) = decodedEvent else {
             return XCTFail("expected .conversation(.create), got \(decodedEvent)")
         }
         XCTAssertEqual(event.conversation.groupType, .meeting)
