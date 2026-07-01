@@ -22,4 +22,10 @@ package struct PaginatedMeetings {
     package let hasMore: Bool
     package let nextOffset: Int
 
+    package init(meetings: [Meeting], hasMore: Bool, nextOffset: Int) {
+        self.meetings = meetings
+        self.hasMore = hasMore
+        self.nextOffset = nextOffset
+    }
+
 }

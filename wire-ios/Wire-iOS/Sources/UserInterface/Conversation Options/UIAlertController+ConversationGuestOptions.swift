@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 
 enum GuestLinkType {
     case secure
@@ -80,7 +81,11 @@ extension UIAlertController {
         confirmTitle: String,
         completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
-        let confirmAction = UIAlertAction(title: confirmTitle, style: .destructive) { _ in
+        let confirmAction = UIAlertAction(
+            title: confirmTitle,
+            style: .destructive,
+            accessibilityIdentifier: Locators.AlertActions.confirm.rawValue
+        ) { _ in
             completion(true)
         }
 
