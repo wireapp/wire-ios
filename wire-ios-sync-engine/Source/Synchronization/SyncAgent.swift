@@ -162,10 +162,18 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
-        ongoingSyncTask?.cancel()
-        ongoingSyncTask = nil
-        await incrementalSyncToken?.suspend()
-        incrementalSyncToken = nil
+
+        if let ongoingSyncTask {
+            ongoingSyncTask.cancel()
+            await ongoingSyncTask.value
+            self.ongoingSyncTask = nil
+        }
+
+        if let incrementalSyncToken {
+            await incrementalSyncToken.suspend()
+            self.incrementalSyncToken = nil
+        }
+
         syncStateSubject.send(.suspended)
 
         if let backgroundActivity {

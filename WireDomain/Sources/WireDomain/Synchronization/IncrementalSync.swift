@@ -453,6 +453,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         public func suspend() async {
             task.cancel()
+            await task.value
             await closePushChannel()
         }
     }
