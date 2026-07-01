@@ -28,6 +28,7 @@ extension ConversationInputBarViewController {
         sourceType: UIImagePickerController.SourceType,
         mediaTypes: [String],
         allowsEditing: Bool,
+        preSelectedAssetIdentifiers: [String] = [],
         pointToView: UIView
     ) {
 
@@ -49,6 +50,7 @@ extension ConversationInputBarViewController {
                 // non-nil.
                 var config = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
                 config.selectionLimit = 0
+                config.preselectedAssetIdentifiers = preSelectedAssetIdentifiers
                 config.filter = .any(of: [.images, .videos])
 
                 let picker = PHPickerViewController(configuration: config)

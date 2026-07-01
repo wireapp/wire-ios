@@ -111,10 +111,14 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func cameraKeyboardViewController(_ controller: CameraKeyboardViewController, didDeselectImage image: PHAsset) {
-        let draft = attachmentsCarouselViewModel.draft(withLocalIdentifier: image.localIdentifier)
+        removeDraft(localIdentifier: image.localIdentifier)
+    }
+
+    func removeDraft(localIdentifier: String) {
+        let draft = attachmentsCarouselViewModel.draft(withLocalIdentifier: localIdentifier)
 
         guard let draft else {
-            return WireLogger.wireDrive.error("Draft with localIdentifier: \(image.localIdentifier) not found")
+            return WireLogger.wireDrive.error("Draft with localIdentifier: \(localIdentifier) not found")
         }
 
         Task.detached { [deleteDraftUseCase] in
@@ -151,12 +155,18 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController) {
+        let collectionView = cameraKeyboardViewController?.collectionView
+        let preSelectedAssetIdentifiers = collectionView?.indexPathsForSelectedItems?
+            .compactMap { collectionView?.cellForItem(at: $0) as? AssetCell }
+            .compactMap(\.representedAssetIdentifier)
+
         hideCameraKeyboardViewController { [self] in
             shouldRefocusKeyboardAfterImagePickerDismiss = true
             presentImagePicker(
                 sourceType: .photoLibrary,
                 mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
                 allowsEditing: false,
+                preSelectedAssetIdentifiers: preSelectedAssetIdentifiers ?? [],
                 pointToView: photoButton.imageView!
             )
         }
