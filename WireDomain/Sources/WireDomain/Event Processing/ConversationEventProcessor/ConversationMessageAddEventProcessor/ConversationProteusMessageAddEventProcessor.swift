@@ -45,32 +45,14 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             )
         }
 
-        guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID.id,
-            domain: conversationID.domain
-        ) else {
-            return WireLogger.proteus.error(
-                "failed to add proteus message: conversation not found in db"
-            )
-        }
-
         let logAttributes: LogAttributes = [
             .messageType: "conversation.otr-message-add",
             .conversationId: conversationID.id.safeForLoggingDescription
         ]
 
-        // Ensure is not self conversation, sender is self user and conversation is not read-only
-        guard await messageLocalStore.canAddMessage(
-            conversation: conversation,
-            senderID: senderID.id
-        ) else {
-            return WireLogger.eventProcessing.warn(
-                "Ignoring incoming message: illegal sender or conversation",
-                attributes: logAttributes
-            )
-        }
-
-        // Deserialize the GenericMessage instance and handle `content` being `nil` if needed.
+        // Deserialize early so availability updates can be handled before conversation-level
+        // checks. Availability broadcasts arrive in the self conversation from non-self senders,
+        // which `canAddMessage` rejects.
         let payload = await getProtobufPayload(
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
@@ -84,6 +66,36 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
                 senderID: senderID,
                 conversationID: conversationID,
                 date: date
+            )
+        }
+
+        // Availability broadcasts don't belong to a specific conversation and must bypass
+        // the conversation fetch and `canAddMessage` gate entirely.
+        if case let .availability(availability) = genericMessage.content {
+            await userLocalStore.updateUser(
+                with: WireDataModel.QualifiedID(uuid: senderID.id, domain: senderID.domain),
+                availability: WireDataModel.Availability(proto: availability)
+            )
+            return
+        }
+
+        guard let conversation = await conversationLocalStore.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else {
+            return WireLogger.proteus.error(
+                "failed to add proteus message: conversation not found in db"
+            )
+        }
+
+        // Ensure is not self conversation, sender is self user and conversation is not read-only
+        guard await messageLocalStore.canAddMessage(
+            conversation: conversation,
+            senderID: senderID.id
+        ) else {
+            return WireLogger.eventProcessing.warn(
+                "Ignoring incoming message: illegal sender or conversation",
+                attributes: logAttributes
             )
         }
 
