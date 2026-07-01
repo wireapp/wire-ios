@@ -50,7 +50,7 @@ final class ConversationsAPIV16: ConversationsAPIV15 {
 
 }
 
-// MARK: - Encodables
+// MARK: - Decodables
 
 private struct QualifiedConversationListV16: Decodable, ToAPIModelConvertible {
 
