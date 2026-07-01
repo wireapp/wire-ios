@@ -37,6 +37,7 @@ public final class NotificationServiceExtension {
 
     private let logger = WireLogger.notifications
     private var onGoingTask: Task<Void, Never>?
+    private var contentHandler: ((UNNotificationContent) -> Void)?
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
@@ -74,6 +75,7 @@ public final class NotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
+        self.contentHandler = contentHandler
 
         if onGoingTask != nil {
             logger.warn(
@@ -135,6 +137,13 @@ public final class NotificationServiceExtension {
 
     public func cancel() async {
         onGoingTask?.cancel()
+        if DeveloperFlag.showNSEErrors.isOn {
+            let content = UNMutableNotificationContent()
+            content.title = "NSE Error"
+            content.body = "NSE will expire"
+            content.interruptionLevel = .active
+            contentHandler?(content)
+        }
         await onGoingTask?.value
     }
 }
