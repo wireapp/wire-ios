@@ -48,58 +48,6 @@ final class ConversationsAPIV16: ConversationsAPIV15 {
             .parse(code: response.statusCode, data: data)
     }
 
-    override func createGroupConversation(
-        parameters: CreateGroupConversationParameters
-    ) async throws -> Conversation {
-        // New payload in v16.
-        let input = CreateGroupConversationParametersV16(from: parameters)
-        let body = try JSONEncoder.defaultEncoder.encode(input)
-        let path = "\(pathPrefix)\(basePath)"
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.post)
-            .withBody(body, contentType: .json)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
-        )
-
-        do {
-            return try ResponseParser()
-                // New payload in v16.
-                .success(code: .created, type: ConversationV16.self)
-                .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
-                .failure(
-                    code: .badRequest,
-                    label: "non-empty-member-list",
-                    error: ConversationsAPIError.nonEmptyMemberList
-                )
-                .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
-                .failure(
-                    code: .forbidden,
-                    label: "missing-legalhold-consent",
-                    error: ConversationsAPIError.missingLegalHoldConsent
-                )
-                .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
-                .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
-                .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)
-                .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
-                .failure(code: .conflict, decodableError: NonFederatingBackendErrorResponseV4.self)
-                .failure(code: .unreachable, error: ConversationsAPIError.unreachableBackends)
-                .parse(code: response.statusCode, data: data)
-        } catch {
-            if let nonFederatingDomains = error as? NonFederatingBackendErrorResponseV4 {
-                throw ConversationsAPIError.nonFederatingBackends(
-                    nonFederatingDomains.nonFederatingBackends
-                )
-            } else {
-                throw error
-            }
-        }
-    }
-
 }
 
 // MARK: - Encodables
@@ -121,56 +69,6 @@ private struct QualifiedConversationListV16: Decodable, ToAPIModelConvertible {
             notFound: notFound.map { $0.toAPIModel() },
             failed: failed.map { $0.toAPIModel() }
         )
-    }
-
-}
-
-struct CreateGroupConversationParametersV16: Encodable { // TODO: is this needed?
-    let users: [UUID]?
-    let qualifiedUsers: [QualifiedIDV0]?
-    let access: [String]?
-    let accessRoles: [String]?
-    let name: String?
-    let team: CreateGroupConversationTeamInfoV0?
-    let messageTimer: TimeInterval?
-    let readReceiptMode: Int?
-    let conversationRole: String?
-    let messageProtocol: String
-    let conversationGroupType: ConversationGroupTypeV16 // changed in v16
-    let cells: Bool
-    let skipCreator: Bool?
-
-    enum CodingKeys: String, CodingKey {
-        case users
-        case qualifiedUsers = "qualified_users"
-        case access
-        case accessRoles = "access_role"
-        case name
-        case team
-        case messageTimer = "message_timer"
-        case readReceiptMode = "receipt_mode"
-        case conversationRole = "conversation_role"
-        case messageProtocol = "protocol"
-        case conversationGroupType = "group_conv_type"
-        case skipCreator = "skip_creator"
-        case cells
-    }
-
-    init(from parameters: CreateGroupConversationParameters) {
-        self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
-        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs
-            .map { $0.toNetworkModel() } : nil
-        self.access = parameters.accessMode.map { $0.toNetworkModel().rawValue }
-        self.accessRoles = parameters.accessRoles.map { $0.toNetworkModel().rawValue }
-        self.name = parameters.name
-        self.team = parameters.teamID.map { .init(teamID: $0) }
-        self.messageTimer = nil
-        self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
-        self.conversationRole = "wire_member"
-        self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
-        self.conversationGroupType = parameters.groupType.toV16()
-        self.skipCreator = parameters.skipCreator
-        self.cells = parameters.cells ?? false
     }
 
 }
