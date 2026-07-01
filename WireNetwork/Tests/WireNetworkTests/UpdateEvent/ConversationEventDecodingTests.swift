@@ -84,6 +84,23 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingConversationCreateMeetingEvent() throws {
+        // Given
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationCreateMeeting")
+
+        // When
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.create(Scaffolding.createMeetingEvent))
+        )
+    }
+
     func testDecodingConversationDeleteEvent() throws {
         // Given
         let mockEventData = try MockJSONPayloadResource(name: "ConversationDelete")
@@ -427,6 +444,17 @@ final class ConversationEventDecodingTests: XCTestCase {
                 lastEventTime: fractionalDate(from: "1970-01-01T00:00:00.000Z")
             )
         )
+
+        static let createMeetingEvent: ConversationCreateEvent = {
+            var conversation = createEvent.conversation
+            conversation.groupType = .meeting
+            return ConversationCreateEvent(
+                conversationID: createEvent.conversationID,
+                senderID: createEvent.senderID,
+                timestamp: createEvent.timestamp,
+                conversation: conversation
+            )
+        }()
 
         static let deleteEvent = ConversationDeleteEvent(
             conversationID: conversationID,
