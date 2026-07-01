@@ -311,9 +311,9 @@ extension ConversationGroupType {
     func toV8() -> ConversationGroupTypeV8? {
         switch self {
         case .group:
-                .group
+            .group
         case .channel:
-                .channel
+            .channel
         case .meeting:
             // Meeting was introduced in v15.
             nil
