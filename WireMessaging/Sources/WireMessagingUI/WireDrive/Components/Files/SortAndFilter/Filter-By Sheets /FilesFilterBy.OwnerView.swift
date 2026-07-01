@@ -127,8 +127,9 @@ extension FilesFilterBy {
                 }
                 .clipShape(Circle())
             } else {
-                Circle()
-                    .foregroundStyle(Color.gray)
+                Image(.unavailableUser)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
             }
         }
     }

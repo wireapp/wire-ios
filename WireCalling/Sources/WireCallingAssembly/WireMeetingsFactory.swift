@@ -33,10 +33,11 @@ public struct WireMeetingsFactory {
     public func makeMeetingsView(
         memberRepository: any MemberRepositoryProtocol
     ) -> UIViewController {
+        let repository = MeetingsRepository.demo()
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
-                repository: MeetingsRepository.demo(),
+                repository: repository,
                 currentDateProvider: .system
             ),
             memberRepository: memberRepository

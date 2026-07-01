@@ -68,4 +68,11 @@ extension XCUIElement {
         tap()
         return true
     }
+
+    @discardableResult
+    func tapAndWait(timeout: TimeInterval = 0.5) -> XCUIElement {
+        tap()
+        Thread.sleep(forTimeInterval: timeout)
+        return self
+    }
 }

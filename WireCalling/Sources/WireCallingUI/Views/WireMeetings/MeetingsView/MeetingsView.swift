@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireCallingDomain
-import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
 
@@ -123,12 +122,22 @@ private struct GroupedSections: View {
     }
 }
 
-#Preview {
+#Preview("empty") {
     MeetingsView(
         viewModel: MeetingsViewModel(
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock()
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase()
         )
     )
+}
+
+private struct PreviewFetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
+
+    var meetings = [Meeting]()
+
+    func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings {
+        .init(meetings: meetings, hasMore: false, nextOffset: 0)
+    }
+
 }
