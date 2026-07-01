@@ -48,6 +48,7 @@ public struct Conversation: Equatable {
     enum GroupType {
         case group
         case channel
+        case meeting
     }
 
     public enum ChannelPermission: String {

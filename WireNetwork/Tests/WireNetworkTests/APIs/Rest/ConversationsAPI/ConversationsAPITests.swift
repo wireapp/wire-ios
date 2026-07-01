@@ -1732,6 +1732,48 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testCreateGroupConversation_givenV8_To_V15_Unsupported_Meeting_Creation() async throws {
+
+        // given
+        let unsupportedVersions = APIVersion.v8.andNextVersions.filter { $0 < .v16 }
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, unsupportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.invalidBody) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createMeetingParameters
+                )
+            }
+        }
+    }
+
+    func testConversationGroupTypeV16_MeetingEncodesCorrectRawValue() {
+        XCTAssertEqual(ConversationGroupTypeV16.meeting.rawValue, "meeting")
+    }
+
+    func testCreateGroupConversation_givenV16_MeetingSuccessResponse201_DecodesGroupType() async throws {
+
+        // given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.created, "testCreateGroupConversation_givenV16AndMeetingSuccessResponse201")
+        ])
+        let sut = ConversationsAPIV16(apiService: apiService)
+
+        // when
+        let conversation = try await sut.createGroupConversation(
+            parameters: Scaffolding.createMeetingParameters
+        )
+
+        // then
+        XCTAssertEqual(conversation.groupType, .meeting)
+    }
+
     func testCreateGroupConversation_givenV8_And_Channel_Creation_AndSuccessResponse201_thenVerifyRespons(
     ) async throws {
 
@@ -2107,6 +2149,20 @@ final class ConversationsAPITests: XCTestCase {
             teamID: .mockID1,
             isReadReceiptsEnabled: true,
             skipCreator: false
+        )
+
+        static let createMeetingParameters = CreateGroupConversationParameters(
+            groupType: .meeting,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.code, .invite],
+            accessRoles: [.teamMember],
+            legacyAccessRole: .teamMember,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true
         )
 
         static let createChannelParameters = CreateGroupConversationParameters(

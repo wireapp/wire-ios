@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 @objc
 public enum ConversationGroupType: Int16 {
 
@@ -32,6 +30,10 @@ public enum ConversationGroupType: Int16 {
     /// A channel conversation
 
     case channel = 2
+
+    /// An underlying conversation of a meeting
+
+    case meeting = 3
 
 }
 

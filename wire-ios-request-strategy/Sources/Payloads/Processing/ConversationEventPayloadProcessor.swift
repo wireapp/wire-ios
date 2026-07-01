@@ -574,6 +574,8 @@ struct ConversationEventPayloadProcessor {
                     .group
                 case .channel:
                     .channel
+                case .meeting:
+                    .meeting
                 }
             } ?? .none
 
