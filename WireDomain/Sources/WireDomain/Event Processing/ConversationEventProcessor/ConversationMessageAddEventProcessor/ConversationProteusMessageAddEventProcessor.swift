@@ -80,7 +80,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         // Availability broadcasts don't belong to a specific conversation and must bypass
-        // the conversation fetch and `canAddMessage` gate entirely.
+        // the `canAddMessage` gate entirely.
         if case let .availability(availability) = genericMessage.content {
             await userLocalStore.updateUser(
                 with: WireDataModel.QualifiedID(uuid: senderID.id, domain: senderID.domain),
