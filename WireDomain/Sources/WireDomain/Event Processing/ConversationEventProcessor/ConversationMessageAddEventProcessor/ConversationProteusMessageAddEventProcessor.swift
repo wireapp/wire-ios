@@ -45,6 +45,15 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             )
         }
 
+        guard let conversation = await conversationLocalStore.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else {
+            return WireLogger.proteus.error(
+                "failed to add proteus message: conversation not found in db"
+            )
+        }
+        
         let logAttributes: LogAttributes = [
             .messageType: "conversation.otr-message-add",
             .conversationId: conversationID.id.safeForLoggingDescription
@@ -57,6 +66,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
         )
+
         guard let payload, let genericMessage = GenericMessage(from: payload, validate: false) else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
@@ -79,16 +89,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             return
         }
 
-        guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID.id,
-            domain: conversationID.domain
-        ) else {
-            return WireLogger.proteus.error(
-                "failed to add proteus message: conversation not found in db"
-            )
-        }
-
-// Ensure the conversation isn't forced read-only, and reject messages sent by non-self users into the self conversation.
+        // Ensure the conversation isn't forced read-only, and reject messages sent by non-self users into the self conversation.
         guard await messageLocalStore.canAddMessage(
             conversation: conversation,
             senderID: senderID.id
