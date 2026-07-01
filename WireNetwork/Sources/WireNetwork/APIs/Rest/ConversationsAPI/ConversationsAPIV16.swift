@@ -25,7 +25,7 @@ final class ConversationsAPIV16: ConversationsAPIV15 {
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         guard 1 ... 1000 ~= identifiers.count else {
             throw ConversationsAPIError.illegalArgument(
-                message: "identifiers must contain between 1 and 1000 elements, got  \(identifiers.count)"
+                message: "identifiers must contain between 1 and 1000 elements, got \(identifiers.count)"
             )
         }
 
