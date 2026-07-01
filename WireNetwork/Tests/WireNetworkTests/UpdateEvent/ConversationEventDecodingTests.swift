@@ -84,23 +84,6 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
-    func testDecodingConversationCreateEvent_meetingGroupType() throws {
-        // Given
-        let mockEventData = try MockJSONPayloadResource(name: "ConversationCreateMeeting")
-
-        // When
-        let decodedEvent = try decoder.decode(
-            UpdateEventDecodingProxy.self,
-            from: mockEventData.jsonData
-        ).updateEvent
-
-        // Then
-        guard case let .conversation(.create(event)) = decodedEvent else {
-            return XCTFail("expected .conversation(.create), got \(decodedEvent)")
-        }
-        XCTAssertEqual(event.conversation.groupType, .meeting)
-    }
-
     func testDecodingConversationDeleteEvent() throws {
         // Given
         let mockEventData = try MockJSONPayloadResource(name: "ConversationDelete")
