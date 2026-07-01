@@ -50,20 +50,22 @@ class PageModel {
 
     @discardableResult
     func verifyStringInGerman(
-        _ expectedString: String,
+        _ expectedStrings: String...,
         timeout: TimeInterval = 5,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let predicate = NSPredicate(format: "label == %@ OR value == %@", expectedString, expectedString)
-        let element = app.descendants(matching: .any).matching(predicate).firstMatch
+        for expectedString in expectedStrings {
+            let predicate = NSPredicate(format: "label == %@ OR value == %@", expectedString, expectedString)
+            let element = app.descendants(matching: .any).matching(predicate).firstMatch
 
-        XCTAssertTrue(
-            element.waitForExistence(timeout: timeout),
-            "Expected German string '\(expectedString)' to be visible",
-            file: file,
-            line: line
-        )
+            XCTAssertTrue(
+                element.waitForExistence(timeout: timeout),
+                "Expected German string '\(expectedString)' to be visible",
+                file: file,
+                line: line
+            )
+        }
         return self
     }
 

@@ -30,16 +30,20 @@ final class SettingsTests: WireUITestCase {
         app.launchArguments += ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
         app.launch()
 
-        // Verify the Next button is localized in German
+        // Verify the welcome screen is localized in German
         try WelcomePage()
-            .verifyStringInGerman("Weiter")
+            .verifyStringInGerman(
+                "Geben Sie Ihre E-Mail-Adresse ein, um zu beginnen."
+            )
 
-        _ = try await loginToBackend(user: user)
+        let conversationsPage = try await loginToBackend(user: user)
 
-        // Verify the setting title in German
-        _ = try ConversationsPage()
-            .openSettings()
-            .verifyStringInGerman("Einstellungen")
+        // Verify the conversation list empty state is localized in German
+        conversationsPage
+            .verifyStringInGerman(
+                "Willkommen 👋",
+                "Verbinden Sie sich mit anderen oder erstellen Sie eine neue Gruppe, um zu kommunizieren!"
+            )
     }
 
     @MainActor
