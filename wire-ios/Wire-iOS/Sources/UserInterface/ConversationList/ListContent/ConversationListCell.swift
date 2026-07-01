@@ -203,6 +203,10 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         itemView.update(for: conversation)
     }
 
+    func updateContextMenuAccessibilityHeader(with label: String) {
+        itemView.updateContextMenuAccessibilityHeader(with: label)
+    }
+
     func size(inCollectionViewSize collectionViewSize: CGSize) -> CGSize {
         if !ConversationListCell.cachedSize.equalTo(CGSize.zero),
            ConversationListCell.cachedSize.width == collectionViewSize.width {

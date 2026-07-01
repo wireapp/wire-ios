@@ -280,6 +280,7 @@ final class ConversationListItemView: UIView {
 
     func update(for conversation: ConversationListCellConversation?) {
         self.conversation = conversation
+        labelsStack.accessibilityTraits = .button
 
         guard let conversation else {
             configure(with: nil, subtitle: nil)
@@ -350,5 +351,12 @@ final class ConversationListItemView: UIView {
             labelsStack.accessibilityHint = ConversationsList.ItemCell.hint
         }
         labelsStack.accessibilityValue = statusComponents.joined(separator: ", ")
+    }
+
+    func updateContextMenuAccessibilityHeader(with label: String) {
+        labelsStack.accessibilityLabel = label
+        labelsStack.accessibilityValue = nil
+        labelsStack.accessibilityHint = nil
+        labelsStack.accessibilityTraits.insert(.header)
     }
 }

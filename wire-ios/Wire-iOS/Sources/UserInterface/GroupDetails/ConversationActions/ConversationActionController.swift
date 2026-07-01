@@ -54,10 +54,13 @@ final class ConversationActionController {
             (conversation as? ZMConversation)?.listActions ?? []
         }
 
-        let title = context == .list ? conversation.displayName : nil
+        let title = context == .list ? listMenuTitle : nil
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())
+        if let title {
+            controller.view.markFirstAccessibilityLabelAsHeader(matching: title)
+        }
 
         if let superView = sourceView.superview, controller.popoverPresentationController != nil {
             currentContext = .sourceView(
@@ -66,9 +69,17 @@ final class ConversationActionController {
             )
         }
 
-        present(controller)
+        present(controller) {
+            if let title {
+                controller.view.markFirstAccessibilityLabelAsHeader(matching: title)
+            }
+        }
 
         alertController = controller
+    }
+
+    private var listMenuTitle: String {
+        L10n.Accessibility.ConversationsList.ContextMenuHeader.description(conversation.displayNameWithFallback)
     }
 
     func enqueue(_ block: @escaping () -> Void) {
@@ -145,13 +156,32 @@ final class ConversationActionController {
         target.presentLocalizedErrorAlert(error)
     }
 
-    func present(_ controller: UIViewController) {
+    func present(_ controller: UIViewController, completion: (() -> Void)? = nil) {
 
         _ = currentContext.map {
             controller.configurePopoverPresentationController(using: $0)
         }
 
-        target.present(controller, animated: true)
+        target.present(controller, animated: true, completion: completion)
     }
 
+}
+
+private extension UIView {
+
+    @discardableResult
+    func markFirstAccessibilityLabelAsHeader(matching text: String) -> Bool {
+        if let label = self as? UILabel, label.text == text {
+            label.isAccessibilityElement = true
+            label.accessibilityLabel = text
+            label.accessibilityTraits.insert(.header)
+            return true
+        }
+
+        for subview in subviews where subview.markFirstAccessibilityLabelAsHeader(matching: text) {
+            return true
+        }
+
+        return false
+    }
 }
