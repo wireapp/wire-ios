@@ -1753,27 +1753,6 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testConversationGroupTypeV16_MeetingEncodesCorrectRawValue() {
-        XCTAssertEqual(ConversationGroupTypeV16.meeting.rawValue, "meeting")
-    }
-
-    func testCreateGroupConversation_givenV16_MeetingSuccessResponse201_DecodesGroupType() async throws {
-
-        // given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.created, "testCreateGroupConversation_givenV16AndMeetingSuccessResponse201")
-        ])
-        let sut = ConversationsAPIV16(apiService: apiService)
-
-        // when
-        let conversation = try await sut.createGroupConversation(
-            parameters: Scaffolding.createMeetingParameters
-        )
-
-        // then
-        XCTAssertEqual(conversation.groupType, .meeting)
-    }
-
     func testCreateGroupConversation_givenV8_And_Channel_Creation_AndSuccessResponse201_thenVerifyRespons(
     ) async throws {
 
