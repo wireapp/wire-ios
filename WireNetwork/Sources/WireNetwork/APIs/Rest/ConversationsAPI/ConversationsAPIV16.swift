@@ -23,7 +23,29 @@ final class ConversationsAPIV16: ConversationsAPIV15 {
     override var apiVersion: APIVersion { .v16 }
 
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
-        fatalError()
+        guard 1 ... 1000 ~= identifiers.count else {
+            throw ConversationsAPIError.illegalArgument(
+                message: "identifiers must contain between 1 and 1000 elements, got  \(identifiers.count)"
+            )
+        }
+
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers.map { $0.toNetworkModel() })
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)\(basePath)/list"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: QualifiedConversationListV16.self)
+            .parse(code: response.statusCode, data: data)
     }
 
     override func createGroupConversation(
@@ -80,7 +102,30 @@ final class ConversationsAPIV16: ConversationsAPIV15 {
 
 }
 
-struct CreateGroupConversationParametersV16: Encodable {
+// MARK: - Encodables
+
+private struct QualifiedConversationListV16: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case found
+        case notFound = "not_found"
+        case failed
+    }
+
+    let found: [ConversationV16]
+    let notFound: [QualifiedIDV0]
+    let failed: [QualifiedIDV0]
+
+    func toAPIModel() -> ConversationList {
+        ConversationList(
+            found: found.map { $0.toAPIModel() },
+            notFound: notFound.map { $0.toAPIModel() },
+            failed: failed.map { $0.toAPIModel() }
+        )
+    }
+
+}
+
+struct CreateGroupConversationParametersV16: Encodable { // TODO: is this needed?
     let users: [UUID]?
     let qualifiedUsers: [QualifiedIDV0]?
     let access: [String]?
