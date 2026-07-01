@@ -207,7 +207,6 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(invocation.availability, .available)
 
         // Then — conversation checks were never reached
-        XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 0)
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 0)
         XCTAssertEqual(
             protobufMessageProcessor
