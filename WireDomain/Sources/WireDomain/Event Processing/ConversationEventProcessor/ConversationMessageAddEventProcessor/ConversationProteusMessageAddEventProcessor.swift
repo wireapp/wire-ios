@@ -88,7 +88,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             )
         }
 
-        // Ensure is not self conversation, sender is self user and conversation is not read-only
+// Ensure the conversation isn't forced read-only, and reject messages sent by non-self users into the self conversation.
         guard await messageLocalStore.canAddMessage(
             conversation: conversation,
             senderID: senderID.id
