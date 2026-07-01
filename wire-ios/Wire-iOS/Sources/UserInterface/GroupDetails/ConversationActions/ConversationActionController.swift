@@ -54,7 +54,7 @@ final class ConversationActionController {
             (conversation as? ZMConversation)?.listActions ?? []
         }
 
-        let title = context == .list ? listMenuTitle : nil
+        let title = context == .list ? conversation.displayName : nil
         let accessibilityTitle = context == .list ? listMenuAccessibilityTitle : nil
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         actions.map(alertAction).forEach(controller.addAction)
@@ -80,10 +80,6 @@ final class ConversationActionController {
         }
 
         alertController = controller
-    }
-
-    private var listMenuTitle: String {
-        conversation.displayNameWithFallback
     }
 
     private var listMenuAccessibilityTitle: String {
