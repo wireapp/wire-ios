@@ -259,10 +259,11 @@ final class ConversationListContentController: UICollectionViewController {
         guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
             return nil
         }
-        let header = L10n.Accessibility.ConversationsList.ContextMenuHeader
+        let title = conversation.displayNameWithFallback
+        let accessibilityHeader = L10n.Accessibility.ConversationsList.ContextMenuHeader
             .description(conversation.displayNameWithFallback)
         (collectionView.cellForItem(at: indexPath) as? ConversationListCell)?
-            .updateContextMenuAccessibilityHeader(with: header)
+            .updateContextMenuAccessibilityHeader(with: accessibilityHeader)
 
         let actionProvider: UIContextMenuActionProvider = { _ in
             let actions = conversation.listActions.map { action in
@@ -281,7 +282,7 @@ final class ConversationListContentController: UICollectionViewController {
                 return uiAction
             }
 
-            return UIMenu(title: header, children: actions)
+            return UIMenu(title: title, children: actions)
         }
 
         return UIContextMenuConfiguration(
