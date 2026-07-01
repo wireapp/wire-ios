@@ -18,10 +18,10 @@
 
 public import CoreData
 
-public final class Meeting: NSManagedObject {
+public final class StoredMeeting: NSManagedObject {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Meeting> {
-        return NSFetchRequest<Meeting>(entityName: "Meeting")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<StoredMeeting> {
+        return NSFetchRequest<StoredMeeting>(entityName: "Meeting")
     }
 
     @NSManaged public var domain: String?
@@ -37,7 +37,7 @@ public final class Meeting: NSManagedObject {
 }
 
 // MARK: Generated accessors for members
-extension Meeting {
+extension StoredMeeting {
 
 //    @objc(addMembersObject:)
 //    @NSManaged public func addToMembers(_ value: ZMUser)
