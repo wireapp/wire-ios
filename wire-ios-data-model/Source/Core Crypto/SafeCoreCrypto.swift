@@ -41,11 +41,15 @@ public final class SafeCoreCrypto {
     public func transaction<Result>(
         block: @escaping (any CoreCryptoContextProtocol) async throws -> Result
     ) async throws -> Result {
-        try await withBackgroundTask(
-            name: "core crypto transaction",
-            executer: backgroundTaskExecuter
-        ) { [coreCrypto] in
+        if BackgroundTaskContext.isBackgroundTask {
             try await coreCrypto.transaction(block)
+        } else {
+            try await withBackgroundTask(
+                name: "core crypto transaction",
+                executer: backgroundTaskExecuter
+            ) { [coreCrypto] in
+                try await coreCrypto.transaction(block)
+            }
         }
     }
 

@@ -20,12 +20,18 @@ public protocol BackgroundTaskExecuter: Sendable {
     func execute<T: Sendable>(name: String?, operation: sending @escaping () async throws -> T) async throws -> T
 }
 
+public enum BackgroundTaskContext {
+    @TaskLocal public static var isBackgroundTask = false
+}
+
 public func withBackgroundTask<T: Sendable>(
     name: String? = nil,
     executer: any BackgroundTaskExecuter,
     operation: sending @escaping @isolated(any) () async throws -> T
 ) async throws -> T {
-    try await executer.execute(name: name, operation: operation)
+    try await BackgroundTaskContext.$isBackgroundTask.withValue(true) {
+        try await executer.execute(name: name, operation: operation)
+    }
 }
 
 /// A ``BackgroundTaskExecuter`` that simply executes the operation without any background task management.
