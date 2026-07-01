@@ -798,6 +798,34 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(conversation.addPermission, .everyone) // Can be decoded in API >= v8
     }
 
+    func testGetConversations_givenV16AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let versions = APIVersion.v16.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.ok, "testGetConversations_givenV16AndSuccessResponse200"), count: versions.count)
+        )
+
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
+
+        // when
+        // then
+        for sut in versions.map({ $0.buildAPI(apiService: apiService) }) {
+            let list = try await sut.getConversations(for: ids)
+
+            XCTAssertEqual(list.found.count, 1)
+            XCTAssertEqual(list.notFound.count, 1)
+            XCTAssertEqual(list.failed.count, 1)
+
+            let conversation = try XCTUnwrap(list.found.first)
+            XCTAssertEqual(conversation.groupType, .meeting)
+        }
+    }
+
     // MARK: - GetMLSOneToOneConversation
 
     func testGetMLSOneToOneConversation_Success_Response_V10_AndNext_Versions() async throws {
@@ -1751,27 +1779,6 @@ final class ConversationsAPITests: XCTestCase {
                 )
             }
         }
-    }
-
-    func testConversationGroupTypeV16_MeetingEncodesCorrectRawValue() {
-        XCTAssertEqual(ConversationGroupTypeV16.meeting.rawValue, "meeting")
-    }
-
-    func testCreateGroupConversation_givenV16_MeetingSuccessResponse201_DecodesGroupType() async throws {
-
-        // given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.created, "testCreateGroupConversation_givenV16AndMeetingSuccessResponse201")
-        ])
-        let sut = ConversationsAPIV16(apiService: apiService)
-
-        // when
-        let conversation = try await sut.createGroupConversation(
-            parameters: Scaffolding.createMeetingParameters
-        )
-
-        // then
-        XCTAssertEqual(conversation.groupType, .meeting)
     }
 
     func testCreateGroupConversation_givenV8_And_Channel_Creation_AndSuccessResponse201_thenVerifyRespons(
