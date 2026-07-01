@@ -353,11 +353,11 @@ jobs:
           echo "commit_message=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
 
       - name: Always Notify on Wire
-        uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+        uses: ./.github/actions/notify-wire
         continue-on-error: true
         if: ${{ inputs.notify == 'always' && always() }}
         with:
-          status: ${{ job.status }}
+          notify: custom
           text: |
             📋 **XCTest Run Summary for ${{ env.SANITIZED_BRANCH }}**
 
@@ -371,11 +371,11 @@ jobs:
             ${{ steps.test-summary.outputs.report_message }}
 
       - name: Only Notify on Wire failures
-        uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+        uses: ./.github/actions/notify-wire
         continue-on-error: true
         if: ${{ inputs.notify == 'failure' && failure() }}
         with:
-          status: ${{ job.status }}
+          notify: custom
           text: |
             📋 **🚨 XCTest Run Summary for ${{ env.SANITIZED_BRANCH }} failed 🆘**
 

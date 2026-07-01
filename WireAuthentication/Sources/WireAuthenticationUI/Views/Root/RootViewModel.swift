@@ -65,6 +65,9 @@ package final class RootViewModel: ObservableObject, Router {
             switch event {
             case .didRewindToThisView:
                 self?.restoreSheet()
+            case let .authenticationFailed(title, message):
+                self?.path = NavigationPath()
+                self?.presentAlert(Alert(title: title, message: message))
             default:
                 break
             }
