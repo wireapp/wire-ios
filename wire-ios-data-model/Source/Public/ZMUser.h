@@ -25,6 +25,7 @@
 @class Member;
 @class Team;
 @class ParticipantRole;
+@class ZMStoredMeeting;
 
 extern NSString * _Nonnull const ZMPersistedClientIdKey;
 

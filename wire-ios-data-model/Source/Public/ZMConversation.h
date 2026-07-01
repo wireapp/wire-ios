@@ -34,6 +34,7 @@
 @class Label;
 @class ParticipantRole;
 @class Role;
+@class ZMStoredMeeting;
 
 @protocol ZMConversationMessage;
 
