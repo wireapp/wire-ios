@@ -18,10 +18,11 @@
 
 public import CoreData
 
-public final class Meeting: NSManagedObject {
+@objc(ZMStoredMeeting) @objcMembers
+public final class StoredMeeting: NSManagedObject, Identifiable {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Meeting> {
-        return NSFetchRequest<Meeting>(entityName: "Meeting")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<StoredMeeting> {
+        return NSFetchRequest<StoredMeeting>(entityName: "Meeting")
     }
 
     @NSManaged public var domain: String?
@@ -30,25 +31,7 @@ public final class Meeting: NSManagedObject {
     @NSManaged public var repeatOptionRawValue: Int16
     @NSManaged public var start: Date?
     @NSManaged public var title: String?
-
-    // TODO: add conversation
-    // @NSManaged public var members: NSSet?
-
-}
-
-// MARK: Generated accessors for members
-extension Meeting {
-
-//    @objc(addMembersObject:)
-//    @NSManaged public func addToMembers(_ value: ZMUser)
-//
-//    @objc(removeMembersObject:)
-//    @NSManaged public func removeFromMembers(_ value: ZMUser)
-
-    @objc(addMembers:)
-    @NSManaged public func addToMembers(_ values: NSSet)
-
-    @objc(removeMembers:)
-    @NSManaged public func removeFromMembers(_ values: NSSet)
+    @NSManaged public var conversation: ZMConversation?
+    @NSManaged public var creator: ZMUser?
 
 }

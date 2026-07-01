@@ -34,6 +34,7 @@
 @class Label;
 @class ParticipantRole;
 @class Role;
+@class ZMStoredMeeting;
 
 @protocol ZMConversationMessage;
 
@@ -92,6 +93,8 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
 
 /// For group conversation this will be nil, for one to one or connection conversation this will be the other user
 @property (nonatomic, readonly, nullable) ZMUser *connectedUser;
+
+@property (nullable, nonatomic, retain) ZMStoredMeeting *parentMeeting;
 
 - (BOOL)canMarkAsUnread;
 - (void)markAsUnread;
