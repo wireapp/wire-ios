@@ -22,6 +22,10 @@ final class ConversationsAPIV16: ConversationsAPIV15 {
 
     override var apiVersion: APIVersion { .v16 }
 
+    override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
+        fatalError()
+    }
+
     override func createGroupConversation(
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation {
