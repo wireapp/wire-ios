@@ -37,10 +37,14 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
     /// The backend the on-prem login resolves to (returned by the fetch-backend-config use case).
     private var stubbedTargetEnvironment: BackendEnvironment2!
 
+    /// The user ID returned by the SSO login use case stub.
+    private var stubbedSSOUserID = UUID()
+
     @MainActor
     override func setUp() async throws {
         router = MockRouter()
         stubbedTargetEnvironment = Self.backendEnvironment(host: "target.example.com")
+        stubbedSSOUserID = UUID()
     }
 
     override func tearDown() {
@@ -153,6 +157,78 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         XCTAssertFalse(router.navigate_Invocations.isEmpty)
     }
 
+    @MainActor
+    func test_ssoLogin_whenAlreadyLoggedIn_showsAlreadyLoggedInAlert() async {
+        // given the SSO flow returns a user ID that is already logged in
+        stubbedAuthMethod = .loginViaSSO(code: UUID())
+        let userID = stubbedSSOUserID
+        makeSUT(
+            allowsMultipleBackends: true,
+            existingBackendHosts: [],
+            isAccountAlreadyLoggedIn: { id in id == userID }
+        )
+
+        // when
+        await sut.submitEmailOrSSOCode()
+
+        // then an alert is shown instead of navigating
+        XCTAssertEqual(sut.alert, .alreadyLoggedIn)
+        XCTAssertTrue(router.navigate_Invocations.isEmpty)
+    }
+
+    @MainActor
+    func test_ssoLogin_whenNotAlreadyLoggedIn_navigates() async {
+        // given the SSO flow returns a user ID that is not yet logged in
+        stubbedAuthMethod = .loginViaSSO(code: UUID())
+        makeSUT(
+            allowsMultipleBackends: true,
+            existingBackendHosts: [],
+            isAccountAlreadyLoggedIn: { _ in false }
+        )
+
+        // when
+        await sut.submitEmailOrSSOCode()
+
+        // then navigation proceeds normally
+        XCTAssertNil(sut.alert)
+        XCTAssertFalse(router.navigate_Invocations.isEmpty)
+    }
+
+    @MainActor
+    func test_switchBackend_whenAlreadyLoggedIn_showsAlreadyLoggedInAlert() async {
+        // given the on-prem SSO flow returns a user ID that is already logged in
+        let userID = stubbedSSOUserID
+        makeSUT(
+            allowsMultipleBackends: true,
+            existingBackendHosts: [],
+            isAccountAlreadyLoggedIn: { id in id == userID }
+        )
+
+        // when
+        await sut.switchBackend(email: nil, environment: stubbedTargetEnvironment)
+
+        // then an alert is shown instead of navigating
+        XCTAssertEqual(sut.alert, .alreadyLoggedIn)
+        XCTAssertTrue(router.navigate_Invocations.isEmpty)
+    }
+
+    @MainActor
+    func test_switchBackend_whenNotAlreadyLoggedIn_navigates() async {
+        // given the on-prem SSO flow returns a user ID that is not yet logged in
+        makeSUT(
+            allowsMultipleBackends: true,
+            existingBackendHosts: [],
+            isAccountAlreadyLoggedIn: { _ in false }
+        )
+
+        // when
+        await sut.switchBackend(email: nil, environment: stubbedTargetEnvironment)
+
+        // then navigation proceeds normally
+        XCTAssertNil(sut.alert)
+        XCTAssertFalse(router.navigate_Invocations.isEmpty)
+    }
+
     // MARK: - Helpers
 
     @MainActor
@@ -160,7 +236,8 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         allowsMultipleBackends: Bool,
         existingBackendHosts: Set<String>,
         emailOrSSOCode: String = "",
-        overrideAllowEmailLoginOnly: Bool = false
+        overrideAllowEmailLoginOnly: Bool = false,
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false }
     ) {
         sut = DetermineAuthMethodViewModel(
             factory: self,
@@ -170,6 +247,7 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
             existsAnotherAccount: !existingBackendHosts.isEmpty,
             allowsMultipleBackends: allowsMultipleBackends,
             existingBackendHosts: existingBackendHosts,
+            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn,
             overrideAllowEmailLoginOnly: overrideAllowEmailLoginOnly
         )
     }
@@ -243,7 +321,7 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
     }
 
     func loginViaSSOUseCase(environment: BackendEnvironment2?) async throws -> any LoginViaSSOUseCaseProtocol {
-        fatalError("not needed here")
+        StubLoginViaSSOUseCase(userID: stubbedSSOUserID, environment: stubbedTargetEnvironment)
     }
 
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
@@ -266,6 +344,29 @@ private struct StubValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseP
 
     func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
         .email(email: input, domain: "example.com")
+    }
+
+}
+
+private struct StubLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
+
+    let userID: UUID
+    let environment: BackendEnvironment2
+
+    func invoke(code: UUID?) async throws -> AuthenticationResult {
+        AuthenticationResult(
+            userID: userID,
+            cookies: [],
+            accessToken: nil,
+            emailCredentials: nil,
+            backendEnvironment: environment,
+            backendMetadata: ResolvedBackendMetadata(
+                apiVersion: .v8,
+                domain: "example.com",
+                isFederationEnabled: false
+            ),
+            proxyCredentials: nil
+        )
     }
 
 }
