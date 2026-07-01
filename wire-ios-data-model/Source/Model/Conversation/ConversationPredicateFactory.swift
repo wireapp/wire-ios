@@ -99,7 +99,7 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     @objc(predicateForGroupConversations)
-    public func predicateForGroupConversations() -> NSPredicate {
+    public func predicateForGroupConversations() -> NSPredicate { // TODO: exclude meeting?
         let isGroupConversationType =
             NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let isNotChannelGroupType =
@@ -188,7 +188,7 @@ public final class ConversationPredicateFactory: NSObject {
     /// Mirror of `ZMConversation.predicateForFilteringResults()` filtering on the persisted
     /// `effectiveConversationType` instead of the computed `conversationType`. Keeps both the store-backed fetch and
     /// the in-memory `predicateMatchesConversation` path off the computed getter (which walks participants).
-    private func filteringResultsPredicate() -> NSPredicate {
+    private func filteringResultsPredicate() -> NSPredicate { // TODO: exclude meeting?
         let selfType = ZMConversationType(rawValue: 1)!
         return NSPredicate(
             format: "\(ZMConversationEffectiveConversationTypeKey) != \(ZMConversationType.invalid.rawValue) AND \(ZMConversationEffectiveConversationTypeKey) != \(selfType.rawValue) AND \(#keyPath(ZMConversation.isDeletedRemotely)) == NO"
