@@ -89,10 +89,10 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         name: String?,
         operation: sending @escaping @isolated(any) () async throws -> T
     ) async throws -> T {
-        if DeveloperFlag.useBackgroundActivityFactoryInAppBackgroundTaskExecuter.isOn {
-            try await executeUsingBackgroundActivityFactory(name: name, operation: operation)
-        } else {
+        if DeveloperFlag.useBackgroundTaskAPIInAppBackgroundTaskExecuter.isOn {
             try await executeUsingBackgroundTaskAPI(name: name, operation: operation)
+        } else {
+            try await executeUsingBackgroundActivityFactory(name: name, operation: operation)
         }
     }
 

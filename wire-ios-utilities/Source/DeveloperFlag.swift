@@ -47,7 +47,7 @@ public enum DeveloperFlag: String, CaseIterable {
     // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     case enableDrivePermissions
     case unSafeLogsForPublic
-    case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
+    case useBackgroundTaskAPIInAppBackgroundTaskExecuter
 
     public var description: String {
         switch self {
@@ -122,8 +122,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .unSafeLogsForPublic:
             "Turn on to write all logs (including debug and non-public) to disk in release builds"
-        case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
-            "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
+
+        case .useBackgroundTaskAPIInAppBackgroundTaskExecuter:
+            "Turn on to use Apple's UIApplication task API directly in AppBackgroundTaskExecuter"
         }
     }
 
