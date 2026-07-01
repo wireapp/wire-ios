@@ -28,12 +28,16 @@ final class ReactionSectionViewControllerTests: XCTestCase {
         _ = sut.view
 
         // WHEN
-        let pan = try XCTUnwrap(sut.view.gestureRecognizers?.first { $0 is UIPanGestureRecognizer } as? UIPanGestureRecognizer)
+        let pan = try XCTUnwrap(sut.view.gestureRecognizers?
+            .first { $0 is UIPanGestureRecognizer } as? UIPanGestureRecognizer)
 
         // THEN — target must be the same instance, not the class; sending didPan: to the class crashes
         let targets = try XCTUnwrap(pan.value(forKey: "targets") as? [NSObject])
         let target = try XCTUnwrap(targets.first?.value(forKey: "target") as AnyObject?)
-        XCTAssertTrue(target === sut, "pan gesture target must be the ReactionSectionViewController instance — sending didPan: to the class crashes (WPB-26550)")
+        XCTAssertTrue(
+            target === sut,
+            "pan gesture target must be the ReactionSectionViewController instance — sending didPan: to the class crashes (WPB-26550)"
+        )
     }
 
 }
