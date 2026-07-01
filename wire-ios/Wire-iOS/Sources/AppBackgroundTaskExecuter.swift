@@ -78,7 +78,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
     public func execute<T: Sendable>(
         name: String?,
-        operation: sending @escaping () async throws -> T
+        operation: sending @escaping @isolated(any) () async throws -> T
     ) async throws -> T {
         let name = name ?? "unnamed"
 
