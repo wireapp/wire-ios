@@ -53,7 +53,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
                 "failed to add proteus message: conversation not found in db"
             )
         }
-        
+
         let logAttributes: LogAttributes = [
             .messageType: "conversation.otr-message-add",
             .conversationId: conversationID.id.safeForLoggingDescription
@@ -89,7 +89,8 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             return
         }
 
-        // Ensure the conversation isn't forced read-only, and reject messages sent by non-self users into the self conversation.
+        // Ensure the conversation isn't forced read-only, and reject messages sent by non-self users into the self
+        // conversation.
         guard await messageLocalStore.canAddMessage(
             conversation: conversation,
             senderID: senderID.id
