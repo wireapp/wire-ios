@@ -59,22 +59,14 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             .conversationId: conversationID.id.safeForLoggingDescription
         ]
 
-        // Ensure is not self conversation, sender is self user and conversation is not read-only
-        guard await messageLocalStore.canAddMessage(
-            conversation: conversation,
-            senderID: senderID.id
-        ) else {
-            return WireLogger.eventProcessing.warn(
-                "Ignoring incoming message: illegal sender or conversation",
-                attributes: logAttributes
-            )
-        }
-
-        // Deserialize the GenericMessage instance and handle `content` being `nil` if needed.
+        // Deserialize early so availability updates can be handled before conversation-level
+        // checks. Availability broadcasts arrive in the self conversation from non-self senders,
+        // which `canAddMessage` rejects.
         let payload = await getProtobufPayload(
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
         )
+
         guard let payload, let genericMessage = GenericMessage(from: payload, validate: false) else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
@@ -84,6 +76,28 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
                 senderID: senderID,
                 conversationID: conversationID,
                 date: date
+            )
+        }
+
+        // Availability broadcasts don't belong to a specific conversation and must bypass
+        // the `canAddMessage` gate entirely.
+        if case let .availability(availability) = genericMessage.content {
+            await userLocalStore.updateUser(
+                with: WireDataModel.QualifiedID(uuid: senderID.id, domain: senderID.domain),
+                availability: WireDataModel.Availability(proto: availability)
+            )
+            return
+        }
+
+        // Ensure the conversation isn't forced read-only, and reject messages sent by non-self users into the self
+        // conversation.
+        guard await messageLocalStore.canAddMessage(
+            conversation: conversation,
+            senderID: senderID.id
+        ) else {
+            return WireLogger.eventProcessing.warn(
+                "Ignoring incoming message: illegal sender or conversation",
+                attributes: logAttributes
             )
         }
 
