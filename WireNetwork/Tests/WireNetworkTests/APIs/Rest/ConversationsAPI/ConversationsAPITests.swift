@@ -800,11 +800,11 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV16AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "testGetConversations_givenV16AndSuccessResponse200")
-        ])
+        let versions = APIVersion.v16.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.ok, "testGetConversations_givenV16AndSuccessResponse200"), count: versions.count)
+        )
 
-        let api = ConversationsAPIV16(apiService: apiService)
         let ids = [
             QualifiedID(
                 id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
@@ -813,15 +813,17 @@ final class ConversationsAPITests: XCTestCase {
         ]
 
         // when
-        let list = try await api.getConversations(for: ids)
-
         // then
-        XCTAssertEqual(list.found.count, 1)
-        XCTAssertEqual(list.notFound.count, 1)
-        XCTAssertEqual(list.failed.count, 1)
+        for sut in versions.map({ $0.buildAPI(apiService: apiService) }) {
+            let list = try await sut.getConversations(for: ids)
 
-        let conversation = try XCTUnwrap(list.found.first)
-        XCTAssertEqual(conversation.groupType, .meeting)
+            XCTAssertEqual(list.found.count, 1)
+            XCTAssertEqual(list.notFound.count, 1)
+            XCTAssertEqual(list.failed.count, 1)
+
+            let conversation = try XCTUnwrap(list.found.first)
+            XCTAssertEqual(conversation.groupType, .meeting)
+        }
     }
 
     // MARK: - GetMLSOneToOneConversation
