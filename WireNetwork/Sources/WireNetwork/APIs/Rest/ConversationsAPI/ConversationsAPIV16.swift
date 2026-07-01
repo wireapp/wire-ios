@@ -53,6 +53,7 @@ final class ConversationsAPIV16: ConversationsAPIV15 {
 // MARK: - Encodables
 
 private struct QualifiedConversationListV16: Decodable, ToAPIModelConvertible {
+
     enum CodingKeys: String, CodingKey {
         case found
         case notFound = "not_found"
@@ -69,21 +70,6 @@ private struct QualifiedConversationListV16: Decodable, ToAPIModelConvertible {
             notFound: notFound.map { $0.toAPIModel() },
             failed: failed.map { $0.toAPIModel() }
         )
-    }
-
-}
-
-extension ConversationGroupType {
-
-    func toV16() -> ConversationGroupTypeV16 {
-        switch self {
-        case .group:
-            .group
-        case .channel:
-            .channel
-        case .meeting:
-            .meeting
-        }
     }
 
 }
@@ -161,4 +147,5 @@ struct ConversationV16: Decodable, ToAPIModelConvertible, DecodableConversation 
             cellsState: cellsState.toAPIModel()
         )
     }
+
 }
