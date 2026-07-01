@@ -20,7 +20,7 @@ import Foundation
 
 /// The various types of conversations.
 
-public enum ConversationType: Sendable {
+public enum ConversationType: Sendable { // TODO: channel, meeting?
 
     /// A conversation with many participants.
 
