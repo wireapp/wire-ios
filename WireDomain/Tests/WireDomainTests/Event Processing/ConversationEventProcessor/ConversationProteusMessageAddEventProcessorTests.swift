@@ -193,11 +193,11 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
     func testProcessEvent_AvailabilityMessage_UpdatesUserAndSkipsConversationChecks() async throws {
         // Availability broadcasts arrive in the self conversation from non-self senders.
         // The processor must handle them before the canAddMessage gate.
-       
+
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
-        
+
         // Mock
         userLocalStore.updateUserWithAvailability_MockMethod = { _, _ in }
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
