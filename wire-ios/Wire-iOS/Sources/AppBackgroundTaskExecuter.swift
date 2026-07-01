@@ -21,6 +21,7 @@ import UIKit
 
 import WireLogging
 import WireSystem
+@preconcurrency import WireTransport
 
 // sourcery: AutoMockable
 /// The subset of `UIApplication`'s background task APIs that `AppBackgroundTaskExecuter` depends on.
@@ -64,11 +65,17 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
     private let application: any BackgroundTaskApplication
     private let applicationState: ApplicationState
+    private let backgroundActivityFactory: BackgroundActivityFactory
 
     @MainActor
-    public init(application: any BackgroundTaskApplication, isInBackground: Bool) {
+    public init(
+        application: any BackgroundTaskApplication,
+        isInBackground: Bool,
+        backgroundActivityFactory: BackgroundActivityFactory = BackgroundActivityFactory.shared
+    ) {
         self.application = application
         self.applicationState = ApplicationState(isInBackground: isInBackground)
+        self.backgroundActivityFactory = backgroundActivityFactory
     }
 
     @MainActor
@@ -76,7 +83,22 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         applicationState.startObservingLifecycleNotifications()
     }
 
+    // MARK: - Private
+
     public func execute<T: Sendable>(
+        name: String?,
+        operation: sending @escaping @isolated(any) () async throws -> T
+    ) async throws -> T {
+        if DeveloperFlag.useBackgroundActivityFactoryInAppBackgroundTaskExecuter.isOn {
+            try await executeUsingBackgroundActivityFactory(name: name, operation: operation)
+        } else {
+            try await executeUsingBackgroundTaskAPI(name: name, operation: operation)
+        }
+    }
+
+    // MARK: BackgroundTaskAPI implementation
+
+    private func executeUsingBackgroundTaskAPI<T: Sendable>(
         name: String?,
         operation: sending @escaping @isolated(any) () async throws -> T
     ) async throws -> T {
@@ -120,13 +142,47 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         }
     }
 
-    // MARK: - Private
-
     private nonisolated func endBackgroundTask(_ operationState: OperationState<some Any>) {
         guard operationState.taskID != .invalid else { return }
 
         application.endBackgroundTask(operationState.taskID)
         operationState.taskID = .invalid
+    }
+
+    // MARK: BackgroundActivityFactory implementation
+
+    private func executeUsingBackgroundActivityFactory<T: Sendable>(
+        name: String?,
+        operation: sending @escaping @isolated(any) () async throws -> T
+    ) async throws -> T {
+        let name = name ?? "unnamed"
+
+        guard let activity = backgroundActivityFactory.startBackgroundActivity(name: name) else {
+            WireLogger.backgroundActivity.debug("background task \(name) cannot begin (BackgroundActivityFactory)")
+            throw CancellationError()
+        }
+
+        let task = Task {
+            WireLogger.backgroundActivity.debug("will start background task: \(name) (BackgroundActivityFactory)")
+            let result = try await operation()
+            WireLogger.backgroundActivity.debug("did end background task: \(name) (BackgroundActivityFactory)")
+            return result
+        }
+
+        activity.expirationHandler = {
+            WireLogger.backgroundActivity.warn(
+                "background task \(name) expiring soon (BackgroundActivityFactory). Cancelling..."
+            )
+            task.cancel()
+        }
+
+        defer { backgroundActivityFactory.endBackgroundActivity(activity) }
+
+        return try await withTaskCancellationHandler {
+            try await task.value
+        } onCancel: {
+            task.cancel()
+        }
     }
 }
 
