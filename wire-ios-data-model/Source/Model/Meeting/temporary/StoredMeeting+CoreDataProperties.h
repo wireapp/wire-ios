@@ -1,5 +1,5 @@
 //
-//  StoredMeetingMeeting+CoreDataProperties.h
+//  StoredMeeting+CoreDataProperties.h
 //  
 //
 //  Created by Christoph Aldrian on 01.07.26.
@@ -7,14 +7,14 @@
 //  This file was automatically generated and should not be edited.
 //
 
-#import "WireDataModel.StoredMeetingMeeting+CoreDataClass.h"
+#import "WireDataModel.StoredMeeting+CoreDataClass.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface StoredMeetingMeeting (CoreDataProperties)
+@interface StoredMeeting (CoreDataProperties)
 
-+ (NSFetchRequest<StoredMeetingMeeting *> *)fetchRequest NS_SWIFT_NAME(fetchRequest());
++ (NSFetchRequest<StoredMeeting *> *)fetchRequest NS_SWIFT_NAME(fetchRequest());
 
 @property (nullable, nonatomic, copy) NSString *domain;
 @property (nullable, nonatomic, copy) NSDate *end;

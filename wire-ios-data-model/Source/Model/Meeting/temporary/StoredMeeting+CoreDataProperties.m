@@ -1,5 +1,5 @@
 //
-//  StoredMeetingMeeting+CoreDataProperties.m
+//  StoredMeeting+CoreDataProperties.m
 //  
 //
 //  Created by Christoph Aldrian on 01.07.26.
@@ -7,11 +7,11 @@
 //  This file was automatically generated and should not be edited.
 //
 
-#import "StoredMeetingMeeting+CoreDataProperties.h"
+#import "StoredMeeting+CoreDataProperties.h"
 
-@implementation StoredMeetingMeeting (CoreDataProperties)
+@implementation StoredMeeting (CoreDataProperties)
 
-+ (NSFetchRequest<StoredMeetingMeeting *> *)fetchRequest {
++ (NSFetchRequest<StoredMeeting *> *)fetchRequest {
 	return [NSFetchRequest fetchRequestWithEntityName:@"Meeting"];
 }
 

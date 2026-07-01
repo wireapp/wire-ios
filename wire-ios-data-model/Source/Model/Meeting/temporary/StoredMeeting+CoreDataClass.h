@@ -1,5 +1,5 @@
 //
-//  StoredMeetingMeeting+CoreDataClass.h
+//  StoredMeeting+CoreDataClass.h
 //  
 //
 //  Created by Christoph Aldrian on 01.07.26.
@@ -14,10 +14,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface StoredMeetingMeeting : NSManagedObject
+@interface StoredMeeting : NSManagedObject
 
 @end
 
 NS_ASSUME_NONNULL_END
 
-#import "StoredMeetingMeeting+CoreDataProperties.h"
+#import "StoredMeeting+CoreDataProperties.h"

@@ -1,5 +1,5 @@
 //
-//  StoredMeetingMeeting+CoreDataClass.m
+//  StoredMeeting+CoreDataClass.m
 //  
 //
 //  Created by Christoph Aldrian on 01.07.26.
@@ -7,8 +7,8 @@
 //  This file was automatically generated and should not be edited.
 //
 
-#import "StoredMeetingMeeting+CoreDataClass.h"
+#import "StoredMeeting+CoreDataClass.h"
 
-@implementation StoredMeetingMeeting
+@implementation StoredMeeting
 
 @end

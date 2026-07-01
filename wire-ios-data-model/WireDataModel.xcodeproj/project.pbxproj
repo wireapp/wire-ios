@@ -110,6 +110,7 @@
 		012CF9E62F3A8C1F004A4957 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Model/Meeting/temporary,
 				Utilis/CoreCryptoContextProtocolExt.swift,
 			);
 			publicHeaders = (
@@ -161,7 +162,7 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		012C00132F3A8E4F004A4957 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (012C016C2F3A8E4F004A4957 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 012C016D2F3A8E4F004A4957 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		012CEC7C2F3A85E9004A4957 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
-		012CF7E82F3A8C1F004A4957 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (012CF9E62F3A8C1F004A4957 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
+		012CF7E82F3A8C1F004A4957 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (012CF9E62F3A8C1F004A4957 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (Model/Meeting/temporary, ); path = Source; sourceTree = "<group>"; };
 		5991D76C2DAD037F00EF63C7 /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5991D77C2DAD038000EF63C7 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 

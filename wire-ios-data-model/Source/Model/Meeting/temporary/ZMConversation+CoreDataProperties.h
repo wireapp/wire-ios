@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSOrderedSet<ZMUser *> *lastServerSyncedActiveParticipants;
 @property (nullable, nonatomic, retain) NSSet<Role *> *nonTeamRoles;
 @property (nullable, nonatomic, retain) ZMUser *oneOnOneUser;
-@property (nullable, nonatomic, retain) StoredMeetingMeeting *parentMeeting;
+@property (nullable, nonatomic, retain) StoredMeeting *parentMeeting;
 @property (nullable, nonatomic, retain) NSSet<ParticipantRole *> *participantRoles;
 @property (nullable, nonatomic, retain) Team *team;
 @property (nullable, nonatomic, retain) NSSet<WireCellsMessageAttachmentDraftEntity *> *wireCellsMessageAttachmentDrafts;

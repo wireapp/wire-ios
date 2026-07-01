@@ -1,5 +1,5 @@
 //
-//  StoredMeetingMeeting+CoreDataProperties.swift
+//  StoredMeeting+CoreDataProperties.swift
 //  
 //
 //  Created by Christoph Aldrian on 01.07.26.
@@ -11,12 +11,12 @@ public import Foundation
 public import CoreData
 
 
-public typealias StoredMeetingMeetingCoreDataPropertiesSet = NSSet
+public typealias StoredMeetingCoreDataPropertiesSet = NSSet
 
-extension StoredMeetingMeeting {
+extension StoredMeeting {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<StoredMeetingMeeting> {
-        return NSFetchRequest<StoredMeetingMeeting>(entityName: "Meeting")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<StoredMeeting> {
+        return NSFetchRequest<StoredMeeting>(entityName: "Meeting")
     }
 
     @NSManaged public var domain: String?
@@ -30,6 +30,6 @@ extension StoredMeetingMeeting {
 
 }
 
-extension StoredMeetingMeeting : Identifiable {
+extension StoredMeeting : Identifiable {
 
 }

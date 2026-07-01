@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Label, NSObject, ParticipantRole, Role, StoredMeetingMeeting, Team, WireCellsMessageAttachmentDraftEntity, ZMMessage, ZMUser;
+@class Label, NSObject, ParticipantRole, Role, StoredMeeting, Team, WireCellsMessageAttachmentDraftEntity, ZMMessage, ZMUser;
 
 NS_ASSUME_NONNULL_BEGIN
 

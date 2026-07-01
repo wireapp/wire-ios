@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSSet<UserClient *> *clients;
 @property (nullable, nonatomic, retain) ZMConnection *connection;
 @property (nullable, nonatomic, retain) NSSet<ZMConversation *> *conversationsCreated;
-@property (nullable, nonatomic, retain) NSSet<StoredMeetingMeeting *> *createdMeetings;
+@property (nullable, nonatomic, retain) NSSet<StoredMeeting *> *createdMeetings;
 @property (nullable, nonatomic, retain) NSSet<Member *> *createdTeamMembers;
 @property (nullable, nonatomic, retain) NSSet<Team *> *createdTeams;
 @property (nullable, nonatomic, retain) NSOrderedSet<ZMConversation *> *lastServerSyncedActiveConversations;
@@ -83,10 +83,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addConversationsCreated:(NSSet<ZMConversation *> *)values;
 - (void)removeConversationsCreated:(NSSet<ZMConversation *> *)values;
 
-- (void)addCreatedMeetingsObject:(StoredMeetingMeeting *)value;
-- (void)removeCreatedMeetingsObject:(StoredMeetingMeeting *)value;
-- (void)addCreatedMeetings:(NSSet<StoredMeetingMeeting *> *)values;
-- (void)removeCreatedMeetings:(NSSet<StoredMeetingMeeting *> *)values;
+- (void)addCreatedMeetingsObject:(StoredMeeting *)value;
+- (void)removeCreatedMeetingsObject:(StoredMeeting *)value;
+- (void)addCreatedMeetings:(NSSet<StoredMeeting *> *)values;
+- (void)removeCreatedMeetings:(NSSet<StoredMeeting *> *)values;
 
 - (void)addCreatedTeamMembersObject:(Member *)value;
 - (void)removeCreatedTeamMembersObject:(Member *)value;

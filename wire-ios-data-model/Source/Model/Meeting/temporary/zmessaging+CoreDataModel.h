@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-#import "WireDataModel.StoredMeetingMeeting+CoreDataClass.h"
+#import "WireDataModel.StoredMeeting+CoreDataClass.h"
 #import "ZMConversation+CoreDataClass.h"
 #import "ZMUser+CoreDataClass.h"
 

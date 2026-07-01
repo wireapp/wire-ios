@@ -84,7 +84,7 @@ extension ZMConversation {
     @NSManaged public var lastServerSyncedActiveParticipants: NSOrderedSet?
     @NSManaged public var nonTeamRoles: NSSet?
     @NSManaged public var oneOnOneUser: ZMUser?
-    @NSManaged public var parentMeeting: StoredMeetingMeeting?
+    @NSManaged public var parentMeeting: StoredMeeting?
     @NSManaged public var participantRoles: NSSet?
     @NSManaged public var team: Team?
     @NSManaged public var wireCellsMessageAttachmentDrafts: NSSet?

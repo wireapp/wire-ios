@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class AddressBookEntry, AppInfo, Member, NSObject, ParticipantRole, Reaction, StoredMeetingMeeting, Team, UserClient, ZMConnection, ZMConversation, ZMMessage, ZMSystemMessage;
+@class AddressBookEntry, AppInfo, Member, NSObject, ParticipantRole, Reaction, StoredMeeting, Team, UserClient, ZMConnection, ZMConversation, ZMMessage, ZMSystemMessage;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -113,10 +113,10 @@ extension ZMUser {
 extension ZMUser {
 
     @objc(addCreatedMeetingsObject:)
-    @NSManaged public func addToCreatedMeetings(_ value: StoredMeetingMeeting)
+    @NSManaged public func addToCreatedMeetings(_ value: StoredMeeting)
 
     @objc(removeCreatedMeetingsObject:)
-    @NSManaged public func removeFromCreatedMeetings(_ value: StoredMeetingMeeting)
+    @NSManaged public func removeFromCreatedMeetings(_ value: StoredMeeting)
 
     @objc(addCreatedMeetings:)
     @NSManaged public func addToCreatedMeetings(_ values: NSSet)

@@ -1,5 +1,5 @@
 //
-//  StoredMeetingMeeting+CoreDataClass.swift
+//  StoredMeeting+CoreDataClass.swift
 //  
 //
 //  Created by Christoph Aldrian on 01.07.26.
@@ -10,9 +10,9 @@
 public import Foundation
 public import CoreData
 
-public typealias StoredMeetingMeetingCoreDataClassSet = NSSet
+public typealias StoredMeetingCoreDataClassSet = NSSet
 
 
-public class StoredMeetingMeeting: NSManagedObject {
+public class StoredMeeting: NSManagedObject {
 
 }
