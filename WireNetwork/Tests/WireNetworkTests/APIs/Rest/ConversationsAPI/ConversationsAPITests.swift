@@ -798,6 +798,32 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(conversation.addPermission, .everyone) // Can be decoded in API >= v8
     }
 
+    func testGetConversations_givenV16AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "testGetConversations_givenV16AndSuccessResponse200")
+        ])
+
+        let api = ConversationsAPIV16(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
+
+        // when
+        let list = try await api.getConversations(for: ids)
+
+        // then
+        XCTAssertEqual(list.found.count, 1)
+        XCTAssertEqual(list.notFound.count, 1)
+        XCTAssertEqual(list.failed.count, 1)
+
+        let conversation = try XCTUnwrap(list.found.first)
+        XCTAssertEqual(conversation.groupType, .meeting)
+    }
+
     // MARK: - GetMLSOneToOneConversation
 
     func testGetMLSOneToOneConversation_Success_Response_V10_AndNext_Versions() async throws {
