@@ -18,6 +18,7 @@
 
 public import CoreData
 
+@objc(ZMStoredMeeting) @objcMembers
 public final class StoredMeeting: NSManagedObject, Identifiable {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<StoredMeeting> {
