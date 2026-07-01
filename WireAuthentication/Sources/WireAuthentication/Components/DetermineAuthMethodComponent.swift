@@ -41,18 +41,21 @@ final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponent
     private let existsAnotherAccount: Bool
     private let allowsMultipleBackends: Bool
     private let existingBackendHosts: Set<String>
+    private let isAccountAlreadyLoggedIn: (UUID) -> Bool
 
     init(
         parent: any Scope,
         networkStack: NetworkStack,
         existsAnotherAccount: Bool,
         allowsMultipleBackends: Bool,
-        existingBackendHosts: Set<String>
+        existingBackendHosts: Set<String>,
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool
     ) {
         self.networkStack = networkStack
         self.existsAnotherAccount = existsAnotherAccount
         self.allowsMultipleBackends = allowsMultipleBackends
         self.existingBackendHosts = existingBackendHosts
+        self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
         super.init(parent: parent)
     }
 
@@ -103,7 +106,9 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             bridge: dependency.bridge,
             environment: networkStack.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount,
+            allowsMultipleBackends: allowsMultipleBackends,
             existingBackendHosts: existingBackendHosts,
+            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn,
             overrideAllowEmailLoginOnly: dependency.overrideAllowEmailLoginOnly
         )
     }

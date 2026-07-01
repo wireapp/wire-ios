@@ -44,6 +44,7 @@ final class RootComponent: BootstrapComponent {
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    public let isAccountAlreadyLoggedIn: (UUID) -> Bool
     public let overrideAllowEmailLoginOnly: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -74,6 +75,7 @@ final class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool,
         overrideAllowEmailLoginOnly: Bool
     ) {
         self.authenticationType = authenticationType
@@ -92,6 +94,7 @@ final class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
         self.registrationAnalyticsTracker = registrationAnalyticsTracker
+        self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
         self.overrideAllowEmailLoginOnly = overrideAllowEmailLoginOnly
     }
 
@@ -110,7 +113,8 @@ final class RootComponent: BootstrapComponent {
             networkStack: networkStack,
             existsAnotherAccount: !accountsPublisher.value.isEmpty,
             allowsMultipleBackends: allowsMultipleBackends,
-            existingBackendHosts: existingBackendHosts
+            existingBackendHosts: existingBackendHosts,
+            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn
         )
     }
 
