@@ -1114,6 +1114,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     .group
                 case .channel:
                     .channel
+                case .meeting:
+                    .meeting
                 }
             } ?? .none
 
