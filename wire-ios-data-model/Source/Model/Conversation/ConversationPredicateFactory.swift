@@ -99,7 +99,7 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     @objc(predicateForGroupConversations)
-    public func predicateForGroupConversations() -> NSPredicate { // TODO: exclude meeting?
+    public func predicateForGroupConversations() -> NSPredicate {
         let isGroupConversationType =
             NSPredicate(format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let isNotChannelGroupType =
@@ -188,7 +188,7 @@ public final class ConversationPredicateFactory: NSObject {
     /// Mirror of `ZMConversation.predicateForFilteringResults()` filtering on the persisted
     /// `effectiveConversationType` instead of the computed `conversationType`. Keeps both the store-backed fetch and
     /// the in-memory `predicateMatchesConversation` path off the computed getter (which walks participants).
-    private func filteringResultsPredicate() -> NSPredicate { // TODO: exclude meeting?
+    private func filteringResultsPredicate() -> NSPredicate {
         let selfType = ZMConversationType(rawValue: 1)!
         return NSPredicate(
             format: "\(ZMConversationEffectiveConversationTypeKey) != \(ZMConversationType.invalid.rawValue) AND \(ZMConversationEffectiveConversationTypeKey) != \(selfType.rawValue) AND \(#keyPath(ZMConversation.isDeletedRemotely)) == NO"
@@ -268,7 +268,9 @@ public final class ConversationPredicateFactory: NSObject {
         // Fake 1:1 conversations are actually groups, so we check
         // whether this group has a one on one user to filter it out.
         let hasNoOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) == NULL")
-        return isGroup.and(hasNoOneOnOneUser)
+        // Meeting conversations are underlying group conversations of a meeting and must not appear in any list.
+        let isNotMeeting = NSPredicate(format: "\(ZMConversationGroupTypeKey) != \(ConversationGroupType.meeting.rawValue)")
+        return isGroup.and(hasNoOneOnOneUser).and(isNotMeeting)
     }
 
     private func predicateForOneToOneConversation() -> NSPredicate {
