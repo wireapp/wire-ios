@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: initial focus state title field
+// TODO: meeting start next full hour
+
 import SwiftUI
 import WireCallingDomain
 import WireDesign
