@@ -59,9 +59,12 @@ final class ConversationActionController {
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())
-        if let title, let accessibilityTitle {
+
+        let markTitleAsHeader = {
+            guard let title, let accessibilityTitle else { return }
             controller.view.markFirstAccessibilityLabelAsHeader(matching: title, accessibilityLabel: accessibilityTitle)
         }
+        markTitleAsHeader()
 
         if let superView = sourceView.superview, controller.popoverPresentationController != nil {
             currentContext = .sourceView(
@@ -70,14 +73,7 @@ final class ConversationActionController {
             )
         }
 
-        present(controller) {
-            if let title, let accessibilityTitle {
-                controller.view.markFirstAccessibilityLabelAsHeader(
-                    matching: title,
-                    accessibilityLabel: accessibilityTitle
-                )
-            }
-        }
+        present(controller, completion: markTitleAsHeader)
 
         alertController = controller
     }
