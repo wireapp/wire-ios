@@ -171,7 +171,7 @@
         <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="labels" inverseEntity="Conversation"/>
     </entity>
-    <entity name="Meeting" representedClassName="WireDataModel.StoredMeeting" syncable="YES">
+    <entity name="Meeting" representedClassName="ZMStoredMeeting" syncable="YES">
         <attribute name="domain" optional="YES" attributeType="String"/>
         <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="remoteIdentifier" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
