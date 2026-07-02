@@ -50,6 +50,10 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
         try await meetingsAPI.listMeetings().contains { $0.startTime > date }
     }
 
+    package func addMeeting(_ meeting: Meeting) async throws {
+        fatalError() // TODO: implement
+    }
+
     package func createMeeting(
         title: String,
         startTime: Date,
@@ -92,7 +96,7 @@ private extension MeetingResponse {
 
 private extension WireNetwork.MeetingRecurrence {
     func toDomainRecurrence() -> WireCallingDomain.MeetingRecurrence {
-        fatalError()
+        fatalError() // TODO: implement
     }
 }
 

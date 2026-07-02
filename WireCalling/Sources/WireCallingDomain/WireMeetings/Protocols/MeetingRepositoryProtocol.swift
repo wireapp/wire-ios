@@ -26,7 +26,9 @@ package protocol MeetingRepositoryProtocol: Sendable {
 
     func hasUpcomingMeetings(after date: Date) async throws -> Bool
 
-    func createMeeting(
+    func addMeeting(_ meeting: Meeting) async throws
+
+    func createMeeting( // TODO: delete
         title: String,
         startTime: Date,
         endTime: Date,
