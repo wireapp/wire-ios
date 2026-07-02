@@ -21,8 +21,9 @@ public import CoreData
 @objc(ZMStoredMeeting) @objcMembers
 public final class StoredMeeting: NSManagedObject, Identifiable {
 
-    @nonobjc public static func fetchRequest() -> NSFetchRequest<StoredMeeting> {
-        return NSFetchRequest<StoredMeeting>(entityName: "Meeting")
+    @nonobjc
+    public static func fetchRequest() -> NSFetchRequest<StoredMeeting> {
+        NSFetchRequest<StoredMeeting>(entityName: "Meeting")
     }
 
     @NSManaged public var domain: String?
