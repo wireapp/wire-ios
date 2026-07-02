@@ -18,8 +18,9 @@
 
 package import Foundation
 package import WireCallingDomain
-
 package import WireNetwork
+
+import WireFoundation
 
 package final class MeetingRepository: MeetingRepositoryProtocol {
 
@@ -81,7 +82,9 @@ private extension MeetingResponse {
             title: title,
             start: startTime,
             end: endTime,
-            repeatOption: recurrence?.frequency.toDomainRepeatOption() ?? .never
+            repeatOption: recurrence?.frequency.toDomainRepeatOption() ?? .never,
+            members: [], // TODO: fix
+            conversationID: QualifiedID(id: UUID(), domain: "") // TODO: fix
         )
     }
 }

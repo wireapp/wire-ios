@@ -91,7 +91,10 @@ struct MeetingRow: View {
             id: QualifiedID(id: UUID(), domain: ""),
             title: "Meeting1",
             start: Date(),
-            end: Date()
+            end: Date(),
+            repeatOption: .yearly,
+            members: [],
+            conversationID: QualifiedID(id: UUID(), domain: "")
         ),
         formatTimeRange: { _ in "Today" },
         onEdit: {},

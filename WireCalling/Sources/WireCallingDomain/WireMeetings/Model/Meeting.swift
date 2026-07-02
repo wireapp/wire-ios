@@ -29,8 +29,6 @@ public struct Meeting: Equatable, Sendable {
 
     public let id: QualifiedID
 
-    // TODO: add conversationID (QualifiedID)
-
     public let title: String
 
     public let start: Date
@@ -41,13 +39,16 @@ public struct Meeting: Equatable, Sendable {
 
     public let members: [Member] // TODO: remove and use the conversation participants
 
+    public let conversationID: QualifiedID
+
     public init(
         id: QualifiedID,
         title: String,
         start: Date,
         end: Date,
-        repeatOption: RepeatOption = .never,
-        members: [Member] = []
+        repeatOption: RepeatOption,
+        members: [Member],
+        conversationID: QualifiedID
     ) {
         self.id = id
         self.title = title
@@ -55,6 +56,7 @@ public struct Meeting: Equatable, Sendable {
         self.end = end
         self.repeatOption = repeatOption
         self.members = members
+        self.conversationID = conversationID
     }
 
 }

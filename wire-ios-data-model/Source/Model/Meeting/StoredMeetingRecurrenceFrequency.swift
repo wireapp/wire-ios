@@ -16,28 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireCallingDomain
-
-import WireFoundation
-
-package extension Meeting {
-
-    // TODO: needed somewhere?
-    /*
-    static func fixture(
-        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration)
-        )
-    }
-     */
-
+public enum StoredMeetingRecurrenceFrequency: Int16 {
+    case daily, weekly, monthly, yearly
 }

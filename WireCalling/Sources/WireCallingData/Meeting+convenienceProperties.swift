@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: delete file?
+
+/*
 public import WireCallingDomain
 public import WireData
 public import WireFoundation
@@ -45,3 +48,4 @@ extension WireData.Meeting {
 //    public let members: [Member]
 
 }
+ */
