@@ -863,28 +863,11 @@ public extension WireCallCenterV3 {
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
 
-            guard isGroupConversation(conversationId: conversationId) else { return }
-
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
             )
         }
-    }
-
-    private func isGroupConversation(conversationId: AVSIdentifier) -> Bool {
-        guard
-            let context = uiMOC,
-            let domain = conversationId.domain ?? localDomain,
-            let conversation = ZMConversation.fetch(
-                with: conversationId.identifier,
-                domain: domain,
-                in: context
-            )
-        else {
-            return false
-        }
-        return conversation.conversationType == .group
     }
 
     /// Rejects an incoming call in the conversation.
