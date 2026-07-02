@@ -174,7 +174,7 @@
     <entity name="Meeting" representedClassName="ZMStoredMeeting" syncable="YES">
         <attribute name="domain" optional="YES" attributeType="String"/>
         <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="recurrenceFrequencyRawValue" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="recurrenceFrequencyRawValue" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="recurrenceInterval" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="recurrenceUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="remoteIdentifier" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

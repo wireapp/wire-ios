@@ -16,28 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireCallingDomain
+public import Foundation
 
-import WireFoundation
+public struct MeetingRecurrence: Equatable, Sendable {
 
-package extension Meeting {
+    public let frequency: Frequency
+    public let interval: Int
+    public let until: Date
 
-    // TODO: needed somewhere?
-    /*
-    static func fixture(
-        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration)
-        )
+    public enum Frequency: CaseIterable, Sendable {
+        case daily
+        case weekly
+        case monthly
+        case yearly
     }
-     */
 
 }

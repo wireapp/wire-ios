@@ -82,10 +82,17 @@ private extension MeetingResponse {
             title: title,
             start: startTime,
             end: endTime,
+            recurrence: recurrence?.toDomainRecurrence(),
             repeatOption: recurrence?.frequency.toDomainRepeatOption() ?? .never,
             members: [], // TODO: fix
             conversationID: QualifiedID(id: UUID(), domain: "") // TODO: fix
         )
+    }
+}
+
+private extension WireNetwork.MeetingRecurrence {
+    func toDomainRecurrence() -> WireCallingDomain.MeetingRecurrence {
+        fatalError()
     }
 }
 
@@ -101,7 +108,7 @@ private extension MeetingFrequency {
 }
 
 private extension RepeatOption {
-    func toNetworkRecurrence() -> MeetingRecurrence? {
+    func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence? {
         switch self {
         case .never: nil
         case .daily: MeetingRecurrence(frequency: .daily, interval: nil, until: nil)

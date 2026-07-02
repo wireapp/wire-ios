@@ -290,7 +290,16 @@ private extension RepeatOption {
 
 private struct MockCreateMeetingUseCase: CreateMeetingUseCaseProtocol {
     func execute(title: String, startTime: Date, endTime: Date, repeatOption: RepeatOption) async throws -> Meeting {
-        Meeting(id: QualifiedID(id: UUID(), domain: ""), title: title, start: startTime, end: endTime)
+        Meeting(
+            id: QualifiedID(id: UUID(), domain: ""),
+            title: title,
+            start: startTime,
+            end: endTime,
+            recurrence: .none,
+            repeatOption: .never,
+            members: [],
+            conversationID: QualifiedID(id: UUID(), domain: "")
+        )
     }
 }
 

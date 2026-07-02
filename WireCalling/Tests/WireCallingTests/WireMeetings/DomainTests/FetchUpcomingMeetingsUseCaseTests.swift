@@ -19,6 +19,7 @@
 import Foundation
 import Testing
 import WireFoundationSupport
+import WireFoundation
 
 @testable import WireCallingDomain
 @testable import WireCallingDomainSupport
@@ -125,6 +126,28 @@ struct FetchUpcomingMeetingsUseCaseTests {
         // Then
         #expect(!result.hasMore)
         #expect(result.meetings.count == 10)
+    }
+
+}
+
+private extension Meeting {
+
+    static func fixture(
+        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
+        title: String,
+        start: Date,
+        duration: TimeInterval = 3600
+    ) -> Meeting {
+        Meeting(
+            id: id,
+            title: title,
+            start: start,
+            end: start.addingTimeInterval(duration),
+            recurrence: nil,
+            repeatOption: .never,
+            members: [],
+            conversationID: QualifiedID(id: UUID(), domain: "")
+        )
     }
 
 }

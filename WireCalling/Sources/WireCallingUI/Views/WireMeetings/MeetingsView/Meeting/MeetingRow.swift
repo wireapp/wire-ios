@@ -92,6 +92,7 @@ struct MeetingRow: View {
             title: "Meeting1",
             start: Date(),
             end: Date(),
+            recurrence: .none,
             repeatOption: .yearly,
             members: [],
             conversationID: QualifiedID(id: UUID(), domain: "")
