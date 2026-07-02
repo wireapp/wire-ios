@@ -59,7 +59,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     public func resolveAllOneOnOneConversations() async throws {
         let userIDs = try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
 
-        try await withBackgroundTask(name: "resolve all 1-1s" , executer: backgroundTaskExecuter) {
+        try await withBackgroundTask(name: "resolve all 1-1s", executer: backgroundTaskExecuter) {
             await withTaskGroup(of: Void.self) { group in
                 var iterator = userIDs.makeIterator()
 
@@ -81,7 +81,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
                 // Start the first batch of up to `concurrentLimit`.
                 let concurrentLimit = 4
-                for _ in 0..<min(concurrentLimit, userIDs.count) {
+                for _ in 0 ..< min(concurrentLimit, userIDs.count) {
                     addNextTaskIfAvailable()
                 }
 
