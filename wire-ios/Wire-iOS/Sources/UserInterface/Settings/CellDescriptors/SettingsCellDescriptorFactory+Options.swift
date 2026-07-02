@@ -268,14 +268,7 @@ extension SettingsCellDescriptorFactory {
             let value = property.value().value() as? Int
             let option = value.flatMap { SettingsColorScheme(rawValue: $0) } ?? .defaultPreference
             #if DEBUG
-                let appliedStyle = UIApplication.shared.connectedScenes
-                    .compactMap { ($0 as? UIWindowScene)?.windows.first(where: \.isKeyWindow) }
-                    .first?
-                    .traitCollection
-                    .userInterfaceStyle
-
-                let appliedTheme = appliedStyle == .dark ? "dark" : "light"
-                return "\(option.keyValueString)|\(appliedTheme)"
+                return "\(option.keyValueString)|\(ColorScheme.default.variant.keyValueString)"
             #else
                 return option.displayString
             #endif
@@ -428,3 +421,16 @@ extension SettingsCellDescriptorFactory {
         !SecurityFlags.forceEncryptionAtRest.isEnabled && settingsPropertyFactory.isAppLockAvailable
     }
 }
+
+#if DEBUG
+private extension ColorSchemeVariant {
+    var keyValueString: String {
+        switch self {
+        case .dark:
+            "dark"
+        case .light:
+            "light"
+        }
+    }
+}
+#endif
