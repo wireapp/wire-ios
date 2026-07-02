@@ -315,7 +315,7 @@ extension ConversationGroupType {
         case .channel:
             .channel
         case .meeting:
-            // Meeting was introduced in v15.
+            // Meeting was introduced in v16.
             nil
         }
     }
