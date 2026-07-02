@@ -78,6 +78,7 @@ NSString *const ZMConversationMigratedToMLS = @"migratedToMLS";
 NSString *const ZMConversationCellNameKey = @"cellName";
 NSString *const ZMConversationWireCellsMessageAttachmentDraftsKey = @"wireCellsMessageAttachmentDrafts";
 NSString *const ZMConversationCellsState = @"cellsState";
+NSString *const ZMConversationParentMeetingKey = @"parentMeeting";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -373,7 +374,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationMigratedToMLS,
             ZMConversationCellNameKey,
             ZMConversationWireCellsMessageAttachmentDraftsKey,
-            ZMConversationCellsState
+            ZMConversationCellsState,
+            ZMConversationParentMeetingKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
