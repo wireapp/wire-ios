@@ -33,12 +33,47 @@ class OngoingCallPage: PageModel {
         app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue]
     }
 
+    var microphoneButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.microphoneButton.rawValue]
+    }
+
+    var cameraButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.cameraButton.rawValue]
+    }
+
+    var speakerButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.speakerButton.rawValue]
+    }
+
     var minimizeCallButton: XCUIElement {
         app.buttons[Locators.OngoingCallPage.minimizeCall.rawValue]
     }
 
+    func participant(named name: String) -> XCUIElement {
+        app.buttons[Locators.OngoingCallPage.participantIdentifier(name)]
+    }
+
     private func tapEndCallButton() {
-        endCallButton.tap()
+        endCallButton.tapAndWait()
+    }
+
+    @discardableResult
+    func toggleMicrophone() -> OngoingCallPage {
+        microphoneButton.tapAndWait()
+        return self
+    }
+
+    @discardableResult
+    func toggleCamera() -> OngoingCallPage {
+        cameraButton.tapAndWait()
+        app.dismissAllowIfPresent()
+        return self
+    }
+
+    @discardableResult
+    func toggleSpeaker() -> OngoingCallPage {
+        speakerButton.tapAndWait()
+        return self
     }
 
     func endOngoingCall() throws -> ConversationsPage {
@@ -54,5 +89,59 @@ class OngoingCallPage: PageModel {
     func minimizeCallUI() throws -> ActiveConversationPage {
         minimizeCallButton.tap()
         return try ActiveConversationPage()
+    }
+
+    @discardableResult
+    func verifyMicrophoneToggle() -> OngoingCallPage {
+        toggleMicrophone()
+        XCTAssertEqual(
+            microphoneButton.label,
+            "Turn on microphone",
+            "Microphone should be OFF after tapping the microphone button"
+        )
+
+        toggleMicrophone()
+        XCTAssertEqual(
+            microphoneButton.label,
+            "Turn off microphone",
+            "Microphone should be ON after tapping the microphone button again"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyCameraToggle() -> OngoingCallPage {
+        toggleCamera()
+        XCTAssertEqual(
+            cameraButton.label,
+            "Turn off camera",
+            "Camera should be ON after tapping the camera button"
+        )
+
+        toggleCamera()
+        XCTAssertEqual(
+            cameraButton.label,
+            "Turn on camera",
+            "Camera should be OFF after tapping the camera button again"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifySpeakerToggle() -> OngoingCallPage {
+        toggleSpeaker()
+        XCTAssertEqual(
+            speakerButton.label,
+            "Turn off speaker",
+            "Speaker should be ON after tapping the speaker button"
+        )
+
+        toggleSpeaker()
+        XCTAssertEqual(
+            speakerButton.label,
+            "Turn on speaker",
+            "Speaker should be OFF after tapping the speaker button again"
+        )
+        return self
     }
 }

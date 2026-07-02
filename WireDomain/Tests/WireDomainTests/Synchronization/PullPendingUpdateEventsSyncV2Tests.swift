@@ -68,7 +68,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
 
         // Setup mocks
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
             coreCrypto: coreCrypto
         )
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in

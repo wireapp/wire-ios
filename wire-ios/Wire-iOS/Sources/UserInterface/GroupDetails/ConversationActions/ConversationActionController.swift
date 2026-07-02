@@ -107,9 +107,7 @@ final class ConversationActionController {
                 conversation.mutedMessageTypes = isSilenced ? .none : .all
             }
         case .leave:
-            request(LeaveResult.self) { result in
-                self.handleLeaveResult(result, for: conversation)
-            }
+            requestLeave(for: conversation)
         case .clearContent:
             requestClearContentResult(for: conversation) { result in
                 self.handleClearContentResult(result, for: conversation)

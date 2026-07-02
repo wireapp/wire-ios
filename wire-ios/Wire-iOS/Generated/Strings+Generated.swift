@@ -63,6 +63,22 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "addParticipantsConversationSettings.closeButton.description", fallback: "Close add participants option")
       }
     }
+    internal enum AdminSelection {
+      internal enum CandidateRow {
+        /// Double tap to select as new admin
+        internal static let hint = L10n.tr("Accessibility", "adminSelection.candidateRow.hint", fallback: "Double tap to select as new admin")
+      }
+      internal enum DeleteGroupButton {
+        /// Deletes the group permanently
+        internal static let hint = L10n.tr("Accessibility", "adminSelection.deleteGroupButton.hint", fallback: "Deletes the group permanently")
+      }
+      internal enum SearchBar {
+        internal enum ClearButton {
+          /// Clear search
+          internal static let description = L10n.tr("Accessibility", "adminSelection.searchBar.clearButton.description", fallback: "Clear search")
+        }
+      }
+    }
     internal enum AdvancedSettings {
       internal enum BackButton {
         /// Go back to Advanced
@@ -1248,6 +1264,16 @@ internal enum L10n {
           }
         }
       }
+    }
+    internal enum AdminSelection {
+      /// After you promoted a new admin, you will leave the group.
+      internal static let infoBanner = L10n.tr("Localizable", "admin_selection.info_banner", fallback: "After you promoted a new admin, you will leave the group.")
+      /// Promote
+      internal static let promote = L10n.tr("Localizable", "admin_selection.promote", fallback: "Promote")
+      /// Failed to promote user to admin.
+      internal static let promotionError = L10n.tr("Localizable", "admin_selection.promotion_error", fallback: "Failed to promote user to admin.")
+      /// New admin
+      internal static let title = L10n.tr("Localizable", "admin_selection.title", fallback: "New admin")
     }
     internal enum AppLockModule {
       internal enum GoToSettingsButton {
@@ -4279,6 +4305,22 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "landing.login.sso.button.title", fallback: "Log in with SSO")
           }
         }
+      }
+    }
+    internal enum LastAdminLeave {
+      /// Delete group
+      internal static let deleteGroup = L10n.tr("Localizable", "last_admin_leave.delete_group", fallback: "Delete group")
+      /// You're the only admin.
+      /// None of the other participants can be promoted to admin. You can only delete the group.
+      internal static let noEligibleCandidatesMessage = L10n.tr("Localizable", "last_admin_leave.no_eligible_candidates_message", fallback: "You're the only admin.\nNone of the other participants can be promoted to admin. You can only delete the group.")
+      /// Promote new admin
+      internal static let promoteNewAdmin = L10n.tr("Localizable", "last_admin_leave.promote_new_admin", fallback: "Promote new admin")
+      /// You're the only admin.
+      /// Promote another participant before leaving, or delete the group if it is no longer needed.
+      internal static let promoteOrDeleteMessage = L10n.tr("Localizable", "last_admin_leave.promote_or_delete_message", fallback: "You're the only admin.\nPromote another participant before leaving, or delete the group if it is no longer needed.")
+      /// Leave "%@"?
+      internal static func title(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "last_admin_leave.title", String(describing: p1), fallback: "Leave \"%@\"?")
       }
     }
     internal enum LegalHold {

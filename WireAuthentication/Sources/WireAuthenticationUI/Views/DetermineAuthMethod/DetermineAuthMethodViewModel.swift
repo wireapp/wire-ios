@@ -67,6 +67,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     /// The `restAPIURL` hosts of the accounts already logged in on this device.
     private let existingBackendHosts: Set<String>
+    private let isAccountAlreadyLoggedIn: (UUID) -> Bool
 
     private var cancellable: AnyCancellable?
 
@@ -82,6 +83,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         allowsMultipleBackends: Bool,
         existingBackendHosts: Set<String>,
         isLoading: Bool = false,
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false },
         overrideAllowEmailLoginOnly: Bool
     ) {
         self.factory = factory
@@ -93,6 +95,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.allowsMultipleBackends = allowsMultipleBackends
         self.existingBackendHosts = existingBackendHosts
         self.isLoading = isLoading
+        self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
         self.overrideAllowEmailLoginOnly = overrideAllowEmailLoginOnly
 
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
@@ -205,7 +208,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case let .loginViaSSO(code):
             do {
                 let authResult = try await loginViaSSO(code: code, environment: nil)
-                router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
+                if isAccountAlreadyLoggedIn(authResult.userID) {
+                    alert = .alreadyLoggedIn
+                } else {
+                    router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
+                }
             } catch let error as LoginViaSSOUseCaseError {
                 switch error {
                 case .invalidCode:
@@ -298,9 +305,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 code: nil,
                 environment: environment
             )
-            router.navigate(
-                to: DetermineAuthMethodDestination.noHistory(authResult)
-            )
+            if isAccountAlreadyLoggedIn(authResult.userID) {
+                alert = .alreadyLoggedIn
+            } else {
+                router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
+            }
         } catch let error as LoginViaSSOUseCaseError {
             switch error {
             case .invalidCode:
