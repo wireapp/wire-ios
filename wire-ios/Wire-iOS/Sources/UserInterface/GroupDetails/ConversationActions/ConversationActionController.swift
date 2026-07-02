@@ -62,7 +62,7 @@ final class ConversationActionController {
 
         let markTitleAsHeader = {
             guard let title, let accessibilityTitle else { return }
-            controller.view.markFirstAccessibilityLabelAsHeader(matching: title, accessibilityLabel: accessibilityTitle)
+            controller.view.markTitleAsHeader(matching: title, accessibilityLabel: accessibilityTitle)
         }
         markTitleAsHeader()
 
@@ -170,18 +170,15 @@ final class ConversationActionController {
 private extension UIView {
 
     @discardableResult
-    func markFirstAccessibilityLabelAsHeader(matching text: String, accessibilityLabel: String) -> Bool {
-        if let label = self as? UILabel, label.text == text {
-            label.isAccessibilityElement = true
-            label.accessibilityLabel = accessibilityLabel
-            label.accessibilityTraits.insert(.header)
+    func markTitleAsHeader(matching text: String, accessibilityLabel label: String) -> Bool {
+        if let titleLabel = self as? UILabel, titleLabel.text == text {
+            titleLabel.isAccessibilityElement = true
+            titleLabel.accessibilityLabel = label
+            titleLabel.accessibilityTraits.insert(.header)
             return true
         }
 
-        for subview in subviews where subview.markFirstAccessibilityLabelAsHeader(
-            matching: text,
-            accessibilityLabel: accessibilityLabel
-        ) {
+        for subview in subviews where subview.markTitleAsHeader(matching: text, accessibilityLabel: label) {
             return true
         }
 
