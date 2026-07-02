@@ -43,7 +43,8 @@ public struct WireMeetingsFactory {
                 currentDateProvider: .system
             ),
             memberRepository: memberRepository,
-            createMeetingUseCase: CreateMeetingUseCase(repository: repository)
+            createInstantMeetingUseCase: CreateInstantMeetingUseCase(repository: repository, dateProvider: .system),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCase(repository: repository)
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
