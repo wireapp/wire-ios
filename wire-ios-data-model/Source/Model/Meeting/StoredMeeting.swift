@@ -43,9 +43,9 @@ public final class StoredMeeting: NSManagedObject, Identifiable {
 
 }
 
-extension StoredMeeting {
+public extension StoredMeeting {
 
-    public var recurrenceFrequency: StoredMeetingRecurrenceFrequency? {
+    var recurrenceFrequency: StoredMeetingRecurrenceFrequency? {
         get { .init(rawValue: recurrenceFrequencyRawValue) }
         set { recurrenceFrequencyRawValue = newValue?.rawValue ?? -1 }
     }
