@@ -211,6 +211,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 @dynamic addressBookEntry;
 @dynamic managedBy;
 @dynamic participantRoles;
+@dynamic createdMeetings;
 
 - (UserClient *)selfClient
 {
