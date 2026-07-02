@@ -17,7 +17,7 @@
 //
 
 // TODO: initial focus state title field
-// TODO: meeting start next full hour
+// TODO: fix default meeting start date and end date adjustment
 
 import SwiftUI
 import WireCallingDomain

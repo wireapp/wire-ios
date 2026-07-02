@@ -33,7 +33,9 @@ package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol 
         self.dateProvider = dateProvider
     }
 
-    package func invoke(title: String) async throws -> Meeting {
+    package func invoke(
+        title: String
+    ) async throws -> Meeting {
         let now = dateProvider.now
         return try await repository.createMeeting(
             title: title,
