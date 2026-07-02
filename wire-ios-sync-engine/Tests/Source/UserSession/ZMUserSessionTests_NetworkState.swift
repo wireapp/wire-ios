@@ -43,7 +43,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         let coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
             coreCrypto: mockCoreCrypto
         )
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }

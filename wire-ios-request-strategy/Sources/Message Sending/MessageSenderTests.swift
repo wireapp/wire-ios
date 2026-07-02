@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireCoreCrypto
+import WireSystem
 import WireTransport
 import XCTest
 
@@ -1153,7 +1154,8 @@ final class MessageSenderTests: MessagingTestBase {
                     incrementalSyncObserver: incrementalSyncObserver,
                     initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
                     featureRepository: featureRepository,
-                    apiVersion: apiVersion
+                    apiVersion: apiVersion,
+                    backgroundTaskExecuter: PassthroughTaskExecuter()
                 )
             )
         }
