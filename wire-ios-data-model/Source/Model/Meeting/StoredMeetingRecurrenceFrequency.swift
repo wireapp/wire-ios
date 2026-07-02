@@ -17,5 +17,8 @@
 //
 
 public enum StoredMeetingRecurrenceFrequency: Int16 {
-    case daily, weekly, monthly, yearly
+    case daily
+    case weekly
+    case monthly
+    case yearly
 }
