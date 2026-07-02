@@ -28,20 +28,11 @@ package protocol MeetingRepositoryProtocol: Sendable {
 
     func addMeeting(_ meeting: Meeting) async throws
 
-    func createInstantMeeting(title: String) async throws -> Meeting
-
-    func createScheduledMeeting(
+    func createMeeting(
         title: String,
-        startTime: Date,
-        endTime: Date,
+        startTime: Date?,
+        endTime: Date?,
         recurrence: MeetingRecurrence?
-    ) async throws -> Meeting
-
-    func createMeeting( // TODO: delete
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        repeatOption: RepeatOption
     ) async throws -> Meeting
 
     func deleteMeeting(meetingID: QualifiedID) async throws

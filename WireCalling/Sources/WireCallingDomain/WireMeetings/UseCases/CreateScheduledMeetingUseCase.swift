@@ -32,7 +32,7 @@ package struct CreateScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProto
         endTime: Date,
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting {
-        try await repository.createScheduledMeeting(
+        try await repository.createMeeting(
             title: title,
             startTime: startTime,
             endTime: endTime,

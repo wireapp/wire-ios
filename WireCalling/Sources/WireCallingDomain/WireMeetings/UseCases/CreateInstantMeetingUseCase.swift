@@ -27,7 +27,7 @@ package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol 
     }
 
     package func execute(title: String) async throws -> Meeting {
-        try await repository.createInstantMeeting(title: title)
+        try await repository.createMeeting(title: title, startTime: nil, endTime: nil, recurrence: nil)
     }
 
 }
