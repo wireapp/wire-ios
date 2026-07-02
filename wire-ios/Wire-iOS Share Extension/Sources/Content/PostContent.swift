@@ -19,6 +19,7 @@
 import MobileCoreServices
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireShareEngine
 
 /// Content that is shared on a share extension post attempt
@@ -100,7 +101,25 @@ final class PostContent {
     }
 
     func cancel(completion: @escaping () -> Void) {
-        sendController?.cancel(completion: completion)
+        guard let sendController else { return }
+
+        WireLogger.shareExtension.info("will cancel posting content", attributes: .safePublic)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        sendController.cancel {
+            completion()
+            WireLogger.shareExtension.info("did cancel posting content", attributes: .safePublic)
+            semaphore.signal()
+        }
+
+        // Keep the share extension alive until posting content is cancelled.
+        ProcessInfo.processInfo.performExpiringActivity(withReason: "cancelling ongoing task") { isExpired in
+            if isExpired {
+                semaphore.signal()
+            } else {
+                _ = semaphore.wait(wallTimeout: .now() + .seconds(30))
+            }
+        }
     }
 
 }

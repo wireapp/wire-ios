@@ -19,6 +19,7 @@
 import Combine
 import WireDomain
 import WireDomainSupport
+import WireSystem
 import XCTest
 
 @testable import WireDataModelSupport
@@ -70,7 +71,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             featureConfigRepository: featureConfigRepository,
             syncStateSubject: syncStateSubject,
             pushChannelCoordinator: mainAppPushChannelCoordinator,
-            networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
+            networkStatePublisher: networkStateSubject.eraseToAnyPublisher(),
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
 
         incrementalSyncDidFinish = XCTestExpectation(description: "incrementalSyncDidFinish")
