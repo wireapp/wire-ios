@@ -23,19 +23,22 @@ import WireTesting
 
 @testable import Wire
 
-@Suite
+@Suite(.serialized)
 struct AppBackgroundTaskExecuterTests {
 
     let application: MockBackgroundTaskApplication
     let sut: AppBackgroundTaskExecuter
 
+    @MainActor
     init() {
         self.application = MockBackgroundTaskApplication()
         application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, _ in
             UIBackgroundTaskIdentifier(rawValue: 99)
         }
         application.endBackgroundTask_MockMethod = { _ in }
-        self.sut = AppBackgroundTaskExecuter(application: application)
+
+        self.sut = AppBackgroundTaskExecuter(application: application, isInBackground: false)
+        DeveloperFlag.useBackgroundTaskAPIInAppBackgroundTaskExecuter.enable(true, storage: .temporary())
     }
 
     @Test
@@ -120,6 +123,61 @@ struct AppBackgroundTaskExecuterTests {
         await #expect(throws: CancellationError.self) {
             _ = try await task.value
         }
+    }
+
+    @Test
+    @MainActor
+    func `throws CancellationError when the app is in the background`() async throws {
+        // given
+        let sut = AppBackgroundTaskExecuter(application: application, isInBackground: true)
+        let didRunOperation = OSAllocatedUnfairLock(initialState: false)
+
+        // then
+        await #expect(throws: CancellationError.self) {
+            // when
+            try await sut.execute(name: "task") {
+                didRunOperation.withLock { $0 = true }
+            }
+        }
+        #expect(didRunOperation.withLock { $0 } == false)
+        #expect(application.beginBackgroundTaskWithNameExpirationHandler_Invocations.isEmpty)
+    }
+
+    @Test
+    func `throws CancellationError when beginBackgroundTask returns invalid`() async throws {
+        // given
+        application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, _ in .invalid }
+        let didRunOperation = OSAllocatedUnfairLock(initialState: false)
+
+        // then
+        await #expect(throws: CancellationError.self) {
+            // when
+            try await sut.execute(name: "task") {
+                didRunOperation.withLock { $0 = true }
+            }
+        }
+        #expect(didRunOperation.withLock { $0 } == false)
+    }
+
+    @Test
+    @MainActor
+    func `throws CancellationError when the expiration handler fires before the task starts`() async throws {
+        // given
+        let didRunOperation = OSAllocatedUnfairLock(initialState: false)
+        application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, handler in
+            handler?()
+            return UIBackgroundTaskIdentifier(rawValue: 30)
+        }
+
+        // then
+        await #expect(throws: CancellationError.self) {
+            // when
+            try await sut.execute(name: "task") {
+                didRunOperation.withLock { $0 = true }
+            }
+        }
+        #expect(didRunOperation.withLock { $0 } == false)
+        #expect(application.endBackgroundTask_Invocations == [UIBackgroundTaskIdentifier(rawValue: 30)])
     }
 
     @Test
