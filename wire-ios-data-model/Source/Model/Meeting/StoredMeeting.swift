@@ -30,12 +30,14 @@ public final class StoredMeeting: NSManagedObject, Identifiable {
         NSFetchRequest<StoredMeeting>(entityName: "Meeting")
     }
 
-    @NSManaged public var domain: String?
-    @NSManaged public var end: Date?
     @NSManaged public var remoteIdentifier: UUID?
-    @NSManaged public var repeatOptionRawValue: Int16
-    @NSManaged public var start: Date?
+    @NSManaged public var domain: String?
     @NSManaged public var title: String?
+    @NSManaged public var start: Date?
+    @NSManaged public var end: Date?
+    @NSManaged public var recurrenceFrequencyRawValue: Int16
+    @NSManaged public var recurrenceInterval: Int64 // TODO: default 0 or -1 ?
+    @NSManaged public var recurrenceUntil: Date?
     @NSManaged public var conversation: ZMConversation?
     @NSManaged public var creator: ZMUser?
 
