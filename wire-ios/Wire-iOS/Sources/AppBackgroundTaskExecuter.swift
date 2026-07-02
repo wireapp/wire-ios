@@ -87,7 +87,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
     public func execute<T: Sendable>(
         name: String?,
-        operation: sending @escaping @isolated(any) () async throws -> T
+        operation: @escaping @isolated(any) () async throws -> T
     ) async throws -> T {
         if DeveloperFlag.useBackgroundTaskAPIInAppBackgroundTaskExecuter.isOn {
             try await executeUsingBackgroundTaskAPI(name: name, operation: operation)
@@ -100,7 +100,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
     private func executeUsingBackgroundTaskAPI<T: Sendable>(
         name: String?,
-        operation: sending @escaping @isolated(any) () async throws -> T
+        operation: @escaping @isolated(any) () async throws -> T
     ) async throws -> T {
         let name = name ?? "unnamed"
 
@@ -153,7 +153,7 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
     private func executeUsingBackgroundActivityFactory<T: Sendable>(
         name: String?,
-        operation: sending @escaping @isolated(any) () async throws -> T
+        operation: @escaping @isolated(any) () async throws -> T
     ) async throws -> T {
         let name = name ?? "unnamed"
 
