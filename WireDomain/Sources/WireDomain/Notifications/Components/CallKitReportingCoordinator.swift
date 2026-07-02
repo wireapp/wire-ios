@@ -29,26 +29,14 @@ import WireLogging
 ///
 /// Callback-triggered CallKit work is tracked as pending tasks so the NSE can wait
 /// for reporting to finish before continuing with regular notification generation.
-final class CallKitReportingCoordinator {
+actor CallKitReportingCoordinator {
 
     // MARK: - Properties
 
     private let accountID: UUID
     private var didReportIncomingCall = false
-    private let callerNamesLock = NSLock()
     private var callerNamesByConversationID: [String: String] = [:]
-
-    private let pendingTasksLock = NSLock()
     private var pendingTasks: [UUID: Task<Void, Never>] = [:]
-
-    private let callbackCountLock = NSLock()
-    private var _callbackCount = 0
-    var callbackCount: Int {
-        callbackCountLock.lock()
-        defer { callbackCountLock.unlock() }
-        return _callbackCount
-    }
-
     // MARK: - Init
 
     init(
@@ -58,22 +46,22 @@ final class CallKitReportingCoordinator {
         self.accountID = accountID
 
         avsService.onIncomingCall = { [self] conversationId, userId, shouldRing, isVideoCall in
-            markCallbackReceived()
-            handleIncomingCall(
-                conversationId: conversationId,
-                userId: userId,
-                shouldRing: shouldRing,
-                isVideoCall: isVideoCall
-            )
+            Task {
+                await self.handleIncomingCall(
+                    conversationId: conversationId,
+                    userId: userId,
+                    shouldRing: shouldRing,
+                    isVideoCall: isVideoCall
+                )
+            }
         }
 
-        avsService.onMissedCall = { [self] _, _, _ in
-            markCallbackReceived()
-        }
+        avsService.onMissedCall = { _, _, _ in }
 
         avsService.onCallClosed = { [self] reason, conversationId in
-            markCallbackReceived()
-            handleCallClosed(reason: reason, conversationId: conversationId)
+            Task {
+                await self.handleCallClosed(reason: reason, conversationId: conversationId)
+            }
         }
     }
 
@@ -84,25 +72,14 @@ final class CallKitReportingCoordinator {
         for conversationId: String
     ) {
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else { return }
-
-        callerNamesLock.lock()
-        defer { callerNamesLock.unlock() }
-
         callerNamesByConversationID[conversationID.storageKey] = callerName
     }
 
     /// Wait for all callback-started CallKit tasks to finish.
     func waitForCompletion() async {
-
         while true {
-            let snapshot: [Task<Void, Never>] = {
-                pendingTasksLock.lock()
-                defer { pendingTasksLock.unlock() }
-                return Array(pendingTasks.values)
-            }()
-
+            let snapshot = Array(pendingTasks.values)
             guard !snapshot.isEmpty else { break }
-
             for task in snapshot {
                 await task.value
             }
@@ -111,39 +88,21 @@ final class CallKitReportingCoordinator {
 
     // MARK: - Private Helpers
 
-    private func markCallbackReceived() {
-        callbackCountLock.lock()
-        _callbackCount += 1
-        callbackCountLock.unlock()
-    }
-
     private func registerPendingTask(_ task: Task<Void, Never>) {
         let id = UUID()
-
-        pendingTasksLock.lock()
         pendingTasks[id] = task
-        pendingTasksLock.unlock()
 
-        Task { [weak self] in
+        Task {
             await task.value
-            guard let self else { return }
-            pendingTasksLock.lock()
             pendingTasks.removeValue(forKey: id)
-            pendingTasksLock.unlock()
         }
     }
 
     private func callerName(for conversationID: AVSIdentifier) -> String? {
-        callerNamesLock.lock()
-        defer { callerNamesLock.unlock() }
-
-        return callerNamesByConversationID[conversationID.storageKey]
+        callerNamesByConversationID[conversationID.storageKey]
     }
 
     private func removeCallerName(for conversationID: AVSIdentifier) {
-        callerNamesLock.lock()
-        defer { callerNamesLock.unlock() }
-
         callerNamesByConversationID.removeValue(forKey: conversationID.storageKey)
     }
 
@@ -164,6 +123,7 @@ final class CallKitReportingCoordinator {
         }
 
         didReportIncomingCall = shouldRing
+        WireLogger.calling.debug("🚀 CallKitReportingCoordinator: lookup key: \(conversationID.storageKey), stored keys: \(callerNamesByConversationID.keys.joined(separator: ", "))", attributes: .newNSE, .safePublic)
         let callerName = callerName(for: conversationID)
 
         let callKitContent: [String: Any] = [

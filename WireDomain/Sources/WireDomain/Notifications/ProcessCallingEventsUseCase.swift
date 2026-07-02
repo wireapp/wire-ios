@@ -66,9 +66,11 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         for batch in eventBatches {
             for event in batch {
                 if let params = await avsParameters(from: event) {
-                    callKitReportingCoordinator.setCallerName(
+                    WireLogger.mls.debug("🚀 setCallerName: callerName \(params.callerName)")
+                    let callerNameKey = params.conversationType == 0 ? params.userId : params.conversationId
+                    await callKitReportingCoordinator.setCallerName(
                         params.callerName,
-                        for: params.conversationId
+                        for: callerNameKey//params.conversationId
                     )
                     callingService.process(
                         data: params.data,
@@ -201,7 +203,7 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         } else {
             1
         }
-
+        WireLogger.mls.debug("🚀 Result: callerName \(callerName)")
         return AVSCallParams(
             data: callingData,
             currentTime: UInt32(Date.now.timeIntervalSince1970),
@@ -228,23 +230,27 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         let conversationName = await conversationLocalStore.name(for: conversation)
         let callerName = await userLocalStore.name(for: caller)
 
+        WireLogger.mls.debug("🚀 teamName \(teamName)")
+        WireLogger.mls.debug("🚀 conversationName \(conversationName)")
+        WireLogger.mls.debug("🚀 callerName \(callerName)")
         let format: NotificationTitle.MessageTitleDescriptor? = if isGroupConversation, let conversationName {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {
                 .conversation(conversation: conversationName)
             }
-        } else if let callerName {
+        } else if let name = callerName ?? conversationName {
             if let teamName {
-                .senderInTeam(sender: callerName, team: teamName)
+                .senderInTeam(sender: name, team: teamName)
             } else {
-                .sender(sender: callerName)
+                .sender(sender: name)
             }
         } else {
             nil
         }
 
         guard let format else { return nil }
+        WireLogger.mls.debug("🚀 format \(format)")
 
         return NotificationTitle
             .conversationMessage(format)
