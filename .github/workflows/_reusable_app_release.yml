@@ -69,6 +69,8 @@ on:
         required: true  
       SUBMODULE_PAT:
         required: true
+      JIRA_TOKEN:
+        required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -83,7 +85,9 @@ jobs:
     uses: ./.github/workflows/changelog.yml
     with:
       is_cloud_build: ${{ inputs.is_cloud_build }}
-      
+    secrets:
+      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+
   build_and_release:
     if: always()
     timeout-minutes: 60
