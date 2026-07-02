@@ -35,10 +35,19 @@ public final class StoredMeeting: NSManagedObject, Identifiable {
     @NSManaged public var title: String?
     @NSManaged public var start: Date?
     @NSManaged public var end: Date?
-    @NSManaged public var recurrenceFrequencyRawValue: Int16
+    @NSManaged var recurrenceFrequencyRawValue: Int16
     @NSManaged public var recurrenceInterval: Int64
     @NSManaged public var recurrenceUntil: Date?
     @NSManaged public var conversation: ZMConversation?
     @NSManaged public var creator: ZMUser?
+
+}
+
+extension StoredMeeting {
+
+    public var recurrenceFrequency: StoredMeetingRecurrenceFrequency? {
+        get { .init(rawValue: recurrenceFrequencyRawValue) }
+        set { recurrenceFrequencyRawValue = newValue?.rawValue ?? -1 }
+    }
 
 }
