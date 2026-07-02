@@ -518,6 +518,7 @@
 				AccountViewSnapshotTests.swift,
 				AddParticipantsViewControllerSnapshotTests.swift,
 				AnalyticsTrackingManager/AnalyticsTrackingAvailabilityCheckerTests.swift,
+				AppBackgroundTaskExecuterTests.swift,
 				AppLockModuleViewTests.swift,
 				AppStateCalculatorTests.swift,
 				ArticleViewTests.swift,
