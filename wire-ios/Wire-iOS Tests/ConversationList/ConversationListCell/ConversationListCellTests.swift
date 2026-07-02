@@ -150,6 +150,20 @@ final class ConversationListCellTests: XCTestCase {
             .verify(matching: sut, file: file, testName: testName, line: line)
     }
 
+    // MARK: - Accessibility
+
+    func testThatItAnnouncesConversationOptionsInAccessibilityHint() {
+        // WHEN
+        sut.conversation = otherUserConversation
+
+        // THEN
+        XCTAssertEqual(sut.itemView.labelsStack.accessibilityLabel, otherUserConversation.displayName)
+        XCTAssertEqual(
+            sut.itemView.labelsStack.accessibilityHint,
+            "Double tap to open conversation. Triple tap to open conversation options"
+        )
+    }
+
     // MARK: - Snapshot Tests
 
     func testThatItRendersWithoutStatus() {
