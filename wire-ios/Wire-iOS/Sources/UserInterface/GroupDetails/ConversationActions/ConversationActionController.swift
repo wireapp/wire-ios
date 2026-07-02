@@ -60,12 +60,6 @@ final class ConversationActionController {
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())
 
-        let markTitleAsHeader = {
-            guard let title, let accessibilityTitle else { return }
-            controller.view.markTitleAsHeader(matching: title, accessibilityLabel: accessibilityTitle)
-        }
-        markTitleAsHeader()
-
         if let superView = sourceView.superview, controller.popoverPresentationController != nil {
             currentContext = .sourceView(
                 sourceView: superView,
@@ -73,7 +67,10 @@ final class ConversationActionController {
             )
         }
 
-        present(controller, completion: markTitleAsHeader)
+        present(controller) {
+            guard let title, let accessibilityTitle else { return }
+            controller.view.markTitleAsHeader(matching: title, accessibilityLabel: accessibilityTitle)
+        }
 
         alertController = controller
     }
