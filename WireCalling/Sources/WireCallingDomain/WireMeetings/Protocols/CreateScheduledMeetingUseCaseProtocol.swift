@@ -18,26 +18,15 @@
 
 package import Foundation
 
-package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
+// sourcery: AutoMockable
+/// Creates a new scheduled meeting via the backend API.
+package protocol CreateScheduledMeetingUseCaseProtocol: Sendable {
 
-    private let repository: any MeetingRepositoryProtocol
-
-    package init(repository: any MeetingRepositoryProtocol) {
-        self.repository = repository
-    }
-
-    package func execute(
+    func execute(
         title: String,
         startTime: Date,
         endTime: Date,
-        repeatOption: RepeatOption
-    ) async throws -> Meeting {
-        try await repository.createMeeting(
-            title: title,
-            startTime: startTime,
-            endTime: endTime,
-            repeatOption: repeatOption
-        )
-    }
+        recurrence: MeetingRecurrence?
+    ) async throws -> Meeting
 
 }

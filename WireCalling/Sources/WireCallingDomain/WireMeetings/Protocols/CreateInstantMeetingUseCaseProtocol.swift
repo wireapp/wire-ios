@@ -19,14 +19,9 @@
 package import Foundation
 
 // sourcery: AutoMockable
-/// Creates a new meeting via the backend API.
-package protocol CreateMeetingUseCaseProtocol: Sendable {
+/// Creates a new instant meeting via the backend API.
+package protocol CreateInstantMeetingUseCaseProtocol: Sendable {
 
-    func execute(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        repeatOption: RepeatOption
-    ) async throws -> Meeting
+    func execute(title: String) async throws -> Meeting
 
 }

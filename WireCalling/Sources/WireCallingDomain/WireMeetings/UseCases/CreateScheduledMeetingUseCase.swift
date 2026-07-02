@@ -18,32 +18,26 @@
 
 package import Foundation
 
-// sourcery: AutoMockable
-/// Repository for accessing and managing meetings.
-package protocol MeetingRepositoryProtocol: Sendable {
+package struct CreateScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocol {
 
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting]
+    private let repository: any MeetingRepositoryProtocol
 
-    func hasUpcomingMeetings(after date: Date) async throws -> Bool
+    package init(repository: any MeetingRepositoryProtocol) {
+        self.repository = repository
+    }
 
-    func addMeeting(_ meeting: Meeting) async throws
-
-    func createInstantMeeting(title: String) async throws -> Meeting
-
-    func createScheduledMeeting(
+    package func execute(
         title: String,
         startTime: Date,
         endTime: Date,
         recurrence: MeetingRecurrence?
-    ) async throws -> Meeting
-
-    func createMeeting( // TODO: delete
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        repeatOption: RepeatOption
-    ) async throws -> Meeting
-
-    func deleteMeeting(meetingID: QualifiedID) async throws
+    ) async throws -> Meeting {
+        try await repository.createScheduledMeeting(
+            title: title,
+            startTime: startTime,
+            endTime: endTime,
+            recurrence: recurrence
+        )
+    }
 
 }
