@@ -21,6 +21,7 @@
 
 import SwiftUI
 import WireCallingDomain
+import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
 
@@ -261,7 +262,8 @@ private extension RepeatOption {
         viewModel: CreateMeetingFormViewModel(
             mode: .instant,
             memberRepository: MockMemberSource(),
-            createMeetingUseCase: MockCreateMeetingUseCase()
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
         )
     )
 }
@@ -271,7 +273,8 @@ private extension RepeatOption {
         viewModel: CreateMeetingFormViewModel(
             mode: .scheduled,
             memberRepository: MockMemberSource(),
-            createMeetingUseCase: MockCreateMeetingUseCase()
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
         )
     )
 }
@@ -280,28 +283,14 @@ private extension RepeatOption {
     let viewModel = CreateMeetingFormViewModel(
         mode: .scheduled,
         memberRepository: MockMemberSource(),
-        createMeetingUseCase: MockCreateMeetingUseCase()
+        createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+        createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
     )
     viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
     return CreateMeetingFormView(viewModel: viewModel)
 }
 
 // MARK: - Mock
-
-private struct MockCreateMeetingUseCase: CreateMeetingUseCaseProtocol {
-    func execute(title: String, startTime: Date, endTime: Date, repeatOption: RepeatOption) async throws -> Meeting {
-        Meeting(
-            id: QualifiedID(id: UUID(), domain: ""),
-            title: title,
-            start: startTime,
-            end: endTime,
-            recurrence: .none,
-            repeatOption: .never,
-            members: [],
-            conversationID: QualifiedID(id: UUID(), domain: "")
-        )
-    }
-}
 
 private struct MockMemberSource: MemberRepositoryProtocol {
 

@@ -44,12 +44,14 @@ final class CreateMeetingFormViewModel {
 
     let mode: Mode
     let memberRepository: any MemberRepositoryProtocol
-    private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
+    private let createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol
+    private let createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol
     private let onSuccess: (Meeting) -> Void
 
     var meetingTitle: String = ""
     var startDate: Date = .init()
     var endDate: Date = .init().addingTimeInterval(1800)
+    var recurrence: MeetingRecurrence?
     var repeatOption: RepeatOption = .never
     var selectedMembers: [Member] = []
     var isLoading = false
@@ -70,12 +72,14 @@ final class CreateMeetingFormViewModel {
     init(
         mode: Mode,
         memberRepository: any MemberRepositoryProtocol,
-        createMeetingUseCase: any CreateMeetingUseCaseProtocol,
+        createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
+        createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
         self.memberRepository = memberRepository
-        self.createMeetingUseCase = createMeetingUseCase
+        self.createInstantMeetingUseCase = createInstantMeetingUseCase
+        self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
         self.onSuccess = onSuccess
     }
 
@@ -109,14 +113,8 @@ final class CreateMeetingFormViewModel {
         isLoading = true
         error = nil
         defer { isLoading = false }
-        let now = Date()
         do {
-            let meeting = try await createMeetingUseCase.execute(
-                title: meetingTitle,
-                startTime: now,
-                endTime: now.addingTimeInterval(1800),
-                repeatOption: .never
-            )
+            let meeting = try await createInstantMeetingUseCase.invoke(title: meetingTitle)
             onSuccess(meeting)
         } catch {
             self.error = error
@@ -128,11 +126,11 @@ final class CreateMeetingFormViewModel {
         error = nil
         defer { isLoading = false }
         do {
-            let meeting = try await createMeetingUseCase.execute(
+            let meeting = try await createScheduledMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startDate,
                 endTime: endDate,
-                repeatOption: repeatOption
+                recurrence: recurrence
             )
             onSuccess(meeting)
         } catch {

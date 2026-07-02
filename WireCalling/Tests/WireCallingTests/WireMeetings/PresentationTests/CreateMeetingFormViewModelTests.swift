@@ -32,7 +32,8 @@ struct CreateMeetingFormViewModelTests {
         self.viewModel = CreateMeetingFormViewModel(
             mode: .instant,
             memberRepository: MemberRepositoryProtocolMock(),
-            createMeetingUseCase: CreateMeetingUseCase(repository: MeetingRepositoryProtocolMock())
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
         )
     }
 

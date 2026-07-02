@@ -29,7 +29,8 @@ import WireCallingDomainSupport
 package final class AllMeetingsViewModel {
 
     let memberRepository: any MemberRepositoryProtocol
-    private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
+    private let createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol // TODO: do they have to be here?
+    private let createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol
 
     package let meetingsViewModel: MeetingsViewModel
 
@@ -40,7 +41,8 @@ package final class AllMeetingsViewModel {
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         memberRepository: any MemberRepositoryProtocol,
-        createMeetingUseCase: any CreateMeetingUseCaseProtocol
+        createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
+        createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
@@ -48,7 +50,8 @@ package final class AllMeetingsViewModel {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
         self.memberRepository = memberRepository
-        self.createMeetingUseCase = createMeetingUseCase
+        self.createInstantMeetingUseCase = createInstantMeetingUseCase
+        self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
     }
 
     // MARK: - Public Interface
@@ -65,7 +68,8 @@ package final class AllMeetingsViewModel {
         CreateMeetingFormViewModel(
             mode: mode,
             memberRepository: memberRepository,
-            createMeetingUseCase: createMeetingUseCase,
+            createInstantMeetingUseCase: createInstantMeetingUseCase,
+            createScheduledMeetingUseCase: createScheduledMeetingUseCase,
             onSuccess: { [weak self] _ in self?.presentedFormMode = nil }
         )
     }

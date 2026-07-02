@@ -26,7 +26,7 @@ package struct CreateScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProto
         self.repository = repository
     }
 
-    package func execute(
+    package func invoke(
         title: String,
         startTime: Date,
         endTime: Date,

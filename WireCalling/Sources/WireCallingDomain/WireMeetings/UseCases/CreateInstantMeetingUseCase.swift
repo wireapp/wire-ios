@@ -16,18 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+package import WireFoundation
+
+import Foundation
 
 package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol {
 
     private let repository: any MeetingRepositoryProtocol
+    private let dateProvider: any CurrentDateProviding
 
-    package init(repository: any MeetingRepositoryProtocol) {
+    package init(
+        repository: any MeetingRepositoryProtocol,
+        dateProvider: any CurrentDateProviding
+    ) {
         self.repository = repository
+        self.dateProvider = dateProvider
     }
 
-    package func execute(title: String) async throws -> Meeting {
-        try await repository.createMeeting(title: title, startTime: nil, endTime: nil, recurrence: nil)
+    package func invoke(title: String) async throws -> Meeting {
+        let now = dateProvider.now
+        return try await repository.createMeeting(
+            title: title,
+            startTime: now,
+            endTime: now.addingTimeInterval(60 * 60), // duration 1h
+            recurrence: nil
+        )
     }
 
 }

@@ -26,12 +26,10 @@ package protocol MeetingRepositoryProtocol: Sendable {
 
     func hasUpcomingMeetings(after date: Date) async throws -> Bool
 
-    func addMeeting(_ meeting: Meeting) async throws
-
     func createMeeting(
         title: String,
-        startTime: Date?,
-        endTime: Date?,
+        startTime: Date,
+        endTime: Date,
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting
 

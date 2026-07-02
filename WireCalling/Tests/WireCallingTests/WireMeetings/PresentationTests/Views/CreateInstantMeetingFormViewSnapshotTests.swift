@@ -80,7 +80,8 @@ final class CreateInstantMeetingFormViewSnapshotTests: XCTestCase {
         CreateMeetingFormViewModel(
             mode: .instant,
             memberRepository: MemberRepositoryProtocolMock(),
-            createMeetingUseCase: CreateMeetingUseCase(repository: MeetingRepositoryProtocolMock())
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
         )
     }
 

@@ -22,7 +22,7 @@ package import Foundation
 /// Creates a new scheduled meeting via the backend API.
 package protocol CreateScheduledMeetingUseCaseProtocol: Sendable {
 
-    func execute(
+    func invoke(
         title: String,
         startTime: Date,
         endTime: Date,

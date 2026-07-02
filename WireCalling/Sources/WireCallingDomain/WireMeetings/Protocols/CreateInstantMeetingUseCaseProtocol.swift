@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
 // sourcery: AutoMockable
 /// Creates a new instant meeting via the backend API.
 package protocol CreateInstantMeetingUseCaseProtocol: Sendable {
 
-    func execute(title: String) async throws -> Meeting
+    func invoke(title: String) async throws -> Meeting
 
 }

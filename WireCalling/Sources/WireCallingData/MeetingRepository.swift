@@ -24,6 +24,8 @@ import WireFoundation
 
 package final class MeetingRepository: MeetingRepositoryProtocol {
 
+    package typealias MeetingRecurrence = WireCallingDomain.MeetingRecurrence
+
     private let meetingsAPI: any MeetingsAPI
 
     package init(meetingsAPI: any MeetingsAPI) {
@@ -50,22 +52,18 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
         try await meetingsAPI.listMeetings().contains { $0.startTime > date }
     }
 
-    package func addMeeting(_ meeting: Meeting) async throws {
-        fatalError() // TODO: implement
-    }
-
     package func createMeeting(
         title: String,
         startTime: Date,
         endTime: Date,
-        repeatOption: RepeatOption
+        recurrence: MeetingRecurrence?
     ) async throws -> Meeting {
         let response = try await meetingsAPI.createMeeting(
             parameters: CreateMeetingParameters(
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
-                recurrence: repeatOption.toNetworkRecurrence()
+                recurrence: recurrence?.toNetworkRecurrence()
             )
         )
         return response.toDomainMeeting()
@@ -96,6 +94,12 @@ private extension MeetingResponse {
 
 private extension WireNetwork.MeetingRecurrence {
     func toDomainRecurrence() -> WireCallingDomain.MeetingRecurrence {
+        fatalError() // TODO: implement
+    }
+}
+
+private extension WireCallingDomain.MeetingRecurrence {
+    func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence {
         fatalError() // TODO: implement
     }
 }
