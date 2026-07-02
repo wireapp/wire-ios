@@ -64,6 +64,7 @@ static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
 static NSString *const TypeKey = @"typeValue";
 static NSString *const AppInfoKey = @"appInfo";
+static NSString *const CreatedMeetingsKey = @"createdMeetings";
 static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
@@ -211,6 +212,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 @dynamic addressBookEntry;
 @dynamic managedBy;
 @dynamic participantRoles;
+@dynamic createdMeetings;
 
 - (UserClient *)selfClient
 {
@@ -363,7 +365,8 @@ static NSString *const PrimaryKey = @"primaryKey";
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
                                            DomainKey,
                                            MessagesFailedToSendRecipientKey,
-                                           IsPendingMetadataRefreshKey
+                                           IsPendingMetadataRefreshKey,
+                                           CreatedMeetingsKey
                                            ]];
         keys = [ignoredKeys copy];
     });

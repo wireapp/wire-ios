@@ -296,6 +296,9 @@ public struct SharingSessionLoader {
             linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector,
             managedObjectContext: coreDataStack.syncContext
         )
+
+        let backgroundTaskExecuter = PassthroughTaskExecuter()
+
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
@@ -303,7 +306,8 @@ public struct SharingSessionLoader {
             transportSession: transportSession,
             initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
             apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue)),
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
         let requestGeneratorStore = RequestGeneratorStore(
             strategies: strategyFactory.strategies,
@@ -336,7 +340,7 @@ public struct SharingSessionLoader {
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: backendMetadata.domain,
-            backgroundTaskManager: nil
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -378,7 +382,8 @@ public struct SharingSessionLoader {
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
-            faultyMLSRemovalKeysByDomain: [:] // not relevant
+            faultyMLSRemovalKeysByDomain: [:], // not relevant
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
