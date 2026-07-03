@@ -54,8 +54,7 @@ final class ConversationActionController {
             (conversation as? ZMConversation)?.listActions ?? []
         }
 
-        let title = context == .list ? conversation.displayName : nil
-        let accessibilityTitle = context == .list ? listMenuAccessibilityTitle : nil
+        let title = context == .list ? listMenuTitle : nil
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())
@@ -67,16 +66,13 @@ final class ConversationActionController {
             )
         }
 
-        present(controller) {
-            guard let title, let accessibilityTitle else { return }
-            controller.view.markTitleAsHeader(matching: title, accessibilityLabel: accessibilityTitle)
-        }
+        present(controller)
 
         alertController = controller
     }
 
-    private var listMenuAccessibilityTitle: String {
-        L10n.Accessibility.ConversationsList.ContextMenuHeader.description(conversation.displayNameWithFallback)
+    private var listMenuTitle: String {
+        L10n.Localizable.ConversationList.ContextMenu.title(conversation.displayNameWithFallback)
     }
 
     func enqueue(_ block: @escaping () -> Void) {
@@ -153,32 +149,13 @@ final class ConversationActionController {
         target.presentLocalizedErrorAlert(error)
     }
 
-    func present(_ controller: UIViewController, completion: (() -> Void)? = nil) {
+    func present(_ controller: UIViewController) {
 
         _ = currentContext.map {
             controller.configurePopoverPresentationController(using: $0)
         }
 
-        target.present(controller, animated: true, completion: completion)
+        target.present(controller, animated: true)
     }
 
-}
-
-private extension UIView {
-
-    @discardableResult
-    func markTitleAsHeader(matching text: String, accessibilityLabel label: String) -> Bool {
-        if let titleLabel = self as? UILabel, titleLabel.text == text {
-            titleLabel.isAccessibilityElement = true
-            titleLabel.accessibilityLabel = label
-            titleLabel.accessibilityTraits.insert(.header)
-            return true
-        }
-
-        for subview in subviews where subview.markTitleAsHeader(matching: text, accessibilityLabel: label) {
-            return true
-        }
-
-        return false
-    }
 }

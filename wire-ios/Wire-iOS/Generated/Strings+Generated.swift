@@ -3091,6 +3091,12 @@ internal enum L10n {
       }
     }
     internal enum ConversationList {
+      internal enum ContextMenu {
+        /// %@ options
+        internal static func title(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "conversation_list.context_menu.title", String(describing: p1), fallback: "%@ options")
+        }
+      }
       internal enum Empty {
         internal enum AllArchived {
           /// Everything archived
