@@ -269,6 +269,7 @@ public final class ConversationPredicateFactory: NSObject {
         // whether this group has a one on one user to filter it out.
         let hasNoOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) == NULL")
         // Meeting conversations are underlying group conversations of a meeting and must not appear in any list.
+        // https://github.com/wireapp/wire-ios/pull/4943/#discussion_r3513591287
         let isNotMeeting =
             NSPredicate(format: "\(ZMConversationGroupTypeKey) != \(ConversationGroupType.meeting.rawValue)")
         return isGroup.and(hasNoOneOnOneUser).and(isNotMeeting)
