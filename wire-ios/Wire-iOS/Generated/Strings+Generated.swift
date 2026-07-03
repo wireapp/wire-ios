@@ -678,12 +678,6 @@ internal enum L10n {
         /// Double tap to open profile
         internal static let hint = L10n.tr("Accessibility", "conversationsList.connectionRequest.hint", fallback: "Double tap to open profile")
       }
-      internal enum ContextMenuHeader {
-        /// Conversation options for %@
-        internal static func description(_ p1: Any) -> String {
-          return L10n.tr("Accessibility", "conversationsList.contextMenuHeader.description", String(describing: p1), fallback: "Conversation options for %@")
-        }
-      }
       internal enum FilterButton {
         /// Filter conversations
         internal static let description = L10n.tr("Accessibility", "conversationsList.filterButton.description", fallback: "Filter conversations")

@@ -54,6 +54,7 @@ final class ConversationActionController {
             (conversation as? ZMConversation)?.listActions ?? []
         }
 
+        let listMenuTitle = L10n.Localizable.ConversationList.ContextMenu.title(conversation.displayNameWithFallback)
         let title = context == .list ? listMenuTitle : nil
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         actions.map(alertAction).forEach(controller.addAction)
@@ -69,10 +70,6 @@ final class ConversationActionController {
         present(controller)
 
         alertController = controller
-    }
-
-    private var listMenuTitle: String {
-        L10n.Localizable.ConversationList.ContextMenu.title(conversation.displayNameWithFallback)
     }
 
     func enqueue(_ block: @escaping () -> Void) {

@@ -260,10 +260,7 @@ final class ConversationListContentController: UICollectionViewController {
             return nil
         }
 
-        let accessibilityHeader = L10n.Accessibility.ConversationsList.ContextMenuHeader
-            .description(conversation.displayNameWithFallback)
-        (collectionView.cellForItem(at: indexPath) as? ConversationListCell)?
-            .updateContextMenuAccessibilityHeader(with: accessibilityHeader)
+        let title = L10n.Localizable.ConversationList.ContextMenu.title(conversation.displayNameWithFallback)
 
         let actionProvider: UIContextMenuActionProvider = { _ in
             let actions = conversation.listActions.map { action in
@@ -282,7 +279,7 @@ final class ConversationListContentController: UICollectionViewController {
                 return uiAction
             }
 
-            return UIMenu(title: conversation.displayNameWithFallback, children: actions)
+            return UIMenu(title: title, children: actions)
         }
 
         return UIContextMenuConfiguration(
@@ -290,19 +287,6 @@ final class ConversationListContentController: UICollectionViewController {
             previewProvider: .none,
             actionProvider: actionProvider
         )
-    }
-
-    override func collectionView(
-        _ collectionView: UICollectionView,
-        willEndContextMenuInteraction configuration: UIContextMenuConfiguration,
-        animator: UIContextMenuInteractionAnimating?
-    ) {
-        guard let indexPath = configuration.identifier as? NSIndexPath else {
-            return
-        }
-
-        let contextMenuIndexPath = IndexPath(item: indexPath.item, section: indexPath.section)
-        (collectionView.cellForItem(at: contextMenuIndexPath) as? ConversationListCell)?.updateAppearance()
     }
 
     // MARK: - UICollectionViewDataSource

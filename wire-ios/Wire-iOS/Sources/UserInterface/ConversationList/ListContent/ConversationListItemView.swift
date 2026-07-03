@@ -352,11 +352,4 @@ final class ConversationListItemView: UIView {
         }
         labelsStack.accessibilityValue = statusComponents.joined(separator: ", ")
     }
-
-    func updateContextMenuAccessibilityHeader(with label: String) {
-        labelsStack.accessibilityLabel = label
-        labelsStack.accessibilityValue = nil
-        labelsStack.accessibilityHint = nil
-        labelsStack.accessibilityTraits.insert(.header)
-    }
 }
