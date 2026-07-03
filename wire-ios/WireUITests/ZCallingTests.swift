@@ -88,7 +88,7 @@ final class ZCallingTests: WireUITestCase {
 
     /// Call participant switches from audio call to video call and back
     @MainActor
-    func testSwitchBetweenAudioAndVideoCall_TC_8888() async throws {
+    func testSwitchBetweenAudioAndVideoCall_TC_9497() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
 
@@ -118,7 +118,7 @@ final class ZCallingTests: WireUITestCase {
             try await callingManager.waitForCurrentCallStatus(
                 instanceId: instanceId,
                 expectedStatuses: ["active"],
-                timeout: 90
+                timeout: 10
             )
         }
 
