@@ -16,19 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
+import Foundation
 import WireCallingDomain
-import WireNetwork
+import WireDomain
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
-    ) -> UIViewController
+struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
+
+    var conversationRepository: any ConversationRepositoryProtocol
+
+    func pullConversation(id: UUID, domain: String) async throws {
+        try await conversationRepository.pullConversation(id: id, domain: domain)
+    }
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

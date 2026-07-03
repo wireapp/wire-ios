@@ -22,14 +22,17 @@ import Foundation
 
 package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol {
 
-    private let repository: any MeetingRepositoryProtocol
+    private let meetingRepository: any MeetingRepositoryProtocol
+    private let conversationRepository: any MeetingConversationRepositoryProtocol
     private let dateProvider: any CurrentDateProviding
 
     package init(
-        repository: any MeetingRepositoryProtocol,
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol,
         dateProvider: any CurrentDateProviding
     ) {
-        self.repository = repository
+        self.meetingRepository = meetingRepository
+        self.conversationRepository = conversationRepository
         self.dateProvider = dateProvider
     }
 
@@ -37,12 +40,20 @@ package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol 
         title: String
     ) async throws -> Meeting {
         let now = dateProvider.now
-        return try await repository.createMeeting(
+        let meeting = try await meetingRepository.createMeeting(
             title: title,
             startTime: now,
             endTime: now.addingTimeInterval(60 * 60), // duration 1h
             recurrence: nil
         )
+        try await conversationRepository.pullConversation(
+            id: meeting.conversationID.id,
+            domain: meeting.conversationID.domain
+        )
+
+        // TODO: add participants
+
+        return meeting
     }
 
 }

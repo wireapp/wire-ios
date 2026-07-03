@@ -33,20 +33,27 @@ public struct WireMeetingsFactory {
     @MainActor
     public func makeMeetingsView(
         meetingsAPI: any MeetingsAPI,
-        memberRepository: any MemberRepositoryProtocol
+        memberRepository: any MemberRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController {
-        let repository = MeetingRepository(meetingsAPI: meetingsAPI)
+        let meetingRepository = MeetingRepository(meetingsAPI: meetingsAPI)
+        let createInstantMeetingUseCase = CreateInstantMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository,
+            dateProvider: .system
+        )
+        let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
+            repository: meetingRepository,
+            currentDateProvider: .system
+        )
+        let createScheduledMeetingUseCase = CreateScheduledMeetingUseCase(repository: meetingRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
-            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
-                repository: repository,
-                currentDateProvider: .system
-            ),
+            upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             memberRepository: memberRepository,
-            createInstantMeetingUseCase: CreateInstantMeetingUseCase(repository: repository, dateProvider: .system),
-            createScheduledMeetingUseCase: CreateScheduledMeetingUseCase(repository: repository)
+            createInstantMeetingUseCase: createInstantMeetingUseCase,
+            createScheduledMeetingUseCase: createScheduledMeetingUseCase
         )
-
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
 

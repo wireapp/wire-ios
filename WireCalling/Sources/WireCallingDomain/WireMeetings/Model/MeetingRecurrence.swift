@@ -31,4 +31,10 @@ public struct MeetingRecurrence: Equatable, Sendable {
         case yearly
     }
 
+    public init(frequency: Frequency, interval: Int, until: Date) {
+        self.frequency = frequency
+        self.interval = interval
+        self.until = until
+    }
+
 }
