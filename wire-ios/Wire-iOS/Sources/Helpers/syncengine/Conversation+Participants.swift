@@ -48,7 +48,7 @@ extension ZMConversation {
         }
     }
 
-    func addOrShowError(participants: [UserType]) {
+    func addOrShowError(participants: [UserType]) { // TODO: see here for adding members
         Flow.addParticipants.start()
         guard
             let session = ZMUserSession.shared(),

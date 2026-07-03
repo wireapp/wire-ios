@@ -114,7 +114,7 @@ final class CreateMeetingFormViewModel {
         error = nil
         defer { isLoading = false }
         do {
-            let meeting = try await createInstantMeetingUseCase.invoke(title: meetingTitle)
+            let meeting = try await createInstantMeetingUseCase.invoke(title: meetingTitle, participants: selectedMembers)
             onSuccess(meeting)
         } catch {
             self.error = error

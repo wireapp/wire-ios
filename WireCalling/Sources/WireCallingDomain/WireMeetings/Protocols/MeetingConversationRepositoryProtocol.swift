@@ -24,4 +24,7 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     /// Fetch and setup conversation if needed.
     func pullConversation(id: UUID, domain: String) async throws
 
+    /// Add participants to the underlying MLS conversation.
+    func addParticipants(_ participants: [Member], to conversationID: QualifiedID) async throws
+
 }

@@ -18,7 +18,9 @@
 
 import Foundation
 import WireCallingDomain
+import WireDataModel
 import WireDomain
+import WireSyncEngine
 
 struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
 
@@ -26,5 +28,35 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
 
     func pullConversation(id: UUID, domain: String) async throws {
         try await conversationRepository.pullConversation(id: id, domain: domain)
+    }
+
+    func addParticipants(_ participants: [WireCallingDomain.Member], to conversationID: WireCallingDomain.QualifiedID) async throws {
+        guard !participants.isEmpty,
+              let session = ZMUserSession.shared() else { return }
+
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else { return }
+
+        let syncContext = session.syncContext
+        let users = await syncContext.perform {
+            participants.compactMap { member in
+                ZMUser.fetch(with: member.qualifiedID.id, domain: member.qualifiedID.domain, in: syncContext)
+            }
+        }
+
+        guard !users.isEmpty else { return }
+
+        let objectID = conversation.objectID
+        let syncConversation = try await syncContext.perform {
+            try ZMConversation.existingObject(for: objectID, in: syncContext)
+        }
+
+        let service = ConversationParticipantsService(
+            context: syncContext,
+            localDomain: session.resolvedBackendMetadata.domain
+        )
+        try await service.addParticipants(users, to: syncConversation)
     }
 }

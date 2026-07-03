@@ -37,7 +37,8 @@ package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol 
     }
 
     package func invoke(
-        title: String
+        title: String,
+        participants: [Member]
     ) async throws -> Meeting {
         let now = dateProvider.now
         let meeting = try await meetingRepository.createMeeting(
@@ -50,9 +51,7 @@ package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol 
             id: meeting.conversationID.id,
             domain: meeting.conversationID.domain
         )
-
-        // TODO: add participants
-
+        try await conversationRepository.addParticipants(participants, to: meeting.conversationID)
         return meeting
     }
 
