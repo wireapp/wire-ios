@@ -814,7 +814,8 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore,
         conversationLocalStore: conversationLocalStore,
         pullMLSOneOnOneSync: pullMLSOneOnOneSync,
-        mlsProvider: mlsProvider
+        mlsProvider: mlsProvider,
+        backgroundTaskExecuter: backgroundTaskExecuter
     )
 
     private lazy var mlsProvider = MLSProvider(
