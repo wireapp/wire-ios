@@ -423,14 +423,14 @@ extension SettingsCellDescriptorFactory {
 }
 
 #if DEBUG
-private extension ColorSchemeVariant {
-    var keyValueString: String {
-        switch self {
-        case .dark:
-            "dark"
-        case .light:
-            "light"
+    private extension ColorSchemeVariant {
+        var keyValueString: String {
+            switch self {
+            case .dark:
+                "dark"
+            case .light:
+                "light"
+            }
         }
     }
-}
 #endif
