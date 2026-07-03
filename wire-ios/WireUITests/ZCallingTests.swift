@@ -88,7 +88,7 @@ final class ZCallingTests: WireUITestCase {
 
     /// Call participant switches from audio call to video call and back
     @MainActor
-    func testSwitchBetweenAudioAndVideoCall_TC_9497() async throws {
+    func testSwitchBetweenAudioAndVideoCall_TC_8888_9497() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
 
