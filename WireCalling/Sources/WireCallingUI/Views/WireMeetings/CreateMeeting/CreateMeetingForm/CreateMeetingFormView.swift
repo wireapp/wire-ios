@@ -70,9 +70,9 @@ struct CreateMeetingFormView: View {
                 set: { if !$0 { viewModel.error = nil } }
             )) {
                 Alert(
-                    title: Text("Error"),
+                    title: Text(Strings.Error.Alert.title),
                     message: Text(viewModel.error?.localizedDescription ?? ""),
-                    dismissButton: .default(Text("OK"))
+                    dismissButton: .default(Text(Strings.Error.Alert.ok))
                 )
             }
         }
