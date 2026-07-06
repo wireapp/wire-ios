@@ -76,7 +76,8 @@ final class CreateInstantMeetingFormViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
-    @MainActor private func makeViewModel() -> CreateMeetingFormViewModel {
+    @MainActor
+    private func makeViewModel() -> CreateMeetingFormViewModel {
         CreateMeetingFormViewModel(
             mode: .instant,
             memberRepository: MemberRepositoryProtocolMock(),

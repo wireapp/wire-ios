@@ -30,7 +30,10 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
         try await conversationRepository.pullConversation(id: id, domain: domain)
     }
 
-    func addParticipants(_ participants: [WireCallingDomain.Member], to conversationID: WireCallingDomain.QualifiedID) async throws {
+    func addParticipants(
+        _ participants: [WireCallingDomain.Member],
+        to conversationID: WireCallingDomain.QualifiedID
+    ) async throws {
         guard !participants.isEmpty else { return }
 
         guard let conversation = await conversationRepository.fetchConversation(

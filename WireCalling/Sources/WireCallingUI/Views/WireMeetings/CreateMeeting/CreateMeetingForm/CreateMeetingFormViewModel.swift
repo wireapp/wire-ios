@@ -113,7 +113,10 @@ final class CreateMeetingFormViewModel {
         error = nil
         defer { isLoading = false }
         do {
-            let meeting = try await createInstantMeetingUseCase.invoke(title: meetingTitle, participants: selectedMembers)
+            let meeting = try await createInstantMeetingUseCase.invoke(
+                title: meetingTitle,
+                participants: selectedMembers
+            )
             onSuccess(meeting)
         } catch {
             self.error = error
@@ -140,6 +143,7 @@ final class CreateMeetingFormViewModel {
 }
 
 private extension MeetingRepeatOption {
+
     func toRecurrence() -> MeetingRecurrence? {
         switch self {
         case .never: nil
@@ -150,4 +154,5 @@ private extension MeetingRepeatOption {
         case .yearly: MeetingRecurrence(frequency: .yearly, interval: 1)
         }
     }
+
 }

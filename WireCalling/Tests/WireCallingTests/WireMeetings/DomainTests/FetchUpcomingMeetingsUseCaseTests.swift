@@ -18,8 +18,8 @@
 
 import Foundation
 import Testing
-import WireFoundationSupport
 import WireFoundation
+import WireFoundationSupport
 
 @testable import WireCallingDomain
 @testable import WireCallingDomainSupport
