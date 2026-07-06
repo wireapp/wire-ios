@@ -35,4 +35,4 @@ runs:
       shell: bash
       env:
         XCRESULT_SEARCH_PATH: ${{ inputs.xcresult_search_path }}
-      run: bash "${{ github.action_path }}/scripts/extract-summary.sh"
+      run: bash "${{ github.action_path }}/extract-summary.sh"
