@@ -50,7 +50,15 @@ final class CreateMeetingFormViewModel {
     private let onSuccess: (Meeting) -> Void
 
     var meetingTitle: String = ""
-    var startDate: Date
+
+    /// Changing the start date shifts the end date by the same amount,
+    /// so the meeting duration is preserved.
+    var startDate: Date {
+        didSet {
+            endDate = endDate.addingTimeInterval(startDate.timeIntervalSince(oldValue))
+        }
+    }
+
     var endDate: Date
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []

@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: fix default meeting start date and end date adjustment
-
 import SwiftUI
 import WireCallingDomain
 import WireCallingDomainSupport
