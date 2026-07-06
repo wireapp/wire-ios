@@ -37,7 +37,9 @@ public final class NotificationServiceExtension {
 
     private let logger = WireLogger.notifications
     private var onGoingTask: Task<Void, Never>?
-    private var contentHandler: ((UNNotificationContent) -> Void)?
+    private let request: UNNotificationRequest
+    private let contentHandler: ((UNNotificationContent) -> Void)
+    private let didComplete: () -> Void
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
@@ -55,8 +57,14 @@ public final class NotificationServiceExtension {
         sharedUserDefaults: UserDefaults,
         cookieEncryptionKey: Data,
         minTLSVersion: String?,
-        preferredAPIVersion: UInt?
+        preferredAPIVersion: UInt?,
+        request: UNNotificationRequest,
+        contentHandler: @escaping (UNNotificationContent) -> Void,
+        didComplete: @escaping () -> Void
     ) {
+        self.request = request
+        self.contentHandler = contentHandler
+        self.didComplete = didComplete
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
         self.appContainerURL = appContainerURL
@@ -65,28 +73,21 @@ public final class NotificationServiceExtension {
         self.minTLSVersion = minTLSVersion
         self.preferredAPIVersion = preferredAPIVersion
         self.mainAppRequiredGate = MainAppRequiredGate(userDefaults: sharedUserDefaults)
+
+        logger.addTag(.notificationRequestID, value: request.identifier)
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE, .safePublic)
     }
 
     // MARK: - Notifications
 
-    public func didReceive(
-        _ request: UNNotificationRequest,
-        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
-    ) {
-        self.contentHandler = contentHandler
-
-        if onGoingTask != nil {
-            logger.warn(
-                "onGoingtask not null: a notification is already being processed",
-                attributes: .newNSE, .safePublic
-            )
-        }
-
+    public func execute() {
         let notificationContentHandler: (UNNotificationContent) -> Void = { [weak self] in
+            guard let self else { return }
+
             contentHandler($0) // Finishes current notification flow by calling system built-in handler.
-            self?.onGoingTask = nil // Current notification flow was completed, nil out the task.
+            didComplete()
+            onGoingTask = nil // Current notification flow was completed, nil out the task.
         }
 
         onGoingTask = Task {
@@ -136,13 +137,14 @@ public final class NotificationServiceExtension {
     }
 
     public func cancel() async {
+        logger.warn("will cancel ongoing task", attributes: .newNSE, .safePublic)
         onGoingTask?.cancel()
         if DeveloperFlag.showNSEErrors.isOn {
             let content = UNMutableNotificationContent()
             content.title = "NSE Error"
             content.body = "NSE will expire"
             content.interruptionLevel = .active
-            contentHandler?(content)
+            contentHandler(content)
         }
         await onGoingTask?.value
     }
