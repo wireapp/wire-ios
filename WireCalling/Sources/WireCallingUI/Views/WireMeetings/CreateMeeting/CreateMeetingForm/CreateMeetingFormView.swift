@@ -16,8 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: initial focus state title field
+// TODO: fix default meeting start date and end date adjustment
+
 import SwiftUI
 import WireCallingDomain
+import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
 
@@ -53,12 +57,22 @@ struct CreateMeetingFormView: View {
                     Button(actionButtonLabel) {
                         viewModel.submit()
                     }
-                    .disabled(!viewModel.isNextButtonEnabled)
+                    .disabled(!viewModel.isNextButtonEnabled || viewModel.isLoading)
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .sheet(isPresented: $isPresentingMemberSelection) {
                 MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
+            }
+            .alert(isPresented: Binding(
+                get: { viewModel.error != nil },
+                set: { if !$0 { viewModel.error = nil } }
+            )) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text(viewModel.error?.localizedDescription ?? ""),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }
@@ -112,7 +126,7 @@ struct CreateMeetingFormView: View {
                 timeField: .endTime
             )
             Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
-                ForEach(RepeatOption.allCases, id: \.self) { option in
+                ForEach(MeetingRepeatOption.allCases, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
                 }
@@ -219,7 +233,7 @@ struct CreateMeetingFormView: View {
     }
 }
 
-private extension RepeatOption {
+private extension MeetingRepeatOption {
 
     typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
 
@@ -247,7 +261,9 @@ private extension RepeatOption {
     CreateMeetingFormView(
         viewModel: CreateMeetingFormViewModel(
             mode: .instant,
-            memberRepository: MockMemberSource()
+            memberRepository: MockMemberSource(),
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
         )
     )
 }
@@ -256,7 +272,9 @@ private extension RepeatOption {
     CreateMeetingFormView(
         viewModel: CreateMeetingFormViewModel(
             mode: .scheduled,
-            memberRepository: MockMemberSource()
+            memberRepository: MockMemberSource(),
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
         )
     )
 }
@@ -264,7 +282,9 @@ private extension RepeatOption {
 #Preview("Scheduled mode with selected members") {
     let viewModel = CreateMeetingFormViewModel(
         mode: .scheduled,
-        memberRepository: MockMemberSource()
+        memberRepository: MockMemberSource(),
+        createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+        createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
     )
     viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
     return CreateMeetingFormView(viewModel: viewModel)

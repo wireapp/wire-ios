@@ -76,10 +76,13 @@ final class CreateInstantMeetingFormViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeViewModel() -> CreateMeetingFormViewModel {
         CreateMeetingFormViewModel(
             mode: .instant,
-            memberRepository: MemberRepositoryProtocolMock()
+            memberRepository: MemberRepositoryProtocolMock(),
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
         )
     }
 

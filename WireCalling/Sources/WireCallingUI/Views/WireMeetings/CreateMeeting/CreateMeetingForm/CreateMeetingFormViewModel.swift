@@ -20,6 +20,7 @@ import Foundation
 import WireCallingDomain
 
 @Observable
+@MainActor
 final class CreateMeetingFormViewModel {
 
     /// Determines whether the meeting starts immediately on submit or is
@@ -43,12 +44,17 @@ final class CreateMeetingFormViewModel {
 
     let mode: Mode
     let memberRepository: any MemberRepositoryProtocol
+    private let createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol
+    private let createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol
+    private let onSuccess: (Meeting) -> Void
 
     var meetingTitle: String = ""
     var startDate: Date = .init()
     var endDate: Date = .init().addingTimeInterval(1800)
-    var repeatOption: RepeatOption = .never
+    var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
+    var isLoading = false
+    var error: (any Error)?
 
     var selectedMembersSummary: String {
         selectedMembers
@@ -64,17 +70,22 @@ final class CreateMeetingFormViewModel {
 
     init(
         mode: Mode,
-        memberRepository: any MemberRepositoryProtocol
+        memberRepository: any MemberRepositoryProtocol,
+        createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
+        createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol,
+        onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
         self.memberRepository = memberRepository
+        self.createInstantMeetingUseCase = createInstantMeetingUseCase
+        self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
+        self.onSuccess = onSuccess
     }
 
     func clearTitle() {
         meetingTitle = ""
     }
 
-    @MainActor
     func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
         MemberSelectionViewModel(
             source: memberRepository,
@@ -84,18 +95,64 @@ final class CreateMeetingFormViewModel {
     }
 
     func submit() {
-        switch mode {
-        case .instant:
-            createInstantMeeting()
-        case .scheduled:
-            scheduleMeeting()
+        guard !isLoading else { return }
+        Task {
+            switch mode {
+            case .instant:
+                await createInstantMeeting()
+            case .scheduled:
+                await scheduleMeeting()
+            }
         }
     }
 
     // MARK: - Private
 
-    private func createInstantMeeting() {}
+    private func createInstantMeeting() async {
+        isLoading = true
+        error = nil
+        defer { isLoading = false }
+        do {
+            let meeting = try await createInstantMeetingUseCase.invoke(
+                title: meetingTitle,
+                participants: selectedMembers
+            )
+            onSuccess(meeting)
+        } catch {
+            self.error = error
+        }
+    }
 
-    private func scheduleMeeting() {}
+    private func scheduleMeeting() async {
+        isLoading = true
+        error = nil
+        defer { isLoading = false }
+        do {
+            let meeting = try await createScheduledMeetingUseCase.invoke(
+                title: meetingTitle,
+                startTime: startDate,
+                endTime: endDate,
+                recurrence: repeatOption.toRecurrence()
+            )
+            onSuccess(meeting)
+        } catch {
+            self.error = error
+        }
+    }
+
+}
+
+private extension MeetingRepeatOption {
+
+    func toRecurrence() -> MeetingRecurrence? {
+        switch self {
+        case .never: nil
+        case .daily: MeetingRecurrence(frequency: .daily, interval: 1)
+        case .weekly: MeetingRecurrence(frequency: .weekly, interval: 1)
+        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2)
+        case .monthly: MeetingRecurrence(frequency: .monthly, interval: 1)
+        case .yearly: MeetingRecurrence(frequency: .yearly, interval: 1)
+        }
+    }
 
 }

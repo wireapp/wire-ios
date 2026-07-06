@@ -415,7 +415,15 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.archiveUI = archiveUI
 
         let memberRepository = WireMeetingsMemberRepository(userSession: userSession)
-        let meetingsUI = wireMeetingsFactory.makeMeetingsView(memberRepository: memberRepository)
+        let conversationRepository = userSession.clientSessionComponent!.conversationRepository
+        let meetingsUI = wireMeetingsFactory.makeMeetingsView(
+            meetingsAPI: userSession.clientSessionComponent!.meetingsAPI,
+            memberRepository: memberRepository,
+            conversationRepository: MeetingConversationRepository(
+                conversationRepository: conversationRepository,
+                contextProvider: userSession.contextProvider
+            )
+        )
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)

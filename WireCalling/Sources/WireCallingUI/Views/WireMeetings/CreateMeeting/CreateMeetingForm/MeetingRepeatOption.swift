@@ -16,19 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
-import WireNetwork
+public enum MeetingRepeatOption: Int, CaseIterable, Sendable {
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
-    ) -> UIViewController
+    case never
+    case daily
+    case weekly
+    case every2Weeks
+    case monthly
+    case yearly
+
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}
