@@ -28,6 +28,7 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSyncEngine
+import WireSystem
 
 enum ApplicationLaunchType {
     case unknown
@@ -397,14 +398,21 @@ private extension AppDelegate {
         queueInitializationOperations(launchOptions: launchOptions)
     }
 
+    @MainActor
     private func createAppRootRouter() {
         let defaultEnvironment = fetchDefaultEnvironment()
+        let appTaskExecuter = AppBackgroundTaskExecuter(
+            application: UIApplication.shared,
+            isInBackground: UIApplication.shared.applicationState == .background
+        )
+        appTaskExecuter.startObservingLifecycleNotifications()
 
         let sessionManager: SessionManager
         do {
             sessionManager = try createSessionManager(
                 defaultEnvironment: defaultEnvironment,
-                cookieStorage: cookieStorage
+                cookieStorage: cookieStorage,
+                backgroundTaskExecuter: appTaskExecuter
             )
         } catch {
             fatalError("sessionManager is not created")
@@ -424,13 +432,15 @@ private extension AppDelegate {
             trackingManager: TrackingManager(
                 sessionManager: sessionManager,
                 availabilityChecker: .default
-            )
+            ),
+            backgroundTaskExecuter: appTaskExecuter
         )
     }
 
     private func createSessionManager(
         defaultEnvironment: BackendEnvironment2,
-        cookieStorage: CookieStorage
+        cookieStorage: CookieStorage,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws -> SessionManager {
         let infoDictionary = Bundle.main.infoDictionary
 
@@ -488,7 +498,8 @@ private extension AppDelegate {
             deleteUserLogs: deleteAllAccountsLogs,
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() },
-            logFilesProvider: LogFilesProvider()
+            logFilesProvider: LogFilesProvider(),
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         voIPPushManager.delegate = sessionManager

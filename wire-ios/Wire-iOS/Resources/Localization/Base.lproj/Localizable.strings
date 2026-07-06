@@ -148,6 +148,7 @@
 
 
 // Conversation List - Filter Conversations
+"conversation_list.context_menu.title" = "%@ options";
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Favorites";
 "conversation_list.filter.groups.title" = "Groups";

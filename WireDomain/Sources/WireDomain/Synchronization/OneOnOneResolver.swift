@@ -17,7 +17,7 @@
 //
 
 import CoreData
-import WireDataModel
+@preconcurrency import WireDataModel
 import WireLogging
 import WireNetwork
 
@@ -36,6 +36,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let pullMLSOneOnOneSync: any PullMLSOneOnOneSyncProtocol
     private let mlsProvider: MLSProvider
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     // MARK: - Object lifecycle
 
@@ -44,30 +45,49 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         pullMLSOneOnOneSync: any PullMLSOneOnOneSyncProtocol,
-        mlsProvider: MLSProvider
+        mlsProvider: MLSProvider,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.context = context
         self.userLocalStore = userLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.pullMLSOneOnOneSync = pullMLSOneOnOneSync
         self.mlsProvider = mlsProvider
+        self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
     public func resolveAllOneOnOneConversations() async throws {
-        let usersIDs = try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
+        let userIDs = try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
 
-        await withTaskGroup(of: Void.self) { group in
-            for userID in usersIDs {
-                group.addTask {
-                    do {
-                        try await resolveOneOnOneConversation(with: userID)
-                    } catch {
-                        /// skip conversation migration for this user
-                        WireLogger.conversation.error(
-                            "resolve 1-1 conversation with userID \(userID) failed: \(error)",
-                            attributes: [.senderUserId: userID.safeForLoggingDescription]
-                        )
+        try await withBackgroundTask(name: "resolve all 1-1s", executer: backgroundTaskExecuter) {
+            await withTaskGroup(of: Void.self) { group in
+                var iterator = userIDs.makeIterator()
+
+                func addNextTaskIfAvailable() {
+                    guard let userID = iterator.next() else { return }
+
+                    _ = group.addTaskUnlessCancelled {
+                        do {
+                            try await resolveOneOnOneConversation(with: userID)
+                        } catch {
+                            /// skip conversation migration for this user
+                            WireLogger.conversation.error(
+                                "resolve 1-1 conversation with userID \(userID) failed: \(error)",
+                                attributes: [.senderUserId: userID.safeForLoggingDescription]
+                            )
+                        }
                     }
+                }
+
+                // Start the first batch of up to `concurrentLimit`.
+                let concurrentLimit = 4
+                for _ in 0 ..< min(concurrentLimit, userIDs.count) {
+                    addNextTaskIfAvailable()
+                }
+
+                // Each time a task finishes, start one more if available.
+                while await group.next() != nil {
+                    addNextTaskIfAvailable()
                 }
             }
         }
