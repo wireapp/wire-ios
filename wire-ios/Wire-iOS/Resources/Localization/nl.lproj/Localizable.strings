@@ -318,7 +318,6 @@
 "conversation.input_bar.verified" = "Geverifieerd";
 "conversation.input_bar.placeholder" = "Type een bericht";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
-"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Swipe omhoog om te versturen";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tik om te verzenden";

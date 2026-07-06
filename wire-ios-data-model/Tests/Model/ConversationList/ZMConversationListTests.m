@@ -139,15 +139,12 @@
     // given
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeGroup;
-    
     ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     ZMConversation *c3 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c3.conversationType = ZMConversationTypeGroup;
     c3.isArchived = YES;
     ZMConversation *c4 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c4.conversationType = ZMConversationTypeOneOnOne;
-
-    // blocked user conversation is not archived
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.remoteIdentifier = [NSUUID createUUID];
     user.oneOnOneConversation = c4;
@@ -157,8 +154,8 @@
     
     // then
     ZMConversationList *list = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
-    XCTAssertEqual(list.items.count, 3u);
-    NSArray *expected = @[c1, c2, c4];
+    XCTAssertEqual(list.items.count, 2u);
+    NSArray *expected = @[c1, c2];
     AssertArraysContainsSameObjects(list.items, expected);
 }
 
@@ -419,8 +416,8 @@
 
     // then
     ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
-    XCTAssertEqual(normalList.items.count, 1u);
-    XCTAssertEqualObjects(normalList.items, @[conversation]);
+    XCTAssertEqual(normalList.items.count, 0u);
+    XCTAssertEqualObjects(normalList.items, @[]);
 
     ConversationListChangeObserver *observer = [[ConversationListChangeObserver alloc] initWithConversationList:normalList managedObjectContext:self.uiMOC];
     

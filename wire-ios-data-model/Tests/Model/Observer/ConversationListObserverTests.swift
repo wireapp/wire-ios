@@ -761,13 +761,13 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         // then
-        XCTAssertEqual(normalList.items.count, 1)
+        XCTAssertEqual(normalList.items.count, 0)
 
         XCTAssertEqual(testObserver.changes.count, 1)
         if let first = testObserver.changes.first {
             XCTAssertEqual(first.insertedIndexes, IndexSet())
-            XCTAssertEqual(first.deletedIndexes, IndexSet())
-            XCTAssertEqual(first.updatedIndexes.count, 1)
+            XCTAssertEqual(first.deletedIndexes, IndexSet(integer: 0))
+            XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])
         }
     }
