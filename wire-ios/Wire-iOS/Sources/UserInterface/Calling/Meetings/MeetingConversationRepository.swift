@@ -51,22 +51,15 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
             return conv.mlsGroupID
         }
 
-        if let mlsGroupID {
-            try await addMLSParticipants(
-                participants,
-                to: mlsGroupID,
-                conversationObjectID: objectID,
-                syncContext: syncContext,
-                mlsService: syncContext.performAndWait { syncContext.mlsService }
-            )
-        } else {
-            try await addProteusParticipants(
-                participants,
-                conversationObjectID: objectID,
-                syncContext: syncContext,
-                localDomain: session.resolvedBackendMetadata.domain
-            )
-        }
+        guard let mlsGroupID else { return }
+
+        try await addMLSParticipants(
+            participants,
+            to: mlsGroupID,
+            conversationObjectID: objectID,
+            syncContext: syncContext,
+            mlsService: syncContext.performAndWait { syncContext.mlsService }
+        )
     }
 
     // Establishes the local CoreCrypto group and adds all users in one commit.
@@ -100,24 +93,4 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
         }
     }
 
-    private func addProteusParticipants(
-        _ participants: [WireCallingDomain.Member],
-        conversationObjectID objectID: NSManagedObjectID,
-        syncContext: NSManagedObjectContext,
-        localDomain: String?
-    ) async throws {
-        let users = await syncContext.perform {
-            participants.compactMap { member in
-                ZMUser.fetch(with: member.qualifiedID.id, domain: member.qualifiedID.domain, in: syncContext)
-            }
-        }
-        guard !users.isEmpty else { return }
-
-        let syncConversation = try await syncContext.perform {
-            try ZMConversation.existingObject(for: objectID, in: syncContext)
-        }
-
-        let service = ConversationParticipantsService(context: syncContext, localDomain: localDomain)
-        try await service.addParticipants(users, to: syncConversation)
-    }
 }
