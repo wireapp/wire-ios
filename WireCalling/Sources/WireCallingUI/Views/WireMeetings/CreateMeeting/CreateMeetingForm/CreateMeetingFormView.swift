@@ -267,7 +267,8 @@ private extension MeetingRepeatOption {
             mode: .instant,
             memberRepository: MockMemberSource(),
             createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
-            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+            currentDateProvider: .system
         )
     )
 }
@@ -278,7 +279,8 @@ private extension MeetingRepeatOption {
             mode: .scheduled,
             memberRepository: MockMemberSource(),
             createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
-            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+            currentDateProvider: .system
         )
     )
 }
@@ -288,7 +290,8 @@ private extension MeetingRepeatOption {
         mode: .scheduled,
         memberRepository: MockMemberSource(),
         createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
-        createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
+        createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+        currentDateProvider: .system
     )
     viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
     return CreateMeetingFormView(viewModel: viewModel)

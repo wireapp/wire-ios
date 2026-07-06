@@ -20,6 +20,7 @@ import SwiftUI
 import Testing
 import WireCallingDomain
 import WireCallingDomainSupport
+import WireFoundationSupport
 
 @testable import WireCallingUI
 
@@ -29,11 +30,14 @@ struct CreateMeetingFormViewModelTests {
     private let viewModel: CreateMeetingFormViewModel
 
     init() {
+        let dateProviderMock = CurrentDateProvidingMock()
+        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-07-06T14:18:00+02:00")
         self.viewModel = CreateMeetingFormViewModel(
             mode: .instant,
             memberRepository: MemberRepositoryProtocolMock(),
             createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
-            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock()
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+            currentDateProvider: dateProviderMock
         )
     }
 

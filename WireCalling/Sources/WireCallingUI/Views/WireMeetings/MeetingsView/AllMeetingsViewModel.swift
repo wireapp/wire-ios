@@ -70,6 +70,7 @@ package final class AllMeetingsViewModel {
             memberRepository: memberRepository,
             createInstantMeetingUseCase: createInstantMeetingUseCase,
             createScheduledMeetingUseCase: createScheduledMeetingUseCase,
+            currentDateProvider: .system,
             onSuccess: { [weak self] _ in self?.presentedFormMode = nil }
         )
     }

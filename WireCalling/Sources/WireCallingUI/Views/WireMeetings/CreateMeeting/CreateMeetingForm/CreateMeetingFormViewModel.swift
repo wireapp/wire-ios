@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCallingDomain
+import WireFoundation
 
 @Observable
 @MainActor
@@ -49,8 +50,8 @@ final class CreateMeetingFormViewModel {
     private let onSuccess: (Meeting) -> Void
 
     var meetingTitle: String = ""
-    var startDate: Date = .now.roundedUpToNextHalfHour()
-    var endDate: Date = .now.roundedUpToNextHalfHour().addingTimeInterval(1800)
+    var startDate: Date
+    var endDate: Date
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     var isLoading = false
@@ -73,6 +74,7 @@ final class CreateMeetingFormViewModel {
         memberRepository: any MemberRepositoryProtocol,
         createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
         createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol,
+        currentDateProvider: any CurrentDateProviding,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
@@ -80,6 +82,10 @@ final class CreateMeetingFormViewModel {
         self.createInstantMeetingUseCase = createInstantMeetingUseCase
         self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
         self.onSuccess = onSuccess
+
+        let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
+        self.startDate = startDate
+        self.endDate = startDate.addingTimeInterval(1800)
     }
 
     func clearTitle() {
