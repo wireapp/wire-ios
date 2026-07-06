@@ -37,6 +37,14 @@ class OptionsOnSettingsPage: PageModel {
         app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.createLinkPreviews.rawValue].firstMatch
     }
 
+    var themeButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.theme.rawValue].firstMatch
+    }
+
+    var themeCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.themeCell.rawValue].firstMatch
+    }
+
     var conversationsButton: XCUIElement {
         app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
@@ -44,6 +52,42 @@ class OptionsOnSettingsPage: PageModel {
     func enableLockWithPasscode() throws -> SetPasscodePage {
         lockWithPasscodeSwitch.tap()
         return try SetPasscodePage()
+    }
+
+    func openThemeSettings() throws -> ThemeSettingsPage {
+        themeButton.tap()
+        return try ThemeSettingsPage()
+    }
+
+    @discardableResult
+    func verifyTheme(
+        _ theme: ThemeSettingsPage.Theme,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> OptionsOnSettingsPage {
+        let themeValues = (themeCell.value as? String)?.components(separatedBy: "|")
+        let actualTheme = themeValues?.first
+        let expectedTheme = theme.rawValue
+
+        XCTAssertEqual(
+            actualTheme,
+            expectedTheme,
+            "Theme setting should be \(expectedTheme)",
+            file: file,
+            line: line
+        )
+
+        if theme != .system {
+            let appliedTheme = themeValues?.count == 2 ? themeValues?.last : nil
+            XCTAssertEqual(
+                appliedTheme,
+                theme.rawValue,
+                "Applied theme should be \(theme.rawValue)",
+                file: file,
+                line: line
+            )
+        }
+        return self
     }
 
     func enterPasscode(_ passcode: String) throws -> OptionsOnSettingsPage {

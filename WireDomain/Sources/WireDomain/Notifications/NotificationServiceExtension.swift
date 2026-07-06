@@ -31,12 +31,13 @@ import WireUtilitiesPackage
 ///
 /// These sequential steps represents the NSE dependency graph (using Needle).
 
-public final class NotificationServiceExtension: NotificationServiceProtocol {
+public final class NotificationServiceExtension {
 
     // MARK: - Properties
 
     private let logger = WireLogger.notifications
     private var onGoingTask: Task<Void, Never>?
+    private var contentHandler: ((UNNotificationContent) -> Void)?
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
@@ -74,6 +75,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
+        self.contentHandler = contentHandler
 
         if onGoingTask != nil {
             logger.warn(
@@ -129,9 +131,20 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         }
     }
 
-    public func serviceExtensionTimeWillExpire() {
-        logger.warn("new notification service will expire", attributes: .newNSE, .safePublic)
+    public var hasOnGoingTask: Bool {
+        onGoingTask != nil
+    }
+
+    public func cancel() async {
         onGoingTask?.cancel()
+        if DeveloperFlag.showNSEErrors.isOn {
+            let content = UNMutableNotificationContent()
+            content.title = "NSE Error"
+            content.body = "NSE will expire"
+            content.interruptionLevel = .active
+            contentHandler?(content)
+        }
+        await onGoingTask?.value
     }
 }
 
@@ -223,7 +236,7 @@ extension NotificationServiceExtension {
 
     private func logUserError(_ error: NSEUserScope.Failure) {
         switch error {
-        case let .mainAppRequired(message):
+        case let .mainAppRequired(message, _):
             logger.warn(
                 "Main app required, need to open main app: \(message)",
                 attributes: .newNSE, .safePublic

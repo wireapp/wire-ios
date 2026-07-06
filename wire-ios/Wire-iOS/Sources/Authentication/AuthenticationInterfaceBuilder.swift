@@ -348,6 +348,9 @@ final class AuthenticationInterfaceBuilder {
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
             registrationAnalyticsTracker: registrationAnalyticsTracker,
+            isAccountAlreadyLoggedIn: { userID in
+                SessionManager.shared?.accountManager.accounts.contains { $0.userIdentifier == userID } ?? false
+            },
             overrideAllowEmailLoginOnly: featureProvider.allowOnlyEmailLogin
         )
 

@@ -63,7 +63,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
             coreCrypto: coreCrypto
         )
         journal = Journal(
@@ -91,6 +91,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
             createPushChannelState: {
                 self.pushChannelState
             },
@@ -751,8 +752,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         let token = try await sut.perform()
         await token.suspend()
 
-        try XCTAssertCount(pushChannel.close_Invocations, count: 1)
-        try XCTAssertCount(pushChannelState.markAsClosed_Invocations, count: 1)
+        // The push channel closes twice - once after the push channel completes and again on token.suspend()
+        try XCTAssertCount(pushChannel.close_Invocations, count: 2)
+        try XCTAssertCount(pushChannelState.markAsClosed_Invocations, count: 2)
 
     }
 

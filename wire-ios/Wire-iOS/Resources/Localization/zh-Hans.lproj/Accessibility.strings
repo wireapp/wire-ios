@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 /// Naming convention:
 ///
 /// The names of all accessibility strings should follow the format:
 ///
 ///  "<screen>.<component>.<usage>"
-
 
 "peoplepicker.upgrade_banner.close_button.label" = "关闭团队创建选项";
 
@@ -221,7 +221,7 @@
 "conversationsList.mentionStatus.value" = "您被提及";
 "conversationsList.replyStatus.value" = "回复";
 "conversationsList.badgeView.value" = "新消息：%d";
-"conversationsList.itemCell.hint" = "双击打开对话";
+"conversationsList.itemCell.hint" = "Double tap to open conversation. Triple tap to open conversation options";
 "conversationsList.itemCell.avatar.group.label" = "群组";
 "conversationsList.itemCell.avatar.channel.label" = "频道";
 "conversationsList.joinButton.description" = "加入";
@@ -343,3 +343,9 @@
 
 "webAuth.urlLabel.description" = "身份提供商 URL";
 "webAuth.urlLabel.hint" = "选择以打开完整的 URL。";
+
+// MARK: - Admin Selection
+
+"adminSelection.searchBar.clearButton.description" = "Clear search";
+"adminSelection.candidateRow.hint" = "Double tap to select as new admin";
+"adminSelection.deleteGroupButton.hint" = "Deletes the group permanently";
