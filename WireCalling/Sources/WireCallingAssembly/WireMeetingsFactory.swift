@@ -50,9 +50,16 @@ public struct WireMeetingsFactory {
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
-            memberRepository: memberRepository,
-            createInstantMeetingUseCase: createInstantMeetingUseCase,
-            createScheduledMeetingUseCase: createScheduledMeetingUseCase
+            makeFormViewModel: { mode, onSuccess in
+                CreateMeetingFormViewModel(
+                    mode: mode,
+                    memberRepository: memberRepository,
+                    createInstantMeetingUseCase: createInstantMeetingUseCase,
+                    createScheduledMeetingUseCase: createScheduledMeetingUseCase,
+                    currentDateProvider: .system,
+                    onSuccess: onSuccess
+                )
+            }
         )
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }

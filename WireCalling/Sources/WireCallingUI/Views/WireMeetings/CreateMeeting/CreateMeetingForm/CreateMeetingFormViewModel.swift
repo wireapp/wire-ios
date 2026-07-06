@@ -16,19 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+package import WireCallingDomain
+package import WireFoundation
+
 import Foundation
-import WireCallingDomain
-import WireFoundation
 
 @Observable
 @MainActor
-final class CreateMeetingFormViewModel {
+package final class CreateMeetingFormViewModel {
 
     /// Determines whether the meeting starts immediately on submit or is
     /// scheduled for a future date and time. Drives the form layout
     /// (schedule fields appear only in `.scheduled`), the navigation title,
     /// and the primary action button's label and behavior.
-    enum Mode: Hashable, Identifiable {
+    package enum Mode: Hashable, Identifiable {
 
         /// Start the meeting immediately. The schedule section
         /// (start/end/repeat) is hidden; the action button reads "Start" and
@@ -40,7 +41,7 @@ final class CreateMeetingFormViewModel {
         /// screen is titled "Schedule a meeting".
         case scheduled
 
-        var id: Self { self }
+        package var id: Self { self }
     }
 
     let mode: Mode
@@ -77,7 +78,7 @@ final class CreateMeetingFormViewModel {
 
     // MARK: - Public Interface
 
-    init(
+    package init(
         mode: Mode,
         memberRepository: any MemberRepositoryProtocol,
         createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
