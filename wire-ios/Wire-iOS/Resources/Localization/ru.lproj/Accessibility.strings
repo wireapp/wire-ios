@@ -222,7 +222,7 @@
 "conversationsList.mentionStatus.value" = "Вас упомянули";
 "conversationsList.replyStatus.value" = "Ответить";
 "conversationsList.badgeView.value" = "Новых сообщений: %d";
-"conversationsList.itemCell.hint" = "Нажмите дважды, чтобы открыть беседу";
+"conversationsList.itemCell.hint" = "Double tap to open conversation. Triple tap to open conversation options";
 "conversationsList.itemCell.avatar.group.label" = "Группа";
 "conversationsList.itemCell.avatar.channel.label" = "Канал";
 "conversationsList.joinButton.description" = "Присоединиться";
@@ -344,3 +344,9 @@
 
 "webAuth.urlLabel.description" = "URL провайдера идентификации";
 "webAuth.urlLabel.hint" = "Нажмите, чтобы открыть полный URL.";
+
+// MARK: - Admin Selection
+
+"adminSelection.searchBar.clearButton.description" = "Очистить поиск";
+"adminSelection.candidateRow.hint" = "Нажмите дважды, чтобы выбрать нового администратора";
+"adminSelection.deleteGroupButton.hint" = "Удаляет группу навсегда";
