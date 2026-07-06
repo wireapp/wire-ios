@@ -137,9 +137,7 @@ struct CreateMeetingFormViewModelTests {
         instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingReturnValue = meeting
 
         // When
-        viewModel.submit()
-        #expect(viewModel.isLoading == true)
-        await viewModel.submitTask?.value
+        await viewModel.submit()
 
         // Then
         #expect(instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingCallsCount == 1)
@@ -162,8 +160,7 @@ struct CreateMeetingFormViewModelTests {
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
 
         // When
-        viewModel.submit()
-        await viewModel.submitTask?.value
+        await viewModel.submit()
 
         // Then
         #expect(
@@ -189,8 +186,7 @@ struct CreateMeetingFormViewModelTests {
         instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingThrowableError = URLError(.badServerResponse)
 
         // When
-        viewModel.submit()
-        await viewModel.submitTask?.value
+        await viewModel.submit()
 
         // Then
         #expect(viewModel.error != nil)
@@ -203,15 +199,22 @@ struct CreateMeetingFormViewModelTests {
         // Given
         let viewModel = makeViewModel(mode: .instant)
         viewModel.meetingTitle = "Team Standup"
-        instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingReturnValue = meeting
+        let meeting = meeting
+        instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingClosure = { _, _ in
+            // Suspend so the second submission starts while the first is in flight.
+            try await Task.sleep(for: .milliseconds(10))
+            return meeting
+        }
 
         // When
-        viewModel.submit()
-        viewModel.submit()
-        await viewModel.submitTask?.value
+        let firstSubmission = Task { await viewModel.submit() }
+        let secondSubmission = Task { await viewModel.submit() }
+        await firstSubmission.value
+        await secondSubmission.value
 
         // Then
         #expect(instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingCallsCount == 1)
+        #expect(viewModel.isLoading == false)
     }
 
 }

@@ -56,7 +56,7 @@ struct CreateMeetingFormView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(actionButtonLabel) {
-                        viewModel.submit()
+                        Task { await viewModel.submit() }
                     }
                     .disabled(!viewModel.isNextButtonEnabled || viewModel.isLoading)
                 }
