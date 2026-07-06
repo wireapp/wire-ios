@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+package import WireCallingDomain
+package import WireFoundation
+
 import Foundation
-import WireCallingDomain
 
 @Observable
 @MainActor
-final class CreateMeetingFormViewModel {
+package final class CreateMeetingFormViewModel {
 
     /// Determines whether the meeting starts immediately on submit or is
     /// scheduled for a future date and time. Drives the form layout
     /// (schedule fields appear only in `.scheduled`), the navigation title,
     /// and the primary action button's label and behavior.
-    enum Mode: Hashable, Identifiable {
+    package enum Mode: Hashable, Identifiable {
 
         /// Start the meeting immediately. The schedule section
         /// (start/end/repeat) is hidden; the action button reads "Start" and
@@ -39,7 +41,7 @@ final class CreateMeetingFormViewModel {
         /// screen is titled "Schedule a meeting".
         case scheduled
 
-        var id: Self { self }
+        package var id: Self { self }
     }
 
     let mode: Mode
@@ -49,8 +51,16 @@ final class CreateMeetingFormViewModel {
     private let onSuccess: (Meeting) -> Void
 
     var meetingTitle: String = ""
-    var startDate: Date = .init()
-    var endDate: Date = .init().addingTimeInterval(1800)
+
+    /// Changing the start date shifts the end date by the same amount,
+    /// so the meeting duration is preserved.
+    var startDate: Date {
+        didSet {
+            endDate = endDate.addingTimeInterval(startDate.timeIntervalSince(oldValue))
+        }
+    }
+
+    var endDate: Date
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     var isLoading = false
@@ -68,11 +78,12 @@ final class CreateMeetingFormViewModel {
 
     // MARK: - Public Interface
 
-    init(
+    package init(
         mode: Mode,
         memberRepository: any MemberRepositoryProtocol,
         createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
         createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol,
+        currentDateProvider: any CurrentDateProviding,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
@@ -80,6 +91,10 @@ final class CreateMeetingFormViewModel {
         self.createInstantMeetingUseCase = createInstantMeetingUseCase
         self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
         self.onSuccess = onSuccess
+
+        let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
+        self.startDate = startDate
+        self.endDate = startDate.addingTimeInterval(1800)
     }
 
     func clearTitle() {
@@ -138,6 +153,20 @@ final class CreateMeetingFormViewModel {
         } catch {
             self.error = error
         }
+    }
+
+}
+
+private extension Date {
+
+    /// Returns the date rounded up to the next half-hour boundary
+    /// (e.g. 10:12 -> 10:30, 10:42 -> 11:00). Dates already on a
+    /// boundary are returned unchanged.
+    func roundedUpToNextHalfHour(calendar: Calendar = .current) -> Date {
+        let components = calendar.dateComponents([.minute, .second], from: self)
+        let secondsPastBoundary = TimeInterval(((components.minute ?? 0) % 30) * 60 + (components.second ?? 0))
+        guard secondsPastBoundary > 0 else { return self }
+        return addingTimeInterval(1800 - secondsPastBoundary)
     }
 
 }
