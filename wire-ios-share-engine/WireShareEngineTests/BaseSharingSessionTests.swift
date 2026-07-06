@@ -128,7 +128,8 @@ class BaseTest: ZMTBaseTest {
             transportSession: transportSession,
             initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
             apiVersion: .v0,
-            localDomain: "wire.com"
+            localDomain: "wire.com",
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
 
         let context = coreDataStack.syncContext

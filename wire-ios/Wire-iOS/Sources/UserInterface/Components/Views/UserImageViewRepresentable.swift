@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UserNotifications
+import SwiftUI
+import WireSyncEngine
 
-public protocol NotificationServiceProtocol {
-    func didReceive(
-        _ request: UNNotificationRequest,
-        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
-    )
+struct UserImageViewRepresentable: UIViewRepresentable {
 
-    func serviceExtensionTimeWillExpire()
+    let user: UserType
+    let userSession: UserSession
+    let size: UserImageView.Size
+
+    func makeUIView(context: Context) -> UserImageView {
+        UserImageView(size: size)
+    }
+
+    func updateUIView(_ view: UserImageView, context: Context) {
+        view.userSession = userSession
+        view.user = user
+    }
 }

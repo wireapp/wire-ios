@@ -162,12 +162,12 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
 
+        if let sortedAttachments = extensionContext?.attachments.sorted {
+            attachments = sortedAttachments
+        }
+
         Task { @MainActor in
             await updateAccount(currentAccount)
-
-            if let sortedAttachments = extensionContext?.attachments.sorted {
-                attachments = sortedAttachments
-            }
         }
     }
 

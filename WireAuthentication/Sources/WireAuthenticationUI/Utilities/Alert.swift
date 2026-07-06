@@ -108,6 +108,11 @@ extension Alert {
         message: Message.incorrectSsoCode
     )
 
+    static let alreadyLoggedIn = Alert(
+        title: Title.alreadyLoggedIn,
+        message: Message.alreadyLoggedIn
+    )
+
     static let termsOfUse = Alert(
         title: L10n.Localizable.CreatePersonalAccount.ConfirmationAlert.title,
         message: L10n.Localizable.CreatePersonalAccount.ConfirmationAlert.message

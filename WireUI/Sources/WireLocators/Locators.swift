@@ -224,14 +224,25 @@ public enum Locators {
         case addParticipantsButton
         case moreOptionsButton
         case userCellName
+        case adminCell
+        case memberCell
         case close
-
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
         case archive
         case clearContent
         case leaveConversation
+    }
+
+    public enum LastAdminLeaveAlert: AutoPrefixedEnum {
+        case promoteNewAdmin
+        case deleteGroup
+    }
+
+    public enum AdminSelectionPage: AutoPrefixedEnum {
+        case promoteButton
+        case userCell
     }
 
     public enum UserProfilePage: AutoPrefixedEnum {
@@ -434,7 +445,10 @@ public enum Locators {
 
     public enum OngoingCallPage: String {
 
-        case endOngoingCallButton = "End call"
+        case cameraButton = "CallVideoButton"
+        case endOngoingCallButton = "EndCallButton"
+        case microphoneButton = "CallMuteButton"
+        case speakerButton = "CallSpeakerButton"
         case timeLabel
         case minimizeCall
 
@@ -602,5 +616,9 @@ public enum Locators {
         case username = "Username"
         case signInButton = "Sign In"
 
+    }
+
+    public enum AlertActions: AutoPrefixedEnum {
+        case confirm
     }
 }
