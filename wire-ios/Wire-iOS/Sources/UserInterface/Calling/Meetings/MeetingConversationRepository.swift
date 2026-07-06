@@ -43,33 +43,6 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
         let objectID = conversation.objectID
         let syncContext = session.syncContext
 
-        // Mirror CreateGroupConversationUseCase.setupMLS: create the local CoreCrypto group
-        // before adding members, otherwise CoreCrypto throws "Couldn't find conversation".
-        try await createMLSGroupIfNeeded(objectID: objectID, syncContext: syncContext)
-
-        let users = await syncContext.perform {
-            participants.compactMap { member in
-                ZMUser.fetch(with: member.qualifiedID.id, domain: member.qualifiedID.domain, in: syncContext)
-            }
-        }
-
-        guard !users.isEmpty else { return }
-
-        let syncConversation = try await syncContext.perform {
-            try ZMConversation.existingObject(for: objectID, in: syncContext)
-        }
-
-        let service = ConversationParticipantsService(
-            context: syncContext,
-            localDomain: session.resolvedBackendMetadata.domain
-        )
-        try await service.addParticipants(users, to: syncConversation)
-    }
-
-    private func createMLSGroupIfNeeded(
-        objectID: NSManagedObjectID,
-        syncContext: NSManagedObjectContext
-    ) async throws {
         let mlsGroupID = await syncContext.perform {
             guard
                 let conv = try? ZMConversation.existingObject(for: objectID, in: syncContext),
@@ -78,12 +51,46 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
             return conv.mlsGroupID
         }
 
-        guard let mlsGroupID else { return }
+        if let mlsGroupID {
+            try await addMLSParticipants(
+                participants,
+                to: mlsGroupID,
+                conversationObjectID: objectID,
+                syncContext: syncContext,
+                mlsService: syncContext.performAndWait { syncContext.mlsService }
+            )
+        } else {
+            try await addProteusParticipants(
+                participants,
+                conversationObjectID: objectID,
+                syncContext: syncContext,
+                localDomain: session.resolvedBackendMetadata.domain
+            )
+        }
+    }
 
-        let mlsService = await syncContext.perform { syncContext.mlsService }
+    // Establishes the local CoreCrypto group and adds all users in one commit.
+    // Using establishGroup (not createGroup + addMembers separately) avoids the
+    // mls-client-mismatch 409, which happens when the self user's other devices
+    // aren't included in the initial group state before a separate add commit.
+    private func addMLSParticipants(
+        _ participants: [WireCallingDomain.Member],
+        to mlsGroupID: MLSGroupID,
+        conversationObjectID objectID: NSManagedObjectID,
+        syncContext: NSManagedObjectContext,
+        mlsService: (any MLSServiceInterface)?
+    ) async throws {
         guard let mlsService else { return }
 
-        let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, removalKeys: nil)
+        let mlsUsers = participants.map { member in
+            MLSUser(id: member.qualifiedID.id, domain: member.qualifiedID.domain)
+        }
+
+        let ciphersuite = try await mlsService.establishGroup(
+            for: mlsGroupID,
+            with: mlsUsers,
+            removalKeys: nil
+        )
 
         await syncContext.perform {
             guard let conv = try? ZMConversation.existingObject(for: objectID, in: syncContext) else { return }
@@ -91,5 +98,26 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
             conv.ciphersuite = ciphersuite
             _ = syncContext.saveOrRollback()
         }
+    }
+
+    private func addProteusParticipants(
+        _ participants: [WireCallingDomain.Member],
+        conversationObjectID objectID: NSManagedObjectID,
+        syncContext: NSManagedObjectContext,
+        localDomain: String?
+    ) async throws {
+        let users = await syncContext.perform {
+            participants.compactMap { member in
+                ZMUser.fetch(with: member.qualifiedID.id, domain: member.qualifiedID.domain, in: syncContext)
+            }
+        }
+        guard !users.isEmpty else { return }
+
+        let syncConversation = try await syncContext.perform {
+            try ZMConversation.existingObject(for: objectID, in: syncContext)
+        }
+
+        let service = ConversationParticipantsService(context: syncContext, localDomain: localDomain)
+        try await service.addParticipants(users, to: syncConversation)
     }
 }
