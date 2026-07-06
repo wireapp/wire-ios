@@ -86,82 +86,6 @@ final class ZCallingTests: WireUITestCase {
         return ongoingCallPage
     }
 
-    /// Call participant switches from audio call to video call and back
-    @MainActor
-    func testSwitchBetweenAudioAndVideoCall_TC_8888_9497() async throws {
-
-        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
-
-        let firstTimePage = try app.loginUser(
-            email: teamAndGroupCallSetup.appUserReceivingCall.email,
-            password: teamAndGroupCallSetup.appUserReceivingCall.password
-        )
-        let conversationsPage = try firstTimePage.acceptPopup()
-
-        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
-        let acceptingIds = instances.compactMap(\.id).filter { !$0.isEmpty }
-        XCTAssertEqual(acceptingIds.count, teamAndGroupCallSetup.callingServiceUsers.count)
-
-        async let acceptingResponses = callingManager.acceptNextCalls(
-            instanceIds: acceptingIds,
-            conversationId: teamAndGroupCallSetup.conversationId
-        )
-
-        let ongoingCallPage = try conversationsPage
-            .openConversation()
-            .initiateCall()
-
-        let responses = try await acceptingResponses
-        XCTAssertEqual(responses.count, acceptingIds.count)
-
-        for instanceId in acceptingIds {
-            try await callingManager.waitForCurrentCallStatus(
-                instanceId: instanceId,
-                expectedStatuses: ["active"],
-                timeout: 10
-            )
-        }
-
-        try ongoingCallPage.turnOnVideo()
-        app.dismissAllowIfPresent(timeout: 2)
-
-        for instanceId in acceptingIds {
-            _ = try await callingManager.switchVideoOn(instanceId: instanceId)
-        }
-
-        XCTAssertTrue(
-            ongoingCallPage.turnOffCameraButton.waitForExistence(timeout: 10),
-            "Camera did not switch on"
-        )
-
-        for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
-            XCTAssertTrue(
-                ongoingCallPage.videoView(for: callingServiceUser.name).waitForExistence(timeout: 15),
-                "Remote video is not visible for \(callingServiceUser.name)"
-            )
-        }
-
-        try await callingManager.verifyReceiveAudioAndVideo(instanceIds: acceptingIds)
-
-        try ongoingCallPage.flipCamera()
-        XCTAssertTrue(
-            ongoingCallPage.flipCameraButton.waitForExistence(timeout: 5),
-            "Flip camera button disappeared after camera flip"
-        )
-
-        try ongoingCallPage.turnOffVideo()
-        XCTAssertTrue(
-            ongoingCallPage.turnOnCameraButton.waitForExistence(timeout: 10),
-            "Camera did not switch off"
-        )
-
-        let conversationsPageAfterCall = try ongoingCallPage.endOngoingCall()
-        XCTAssertTrue(
-            conversationsPageAfterCall.conversationCell.exists,
-            "Conversation List is not showing after ending the call"
-        )
-    }
-
     /// Team Owner creates group conversation and initiates a group call with members via calling service
     @MainActor
     func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
@@ -237,6 +161,82 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertTrue(
             activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
             "Ongoing call still visible after hanging up the call"
+        )
+    }
+    
+    /// Call participant switches from audio call to video call and back
+    @MainActor
+    func testSwitchBetweenAudioAndVideoCall_TC_8888_9497() async throws {
+
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        let conversationsPage = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let acceptingIds = instances.compactMap(\.id).filter { !$0.isEmpty }
+        XCTAssertEqual(acceptingIds.count, teamAndGroupCallSetup.callingServiceUsers.count)
+
+        async let acceptingResponses = callingManager.acceptNextCalls(
+            instanceIds: acceptingIds,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let ongoingCallPage = try conversationsPage
+            .openConversation()
+            .initiateCall()
+
+        let responses = try await acceptingResponses
+        XCTAssertEqual(responses.count, acceptingIds.count)
+
+        for instanceId in acceptingIds {
+            try await callingManager.waitForCurrentCallStatus(
+                instanceId: instanceId,
+                expectedStatuses: ["active"],
+                timeout: 10
+            )
+        }
+
+        try ongoingCallPage.turnOnVideo()
+        app.dismissAllowIfPresent(timeout: 2)
+
+        for instanceId in acceptingIds {
+            _ = try await callingManager.switchVideoOn(instanceId: instanceId)
+        }
+
+        XCTAssertTrue(
+            ongoingCallPage.turnOffCameraButton.waitForExistence(timeout: 10),
+            "Camera did not switch on"
+        )
+
+        for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
+            XCTAssertTrue(
+                ongoingCallPage.videoView(for: callingServiceUser.name).waitForExistence(timeout: 15),
+                "Remote video is not visible for \(callingServiceUser.name)"
+            )
+        }
+
+        try await callingManager.verifyReceiveAudioAndVideo(instanceIds: acceptingIds)
+
+        try ongoingCallPage.flipCamera()
+        XCTAssertTrue(
+            ongoingCallPage.flipCameraButton.waitForExistence(timeout: 5),
+            "Flip camera button disappeared after camera flip"
+        )
+
+        try ongoingCallPage.turnOffVideo()
+        XCTAssertTrue(
+            ongoingCallPage.turnOnCameraButton.waitForExistence(timeout: 10),
+            "Camera did not switch off"
+        )
+
+        let conversationsPageAfterCall = try ongoingCallPage.endOngoingCall()
+        XCTAssertTrue(
+            conversationsPageAfterCall.conversationCell.exists,
+            "Conversation List is not showing after ending the call"
         )
     }
 }
