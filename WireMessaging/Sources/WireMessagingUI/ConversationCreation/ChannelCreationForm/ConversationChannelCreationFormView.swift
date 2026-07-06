@@ -53,7 +53,7 @@ public struct ConversationChannelCreationForm: View {
             #endif
 
             if viewModel.isWireDriveEnabled {
-                fileManagementSection
+                sharedDriveSection
             }
 
         }
@@ -211,9 +211,9 @@ public struct ConversationChannelCreationForm: View {
         })
     }
 
-    var fileManagementSection: some View {
+    var sharedDriveSection: some View {
         Section(content: {
-            Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.fileManagementEnabled)
+            Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.sharedDriveEnabled)
                 .accessibilityIdentifier(Locators.CreateChannelPage.sharedDriveSwitch.rawValue)
         }, footer: {
             Text(footerText)

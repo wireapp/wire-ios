@@ -16,22 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireLocators
+class MeetingsAPIV7: MeetingsAPIV6 {
 
-final class ConversationCreateFileManagementCell: IconToggleCell {
-
-    override func setUp() {
-        super.setUp()
-        title = L10n.Localizable.Conversation.Create.FileManagement.title
-        showSeparator = false
-        icon = nil
-        toggle.accessibilityIdentifier = Locators.CreateGroupPage.sharedDriveSwitch.rawValue
+    override var apiVersion: APIVersion {
+        .v7
     }
-}
 
-extension ConversationCreateFileManagementCell: ConversationCreationValuesConfigurable {
-    func configure(with values: ConversationCreationValues) {
-        isOn = values.enableFileManagement
-    }
 }

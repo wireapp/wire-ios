@@ -18,10 +18,11 @@
 
 import UIKit
 import WireDesign
+import WireUtilities
 
-final class ConversationCreateFileManagementSectionController: ConversationCreateSectionController {
+final class ConversationCreateSharedDriveSectionController: ConversationCreateSectionController {
 
-    typealias Cell = ConversationCreateFileManagementCell
+    typealias Cell = ConversationCreateSharedDriveCell
 
     var toggleAction: ((Bool) -> Void)?
 
@@ -32,7 +33,7 @@ final class ConversationCreateFileManagementSectionController: ConversationCreat
 
 }
 
-extension ConversationCreateFileManagementSectionController {
+extension ConversationCreateSharedDriveSectionController {
     override func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
@@ -73,28 +74,69 @@ extension ConversationCreateFileManagementSectionController {
         return footer.bounds.size
     }
 
-    private func addAttributedText(
-        to footer: SectionFooter
-    ) {
-        var fullText = L10n.Localizable.Conversation.Create.FileManagement.subtitle
+    private func addAttributedText(to footer: SectionFooter) {
+        let subtitle = L10n.Localizable.Conversation.Create.FileManagement.subtitle
         let learnMore = L10n.Localizable.Conversation.Create.FileManagement.learnMore
-        fullText += " " + learnMore
-        let attributedText = NSMutableAttributedString(string: fullText)
         let supportLink = "https://support.wire.com/hc/articles/32207749480477-Use-Wire-Drive-in-conversations"
 
+        let fullText = "\(subtitle) \(learnMore)"
+        let attributedText = NSMutableAttributedString(string: fullText)
+
         guard let learnMoreRange = fullText.range(of: learnMore, options: .caseInsensitive) else {
-            assertionFailure(
-                "'Learn more' substring missing in \(L10n.Localizable.Conversation.Create.FileManagement.subtitle)"
-            )
-            return
+            return assertionFailure("'Learn more' substring missing in subtitle")
         }
 
-        let linkRange = NSRange(learnMoreRange, in: fullText)
-        let fullRange = NSRange(location: 0, length: fullText.count)
-        attributedText.addAttribute(.link, value: supportLink, range: linkRange)
-        attributedText.addAttribute(.font, value: UIFont.font(for: .subline1), range: fullRange)
-        attributedText.addAttribute(.foregroundColor, value: SemanticColors.Label.textSectionFooter, range: fullRange)
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        if DeveloperFlag.enableDrivePermissions.isOn {
+            attributedText.append(NSAttributedString(string: "\n\n"))
+            attributedText.append(sharedDriveAccessAttributedString())
+        }
+
+        let fullRange = NSRange(location: 0, length: attributedText.length)
+
+        attributedText.addAttribute(
+            .link,
+            value: supportLink,
+            range: NSRange(learnMoreRange, in: fullText)
+        )
+
+        attributedText.addAttributes(
+            [
+                .font: UIFont.font(for: .subline1),
+                .foregroundColor: SemanticColors.Label.textSectionFooter
+            ],
+            range: fullRange
+        )
 
         footer.linkTextView.attributedText = attributedText
+    }
+
+    private func sharedDriveAccessAttributedString() -> NSAttributedString {
+        let font = UIFont.font(for: .subline1)
+
+        let image = UIImage(
+            systemName: "lock.document",
+            withConfiguration: UIImage.SymbolConfiguration(
+                pointSize: font.pointSize + 1,
+                weight: .regular
+            )
+        )?
+            .withTintColor(
+                SemanticColors.Label.textSectionFooter,
+                renderingMode: .alwaysOriginal
+            )
+
+        let attachment = NSTextAttachment()
+        attachment.image = image
+
+        let result = NSMutableAttributedString(attachment: attachment)
+        result.append(NSAttributedString(string: " "))
+        result.append(
+            NSAttributedString(
+                string: L10n.Localizable.Conversation.Create.FileManagement.sharedDriveAccess
+            )
+        )
+
+        return result
     }
 }

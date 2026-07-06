@@ -269,7 +269,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
         with:
           notify: custom
-          text: '"**${{ env.RELEASE_BRANCH }}** branch has been created. please (re) target your work to this branch if necessary."'
+          text: '**${{ env.RELEASE_BRANCH }}** branch has been created. please (re) target your work to this branch if necessary.'
 
       - name: Job summary
         if: always()

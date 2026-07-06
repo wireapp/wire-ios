@@ -123,6 +123,18 @@ final class CallingServiceClient {
         )
     }
 
+    private func responseBodyDescription(_ data: Data) -> String {
+        guard !data.isEmpty else { return "<empty>" }
+        return String(data: data, encoding: .utf8) ?? "<non-utf8 body: \(data.count) bytes>"
+    }
+
+    private func logEndpointFailure(method: String, endpoint: URL, statusCode: Int, data: Data) {
+        print(
+            "CallingService endpoint failed: \(method) \(endpoint.absoluteString) HTTP \(statusCode). " +
+                "Body: \(responseBodyDescription(data))"
+        )
+    }
+
     /// Create callingService instance
     /// - Parameters:
     ///   - name: name of instance
@@ -162,6 +174,7 @@ final class CallingServiceClient {
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: body, method: .post)
 
         guard code.statusCode == 200 else {
+            logEndpointFailure(method: "POST", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
                 "CallingService failed to createInstance: HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
@@ -233,6 +246,7 @@ final class CallingServiceClient {
             )
 
             guard code.statusCode == 200 else {
+                logEndpointFailure(method: "GET", endpoint: endpoint, statusCode: code.statusCode, data: data)
                 throw RuntimeError(
                     "CallingService failed to getInstanceStatus for \(id): HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
                 )
@@ -259,6 +273,7 @@ final class CallingServiceClient {
             )
 
             guard code.statusCode == 200 else {
+                logEndpointFailure(method: "PUT", endpoint: endpoint, statusCode: code.statusCode, data: data)
                 throw RuntimeError(
                     "CallingService failed to destroyStatus for \(id): HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
                 )
@@ -279,6 +294,7 @@ final class CallingServiceClient {
         let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: request, method: .post)
         guard code.statusCode == 200 else {
+            logEndpointFailure(method: "POST", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
                 "CallingService call failed: POST \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
@@ -297,6 +313,7 @@ final class CallingServiceClient {
             method: .get
         )
         guard code.statusCode == 200 else {
+            logEndpointFailure(method: "GET", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
                 "CallingService call failed: GET \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
@@ -311,6 +328,7 @@ final class CallingServiceClient {
         let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: CallingServiceEmptyBody(), method: .put)
         guard code.statusCode == 200 else {
+            logEndpointFailure(method: "PUT", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
                 "CallingService call failed: PUT \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )

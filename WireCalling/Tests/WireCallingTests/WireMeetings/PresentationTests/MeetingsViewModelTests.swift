@@ -25,6 +25,7 @@ import WireFoundationSupport
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
+@MainActor
 @Suite("MeetingsViewModel Tests")
 struct MeetingsViewModelTests {
 

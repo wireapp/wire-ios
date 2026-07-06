@@ -173,15 +173,28 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     private func setupReactions() {
         reactions = message.usersReaction.lazy
             .compactMap { reaction, users in
-                guard let emoji = self.emojiRepository.emoji(for: reaction) else { return nil }
-                let name = emoji.localizedName ?? emoji.name
+                let items = MessageDetailsCellDescription.makeReactionCells(users)
+                guard !items.isEmpty else { return nil }
+
                 return MessageDetailsSectionDescription(
-                    headerText: "\(emoji.value) \(name.capitalized) (\(users.count))",
-                    items: MessageDetailsCellDescription.makeReactionCells(users)
+                    headerText: self.reactionHeaderText(for: reaction, userCount: users.count),
+                    items: items
                 )
             }
-            .filter { !$0.items.isEmpty }
             .sorted { $0.items.count > $1.items.count }
+    }
+
+    private func reactionHeaderText(for reaction: String, userCount: Int) -> String {
+        guard let emoji = emoji(for: reaction) else {
+            return "\(reaction) (\(userCount))"
+        }
+
+        let name = emoji.localizedName ?? emoji.name
+        return "\(reaction) \(name.capitalized) (\(userCount))"
+    }
+
+    private func emoji(for reaction: String) -> Emoji? {
+        emojiRepository.emoji(for: reaction) ?? emojiRepository.emoji(for: reaction.removingEmojiSkinToneModifiers)
     }
 
     func setupReadReceipts() {
@@ -207,6 +220,22 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     private func performChanges(_ block: () -> Void) {
         block()
         observer?.dataSourceDidChange(self)
+    }
+
+}
+
+private extension String {
+
+    var removingEmojiSkinToneModifiers: String {
+        String(unicodeScalars.filter { !$0.isEmojiSkinToneModifier })
+    }
+
+}
+
+private extension Unicode.Scalar {
+
+    var isEmojiSkinToneModifier: Bool {
+        (0x1F3FB ... 0x1F3FF).contains(value)
     }
 
 }

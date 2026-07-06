@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireUtilities
 
 extension CellConfiguration {
 
@@ -40,11 +41,20 @@ extension CellConfiguration {
     static func allowGuestsToogle(
         get: @escaping () -> Bool,
         set: @escaping (Bool, UIView) -> Void,
-        isEnabled: Bool
+        isEnabled: Bool,
+        isDriveConversation: Bool
     ) -> CellConfiguration {
-        .iconToggle(
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        let subtitle = if isDriveConversation, DeveloperFlag.enableDrivePermissions.isOn {
+            L10n.Localizable.GuestRoom.AllowGuests.subtitle + "\n\n" + L10n.Localizable.GuestRoom.AllowGuests
+                .SharedDrive.subtitle
+        } else {
+            L10n.Localizable.GuestRoom.AllowGuests.subtitle
+        }
+
+        return .iconToggle(
             title: L10n.Localizable.GuestRoom.AllowGuests.title,
-            subtitle: L10n.Localizable.GuestRoom.AllowGuests.subtitle,
+            subtitle: subtitle,
             identifier: "toggle.guestoptions.allowguests",
             titleIdentifier: "label.guestoptions.description",
             icon: nil,

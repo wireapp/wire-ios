@@ -16,65 +16,56 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDesign
 import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
-final class ConversationFileCollaborationSystemMessageCellSnapshotTests: XCTestCase {
+final class GroupDetailsSharedDriveCellTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationFileCollaborationSystemMessageCellDescription!
+    private var cell: GroupDetailsSharedDriveCell!
+    private var conversation: ZMConversation!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
+        cell = GroupDetailsSharedDriveCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
+        conversation = createGroupConversation()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
-        sut = nil
+        cell = nil
+        conversation = nil
 
         super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
-    func testFileCollaboration_LightTheme() {
-        let view = makeSut()
+    func testThatItDisplaysCell_Light() {
+        // GIVEN & WHEN
+        cell.configure(with: conversation)
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view)
+        // THEN
+        snapshotHelper.verify(matching: cell)
     }
 
-    func testFileCollaboration_DarkTheme() {
-        let view = makeSut()
+    func testThatItDisplaysCell_Dark() {
+        // GIVEN & WHEN
+        cell.configure(with: conversation)
 
+        // THEN
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view)
-    }
-
-    // MARK: - Helpers
-
-    private func makeSut() -> UIView {
-        sut = ConversationFileCollaborationSystemMessageCellDescription()
-        let view = sut.makeView()
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
-        let wrapperView = UIView(frame: .init(x: 0, y: 0, width: 375, height: 30))
-        wrapperView.backgroundColor = SemanticColors.View.backgroundConversationList
-        wrapperView.addSubview(view)
-        view.frame = wrapperView.bounds
-
-        return view
+            .verify(matching: cell)
     }
 
 }

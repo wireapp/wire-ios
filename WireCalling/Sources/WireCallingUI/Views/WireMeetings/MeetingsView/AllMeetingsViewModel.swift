@@ -25,6 +25,7 @@ import WireCallingDomainSupport
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
 @Observable
+@MainActor
 package final class AllMeetingsViewModel {
 
     let memberRepository: any MemberRepositoryProtocol

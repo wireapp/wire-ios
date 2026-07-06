@@ -110,7 +110,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -134,7 +135,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -169,7 +171,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -193,7 +196,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -216,7 +220,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -241,7 +246,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         snapshotHelper.verify(matching: sut)
@@ -264,7 +270,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -288,7 +295,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -312,7 +320,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -336,15 +345,17 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
         snapshotHelper.verify(matching: sut)
     }
 
-    func testWireDriveEnabled() throws {
+    func testWireDriveEnabled_Drive_Permissions_Flag_Disabled() throws {
         // GIVEN
+        DeveloperFlag.enableDrivePermissions.enable(false)
         setSelfUserInTeam()
         mockSelfUser.teamRole = .admin
         mockSelfUser.canModifyEphemeralSettingsInConversation = true
@@ -362,7 +373,36 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
+        )
+
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testWireDriveEnabled() throws {
+        // GIVEN
+        DeveloperFlag.enableDrivePermissions.enable(true)
+        defer { DeveloperFlag.enableDrivePermissions.enable(false) }
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockSelfUser.canModifyEphemeralSettingsInConversation = true
+        mockSelfUser.canModifyTitleInConversation = true
+
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+        mockConversation.displayName = "Empty group conversation"
+        mockConversation.isWireDriveEnabled = true
+
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         snapshotHelper.verify(matching: sut)

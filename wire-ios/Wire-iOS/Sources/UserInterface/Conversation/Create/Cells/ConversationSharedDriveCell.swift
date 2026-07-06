@@ -17,28 +17,21 @@
 //
 
 import UIKit
-import WireDesign
+import WireLocators
 
-final class GroupDetailsFileCollaborationCell: GroupDetailsDisclosureOptionsCell {
+final class ConversationCreateSharedDriveCell: IconToggleCell {
 
     override func setUp() {
         super.setUp()
-        accessibilityIdentifier = "cell.groupdetails.fileCollaboration"
-        title = L10n.Localizable.GroupDetails.FileCollaborationCell.title
-
-        icon = UIImage(systemName: "rectangle.stack.fill")
-        iconColor = SemanticColors.Icon.foregroundDefault
+        title = L10n.Localizable.Conversation.Create.FileManagement.title
+        showSeparator = false
+        icon = nil
+        toggle.accessibilityIdentifier = Locators.CreateGroupPage.sharedDriveSwitch.rawValue
     }
+}
 
-    func configure(with conversation: GroupDetailsConversationType) {
-        status = L10n.Localizable.GroupDetails.FileCollaborationCell.subtitle
-        accessory = nil
+extension ConversationCreateSharedDriveCell: ConversationCreationValuesConfigurable {
+    func configure(with values: ConversationCreationValues) {
+        isOn = values.enableSharedDrive
     }
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = ColorTheme.Backgrounds.surface
-        }
-    }
-
 }

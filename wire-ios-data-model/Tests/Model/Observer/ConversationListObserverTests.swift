@@ -17,7 +17,7 @@
 //
 
 import Foundation
-
+import WireFoundation
 @testable import WireDataModel
 
 class ConversationListObserverTests: NotificationDispatcherTestBase {
@@ -103,6 +103,35 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(testConversationListReloadObserver.conversationListsReloadCount, 1)
 
+    }
+
+    func testThatItCoalescesRepeatedReloadsIntoASingleTrailingRebuild() {
+        // given
+        let cooldownTime: TimeInterval = 0.2
+        uiMOC.userInfo[NSManagedObjectContext.conversationListObserverCenterKey] = ConversationListObserverCenter(
+            managedObjectContext: uiMOC,
+            debouncer: LeadingTrailingDebouncer(cooldownTime: cooldownTime)
+        )
+        sut.operationMode = .normal
+        token = ConversationListChangeInfo.addReloadObserver(
+            testConversationListReloadObserver,
+            managedObjectContext: uiMOC
+        )
+
+        // when - simulate several incremental-sync cycles in quick succession
+        for _ in 0 ..< 5 {
+            sut.operationMode = .economical
+            sut.operationMode = .normal
+        }
+
+        // then - only the leading rebuild has run synchronously so far
+        XCTAssertEqual(testConversationListReloadObserver.conversationListsReloadCount, 1)
+
+        // when - the cooldown elapses
+        spinMainQueue(withTimeout: 0.5)
+
+        // then - the burst collapsed into one additional trailing rebuild (2 total, not 5)
+        XCTAssertEqual(testConversationListReloadObserver.conversationListsReloadCount, 2)
     }
 
     func testThatItNotifiesObserversWhenANewConversationIsInsertedThatMatchesListPredicate() {

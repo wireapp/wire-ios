@@ -39,6 +39,10 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
             participantsRole: nil
         )
 
+        // The conversation lists filter on the persisted `effectiveConversationType`, which is populated in
+        // `-willSave`. Persist so the inserted conversation has a valid effective type before fetching the list.
+        uiMOC.saveOrRollback()
+
         // then
         let conversations = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 

@@ -98,7 +98,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin, !viewModel.isOffline {
+        if showMoreActionsButton {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -118,6 +118,10 @@ private extension FilesView {
                 viewModel.selectFolderMenuOption(option)
             }
         }
+    }
+
+    var showMoreActionsButton: Bool {
+        !viewModel.isRecycleBin && !viewModel.isOffline && viewModel.selfUserRole == .editor
     }
 
     var closeButton: some View {

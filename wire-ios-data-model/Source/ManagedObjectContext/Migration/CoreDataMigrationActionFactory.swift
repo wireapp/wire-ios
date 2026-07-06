@@ -69,6 +69,9 @@ enum CoreDataMigrationActionFactory {
         -> CoreDataMigrationAction? {
         switch destinationVersion {
 
+        case .v136:
+            EffectiveConversationTypeMigrationAction()
+
         case .v131:
             SetCorrectUserTypeAction()
 
