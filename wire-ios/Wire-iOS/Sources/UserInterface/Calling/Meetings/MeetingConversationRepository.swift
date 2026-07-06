@@ -30,6 +30,7 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
         try await conversationRepository.pullConversation(id: id, domain: domain)
     }
 
+    @MainActor
     func addParticipants(_ participants: [WireCallingDomain.Member], to conversationID: WireCallingDomain.QualifiedID) async throws {
         guard !participants.isEmpty,
               let session = ZMUserSession.shared() else { return }
@@ -39,7 +40,13 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
             domain: conversationID.domain
         ) else { return }
 
+        let objectID = conversation.objectID
         let syncContext = session.syncContext
+
+        // Mirror CreateGroupConversationUseCase.setupMLS: create the local CoreCrypto group
+        // before adding members, otherwise CoreCrypto throws "Couldn't find conversation".
+        try await createMLSGroupIfNeeded(objectID: objectID, syncContext: syncContext)
+
         let users = await syncContext.perform {
             participants.compactMap { member in
                 ZMUser.fetch(with: member.qualifiedID.id, domain: member.qualifiedID.domain, in: syncContext)
@@ -48,7 +55,6 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
 
         guard !users.isEmpty else { return }
 
-        let objectID = conversation.objectID
         let syncConversation = try await syncContext.perform {
             try ZMConversation.existingObject(for: objectID, in: syncContext)
         }
@@ -58,5 +64,32 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
             localDomain: session.resolvedBackendMetadata.domain
         )
         try await service.addParticipants(users, to: syncConversation)
+    }
+
+    private func createMLSGroupIfNeeded(
+        objectID: NSManagedObjectID,
+        syncContext: NSManagedObjectContext
+    ) async throws {
+        let mlsGroupID = await syncContext.perform {
+            guard
+                let conv = try? ZMConversation.existingObject(for: objectID, in: syncContext),
+                conv.messageProtocol == .mls
+            else { return nil as MLSGroupID? }
+            return conv.mlsGroupID
+        }
+
+        guard let mlsGroupID else { return }
+
+        let mlsService = await syncContext.perform { syncContext.mlsService }
+        guard let mlsService else { return }
+
+        let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, removalKeys: nil)
+
+        await syncContext.perform {
+            guard let conv = try? ZMConversation.existingObject(for: objectID, in: syncContext) else { return }
+            conv.mlsStatus = .ready
+            conv.ciphersuite = ciphersuite
+            _ = syncContext.saveOrRollback()
+        }
     }
 }
