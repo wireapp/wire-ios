@@ -22,28 +22,6 @@ import XCTest
 final class SettingsTests: WireUITestCase {
 
     @MainActor
-    func testChangeAppLanguageToGerman_TC_8944() async throws {
-        let user = try await UserHelper.default.createPersonalUser()
-
-        // Relaunch the app forcing language as German
-        app.terminate()
-        app.launchArguments += ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
-        app.launch()
-
-        // Verify the welcome screen is localized in German
-        try WelcomePage()
-            .verifyStringInGerman(
-                "Geben Sie Ihre E-Mail-Adresse ein, um zu beginnen."
-            )
-
-        let conversationsPage = try await loginToBackend(user: user)
-
-        // Verify the conversation list empty state is localized in German
-        conversationsPage
-            .verifyStringInGerman(
-                "Willkommen 👋",
-                "Verbinden Sie sich mit anderen oder erstellen Sie eine neue Gruppe, um zu kommunizieren!"
-            )
     func testChangeAppThemeToSystemDarkOrLight_TC_8945() async throws {
         // GIVEN
         let user = try await UserHelper.default.createPersonalUser()
@@ -172,4 +150,28 @@ final class SettingsTests: WireUITestCase {
             .verifyLinkPreviewCell()
     }
 
+    @MainActor
+    func testChangeAppLanguageToGerman_TC_8944() async throws {
+        let user = try await UserHelper.default.createPersonalUser()
+
+        // Relaunch the app forcing language as German
+        app.terminate()
+        app.launchArguments += ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
+        app.launch()
+
+        // Verify the welcome screen is localized in German
+        try WelcomePage()
+            .verifyStringInGerman(
+                "Geben Sie Ihre E-Mail-Adresse ein, um zu beginnen."
+            )
+
+        let conversationsPage = try await loginToBackend(user: user)
+
+        // Verify the conversation list empty state is localized in German
+        conversationsPage
+            .verifyStringInGerman(
+                "Willkommen 👋",
+                "Verbinden Sie sich mit anderen oder erstellen Sie eine neue Gruppe, um zu kommunizieren!"
+            )
+    }
 }
