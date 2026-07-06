@@ -148,6 +148,7 @@
 
 
 // Conversation List - Filter Conversations
+"conversation_list.context_menu.title" = "Настройки %@";
 "conversation_list.filter.all_conversations.title" = "Все беседы";
 "conversation_list.filter.favorites.title" = "Избранное";
 "conversation_list.filter.groups.title" = "Группы";
@@ -388,6 +389,7 @@
 "conversation.create.file_management.title" = "Общий диск";
 "conversation.create.file_management.subtitle" = "Разрешить участникам управлять своими документами и медиа файлами в общем диске. Это действие не может быть отменено.";
 "conversation.create.file_management.learnMore" = "Подробнее";
+"conversation.create.file_management.sharedDriveAccess" = "Пользователи, не входящие в вашу команду, могут просматривать файлы, но не могут их загружать или редактировать.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Исходящий звонок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Вы не можете записать аудиосообщение во время звонка.";
@@ -637,7 +639,12 @@
 "content.system.channel.guest.joined" = "%@ присоединился к каналу";
 "content.system.channel.guest.you_joined" = "Вы присоединились к каналу";
 
-"content.system.file_collaboration.enabled" = "Общий диск включен";
+"content.system.file_collaboration.sharedDriveState" = "Общий диск %@";
+"content.system.file_collaboration.sharedDriveState.enabled" = "вкл";
+"content.system.file_collaboration.enabled.editor_access" = "У вас есть права редактора. У пользователей, не входящих в вашу команду, есть только права просмотра.";
+"content.system.file_collaboration.enabled.viewer_access" = "Вы можете просматривать файлы, но не можете загружать, редактировать или управлять ими.";
+"content.system.file_collaboration.enabled.learn_more" = "Подробнее";
+"content.system.file_collaboration.drive_viewer_access.title" = "Гости имеют доступ к файлам в этом чате только для просмотра.";
 
 // read receipt
 
@@ -851,7 +858,7 @@
 "call.status.variable_bitrate" = "Переменный битрейт";
 
 "call.participants.show_all" = "Участников (%d)";
-"call.participants.list.title" = "Participants";
+"call.participants.list.title" = "Участники";
 
 "call.overlay.switch_to.speakers" = "СПЕКЕРЫ";
 "call.overlay.switch_to.all" = "ВСЕ";
@@ -981,6 +988,19 @@
 "meta.leave_conversation_button_cancel" = "Отмена";
 "meta.leave_conversation_button_leave" = "Покинуть";
 "meta.leave_conversation_button_leave_and_delete" = "Покинуть и очистить контент";
+
+// Admin selection (promote new admin before leaving)
+"admin_selection.title" = "Новый администратор";
+"admin_selection.promote" = "Назначить";
+"admin_selection.info_banner" = "После того как вы назначите нового администратора, вы покинете группу.";
+"admin_selection.promotion_error" = "Не удалось назначить пользователя администратором.";
+
+// Last admin leave flow
+"last_admin_leave.title" = "Покинуть \"%@\"?";
+"last_admin_leave.promote_or_delete_message" = "Вы - единственный администратор.\nНазначьте другого пользователя, прежде чем покинуть, или удалите группу, если она больше не нужна.";
+"last_admin_leave.promote_new_admin" = "Назначить нового администратора";
+"last_admin_leave.no_eligible_candidates_message" = "Вы - единственный администратор.\nНикто из остальных участников не может быть назначен администратором. Вы можете только удалить группу.";
+"last_admin_leave.delete_group" = "Удалить группу";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
@@ -1117,6 +1137,8 @@
 "group_details.channel_history_options_cell.title" = "История беседы";
 "group_details.file_collaboration_cell.title" = "Общий диск";
 "group_details.file_collaboration_cell.subtitle" = "Вкл.";
+"group_details.file_collaboration_cell.subtitle.editor_access" = "Доступ редактора";
+"group_details.file_collaboration_cell.subtitle.viewer_access" = "Доступ для просмотра";
 "group_details.file_collaboration_cell.footer" = "Постоянно для этой беседы";
 "group_details.timeout_options_disabled.footer" = "Функция недоступна для бесед с общим диском.";
 
@@ -1554,6 +1576,7 @@
 
 "guest_room.allow_guests.title" = "Разрешить гостей";
 "guest_room.allow_guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
+"guest_room.allow_guests.shared_drive.subtitle" = "Гости не могут загружать, редактировать или управлять файлами в Общем диске.";
 "guest_room.remove_guests.message" = "Текущие гости будут удалены из беседы. Новые гости допущены не будут.";
 "guest_room.remove_guests.action" = "Удалить";
 "guest_room.revoke_link.message" = "Новые гости не смогут присоединиться по этой ссылке. На доступ текущих гостей это не повлияет.";

@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UserNotifications
-
-public protocol NotificationServiceProtocol {
-    func didReceive(
-        _ request: UNNotificationRequest,
-        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
-    )
-
-    func serviceExtensionTimeWillExpire()
+public enum StoredMeetingRecurrenceFrequency: Int16 {
+    case daily
+    case weekly
+    case monthly
+    case yearly
 }

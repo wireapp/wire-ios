@@ -15,10 +15,7 @@
       }
     ],
     "environmentVariableEntries" : [
-      {
-        "key" : "CI",
-        "value" : "${CI}"
-      }
+
     ],
     "targetForVariableExpansion" : {
       "containerPath" : "container:WireDataModel.xcodeproj",

@@ -268,7 +268,10 @@ public final class ConversationPredicateFactory: NSObject {
         // Fake 1:1 conversations are actually groups, so we check
         // whether this group has a one on one user to filter it out.
         let hasNoOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) == NULL")
-        return isGroup.and(hasNoOneOnOneUser)
+        // Meeting conversations are underlying group conversations of a meeting and must not appear in any list.
+        let isNotMeeting =
+            NSPredicate(format: "\(ZMConversationGroupTypeKey) != \(ConversationGroupType.meeting.rawValue)")
+        return isGroup.and(hasNoOneOnOneUser).and(isNotMeeting)
     }
 
     private func predicateForOneToOneConversation() -> NSPredicate {

@@ -150,6 +150,10 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
     }
 
+    var conversationBackground: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.conversationBackground.rawValue].firstMatch
+    }
+
     var userLeftSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
@@ -227,6 +231,10 @@ class ActiveConversationPage: PageModel {
 
     var openOngoingCallButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.openOngoingCallButton.rawValue]
+    }
+
+    var linkPreviewCell: XCUIElement {
+        app.cells[Locators.ActiveConversationPage.linkPreviewCell.rawValue].firstMatch
     }
 
     func fetchMessages() -> [String] {
@@ -317,6 +325,44 @@ class ActiveConversationPage: PageModel {
     func verifyCanAccessSharedDrive() {
         conversationTitleButton.waitAndTap()
         XCTAssertTrue(sharedDriveButton.exists)
+    }
+
+    @MainActor
+    @discardableResult
+    func verifyConversationBackgroundColor(
+        _ color: AccountSettingsPage.ProfileColor,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws -> ActiveConversationPage {
+        let background = conversationBackground
+        XCTAssertTrue(
+            background.waitForExistence(timeout: 5),
+            "Conversation background element did not appear",
+            file: file,
+            line: line
+        )
+        let backgroundColor = try XCTUnwrap(
+            background.value as? String,
+            "Conversation background color value did not appear",
+            file: file,
+            line: line
+        )
+        XCTAssertNotEqual(
+            backgroundColor,
+            "default",
+            "Conversation background should not be default when accentID \(color.accentID) is selected",
+            file: file,
+            line: line
+        )
+        let selfUser = try await UserHelper.default.selfUserAPI.getSelfUser()
+        XCTAssertEqual(
+            selfUser.accentID,
+            color.accentID,
+            "Self user accent ID should match \(color.accentID)",
+            file: file,
+            line: line
+        )
+        return self
     }
 
     func openPhotosAndGrantPermission() throws -> ActiveConversationPage {
@@ -487,7 +533,7 @@ class ActiveConversationPage: PageModel {
         line: UInt = #line
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            app.cells["LinkPreviewCell"].firstMatch.waitForExistence(timeout: 10),
+            linkPreviewCell.waitForExistence(timeout: 10),
             file: file,
             line: line
         )
