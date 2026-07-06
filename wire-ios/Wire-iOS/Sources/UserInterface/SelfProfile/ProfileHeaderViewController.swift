@@ -154,6 +154,7 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.showsInitialsOnly = options.contains(.showInitialsOnly)
         imageView.userSession = userSession
         imageView.user = user
+        updateProfilePictureAccessibilityValue()
 
         if !ProcessInfo.processInfo.isRunningTests, let session = userSession as? ZMUserSession {
             userObserver = UserChangeInfo.add(observer: self, for: user, in: session)
@@ -521,6 +522,9 @@ extension ProfileHeaderViewController: UserObserving {
             userStatus.isProteusVerified = changeInfo.user.isVerified
             updateE2EICertifiedStatus()
         }
+        if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
+            updateProfilePictureAccessibilityValue()
+        }
     }
 }
 
@@ -546,6 +550,16 @@ extension ProfileHeaderViewController {
             return
         }
         updateColors()
+    }
+
+}
+
+private extension ProfileHeaderViewController {
+
+    func updateProfilePictureAccessibilityValue() {
+        let hasProfileImage = !imageView.showsInitialsOnly &&
+            (user.previewImageData != nil || user.completeImageData != nil)
+        imageView.accessibilityValue = hasProfileImage ? "image" : "initials"
     }
 
 }
