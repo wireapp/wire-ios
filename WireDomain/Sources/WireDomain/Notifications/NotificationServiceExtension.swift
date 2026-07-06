@@ -63,10 +63,7 @@ public final class NotificationServiceExtension {
         didComplete: @escaping () -> Void
     ) {
         // Avoid `WireLogger.notifications` as we want a logger specific to this NSE instance.
-        let logger = WireLogger(tag: "notifications")
-        logger.addTag(.notificationRequestID, value: request.identifier)
-
-        self.logger = logger
+        self.logger = WireLogger(tag: "notifications", instanceAttributes: [.notificationRequestID: request.identifier])
         self.request = request
         self.contentHandler = contentHandler
         self.didComplete = didComplete
