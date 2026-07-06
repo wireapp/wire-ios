@@ -56,12 +56,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     var isSelected: Bool = false
 
     private lazy var avatar: UserImageView = {
-        let view = BadgeUserImageView()
+        let view = UserImageView()
         view.initialsFont = .avatarInitial
         view.size = .badge
-        // Match the conversation list: show the full-colour image (or the blocked badge) rather
-        // than a desaturated avatar for a blocked user.
-        view.shouldDesaturate = false
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnAvatar)))
         view.accessibilityElementsHidden = false
