@@ -22,7 +22,7 @@ public struct MeetingRecurrence: Equatable, Sendable {
 
     public let frequency: Frequency
     public let interval: Int
-    public let until: Date
+    public let until: Date?
 
     public enum Frequency: CaseIterable, Sendable {
         case daily
@@ -31,7 +31,7 @@ public struct MeetingRecurrence: Equatable, Sendable {
         case yearly
     }
 
-    public init(frequency: Frequency, interval: Int, until: Date) {
+    public init(frequency: Frequency, interval: Int, until: Date? = nil) {
         self.frequency = frequency
         self.interval = interval
         self.until = until

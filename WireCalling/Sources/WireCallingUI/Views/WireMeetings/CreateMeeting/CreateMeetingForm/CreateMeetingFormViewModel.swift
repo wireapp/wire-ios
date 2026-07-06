@@ -51,7 +51,6 @@ final class CreateMeetingFormViewModel {
     var meetingTitle: String = ""
     var startDate: Date = .init()
     var endDate: Date = .init().addingTimeInterval(1800)
-    var recurrence: MeetingRecurrence? // TODO: make computed property?
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     var isLoading = false
@@ -130,7 +129,7 @@ final class CreateMeetingFormViewModel {
                 title: meetingTitle,
                 startTime: startDate,
                 endTime: endDate,
-                recurrence: recurrence
+                recurrence: repeatOption.toRecurrence()
             )
             onSuccess(meeting)
         } catch {
@@ -140,29 +139,15 @@ final class CreateMeetingFormViewModel {
 
 }
 
-// TODO: clean up
-/*
-private extension MeetingFrequency {
-    func toDomainRepeatOption() -> RepeatOption {
-        switch self {
-        case .daily: .daily
-        case .weekly: .weekly
-        case .monthly: .monthly
-        case .yearly: .yearly
-        }
-    }
-}
-
-private extension RepeatOption {
-    func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence? {
+private extension MeetingRepeatOption {
+    func toRecurrence() -> MeetingRecurrence? {
         switch self {
         case .never: nil
-        case .daily: MeetingRecurrence(frequency: .daily, interval: nil, until: nil)
-        case .weekly: MeetingRecurrence(frequency: .weekly, interval: nil, until: nil)
-        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2, until: nil)
-        case .monthly: MeetingRecurrence(frequency: .monthly, interval: nil, until: nil)
-        case .yearly: MeetingRecurrence(frequency: .yearly, interval: nil, until: nil)
+        case .daily: MeetingRecurrence(frequency: .daily, interval: 1)
+        case .weekly: MeetingRecurrence(frequency: .weekly, interval: 1)
+        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2)
+        case .monthly: MeetingRecurrence(frequency: .monthly, interval: 1)
+        case .yearly: MeetingRecurrence(frequency: .yearly, interval: 1)
         }
     }
 }
-*/
