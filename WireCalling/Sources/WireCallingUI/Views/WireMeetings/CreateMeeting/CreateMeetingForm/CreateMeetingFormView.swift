@@ -126,7 +126,7 @@ struct CreateMeetingFormView: View {
                 timeField: .endTime
             )
             Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
-                ForEach(RepeatOption.allCases, id: \.self) { option in
+                ForEach(MeetingRepeatOption.allCases, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
                 }
@@ -233,7 +233,7 @@ struct CreateMeetingFormView: View {
     }
 }
 
-private extension RepeatOption {
+private extension MeetingRepeatOption {
 
     typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
 

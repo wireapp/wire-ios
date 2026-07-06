@@ -36,7 +36,6 @@ public struct Meeting: Equatable, Sendable {
     public let end: Date
 
     public let recurrence: MeetingRecurrence?
-    public let repeatOption: RepeatOption // TODO: delete
 
     public let members: [Member]
 
@@ -48,7 +47,6 @@ public struct Meeting: Equatable, Sendable {
         start: Date,
         end: Date,
         recurrence: MeetingRecurrence?,
-        repeatOption: RepeatOption,
         members: [Member],
         conversationID: QualifiedID
     ) {
@@ -56,7 +54,6 @@ public struct Meeting: Equatable, Sendable {
         self.title = title
         self.start = start
         self.end = end
-        self.repeatOption = repeatOption
         self.recurrence = recurrence
         self.members = members
         self.conversationID = conversationID

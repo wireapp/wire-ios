@@ -51,8 +51,8 @@ final class CreateMeetingFormViewModel {
     var meetingTitle: String = ""
     var startDate: Date = .init()
     var endDate: Date = .init().addingTimeInterval(1800)
-    var recurrence: MeetingRecurrence?
-    var repeatOption: RepeatOption = .never
+    var recurrence: MeetingRecurrence? // TODO: make computed property?
+    var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     var isLoading = false
     var error: (any Error)?
@@ -139,3 +139,30 @@ final class CreateMeetingFormViewModel {
     }
 
 }
+
+// TODO: clean up
+/*
+private extension MeetingFrequency {
+    func toDomainRepeatOption() -> RepeatOption {
+        switch self {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+    }
+}
+
+private extension RepeatOption {
+    func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence? {
+        switch self {
+        case .never: nil
+        case .daily: MeetingRecurrence(frequency: .daily, interval: nil, until: nil)
+        case .weekly: MeetingRecurrence(frequency: .weekly, interval: nil, until: nil)
+        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2, until: nil)
+        case .monthly: MeetingRecurrence(frequency: .monthly, interval: nil, until: nil)
+        case .yearly: MeetingRecurrence(frequency: .yearly, interval: nil, until: nil)
+        }
+    }
+}
+*/

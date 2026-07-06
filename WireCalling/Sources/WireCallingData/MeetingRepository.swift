@@ -85,7 +85,6 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
-            repeatOption: recurrence?.frequency.toDomainRepeatOption() ?? .never,
             members: [],
             conversationID: conversationID
         )
@@ -121,29 +120,5 @@ private extension WireCallingDomain.MeetingRecurrence {
             interval: interval,
             until: until
         )
-    }
-}
-
-private extension MeetingFrequency {
-    func toDomainRepeatOption() -> RepeatOption {
-        switch self {
-        case .daily: .daily
-        case .weekly: .weekly
-        case .monthly: .monthly
-        case .yearly: .yearly
-        }
-    }
-}
-
-private extension RepeatOption {
-    func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence? {
-        switch self {
-        case .never: nil
-        case .daily: MeetingRecurrence(frequency: .daily, interval: nil, until: nil)
-        case .weekly: MeetingRecurrence(frequency: .weekly, interval: nil, until: nil)
-        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2, until: nil)
-        case .monthly: MeetingRecurrence(frequency: .monthly, interval: nil, until: nil)
-        case .yearly: MeetingRecurrence(frequency: .yearly, interval: nil, until: nil)
-        }
     }
 }

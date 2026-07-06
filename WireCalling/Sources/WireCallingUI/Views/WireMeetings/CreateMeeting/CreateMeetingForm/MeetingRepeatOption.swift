@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: delete
-public enum RepeatOption: Int, CaseIterable, Sendable {
+public enum MeetingRepeatOption: Int, CaseIterable, Sendable {
 
     case never
     case daily
