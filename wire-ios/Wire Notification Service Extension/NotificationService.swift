@@ -56,7 +56,7 @@ final class NotificationService: UNNotificationServiceExtension {
             WireLogger.notifications.warn("notification service has multiple handlers")
         }
 
-        if let handler  = loadNotificationHandler(for: request, contentHandler: contentHandler) {
+        if let handler = loadNotificationHandler(for: request, contentHandler: contentHandler) {
             notificationHandlers[request.identifier] = handler
             handler.execute()
         } else {

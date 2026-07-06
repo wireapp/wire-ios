@@ -38,7 +38,7 @@ public final class NotificationServiceExtension {
     private let logger: WireLogger
     private var onGoingTask: Task<Void, Never>?
     private let request: UNNotificationRequest
-    private let contentHandler: ((UNNotificationContent) -> Void)
+    private let contentHandler: (UNNotificationContent) -> Void
     private let didComplete: () -> Void
 
     private let currentAppVersion: String
