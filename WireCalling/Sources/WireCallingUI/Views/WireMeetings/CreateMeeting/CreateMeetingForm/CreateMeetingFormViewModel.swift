@@ -49,8 +49,8 @@ final class CreateMeetingFormViewModel {
     private let onSuccess: (Meeting) -> Void
 
     var meetingTitle: String = ""
-    var startDate: Date = .init()
-    var endDate: Date = .init().addingTimeInterval(1800)
+    var startDate: Date = .now.roundedUpToNextHalfHour()
+    var endDate: Date = .now.roundedUpToNextHalfHour().addingTimeInterval(1800)
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     var isLoading = false
@@ -138,6 +138,20 @@ final class CreateMeetingFormViewModel {
         } catch {
             self.error = error
         }
+    }
+
+}
+
+private extension Date {
+
+    /// Returns the date rounded up to the next half-hour boundary
+    /// (e.g. 10:12 -> 10:30, 10:42 -> 11:00). Dates already on a
+    /// boundary are returned unchanged.
+    func roundedUpToNextHalfHour(calendar: Calendar = .current) -> Date {
+        let components = calendar.dateComponents([.minute, .second], from: self)
+        let secondsPastBoundary = TimeInterval(((components.minute ?? 0) % 30) * 60 + (components.second ?? 0))
+        guard secondsPastBoundary > 0 else { return self }
+        return addingTimeInterval(1800 - secondsPastBoundary)
     }
 
 }
