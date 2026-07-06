@@ -115,7 +115,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var labelSharedDriveIsOn: XCUIElement {
-        app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
+        app.links[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
     }
 
     var sharedDriveButton: XCUIElement {
