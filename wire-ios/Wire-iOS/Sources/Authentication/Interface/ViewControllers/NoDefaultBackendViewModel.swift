@@ -1,0 +1,97 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireSyncEngine
+import WireTransport
+import WireLogging
+
+protocol NoDefaultBackendViewModelDelegate: AnyObject {
+    func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, didChangeLoading isLoading: Bool)
+    func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, didFailWithMessage message: String)
+    func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, didConfigureBackend configurationURL: URL)
+    func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, requestUserConfirmationForBackendSwitch environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void)
+}
+
+/// Validates a backend configuration link (typed or scanned) and, once valid,
+/// fetches and applies the corresponding backend environment.
+final class NoDefaultBackendViewModel {
+
+    weak var delegate: NoDefaultBackendViewModelDelegate?
+
+    private let sessionManager: () -> SessionManager?
+
+    init(sessionManager: @escaping () -> SessionManager? = { SessionManager.shared }) {
+        self.sessionManager = sessionManager
+    }
+
+    func submitConfigurationLink(_ rawInput: String) {
+        guard let sessionManager = sessionManager() else {
+            fail()
+            return
+        }
+
+        let trimmed = rawInput.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmed.isEmpty else {
+            fail()
+            return
+        }
+
+        let candidate: String = if trimmed.hasPrefix("wire://") {
+            trimmed
+        } else {
+            "wire://access/?config=\(trimmed.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? trimmed)"
+        }
+
+        guard
+            let deeplinkURL = URL(string: candidate),
+            let action = try? URLAction(url: deeplinkURL),
+            case let .accessBackend(configurationURL) = action
+        else {
+            fail()
+            return
+        }
+
+        delegate?.noDefaultBackendViewModel(self, didChangeLoading: true)
+        
+        sessionManager.fetchBackendEnvironment(at: configurationURL) { [weak self] result in
+            guard let self else { return }
+
+            switch result {
+            case let .success(backendEnvironment):
+                delegate?.noDefaultBackendViewModel(self, requestUserConfirmationForBackendSwitch: backendEnvironment) { didConfirm in
+                    guard didConfirm else { return }
+                    sessionManager.markNetworkSessionsAsReady(true)
+                    sessionManager.switchBackendWithoutResolving(to: backendEnvironment)
+                    self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false)
+//                        BackendEnvironment.shared = backendEnvironment
+//                        self.startAutomaticSSOFlow(promptOnError: false)
+                    self.delegate?.noDefaultBackendViewModel(self, didConfigureBackend: configurationURL)
+                    }
+            case .failure:
+                self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false)
+                self.fail()
+            }
+        }
+    }
+
+    private func fail() {
+        delegate?.noDefaultBackendViewModel(self, didFailWithMessage: L10n.Localizable.NoDefaultBackend.error)
+    }
+}

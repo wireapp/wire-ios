@@ -98,6 +98,8 @@ final class AuthenticationInterfaceBuilder {
                 bridge: bridge,
                 authenticationCoordinator: authenticationCoordinator
             )
+        case .noDefaultBackend:
+            return NoDefaultBackendViewController()
 
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)

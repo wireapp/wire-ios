@@ -31,6 +31,10 @@ public extension BackendEnvironment {
             EnvironmentType(userDefaults: .applicationGroup)
         }
 
+        guard let bundle = Bundle.backendBundle else {
+            return BackendEnvironment.defaultNoBackend
+        }
+        
         guard let environment = BackendEnvironment(type: environmentType) else {
             fatalError("Malformed backend configuration data")
         }
@@ -45,11 +49,50 @@ public extension BackendEnvironment {
     }
 
     convenience init?(type: EnvironmentType?) {
+        
+        guard let bundle = Bundle.backendBundle else {
+            return nil
+        }
+        
         self.init(
             userDefaults: .applicationGroupCombinedWithStandard,
-            configurationBundle: .backendBundle,
+            configurationBundle: bundle,
             environmentType: type
         )
     }
 
+    static var defaultNoBackend = BackendEnvironment(title: "No default backend", trustData: [], environmentType: .production, endpoints: NoBackendEndpointsProvider(), proxySettings: nil, certificateTrust: NoBackendTrustProvider())
+}
+
+class NoBackendTrustProvider: NSObject, BackendTrustProvider {
+    func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
+        return false
+    }
+    
+    var bundleIdentifier: String = "com.wire.no-default-backend"
+}
+
+class NoBackendEndpointsProvider: NSObject, BackendEndpointsProvider {
+    var backendURL: URL
+    
+    var backendWSURL: URL
+    
+    var blackListURL: URL
+    
+    var teamsURL: URL
+    
+    var accountsURL: URL
+    
+    var websiteURL: URL
+    
+    var countlyURL: URL?
+    
+    override init() {
+        self.websiteURL = URL(string: "https://example.com")!
+        self.backendURL = URL(string: "https://example.com")!
+        self.backendWSURL = URL(string: "wss://example.com")!
+        self.blackListURL = URL(string: "https://example.com")!
+        self.teamsURL = URL(string: "https://example.com")!
+        self.accountsURL = URL(string: "https://example.com")!
+    }
 }

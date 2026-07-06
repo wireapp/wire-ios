@@ -36,6 +36,8 @@ indirect enum AuthenticationFlowStep: Equatable {
     case start
     // New WireAuthentication feature module
     case wireAuthenticationModule
+    // No default backend
+    case noDefaultBackend
     // Legacy authentication flow
     case landingScreen
     case reauthenticate(credentials: LoginCredentials?, numberOfAccounts: Int, isSignedOut: Bool)
@@ -78,6 +80,7 @@ indirect enum AuthenticationFlowStep: Equatable {
         // Initial Steps
         case .start: false
         case .wireAuthenticationModule: true
+        case .noDefaultBackend: true
         case .landingScreen: true
         case .reauthenticate: true
         // Sign-In
@@ -122,6 +125,8 @@ extension AuthenticationFlowStep: CustomStringConvertible {
             "start"
         case .wireAuthenticationModule:
             "wireAuthenticationModule"
+        case .noDefaultBackend:
+            "noDefaultBackend"
         case .landingScreen:
             "landingScreen"
         case .reauthenticate:

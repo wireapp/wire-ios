@@ -897,6 +897,16 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "messageAction.unlikeButton.description", fallback: "Unlike the picture")
       }
     }
+    internal enum NoDefaultBackend {
+      internal enum CloseButton {
+        /// Close QR code scanner
+        internal static let description = L10n.tr("Accessibility", "noDefaultBackend.closeButton.description", fallback: "Close QR code scanner")
+      }
+      internal enum QrCodeButton {
+        /// Scan QR code
+        internal static let description = L10n.tr("Accessibility", "noDefaultBackend.qrCodeButton.description", fallback: "Scan QR code")
+      }
+    }
     internal enum NotificationConversationSettings {
       internal enum CloseButton {
         /// Close notification settings
@@ -4364,6 +4374,24 @@ internal enum L10n {
         internal static let toolong = L10n.tr("Localizable", "name.guidance.toolong", fallback: "Too many characters")
         /// At least 2 characters
         internal static let tooshort = L10n.tr("Localizable", "name.guidance.tooshort", fallback: "At least 2 characters")
+      }
+    }
+    internal enum NoDefaultBackend {
+      /// Something went wrong. Check the link and try again.
+      internal static let error = L10n.tr("Localizable", "no_default_backend.error", fallback: "Something went wrong. Check the link and try again.")
+      /// Your app needs configuration. Ask your administration for a configuration link or QR code.
+      internal static let paragraph = L10n.tr("Localizable", "no_default_backend.paragraph", fallback: "Your app needs configuration. Ask your administration for a configuration link or QR code.")
+      /// Set up backend configuration
+      internal static let subheadline = L10n.tr("Localizable", "no_default_backend.subheadline", fallback: "Set up backend configuration")
+      internal enum Button {
+        /// Configure
+        internal static let configure = L10n.tr("Localizable", "no_default_backend.button.configure", fallback: "Configure")
+      }
+      internal enum TextField {
+        /// Configuration link
+        internal static let caption = L10n.tr("Localizable", "no_default_backend.text_field.caption", fallback: "Configuration link")
+        /// Enter link
+        internal static let placeholder = L10n.tr("Localizable", "no_default_backend.text_field.placeholder", fallback: "Enter link")
       }
     }
     internal enum Notifications {
