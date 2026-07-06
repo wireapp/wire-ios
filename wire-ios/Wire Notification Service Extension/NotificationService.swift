@@ -57,6 +57,7 @@ final class NotificationService: UNNotificationServiceExtension {
         }
 
         if let handler  = loadNotificationHandler(for: request, contentHandler: contentHandler) {
+            notificationHandlers[request.identifier] = handler
             handler.execute()
         } else {
             WireLogger.notifications.warn("cannot load notification handler", attributes: .safePublic)
