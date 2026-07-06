@@ -35,7 +35,7 @@ public final class NotificationServiceExtension {
 
     // MARK: - Properties
 
-    private let logger = WireLogger.notifications
+    private let logger: WireLogger
     private var onGoingTask: Task<Void, Never>?
     private let request: UNNotificationRequest
     private let contentHandler: ((UNNotificationContent) -> Void)
@@ -62,6 +62,11 @@ public final class NotificationServiceExtension {
         contentHandler: @escaping (UNNotificationContent) -> Void,
         didComplete: @escaping () -> Void
     ) {
+        // Avoid `WireLogger.notifications` as we want a logger specific to this NSE instance.
+        let logger = WireLogger(tag: "notifications")
+        logger.addTag(.notificationRequestID, value: request.identifier)
+
+        self.logger = logger
         self.request = request
         self.contentHandler = contentHandler
         self.didComplete = didComplete
@@ -74,7 +79,6 @@ public final class NotificationServiceExtension {
         self.preferredAPIVersion = preferredAPIVersion
         self.mainAppRequiredGate = MainAppRequiredGate(userDefaults: sharedUserDefaults)
 
-        logger.addTag(.notificationRequestID, value: request.identifier)
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE, .safePublic)
     }

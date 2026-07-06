@@ -50,7 +50,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
         if !notificationHandlers.isEmpty {
             // It is not clearly documented whether a `UNNotificationServiceExtension` instance can be called multiple
-            // times. Looking at Apples example code I would assume not but to be safe we are allowing multiple
+            // times. Looking at Apple's example code I would assume not but to be safe we are allowing multiple
             // invocations per `UNNotificationServiceExtension` instance. If in practice this warning is never called
             // we can re-architect things.
             WireLogger.notifications.warn("notification service has multiple handlers")
