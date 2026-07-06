@@ -20,20 +20,18 @@ import Foundation
 import WireCallingDomain
 import WireDataModel
 import WireDomain
-import WireSyncEngine
 
 struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
 
     var conversationRepository: any ConversationRepositoryProtocol
+    var contextProvider: any ContextProvider
 
     func pullConversation(id: UUID, domain: String) async throws {
         try await conversationRepository.pullConversation(id: id, domain: domain)
     }
 
-    @MainActor
     func addParticipants(_ participants: [WireCallingDomain.Member], to conversationID: WireCallingDomain.QualifiedID) async throws {
-        guard !participants.isEmpty,
-              let session = ZMUserSession.shared() else { return }
+        guard !participants.isEmpty else { return }
 
         guard let conversation = await conversationRepository.fetchConversation(
             id: conversationID.id,
@@ -41,7 +39,7 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
         ) else { return }
 
         let objectID = conversation.objectID
-        let syncContext = session.syncContext
+        let syncContext = contextProvider.syncContext
 
         let mlsGroupID = await syncContext.perform {
             guard
