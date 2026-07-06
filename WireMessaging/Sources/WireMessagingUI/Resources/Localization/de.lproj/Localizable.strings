@@ -144,6 +144,7 @@
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
 "conversation.wireCells.files.noData.learnMore" = "Erfahren Sie mehr über Geteiltes Drive";
+
 "conversation.wireCells.allFiles.noData.title" = "Es gibt noch keine Dateien";
 "conversation.wireCells.allFiles.noData.message" = "Bei Unterhaltungen mit Geteiltes Drive finden Sie hier die geteilten Dateien.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Mehr erfahren";
@@ -195,7 +196,6 @@
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Erfahren Sie mehr über den Papierkorb";
 "conversation.wireCells.recycleBin.noData.message" = "Hier finden Sie alle gelöschten Dateien und Ordner.";
-"conversation.wireCells.recycleBin.emptyFolder.message" = "Dieser Ordner ist leer.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Endgültig löschen";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Endgültig löschen";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "Dies wird die Datei \"%@\" für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
@@ -207,6 +207,8 @@
 "conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "Der Ordner \"%@\" mit all seinen Dateien und Unterordnern wird wiederhergestellt und allen in dieser Unterhaltung zur Verfügung gestellt.";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Übergeordneten Ordner wiederherstellen";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Sie können keine Ordner oder Dateien aus einem gelöschten Ordner wiederherstellen. Um das gewünschte Objekt wiederzuverwenden, müssen Sie den übergeordneten Ordner wiederherstellen.\n\nDer Ordner \"%@\" mit allen Dateien und Unterordnern wird wiederhergestellt und steht allen Teilnehmern dieser Unterhaltung zur Verfügung.";
+"conversation.wireCells.recycleBin.emptyFolder.title" = "Leerer Ordner";
+"conversation.wireCells.recycleBin.emptyFolder.message" = "Dieser Ordner enthält keine Dateien oder Ordner.";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Tags hinzufügen oder entfernen";
@@ -332,3 +334,11 @@
 "conversation.wireCells.filter.fileType.typeName.code" = "Code";
 "conversation.wireCells.filter.fileType.typeName.archive" = "Archive";
 "conversation.wireCells.filter.fileType.typeName.text" = "Textdateien";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDriveToggleSection.title" = "Geteiltes Drive";
+"conversation.details.sharedDriveToggleSection.footer.title" = "Dauerhaft aktiv für diese Unterhaltung.";
+"conversation.details.sharedDriveAccessSection.header.title" = "Zugriff auf Geteiltes Drive";
+"conversation.details.sharedDriveAccessSection.footer.title" = "Bearbeiter können auf alle Dateien zugreifen und diese verwalten. Betrachter können Dateien nur lesen; sie können keine Dateien oder Ordner hochladen, bearbeiten oder verwalten.";
+"conversation.details.sharedDriveAccessSection.footer.subtitle" = "Personen, die nicht zu dem Team gehören, das die Unterhaltung erstellt hat, sind standardmäßig Betrachter.";
+"conversation.details.sharedDriveAccessSection.you" = "Sie";

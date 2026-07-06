@@ -19,13 +19,13 @@
 "authentication.identity.input.body" = "Geben Sie Ihre E-Mail-Adresse ein, um zu beginnen.";
 "authentication.identity.input.field.placeholder" = "E-Mail-Adresse oder SSO-Code";
 "authentication.identity.input.field.title" = "E-Mail-Adresse oder SSO-Code";
-"authentication.identity.input.field.email_only.placeholder" = "E-Mail";
-"authentication.identity.input.field.email_only.title" = "E-Mail";
+"authentication.identity.input.field.email_only.placeholder" = "E-Mail-Adresse";
+"authentication.identity.input.field.email_only.title" = "E-Mail-Adresse";
 "authentication.identity.input.submit" = "Weiter";
 
 "cloud_user_login.title" = "Geben Sie Ihr Passwort ein, um sich anzumelden ";
 "cloud_user_login.expiration_message" = "Die Session ist abgelaufen. Zum Fortfahren bitte Passwort eingeben.";
-"cloud_user_login.input_email.title" = "E-Mail";
+"cloud_user_login.input_email.title" = "E-Mail-Adresse";
 "cloud_user_login.input_email.placeholder" = "E-Mail-Adresse eingeben";
 "cloud_user_login.input_password.title" = "Passwort";
 "cloud_user_login.input_password.placeholder" = "Passwort eingeben";
@@ -121,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Bitte nehmen Sie die Einladung zu Ihrem Team an und folgen Sie den Schritten zur Erstellung Ihres Benutzerkontos.";
 "authentication.error.message.account_suspended" = "Benutzerkonto ist nicht mehr zur Anmeldung berechtigt.";
 "authentication.error.message.incorrect_sso_code" = "Bitte den SSO-Zugangscode des Unternehmens überprüfen und erneut versuchen.";
+"authentication.error.title.already_logged_in" = "Account already active";
+"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
 
 "authentication.error.confirm" = "OK";
 
@@ -156,7 +158,7 @@
 "create_personal_account.create_team" = "Team erstellen";
 "create_personal_account.input_name.title" = "Name";
 "create_personal_account.input_name.placeholder" = "Name eingeben";
-"create_personal_account.input_email.title" = "E-Mail";
+"create_personal_account.input_email.title" = "E-Mail-Adresse";
 "create_personal_account.input_email.placeholder" = "E-Mail-Adresse eingeben";
 "create_personal_account.input_password.title" = "Passwort";
 "create_personal_account.input_password.placeholder" = "Passwort eingeben";

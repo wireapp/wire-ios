@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 /// Naming convention:
 ///
 /// The names of all accessibility strings should follow the format:
 ///
 ///  "<screen>.<component>.<usage>"
-
 
 "peoplepicker.upgrade_banner.close_button.label" = "Cerrar opción de creación de equipo";
 
@@ -222,7 +222,7 @@
 "conversationsList.mentionStatus.value" = "Has sido mencionado";
 "conversationsList.replyStatus.value" = "Responder";
 "conversationsList.badgeView.value" = "Mensajes nuevos: %d";
-"conversationsList.itemCell.hint" = "Doble toque para abrir la conversación";
+"conversationsList.itemCell.hint" = "Double tap to open conversation. Triple tap to open conversation options";
 "conversationsList.itemCell.avatar.group.label" = "Grupo";
 "conversationsList.itemCell.avatar.channel.label" = "Canal";
 "conversationsList.joinButton.description" = "Entrar";
@@ -344,3 +344,9 @@
 
 "webAuth.urlLabel.description" = "URL del proveedor de identidad";
 "webAuth.urlLabel.hint" = "Seleccione para abrir la URL completa.";
+
+// MARK: - Admin Selection
+
+"adminSelection.searchBar.clearButton.description" = "Clear search";
+"adminSelection.candidateRow.hint" = "Double tap to select as new admin";
+"adminSelection.deleteGroupButton.hint" = "Deletes the group permanently";

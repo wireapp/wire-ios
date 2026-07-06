@@ -221,7 +221,7 @@
 "conversationsList.mentionStatus.value" = "Sie wurden erwähnt";
 "conversationsList.replyStatus.value" = "Antworten";
 "conversationsList.badgeView.value" = "Neue Nachrichten: %d";
-"conversationsList.itemCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
+"conversationsList.itemCell.hint" = "Double tap to open conversation. Triple tap to open conversation options";
 "conversationsList.itemCell.avatar.group.label" = "Gruppe";
 "conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Beitreten";
@@ -343,3 +343,9 @@
 
 "webAuth.urlLabel.description" = "Identity-Provider-URL";
 "webAuth.urlLabel.hint" = "Auswählen, um die vollständige URL zu öffnen.";
+
+// MARK: - Admin Selection
+
+"adminSelection.searchBar.clearButton.description" = "Suche löschen";
+"adminSelection.candidateRow.hint" = "Doppeltippen, um als neuen Admin auszuwählen";
+"adminSelection.deleteGroupButton.hint" = "Löscht die Gruppe dauerhaft";
