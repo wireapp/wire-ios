@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: initial focus state title field
 // TODO: fix default meeting start date and end date adjustment
 
 import SwiftUI
@@ -32,6 +31,7 @@ struct CreateMeetingFormView: View {
     @State private(set) var viewModel: CreateMeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
+    @FocusState private var isTitleFieldFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -43,6 +43,9 @@ struct CreateMeetingFormView: View {
                 participantsSection
             }
             .listSectionSpacing(.compact)
+            .onAppear {
+                isTitleFieldFocused = true
+            }
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
             .navigationTitle(navigationTitle)
@@ -99,6 +102,7 @@ struct CreateMeetingFormView: View {
         Section(Strings.SetupTitle.header) {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+                    .focused($isTitleFieldFocused)
                 if !viewModel.meetingTitle.isEmpty {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(Color(.lightGray))
