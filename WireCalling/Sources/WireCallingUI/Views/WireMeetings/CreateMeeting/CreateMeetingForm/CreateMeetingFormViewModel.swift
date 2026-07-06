@@ -63,7 +63,7 @@ package final class CreateMeetingFormViewModel {
     var endDate: Date
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
-    var isLoading = false
+    private(set) var isLoading = false
     var error: (any Error)?
 
     var selectedMembersSummary: String {
@@ -109,24 +109,22 @@ package final class CreateMeetingFormViewModel {
         )
     }
 
-    func submit() {
+    func submit() async {
         guard !isLoading else { return }
-        Task {
-            switch mode {
-            case .instant:
-                await createInstantMeeting()
-            case .scheduled:
-                await scheduleMeeting()
-            }
+        isLoading = true
+        error = nil
+        defer { isLoading = false }
+        switch mode {
+        case .instant:
+            await createInstantMeeting()
+        case .scheduled:
+            await scheduleMeeting()
         }
     }
 
     // MARK: - Private
 
     private func createInstantMeeting() async {
-        isLoading = true
-        error = nil
-        defer { isLoading = false }
         do {
             let meeting = try await createInstantMeetingUseCase.invoke(
                 title: meetingTitle,
@@ -139,9 +137,6 @@ package final class CreateMeetingFormViewModel {
     }
 
     private func scheduleMeeting() async {
-        isLoading = true
-        error = nil
-        defer { isLoading = false }
         do {
             let meeting = try await createScheduledMeetingUseCase.invoke(
                 title: meetingTitle,

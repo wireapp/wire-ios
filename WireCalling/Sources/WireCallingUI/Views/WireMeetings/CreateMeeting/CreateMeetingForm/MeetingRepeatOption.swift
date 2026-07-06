@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum MeetingRepeatOption: Int, CaseIterable, Sendable {
+enum MeetingRepeatOption: Int, CaseIterable, Sendable {
 
     case never
     case daily

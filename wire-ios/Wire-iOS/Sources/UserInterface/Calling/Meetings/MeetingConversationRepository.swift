@@ -21,10 +21,10 @@ import WireCallingDomain
 import WireDataModel
 import WireDomain
 
-struct MeetingConversationRepository: MeetingConversationRepositoryProtocol {
+struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @unchecked Sendable {
 
-    var conversationRepository: any ConversationRepositoryProtocol
-    var contextProvider: any ContextProvider
+    let conversationRepository: any ConversationRepositoryProtocol
+    let contextProvider: any ContextProvider
 
     func pullConversation(id: UUID, domain: String) async throws {
         try await conversationRepository.pullConversation(id: id, domain: domain)
