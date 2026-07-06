@@ -69,6 +69,8 @@ on:
         required: true  
       SUBMODULE_PAT:
         required: true
+      JIRA_TOKEN:
+        required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -83,7 +85,9 @@ jobs:
     uses: ./.github/workflows/changelog.yml
     with:
       is_cloud_build: ${{ inputs.is_cloud_build }}
-      
+    secrets:
+      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+
   build_and_release:
     if: always()
     timeout-minutes: 60
@@ -212,9 +216,9 @@ jobs:
       - name: Notify on Wire if succeeded
         if: success()
         continue-on-error: true
-        uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+        uses: ./.github/actions/notify-wire
         with:
-          status: ${{ job.status }}
+          notify: custom
           text: |
             **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test 🚀
             **COUNTLY_ENABLED:** ${{ env.ENABLE_COUNTLY }}
@@ -226,10 +230,15 @@ jobs:
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             **SHA256:**  ${{ env.BUILD_SHA256 }}
+            ${{ env.TESTFLIGHT_ERROR != '' && format('⚠️ **TestFlight:** {0}', env.TESTFLIGHT_ERROR) || '' }}
       - name: Notify on Wire if failed
         if: failure()
         continue-on-error: true
-        uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+        uses: ./.github/actions/notify-wire
         with:
-          status: ${{ job.status }}
-          text: "🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          notify: custom
+          text: |
+            🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ${{ env.TESTFLIGHT_ERROR != '' && format('⚠️ **TestFlight:** {0}', env.TESTFLIGHT_ERROR) || '' }}

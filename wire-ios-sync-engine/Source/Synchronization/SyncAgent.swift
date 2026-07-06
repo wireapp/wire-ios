@@ -62,6 +62,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
     private let networkStatePublisher: AnyPublisher<NetworkState, Never>
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
     private let incrementalSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
     private let initialSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
     private var incrementalSyncToken: IncrementalSync.Token?
@@ -86,7 +87,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol,
-        networkStatePublisher: AnyPublisher<NetworkState, Never>
+        networkStatePublisher: AnyPublisher<NetworkState, Never>,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.journal = journal
         self.coreCryptoProvider = coreCryptoProvider
@@ -96,6 +98,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.syncStateSubject = syncStateSubject
         self.pushChannelCoordinator = pushChannelCoordinator
         self.networkStatePublisher = networkStatePublisher
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         super.init()
 
         setupBindings()
@@ -127,7 +130,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
-                try await withExpiringActivity(reason: "resuming sync") { [weak self] in
+                try await withBackgroundTask(name: "resuming sync", executer: backgroundTaskExecuter) { [weak self] in
                     if callEventsOnly {
                         try await self?.performIncrementalSyncForCallingEvents()
                     } else {
@@ -136,9 +139,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 }
             } catch is CancellationError {
                 // ignore error
-            } catch is ExpiringActivityNotAllowedToRun {
-                // ignore: the system denied or expired background time before
-                // sync could run. Sync resumes when the app returns to the foreground.
             } catch URLError.cancelled {
                 // ignore error, this is a result of cancelling the sync while a `URLSessionDataTask` is in progress,
                 // we treat it the same as a `CancellationError`
@@ -162,10 +162,18 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
-        ongoingSyncTask?.cancel()
-        ongoingSyncTask = nil
-        await incrementalSyncToken?.suspend()
-        incrementalSyncToken = nil
+
+        if let ongoingSyncTask {
+            ongoingSyncTask.cancel()
+            await ongoingSyncTask.value
+            self.ongoingSyncTask = nil
+        }
+
+        if let incrementalSyncToken {
+            await incrementalSyncToken.suspend()
+            self.incrementalSyncToken = nil
+        }
+
         syncStateSubject.send(.suspended)
 
         if let backgroundActivity {

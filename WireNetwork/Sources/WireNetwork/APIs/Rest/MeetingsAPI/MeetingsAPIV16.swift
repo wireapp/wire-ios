@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 final class MeetingsAPIV16: MeetingsAPIV15 {
 
     override var apiVersion: APIVersion {
@@ -37,7 +39,78 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: MeetingListResponseV15.self)
+            .success(code: .ok, type: MeetingListResponseV16.self)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    // MARK: - Create meeting
+
+    override func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)/meetings"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .created, type: MeetingResponseV16.self)
+            .failure(code: .forbidden, label: "invalid-op", error: MeetingsAPIError.invalidOperation)
+            .failure(code: .unreachable, error: MeetingsAPIError.unreachableBackends)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    // MARK: - Update meeting
+
+    override func updateMeeting(
+        meetingID: QualifiedID,
+        parameters: UpdateMeetingParameters
+    ) async throws -> MeetingResponse {
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)/meetings/\(meetingID.domain)/\(meetingID.id.uuidString.lowercased())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: MeetingResponseV16.self)
+            .failure(code: .forbidden, label: "invalid-op", error: MeetingsAPIError.invalidOperation)
+            .failure(code: .forbidden, label: "access-denied", error: MeetingsAPIError.accessDenied)
+            .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    // MARK: - Delete meeting
+
+    override func deleteMeeting(meetingID: QualifiedID) async throws {
+        let path = "\(pathPrefix)/meetings/\(meetingID.domain)/\(meetingID.id.uuidString.lowercased())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.delete)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .forbidden, label: "access-denied", error: MeetingsAPIError.accessDenied)
+            .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
             .parse(code: response.statusCode, data: data)
     }
 

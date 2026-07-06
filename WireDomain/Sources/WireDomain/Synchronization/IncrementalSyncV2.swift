@@ -52,6 +52,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let createPushChannelState: CreatePushChannelStateClosure
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -70,6 +71,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
         earService: EARServiceInterface,
+        backgroundTaskExecuter: any BackgroundTaskExecuter,
         createPushChannelState: @escaping CreatePushChannelStateClosure,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -87,6 +89,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.earService = earService
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         self.syncMarkerGenerator = syncMarkerGenerator
         self.createPushChannelState = createPushChannelState
     }
@@ -159,7 +162,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
-                try await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
+                try await withBackgroundTask(
+                    name: "processLiveStream IncrementalSyncV2",
+                    executer: backgroundTaskExecuter
+                ) {
                     await processLiveStream(
                         liveEventStream,
                         pushChannel: pushChannel,

@@ -31,7 +31,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     // MARK: - Properties
 
-    var notificationService: NotificationServiceProtocol?
+    private var notificationService: NotificationServiceExtension?
 
     override init() {
         super.init()
@@ -64,10 +64,33 @@ final class NotificationService: UNNotificationServiceExtension {
     }
 
     override func serviceExtensionTimeWillExpire() {
-        notificationService?.serviceExtensionTimeWillExpire()
+        WireLogger.notifications.warn("notification service will expire", attributes: .safePublic)
+
+        guard notificationService?.hasOnGoingTask == true else {
+            WireLogger.notifications.info("no ongoing task, no need to cancel", attributes: .safePublic)
+            return
+        }
+
+        let semaphore = DispatchSemaphore(value: 0)
+        Task {
+            await notificationService?.cancel()
+            WireLogger.notifications.info("did cancel ongoing task", attributes: .safePublic)
+            semaphore.signal()
+        }
+
+        // Keep the notification service alive until the ongoing task has completed cancellation as we have file locks
+        // that need releasing. It has been observed when using `performExpiringActivity(withReason:)` from within the
+        // NSE that the block might continue a long time after the activity has expired. Therefore we use a timeout.
+        ProcessInfo.processInfo.performExpiringActivity(withReason: "cancelling ongoing task") { isExpired in
+            if isExpired {
+                semaphore.signal()
+            } else {
+                _ = semaphore.wait(wallTimeout: .now() + .seconds(30))
+            }
+        }
     }
 
-    private func loadNotificationService(for request: UNNotificationRequest) -> NotificationServiceProtocol? {
+    private func loadNotificationService(for request: UNNotificationRequest) -> NotificationServiceExtension? {
         let info = Bundle.appMainBundle.infoDictionary
 
         guard let currentAppVersion = info?["CFBundleShortVersionString"] as? String else {

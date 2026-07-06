@@ -771,8 +771,8 @@ internal enum L10n {
         }
       }
       internal enum ItemCell {
-        /// Double tap to open conversation
-        internal static let hint = L10n.tr("Accessibility", "conversationsList.itemCell.hint", fallback: "Double tap to open conversation")
+        /// Double tap to open conversation. Triple tap to open conversation options
+        internal static let hint = L10n.tr("Accessibility", "conversationsList.itemCell.hint", fallback: "Double tap to open conversation. Triple tap to open conversation options")
         internal enum Avatar {
           internal enum Channel {
             /// Channel
@@ -3085,6 +3085,12 @@ internal enum L10n {
       }
     }
     internal enum ConversationList {
+      internal enum ContextMenu {
+        /// %@ options
+        internal static func title(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "conversation_list.context_menu.title", String(describing: p1), fallback: "%@ options")
+        }
+      }
       internal enum Empty {
         internal enum AllArchived {
           /// Everything archived

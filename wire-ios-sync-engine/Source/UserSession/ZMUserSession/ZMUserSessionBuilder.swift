@@ -173,7 +173,8 @@ struct ZMUserSessionBuilder {
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
             faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:],
-            updateBackendMetadataUseCase: updateBackendMetadataUseCase
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase,
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
     }
 
