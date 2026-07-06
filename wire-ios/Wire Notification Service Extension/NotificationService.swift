@@ -81,13 +81,11 @@ final class NotificationService: UNNotificationServiceExtension {
 
             await withTaskGroup { group in
                 for handler in handlers.values {
-
                     group.addTask {
                         await handler.cancel()
                     }
-
-                    await group.waitForAll()
                 }
+                await group.waitForAll()
             }
 
             WireLogger.notifications.info("did cancel ongoing tasks", attributes: .safePublic)
