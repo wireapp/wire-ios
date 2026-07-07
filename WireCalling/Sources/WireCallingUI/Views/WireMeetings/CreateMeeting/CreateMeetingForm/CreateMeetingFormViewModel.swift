@@ -48,7 +48,12 @@ package final class CreateMeetingFormViewModel {
     let searchMembersUseCase: any SearchMembersUseCaseProtocol
     private let createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol
     private let createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol
+    private let currentDateProvider: any CurrentDateProviding
     private let onSuccess: (Meeting) -> Void
+
+    /// The smallest allowed interval between start and end date, matching
+    /// the minute granularity of the time picker.
+    private static let minimumDuration: TimeInterval = 60
 
     var meetingTitle: String = ""
 
@@ -60,7 +65,24 @@ package final class CreateMeetingFormViewModel {
         }
     }
 
-    var endDate: Date
+    /// The end date is always after the start date.
+    var endDate: Date {
+        didSet {
+            if endDate < startDate.addingTimeInterval(Self.minimumDuration) {
+                endDate = startDate.addingTimeInterval(Self.minimumDuration)
+            }
+        }
+    }
+
+    /// Meetings can't be scheduled in the past.
+    var startDateRange: PartialRangeFrom<Date> {
+        currentDateProvider.now...
+    }
+
+    /// The end date must always be after the start date.
+    var endDateRange: PartialRangeFrom<Date> {
+        startDate.addingTimeInterval(Self.minimumDuration)...
+    }
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     private(set) var isLoading = false
@@ -90,6 +112,7 @@ package final class CreateMeetingFormViewModel {
         self.searchMembersUseCase = searchMembersUseCase
         self.createInstantMeetingUseCase = createInstantMeetingUseCase
         self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
+        self.currentDateProvider = currentDateProvider
         self.onSuccess = onSuccess
 
         let startDate = currentDateProvider.now.roundedUpToNextHalfHour()

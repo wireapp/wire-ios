@@ -118,12 +118,14 @@ struct CreateMeetingFormView: View {
             dateTimeRow(
                 label: Strings.Time.starts,
                 date: $viewModel.startDate,
+                range: viewModel.startDateRange,
                 dateField: .startDate,
                 timeField: .startTime
             )
             dateTimeRow(
                 label: Strings.Time.ends,
                 date: $viewModel.endDate,
+                range: viewModel.endDateRange,
                 dateField: .endDate,
                 timeField: .endTime
             )
@@ -173,6 +175,7 @@ struct CreateMeetingFormView: View {
     private func dateTimeRow(
         label: String,
         date: Binding<Date>,
+        range: PartialRangeFrom<Date>,
         dateField: ExpandedField,
         timeField: ExpandedField
     ) -> some View {
@@ -194,12 +197,12 @@ struct CreateMeetingFormView: View {
         }
 
         if expandedField == dateField {
-            DatePicker("", selection: date, displayedComponents: .date)
+            DatePicker("", selection: date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
         }
         if expandedField == timeField {
-            DatePicker("", selection: date, displayedComponents: .hourAndMinute)
+            DatePicker("", selection: date, in: range, displayedComponents: .hourAndMinute)
                 .datePickerStyle(.wheel)
                 .labelsHidden()
         }
