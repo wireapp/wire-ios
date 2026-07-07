@@ -125,6 +125,36 @@ struct CreateMeetingFormViewModelTests {
         #expect(viewModel.isNextButtonEnabled == true)
     }
 
+    // MARK: - Date Validation Tests
+
+    @Test("startDateRange starts at the beginning of the current day")
+    func startDateRange_StartsAtBeginningOfCurrentDay() {
+        #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: dateProviderMock.now))
+    }
+
+    @Test("endDateRange starts after the start date")
+    func endDateRange_StartsAfterStartDate() {
+        #expect(viewModel.endDateRange.lowerBound > viewModel.startDate)
+    }
+
+    @Test("setting an end date before the start date is corrected to be after the start date")
+    func endDateBeforeStartDate_IsCorrected() {
+        // When
+        viewModel.endDate = viewModel.startDate.addingTimeInterval(-3600)
+
+        // Then
+        #expect(viewModel.endDate > viewModel.startDate)
+    }
+
+    @Test("changing the start date keeps the end date after the start date")
+    func changingStartDate_KeepsEndDateAfterStartDate() {
+        // When
+        viewModel.startDate = viewModel.startDate.addingTimeInterval(86400)
+
+        // Then
+        #expect(viewModel.endDate > viewModel.startDate)
+    }
+
     // MARK: - submit Tests
 
     @Test("submit in instant mode invokes the instant use case and calls onSuccess")
