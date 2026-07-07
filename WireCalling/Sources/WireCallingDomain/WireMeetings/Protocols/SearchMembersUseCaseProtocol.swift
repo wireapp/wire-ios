@@ -16,25 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAccountImageUI
-import WireDataModel
-import WireSyncEngine
+// sourcery: AutoMockable
+/// Searches the user's team for members so they can be added as participants
+/// to a meeting.
+package protocol SearchMembersUseCaseProtocol: Sendable {
 
-class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol {
+    func invoke(query: String) async throws -> [Member]
 
-    private let repository: GetParticipantImageSourceRepositoryProtocol
-
-    init(repository: GetParticipantImageSourceRepositoryProtocol) {
-        self.repository = repository
-    }
-
-    @MainActor
-    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
-        let image = await repository.invoke(user: user)
-        if let image {
-            return WireAccountImageUI.AccountImageSource.image(image)
-        } else {
-            return WireAccountImageUI.AccountImageSource.text(user.initials ?? "")
-        }
-    }
 }

@@ -128,9 +128,9 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     /// waits for the init-time async search to complete before returning.
     @MainActor
     private func makeSettledViewModel(searchResults: [Member]) async -> MemberSelectionViewModel {
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = searchResults
-        let viewModel = MemberSelectionViewModel(source: repository)
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMemberReturnValue = searchResults
+        let viewModel = MemberSelectionViewModel(source: useCase)
         while viewModel.isSearching {
             await Task.yield()
         }
@@ -141,12 +141,12 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     /// stays in the loading state when snapshotted.
     @MainActor
     private func makeLoadingViewModel() -> MemberSelectionViewModel {
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberClosure = { _ in
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMemberClosure = { _ in
             try? await Task.sleep(for: .seconds(60))
             return []
         }
-        return MemberSelectionViewModel(source: repository)
+        return MemberSelectionViewModel(source: useCase)
     }
 }
 
