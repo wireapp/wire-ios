@@ -69,10 +69,6 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
         return response.toDomainMeeting()
     }
 
-    package func deleteMeeting(meetingID: QualifiedID) async throws {
-        // TODO: wire up when a delete endpoint is added to MeetingsAPI
-    }
-
 }
 
 // MARK: - Mapping
