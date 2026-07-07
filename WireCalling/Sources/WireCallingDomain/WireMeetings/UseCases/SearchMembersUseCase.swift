@@ -16,19 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
-import WireNetwork
+package struct SearchMembersUseCase: SearchMembersUseCaseProtocol {
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
-    ) -> UIViewController
+    private let repository: any MemberRepositoryProtocol
+
+    package init(repository: any MemberRepositoryProtocol) {
+        self.repository = repository
+    }
+
+    package func invoke(query: String) async throws -> [Member] {
+        try await repository.search(query: query)
+    }
+
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

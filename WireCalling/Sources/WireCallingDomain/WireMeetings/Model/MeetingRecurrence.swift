@@ -16,19 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
-import WireNetwork
+public import Foundation
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
-    ) -> UIViewController
+public struct MeetingRecurrence: Equatable, Sendable {
+
+    public let frequency: Frequency
+    public let interval: Int
+    public let until: Date?
+
+    public enum Frequency: CaseIterable, Sendable {
+        case daily
+        case weekly
+        case monthly
+        case yearly
+    }
+
+    public init(frequency: Frequency, interval: Int, until: Date? = nil) {
+        self.frequency = frequency
+        self.interval = interval
+        self.until = until
+    }
+
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

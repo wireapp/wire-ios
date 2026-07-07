@@ -187,22 +187,22 @@ struct MemberSelectionView: View {
 // MARK: - Preview
 
 #Preview("success") {
-    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockMemberSource()))
+    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockSearchMembersUseCase()))
 }
 
 #Preview("empty") {
-    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockMemberSource(members: [])))
+    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockSearchMembersUseCase(members: [])))
 }
 
 #Preview("failure") {
     MemberSelectionView(
-        viewModel: MemberSelectionViewModel(source: MockMemberSource(error: URLError(.badServerResponse)))
+        viewModel: MemberSelectionViewModel(source: MockSearchMembersUseCase(error: URLError(.badServerResponse)))
     )
 }
 
 // MARK: - Mock
 
-private struct MockMemberSource: MemberRepositoryProtocol {
+private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
 
     let result: Result<[Member], any Error>
 
@@ -214,7 +214,7 @@ private struct MockMemberSource: MemberRepositoryProtocol {
         self.result = .failure(error)
     }
 
-    func search(query: String) async throws -> [Member] {
+    func invoke(query: String) async throws -> [Member] {
         switch result {
         case let .failure(error):
             throw error
