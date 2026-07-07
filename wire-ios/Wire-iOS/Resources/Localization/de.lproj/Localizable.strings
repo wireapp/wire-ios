@@ -1433,6 +1433,20 @@
 "landing.custom_backend.alert.message.backend-name" = "Backend-Name:";
 "landing.custom_backend.alert.message.backend-url" = "Backend-URL:";
 
+
+// No default backend
+
+"no_default_backend.title" = "Einrichten";
+"no_default_backend.subheadline" = "Richten Sie Ihre App ein";
+"no_default_backend.paragraph" = "Geben Sie den von Ihrer Verwaltung bereitgestellten Link ein oder scannen Sie den QR-Code.";
+"no_default_backend.text_field.caption" = "Konfigurationslink";
+"no_default_backend.text_field.placeholder" = "Link eingeben oder QR-Code scannen";
+"no_default_backend.button.configure" = "Einrichten";
+"no_default_backend.error" = "Es ist ein Fehler aufgetreten. Überprüfen Sie den Link sowie Ihre Internetverbindung und versuchen Sie es dann erneut.";
+"no_default_backend.setup.message" = "Ihre App ist eingerichtet";
+"no_default_backend.setup.subtitle" = "Im nächsten Schritt können Sie sich anmelden";
+"no_default_backend.setup.button.continue" = "Weiter";
+
 // Create team
 
 "team.activation_code.headline" = "Posteingang prüfen";

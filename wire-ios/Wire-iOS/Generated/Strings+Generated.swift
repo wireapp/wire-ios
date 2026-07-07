@@ -4377,21 +4377,33 @@ internal enum L10n {
       }
     }
     internal enum NoDefaultBackend {
-      /// Something went wrong. Check the link and try again.
-      internal static let error = L10n.tr("Localizable", "no_default_backend.error", fallback: "Something went wrong. Check the link and try again.")
-      /// Your app needs configuration. Ask your administration for a configuration link or QR code.
-      internal static let paragraph = L10n.tr("Localizable", "no_default_backend.paragraph", fallback: "Your app needs configuration. Ask your administration for a configuration link or QR code.")
-      /// Set up backend configuration
-      internal static let subheadline = L10n.tr("Localizable", "no_default_backend.subheadline", fallback: "Set up backend configuration")
+      /// Something went wrong. Check the link and your connection, then try again.
+      internal static let error = L10n.tr("Localizable", "no_default_backend.error", fallback: "Something went wrong. Check the link and your connection, then try again.")
+      /// To get started, enter the link or scan the QR code provided by your administration.
+      internal static let paragraph = L10n.tr("Localizable", "no_default_backend.paragraph", fallback: "To get started, enter the link or scan the QR code provided by your administration.")
+      /// Set up your app
+      internal static let subheadline = L10n.tr("Localizable", "no_default_backend.subheadline", fallback: "Set up your app")
+      /// Setup
+      internal static let title = L10n.tr("Localizable", "no_default_backend.title", fallback: "Setup")
       internal enum Button {
-        /// Configure
-        internal static let configure = L10n.tr("Localizable", "no_default_backend.button.configure", fallback: "Configure")
+        /// Set Up
+        internal static let configure = L10n.tr("Localizable", "no_default_backend.button.configure", fallback: "Set Up")
+      }
+      internal enum Setup {
+        /// Your app is set up
+        internal static let message = L10n.tr("Localizable", "no_default_backend.setup.message", fallback: "Your app is set up")
+        /// In the next step, you can log in
+        internal static let subtitle = L10n.tr("Localizable", "no_default_backend.setup.subtitle", fallback: "In the next step, you can log in")
+        internal enum Button {
+          /// Continue
+          internal static let `continue` = L10n.tr("Localizable", "no_default_backend.setup.button.continue", fallback: "Continue")
+        }
       }
       internal enum TextField {
         /// Configuration link
         internal static let caption = L10n.tr("Localizable", "no_default_backend.text_field.caption", fallback: "Configuration link")
-        /// Enter link
-        internal static let placeholder = L10n.tr("Localizable", "no_default_backend.text_field.placeholder", fallback: "Enter link")
+        /// Enter link or scan QR code
+        internal static let placeholder = L10n.tr("Localizable", "no_default_backend.text_field.placeholder", fallback: "Enter link or scan QR code")
       }
     }
     internal enum Notifications {

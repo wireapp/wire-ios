@@ -1436,12 +1436,16 @@
 
 // No default backend
 
-"no_default_backend.subheadline" = "Set up backend configuration";
-"no_default_backend.paragraph" = "Your app needs configuration. Ask your administration for a configuration link or QR code.";
+"no_default_backend.title" = "Setup";
+"no_default_backend.subheadline" = "Set up your app";
+"no_default_backend.paragraph" = "To get started, enter the link or scan the QR code provided by your administration.";
 "no_default_backend.text_field.caption" = "Configuration link";
-"no_default_backend.text_field.placeholder" = "Enter link";
-"no_default_backend.button.configure" = "Configure";
-"no_default_backend.error" = "Something went wrong. Check the link and try again.";
+"no_default_backend.text_field.placeholder" = "Enter link or scan QR code";
+"no_default_backend.button.configure" = "Set Up";
+"no_default_backend.error" = "Something went wrong. Check the link and your connection, then try again.";
+"no_default_backend.setup.message" = "Your app is set up";
+"no_default_backend.setup.subtitle" = "In the next step, you can log in";
+"no_default_backend.setup.button.continue" = "Continue";
 
 // Create team
 

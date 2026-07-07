@@ -22,7 +22,7 @@ import SwiftUI
 
 extension AuthenticationCoordinator: NoDefaultBackendViewControllerDelegate {
     func noDefaultBackendViewControllerDidConfigureBackend(_ configurationURL: URL) {
-        executeActions([.transition(.provideCredentials(nil), mode: .reset)])
+        executeActions([.transition(.backendConfigured, mode: .reset)])
     }
     
     func didRequestUserConfirmationToSwitchToBackend(environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void) {

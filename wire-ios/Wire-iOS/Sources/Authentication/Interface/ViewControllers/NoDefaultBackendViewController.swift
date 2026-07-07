@@ -46,7 +46,7 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
 
     private let headlineLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
-            text: L10n.Localizable.Registration.Signin.title,
+            text: L10n.Localizable.NoDefaultBackend.title,
             style: .largeTitle,
             color: SemanticColors.Label.textDefault
         )
