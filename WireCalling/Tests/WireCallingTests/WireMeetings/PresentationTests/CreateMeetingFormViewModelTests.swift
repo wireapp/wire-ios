@@ -127,9 +127,9 @@ struct CreateMeetingFormViewModelTests {
 
     // MARK: - Date Validation Tests
 
-    @Test("startDateRange starts at the current date")
-    func startDateRange_StartsAtCurrentDate() {
-        #expect(viewModel.startDateRange.lowerBound == dateProviderMock.now)
+    @Test("startDateRange starts at the beginning of the current day")
+    func startDateRange_StartsAtBeginningOfCurrentDay() {
+        #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: dateProviderMock.now))
     }
 
     @Test("endDateRange starts after the start date")

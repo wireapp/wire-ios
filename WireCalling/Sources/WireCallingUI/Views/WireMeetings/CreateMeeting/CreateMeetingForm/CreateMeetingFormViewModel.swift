@@ -74,9 +74,10 @@ package final class CreateMeetingFormViewModel {
         }
     }
 
-    /// Meetings can't be scheduled in the past.
+    /// Meetings can't be scheduled on a past day, but any time
+    /// of the current day is allowed.
     var startDateRange: PartialRangeFrom<Date> {
-        currentDateProvider.now...
+        Calendar.current.startOfDay(for: currentDateProvider.now)...
     }
 
     /// The end date must always be after the start date.
