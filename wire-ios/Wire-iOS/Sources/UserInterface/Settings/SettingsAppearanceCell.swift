@@ -81,18 +81,21 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
                 iconImageView.image = image
                 iconImageView.backgroundColor = UIColor.clear
                 subtitleLabel.text = nil
+                accessibilityValue = "image"
                 titleLabelToIconInset.isActive = true
                 accessibilityTraits = [.button]
             case let .color(color):
                 iconImageView.backgroundColor = color
                 iconImageView.image = .none
                 subtitleLabel.text = AccentColor.current.name
+                accessibilityValue = AccentColor.current.name
                 titleLabelToIconInset.isActive = true
                 accessibilityTraits = [.button]
             default:
                 subtitleLabel.text = nil
                 iconImageView.backgroundColor = UIColor.clear
                 iconImageView.image = .none
+                accessibilityValue = nil
                 titleLabelToIconInset.isActive = false
                 accessibilityTraits = []
             }

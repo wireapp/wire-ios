@@ -25,7 +25,7 @@ import WireLogging
 @Observable
 final class MemberSelectionViewModel {
 
-    private let source: any MemberRepositoryProtocol
+    private let source: any SearchMembersUseCaseProtocol
     private let onSelect: ([Member]) -> Void
 
     var searchText: String = "" {
@@ -42,7 +42,7 @@ final class MemberSelectionViewModel {
     private var searchTask: Task<Void, Never>?
 
     init(
-        source: any MemberRepositoryProtocol,
+        source: any SearchMembersUseCaseProtocol,
         initialSelection: [Member] = [],
         onSelect: @escaping ([Member]) -> Void = { _ in }
     ) {
@@ -97,7 +97,7 @@ final class MemberSelectionViewModel {
                 }
                 try Task.checkCancellation()
 
-                let results = try await source.search(query: query)
+                let results = try await source.invoke(query: query)
                 try Task.checkCancellation()
 
                 searchResults = results

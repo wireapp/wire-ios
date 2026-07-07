@@ -49,8 +49,10 @@
 "wireMeetings.schedule.start.button" = "Начать";
 "wireMeetings.schedule.setupTitle.header" = "Название";
 "wireMeetings.schedule.setupTitle.placeholder" = "Введите название встречи";
-"wireMeetings.schedule.setupParticipants.header" = "Participants";
+"wireMeetings.schedule.setupParticipants.header" = "Участники";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Добавить участников";
+"wireMeetings.schedule.error.alert.title" = "Что-то пошло не так";
+"wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Отключить доступ гостей?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Отключить";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Отмена";
