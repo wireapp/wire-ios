@@ -20,6 +20,7 @@ package import WireCallingDomain
 package import WireFoundation
 
 import Foundation
+import WireLogging
 
 @Observable
 @MainActor
@@ -88,7 +89,10 @@ package final class CreateMeetingFormViewModel {
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     private(set) var isLoading = false
-    var error: (any Error)?
+
+    /// Set when creating a meeting fails. The caught error itself is only
+    /// logged; the view shows a generic alert.
+    var hasError = false
 
     var selectedMembersSummary: String {
         selectedMembers
@@ -137,7 +141,7 @@ package final class CreateMeetingFormViewModel {
     func submit() async {
         guard !isLoading else { return }
         isLoading = true
-        error = nil
+        hasError = false
         defer { isLoading = false }
         switch mode {
         case .instant:
@@ -157,7 +161,9 @@ package final class CreateMeetingFormViewModel {
             )
             onSuccess(meeting)
         } catch {
-            self.error = error
+            let errorType = Swift.type(of: error)
+            WireLogger.search.error("failed to create instant meeting: \(String(describing: errorType))")
+            hasError = true
         }
     }
 
@@ -171,7 +177,9 @@ package final class CreateMeetingFormViewModel {
             )
             onSuccess(meeting)
         } catch {
-            self.error = error
+            let errorType = Swift.type(of: error)
+            WireLogger.search.error("failed to create instant meeting: \(String(describing: errorType))")
+            hasError = true
         }
     }
 

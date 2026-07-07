@@ -176,7 +176,7 @@ struct CreateMeetingFormViewModelTests {
         #expect(arguments?.participants == [member])
         #expect(receivedMeeting == meeting)
         #expect(viewModel.isLoading == false)
-        #expect(viewModel.error == nil)
+        #expect(viewModel.hasError == false)
     }
 
     @Test("submit in scheduled mode invokes the scheduled use case with the form values")
@@ -207,7 +207,7 @@ struct CreateMeetingFormViewModelTests {
         #expect(viewModel.isLoading == false)
     }
 
-    @Test("submit exposes the error and does not call onSuccess when the use case fails")
+    @Test("submit sets the error flag and does not call onSuccess when the use case fails")
     func submit_Failure_SetsError() async {
         // Given
         var onSuccessCalled = false
@@ -219,7 +219,7 @@ struct CreateMeetingFormViewModelTests {
         await viewModel.submit()
 
         // Then
-        #expect(viewModel.error != nil)
+        #expect(viewModel.hasError == true)
         #expect(viewModel.isLoading == false)
         #expect(onSuccessCalled == false)
     }

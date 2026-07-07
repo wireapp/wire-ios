@@ -65,13 +65,9 @@ struct CreateMeetingFormView: View {
             .sheet(isPresented: $isPresentingMemberSelection) {
                 MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
             }
-            .alert(isPresented: Binding(
-                get: { viewModel.error != nil },
-                set: { if !$0 { viewModel.error = nil } }
-            )) {
+            .alert(isPresented: $viewModel.hasError) {
                 Alert(
                     title: Text(Strings.Error.Alert.title),
-                    message: Text(viewModel.error?.localizedDescription ?? ""),
                     dismissButton: .default(Text(Strings.Error.Alert.ok))
                 )
             }
