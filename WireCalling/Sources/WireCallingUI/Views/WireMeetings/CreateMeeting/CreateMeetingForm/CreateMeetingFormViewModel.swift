@@ -119,7 +119,7 @@ package final class CreateMeetingFormViewModel {
 
         let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
         self.startDate = startDate
-        self.endDate = startDate.addingTimeInterval(1800)
+        self.endDate = startDate.addingTimeInterval(30 * TimeInterval.oneMinute)
     }
 
     func clearTitle() {
