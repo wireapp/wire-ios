@@ -17,6 +17,8 @@
 //
 
 import SwiftUI
+import WireFoundation
+import WireFoundationSupport
 import WireTestingPackage
 import XCTest
 
@@ -76,14 +78,17 @@ final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeViewModel() -> CreateMeetingFormViewModel {
-        let viewModel = CreateMeetingFormViewModel(
+        let dateProviderMock = CurrentDateProvidingMock()
+        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
+        return CreateMeetingFormViewModel(
             mode: .scheduled,
-            memberRepository: MemberRepositoryProtocolMock()
+            searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+            currentDateProvider: dateProviderMock
         )
-        viewModel.startDate = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
-        viewModel.endDate = viewModel.startDate.addingTimeInterval(60 * 30) // 30 minutes
-        return viewModel
     }
 
 }

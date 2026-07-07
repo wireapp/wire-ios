@@ -18,14 +18,22 @@
 
 package import Foundation
 package import WireCallingDomain
+package import WireNetwork
 
 import WireFoundation
 
-package final class MeetingsRepository: MeetingsRepositoryProtocol {
+package final class MeetingRepository: MeetingRepositoryProtocol {
 
+    package typealias MeetingRecurrence = WireCallingDomain.MeetingRecurrence
+
+    private let meetingsAPI: any MeetingsAPI
     private let meetingsSource: @Sendable () -> [Meeting]
 
-    package init(meetings: @Sendable @escaping () -> [Meeting]) {
+    package init(
+        meetingsAPI: any MeetingsAPI,
+        meetings: @Sendable @escaping () -> [Meeting]
+    ) {
+        self.meetingsAPI = meetingsAPI
         self.meetingsSource = meetings
     }
 
@@ -48,10 +56,44 @@ package final class MeetingsRepository: MeetingsRepositoryProtocol {
         meetingsSource().contains { $0.start > date }
     }
 
+    package func createMeeting(
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?
+    ) async throws -> Meeting {
+        let response = try await meetingsAPI.createMeeting(
+            parameters: CreateMeetingParameters(
+                title: title,
+                startTime: startTime,
+                endTime: endTime,
+                recurrence: recurrence?.toNetworkRecurrence()
+            )
+        )
+        return response.toDomainMeeting()
+    }
+
 }
 
-package extension MeetingsRepository {
-    static func demo() -> MeetingsRepository {
+private extension MeetingResponse {
+    func toDomainMeeting() -> Meeting {
+        Meeting(
+            id: id,
+            title: title,
+            start: startTime,
+            end: endTime,
+            recurrence: recurrence?.toDomainRecurrence(),
+            members: [],
+            conversationID: conversationID
+        )
+    }
+}
+
+package extension MeetingRepository {
+
+    static func demo(
+        meetingsAPI: any MeetingsAPI
+    ) -> MeetingRepository {
         let cal = Calendar.current
         let now = Date()
         func day(_ offset: Int, hour: Int, min: Int = 0) -> Date {
@@ -555,8 +597,33 @@ package extension MeetingsRepository {
             )
         ]
 
-        return MeetingsRepository(meetings: { meetings })
+        return MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            meetings: { meetings }
+        )
     }
+}
+
+private extension Meeting {
+
+    init(
+        id: QualifiedID,
+        title: String,
+        start: Date,
+        end: Date,
+        members: [Member]
+    ) {
+        self.init(
+            id: id,
+            title: title,
+            start: start,
+            end: end,
+            recurrence: nil,
+            members: members,
+            conversationID: QualifiedID(id: UUID(), domain: "")
+        )
+    }
+
 }
 
 private extension Member {
@@ -571,4 +638,36 @@ private extension Member {
         )
     }
 
+}
+
+private extension WireNetwork.MeetingRecurrence {
+    func toDomainRecurrence() -> WireCallingDomain.MeetingRecurrence {
+        let domainFrequency: WireCallingDomain.MeetingRecurrence.Frequency = switch frequency {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+        return MeetingRecurrence(
+            frequency: domainFrequency,
+            interval: interval ?? 1,
+            until: until ?? .distantFuture
+        )
+    }
+}
+
+private extension WireCallingDomain.MeetingRecurrence {
+    func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence {
+        let networkFrequency: MeetingFrequency = switch frequency {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+        return MeetingRecurrence(
+            frequency: networkFrequency,
+            interval: interval,
+            until: until
+        )
+    }
 }
