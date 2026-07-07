@@ -37,21 +37,22 @@ public struct WireMeetingsFactory {
         conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController {
         let meetingRepository = MeetingRepository(meetingsAPI: meetingsAPI)
+        let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
+            repository: meetingRepository,
+            currentDateProvider: .system
+        )
         let createInstantMeetingUseCase = CreateInstantMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository,
             dateProvider: .system
         )
-        let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
-            repository: meetingRepository,
-            currentDateProvider: .system
-        )
+        let deleteMeetingUseCase = DeleteMeetingUseCase(repository: meetingRepository)
         let createScheduledMeetingUseCase = CreateScheduledMeetingUseCase(repository: meetingRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
-            deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository),
+            deleteMeetingUseCase: deleteMeetingUseCase,
             makeFormViewModel: { mode, onSuccess in
                 CreateMeetingFormViewModel(
                     mode: mode,

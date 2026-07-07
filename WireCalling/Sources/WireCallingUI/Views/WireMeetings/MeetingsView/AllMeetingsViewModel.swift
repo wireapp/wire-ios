@@ -42,7 +42,6 @@ package final class AllMeetingsViewModel {
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
-        memberRepository: any MemberRepositoryProtocol,
         makeFormViewModel: @escaping @MainActor (
             _ mode: CreateMeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting) -> Void
