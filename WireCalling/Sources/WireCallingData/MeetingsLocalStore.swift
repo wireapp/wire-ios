@@ -21,7 +21,7 @@ package import WireCallingDomain
 /// An in-memory store of meetings, keyed by meeting id.
 package actor MeetingsLocalStore: MeetingsLocalStoreProtocol {
 
-    private var meetingsByID: [QualifiedID: Meeting] = [:]
+    private var meetingsByID: [QualifiedID: Meeting] = [:] // TODO: use Core Data
 
     package init() {}
 
