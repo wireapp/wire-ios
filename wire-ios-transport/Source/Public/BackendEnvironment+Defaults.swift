@@ -28,7 +28,8 @@ public extension BackendEnvironment {
         configurationBundle: Bundle,
         environmentType type: EnvironmentType? = nil
     ) {
-        let environmentType = type ?? EnvironmentType(userDefaults: userDefaults)
+        let fallbackEnvironmentType: EnvironmentType = .production
+        let environmentType = type ?? EnvironmentType(userDefaults: userDefaults) ?? fallbackEnvironmentType
         switch environmentType {
         case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
             guard let path = configurationBundle.path(forResource: environmentType.stringValue, ofType: "json") else {
@@ -48,6 +49,24 @@ public extension BackendEnvironment {
             self.init(environmentType: environmentType, data: data)
         }
     }
+    
+    
+    convenience init?(userDefaults: UserDefaults) {
+        guard let environmentType = EnvironmentType(userDefaults: userDefaults) else {
+            return nil
+        }
+        switch environmentType {
+        case .custom:
+            guard let data = userDefaults.data(forKey: BackendEnvironment.defaultsKey) else {
+                Logging.backendEnvironment.error("Could not read data from user defaults")
+                return nil
+            }
+            self.init(environmentType: environmentType, data: data)
+        default:
+            Logging.backendEnvironment.error("Unsupported configuration")
+            return nil
+        }
+    }
 
     func save(in userDefaults: UserDefaults) {
         type.save(in: userDefaults)
@@ -58,6 +77,7 @@ public extension BackendEnvironment {
                 let title: String
                 let endpoints: BackendEndpoints
                 let apiProxy: ProxySettings?
+                let supportEmail: String?
             }
 
             let backendEndpoints = BackendEndpoints(
@@ -80,7 +100,7 @@ public extension BackendEnvironment {
                 nil
             }
 
-            let data = SerializedData(title: title, endpoints: backendEndpoints, apiProxy: proxy)
+            let data = SerializedData(title: title, endpoints: backendEndpoints, apiProxy: proxy, supportEmail: supportEmail)
             let encoded = try? JSONEncoder().encode(data)
             userDefaults.set(encoded, forKey: BackendEnvironment.defaultsKey)
         default:

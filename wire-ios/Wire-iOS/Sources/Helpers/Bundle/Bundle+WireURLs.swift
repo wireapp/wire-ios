@@ -18,6 +18,7 @@
 
 import Foundation
 import WireSystem
+import WireTransport
 
 /// This struct contains various URLs used in the app. All links are defined in the `url.json` configuration file.
 ///
@@ -101,6 +102,10 @@ struct WireURLs: Codable {
     let howToDeleteAccount: URL
 
     static var shared: WireURLs = {
+        guard Bundle.backendBundle != nil else {
+            
+            return WireURLs.noDefaultBackend(url: BackendEnvironment.shared.websiteURL)
+        }
         do {
             return try WireURLs(forResource: "url", withExtension: "json")
         } catch {
@@ -144,6 +149,40 @@ struct WireURLs: Codable {
 
     enum WireURLsError: Error {
         case fileNotFound
+    }
+
+    /// Builds a fallback set of URLs when there is no bundled backend configuration:
+    /// every link points to `<url>/support`.
+    static func noDefaultBackend(url: URL) -> WireURLs {
+        let supportURL = url.appendingPathComponent("support")
+
+        return WireURLs(fallbackURL: supportURL)
+    }
+
+    private init(fallbackURL url: URL) {
+        appOnItunes = url
+        support = url
+        searchSupport = url
+        website = url
+        emailAlreadyInUse = url
+        whyToVerifyFingerprintArticle = url
+        howToVerifyFingerprintArticle = url
+        privacyPolicy = url
+        legal = url
+        licenseInformation = url
+        askSupportArticle = url
+        reportAbuse = url
+        wireEnterpriseInfo = url
+        legalHoldInfo = url
+        guestLinksInfo = url
+        unreachableBackendInfo = url
+        federationInfo = url
+        mlsInfo = url
+        endToEndIdentityInfo = url
+        howToAddConversationToYourFavourites = url
+        howToAddConversationToCustomFolder = url
+        howToChangeEmail = url
+        howToDeleteAccount = url
     }
 
 }

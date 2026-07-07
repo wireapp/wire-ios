@@ -18,6 +18,7 @@
 
 import AVFoundation
 import UIKit
+import WireDesign
 
 final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 
@@ -28,7 +29,7 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        view.backgroundColor = SemanticColors.View.backgroundDefault
         captureSession = AVCaptureSession()
 
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {

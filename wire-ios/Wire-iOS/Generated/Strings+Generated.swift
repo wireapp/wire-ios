@@ -4389,6 +4389,10 @@ internal enum L10n {
         /// Set Up
         internal static let configure = L10n.tr("Localizable", "no_default_backend.button.configure", fallback: "Set Up")
       }
+      internal enum Scanner {
+        /// Scan QR code
+        internal static let title = L10n.tr("Localizable", "no_default_backend.scanner.title", fallback: "Scan QR code")
+      }
       internal enum Setup {
         /// Your app is set up
         internal static let message = L10n.tr("Localizable", "no_default_backend.setup.message", fallback: "Your app is set up")

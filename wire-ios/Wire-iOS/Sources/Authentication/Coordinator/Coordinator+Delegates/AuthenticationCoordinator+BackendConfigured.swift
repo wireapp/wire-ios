@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import WireTransport
 
 extension AuthenticationCoordinator: BackendConfiguredViewControllerDelegate {
     func backendConfiguredViewControllerDidTapContinue() {
         executeActions([.transition(.provideCredentials(nil), mode: .reset)])
+        BackendEnvironment.reset()
     }
 }

@@ -1446,6 +1446,7 @@
 "no_default_backend.setup.message" = "Ihre App ist eingerichtet";
 "no_default_backend.setup.subtitle" = "Im nächsten Schritt können Sie sich anmelden";
 "no_default_backend.setup.button.continue" = "Weiter";
+"no_default_backend.scanner.title" = "QR-Code scannen";
 
 // Create team
 

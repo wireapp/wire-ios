@@ -17,12 +17,22 @@
 //
 
 import Foundation
+import WireTransport
 
 struct WireEmail: Codable {
     let supportEmail: String
     let callingSupportEmail: String
 
-    static var shared: WireEmail = .init(forResource: "email", withExtension: "json")!
+    static func shared() -> WireEmail? {
+        guard Bundle.backendBundle != nil else {
+            if let supportEmail = BackendEnvironment.shared.supportEmail {
+                return WireEmail(email: supportEmail)
+            }
+            return nil
+        }
+        
+        return .init(forResource: "email", withExtension: "json")!
+    }
 
     private init?(forResource resource: String, withExtension fileExtension: String) {
         do {
@@ -33,4 +43,8 @@ struct WireEmail: Codable {
         }
     }
 
+    private init(email: String) {
+        self.supportEmail = email
+        self.callingSupportEmail = email
+    }
 }

@@ -269,7 +269,7 @@ platform :ios do
     end
 
     desc "Build & Upload Wire Gov Production AppStore build"
-    lane :appstore_col_1_prod do |options|
+    lane :appstore_gov do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "Gov"
         options[:s3_subfolder] = ENV['GOV_SUBFOLDER_PRODUCTION']
@@ -466,9 +466,7 @@ platform :ios do
         xcode_version = options[:xcode_version]
 
         build_type = options[:build_type]
-        # Delete configurations in case we switch to different branch or repo
-        sh "rm -rf ../Configuration"
-        if build_type.nil? 
+        if build_type.nil?
             sh "cd .. && ./setup.sh"
         else
             override_folder = options[:override_folder]

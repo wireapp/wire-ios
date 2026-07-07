@@ -80,10 +80,10 @@ final class NoDefaultBackendViewModel {
                     sessionManager.markNetworkSessionsAsReady(true)
                     sessionManager.switchBackendWithoutResolving(to: backendEnvironment)
                     self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false)
-//                        BackendEnvironment.shared = backendEnvironment
-//                        self.startAutomaticSSOFlow(promptOnError: false)
+                    // persist backendenvironment so urls work
+                    backendEnvironment.save(in: .applicationGroup)
                     self.delegate?.noDefaultBackendViewModel(self, didConfigureBackend: configurationURL)
-                    }
+                }
             case .failure:
                 self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false)
                 self.fail()

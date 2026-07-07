@@ -266,7 +266,7 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
     @objc
     private func qrButtonTapped() {
         let scanner = QRCodeScannerViewController()
-        scanner.title = "Scan QR code"
+        scanner.title = L10n.Localizable.NoDefaultBackend.Scanner.title
         scanner.onQRCodeScanned = { [weak self] scannedValue in
             self?.handleScannedCode(scannedValue)
         }

@@ -18,50 +18,71 @@
 
 import Foundation
 import WireTransport
-
-private let zmsLog = ZMSLog(tag: "backend-environment")
+import WireLogging
 
 public extension BackendEnvironment {
-    static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
-    static var shared: BackendEnvironment = {
-        let environmentType = if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
+
+    static func reset() {
+        if let loaded = BackendEnvironment.load() {
+            BackendEnvironment.shared = loaded
+        }
+    }
+    
+    private static func load() -> BackendEnvironment? {
+        let environmentType: EnvironmentType? = if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
             EnvironmentType(stringValue: typeOverride)
         } else {
             // read from userDefaults first
             EnvironmentType(userDefaults: .applicationGroup)
         }
 
-        guard let bundle = Bundle.backendBundle else {
+        if Bundle.backendBundle == nil && environmentType == nil {
             return BackendEnvironment.defaultNoBackend
         }
         
-        guard let environment = BackendEnvironment(type: environmentType) else {
-            fatalError("Malformed backend configuration data")
+        let finalEnvironmentType: EnvironmentType
+        if let environmentType {
+            finalEnvironmentType = environmentType
+        } else {
+            WireLogger.environment.info("fallback to production environment", attributes: .safePublic)
+            finalEnvironmentType = .production
+        }
+        
+        guard let environment = BackendEnvironment(type: finalEnvironmentType) else {
+            return nil
         }
         return environment
+    }
+
+    static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
+    static var shared: BackendEnvironment = {
+        if let loaded = BackendEnvironment.load() {
+            return loaded
+        } else {
+            fatalError("Malformed backend configuration data")
+        }
     }() {
         didSet {
             AutomationHelper.sharedHelper.disableBackendTypeOverride()
             shared.save(in: .applicationGroup)
             NotificationCenter.default.post(name: backendSwitchNotification, object: shared)
-            zmsLog.debug("Shared backend environment did change to: \(shared.title)")
+            WireLogger.environment.debug("Shared backend environment did change to: \(shared.title)")
         }
     }
 
-    convenience init?(type: EnvironmentType?) {
-        
-        guard let bundle = Bundle.backendBundle else {
-            return nil
+    convenience init?(type: EnvironmentType?) {        
+        if let bundle = Bundle.backendBundle {
+            self.init(
+                userDefaults: .applicationGroupCombinedWithStandard,
+                configurationBundle: bundle,
+                environmentType: type
+            )
+        } else {
+            self.init(userDefaults: .applicationGroupCombinedWithStandard)
         }
-        
-        self.init(
-            userDefaults: .applicationGroupCombinedWithStandard,
-            configurationBundle: bundle,
-            environmentType: type
-        )
     }
 
-    static var defaultNoBackend = BackendEnvironment(title: "No default backend", trustData: [], environmentType: .production, endpoints: NoBackendEndpointsProvider(), proxySettings: nil, certificateTrust: NoBackendTrustProvider())
+    static var defaultNoBackend = BackendEnvironment(title: "No default backend", trustData: [], environmentType: .production, endpoints: NoBackendEndpointsProvider(), proxySettings: nil, certificateTrust: NoBackendTrustProvider(), supportEmail: nil)
 }
 
 class NoBackendTrustProvider: NSObject, BackendTrustProvider {
