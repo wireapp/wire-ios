@@ -53,7 +53,7 @@ package final class CreateMeetingFormViewModel {
 
     /// The smallest allowed interval between start and end date, matching
     /// the minute granularity of the time picker.
-    private static let minimumDuration: TimeInterval = 60
+    private static let minimumDuration: TimeInterval = .oneMinute
 
     var meetingTitle: String = ""
 
@@ -184,13 +184,14 @@ private extension Date {
     /// boundary are returned unchanged.
     func roundedUpToNextHalfHour(calendar: Calendar = .current) -> Date {
         let components = calendar.dateComponents([.minute, .second], from: self)
-        // How far past the last half-hour boundary this date is, in seconds:
+        // How far past the last half-hour boundary this date is:
         // minutes past the boundary (minute % 30) converted to seconds, plus the seconds.
-        let secondsPastBoundary = TimeInterval(((components.minute ?? 0) % 30) * 60 + (components.second ?? 0))
+        let minutesPastBoundary = (components.minute ?? 0) % 30
+        let secondsPastBoundary = TimeInterval(minutesPastBoundary) * .oneMinute + TimeInterval(components.second ?? 0)
         // Exactly on a boundary — nothing to round.
         guard secondsPastBoundary > 0 else { return self }
-        // Add the remaining time up to the next boundary (1800 s = 30 min).
-        return addingTimeInterval(1800 - secondsPastBoundary)
+        // Add the remaining time up to the next boundary.
+        return addingTimeInterval(30 * .oneMinute - secondsPastBoundary)
     }
 
 }
