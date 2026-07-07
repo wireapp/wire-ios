@@ -1266,8 +1266,8 @@ internal enum L10n {
       }
     }
     internal enum AdminSelection {
-      /// After you promoted a new admin, you will leave the group.
-      internal static let infoBanner = L10n.tr("Localizable", "admin_selection.info_banner", fallback: "After you promoted a new admin, you will leave the group.")
+      /// After you promote a new admin, you leave the group.
+      internal static let infoBanner = L10n.tr("Localizable", "admin_selection.info_banner", fallback: "After you promote a new admin, you leave the group.")
       /// Promote
       internal static let promote = L10n.tr("Localizable", "admin_selection.promote", fallback: "Promote")
       /// Failed to promote user to admin.
@@ -4314,9 +4314,9 @@ internal enum L10n {
     internal enum LastAdminLeave {
       /// Delete group
       internal static let deleteGroup = L10n.tr("Localizable", "last_admin_leave.delete_group", fallback: "Delete group")
-      /// You're the only admin.
-      /// None of the other participants can be promoted to admin. You can only delete the group.
-      internal static let noEligibleCandidatesMessage = L10n.tr("Localizable", "last_admin_leave.no_eligible_candidates_message", fallback: "You're the only admin.\nNone of the other participants can be promoted to admin. You can only delete the group.")
+      /// You're the only admin. The other participants can't be admins.
+      /// Add at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.
+      internal static let noEligibleCandidatesMessage = L10n.tr("Localizable", "last_admin_leave.no_eligible_candidates_message", fallback: "You're the only admin. The other participants can't be admins.\nAdd at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.")
       /// Promote new admin
       internal static let promoteNewAdmin = L10n.tr("Localizable", "last_admin_leave.promote_new_admin", fallback: "Promote new admin")
       /// You're the only admin.
