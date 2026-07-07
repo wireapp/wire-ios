@@ -121,8 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "See konto ei ole enam sisse logimiseks autoriseeritud.";
 "authentication.error.message.incorrect_sso_code" = "Palun kinnita oma ettevõtte SSO ligipääsukood ja proovi uuesti.";
-"authentication.error.title.already_logged_in" = "Account already active";
-"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "OK";
 

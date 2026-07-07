@@ -51,6 +51,8 @@
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupParticipants.header" = "Dalyviai";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Pridėti pašnekovų";
+"wireMeetings.schedule.error.alert.title" = "Kažkas atsitiko";
+"wireMeetings.schedule.error.alert.ok" = "GERAI";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Atsisakyti";
