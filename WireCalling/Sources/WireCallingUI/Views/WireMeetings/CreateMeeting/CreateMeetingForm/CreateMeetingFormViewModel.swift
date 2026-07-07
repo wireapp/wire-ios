@@ -184,8 +184,12 @@ private extension Date {
     /// boundary are returned unchanged.
     func roundedUpToNextHalfHour(calendar: Calendar = .current) -> Date {
         let components = calendar.dateComponents([.minute, .second], from: self)
+        // How far past the last half-hour boundary this date is, in seconds:
+        // minutes past the boundary (minute % 30) converted to seconds, plus the seconds.
         let secondsPastBoundary = TimeInterval(((components.minute ?? 0) % 30) * 60 + (components.second ?? 0))
+        // Exactly on a boundary — nothing to round.
         guard secondsPastBoundary > 0 else { return self }
+        // Add the remaining time up to the next boundary (1800 s = 30 min).
         return addingTimeInterval(1800 - secondsPastBoundary)
     }
 
