@@ -278,12 +278,10 @@ final class FilesItemViewModel: ObservableObject {
     private var viewerMenuActions: Set<ItemAction> {
         var actions: Set<ItemAction> = []
 
-        if !isInRecycleBin {
-            actions.insert(.primaryAction)
+        actions.insert(.primaryAction)
 
-            if !isOffline, isBrowsing {
-                actions.insert(.shareLink)
-            }
+        if !isInRecycleBin, !isOffline, isBrowsing {
+            actions.insert(.shareLink)
         }
 
         if !isEditable, !isInRecycleBin, item.kind == .file {
@@ -302,12 +300,10 @@ final class FilesItemViewModel: ObservableObject {
     private var editorMenuActions: Set<ItemAction> {
         var actions: Set<ItemAction> = []
 
-        if !isInRecycleBin {
-            actions.insert(.primaryAction)
+        actions.insert(.primaryAction)
 
-            if !isOffline {
-                actions.insert(.shareLink)
-            }
+        if !isInRecycleBin, !isOffline {
+            actions.insert(.shareLink)
         }
 
         if !isEditable, !isInRecycleBin, item.kind == .file {
