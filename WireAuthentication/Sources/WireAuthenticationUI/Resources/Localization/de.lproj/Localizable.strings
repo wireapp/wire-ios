@@ -121,8 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Bitte nehmen Sie die Einladung zu Ihrem Team an und folgen Sie den Schritten zur Erstellung Ihres Benutzerkontos.";
 "authentication.error.message.account_suspended" = "Benutzerkonto ist nicht mehr zur Anmeldung berechtigt.";
 "authentication.error.message.incorrect_sso_code" = "Bitte den SSO-Zugangscode des Unternehmens überprüfen und erneut versuchen.";
-"authentication.error.title.already_logged_in" = "Account already active";
-"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
+"authentication.error.title.already_logged_in" = "Benutzerkonto in Gebrauch";
+"authentication.error.message.already_logged_in" = "Sie sind bereits mit diesen Daten auf diesem Gerät angemeldet.";
 
 "authentication.error.confirm" = "OK";
 

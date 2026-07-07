@@ -222,7 +222,7 @@
 "conversationsList.mentionStatus.value" = "Вас упомянули";
 "conversationsList.replyStatus.value" = "Ответить";
 "conversationsList.badgeView.value" = "Новых сообщений: %d";
-"conversationsList.itemCell.hint" = "Double tap to open conversation. Triple tap to open conversation options";
+"conversationsList.itemCell.hint" = "Нажмите дважды, чтобы открыть беседу. Нажмите трижды, чтобы открыть ее настройки";
 "conversationsList.itemCell.avatar.group.label" = "Группа";
 "conversationsList.itemCell.avatar.channel.label" = "Канал";
 "conversationsList.joinButton.description" = "Присоединиться";
