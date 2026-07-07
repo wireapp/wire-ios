@@ -19,6 +19,8 @@
 import Foundation
 import WireNetwork
 
+/// Thin HTTP client for CallingService endpoints.
+/// Keeps request/response encoding and raw API calls separate from test flow orchestration.
 final class CallingServiceClient {
 
     private let userHelper = UserHelper.default
@@ -302,25 +304,6 @@ final class CallingServiceClient {
         return try JSONDecoder().decode(CallResponse.self, from: data)
     }
 
-    private func performCallGet(
-        instanceId: String,
-        path: String
-    ) async throws -> CallResponse {
-        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
-        let (data, code) = try await sendHttpRequest(
-            endpoint: endpoint,
-            body: CallingServiceEmptyBody?.none,
-            method: .get
-        )
-        guard code.statusCode == 200 else {
-            logEndpointFailure(method: "GET", endpoint: endpoint, statusCode: code.statusCode, data: data)
-            throw RuntimeError(
-                "CallingService call failed: GET \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
-            )
-        }
-        return try JSONDecoder().decode(CallResponse.self, from: data)
-    }
-
     private func performCallPut(
         instanceId: String,
         path: String
@@ -351,20 +334,8 @@ final class CallingServiceClient {
         return try JSONDecoder().decode([CallFlow].self, from: data)
     }
 
-    func start(instanceId: String, request: StartCallBody) async throws -> CallResponse {
-        try await performCall(instanceId: instanceId, path: "/call/start", request: request)
-    }
-
-    func startVideo(instanceId: String, request: StartCallBody) async throws -> CallResponse {
-        try await performCall(instanceId: instanceId, path: "/call/startVideo", request: request)
-    }
-
     func acceptNext(instanceId: String, request: CallRequest) async throws -> CallResponse {
         try await performCall(instanceId: instanceId, path: "/call/acceptNext", request: request)
-    }
-
-    func acceptNextVideo(instanceId: String, request: CallRequest) async throws -> CallResponse {
-        try await performCall(instanceId: instanceId, path: "/call/acceptNextVideo", request: request)
     }
 
     func startCall(
@@ -375,22 +346,7 @@ final class CallingServiceClient {
             conversationId: conversationId,
             timeout: Constants.CALLING_RESPONSE_TIMEOUT
         )
-        return try await start(instanceId: instanceId, request: request)
-    }
-
-    func startVideoCall(
-        instanceId: String,
-        conversationId: String
-    ) async throws -> CallResponse {
-        let request = StartCallBody(
-            conversationId: conversationId,
-            timeout: Constants.CALLING_RESPONSE_TIMEOUT
-        )
-        return try await startVideo(instanceId: instanceId, request: request)
-    }
-
-    func getCall(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallGet(instanceId: instanceId, path: "/call/\(callId)/status")
+        return try await performCall(instanceId: instanceId, path: "/call/start", request: request)
     }
 
     func getCurrentCall(instanceId: String) async throws -> CallResponse {
@@ -401,52 +357,8 @@ final class CallingServiceClient {
         return call
     }
 
-    func stopCall(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/stop")
-    }
-
-    func declineCall(instanceId: String, conversationId: String) async throws -> CallResponse {
-        let request = CallRequest(
-            conversationId: conversationId,
-            timeout: Constants.CALLING_RESPONSE_TIMEOUT
-        )
-        return try await performCall(instanceId: instanceId, path: "/call/decline", request: request)
-    }
-
     func switchVideoOn(instanceId: String, callId: String) async throws -> CallResponse {
         try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchVideoOn")
-    }
-
-    func switchVideoOff(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchVideoOff")
-    }
-
-    func pauseVideoCall(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/pauseVideoCall")
-    }
-
-    func unpauseVideoCall(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/unpauseVideoCall")
-    }
-
-    func switchScreensharingOn(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchScreensharingOn")
-    }
-
-    func switchScreensharingOff(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchScreensharingOff")
-    }
-
-    func muteMicrophone(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/mute")
-    }
-
-    func unmuteMicrophone(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/unmute")
-    }
-
-    func maximiseCall(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/maximiseVideoCall")
     }
 
     func getFlows(instanceId: String) async throws -> [CallFlow] {

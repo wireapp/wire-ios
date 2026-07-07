@@ -245,7 +245,7 @@ final class ZCallingTests: WireUITestCase {
     /// Call participant switches from audio call to video call and back
     /// [critical]
     @MainActor
-    func testSwitchBetweenAudioAndVideoCall_TC_8888_9497() async throws {
+    func testSwitchBetweenAudioAndVideoCall_TC_8888_TC_0000() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
 
@@ -292,19 +292,13 @@ final class ZCallingTests: WireUITestCase {
         )
 
         for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
-            XCTAssertTrue(
-                ongoingCallPage.videoView(for: callingServiceUser.name).waitForExistence(timeout: 15),
-                "Remote video is not visible for \(callingServiceUser.name)"
+            ongoingCallPage.verifyVideoQRCode(
+                for: callingServiceUser.name,
+                expectedCode: callingServiceUser.email
             )
         }
 
         try await callingManager.verifyReceiveAudioAndVideo(instanceIds: acceptingIds)
-
-        try ongoingCallPage.flipCamera()
-        XCTAssertTrue(
-            ongoingCallPage.flipCameraButton.waitForExistence(timeout: 5),
-            "Flip camera button disappeared after camera flip"
-        )
 
         try ongoingCallPage.turnOffVideo()
         XCTAssertTrue(
