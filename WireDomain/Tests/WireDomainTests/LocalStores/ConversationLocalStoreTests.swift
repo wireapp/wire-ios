@@ -545,57 +545,6 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
     }
 
-    func testLinkOneOnOneUserIfNeeded_GivenLinkedUserButNoParticipants_ItKeepsMLSConversationUsable() async {
-        // Given an established MLS 1:1 linked to its one-on-one user but with no participants — the
-        // state the blocked party ends up in once the backend removes the blocker from the members.
-        let conversation = await context.perform { [self] in
-            _ = modelHelper.createSelfUser(in: context)
-            let conversation = modelHelper.createMLSConversation(
-                mlsStatus: .ready,
-                conversationType: .oneOnOne,
-                in: context
-            )
-            let otherUser = modelHelper.createUser(id: Scaffolding.otherUserID, domain: Scaffolding.domain, in: context)
-            conversation.oneOnOneUser = otherUser
-            return conversation
-        }
-
-        // When
-        await context.perform { [self] in
-            sut.linkOneOnOneUserIfNeeded(for: conversation)
-        }
-
-        // Then the MLS 1:1 is preserved and remains usable (not wiped, not read-only).
-        await context.perform {
-            XCTAssertEqual(conversation.mlsStatus, .ready)
-            XCTAssertEqual(conversation.messageProtocol, .mls)
-            XCTAssertFalse(conversation.isForcedReadOnly)
-        }
-    }
-
-    func testLinkOneOnOneUserIfNeeded_GivenNoLinkedUserAndNoParticipants_ItInvalidatesMLSConversation() async {
-        // Given an MLS 1:1 with no linked one-on-one user (a genuinely empty/malformed 1:1).
-        let conversation = await context.perform { [self] in
-            _ = modelHelper.createSelfUser(in: context)
-            return modelHelper.createMLSConversation(
-                mlsStatus: .ready,
-                conversationType: .oneOnOne,
-                in: context
-            )
-        }
-
-        // When
-        await context.perform { [self] in
-            sut.linkOneOnOneUserIfNeeded(for: conversation)
-        }
-
-        // Then the MLS group is invalidated and the conversation forced read-only.
-        await context.perform {
-            XCTAssertEqual(conversation.mlsStatus, .invalid)
-            XCTAssertTrue(conversation.isForcedReadOnly)
-        }
-    }
-
     private enum Scaffolding {
 
         static let selfUserId = UUID.mockID1

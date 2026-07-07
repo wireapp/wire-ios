@@ -318,7 +318,6 @@
 "conversation.input_bar.verified" = "検証する";
 "conversation.input_bar.placeholder" = "メッセージを入力します";
 "conversation.input_bar.placeholder_ephemeral" = "自動削除メッセージ";
-"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "上にスワイプして送信";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "タップして送信";

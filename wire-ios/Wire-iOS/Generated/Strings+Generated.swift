@@ -2795,8 +2795,6 @@ internal enum L10n {
         }
       }
       internal enum InputBar {
-        /// You blocked this user
-        internal static let blockedUser = L10n.tr("Localizable", "conversation.input_bar.blocked_user", fallback: "You blocked this user")
         /// Cancel reply
         internal static let closeReply = L10n.tr("Localizable", "conversation.input_bar.close_reply", fallback: "Cancel reply")
         /// Type a message

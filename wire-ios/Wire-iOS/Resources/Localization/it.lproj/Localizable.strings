@@ -318,7 +318,6 @@
 "conversation.input_bar.verified" = "Verificato";
 "conversation.input_bar.placeholder" = "Digita un messaggio";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
-"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Scorri in su per inviare";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tocca per inviare";
