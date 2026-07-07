@@ -44,7 +44,7 @@ package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol 
         let meeting = try await meetingRepository.createMeeting(
             title: title,
             startTime: now,
-            endTime: now.addingTimeInterval(60 * 60), // duration 1h
+            endTime: now.addingTimeInterval(.oneHour),
             recurrence: nil
         )
         try await conversationRepository.pullConversation(

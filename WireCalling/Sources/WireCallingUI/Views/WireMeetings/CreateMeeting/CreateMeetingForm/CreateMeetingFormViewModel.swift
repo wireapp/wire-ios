@@ -20,6 +20,7 @@ package import WireCallingDomain
 package import WireFoundation
 
 import Foundation
+import WireLogging
 
 @Observable
 @MainActor
@@ -53,7 +54,7 @@ package final class CreateMeetingFormViewModel {
 
     /// The smallest allowed interval between start and end date, matching
     /// the minute granularity of the time picker.
-    private static let minimumDuration: TimeInterval = 60
+    private static let minimumDuration: TimeInterval = .oneMinute
 
     var meetingTitle: String = ""
 
@@ -88,7 +89,10 @@ package final class CreateMeetingFormViewModel {
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     private(set) var isLoading = false
-    var error: (any Error)?
+
+    /// Set when creating a meeting fails. The caught error itself is only
+    /// logged; the view shows a generic alert.
+    var hasError = false
 
     var selectedMembersSummary: String {
         selectedMembers
@@ -119,7 +123,7 @@ package final class CreateMeetingFormViewModel {
 
         let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
         self.startDate = startDate
-        self.endDate = startDate.addingTimeInterval(1800)
+        self.endDate = startDate.addingTimeInterval(30 * TimeInterval.oneMinute)
     }
 
     func clearTitle() {
@@ -137,7 +141,7 @@ package final class CreateMeetingFormViewModel {
     func submit() async {
         guard !isLoading else { return }
         isLoading = true
-        error = nil
+        hasError = false
         defer { isLoading = false }
         switch mode {
         case .instant:
@@ -157,7 +161,9 @@ package final class CreateMeetingFormViewModel {
             )
             onSuccess(meeting)
         } catch {
-            self.error = error
+            let errorType = Swift.type(of: error)
+            WireLogger.search.error("failed to create instant meeting: \(String(describing: errorType))")
+            hasError = true
         }
     }
 
@@ -171,7 +177,9 @@ package final class CreateMeetingFormViewModel {
             )
             onSuccess(meeting)
         } catch {
-            self.error = error
+            let errorType = Swift.type(of: error)
+            WireLogger.search.error("failed to create instant meeting: \(String(describing: errorType))")
+            hasError = true
         }
     }
 
@@ -184,9 +192,14 @@ private extension Date {
     /// boundary are returned unchanged.
     func roundedUpToNextHalfHour(calendar: Calendar = .current) -> Date {
         let components = calendar.dateComponents([.minute, .second], from: self)
-        let secondsPastBoundary = TimeInterval(((components.minute ?? 0) % 30) * 60 + (components.second ?? 0))
+        // How far past the last half-hour boundary this date is:
+        // minutes past the boundary (minute % 30) converted to seconds, plus the seconds.
+        let minutesPastBoundary = (components.minute ?? 0) % 30
+        let secondsPastBoundary = TimeInterval(minutesPastBoundary) * .oneMinute + TimeInterval(components.second ?? 0)
+        // Exactly on a boundary — nothing to round.
         guard secondsPastBoundary > 0 else { return self }
-        return addingTimeInterval(1800 - secondsPastBoundary)
+        // Add the remaining time up to the next boundary.
+        return addingTimeInterval(30 * .oneMinute - secondsPastBoundary)
     }
 
 }
