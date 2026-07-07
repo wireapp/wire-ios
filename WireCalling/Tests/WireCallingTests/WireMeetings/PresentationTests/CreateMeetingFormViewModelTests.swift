@@ -53,7 +53,7 @@ struct CreateMeetingFormViewModelTests {
         dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-07-06T14:18:00+02:00")
         self.viewModel = CreateMeetingFormViewModel(
             mode: .instant,
-            memberRepository: MemberRepositoryProtocolMock(),
+            searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createInstantMeetingUseCase: instantUseCaseMock,
             createScheduledMeetingUseCase: scheduledUseCaseMock,
             currentDateProvider: dateProviderMock
@@ -66,7 +66,7 @@ struct CreateMeetingFormViewModelTests {
     ) -> CreateMeetingFormViewModel {
         CreateMeetingFormViewModel(
             mode: mode,
-            memberRepository: MemberRepositoryProtocolMock(),
+            searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createInstantMeetingUseCase: instantUseCaseMock,
             createScheduledMeetingUseCase: scheduledUseCaseMock,
             currentDateProvider: dateProviderMock,

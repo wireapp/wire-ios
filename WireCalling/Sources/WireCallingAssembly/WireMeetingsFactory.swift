@@ -47,13 +47,14 @@ public struct WireMeetingsFactory {
             currentDateProvider: .system
         )
         let createScheduledMeetingUseCase = CreateScheduledMeetingUseCase(repository: meetingRepository)
+        let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             makeFormViewModel: { mode, onSuccess in
                 CreateMeetingFormViewModel(
                     mode: mode,
-                    memberRepository: memberRepository,
+                    searchMembersUseCase: searchMembersUseCase,
                     createInstantMeetingUseCase: createInstantMeetingUseCase,
                     createScheduledMeetingUseCase: createScheduledMeetingUseCase,
                     currentDateProvider: .system,

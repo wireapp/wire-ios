@@ -84,7 +84,7 @@ final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
         dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
         return CreateMeetingFormViewModel(
             mode: .scheduled,
-            memberRepository: MemberRepositoryProtocolMock(),
+            searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
             createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
             currentDateProvider: dateProviderMock

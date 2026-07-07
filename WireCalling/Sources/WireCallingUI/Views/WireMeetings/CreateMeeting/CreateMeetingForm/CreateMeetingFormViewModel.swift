@@ -45,7 +45,7 @@ package final class CreateMeetingFormViewModel {
     }
 
     let mode: Mode
-    let memberRepository: any MemberRepositoryProtocol
+    let searchMembersUseCase: any SearchMembersUseCaseProtocol
     private let createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol
     private let createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol
     private let onSuccess: (Meeting) -> Void
@@ -80,14 +80,14 @@ package final class CreateMeetingFormViewModel {
 
     package init(
         mode: Mode,
-        memberRepository: any MemberRepositoryProtocol,
+        searchMembersUseCase: any SearchMembersUseCaseProtocol,
         createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
         createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
-        self.memberRepository = memberRepository
+        self.searchMembersUseCase = searchMembersUseCase
         self.createInstantMeetingUseCase = createInstantMeetingUseCase
         self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
         self.onSuccess = onSuccess
@@ -103,7 +103,7 @@ package final class CreateMeetingFormViewModel {
 
     func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
         MemberSelectionViewModel(
-            source: memberRepository,
+            source: searchMembersUseCase,
             initialSelection: selectedMembers,
             onSelect: { [weak self] in self?.selectedMembers = $0 }
         )

@@ -263,7 +263,7 @@ private extension MeetingRepeatOption {
     CreateMeetingFormView(
         viewModel: CreateMeetingFormViewModel(
             mode: .instant,
-            memberRepository: MockMemberSource(),
+            searchMembersUseCase: MockSearchMembersUseCase(),
             createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
             createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
             currentDateProvider: .system
@@ -275,7 +275,7 @@ private extension MeetingRepeatOption {
     CreateMeetingFormView(
         viewModel: CreateMeetingFormViewModel(
             mode: .scheduled,
-            memberRepository: MockMemberSource(),
+            searchMembersUseCase: MockSearchMembersUseCase(),
             createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
             createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
             currentDateProvider: .system
@@ -286,7 +286,7 @@ private extension MeetingRepeatOption {
 #Preview("Scheduled mode with selected members") {
     let viewModel = CreateMeetingFormViewModel(
         mode: .scheduled,
-        memberRepository: MockMemberSource(),
+        searchMembersUseCase: MockSearchMembersUseCase(),
         createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
         createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
         currentDateProvider: .system
@@ -297,11 +297,11 @@ private extension MeetingRepeatOption {
 
 // MARK: - Mock
 
-private struct MockMemberSource: MemberRepositoryProtocol {
+private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
 
     let members: [Member] = .mock
 
-    func search(query: String) async throws -> [Member] {
+    func invoke(query: String) async throws -> [Member] {
         guard !query.isEmpty else { return members }
         return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
