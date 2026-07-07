@@ -49,48 +49,6 @@ extension ConversationViewController {
         }
     }
 
-    /// Whether the self user has blocked the one-on-one partner. When `true`, the input bar is
-    /// replaced by a "You blocked this user" bar, since messages can no longer be sent. Note this is
-    /// only the case for the user who did the blocking — the blocked party is never notified.
-    var didBlockConnectedUser: Bool {
-        conversation.conversationType == .oneOnOne && conversation.connectedUser?.isBlocked == true
-    }
-
-    func updateBlockedUserVisibility() {
-        if didBlockConnectedUser {
-            guard blockedUserViewController == nil else { return }
-
-            // The input bar is collapsed in `updateInputBarVisibility`; pin the content above this
-            // (shorter) bar instead so it occupies its own compact height at the bottom.
-            let blockedUserViewController = BlockedUserBottomBarViewController()
-            blockedUserViewController.view.translatesAutoresizingMaskIntoConstraints = false
-            addChild(blockedUserViewController)
-            view.addSubview(blockedUserViewController.view)
-
-            contentBottomToInputBar?.isActive = false
-            NSLayoutConstraint.activate([
-                blockedUserViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                blockedUserViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                blockedUserViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                exchangeableContentViewController.view.bottomAnchor
-                    .constraint(equalTo: blockedUserViewController.view.topAnchor)
-            ])
-            blockedUserViewController.didMove(toParent: self)
-            self.blockedUserViewController = blockedUserViewController
-        } else {
-            guard blockedUserViewController != nil else { return }
-
-            blockedUserViewController?.willMove(toParent: nil)
-            blockedUserViewController?.view.removeFromSuperview()
-            blockedUserViewController?.removeFromParent()
-            blockedUserViewController = nil
-
-            // Restore the content → input bar pin (removing the bar's view already dropped the
-            // content → blocked bar constraint).
-            contentBottomToInputBar?.isActive = true
-        }
-    }
-
     func createConstraints() {
         [
             conversationBarController.view,
@@ -108,9 +66,8 @@ extension ConversationViewController {
             exchangeableContentViewController.view.topAnchor.constraint(equalTo: conversationBottomAnchor)
         ])
 
-        contentBottomToInputBar = exchangeableContentViewController.view.bottomAnchor
-            .constraint(equalTo: inputBarController.view.topAnchor)
-        contentBottomToInputBar?.isActive = true
+        exchangeableContentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor)
+            .isActive = true
         NSLayoutConstraint.activate([
             inputBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             inputBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),

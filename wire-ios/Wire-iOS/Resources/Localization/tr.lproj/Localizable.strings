@@ -318,7 +318,6 @@
 "conversation.input_bar.verified" = "Doğrulandı";
 "conversation.input_bar.placeholder" = "Bir mesaj yazın";
 "conversation.input_bar.placeholder_ephemeral" = "Kendini silen mesaj";
-"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Göndermek için kaydırın";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Göndermek için tıkla";
