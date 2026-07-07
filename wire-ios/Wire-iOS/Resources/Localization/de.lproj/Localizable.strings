@@ -643,7 +643,7 @@
 "content.system.file_collaboration.enabled.editor_access" = "Sie haben Bearbeitungsrechte. Personen außerhalb Ihres Teams haben lediglich Leserechte.";
 "content.system.file_collaboration.enabled.viewer_access" = "Sie können Dateien lesen, aber nicht hochladen, bearbeiten oder verwalten.";
 "content.system.file_collaboration.enabled.learn_more" = "Mehr erfahren";
-"content.system.file_collaboration.drive_viewer_access.title" = "Guests have view-only access to files in this conversation.";
+"content.system.file_collaboration.drive_viewer_access.title" = "People outside your team can join this conversation as viewers.";
 
 // read receipt
 
