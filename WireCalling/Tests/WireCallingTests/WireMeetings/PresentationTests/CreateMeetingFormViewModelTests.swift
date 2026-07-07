@@ -149,7 +149,7 @@ struct CreateMeetingFormViewModelTests {
     @Test("changing the start date keeps the end date after the start date")
     func changingStartDate_KeepsEndDateAfterStartDate() {
         // When
-        viewModel.startDate = viewModel.startDate.addingTimeInterval(86400)
+        viewModel.startDate = viewModel.startDate.addingTimeInterval(86_400)
 
         // Then
         #expect(viewModel.endDate > viewModel.startDate)

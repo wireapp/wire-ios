@@ -84,6 +84,7 @@ package final class CreateMeetingFormViewModel {
     var endDateRange: PartialRangeFrom<Date> {
         startDate.addingTimeInterval(Self.minimumDuration)...
     }
+
     var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
     private(set) var isLoading = false
