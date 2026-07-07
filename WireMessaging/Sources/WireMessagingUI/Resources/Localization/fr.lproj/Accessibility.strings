@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// MARK: - Navigation
 
+// MARK: - Navigation
 "general.loading" = "Chargement…";
 "general.confirm" = "OK";
 "general.failure" = "Une erreur est survenue";
@@ -70,3 +70,10 @@
 "conversation.wireCells.files.folder" = "Folder";
 "conversation.wireCells.files.text" = "Text";
 "conversation.wireCells.files.availableOffline" = "Available offline";
+
+// MARK: - Viewer access
+"conversation.wireCells.files.readOnly" = "Read only";
+"conversation.wireCells.files.viewerAccess.banner.close" = "Close access info";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDrive.closeButton" = "Close conversation details";

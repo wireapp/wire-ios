@@ -45,6 +45,10 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
         clearedTeamConversation = createGroupConversation(in: team, archived: true)
         clearedTeamConversation.clearedTimeStamp = clearedTeamConversation.lastServerTimeStamp
         conversationWithoutTeam = createGroupConversation(in: nil)
+
+        // The directory now fetches each list from the store filtering on the persisted `effectiveConversationType`
+        // (maintained in `-willSave`), so conversations must be saved before the lists are built.
+        XCTAssertTrue(uiMOC.saveOrRollback())
     }
 
     override func tearDown() {

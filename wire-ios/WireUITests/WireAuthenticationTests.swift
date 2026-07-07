@@ -44,6 +44,7 @@ final class WireAuthenticationTests: WireUITestCase {
         XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
 
+    /// [critical]
     @MainActor
     func testLogout_TC_8946() async throws {
         // Login user A

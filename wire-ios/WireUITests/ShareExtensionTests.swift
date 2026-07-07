@@ -20,6 +20,7 @@ import WireFoundation
 import WireLocators
 import XCTest
 
+/// [core-messenger]
 final class ShareExtensionTests: WireUITestCase {
 
     private let photosAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
@@ -76,47 +77,86 @@ final class ShareExtensionTests: WireUITestCase {
         }
     }
 
+    /// [critical]
     @MainActor
-    private func createOneOnOneShareScenario() async throws -> String {
-        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
-        let member = try XCTUnwrap(teamMembers.first)
+    private func createTeamAndLoginAsOwner(
+        conversation: CreateConversationOption? = nil
+    ) async throws -> (
+        teamOwner: UserInfo,
+        member: UserInfo,
+        conversationName: String,
+        conversationsPage: ConversationsPage
+    ) {
+        let (teamOwner, teamMembers, _, _) =
+            if let conversation {
+                try await UserHelper.default.registerTeam(
+                    withMemberCount: 1,
+                    conversation: conversation
+                )
+            } else {
+                try await UserHelper.default.registerTeam(withMemberCount: 1)
+            }
 
-        let firstTimePage = try app.loginUser(email: member.email, password: member.password)
-        let conversationsPage = try firstTimePage
-            .acceptPopup()
+        let member = try XCTUnwrap(teamMembers.first)
+        let conversationName =
+            if let conversation {
+                switch conversation {
+                case let .group(name), let .channel(name):
+                    name
+                }
+            } else {
+                member.name
+            }
+
+        let firstTimePage = try app.loginUser(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let conversationsPage = try firstTimePage.acceptPopup()
+
+        return (
+            teamOwner: teamOwner,
+            member: member,
+            conversationName: conversationName,
+            conversationsPage: conversationsPage
+        )
+    }
+
+    @MainActor
+    private func startOneOnOneConversation(
+        with userName: String,
+        from conversationsPage: ConversationsPage
+    ) throws -> ConversationsPage {
+        let conversationsPage = try conversationsPage
             .tapPlusButtonToCreateGroup()
             .openUserDetailsInContactList()
             .tapStartConversationButton()
             .goBackToConversationPage()
 
         XCTAssertTrue(
-            conversationsPage.conversationCell(named: teamOwner.name).waitForExistence(timeout: timeout),
-            "Conversation '\(teamOwner.name)' did not show up after creating 1:1"
+            conversationsPage.conversationCell(named: userName).waitForExistence(timeout: timeout),
+            "Conversation '\(userName)' did not show up after creating 1:1"
         )
 
-        return teamOwner.name
+        return conversationsPage
     }
 
     @MainActor
-    private func createTeamShareScenario(conversation: CreateConversationOption) async throws -> String {
-        let conversationName: String = switch conversation {
-        case let .group(name), let .channel(name):
-            name
-        }
+    private func addReceiverUserAndSwitchAccount(
+        email: String,
+        password: String,
+        switchBackToUserName: String
+    ) async throws {
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
 
-        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
-            withMemberCount: 1,
-            conversation: conversation
-        )
-        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationsPage = try firstTimePage.acceptPopup()
+        let firstTimePage = try app.loginUser(email: email, password: password)
+        _ = try firstTimePage.acceptPopup()
 
-        XCTAssertTrue(
-            conversationsPage.conversationCell(named: conversationName).waitForExistence(timeout: timeout),
-            "Conversation '\(conversationName)' did not show up after sender login"
-        )
-
-        return conversationName
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: switchBackToUserName)
     }
 
     @MainActor
@@ -156,11 +196,38 @@ final class ShareExtensionTests: WireUITestCase {
     }
 
     @MainActor
-    func testShareImageOnetoOne_TC_8915() async throws {
-        let conversationName = try await createOneOnOneShareScenario()
+    private func addMemberToConversation(
+        named conversationName: String,
+        memberName: String
+    ) throws -> ConversationsPage {
+        let conversationDetailsPage = try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        .openConversationDetails()
 
+        return try conversationDetailsPage
+            .appParticipantToConversation()
+            .tapMemberCells(withLabelPrefixes: [memberName])
+            .addSelectedParticipant()
+            .closeConversationDetails()
+            .goBackToConversationPage()
+    }
+
+    @MainActor
+    func testShareImageOnetoOne_TC_8915() async throws {
+        // GIVEN
+        let scenario = try await createTeamAndLoginAsOwner()
+        let conversationName = scenario.conversationName
+        _ = try startOneOnOneConversation(
+            with: conversationName,
+            from: scenario.conversationsPage
+        )
+
+        // WHEN
         try await shareFirstImageToWire(conversationName: conversationName)
 
+        // THEN
         let activeConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
@@ -170,13 +237,21 @@ final class ShareExtensionTests: WireUITestCase {
 
     @MainActor
     func testShareVideoToOneOnOneConversation_TC_8916() async throws {
-        let conversationName = try await createOneOnOneShareScenario()
+        // GIVEN
+        let scenario = try await createTeamAndLoginAsOwner()
+        let conversationName = scenario.conversationName
+        _ = try startOneOnOneConversation(
+            with: conversationName,
+            from: scenario.conversationsPage
+        )
 
+        // WHEN
         try await shareFixtureFileToWire(
             fileName: testVideoName,
             conversationName: conversationName
         )
 
+        // THEN
         let activeConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
@@ -185,9 +260,25 @@ final class ShareExtensionTests: WireUITestCase {
     }
 
     @MainActor
-    func testShareFileToOneOnOneConversation_TC_8917() async throws {
-        let conversationName = try await createOneOnOneShareScenario()
+    func testShareAndReceiveFileToOneOnOneConversation_TC_8917_8918() async throws {
+        // GIVEN
+        let scenario = try await createTeamAndLoginAsOwner()
+        let teamOwner = scenario.teamOwner
+        let member = scenario.member
+        let conversationName = scenario.conversationName
 
+        try await addReceiverUserAndSwitchAccount(
+            email: member.email,
+            password: member.password,
+            switchBackToUserName: teamOwner.name
+        )
+
+        _ = try startOneOnOneConversation(
+            with: conversationName,
+            from: scenario.conversationsPage
+        )
+
+        // WHEN
         try await shareFixtureFileToWire(
             fileName: testFileName,
             conversationName: conversationName
@@ -197,16 +288,32 @@ final class ShareExtensionTests: WireUITestCase {
             named: conversationName,
             on: try ConversationsPage()
         )
+        // THEN - file is sent
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .goBackToConversationPage()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: member.name)
+
+        try openConversation(
+            named: teamOwner.name,
+            on: try ConversationsPage()
+        )
+        // THEN - file is received
         .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
+    /// [critical]
     @MainActor
     func testShareImageToGroupConversation_TC_8919() async throws {
+        // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
-        let conversationName = try await createTeamShareScenario(conversation: .group(groupName))
+        let scenario = try await createTeamAndLoginAsOwner(conversation: .group(groupName))
+        let conversationName = scenario.conversationName
 
+        // WHEN
         try await shareFirstImageToWire(conversationName: conversationName)
 
+        // THEN
         let activeConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
@@ -216,14 +323,18 @@ final class ShareExtensionTests: WireUITestCase {
 
     @MainActor
     func testShareVideoToGroupConversation_TC_8920() async throws {
+        // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
-        let conversationName = try await createTeamShareScenario(conversation: .group(groupName))
+        let scenario = try await createTeamAndLoginAsOwner(conversation: .group(groupName))
+        let conversationName = scenario.conversationName
 
+        // WHEN
         try await shareFixtureFileToWire(
             fileName: testVideoName,
             conversationName: conversationName
         )
 
+        // THEN
         let activeConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
@@ -232,10 +343,21 @@ final class ShareExtensionTests: WireUITestCase {
     }
 
     @MainActor
-    func testShareFileToGroupConversation_TC_8921() async throws {
+    func testShareAndReceiveFileToGroupConversation_TC_8921_8922() async throws {
+        // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
-        let conversationName = try await createTeamShareScenario(conversation: .group(groupName))
+        let scenario = try await createTeamAndLoginAsOwner(conversation: .group(groupName))
+        let conversationName = scenario.conversationName
+        let teamOwner = scenario.teamOwner
+        let member = scenario.member
 
+        try await addReceiverUserAndSwitchAccount(
+            email: member.email,
+            password: member.password,
+            switchBackToUserName: teamOwner.name
+        )
+
+        // WHEN
         try await shareFixtureFileToWire(
             fileName: testFileName,
             conversationName: conversationName
@@ -245,16 +367,31 @@ final class ShareExtensionTests: WireUITestCase {
             named: conversationName,
             on: try ConversationsPage()
         )
+        // THEN - file is sent
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .goBackToConversationPage()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: member.name)
+
+        try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        // THEN - file is received
         .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
     @MainActor
     func testShareImageToChannelConversation_TC_8923() async throws {
+        // GIVEN
         let channelName = UserGenerator.generateRandomConversationName()
-        let conversationName = try await createTeamShareScenario(conversation: .channel(channelName))
+        let scenario = try await createTeamAndLoginAsOwner(conversation: .channel(channelName))
+        let conversationName = scenario.conversationName
 
+        // WHEN
         try await shareFirstImageToWire(conversationName: conversationName)
 
+        // THEN
         let activeConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
@@ -264,14 +401,18 @@ final class ShareExtensionTests: WireUITestCase {
 
     @MainActor
     func testShareVideoToChannelConversation_TC_8924() async throws {
+        // GIVEN
         let channelName = UserGenerator.generateRandomConversationName()
-        let conversationName = try await createTeamShareScenario(conversation: .channel(channelName))
+        let scenario = try await createTeamAndLoginAsOwner(conversation: .channel(channelName))
+        let conversationName = scenario.conversationName
 
+        // WHEN
         try await shareFixtureFileToWire(
             fileName: testVideoName,
             conversationName: conversationName
         )
 
+        // THEN
         let activeConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
@@ -280,10 +421,26 @@ final class ShareExtensionTests: WireUITestCase {
     }
 
     @MainActor
-    func testShareFileToChannelConversation_TC_8925() async throws {
+    func testShareAndReceiveFileToChannelConversation_TC_8925_8926() async throws {
+        // GIVEN
         let channelName = UserGenerator.generateRandomConversationName()
-        let conversationName = try await createTeamShareScenario(conversation: .channel(channelName))
+        let scenario = try await createTeamAndLoginAsOwner(conversation: .channel(channelName))
+        let conversationName = scenario.conversationName
+        let teamOwner = scenario.teamOwner
+        let member = scenario.member
 
+        try await addReceiverUserAndSwitchAccount(
+            email: member.email,
+            password: member.password,
+            switchBackToUserName: teamOwner.name
+        )
+
+        _ = try addMemberToConversation(
+            named: conversationName,
+            memberName: member.name
+        )
+
+        // WHEN
         try await shareFixtureFileToWire(
             fileName: testFileName,
             conversationName: conversationName
@@ -293,6 +450,17 @@ final class ShareExtensionTests: WireUITestCase {
             named: conversationName,
             on: try ConversationsPage()
         )
+        // THEN - file is sent
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .goBackToConversationPage()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: member.name)
+
+        try openConversation(
+            named: conversationName,
+            on: try ConversationsPage()
+        )
+        // THEN - file is received
         .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 }

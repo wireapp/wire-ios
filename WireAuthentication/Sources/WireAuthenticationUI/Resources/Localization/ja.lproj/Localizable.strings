@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.field.email_only.placeholder" = "メール";
+"authentication.identity.input.field.email_only.title" = "メール";
 "authentication.identity.input.submit" = "次へ";
 
 "cloud_user_login.title" = "Enter your password to log in";
@@ -87,6 +89,8 @@
 "switch_backend_confirmation.show_details" = "Show details";
 "switch_backend.error.title.logged_in" = "サーバを変更することができません";
 "switch_backend.error.message.logged_in" = "あなたはすでにログインしています。サーバを変更するには、すべてのアカウントでログアウトして、もう一度やり直してください";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "メール受信しました。";
 "verification_code.message" = "%@ に送信した認証コードを入力してください";
@@ -117,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "このアカウントは、もはやログイン権限はありません";
 "authentication.error.message.incorrect_sso_code" = "企業 シングルサインオン アクセスコードを確認して、もう一度やりなおしてください。";
+"authentication.error.title.already_logged_in" = "Account already active";
+"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
 
 "authentication.error.confirm" = "OK";
 

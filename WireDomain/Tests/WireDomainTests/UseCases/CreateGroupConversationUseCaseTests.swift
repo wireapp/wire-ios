@@ -93,7 +93,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             .createGroupConversationParameters_MockValue =
             Scaffolding.conversation
 
-        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = proteusConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
@@ -123,7 +124,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             1
         )
         XCTAssertEqual(
-            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
@@ -178,7 +180,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 }
             }
 
-        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = proteusConversation
 
@@ -206,7 +209,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             2
         ) // called twice, first try then retry excluding non federated domains
         XCTAssertEqual(
-            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
@@ -234,7 +238,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             .createGroupConversationParameters_MockValue =
             Scaffolding.conversation
 
-        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
@@ -264,7 +269,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             1
         )
         XCTAssertEqual(
-            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
@@ -312,7 +318,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 }
             }
 
-        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
@@ -342,7 +349,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             2
         ) // called twice, first try then retry excluding non federated domains
         XCTAssertEqual(
-            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
@@ -373,7 +381,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             .createGroupConversationParameters_MockValue =
             Scaffolding.conversation
 
-        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
@@ -428,7 +437,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             1
         )
         XCTAssertEqual(
-            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
@@ -472,7 +482,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             .createGroupConversationParameters_MockValue =
             Scaffolding.conversation
 
-        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
@@ -522,7 +533,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             1
         )
         XCTAssertEqual(
-            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
@@ -557,7 +569,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             .createGroupConversationParameters_MockValue =
             Scaffolding.conversation
 
-        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
@@ -607,7 +620,8 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             1
         )
         XCTAssertEqual(
-            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)

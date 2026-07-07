@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.field.email_only.placeholder" = "Email";
+"authentication.identity.input.field.email_only.title" = "Email";
 "authentication.identity.input.submit" = "Avanti";
 
 "cloud_user_login.title" = "Enter your password to log in";
@@ -87,6 +89,8 @@
 "switch_backend_confirmation.show_details" = "Mostra dettagli";
 "switch_backend.error.title.logged_in" = "Impossibile cambiare server";
 "switch_backend.error.message.logged_in" = "Sei già loggato. Per connettersi a questo server, scollegati da tutti gli account e prova di nuovo.";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "C'è posta per te";
 "verification_code.message" = "Inserisci il codice di verifica che abbiamo inviato a %@.";
@@ -117,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "Questo account non è più autorizzato ad accedere.";
 "authentication.error.message.incorrect_sso_code" = "Verifica il tuo codice di accesso SSO aziendale e riprova.";
+"authentication.error.title.already_logged_in" = "Account already active";
+"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
 
 "authentication.error.confirm" = "OK";
 

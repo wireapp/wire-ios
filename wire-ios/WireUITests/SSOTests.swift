@@ -18,6 +18,7 @@
 
 import XCTest
 
+/// [core-messenger]
 final class SSOTests: WireUITestCase {
 
     private func registerTeamOwnerWithSSOEnabled() async throws -> UserInfo {
@@ -41,6 +42,7 @@ final class SSOTests: WireUITestCase {
             .acceptFirstTimeAlert()
     }
 
+    /// [critical]
     @MainActor
     func testSSOLoginWithSSOCodeAndNoResetPassword_TC_8966_TC_10850() async throws {
         // GIVEN
@@ -65,6 +67,7 @@ final class SSOTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testReloginSSO_TC_8970() async throws {
         // GIVEN
@@ -131,6 +134,7 @@ final class SSOTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testSSOLoginWithClaimedDomain_TC_8967() async throws {
 

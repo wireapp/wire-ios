@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.field.email_only.placeholder" = "電子郵件";
+"authentication.identity.input.field.email_only.title" = "電子郵件";
 "authentication.identity.input.submit" = "下一步";
 
 "cloud_user_login.title" = "Enter your password to log in";
@@ -87,6 +89,8 @@
 "switch_backend_confirmation.show_details" = "Show details";
 "switch_backend.error.title.logged_in" = "無法切換伺服器";
 "switch_backend.error.message.logged_in" = "您已經登錄。要切換到該服務器，請登出所有帳戶，然後重試。";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "您收到了郵件";
 "verification_code.message" = "輸入我們發送到%@的驗證碼。";
@@ -117,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "此帳戶不再被授權登錄";
 "authentication.error.message.incorrect_sso_code" = "請核對您的公司單一登錄(SSO)存取碼，然後重試。";
+"authentication.error.title.already_logged_in" = "Account already active";
+"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
 
 "authentication.error.confirm" = "確認";
 

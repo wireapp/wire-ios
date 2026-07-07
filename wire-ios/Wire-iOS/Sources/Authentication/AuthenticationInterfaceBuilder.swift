@@ -304,7 +304,8 @@ final class AuthenticationInterfaceBuilder {
         registrationAnalyticsTracker: RegistrationAnalyticsTracker?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let assembly = WireAuthenticationAssembly()
-        let accounts = (SessionManager.shared?.accountManager.accounts ?? [])
+        let rawAccounts = SessionManager.shared?.accountManager.accounts ?? []
+        let accounts = rawAccounts
             .map { account in
                 account.toUIModel { [weak self] in
                     self?.accountSelector?.switchTo(account: account)
@@ -314,10 +315,29 @@ final class AuthenticationInterfaceBuilder {
             WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
         }
 
+        // The backend hosts of the accounts already logged in on this device. Accounts on the
+        // default backend store no environment file, so fall back to the default environment's
+        // host. Used to block adding an account from a different backend when multibackend
+        // support is disabled.
+        let defaultHost = defaultEnvironment.config.endpoints.restAPIURL.host()
+        var existingBackendHosts = Set<String>()
+        if let sessionManager = SessionManager.shared {
+            for account in rawAccounts {
+                let backend = try? sessionManager.environmentStore.fetchBackendEnvironment(
+                    accountID: account.userIdentifier
+                )
+                if let host = backend?.config.endpoints.restAPIURL.host() ?? defaultHost {
+                    existingBackendHosts.insert(host)
+                }
+            }
+        }
+
         let (view, bridge) = assembly.assemble(
             authenticationType: authenticationType,
             environment: environment,
             minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+            allowsMultipleBackends: SecurityFlags.multibackendSupport.isEnabled,
+            existingBackendHosts: existingBackendHosts,
             preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
             howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
             howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
@@ -327,7 +347,11 @@ final class AuthenticationInterfaceBuilder {
             ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
-            registrationAnalyticsTracker: registrationAnalyticsTracker
+            registrationAnalyticsTracker: registrationAnalyticsTracker,
+            isAccountAlreadyLoggedIn: { userID in
+                SessionManager.shared?.accountManager.accounts.contains { $0.userIdentifier == userID } ?? false
+            },
+            overrideAllowEmailLoginOnly: featureProvider.allowOnlyEmailLogin
         )
 
         return (

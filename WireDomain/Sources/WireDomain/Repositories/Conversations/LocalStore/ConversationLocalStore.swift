@@ -469,7 +469,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         _ conversation: Conversation,
         timestamp: Date,
         isFederationEnabled: Bool,
-        isMLSEnabled: Bool
+        isMLSEnabled: Bool,
+        markAsRead: Bool
     ) async {
         guard let conversationType = conversation.type else {
             return
@@ -500,7 +501,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 withID: id,
                 serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled,
-                isMLSEnabled: isMLSEnabled
+                isMLSEnabled: isMLSEnabled,
+                markAsRead: markAsRead
             )
 
         case .`self`:
@@ -1077,14 +1079,20 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ///
     /// - Parameter conversation: The up-to-date conversation object.
     /// - Parameter id: The conversation ID.
-    /// - Parameter isFederationEnabled: A flag indicating whether a federation is enabled.
+    /// - Parameter serverTimestamp: The timestamp associated with the server update used to set last server/modified
+    /// dates.
+    /// - Parameter isFederationEnabled: A flag indicating whether federation is enabled (controls whether the domain is
+    /// stored).
+    /// - Parameter isMLSEnabled: A flag indicating whether MLS features are enabled (controls MLS status updates).
+    /// - Parameter markAsRead: When true, marks the conversation as read on initial fetch (e.g. slow sync).
 
     private func updateOrCreateGroupConversation(
         from conversation: Conversation,
         withID id: UUID,
         serverTimestamp: Date,
         isFederationEnabled: Bool,
-        isMLSEnabled: Bool
+        isMLSEnabled: Bool,
+        markAsRead: Bool
     ) async {
         var isInitialFetch = false
 
@@ -1106,6 +1114,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     .group
                 case .channel:
                     .channel
+                case .meeting:
+                    .meeting
                 }
             } ?? .none
 
@@ -1178,8 +1188,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     users: localConversation.localParticipants
                 )
 
-                // Slow synced conversations should be considered read from the start
-                localConversation.lastReadServerTimeStamp = localConversation.lastModifiedDate
+                // Slow synced conversations should be considered read from the start,
+                // but only when called from the slow sync path (not from UpdateConversationItem,
+                // which also runs for new conversations created while the app is backgrounded).
+                if markAsRead {
+                    localConversation.lastReadServerTimeStamp = localConversation.lastModifiedDate
+                }
 
                 Flow.createGroup.checkpoint(
                     description: "new system message for conversation inserted"

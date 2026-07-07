@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.field.email_only.placeholder" = "E-pošta";
+"authentication.identity.input.field.email_only.title" = "E-pošta";
 "authentication.identity.input.submit" = "Next";
 
 "cloud_user_login.title" = "Enter your password to log in";
@@ -87,6 +89,8 @@
 "switch_backend_confirmation.show_details" = "Show details";
 "switch_backend.error.title.logged_in" = "Can’t switch servers";
 "switch_backend.error.message.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "You’ve got mail";
 "verification_code.message" = "Vnesite verifikacijsko kodo, ki smo jo poslali na %@.";
@@ -117,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "This account is no longer authorized to log in.";
 "authentication.error.message.incorrect_sso_code" = "Please verify your company SSO access code and try again.";
+"authentication.error.title.already_logged_in" = "Account already active";
+"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
 
 "authentication.error.confirm" = "V redu";
 

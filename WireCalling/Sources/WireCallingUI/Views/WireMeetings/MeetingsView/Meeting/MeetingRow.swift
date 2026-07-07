@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCallingDomain
 import WireDesign
+import WireFoundation
 
 struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
@@ -76,7 +77,7 @@ struct MeetingRow: View {
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 if !meeting.members.isEmpty {
-                    ParticipantsView(members: meeting.members)
+                    MemberAvatarsView(members: meeting.members)
                         .padding(.top, 2)
                 }
             }
@@ -87,7 +88,7 @@ struct MeetingRow: View {
 #Preview {
     MeetingRow(
         meeting: Meeting(
-            id: UUID(),
+            id: QualifiedID(id: UUID(), domain: ""),
             title: "Meeting1",
             start: Date(),
             end: Date()

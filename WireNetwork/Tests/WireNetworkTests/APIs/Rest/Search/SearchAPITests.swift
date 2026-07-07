@@ -58,8 +58,6 @@ final class SearchAPITests: XCTestCase {
         }
     }
 
-    // MARK: - Response handling
-
     // MARK: - V1
 
     func testSearchContacts_SuccessResponse_200_V1ToV14_Then_Verify_Request() async throws {

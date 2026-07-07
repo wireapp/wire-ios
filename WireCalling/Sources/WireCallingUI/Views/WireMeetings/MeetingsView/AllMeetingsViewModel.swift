@@ -25,41 +25,41 @@ import WireCallingDomainSupport
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
 @Observable
+@MainActor
 package final class AllMeetingsViewModel {
+
+    let memberRepository: any MemberRepositoryProtocol
 
     package let meetingsViewModel: MeetingsViewModel
 
-    var isCreateInstantMeetingPresented: Bool = false
-    var isScheduleMeetingPresented: Bool = false
+    var presentedFormMode: CreateMeetingFormViewModel.Mode?
 
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        memberRepository: any MemberRepositoryProtocol
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
+        self.memberRepository = memberRepository
     }
 
     // MARK: - Public Interface
 
     func createInstantMeetingTapped() {
-        isCreateInstantMeetingPresented = true
+        presentedFormMode = .instant
     }
 
     func scheduleMeetingTapped() {
-        isScheduleMeetingPresented = true
+        presentedFormMode = .scheduled
     }
 
-    func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel()
-    }
-
-    func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel()
+    func makeMeetingFormViewModel(mode: CreateMeetingFormViewModel.Mode) -> CreateMeetingFormViewModel {
+        CreateMeetingFormViewModel(mode: mode, memberRepository: memberRepository)
     }
 
 }

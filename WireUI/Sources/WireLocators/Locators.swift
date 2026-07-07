@@ -63,8 +63,7 @@ public enum Locators {
         case bottomBarDriveButton
         case createGroupOrSearchButton
         case conversationCell
-        case blockOptionOnContextMenu
-        case unblockOptionOnContextMenu
+        case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
         case leaveButtonOnBottomSheet
@@ -121,6 +120,9 @@ public enum Locators {
         // We are keeping the current title+field identifiers for now to avoid
         // changing existing references across the app.
         case accountHeader = "Account"
+        case pictureCell
+        case colorCell
+        case conversationBackgroundSwitch = "ConversationBackgroundSwitch"
         case nameField = "NameField"
         case nameFieldDisabled = "NameFieldDisabled"
         case usernameField = "UsernameField"
@@ -136,6 +138,13 @@ public enum Locators {
 
     }
 
+    public enum ThemeSettingsPage: AutoPrefixedEnum {
+
+        case lightOption
+        case darkOption
+        case systemOption
+    }
+
     public enum ActiveConversationPage: String {
 
         case videoCallBarButton
@@ -147,6 +156,7 @@ public enum Locators {
         case sharedDriveButton
         case ephemeralTimeSelectionButton
         case message
+        case linkPreviewCell = "LinkPreviewCell"
         case imageCell
         case videoCell
         case videoPlayButton
@@ -165,6 +175,9 @@ public enum Locators {
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
+        case uploadFileButton
+        case browse = "Browse"
+        case open = "Open"
         case allowFullAccess = "Allow Full Access"
         case ok = "OK"
         case audioButton
@@ -177,6 +190,7 @@ public enum Locators {
         case showOtherRowButton
         case pingButton
         case guestsArePresent = "Guests are present"
+        case conversationBackground
         case openOngoingCallButton
 
     }
@@ -209,14 +223,25 @@ public enum Locators {
         case addParticipantsButton
         case moreOptionsButton
         case userCellName
+        case adminCell
+        case memberCell
         case close
-
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
         case archive
         case clearContent
         case leaveConversation
+    }
+
+    public enum LastAdminLeaveAlert: AutoPrefixedEnum {
+        case promoteNewAdmin
+        case deleteGroup
+    }
+
+    public enum AdminSelectionPage: AutoPrefixedEnum {
+        case promoteButton
+        case userCell
     }
 
     public enum UserProfilePage: AutoPrefixedEnum {
@@ -303,6 +328,8 @@ public enum Locators {
 
     public enum OptionsOnSettingsPage: String {
 
+        case theme = "Theme"
+        case themeCell
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
     }
@@ -417,7 +444,10 @@ public enum Locators {
 
     public enum OngoingCallPage: String {
 
-        case endOngoingCallButton = "End call"
+        case cameraButton = "CallVideoButton"
+        case endOngoingCallButton = "EndCallButton"
+        case microphoneButton = "CallMuteButton"
+        case speakerButton = "CallSpeakerButton"
         case timeLabel
         case minimizeCall
 
@@ -560,6 +590,18 @@ public enum Locators {
         public enum RecycleBinPage: String {
             case deletePermanently = "Delete Permanently"
         }
+
+        public enum ConversationDetailsSharedDriveOptionsPage: AutoPrefixedEnum {
+            case toggleSectionTitle
+            case toggle
+            case toggleSectionFooter
+            case participantsSectionHeader
+            case participantsSectionFooterTitle
+            case participantsSectionFooterSubtitle
+            case participantName
+            case participantHandle
+            case participantRole
+        }
     }
 
     public enum BlockerPage: String {
@@ -573,5 +615,9 @@ public enum Locators {
         case username = "Username"
         case signInButton = "Sign In"
 
+    }
+
+    public enum AlertActions: AutoPrefixedEnum {
+        case confirm
     }
 }

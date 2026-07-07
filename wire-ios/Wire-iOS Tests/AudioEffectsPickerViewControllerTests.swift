@@ -90,4 +90,90 @@ final class AudioEffectsPickerViewControllerTests: XCTestCase {
         sut.selectedAudioEffect = AVSAudioEffectType.chorusMax
         snapshotHelper.verify(matching: preparedView)
     }
+
+    // MARK: - Effect apply completion (WPB-24864)
+
+    func testThatItNotifiesTheDelegateWhenTheEffectApplyCompletes() {
+        // GIVEN
+        let delegate = MockAudioEffectsPickerDelegate()
+        sut.delegate = delegate
+        var capturedCompletion: (() -> Void)?
+        sut.applyEffect = { _, _, _, completion in capturedCompletion = completion }
+
+        // WHEN
+        sut.selectedAudioEffect = .reverbMax
+
+        // THEN the delegate is not notified until the (asynchronous) apply completes
+        XCTAssertTrue(delegate.pickedEffects.isEmpty)
+
+        // WHEN the apply completes
+        capturedCompletion?()
+
+        // THEN the delegate is notified once, for the selected effect
+        XCTAssertEqual(delegate.pickedEffects.count, 1)
+        XCTAssertEqual(delegate.pickedEffects.first?.effect, .reverbMax)
+    }
+
+    func testThatItIgnoresAnEffectApplyCompletionSupersededByANewerEffect() throws {
+        // GIVEN
+        let delegate = MockAudioEffectsPickerDelegate()
+        sut.delegate = delegate
+        var pending: [(effect: AVSAudioEffectType, completion: () -> Void)] = []
+        sut.applyEffect = { effect, _, _, completion in pending.append((effect, completion)) }
+
+        // WHEN selecting two effects in a row (the second supersedes the first)
+        sut.selectedAudioEffect = .pitchupInsane
+        sut.selectedAudioEffect = .chorusMax
+        XCTAssertEqual(pending.count, 2)
+
+        let superseded = try XCTUnwrap(pending.first)
+        let latest = try XCTUnwrap(pending.last)
+
+        // WHEN the superseded (first) apply completes
+        superseded.completion()
+
+        // THEN the delegate is not notified for it
+        XCTAssertTrue(delegate.pickedEffects.isEmpty)
+
+        // WHEN the latest apply completes
+        latest.completion()
+
+        // THEN the delegate is notified once, for the latest effect only
+        XCTAssertEqual(delegate.pickedEffects.map(\.effect), [.chorusMax])
+    }
+
+    func testThatItIgnoresAStaleEffectApplyCompletionArrivingAfterTheLatestOne() throws {
+        // GIVEN
+        let delegate = MockAudioEffectsPickerDelegate()
+        sut.delegate = delegate
+        var pending: [(effect: AVSAudioEffectType, completion: () -> Void)] = []
+        sut.applyEffect = { effect, _, _, completion in pending.append((effect, completion)) }
+
+        sut.selectedAudioEffect = .pitchupInsane
+        sut.selectedAudioEffect = .paceupMed
+        XCTAssertEqual(pending.count, 2)
+
+        let stale = try XCTUnwrap(pending.first)
+        let latest = try XCTUnwrap(pending.last)
+
+        // WHEN the latest completion runs first, then the stale one arrives late
+        latest.completion()
+        stale.completion()
+
+        // THEN only the latest effect is reported to the delegate
+        XCTAssertEqual(delegate.pickedEffects.map(\.effect), [.paceupMed])
+    }
+}
+
+private final class MockAudioEffectsPickerDelegate: AudioEffectsPickerDelegate {
+
+    private(set) var pickedEffects: [(effect: AVSAudioEffectType, resultFilePath: String)] = []
+
+    func audioEffectsPickerDidPickEffect(
+        _ picker: AudioEffectsPickerViewController,
+        effect: AVSAudioEffectType,
+        resultFilePath: String
+    ) {
+        pickedEffects.append((effect, resultFilePath))
+    }
 }

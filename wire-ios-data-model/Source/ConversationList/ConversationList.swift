@@ -31,6 +31,10 @@ public final class ConversationList: NSObject {
     private var filteringPredicate: NSPredicate
     private let sortDescriptors: [NSSortDescriptor]
 
+    /// Creates a list by filtering an already-loaded set of conversations in memory.
+    ///
+    /// Prefer ``init(filteringPredicate:managedObjectContext:description:label:)`` on the rebuild hot path: it lets
+    /// the persistent store evaluate the predicate instead of walking every conversation in memory.
     public convenience init(
         allConversations: [ZMConversation],
         filteringPredicate: NSPredicate,
@@ -46,8 +50,44 @@ public final class ConversationList: NSObject {
         )
     }
 
-    public init(
+    public convenience init(
         allConversations: [ZMConversation],
+        filteringPredicate: NSPredicate,
+        managedObjectContext: NSManagedObjectContext,
+        description: String,
+        label: Label?
+    ) {
+        self.init(
+            items: Self.filterItems(allConversations, filteringPredicate),
+            filteringPredicate: filteringPredicate,
+            managedObjectContext: managedObjectContext,
+            description: description,
+            label: label
+        )
+    }
+
+    /// Creates a list by fetching the matching conversations from the persistent store.
+    ///
+    /// The predicate is evaluated by SQLite (using indexes) rather than by walking every conversation in memory, which
+    /// is what keeps the directory rebuild off the main-thread hang path. Conversation-type membership is correct
+    /// because the predicates filter on the persisted `effectiveConversationType` mirror.
+    public convenience init(
+        filteringPredicate: NSPredicate,
+        managedObjectContext: NSManagedObjectContext,
+        description: String,
+        label: Label?
+    ) {
+        self.init(
+            items: Self.fetchItems(matching: filteringPredicate, in: managedObjectContext),
+            filteringPredicate: filteringPredicate,
+            managedObjectContext: managedObjectContext,
+            description: description,
+            label: label
+        )
+    }
+
+    private init(
+        items: [ZMConversation],
         filteringPredicate: NSPredicate,
         managedObjectContext: NSManagedObjectContext,
         description: String,
@@ -60,7 +100,7 @@ public final class ConversationList: NSObject {
         self.sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
         self.conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
-        self.items = Self.createItems(allConversations, filteringPredicate, sortDescriptors)
+        self.items = items
 
         super.init()
 
@@ -77,13 +117,28 @@ public final class ConversationList: NSObject {
         }
     }
 
-    private static func createItems(
+    private static func filterItems(
         _ conversations: [ZMConversation],
-        _ filteringPredicate: NSPredicate,
-        _ sortDescriptors: [NSSortDescriptor]
+        _ filteringPredicate: NSPredicate
     ) -> [ZMConversation] {
+        let sortDescriptors = ZMConversation.defaultSortDescriptors()!
         let filtered = (conversations as NSArray).filtered(using: filteringPredicate)
         return NSSet(array: filtered).sortedArray(using: sortDescriptors) as! [ZMConversation]
+    }
+
+    private static func fetchItems(
+        matching predicate: NSPredicate,
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
+        let request = ZMConversation.sortedFetchRequest(with: predicate)
+        // Mirror `fetchAllConversations`'s prefetching: these relationships are almost always touched right after,
+        // for sorting (call/unread state) and display, so prefetch them to avoid a fault storm.
+        var keyPaths = request.relationshipKeyPathsForPrefetching ?? []
+        keyPaths.append(ZMConversationParticipantRolesKey)
+        keyPaths.append("\(ZMConversationOneOnOneUserKey).connection")
+        request.relationshipKeyPathsForPrefetching = keyPaths
+
+        return (context.fetchOrAssert(request: request) as? [ZMConversation]) ?? []
     }
 
     private static func calculateKeysAffectingPredicateAndSort(_ sortDescriptors: [NSSortDescriptor]) -> NSSet {
@@ -101,11 +156,22 @@ public final class ConversationList: NSObject {
         predicate: NSPredicate
     ) {
         filteringPredicate = predicate
-        items = Self.createItems(allConversations, predicate, sortDescriptors)
+        items = Self.filterItems(allConversations, predicate)
 
         let managedObjectContext = managedObjectContext
         managedObjectContext?.performAndWait {
             managedObjectContext?.conversationListObserverCenter.startObservingList(self)
+        }
+    }
+
+    /// Rebuilds the list by fetching the matching conversations from the store.
+    func recreate(predicate: NSPredicate) {
+        filteringPredicate = predicate
+
+        guard let managedObjectContext else { return }
+        items = Self.fetchItems(matching: predicate, in: managedObjectContext)
+        managedObjectContext.performAndWait {
+            managedObjectContext.conversationListObserverCenter.startObservingList(self)
         }
     }
 

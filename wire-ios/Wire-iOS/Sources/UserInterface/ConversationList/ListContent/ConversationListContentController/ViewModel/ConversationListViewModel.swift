@@ -217,6 +217,9 @@ final class ConversationListViewModel: NSObject {
         user.publisher(for: \.teamIdentifier)
             .removeDuplicates()
             .receive(on: RunLoop.main)
+            // Debounce so the nil -> team transition during slow sync collapses into a single rebuild instead of
+            // firing a full `refetchAllLists` that overlaps the sync-driven rebuilds (a main-thread hang source).
+            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak userSession] _ in
                 guard let userSession, !userSession.isTornDown else { return }
 

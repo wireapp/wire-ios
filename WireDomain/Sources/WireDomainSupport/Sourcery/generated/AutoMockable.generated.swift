@@ -739,17 +739,17 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool)] = []
-    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod: ((WireDomain.Conversation, Date, Bool, Bool) async -> Void)?
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool, markAsRead: Bool)] = []
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod: ((WireDomain.Conversation, Date, Bool, Bool, Bool) async -> Void)?
 
-    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool) async {
-        storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled, isMLSEnabled: isMLSEnabled))
+    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool, markAsRead: Bool) async {
+        storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled, isMLSEnabled: isMLSEnabled, markAsRead: markAsRead))
 
-        guard let mock = storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod else {
-            fatalError("no mock for `storeConversationTimestampIsFederationEnabledIsMLSEnabled`")
+        guard let mock = storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod else {
+            fatalError("no mock for `storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead`")
         }
 
-        await mock(conversation, timestamp, isFederationEnabled, isMLSEnabled)
+        await mock(conversation, timestamp, isFederationEnabled, isMLSEnabled, markAsRead)
     }
 
     // MARK: - storeConversation
@@ -1892,24 +1892,6 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
             return mock
         } else {
             fatalError("no mock for `fetchMLSConversationGroupID`")
-        }
-    }
-
-    // MARK: - isGroupConversation
-
-    public var isGroupConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var isGroupConversationIdDomain_MockMethod: ((UUID, String?) async -> Bool)?
-    public var isGroupConversationIdDomain_MockValue: Bool?
-
-    public func isGroupConversation(id: UUID, domain: String?) async -> Bool {
-        isGroupConversationIdDomain_Invocations.append((id: id, domain: domain))
-
-        if let mock = isGroupConversationIdDomain_MockMethod {
-            return await mock(id, domain)
-        } else if let mock = isGroupConversationIdDomain_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `isGroupConversationIdDomain`")
         }
     }
 

@@ -33,6 +33,8 @@ final class RootComponent: BootstrapComponent {
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
+    public let allowsMultipleBackends: Bool
+    public let existingBackendHosts: Set<String>
     public let howToChangeEmailURL: URL
     public let howToDeleteAccountURL: URL
     public let privacyPolicyURL: URL
@@ -42,6 +44,8 @@ final class RootComponent: BootstrapComponent {
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    public let isAccountAlreadyLoggedIn: (UUID) -> Bool
+    public let overrideAllowEmailLoginOnly: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -60,6 +64,8 @@ final class RootComponent: BootstrapComponent {
         environment: BackendEnvironment2,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
+        allowsMultipleBackends: Bool,
+        existingBackendHosts: Set<String>,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         privacyPolicyURL: URL,
@@ -68,13 +74,17 @@ final class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool,
+        overrideAllowEmailLoginOnly: Bool
     ) {
         self.authenticationType = authenticationType
         self.environment = environment
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
+        self.allowsMultipleBackends = allowsMultipleBackends
+        self.existingBackendHosts = existingBackendHosts
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.privacyPolicyURL = privacyPolicyURL
@@ -84,6 +94,8 @@ final class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
         self.registrationAnalyticsTracker = registrationAnalyticsTracker
+        self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
+        self.overrideAllowEmailLoginOnly = overrideAllowEmailLoginOnly
     }
 
     // MARK: - Children
@@ -99,7 +111,10 @@ final class RootComponent: BootstrapComponent {
         return DetermineAuthMethodComponent(
             parent: self,
             networkStack: networkStack,
-            existsAnotherAccount: !accountsPublisher.value.isEmpty
+            existsAnotherAccount: !accountsPublisher.value.isEmpty,
+            allowsMultipleBackends: allowsMultipleBackends,
+            existingBackendHosts: existingBackendHosts,
+            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn
         )
     }
 

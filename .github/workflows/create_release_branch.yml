@@ -151,22 +151,73 @@ jobs:
             | grep -oiE 'WPB-[0-9]+' | tr 'a-z' 'A-Z' | sort -u -t- -k2 -n || true)"
           COUNT="$(printf '%s\n' "$TICKETS" | grep -c . || true)"
 
-          if [[ "$COUNT" -gt 0 ]]; then
-            LIST="$(printf '%s\n' "$TICKETS" | sed 's#^#- https://wearezeta.atlassian.net/browse/#')"
-          else
-            LIST="_No tickets found — generate the changelog to fill this in._"
-          fi
-
           {
             echo "TICKET_COUNT=$COUNT"
-            echo "TICKET_LIST<<EOF"
-            echo "$LIST"
+            echo "TICKET_KEYS<<EOF"
+            echo "$TICKETS"
             echo "EOF"
           } >> "$GITHUB_ENV"
+
+      # Resolve each WPB key to its JIRA title and issue type, then group them
+      # into the release-note sections: bugs under Fix, improvements under
+      # Improvements, everything else under New.
+      - name: Resolve JIRA titles for the draft release
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          JIRA_BASE_URL: https://wearezeta.atlassian.net
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        with:
+          script: |
+            const base = process.env.JIRA_BASE_URL;
+            const token = process.env.JIRA_TOKEN;
+            const keys = (process.env.TICKET_KEYS || '')
+              .split('\n').map((s) => s.trim()).filter(Boolean);
+            const auth = token ? `Basic ${Buffer.from(token).toString('base64')}` : null;
+            if (!auth) core.warning('JIRA_TOKEN not set — listing tickets without titles or grouping');
+            const fetchIssue = async (key) => {
+              try {
+                const res = await fetch(`${base}/rest/api/3/issue/${key}?fields=summary,issuetype`, {
+                  headers: { Authorization: auth, Accept: 'application/json' },
+                });
+                if (res.ok) {
+                  const f = (await res.json()).fields || {};
+                  let summary = f.summary || null;
+                  // Tickets are often prefixed with a platform tag like "[iOS] " — drop it.
+                  if (summary) summary = summary.replace(/^\s*\[[^\]]*\]\s*/, '');
+                  return { summary, type: (f.issuetype && f.issuetype.name) || '' };
+                }
+                core.warning(`Jira ${key}: ${res.status} ${await res.text()}`);
+              } catch (e) {
+                core.warning(`Jira ${key}: ${e.message}`);
+              }
+              return { summary: null, type: '' };
+            };
+            const buckets = { New: [], Improvements: [], Fix: [] };
+            for (const key of keys) {
+              const { summary, type } = auth ? await fetchIssue(key) : { summary: null, type: '' };
+              const link = `[${key}](${base}/browse/${key})`;
+              const line = summary ? `• ${summary} (${link})` : `• ${link}`;
+              const t = type.toLowerCase();
+              if (t === 'bug') buckets.Fix.push(line);
+              else if (t === 'improvement') buckets.Improvements.push(line);
+              else buckets.New.push(line);
+            }
+            const section = (name) => `**${name}:**\n` + (buckets[name].length ? buckets[name].join('\n') : '•');
+            core.exportVariable('TICKET_SECTIONS', ['New', 'Improvements', 'Fix'].map(section).join('\n\n'));
+            core.info(`Grouped ${keys.length} ticket(s): New=${buckets.New.length} Improvements=${buckets.Improvements.length} Fix=${buckets.Fix.length}`);
 
       - name: Create draft GitHub release
         run: |
           set -euo pipefail
+          TICKET_SECTIONS="${TICKET_SECTIONS:-**New:**
+          •
+
+          **Improvements:**
+          •
+
+          **Fix:**
+          •}"
           RELEASE_NOTES_PR_LINK="${{ github.server_url }}/${BUILD_ASSETS_REPO}/compare?expand=1"
           echo "RELEASE_NOTES_PR_LINK=$RELEASE_NOTES_PR_LINK" >> "$GITHUB_ENV"
 
@@ -183,22 +234,9 @@ jobs:
           > **Edit the release notes before publishing.**
           > You can use the [changelog action](${CHANGELOG_WORKFLOW_URL}) to prefill them.
 
-          **New:**
-          •
-
-          **Improvements:**
-          •
-
-          **Fix:**
-          •
+          ${TICKET_SECTIONS}
 
           [Full change log](${FULL_CHANGELOG_URL})
-
-          ---
-
-          ### Tickets included in this cycle (${TICKET_COUNT})
-
-          ${TICKET_LIST}
 
           ---
 
@@ -266,10 +304,10 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/notify-wire
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
         with:
           notify: custom
-          text: '"**${{ env.RELEASE_BRANCH }}** branch has been created. please (re) target your work to this branch if necessary."'
+          text: '**${{ env.RELEASE_BRANCH }}** branch has been created. please (re) target your work to this branch if necessary.'
 
       - name: Job summary
         if: always()

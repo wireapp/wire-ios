@@ -70,3 +70,10 @@
 "conversation.wireCells.files.folder" = "Ordner";
 "conversation.wireCells.files.text" = "Text";
 "conversation.wireCells.files.availableOffline" = "Offline verfügbar";
+
+// MARK: - Viewer access
+"conversation.wireCells.files.readOnly" = "Read only";
+"conversation.wireCells.files.viewerAccess.banner.close" = "Close access info";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDrive.closeButton" = "Unterhaltungsdetails schließen";

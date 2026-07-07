@@ -28,6 +28,7 @@ final class ShareDebugReportTests: WireUITestCase {
 
     /// On the login screen there is no user session and no mail client (simulator),
     /// so only "Share" and "Cancel" should appear — 2 options total.
+    /// [critical]
     func testShakeGesture_onLoginScreen_presentsShareDebugActionSheet_TC_10853() throws {
         // GIVEN
         _ = try WelcomePage()
@@ -74,6 +75,7 @@ final class ShareDebugReportTests: WireUITestCase {
 
     /// The debug report banner in Settings should also trigger the action sheet,
     /// and the report can be shared to a group conversation via Wire.
+    /// [critical]
     @MainActor
     func testShareDebugReportBanner_TC_10855() async throws {
         // GIVEN

@@ -79,6 +79,10 @@ package final class FilesViewModel: ObservableObject {
     // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     var isDrivePermissionsFlagEnabled: Bool = UserDefaults.standard.bool(forKey: "enableDrivePermissions")
 
+    var selfUserRole: WireDriveConversation.Participant.Role {
+        selfUser?.role ?? .viewer
+    }
+
     var navigationTitle: String {
         if let title {
             title
@@ -94,7 +98,7 @@ package final class FilesViewModel: ObservableObject {
     }
 
     var navigationSubtitle: String? {
-        if let selfUser, selfUser.role == .viewer, !isBrowsing, isDrivePermissionsFlagEnabled {
+        if selfUserRole == .viewer, !isBrowsing, isDrivePermissionsFlagEnabled {
             Strings.Files.ViewerAccess.navigationSubtitle
         } else {
             nil

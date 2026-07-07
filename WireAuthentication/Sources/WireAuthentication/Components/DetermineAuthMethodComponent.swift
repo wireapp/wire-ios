@@ -31,6 +31,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
+    var overrideAllowEmailLoginOnly: Bool { get }
 }
 
 final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
@@ -38,14 +39,23 @@ final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponent
     public let networkStack: NetworkStack
     public let didReauthenticate: Bool = false
     private let existsAnotherAccount: Bool
+    private let allowsMultipleBackends: Bool
+    private let existingBackendHosts: Set<String>
+    private let isAccountAlreadyLoggedIn: (UUID) -> Bool
 
     init(
         parent: any Scope,
         networkStack: NetworkStack,
-        existsAnotherAccount: Bool
+        existsAnotherAccount: Bool,
+        allowsMultipleBackends: Bool,
+        existingBackendHosts: Set<String>,
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool
     ) {
         self.networkStack = networkStack
         self.existsAnotherAccount = existsAnotherAccount
+        self.allowsMultipleBackends = allowsMultipleBackends
+        self.existingBackendHosts = existingBackendHosts
+        self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
         super.init(parent: parent)
     }
 
@@ -95,7 +105,11 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             router: dependency.router,
             bridge: dependency.bridge,
             environment: networkStack.backendEnvironment,
-            existsAnotherAccount: existsAnotherAccount
+            existsAnotherAccount: existsAnotherAccount,
+            allowsMultipleBackends: allowsMultipleBackends,
+            existingBackendHosts: existingBackendHosts,
+            isAccountAlreadyLoggedIn: isAccountAlreadyLoggedIn,
+            overrideAllowEmailLoginOnly: dependency.overrideAllowEmailLoginOnly
         )
     }
 

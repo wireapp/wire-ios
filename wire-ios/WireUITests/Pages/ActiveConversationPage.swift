@@ -150,12 +150,35 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
     }
 
+    var conversationBackground: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.conversationBackground.rawValue].firstMatch
+    }
+
     var userLeftSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
 
     var photoButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
+    }
+
+    var uploadFileButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.uploadFileButton.rawValue].firstMatch
+    }
+
+    var browseFileOption: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.browse.rawValue].firstMatch
+    }
+
+    var openFileButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.open.rawValue].firstMatch
+    }
+
+    func fileCell(named fileName: String) -> XCUIElement {
+        let displayedFileName = (fileName as NSString).deletingPathExtension
+        let fileExtension = (fileName as NSString).pathExtension
+
+        return app.cells["\(displayedFileName), \(fileExtension)"].firstMatch
     }
 
     var imageToChoose: XCUIElement {
@@ -208,6 +231,10 @@ class ActiveConversationPage: PageModel {
 
     var openOngoingCallButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.openOngoingCallButton.rawValue]
+    }
+
+    var linkPreviewCell: XCUIElement {
+        app.cells[Locators.ActiveConversationPage.linkPreviewCell.rawValue].firstMatch
     }
 
     func fetchMessages() -> [String] {
@@ -300,6 +327,44 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(sharedDriveButton.exists)
     }
 
+    @MainActor
+    @discardableResult
+    func verifyConversationBackgroundColor(
+        _ color: AccountSettingsPage.ProfileColor,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws -> ActiveConversationPage {
+        let background = conversationBackground
+        XCTAssertTrue(
+            background.waitForExistence(timeout: 5),
+            "Conversation background element did not appear",
+            file: file,
+            line: line
+        )
+        let backgroundColor = try XCTUnwrap(
+            background.value as? String,
+            "Conversation background color value did not appear",
+            file: file,
+            line: line
+        )
+        XCTAssertNotEqual(
+            backgroundColor,
+            "default",
+            "Conversation background should not be default when accentID \(color.accentID) is selected",
+            file: file,
+            line: line
+        )
+        let selfUser = try await UserHelper.default.selfUserAPI.getSelfUser()
+        XCTAssertEqual(
+            selfUser.accentID,
+            color.accentID,
+            "Self user accent ID should match \(color.accentID)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
     func openPhotosAndGrantPermission() throws -> ActiveConversationPage {
         photoButton.waitAndTap()
 
@@ -351,6 +416,29 @@ class ActiveConversationPage: PageModel {
             "OK button did not appear after selecting media"
         )
         okToSend.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func uploadFile(named fileName: String = "testFile.pdf") -> ActiveConversationPage {
+        if !uploadFileButton.waitForExistence(timeout: 2) || !uploadFileButton.isHittable {
+            showOtherRowButton.waitAndTap()
+        }
+
+        uploadFileButton.waitAndTap()
+        browseFileOption.waitAndTap()
+
+        XCTAssertTrue(
+            fileCell(named: fileName).waitForExistence(timeout: 5),
+            "Seeded file '\(fileName)' didn't show up"
+        )
+        fileCell(named: fileName).waitAndTap()
+
+        XCTAssertTrue(
+            openFileButton.waitForExistence(timeout: 5),
+            "Open button didn't show up"
+        )
+        openFileButton.waitAndTap()
         return self
     }
 
@@ -445,7 +533,7 @@ class ActiveConversationPage: PageModel {
         line: UInt = #line
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            app.cells["LinkPreviewCell"].firstMatch.waitForExistence(timeout: 10),
+            linkPreviewCell.waitForExistence(timeout: 10),
             file: file,
             line: line
         )
@@ -461,5 +549,14 @@ class ActiveConversationPage: PageModel {
     func resumeCallUI() throws -> OngoingCallPage {
         openOngoingCallButton.waitAndTap()
         return try OngoingCallPage()
+    }
+
+    @discardableResult
+    func verifyNoCallOngoingAfterHangUp() throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            openOngoingCallButton.waitForNonExistence(timeout: 4),
+            "Ongoing call still visible after hanging up the call"
+        )
+        return self
     }
 }

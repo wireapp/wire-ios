@@ -10,11 +10,16 @@ on:
         type: boolean
         description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees (Public Beta)'
         default: false
-permissions: 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
   checks: write
 
 jobs:
   testflight_beta:
+    if: ${{ github.ref != format('refs/heads/{0}', vars.LTS_RELEASE) }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       countly_enabled: true

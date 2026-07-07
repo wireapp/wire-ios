@@ -150,7 +150,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         values.allowApps = channelCreationSettings.appsAllowed
         values.enableReceipts = channelCreationSettings.readReceiptsEnabled
         values.channelHistoryDepth = channelCreationSettings.historyDepth
-        values.enableFileManagement = channelCreationSettings.fileManagementEnabled
+        values.enableSharedDrive = channelCreationSettings.sharedDriveEnabled
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
@@ -240,7 +240,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
                 teamID: teamID,
                 name: values.name,
                 historyDepth: channelHistoryDepth,
-                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableSharedDrive : nil,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
