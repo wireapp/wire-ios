@@ -29,32 +29,34 @@ public struct Meeting: Equatable, Sendable {
 
     public let id: QualifiedID
 
-    // TODO: add conversationID (QualifiedID)
-
     public let title: String
 
     public let start: Date
 
     public let end: Date
 
-    public let repeatOption: RepeatOption
+    public let recurrence: MeetingRecurrence?
 
-    public let members: [Member] // TODO: remove and use the conversation participants
+    public let members: [Member]
+
+    public let conversationID: QualifiedID
 
     public init(
         id: QualifiedID,
         title: String,
         start: Date,
         end: Date,
-        repeatOption: RepeatOption = .never,
-        members: [Member] = []
+        recurrence: MeetingRecurrence?,
+        members: [Member],
+        conversationID: QualifiedID
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
-        self.repeatOption = repeatOption
+        self.recurrence = recurrence
         self.members = members
+        self.conversationID = conversationID
     }
 
 }

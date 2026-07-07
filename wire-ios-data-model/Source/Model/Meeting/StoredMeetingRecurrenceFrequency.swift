@@ -16,32 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireCallingDomain
-public import WireData
-public import WireFoundation
-
-extension WireData.Meeting {
-
-    public var qualifiedID: QualifiedID? {
-        get {
-            guard let remoteIdentifier else { return nil }
-            return QualifiedID(id: remoteIdentifier, domain: domain ?? "")
-        }
-        set {
-            remoteIdentifier = newValue?.id
-            domain = newValue?.domain
-        }
-    }
-
-    public var repeatOption: RepeatOption {
-        get {
-            RepeatOption(rawValue: Int(repeatOptionRawValue)) ?? .never
-        }
-        set {
-            repeatOptionRawValue = Int16(newValue.rawValue)
-        }
-    }
-
-//    public let members: [Member]
-
+public enum StoredMeetingRecurrenceFrequency: Int16 {
+    case daily
+    case weekly
+    case monthly
+    case yearly
 }

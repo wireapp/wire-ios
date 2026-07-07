@@ -18,9 +18,9 @@
 
 package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
-    private let repository: any MeetingsRepositoryProtocol
+    private let repository: any MeetingRepositoryProtocol
 
-    package init(repository: any MeetingsRepositoryProtocol) {
+    package init(repository: any MeetingRepositoryProtocol) {
         self.repository = repository
     }
 

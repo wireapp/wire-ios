@@ -18,10 +18,13 @@
 
 package import Foundation
 package import WireCallingDomain
-
 package import WireNetwork
 
+import WireFoundation
+
 package final class MeetingRepository: MeetingRepositoryProtocol {
+
+    package typealias MeetingRecurrence = WireCallingDomain.MeetingRecurrence
 
     private let meetingsAPI: any MeetingsAPI
 
@@ -53,14 +56,14 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
         title: String,
         startTime: Date,
         endTime: Date,
-        repeatOption: RepeatOption
+        recurrence: MeetingRecurrence?
     ) async throws -> Meeting {
         let response = try await meetingsAPI.createMeeting(
             parameters: CreateMeetingParameters(
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
-                recurrence: repeatOption.toNetworkRecurrence()
+                recurrence: recurrence?.toNetworkRecurrence()
             )
         )
         return response.toDomainMeeting()
@@ -81,31 +84,41 @@ private extension MeetingResponse {
             title: title,
             start: startTime,
             end: endTime,
-            repeatOption: recurrence?.frequency.toDomainRepeatOption() ?? .never
+            recurrence: recurrence?.toDomainRecurrence(),
+            members: [],
+            conversationID: conversationID
         )
     }
 }
 
-private extension MeetingFrequency {
-    func toDomainRepeatOption() -> RepeatOption {
-        switch self {
+private extension WireNetwork.MeetingRecurrence {
+    func toDomainRecurrence() -> WireCallingDomain.MeetingRecurrence {
+        let domainFrequency: WireCallingDomain.MeetingRecurrence.Frequency = switch frequency {
         case .daily: .daily
         case .weekly: .weekly
         case .monthly: .monthly
         case .yearly: .yearly
         }
+        return MeetingRecurrence(
+            frequency: domainFrequency,
+            interval: interval ?? 1,
+            until: until ?? .distantFuture
+        )
     }
 }
 
-private extension RepeatOption {
-    func toNetworkRecurrence() -> MeetingRecurrence? {
-        switch self {
-        case .never: nil
-        case .daily: MeetingRecurrence(frequency: .daily, interval: nil, until: nil)
-        case .weekly: MeetingRecurrence(frequency: .weekly, interval: nil, until: nil)
-        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2, until: nil)
-        case .monthly: MeetingRecurrence(frequency: .monthly, interval: nil, until: nil)
-        case .yearly: MeetingRecurrence(frequency: .yearly, interval: nil, until: nil)
+private extension WireCallingDomain.MeetingRecurrence {
+    func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence {
+        let networkFrequency: MeetingFrequency = switch frequency {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
         }
+        return MeetingRecurrence(
+            frequency: networkFrequency,
+            interval: interval,
+            until: until
+        )
     }
 }

@@ -26,7 +26,8 @@ protocol WireMeetingsFactoryProtocol {
     @MainActor
     func makeMeetingsView(
         meetingsAPI: any MeetingsAPI,
-        memberRepository: any MemberRepositoryProtocol
+        memberRepository: any MemberRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController
 }
 

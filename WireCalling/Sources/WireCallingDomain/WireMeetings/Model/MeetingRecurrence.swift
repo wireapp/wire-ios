@@ -16,28 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import Foundation
 
-package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
+public struct MeetingRecurrence: Equatable, Sendable {
 
-    private let repository: any MeetingRepositoryProtocol
+    public let frequency: Frequency
+    public let interval: Int
+    public let until: Date?
 
-    package init(repository: any MeetingRepositoryProtocol) {
-        self.repository = repository
+    public enum Frequency: CaseIterable, Sendable {
+        case daily
+        case weekly
+        case monthly
+        case yearly
     }
 
-    package func execute(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        repeatOption: RepeatOption
-    ) async throws -> Meeting {
-        try await repository.createMeeting(
-            title: title,
-            startTime: startTime,
-            endTime: endTime,
-            repeatOption: repeatOption
-        )
+    public init(frequency: Frequency, interval: Int, until: Date? = nil) {
+        self.frequency = frequency
+        self.interval = interval
+        self.until = until
     }
 
 }

@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum RepeatOption: Int, CaseIterable, Sendable {
+// sourcery: AutoMockable
+/// Searches the user's team for members so they can be added as participants
+/// to a meeting.
+package protocol SearchMembersUseCaseProtocol: Sendable {
 
-    case never
-    case daily
-    case weekly
-    case every2Weeks
-    case monthly
-    case yearly
+    func invoke(query: String) async throws -> [Member]
 
 }

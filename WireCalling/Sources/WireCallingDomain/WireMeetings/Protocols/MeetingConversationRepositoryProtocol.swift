@@ -16,19 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import Foundation
 
 // sourcery: AutoMockable
-/// Creates a new meeting via the backend API.
-package protocol CreateMeetingUseCaseProtocol: Sendable {
+public protocol MeetingConversationRepositoryProtocol: Sendable {
 
-    func execute(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        repeatOption: RepeatOption
-    ) async throws -> Meeting
+    /// Fetch and setup conversation if needed.
+    func pullConversation(id: UUID, domain: String) async throws
 
-    func deleteMeeting(meetingID: QualifiedID) async throws
+    /// Add participants to the underlying MLS conversation.
+    func addParticipants(_ participants: [Member], to conversationID: QualifiedID) async throws
 
 }

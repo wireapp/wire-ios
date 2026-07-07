@@ -30,7 +30,7 @@ package protocol MeetingRepositoryProtocol: Sendable {
         title: String,
         startTime: Date,
         endTime: Date,
-        repeatOption: RepeatOption
+        recurrence: MeetingRecurrence?
     ) async throws -> Meeting
 
     func deleteMeeting(meetingID: QualifiedID) async throws

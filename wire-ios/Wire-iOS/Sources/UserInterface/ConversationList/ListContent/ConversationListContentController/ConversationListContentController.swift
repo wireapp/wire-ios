@@ -260,9 +260,11 @@ final class ConversationListContentController: UICollectionViewController {
             return nil
         }
 
+        let title = L10n.Localizable.ConversationList.ContextMenu.title(conversation.displayNameWithFallback)
+
         let actionProvider: UIContextMenuActionProvider = { _ in
             let actions = conversation.listActions.map { action in
-                let uiAction = UIAction(title: action.title, image: nil) { _ in
+                UIAction(title: action.title, image: nil) { _ in
                     let actionController = ConversationActionController(
                         conversation: conversation,
                         target: self,
@@ -271,13 +273,9 @@ final class ConversationListContentController: UICollectionViewController {
                     )
                     actionController.handleAction(action)
                 }
-                if let identifier = action.accessibilityIdentifier {
-                    uiAction.accessibilityIdentifier = identifier
-                }
-                return uiAction
             }
 
-            return UIMenu(title: conversation.displayNameWithFallback, children: actions)
+            return UIMenu(title: title, children: actions)
         }
 
         return UIContextMenuConfiguration(

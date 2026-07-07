@@ -234,11 +234,10 @@ public final class ConversationPredicateFactory: NSObject {
                 format: "\(ZMConversationEffectiveConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)"
             )
         let hasOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) != NULL")
-        let isConnectionAcceptedOrBlocked =
-            NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)).connection.status IN %@", [
-                NSNumber(value: ZMConnectionStatus.accepted.rawValue),
-                NSNumber(value: ZMConnectionStatus.blocked.rawValue)
-            ])
+        let isConnectionAccepted =
+            NSPredicate(
+                format: "\(#keyPath(ZMConversation.oneOnOneUser)).connection.status == \(ZMConnectionStatus.accepted.rawValue)"
+            )
 
         let isOtherUserInSameTeam = if let selfTeam {
             NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.membership.team)) == %@", selfTeam)
@@ -256,7 +255,7 @@ public final class ConversationPredicateFactory: NSObject {
         return (isOneOnOne.and(otherUserDeleted))
             .or(userDeletedProteusOneOnOne)
             .or(
-                isOneOnOne.and(hasOneOnOneUser).and(isConnectionAcceptedOrBlocked
+                isOneOnOne.and(hasOneOnOneUser).and(isConnectionAccepted
                     .or(isOtherUserInSameTeam)
                     .or(isOtherUserBot))
             )
@@ -268,7 +267,10 @@ public final class ConversationPredicateFactory: NSObject {
         // Fake 1:1 conversations are actually groups, so we check
         // whether this group has a one on one user to filter it out.
         let hasNoOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) == NULL")
-        return isGroup.and(hasNoOneOnOneUser)
+        // Meeting conversations are underlying group conversations of a meeting and must not appear in any list.
+        let isNotMeeting =
+            NSPredicate(format: "\(ZMConversationGroupTypeKey) != \(ConversationGroupType.meeting.rawValue)")
+        return isGroup.and(hasNoOneOnOneUser).and(isNotMeeting)
     }
 
     private func predicateForOneToOneConversation() -> NSPredicate {

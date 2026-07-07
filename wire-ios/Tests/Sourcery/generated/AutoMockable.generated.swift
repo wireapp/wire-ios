@@ -201,6 +201,48 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
 
 }
 
+public class MockBackgroundTaskApplication: BackgroundTaskApplication, @unchecked Sendable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - beginBackgroundTask
+
+    public var beginBackgroundTaskWithNameExpirationHandler_Invocations: [(taskName: String?, handler: (@MainActor @Sendable () -> Void)?)] = []
+    public var beginBackgroundTaskWithNameExpirationHandler_MockMethod: ((String?, (@MainActor @Sendable () -> Void)?) -> UIBackgroundTaskIdentifier)?
+    public var beginBackgroundTaskWithNameExpirationHandler_MockValue: UIBackgroundTaskIdentifier?
+
+    public func beginBackgroundTask(withName taskName: String?, expirationHandler handler: (@MainActor @Sendable () -> Void)?) -> UIBackgroundTaskIdentifier {
+        beginBackgroundTaskWithNameExpirationHandler_Invocations.append((taskName: taskName, handler: handler))
+
+        if let mock = beginBackgroundTaskWithNameExpirationHandler_MockMethod {
+            return mock(taskName, handler)
+        } else if let mock = beginBackgroundTaskWithNameExpirationHandler_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `beginBackgroundTaskWithNameExpirationHandler`")
+        }
+    }
+
+    // MARK: - endBackgroundTask
+
+    public var endBackgroundTask_Invocations: [UIBackgroundTaskIdentifier] = []
+    public var endBackgroundTask_MockMethod: ((UIBackgroundTaskIdentifier) -> Void)?
+
+    public func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
+        endBackgroundTask_Invocations.append(identifier)
+
+        guard let mock = endBackgroundTask_MockMethod else {
+            fatalError("no mock for `endBackgroundTask`")
+        }
+
+        mock(identifier)
+    }
+
+}
+
 class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
     // MARK: - Life cycle
@@ -1701,20 +1743,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsViewMeetingsAPIMemberRepository_Invocations: [(meetingsAPI: any MeetingsAPI, memberRepository: any MemberRepositoryProtocol)] = []
-    var makeMeetingsViewMeetingsAPIMemberRepository_MockMethod: ((any MeetingsAPI, any MemberRepositoryProtocol) -> UIViewController)?
-    var makeMeetingsViewMeetingsAPIMemberRepository_MockValue: UIViewController?
+    var makeMeetingsViewMeetingsAPIMemberRepositoryConversationRepository_Invocations: [(meetingsAPI: any MeetingsAPI, memberRepository: any MemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol)] = []
+    var makeMeetingsViewMeetingsAPIMemberRepositoryConversationRepository_MockMethod: ((any MeetingsAPI, any MemberRepositoryProtocol, any MeetingConversationRepositoryProtocol) -> UIViewController)?
+    var makeMeetingsViewMeetingsAPIMemberRepositoryConversationRepository_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView(meetingsAPI: any MeetingsAPI, memberRepository: any MemberRepositoryProtocol) -> UIViewController {
-        makeMeetingsViewMeetingsAPIMemberRepository_Invocations.append((meetingsAPI: meetingsAPI, memberRepository: memberRepository))
+    func makeMeetingsView(meetingsAPI: any MeetingsAPI, memberRepository: any MemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol) -> UIViewController {
+        makeMeetingsViewMeetingsAPIMemberRepositoryConversationRepository_Invocations.append((meetingsAPI: meetingsAPI, memberRepository: memberRepository, conversationRepository: conversationRepository))
 
-        if let mock = makeMeetingsViewMeetingsAPIMemberRepository_MockMethod {
-            return mock(meetingsAPI, memberRepository)
-        } else if let mock = makeMeetingsViewMeetingsAPIMemberRepository_MockValue {
+        if let mock = makeMeetingsViewMeetingsAPIMemberRepositoryConversationRepository_MockMethod {
+            return mock(meetingsAPI, memberRepository, conversationRepository)
+        } else if let mock = makeMeetingsViewMeetingsAPIMemberRepositoryConversationRepository_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsViewMeetingsAPIMemberRepository`")
+            fatalError("no mock for `makeMeetingsViewMeetingsAPIMemberRepositoryConversationRepository`")
         }
     }
 

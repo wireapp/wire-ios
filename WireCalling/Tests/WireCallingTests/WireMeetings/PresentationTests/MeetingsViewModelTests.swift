@@ -235,3 +235,24 @@ struct MeetingsViewModelTests {
     }
 
 }
+
+private extension Meeting {
+
+    static func fixture(
+        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
+        title: String,
+        start: Date,
+        duration: TimeInterval = 3600
+    ) -> Meeting {
+        Meeting(
+            id: id,
+            title: title,
+            start: start,
+            end: start.addingTimeInterval(duration),
+            recurrence: nil,
+            members: [],
+            conversationID: QualifiedID(id: UUID(), domain: "")
+        )
+    }
+
+}

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCallingDomain
+import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
 
@@ -28,6 +29,7 @@ struct CreateMeetingFormView: View {
     @State private(set) var viewModel: CreateMeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
+    @FocusState private var isTitleFieldFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -39,6 +41,9 @@ struct CreateMeetingFormView: View {
                 participantsSection
             }
             .listSectionSpacing(.compact)
+            .onAppear {
+                isTitleFieldFocused = true
+            }
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
             .navigationTitle(navigationTitle)
@@ -51,7 +56,7 @@ struct CreateMeetingFormView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(actionButtonLabel) {
-                        viewModel.submit()
+                        Task { await viewModel.submit() }
                     }
                     .disabled(!viewModel.isNextButtonEnabled || viewModel.isLoading)
                 }
@@ -65,9 +70,9 @@ struct CreateMeetingFormView: View {
                 set: { if !$0 { viewModel.error = nil } }
             )) {
                 Alert(
-                    title: Text("Error"),
+                    title: Text(Strings.Error.Alert.title),
                     message: Text(viewModel.error?.localizedDescription ?? ""),
-                    dismissButton: .default(Text("OK"))
+                    dismissButton: .default(Text(Strings.Error.Alert.ok))
                 )
             }
         }
@@ -95,6 +100,7 @@ struct CreateMeetingFormView: View {
         Section(Strings.SetupTitle.header) {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+                    .focused($isTitleFieldFocused)
                 if !viewModel.meetingTitle.isEmpty {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(Color(.lightGray))
@@ -112,17 +118,19 @@ struct CreateMeetingFormView: View {
             dateTimeRow(
                 label: Strings.Time.starts,
                 date: $viewModel.startDate,
+                range: viewModel.startDateRange,
                 dateField: .startDate,
                 timeField: .startTime
             )
             dateTimeRow(
                 label: Strings.Time.ends,
                 date: $viewModel.endDate,
+                range: viewModel.endDateRange,
                 dateField: .endDate,
                 timeField: .endTime
             )
             Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
-                ForEach(RepeatOption.allCases, id: \.self) { option in
+                ForEach(MeetingRepeatOption.allCases, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
                 }
@@ -167,6 +175,7 @@ struct CreateMeetingFormView: View {
     private func dateTimeRow(
         label: String,
         date: Binding<Date>,
+        range: PartialRangeFrom<Date>,
         dateField: ExpandedField,
         timeField: ExpandedField
     ) -> some View {
@@ -188,12 +197,12 @@ struct CreateMeetingFormView: View {
         }
 
         if expandedField == dateField {
-            DatePicker("", selection: date, displayedComponents: .date)
+            DatePicker("", selection: date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
         }
         if expandedField == timeField {
-            DatePicker("", selection: date, displayedComponents: .hourAndMinute)
+            DatePicker("", selection: date, in: range, displayedComponents: .hourAndMinute)
                 .datePickerStyle(.wheel)
                 .labelsHidden()
         }
@@ -229,7 +238,7 @@ struct CreateMeetingFormView: View {
     }
 }
 
-private extension RepeatOption {
+private extension MeetingRepeatOption {
 
     typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
 
@@ -257,8 +266,10 @@ private extension RepeatOption {
     CreateMeetingFormView(
         viewModel: CreateMeetingFormViewModel(
             mode: .instant,
-            memberRepository: MockMemberSource(),
-            createMeetingUseCase: MockCreateMeetingUseCase()
+            searchMembersUseCase: MockSearchMembersUseCase(),
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+            currentDateProvider: .system
         )
     )
 }
@@ -267,8 +278,10 @@ private extension RepeatOption {
     CreateMeetingFormView(
         viewModel: CreateMeetingFormViewModel(
             mode: .scheduled,
-            memberRepository: MockMemberSource(),
-            createMeetingUseCase: MockCreateMeetingUseCase()
+            searchMembersUseCase: MockSearchMembersUseCase(),
+            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+            currentDateProvider: .system
         )
     )
 }
@@ -276,8 +289,10 @@ private extension RepeatOption {
 #Preview("Scheduled mode with selected members") {
     let viewModel = CreateMeetingFormViewModel(
         mode: .scheduled,
-        memberRepository: MockMemberSource(),
-        createMeetingUseCase: MockCreateMeetingUseCase()
+        searchMembersUseCase: MockSearchMembersUseCase(),
+        createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
+        createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+        currentDateProvider: .system
     )
     viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
     return CreateMeetingFormView(viewModel: viewModel)
@@ -285,17 +300,11 @@ private extension RepeatOption {
 
 // MARK: - Mock
 
-private struct MockCreateMeetingUseCase: CreateMeetingUseCaseProtocol {
-    func execute(title: String, startTime: Date, endTime: Date, repeatOption: RepeatOption) async throws -> Meeting {
-        Meeting(id: QualifiedID(id: UUID(), domain: ""), title: title, start: startTime, end: endTime)
-    }
-}
-
-private struct MockMemberSource: MemberRepositoryProtocol {
+private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
 
     let members: [Member] = .mock
 
-    func search(query: String) async throws -> [Member] {
+    func invoke(query: String) async throws -> [Member] {
         guard !query.isEmpty else { return members }
         return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }

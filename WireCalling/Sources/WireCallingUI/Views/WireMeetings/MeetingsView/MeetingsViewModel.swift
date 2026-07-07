@@ -89,6 +89,7 @@ package final class MeetingsViewModel {
 
     private func load(pageSize: Int) async {
         isLoading = true
+        // TODO: don't swallow errors
         guard let result = try? await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset) else {
             isLoading = false
             return

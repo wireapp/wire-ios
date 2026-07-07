@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+package import WireCallingDomain
+package import WireFoundation
+
 import Foundation
-import WireCallingDomain
 
 @Observable
 @MainActor
-final class CreateMeetingFormViewModel {
+package final class CreateMeetingFormViewModel {
 
     /// Determines whether the meeting starts immediately on submit or is
     /// scheduled for a future date and time. Drives the form layout
     /// (schedule fields appear only in `.scheduled`), the navigation title,
     /// and the primary action button's label and behavior.
-    enum Mode: Hashable, Identifiable {
+    package enum Mode: Hashable, Identifiable {
 
         /// Start the meeting immediately. The schedule section
         /// (start/end/repeat) is hidden; the action button reads "Start" and
@@ -39,20 +41,53 @@ final class CreateMeetingFormViewModel {
         /// screen is titled "Schedule a meeting".
         case scheduled
 
-        var id: Self { self }
+        package var id: Self { self }
     }
 
     let mode: Mode
-    let memberRepository: any MemberRepositoryProtocol
-    private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
+    let searchMembersUseCase: any SearchMembersUseCaseProtocol
+    private let createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol
+    private let createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol
+    private let currentDateProvider: any CurrentDateProviding
     private let onSuccess: (Meeting) -> Void
 
+    /// The smallest allowed interval between start and end date, matching
+    /// the minute granularity of the time picker.
+    private static let minimumDuration: TimeInterval = 60
+
     var meetingTitle: String = ""
-    var startDate: Date = .init()
-    var endDate: Date = .init().addingTimeInterval(1800)
-    var repeatOption: RepeatOption = .never
+
+    /// Changing the start date shifts the end date by the same amount,
+    /// so the meeting duration is preserved.
+    var startDate: Date {
+        didSet {
+            endDate = endDate.addingTimeInterval(startDate.timeIntervalSince(oldValue))
+        }
+    }
+
+    /// The end date is always after the start date.
+    var endDate: Date {
+        didSet {
+            if endDate < startDate.addingTimeInterval(Self.minimumDuration) {
+                endDate = startDate.addingTimeInterval(Self.minimumDuration)
+            }
+        }
+    }
+
+    /// Meetings can't be scheduled on a past day, but any time
+    /// of the current day is allowed.
+    var startDateRange: PartialRangeFrom<Date> {
+        Calendar.current.startOfDay(for: currentDateProvider.now)...
+    }
+
+    /// The end date must always be after the start date.
+    var endDateRange: PartialRangeFrom<Date> {
+        startDate.addingTimeInterval(Self.minimumDuration)...
+    }
+
+    var repeatOption: MeetingRepeatOption = .never
     var selectedMembers: [Member] = []
-    var isLoading = false
+    private(set) var isLoading = false
     var error: (any Error)?
 
     var selectedMembersSummary: String {
@@ -67,16 +102,24 @@ final class CreateMeetingFormViewModel {
 
     // MARK: - Public Interface
 
-    init(
+    package init(
         mode: Mode,
-        memberRepository: any MemberRepositoryProtocol,
-        createMeetingUseCase: any CreateMeetingUseCaseProtocol,
+        searchMembersUseCase: any SearchMembersUseCaseProtocol,
+        createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
+        createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol,
+        currentDateProvider: any CurrentDateProviding,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
-        self.memberRepository = memberRepository
-        self.createMeetingUseCase = createMeetingUseCase
+        self.searchMembersUseCase = searchMembersUseCase
+        self.createInstantMeetingUseCase = createInstantMeetingUseCase
+        self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
+        self.currentDateProvider = currentDateProvider
         self.onSuccess = onSuccess
+
+        let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
+        self.startDate = startDate
+        self.endDate = startDate.addingTimeInterval(1800)
     }
 
     func clearTitle() {
@@ -85,37 +128,32 @@ final class CreateMeetingFormViewModel {
 
     func makeMemberSelectionViewModel() -> MemberSelectionViewModel {
         MemberSelectionViewModel(
-            source: memberRepository,
+            source: searchMembersUseCase,
             initialSelection: selectedMembers,
             onSelect: { [weak self] in self?.selectedMembers = $0 }
         )
     }
 
-    func submit() {
+    func submit() async {
         guard !isLoading else { return }
-        Task {
-            switch mode {
-            case .instant:
-                await createInstantMeeting()
-            case .scheduled:
-                await scheduleMeeting()
-            }
+        isLoading = true
+        error = nil
+        defer { isLoading = false }
+        switch mode {
+        case .instant:
+            await createInstantMeeting()
+        case .scheduled:
+            await scheduleMeeting()
         }
     }
 
     // MARK: - Private
 
     private func createInstantMeeting() async {
-        isLoading = true
-        error = nil
-        defer { isLoading = false }
-        let now = Date()
         do {
-            let meeting = try await createMeetingUseCase.execute(
+            let meeting = try await createInstantMeetingUseCase.invoke(
                 title: meetingTitle,
-                startTime: now,
-                endTime: now.addingTimeInterval(1800),
-                repeatOption: .never
+                participants: selectedMembers
             )
             onSuccess(meeting)
         } catch {
@@ -124,19 +162,45 @@ final class CreateMeetingFormViewModel {
     }
 
     private func scheduleMeeting() async {
-        isLoading = true
-        error = nil
-        defer { isLoading = false }
         do {
-            let meeting = try await createMeetingUseCase.execute(
+            let meeting = try await createScheduledMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startDate,
                 endTime: endDate,
-                repeatOption: repeatOption
+                recurrence: repeatOption.toRecurrence()
             )
             onSuccess(meeting)
         } catch {
             self.error = error
+        }
+    }
+
+}
+
+private extension Date {
+
+    /// Returns the date rounded up to the next half-hour boundary
+    /// (e.g. 10:12 -> 10:30, 10:42 -> 11:00). Dates already on a
+    /// boundary are returned unchanged.
+    func roundedUpToNextHalfHour(calendar: Calendar = .current) -> Date {
+        let components = calendar.dateComponents([.minute, .second], from: self)
+        let secondsPastBoundary = TimeInterval(((components.minute ?? 0) % 30) * 60 + (components.second ?? 0))
+        guard secondsPastBoundary > 0 else { return self }
+        return addingTimeInterval(1800 - secondsPastBoundary)
+    }
+
+}
+
+private extension MeetingRepeatOption {
+
+    func toRecurrence() -> MeetingRecurrence? {
+        switch self {
+        case .never: nil
+        case .daily: MeetingRecurrence(frequency: .daily, interval: 1)
+        case .weekly: MeetingRecurrence(frequency: .weekly, interval: 1)
+        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2)
+        case .monthly: MeetingRecurrence(frequency: .monthly, interval: 1)
+        case .yearly: MeetingRecurrence(frequency: .yearly, interval: 1)
         }
     }
 

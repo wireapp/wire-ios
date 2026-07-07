@@ -17,24 +17,16 @@
 //
 
 package import Foundation
-package import WireCallingDomain
 
-import WireFoundation
+// sourcery: AutoMockable
+/// Creates a new scheduled meeting via the backend API.
+package protocol CreateScheduledMeetingUseCaseProtocol: Sendable {
 
-package extension Meeting {
-
-    static func fixture(
-        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
+    func invoke(
         title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration)
-        )
-    }
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?
+    ) async throws -> Meeting
 
 }

@@ -148,6 +148,7 @@
 
 
 // Conversation List - Filter Conversations
+"conversation_list.context_menu.title" = "%@ options";
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Favorites";
 "conversation_list.filter.groups.title" = "Groups";
@@ -317,7 +318,6 @@
 "conversation.input_bar.verified" = "Verified";
 "conversation.input_bar.placeholder" = "Type a message";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
-"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Swipe up to send";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tap to send";

@@ -33,20 +33,36 @@ public struct WireMeetingsFactory {
     @MainActor
     public func makeMeetingsView(
         meetingsAPI: any MeetingsAPI,
-        memberRepository: any MemberRepositoryProtocol
+        memberRepository: any MemberRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController {
-        let repository = MeetingRepository(meetingsAPI: meetingsAPI)
+        let meetingRepository = MeetingRepository(meetingsAPI: meetingsAPI)
+        let createInstantMeetingUseCase = CreateInstantMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository,
+            dateProvider: .system
+        )
+        let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
+            repository: meetingRepository,
+            currentDateProvider: .system
+        )
+        let createScheduledMeetingUseCase = CreateScheduledMeetingUseCase(repository: meetingRepository)
+        let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
-            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
-                repository: repository,
-                currentDateProvider: .system
-            ),
-deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository),
-            memberRepository: memberRepository,
-            createMeetingUseCase: CreateMeetingUseCase(repository: repository)
+            upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
+            deleteMeetingUseCase: DeleteMeetingUseCase(repository: repository),
+            makeFormViewModel: { mode, onSuccess in
+                CreateMeetingFormViewModel(
+                    mode: mode,
+                    searchMembersUseCase: searchMembersUseCase,
+                    createInstantMeetingUseCase: createInstantMeetingUseCase,
+                    createScheduledMeetingUseCase: createScheduledMeetingUseCase,
+                    currentDateProvider: .system,
+                    onSuccess: onSuccess
+                )
+            }
         )
-
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
 

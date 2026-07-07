@@ -50,8 +50,10 @@ class ConversationsAPIV8: ConversationsAPIV7 {
     override func createGroupConversation(
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation {
-        // removed `guard` condition in api v8 since conversation group can be either `channel` or `group_conversation`
-        let input = CreateGroupConversationParametersV8(from: parameters)
+        guard let input = CreateGroupConversationParametersV8(from: parameters) else {
+            throw ConversationsAPIError.invalidBody
+        }
+
         let body = try JSONEncoder.defaultEncoder.encode(input)
         let path = "\(pathPrefix)\(basePath)"
 
@@ -282,7 +284,11 @@ struct CreateGroupConversationParametersV8: Encodable {
         case cells
     }
 
-    init(from parameters: CreateGroupConversationParameters) {
+    init?(from parameters: CreateGroupConversationParameters) {
+        guard let conversationGroupType = parameters.groupType.toV8() else {
+            return nil
+        }
+
         self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
         self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs
             .map { $0.toNetworkModel() } : nil
@@ -294,8 +300,24 @@ struct CreateGroupConversationParametersV8: Encodable {
         self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
         self.conversationRole = "wire_member"
         self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
-        self.conversationGroupType = parameters.groupType.toNetworkModel()
+        self.conversationGroupType = conversationGroupType
         self.cells = parameters.cells ?? false
+    }
+
+}
+
+extension ConversationGroupType {
+
+    func toV8() -> ConversationGroupTypeV8? {
+        switch self {
+        case .group:
+            .group
+        case .channel:
+            .channel
+        case .meeting:
+            // Meeting was introduced in v16.
+            nil
+        }
     }
 
 }
