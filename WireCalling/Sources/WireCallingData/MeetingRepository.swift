@@ -71,6 +71,7 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
 
     package func deleteMeeting(meetingID: QualifiedID) async throws {
         // TODO: wire up when a delete endpoint is added to MeetingsAPI
+        fatalError()
     }
 
 }
