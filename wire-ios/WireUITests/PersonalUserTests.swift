@@ -21,6 +21,46 @@ import XCTest
 /// [core-messenger]
 final class PersonalUsersTests: WireUITestCase {
 
+    private typealias ConversationFilterTeam = (
+        teamOwner: UserInfo,
+        teamMember: UserInfo,
+        groupName: String,
+        channelName: String
+    )
+
+    @MainActor
+    private func registerTeamForConversationFilter() async throws -> ConversationFilterTeam {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let channelName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, teamMembers, qualifiedIDs, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .channel(channelName)
+        )
+
+        try await UserHelper.default.createGroupConversations(
+            qualifiedIds: qualifiedIDs,
+            owner: teamOwner,
+            groupName: groupName
+        )
+
+        return (
+            teamOwner,
+            try XCTUnwrap(teamMembers.first),
+            groupName,
+            channelName
+        )
+    }
+
+    @MainActor
+    private func loginAndCreateOneOnOneConversation(for user: UserInfo) throws -> ConversationsPage {
+        try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .openUserDetailsInContactList()
+            .tapStartConversationButton()
+            .goBackToConversationPage()
+    }
+
     /// [critical]
     @MainActor
     func testRegisterAsPersonalUser_TC_8971() async throws {
@@ -233,6 +273,42 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertTrue(
             conversationsPage.textFilteredByOneOnOne.exists,
             "'Filtered by Favorites' label did not appear"
+        )
+    }
+
+    @MainActor
+    func testFilterConversationByGroupsChannelsAndOneOnOne_TC_8875_8876_8877() async throws {
+        // GIVEN
+        let team = try await registerTeamForConversationFilter()
+
+        // WHEN
+        let conversationsPage = try loginAndCreateOneOnOneConversation(for: team.teamOwner)
+
+        // WHEN - Filtering by group
+        _ = try conversationsPage.filterConversationByGroup()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.groupName).waitForExistence(timeout: 5),
+            "Group conversation did not appear"
+        )
+
+        // WHEN - Filtering by channel
+        _ = try conversationsPage.filterConversationByChannel()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.channelName).waitForExistence(timeout: 5),
+            "Channel conversation did not appear"
+        )
+
+        // WHEN - Filtering by OneOnOne
+        _ = try conversationsPage.filterConversationByOneOnOne()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.teamMember.name).waitForExistence(timeout: 5),
+            "OneOnOne conversation did not appear"
         )
     }
 }

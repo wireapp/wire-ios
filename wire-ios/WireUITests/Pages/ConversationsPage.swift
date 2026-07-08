@@ -62,6 +62,14 @@ class ConversationsPage: PageModel {
         app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
     }
 
+    var textFilteredByGroups: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByGroups.rawValue]
+    }
+
+    var textFilteredByChannels: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByChannels.rawValue]
+    }
+
     var textFilteredByOneOnOne: XCUIElement {
         app.staticTexts[Locators.ConversationsPage.textFilteredByOneOnOne.rawValue]
     }
@@ -88,6 +96,14 @@ class ConversationsPage: PageModel {
 
     var filterByFavourite: XCUIElement {
         app.buttons[Locators.ConversationsPage.filterByFavourites.rawValue]
+    }
+
+    var filterByGroupConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByGroups.rawValue]
+    }
+
+    var filterByChannelConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByChannels.rawValue]
     }
 
     var filterByOneOnOneConversation: XCUIElement {
@@ -267,6 +283,18 @@ class ConversationsPage: PageModel {
     func filterConversationByFavourite() throws -> ConversationsPage {
         filterConversationsButton.tap()
         filterByFavourite.tap()
+        return self
+    }
+
+    func filterConversationByGroup() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByGroupConversation.tap()
+        return self
+    }
+
+    func filterConversationByChannel() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByChannelConversation.tap()
         return self
     }
 

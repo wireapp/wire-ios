@@ -78,8 +78,12 @@ public enum Locators {
         case removeFromFavourite = "Remove from Favorites"
         case filterConversations = "Filter conversations"
         case filterByFavourites = "Show all favorite conversations"
+        case filterByGroups = "Show all group conversations"
+        case filterByChannels = "Show all channel conversations"
         case filterByOneOnOneConversation = "Show all one on one conversations"
         case textFilteredByFavourites = "Filtered by Favorites"
+        case textFilteredByGroups = "Filtered by Groups"
+        case textFilteredByChannels = "Filtered by Channels"
         case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
         case userRemovedSystemMessage
         case connectionRequestsCell
