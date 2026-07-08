@@ -610,7 +610,7 @@ platform :ios do
             UI.user_error! "missing id for tests"
         end
 
-        ci_args = is_running_on_ci ? "CI=1" : nil
+        ENV['TEST_RUNNER_CI'] = ENV['CI']
 
         run_tests_options = {
             step_name: "🧪 Running tests for scheme: #{scheme}",
@@ -630,8 +630,7 @@ platform :ios do
             cloned_source_packages_path: ENV['PACKAGES_DIR'],
             disable_package_automatic_updates: true,
             skip_package_dependencies_resolution: true,
-            number_of_retries: build.number_of_retries,
-            xcargs: ci_args
+            number_of_retries: build.number_of_retries
         }
         run_tests_options[:only_testing] = options[:only_testing] if options[:only_testing]&.any?
         run_tests_options[:skip_testing] = options[:skip_testing] if options[:skip_testing]&.any?
@@ -827,15 +826,23 @@ platform :ios do
             groups += options[:extra_distribution_groups]
         end
 
-        upload_to_testflight(
-            api_key_path: appstoreconnect_api_key_file_path,
-            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
-            skip_waiting_for_build_processing: false,
-            distribute_external: true,
-            groups: groups,
-            submit_beta_review: true,
-            changelog: changelog(build)
-        )
+        begin
+            upload_to_testflight(
+                api_key_path: appstoreconnect_api_key_file_path,
+                ipa: "#{build.artifact_path(with_filename: true)}.ipa",
+                skip_waiting_for_build_processing: false,
+                distribute_external: true,
+                groups: groups,
+                submit_beta_review: true,
+                changelog: changelog(build)
+            )
+        rescue Spaceship::UnexpectedResponse => e
+            UI.error("TestFlight upload skipped: #{e.message}")
+            export_env_path = "./.post_build/.env"
+            FileUtils.mkdir_p("./.post_build")
+            error_line = e.message.tr("\n", ' ').strip.gsub('"', '\\"')
+            File.open(export_env_path, 'a') { |f| f.puts "TESTFLIGHT_ERROR=\"#{error_line}\"" }
+        end
     end
 
     # Changelog for current build

@@ -51,6 +51,8 @@
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupParticipants.header" = "Katılımcılar";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Katılımcıları ekle";
+"wireMeetings.schedule.error.alert.title" = "Bir şeyler yanlış gitti";
+"wireMeetings.schedule.error.alert.ok" = "TAMAM";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "İptal";

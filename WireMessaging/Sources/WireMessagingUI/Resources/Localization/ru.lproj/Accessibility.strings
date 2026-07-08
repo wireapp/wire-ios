@@ -72,5 +72,8 @@
 "conversation.wireCells.files.availableOffline" = "Доступно оффлайн";
 
 // MARK: - Viewer access
-"conversation.wireCells.files.viewerAccess.banner.close" = "Закрыть информацию о доступе";
 "conversation.wireCells.files.readOnly" = "Только чтение";
+"conversation.wireCells.files.viewerAccess.banner.close" = "Закрыть информацию о доступе";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDrive.closeButton" = "Закрыть информацию о беседе";

@@ -18,6 +18,7 @@
 
 public import UIKit
 public import WireCallingDomain
+public import WireNetwork
 
 import SwiftUI
 import WireCallingData
@@ -31,18 +32,36 @@ public struct WireMeetingsFactory {
 
     @MainActor
     public func makeMeetingsView(
-        memberRepository: any MemberRepositoryProtocol
+        meetingsAPI: any MeetingsAPI,
+        memberRepository: any MemberRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController {
-        let repository = MeetingsRepository.demo()
+        let meetingRepository = MeetingRepository.demo(meetingsAPI: meetingsAPI)
+        let createInstantMeetingUseCase = CreateInstantMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository,
+            dateProvider: .system
+        )
+        let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
+            repository: meetingRepository,
+            currentDateProvider: .system
+        )
+        let createScheduledMeetingUseCase = CreateScheduledMeetingUseCase(repository: meetingRepository)
+        let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
-            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
-                repository: repository,
-                currentDateProvider: .system
-            ),
-            memberRepository: memberRepository
+            upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
+            makeFormViewModel: { mode, onSuccess in
+                CreateMeetingFormViewModel(
+                    mode: mode,
+                    searchMembersUseCase: searchMembersUseCase,
+                    createInstantMeetingUseCase: createInstantMeetingUseCase,
+                    createScheduledMeetingUseCase: createScheduledMeetingUseCase,
+                    currentDateProvider: .system,
+                    onSuccess: onSuccess
+                )
+            }
         )
-
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
 

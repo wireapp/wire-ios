@@ -41,7 +41,7 @@ runs:
       with:
         status: custom
         custom_payload: |
-          { "text": ${{ inputs.text }} }
+          { "text": ${{ toJSON(inputs.text) }} }
 
     - name: Notify (always)
       if: ${{ inputs.notify == 'always' }}

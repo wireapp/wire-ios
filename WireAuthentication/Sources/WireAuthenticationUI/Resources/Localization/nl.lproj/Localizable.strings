@@ -121,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "Dit account is niet langer geautoriseerd om in te loggen.";
 "authentication.error.message.incorrect_sso_code" = "Please verify your company SSO access code and try again.";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "OK";
 

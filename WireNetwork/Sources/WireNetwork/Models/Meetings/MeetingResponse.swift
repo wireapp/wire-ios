@@ -32,6 +32,7 @@ public enum MeetingFrequency: String, Codable, Sendable {
 public struct MeetingRecurrence: Encodable, Sendable {
 
     public let frequency: MeetingFrequency
+    /// Contains a positive integer representing at which intervals the recurrence rule repeats
     public let interval: Int?
     public let until: Date?
 
@@ -117,15 +118,15 @@ public struct MeetingResponse {
     }
 }
 
-// MARK: - MeetingListResponseV15 (internal, for decoding an array response)
+// MARK: - MeetingListResponseV16 (internal, for decoding an array response)
 
-struct MeetingListResponseV15: Decodable, ToAPIModelConvertible {
+struct MeetingListResponseV16: Decodable, ToAPIModelConvertible {
 
-    private let meetings: [MeetingResponseV15]
+    private let meetings: [MeetingResponseV16]
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.meetings = try container.decode([MeetingResponseV15].self)
+        self.meetings = try container.decode([MeetingResponseV16].self)
     }
 
     func toAPIModel() -> [MeetingResponse] {
@@ -133,9 +134,9 @@ struct MeetingListResponseV15: Decodable, ToAPIModelConvertible {
     }
 }
 
-// MARK: - MeetingResponseV15 (internal, for decoding)
+// MARK: - MeetingResponseV16 (internal, for decoding)
 
-struct MeetingResponseV15: Decodable, ToAPIModelConvertible {
+struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
 
     let qualifiedID: QualifiedIDV0
     let title: String

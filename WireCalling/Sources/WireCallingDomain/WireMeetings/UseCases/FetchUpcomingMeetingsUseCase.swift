@@ -20,11 +20,11 @@ package import WireFoundation
 
 package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
 
-    private let repository: any MeetingsRepositoryProtocol
+    private let repository: any MeetingRepositoryProtocol
     private let currentDateProvider: any CurrentDateProviding
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
+        repository: any MeetingRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding
     ) {
         self.repository = repository

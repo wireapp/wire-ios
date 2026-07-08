@@ -72,11 +72,15 @@ extension UIAlertAction {
         title: String?,
         style: UIAlertAction.Style,
         accessibilityIdentifier: String?,
+        accessibilityHint: String? = nil,
         handler: ((UIAlertAction) -> Void)? = nil
     ) {
         self.init(title: title, style: style, handler: handler)
         if let accessibilityIdentifier {
             setValue(accessibilityIdentifier, forKey: "accessibilityIdentifier")
+        }
+        if let accessibilityHint {
+            setValue(accessibilityHint, forKey: "accessibilityHint")
         }
     }
 }

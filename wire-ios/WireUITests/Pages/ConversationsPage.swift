@@ -82,10 +82,6 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
     }
 
-    var unblockButtonOnMoreOptions: XCUIElement {
-        app.buttons[Locators.ConversationsPage.unblockOptionOnContextMenu.rawValue]
-    }
-
     var clearButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.clearOptionOnContextMenu.rawValue]
     }
@@ -262,16 +258,8 @@ class ConversationsPage: PageModel {
         return try ConversationsPage()
     }
 
-    @discardableResult
     func blockUser() throws -> ConversationsPage {
         blockButtonOnMoreOptions.tap()
-        blockButtonOnBottomSheet.tap()
-        return self
-    }
-
-    @discardableResult
-    func unblockUser() throws -> ConversationsPage {
-        unblockButtonOnMoreOptions.tap()
         blockButtonOnBottomSheet.tap()
         return self
     }

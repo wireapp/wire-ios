@@ -121,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "请先接受您的团队的邀请，然后按照步骤创建您的账户。";
 "authentication.error.message.account_suspended" = "此账户不再被授权登录";
 "authentication.error.message.incorrect_sso_code" = "请验证您的公司SSO访问代码并重试。";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "好";
 
