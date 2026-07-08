@@ -93,7 +93,6 @@ final class ConversationViewController: UIViewController {
 
     var collectionController: CollectionsViewController?
     var outgoingConnectionViewController: OutgoingConnectionViewController!
-    var blockedUserViewController: BlockedUserBottomBarViewController?
     let conversationBarController: BarController = .init()
     let guestsBarController: GuestsBarController = .init()
     let invisibleInputAccessoryView: InvisibleInputAccessoryView = .init()
@@ -105,9 +104,6 @@ final class ConversationViewController: UIViewController {
 
     var inputBarBottomMargin: NSLayoutConstraint?
     var inputBarZeroHeight: NSLayoutConstraint?
-    /// Pins the content view above the input bar. Deactivated while the "You blocked this user"
-    /// bar is shown, so the content sits above that (shorter) bar instead.
-    var contentBottomToInputBar: NSLayoutConstraint?
 
     var isAppearing = false
     private var voiceChannelStateObserverToken: Any?
@@ -312,7 +308,6 @@ final class ConversationViewController: UIViewController {
         updateOutgoingConnectionVisibility()
         createConstraints()
         updateInputBarVisibility()
-        updateBlockedUserVisibility()
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
             let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
@@ -467,18 +462,13 @@ final class ConversationViewController: UIViewController {
     }
 
     private func updateInputBarVisibility() {
-        // Collapse the input bar when the conversation is read-only or when the self user has
-        // blocked the other user (in which case it is replaced by the "You blocked this user" bar).
-        let shouldCollapseInputBar = conversation.isReadOnly || didBlockConnectedUser
-
-        if shouldCollapseInputBar {
+        if conversation.isReadOnly {
             inputBarController.inputBar.textView.resignFirstResponder()
             inputBarController.dismissMentionsIfNeeded()
             inputBarController.removeReplyComposingView()
         }
 
-        inputBarController.isHiddenForBlockedUser = didBlockConnectedUser
-        inputBarZeroHeight?.isActive = shouldCollapseInputBar
+        inputBarZeroHeight?.isActive = conversation.isReadOnly
         view.setNeedsLayout()
     }
 
@@ -741,7 +731,6 @@ extension ConversationViewController: ZMConversationObserver {
             updateOutgoingConnectionVisibility()
             contentViewController?.updateTableViewHeaderView()
             updateInputBarVisibility()
-            updateBlockedUserVisibility()
         }
 
         if note.participantsChanged ||

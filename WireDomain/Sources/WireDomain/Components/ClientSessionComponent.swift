@@ -168,6 +168,10 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
+    public private(set) lazy var meetingsAPI = MeetingsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+
     public private(set) lazy var teamsAPI = TeamsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)

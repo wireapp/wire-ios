@@ -318,7 +318,6 @@
 "conversation.input_bar.verified" = "Geverifieerd";
 "conversation.input_bar.placeholder" = "Type een bericht";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
-"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Swipe omhoog om te versturen";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tik om te verzenden";
@@ -992,14 +991,14 @@
 // Admin selection (promote new admin before leaving)
 "admin_selection.title" = "New admin";
 "admin_selection.promote" = "Promote";
-"admin_selection.info_banner" = "After you promoted a new admin, you will leave the group.";
+"admin_selection.info_banner" = "After you promote a new admin, you leave the group.";
 "admin_selection.promotion_error" = "Failed to promote user to admin.";
 
 // Last admin leave flow
 "last_admin_leave.title" = "Leave \"%@\"?";
 "last_admin_leave.promote_or_delete_message" = "You're the only admin.\nPromote another participant before leaving, or delete the group if it is no longer needed.";
 "last_admin_leave.promote_new_admin" = "Promote new admin";
-"last_admin_leave.no_eligible_candidates_message" = "You're the only admin.\nNone of the other participants can be promoted to admin. You can only delete the group.";
+"last_admin_leave.no_eligible_candidates_message" = "You're the only admin. The other participants can't be admins.\nAdd at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.";
 "last_admin_leave.delete_group" = "Delete group";
 
 // Conversation Degraded (security level lowered)

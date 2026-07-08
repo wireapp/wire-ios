@@ -55,6 +55,7 @@ final class SharingSessionTests: BaseSharingSessionTests {
         activeConnection = nil
         archivedConversation = nil
         archivedConnection = nil
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
         super.tearDown()
     }
 

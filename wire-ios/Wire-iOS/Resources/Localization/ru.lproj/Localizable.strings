@@ -318,7 +318,6 @@
 "conversation.input_bar.verified" = "Верифицировано";
 "conversation.input_bar.placeholder" = "Введите сообщение";
 "conversation.input_bar.placeholder_ephemeral" = "Самоудаляющееся сообщение";
-"conversation.input_bar.blocked_user" = "Вы заблокировали этого пользователя";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Проведите вверх для отправки";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Нажмите для отправки";
@@ -999,7 +998,7 @@
 "last_admin_leave.title" = "Покинуть \"%@\"?";
 "last_admin_leave.promote_or_delete_message" = "Вы - единственный администратор.\nНазначьте другого пользователя, прежде чем покинуть, или удалите группу, если она больше не нужна.";
 "last_admin_leave.promote_new_admin" = "Назначить нового администратора";
-"last_admin_leave.no_eligible_candidates_message" = "Вы - единственный администратор.\nНикто из остальных участников не может быть назначен администратором. Вы можете только удалить группу.";
+"last_admin_leave.no_eligible_candidates_message" = "Вы - единственный администратор. Другие участники не могут быть администраторами.\nДобавьте хотя бы одного члена команды и назначьте его администратором, прежде чем покинуть. Или удалите группу, если она больше не нужна.";
 "last_admin_leave.delete_group" = "Удалить группу";
 
 // Conversation Degraded (security level lowered)
