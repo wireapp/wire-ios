@@ -16,27 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireCallingDomain
+struct MeetingUpdateEventDecoder {
 
-/// An in-memory store of meetings, keyed by meeting id.
-package actor MeetingsLocalStore: MeetingsLocalStoreProtocol {
+    func decode(
+        from container: KeyedDecodingContainer<MeetingEventCodingKeys>
+    ) throws -> MeetingUpdateEvent {
+        let qualifiedID = try container.decode(
+            QualifiedIDV0.self,
+            forKey: .qualifiedID
+        )
 
-    private var meetingsByID: [QualifiedID: Meeting] = [:] // TODO: use Core Data
-
-    package init() {}
-
-    package func storedMeetings() -> [Meeting] {
-        Array(meetingsByID.values)
-    }
-
-    package func storeMeetings(_ meetings: [Meeting]) {
-        for meeting in meetings {
-            meetingsByID[meeting.id] = meeting
-        }
-    }
-
-    package func storeMeeting(_ meeting: Meeting) {
-        meetingsByID[meeting.id] = meeting
+        return MeetingUpdateEvent(meetingID: qualifiedID.toAPIModel())
     }
 
 }

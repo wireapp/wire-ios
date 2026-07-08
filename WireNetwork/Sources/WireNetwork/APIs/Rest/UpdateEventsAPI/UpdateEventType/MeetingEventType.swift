@@ -16,20 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
-import WireNetwork
+enum MeetingEventType: String {
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        meetingsLocalStore: any MeetingsLocalStoreProtocol,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
-    ) -> UIViewController
+    case create = "meeting.create"
+    case delete = "meeting.delete"
+    case update = "meeting.update"
+
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

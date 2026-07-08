@@ -16,16 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireCallingDomain
+import WireNetwork
 
-// sourcery: AutoMockable
-/// A local store dedicated to meetings.
-package protocol MeetingsLocalStoreProtocol: Sendable {
+struct MeetingDeleteEventProcessor: MeetingDeleteEventProcessorProtocol {
 
-    func storedMeetings() async -> [Meeting]
+    let localStore: any MeetingLocalStoreProtocol
 
-    func storeMeetings(_ meetings: [Meeting]) async
-
-    func storeMeeting(_ meeting: Meeting) async
+    func processEvent(_ event: MeetingDeleteEvent) async {
+        await localStore.deleteMeeting(
+            id: event.meetingID.id,
+            domain: event.meetingID.domain
+        )
+    }
 
 }

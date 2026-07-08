@@ -16,20 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
-import WireNetwork
+/// An event where a meeting was updated.
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        meetingsLocalStore: any MeetingsLocalStoreProtocol,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
-    ) -> UIViewController
+public struct MeetingUpdateEvent: Equatable, Sendable {
+
+    /// The qualified id of the updated meeting.
+
+    public let meetingID: QualifiedID
+
+    public init(meetingID: QualifiedID) {
+        self.meetingID = meetingID
+    }
+
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

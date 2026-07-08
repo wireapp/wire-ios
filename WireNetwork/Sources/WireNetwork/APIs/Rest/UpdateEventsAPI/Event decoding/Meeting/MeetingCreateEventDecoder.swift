@@ -16,20 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
-import WireNetwork
+struct MeetingCreateEventDecoder {
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        meetingsLocalStore: any MeetingsLocalStoreProtocol,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
-    ) -> UIViewController
+    func decode(
+        from container: KeyedDecodingContainer<MeetingEventCodingKeys>
+    ) throws -> MeetingCreateEvent {
+        let qualifiedID = try container.decode(
+            QualifiedIDV0.self,
+            forKey: .qualifiedID
+        )
+
+        return MeetingCreateEvent(meetingID: qualifiedID.toAPIModel())
+    }
+
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

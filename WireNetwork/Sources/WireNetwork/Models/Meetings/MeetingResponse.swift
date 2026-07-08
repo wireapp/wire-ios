@@ -77,7 +77,7 @@ struct MeetingRecurrenceV16: Decodable {
 
 // MARK: - MeetingResponse
 
-public struct MeetingResponse {
+public struct MeetingResponse: Sendable {
 
     public let id: QualifiedID
     public let title: String

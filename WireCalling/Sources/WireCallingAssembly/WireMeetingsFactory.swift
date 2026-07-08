@@ -33,12 +33,13 @@ public struct WireMeetingsFactory {
     @MainActor
     public func makeMeetingsView(
         meetingsAPI: any MeetingsAPI,
+        meetingsLocalStore: any MeetingsLocalStoreProtocol,
         memberRepository: any MemberRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController {
         let meetingRepository = MeetingRepository(
             meetingsAPI: meetingsAPI,
-            meetingsLocalStore: MeetingsLocalStore()
+            meetingsLocalStore: meetingsLocalStore
         )
         let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
             repository: meetingRepository,

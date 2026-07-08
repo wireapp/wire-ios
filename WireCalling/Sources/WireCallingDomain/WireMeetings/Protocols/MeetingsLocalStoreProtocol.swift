@@ -16,20 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
-import WireNetwork
-
 // sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        meetingsLocalStore: any MeetingsLocalStoreProtocol,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
-    ) -> UIViewController
-}
+/// A local store dedicated to meetings.
+///
+/// The protocol is implemented outside of this package, where the
+/// persistence layer (Core Data) is available, and injected in.
+public protocol MeetingsLocalStoreProtocol: Sendable {
 
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}
+    func storedMeetings() async -> [Meeting]
+
+    func storeMeetings(_ meetings: [Meeting]) async
+
+    func storeMeeting(_ meeting: Meeting) async
+
+    /// Stores the given meetings and deletes all stored meetings not contained in the list.
+    /// Use this when the given meetings are a full snapshot of the backend state.
+    func replaceAllMeetings(with meetings: [Meeting]) async
+
+}
