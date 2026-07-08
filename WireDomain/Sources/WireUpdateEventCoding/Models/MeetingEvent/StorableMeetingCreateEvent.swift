@@ -16,38 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents an update event received from the backend
-/// that can be used to incrementally update the state of
-/// the client.
+import WireNetwork
 
-public enum UpdateEvent: Equatable, Sendable {
+struct StorableMeetingCreateEvent: Equatable, Codable, Sendable {
 
-    /// A conversation event.
+    private let meetingID: StorableQualifiedID
 
-    case conversation(ConversationEvent)
+    init(_ value: WireNetwork.MeetingCreateEvent) {
+        self.meetingID = StorableQualifiedID(value.meetingID)
+    }
 
-    /// A feature config event.
-
-    case featureConfig(FeatureConfigEvent)
-
-    /// A federation event.
-
-    case federation(FederationEvent)
-
-    /// A user event.
-
-    case user(UserEvent)
-
-    /// A team event.
-
-    case team(TeamEvent)
-
-    /// A meeting event.
-
-    case meeting(MeetingEvent)
-
-    /// An event that is not known by the client.
-
-    case unknown(eventType: String)
+    func toAPIModel() -> WireNetwork.MeetingCreateEvent {
+        .init(meetingID: meetingID.toAPIModel())
+    }
 
 }
