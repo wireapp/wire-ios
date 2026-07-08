@@ -658,6 +658,19 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         }
     }
 
+    func selectItem(withLocalIdentifier localIdentifier: String) {
+        guard let assetLibrary else { return }
+
+        for index in 0 ..< assetLibrary.count {
+            guard let asset = try? assetLibrary.asset(atIndex: index) else { continue }
+            if asset.localIdentifier == localIdentifier {
+                let indexPath = IndexPath(item: Int(index), section: Int(CameraKeyboardSection.photos.rawValue))
+                collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+                return
+            }
+        }
+    }
+
     func collectionView(
         _ collectionView: UICollectionView,
         didEndDisplaying cell: UICollectionViewCell,
