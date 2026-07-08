@@ -23,4 +23,8 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
-    secrets: inherit
+    secrets:
+      # Replace these with only the secrets declared under
+      # ./.github/workflows/_reusable_app_release.yml -> on.workflow_call.secrets
+      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
