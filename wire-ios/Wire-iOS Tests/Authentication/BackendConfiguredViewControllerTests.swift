@@ -16,13 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTestingPackage
 import XCTest
+
 @testable import Wire
 
-final class WireEmailTests: XCTestCase {
-    func testThatCallingSupportEmailIsCorrect() throws {
-        let email = try XCTUnwrap(WireEmail.shared())
-        
-        XCTAssertEqual(email.callingSupportEmail, "calling-ios@wire.com")
+final class BackendConfiguredViewControllerTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var sut: BackendConfiguredViewController!
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+        accentColor = .blue
+    }
+
+    override func tearDown() {
+        sut = nil
+        snapshotHelper = nil
+        super.tearDown()
+    }
+
+    // MARK: - Snapshot Tests
+
+    @MainActor
+    func testForAllScreenSizes() {
+        sut = BackendConfiguredViewController()
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 }
