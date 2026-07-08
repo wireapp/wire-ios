@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireCallingDomain
-
 // sourcery: AutoMockable
 /// A local store dedicated to meetings.
-package protocol MeetingsLocalStoreProtocol: Sendable {
+///
+/// The protocol is implemented outside of this package, where the
+/// persistence layer (Core Data) is available, and injected in.
+public protocol MeetingsLocalStoreProtocol: Sendable {
 
     func storedMeetings() async -> [Meeting]
 

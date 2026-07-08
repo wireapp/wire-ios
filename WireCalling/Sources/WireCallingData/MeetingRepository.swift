@@ -38,8 +38,11 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
     }
 
     package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
-        let allFuture = try await meetingsAPI.listMeetings()
+        let allMeetings = try await meetingsAPI.listMeetings()
             .map { $0.toDomainMeeting() }
+        await meetingsLocalStore.storeMeetings(allMeetings)
+
+        let allFuture = allMeetings
             .filter { $0.start > date }
             .sorted {
                 if $0.start != $1.start {
@@ -71,7 +74,9 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
-        return response.toDomainMeeting()
+        let meeting = response.toDomainMeeting()
+        await meetingsLocalStore.storeMeeting(meeting)
+        return meeting
     }
 
 }
