@@ -418,6 +418,7 @@ final class ZClientViewController: UIViewController {
         let conversationRepository = userSession.clientSessionComponent!.conversationRepository
         let meetingsUI = wireMeetingsFactory.makeMeetingsView(
             meetingsAPI: userSession.clientSessionComponent!.meetingsAPI,
+            meetingsLocalStore: MeetingsLocalStore(context: userSession.contextProvider.syncContext),
             memberRepository: memberRepository,
             conversationRepository: MeetingConversationRepository(
                 conversationRepository: conversationRepository,

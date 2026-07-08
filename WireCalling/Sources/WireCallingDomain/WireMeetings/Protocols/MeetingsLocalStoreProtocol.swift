@@ -17,9 +17,20 @@
 //
 
 // sourcery: AutoMockable
-/// Fetches upcoming meetings
-package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
+/// A local store dedicated to meetings.
+///
+/// The protocol is implemented outside of this package, where the
+/// persistence layer (Core Data) is available, and injected in.
+public protocol MeetingsLocalStoreProtocol: Sendable {
 
-    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
+    func storedMeetings() async -> [Meeting]
+
+    func storeMeetings(_ meetings: [Meeting]) async
+
+    func storeMeeting(_ meeting: Meeting) async
+
+    /// Stores the given meetings and deletes all stored meetings not contained in the list.
+    /// Use this when the given meetings are a full snapshot of the backend state.
+    func replaceAllMeetings(with meetings: [Meeting]) async
 
 }

@@ -27,18 +27,20 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
     package typealias MeetingRecurrence = WireCallingDomain.MeetingRecurrence
 
     private let meetingsAPI: any MeetingsAPI
-    private let meetingsSource: @Sendable () -> [Meeting]
+    private let meetingsLocalStore: any MeetingsLocalStoreProtocol
 
     package init(
         meetingsAPI: any MeetingsAPI,
-        meetings: @Sendable @escaping () -> [Meeting]
+        meetingsLocalStore: any MeetingsLocalStoreProtocol
     ) {
         self.meetingsAPI = meetingsAPI
-        self.meetingsSource = meetings
+        self.meetingsLocalStore = meetingsLocalStore
     }
 
-    package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
-        let allFuture = meetingsSource()
+    package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
+        try await refreshStoredMeetings()
+
+        let allFuture = await meetingsLocalStore.storedMeetings()
             .filter { $0.start > date }
             .sorted {
                 if $0.start != $1.start {
@@ -52,8 +54,10 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
         return Array(allFuture[start ..< end])
     }
 
-    package func hasUpcomingMeetings(after date: Date) -> Bool {
-        meetingsSource().contains { $0.start > date }
+    package func hasUpcomingMeetings(after date: Date) async throws -> Bool {
+        try await refreshStoredMeetings()
+
+        return await meetingsLocalStore.storedMeetings().contains { $0.start > date }
     }
 
     package func createMeeting(
@@ -70,10 +74,26 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
-        return response.toDomainMeeting()
+        let meeting = response.toDomainMeeting()
+        await meetingsLocalStore.storeMeeting(meeting)
+        return meeting
+    }
+
+    /// Refreshes the local store with the latest snapshot of meetings from the backend.
+    /// When the backend is unreachable, previously stored meetings are kept and served;
+    /// the error is only rethrown if there are no stored meetings to fall back to.
+    private func refreshStoredMeetings() async throws {
+        do {
+            let meetings = try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
+            await meetingsLocalStore.replaceAllMeetings(with: meetings)
+        } catch {
+            guard await !meetingsLocalStore.storedMeetings().isEmpty else { throw error }
+        }
     }
 
 }
+
+// MARK: - Mapping
 
 private extension MeetingResponse {
     func toDomainMeeting() -> Meeting {
@@ -87,557 +107,6 @@ private extension MeetingResponse {
             conversationID: conversationID
         )
     }
-}
-
-package extension MeetingRepository {
-
-    static func demo(
-        meetingsAPI: any MeetingsAPI
-    ) -> MeetingRepository {
-        let cal = Calendar.current
-        let now = Date()
-        func day(_ offset: Int, hour: Int, min: Int = 0) -> Date {
-            cal.date(
-                bySettingHour: hour,
-                minute: min,
-                second: 0,
-                of: cal.date(byAdding: .day, value: offset, to: cal.startOfDay(for: now))!
-            )!
-        }
-        let meetings: [Meeting] = [
-            // YESTERDAY
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "iOS Playtest - develop build",
-                start: day(-1, hour: 8, min: 0),
-                end: day(-1, hour: 8, min: 30),
-                members: [Member(name: "User1")]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "Sprint Review (all teams)",
-                start: day(-1, hour: 16, min: 0),
-                end: day(-1, hour: 16, min: 30),
-                members: [Member(name: "User1")]
-            ),
-
-            // TODAY — several at 7:00 AM for time grouping
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "Candidate interview",
-                start: day(0, hour: 16, min: 0),
-                end: day(0, hour: 16, min: 45),
-                members: [Member(name: "User1")]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "Standup",
-                start: day(0, hour: 7, min: 0),
-                end: day(0, hour: 7, min: 30),
-                members: [Member(name: "User1")]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "iOS team update",
-                start: day(0, hour: 7, min: 0),
-                end: day(0, hour: 7, min: 20),
-                members: [Member(name: "User1")]
-            ),
-
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "Design review",
-                start: day(0, hour: 17),
-                end: day(0, hour: 18),
-                members: [Member(name: "User1")]
-            ),
-
-            // TOMORROW — again two meetings at 7:00 AM to group
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "Sprint planning",
-                start: day(1, hour: 7),
-                end: day(1, hour: 8),
-                members: [Member(name: "User1")]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "Daily sync",
-                start: day(1, hour: 7),
-                end: day(1, hour: 7, min: 20),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "Architecture Forum",
-                start: day(1, hour: 13),
-                end: day(1, hour: 14),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(3, hour: 11),
-                end: day(3, hour: 12),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(3, hour: 12),
-                end: day(3, hour: 13),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4"),
-                    Member(name: "User5"),
-                    Member(name: "User6")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(3, hour: 14),
-                end: day(3, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4"),
-                    Member(name: "User5"),
-                    Member(name: "User6"),
-                    Member(name: "User7"),
-                    Member(name: "User8"),
-                    Member(name: "User9")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(3, hour: 16),
-                end: day(3, hour: 17),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(4, hour: 14),
-                end: day(4, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(4, hour: 16),
-                end: day(4, hour: 17),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(5, hour: 12),
-                end: day(5, hour: 13),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(5, hour: 14),
-                end: day(5, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(5, hour: 16),
-                end: day(5, hour: 17),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(6, hour: 14),
-                end: day(6, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(6, hour: 16),
-                end: day(6, hour: 17),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(7, hour: 12),
-                end: day(7, hour: 13),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4"),
-                    Member(name: "User5"),
-                    Member(name: "User6"),
-                    Member(name: "User7"),
-                    Member(name: "User8"),
-                    Member(name: "User9")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(7, hour: 14),
-                end: day(7, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(7, hour: 16),
-                end: day(7, hour: 17),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(8, hour: 14),
-                end: day(8, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4"),
-                    Member(name: "User5"),
-                    Member(name: "User6"),
-                    Member(name: "User7"),
-                    Member(name: "User8"),
-                    Member(name: "User9")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(8, hour: 16),
-                end: day(8, hour: 17),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(9, hour: 12),
-                end: day(9, hour: 13),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(9, hour: 14),
-                end: day(9, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4"),
-                    Member(name: "User5"),
-                    Member(name: "User6"),
-                    Member(name: "User7"),
-                    Member(name: "User8"),
-                    Member(name: "User9")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(9, hour: 16),
-                end: day(9, hour: 17),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(10, hour: 14),
-                end: day(10, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(10, hour: 16),
-                end: day(10, hour: 17),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(11, hour: 12),
-                end: day(11, hour: 13),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(11, hour: 14),
-                end: day(11, hour: 15),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(11, hour: 16),
-                end: day(11, hour: 17),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(12, hour: 14),
-                end: day(12, hour: 15),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(12, hour: 16),
-                end: day(12, hour: 17),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4"),
-                    Member(name: "User5"),
-                    Member(name: "User6"),
-                    Member(name: "User7"),
-                    Member(name: "User8"),
-                    Member(name: "User9")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(13, hour: 12),
-                end: day(13, hour: 13),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(13, hour: 14),
-                end: day(13, hour: 15),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(13, hour: 16),
-                end: day(13, hour: 17),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(14, hour: 14),
-                end: day(14, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(14, hour: 16),
-                end: day(14, hour: 17),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(15, hour: 12),
-                end: day(15, hour: 13),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4"),
-                    Member(name: "User5"),
-                    Member(name: "User6"),
-                    Member(name: "User7"),
-                    Member(name: "User8"),
-                    Member(name: "User9")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(15, hour: 14),
-                end: day(15, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(15, hour: 16),
-                end: day(15, hour: 17),
-                members: [
-                    Member(name: "User1")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(16, hour: 14),
-                end: day(16, hour: 15),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2")
-                ]
-            ),
-            Meeting(
-                id: QualifiedID(id: UUID(), domain: ""),
-                title: "All hands",
-                start: day(16, hour: 16),
-                end: day(16, hour: 17),
-                members: [
-                    Member(name: "User1"),
-                    Member(name: "User2"),
-                    Member(name: "User3"),
-                    Member(name: "User4"),
-                    Member(name: "User5"),
-                    Member(name: "User6"),
-                    Member(name: "User7"),
-                    Member(name: "User8"),
-                    Member(name: "User9")
-                ]
-            )
-        ]
-
-        return MeetingRepository(
-            meetingsAPI: meetingsAPI,
-            meetings: { meetings }
-        )
-    }
-}
-
-private extension Meeting {
-
-    init(
-        id: QualifiedID,
-        title: String,
-        start: Date,
-        end: Date,
-        members: [Member]
-    ) {
-        self.init(
-            id: id,
-            title: title,
-            start: start,
-            end: end,
-            recurrence: nil,
-            members: members,
-            conversationID: QualifiedID(id: UUID(), domain: "")
-        )
-    }
-
-}
-
-private extension Member {
-
-    init(name: String) {
-        self.init(
-            qualifiedID: .init(id: UUID(), domain: ""),
-            name: name,
-            handle: name
-                .lowercased()
-                .replacingOccurrences(of: " ", with: "")
-        )
-    }
-
 }
 
 private extension WireNetwork.MeetingRecurrence {

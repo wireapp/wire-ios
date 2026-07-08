@@ -20,6 +20,7 @@ import Foundation
 import WireCallingDomain
 import WireDataModel
 import WireDomain
+import WireFoundation
 
 struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @unchecked Sendable {
 
@@ -32,7 +33,7 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @un
 
     func addParticipants(
         _ participants: [WireCallingDomain.Member],
-        to conversationID: WireCallingDomain.QualifiedID
+        to conversationID: WireFoundation.QualifiedID
     ) async throws {
         guard !participants.isEmpty else { return }
 

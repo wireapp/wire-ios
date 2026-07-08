@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Fetches upcoming meetings
-package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
+enum MeetingEventCodingKeys: String, CodingKey {
 
-    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
+    case qualifiedID = "qualified_id"
+    case time
 
 }

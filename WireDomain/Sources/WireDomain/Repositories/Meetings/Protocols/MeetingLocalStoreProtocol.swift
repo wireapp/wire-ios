@@ -16,10 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Fetches upcoming meetings
-package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
+import Foundation
+import WireNetwork
 
-    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
+// sourcery: AutoMockable
+/// A local store dedicated to meetings.
+/// The store uses the injected context to perform `CoreData` operations on meeting objects.
+public protocol MeetingLocalStoreProtocol {
+
+    /// Stores a meeting locally, creating or updating it.
+    ///
+    /// - Parameter meeting: The meeting to store.
+
+    func storeMeeting(_ meeting: MeetingResponse) async
+
+    /// Deletes a locally stored meeting.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the meeting to delete.
+    ///   - domain: The domain of the meeting to delete.
+
+    func deleteMeeting(id: UUID, domain: String) async
 
 }

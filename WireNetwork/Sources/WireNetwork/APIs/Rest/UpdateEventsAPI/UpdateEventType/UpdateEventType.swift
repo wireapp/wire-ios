@@ -25,6 +25,7 @@ enum UpdateEventType {
     case federation(FederationEventType)
     case user(UserEventType)
     case team(TeamEventType)
+    case meeting(MeetingEventType)
     case unknown(String)
 
     init(_ string: String) {
@@ -38,6 +39,8 @@ enum UpdateEventType {
             self = .user(eventType)
         } else if let eventType = TeamEventType(rawValue: string) {
             self = .team(eventType)
+        } else if let eventType = MeetingEventType(rawValue: string) {
+            self = .meeting(eventType)
         } else {
             self = .unknown(string)
         }

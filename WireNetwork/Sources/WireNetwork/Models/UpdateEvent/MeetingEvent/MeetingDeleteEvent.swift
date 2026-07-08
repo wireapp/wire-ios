@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Fetches upcoming meetings
-package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
+/// An event where a meeting was deleted.
 
-    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
+public struct MeetingDeleteEvent: Equatable, Sendable {
+
+    /// The qualified id of the deleted meeting.
+
+    public let meetingID: QualifiedID
+
+    public init(meetingID: QualifiedID) {
+        self.meetingID = meetingID
+    }
 
 }

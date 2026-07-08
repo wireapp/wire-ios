@@ -22,9 +22,9 @@ package import Foundation
 /// Repository for accessing and managing meetings.
 package protocol MeetingRepositoryProtocol: Sendable {
 
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
+    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting]
 
-    func hasUpcomingMeetings(after date: Date) -> Bool
+    func hasUpcomingMeetings(after date: Date) async throws -> Bool
 
     func createMeeting(
         title: String,

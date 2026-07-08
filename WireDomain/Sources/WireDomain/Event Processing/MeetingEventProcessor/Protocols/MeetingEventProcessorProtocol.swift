@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Fetches upcoming meetings
-package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
+import WireNetwork
 
-    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
+/// Process meeting update events.
+
+protocol MeetingEventProcessorProtocol {
+
+    /// Process a meeting update event.
+    ///
+    /// - Parameter event: A meeting update event.
+
+    func processEvent(_ event: MeetingEvent) async throws
 
 }

@@ -57,16 +57,16 @@ package final class MeetingsViewModel {
         grouper.group(loadedMeetings)
     }
 
-    func loadInitialData() {
+    func loadInitialData() async {
         futureOffset = 0
         loadedMeetings = []
         hasMore = false
-        load(pageSize: initialPageSize)
+        await load(pageSize: initialPageSize)
     }
 
-    func loadMoreIfNeeded() {
+    func loadMoreIfNeeded() async {
         guard hasMore, !isLoading else { return }
-        load(pageSize: pageSize)
+        await load(pageSize: pageSize)
     }
 
     func formatDay(_ date: Date) -> String {
@@ -79,9 +79,13 @@ package final class MeetingsViewModel {
 
     // MARK: - Private Methods
 
-    private func load(pageSize: Int) {
+    private func load(pageSize: Int) async {
         isLoading = true
-        let result = upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
+        // TODO: don't swallow errors
+        guard let result = try? await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset) else {
+            isLoading = false
+            return
+        }
 
         if futureOffset == 0 {
             loadedMeetings = result.meetings
