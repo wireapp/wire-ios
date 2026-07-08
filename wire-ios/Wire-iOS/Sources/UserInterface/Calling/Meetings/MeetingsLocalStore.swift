@@ -50,6 +50,28 @@ struct MeetingsLocalStore: MeetingsLocalStoreProtocol, @unchecked Sendable {
         }
     }
 
+    func replaceAllMeetings(with meetings: [Meeting]) async {
+        await context.perform { [context] in
+            let newIDs = Set(meetings.map(\.id))
+            let request = StoredMeeting.fetchRequest()
+            let existing = (try? context.fetch(request)) ?? []
+            for storedMeeting in existing {
+                guard let remoteIdentifier = storedMeeting.remoteIdentifier else { continue }
+                let id = WireFoundation.QualifiedID(
+                    id: remoteIdentifier,
+                    domain: storedMeeting.domain ?? ""
+                )
+                if !newIDs.contains(id) {
+                    context.delete(storedMeeting)
+                }
+            }
+            for meeting in meetings {
+                Self.upsert(meeting, in: context)
+            }
+            _ = context.saveOrRollback()
+        }
+    }
+
     private static func upsert(_ meeting: Meeting, in context: NSManagedObjectContext) {
         let storedMeeting = fetchOrCreateStoredMeeting(id: meeting.id, in: context)
         storedMeeting.title = meeting.title

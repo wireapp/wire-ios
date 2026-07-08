@@ -29,4 +29,8 @@ public protocol MeetingsLocalStoreProtocol: Sendable {
 
     func storeMeeting(_ meeting: Meeting) async
 
+    /// Stores the given meetings and deletes all stored meetings not contained in the list.
+    /// Use this when the given meetings are a full snapshot of the backend state.
+    func replaceAllMeetings(with meetings: [Meeting]) async
+
 }

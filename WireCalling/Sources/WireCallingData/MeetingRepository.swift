@@ -38,11 +38,9 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
     }
 
     package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
-        let allMeetings = try await meetingsAPI.listMeetings()
-            .map { $0.toDomainMeeting() }
-        await meetingsLocalStore.storeMeetings(allMeetings)
+        try await refreshStoredMeetings()
 
-        let allFuture = allMeetings
+        let allFuture = await meetingsLocalStore.storedMeetings()
             .filter { $0.start > date }
             .sorted {
                 if $0.start != $1.start {
@@ -57,7 +55,9 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
     }
 
     package func hasUpcomingMeetings(after date: Date) async throws -> Bool {
-        try await meetingsAPI.listMeetings().contains { $0.startTime > date }
+        try await refreshStoredMeetings()
+
+        return await meetingsLocalStore.storedMeetings().contains { $0.start > date }
     }
 
     package func createMeeting(
@@ -77,6 +77,18 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
         let meeting = response.toDomainMeeting()
         await meetingsLocalStore.storeMeeting(meeting)
         return meeting
+    }
+
+    /// Refreshes the local store with the latest snapshot of meetings from the backend.
+    /// When the backend is unreachable, previously stored meetings are kept and served;
+    /// the error is only rethrown if there are no stored meetings to fall back to.
+    private func refreshStoredMeetings() async throws {
+        do {
+            let meetings = try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
+            await meetingsLocalStore.replaceAllMeetings(with: meetings)
+        } catch {
+            guard await !meetingsLocalStore.storedMeetings().isEmpty else { throw error }
+        }
     }
 
 }
