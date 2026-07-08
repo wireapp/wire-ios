@@ -337,7 +337,7 @@ final class ConversationCreationController: UIViewController {
     private func setNextButtonEnabled(_ isEnabled: Bool, announceChange: Bool) {
         navigationItem.rightBarButtonItem?.isEnabled = isEnabled
 
-        if announceChange, isEnabled, !nextButtonWasEnabled, UIAccessibility.isVoiceOverRunning {
+        if announceChange, isEnabled, !nextButtonWasEnabled {
             UIAccessibility.post(notification: .layoutChanged, argument: navigationItem.rightBarButtonItem)
         }
 
