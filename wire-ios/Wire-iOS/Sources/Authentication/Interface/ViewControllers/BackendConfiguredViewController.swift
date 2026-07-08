@@ -84,7 +84,13 @@ final class BackendConfiguredViewController: UIViewController, AuthenticationCoo
         fontSpec: .buttonBigSemibold
     )
 
+    private let scrollView = UIScrollView()
+
     private var contentStackView: UIStackView!
+    private var contentWidthRegular: NSLayoutConstraint!
+    private var contentWidthCompact: NSLayoutConstraint!
+
+    private static let regularWidth: CGFloat = 375
 
     // MARK: - Lifecycle
 
@@ -126,38 +132,94 @@ final class BackendConfiguredViewController: UIViewController, AuthenticationCoo
         contentStack.spacing = 16
         contentStack.setCustomSpacing(32, after: subtitleLabel)
 
-        view.addSubview(headlineLabel)
-        view.addSubview(contentStack)
+        view.addSubview(scrollView)
+        scrollView.addSubview(headlineLabel)
+        scrollView.addSubview(contentStack)
         contentStackView = contentStack
 
         for subview in [headlineLabel, contentStack, checkmarkImageView] {
             subview.translatesAutoresizingMaskIntoConstraints = false
         }
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
     }
 
     private func createConstraints() {
+        let contentCenter = contentStackView.centerYAnchor.constraint(
+            equalTo: scrollView.contentLayoutGuide.centerYAnchor
+        )
+        contentCenter.priority = .init(999)
+
+        contentWidthRegular = contentStackView.widthAnchor.constraint(equalToConstant: Self.regularWidth)
+        contentWidthCompact = contentStackView.widthAnchor.constraint(
+            equalTo: scrollView.frameLayoutGuide.widthAnchor,
+            constant: -62
+        )
+
         NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
             checkmarkImageView.widthAnchor.constraint(equalToConstant: 20),
             checkmarkImageView.heightAnchor.constraint(equalToConstant: 20),
 
             continueButton.heightAnchor.constraint(equalToConstant: 48),
 
-            headlineLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            headlineLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 31),
-            headlineLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -31),
+            scrollView.contentLayoutGuide.heightAnchor.constraint(
+                greaterThanOrEqualTo: scrollView.frameLayoutGuide.heightAnchor
+            ),
+
+            headlineLabel.topAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.topAnchor,
+                constant: 64
+            ),
+            headlineLabel.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
+            headlineLabel.leadingAnchor.constraint(
+                greaterThanOrEqualTo: scrollView.contentLayoutGuide.leadingAnchor,
+                constant: 31
+            ),
+            headlineLabel.trailingAnchor.constraint(
+                lessThanOrEqualTo: scrollView.contentLayoutGuide.trailingAnchor,
+                constant: -31
+            ),
 
             contentStackView.topAnchor.constraint(
                 greaterThanOrEqualTo: headlineLabel.bottomAnchor,
                 constant: 16
             ),
             contentStackView.bottomAnchor.constraint(
-                lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor,
+                lessThanOrEqualTo: scrollView.contentLayoutGuide.bottomAnchor,
                 constant: -24
             ),
-            contentStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).withPriority(.init(999)),
-            contentStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 31),
-            contentStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -31)
+            contentCenter,
+            contentStackView.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
+            contentStackView.leadingAnchor.constraint(
+                greaterThanOrEqualTo: scrollView.contentLayoutGuide.leadingAnchor,
+                constant: 31
+            ),
+            contentStackView.trailingAnchor.constraint(
+                lessThanOrEqualTo: scrollView.contentLayoutGuide.trailingAnchor,
+                constant: -31
+            )
         ])
+
+        updateConstraints(forRegularLayout: traitCollection.horizontalSizeClass == .regular)
+    }
+
+    private func updateConstraints(forRegularLayout isRegular: Bool) {
+        if isRegular {
+            contentWidthCompact.isActive = false
+            contentWidthRegular.isActive = true
+        } else {
+            contentWidthRegular.isActive = false
+            contentWidthCompact.isActive = true
+        }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateConstraints(forRegularLayout: traitCollection.horizontalSizeClass == .regular)
     }
 
     // MARK: - Actions
