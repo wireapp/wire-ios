@@ -95,7 +95,7 @@ class ConversationsPage: PageModel {
     }
 
     var moveToFolderButtonOnMoreOptions: XCUIElement {
-        app.buttons[Locators.ConversationDetailsActions.moveToFolder.rawValue]
+        app.buttons[Locators.ConversationsPage.moveToFolderOptionOnContextMenu.rawValue]
     }
 
     private var createNewFolderButton: XCUIElement {

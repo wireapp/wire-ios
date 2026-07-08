@@ -190,7 +190,6 @@ extension ZMConversation.Action {
         case .archive: Locators.ConversationDetailsActions.archive.rawValue
         case .clearContent: Locators.ConversationDetailsActions.clearContent.rawValue
         case .leave: Locators.ConversationDetailsActions.leaveConversation.rawValue
-        case .moveToFolder: Locators.ConversationDetailsActions.moveToFolder.rawValue
         default: nil
         }
     }

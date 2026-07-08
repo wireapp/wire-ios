@@ -75,6 +75,7 @@ public enum Locators {
         case loadBar
         case addToFavourite = "Add to Favorites"
         case removeFromFavourite = "Remove from Favorites"
+        case moveToFolderOptionOnContextMenu = "Move to…"
         case filterConversations = "Filter conversations"
         case filterByFavourites
         case filterByGroups
