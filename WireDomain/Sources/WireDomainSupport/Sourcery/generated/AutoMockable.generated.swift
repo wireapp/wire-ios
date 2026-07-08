@@ -2886,18 +2886,19 @@ public class MockMainAppPushChannelCoordinatorProtocol: MainAppPushChannelCoordi
 
 }
 
-class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol {
+public class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - storeMeeting
 
-    var storeMeeting_Invocations: [MeetingResponse] = []
-    var storeMeeting_MockMethod: ((MeetingResponse) async -> Void)?
+    public var storeMeeting_Invocations: [MeetingResponse] = []
+    public var storeMeeting_MockMethod: ((MeetingResponse) async -> Void)?
 
-    func storeMeeting(_ meeting: MeetingResponse) async {
+    public func storeMeeting(_ meeting: MeetingResponse) async {
         storeMeeting_Invocations.append(meeting)
 
         guard let mock = storeMeeting_MockMethod else {
@@ -2909,10 +2910,10 @@ class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol {
 
     // MARK: - deleteMeeting
 
-    var deleteMeetingIdDomain_Invocations: [(id: UUID, domain: String)] = []
-    var deleteMeetingIdDomain_MockMethod: ((UUID, String) async -> Void)?
+    public var deleteMeetingIdDomain_Invocations: [(id: UUID, domain: String)] = []
+    public var deleteMeetingIdDomain_MockMethod: ((UUID, String) async -> Void)?
 
-    func deleteMeeting(id: UUID, domain: String) async {
+    public func deleteMeeting(id: UUID, domain: String) async {
         deleteMeetingIdDomain_Invocations.append((id: id, domain: domain))
 
         guard let mock = deleteMeetingIdDomain_MockMethod else {

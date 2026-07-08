@@ -22,7 +22,7 @@ import WireNetwork
 // sourcery: AutoMockable
 /// A local store dedicated to meetings.
 /// The store uses the injected context to perform `CoreData` operations on meeting objects.
-protocol MeetingLocalStoreProtocol {
+public protocol MeetingLocalStoreProtocol {
 
     /// Stores a meeting locally, creating or updating it.
     ///
