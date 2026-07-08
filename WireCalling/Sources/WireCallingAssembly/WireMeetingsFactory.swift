@@ -40,7 +40,6 @@ public struct WireMeetingsFactory {
             meetingsAPI: meetingsAPI,
             meetingsLocalStore: MeetingsLocalStore()
         )
-        let meetingRepository = MeetingRepository(meetingsAPI: meetingsAPI)
         let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
             repository: meetingRepository,
             currentDateProvider: .system
