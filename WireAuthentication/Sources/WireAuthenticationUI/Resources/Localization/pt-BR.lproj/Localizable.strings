@@ -121,8 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Sceite o convite para sua equipe primeiro e siga os passos para criar sua conta.";
 "authentication.error.message.account_suspended" = "Esta conta não está mais autorizada a entrar.";
 "authentication.error.message.incorrect_sso_code" = "Por favor, verifique se o seu código de acesso SSO da empresa e tente novamente.";
-"authentication.error.title.already_logged_in" = "Account already active";
-"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "OK";
 
