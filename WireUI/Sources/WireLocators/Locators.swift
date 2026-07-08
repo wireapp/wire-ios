@@ -77,14 +77,15 @@ public enum Locators {
         case addToFavourite = "Add to Favorites"
         case removeFromFavourite = "Remove from Favorites"
         case filterConversations = "Filter conversations"
-        case filterByFavourites = "Show all favorite conversations"
-        case filterByGroups = "Show all group conversations"
-        case filterByChannels = "Show all channel conversations"
-        case filterByOneOnOneConversation = "Show all one on one conversations"
-        case textFilteredByFavourites = "Filtered by Favorites"
-        case textFilteredByGroups = "Filtered by Groups"
-        case textFilteredByChannels = "Filtered by Channels"
-        case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
+        case filterByFavourites
+        case filterByGroups
+        case filterByChannels
+        case filterByOneOnOneConversation
+        case filterByFolders
+        case textFilteredByFavourites
+        case textFilteredByGroups
+        case textFilteredByChannels
+        case textFilteredByOneOnOne
         case userRemovedSystemMessage
         case connectionRequestsCell
         case unreadMessageCount
@@ -224,6 +225,7 @@ public enum Locators {
         case archive
         case clearContent
         case leaveConversation
+        case moveToFolder
     }
 
     public enum UserProfilePage: AutoPrefixedEnum {

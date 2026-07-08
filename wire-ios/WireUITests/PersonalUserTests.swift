@@ -249,7 +249,7 @@ final class PersonalUsersTests: WireUITestCase {
 
         XCTAssertTrue(
             conversationsPage.textFilteredByFavourites.exists,
-            "'Filtered by Favorites' label did not appear"
+            "Favorites filter label did not appear"
         )
 
         XCTAssertTrue(
@@ -272,7 +272,7 @@ final class PersonalUsersTests: WireUITestCase {
 
         XCTAssertTrue(
             conversationsPage.textFilteredByOneOnOne.exists,
-            "'Filtered by Favorites' label did not appear"
+            "OneOnOne filter label did not appear"
         )
     }
 
@@ -309,6 +309,33 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertTrue(
             conversationsPage.conversationCell(named: team.teamMember.name).waitForExistence(timeout: 5),
             "OneOnOne conversation did not appear"
+        )
+    }
+
+    @MainActor
+    func testMoveConversationToFolderAndFilterByFolder_TC_8870_8878() async throws {
+        // GIVEN
+        let team = try await registerTeamForConversationFilter()
+
+        // WHEN
+        let conversationsPage = try app.loginUser(email: team.teamOwner.email, password: team.teamOwner.password)
+            .acceptPopup()
+            .longPressForMoreOptionOnConversation(named: team.groupName)
+            .moveConversationToNewFolder(named: team.groupName)
+            .filterConversationByFolder(named: team.groupName)
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage
+                .conversationCell(named: team.groupName)
+                .waitForExistence(timeout: 5),
+            "Conversation moved to folder did not returned in folder filter"
+        )
+
+        XCTAssertEqual(
+            conversationsPage.conversationCells.count,
+            1,
+            "Expected only one conversation to be visible after filtering by folder"
         )
     }
 }
