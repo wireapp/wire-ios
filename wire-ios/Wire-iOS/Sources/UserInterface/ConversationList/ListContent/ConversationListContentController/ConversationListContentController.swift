@@ -48,6 +48,7 @@ final class ConversationListContentController: UICollectionViewController {
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
+    private var contextMenuActionController: ConversationActionController?
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
@@ -271,6 +272,7 @@ final class ConversationListContentController: UICollectionViewController {
                         sourceView: collectionView.cellForItem(at: indexPath)!,
                         userSession: self.userSession
                     )
+                    self.contextMenuActionController = actionController
                     actionController.handleAction(action)
                 }
             }

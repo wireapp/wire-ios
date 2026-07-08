@@ -36,6 +36,10 @@ public struct WireMeetingsFactory {
         memberRepository: any MemberRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController {
+        let meetingRepository = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            meetingsLocalStore: MeetingsLocalStore()
+        )
         let meetingRepository = MeetingRepository(meetingsAPI: meetingsAPI)
         let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
             repository: meetingRepository,

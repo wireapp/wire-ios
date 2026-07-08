@@ -27,9 +27,14 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
     package typealias MeetingRecurrence = WireCallingDomain.MeetingRecurrence
 
     private let meetingsAPI: any MeetingsAPI
+    private let meetingsLocalStore: any MeetingsLocalStoreProtocol
 
-    package init(meetingsAPI: any MeetingsAPI) {
+    package init(
+        meetingsAPI: any MeetingsAPI,
+        meetingsLocalStore: any MeetingsLocalStoreProtocol
+    ) {
         self.meetingsAPI = meetingsAPI
+        self.meetingsLocalStore = meetingsLocalStore
     }
 
     package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
