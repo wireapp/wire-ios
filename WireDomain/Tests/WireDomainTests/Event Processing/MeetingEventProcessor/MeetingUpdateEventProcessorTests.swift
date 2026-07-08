@@ -26,33 +26,28 @@ import XCTest
 final class MeetingUpdateEventProcessorTests: XCTestCase {
 
     private var sut: MeetingUpdateEventProcessor!
-    private var meetingsAPI: MockMeetingsAPI!
-    private var localStore: MockMeetingLocalStoreProtocol!
+    private var repository: MockMeetingRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
-        meetingsAPI = MockMeetingsAPI()
-        localStore = MockMeetingLocalStoreProtocol()
+        repository = MockMeetingRepositoryProtocol()
         sut = MeetingUpdateEventProcessor(
-            meetingsAPI: meetingsAPI,
-            localStore: localStore
+            repository: repository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        meetingsAPI = nil
-        localStore = nil
+        repository = nil
         sut = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Stores_Meeting_Contained_In_Backend_Response() async throws {
+    func testProcessEvent_It_Pulls_Meeting_From_Repository() async throws {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meeting]
-        localStore.storeMeeting_MockMethod = { _ in }
+        repository.pullMeetingId_MockMethod = { _ in }
 
         // When
 
@@ -60,33 +55,13 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(localStore.storeMeeting_Invocations.count, 1)
-        XCTAssertEqual(localStore.storeMeeting_Invocations.first?.id, Scaffolding.meetingID)
-        XCTAssertTrue(localStore.deleteMeetingIdDomain_Invocations.isEmpty)
+        XCTAssertEqual(repository.pullMeetingId_Invocations, [Scaffolding.meetingID])
     }
 
-    func testProcessEvent_It_Deletes_Meeting_Missing_From_Backend_Response() async throws {
+    func testProcessEvent_It_Throws_When_Pulling_Meeting_Fails() async {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = []
-        localStore.deleteMeetingIdDomain_MockMethod = { _, _ in }
-
-        // When
-
-        try await sut.processEvent(Scaffolding.event)
-
-        // Then
-
-        XCTAssertTrue(localStore.storeMeeting_Invocations.isEmpty)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.count, 1)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.first?.id, Scaffolding.meetingID.id)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.first?.domain, Scaffolding.meetingID.domain)
-    }
-
-    func testProcessEvent_It_Throws_When_Listing_Meetings_Fails() async {
-        // Mock
-
-        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        repository.pullMeetingId_MockError = MeetingsAPIError.meetingNotFound
 
         // When / Then
 
@@ -94,8 +69,7 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
             try await sut.processEvent(Scaffolding.event)
             XCTFail("expected an error to be thrown")
         } catch {
-            XCTAssertTrue(localStore.storeMeeting_Invocations.isEmpty)
-            XCTAssertTrue(localStore.deleteMeetingIdDomain_Invocations.isEmpty)
+            XCTAssertEqual(repository.pullMeetingId_Invocations, [Scaffolding.meetingID])
         }
     }
 
@@ -107,19 +81,6 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
         )
 
         static let event = MeetingUpdateEvent(meetingID: meetingID)
-
-        static let meeting = MeetingResponse(
-            id: meetingID,
-            title: "Weekly Sync",
-            creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-            startTime: Date(timeIntervalSince1970: 1_000_000),
-            endTime: Date(timeIntervalSince1970: 1_003_600),
-            conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-            invitedEmails: [],
-            isTrial: false,
-            createdAt: Date(timeIntervalSince1970: 900_000),
-            updatedAt: Date(timeIntervalSince1970: 900_000)
-        )
 
     }
 

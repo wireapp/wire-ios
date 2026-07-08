@@ -20,10 +20,10 @@ import WireNetwork
 
 struct MeetingDeleteEventProcessor: MeetingDeleteEventProcessorProtocol {
 
-    let localStore: any MeetingLocalStoreProtocol
+    let repository: any MeetingRepositoryProtocol
 
     func processEvent(_ event: MeetingDeleteEvent) async {
-        await localStore.deleteMeeting(
+        await repository.deleteLocalMeeting(
             id: event.meetingID.id,
             domain: event.meetingID.domain
         )

@@ -25,28 +25,28 @@ import XCTest
 final class MeetingDeleteEventProcessorTests: XCTestCase {
 
     private var sut: MeetingDeleteEventProcessor!
-    private var localStore: MockMeetingLocalStoreProtocol!
+    private var repository: MockMeetingRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
-        localStore = MockMeetingLocalStoreProtocol()
+        repository = MockMeetingRepositoryProtocol()
         sut = MeetingDeleteEventProcessor(
-            localStore: localStore
+            repository: repository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        localStore = nil
+        repository = nil
         sut = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Deletes_Meeting_From_Local_Store() async {
+    func testProcessEvent_It_Deletes_Local_Meeting_Via_Repository() async {
         // Mock
 
-        localStore.deleteMeetingIdDomain_MockMethod = { _, _ in }
+        repository.deleteLocalMeetingIdDomain_MockMethod = { _, _ in }
 
         // When
 
@@ -54,9 +54,9 @@ final class MeetingDeleteEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.count, 1)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.first?.id, Scaffolding.meetingID.id)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.first?.domain, Scaffolding.meetingID.domain)
+        XCTAssertEqual(repository.deleteLocalMeetingIdDomain_Invocations.count, 1)
+        XCTAssertEqual(repository.deleteLocalMeetingIdDomain_Invocations.first?.id, Scaffolding.meetingID.id)
+        XCTAssertEqual(repository.deleteLocalMeetingIdDomain_Invocations.first?.domain, Scaffolding.meetingID.domain)
     }
 
     private enum Scaffolding {

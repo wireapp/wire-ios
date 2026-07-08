@@ -2925,6 +2925,50 @@ public class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol {
 
 }
 
+public class MockMeetingRepositoryProtocol: MeetingRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullMeeting
+
+    public var pullMeetingId_Invocations: [WireNetwork.QualifiedID] = []
+    public var pullMeetingId_MockError: Error?
+    public var pullMeetingId_MockMethod: ((WireNetwork.QualifiedID) async throws -> Void)?
+
+    public func pullMeeting(id: WireNetwork.QualifiedID) async throws {
+        pullMeetingId_Invocations.append(id)
+
+        if let error = pullMeetingId_MockError {
+            throw error
+        }
+
+        guard let mock = pullMeetingId_MockMethod else {
+            fatalError("no mock for `pullMeetingId`")
+        }
+
+        try await mock(id)
+    }
+
+    // MARK: - deleteLocalMeeting
+
+    public var deleteLocalMeetingIdDomain_Invocations: [(id: UUID, domain: String)] = []
+    public var deleteLocalMeetingIdDomain_MockMethod: ((UUID, String) async -> Void)?
+
+    public func deleteLocalMeeting(id: UUID, domain: String) async {
+        deleteLocalMeetingIdDomain_Invocations.append((id: id, domain: domain))
+
+        guard let mock = deleteLocalMeetingIdDomain_MockMethod else {
+            fatalError("no mock for `deleteLocalMeetingIdDomain`")
+        }
+
+        await mock(id, domain)
+    }
+
+}
+
 public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - Life cycle

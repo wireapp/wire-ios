@@ -20,23 +20,10 @@ import WireNetwork
 
 struct MeetingUpdateEventProcessor: MeetingUpdateEventProcessorProtocol {
 
-    let meetingsAPI: any MeetingsAPI
-    let localStore: any MeetingLocalStoreProtocol
+    let repository: any MeetingRepositoryProtocol
 
     func processEvent(_ event: MeetingUpdateEvent) async throws {
-        // The event only carries the meeting id and there is no endpoint
-        // to fetch a single meeting, so refetch the list to get the details.
-        let meetings = try await meetingsAPI.listMeetings()
-
-        if let meeting = meetings.first(where: { $0.id == event.meetingID }) {
-            await localStore.storeMeeting(meeting)
-        } else {
-            // The meeting no longer exists on the backend.
-            await localStore.deleteMeeting(
-                id: event.meetingID.id,
-                domain: event.meetingID.domain
-            )
-        }
+        try await repository.pullMeeting(id: event.meetingID)
     }
 
 }
