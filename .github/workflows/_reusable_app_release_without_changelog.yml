@@ -160,6 +160,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Run setup
+        run: sh ./setup.sh
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
