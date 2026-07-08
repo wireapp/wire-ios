@@ -28,15 +28,25 @@ protocol NoDefaultBackendViewModelDelegate: AnyObject {
     func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, requestUserConfirmationForBackendSwitch environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void)
 }
 
+/// The subset of `SessionManager` behavior that `NoDefaultBackendViewModel` needs.
+/// Exists so tests can substitute a lightweight double for the real (non-mockable) `SessionManager`.
+protocol BackendConfigurationSessionManaging: AnyObject {
+    func fetchBackendEnvironment(at url: URL, completion: @escaping (Result<BackendEnvironment, Error>) -> Void)
+    func markNetworkSessionsAsReady(_ ready: Bool)
+    func switchBackendWithoutResolving(to environment: BackendEnvironment)
+}
+
+extension SessionManager: BackendConfigurationSessionManaging {}
+
 /// Validates a backend configuration link (typed or scanned) and, once valid,
 /// fetches and applies the corresponding backend environment.
 final class NoDefaultBackendViewModel {
 
     weak var delegate: NoDefaultBackendViewModelDelegate?
 
-    private let sessionManager: () -> SessionManager?
+    private let sessionManager: () -> BackendConfigurationSessionManaging?
 
-    init(sessionManager: @escaping () -> SessionManager? = { SessionManager.shared }) {
+    init(sessionManager: @escaping () -> BackendConfigurationSessionManaging? = { SessionManager.shared }) {
         self.sessionManager = sessionManager
     }
 

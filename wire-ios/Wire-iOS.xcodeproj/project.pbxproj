@@ -527,6 +527,7 @@
 				Authentication/BackendConfiguredViewControllerTests.swift,
 				Authentication/MockAuthenticationFeatureProvider.swift,
 				Authentication/NoDefaultBackendViewControllerTests.swift,
+				Authentication/NoDefaultBackendViewModelTests.swift,
 				AvailabilityLabelTests.swift,
 				"AVAsset/AVURLAsset+conversionTests.swift",
 				Backup/BackupExcluderTests.swift,
