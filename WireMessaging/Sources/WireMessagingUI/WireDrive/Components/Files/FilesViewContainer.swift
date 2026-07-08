@@ -109,10 +109,11 @@ package struct FilesViewContainer: View {
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
             useCases: .init(
-                fetchNodes: WireDriveFetchNodesPageUseCase(
-                    configuration: .conversationFileView(
-                        root: path.last.map { .path($0.filePath) } ?? .path(cellName),
-                    ),
+                fetchNodesPage: WireDriveFetchNodesPageUseCase(
+                    repository: nodesRepository
+                ),
+                fetchNodes: WireDriveFetchNodesUseCase(
+                    state: WireDriveNodesCollection(),
                     repository: nodesRepository
                 ),
                 deleteNodes: WireDriveDeleteNodesUseCase(
@@ -160,6 +161,13 @@ package struct FilesViewContainer: View {
                 ),
                 getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                     localAssetRepository: localAssetRepository
+                ),
+                observeAsset: WireDriveObserveAssetUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                moveNode: WireDriveMoveNodeUseCase(
+                    nodesRepository: nodesRepository,
+                    localAssetRepository: localAssetRepository
                 )
             ),
             title: path.last?.name,
@@ -168,8 +176,6 @@ package struct FilesViewContainer: View {
                 path = items
             },
             isCellsStatePending: isCellsStatePending,
-            localAssetRepository: localAssetRepository,
-            nodesRepository: nodesRepository,
             cellName: cellName,
             isBrowsing: false,
             isRecycleBin: false,

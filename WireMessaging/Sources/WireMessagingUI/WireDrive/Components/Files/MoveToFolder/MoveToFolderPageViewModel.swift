@@ -96,7 +96,6 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     private let nodeName: String
     private let onNavigate: (String) -> Void
     private let onFinish: () -> Void
-    private let nodesCollection: WireDriveNodesCollection
     private let fetchNodesUseCase: WireDriveFetchNodesUseCase
     private let moveNodeUseCase: WireDriveMoveNodeUseCase
     private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
@@ -119,7 +118,6 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         nodeName: String,
         onNavigate: @escaping (String) -> Void,
         onFinish: @escaping () -> Void,
-        nodesCollection: WireDriveNodesCollection,
         fetchNodesUseCase: WireDriveFetchNodesUseCase,
         moveNodeUseCase: WireDriveMoveNodeUseCase,
         createFileUseCase: any WireDriveCreateFileUseCaseProtocol
@@ -131,12 +129,11 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         self.originalContainerPath = originalContainerPath
         self.onNavigate = onNavigate
         self.onFinish = onFinish
-        self.nodesCollection = nodesCollection
         self.fetchNodesUseCase = fetchNodesUseCase
         self.moveNodeUseCase = moveNodeUseCase
         self.createFileUseCase = createFileUseCase
 
-        nodesCollection.observeNodes().sink { [weak self] nodes in
+        fetchNodesUseCase.nodes.sink { [weak self] nodes in
             self?.nodes = nodes.filter { $0.id != nodeID }
         }.store(in: &subscriptions)
     }
@@ -307,7 +304,10 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         loadingContentError = nil
         isLoadingContent = true
         do {
-            hasMoreContent = try await fetchNodesUseCase.invoke(request: .reload(searchTerm: nil)).hasMore
+            hasMoreContent = try await fetchNodesUseCase.invoke(
+                request: .reload(searchTerm: nil),
+                configuration: .moveToFolder(root: containerPath)
+            ).hasMore
         } catch where error.isURLErrorCancelled {
             // no op
         } catch {

@@ -70,10 +70,11 @@ package struct RecycleBinContainer: View {
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
             useCases: .init(
-                fetchNodes: WireDriveFetchNodesPageUseCase(
-                    configuration: .recycleBinView(
-                        root: path.last.map { .id($0.id) } ?? .path(cellName),
-                    ),
+                fetchNodesPage: WireDriveFetchNodesPageUseCase(
+                    repository: nodesRepository
+                ),
+                fetchNodes: WireDriveFetchNodesUseCase(
+                    state: WireDriveNodesCollection(),
                     repository: nodesRepository
                 ),
                 deleteNodes: WireDriveDeleteNodesUseCase(
@@ -121,6 +122,13 @@ package struct RecycleBinContainer: View {
                 ),
                 getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                     localAssetRepository: localAssetRepository
+                ),
+                observeAsset: WireDriveObserveAssetUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                moveNode: WireDriveMoveNodeUseCase(
+                    nodesRepository: nodesRepository,
+                    localAssetRepository: localAssetRepository
                 )
             ),
             title: path.last?.name,
@@ -129,8 +137,6 @@ package struct RecycleBinContainer: View {
                 path = items
             },
             isCellsStatePending: isCellsStatePending,
-            localAssetRepository: localAssetRepository,
-            nodesRepository: nodesRepository,
             cellName: cellName,
             isBrowsing: false,
             isRecycleBin: true

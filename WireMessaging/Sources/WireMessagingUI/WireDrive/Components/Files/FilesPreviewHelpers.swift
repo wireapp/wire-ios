@@ -40,8 +40,11 @@ extension FilesViewModel {
 
         return FilesViewModel(
             useCases: .init(
-                fetchNodes: WireDriveFetchNodesPageUseCase(
-                    configuration: .conversationFileView(root: .path("root")),
+                fetchNodesPage: WireDriveFetchNodesPageUseCase(
+                    repository: previewNodesRepository()
+                ),
+                fetchNodes: WireDriveFetchNodesUseCase(
+                    state: WireDriveNodesCollection(),
                     repository: previewNodesRepository()
                 ),
                 deleteNodes: WireDriveDeleteNodesUseCase(
@@ -112,12 +115,17 @@ extension FilesViewModel {
                 ),
                 getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                     localAssetRepository: localAssetRepository
+                ),
+                observeAsset: WireDriveObserveAssetUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                moveNode: WireDriveMoveNodeUseCase(
+                    nodesRepository: previewNodesRepository(),
+                    localAssetRepository: localAssetRepository
                 )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
-            localAssetRepository: localAssetRepository,
-            nodesRepository: previewNodesRepository(),
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isBrowsing: isBrowsing
         )
@@ -177,7 +185,11 @@ extension FilesItemViewModel {
             ),
             selectedSortingKey: .date,
             conversationName: "Test",
-            localAssetRepository: PreviewLocalAssetRepository(),
+            observeAssetUseCase: WireDriveObserveAssetUseCase(localAssetRepository: PreviewLocalAssetRepository()),
+            getAssetUseCase: WireDriveGetAssetUseCase(
+                localAssetRepository: PreviewLocalAssetRepository(),
+                fileCache: MockFileCache()
+            ),
             onItemAction: { _, _ in },
             isBrowsing: false,
             isInRecycleBin: false,

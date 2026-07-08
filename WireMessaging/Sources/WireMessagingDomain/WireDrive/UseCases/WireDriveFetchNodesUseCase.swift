@@ -17,9 +17,11 @@
 //
 
 import Foundation
+package import Combine
 
 /// Fetches nodes for a particular configuration, and mutating the injected WireDriveNodesCollection.
-package final class WireDriveFetchNodesUseCase: Sendable {
+@MainActor
+package final class WireDriveFetchNodesUseCase {
 
     /// The type of request.
     package enum Request {
@@ -32,50 +34,55 @@ package final class WireDriveFetchNodesUseCase: Sendable {
 
     }
 
-    private let configuration: WireDriveGetNodesRequest.Configuration
     private let repository: any WireDriveNodesRepositoryProtocol
     private let state: WireDriveNodesCollection
 
-    @MainActor private var searchTerm: String?
-
-    @MainActor private var currentTask: Task<(nodes: [WireDriveNode], nextOffset: Int?), any Error>?
+    private var subscriptions = Set<AnyCancellable>()
+    private let _nodes = PassthroughSubject<[WireDriveNode], Never>()
+    package var nodes: AnyPublisher<[WireDriveNode], Never> { _nodes.eraseToAnyPublisher() }
+    private var searchTerm: String?
+    private var currentTask: Task<(nodes: [WireDriveNode], nextOffset: Int?), any Error>?
 
     /// Initializes the use case with the required parameters.
     /// - Parameters:
-    ///   - configuration: The configuration for the use case.
     ///   - repository: The repository to use for fetching nodes.
     package init(
         state: WireDriveNodesCollection,
-        configuration: WireDriveGetNodesRequest.Configuration,
         repository: any WireDriveNodesRepositoryProtocol
     ) {
         self.state = state
-        self.configuration = configuration
         self.repository = repository
+
+        state.observeNodes().sink { [weak self] nodes in
+            self?._nodes.send(nodes)
+        }.store(in: &subscriptions)
     }
 
     /// Invokes the use case with the given `request` mutating the injected WireDriveNodesCollection.
     package func invoke(
-        request: Request
+        request: Request,
+        configuration: WireDriveGetNodesRequest.Configuration
     ) async throws -> (nodes: [WireDriveNode], hasMore: Bool) {
         switch request {
         case let .reload(searchTerm):
-            await setSearchTerm(searchTerm)
-            await cancelCurrentTask()
-            await state.setNodes([])
+            setSearchTerm(searchTerm)
+            cancelCurrentTask()
+            state.setNodes([])
         case .loadMore:
             break
         }
 
-        let task = await loadMoreTask()
+        let task = loadMoreTask(configuration: configuration)
         let (newNodes, nextOffset) = try await task.value
-        let allNodes = await appendNodes(newNodes)
+        let allNodes = appendNodes(newNodes)
 
         return (allNodes, nextOffset != nil)
     }
 
     @MainActor
-    private func loadMoreTask() -> Task<(nodes: [WireDriveNode], nextOffset: Int?), any Error> {
+    private func loadMoreTask(
+        configuration: WireDriveGetNodesRequest.Configuration
+    ) -> Task<(nodes: [WireDriveNode], nextOffset: Int?), any Error> {
         if let task = currentTask {
             return task
         }
