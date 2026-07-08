@@ -133,6 +133,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         self.moveNodeUseCase = moveNodeUseCase
         self.createFileUseCase = createFileUseCase
 
+        fetchNodesUseCase.clearNodes()
         fetchNodesUseCase.nodes.sink { [weak self] nodes in
             self?.nodes = nodes.filter { $0.id != nodeID }
         }.store(in: &subscriptions)

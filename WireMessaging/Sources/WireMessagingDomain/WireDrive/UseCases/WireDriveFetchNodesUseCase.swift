@@ -35,7 +35,7 @@ package final class WireDriveFetchNodesUseCase {
     }
 
     private let repository: any WireDriveNodesRepositoryProtocol
-    private let state: WireDriveNodesCollection
+    private var state: WireDriveNodesCollection
 
     private var subscriptions = Set<AnyCancellable>()
     private let _nodes = PassthroughSubject<[WireDriveNode], Never>()
@@ -52,10 +52,20 @@ package final class WireDriveFetchNodesUseCase {
     ) {
         self.state = state
         self.repository = repository
+        startNodesObservation()
+    }
 
-        state.observeNodes().sink { [weak self] nodes in
-            self?._nodes.send(nodes)
-        }.store(in: &subscriptions)
+    private func startNodesObservation() {
+        state.observeNodes()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] nodes in
+                self?._nodes.send(nodes)
+            }.store(in: &subscriptions)
+    }
+
+    package func clearNodes() {
+        state = WireDriveNodesCollection()
+        startNodesObservation()
     }
 
     /// Invokes the use case with the given `request` mutating the injected WireDriveNodesCollection.
