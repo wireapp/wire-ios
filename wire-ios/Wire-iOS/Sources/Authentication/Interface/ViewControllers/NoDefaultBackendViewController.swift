@@ -375,11 +375,13 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
         errorLabel.text = message
         errorLabel.isHidden = false
         configurationTextField.layer.borderColor = SemanticColors.Icon.foregroundDefaultRed.cgColor
+        fieldCaptionLabel.textColor = SemanticColors.Icon.foregroundDefaultRed
     }
 
     private func clearError() {
         errorLabel.text = nil
         errorLabel.isHidden = true
+        fieldCaptionLabel.textColor = .accent()
     }
 }
 
