@@ -658,7 +658,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     func deselectItem(withLocalIdentifier localIdentifier: String) {
         guard let assetLibrary else { return }
 
-        for index in 0..<assetLibrary.count {
+        for index in 0 ..< assetLibrary.count {
             guard let asset = try? assetLibrary.asset(atIndex: index) else { continue }
             if asset.localIdentifier == localIdentifier {
                 let indexPath = IndexPath(item: Int(index), section: Int(CameraKeyboardSection.photos.rawValue))
