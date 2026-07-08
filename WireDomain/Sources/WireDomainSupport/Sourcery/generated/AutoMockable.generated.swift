@@ -2886,6 +2886,44 @@ public class MockMainAppPushChannelCoordinatorProtocol: MainAppPushChannelCoordi
 
 }
 
+class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - storeMeeting
+
+    var storeMeeting_Invocations: [MeetingResponse] = []
+    var storeMeeting_MockMethod: ((MeetingResponse) async -> Void)?
+
+    func storeMeeting(_ meeting: MeetingResponse) async {
+        storeMeeting_Invocations.append(meeting)
+
+        guard let mock = storeMeeting_MockMethod else {
+            fatalError("no mock for `storeMeeting`")
+        }
+
+        await mock(meeting)
+    }
+
+    // MARK: - deleteMeeting
+
+    var deleteMeetingIdDomain_Invocations: [(id: UUID, domain: String)] = []
+    var deleteMeetingIdDomain_MockMethod: ((UUID, String) async -> Void)?
+
+    func deleteMeeting(id: UUID, domain: String) async {
+        deleteMeetingIdDomain_Invocations.append((id: id, domain: domain))
+
+        guard let mock = deleteMeetingIdDomain_MockMethod else {
+            fatalError("no mock for `deleteMeetingIdDomain`")
+        }
+
+        await mock(id, domain)
+    }
+
+}
+
 public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - Life cycle

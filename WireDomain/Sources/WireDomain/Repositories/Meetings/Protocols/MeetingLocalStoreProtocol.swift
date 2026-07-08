@@ -16,38 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents an update event received from the backend
-/// that can be used to incrementally update the state of
-/// the client.
+import Foundation
+import WireNetwork
 
-public enum UpdateEvent: Equatable, Sendable {
+// sourcery: AutoMockable
+/// A local store dedicated to meetings.
+/// The store uses the injected context to perform `CoreData` operations on meeting objects.
+protocol MeetingLocalStoreProtocol {
 
-    /// A conversation event.
+    /// Stores a meeting locally, creating or updating it.
+    ///
+    /// - Parameter meeting: The meeting to store.
 
-    case conversation(ConversationEvent)
+    func storeMeeting(_ meeting: MeetingResponse) async
 
-    /// A feature config event.
+    /// Deletes a locally stored meeting.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the meeting to delete.
+    ///   - domain: The domain of the meeting to delete.
 
-    case featureConfig(FeatureConfigEvent)
-
-    /// A federation event.
-
-    case federation(FederationEvent)
-
-    /// A user event.
-
-    case user(UserEvent)
-
-    /// A team event.
-
-    case team(TeamEvent)
-
-    /// A meeting event.
-
-    case meeting(MeetingEvent)
-
-    /// An event that is not known by the client.
-
-    case unknown(eventType: String)
+    func deleteMeeting(id: UUID, domain: String) async
 
 }

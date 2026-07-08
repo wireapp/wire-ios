@@ -16,38 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents an update event received from the backend
-/// that can be used to incrementally update the state of
-/// the client.
+enum MeetingEventType: String {
 
-public enum UpdateEvent: Equatable, Sendable {
-
-    /// A conversation event.
-
-    case conversation(ConversationEvent)
-
-    /// A feature config event.
-
-    case featureConfig(FeatureConfigEvent)
-
-    /// A federation event.
-
-    case federation(FederationEvent)
-
-    /// A user event.
-
-    case user(UserEvent)
-
-    /// A team event.
-
-    case team(TeamEvent)
-
-    /// A meeting event.
-
-    case meeting(MeetingEvent)
-
-    /// An event that is not known by the client.
-
-    case unknown(eventType: String)
+    case create = "meeting.create"
+    case delete = "meeting.delete"
+    case update = "meeting.update"
 
 }
