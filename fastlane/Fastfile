@@ -455,7 +455,9 @@ platform :ios do
         xcode_version = options[:xcode_version]
 
         build_type = options[:build_type]
-        if build_type.nil?
+        # Delete configurations in case we switch to different branch or repo
+        sh "rm -rf ../Configuration"
+        if build_type.nil? 
             sh "cd .. && ./setup.sh"
         else
             override_folder = options[:override_folder]
