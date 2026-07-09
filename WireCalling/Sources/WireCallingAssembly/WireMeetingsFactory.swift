@@ -18,10 +18,8 @@
 
 public import UIKit
 public import WireCallingDomain
-public import WireNetwork
 
 import SwiftUI
-import WireCallingData
 import WireCallingUI
 import WireFoundation
 
@@ -32,15 +30,10 @@ public struct WireMeetingsFactory {
 
     @MainActor
     public func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        meetingsLocalStore: any MeetingsLocalStoreProtocol,
+        meetingRepository: any MeetingRepositoryProtocol,
         memberRepository: any MemberRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController {
-        let meetingRepository = MeetingRepository(
-            meetingsAPI: meetingsAPI,
-            meetingsLocalStore: meetingsLocalStore
-        )
         let createInstantMeetingUseCase = CreateInstantMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository,

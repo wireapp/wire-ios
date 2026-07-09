@@ -30,6 +30,7 @@ import WireDataModel
 import WireDomainPackage
 import WireCoreCrypto
 import Combine
+import WireCallingDomain
 
 @testable import WireDomain
 
@@ -2886,19 +2887,37 @@ public class MockMainAppPushChannelCoordinatorProtocol: MainAppPushChannelCoordi
 
 }
 
-public class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol {
+public class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol, @unchecked Sendable {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - storedMeetings
+
+    public var storedMeetings_Invocations: [Void] = []
+    public var storedMeetings_MockMethod: (() async -> [Meeting])?
+    public var storedMeetings_MockValue: [Meeting]?
+
+    public func storedMeetings() async -> [Meeting] {
+        storedMeetings_Invocations.append(())
+
+        if let mock = storedMeetings_MockMethod {
+            return await mock()
+        } else if let mock = storedMeetings_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `storedMeetings`")
+        }
+    }
+
     // MARK: - storeMeeting
 
-    public var storeMeeting_Invocations: [MeetingResponse] = []
-    public var storeMeeting_MockMethod: ((MeetingResponse) async -> Void)?
+    public var storeMeeting_Invocations: [Meeting] = []
+    public var storeMeeting_MockMethod: ((Meeting) async -> Void)?
 
-    public func storeMeeting(_ meeting: MeetingResponse) async {
+    public func storeMeeting(_ meeting: Meeting) async {
         storeMeeting_Invocations.append(meeting)
 
         guard let mock = storeMeeting_MockMethod else {
@@ -2908,63 +2927,34 @@ public class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol {
         await mock(meeting)
     }
 
+    // MARK: - replaceAllMeetings
+
+    public var replaceAllMeetingsWith_Invocations: [[Meeting]] = []
+    public var replaceAllMeetingsWith_MockMethod: (([Meeting]) async -> Void)?
+
+    public func replaceAllMeetings(with meetings: [Meeting]) async {
+        replaceAllMeetingsWith_Invocations.append(meetings)
+
+        guard let mock = replaceAllMeetingsWith_MockMethod else {
+            fatalError("no mock for `replaceAllMeetingsWith`")
+        }
+
+        await mock(meetings)
+    }
+
     // MARK: - deleteMeeting
 
-    public var deleteMeetingIdDomain_Invocations: [(id: UUID, domain: String)] = []
-    public var deleteMeetingIdDomain_MockMethod: ((UUID, String) async -> Void)?
+    public var deleteMeetingId_Invocations: [QualifiedID] = []
+    public var deleteMeetingId_MockMethod: ((QualifiedID) async -> Void)?
 
-    public func deleteMeeting(id: UUID, domain: String) async {
-        deleteMeetingIdDomain_Invocations.append((id: id, domain: domain))
+    public func deleteMeeting(id: QualifiedID) async {
+        deleteMeetingId_Invocations.append(id)
 
-        guard let mock = deleteMeetingIdDomain_MockMethod else {
-            fatalError("no mock for `deleteMeetingIdDomain`")
+        guard let mock = deleteMeetingId_MockMethod else {
+            fatalError("no mock for `deleteMeetingId`")
         }
 
-        await mock(id, domain)
-    }
-
-}
-
-public class MockMeetingRepositoryProtocol: MeetingRepositoryProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - pullMeeting
-
-    public var pullMeetingId_Invocations: [WireNetwork.QualifiedID] = []
-    public var pullMeetingId_MockError: Error?
-    public var pullMeetingId_MockMethod: ((WireNetwork.QualifiedID) async throws -> Void)?
-
-    public func pullMeeting(id: WireNetwork.QualifiedID) async throws {
-        pullMeetingId_Invocations.append(id)
-
-        if let error = pullMeetingId_MockError {
-            throw error
-        }
-
-        guard let mock = pullMeetingId_MockMethod else {
-            fatalError("no mock for `pullMeetingId`")
-        }
-
-        try await mock(id)
-    }
-
-    // MARK: - deleteLocalMeeting
-
-    public var deleteLocalMeetingIdDomain_Invocations: [(id: UUID, domain: String)] = []
-    public var deleteLocalMeetingIdDomain_MockMethod: ((UUID, String) async -> Void)?
-
-    public func deleteLocalMeeting(id: UUID, domain: String) async {
-        deleteLocalMeetingIdDomain_Invocations.append((id: id, domain: domain))
-
-        guard let mock = deleteLocalMeetingIdDomain_MockMethod else {
-            fatalError("no mock for `deleteLocalMeetingIdDomain`")
-        }
-
-        await mock(id, domain)
+        await mock(id)
     }
 
 }

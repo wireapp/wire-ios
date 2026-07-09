@@ -17,25 +17,36 @@
 //
 
 import Foundation
-import WireNetwork
+import WireCallingDomain
 
 // sourcery: AutoMockable
 /// A local store dedicated to meetings.
 /// The store uses the injected context to perform `CoreData` operations on meeting objects.
-public protocol MeetingLocalStoreProtocol {
+public protocol MeetingLocalStoreProtocol: Sendable {
+
+    /// Fetches all locally stored meetings.
+    ///
+    /// - Returns: The stored meetings.
+
+    func storedMeetings() async -> [Meeting]
 
     /// Stores a meeting locally, creating or updating it.
     ///
     /// - Parameter meeting: The meeting to store.
 
-    func storeMeeting(_ meeting: MeetingResponse) async
+    func storeMeeting(_ meeting: Meeting) async
+
+    /// Stores the given meetings and deletes all stored meetings not contained in the list.
+    /// Use this when the given meetings are a full snapshot of the backend state.
+    ///
+    /// - Parameter meetings: The meetings to store.
+
+    func replaceAllMeetings(with meetings: [Meeting]) async
 
     /// Deletes a locally stored meeting.
     ///
-    /// - Parameters:
-    ///   - id: The id of the meeting to delete.
-    ///   - domain: The domain of the meeting to delete.
+    /// - Parameter id: The qualified id of the meeting to delete.
 
-    func deleteMeeting(id: UUID, domain: String) async
+    func deleteMeeting(id: QualifiedID) async
 
 }

@@ -705,7 +705,7 @@ public final class ClientSessionComponent {
         context: syncContext
     )
 
-    private lazy var meetingRepository = MeetingRepository(
+    public private(set) lazy var meetingRepository = MeetingRepository(
         meetingsAPI: meetingsAPI,
         localStore: meetingLocalStore
     )

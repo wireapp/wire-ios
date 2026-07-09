@@ -1743,20 +1743,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsViewMeetingsAPIMeetingsLocalStoreMemberRepositoryConversationRepository_Invocations: [(meetingsAPI: any MeetingsAPI, meetingsLocalStore: any MeetingsLocalStoreProtocol, memberRepository: any MemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol)] = []
-    var makeMeetingsViewMeetingsAPIMeetingsLocalStoreMemberRepositoryConversationRepository_MockMethod: ((any MeetingsAPI, any MeetingsLocalStoreProtocol, any MemberRepositoryProtocol, any MeetingConversationRepositoryProtocol) -> UIViewController)?
-    var makeMeetingsViewMeetingsAPIMeetingsLocalStoreMemberRepositoryConversationRepository_MockValue: UIViewController?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_Invocations: [(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol)] = []
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockMethod: ((any MeetingRepositoryProtocol, any MemberRepositoryProtocol, any MeetingConversationRepositoryProtocol) -> UIViewController)?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView(meetingsAPI: any MeetingsAPI, meetingsLocalStore: any MeetingsLocalStoreProtocol, memberRepository: any MemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol) -> UIViewController {
-        makeMeetingsViewMeetingsAPIMeetingsLocalStoreMemberRepositoryConversationRepository_Invocations.append((meetingsAPI: meetingsAPI, meetingsLocalStore: meetingsLocalStore, memberRepository: memberRepository, conversationRepository: conversationRepository))
+    func makeMeetingsView(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol) -> UIViewController {
+        makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_Invocations.append((meetingRepository: meetingRepository, memberRepository: memberRepository, conversationRepository: conversationRepository))
 
-        if let mock = makeMeetingsViewMeetingsAPIMeetingsLocalStoreMemberRepositoryConversationRepository_MockMethod {
-            return mock(meetingsAPI, meetingsLocalStore, memberRepository, conversationRepository)
-        } else if let mock = makeMeetingsViewMeetingsAPIMeetingsLocalStoreMemberRepositoryConversationRepository_MockValue {
+        if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockMethod {
+            return mock(meetingRepository, memberRepository, conversationRepository)
+        } else if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsViewMeetingsAPIMeetingsLocalStoreMemberRepositoryConversationRepository`")
+            fatalError("no mock for `makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository`")
         }
     }
 

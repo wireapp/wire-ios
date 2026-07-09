@@ -11,16 +11,15 @@ let package = Package(
     platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
+        .library(name: "WireCallingDomainSupport", targets: ["WireCallingDomainSupport"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
     dependencies: [
-        .package(path: "../WireData"),
         .package(path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI"),
-        .package(path: "../WireNetwork")
+        .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
         .target(
@@ -33,27 +32,15 @@ let package = Package(
         .target(
             name: "WireCallingDomainSupport",
             dependencies: [
-                "WireCallingDomain",
-                "WireCallingData"
+                "WireCallingDomain"
             ],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
-        ),
-        .target(
-            name: "WireCallingData",
-            dependencies: [
-                "WireCallingDomain",
-                "WireData",
-                "WireLogging",
-                "WireNetwork"
-            ]
         ),
         .target(
             name: "WireCallingAssembly",
             dependencies: [
                 "WireCallingDomain",
-                "WireCallingUI",
-                "WireCallingData",
-                "WireNetwork"
+                "WireCallingUI"
             ]
         ),
         .target(
@@ -73,7 +60,6 @@ let package = Package(
                 "WireCallingUI",
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
-                "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireFoundationSupport", package: "WireFoundation")
             ],

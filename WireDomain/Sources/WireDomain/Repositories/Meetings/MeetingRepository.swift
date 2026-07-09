@@ -17,8 +17,13 @@
 //
 
 import Foundation
+import WireCallingDomain
 import WireNetwork
 
+/// The single implementation of `WireCallingDomain.MeetingRepositoryProtocol`.
+///
+/// The repository bridges between the backend API (`MeetingResponse`) and the
+/// meeting domain model (`Meeting`), persisting meetings via the local store.
 public final class MeetingRepository: MeetingRepositoryProtocol {
 
     // MARK: - Properties
@@ -38,26 +43,131 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     // MARK: - Public
 
-    public func pullMeeting(id: WireNetwork.QualifiedID) async throws {
+    public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
+        try await refreshStoredMeetings()
+
+        let allFuture = await localStore.storedMeetings()
+            .filter { $0.start > date }
+            .sorted {
+                if $0.start != $1.start {
+                    $0.start < $1.start
+                } else {
+                    $0.title < $1.title
+                }
+            }
+        let start = min(offset, allFuture.count)
+        let end = min(offset + limit, allFuture.count)
+        return Array(allFuture[start ..< end])
+    }
+
+    public func hasUpcomingMeetings(after date: Date) async throws -> Bool {
+        try await refreshStoredMeetings()
+
+        return await localStore.storedMeetings().contains { $0.start > date }
+    }
+
+    public func createMeeting(
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: WireCallingDomain.MeetingRecurrence?
+    ) async throws -> Meeting {
+        let response = try await meetingsAPI.createMeeting(
+            parameters: CreateMeetingParameters(
+                title: title,
+                startTime: startTime,
+                endTime: endTime,
+                recurrence: recurrence?.toNetworkRecurrence()
+            )
+        )
+        let meeting = response.toDomainMeeting()
+        await localStore.storeMeeting(meeting)
+        return meeting
+    }
+
+    public func pullMeeting(id: QualifiedID) async throws {
         // There is no endpoint to fetch a single meeting,
         // so refetch the list to get the details.
         let meetings = try await meetingsAPI.listMeetings()
 
         if let meeting = meetings.first(where: { $0.id == id }) {
-            await localStore.storeMeeting(meeting)
+            await localStore.storeMeeting(meeting.toDomainMeeting())
         } else {
             // The meeting no longer exists on the backend.
-            await localStore.deleteMeeting(
-                id: id.id,
-                domain: id.domain
-            )
+            await localStore.deleteMeeting(id: id)
         }
     }
 
-    public func deleteLocalMeeting(id: UUID, domain: String) async {
-        await localStore.deleteMeeting(
+    public func deleteLocalMeeting(id: QualifiedID) async {
+        await localStore.deleteMeeting(id: id)
+    }
+
+    // MARK: - Private
+
+    /// Refreshes the local store with the latest snapshot of meetings from the backend.
+    /// When the backend is unreachable, previously stored meetings are kept and served;
+    /// the error is only rethrown if there are no stored meetings to fall back to.
+    private func refreshStoredMeetings() async throws {
+        do {
+            let meetings = try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
+            await localStore.replaceAllMeetings(with: meetings)
+        } catch {
+            guard await !localStore.storedMeetings().isEmpty else { throw error }
+        }
+    }
+
+}
+
+// MARK: - Mapping
+
+private extension MeetingResponse {
+
+    func toDomainMeeting() -> Meeting {
+        Meeting(
             id: id,
-            domain: domain
+            title: title,
+            start: startTime,
+            end: endTime,
+            recurrence: recurrence?.toDomainRecurrence(),
+            members: [],
+            conversationID: conversationID,
+            creatorID: creatorID
+        )
+    }
+
+}
+
+private extension WireNetwork.MeetingRecurrence {
+
+    func toDomainRecurrence() -> WireCallingDomain.MeetingRecurrence {
+        let domainFrequency: WireCallingDomain.MeetingRecurrence.Frequency = switch frequency {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+        return WireCallingDomain.MeetingRecurrence(
+            frequency: domainFrequency,
+            interval: interval ?? 1,
+            until: until
+        )
+    }
+
+}
+
+private extension WireCallingDomain.MeetingRecurrence {
+
+    func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence {
+        let networkFrequency: MeetingFrequency = switch frequency {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+        return WireNetwork.MeetingRecurrence(
+            frequency: networkFrequency,
+            interval: interval,
+            until: until
         )
     }
 

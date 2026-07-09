@@ -17,10 +17,10 @@
 //
 
 import CoreData
+import WireCallingDomain
 import WireDataModel
-import WireNetwork
 
-final class MeetingLocalStore: MeetingLocalStoreProtocol {
+final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
 
     private let context: NSManagedObjectContext
 
@@ -28,37 +28,47 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol {
         self.context = context
     }
 
-    func storeMeeting(_ meeting: MeetingResponse) async {
+    func storedMeetings() async -> [Meeting] {
         await context.perform { [context] in
-            let storedMeeting = Self.fetchOrCreateStoredMeeting(
-                id: meeting.id.id,
-                domain: meeting.id.domain,
-                in: context
-            )
-            storedMeeting.title = meeting.title
-            storedMeeting.start = meeting.startTime
-            storedMeeting.end = meeting.endTime
-            storedMeeting.recurrenceFrequency = meeting.recurrence?.frequency.toStoredFrequency()
-            storedMeeting.recurrenceInterval = Int64(meeting.recurrence?.interval ?? 0)
-            storedMeeting.recurrenceUntil = meeting.recurrence?.until
-            storedMeeting.conversation = ZMConversation.fetch(
-                with: meeting.conversationID.id,
-                domain: meeting.conversationID.domain,
-                in: context
-            )
-            storedMeeting.creator = ZMUser.fetch(
-                with: meeting.creatorID.id,
-                domain: meeting.creatorID.domain,
-                in: context
-            )
+            let request = StoredMeeting.fetchRequest()
+            let storedMeetings = (try? context.fetch(request)) ?? []
+            return storedMeetings.compactMap { $0.toDomainMeeting() }
+        }
+    }
+
+    func storeMeeting(_ meeting: Meeting) async {
+        await context.perform { [context] in
+            Self.upsert(meeting, in: context)
             _ = context.saveOrRollback()
         }
     }
 
-    func deleteMeeting(id: UUID, domain: String) async {
+    func replaceAllMeetings(with meetings: [Meeting]) async {
+        await context.perform { [context] in
+            let newIDs = Set(meetings.map(\.id))
+            let request = StoredMeeting.fetchRequest()
+            let existing = (try? context.fetch(request)) ?? []
+            for storedMeeting in existing {
+                guard let remoteIdentifier = storedMeeting.remoteIdentifier else { continue }
+                let id = QualifiedID(
+                    id: remoteIdentifier,
+                    domain: storedMeeting.domain ?? ""
+                )
+                if !newIDs.contains(id) {
+                    context.delete(storedMeeting)
+                }
+            }
+            for meeting in meetings {
+                Self.upsert(meeting, in: context)
+            }
+            _ = context.saveOrRollback()
+        }
+    }
+
+    func deleteMeeting(id: QualifiedID) async {
         await context.perform { [context] in
             let request = StoredMeeting.fetchRequest()
-            request.predicate = Self.predicate(id: id, domain: domain)
+            request.predicate = Self.predicate(id: id)
             request.fetchLimit = 1
             guard let storedMeeting = try? context.fetch(request).first else { return }
 
@@ -69,13 +79,34 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol {
 
     // MARK: - Private
 
+    private static func upsert(_ meeting: Meeting, in context: NSManagedObjectContext) {
+        let storedMeeting = fetchOrCreateStoredMeeting(id: meeting.id, in: context)
+        storedMeeting.title = meeting.title
+        storedMeeting.start = meeting.start
+        storedMeeting.end = meeting.end
+        storedMeeting.recurrenceFrequency = meeting.recurrence?.frequency.toStoredFrequency()
+        storedMeeting.recurrenceInterval = Int64(meeting.recurrence?.interval ?? 0)
+        storedMeeting.recurrenceUntil = meeting.recurrence?.until
+        storedMeeting.conversation = ZMConversation.fetch(
+            with: meeting.conversationID.id,
+            domain: meeting.conversationID.domain,
+            in: context
+        )
+        storedMeeting.creator = meeting.creatorID.flatMap { creatorID in
+            ZMUser.fetch(
+                with: creatorID.id,
+                domain: creatorID.domain,
+                in: context
+            )
+        }
+    }
+
     private static func fetchOrCreateStoredMeeting(
-        id: UUID,
-        domain: String,
+        id: QualifiedID,
         in context: NSManagedObjectContext
     ) -> StoredMeeting {
         let request = StoredMeeting.fetchRequest()
-        request.predicate = predicate(id: id, domain: domain)
+        request.predicate = predicate(id: id)
         request.fetchLimit = 1
         if let existing = try? context.fetch(request).first {
             return existing
@@ -85,16 +116,16 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol {
             forEntityName: StoredMeeting.entityName,
             into: context
         ) as! StoredMeeting
-        storedMeeting.remoteIdentifier = id
-        storedMeeting.domain = domain
+        storedMeeting.remoteIdentifier = id.id
+        storedMeeting.domain = id.domain
         return storedMeeting
     }
 
-    private static func predicate(id: UUID, domain: String) -> NSPredicate {
+    private static func predicate(id: QualifiedID) -> NSPredicate {
         NSPredicate(
             format: "remoteIdentifier == %@ AND domain == %@",
-            id as CVarArg,
-            domain
+            id.id as CVarArg,
+            id.domain
         )
     }
 
@@ -102,7 +133,54 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol {
 
 // MARK: - Mapping
 
-private extension MeetingFrequency {
+private extension StoredMeeting {
+
+    func toDomainMeeting() -> Meeting? {
+        guard
+            let remoteIdentifier,
+            let title,
+            let start,
+            let end
+        else { return nil }
+
+        guard let conversationID = conversation?.qualifiedID else { return nil }
+
+        return Meeting(
+            id: QualifiedID(id: remoteIdentifier, domain: domain ?? ""),
+            title: title,
+            start: start,
+            end: end,
+            recurrence: toDomainRecurrence(),
+            members: [],
+            conversationID: QualifiedID(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            ),
+            creatorID: creator?.qualifiedID.map {
+                QualifiedID(id: $0.uuid, domain: $0.domain)
+            }
+        )
+    }
+
+    private func toDomainRecurrence() -> WireCallingDomain.MeetingRecurrence? {
+        guard let recurrenceFrequency else { return nil }
+
+        let frequency: WireCallingDomain.MeetingRecurrence.Frequency = switch recurrenceFrequency {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+        return MeetingRecurrence(
+            frequency: frequency,
+            interval: Int(recurrenceInterval),
+            until: recurrenceUntil
+        )
+    }
+
+}
+
+private extension WireCallingDomain.MeetingRecurrence.Frequency {
 
     func toStoredFrequency() -> StoredMeetingRecurrenceFrequency {
         switch self {

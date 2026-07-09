@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainSupport
+import WireCallingDomainSupport
 import WireNetwork
-import WireNetworkSupport
 import XCTest
 
 @testable import WireDomain
@@ -26,11 +25,11 @@ import XCTest
 final class MeetingUpdateEventProcessorTests: XCTestCase {
 
     private var sut: MeetingUpdateEventProcessor!
-    private var repository: MockMeetingRepositoryProtocol!
+    private var repository: MeetingRepositoryProtocolMock!
 
     override func setUp() async throws {
         try await super.setUp()
-        repository = MockMeetingRepositoryProtocol()
+        repository = MeetingRepositoryProtocolMock()
         sut = MeetingUpdateEventProcessor(
             repository: repository
         )
@@ -45,23 +44,19 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
     // MARK: - Tests
 
     func testProcessEvent_It_Pulls_Meeting_From_Repository() async throws {
-        // Mock
-
-        repository.pullMeetingId_MockMethod = { _ in }
-
         // When
 
         try await sut.processEvent(Scaffolding.event)
 
         // Then
 
-        XCTAssertEqual(repository.pullMeetingId_Invocations, [Scaffolding.meetingID])
+        XCTAssertEqual(repository.pullMeetingIdQualifiedIDVoidReceivedInvocations, [Scaffolding.meetingID])
     }
 
     func testProcessEvent_It_Throws_When_Pulling_Meeting_Fails() async {
         // Mock
 
-        repository.pullMeetingId_MockError = MeetingsAPIError.meetingNotFound
+        repository.pullMeetingIdQualifiedIDVoidThrowableError = MeetingsAPIError.meetingNotFound
 
         // When / Then
 
@@ -69,7 +64,7 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
             try await sut.processEvent(Scaffolding.event)
             XCTFail("expected an error to be thrown")
         } catch {
-            XCTAssertEqual(repository.pullMeetingId_Invocations, [Scaffolding.meetingID])
+            XCTAssertEqual(repository.pullMeetingIdQualifiedIDVoidReceivedInvocations, [Scaffolding.meetingID])
         }
     }
 
