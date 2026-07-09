@@ -1,8 +1,0 @@
-{
-    "type": "meeting.delete",
-    "time": "2015-08-19T15:32:28.975Z",
-    "qualified_id": {
-        "domain": "example.com",
-        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
-    }
-}

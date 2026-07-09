@@ -26,7 +26,6 @@ enum StorableUpdateEvent: Equatable, Codable, Sendable {
     case federation(StorableFederationEvent)
     case user(StorableUserEvent)
     case team(StorableTeamEvent)
-    case meeting(StorableMeetingEvent)
     case unknown(eventType: String)
 
     init(_ value: WireNetwork.UpdateEvent) {
@@ -41,8 +40,6 @@ enum StorableUpdateEvent: Equatable, Codable, Sendable {
             self = .user(StorableUserEvent(user))
         case let .team(team):
             self = .team(StorableTeamEvent(team))
-        case let .meeting(meeting):
-            self = .meeting(StorableMeetingEvent(meeting))
         case let .unknown(eventType):
             self = .unknown(eventType: eventType)
         }
@@ -60,8 +57,6 @@ enum StorableUpdateEvent: Equatable, Codable, Sendable {
             .user(user.toAPIModel())
         case let .team(team):
             .team(team.toAPIModel())
-        case let .meeting(meeting):
-            .meeting(meeting.toAPIModel())
         case let .unknown(eventType):
             .unknown(eventType: eventType)
         }

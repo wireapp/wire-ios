@@ -61,9 +61,6 @@ struct UpdateEventDecodingProxy: Decodable {
             case let .team(eventType):
                 try self.init(eventType: eventType, from: decoder)
 
-            case let .meeting(eventType):
-                try self.init(eventType: eventType, from: decoder)
-
             case let .unknown(eventType):
                 self.init(updateEvent: .unknown(eventType: eventType))
             }
