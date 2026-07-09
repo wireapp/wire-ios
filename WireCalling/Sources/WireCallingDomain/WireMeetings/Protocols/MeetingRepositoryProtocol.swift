@@ -28,6 +28,14 @@ public protocol MeetingRepositoryProtocol: Sendable {
 
     func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting]
 
+    /// Returns a stream that emits whenever meetings are created, updated or deleted,
+    /// e.g. by processed sync events.
+    ///
+    /// The backend refresh performed by `fetchMeetingsStarting` does not emit, so
+    /// observers can safely re-fetch in response to an emission without causing a loop.
+
+    func observeMeetingChanges() -> AsyncStream<Void>
+
     func hasUpcomingMeetings(after date: Date) async throws -> Bool
 
     func createMeeting(

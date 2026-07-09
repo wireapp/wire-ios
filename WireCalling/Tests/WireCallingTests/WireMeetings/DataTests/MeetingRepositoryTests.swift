@@ -18,6 +18,7 @@
 
 import Foundation
 import Testing
+import WireFoundation
 import WireNetwork
 import WireNetworkSupport
 
@@ -33,7 +34,7 @@ struct MeetingRepositoryTests {
     private let sut: MeetingRepository
 
     init() {
-        sut = MeetingRepository(
+        self.sut = MeetingRepository(
             meetingsAPI: meetingsAPI,
             localStore: localStore
         )
@@ -108,6 +109,60 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
+    }
+
+    // MARK: - observeMeetingChanges
+
+    @Test
+    func pullMeetingBroadcastsMeetingChange() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        var changes = sut.observeMeetingChanges().makeAsyncIterator()
+
+        // When
+
+        try await sut.pullMeeting(id: Scaffolding.meetingID)
+
+        // Then — the yielded event is buffered by the stream
+
+        #expect(await changes.next() != nil)
+    }
+
+    @Test
+    func deleteLocalMeetingBroadcastsMeetingChange() async {
+        // Mock
+
+        var changes = sut.observeMeetingChanges().makeAsyncIterator()
+
+        // When
+
+        await sut.deleteLocalMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(await changes.next() != nil)
+    }
+
+    @Test
+    func createMeetingBroadcastsMeetingChange() async throws {
+        // Mock
+
+        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+        var changes = sut.observeMeetingChanges().makeAsyncIterator()
+
+        // When
+
+        _ = try await sut.createMeeting(
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: nil
+        )
+
+        // Then
+
+        #expect(await changes.next() != nil)
     }
 
     // MARK: - fetchMeetingsStarting
@@ -249,7 +304,8 @@ struct MeetingRepositoryTests {
                 end: start.addingTimeInterval(3600),
                 recurrence: nil,
                 members: [],
-                conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
+                conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
+                creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
             )
         }
 

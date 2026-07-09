@@ -34,6 +34,7 @@ package final class MeetingsViewModel {
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+    private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
 
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 10
@@ -45,11 +46,13 @@ package final class MeetingsViewModel {
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
+        self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
     }
 
     // MARK: - Public Interface
@@ -70,6 +73,14 @@ package final class MeetingsViewModel {
         await load(pageSize: pageSize)
     }
 
+    /// Reloads the loaded meetings whenever they are changed outside of this screen,
+    /// e.g. by background sync. Runs until the surrounding task is cancelled.
+    func observeMeetingChanges() async {
+        for await _ in observeMeetingChangesUseCase.invoke() {
+            await reloadLoadedMeetings()
+        }
+    }
+
     func formatDay(_ date: Date) -> String {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
     }
@@ -79,6 +90,15 @@ package final class MeetingsViewModel {
     }
 
     // MARK: - Private Methods
+
+    /// Re-fetches everything that is currently loaded in a single page, because a
+    /// change can insert or remove meetings anywhere in the loaded range.
+    private func reloadLoadedMeetings() async {
+        guard !isLoading else { return }
+        let reloadSize = max(loadedMeetings.count, initialPageSize)
+        futureOffset = 0
+        await load(pageSize: reloadSize)
+    }
 
     private func load(pageSize: Int) async {
         isLoading = true

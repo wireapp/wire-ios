@@ -32,6 +32,7 @@ struct MeetingsViewModelTests {
     private let mockDateProvider: CurrentDateProvidingMock
     private let formatter: MeetingsFormatter
     private let upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock
+    private let observeMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocolMock
     private let viewModel: MeetingsViewModel
 
     init() throws {
@@ -39,10 +40,12 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
         self.upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
+        self.observeMeetingChangesUseCase = ObserveMeetingChangesUseCaseProtocolMock()
         self.viewModel = MeetingsViewModel(
             currentDateProvider: mockDateProvider,
             formatter: formatter,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase
         )
     }
 
@@ -148,6 +151,74 @@ struct MeetingsViewModelTests {
 
         // Then — no extra fetch happened
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
+    }
+
+    // MARK: - observeMeetingChanges
+
+    @Test("a meeting change event reloads the loaded meetings from offset zero")
+    func meetingChangeEvent_reloadsLoadedMeetings() async {
+        // Given — an initial load with one meeting
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let (changes, changeContinuation) = AsyncStream<Void>.makeStream()
+        observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = changes
+
+        // When — a change event arrives while the next fetch returns different meetings
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        }
+        changeContinuation.yield(())
+        changeContinuation.finish()
+        await viewModel.observeMeetingChanges()
+
+        // Then — the loaded meetings were replaced by a fetch from offset 0
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
+            .offset == 0)
+    }
+
+    @Test("a meeting change event re-fetches the entire loaded range in one page")
+    func meetingChangeEvent_refetchesLoadedRange() async {
+        // Given — 12 loaded meetings (initial page of 10 plus a page of 2)
+        let meetings = (0 ..< 12).map { index in
+            Meeting.fixture(
+                title: "Meeting \(index)",
+                start: mockDateProvider.now.addingTimeInterval(Double(index + 1) * 3600)
+            )
+        }
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, offset in
+            if offset == 0 {
+                PaginatedMeetings(meetings: Array(meetings.prefix(10)), hasMore: true, nextOffset: 10)
+            } else {
+                PaginatedMeetings(meetings: Array(meetings.suffix(2)), hasMore: false, nextOffset: 12)
+            }
+        }
+        await viewModel.loadInitialData()
+        await viewModel.loadMoreIfNeeded()
+        #expect(viewModel.loadedMeetings.count == 12)
+
+        let (changes, changeContinuation) = AsyncStream<Void>.makeStream()
+        observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = changes
+
+        // When
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: meetings, hasMore: false, nextOffset: 12)
+        }
+        changeContinuation.yield(())
+        changeContinuation.finish()
+        await viewModel.observeMeetingChanges()
+
+        // Then — a single fetch covering all 12 loaded meetings
+        let lastInvocation = upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations
+            .last
+        #expect(lastInvocation?.pageSize == 12)
+        #expect(lastInvocation?.offset == 0)
+        #expect(viewModel.loadedMeetings.count == 12)
     }
 
     // MARK: - Grouping
