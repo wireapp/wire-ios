@@ -40,6 +40,9 @@ struct MeetingsView: View {
         .task {
             await viewModel.loadInitialData()
         }
+        .task {
+            await viewModel.observeMeetingChanges()
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -128,6 +131,8 @@ private struct GroupedSections: View {
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase()
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
             deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
         )
     )
@@ -138,6 +143,8 @@ private struct GroupedSections: View {
         viewModel: MeetingsViewModel(
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(meetings: previewMeetings()),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase()
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(
                 meetings: previewMeetings()
             ),
@@ -152,6 +159,14 @@ private struct PreviewFetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase
 
     func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
         .init(meetings: meetings, hasMore: false, nextOffset: 0)
+    }
+
+}
+
+private struct PreviewObserveMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocol {
+
+    func invoke() -> AsyncStream<Void> {
+        AsyncStream { $0.finish() }
     }
 
 }

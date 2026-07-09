@@ -41,6 +41,7 @@ package final class AllMeetingsViewModel {
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         makeFormViewModel: @escaping @MainActor (
             _ mode: CreateMeetingFormViewModel.Mode,
@@ -50,6 +51,8 @@ package final class AllMeetingsViewModel {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase
         )

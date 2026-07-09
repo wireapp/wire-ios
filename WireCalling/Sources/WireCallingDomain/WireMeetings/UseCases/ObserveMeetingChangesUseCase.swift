@@ -16,17 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct MeetingDeleteEventDecoder {
+package struct ObserveMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocol {
 
-    func decode(
-        from container: KeyedDecodingContainer<MeetingEventCodingKeys>
-    ) throws -> MeetingDeleteEvent {
-        let qualifiedID = try container.decode(
-            QualifiedIDV0.self,
-            forKey: .qualifiedID
-        )
+    private let repository: any MeetingRepositoryProtocol
 
-        return MeetingDeleteEvent(meetingID: qualifiedID.toAPIModel())
+    package init(repository: any MeetingRepositoryProtocol) {
+        self.repository = repository
+    }
+
+    package func invoke() -> AsyncStream<Void> {
+        repository.observeMeetingChanges()
     }
 
 }

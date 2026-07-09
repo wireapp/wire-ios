@@ -18,6 +18,7 @@
 
 public import Foundation
 public import WireCallingDomain
+public import WireFoundation
 public import WireNetwork
 
 /// The single implementation of `WireCallingDomain.MeetingRepositoryProtocol`.
@@ -30,6 +31,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     private let meetingsAPI: any MeetingsAPI
     private let localStore: any MeetingLocalStoreProtocol
+    private let changeBroadcaster = AsyncMulticaster<Void>()
 
     // MARK: - Object lifecycle
 
@@ -60,6 +62,10 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         return Array(allFuture[start ..< end])
     }
 
+    public func observeMeetingChanges() -> AsyncStream<Void> {
+        changeBroadcaster.makeStream()
+    }
+
     public func hasUpcomingMeetings(after date: Date) async throws -> Bool {
         try await refreshStoredMeetings()
 
@@ -82,6 +88,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         )
         let meeting = response.toDomainMeeting()
         await localStore.storeMeeting(meeting)
+        changeBroadcaster.broadcast()
         return meeting
     }
 
@@ -96,10 +103,12 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             // The meeting no longer exists on the backend.
             await localStore.deleteMeeting(id: id)
         }
+        changeBroadcaster.broadcast()
     }
 
     public func deleteLocalMeeting(id: QualifiedID) async {
         await localStore.deleteMeeting(id: id)
+        changeBroadcaster.broadcast()
     }
 
     // MARK: - Private

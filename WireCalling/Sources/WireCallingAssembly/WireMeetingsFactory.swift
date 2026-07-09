@@ -39,12 +39,18 @@ public struct WireMeetingsFactory {
             conversationRepository: conversationRepository,
             dateProvider: .system
         )
+        let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
+            repository: meetingRepository,
+            currentDateProvider: .system
+        )
+        let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
         let deleteMeetingUseCase = DeleteMeetingUseCase(repository: meetingRepository)
         let createScheduledMeetingUseCase = CreateScheduledMeetingUseCase(repository: meetingRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
             makeFormViewModel: { mode, onSuccess in
                 CreateMeetingFormViewModel(

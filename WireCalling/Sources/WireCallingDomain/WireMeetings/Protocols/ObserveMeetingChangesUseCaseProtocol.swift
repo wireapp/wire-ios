@@ -16,17 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct MeetingUpdateEventDecoder {
+// sourcery: AutoMockable
+/// Observes changes to stored meetings, e.g. caused by background sync.
+package protocol ObserveMeetingChangesUseCaseProtocol: Sendable {
 
-    func decode(
-        from container: KeyedDecodingContainer<MeetingEventCodingKeys>
-    ) throws -> MeetingUpdateEvent {
-        let qualifiedID = try container.decode(
-            QualifiedIDV0.self,
-            forKey: .qualifiedID
-        )
+    /// Returns a stream that emits whenever meetings are created, updated or deleted.
 
-        return MeetingUpdateEvent(meetingID: qualifiedID.toAPIModel())
-    }
+    func invoke() -> AsyncStream<Void>
 
 }

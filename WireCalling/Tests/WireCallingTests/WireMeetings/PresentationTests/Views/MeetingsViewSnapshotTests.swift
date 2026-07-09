@@ -89,9 +89,14 @@ final class MeetingsViewSnapshotTests: XCTestCase {
             nextOffset: 0
         )
 
+        let observeMeetingChangesUseCase = ObserveMeetingChangesUseCaseProtocolMock()
+        observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = AsyncStream { $0.finish() }
+
         return MeetingsViewModel(
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             deleteMeetingUseCase: DeleteMeetingUseCaseProtocolMock()
         )
