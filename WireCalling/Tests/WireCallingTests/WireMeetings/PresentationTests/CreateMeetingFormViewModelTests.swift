@@ -214,7 +214,8 @@ struct CreateMeetingFormViewModelTests {
         var onSuccessCalled = false
         let viewModel = makeViewModel(mode: .instant) { _ in onSuccessCalled = true }
         viewModel.meetingTitle = "Team Standup"
-        instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingThrowableError = URLError(.badServerResponse)
+        instantUseCaseMock
+            .invokeTitleStringParticipantsMeetingMemberMeetingThrowableError = URLError(.badServerResponse)
 
         // When
         await viewModel.submit()

@@ -239,6 +239,6 @@ private func previewMeetings() -> [Meeting] {
             start: day(7, hour: 16),
             end: day(7, hour: 16, minute: 30),
             members: [member("User1")]
-        ),
+        )
     ]
 }
