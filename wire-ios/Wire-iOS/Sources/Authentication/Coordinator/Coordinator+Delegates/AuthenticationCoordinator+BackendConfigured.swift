@@ -21,7 +21,8 @@ import WireTransport
 
 extension AuthenticationCoordinator: BackendConfiguredViewControllerDelegate {
     func backendConfiguredViewControllerDidTapContinue() {
-        executeActions([.transition(.provideCredentials(nil), mode: .reset)])
+        // reset the static environment so other places get the right env.
+        // it will also start the auth flow -> provideCredentials...
         BackendEnvironment.reset()
     }
 }
