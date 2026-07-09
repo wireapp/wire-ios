@@ -213,7 +213,8 @@ private extension Meeting {
             end: start.addingTimeInterval(duration),
             recurrence: nil,
             members: [],
-            conversationID: QualifiedID(id: UUID(), domain: "")
+            conversationID: QualifiedID(id: UUID(), domain: ""),
+            creatorID: QualifiedID(id: UUID(), domain: "")
         )
     }
 

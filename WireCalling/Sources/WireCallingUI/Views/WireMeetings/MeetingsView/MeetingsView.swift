@@ -181,7 +181,8 @@ private func previewMeetings() -> [Meeting] {
             end: end,
             recurrence: nil,
             members: members,
-            conversationID: QualifiedID(id: UUID(), domain: "")
+            conversationID: QualifiedID(id: UUID(), domain: ""),
+            creatorID: QualifiedID(id: UUID(), domain: "")
         )
     }
 

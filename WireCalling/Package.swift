@@ -57,6 +57,7 @@ let package = Package(
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
+                "WireCallingAssembly",
                 "WireCallingUI",
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
