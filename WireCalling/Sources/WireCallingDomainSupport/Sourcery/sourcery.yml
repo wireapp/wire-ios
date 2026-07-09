@@ -1,8 +1,10 @@
 sources:
 - ${PACKAGE_ROOT_DIR}/Sources/WireCallingDomain
+- ${PACKAGE_ROOT_DIR}/Sources/WireCallingData
 templates:
 - ${TARGET_DIR}/Sourcery/AutoMockable.stencil
 output:
   ${DERIVED_SOURCES_DIR}
 args:
+  autoMockableImports: ["WireCallingData"]
   autoMockablePublicImports: ["Foundation", "WireCallingDomain"]
