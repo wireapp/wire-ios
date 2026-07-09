@@ -56,6 +56,7 @@ final class ConversationCreationController: UIViewController {
 
     private var preSelectedParticipants: UserSet?
     private var values: ConversationCreationValues
+    private var nextButtonWasEnabled = false
 
     weak var delegate: ConversationCreationControllerDelegate?
 
@@ -213,6 +214,14 @@ final class ConversationCreationController: UIViewController {
         setupNavigationBar()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if UIAccessibility.isVoiceOverRunning {
+            UIAccessibility.post(notification: .screenChanged, argument: CreateGroupName.title)
+        }
+    }
+
     // MARK: - Methods
 
     override var prefersStatusBarHidden: Bool {
@@ -271,8 +280,8 @@ final class ConversationCreationController: UIViewController {
 
         nextButtonItem.accessibilityIdentifier = Locators.CreateGroupPage.newGroupNextButton.rawValue
         nextButtonItem.tintColor = UIColor.accent()
-        nextButtonItem.isEnabled = isGroupNameValid()
         navigationItem.rightBarButtonItem = nextButtonItem
+        setNextButtonEnabled(isGroupNameValid(), announceChange: false)
     }
 
     func proceedWith(value: WireTextField.Value) {
@@ -323,6 +332,16 @@ final class ConversationCreationController: UIViewController {
         appsSection.configure(with: values)
         encryptionProtocolSection.configure(with: values)
         sharedDriveSection.configure(with: values)
+    }
+
+    private func setNextButtonEnabled(_ isEnabled: Bool, announceChange: Bool) {
+        navigationItem.rightBarButtonItem?.isEnabled = isEnabled
+
+        if announceChange, isEnabled, !nextButtonWasEnabled {
+            UIAccessibility.post(notification: .layoutChanged, argument: navigationItem.rightBarButtonItem)
+        }
+
+        nextButtonWasEnabled = isEnabled
     }
 }
 
@@ -539,8 +558,8 @@ extension ConversationCreationController: WireTextFieldDelegate {
     func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value) {
         errorSection.clearError()
         switch value {
-        case .error: navigationItem.rightBarButtonItem?.isEnabled = false
-        case let .valid(text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
+        case .error: setNextButtonEnabled(false, announceChange: true)
+        case let .valid(text): setNextButtonEnabled(!text.isEmpty, announceChange: true)
         }
 
     }
