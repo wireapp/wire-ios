@@ -25,7 +25,7 @@ final class GuestAccountWarningView: UIView {
         case group(driveEnabled: Bool)
         case channel(driveEnabled: Bool)
     }
-    
+
     private let variant: Variant
     private let stackView = UIStackView(axis: .vertical)
 
@@ -95,7 +95,7 @@ final class GuestAccountWarningView: UIView {
         default: // Drive enabled message
             L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells
         }
-        
+
         messageLabel.isAccessibilityElement = true
 
         stackView.addArrangedSubview(messageLabel)
