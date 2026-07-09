@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireCallingData
 import WireCoreCrypto
 import WireDataModel
 import WireFoundation
@@ -699,6 +700,11 @@ public final class ClientSessionComponent {
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore,
         lockRepository: resetMLSConversationLockRepository
+    )
+
+    public private(set) lazy var meetingRepository = MeetingRepository(
+        meetingsAPI: meetingsAPI,
+        localStore: MeetingLocalStore(context: syncContext)
     )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
