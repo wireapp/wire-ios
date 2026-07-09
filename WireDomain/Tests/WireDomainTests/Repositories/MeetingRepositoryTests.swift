@@ -17,6 +17,7 @@
 //
 
 import WireCallingDomain
+import WireDataModel
 import WireDomainSupport
 import WireNetwork
 import WireNetworkSupport
@@ -81,7 +82,7 @@ final class MeetingRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertTrue(localStore.storeMeeting_Invocations.isEmpty)
-        XCTAssertEqual(localStore.deleteMeetingId_Invocations, [Scaffolding.meetingID])
+        XCTAssertEqual(localStore.deleteMeetingId_Invocations, [Scaffolding.localMeetingID])
     }
 
     func testPullMeeting_It_Throws_When_Listing_Meetings_Fails() async {
@@ -113,7 +114,7 @@ final class MeetingRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(localStore.deleteMeetingId_Invocations, [Scaffolding.meetingID])
+        XCTAssertEqual(localStore.deleteMeetingId_Invocations, [Scaffolding.localMeetingID])
     }
 
     // MARK: - fetchMeetingsStarting
@@ -233,6 +234,11 @@ final class MeetingRepositoryTests: XCTestCase {
         static let meetingID = WireNetwork.QualifiedID(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
             domain: "example.com"
+        )
+
+        static let localMeetingID = WireDataModel.QualifiedID(
+            uuid: meetingID.id,
+            domain: meetingID.domain
         )
 
         static let meetingResponse = MeetingResponse(
