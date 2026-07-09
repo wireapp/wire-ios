@@ -49,8 +49,7 @@ public extension BackendEnvironment {
             self.init(environmentType: environmentType, data: data)
         }
     }
-    
-    
+
     convenience init?(userDefaults: UserDefaults) {
         guard let environmentType = EnvironmentType(userDefaults: userDefaults) else {
             return nil

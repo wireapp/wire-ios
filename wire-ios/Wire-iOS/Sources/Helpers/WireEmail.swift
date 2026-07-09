@@ -30,7 +30,7 @@ struct WireEmail: Codable {
             }
             return nil
         }
-        
+
         return .init(forResource: "email", withExtension: "json")!
     }
 

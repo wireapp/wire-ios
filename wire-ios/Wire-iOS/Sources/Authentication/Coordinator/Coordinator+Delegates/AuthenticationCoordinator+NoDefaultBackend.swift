@@ -24,7 +24,7 @@ extension AuthenticationCoordinator: NoDefaultBackendViewControllerDelegate {
     func noDefaultBackendViewControllerDidConfigureBackend(_ configurationURL: URL) {
         executeActions([.transition(.backendConfigured, mode: .reset)])
     }
-    
+
     func didRequestUserConfirmationToSwitchToBackend(environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void) {
         let viewModel = SwitchBackendConfirmationViewModel(
             environment: environment,

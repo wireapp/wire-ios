@@ -39,7 +39,7 @@ final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandle
             [.transition(.noDefaultBackend, mode: .reset)]
         } else if featureProvider.allowOnlyEmailLogin {
             // Hide the landing screen if account creation is disabled.
-            [.transition(.provideCredentials(nil), mode : .reset)]
+            [.transition(.provideCredentials(nil), mode: .reset)]
         } else {
             [.transition(.landingScreen, mode: .reset)]
         }

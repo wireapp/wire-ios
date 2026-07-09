@@ -103,7 +103,7 @@ struct WireURLs: Codable {
 
     static var shared: WireURLs = {
         guard Bundle.backendBundle != nil else {
-            
+
             return WireURLs.noDefaultBackend(url: BackendEnvironment.shared.websiteURL)
         }
         do {

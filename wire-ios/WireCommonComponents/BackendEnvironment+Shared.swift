@@ -27,7 +27,7 @@ public extension BackendEnvironment {
             BackendEnvironment.shared = loaded
         }
     }
-    
+
     private static func load() -> BackendEnvironment? {
         let environmentType: EnvironmentType? = if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
             EnvironmentType(stringValue: typeOverride)
@@ -39,7 +39,7 @@ public extension BackendEnvironment {
         if Bundle.backendBundle == nil && environmentType == nil {
             return BackendEnvironment.defaultNoBackend
         }
-        
+
         let finalEnvironmentType: EnvironmentType
         if let environmentType {
             finalEnvironmentType = environmentType
@@ -47,7 +47,7 @@ public extension BackendEnvironment {
             WireLogger.environment.info("fallback to production environment", attributes: .safePublic)
             finalEnvironmentType = .production
         }
-        
+
         guard let environment = BackendEnvironment(type: finalEnvironmentType) else {
             return nil
         }
@@ -70,7 +70,7 @@ public extension BackendEnvironment {
         }
     }
 
-    convenience init?(type: EnvironmentType?) {        
+    convenience init?(type: EnvironmentType?) {
         if let bundle = Bundle.backendBundle {
             self.init(
                 userDefaults: .applicationGroupCombinedWithStandard,
@@ -89,25 +89,25 @@ class NoBackendTrustProvider: NSObject, BackendTrustProvider {
     func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
         return false
     }
-    
+
     var bundleIdentifier: String = "com.wire.no-default-backend"
 }
 
 class NoBackendEndpointsProvider: NSObject, BackendEndpointsProvider {
     var backendURL: URL
-    
+
     var backendWSURL: URL
-    
+
     var blackListURL: URL
-    
+
     var teamsURL: URL
-    
+
     var accountsURL: URL
-    
+
     var websiteURL: URL
-    
+
     var countlyURL: URL?
-    
+
     override init() {
         self.websiteURL = URL(string: "https://example.com")!
         self.backendURL = URL(string: "https://example.com")!

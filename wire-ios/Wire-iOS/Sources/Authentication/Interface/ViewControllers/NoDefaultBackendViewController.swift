@@ -420,11 +420,11 @@ extension NoDefaultBackendViewController: NoDefaultBackendViewModelDelegate {
         delegate?.noDefaultBackendViewControllerDidConfigureBackend(configurationURL)
 
     }
-    
+
     func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, requestUserConfirmationForBackendSwitch environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void) {
         delegate?.didRequestUserConfirmationToSwitchToBackend(environment: environment, didConfirm: didConfirm)
     }
-    
+
 }
 
 // MARK: - AuthenticationCoordinatedViewController

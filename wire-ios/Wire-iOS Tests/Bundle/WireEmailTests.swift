@@ -22,7 +22,7 @@ import XCTest
 final class WireEmailTests: XCTestCase {
     func testThatCallingSupportEmailIsCorrect() throws {
         let email = try XCTUnwrap(WireEmail.shared())
-        
+
         XCTAssertEqual(email.callingSupportEmail, "calling-ios@wire.com")
     }
 }

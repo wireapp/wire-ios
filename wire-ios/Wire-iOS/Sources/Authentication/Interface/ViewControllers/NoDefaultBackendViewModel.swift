@@ -79,7 +79,7 @@ final class NoDefaultBackendViewModel {
         }
 
         delegate?.noDefaultBackendViewModel(self, didChangeLoading: true)
-        
+
         sessionManager.fetchBackendEnvironment(at: configurationURL) { [weak self] result in
             guard let self else { return }
 
