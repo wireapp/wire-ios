@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public typealias LogAttributes = [LogAttributesKey: any Encodable]
+public typealias LogAttributes = [LogAttributesKey: any Encodable & Sendable]
 
 public enum LogAttributesKey: String, Comparable, Sendable {
 
@@ -51,6 +51,7 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case isNewClient = "is_new_client"
     case isSubconversation = "is_subconversation"
     case timeInterval = "time_interval"
+    case notificationRequestID = "notification_request_id"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue

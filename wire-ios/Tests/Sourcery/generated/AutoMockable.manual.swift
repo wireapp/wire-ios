@@ -23,7 +23,6 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-
 import CoreLocation
 import WireDataModel
 import WireLogging
@@ -33,6 +32,8 @@ import WireMessagingDomain
 
 @testable import Wire
 @testable import WireCommonComponents
+
+typealias UserType = WireDataModel.UserType
 
 class MockGetUserByIdUseCaseProtocol: GetUserByIDUseCaseProtocol {
 

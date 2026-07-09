@@ -27,20 +27,20 @@ import WireFoundation
 @MainActor
 struct MemberSelectionViewModelTests {
 
-    private let memberRepository: MemberRepositoryProtocolMock
+    private let searchMembersUseCase: SearchMembersUseCaseProtocolMock
     private let onSelectRecorder: OnSelectRecorder
     private let viewModel: MemberSelectionViewModel
 
     init() {
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = []
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMemberReturnValue = []
 
         let recorder = OnSelectRecorder()
 
-        self.memberRepository = repository
+        self.searchMembersUseCase = useCase
         self.onSelectRecorder = recorder
         self.viewModel = MemberSelectionViewModel(
-            source: repository,
+            source: useCase,
             onSelect: { recorder.calls.append($0) }
         )
     }
@@ -145,12 +145,12 @@ struct MemberSelectionViewModelTests {
     @Test("initialSelection seeds selectedMembers")
     func initialSelection_seedsSelectedMembers() {
         // Given
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = []
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMemberReturnValue = []
 
         // When
         let viewModel = MemberSelectionViewModel(
-            source: repository,
+            source: useCase,
             initialSelection: [.alice]
         )
 
@@ -164,11 +164,11 @@ struct MemberSelectionViewModelTests {
     @Test("initial search populates searchResults")
     func initialSearch_populatesSearchResults() async {
         // Given
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = [.alice, .bob]
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMemberReturnValue = [.alice, .bob]
 
         // When
-        let viewModel = MemberSelectionViewModel(source: repository)
+        let viewModel = MemberSelectionViewModel(source: useCase)
         await waitForSearchToSettle(viewModel)
 
         // Then
@@ -180,11 +180,11 @@ struct MemberSelectionViewModelTests {
     @Test("search failure sets hasSearchError and clears searchResults")
     func searchFailure_setsHasSearchError() async {
         // Given
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberThrowableError = TestError.failure
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMemberThrowableError = TestError.failure
 
         // When
-        let viewModel = MemberSelectionViewModel(source: repository)
+        let viewModel = MemberSelectionViewModel(source: useCase)
         await waitForSearchToSettle(viewModel)
 
         // Then
