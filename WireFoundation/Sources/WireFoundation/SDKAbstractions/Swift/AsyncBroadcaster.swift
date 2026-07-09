@@ -18,20 +18,20 @@
 
 import Foundation
 
-/// Multicasts void events to any number of `AsyncStream` observers.
+/// Multicasts events to any number of `AsyncStream` observers.
 ///
 /// `AsyncStream` itself supports only a single consumer, so each observer
 /// gets its own stream and events are yielded to all active streams.
-public final class AsyncBroadcaster: @unchecked Sendable {
+public final class AsyncBroadcaster<Element: Sendable>: @unchecked Sendable {
 
     private let lock = NSLock()
-    private var continuations: [UUID: AsyncStream<Void>.Continuation] = [:]
+    private var continuations: [UUID: AsyncStream<Element>.Continuation] = [:]
 
     public init() {}
 
-    /// Returns a stream that emits on every `broadcast()` until the
+    /// Returns a stream that emits on every `broadcast(_:)` until the
     /// consuming task is cancelled.
-    public func makeStream() -> AsyncStream<Void> {
+    public func makeStream() -> AsyncStream<Element> {
         AsyncStream { continuation in
             let id = UUID()
             lock.withLock { continuations[id] = continuation }
@@ -42,11 +42,19 @@ public final class AsyncBroadcaster: @unchecked Sendable {
         }
     }
 
-    public func broadcast() {
+    public func broadcast(_ element: Element) {
         let active = lock.withLock { Array(continuations.values) }
         for continuation in active {
-            continuation.yield(())
+            continuation.yield(element)
         }
+    }
+
+}
+
+extension AsyncBroadcaster where Element == Void {
+
+    public func broadcast() {
+        broadcast(())
     }
 
 }

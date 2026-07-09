@@ -31,7 +31,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     private let meetingsAPI: any MeetingsAPI
     private let localStore: any MeetingLocalStoreProtocol
-    private let changeBroadcaster = AsyncBroadcaster()
+    private let changeBroadcaster = AsyncBroadcaster<Void>()
 
     // MARK: - Object lifecycle
 
