@@ -44,6 +44,10 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    var conversationCells: XCUIElementQuery {
+        app.buttons.matching(identifier: Locators.ConversationsPage.conversationCell.rawValue)
+    }
+
     func conversationCell(named name: String) -> XCUIElement {
         app.buttons.matching(
             NSPredicate(
@@ -60,6 +64,14 @@ class ConversationsPage: PageModel {
 
     var textFilteredByFavourites: XCUIElement {
         app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
+    }
+
+    var textFilteredByGroups: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByGroups.rawValue]
+    }
+
+    var textFilteredByChannels: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByChannels.rawValue]
     }
 
     var textFilteredByOneOnOne: XCUIElement {
@@ -82,12 +94,36 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.removeFromFavourite.rawValue]
     }
 
+    var moveToFolderButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.moveToFolderOptionOnContextMenu.rawValue]
+    }
+
+    private var createNewFolderButton: XCUIElement {
+        app.buttons["button.newfolder.create"].firstMatch
+    }
+
+    private var newFolderNameInput: XCUIElement {
+        app.textFields["input.newfolder.name"].firstMatch
+    }
+
     var filterByFavourite: XCUIElement {
         app.buttons[Locators.ConversationsPage.filterByFavourites.rawValue]
     }
 
+    var filterByGroupConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByGroups.rawValue]
+    }
+
+    var filterByChannelConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByChannels.rawValue]
+    }
+
     var filterByOneOnOneConversation: XCUIElement {
         app.buttons[Locators.ConversationsPage.filterByOneOnOneConversation.rawValue]
+    }
+
+    var filterByFolderConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByFolders.rawValue]
     }
 
     var filterConversationsButton: XCUIElement {
@@ -216,8 +252,9 @@ class ConversationsPage: PageModel {
     }
 
     @discardableResult
-    func longPressForMoreOptionOnConversation() throws -> ConversationsPage {
-        conversationCell.press(forDuration: 1.0)
+    func longPressForMoreOptionOnConversation(named name: String? = nil) throws -> ConversationsPage {
+        let targetConversation = name.map { conversationCell(named: $0) } ?? conversationCell
+        targetConversation.press(forDuration: 1.0)
         return try ConversationsPage()
     }
 
@@ -252,15 +289,60 @@ class ConversationsPage: PageModel {
         return self
     }
 
+    func moveConversationToNewFolder(named folderName: String) throws -> ConversationsPage {
+        XCTAssertTrue(moveToFolderButtonOnMoreOptions.waitAndTap(), "Move to folder option did not appear")
+        XCTAssertTrue(createNewFolderButton.waitAndTap(), "Create new folder button did not appear")
+        XCTAssertTrue(
+            newFolderNameInput.waitForExistence(timeout: 5),
+            "New folder name input did not appear"
+        )
+        newFolderNameInput.tap()
+        newFolderNameInput.typeText(folderName)
+        XCTAssertTrue(
+            createNewFolderButton.waitAndTap(),
+            "Create folder button did not appear"
+        )
+        XCTAssertTrue(
+            newFolderNameInput.waitToDisappear(timeout: 10),
+            "New folder name input did not disappear after creating folder"
+        )
+        return self
+    }
+
     func filterConversationByFavourite() throws -> ConversationsPage {
         filterConversationsButton.tap()
         filterByFavourite.tap()
         return self
     }
 
+    func filterConversationByGroup() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByGroupConversation.tap()
+        return self
+    }
+
+    func filterConversationByChannel() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByChannelConversation.tap()
+        return self
+    }
+
     func filterConversationByOneOnOne() throws -> ConversationsPage {
         filterConversationsButton.tap()
         filterByOneOnOneConversation.tap()
+        return self
+    }
+
+    func filterConversationByFolder(named name: String) throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByFolderConversation.tap()
+        let folder = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@", name))
+            .firstMatch
+        XCTAssertTrue(
+            folder.waitAndTap(),
+            "Folder \(name) did not appear"
+        )
         return self
     }
 

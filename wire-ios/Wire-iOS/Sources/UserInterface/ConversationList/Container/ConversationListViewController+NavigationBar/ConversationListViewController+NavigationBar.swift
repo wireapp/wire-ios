@@ -362,8 +362,26 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                 await self?.mainCoordinator.showConversationList(conversationFilter: filter)
             }
         }
+        action.accessibilityIdentifier = filterActionIdentifier(for: filter)
         action.accessibilityLabel = accessibilityLabelForFilterAction(for: filter, isSelected: isSelected)
         return action
+    }
+
+    private func filterActionIdentifier(for filter: ConversationFilter?) -> String? {
+        switch filter {
+        case .favorites:
+            Locators.ConversationsPage.filterByFavourites.rawValue
+        case .groups:
+            Locators.ConversationsPage.filterByGroups.rawValue
+        case .channels:
+            Locators.ConversationsPage.filterByChannels.rawValue
+        case .oneOnOne:
+            Locators.ConversationsPage.filterByOneOnOneConversation.rawValue
+        case .folder:
+            Locators.ConversationsPage.filterByFolders.rawValue
+        default:
+            nil
+        }
     }
 
     func accessibilityLabelForFilterAction(
@@ -564,6 +582,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             }
         }
 
+        action.accessibilityIdentifier = Locators.ConversationsPage.filterByFolders.rawValue
         action.accessibilityLabel = if isSelected {
             L10n.Accessibility.ConversationsList.FilterMenuOptions.Folders.Selected.description
         } else {
