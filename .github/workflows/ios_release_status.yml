@@ -36,7 +36,7 @@ jobs:
       # When set, an extra LTS section is appended to the report.
       LTS_RELEASE: ${{ vars.LTS_RELEASE }}
       # Optional: full branch name of an additionally tracked release (e.g. release/cycle-4.20).
-      # When set, an extra GOV section is appended to the report.
+      # When set, and the Jira version isn't yet released, an extra GOV section is appended to the report.
       GOV_RELEASE: ${{ vars.GOV_RELEASE }}
     steps:
       # Needed so the local ./.github/actions/notify-wire composite action is available.
