@@ -165,15 +165,15 @@ private func previewMeetings() -> [Meeting] {
         )!
     }
 
-    func member(_ name: String) -> Member {
-        Member(
+    func member(_ name: String) -> MeetingMember {
+        MeetingMember(
             qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
             handle: name.lowercased().replacingOccurrences(of: " ", with: "")
         )
     }
 
-    func meeting(_ title: String, start: Date, end: Date, members: [Member]) -> Meeting {
+    func meeting(_ title: String, start: Date, end: Date, members: [MeetingMember]) -> Meeting {
         Meeting(
             id: QualifiedID(id: UUID(), domain: ""),
             title: title,

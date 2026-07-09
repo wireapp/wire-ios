@@ -20,6 +20,6 @@
 /// Creates a new instant meeting via the backend API.
 package protocol CreateInstantMeetingUseCaseProtocol: Sendable {
 
-    func invoke(title: String, participants: [Member]) async throws -> Meeting
+    func invoke(title: String, participants: [MeetingMember]) async throws -> Meeting
 
 }

@@ -20,6 +20,7 @@
 		591B6E472C8B09BD009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01BDA5442C20762200636E50 /* WireDataModelSupport.framework */; };
 		59202AD22D54D3D500143413 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59202AD12D54D3D500143413 /* WireDomainPackage */; };
 		5963BF6A2FFF8E4F0074A2FB /* WireCallingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 5963BF692FFF8E4F0074A2FB /* WireCallingDomain */; };
+		5963EEDB2FFF934C0074A2FB /* WireCallingDomainSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 5963EEDA2FFF934C0074A2FB /* WireCallingDomainSupport */; };
 		598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042C2C89C63100B64D71 /* WireFoundation */; };
 		59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59DBDE972D395BB50069C64C /* WireDomainPackage */; };
 		59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59EA774E2D00CE0C002CA0B8 /* WireLogging */; };
@@ -141,6 +142,7 @@
 				5904B1B32D31582700E866D1 /* WireDomainSupport.framework in Frameworks */,
 				C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */,
 				CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */,
+				5963EEDB2FFF934C0074A2FB /* WireCallingDomainSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,6 +293,7 @@
 			packageProductDependencies = (
 				C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */,
 				34F8CA992E02C003000FE4E0 /* WireNetworkSupport */,
+				5963EEDA2FFF934C0074A2FB /* WireCallingDomainSupport */,
 			);
 			productName = WireDomainTests;
 			productReference = 01D0DCB02C1C8C880076CB1C /* WireDomainTests.xctest */;
@@ -986,6 +989,10 @@
 		5963BF692FFF8E4F0074A2FB /* WireCallingDomain */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireCallingDomain;
+		};
+		5963EEDA2FFF934C0074A2FB /* WireCallingDomainSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCallingDomainSupport;
 		};
 		598D042C2C89C63100B64D71 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
