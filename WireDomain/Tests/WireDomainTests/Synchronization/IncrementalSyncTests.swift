@@ -427,7 +427,7 @@ final class IncrementalSyncTests: XCTestCase {
         // Given: A large batch of stored events
         let largeEventCount = 100
         var largeEventBatch: [(UpdateEventEnvelope, NSManagedObjectID)] = []
-        for i in 0..<largeEventCount {
+        for i in 0 ..< largeEventCount {
             let event = Scaffolding.createEvent(
                 message: "message \(i)",
                 timeIntervalSinceNow: TimeInterval(-i)
