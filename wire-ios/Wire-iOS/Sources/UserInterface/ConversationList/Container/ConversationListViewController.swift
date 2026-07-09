@@ -23,6 +23,7 @@ import WireConversationListUI
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
@@ -54,6 +55,7 @@ final class ConversationListViewController: UIViewController {
         label.font = UIFont.font(for: .h5)
         label.textColor = SemanticColors.Label.baseSecondaryText
         label.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
+        label.accessibilityIdentifier = selectedFilterAccessibilityIdentifier
         return label
     }()
 
@@ -96,6 +98,21 @@ final class ConversationListViewController: UIViewController {
             return name
         case .none:
             return ""
+        }
+    }
+
+    private var selectedFilterAccessibilityIdentifier: String? {
+        switch listContentController.listViewModel.selectedFilter {
+        case .favorites:
+            Locators.ConversationsPage.textFilteredByFavourites.rawValue
+        case .groups:
+            Locators.ConversationsPage.textFilteredByGroups.rawValue
+        case .channels:
+            Locators.ConversationsPage.textFilteredByChannels.rawValue
+        case .oneOnOne:
+            Locators.ConversationsPage.textFilteredByOneOnOne.rawValue
+        default:
+            nil
         }
     }
 
@@ -372,6 +389,7 @@ final class ConversationListViewController: UIViewController {
             .isHidden = mainSplitViewState == .expanded || listContentController
             .listViewModel.selectedFilter == .none
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
+        filterLabel.accessibilityIdentifier = selectedFilterAccessibilityIdentifier
     }
 
     private func setupListContentController() {
