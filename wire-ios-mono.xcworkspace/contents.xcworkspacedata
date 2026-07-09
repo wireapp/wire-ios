@@ -101,10 +101,16 @@
          location = "group:c1_c2_c3_app_release_restricted.yml">
       </FileRef>
       <FileRef
+<<<<<<< HEAD
          location = "group:pr-review-summary.yml">
       </FileRef>
       <FileRef
+=======
+>>>>>>> e770e93dd6 (chore: add gov pipeline - WPB-26202 (#4976))
          location = "group:changelog.yml">
+      </FileRef>
+      <FileRef
+         location = "group:gov_app_release.yml">
       </FileRef>
       <FileRef
          location = "group:cherry-pick-from-release-to-develop.yml">

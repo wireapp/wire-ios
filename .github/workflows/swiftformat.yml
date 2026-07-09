@@ -28,8 +28,17 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         if: ${{ steps.changes.outputs.swift == 'true' }}
 
-      - name: Install SwiftFormat 0.58.3
+      - name: Check for .swiftformat config
+        id: config
         if: ${{ steps.changes.outputs.swift == 'true' }}
+        run: echo "exists=$(test -f .swiftformat && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Install SwiftFormat 0.58.3
+<<<<<<< HEAD
+        if: ${{ steps.changes.outputs.swift == 'true' }}
+=======
+        if: ${{ steps.changes.outputs.swift == 'true' && steps.config.outputs.exists == 'true' }}
+>>>>>>> e770e93dd6 (chore: add gov pipeline - WPB-26202 (#4976))
         run: |
           curl -L -o swiftformat.zip https://github.com/nicklockwood/SwiftFormat/releases/download/0.58.3/swiftformat_linux.zip
           unzip swiftformat.zip -d swiftformat_bin
@@ -37,5 +46,9 @@ jobs:
           chmod +x /usr/local/bin/swiftformat
 
       - name: Run SwiftFormat
+<<<<<<< HEAD
         if: ${{ steps.changes.outputs.swift == 'true' }}
+=======
+        if: ${{ steps.changes.outputs.swift == 'true' && steps.config.outputs.exists == 'true' }}
+>>>>>>> e770e93dd6 (chore: add gov pipeline - WPB-26202 (#4976))
         run: swiftformat --lint . --reporter github-actions-log --config .swiftformat
