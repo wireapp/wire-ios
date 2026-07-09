@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCallingDomain
-import WireNetwork
+public import Foundation
+public import WireCallingDomain
+public import WireNetwork
 
 /// The single implementation of `WireCallingDomain.MeetingRepositoryProtocol`.
 ///
@@ -94,12 +94,12 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             await localStore.storeMeeting(meeting.toDomainMeeting())
         } else {
             // The meeting no longer exists on the backend.
-            await localStore.deleteMeeting(id: .init(uuid: id.id, domain: id.domain))
+            await localStore.deleteMeeting(id: id)
         }
     }
 
     public func deleteLocalMeeting(id: QualifiedID) async {
-        await localStore.deleteMeeting(id: .init(uuid: id.id, domain: id.domain))
+        await localStore.deleteMeeting(id: id)
     }
 
     // MARK: - Private

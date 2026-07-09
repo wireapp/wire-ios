@@ -134,12 +134,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         // When
 
-        await sut.deleteMeeting(
-            id: WireDataModel.QualifiedID(
-                uuid: Scaffolding.meetingID.id,
-                domain: Scaffolding.meetingID.domain
-            )
-        )
+        await sut.deleteMeeting(id: Scaffolding.meetingID)
 
         // Then
 
@@ -156,12 +151,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         // When
 
-        await sut.deleteMeeting(
-            id: WireDataModel.QualifiedID(
-                uuid: UUID(),
-                domain: Scaffolding.meetingID.domain
-            )
-        )
+        await sut.deleteMeeting(id: .init(id: UUID(), domain: Scaffolding.meetingID.domain))
 
         // Then
 

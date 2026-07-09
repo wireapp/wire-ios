@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireCallingData
 import WireCallingDomain
 import WireDataModel
 import WireFoundation
@@ -66,10 +67,10 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         }
     }
 
-    func deleteMeeting(id: WireDataModel.QualifiedID) async {
+    func deleteMeeting(id: WireCallingDomain.QualifiedID) async {
         await context.perform { [context] in
             let request = StoredMeeting.fetchRequest()
-            request.predicate = Self.predicate(id: id)
+            request.predicate = Self.predicate(id: .init(uuid: id.id, domain: id.domain))
             request.fetchLimit = 1
             guard let storedMeeting = try? context.fetch(request).first else { return }
 
@@ -96,13 +97,11 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
             domain: meeting.conversationID.domain,
             in: context
         )
-        storedMeeting.creator = meeting.creatorID.flatMap { creatorID in
-            ZMUser.fetch(
-                with: creatorID.id,
-                domain: creatorID.domain,
-                in: context
-            )
-        }
+        storedMeeting.creator = ZMUser.fetch(
+            with: meeting.creatorID.id,
+            domain: meeting.creatorID.domain,
+            in: context
+        )
     }
 
     private static func fetchOrCreateStoredMeeting(
@@ -144,7 +143,8 @@ private extension StoredMeeting {
             let remoteIdentifier,
             let title,
             let start,
-            let end
+            let end,
+            let creatorID = creator?.qualifiedID
         else { return nil }
 
         guard let conversationID = conversation?.qualifiedID else { return nil }
@@ -160,9 +160,7 @@ private extension StoredMeeting {
                 id: conversationID.uuid,
                 domain: conversationID.domain
             ),
-            creatorID: creator?.qualifiedID.map {
-                QualifiedID(id: $0.uuid, domain: $0.domain)
-            }
+            creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
     }
 

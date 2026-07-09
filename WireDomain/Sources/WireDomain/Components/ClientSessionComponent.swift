@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireCallingData
 import WireCoreCrypto
 import WireDataModel
 import WireFoundation

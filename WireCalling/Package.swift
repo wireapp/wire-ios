@@ -12,12 +12,14 @@ let package = Package(
     products: [
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
         .library(name: "WireCallingDomainSupport", targets: ["WireCallingDomainSupport"]),
+        .library(name: "WireCallingData", targets: ["WireCallingData"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
     dependencies: [
         .package(path: "../WireData"),
         .package(path: "../WireFoundation"),
+        .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI")
@@ -43,7 +45,8 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireData",
-                "WireLogging"
+                "WireLogging",
+                "WireNetwork"
             ]
         ),
         .target(
@@ -74,7 +77,8 @@ let package = Package(
                 "WireCallingDomainSupport",
                 "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
+                .product(name: "WireFoundationSupport", package: "WireFoundation"),
+                .product(name: "WireNetworkSupport", package: "WireNetwork")
             ],
         ),
     ]
