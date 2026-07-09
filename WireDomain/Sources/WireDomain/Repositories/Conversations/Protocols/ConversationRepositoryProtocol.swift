@@ -90,17 +90,6 @@ public protocol ConversationRepositoryProtocol: Sendable {
         groupID: String
     ) async -> ZMConversation?
 
-    /// Whether a conversation stored locally is a group.
-    /// - Parameters:
-    ///     - id: The ID of the conversation.
-    ///     - domain: The domain of the conversation if any.
-    /// - returns: `true` if a local conversation with this id exists and is of type `.group`.
-
-    func isGroupConversation(
-        id: UUID,
-        domain: String?
-    ) async -> Bool
-
     /// Deletes a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.

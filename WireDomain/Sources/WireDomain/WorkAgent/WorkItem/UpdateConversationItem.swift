@@ -63,15 +63,7 @@ struct UpdateConversationItem: WorkItem {
                 attributes: [.conversationId: conversationID.id.uuidString],
                 .init(self)
             )
-            // Only group conversations should be removed locally when the backend reports them
-            // missing. A 1:1 whose connection has just transitioned to `.blocked` (and similarly
-            // `.cancelled` / `.ignored`) still returns 404 from GET /conversations/{id} because
-            // the backend only exposes the underlying connection, not a conversation resource.
-            // Marking such conversations as `isDeletedRemotely` would hide them from the list
-            // and prevent the user from unblocking from the cell long-press menu.
-            if await repository.isGroupConversation(id: conversationID.id, domain: conversationID.domain) {
-                try await repository.deleteConversation(id: conversationID.id, domain: conversationID.domain)
-            }
+            try await repository.deleteConversation(id: conversationID.id, domain: conversationID.domain)
 
         } catch {
             // giving more context to the error
