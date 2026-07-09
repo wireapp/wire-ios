@@ -51,9 +51,9 @@ public final class AsyncMulticaster<Element: Sendable>: @unchecked Sendable {
 
 }
 
-extension AsyncMulticaster where Element == Void {
+public extension AsyncMulticaster where Element == Void {
 
-    public func broadcast() {
+    func broadcast() {
         broadcast(())
     }
 
