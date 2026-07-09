@@ -16,6 +16,14 @@ jobs:
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
         steps:
+            # Needed so the local ./.github/actions/notify-wire composite action is available.
+            # Only .github is required, and no LFS objects.
+            -   name: Checkout
+                uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+                with:
+                    sparse-checkout: .github
+                    lfs: 'false'
+
             -   name: Build summary message
                 id: build-summary
                 uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
