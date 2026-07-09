@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCallingDomain
 import WireDataModel
 import WireDataModelSupport
 import WireNetwork
@@ -84,8 +85,8 @@ final class MeetingLocalStoreTests: XCTestCase {
             XCTAssertEqual(storedMeeting.remoteIdentifier, Scaffolding.meetingID.id)
             XCTAssertEqual(storedMeeting.domain, Scaffolding.meetingID.domain)
             XCTAssertEqual(storedMeeting.title, Scaffolding.meeting.title)
-            XCTAssertEqual(storedMeeting.start, Scaffolding.meeting.startTime)
-            XCTAssertEqual(storedMeeting.end, Scaffolding.meeting.endTime)
+            XCTAssertEqual(storedMeeting.start, Scaffolding.meeting.start)
+            XCTAssertEqual(storedMeeting.end, Scaffolding.meeting.end)
             XCTAssertEqual(storedMeeting.recurrenceFrequency, .weekly)
             XCTAssertEqual(storedMeeting.recurrenceInterval, 2)
             XCTAssertEqual(storedMeeting.recurrenceUntil, Scaffolding.recurrenceUntil)
@@ -99,18 +100,15 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         await sut.storeMeeting(Scaffolding.meeting)
 
-        let updatedMeeting = MeetingResponse(
+        let updatedMeeting = Meeting(
             id: Scaffolding.meetingID,
             title: "Renamed Meeting",
-            creatorID: Scaffolding.creatorID,
-            startTime: Scaffolding.meeting.startTime,
-            endTime: Scaffolding.meeting.endTime,
+            start: Scaffolding.meeting.start,
+            end: Scaffolding.meeting.end,
+            recurrence: nil,
+            members: [],
             conversationID: Scaffolding.conversationID,
-            invitedEmails: [],
-            isTrial: false,
-            createdAt: Scaffolding.meeting.createdAt,
-            updatedAt: Scaffolding.meeting.updatedAt,
-            recurrence: nil
+            creatorID: Scaffolding.creatorID
         )
 
         // When
@@ -137,8 +135,10 @@ final class MeetingLocalStoreTests: XCTestCase {
         // When
 
         await sut.deleteMeeting(
-            id: Scaffolding.meetingID.id,
-            domain: Scaffolding.meetingID.domain
+            id: WireDataModel.QualifiedID(
+                uuid: Scaffolding.meetingID.id,
+                domain: Scaffolding.meetingID.domain
+            )
         )
 
         // Then
@@ -157,8 +157,10 @@ final class MeetingLocalStoreTests: XCTestCase {
         // When
 
         await sut.deleteMeeting(
-            id: UUID(),
-            domain: Scaffolding.meetingID.domain
+            id: WireDataModel.QualifiedID(
+                uuid: UUID(),
+                domain: Scaffolding.meetingID.domain
+            )
         )
 
         // Then
@@ -188,22 +190,19 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         static let recurrenceUntil = Date(timeIntervalSince1970: 2_000_000)
 
-        static let meeting = MeetingResponse(
+        static let meeting = Meeting(
             id: meetingID,
             title: "Weekly Sync",
-            creatorID: creatorID,
-            startTime: Date(timeIntervalSince1970: 1_000_000),
-            endTime: Date(timeIntervalSince1970: 1_003_600),
-            conversationID: conversationID,
-            invitedEmails: [],
-            isTrial: false,
-            createdAt: Date(timeIntervalSince1970: 900_000),
-            updatedAt: Date(timeIntervalSince1970: 900_000),
-            recurrence: MeetingRecurrence(
+            start: Date(timeIntervalSince1970: 1_000_000),
+            end: Date(timeIntervalSince1970: 1_003_600),
+            recurrence: WireCallingDomain.MeetingRecurrence(
                 frequency: .weekly,
                 interval: 2,
                 until: recurrenceUntil
-            )
+            ),
+            members: [],
+            conversationID: conversationID,
+            creatorID: creatorID
         )
 
     }
