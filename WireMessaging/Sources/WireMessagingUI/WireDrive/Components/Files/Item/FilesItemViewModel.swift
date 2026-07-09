@@ -80,10 +80,6 @@ final class FilesItemViewModel: ObservableObject {
         isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
     }
 
-    var disableShareLinkButton: Bool {
-        isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
-    }
-
     struct TagsInfo {
         let firstTag: String?
         let additionalTagsIndicator: String?
@@ -178,6 +174,15 @@ final class FilesItemViewModel: ObservableObject {
 
     var isEditable: Bool {
         item.isEditable
+    }
+
+    func isActionDisabled(_ action: ItemAction) -> Bool {
+        switch action {
+        case .shareLink, .makeAvailableOffline, .removeAvailableOffline:
+            isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
+        default:
+            false
+        }
     }
 
     func performAction(_ action: ItemAction) {
@@ -281,10 +286,11 @@ final class FilesItemViewModel: ObservableObject {
         actions.insert(.primaryAction)
 
         if !isInRecycleBin, !isOffline, isBrowsing {
-            actions.insert(.shareLink)
+            actions.insert(.shareLink) // action visible to the user but disabled
         }
 
-        if !isEditable, !isInRecycleBin, item.kind == .file {
+        if !isEditable, !isInRecycleBin, isBrowsing, item.kind == .file {
+            // actions visible to the user but disabled
             if isAvailableOffline {
                 actions.insert(.removeAvailableOffline)
             } else {

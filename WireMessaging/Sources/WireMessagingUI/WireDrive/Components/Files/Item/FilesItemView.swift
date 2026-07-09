@@ -275,7 +275,7 @@ struct FilesItemView: View {
                     Strings.Files.Item.Menu.shareLink,
                     systemImage: "square.and.arrow.up"
                 )
-            }.disabled(viewModel.disableShareLinkButton)
+            }.disabled(viewModel.isActionDisabled(.shareLink))
         }
 
         menuItem(.makeAvailableOffline) { item in
@@ -286,7 +286,7 @@ struct FilesItemView: View {
                     Strings.Files.Item.Menu.makeAvailableOffline,
                     systemImage: "arrow.down.circle"
                 )
-            }
+            }.disabled(viewModel.isActionDisabled(.makeAvailableOffline))
         }
 
         menuItem(.removeAvailableOffline) { item in
@@ -297,7 +297,7 @@ struct FilesItemView: View {
                     Strings.Files.Item.Menu.removeAvailableOffline,
                     systemImage: "xmark.circle"
                 )
-            }
+            }.disabled(viewModel.isActionDisabled(.removeAvailableOffline))
         }
 
         menuItem(.showVersionHistory) { item in

@@ -1,0 +1,30 @@
+name: Gov
+
+on:
+  workflow_dispatch:
+    inputs:
+      datadog_enabled:
+        description: 'Enable DataDog'
+        type: boolean
+        default: false
+      skip_security_tests:
+        description: 'Skip security tests'
+        type: boolean
+        default: false
+permissions:
+  checks: write
+
+jobs:
+  gov_release:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_gov
+      is_cloud_build: false
+      countly_enabled: false
+      datadog_enabled: ${{ inputs.datadog_enabled }}
+      skip_security_tests: ${{ inputs.skip_security_tests }}
+    secrets:
+      # Replace these with only the secrets declared under
+      # ./.github/workflows/_reusable_app_release.yml -> on.workflow_call.secrets
+      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
