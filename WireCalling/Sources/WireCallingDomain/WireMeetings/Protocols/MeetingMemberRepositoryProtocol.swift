@@ -22,7 +22,7 @@
 ///
 /// Backing implementations may serve results from local storage, the remote
 /// backend, or both.
-public protocol MemberRepositoryProtocol: Sendable {
+public protocol MeetingMemberRepositoryProtocol: Sendable {
 
     /// Returns team members matching the given query.
     ///
@@ -31,6 +31,6 @@ public protocol MemberRepositoryProtocol: Sendable {
     /// - Returns: The matching team members.
     /// - Throws: An error if the underlying source (local store or remote
     ///   backend) fails to produce results.
-    func search(query: String) async throws -> [Member]
+    func search(query: String) async throws -> [MeetingMember]
 
 }
