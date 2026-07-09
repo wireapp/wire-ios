@@ -193,7 +193,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
     private var callingService: any AVSCallingEventServiceProtocol {
         shared {
-            AVSCallingEventService(
+            AVSCallingEventService.shared(
                 userID: dependency.accountID.transportString(),
                 clientID: clientID
             )
@@ -214,10 +214,12 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     }
 
     private var callKitReportingCoordinator: CallKitReportingCoordinator {
-        CallKitReportingCoordinator(
-            accountID: dependency.accountID,
-            avsService: callingService
-        )
+        shared {
+            CallKitReportingCoordinator(
+                accountID: dependency.accountID,
+                avsService: callingService
+            )
+        }
     }
 
     // MARK: - Pull events consumable notifications

@@ -67,10 +67,9 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
             for event in batch {
                 if let params = await avsParameters(from: event) {
                     WireLogger.mls.debug("🚀 setCallerName: callerName \(params.callerName)")
-                    let callerNameKey = params.conversationType == 0 ? params.userId : params.conversationId
                     await callKitReportingCoordinator.setCallerName(
                         params.callerName,
-                        for: callerNameKey//params.conversationId
+                        for: params.conversationId
                     )
                     callingService.process(
                         data: params.data,

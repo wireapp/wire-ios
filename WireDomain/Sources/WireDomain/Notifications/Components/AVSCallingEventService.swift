@@ -111,8 +111,22 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
         if result != 0 {
             WireLogger.calling.error("NSE AVS: wcall_init failed with code \(result)", attributes: .newNSE, .safePublic)
         }
-
     }()
+
+    // AVS registers C-level callbacks with a handle created in init. Calling
+    // wcall_event_create a second time returns the same handle, so callbacks
+    // always fire through the first instance's contextRef. We keep one instance
+    // per process so the handle and contextRef are stable across NSE invocations.
+    nonisolated(unsafe) private static var processInstance: AVSCallingEventService?
+
+    public static func shared(userID: String, clientID: String) -> AVSCallingEventService {
+        if let existing = processInstance {
+            return existing
+        }
+        let instance = AVSCallingEventService(userID: userID, clientID: clientID)
+        processInstance = instance
+        return instance
+    }
 
     public init(userID: String, clientID: String) {
         self.handle = 0

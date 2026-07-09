@@ -73,6 +73,8 @@ actor CallKitReportingCoordinator {
     ) {
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else { return }
         callerNamesByConversationID[conversationID.storageKey] = callerName
+        WireLogger.calling.debug("🚀 callerNamesByConversationID: \(callerNamesByConversationID)", attributes: .newNSE, .safePublic)
+
     }
 
     /// Wait for all callback-started CallKit tasks to finish.
