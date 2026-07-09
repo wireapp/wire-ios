@@ -101,7 +101,7 @@ final class ConversationListViewController: UIViewController {
         }
     }
 
-    var selectedFilterAccessibilityIdentifier: String? {
+    private var selectedFilterAccessibilityIdentifier: String? {
         switch listContentController.listViewModel.selectedFilter {
         case .favorites:
             Locators.ConversationsPage.textFilteredByFavourites.rawValue

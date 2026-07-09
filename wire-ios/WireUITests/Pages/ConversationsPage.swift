@@ -290,8 +290,8 @@ class ConversationsPage: PageModel {
     }
 
     func moveConversationToNewFolder(named folderName: String) throws -> ConversationsPage {
-        moveToFolderButtonOnMoreOptions.tap()
-        createNewFolderButton.tap()
+        XCTAssertTrue(moveToFolderButtonOnMoreOptions.waitAndTap(), "Move to folder option did not appear")
+        XCTAssertTrue(createNewFolderButton.waitAndTap(), "Create new folder button did not appear")
         XCTAssertTrue(
             newFolderNameInput.waitForExistence(timeout: 5),
             "New folder name input did not appear"

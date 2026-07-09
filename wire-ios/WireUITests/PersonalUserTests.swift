@@ -329,7 +329,7 @@ final class PersonalUsersTests: WireUITestCase {
             conversationsPage
                 .conversationCell(named: team.groupName)
                 .waitForExistence(timeout: 5),
-            "Conversation moved to folder did not returned in folder filter"
+            "Conversation moved to folder did not appear in folder filter"
         )
 
         XCTAssertEqual(
