@@ -45,19 +45,15 @@ on:
         required: true
       DATADOG_CLIENT_TOKEN:
         required: true
+      GOV_SUBFOLDER_PRODUCTION:
+        required: true
       C1_S3_SUBFOLDER_RESTRICTED:
         required: true
       C1_S3_SUBFOLDER_PRODUCTION:
         required: true
-      C1_APP_CENTER_APP_NAME_PRODUCTION:
-        required: true
       C3_S3_SUBFOLDER_RESTRICTED:
         required: true
-      C3_APP_CENTER_APP_NAME_RESTRICTED:
-        required: true
       C3_S3_SUBFOLDER_PRODUCTION:
-        required: true
-      C3_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
       PLAYGROUND_TESTFLIGHT_LINK:
         required: true
@@ -99,15 +95,11 @@ jobs:
       ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
       C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
       C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
-      C1_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C1_APP_CENTER_APP_NAME_PRODUCTION }}
+      GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
       C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
-      C2_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C2_APP_CENTER_APP_NAME_RESTRICTED }}
       C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
-      C2_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C2_APP_CENTER_APP_NAME_PRODUCTION }}
       C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
-      C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
-      C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
       BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
       PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
       COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
@@ -160,8 +152,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Run setup
-        run: sh ./setup.sh
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

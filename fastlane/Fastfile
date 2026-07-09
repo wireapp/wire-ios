@@ -268,6 +268,17 @@ platform :ios do
         build_and_upload_app(options)
     end
 
+    desc "Build & Upload Wire Gov Production AppStore build"
+    lane :appstore_gov do |options|
+        options[:build_type] = "AppStore"
+        options[:override_folder] = "Gov"
+        options[:s3_subfolder] = ENV['GOV_SUBFOLDER_PRODUCTION']
+        options[:upload_testflight] = true
+        options[:produce_debug_builds] = ENV['DEBUG_BUILDS'] == "1" || ENV['DEBUG_BUILDS'] == "true"
+        save_app_name('Wire Gov')
+        build_and_upload_app(options)
+    end
+
     desc "Build & Upload Col 2 Production AppStore build"
     lane :appstore_col_2_prod do |options|
         options[:build_type] = "AppStore"
