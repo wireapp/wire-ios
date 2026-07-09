@@ -22,7 +22,7 @@ import Foundation
 ///
 /// `AsyncStream` itself supports only a single consumer, so each observer
 /// gets its own stream and events are yielded to all active streams.
-public final class AsyncBroadcaster<Element: Sendable>: @unchecked Sendable {
+public final class AsyncMulticaster<Element: Sendable>: @unchecked Sendable {
 
     private let lock = NSLock()
     private var continuations: [UUID: AsyncStream<Element>.Continuation] = [:]
@@ -51,7 +51,7 @@ public final class AsyncBroadcaster<Element: Sendable>: @unchecked Sendable {
 
 }
 
-extension AsyncBroadcaster where Element == Void {
+extension AsyncMulticaster where Element == Void {
 
     public func broadcast() {
         broadcast(())
