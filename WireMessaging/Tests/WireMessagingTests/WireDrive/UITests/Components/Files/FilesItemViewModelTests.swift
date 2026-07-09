@@ -74,7 +74,7 @@ final class FilesItemViewModelTests {
     @Test
     func hasViewerMenuActions() async throws {
         let sut = makeSut(isReadOnly: true)
-        #expect(sut.menuActions == [.primaryAction, .makeAvailableOffline])
+        #expect(sut.menuActions == [.primaryAction])
     }
 
     private func makeSut(isReadOnly: Bool) -> FilesItemViewModel {
