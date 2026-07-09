@@ -31,7 +31,7 @@ public struct WireMeetingsFactory {
     @MainActor
     public func makeMeetingsView(
         meetingRepository: any MeetingRepositoryProtocol,
-        memberRepository: any MemberRepositoryProtocol,
+        memberRepository: any MeetingMemberRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController {
         let createInstantMeetingUseCase = CreateInstantMeetingUseCase(
