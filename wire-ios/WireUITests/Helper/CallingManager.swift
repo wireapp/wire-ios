@@ -92,7 +92,7 @@ final class CallingManager {
             checkAudioReceived: true,
             checkVideoSent: false,
             checkVideoReceived: true,
-            timeout: 30
+            timeout: 15
         )
     }
 
@@ -124,7 +124,7 @@ final class CallingManager {
     private func waitForFlows(
         instanceId: String,
         minimumCount: Int = 1,
-        timeout: TimeInterval = 40
+        timeout: TimeInterval = 15
     ) async throws -> [CallFlow] {
         let deadline = Date().addingTimeInterval(timeout)
         var flows: [CallFlow] = []

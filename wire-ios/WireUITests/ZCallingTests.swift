@@ -245,7 +245,7 @@ final class ZCallingTests: WireUITestCase {
     /// Call participant switches from audio call to video call and back
     /// [critical]
     @MainActor
-    func testSwitchBetweenAudioAndVideoCall_TC_8888_TC_9497() async throws {
+    func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_TC_9497() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
 
@@ -280,7 +280,6 @@ final class ZCallingTests: WireUITestCase {
         }
 
         try ongoingCallPage.turnOnVideo()
-        app.dismissAllowIfPresent(timeout: 2)
 
         for instanceId in acceptingIds {
             _ = try await callingManager.switchVideoOn(instanceId: instanceId)
