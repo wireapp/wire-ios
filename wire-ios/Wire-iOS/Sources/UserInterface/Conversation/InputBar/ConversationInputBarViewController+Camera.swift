@@ -155,10 +155,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController) {
-        let collectionView = cameraKeyboardViewController?.collectionView
-        let preSelectedAssetIdentifiers = collectionView?.indexPathsForSelectedItems?
-            .compactMap { collectionView?.cellForItem(at: $0) as? AssetCell }
-            .compactMap(\.representedAssetIdentifier)
+        let preSelectedAssetIdentifiers = controller.selectedAssetIdentifiers
 
         hideCameraKeyboardViewController { [self] in
             shouldRefocusKeyboardAfterImagePickerDismiss = true
@@ -166,7 +163,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 sourceType: .photoLibrary,
                 mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
                 allowsEditing: false,
-                preSelectedAssetIdentifiers: preSelectedAssetIdentifiers ?? [],
+                preSelectedAssetIdentifiers: preSelectedAssetIdentifiers,
                 pointToView: photoButton.imageView!
             )
         }
