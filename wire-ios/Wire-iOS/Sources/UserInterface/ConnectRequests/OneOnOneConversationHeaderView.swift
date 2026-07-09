@@ -37,7 +37,7 @@ final class OneOnOneConversationHeaderView: UIView, Copyable {
     private let labelContainer = UIStackView(axis: .vertical)
     private let userImageView = UserImageView()
     private let guestIndicator = LabelIndicator(context: .guest)
-    private let guestWarningView = GuestAccountWarningView()
+    private let guestWarningView = GuestAccountWarningView(variant: .oneOnOne)
     private let guestWarningContainer = UIView()
     private let userSession: UserSession
 
