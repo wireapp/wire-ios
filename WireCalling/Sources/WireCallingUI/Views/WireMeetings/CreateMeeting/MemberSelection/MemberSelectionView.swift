@@ -146,7 +146,7 @@ struct MemberSelectionView: View {
         .textCase(nil)
     }
 
-    private func row(for member: Member) -> some View {
+    private func row(for member: MeetingMember) -> some View {
         let isSelected = viewModel.isSelected(member)
         return Button {
             viewModel.toggleSelection(member)
@@ -204,9 +204,9 @@ struct MemberSelectionView: View {
 
 private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
 
-    let result: Result<[Member], any Error>
+    let result: Result<[MeetingMember], any Error>
 
-    init(members: [Member] = .mock) {
+    init(members: [MeetingMember] = .mock) {
         self.result = .success(members)
     }
 
@@ -214,7 +214,7 @@ private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
         self.result = .failure(error)
     }
 
-    func invoke(query: String) async throws -> [Member] {
+    func invoke(query: String) async throws -> [MeetingMember] {
         switch result {
         case let .failure(error):
             throw error
@@ -225,7 +225,7 @@ private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
     }
 }
 
-private extension [Member] {
+private extension [MeetingMember] {
     static var mock: Self {
         [
             .init(name: "Martin Koch-Johansen", handle: "username"),
@@ -241,7 +241,7 @@ private extension [Member] {
     }
 }
 
-private extension Member {
+private extension MeetingMember {
 
     init(
         name: String,

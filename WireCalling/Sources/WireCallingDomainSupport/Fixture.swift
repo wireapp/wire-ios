@@ -36,7 +36,8 @@ package extension Meeting {
             end: start.addingTimeInterval(duration),
             recurrence: .none,
             members: [],
-            conversationID: QualifiedID(id: UUID(), domain: "")
+            conversationID: QualifiedID(id: UUID(), domain: ""),
+            creatorID: QualifiedID(id: UUID(), domain: "")
         )
     }
 
