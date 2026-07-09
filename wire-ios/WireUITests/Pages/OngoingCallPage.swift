@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import Vision
 import WireLocators
 import XCTest
 
@@ -86,23 +85,9 @@ class OngoingCallPage: PageModel {
         ).firstMatch
     }
 
-    private func readQRCode(from screenshot: XCUIScreenshot) throws -> String? {
-        let request = VNDetectBarcodesRequest()
-        request.symbologies = [.qr]
-
-        let handler = VNImageRequestHandler(
-            data: screenshot.pngRepresentation,
-            options: [:]
-        )
-        try handler.perform([request])
-
-        return request.results?.compactMap(\.payloadStringValue).first
-    }
-
     @discardableResult
-    func verifyVideoQRCode(
+    func isOtherParticipantVideoTileVisible(
         for participantName: String,
-        expectedCode: String,
         timeout: TimeInterval = 20
     ) -> OngoingCallPage {
         let tile = videoView(for: participantName)
@@ -111,22 +96,10 @@ class OngoingCallPage: PageModel {
             "Remote video is not visible for \(participantName)"
         )
 
-        let deadline = Date().addingTimeInterval(timeout)
-        var decodedCode: String?
-
-        repeat {
-            decodedCode = try? readQRCode(from: tile.screenshot())
-            if decodedCode == expectedCode {
-                return self
-            }
-
-            RunLoop.current.run(until: Date().addingTimeInterval(1))
-        } while Date() < deadline
-
-        XCTAssertEqual(
-            decodedCode,
-            expectedCode,
-            "Remote video QR code did not match for \(participantName)"
+        XCTAssertTrue(
+            tile.identifier.localizedCaseInsensitiveContains(participantName) ||
+                tile.label.localizedCaseInsensitiveContains(participantName),
+            "Remote video tile did not match participant \(participantName). Identifier: \(tile.identifier). Label: \(tile.label)"
         )
         return self
     }

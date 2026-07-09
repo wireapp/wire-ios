@@ -64,7 +64,8 @@ final class CallingServiceClient {
     enum Constants {
         static let CONNECT_TIMEOUT: TimeInterval = 360
         static let RESPONSE_TIMEOUT: TimeInterval = 360
-        static let CALLING_RESPONSE_TIMEOUT: TimeInterval = 600
+        static let INSTANCE_TIMEOUT_MILLISECONDS: Double = 1000 * 60 * 10
+        static let CALL_TIMEOUT_MILLISECONDS: Double = 1000 * 60 * 60 * 2
 
     }
 
@@ -170,7 +171,7 @@ final class CallingServiceClient {
                 name: instanceTypeName,
                 version: instanceTypeVersion
             ),
-            timeout: Constants.RESPONSE_TIMEOUT
+            timeout: Constants.INSTANCE_TIMEOUT_MILLISECONDS
         )
 
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: body, method: .post)
@@ -344,7 +345,7 @@ final class CallingServiceClient {
     ) async throws -> CallResponse {
         let request = StartCallBody(
             conversationId: conversationId,
-            timeout: Constants.CALLING_RESPONSE_TIMEOUT
+            timeout: Constants.CALL_TIMEOUT_MILLISECONDS
         )
         return try await performCall(instanceId: instanceId, path: "/call/start", request: request)
     }

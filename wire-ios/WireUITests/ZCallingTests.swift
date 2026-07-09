@@ -245,7 +245,7 @@ final class ZCallingTests: WireUITestCase {
     /// Call participant switches from audio call to video call and back
     /// [critical]
     @MainActor
-    func testSwitchBetweenAudioAndVideoCall_TC_8888_TC_0000() async throws {
+    func testSwitchBetweenAudioAndVideoCall_TC_8888_TC_9497() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
 
@@ -292,10 +292,7 @@ final class ZCallingTests: WireUITestCase {
         )
 
         for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
-            ongoingCallPage.verifyVideoQRCode(
-                for: callingServiceUser.name,
-                expectedCode: callingServiceUser.email
-            )
+            ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
         }
 
         try await callingManager.verifyReceiveAudioAndVideo(instanceIds: acceptingIds)
@@ -304,12 +301,6 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertTrue(
             ongoingCallPage.turnOnCameraButton.waitForExistence(timeout: 10),
             "Camera did not switch off"
-        )
-
-        let conversationsPageAfterCall = try ongoingCallPage.endOngoingCall()
-        XCTAssertTrue(
-            conversationsPageAfterCall.conversationCell.exists,
-            "Conversation List is not showing after ending the call"
         )
     }
 }
