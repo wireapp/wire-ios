@@ -4312,6 +4312,12 @@ internal enum L10n {
       }
     }
     internal enum LastAdminLeave {
+      /// There are no other eligible admins in the group and as a personal user you cannot delete the group. However, add another team member and make that user admin to delete the group.
+      internal static let cannotLeaveMessage = L10n.tr("Localizable", "last_admin_leave.cannot_leave_message", fallback: "There are no other eligible admins in the group and as a personal user you cannot delete the group. However, add another team member and make that user admin to delete the group.")
+      /// Cannot leave "%@".
+      internal static func cannotLeaveTitle(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "last_admin_leave.cannot_leave_title", String(describing: p1), fallback: "Cannot leave \"%@\".")
+      }
       /// Delete group
       internal static let deleteGroup = L10n.tr("Localizable", "last_admin_leave.delete_group", fallback: "Delete group")
       /// You're the only admin. The other participants can't be admins.
@@ -4319,6 +4325,9 @@ internal enum L10n {
       internal static let noEligibleCandidatesMessage = L10n.tr("Localizable", "last_admin_leave.no_eligible_candidates_message", fallback: "You're the only admin. The other participants can't be admins.\nAdd at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.")
       /// Promote new admin
       internal static let promoteNewAdmin = L10n.tr("Localizable", "last_admin_leave.promote_new_admin", fallback: "Promote new admin")
+      /// You're the only admin.
+      /// Promote another participant before leaving.
+      internal static let promoteOnlyMessage = L10n.tr("Localizable", "last_admin_leave.promote_only_message", fallback: "You're the only admin.\nPromote another participant before leaving.")
       /// You're the only admin.
       /// Promote another participant before leaving, or delete the group if it is no longer needed.
       internal static let promoteOrDeleteMessage = L10n.tr("Localizable", "last_admin_leave.promote_or_delete_message", fallback: "You're the only admin.\nPromote another participant before leaving, or delete the group if it is no longer needed.")
