@@ -23,7 +23,6 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets:
       # Only the secrets declared under
       # ./.github/workflows/_reusable_app_release.yml -> on.workflow_call.secrets
