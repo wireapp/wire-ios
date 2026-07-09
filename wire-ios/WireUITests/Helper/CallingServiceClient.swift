@@ -89,13 +89,19 @@ final class CallingServiceClient {
     }
 
     func instanceEndpoint(instanceId: String, path: String) -> URL {
-        let cleanPath = path.hasPrefix("/") ? String(path.dropFirst()) : path
-        return callingServiceURL
+        instanceEndpoint(instanceId: instanceId, pathComponents: [path])
+    }
+
+    func instanceEndpoint(instanceId: String, pathComponents: [String]) -> URL {
+        let instanceURL = callingServiceURL
             .appendingPathComponent("api")
             .appendingPathComponent("v1")
             .appendingPathComponent("instance")
             .appendingPathComponent(instanceId)
-            .appendingPathComponent(cleanPath)
+
+        return pathComponents.reduce(instanceURL) { url, pathComponent in
+            url.appendingPathComponent(pathComponent)
+        }
     }
 
     func sendHttpRequest(
@@ -291,15 +297,16 @@ final class CallingServiceClient {
 
     private func performCall(
         instanceId: String,
-        path: String,
+        pathComponents: [String],
         request: some Encodable
     ) async throws -> CallResponse {
-        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
+        let endpoint = instanceEndpoint(instanceId: instanceId, pathComponents: pathComponents)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: request, method: .post)
         guard code.statusCode == 200 else {
             logEndpointFailure(method: "POST", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
-                "CallingService call failed: POST \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService call failed: POST \(endpoint.path) HTTP \(code.statusCode). " +
+                    (String(data: data, encoding: .utf8) ?? "")
             )
         }
         return try JSONDecoder().decode(CallResponse.self, from: data)
@@ -307,14 +314,15 @@ final class CallingServiceClient {
 
     private func performCallPut(
         instanceId: String,
-        path: String
+        pathComponents: [String]
     ) async throws -> CallResponse {
-        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
+        let endpoint = instanceEndpoint(instanceId: instanceId, pathComponents: pathComponents)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: CallingServiceEmptyBody(), method: .put)
         guard code.statusCode == 200 else {
             logEndpointFailure(method: "PUT", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
-                "CallingService call failed: PUT \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService call failed: PUT \(endpoint.path) HTTP \(code.statusCode). " +
+                    (String(data: data, encoding: .utf8) ?? "")
             )
         }
         return try JSONDecoder().decode(CallResponse.self, from: data)
@@ -336,7 +344,7 @@ final class CallingServiceClient {
     }
 
     func acceptNext(instanceId: String, request: CallRequest) async throws -> CallResponse {
-        try await performCall(instanceId: instanceId, path: "/call/acceptNext", request: request)
+        try await performCall(instanceId: instanceId, pathComponents: ["call", "acceptNext"], request: request)
     }
 
     func startCall(
@@ -347,8 +355,7 @@ final class CallingServiceClient {
             conversationId: conversationId,
             timeout: Constants.callTimeoutMilliseconds
         )
-        let path = "/" + ["call", "start"].joined(separator: "/")
-        return try await performCall(instanceId: instanceId, path: path, request: request)
+        return try await performCall(instanceId: instanceId, pathComponents: ["call", "start"], request: request)
     }
 
     func getCurrentCall(instanceId: String) async throws -> CallResponse {
@@ -360,7 +367,7 @@ final class CallingServiceClient {
     }
 
     func switchVideoOn(instanceId: String, callId: String) async throws -> CallResponse {
-        try await performCallPut(instanceId: instanceId, path: "/call/\(callId)/switchVideoOn")
+        try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "switchVideoOn"])
     }
 
     func getFlows(instanceId: String) async throws -> [CallFlow] {

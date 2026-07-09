@@ -39,7 +39,7 @@ final class CallingManager {
                 group.addTask {
                     let request = CallRequest(
                         conversationId: conversationId,
-                        timeout: CallingServiceClient.Constants.CALL_TIMEOUT_MILLISECONDS
+                        timeout: CallingServiceClient.Constants.callTimeoutMilliseconds
                     )
                     let response = try await self.client.acceptNext(instanceId: instanceId, request: request)
                     return (instanceId, response)
