@@ -75,11 +75,17 @@ public enum Locators {
         case loadBar
         case addToFavourite = "Add to Favorites"
         case removeFromFavourite = "Remove from Favorites"
+        case moveToFolderOptionOnContextMenu = "Move to…"
         case filterConversations = "Filter conversations"
-        case filterByFavourites = "Show all favorite conversations"
-        case filterByOneOnOneConversation = "Show all one on one conversations"
-        case textFilteredByFavourites = "Filtered by Favorites"
-        case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
+        case filterByFavourites
+        case filterByGroups
+        case filterByChannels
+        case filterByOneOnOneConversation
+        case filterByFolders
+        case textFilteredByFavourites
+        case textFilteredByGroups
+        case textFilteredByChannels
+        case textFilteredByOneOnOne
         case userRemovedSystemMessage
         case connectionRequestsCell
         case unreadMessageCount
@@ -232,6 +238,7 @@ public enum Locators {
         case archive
         case clearContent
         case leaveConversation
+        case moveToFolder
     }
 
     public enum LastAdminLeaveAlert: AutoPrefixedEnum {
