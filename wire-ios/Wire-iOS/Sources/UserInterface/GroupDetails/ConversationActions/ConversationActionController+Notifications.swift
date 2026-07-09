@@ -60,14 +60,26 @@ enum NotificationResult: CaseIterable {
     }
 
     func action(for conversation: ZMConversation, handler: @escaping (NotificationResult) -> Void) -> UIAlertAction {
-        let checkmarkText = if let mutedMessageTypes, conversation.mutedMessageTypes == mutedMessageTypes {
+        let isSelected = mutedMessageTypes.map { conversation.mutedMessageTypes == $0 } ?? false
+        let checkmarkText = if isSelected {
             " ✓"
         } else {
             ""
         }
 
-        let title = title + checkmarkText
-        return .init(title: title, style: style, handler: { _ in handler(self) })
+        let actionTitle = title
+        let visibleTitle = actionTitle + checkmarkText
+        let action = UIAlertAction(title: visibleTitle, style: style, handler: { _ in handler(self) })
+        if mutedMessageTypes != nil {
+            let accessibilityValue = if isSelected {
+                L10n.Localizable.ButtonMessageCell.State.selected
+            } else {
+                L10n.Localizable.ButtonMessageCell.State.unselected
+            }
+            action.accessibilityLabel = "\(actionTitle), \(accessibilityValue)"
+            action.accessibilityValue = accessibilityValue
+        }
+        return action
     }
 }
 
