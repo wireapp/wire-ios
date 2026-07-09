@@ -86,10 +86,10 @@ final class NoDefaultBackendViewModel {
             switch result {
             case let .success(backendEnvironment):
                 delegate?.noDefaultBackendViewModel(self, requestUserConfirmationForBackendSwitch: backendEnvironment) { didConfirm in
+                    defer { self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false) }
                     guard didConfirm else { return }
                     sessionManager.markNetworkSessionsAsReady(true)
                     sessionManager.switchBackendWithoutResolving(to: backendEnvironment)
-                    self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false)
                     // persist backendenvironment so urls work
                     backendEnvironment.save(in: .applicationGroup)
                     self.delegate?.noDefaultBackendViewModel(self, didConfigureBackend: configurationURL)
