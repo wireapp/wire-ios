@@ -37,6 +37,5 @@ jobs:
       DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
       DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
       SUBMODULE_PAT: ${{ secrets.SUBMODULE_PAT }}
-      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
       WIRE_IOS_BUILD_WEBHOOK: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
       GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
