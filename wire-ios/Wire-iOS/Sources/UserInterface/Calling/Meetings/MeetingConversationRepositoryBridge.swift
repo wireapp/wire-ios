@@ -37,7 +37,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
 
     func addParticipants(
         _ participants: [MeetingMember],
-        to conversationID: WireFoundation.QualifiedID
+        to conversationID: WireCallingDomain.QualifiedID
     ) async throws {
         guard !participants.isEmpty else { return }
 
