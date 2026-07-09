@@ -339,7 +339,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             case .startingSending:
                 WireLogger.shareExtension.info("progress event: start sending")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                    guard postContent.sentAllSendables, self.progressViewController == nil else { return }
+                    guard !postContent.sentAllSendables, self.progressViewController == nil else { return }
                     self.presentSendingProgress(mode: .sending)
                 }
 

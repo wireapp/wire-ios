@@ -48,6 +48,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
     }
 
+    private let eventID: UUID
+    private let contentHandler: (UNNotificationContent) -> Void
     private let clientID: String
     private let restNetworkService: NetworkService
     private let webSocketNetworkService: NetworkService
@@ -56,12 +58,13 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let isFederationEnabled: Bool
     private let coreDataStack: CoreDataStack
     private let earService: EARServiceInterface
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
-    private var currentTask: Task<Void, any Error>?
-    private var monitoringTask: Task<Void, any Error>?
 
     init(
+        eventID: UUID,
+        contentHandler: @escaping (UNNotificationContent) -> Void,
         parent: any Scope,
         clientID: String,
         restNetworkService: NetworkService,
@@ -70,8 +73,11 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         localDomain: String,
         isFederationEnabled: Bool,
         coreDataStack: CoreDataStack,
-        earService: EARServiceInterface
+        earService: EARServiceInterface,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
+        self.eventID = eventID
+        self.contentHandler = contentHandler
         self.clientID = clientID
         self.restNetworkService = restNetworkService
         self.webSocketNetworkService = webSocketNetworkService
@@ -81,14 +87,12 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         self.coreDataStack = coreDataStack
         self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: clientID)
         self.earService = earService
+        self.backgroundTaskExecuter = backgroundTaskExecuter
 
         super.init(parent: parent)
     }
 
-    func processPayload(
-        eventID: UUID,
-        contentHandler: @escaping (UNNotificationContent) -> Void
-    ) async throws {
+    func processPayload() async throws {
         // Pull pending update events.
         let eventStream: AsyncStream<[UpdateEvent]>
         let publicKeys = try earService.fetchPublicKeys()
@@ -97,55 +101,56 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             let (useCase, stream) = syncEventsUseCase()
             eventStream = stream
 
-            // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
-            // cancel the task (not keeping any file lock in suspend mode)
-            try await withExpiringActivity(reason: "processPayload in NSE") { [weak self] in
-                guard let self else { return }
-                // make sure no pushChannel is open
-                let pushChannelState = PushChannelState(
-                    sharedContainerURL: dependency.appContainerURL,
-                    clientID: clientID
-                )
-                do {
-                    try await pushChannelState.markAsOpen()
-                } catch {
-                    throw Failure.pushChannelAlreadyOpened
-                }
-
-                monitoringTask = Task { [weak self] in
-                    var request = await self?.pushChannelCoordinator.listenForYieldRequests()
-                    if Task.isCancelled {
-                        return
-                    }
-                    WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
-                    self?.currentTask?.cancel()
-                    request?.acknowledge()
-                    WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
-                }
-
-                currentTask = Task {
-                    do {
-                        try Task.checkCancellation()
-                        try await useCase.invoke()
-                    } catch {
-                        // either we timeout during decrypting/storing events OR an issue
-                        // with the sync. In both cases, we end up with a stream of
-                        // notifications that has not been shown, so we need to continue
-                        // to show them.
-                        WireLogger.sync.warn(
-                            "syncing events via websocket: \(String(describing: error))",
-                            attributes: .incrementalSyncV3, .newNSE
-                        )
-                        await pushChannelState.markAsClosed()
-                    }
-                }
-                try await currentTask?.value
-                WireLogger.sync.debug("closing push channel")
-                await pushChannelState.markAsClosed()
-
-                // no need to monitor anymore let's cancel
-                monitoringTask?.cancel()
+            // make sure no pushChannel is open
+            let pushChannelState = PushChannelState(
+                sharedContainerURL: dependency.appContainerURL,
+                clientID: clientID
+            )
+            do {
+                try await pushChannelState.markAsOpen()
+            } catch {
+                throw Failure.pushChannelAlreadyOpened
             }
+
+            let currentTask = Task<Void, any Error> {
+                do {
+                    try Task.checkCancellation()
+                    try await useCase.invoke()
+                } catch {
+                    // either we timeout during decrypting/storing events OR an issue
+                    // with the sync. In both cases, we end up with a stream of
+                    // notifications that has not been shown, so we need to continue
+                    // to show them.
+                    WireLogger.sync.warn(
+                        "syncing events via websocket: \(String(describing: error))",
+                        attributes: .incrementalSyncV3, .newNSE
+                    )
+                    await pushChannelState.markAsClosed()
+                }
+            }
+
+            let monitoringTask = Task<Void, any Error> { [pushChannelCoordinator] in
+                let request = await pushChannelCoordinator.listenForYieldRequests()
+                if Task.isCancelled {
+                    return
+                }
+                WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
+                currentTask.cancel()
+                request.acknowledge()
+                WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
+            }
+
+            try await withTaskCancellationHandler {
+                try await currentTask.value
+            } onCancel: {
+                currentTask.cancel()
+            }
+
+            WireLogger.sync.debug("closing push channel")
+            await pushChannelState.markAsClosed()
+
+            // no need to monitor anymore let's cancel
+            monitoringTask.cancel()
 
         } else {
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
@@ -316,7 +321,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
                 localDomain: localDomain,
-                backgroundTaskManager: nil
+                backgroundTaskExecuter: backgroundTaskExecuter
             )
         }
     }

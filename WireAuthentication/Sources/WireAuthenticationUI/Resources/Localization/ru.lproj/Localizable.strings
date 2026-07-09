@@ -121,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Сначала примите приглашение в свою команду и выполните шаги по созданию аккаунта.";
 "authentication.error.message.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
 "authentication.error.message.incorrect_sso_code" = "Проверьте код доступа SSO вашей компании и повторите попытку.";
+"authentication.error.title.already_logged_in" = "Используемая учетная запись";
+"authentication.error.message.already_logged_in" = "Вы уже авторизованы с этими учетными данными на данном устройстве.";
 
 "authentication.error.confirm" = "OK";
 

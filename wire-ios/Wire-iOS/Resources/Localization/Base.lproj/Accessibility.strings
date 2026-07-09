@@ -221,7 +221,7 @@
 "conversationsList.mentionStatus.value" = "You are mentioned";
 "conversationsList.replyStatus.value" = "Reply";
 "conversationsList.badgeView.value" = "New messages: %d";
-"conversationsList.itemCell.hint" = "Double tap to open conversation";
+"conversationsList.itemCell.hint" = "Double tap to open conversation. Triple tap to open conversation options";
 "conversationsList.itemCell.avatar.group.label" = "Group";
 "conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Join";

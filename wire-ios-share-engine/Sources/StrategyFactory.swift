@@ -20,6 +20,7 @@ import Foundation
 import WireLinkPreview
 import WireNetwork
 import WireRequestStrategy
+import WireSystem
 import WireTransport.ZMRequestCancellation
 
 final class StrategyFactory {
@@ -42,7 +43,8 @@ final class StrategyFactory {
         transportSession: TransportSessionType,
         initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
         apiVersion: WireTransport.APIVersion?,
-        localDomain: String?
+        localDomain: String?,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
@@ -60,7 +62,8 @@ final class StrategyFactory {
             incrementalSyncObserver: NoOpIncrementalSyncObserver(),
             initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
             featureRepository: featureRepository,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
         self.apiVersion = apiVersion
         self.localDomain = localDomain

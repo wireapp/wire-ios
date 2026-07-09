@@ -51,6 +51,8 @@
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupParticipants.header" = "Uczestnicy";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Dodaj uczestników";
+"wireMeetings.schedule.error.alert.title" = "Coś poszło nie tak";
+"wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Anuluj";

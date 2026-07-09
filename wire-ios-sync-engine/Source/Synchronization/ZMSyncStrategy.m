@@ -123,15 +123,8 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (void)updateStrategyClientContextChangeTrackers
 {
-    // Capture strong references on the calling thread so the enqueued block does
-    // not re-read these `nonatomic` properties from the syncMOC queue. Otherwise
-    // a concurrent `tearDown` (which nils them on the main thread) races with this
-    // block and can cause a use-after-free when the block runs. See WPB crash:
-    // objc_msgSend in updateStrategyClientContextChangeTrackers block during tearDown.
-    ZMChangeTrackerBootstrap *changeTrackerBootStrap = self.changeTrackerBootStrap;
-    id<StrategyDirectoryProtocol> strategyDirectory = self.strategyDirectory;
     [self.syncMOC performBlock:^{
-        [changeTrackerBootStrap addChangeTrackers:strategyDirectory.clientContextChangeTrackers];
+        [self.changeTrackerBootStrap addChangeTrackers:self.strategyDirectory.clientContextChangeTrackers];
     }];
 }
 

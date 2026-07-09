@@ -440,6 +440,8 @@ public final class ZMUserSession: NSObject {
     private(set) var userSessionComponent: UserSessionComponent!
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
+
     private let networkReachability = NetworkReachability()
     private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
@@ -479,9 +481,11 @@ public final class ZMUserSession: NSObject {
         logFilesProvider: LogFilesProviding,
         cookieStorage: any WireNetwork.CookieStorageProtocol,
         faultyMLSRemovalKeysByDomain: [String: [String]],
-        updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol
+        updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.application = application
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
         self.flowManager = flowManager
@@ -536,7 +540,8 @@ public final class ZMUserSession: NSObject {
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         self.conversationEventProcessor = ConversationEventProcessor(
@@ -639,7 +644,8 @@ public final class ZMUserSession: NSObject {
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
-            networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
+            networkStatePublisher: networkStateSubject.eraseToAnyPublisher(),
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         self.syncAgent = syncAgent
@@ -670,7 +676,8 @@ public final class ZMUserSession: NSObject {
                     flowManager: flowManager,
                     incrementalSyncObserver: incrementalSyncObserver,
                     initiateResetMLSConversationUseCase: clientSessionComponent.initiateResetMLSConversationUseCase,
-                    metadata: resolvedBackendMetadata
+                    metadata: resolvedBackendMetadata,
+                    backgroundTaskExecuter: backgroundTaskExecuter
                 )
             }
             syncStrategy?.updateClientContextChangeTrackers()
@@ -1646,9 +1653,6 @@ extension ZMUserSession {
                 coreCryptoProvider: coreCryptoProvider
             ),
             AppVersionMigration_4_18_0(
-                coreDataStack: coreDataStack
-            ),
-            AppVersionMigration_4_22_0(
                 coreDataStack: coreDataStack
             )
         ]

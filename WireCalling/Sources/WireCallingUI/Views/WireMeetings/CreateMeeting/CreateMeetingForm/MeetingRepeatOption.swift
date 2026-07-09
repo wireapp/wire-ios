@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+enum MeetingRepeatOption: Int, CaseIterable, Sendable {
 
-// sourcery: AutoMockable
-/// Repository for accessing Meetings
-package protocol MeetingsRepositoryProtocol: Sendable {
-
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
-
-    func hasUpcomingMeetings(after date: Date) -> Bool
+    case never
+    case daily
+    case weekly
+    case every2Weeks
+    case monthly
+    case yearly
 
 }

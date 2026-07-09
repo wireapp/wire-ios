@@ -48,6 +48,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case enableDrivePermissions
     case unSafeLogsForPublic
     case enableNSEHelper
+    case useBackgroundTaskAPIInAppBackgroundTaskExecuter
 
     public var description: String {
         switch self {
@@ -125,6 +126,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .enableNSEHelper:
             "Turn on to process calling events via AVS in the Notification Service Extension"
+
+        case .useBackgroundTaskAPIInAppBackgroundTaskExecuter:
+            "Turn on to use Apple's UIApplication task API directly in AppBackgroundTaskExecuter"
         }
     }
 

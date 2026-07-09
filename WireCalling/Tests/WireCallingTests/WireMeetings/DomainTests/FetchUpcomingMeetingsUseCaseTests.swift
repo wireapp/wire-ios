@@ -26,7 +26,7 @@ import WireFoundationSupport
 @Suite("FetchUpcomingMeetingsUseCase Tests")
 struct FetchUpcomingMeetingsUseCaseTests {
 
-    private let repository = MeetingsRepositoryProtocolMock()
+    private let repository = MeetingRepositoryProtocolMock()
     private let calendar = Calendar.current
 
     @Test("invoke fetches upcoming meetings from repository")

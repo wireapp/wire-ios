@@ -16,6 +16,14 @@ jobs:
         env:
             SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
         steps:
+            # Needed so the local ./.github/actions/notify-wire composite action is available.
+            # Only .github is required, and no LFS objects.
+            -   name: Checkout
+                uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+                with:
+                    sparse-checkout: .github
+                    lfs: 'false'
+
             -   name: Build summary message
                 id: build-summary
                 uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
@@ -146,12 +154,11 @@ jobs:
                             }
                         }
 
-                        return lines.join('\n');
+                        core.setOutput('result', lines.join('\n'));
 
             -   name: Post to Wire
                 continue-on-error: true
-                uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+                uses: ./.github/actions/notify-wire
                 with:
-                    status: custom
-                    custom_payload: |
-                        { "text": ${{ steps.build-summary.outputs.result }} }
+                    notify: custom
+                    text: ${{ steps.build-summary.outputs.result }}
