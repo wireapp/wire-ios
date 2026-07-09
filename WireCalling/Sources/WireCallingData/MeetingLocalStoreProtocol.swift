@@ -29,7 +29,7 @@ public protocol MeetingLocalStoreProtocol: Sendable {
     ///
     /// - Returns: The stored meetings.
 
-    func storedMeetings() async -> [Meeting]
+    func storedMeetings() async -> [Meeting] // TODO: consider async stream
 
     /// Stores a meeting locally, creating or updating it.
     ///

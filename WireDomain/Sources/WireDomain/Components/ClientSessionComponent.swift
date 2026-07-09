@@ -702,13 +702,9 @@ public final class ClientSessionComponent {
         lockRepository: resetMLSConversationLockRepository
     )
 
-    private lazy var meetingLocalStore = MeetingLocalStore(
-        context: syncContext
-    )
-
     public private(set) lazy var meetingRepository = MeetingRepository(
         meetingsAPI: meetingsAPI,
-        localStore: meetingLocalStore
+        localStore: MeetingLocalStore(context: syncContext)
     )
 
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
