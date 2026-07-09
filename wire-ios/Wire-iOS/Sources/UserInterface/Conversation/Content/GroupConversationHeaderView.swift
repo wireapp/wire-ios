@@ -61,8 +61,8 @@ final class GroupConversationHeaderView: UIView {
         ])
     }
 
-    private func makeGuestWarningBanner() -> UIView {
-        let warningView = GuestAccountWarningView()
+    private func makeGuestWarningBanner(variant: GuestAccountWarningView.Variant) -> UIView {
+        let warningView = GuestAccountWarningView(variant: variant)
         warningView.translatesAutoresizingMaskIntoConstraints = false
         let container = UIView()
         container.backgroundColor = SemanticColors.View.backgroundGreen
@@ -72,7 +72,8 @@ final class GroupConversationHeaderView: UIView {
     }
 
     private func populate(conversation: ZMConversation, selfUser: any UserType) {
-        let bannerView = makeGuestWarningBanner()
+        let variant: GuestAccountWarningView.Variant = conversation.isChannel ? .channel(driveEnabled: conversation.isWireDriveEnabled) : .group(driveEnabled: conversation.isWireDriveEnabled)
+        let bannerView = makeGuestWarningBanner(variant: variant)
         stackView.addArrangedSubview(bannerView)
         stackView.setCustomSpacing(16, after: bannerView)
 
