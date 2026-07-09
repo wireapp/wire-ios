@@ -18,6 +18,7 @@
 
 public import Foundation
 public import WireCallingDomain
+public import WireFoundation
 public import WireNetwork
 
 /// The single implementation of `WireCallingDomain.MeetingRepositoryProtocol`.
