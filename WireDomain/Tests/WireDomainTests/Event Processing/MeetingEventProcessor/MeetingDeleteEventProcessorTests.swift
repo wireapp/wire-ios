@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainSupport
+import WireCallingDomainSupport
 import WireNetwork
 import XCTest
 
@@ -25,38 +25,32 @@ import XCTest
 final class MeetingDeleteEventProcessorTests: XCTestCase {
 
     private var sut: MeetingDeleteEventProcessor!
-    private var localStore: MockMeetingLocalStoreProtocol!
+    private var repository: MeetingRepositoryProtocolMock!
 
     override func setUp() async throws {
         try await super.setUp()
-        localStore = MockMeetingLocalStoreProtocol()
+        repository = MeetingRepositoryProtocolMock()
         sut = MeetingDeleteEventProcessor(
-            localStore: localStore
+            repository: repository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        localStore = nil
+        repository = nil
         sut = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Deletes_Meeting_From_Local_Store() async {
-        // Mock
-
-        localStore.deleteMeetingIdDomain_MockMethod = { _, _ in }
-
+    func testProcessEvent_It_Deletes_Local_Meeting_Via_Repository() async {
         // When
 
         await sut.processEvent(Scaffolding.event)
 
         // Then
 
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.count, 1)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.first?.id, Scaffolding.meetingID.id)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.first?.domain, Scaffolding.meetingID.domain)
+        XCTAssertEqual(repository.deleteLocalMeetingIdQualifiedIDVoidReceivedInvocations, [Scaffolding.meetingID])
     }
 
     private enum Scaffolding {

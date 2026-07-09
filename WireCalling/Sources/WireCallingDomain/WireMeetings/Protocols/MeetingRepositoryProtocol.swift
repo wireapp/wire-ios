@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import Foundation
 
 // sourcery: AutoMockable
 /// Repository for accessing and managing meetings.
-package protocol MeetingRepositoryProtocol: Sendable {
+///
+/// The protocol is implemented outside of this package, where the
+/// persistence layer (Core Data) and the backend API are available,
+/// and injected in.
+public protocol MeetingRepositoryProtocol: Sendable {
 
     func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting]
 
@@ -33,6 +37,17 @@ package protocol MeetingRepositoryProtocol: Sendable {
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting
 
-    func deleteMeeting(meetingID: QualifiedID) async throws
+    /// Pulls a meeting from the server and stores it locally.
+    /// If the meeting no longer exists on the server, the locally stored copy is deleted.
+    ///
+    /// - Parameter id: The qualified id of the meeting to pull.
+
+    func pullMeeting(id: QualifiedID) async throws
+
+    /// Deletes a locally stored meeting without contacting the server.
+    ///
+    /// - Parameter id: The qualified id of the meeting to delete.
+
+    func deleteLocalMeeting(id: QualifiedID) async
 
 }

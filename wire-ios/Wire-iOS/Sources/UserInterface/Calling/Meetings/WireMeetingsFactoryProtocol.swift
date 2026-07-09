@@ -19,15 +19,13 @@
 import UIKit
 import WireCallingAssembly
 import WireCallingDomain
-import WireNetwork
 
 // sourcery: AutoMockable
 protocol WireMeetingsFactoryProtocol {
     @MainActor
     func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        meetingsLocalStore: any MeetingsLocalStoreProtocol,
-        memberRepository: any MemberRepositoryProtocol,
+        meetingRepository: any MeetingRepositoryProtocol,
+        memberRepository: any MeetingMemberRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController
 }

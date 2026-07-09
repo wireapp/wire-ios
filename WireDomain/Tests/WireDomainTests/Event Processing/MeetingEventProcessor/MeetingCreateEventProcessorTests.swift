@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainSupport
+import WireCallingDomainSupport
 import WireNetwork
-import WireNetworkSupport
 import XCTest
 
 @testable import WireDomain
@@ -26,67 +25,38 @@ import XCTest
 final class MeetingCreateEventProcessorTests: XCTestCase {
 
     private var sut: MeetingCreateEventProcessor!
-    private var meetingsAPI: MockMeetingsAPI!
-    private var localStore: MockMeetingLocalStoreProtocol!
+    private var repository: MeetingRepositoryProtocolMock!
 
     override func setUp() async throws {
         try await super.setUp()
-        meetingsAPI = MockMeetingsAPI()
-        localStore = MockMeetingLocalStoreProtocol()
+        repository = MeetingRepositoryProtocolMock()
         sut = MeetingCreateEventProcessor(
-            meetingsAPI: meetingsAPI,
-            localStore: localStore
+            repository: repository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        meetingsAPI = nil
-        localStore = nil
+        repository = nil
         sut = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Stores_Meeting_Contained_In_Backend_Response() async throws {
-        // Mock
-
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meeting]
-        localStore.storeMeeting_MockMethod = { _ in }
-
+    func testProcessEvent_It_Pulls_Meeting_From_Repository() async throws {
         // When
 
         try await sut.processEvent(Scaffolding.event)
 
         // Then
 
-        XCTAssertEqual(localStore.storeMeeting_Invocations.count, 1)
-        XCTAssertEqual(localStore.storeMeeting_Invocations.first?.id, Scaffolding.meetingID)
-        XCTAssertTrue(localStore.deleteMeetingIdDomain_Invocations.isEmpty)
+        XCTAssertEqual(repository.pullMeetingIdQualifiedIDVoidReceivedInvocations, [Scaffolding.meetingID])
     }
 
-    func testProcessEvent_It_Deletes_Meeting_Missing_From_Backend_Response() async throws {
+    func testProcessEvent_It_Throws_When_Pulling_Meeting_Fails() async {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = []
-        localStore.deleteMeetingIdDomain_MockMethod = { _, _ in }
-
-        // When
-
-        try await sut.processEvent(Scaffolding.event)
-
-        // Then
-
-        XCTAssertTrue(localStore.storeMeeting_Invocations.isEmpty)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.count, 1)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.first?.id, Scaffolding.meetingID.id)
-        XCTAssertEqual(localStore.deleteMeetingIdDomain_Invocations.first?.domain, Scaffolding.meetingID.domain)
-    }
-
-    func testProcessEvent_It_Throws_When_Listing_Meetings_Fails() async {
-        // Mock
-
-        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        repository.pullMeetingIdQualifiedIDVoidThrowableError = MeetingsAPIError.meetingNotFound
 
         // When / Then
 
@@ -94,8 +64,7 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
             try await sut.processEvent(Scaffolding.event)
             XCTFail("expected an error to be thrown")
         } catch {
-            XCTAssertTrue(localStore.storeMeeting_Invocations.isEmpty)
-            XCTAssertTrue(localStore.deleteMeetingIdDomain_Invocations.isEmpty)
+            XCTAssertEqual(repository.pullMeetingIdQualifiedIDVoidReceivedInvocations, [Scaffolding.meetingID])
         }
     }
 
@@ -107,19 +76,6 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
         )
 
         static let event = MeetingCreateEvent(meetingID: meetingID)
-
-        static let meeting = MeetingResponse(
-            id: meetingID,
-            title: "Weekly Sync",
-            creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-            startTime: Date(timeIntervalSince1970: 1_000_000),
-            endTime: Date(timeIntervalSince1970: 1_003_600),
-            conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-            invitedEmails: [],
-            isTrial: false,
-            createdAt: Date(timeIntervalSince1970: 900_000),
-            updatedAt: Date(timeIntervalSince1970: 900_000)
-        )
 
     }
 

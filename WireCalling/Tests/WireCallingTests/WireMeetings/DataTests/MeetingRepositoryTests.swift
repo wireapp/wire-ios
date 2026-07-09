@@ -1,0 +1,258 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import Testing
+import WireNetwork
+import WireNetworkSupport
+
+@testable import WireCallingData
+@testable import WireCallingDomain
+@testable import WireCallingDomainSupport
+
+@Suite("MeetingRepository Tests")
+struct MeetingRepositoryTests {
+
+    private let meetingsAPI = MockMeetingsAPI()
+    private let localStore = MeetingLocalStoreProtocolMock()
+    private let sut: MeetingRepository
+
+    init() {
+        sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore
+        )
+    }
+
+    // MARK: - pullMeeting
+
+    @Test
+    func pullMeetingStoresMeetingContainedInBackendResponse() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+
+        // When
+
+        try await sut.pullMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
+        #expect(
+            localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.title
+                == Scaffolding.meetingResponse.title
+        )
+        #expect(
+            localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.creatorID
+                == Scaffolding.meetingResponse.creatorID
+        )
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
+    @Test
+    func pullMeetingDeletesMeetingMissingFromBackendResponse() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = []
+
+        // When
+
+        try await sut.pullMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
+    }
+
+    @Test
+    func pullMeetingThrowsWhenListingMeetingsFails() async {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+
+        // When / Then
+
+        await #expect(throws: (any Error).self) {
+            try await sut.pullMeeting(id: Scaffolding.meetingID)
+        }
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
+    // MARK: - deleteLocalMeeting
+
+    @Test
+    func deleteLocalMeetingDeletesMeetingFromLocalStore() async {
+        // When
+
+        await sut.deleteLocalMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
+    }
+
+    // MARK: - fetchMeetingsStarting
+
+    @Test
+    func fetchMeetingsStartingRefreshesStoreAndReturnsSortedUpcomingMeetings() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        localStore.storedMeetingsMeetingReturnValue = [
+            Scaffolding.meeting(title: "B", start: Scaffolding.referenceDate.addingTimeInterval(3600)),
+            Scaffolding.meeting(title: "A", start: Scaffolding.referenceDate.addingTimeInterval(3600)),
+            Scaffolding.meeting(title: "Past", start: Scaffolding.referenceDate.addingTimeInterval(-3600))
+        ]
+
+        // When
+
+        let meetings = try await sut.fetchMeetingsStarting(
+            after: Scaffolding.referenceDate,
+            offset: 0,
+            limit: 10
+        )
+
+        // Then
+
+        #expect(localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.count == 1)
+        #expect(meetings.map(\.title) == ["A", "B"])
+    }
+
+    @Test
+    func fetchMeetingsStartingServesStoredMeetingsWhenBackendIsUnreachable() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        localStore.storedMeetingsMeetingReturnValue = [
+            Scaffolding.meeting(title: "Stored", start: Scaffolding.referenceDate.addingTimeInterval(3600))
+        ]
+
+        // When
+
+        let meetings = try await sut.fetchMeetingsStarting(
+            after: Scaffolding.referenceDate,
+            offset: 0,
+            limit: 10
+        )
+
+        // Then
+
+        #expect(meetings.map(\.title) == ["Stored"])
+    }
+
+    @Test
+    func fetchMeetingsStartingThrowsWhenBackendIsUnreachableAndStoreIsEmpty() async {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        localStore.storedMeetingsMeetingReturnValue = []
+
+        // When / Then
+
+        await #expect(throws: (any Error).self) {
+            _ = try await sut.fetchMeetingsStarting(
+                after: Scaffolding.referenceDate,
+                offset: 0,
+                limit: 10
+            )
+        }
+    }
+
+    // MARK: - hasUpcomingMeetings
+
+    @Test
+    func hasUpcomingMeetingsReturnsTrueWhenAStoredMeetingIsUpcoming() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = []
+        localStore.storedMeetingsMeetingReturnValue = [
+            Scaffolding.meeting(title: "Upcoming", start: Scaffolding.referenceDate.addingTimeInterval(3600))
+        ]
+
+        // When / Then
+
+        let hasUpcoming = try await sut.hasUpcomingMeetings(after: Scaffolding.referenceDate)
+        #expect(hasUpcoming)
+    }
+
+    // MARK: - createMeeting
+
+    @Test
+    func createMeetingCreatesMeetingViaAPIAndStoresIt() async throws {
+        // Mock
+
+        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+
+        // When
+
+        let meeting = try await sut.createMeeting(
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: nil
+        )
+
+        // Then
+
+        #expect(meetingsAPI.createMeetingParameters_Invocations.count == 1)
+        #expect(meeting.id == Scaffolding.meetingID)
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
+    }
+
+    private enum Scaffolding {
+
+        static let referenceDate = Date(timeIntervalSince1970: 500_000)
+
+        static let meetingID = WireNetwork.QualifiedID(
+            id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+            domain: "example.com"
+        )
+
+        static let meetingResponse = MeetingResponse(
+            id: meetingID,
+            title: "Weekly Sync",
+            creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
+            startTime: Date(timeIntervalSince1970: 1_000_000),
+            endTime: Date(timeIntervalSince1970: 1_003_600),
+            conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
+            invitedEmails: [],
+            isTrial: false,
+            createdAt: Date(timeIntervalSince1970: 900_000),
+            updatedAt: Date(timeIntervalSince1970: 900_000)
+        )
+
+        static func meeting(title: String, start: Date) -> Meeting {
+            Meeting(
+                id: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
+                title: title,
+                start: start,
+                end: start.addingTimeInterval(3600),
+                recurrence: nil,
+                members: [],
+                conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
+            )
+        }
+
+    }
+
+}

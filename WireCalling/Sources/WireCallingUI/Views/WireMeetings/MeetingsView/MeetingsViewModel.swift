@@ -20,6 +20,7 @@ package import WireCallingDomain
 package import WireFoundation
 
 import Foundation
+import WireLogging
 
 @Observable
 @MainActor
@@ -89,21 +90,22 @@ package final class MeetingsViewModel {
 
     private func load(pageSize: Int) async {
         isLoading = true
-        // TODO: don't swallow errors
-        guard let result = try? await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset) else {
-            isLoading = false
-            return
-        }
+        defer { isLoading = false }
 
-        if futureOffset == 0 {
-            loadedMeetings = result.meetings
-        } else {
-            loadedMeetings += result.meetings
-        }
+        do {
+            let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
+            if futureOffset == 0 {
+                loadedMeetings = result.meetings
+            } else {
+                loadedMeetings += result.meetings
+            }
 
-        futureOffset = result.nextOffset
-        hasMore = result.hasMore
-        isLoading = false
+            futureOffset = result.nextOffset
+            hasMore = result.hasMore
+        } catch {
+            let errorType = Swift.type(of: error)
+            WireLogger.ui.error("failed to fetch upcoming meetings: \(String(describing: errorType))")
+        }
     }
 
 }

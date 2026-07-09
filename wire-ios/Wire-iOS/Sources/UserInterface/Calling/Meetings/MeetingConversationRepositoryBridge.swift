@@ -22,7 +22,11 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 
-struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @unchecked Sendable {
+/// Bridges `WireDomain`'s `ConversationRepositoryProtocol` into `WireCallingDomain`'s
+/// `MeetingConversationRepositoryProtocol`, so the meetings feature can pull meeting
+/// conversations and add participants (including MLS group establishment) without
+/// depending on `WireDomain` directly.
+struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtocol, @unchecked Sendable {
 
     let conversationRepository: any ConversationRepositoryProtocol
     let contextProvider: any ContextProvider
@@ -32,8 +36,8 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @un
     }
 
     func addParticipants(
-        _ participants: [WireCallingDomain.Member],
-        to conversationID: WireFoundation.QualifiedID
+        _ participants: [MeetingMember],
+        to conversationID: WireCallingDomain.QualifiedID
     ) async throws {
         guard !participants.isEmpty else { return }
 
@@ -47,7 +51,7 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @un
 
         let mlsGroupID = await syncContext.perform {
             guard
-                let conv = try? ZMConversation.existingObject(for: objectID, in: syncContext),
+                let conv = ZMConversation.existingObject(for: objectID, in: syncContext),
                 conv.messageProtocol == .mls
             else { return nil as MLSGroupID? }
             return conv.mlsGroupID
@@ -69,7 +73,7 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @un
     // mls-client-mismatch 409, which happens when the self user's other devices
     // aren't included in the initial group state before a separate add commit.
     private func addMLSParticipants(
-        _ participants: [WireCallingDomain.Member],
+        _ participants: [MeetingMember],
         to mlsGroupID: MLSGroupID,
         conversationObjectID objectID: NSManagedObjectID,
         syncContext: NSManagedObjectContext,
@@ -88,7 +92,7 @@ struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @un
         )
 
         await syncContext.perform {
-            guard let conv = try? ZMConversation.existingObject(for: objectID, in: syncContext) else { return }
+            guard let conv = ZMConversation.existingObject(for: objectID, in: syncContext) else { return }
             conv.mlsStatus = .ready
             conv.ciphersuite = ciphersuite
             _ = syncContext.saveOrRollback()

@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireCallingData
 import WireCoreCrypto
 import WireDataModel
 import WireFoundation
@@ -701,22 +702,21 @@ public final class ClientSessionComponent {
         lockRepository: resetMLSConversationLockRepository
     )
 
-    private lazy var meetingLocalStore = MeetingLocalStore(
-        context: syncContext
+    public private(set) lazy var meetingRepository = MeetingRepository(
+        meetingsAPI: meetingsAPI,
+        localStore: MeetingLocalStore(context: syncContext)
     )
 
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
-        meetingsAPI: meetingsAPI,
-        localStore: meetingLocalStore
+        repository: meetingRepository
     )
 
     private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
-        localStore: meetingLocalStore
+        repository: meetingRepository
     )
 
     private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
-        meetingsAPI: meetingsAPI,
-        localStore: meetingLocalStore
+        repository: meetingRepository
     )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
