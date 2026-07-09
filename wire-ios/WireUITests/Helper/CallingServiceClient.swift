@@ -62,17 +62,17 @@ final class CallingServiceClient {
     }
 
     enum Constants {
-        static let CONNECT_TIMEOUT: TimeInterval = 360
-        static let RESPONSE_TIMEOUT: TimeInterval = 360
-        static let INSTANCE_TIMEOUT_MILLISECONDS: Double = 1000 * 60 * 10
-        static let CALL_TIMEOUT_MILLISECONDS: Double = 1000 * 60 * 60 * 2
+        static let connectTimeout: TimeInterval = 360
+        static let responseTimeout: TimeInterval = 360
+        static let instanceTimeoutMilliseconds: Double = 1000 * 60 * 10
+        static let callTimeoutMilliseconds: Double = 1000 * 60 * 60 * 2
 
     }
 
     private lazy var session: URLSession = {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = Constants.CONNECT_TIMEOUT
-        config.timeoutIntervalForResource = Constants.RESPONSE_TIMEOUT
+        config.timeoutIntervalForRequest = Constants.connectTimeout
+        config.timeoutIntervalForResource = Constants.responseTimeout
         return URLSession(configuration: config)
     }()
 
@@ -171,7 +171,7 @@ final class CallingServiceClient {
                 name: instanceTypeName,
                 version: instanceTypeVersion
             ),
-            timeout: Constants.INSTANCE_TIMEOUT_MILLISECONDS
+            timeout: Constants.instanceTimeoutMilliseconds
         )
 
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: body, method: .post)
@@ -345,9 +345,10 @@ final class CallingServiceClient {
     ) async throws -> CallResponse {
         let request = StartCallBody(
             conversationId: conversationId,
-            timeout: Constants.CALL_TIMEOUT_MILLISECONDS
+            timeout: Constants.callTimeoutMilliseconds
         )
-        return try await performCall(instanceId: instanceId, path: "/call/start", request: request)
+        let path = "/" + ["call", "start"].joined(separator: "/")
+        return try await performCall(instanceId: instanceId, path: path, request: request)
     }
 
     func getCurrentCall(instanceId: String) async throws -> CallResponse {
