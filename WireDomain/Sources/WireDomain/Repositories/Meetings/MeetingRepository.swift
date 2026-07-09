@@ -94,12 +94,12 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             await localStore.storeMeeting(meeting.toDomainMeeting())
         } else {
             // The meeting no longer exists on the backend.
-            await localStore.deleteMeeting(id: id)
+            await localStore.deleteMeeting(id: .init(uuid: id.id, domain: id.domain))
         }
     }
 
     public func deleteLocalMeeting(id: QualifiedID) async {
-        await localStore.deleteMeeting(id: id)
+        await localStore.deleteMeeting(id: .init(uuid: id.id, domain: id.domain))
     }
 
     // MARK: - Private

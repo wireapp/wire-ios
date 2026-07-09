@@ -2944,10 +2944,10 @@ public class MockMeetingLocalStoreProtocol: MeetingLocalStoreProtocol, @unchecke
 
     // MARK: - deleteMeeting
 
-    public var deleteMeetingId_Invocations: [QualifiedID] = []
-    public var deleteMeetingId_MockMethod: ((QualifiedID) async -> Void)?
+    public var deleteMeetingId_Invocations: [WireDataModel.QualifiedID] = []
+    public var deleteMeetingId_MockMethod: ((WireDataModel.QualifiedID) async -> Void)?
 
-    public func deleteMeeting(id: QualifiedID) async {
+    public func deleteMeeting(id: WireDataModel.QualifiedID) async {
         deleteMeetingId_Invocations.append(id)
 
         guard let mock = deleteMeetingId_MockMethod else {

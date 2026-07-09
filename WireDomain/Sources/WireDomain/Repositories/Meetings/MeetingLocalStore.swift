@@ -19,6 +19,7 @@
 import CoreData
 import WireCallingDomain
 import WireDataModel
+import WireFoundation
 
 final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
 
@@ -65,7 +66,7 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         }
     }
 
-    func deleteMeeting(id: QualifiedID) async {
+    func deleteMeeting(id: WireDataModel.QualifiedID) async {
         await context.perform { [context] in
             let request = StoredMeeting.fetchRequest()
             request.predicate = Self.predicate(id: id)
@@ -80,7 +81,10 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
     // MARK: - Private
 
     private static func upsert(_ meeting: Meeting, in context: NSManagedObjectContext) {
-        let storedMeeting = fetchOrCreateStoredMeeting(id: meeting.id, in: context)
+        let storedMeeting = fetchOrCreateStoredMeeting(
+            id: .init(uuid: meeting.id.id, domain: meeting.id.domain),
+            in: context
+        )
         storedMeeting.title = meeting.title
         storedMeeting.start = meeting.start
         storedMeeting.end = meeting.end
@@ -102,7 +106,7 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
     }
 
     private static func fetchOrCreateStoredMeeting(
-        id: QualifiedID,
+        id: WireDataModel.QualifiedID,
         in context: NSManagedObjectContext
     ) -> StoredMeeting {
         let request = StoredMeeting.fetchRequest()
@@ -116,15 +120,15 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
             forEntityName: StoredMeeting.entityName,
             into: context
         ) as! StoredMeeting
-        storedMeeting.remoteIdentifier = id.id
+        storedMeeting.remoteIdentifier = id.uuid
         storedMeeting.domain = id.domain
         return storedMeeting
     }
 
-    private static func predicate(id: QualifiedID) -> NSPredicate {
+    private static func predicate(id: WireDataModel.QualifiedID) -> NSPredicate {
         NSPredicate(
             format: "remoteIdentifier == %@ AND domain == %@",
-            id.id as CVarArg,
+            id.uuid as CVarArg, // TODO: ?
             id.domain
         )
     }

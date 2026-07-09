@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCallingDomain
+import WireDataModel
 
 // sourcery: AutoMockable
 /// A local store dedicated to meetings.
@@ -47,6 +48,6 @@ public protocol MeetingLocalStoreProtocol: Sendable {
     ///
     /// - Parameter id: The qualified id of the meeting to delete.
 
-    func deleteMeeting(id: QualifiedID) async
+    func deleteMeeting(id: WireDataModel.QualifiedID) async
 
 }
