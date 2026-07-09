@@ -168,17 +168,12 @@ jobs:
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           bundler-cache: true
-<<<<<<< HEAD
           
       - name: Install ImageMagick
         uses: gerlero/brew-install@5e2f576b2a0ede9d50a5b08c0099c70fdda0b0b9 # v1.1.2
         with:
           packages: imagemagick ghostscript freetype
-          
-      - name: Run setup
-        run: sh ./setup.sh
-=======
->>>>>>> e770e93dd6 (chore: add gov pipeline - WPB-26202 (#4976))
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
