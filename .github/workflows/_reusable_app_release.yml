@@ -44,6 +44,8 @@ on:
         required: true
       DATADOG_CLIENT_TOKEN:
         required: true
+      GOV_SUBFOLDER_PRODUCTION:
+        required: true
       C1_S3_SUBFOLDER_RESTRICTED:
         required: true
       C1_S3_SUBFOLDER_PRODUCTION:
@@ -95,6 +97,7 @@ jobs:
       DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
       DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
       ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
+      GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
       C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
       C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
       C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
@@ -165,8 +168,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Run setup
-        run: sh ./setup.sh
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
