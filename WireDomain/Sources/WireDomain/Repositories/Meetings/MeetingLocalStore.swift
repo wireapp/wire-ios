@@ -128,7 +128,7 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
     private static func predicate(id: WireDataModel.QualifiedID) -> NSPredicate {
         NSPredicate(
             format: "remoteIdentifier == %@ AND domain == %@",
-            id.uuid as CVarArg, // TODO: ?
+            id.uuid as NSUUID,
             id.domain
         )
     }
