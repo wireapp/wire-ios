@@ -31,7 +31,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     // MARK: - Properties
 
-    private var notificationService: NotificationServiceExtension?
+    private var notificationHandlers: [String: NotificationServiceExtension] = [:]
 
     override init() {
         super.init()
@@ -48,17 +48,19 @@ final class NotificationService: UNNotificationServiceExtension {
     ) {
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
-        if notificationService == nil {
-            notificationService = loadNotificationService(for: request)
+        if !notificationHandlers.isEmpty {
+            // It is not clearly documented whether a `UNNotificationServiceExtension` instance can be called multiple
+            // times. Looking at Apple's example code I would assume not but to be safe we are allowing multiple
+            // invocations per `UNNotificationServiceExtension` instance. If in practice this warning is never called
+            // we can re-architect things.
+            WireLogger.notifications.warn("notification service has multiple handlers")
         }
 
-        if let notificationService {
-            notificationService.didReceive(
-                request,
-                withContentHandler: contentHandler
-            )
+        if let handler = loadNotificationHandler(for: request, contentHandler: contentHandler) {
+            notificationHandlers[request.identifier] = handler
+            handler.execute()
         } else {
-            WireLogger.notifications.warn("no notification service loaded", attributes: .safePublic)
+            WireLogger.notifications.warn("cannot load notification handler", attributes: .safePublic)
             contentHandler(.emptyNotification)
         }
     }
@@ -66,22 +68,34 @@ final class NotificationService: UNNotificationServiceExtension {
     override func serviceExtensionTimeWillExpire() {
         WireLogger.notifications.warn("notification service will expire", attributes: .safePublic)
 
-        guard notificationService?.hasOnGoingTask == true else {
-            WireLogger.notifications.info("no ongoing task, no need to cancel", attributes: .safePublic)
+        let hasOnGoingTask = notificationHandlers.values.contains { $0.hasOnGoingTask }
+        guard hasOnGoingTask == true else {
+            WireLogger.notifications.info("no ongoing tasks, no need to cancel", attributes: .safePublic)
             return
         }
 
         let semaphore = DispatchSemaphore(value: 0)
         Task {
-            await notificationService?.cancel()
-            WireLogger.notifications.info("did cancel ongoing task", attributes: .safePublic)
+            let handlers = notificationHandlers
+            notificationHandlers = [:]
+
+            await withTaskGroup { group in
+                for handler in handlers.values {
+                    group.addTask {
+                        await handler.cancel()
+                    }
+                }
+                await group.waitForAll()
+            }
+
+            WireLogger.notifications.info("did cancel ongoing tasks", attributes: .safePublic)
             semaphore.signal()
         }
 
         // Keep the notification service alive until the ongoing task has completed cancellation as we have file locks
         // that need releasing. It has been observed when using `performExpiringActivity(withReason:)` from within the
         // NSE that the block might continue a long time after the activity has expired. Therefore we use a timeout.
-        ProcessInfo.processInfo.performExpiringActivity(withReason: "cancelling ongoing task") { isExpired in
+        ProcessInfo.processInfo.performExpiringActivity(withReason: "cancelling ongoing tasks") { isExpired in
             if isExpired {
                 semaphore.signal()
             } else {
@@ -90,7 +104,10 @@ final class NotificationService: UNNotificationServiceExtension {
         }
     }
 
-    private func loadNotificationService(for request: UNNotificationRequest) -> NotificationServiceExtension? {
+    private func loadNotificationHandler(
+        for request: UNNotificationRequest,
+        contentHandler: @escaping (UNNotificationContent) -> Void
+    ) -> NotificationServiceExtension? {
         let info = Bundle.appMainBundle.infoDictionary
 
         guard let currentAppVersion = info?["CFBundleShortVersionString"] as? String else {
@@ -149,6 +166,12 @@ final class NotificationService: UNNotificationServiceExtension {
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
                 UInt($0.rawValue)
+            },
+            request: request,
+            contentHandler: contentHandler,
+            didComplete: { [weak self] in
+                guard let self else { return }
+                notificationHandlers[request.identifier] = nil
             }
         )
     }
