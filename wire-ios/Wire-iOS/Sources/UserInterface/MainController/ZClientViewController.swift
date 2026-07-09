@@ -301,7 +301,7 @@ final class ZClientViewController: UIViewController {
     /// Allows to be notified when the cells feature config is updated locally so we can setup the Files tab.
     /// On login, tab will show up with a slight delay, after resources have been pulled from the server (initial sync).
     private func observeCellsFeatureChange() {
-        subscription = clientSessionComponent?.featureConfigRepository
+        subscription = clientSessionComponent.featureConfigRepository
             .observeFeatureStates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] featureState in
@@ -571,8 +571,7 @@ final class ZClientViewController: UIViewController {
     func openDetailScreen(for conversation: ZMConversation) {
         Task {
             let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
-            let isAppsFeatureEnabled = await clientSessionComponent?.featureConfigRepository
-                .isFeatureEnabled(.apps) ?? false
+            let isAppsFeatureEnabled = await clientSessionComponent.featureConfigRepository.isFeatureEnabled(.apps)
             let controller = GroupDetailsViewController(
                 conversation: conversation,
                 userSession: userSession,
