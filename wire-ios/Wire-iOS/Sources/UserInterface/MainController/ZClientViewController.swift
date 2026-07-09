@@ -25,6 +25,7 @@ import WireCallingAssembly
 import WireCommonComponents
 import WireData
 import WireDesign
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
@@ -47,6 +48,15 @@ final class ZClientViewController: UIViewController {
     let userSession: UserSession
     let trackingManager: TrackingManager?
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
+
+    /// The session's `clientSessionComponent` is created when the self user client is registered
+    /// (`ZMUserSession.setUpSyncAgent`) and is never reset afterwards. Since this view controller
+    /// is only instantiated for the `.authenticated` app state, which requires a registered client,
+    /// the component is guaranteed to exist for the lifetime of this view controller.
+    private var clientSessionComponent: ClientSessionComponent! {
+        userSession.clientSessionComponent
+    }
+
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet {
             sidebarViewController.accountInfo.accountImageSource = cachedAccountImage
@@ -151,7 +161,7 @@ final class ZClientViewController: UIViewController {
         createGroupConversationUIBuilder: createGroupConversationBuilder,
         channelConversationFormFactory: channelConversationFormFactory,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
+        featureConfigRepository: clientSessionComponent.featureConfigRepository,
         conversationCreationRepository: conversationCreationRepository
     )
 
@@ -291,7 +301,7 @@ final class ZClientViewController: UIViewController {
     /// Allows to be notified when the cells feature config is updated locally so we can setup the Files tab.
     /// On login, tab will show up with a slight delay, after resources have been pulled from the server (initial sync).
     private func observeCellsFeatureChange() {
-        subscription = userSession.clientSessionComponent?.featureConfigRepository
+        subscription = clientSessionComponent?.featureConfigRepository
             .observeFeatureStates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] featureState in
@@ -415,11 +425,11 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.archiveUI = archiveUI
 
         let memberRepository = WireMeetingsMemberRepository(userSession: userSession)
-        let conversationRepository = userSession.clientSessionComponent!.conversationRepository
+        let conversationRepository = clientSessionComponent.conversationRepository
         let meetingsUI = wireMeetingsFactory.makeMeetingsView(
-            meetingsAPI: userSession.clientSessionComponent!.meetingsAPI,
+            meetingsAPI: clientSessionComponent.meetingsAPI,
             memberRepository: memberRepository,
-            conversationRepository: MeetingConversationRepository(
+            conversationRepository: MeetingConversationRepositoryBridge(
                 conversationRepository: conversationRepository,
                 contextProvider: userSession.contextProvider
             )
@@ -561,8 +571,7 @@ final class ZClientViewController: UIViewController {
     func openDetailScreen(for conversation: ZMConversation) {
         Task {
             let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
-            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
-                .isFeatureEnabled(.apps) ?? false
+            let isAppsFeatureEnabled = await clientSessionComponent.featureConfigRepository.isFeatureEnabled(.apps)
             let controller = GroupDetailsViewController(
                 conversation: conversation,
                 userSession: userSession,

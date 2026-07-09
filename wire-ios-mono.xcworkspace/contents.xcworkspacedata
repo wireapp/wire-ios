@@ -107,6 +107,9 @@
          location = "group:changelog.yml">
       </FileRef>
       <FileRef
+         location = "group:gov_app_release.yml">
+      </FileRef>
+      <FileRef
          location = "group:cherry-pick-from-release-to-develop.yml">
       </FileRef>
       <FileRef

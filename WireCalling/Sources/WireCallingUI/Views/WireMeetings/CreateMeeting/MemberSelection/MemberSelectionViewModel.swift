@@ -26,14 +26,14 @@ import WireLogging
 final class MemberSelectionViewModel {
 
     private let source: any SearchMembersUseCaseProtocol
-    private let onSelect: ([Member]) -> Void
+    private let onSelect: ([MeetingMember]) -> Void
 
     var searchText: String = "" {
         didSet { scheduleSearch() }
     }
 
-    var searchResults: [Member] = []
-    var selectedMembers: [Member] = []
+    var searchResults: [MeetingMember] = []
+    var selectedMembers: [MeetingMember] = []
     var isSearching = false
     var hasSearchError = false
     var isSelectedExpanded = true
@@ -43,8 +43,8 @@ final class MemberSelectionViewModel {
 
     init(
         source: any SearchMembersUseCaseProtocol,
-        initialSelection: [Member] = [],
-        onSelect: @escaping ([Member]) -> Void = { _ in }
+        initialSelection: [MeetingMember] = [],
+        onSelect: @escaping ([MeetingMember]) -> Void = { _ in }
     ) {
         self.source = source
         self.selectedMembers = initialSelection
@@ -54,18 +54,18 @@ final class MemberSelectionViewModel {
 
     // MARK: - Derived state
 
-    var filteredUnselected: [Member] {
+    var filteredUnselected: [MeetingMember] {
         let selectedIDs = Set(selectedMembers.map(\.id))
         return searchResults.filter { !selectedIDs.contains($0.id) }
     }
 
-    func isSelected(_ member: Member) -> Bool {
+    func isSelected(_ member: MeetingMember) -> Bool {
         selectedMembers.contains { $0.id == member.id }
     }
 
     // MARK: - Actions
 
-    func toggleSelection(_ member: Member) {
+    func toggleSelection(_ member: MeetingMember) {
         if let index = selectedMembers.firstIndex(where: { $0.id == member.id }) {
             selectedMembers.remove(at: index)
         } else {
