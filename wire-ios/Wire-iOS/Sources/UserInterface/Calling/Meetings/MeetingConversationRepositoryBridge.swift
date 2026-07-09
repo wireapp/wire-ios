@@ -22,7 +22,11 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 
-struct MeetingConversationRepository: MeetingConversationRepositoryProtocol, @unchecked Sendable {
+/// Bridges `WireDomain`'s `ConversationRepositoryProtocol` into `WireCallingDomain`'s
+/// `MeetingConversationRepositoryProtocol`, so the meetings feature can pull meeting
+/// conversations and add participants (including MLS group establishment) without
+/// depending on `WireDomain` directly.
+struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtocol, @unchecked Sendable {
 
     let conversationRepository: any ConversationRepositoryProtocol
     let contextProvider: any ContextProvider
