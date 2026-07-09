@@ -121,8 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "此帳戶不再被授權登錄";
 "authentication.error.message.incorrect_sso_code" = "請核對您的公司單一登錄(SSO)存取碼，然後重試。";
-"authentication.error.title.already_logged_in" = "Account already active";
-"authentication.error.message.already_logged_in" = "This account is already logged in on this device.";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "確認";
 

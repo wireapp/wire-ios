@@ -51,6 +51,8 @@
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupParticipants.header" = "参与者";
 "wireMeetings.schedule.setupParticipants.placeholder" = "添加参与者";
+"wireMeetings.schedule.error.alert.title" = "好像出了点问题。";
+"wireMeetings.schedule.error.alert.ok" = "好";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "取消";
