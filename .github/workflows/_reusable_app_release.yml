@@ -161,8 +161,8 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
-      - name: Cache Swift Packages
-        uses: ./.github/actions/cache-swift-packages
+#      - name: Cache Swift Packages
+#        uses: ./.github/actions/cache-swift-packages
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
