@@ -116,7 +116,7 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         }
 
         let storedMeeting = NSEntityDescription.insertNewObject(
-            forEntityName: StoredMeeting.entityName,
+            forEntityName: StoredMeeting.entityName(),
             into: context
         ) as! StoredMeeting
         storedMeeting.remoteIdentifier = id.uuid
