@@ -87,7 +87,7 @@ package final class CreateMeetingFormViewModel {
     }
 
     var repeatOption: MeetingRepeatOption = .never
-    var selectedMembers: [Member] = []
+    var selectedMembers: [MeetingMember] = []
     private(set) var isLoading = false
 
     /// Set when creating a meeting fails. The caught error itself is only

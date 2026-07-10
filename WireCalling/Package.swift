@@ -11,6 +11,7 @@ let package = Package(
     platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
+        .library(name: "WireCallingDomainSupport", targets: ["WireCallingDomainSupport"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
@@ -70,12 +71,14 @@ let package = Package(
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
+                "WireCallingAssembly",
                 "WireCallingUI",
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
                 "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
+                .product(name: "WireFoundationSupport", package: "WireFoundation"),
+                .product(name: "WireNetworkSupport", package: "WireNetwork")
             ],
         ),
     ]
