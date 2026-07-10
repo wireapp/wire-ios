@@ -38,6 +38,12 @@ struct MeetingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
+        .alert(
+            Strings.Delete.Error.Alert.title,
+            isPresented: $viewModel.hasDeleteError
+        ) {
+            Button(Strings.Delete.Error.Alert.ok, role: .cancel) {}
+        }
         .task {
             await viewModel.loadInitialData()
         }
@@ -99,7 +105,7 @@ struct MeetingsView: View {
         ) { meeting in
             Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
                 Task {
-                    try? await viewModel.deleteMeeting(meeting)
+                    await viewModel.deleteMeeting(meeting)
                 }
             }
             Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}

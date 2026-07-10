@@ -30,6 +30,7 @@ package final class MeetingsViewModel {
 
     private(set) var loadedMeetings: [Meeting] = []
     private(set) var hasMore: Bool = false
+    var hasDeleteError = false
 
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
@@ -92,9 +93,14 @@ package final class MeetingsViewModel {
         formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
-    func deleteMeeting(_ meeting: Meeting) async throws {
-        try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
-        loadedMeetings.removeAll { $0.id == meeting.id }
+    func deleteMeeting(_ meeting: Meeting) async {
+        do {
+            try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
+            loadedMeetings.removeAll { $0.id == meeting.id }
+        } catch {
+            hasDeleteError = true
+            WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
+        }
     }
 
     // MARK: - Private Methods
