@@ -172,7 +172,7 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         timestamp: Date,
         isMLS: Bool
     ) async -> AVSCallParams? {
-        let callingConvID = callingProto.qualifiedConversationID
+        let callingConversationID = callingProto.qualifiedConversationID
         let conversationUUID: UUID
         let conversationDomain: String?
         if !callingConvID.id.isEmpty, let uuid = UUID(uuidString: callingConvID.id) {
