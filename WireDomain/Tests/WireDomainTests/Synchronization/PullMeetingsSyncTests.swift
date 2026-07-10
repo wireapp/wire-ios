@@ -150,6 +150,24 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         }
     }
 
+    // MARK: - storeMeeting
+
+    public var storeMeetingMeetingMeetingVoidCallsCount = 0
+    public var storeMeetingMeetingMeetingVoidCalled: Bool {
+        storeMeetingMeetingMeetingVoidCallsCount > 0
+    }
+
+    public var storeMeetingMeetingMeetingVoidReceivedMeeting: Meeting?
+    public var storeMeetingMeetingMeetingVoidReceivedInvocations: [Meeting] = []
+    public var storeMeetingMeetingMeetingVoidClosure: ((Meeting) async -> Void)?
+
+    public func storeMeeting(_ meeting: Meeting) async {
+        storeMeetingMeetingMeetingVoidCallsCount += 1
+        storeMeetingMeetingMeetingVoidReceivedMeeting = meeting
+        storeMeetingMeetingMeetingVoidReceivedInvocations.append(meeting)
+        await storeMeetingMeetingMeetingVoidClosure?(meeting)
+    }
+
     // MARK: - pullMeeting
 
     public var pullMeetingIdQualifiedIDVoidThrowableError: (any Error)?
@@ -208,47 +226,53 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         await deleteLocalMeetingIdQualifiedIDVoidClosure?(id)
     }
 
-    // MARK: - fetchMeetingsStarting
+    // MARK: - fetchMeetings
 
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount = 0
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCalled: Bool {
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount > 0
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingThrowableError: (any Error)?
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount = 0
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCalled: Bool {
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount > 0
     }
 
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedArguments: (
-        date: Date,
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments: (
+        range: Range<Date>,
         offset: Int,
         limit: Int
     )?
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedInvocations: [(
-        date: Date,
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedInvocations: [(
+        range: Range<Date>,
         offset: Int,
         limit: Int
     )] = []
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue: [Meeting]!
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure: ((Date, Int, Int) -> [Meeting])?
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue: [Meeting]!
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure: ((Range<Date>, Int, Int) async throws
+        -> [Meeting])?
 
-    public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount += 1
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedArguments = (
-            date: date,
+    public func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting] {
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount += 1
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments = (
+            range: range,
             offset: offset,
             limit: limit
         )
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedInvocations.append((
-            date: date,
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedInvocations.append((
+            range: range,
             offset: offset,
             limit: limit
         ))
-        if let fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure {
-            return fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure(date, offset, limit)
+        if let error = fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingThrowableError {
+            throw error
+        }
+        if let fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure {
+            return try await fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure(range, offset, limit)
         } else {
-            return fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue
+            return fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue
         }
     }
 
     // MARK: - hasUpcomingMeetings
 
+    public var hasUpcomingMeetingsAfterDateDateBoolThrowableError: (any Error)?
     public var hasUpcomingMeetingsAfterDateDateBoolCallsCount = 0
     public var hasUpcomingMeetingsAfterDateDateBoolCalled: Bool {
         hasUpcomingMeetingsAfterDateDateBoolCallsCount > 0
@@ -257,14 +281,17 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
     public var hasUpcomingMeetingsAfterDateDateBoolReceivedDate: Date?
     public var hasUpcomingMeetingsAfterDateDateBoolReceivedInvocations: [Date] = []
     public var hasUpcomingMeetingsAfterDateDateBoolReturnValue: Bool!
-    public var hasUpcomingMeetingsAfterDateDateBoolClosure: ((Date) -> Bool)?
+    public var hasUpcomingMeetingsAfterDateDateBoolClosure: ((Date) async throws -> Bool)?
 
-    public func hasUpcomingMeetings(after date: Date) -> Bool {
+    public func hasUpcomingMeetings(after date: Date) async throws -> Bool {
         hasUpcomingMeetingsAfterDateDateBoolCallsCount += 1
         hasUpcomingMeetingsAfterDateDateBoolReceivedDate = date
         hasUpcomingMeetingsAfterDateDateBoolReceivedInvocations.append(date)
+        if let error = hasUpcomingMeetingsAfterDateDateBoolThrowableError {
+            throw error
+        }
         if let hasUpcomingMeetingsAfterDateDateBoolClosure {
-            return hasUpcomingMeetingsAfterDateDateBoolClosure(date)
+            return try await hasUpcomingMeetingsAfterDateDateBoolClosure(date)
         } else {
             return hasUpcomingMeetingsAfterDateDateBoolReturnValue
         }

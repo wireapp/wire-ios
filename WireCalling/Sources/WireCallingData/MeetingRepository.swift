@@ -118,12 +118,12 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.broadcast()
     }
 
-    public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
+    public func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting] {
         try await refreshStoredMeetings()
 
         let storedMeetings = await localStore.storedMeetings()
-        let allFuture = storedMeetings
-            .filter { $0.start > date }
+        let matching = storedMeetings
+            .filter { range.contains($0.start) }
             .sorted {
                 if $0.start != $1.start {
                     $0.start < $1.start
@@ -131,9 +131,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                     $0.title < $1.title
                 }
             }
-        let start = min(offset, allFuture.count)
-        let end = min(offset + limit, allFuture.count)
-        return Array(allFuture[start ..< end])
+        let start = min(offset, matching.count)
+        let end = min(offset + limit, matching.count)
+        return Array(matching[start ..< end])
     }
 
     public func hasUpcomingMeetings(after date: Date) async throws -> Bool {
