@@ -9,13 +9,17 @@ let package = Package(
         .library(name: "WireNetworkSupport", type: .dynamic, targets: ["WireNetworkSupport"])
     ],
     dependencies: [
+        .package(path: "../WireFoundation"),
         .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
             name: "WireNetworkSupport",
-            dependencies: ["WireNetwork"],
+            dependencies: [
+                "WireFoundation",
+                "WireNetwork"
+            ],
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]

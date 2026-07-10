@@ -11,13 +11,17 @@
 		018ADDB82FBC648B002384C2 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 018ADDB72FBC648B002384C2 /* WireUtilitiesPackage */; };
 		01A9C1BD2E0A106D000617B4 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 01A9C1BC2E0A106D000617B4 /* WireFoundation */; };
 		01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */; };
-		34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44B22E01C206004D5DD5 /* WireNetwork */; };
 		34F8CA9A2E02C003000FE4E0 /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 34F8CA992E02C003000FE4E0 /* WireNetworkSupport */; };
 		34F8CA9C2E02C012000FE4E0 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34F8CA9B2E02C012000FE4E0 /* WireNetwork */; };
 		590386C32F6BE9960089C9E4 /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = 590386C22F6BE9960089C9E4 /* WireData */; };
 		5904B1B32D31582700E866D1 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */; };
 		591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */; };
 		591B6E472C8B09BD009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01BDA5442C20762200636E50 /* WireDataModelSupport.framework */; };
+		591D25BD30012BFB0043E549 /* WireCallingData in Frameworks */ = {isa = PBXBuildFile; productRef = 591D25BC30012BFB0043E549 /* WireCallingData */; };
+		591D25BF30012BFB0043E549 /* WireCallingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 591D25BE30012BFB0043E549 /* WireCallingDomain */; };
+		591D25C130012C380043E549 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 591D25C030012C380043E549 /* WireNetwork */; };
+		591D25C530012C4D0043E549 /* WireCallingDomainSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 591D25C430012C4D0043E549 /* WireCallingDomainSupport */; };
+		591D25C730012C750043E549 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 591D25C630012C750043E549 /* WireFoundation */; };
 		59202AD22D54D3D500143413 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59202AD12D54D3D500143413 /* WireDomainPackage */; };
 		598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042C2C89C63100B64D71 /* WireFoundation */; };
 		59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59DBDE972D395BB50069C64C /* WireDomainPackage */; };
@@ -69,6 +73,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		591D25C330012C380043E549 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		017F67822C207A3200B6E02D /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01BDA5442C20762200636E50 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,14 +133,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
+				591D25C130012C380043E549 /* WireNetwork in Frameworks */,
 				590386C32F6BE9960089C9E4 /* WireData in Frameworks */,
-				34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */,
+				591D25BD30012BFB0043E549 /* WireCallingData in Frameworks */,
 				CB6343F02DB7EF3D00A1C892 /* WireUpdateEventCoding in Frameworks */,
 				C91D188E2D7212FC00B63B66 /* NeedleFoundation in Frameworks */,
 				59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */,
 				591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */,
 				59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */,
 				C9B4C1F72D4915F10072A0EE /* WireCrypto in Frameworks */,
+				591D25BF30012BFB0043E549 /* WireCallingDomain in Frameworks */,
 				018ADDB82FBC648B002384C2 /* WireUtilitiesPackage in Frameworks */,
 				01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */,
 			);
@@ -137,8 +156,10 @@
 				017F67942C207AA000B6E02D /* WireDomainSupport.framework in Frameworks */,
 				591B6E472C8B09BD009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 				5904B1B32D31582700E866D1 /* WireDomainSupport.framework in Frameworks */,
+				591D25C730012C750043E549 /* WireFoundation in Frameworks */,
 				C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */,
 				CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */,
+				591D25C530012C4D0043E549 /* WireCallingDomainSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +262,7 @@
 				01D0DCA22C1C8C870076CB1C /* Sources */,
 				01D0DCA32C1C8C870076CB1C /* Frameworks */,
 				01D0DCA42C1C8C870076CB1C /* Resources */,
+				591D25C330012C380043E549 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -257,9 +279,11 @@
 				59DBDE972D395BB50069C64C /* WireDomainPackage */,
 				C91D188D2D7212FC00B63B66 /* NeedleFoundation */,
 				CB6343EF2DB7EF3D00A1C892 /* WireUpdateEventCoding */,
-				34DC44B22E01C206004D5DD5 /* WireNetwork */,
 				590386C22F6BE9960089C9E4 /* WireData */,
 				018ADDB72FBC648B002384C2 /* WireUtilitiesPackage */,
+				591D25BC30012BFB0043E549 /* WireCallingData */,
+				591D25BE30012BFB0043E549 /* WireCallingDomain */,
+				591D25C030012C380043E549 /* WireNetwork */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -288,6 +312,8 @@
 			packageProductDependencies = (
 				C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */,
 				34F8CA992E02C003000FE4E0 /* WireNetworkSupport */,
+				591D25C430012C4D0043E549 /* WireCallingDomainSupport */,
+				591D25C630012C750043E549 /* WireFoundation */,
 			);
 			productName = WireDomainTests;
 			productReference = 01D0DCB02C1C8C880076CB1C /* WireDomainTests.xctest */;
@@ -960,10 +986,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
 		};
-		34DC44B22E01C206004D5DD5 /* WireNetwork */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireNetwork;
-		};
 		34F8CA992E02C003000FE4E0 /* WireNetworkSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetworkSupport;
@@ -975,6 +997,26 @@
 		590386C22F6BE9960089C9E4 /* WireData */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireData;
+		};
+		591D25BC30012BFB0043E549 /* WireCallingData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCallingData;
+		};
+		591D25BE30012BFB0043E549 /* WireCallingDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCallingDomain;
+		};
+		591D25C030012C380043E549 /* WireNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetwork;
+		};
+		591D25C430012C4D0043E549 /* WireCallingDomainSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCallingDomainSupport;
+		};
+		591D25C630012C750043E549 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
 		};
 		59202AD12D54D3D500143413 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
