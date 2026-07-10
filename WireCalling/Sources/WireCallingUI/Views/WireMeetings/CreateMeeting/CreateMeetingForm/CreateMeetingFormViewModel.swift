@@ -139,7 +139,12 @@ package final class CreateMeetingFormViewModel {
     }
 
     func submit() async {
-        // TODO: [WPB-20274] reloadLoadedMeetings() sets futureOffset = 0 before calling load(pageSize:), but load(pageSize:) catches errors internally and does not restore the previous offset on failure. If the fetch throws, futureOffset stays at 0 while loadedMeetings still contains the previously loaded page(s), which can corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore futureOffset (and possibly coalesce missed reloads while isLoading is true).
+        // TODO: [WPB-20274] reloadLoadedMeetings() sets futureOffset = 0 before calling load(pageSize:), but
+        // load(pageSize:) catches errors internally and does not restore the previous offset on failure. If the fetch
+        // throws, futureOffset stays at 0 while loadedMeetings still contains the previously loaded page(s), which can
+        // corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data
+        // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
+        // futureOffset (and possibly coalesce missed reloads while isLoading is true).
         guard !isLoading else { return }
         isLoading = true
         hasError = false
