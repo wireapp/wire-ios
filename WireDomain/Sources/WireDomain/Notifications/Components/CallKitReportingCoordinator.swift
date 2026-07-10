@@ -57,7 +57,11 @@ actor CallKitReportingCoordinator {
             }
         }
 
-        avsService.onMissedCall = { _, _, _ in }
+        avsService.onMissedCall = { [self] conversationId, _, _ in
+            Task {
+                await self.handleCallClosed(reason: CallClosedReason.canceled, conversationId: conversationId)
+            }
+        }
 
         avsService.onCallClosed = { [self] reason, conversationId in
             Task {
