@@ -48,7 +48,8 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
         try await refreshStoredMeetings()
 
-        let allFuture = await localStore.storedMeetings()
+        let storedMeetings = await localStore.storedMeetings()
+        let allFuture = storedMeetings
             .filter { $0.start > date }
             .sorted {
                 if $0.start != $1.start {
