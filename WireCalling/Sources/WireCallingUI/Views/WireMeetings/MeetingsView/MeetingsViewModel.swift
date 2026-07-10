@@ -116,7 +116,7 @@ package final class MeetingsViewModel {
             hasMore = result.hasMore
         } catch {
             hasMore = false
-            WireLogger.ui.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
+            WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
         }
     }
 
