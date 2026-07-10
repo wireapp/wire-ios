@@ -66,8 +66,6 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
 
     public init() {}
 
-
-
     // MARK: - observeMeetingChanges
 
     public var observeMeetingChangesAsyncStreamVoidCallsCount = 0
@@ -271,6 +269,5 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
             return hasUpcomingMeetingsAfterDateDateBoolReturnValue
         }
     }
-
 
 }
