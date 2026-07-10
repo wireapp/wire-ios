@@ -175,9 +175,9 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         let callingConversationID = callingProto.qualifiedConversationID
         let conversationUUID: UUID
         let conversationDomain: String?
-        if !callingConvID.id.isEmpty, let uuid = UUID(uuidString: callingConvID.id) {
+        if !callingConversationID.id.isEmpty, let uuid = UUID(uuidString: callingConversationID.id) {
             conversationUUID = uuid
-            conversationDomain = callingConvID.domain.isEmpty ? nil : callingConvID.domain
+            conversationDomain = callingConversationID.domain.isEmpty ? nil : callingConversationID.domain
         } else {
             conversationUUID = fallbackConversationID.id
             conversationDomain = fallbackConversationID.domain
