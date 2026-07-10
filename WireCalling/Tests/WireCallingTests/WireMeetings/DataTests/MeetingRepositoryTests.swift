@@ -183,7 +183,7 @@ struct MeetingRepositoryTests {
     func deleteMeetingDeletesMeetingViaAPIAndFromLocalStore() async throws {
         // Mock
 
-        meetingsAPI.deleteMeetingMeetingID_MockMethod = { _ in }
+        meetingsAPI.deleteMeetingId_MockMethod = { _ in }
 
         // When
 
@@ -191,7 +191,7 @@ struct MeetingRepositoryTests {
 
         // Then
 
-        #expect(meetingsAPI.deleteMeetingMeetingID_Invocations == [Scaffolding.meetingID])
+        #expect(meetingsAPI.deleteMeetingId_Invocations == [Scaffolding.meetingID])
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
     }
 
@@ -199,7 +199,7 @@ struct MeetingRepositoryTests {
     func deleteMeetingDeletesLocalCopyWhenMeetingIsAlreadyGoneFromBackend() async throws {
         // Mock
 
-        meetingsAPI.deleteMeetingMeetingID_MockError = MeetingsAPIError.meetingNotFound
+        meetingsAPI.deleteMeetingId_MockError = MeetingsAPIError.meetingNotFound
 
         // When
 
@@ -214,7 +214,7 @@ struct MeetingRepositoryTests {
     func deleteMeetingThrowsAndKeepsLocalCopyWhenDeletingFails() async {
         // Mock
 
-        meetingsAPI.deleteMeetingMeetingID_MockError = MeetingsAPIError.accessDenied
+        meetingsAPI.deleteMeetingId_MockError = MeetingsAPIError.accessDenied
 
         // When / Then
 
@@ -261,7 +261,7 @@ struct MeetingRepositoryTests {
     func deleteMeetingBroadcastsMeetingChange() async throws {
         // Mock
 
-        meetingsAPI.deleteMeetingMeetingID_MockMethod = { _ in }
+        meetingsAPI.deleteMeetingId_MockMethod = { _ in }
         var changes = sut.observeMeetingChanges().makeAsyncIterator()
 
         // When
