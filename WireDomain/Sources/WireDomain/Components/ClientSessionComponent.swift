@@ -358,6 +358,10 @@ public final class ClientSessionComponent {
         store: updateEventsLocalStore
     )
 
+    private lazy var pullMeetingsSync = PullMeetingsSync(
+        repository: meetingRepository
+    )
+
     // MARK: - Push syncs
 
     private lazy var pushSupportedProtocolsSync = PushSupportedProtocolsSync(
@@ -384,7 +388,8 @@ public final class ClientSessionComponent {
             pullKnownUsersSync: pullKnownUsersSync,
             pullConversationLabelsSync: pullConversationLabelsSync,
             pullAllFeatureConfigsSync: pullAllFeatureConfigsSync,
-            pullMLSStatusSync: pullMLSStatusSync
+            pullMLSStatusSync: pullMLSStatusSync,
+            pullMeetingsSync: pullMeetingsSync
         )
 
         return InitialSync(
