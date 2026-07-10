@@ -45,27 +45,8 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     // MARK: - Public
 
-    public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
-        let allFuture = Self.demoData()
-            .filter { $0.start > date }
-            .sorted {
-                if $0.start != $1.start {
-                    $0.start < $1.start
-                } else {
-                    $0.title < $1.title
-                }
-            }
-        let start = min(offset, allFuture.count)
-        let end = min(offset + limit, allFuture.count)
-        return Array(allFuture[start ..< end])
-    }
-
     public func observeMeetingChanges() -> AsyncStream<Void> {
         changeBroadcaster.makeStream()
-    }
-
-    public func hasUpcomingMeetings(after date: Date) -> Bool {
-        Self.demoData().contains { $0.start > date }
     }
 
     public func createMeeting(
@@ -118,6 +99,25 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     public func deleteLocalMeeting(id: QualifiedID) async {
         await localStore.deleteMeeting(id: id)
         changeBroadcaster.broadcast()
+    }
+
+    public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
+        let allFuture = Self.demoData()
+            .filter { $0.start > date }
+            .sorted {
+                if $0.start != $1.start {
+                    $0.start < $1.start
+                } else {
+                    $0.title < $1.title
+                }
+            }
+        let start = min(offset, allFuture.count)
+        let end = min(offset + limit, allFuture.count)
+        return Array(allFuture[start ..< end])
+    }
+
+    public func hasUpcomingMeetings(after date: Date) -> Bool {
+        Self.demoData().contains { $0.start > date }
     }
 
     // MARK: - Private
