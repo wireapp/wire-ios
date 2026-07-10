@@ -177,6 +177,53 @@ struct MeetingRepositoryTests {
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
     }
 
+    // MARK: - deleteMeeting
+
+    @Test
+    func deleteMeetingDeletesMeetingViaAPIAndFromLocalStore() async throws {
+        // Mock
+
+        meetingsAPI.deleteMeetingMeetingID_MockMethod = { _ in }
+
+        // When
+
+        try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(meetingsAPI.deleteMeetingMeetingID_Invocations == [Scaffolding.meetingID])
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
+    }
+
+    @Test
+    func deleteMeetingDeletesLocalCopyWhenMeetingIsAlreadyGoneFromBackend() async throws {
+        // Mock
+
+        meetingsAPI.deleteMeetingMeetingID_MockError = MeetingsAPIError.meetingNotFound
+
+        // When
+
+        try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
+    }
+
+    @Test
+    func deleteMeetingThrowsAndKeepsLocalCopyWhenDeletingFails() async {
+        // Mock
+
+        meetingsAPI.deleteMeetingMeetingID_MockError = MeetingsAPIError.accessDenied
+
+        // When / Then
+
+        await #expect(throws: (any Error).self) {
+            try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+        }
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
     // MARK: - observeMeetingChanges
 
     @Test
@@ -204,6 +251,22 @@ struct MeetingRepositoryTests {
         // When
 
         await sut.deleteLocalMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(await changes.next() != nil)
+    }
+
+    @Test
+    func deleteMeetingBroadcastsMeetingChange() async throws {
+        // Mock
+
+        meetingsAPI.deleteMeetingMeetingID_MockMethod = { _ in }
+        var changes = sut.observeMeetingChanges().makeAsyncIterator()
+
+        // When
+
+        try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
 
         // Then
 

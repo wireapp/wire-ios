@@ -47,8 +47,7 @@ struct MeetingsViewModelTests {
             currentDateProvider: mockDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
-            observeMeetingChangesUseCase: observeMeetingChangesUseCase
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase
         )
     }

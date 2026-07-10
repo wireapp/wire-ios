@@ -96,8 +96,7 @@ final class MeetingsViewSnapshotTests: XCTestCase {
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
-            observeMeetingChangesUseCase: observeMeetingChangesUseCase
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: DeleteMeetingUseCaseProtocolMock()
         )
     }

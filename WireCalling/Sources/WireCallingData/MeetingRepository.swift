@@ -104,8 +104,14 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     }
 
     public func deleteMeeting(meetingID: QualifiedID) async throws {
-        // TODO: wire up when a delete endpoint is added to MeetingsAPI
-        fatalError()
+        do {
+            try await meetingsAPI.deleteMeeting(meetingID: meetingID)
+        } catch MeetingsAPIError.meetingNotFound {
+            // The meeting is already gone from the backend,
+            // so only the local copy is left to delete.
+        }
+        await localStore.deleteMeeting(id: meetingID)
+        changeBroadcaster.broadcast()
     }
 
     public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
