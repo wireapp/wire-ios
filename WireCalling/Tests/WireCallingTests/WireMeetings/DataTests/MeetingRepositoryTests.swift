@@ -246,7 +246,7 @@ struct MeetingRepositoryTests {
 
         // When
 
-        let meetings = try await sut.fetchMeetingsStarting(
+        let meetings = sut.fetchMeetingsStarting(
             after: Scaffolding.referenceDate,
             offset: 0,
             limit: 10
@@ -269,7 +269,7 @@ struct MeetingRepositoryTests {
 
         // When
 
-        let meetings = try await sut.fetchMeetingsStarting(
+        let meetings = sut.fetchMeetingsStarting(
             after: Scaffolding.referenceDate,
             offset: 0,
             limit: 10
@@ -289,8 +289,8 @@ struct MeetingRepositoryTests {
 
         // When / Then
 
-        await #expect(throws: (any Error).self) {
-            _ = try await sut.fetchMeetingsStarting(
+        #expect(throws: (any Error).self) {
+            _ = sut.fetchMeetingsStarting(
                 after: Scaffolding.referenceDate,
                 offset: 0,
                 limit: 10
@@ -311,7 +311,7 @@ struct MeetingRepositoryTests {
 
         // When / Then
 
-        let hasUpcoming = try await sut.hasUpcomingMeetings(after: Scaffolding.referenceDate)
+        let hasUpcoming = sut.hasUpcomingMeetings(after: Scaffolding.referenceDate)
         #expect(hasUpcoming)
     }
 
