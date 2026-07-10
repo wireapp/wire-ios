@@ -34,9 +34,13 @@ struct AsyncMulticasterTests {
         sut = nil // finishes the streams, buffered elements are still delivered
 
         var received1 = [Int]()
-        for await element in stream1 { received1.append(element) }
+        for await element in stream1 {
+            received1.append(element)
+        }
         var received2 = [Int]()
-        for await element in stream2 { received2.append(element) }
+        for await element in stream2 {
+            received2.append(element)
+        }
 
         #expect(received1 == [1, 2])
         #expect(received2 == [1, 2])
@@ -49,7 +53,9 @@ struct AsyncMulticasterTests {
 
         let consumer = Task {
             var received = [Int]()
-            for await element in stream { received.append(element) }
+            for await element in stream {
+                received.append(element)
+            }
             return received
         }
 
@@ -74,7 +80,9 @@ struct AsyncMulticasterTests {
         sut = nil
 
         var received = [Int]()
-        for await element in stream { received.append(element) }
+        for await element in stream {
+            received.append(element)
+        }
 
         #expect(received == [5])
     }
@@ -88,7 +96,9 @@ struct AsyncMulticasterTests {
         sut = nil
 
         var count = 0
-        for await _ in stream { count += 1 }
+        for await _ in stream {
+            count += 1
+        }
 
         #expect(count == 1)
     }
