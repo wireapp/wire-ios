@@ -5,6 +5,8 @@ class Framework
         all_folders = [
             "wire-ios", # tested first so its build output warms DerivedData for all other schemes
             "WireNetwork",
+            "WireNetworkSupport",
+            "WireNetworkTests",
             "WireAnalytics",
             "WireAuthentication",
             "WireBackup",
