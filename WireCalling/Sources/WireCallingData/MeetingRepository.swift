@@ -16,29 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireCallingDomain
-package import WireNetwork
+public import Foundation
+public import WireCallingDomain
+public import WireFoundation
+public import WireNetwork
 
-import WireFoundation
+/// The single implementation of `WireCallingDomain.MeetingRepositoryProtocol`.
+///
+/// The repository bridges between the backend API (`MeetingResponse`) and the
+/// meeting domain model (`Meeting`), persisting meetings via the local store.
+public final class MeetingRepository: MeetingRepositoryProtocol {
 
-package final class MeetingRepository: MeetingRepositoryProtocol {
-
-    package typealias MeetingRecurrence = WireCallingDomain.MeetingRecurrence
+    // MARK: - Properties
 
     private let meetingsAPI: any MeetingsAPI
-    private let meetingsSource: @Sendable () -> [Meeting]
+    private let localStore: any MeetingLocalStoreProtocol
+    private let changeBroadcaster = AsyncMulticaster<Void>()
 
-    package init(
+    // MARK: - Object lifecycle
+
+    public init(
         meetingsAPI: any MeetingsAPI,
-        meetings: @Sendable @escaping () -> [Meeting]
+        localStore: any MeetingLocalStoreProtocol
     ) {
         self.meetingsAPI = meetingsAPI
-        self.meetingsSource = meetings
+        self.localStore = localStore
     }
 
-    package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
-        let allFuture = meetingsSource()
+    // MARK: - Public
+
+    public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
+        let allFuture = Self.demoData()
             .filter { $0.start > date }
             .sorted {
                 if $0.start != $1.start {
@@ -52,15 +60,19 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
         return Array(allFuture[start ..< end])
     }
 
-    package func hasUpcomingMeetings(after date: Date) -> Bool {
-        meetingsSource().contains { $0.start > date }
+    public func observeMeetingChanges() -> AsyncStream<Void> {
+        changeBroadcaster.makeStream()
     }
 
-    package func createMeeting(
+    public func hasUpcomingMeetings(after date: Date) -> Bool {
+        Self.demoData().contains { $0.start > date }
+    }
+
+    public func createMeeting(
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: MeetingRecurrence?
+        recurrence: WireCallingDomain.MeetingRecurrence?
     ) async throws -> Meeting {
         let response = try await meetingsAPI.createMeeting(
             parameters: CreateMeetingParameters(
@@ -70,12 +82,64 @@ package final class MeetingRepository: MeetingRepositoryProtocol {
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
-        return response.toDomainMeeting()
+        let meeting = response.toDomainMeeting()
+        await localStore.storeMeeting(meeting)
+        changeBroadcaster.broadcast()
+        return meeting
+    }
+
+    public func pullMeeting(id: QualifiedID) async throws {
+        // There is no endpoint to fetch a single meeting,
+        // so refetch the list to get the details.
+        let meetings = try await meetingsAPI.listMeetings()
+
+        if let meeting = meetings.first(where: { $0.id == id }) {
+            await localStore.storeMeeting(meeting.toDomainMeeting())
+        } else {
+            // The meeting no longer exists on the backend.
+            await localStore.deleteMeeting(id: id)
+        }
+        changeBroadcaster.broadcast()
+    }
+
+    public func pullMeetings() async throws {
+        let responses: [MeetingResponse]
+        do {
+            responses = try await meetingsAPI.listMeetings()
+        } catch MeetingsAPIError.unsupportedEndpointForAPIVersion {
+            // Meetings only exist on backends with a recent enough api version,
+            // so there is nothing to pull from older backends.
+            return
+        }
+        await localStore.replaceAllMeetings(with: responses.map { $0.toDomainMeeting() })
+        changeBroadcaster.broadcast()
+    }
+
+    public func deleteLocalMeeting(id: QualifiedID) async {
+        await localStore.deleteMeeting(id: id)
+        changeBroadcaster.broadcast()
+    }
+
+    // MARK: - Private
+
+    /// Refreshes the local store with the latest snapshot of meetings from the backend.
+    /// When the backend is unreachable, previously stored meetings are kept and served;
+    /// the error is only rethrown if there are no stored meetings to fall back to.
+    private func refreshStoredMeetings() async throws {
+        do {
+            let meetings = try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
+            await localStore.replaceAllMeetings(with: meetings)
+        } catch {
+            guard await !localStore.storedMeetings().isEmpty else { throw error }
+        }
     }
 
 }
 
+// MARK: - Mapping
+
 private extension MeetingResponse {
+
     func toDomainMeeting() -> Meeting {
         Meeting(
             id: id,
@@ -90,11 +154,9 @@ private extension MeetingResponse {
     }
 }
 
-package extension MeetingRepository {
+private extension MeetingRepository {
 
-    static func demo(
-        meetingsAPI: any MeetingsAPI
-    ) -> MeetingRepository {
+    static func demoData() -> [Meeting] {
         let cal = Calendar.current
         let now = Date()
         func day(_ offset: Int, hour: Int, min: Int = 0) -> Date {
@@ -597,11 +659,7 @@ package extension MeetingRepository {
                 ]
             )
         ]
-
-        return MeetingRepository(
-            meetingsAPI: meetingsAPI,
-            meetings: { meetings }
-        )
+        return meetings
     }
 }
 
@@ -650,15 +708,17 @@ private extension WireNetwork.MeetingRecurrence {
         case .monthly: .monthly
         case .yearly: .yearly
         }
-        return MeetingRecurrence(
+        return WireCallingDomain.MeetingRecurrence(
             frequency: domainFrequency,
             interval: interval ?? 1,
-            until: until ?? .distantFuture
+            until: until
         )
     }
+
 }
 
 private extension WireCallingDomain.MeetingRecurrence {
+
     func toNetworkRecurrence() -> WireNetwork.MeetingRecurrence {
         let networkFrequency: MeetingFrequency = switch frequency {
         case .daily: .daily
@@ -666,10 +726,11 @@ private extension WireCallingDomain.MeetingRecurrence {
         case .monthly: .monthly
         case .yearly: .yearly
         }
-        return MeetingRecurrence(
+        return WireNetwork.MeetingRecurrence(
             frequency: networkFrequency,
             interval: interval,
             until: until
         )
     }
+
 }

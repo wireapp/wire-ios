@@ -21,7 +21,6 @@ import Testing
 import WireCallingAssembly
 import WireCallingDomainSupport
 import WireCallingUI
-import WireNetworkSupport
 
 @Suite("WireMeetingsFactory Tests")
 @MainActor
@@ -34,7 +33,7 @@ struct WireMeetingsFactoryTests {
 
         // When
         let viewController = factory.makeMeetingsView(
-            meetingsAPI: MockMeetingsAPI(),
+            meetingRepository: MeetingRepositoryProtocolMock(),
             memberRepository: MeetingMemberRepositoryProtocolMock(),
             conversationRepository: MeetingConversationRepositoryProtocolMock()
         )
