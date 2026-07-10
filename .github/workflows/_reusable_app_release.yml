@@ -68,6 +68,8 @@ on:
         required: true
       WIRE_IOS_BUILD_WEBHOOK:
         required: false
+      WIRE_IOS_CI_WEBHOOK:
+        required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
