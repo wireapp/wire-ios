@@ -27,7 +27,7 @@ protocol ProcessCallingEventsUseCaseProtocol {
     func invoke(
         eventBatches: [[UpdateEvent]],
         callKitReportingCoordinator: CallKitReportingCoordinator
-    ) async
+    ) async throws
 }
 
 /// Processes calling events collected during Notification Service Extension sync.
@@ -68,10 +68,11 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
     func invoke(
         eventBatches: [[UpdateEvent]],
         callKitReportingCoordinator: CallKitReportingCoordinator
-    ) async {
+    ) async throws {
         callingService.start()
 
         for batch in eventBatches {
+            try Task.checkCancellation()
             for event in batch {
                 if let params = await avsParameters(from: event) {
                     await callKitReportingCoordinator.setCallerName(
@@ -93,7 +94,7 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
 
         callingService.end()
 
-        await callKitReportingCoordinator.waitForCompletion()
+        try await callKitReportingCoordinator.waitForCompletion()
     }
 
     // MARK: - Helpers

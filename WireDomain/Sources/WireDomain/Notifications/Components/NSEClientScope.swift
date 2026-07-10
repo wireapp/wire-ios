@@ -164,7 +164,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             }
 
             _ = callKitReportingCoordinator
-            await processCallingEventsUseCase.invoke(
+            try await processCallingEventsUseCase.invoke(
                 eventBatches: eventBatches,
                 callKitReportingCoordinator: callKitReportingCoordinator
             )

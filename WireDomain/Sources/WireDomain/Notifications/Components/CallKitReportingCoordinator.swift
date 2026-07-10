@@ -77,8 +77,9 @@ actor CallKitReportingCoordinator {
     }
 
     /// Wait for all callback-started CallKit tasks to finish.
-    func waitForCompletion() async {
+    func waitForCompletion() async throws {
         while true {
+            try Task.checkCancellation()
             let snapshot = Array(pendingTasks.values)
             guard !snapshot.isEmpty else { break }
             for task in snapshot {
