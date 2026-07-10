@@ -102,7 +102,7 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
     private func avsParameters(from event: UpdateEvent) async -> AVSCallParams? {
         switch event {
         case let .conversation(.proteusMessageAdd(e)):
-            await avsParametersForProteus(e).first
+            await avsParametersForProteus(e)
         case let .conversation(.mlsMessageAdd(e)):
             await avsParametersForMLS(e).first
         default:
@@ -112,16 +112,16 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
 
     private func avsParametersForProteus(
         _ event: ConversationProteusMessageAddEvent
-    ) async -> [AVSCallParams] {
+    ) async -> AVSCallParams? {
         guard
             let decryptedBase64 = event.message.decryptedMessage,
             let payload = Data(base64Encoded: decryptedBase64),
             let genericMessage = GenericMessage(from: payload, validate: false),
             genericMessage.hasCalling,
             let callingData = genericMessage.calling.content.data(using: .utf8)
-        else { return [] }
+        else { return nil }
 
-        let params = await buildParams(
+        return await buildParams(
             callingData: callingData,
             callingProto: genericMessage.calling,
             fallbackConversationID: event.conversationID,
@@ -130,7 +130,6 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
             timestamp: event.timestamp,
             isMLS: false
         )
-        return params.map { [$0] } ?? []
     }
 
     private func avsParametersForMLS(
