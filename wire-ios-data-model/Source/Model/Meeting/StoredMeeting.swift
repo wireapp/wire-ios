@@ -19,11 +19,13 @@
 public import CoreData
 
 @objc(ZMStoredMeeting) @objcMembers
-public final class StoredMeeting: NSManagedObject, Identifiable {
+public final class StoredMeeting: ZMManagedObject, Identifiable {
 
     /// The name of the associated Core Data entity.
 
-    public static let entityName = "Meeting"
+    public override static func entityName() -> String {
+        "Meeting"
+    }
 
     @nonobjc
     public static func fetchRequest() -> NSFetchRequest<StoredMeeting> {
