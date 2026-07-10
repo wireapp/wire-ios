@@ -127,13 +127,15 @@ public extension AVURLAsset {
         completion: @escaping ConvertVideoCompletion
     ) {
         let outputURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(filename)
-        if FileManager.default.fileExists(atPath: outputURL.path) {
-            do {
-                try FileManager.default.removeItem(at: outputURL)
-            } catch let deleteError {
-                WireLogger.ui.error("Cannot delete old leftover at \(outputURL): \(deleteError)")
-            }
-        }
+
+        // Export into a uniquely named intermediate file rather than directly to `outputURL`.
+        // `outputURL`'s name is derived from the source asset's filename with the extension
+        // swapped to `.mp4`, so when the source is already an `.mp4` it collides with the
+        // source path itself. Deleting that "leftover" file out from under the export session
+        // while it's still reading from it caused it to fail.
+        let exportingURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension(outputURL.pathExtension)
 
         guard let exportSession = AVAssetExportSession(asset: self, presetName: quality) else {
             return completion(nil, nil, ConversionFailure.exportSessionUnavailable)
@@ -143,9 +145,30 @@ public extension AVURLAsset {
             exportSession.fileLengthLimit = fileLengthLimit
         }
 
-        exportSession.exportVideo(exportURL: outputURL) { _, error in
+        exportSession.exportVideo(exportURL: exportingURL) { _, error in
+            guard error == nil else {
+                try? FileManager.default.removeItem(at: exportingURL)
+                DispatchQueue.main.async {
+                    completion(nil, self, error)
+                }
+                return
+            }
+
+            do {
+                if FileManager.default.fileExists(atPath: outputURL.path) {
+                    try FileManager.default.removeItem(at: outputURL)
+                }
+                try FileManager.default.moveItem(at: exportingURL, to: outputURL)
+            } catch let moveError {
+                WireLogger.ui.error("Cannot move converted video to \(outputURL): \(moveError)")
+                DispatchQueue.main.async {
+                    completion(nil, self, moveError)
+                }
+                return
+            }
+
             DispatchQueue.main.async {
-                completion(outputURL, self, error)
+                completion(outputURL, self, nil)
             }
         }
     }
