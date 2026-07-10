@@ -26,8 +26,6 @@ public import Foundation
 /// and injected in.
 public protocol MeetingRepositoryProtocol: Sendable {
 
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting]
-
     /// Returns a stream that emits whenever meetings are created, updated or deleted,
     /// e.g. by processed sync events.
     ///
@@ -35,8 +33,6 @@ public protocol MeetingRepositoryProtocol: Sendable {
     /// observers can safely re-fetch in response to an emission without causing a loop.
 
     func observeMeetingChanges() -> AsyncStream<Void>
-
-    func hasUpcomingMeetings(after date: Date) async throws -> Bool
 
     func createMeeting(
         title: String,
@@ -64,5 +60,9 @@ public protocol MeetingRepositoryProtocol: Sendable {
     /// - Parameter id: The qualified id of the meeting to delete.
 
     func deleteLocalMeeting(id: QualifiedID) async
+
+    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting]
+
+    func hasUpcomingMeetings(after date: Date) async throws -> Bool
 
 }
