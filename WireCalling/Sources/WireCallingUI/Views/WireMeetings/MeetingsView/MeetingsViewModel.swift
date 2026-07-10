@@ -115,8 +115,8 @@ package final class MeetingsViewModel {
             futureOffset = result.nextOffset
             hasMore = result.hasMore
         } catch {
-            let errorType = Swift.type(of: error)
-            WireLogger.ui.error("failed to fetch upcoming meetings: \(String(describing: errorType))")
+            hasMore = false
+            WireLogger.ui.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
         }
     }
 
