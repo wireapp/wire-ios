@@ -101,7 +101,7 @@ extension ConversationActionController {
             let canDelete = ZMUser.selfUser()?.canDeleteConversation(conversation) ?? false
 
             switch (hasEligibleCandidates, canDelete) {
-                
+
             // no eligibles candidates and admin can delete group
             case (false, true):
                 self.present(LastAdminLeaveAlert.deleteOnly(groupName: groupName) { [weak self] in
@@ -110,7 +110,7 @@ extension ConversationActionController {
                         handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
                     }
                 })
-                
+
             // eligible candidates and admin can delete group
             case (true, true):
                 self.present(LastAdminLeaveAlert.promoteOrDelete(groupName: groupName) { [weak self] in
@@ -121,13 +121,13 @@ extension ConversationActionController {
                         handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
                     }
                 })
-                
+
             // eligible candidates and admin cannot delete group
             case (true, false):
                 self.present(LastAdminLeaveAlert.promoteOnly(groupName: groupName) { [weak self] in
                     self?.presentAdminSelection(for: conversation, candidates: eligibleCandidates)
                 })
-                
+
             // no eligible candidates and admin cannot delete group
             case (false, false):
                 self.present(LastAdminLeaveAlert.cannotLeave(groupName: groupName))
