@@ -18,13 +18,13 @@
 
 package struct SearchMembersUseCase: SearchMembersUseCaseProtocol {
 
-    private let repository: any MemberRepositoryProtocol
+    private let repository: any MeetingMemberRepositoryProtocol
 
-    package init(repository: any MemberRepositoryProtocol) {
+    package init(repository: any MeetingMemberRepositoryProtocol) {
         self.repository = repository
     }
 
-    package func invoke(query: String) async throws -> [Member] {
+    package func invoke(query: String) async throws -> [MeetingMember] {
         try await repository.search(query: query)
     }
 
