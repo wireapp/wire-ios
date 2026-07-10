@@ -25,7 +25,7 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
     }
 
     package func invoke(meetingID: QualifiedID) async throws {
-        try await repository.deleteMeeting(meetingID: meetingID)
+        try await repository.deleteMeeting(id: meetingID)
     }
 
 }

@@ -187,7 +187,7 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+        try await sut.deleteMeeting(id: Scaffolding.meetingID)
 
         // Then
 
@@ -203,7 +203,7 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+        try await sut.deleteMeeting(id: Scaffolding.meetingID)
 
         // Then
 
@@ -219,7 +219,7 @@ struct MeetingRepositoryTests {
         // When / Then
 
         await #expect(throws: (any Error).self) {
-            try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+            try await sut.deleteMeeting(id: Scaffolding.meetingID)
         }
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
     }
@@ -266,7 +266,7 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+        try await sut.deleteMeeting(id: Scaffolding.meetingID)
 
         // Then
 

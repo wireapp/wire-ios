@@ -103,14 +103,14 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.broadcast()
     }
 
-    public func deleteMeeting(meetingID: QualifiedID) async throws {
+    public func deleteMeeting(id: QualifiedID) async throws {
         do {
-            try await meetingsAPI.deleteMeeting(meetingID: meetingID)
+            try await meetingsAPI.deleteMeeting(meetingID: id)
         } catch MeetingsAPIError.meetingNotFound {
             // The meeting is already gone from the backend,
             // so only the local copy is left to delete.
         }
-        await localStore.deleteMeeting(id: meetingID)
+        await localStore.deleteMeeting(id: id)
         changeBroadcaster.broadcast()
     }
 
