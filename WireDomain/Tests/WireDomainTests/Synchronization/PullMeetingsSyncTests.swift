@@ -208,42 +208,60 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         await deleteLocalMeetingIdQualifiedIDVoidClosure?(id)
     }
 
-    // MARK: - fetchMeetingsStarting
+    // MARK: - storeMeeting
 
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount = 0
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCalled: Bool {
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount > 0
+    public var storeMeetingMeetingMeetingVoidCallsCount = 0
+    public var storeMeetingMeetingMeetingVoidCalled: Bool {
+        storeMeetingMeetingMeetingVoidCallsCount > 0
     }
 
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedArguments: (
-        date: Date,
+    public var storeMeetingMeetingMeetingVoidReceivedMeeting: Meeting?
+    public var storeMeetingMeetingMeetingVoidReceivedInvocations: [Meeting] = []
+    public var storeMeetingMeetingMeetingVoidClosure: ((Meeting) async -> Void)?
+
+    public func storeMeeting(_ meeting: Meeting) async {
+        storeMeetingMeetingMeetingVoidCallsCount += 1
+        storeMeetingMeetingMeetingVoidReceivedMeeting = meeting
+        storeMeetingMeetingMeetingVoidReceivedInvocations.append(meeting)
+        await storeMeetingMeetingMeetingVoidClosure?(meeting)
+    }
+
+    // MARK: - fetchMeetings
+
+    public var fetchMeetingsInRangeDateOffsetIntLimitIntMeetingCallsCount = 0
+    public var fetchMeetingsInRangeDateOffsetIntLimitIntMeetingCalled: Bool {
+        fetchMeetingsInRangeDateOffsetIntLimitIntMeetingCallsCount > 0
+    }
+
+    public var fetchMeetingsInRangeDateOffsetIntLimitIntMeetingReceivedArguments: (
+        range: Range<Date>,
         offset: Int,
         limit: Int
     )?
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedInvocations: [(
-        date: Date,
+    public var fetchMeetingsInRangeDateOffsetIntLimitIntMeetingReceivedInvocations: [(
+        range: Range<Date>,
         offset: Int,
         limit: Int
     )] = []
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue: [Meeting]!
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure: ((Date, Int, Int) -> [Meeting])?
+    public var fetchMeetingsInRangeDateOffsetIntLimitIntMeetingReturnValue: [Meeting]!
+    public var fetchMeetingsInRangeDateOffsetIntLimitIntMeetingClosure: ((Range<Date>, Int, Int) -> [Meeting])?
 
-    public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount += 1
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedArguments = (
-            date: date,
+    public func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) -> [Meeting] {
+        fetchMeetingsInRangeDateOffsetIntLimitIntMeetingCallsCount += 1
+        fetchMeetingsInRangeDateOffsetIntLimitIntMeetingReceivedArguments = (
+            range: range,
             offset: offset,
             limit: limit
         )
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedInvocations.append((
-            date: date,
+        fetchMeetingsInRangeDateOffsetIntLimitIntMeetingReceivedInvocations.append((
+            range: range,
             offset: offset,
             limit: limit
         ))
-        if let fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure {
-            return fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure(date, offset, limit)
+        if let fetchMeetingsInRangeDateOffsetIntLimitIntMeetingClosure {
+            return fetchMeetingsInRangeDateOffsetIntLimitIntMeetingClosure(range, offset, limit)
         } else {
-            return fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue
+            return fetchMeetingsInRangeDateOffsetIntLimitIntMeetingReturnValue
         }
     }
 

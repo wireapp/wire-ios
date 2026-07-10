@@ -38,7 +38,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
 
         let meeting1 = Meeting.fixture(title: "Meeting 1", start: mockDateProvider.now.addingTimeInterval(3600))
         let meeting2 = Meeting.fixture(title: "Meeting 2", start: mockDateProvider.now.addingTimeInterval(7200))
-        repository.fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue = [meeting1, meeting2]
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [meeting1, meeting2]
 
         let useCase = FetchUpcomingMeetingsUseCase(
             repository: repository,
@@ -57,7 +57,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
     @Test("invoke returns empty result when no upcoming meetings")
     func invoke_WithNoMeetings() async throws {
         // Given
-        repository.fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue = []
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = []
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
 
@@ -86,7 +86,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
                 start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600))
             )
         }
-        repository.fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue = meetings
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
 
         let useCase = FetchUpcomingMeetingsUseCase(
             repository: repository,
@@ -113,7 +113,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
                 start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600))
             )
         }
-        repository.fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue = meetings
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
 
         let useCase = FetchUpcomingMeetingsUseCase(
             repository: repository,
@@ -126,6 +126,31 @@ struct FetchUpcomingMeetingsUseCaseTests {
         // Then
         #expect(!result.hasMore)
         #expect(result.meetings.count == 10)
+    }
+
+    @Test("invoke fetches meetings from the start of today until the end of tomorrow")
+    func invoke_FetchesTodayAndTomorrow() async throws {
+        // Given: just after midnight local time, so a meeting created "now"
+        // lies before `now` by the time the list reloads, but still today.
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: try Date.ISO8601FormatStyle().parse("2026-07-11T12:00:00Z"))
+        let mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = startOfToday.addingTimeInterval(5 * 60) // 00:05
+
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = []
+
+        let useCase = FetchUpcomingMeetingsUseCase(
+            repository: repository,
+            currentDateProvider: mockDateProvider
+        )
+
+        // When
+        _ = try await useCase.invoke(pageSize: 10, offset: 0)
+
+        // Then
+        let range = repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments?.range
+        #expect(range?.lowerBound == startOfToday)
+        #expect(range?.upperBound == calendar.date(byAdding: .day, value: 2, to: startOfToday))
     }
 
 }
