@@ -39,9 +39,9 @@ final class BackupRestoreConversationListTests: WireUITestCase {
     func testConversationListOrderAndUnreadAfterBackupRestore_WPB_23380() async throws {
 
         // GIVEN a team with one owner and one member who shares three conversations.
-        let nameA = UserGenerator.generateRandomConversationName()
-        let nameB = UserGenerator.generateRandomConversationName()
-        let nameC = UserGenerator.generateRandomConversationName()
+        let nameA = "Conversation A"
+        let nameB = "Conversation B"
+        let nameC = "Conversation C"
 
         let messageInA = UserGenerator.generateRandomMessage()
         let messageInB = UserGenerator.generateRandomMessage()
@@ -191,7 +191,7 @@ final class BackupRestoreConversationListTests: WireUITestCase {
             .openAccountSettings()
             .tapBackupOrRestore()
             .tapRestoreFromBackupButton()
-            .selectBackupFile(withName: fileName)
+            .selectBackupFileWithPassword(withName: fileName)
             .enterBackupPasswordAndRestore(user.password)
 
         XCTAssertTrue(
