@@ -16,42 +16,47 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireFoundation
+package import Foundation
 
-import Foundation
+import WireFoundation
 
-package struct CreateInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocol {
+package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
 
     private let meetingRepository: any MeetingRepositoryProtocol
     private let conversationRepository: any MeetingConversationRepositoryProtocol
-    private let dateProvider: any CurrentDateProviding
 
     package init(
         meetingRepository: any MeetingRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol,
-        dateProvider: any CurrentDateProviding
+        conversationRepository: any MeetingConversationRepositoryProtocol
     ) {
         self.meetingRepository = meetingRepository
         self.conversationRepository = conversationRepository
-        self.dateProvider = dateProvider
     }
 
     package func invoke(
         title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?,
         participants: [MeetingMember]
     ) async throws -> Meeting {
-        let now = dateProvider.now
         let meeting = try await meetingRepository.createMeeting(
             title: title,
-            startTime: now,
-            endTime: now.addingTimeInterval(.oneHour),
-            recurrence: nil
+            startTime: startTime,
+            endTime: endTime,
+            recurrence: recurrence
         )
+        // The backend creates a conversation for the meeting but doesn't
+        // notify this client about it, so pull it explicitly.
         try await conversationRepository.pullConversation(
             id: meeting.conversationID.id,
             domain: meeting.conversationID.domain
         )
         try await conversationRepository.addParticipants(participants, to: meeting.conversationID)
+        // Store the meeting again now that its conversation exists locally,
+        // so the two are linked; meetings without a local conversation are
+        // not listed.
+        await meetingRepository.storeMeeting(meeting)
         return meeting
     }
 
