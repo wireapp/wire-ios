@@ -185,7 +185,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: Trigger build
-        run: bundle exec fastlane ${{ inputs.fastlane_action }} configuration_path:"${{ inputs.configuration_path }}"
+      - name: Trigger build
+        run: bundle exec fastlane "${FASTLANE_ACTION_INPUT}" configuration_path:"${CONFIGURATION_PATH_INPUT}"
+        env:
+          HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
+          FASTLANE_ACTION_INPUT: ${{ inputs.fastlane_action }}
+          CONFIGURATION_PATH_INPUT: ${{ inputs.configuration_path }}
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
       - name: Archiving Logs
