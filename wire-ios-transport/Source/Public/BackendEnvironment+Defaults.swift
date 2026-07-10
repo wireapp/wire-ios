@@ -99,7 +99,12 @@ public extension BackendEnvironment {
                 nil
             }
 
-            let data = SerializedData(title: title, endpoints: backendEndpoints, apiProxy: proxy, supportEmail: supportEmail)
+            let data = SerializedData(
+                title: title,
+                endpoints: backendEndpoints,
+                apiProxy: proxy,
+                supportEmail: supportEmail
+            )
             let encoded = try? JSONEncoder().encode(data)
             userDefaults.set(encoded, forKey: BackendEnvironment.defaultsKey)
         default:

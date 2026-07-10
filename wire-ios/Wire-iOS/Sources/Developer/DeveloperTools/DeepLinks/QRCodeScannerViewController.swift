@@ -145,7 +145,8 @@ private final class QRCodeViewfinderView: UIView {
         backgroundColor = .clear
         isUserInteractionEnabled = false
 
-        shapeLayer.strokeColor = SemanticColors.Icon.foregroundDefault.cgColor
+        shapeLayer.strokeColor = UIColor.white.cgColor
+        shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.lineWidth = lineWidth
         shapeLayer.lineCap = .round
         layer.addSublayer(shapeLayer)
