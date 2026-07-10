@@ -48,7 +48,8 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
         try await refreshStoredMeetings()
 
-        let allFuture = await localStore.storedMeetings()
+        let storedMeetings = await localStore.storedMeetings()
+        let allFuture = storedMeetings
             .filter { $0.start > date }
             .sorted {
                 if $0.start != $1.start {
@@ -103,6 +104,19 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             // The meeting no longer exists on the backend.
             await localStore.deleteMeeting(id: id)
         }
+        changeBroadcaster.broadcast()
+    }
+
+    public func pullMeetings() async throws {
+        let responses: [MeetingResponse]
+        do {
+            responses = try await meetingsAPI.listMeetings()
+        } catch MeetingsAPIError.unsupportedEndpointForAPIVersion {
+            // Meetings only exist on backends with a recent enough api version,
+            // so there is nothing to pull from older backends.
+            return
+        }
+        await localStore.replaceAllMeetings(with: responses.map { $0.toDomainMeeting() })
         changeBroadcaster.broadcast()
     }
 
