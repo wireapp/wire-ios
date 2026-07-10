@@ -10,6 +10,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
+        .library(name: "WireCallingData", targets: ["WireCallingData"]),
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
         .library(name: "WireCallingDomainSupport", targets: ["WireCallingDomainSupport"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
