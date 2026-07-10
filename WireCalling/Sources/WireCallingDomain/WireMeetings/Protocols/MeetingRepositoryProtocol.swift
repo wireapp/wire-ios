@@ -41,6 +41,13 @@ public protocol MeetingRepositoryProtocol: Sendable {
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting
 
+    /// Stores a meeting locally without contacting the server, linking it to
+    /// locally stored entities such as its conversation and creator.
+    ///
+    /// - Parameter meeting: The meeting to store.
+
+    func storeMeeting(_ meeting: Meeting) async
+
     /// Pulls a meeting from the server and stores it locally.
     /// If the meeting no longer exists on the server, the locally stored copy is deleted.
     ///
