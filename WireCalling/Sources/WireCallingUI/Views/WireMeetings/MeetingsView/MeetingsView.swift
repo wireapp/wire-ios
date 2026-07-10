@@ -26,6 +26,7 @@ struct MeetingsView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @State private var viewModel: MeetingsViewModel
+    @State private var meetingToDelete: Meeting?
 
     init(viewModel: MeetingsViewModel) {
         self.viewModel = viewModel
@@ -68,7 +69,7 @@ struct MeetingsView: View {
                     // TODO: [WPB-25501] Implement UI
                 },
                 onDelete: { meeting in
-                    Task { try? await viewModel.deleteMeeting(meeting) }
+                    meetingToDelete = meeting
                 }
             )
 
@@ -87,6 +88,23 @@ struct MeetingsView: View {
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
             await viewModel.loadInitialData()
+        }
+        .alert(
+            Strings.Delete.Alert.title,
+            isPresented: Binding(
+                get: { meetingToDelete != nil },
+                set: { if !$0 { meetingToDelete = nil } }
+            ),
+            presenting: meetingToDelete
+        ) { meeting in
+            Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
+                Task {
+                    try? await viewModel.deleteMeeting(meeting)
+                }
+            }
+            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
+        } message: { _ in
+            Text(Strings.Delete.Alert.subtitle)
         }
     }
 
