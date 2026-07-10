@@ -48,7 +48,7 @@ struct CreateMeetingUseCaseTests {
     )
 
     init() {
-        useCase = CreateMeetingUseCase(
+        self.useCase = CreateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
@@ -143,7 +143,8 @@ struct CreateMeetingUseCaseTests {
             )
         }
         #expect(conversationRepository.pullConversationIdUUIDDomainStringVoidCallsCount == 0)
-        #expect(conversationRepository.addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
+        #expect(conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(meetingRepository.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
     }
 
