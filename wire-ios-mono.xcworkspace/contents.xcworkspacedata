@@ -293,9 +293,19 @@
    <FileRef
       location = "group:WireMessaging">
    </FileRef>
-   <FileRef
-      location = "group:WireNetwork">
-   </FileRef>
+   <Group
+      location = "container:"
+      name = "WireNetwork">
+      <FileRef
+         location = "group:WireNetwork">
+      </FileRef>
+      <FileRef
+         location = "group:WireNetworkSupport">
+      </FileRef>
+      <FileRef
+         location = "group:WireNetworkTests">
+      </FileRef>
+   </Group>
    <FileRef
       location = "group:WirePlugins">
    </FileRef>

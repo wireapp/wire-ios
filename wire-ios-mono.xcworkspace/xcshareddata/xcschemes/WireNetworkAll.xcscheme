@@ -58,7 +58,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:WireNetwork/Tests/TestPlans/AllTests.xctestplan"
+            reference = "container:WireNetworkTests/Tests/TestPlans/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>

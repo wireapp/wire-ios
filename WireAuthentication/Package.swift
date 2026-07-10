@@ -16,6 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../WireNetwork"),
+        .package(path: "../WireNetworkSupport"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
         .package(path: "../WireUI"),
@@ -56,7 +57,7 @@ let package = Package(
             dependencies: [
                 "WireAuthenticationLogic",
                 "WireAuthenticationAPISupport",
-                .product(name: "WireNetworkSupport", package: "WireNetwork"),
+                "WireNetworkSupport"
             ]
         ),
 

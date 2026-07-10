@@ -21,7 +21,8 @@ let package = Package(
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI"),
-        .package(path: "../WireNetwork")
+        .package(path: "../WireNetwork"),
+        .package(path: "../WireNetworkSupport")
     ],
     targets: [
         .target(
@@ -78,7 +79,7 @@ let package = Package(
                 "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireFoundationSupport", package: "WireFoundation"),
-                .product(name: "WireNetworkSupport", package: "WireNetwork")
+                "WireNetworkSupport"
             ],
         ),
     ]

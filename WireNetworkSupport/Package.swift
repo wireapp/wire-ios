@@ -3,13 +3,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "WireNetwork",
+    name: "WireNetworkSupport",
     platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireNetworkSupport", type: .dynamic, targets: ["WireNetworkSupport"])
     ],
     dependencies: [
-        .package(path: "../WireNetwork")
+        .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins")
     ],
     targets: [
