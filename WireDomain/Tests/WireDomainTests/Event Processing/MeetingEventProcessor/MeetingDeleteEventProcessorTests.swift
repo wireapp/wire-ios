@@ -233,47 +233,47 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         await deleteLocalMeetingIdQualifiedIDVoidClosure?(id)
     }
 
-    // MARK: - fetchMeetingsStarting
+    // MARK: - fetchMeetings
 
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingThrowableError: (any Error)?
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount = 0
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCalled: Bool {
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount > 0
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingThrowableError: (any Error)?
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount = 0
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCalled: Bool {
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount > 0
     }
 
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedArguments: (
-        date: Date,
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments: (
+        range: Range<Date>,
         offset: Int,
         limit: Int
     )?
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedInvocations: [(
-        date: Date,
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedInvocations: [(
+        range: Range<Date>,
         offset: Int,
         limit: Int
     )] = []
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue: [Meeting]!
-    public var fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure: ((Date, Int, Int) async throws
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue: [Meeting]!
+    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure: ((Range<Date>, Int, Int) async throws
         -> [Meeting])?
 
-    public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingCallsCount += 1
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedArguments = (
-            date: date,
+    public func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting] {
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount += 1
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments = (
+            range: range,
             offset: offset,
             limit: limit
         )
-        fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReceivedInvocations.append((
-            date: date,
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedInvocations.append((
+            range: range,
             offset: offset,
             limit: limit
         ))
-        if let error = fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingThrowableError {
+        if let error = fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingThrowableError {
             throw error
         }
-        if let fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure {
-            return try await fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingClosure(date, offset, limit)
+        if let fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure {
+            return try await fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure(range, offset, limit)
         } else {
-            return fetchMeetingsStartingAfterDateDateOffsetIntLimitIntMeetingReturnValue
+            return fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue
         }
     }
 
@@ -303,4 +303,5 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
             return hasUpcomingMeetingsAfterDateDateBoolReturnValue
         }
     }
+
 }
