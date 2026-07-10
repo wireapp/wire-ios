@@ -52,8 +52,7 @@ package final class AllMeetingsViewModel {
             currentDateProvider: currentDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
-            observeMeetingChangesUseCase: observeMeetingChangesUseCase
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase
         )
         self.makeFormViewModel = makeFormViewModel

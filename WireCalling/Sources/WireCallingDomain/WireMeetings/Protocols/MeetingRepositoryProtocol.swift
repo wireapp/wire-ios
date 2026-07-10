@@ -61,6 +61,12 @@ public protocol MeetingRepositoryProtocol: Sendable {
 
     func deleteLocalMeeting(id: QualifiedID) async
 
+    /// Deletes a meeting on the server and removes the locally stored copy.
+    ///
+    /// - Parameter meetingID: The qualified id of the meeting to delete.
+
+    func deleteMeeting(meetingID: QualifiedID) async throws
+
     func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting]
 
     func hasUpcomingMeetings(after date: Date) async throws -> Bool

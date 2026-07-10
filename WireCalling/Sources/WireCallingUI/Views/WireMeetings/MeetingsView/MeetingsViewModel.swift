@@ -48,8 +48,7 @@ package final class MeetingsViewModel {
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
     ) {
         self.currentDateProvider = currentDateProvider

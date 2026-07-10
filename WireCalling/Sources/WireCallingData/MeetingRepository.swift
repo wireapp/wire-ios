@@ -103,6 +103,11 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.broadcast()
     }
 
+    public func deleteMeeting(meetingID: QualifiedID) async throws {
+        // TODO: wire up when a delete endpoint is added to MeetingsAPI
+        fatalError()
+    }
+
     public func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) async throws -> [Meeting] {
         try await refreshStoredMeetings()
 
@@ -139,11 +144,6 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         } catch {
             guard await !localStore.storedMeetings().isEmpty else { throw error }
         }
-    }
-
-    package func deleteMeeting(meetingID: QualifiedID) async throws {
-        // TODO: wire up when a delete endpoint is added to MeetingsAPI
-        fatalError()
     }
 
 }

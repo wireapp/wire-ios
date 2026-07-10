@@ -132,8 +132,7 @@ private struct GroupedSections: View {
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
-            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase()
-            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
             deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
         )
     )
@@ -145,10 +144,7 @@ private struct GroupedSections: View {
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(meetings: previewMeetings()),
-            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase()
-            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(
-                meetings: previewMeetings()
-            ),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
             deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
         )
     )
