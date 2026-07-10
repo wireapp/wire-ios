@@ -16,29 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireCallingDomain
+// sourcery: AutoMockable
+/// An object to keep the local meetings up to date
+/// with the remote meetings.
+protocol PullMeetingsSyncProtocol {
 
-import WireFoundation
+    /// Fetch all meetings from remote, then replace
+    /// the locally stored meetings.
 
-package extension Meeting {
-
-    static func fixture(
-        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration),
-            recurrence: .none,
-            members: [],
-            conversationID: QualifiedID(id: UUID(), domain: ""),
-            creatorID: QualifiedID(id: UUID(), domain: "")
-        )
-    }
+    func pull() async throws
 
 }
