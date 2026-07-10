@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "swift"
+    directory: "/wire-ios-mono.xcworkspace/xcshareddata/swiftpm"
+    schedule:
+      interval: "weekly"
+    exclude-paths:
+      - "/wire-ios-build-assets"
+
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    exclude-paths:
+      - "/wire-ios-build-assets"
