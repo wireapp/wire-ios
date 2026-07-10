@@ -167,7 +167,7 @@ private extension MeetingRepository {
                 of: cal.date(byAdding: .day, value: offset, to: cal.startOfDay(for: now))!
             )!
         }
-        let meetings: [Meeting] = [
+        return [
             // YESTERDAY
             Meeting(
                 id: QualifiedID(id: UUID(), domain: ""),
@@ -659,7 +659,6 @@ private extension MeetingRepository {
                 ]
             )
         ]
-        return meetings
     }
 }
 
