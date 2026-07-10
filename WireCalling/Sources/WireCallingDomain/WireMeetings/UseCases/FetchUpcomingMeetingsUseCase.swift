@@ -31,9 +31,9 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
         self.currentDateProvider = currentDateProvider
     }
 
-    package func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings {
+    package func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
         let now = currentDateProvider.now
-        let meetings = repository.fetchMeetingsStarting(
+        let meetings = try await repository.fetchMeetingsStarting(
             after: now,
             offset: offset,
             limit: pageSize + 1

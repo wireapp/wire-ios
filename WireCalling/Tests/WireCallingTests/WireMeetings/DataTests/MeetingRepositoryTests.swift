@@ -231,6 +231,73 @@ struct MeetingRepositoryTests {
         #expect(await changes.next() != nil)
     }
 
+    // MARK: - fetchMeetingsStarting
+
+    @Test
+    func fetchMeetingsStartingRefreshesStoreAndReturnsSortedUpcomingMeetings() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        localStore.storedMeetingsMeetingReturnValue = [
+            Scaffolding.meeting(title: "B", start: Scaffolding.referenceDate.addingTimeInterval(3600)),
+            Scaffolding.meeting(title: "A", start: Scaffolding.referenceDate.addingTimeInterval(3600)),
+            Scaffolding.meeting(title: "Past", start: Scaffolding.referenceDate.addingTimeInterval(-3600))
+        ]
+
+        // When
+
+        let meetings = try await sut.fetchMeetingsStarting(
+            after: Scaffolding.referenceDate,
+            offset: 0,
+            limit: 10
+        )
+
+        // Then
+
+        #expect(localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.count == 1)
+        #expect(meetings.map(\.title) == ["A", "B"])
+    }
+
+    @Test
+    func fetchMeetingsStartingServesStoredMeetingsWhenBackendIsUnreachable() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        localStore.storedMeetingsMeetingReturnValue = [
+            Scaffolding.meeting(title: "Stored", start: Scaffolding.referenceDate.addingTimeInterval(3600))
+        ]
+
+        // When
+
+        let meetings = try await sut.fetchMeetingsStarting(
+            after: Scaffolding.referenceDate,
+            offset: 0,
+            limit: 10
+        )
+
+        // Then
+
+        #expect(meetings.map(\.title) == ["Stored"])
+    }
+
+    @Test
+    func fetchMeetingsStartingThrowsWhenBackendIsUnreachableAndStoreIsEmpty() async {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        localStore.storedMeetingsMeetingReturnValue = []
+
+        // When / Then
+
+        await #expect(throws: (any Error).self) {
+            _ = try await sut.fetchMeetingsStarting(
+                after: Scaffolding.referenceDate,
+                offset: 0,
+                limit: 10
+            )
+        }
+    }
+
     // MARK: - hasUpcomingMeetings
 
     @Test
@@ -244,7 +311,7 @@ struct MeetingRepositoryTests {
 
         // When / Then
 
-        let hasUpcoming = sut.hasUpcomingMeetings(after: Scaffolding.referenceDate)
+        let hasUpcoming = try await sut.hasUpcomingMeetings(after: Scaffolding.referenceDate)
         #expect(hasUpcoming)
     }
 

@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Fetches upcoming meetings
-package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
+package struct ObserveMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocol {
 
-    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
+    private let repository: any MeetingRepositoryProtocol
+
+    package init(repository: any MeetingRepositoryProtocol) {
+        self.repository = repository
+    }
+
+    package func invoke() -> AsyncStream<Void> {
+        repository.observeMeetingChanges()
+    }
 
 }

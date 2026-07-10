@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum RepeatOption: CaseIterable, Sendable {
+// sourcery: AutoMockable
+/// Observes changes to stored meetings, e.g. caused by background sync.
+package protocol ObserveMeetingChangesUseCaseProtocol: Sendable {
 
-    case never
-    case daily
-    case weekly
-    case every2Weeks
-    case monthly
-    case yearly
+    /// Returns a stream that emits whenever meetings are created, updated or deleted.
+
+    func invoke() -> AsyncStream<Void>
 
 }
