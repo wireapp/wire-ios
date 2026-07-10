@@ -1002,7 +1002,7 @@
 "last_admin_leave.delete_group" = "Delete group";
 "last_admin_leave.promote_only_message" = "You're the only admin.\nPromote another participant before leaving.";
 "last_admin_leave.cannot_leave_title" = "Cannot leave \"%@\".";
-"last_admin_leave.cannot_leave_message" = "There are no other eligible admins in the group and as a personal user you cannot delete the group. However, add another team member and make that user admin to delete the group.";
+"last_admin_leave.cannot_leave_message" = "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ started using a new device.";
