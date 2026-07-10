@@ -9,7 +9,7 @@ on:
         default: false
       configuration_path:
         type: string
-        description: 'Optional build-asset folder to overlay on top of the Playground config (keeps Debug.xcconfig/Release.xcconfig from Playground), e.g. ./wire-ios-build-assets/Gov/AppStore'
+        description: 'configuration folder (keeps Playground Release.xcconfig)'
         default: ''
 
 permissions:
