@@ -22,6 +22,7 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
+// sourcery: AutoMockable
 protocol ProcessCallingEventsUseCaseProtocol {
     func invoke(
         eventBatches: [[UpdateEvent]],
@@ -73,7 +74,6 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         for batch in eventBatches {
             for event in batch {
                 if let params = await avsParameters(from: event) {
-                    WireLogger.mls.debug("🚀 setCallerName: callerName \(params.callerName)")
                     await callKitReportingCoordinator.setCallerName(
                         params.callerName,
                         for: params.conversationId
@@ -209,7 +209,6 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         } else {
             1
         }
-        WireLogger.mls.debug("🚀 Result: callerName \(callerName)")
         return AVSCallParams(
             data: callingData,
             currentTime: UInt32(Date.now.timeIntervalSince1970),
@@ -236,9 +235,6 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         let conversationName = await conversationLocalStore.name(for: conversation)
         let callerName = await userLocalStore.name(for: caller)
 
-        WireLogger.mls.debug("🚀 teamName \(teamName)")
-        WireLogger.mls.debug("🚀 conversationName \(conversationName)")
-        WireLogger.mls.debug("🚀 callerName \(callerName)")
         let format: NotificationTitle.MessageTitleDescriptor? = if isGroupConversation, let conversationName {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
@@ -256,7 +252,6 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         }
 
         guard let format else { return nil }
-        WireLogger.mls.debug("🚀 format \(format)")
 
         return NotificationTitle
             .conversationMessage(format)

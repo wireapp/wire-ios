@@ -37,6 +37,7 @@ actor CallKitReportingCoordinator {
     private var didReportIncomingCall = false
     private var callerNamesByConversationID: [String: String] = [:]
     private var pendingTasks: [UUID: Task<Void, Never>] = [:]
+
     // MARK: - Init
 
     init(
@@ -73,8 +74,6 @@ actor CallKitReportingCoordinator {
     ) {
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else { return }
         callerNamesByConversationID[conversationID.storageKey] = callerName
-        WireLogger.calling.debug("🚀 callerNamesByConversationID: \(callerNamesByConversationID)", attributes: .newNSE, .safePublic)
-
     }
 
     /// Wait for all callback-started CallKit tasks to finish.
@@ -125,7 +124,6 @@ actor CallKitReportingCoordinator {
         }
 
         didReportIncomingCall = shouldRing
-        WireLogger.calling.debug("🚀 CallKitReportingCoordinator: lookup key: \(conversationID.storageKey), stored keys: \(callerNamesByConversationID.keys.joined(separator: ", "))", attributes: .newNSE, .safePublic)
         let callerName = callerName(for: conversationID)
 
         let callKitContent: [String: Any] = [
