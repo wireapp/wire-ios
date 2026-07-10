@@ -24,7 +24,7 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:WireNetworkTests",
+        "containerPath" : "container:WireNetwork\/WireNetworkTests",
         "identifier" : "WireNetworkTests",
         "name" : "WireNetworkTests"
       }
