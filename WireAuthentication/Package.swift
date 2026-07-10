@@ -57,7 +57,8 @@ let package = Package(
             dependencies: [
                 "WireAuthenticationLogic",
                 "WireAuthenticationAPISupport",
-                "WireNetworkSupport"
+                "WireNetworkSupport",
+                "WireLogging"
             ]
         ),
 
