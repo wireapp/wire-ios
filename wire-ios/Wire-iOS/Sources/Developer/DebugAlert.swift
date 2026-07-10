@@ -174,7 +174,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
 
         guard MFMailComposeViewController.canSendMail() else {
             return DebugAlert.displayFallbackActivityController(
-                email: mail ?? "undefined",
+                email: mail ?? L10n.Localizable.Self.Settings.TechnicalReport.noMailRecipient,
                 from: presentingViewController,
                 popoverPresentationConfiguration: fallbackActivityPopoverConfiguration
             )

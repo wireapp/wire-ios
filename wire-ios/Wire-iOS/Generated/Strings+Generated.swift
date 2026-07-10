@@ -5858,6 +5858,8 @@ internal enum L10n {
           internal static let info = L10n.tr("Localizable", "self.settings.technical_report.info", fallback: "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.")
           /// No mail client detected. Tap "OK" and send logs manually to: 
           internal static let noMailAlert = L10n.tr("Localizable", "self.settings.technical_report.no_mail_alert", fallback: "No mail client detected. Tap \"OK\" and send logs manually to: ")
+          /// no recipient available
+          internal static let noMailRecipient = L10n.tr("Localizable", "self.settings.technical_report.no_mail_recipient", fallback: "no recipient available")
           /// Detailed logs could contain personal data
           internal static let privacyWarning = L10n.tr("Localizable", "self.settings.technical_report.privacy_warning", fallback: "Detailed logs could contain personal data")
           /// Send Report

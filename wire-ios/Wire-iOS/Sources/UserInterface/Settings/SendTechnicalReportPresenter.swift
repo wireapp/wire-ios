@@ -36,7 +36,7 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
             // we will be stuck on the blocker screen after that
             // considering this an edge case for now
             return DebugAlert.displayFallbackActivityController(
-                email: mailRecipient ?? "undefined",
+                email: mailRecipient ?? L10n.Localizable.Self.Settings.TechnicalReport.noMailRecipient,
                 from: self,
                 popoverPresentationConfiguration: fallbackActivityPopoverConfiguration
             )

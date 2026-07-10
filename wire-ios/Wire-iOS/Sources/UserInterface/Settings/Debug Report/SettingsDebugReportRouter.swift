@@ -111,7 +111,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         guard let viewController else { return }
 
         DebugAlert.displayFallbackActivityController(
-            email: mailRecipient ?? "undefined",
+            email: mailRecipient ?? L10n.Localizable.Self.Settings.TechnicalReport.noMailRecipient,
             from: viewController,
             popoverPresentationConfiguration: .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
         )
