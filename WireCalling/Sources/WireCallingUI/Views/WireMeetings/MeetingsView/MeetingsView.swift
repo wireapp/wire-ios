@@ -41,6 +41,7 @@ struct MeetingsView: View {
             await viewModel.loadInitialData()
         }
         .task {
+            // Never returns on its own; the task is cancelled by SwiftUI when the view disappears.
             await viewModel.observeMeetingChanges()
         }
     }
