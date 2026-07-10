@@ -17,11 +17,12 @@
 //
 
 import Foundation
-import WireNetwork
+//import WireNetwork
+//import WireDomain
 
-protocol ProcessCallingEventsUseCaseProtocol {
-    func invoke(
-        eventBatches: [[UpdateEvent]],
-        callKitReportingCoordinator: CallKitReportingCoordinator
-    ) async
-}
+//protocol ProcessCallingEventsUseCaseProtocol {
+//    func invoke(
+//        eventBatches: [[UpdateEvent]],
+//        callKitReportingCoordinator: CallKitReportingCoordinator
+//    ) async
+//}

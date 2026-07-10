@@ -22,6 +22,13 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
+protocol ProcessCallingEventsUseCaseProtocol {
+    func invoke(
+        eventBatches: [[UpdateEvent]],
+        callKitReportingCoordinator: CallKitReportingCoordinator
+    ) async
+}
+
 /// Processes calling events collected during Notification Service Extension sync.
 ///
 /// This use case opens an AVS calling-event batch, extracts call payloads from
