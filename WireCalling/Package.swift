@@ -13,6 +13,7 @@ let package = Package(
         .library(name: "WireCallingData", targets: ["WireCallingData"]),
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
         .library(name: "WireCallingDomainSupport", targets: ["WireCallingDomainSupport"]),
+        .library(name: "WireCallingData", targets: ["WireCallingData"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
@@ -55,8 +56,7 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireCallingUI",
-                "WireCallingData",
-                "WireNetwork"
+                "WireCallingData"
             ]
         ),
         .target(

@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireCallingData
 import WireCoreCrypto
 import WireDataModel
 import WireFoundation
@@ -357,6 +358,10 @@ public final class ClientSessionComponent {
         store: updateEventsLocalStore
     )
 
+    private lazy var pullMeetingsSync = PullMeetingsSync(
+        repository: meetingRepository
+    )
+
     // MARK: - Push syncs
 
     private lazy var pushSupportedProtocolsSync = PushSupportedProtocolsSync(
@@ -383,7 +388,8 @@ public final class ClientSessionComponent {
             pullKnownUsersSync: pullKnownUsersSync,
             pullConversationLabelsSync: pullConversationLabelsSync,
             pullAllFeatureConfigsSync: pullAllFeatureConfigsSync,
-            pullMLSStatusSync: pullMLSStatusSync
+            pullMLSStatusSync: pullMLSStatusSync,
+            pullMeetingsSync: pullMeetingsSync
         )
 
         return InitialSync(
@@ -699,6 +705,11 @@ public final class ClientSessionComponent {
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore,
         lockRepository: resetMLSConversationLockRepository
+    )
+
+    public private(set) lazy var meetingRepository = MeetingRepository(
+        meetingsAPI: meetingsAPI,
+        localStore: MeetingLocalStore(context: syncContext)
     )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
