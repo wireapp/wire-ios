@@ -46,7 +46,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     // MARK: - Public
 
     public func observeMeetingChanges() -> AsyncStream<Void> {
-        changeBroadcaster.makeStream()
+        // The stream is only a change signal, so a burst of broadcasts
+        // can coalesce into a single element for a slow consumer.
+        changeBroadcaster.makeStream(bufferingPolicy: .bufferingNewest(1))
     }
 
     public func createMeeting(

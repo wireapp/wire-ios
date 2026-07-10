@@ -29,10 +29,25 @@ public final class AsyncMulticaster<Element: Sendable>: @unchecked Sendable {
 
     public init() {}
 
+    deinit {
+        // A dropped continuation never finishes its stream (see SE-0406),
+        // so observers would hang forever once the multicaster is gone.
+        let active = lock.withLock { Array(continuations.values) }
+        for continuation in active {
+            continuation.finish()
+        }
+    }
+
     /// Returns a stream that emits on every `broadcast(_:)` until the
-    /// consuming task is cancelled.
-    public func makeStream() -> AsyncStream<Element> {
-        AsyncStream { continuation in
+    /// consuming task is cancelled or the multicaster is deallocated.
+    ///
+    /// - Parameter bufferingPolicy: How elements are buffered for a slow
+    ///   consumer. Use `.bufferingNewest(1)` for signal-like streams where
+    ///   only the latest element matters.
+    public func makeStream(
+        bufferingPolicy: AsyncStream<Element>.Continuation.BufferingPolicy = .unbounded
+    ) -> AsyncStream<Element> {
+        AsyncStream(bufferingPolicy: bufferingPolicy) { continuation in
             let id = UUID()
             lock.withLock { continuations[id] = continuation }
             continuation.onTermination = { [weak self] _ in
