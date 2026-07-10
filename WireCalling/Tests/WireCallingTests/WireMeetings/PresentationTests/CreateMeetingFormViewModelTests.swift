@@ -33,7 +33,7 @@ struct CreateMeetingFormViewModelTests {
     private let dateProviderMock = CurrentDateProvidingMock()
     private let viewModel: CreateMeetingFormViewModel
 
-    private let member = Member(
+    private let member = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Katie Armstrong",
         handle: "katie"
@@ -46,7 +46,8 @@ struct CreateMeetingFormViewModelTests {
         end: .distantFuture,
         recurrence: nil,
         members: [],
-        conversationID: QualifiedID(id: UUID(), domain: "example.com")
+        conversationID: QualifiedID(id: UUID(), domain: "example.com"),
+        creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
 
     init() {
@@ -164,14 +165,14 @@ struct CreateMeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .instant) { receivedMeeting = $0 }
         viewModel.meetingTitle = "Team Standup"
         viewModel.selectedMembers = [member]
-        instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingReturnValue = meeting
+        instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingReturnValue = meeting
 
         // When
         await viewModel.submit()
 
         // Then
-        #expect(instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingCallsCount == 1)
-        let arguments = instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingReceivedArguments
+        #expect(instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingCallsCount == 1)
+        let arguments = instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingReceivedArguments
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.participants == [member])
         #expect(receivedMeeting == meeting)
@@ -213,7 +214,8 @@ struct CreateMeetingFormViewModelTests {
         var onSuccessCalled = false
         let viewModel = makeViewModel(mode: .instant) { _ in onSuccessCalled = true }
         viewModel.meetingTitle = "Team Standup"
-        instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingThrowableError = URLError(.badServerResponse)
+        instantUseCaseMock
+            .invokeTitleStringParticipantsMeetingMemberMeetingThrowableError = URLError(.badServerResponse)
 
         // When
         await viewModel.submit()
@@ -230,7 +232,7 @@ struct CreateMeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .instant)
         viewModel.meetingTitle = "Team Standup"
         let meeting = meeting
-        instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingClosure = { _, _ in
+        instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingClosure = { _, _ in
             // Suspend so the second submission starts while the first is in flight.
             try await Task.sleep(for: .milliseconds(10))
             return meeting
@@ -243,7 +245,7 @@ struct CreateMeetingFormViewModelTests {
         await secondSubmission.value
 
         // Then
-        #expect(instantUseCaseMock.invokeTitleStringParticipantsMemberMeetingCallsCount == 1)
+        #expect(instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingCallsCount == 1)
         #expect(viewModel.isLoading == false)
     }
 
