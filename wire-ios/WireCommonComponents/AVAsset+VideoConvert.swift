@@ -107,8 +107,12 @@ public extension AVURLAsset {
             filename: filename,
             quality: cappedQuality,
             fileLengthLimit: fileLengthLimit
-        ) { URL, asset, error in
-            if deleteSourceFile {
+        ) { convertedURL, asset, error in
+            // When the source already has a `.mp4` extension, the converted file's name
+            // collides with the source's, so `convert(filename:)` writes the result to the
+            // same path as `url`. In that case `url` no longer refers to the original source
+            // but to the freshly converted file, so it must not be deleted here.
+            if deleteSourceFile, convertedURL?.path != url.path {
                 do {
                     try FileManager.default.removeItem(at: url)
                 } catch let deleteError {
@@ -116,7 +120,7 @@ public extension AVURLAsset {
                 }
             }
 
-            completion(URL, asset, error)
+            completion(convertedURL, asset, error)
         }
     }
 
