@@ -26,7 +26,10 @@ import WireTransport
 /// successfully validated and applied.
 protocol NoDefaultBackendViewControllerDelegate: AnyObject {
     func noDefaultBackendViewControllerDidConfigureBackend(_ configurationURL: URL)
-    func didRequestUserConfirmationToSwitchToBackend(environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void)
+    func didRequestUserConfirmationToSwitchToBackend(
+        environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    )
 }
 
 /// Displayed when the app has no default backend bundled. Lets the user enter
@@ -421,7 +424,11 @@ extension NoDefaultBackendViewController: NoDefaultBackendViewModelDelegate {
 
     }
 
-    func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, requestUserConfirmationForBackendSwitch environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void) {
+    func noDefaultBackendViewModel(
+        _ viewModel: NoDefaultBackendViewModel,
+        requestUserConfirmationForBackendSwitch environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    ) {
         delegate?.didRequestUserConfirmationToSwitchToBackend(environment: environment, didConfirm: didConfirm)
     }
 

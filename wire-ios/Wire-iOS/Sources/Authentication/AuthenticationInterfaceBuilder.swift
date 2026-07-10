@@ -98,6 +98,7 @@ final class AuthenticationInterfaceBuilder {
                 bridge: bridge,
                 authenticationCoordinator: authenticationCoordinator
             )
+
         case .noDefaultBackend:
             return NoDefaultBackendViewController()
 

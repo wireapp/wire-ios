@@ -17,15 +17,18 @@
 //
 
 import Foundation
-import WireTransport
 import SwiftUI
+import WireTransport
 
 extension AuthenticationCoordinator: NoDefaultBackendViewControllerDelegate {
     func noDefaultBackendViewControllerDidConfigureBackend(_ configurationURL: URL) {
         executeActions([.transition(.backendConfigured, mode: .reset)])
     }
 
-    func didRequestUserConfirmationToSwitchToBackend(environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void) {
+    func didRequestUserConfirmationToSwitchToBackend(
+        environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    ) {
         let viewModel = SwitchBackendConfirmationViewModel(
             environment: environment,
             didConfirm: didConfirm

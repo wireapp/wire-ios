@@ -17,15 +17,19 @@
 //
 
 import Foundation
+import WireLogging
 import WireSyncEngine
 import WireTransport
-import WireLogging
 
 protocol NoDefaultBackendViewModelDelegate: AnyObject {
     func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, didChangeLoading isLoading: Bool)
     func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, didFailWithMessage message: String)
     func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, didConfigureBackend configurationURL: URL)
-    func noDefaultBackendViewModel(_ viewModel: NoDefaultBackendViewModel, requestUserConfirmationForBackendSwitch environment: BackendEnvironment, didConfirm: @escaping (Bool) -> Void)
+    func noDefaultBackendViewModel(
+        _ viewModel: NoDefaultBackendViewModel,
+        requestUserConfirmationForBackendSwitch environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    )
 }
 
 /// The subset of `SessionManager` behavior that `NoDefaultBackendViewModel` needs.
@@ -85,18 +89,22 @@ final class NoDefaultBackendViewModel {
 
             switch result {
             case let .success(backendEnvironment):
-                delegate?.noDefaultBackendViewModel(self, requestUserConfirmationForBackendSwitch: backendEnvironment) { didConfirm in
-                    defer { self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false) }
-                    guard didConfirm else { return }
-                    sessionManager.markNetworkSessionsAsReady(true)
-                    sessionManager.switchBackendWithoutResolving(to: backendEnvironment)
-                    // persist backendenvironment so urls work
-                    backendEnvironment.save(in: .applicationGroup)
-                    self.delegate?.noDefaultBackendViewModel(self, didConfigureBackend: configurationURL)
-                }
+                delegate?
+                    .noDefaultBackendViewModel(
+                        self,
+                        requestUserConfirmationForBackendSwitch: backendEnvironment
+                    ) { didConfirm in
+                        defer { self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false) }
+                        guard didConfirm else { return }
+                        sessionManager.markNetworkSessionsAsReady(true)
+                        sessionManager.switchBackendWithoutResolving(to: backendEnvironment)
+                        // persist backendenvironment so urls work
+                        backendEnvironment.save(in: .applicationGroup)
+                        self.delegate?.noDefaultBackendViewModel(self, didConfigureBackend: configurationURL)
+                    }
             case .failure:
-                self.delegate?.noDefaultBackendViewModel(self, didChangeLoading: false)
-                self.fail()
+                delegate?.noDefaultBackendViewModel(self, didChangeLoading: false)
+                fail()
             }
         }
     }

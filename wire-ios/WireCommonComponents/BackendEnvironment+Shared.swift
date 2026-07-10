@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireLogging
+import WireTransport
 
 public extension BackendEnvironment {
 
@@ -29,14 +29,15 @@ public extension BackendEnvironment {
     }
 
     private static func load() -> BackendEnvironment? {
-        let environmentType: EnvironmentType? = if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
+        let environmentType: EnvironmentType? = if let typeOverride = AutomationHelper.sharedHelper
+            .backendEnvironmentTypeOverride() {
             EnvironmentType(stringValue: typeOverride)
         } else {
             // read from userDefaults first
             EnvironmentType(userDefaults: .applicationGroup)
         }
 
-        if Bundle.backendBundle == nil && environmentType == nil {
+        if Bundle.backendBundle == nil, environmentType == nil {
             return BackendEnvironment.defaultNoBackend
         }
 
@@ -57,7 +58,7 @@ public extension BackendEnvironment {
     static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
     static var shared: BackendEnvironment = {
         if let loaded = BackendEnvironment.load() {
-            return loaded
+            loaded
         } else {
             fatalError("Malformed backend configuration data")
         }
@@ -82,12 +83,20 @@ public extension BackendEnvironment {
         }
     }
 
-    static var defaultNoBackend = BackendEnvironment(title: "No default backend", trustData: [], environmentType: .production, endpoints: NoBackendEndpointsProvider(), proxySettings: nil, certificateTrust: NoBackendTrustProvider(), supportEmail: nil)
+    static var defaultNoBackend = BackendEnvironment(
+        title: "No default backend",
+        trustData: [],
+        environmentType: .production,
+        endpoints: NoBackendEndpointsProvider(),
+        proxySettings: nil,
+        certificateTrust: NoBackendTrustProvider(),
+        supportEmail: nil
+    )
 }
 
 class NoBackendTrustProvider: NSObject, BackendTrustProvider {
     func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return false
+        false
     }
 
     var bundleIdentifier: String = "com.wire.no-default-backend"

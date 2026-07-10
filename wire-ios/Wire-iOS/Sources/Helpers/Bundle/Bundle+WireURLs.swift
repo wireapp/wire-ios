@@ -160,29 +160,29 @@ struct WireURLs: Codable {
     }
 
     private init(fallbackURL url: URL) {
-        appOnItunes = url
-        support = url
-        searchSupport = url
-        website = url
-        emailAlreadyInUse = url
-        whyToVerifyFingerprintArticle = url
-        howToVerifyFingerprintArticle = url
-        privacyPolicy = url
-        legal = url
-        licenseInformation = url
-        askSupportArticle = url
-        reportAbuse = url
-        wireEnterpriseInfo = url
-        legalHoldInfo = url
-        guestLinksInfo = url
-        unreachableBackendInfo = url
-        federationInfo = url
-        mlsInfo = url
-        endToEndIdentityInfo = url
-        howToAddConversationToYourFavourites = url
-        howToAddConversationToCustomFolder = url
-        howToChangeEmail = url
-        howToDeleteAccount = url
+        self.appOnItunes = url
+        self.support = url
+        self.searchSupport = url
+        self.website = url
+        self.emailAlreadyInUse = url
+        self.whyToVerifyFingerprintArticle = url
+        self.howToVerifyFingerprintArticle = url
+        self.privacyPolicy = url
+        self.legal = url
+        self.licenseInformation = url
+        self.askSupportArticle = url
+        self.reportAbuse = url
+        self.wireEnterpriseInfo = url
+        self.legalHoldInfo = url
+        self.guestLinksInfo = url
+        self.unreachableBackendInfo = url
+        self.federationInfo = url
+        self.mlsInfo = url
+        self.endToEndIdentityInfo = url
+        self.howToAddConversationToYourFavourites = url
+        self.howToAddConversationToCustomFolder = url
+        self.howToChangeEmail = url
+        self.howToDeleteAccount = url
     }
 
 }
