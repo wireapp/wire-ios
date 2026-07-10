@@ -32,6 +32,14 @@ package final class MeetingsViewModel {
     private(set) var hasMore: Bool = false
     var hasDeleteError = false
 
+    /// The meeting awaiting delete confirmation, or `nil` if no confirmation is in progress.
+    var meetingToDelete: Meeting?
+
+    var isDeleteConfirmationPresented: Bool {
+        get { meetingToDelete != nil }
+        set { if !newValue { meetingToDelete = nil } }
+    }
+
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
@@ -91,6 +99,16 @@ package final class MeetingsViewModel {
 
     func formatTimeRange(for meeting: Meeting) -> String {
         formatter.timeRange(from: meeting.start, to: meeting.end)
+    }
+
+    /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture
+    /// `meetingToDelete` before the alert dismissal clears it via `isDeleteConfirmationPresented`.
+    func confirmDelete() {
+        guard let meeting = meetingToDelete else { return }
+        meetingToDelete = nil
+        Task {
+            await deleteMeeting(meeting)
+        }
     }
 
     func deleteMeeting(_ meeting: Meeting) async {

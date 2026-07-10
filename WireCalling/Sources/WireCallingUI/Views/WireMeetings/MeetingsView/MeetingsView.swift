@@ -26,7 +26,6 @@ struct MeetingsView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @State private var viewModel: MeetingsViewModel
-    @State private var meetingToDelete: Meeting?
 
     init(viewModel: MeetingsViewModel) {
         self.viewModel = viewModel
@@ -75,7 +74,7 @@ struct MeetingsView: View {
                     // TODO: [WPB-25501] Implement UI
                 },
                 onDelete: { meeting in
-                    meetingToDelete = meeting
+                    viewModel.meetingToDelete = meeting
                 }
             )
 
@@ -97,19 +96,13 @@ struct MeetingsView: View {
         }
         .alert(
             Strings.Delete.Alert.title,
-            isPresented: Binding(
-                get: { meetingToDelete != nil },
-                set: { if !$0 { meetingToDelete = nil } }
-            ),
-            presenting: meetingToDelete
-        ) { meeting in
+            isPresented: $viewModel.isDeleteConfirmationPresented
+        ) {
             Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
-                Task {
-                    await viewModel.deleteMeeting(meeting)
-                }
+                viewModel.confirmDelete()
             }
             Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
-        } message: { _ in
+        } message: {
             Text(Strings.Delete.Alert.subtitle)
         }
     }
