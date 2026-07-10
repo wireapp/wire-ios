@@ -66,9 +66,13 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             )
         )
         let meeting = response.toDomainMeeting()
+        await storeMeeting(meeting)
+        return meeting
+    }
+
+    public func storeMeeting(_ meeting: Meeting) async {
         await localStore.storeMeeting(meeting)
         changeBroadcaster.broadcast()
-        return meeting
     }
 
     public func pullMeeting(id: QualifiedID) async throws {
