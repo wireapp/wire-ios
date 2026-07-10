@@ -7,8 +7,12 @@ on:
         type: boolean
         description: 'Distribute externally'
         default: false
+      configuration_path:
+        type: string
+        description: 'Optional build-asset folder to overlay on top of the Playground config (keeps Debug.xcconfig/Release.xcconfig from Playground), e.g. ./wire-ios-build-assets/Gov/AppStore'
+        default: ''
 
-permissions: 
+permissions:
   checks: write
 
 jobs:
@@ -19,4 +23,5 @@ jobs:
       datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
+      configuration_path: ${{ inputs.configuration_path }}
     secrets: inherit

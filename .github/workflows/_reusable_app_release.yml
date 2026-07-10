@@ -22,6 +22,10 @@ on:
         type: boolean
         required: false
         default: false
+      configuration_path:
+        type: string
+        required: false
+        default: ''
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -181,7 +185,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: Trigger build
-        run: bundle exec fastlane ${{ inputs.fastlane_action }}
+        run: bundle exec fastlane ${{ inputs.fastlane_action }} configuration_path:"${{ inputs.configuration_path }}"
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
       - name: Archiving Logs

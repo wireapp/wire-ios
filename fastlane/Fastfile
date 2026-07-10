@@ -480,7 +480,12 @@ platform :ios do
 
             `echo BUILD_VERSION=#{build.version_from_xcconfig} >> ./.post_build/.env`
 
-            sh "cd .. && ./setup.sh -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
+            setup_command = "cd .. && ./setup.sh -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
+            configuration_path = options[:configuration_path]
+            unless configuration_path.nil? || configuration_path.empty?
+                setup_command += " -c \'#{configuration_path}\'"
+            end
+            sh setup_command
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
 
