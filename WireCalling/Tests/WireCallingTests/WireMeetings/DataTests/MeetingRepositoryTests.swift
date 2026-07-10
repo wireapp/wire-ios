@@ -98,6 +98,72 @@ struct MeetingRepositoryTests {
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
     }
 
+    // MARK: - pullMeetings
+
+    @Test
+    func pullMeetingsReplacesStoredMeetingsWithBackendResponse() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+
+        // When
+
+        try await sut.pullMeetings()
+
+        // Then
+
+        #expect(localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.count == 1)
+        #expect(
+            localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.first?.map(\.id)
+                == [Scaffolding.meetingID]
+        )
+    }
+
+    @Test
+    func pullMeetingsDoesNothingWhenEndpointIsUnsupported() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.unsupportedEndpointForAPIVersion
+
+        // When
+
+        try await sut.pullMeetings()
+
+        // Then
+
+        #expect(localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.isEmpty)
+    }
+
+    @Test
+    func pullMeetingsThrowsWhenListingMeetingsFails() async {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+
+        // When / Then
+
+        await #expect(throws: (any Error).self) {
+            try await sut.pullMeetings()
+        }
+        #expect(localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.isEmpty)
+    }
+
+    @Test
+    func pullMeetingsBroadcastsMeetingChange() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        var changes = sut.observeMeetingChanges().makeAsyncIterator()
+
+        // When
+
+        try await sut.pullMeetings()
+
+        // Then — the yielded event is buffered by the stream
+
+        #expect(await changes.next() != nil)
+    }
+
     // MARK: - deleteLocalMeeting
 
     @Test

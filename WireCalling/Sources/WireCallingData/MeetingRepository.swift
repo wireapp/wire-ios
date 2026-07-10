@@ -107,6 +107,19 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.broadcast()
     }
 
+    public func pullMeetings() async throws {
+        let responses: [MeetingResponse]
+        do {
+            responses = try await meetingsAPI.listMeetings()
+        } catch MeetingsAPIError.unsupportedEndpointForAPIVersion {
+            // Meetings only exist on backends with a recent enough api version,
+            // so there is nothing to pull from older backends.
+            return
+        }
+        await localStore.replaceAllMeetings(with: responses.map { $0.toDomainMeeting() })
+        changeBroadcaster.broadcast()
+    }
+
     public func deleteLocalMeeting(id: QualifiedID) async {
         await localStore.deleteMeeting(id: id)
         changeBroadcaster.broadcast()
