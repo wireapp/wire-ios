@@ -29,8 +29,8 @@ public protocol MeetingRepositoryProtocol: Sendable {
     /// Returns a stream that emits whenever meetings are created, updated or deleted,
     /// e.g. by processed sync events.
     ///
-    /// The backend refresh performed by `fetchMeetingsStarting` does not emit, so
-    /// observers can safely re-fetch in response to an emission without causing a loop.
+    /// The backend refresh performed by `fetchMeetings(in:offset:limit:)` does not emit,
+    /// so observers can safely re-fetch in response to an emission without causing a loop.
 
     func observeMeetingChanges() -> AsyncStream<Void>
 
@@ -40,6 +40,13 @@ public protocol MeetingRepositoryProtocol: Sendable {
         endTime: Date,
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting
+
+    /// Stores a meeting locally without contacting the server, linking it to
+    /// locally stored entities such as its conversation and creator.
+    ///
+    /// - Parameter meeting: The meeting to store.
+
+    func storeMeeting(_ meeting: Meeting) async
 
     /// Pulls a meeting from the server and stores it locally.
     /// If the meeting no longer exists on the server, the locally stored copy is deleted.
@@ -61,8 +68,16 @@ public protocol MeetingRepositoryProtocol: Sendable {
 
     func deleteLocalMeeting(id: QualifiedID) async
 
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
+    /// Fetches stored meetings whose start date lies in the given range,
+    /// refreshing the local store from the backend first.
+    ///
+    /// - Parameters:
+    ///   - range: The half-open range the meetings' start dates must lie in.
+    ///   - offset: The number of matching meetings to skip, for pagination.
+    ///   - limit: The maximum number of meetings to return.
 
-    func hasUpcomingMeetings(after date: Date) -> Bool
+    func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting]
+
+    func hasUpcomingMeetings(after date: Date) async throws -> Bool
 
 }

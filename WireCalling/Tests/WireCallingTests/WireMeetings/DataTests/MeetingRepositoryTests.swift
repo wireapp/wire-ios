@@ -231,6 +231,78 @@ struct MeetingRepositoryTests {
         #expect(await changes.next() != nil)
     }
 
+    // MARK: - fetchMeetings(in:)
+
+    @Test
+    func fetchMeetingsRefreshesStoreAndReturnsSortedMeetingsInRange() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        localStore.storedMeetingsMeetingReturnValue = [
+            Scaffolding.meeting(title: "B", start: Scaffolding.referenceDate.addingTimeInterval(3600)),
+            Scaffolding.meeting(title: "A", start: Scaffolding.referenceDate.addingTimeInterval(3600)),
+            Scaffolding.meeting(title: "Started", start: Scaffolding.referenceDate.addingTimeInterval(-3600)),
+            Scaffolding.meeting(title: "Before range", start: Scaffolding.referenceDate.addingTimeInterval(-7200)),
+            Scaffolding.meeting(title: "After range", start: Scaffolding.referenceDate.addingTimeInterval(7200))
+        ]
+
+        // When
+
+        let meetings = try await sut.fetchMeetings(
+            in: Scaffolding.referenceDate.addingTimeInterval(-3600)
+                ..< Scaffolding.referenceDate.addingTimeInterval(7200),
+            offset: 0,
+            limit: 10
+        )
+
+        // Then
+        // The range's lower bound is inclusive, so "Started" is returned;
+        // the upper bound is exclusive, so "After range" is not.
+
+        #expect(localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.count == 1)
+        #expect(meetings.map(\.title) == ["Started", "A", "B"])
+    }
+
+    @Test
+    func fetchMeetingsServesStoredMeetingsWhenBackendIsUnreachable() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        localStore.storedMeetingsMeetingReturnValue = [
+            Scaffolding.meeting(title: "Stored", start: Scaffolding.referenceDate.addingTimeInterval(3600))
+        ]
+
+        // When
+
+        let meetings = try await sut.fetchMeetings(
+            in: Scaffolding.referenceDate ..< Date.distantFuture,
+            offset: 0,
+            limit: 10
+        )
+
+        // Then
+
+        #expect(meetings.map(\.title) == ["Stored"])
+    }
+
+    @Test
+    func fetchMeetingsThrowsWhenBackendIsUnreachableAndStoreIsEmpty() async {
+        // Mock
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        localStore.storedMeetingsMeetingReturnValue = []
+
+        // When / Then
+
+        await #expect(throws: (any Error).self) {
+            _ = try await sut.fetchMeetings(
+                in: Scaffolding.referenceDate ..< Date.distantFuture,
+                offset: 0,
+                limit: 10
+            )
+        }
+    }
+
     // MARK: - hasUpcomingMeetings
 
     @Test
@@ -244,7 +316,7 @@ struct MeetingRepositoryTests {
 
         // When / Then
 
-        let hasUpcoming = sut.hasUpcomingMeetings(after: Scaffolding.referenceDate)
+        let hasUpcoming = try await sut.hasUpcomingMeetings(after: Scaffolding.referenceDate)
         #expect(hasUpcoming)
     }
 

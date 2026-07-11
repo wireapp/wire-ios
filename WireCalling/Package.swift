@@ -19,10 +19,10 @@ let package = Package(
     dependencies: [
         .package(path: "../WireData"),
         .package(path: "../WireFoundation"),
+        .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI"),
-        .package(path: "../WireNetwork")
+        .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
         .target(

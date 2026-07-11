@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Creates a new instant meeting via the backend API.
-package protocol CreateInstantMeetingUseCaseProtocol: Sendable {
+package import Foundation
 
-    func invoke(title: String, participants: [MeetingMember]) async throws -> Meeting
+// sourcery: AutoMockable
+/// Creates a new meeting via the backend API, syncs the conversation the
+/// backend created for it and adds the selected participants.
+///
+/// Instant and scheduled meetings share this use case; an instant meeting
+/// is simply one that starts now.
+package protocol CreateMeetingUseCaseProtocol: Sendable {
+
+    func invoke(
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?,
+        participants: [MeetingMember]
+    ) async throws -> Meeting
 
 }

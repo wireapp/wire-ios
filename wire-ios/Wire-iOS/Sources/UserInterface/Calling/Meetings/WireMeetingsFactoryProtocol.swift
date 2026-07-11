@@ -19,7 +19,6 @@
 import UIKit
 import WireCallingAssembly
 import WireCallingDomain
-import WireNetwork
 
 // sourcery: AutoMockable
 protocol WireMeetingsFactoryProtocol {
