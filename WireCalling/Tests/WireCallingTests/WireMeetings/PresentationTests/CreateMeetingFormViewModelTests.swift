@@ -28,8 +28,7 @@ import WireFoundationSupport
 @MainActor
 struct CreateMeetingFormViewModelTests {
 
-    private let instantUseCaseMock = CreateInstantMeetingUseCaseProtocolMock()
-    private let scheduledUseCaseMock = CreateScheduledMeetingUseCaseProtocolMock()
+    private let createMeetingUseCaseMock = CreateMeetingUseCaseProtocolMock()
     private let dateProviderMock = CurrentDateProvidingMock()
     private let viewModel: CreateMeetingFormViewModel
 
@@ -55,8 +54,7 @@ struct CreateMeetingFormViewModelTests {
         self.viewModel = CreateMeetingFormViewModel(
             mode: .instant,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
-            createInstantMeetingUseCase: instantUseCaseMock,
-            createScheduledMeetingUseCase: scheduledUseCaseMock,
+            createMeetingUseCase: createMeetingUseCaseMock,
             currentDateProvider: dateProviderMock
         )
     }
@@ -68,8 +66,7 @@ struct CreateMeetingFormViewModelTests {
         CreateMeetingFormViewModel(
             mode: mode,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
-            createInstantMeetingUseCase: instantUseCaseMock,
-            createScheduledMeetingUseCase: scheduledUseCaseMock,
+            createMeetingUseCase: createMeetingUseCaseMock,
             currentDateProvider: dateProviderMock,
             onSuccess: onSuccess
         )
@@ -158,52 +155,66 @@ struct CreateMeetingFormViewModelTests {
 
     // MARK: - submit Tests
 
-    @Test("submit in instant mode invokes the instant use case and calls onSuccess")
+    @Test("submit in instant mode creates a meeting starting now and calls onSuccess")
     func submit_InstantMode_Success() async {
         // Given
         var receivedMeeting: Meeting?
         let viewModel = makeViewModel(mode: .instant) { receivedMeeting = $0 }
         viewModel.meetingTitle = "Team Standup"
         viewModel.selectedMembers = [member]
-        instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingReturnValue = meeting
-
-        // When
-        await viewModel.submit()
-
-        // Then
-        #expect(instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingCallsCount == 1)
-        let arguments = instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingReceivedArguments
-        #expect(arguments?.title == "Team Standup")
-        #expect(arguments?.participants == [member])
-        #expect(receivedMeeting == meeting)
-        #expect(viewModel.isLoading == false)
-        #expect(viewModel.hasError == false)
-    }
-
-    @Test("submit in scheduled mode invokes the scheduled use case with the form values")
-    func submit_ScheduledMode_Success() async {
-        // Given
-        var receivedMeeting: Meeting?
-        let viewModel = makeViewModel(mode: .scheduled) { receivedMeeting = $0 }
-        viewModel.meetingTitle = "Planning"
-        viewModel.repeatOption = .weekly
-        scheduledUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
+        createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
+            meeting
 
         // When
         await viewModel.submit()
 
         // Then
         #expect(
-            scheduledUseCaseMock
-                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount == 1
+            createMeetingUseCaseMock
+                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+                1
         )
-        let arguments = scheduledUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments
+        let arguments = createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+        #expect(arguments?.title == "Team Standup")
+        #expect(arguments?.startTime == dateProviderMock.now)
+        #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(.oneHour))
+        #expect(arguments?.recurrence == nil)
+        #expect(arguments?.participants == [member])
+        #expect(receivedMeeting == meeting)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.hasError == false)
+    }
+
+    @Test("submit in scheduled mode creates a meeting with the form values")
+    func submit_ScheduledMode_Success() async {
+        // Given
+        var receivedMeeting: Meeting?
+        let viewModel = makeViewModel(mode: .scheduled) { receivedMeeting = $0 }
+        viewModel.meetingTitle = "Planning"
+        viewModel.repeatOption = .weekly
+        viewModel.selectedMembers = [member]
+        createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
+            meeting
+
+        // When
+        await viewModel.submit()
+
+        // Then
+        #expect(
+            createMeetingUseCaseMock
+                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+                1
+        )
+        let arguments = createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
         #expect(arguments?.title == "Planning")
         #expect(arguments?.startTime == viewModel.startDate)
         #expect(arguments?.endTime == viewModel.endDate)
         #expect(arguments?.recurrence == MeetingRecurrence(frequency: .weekly, interval: 1))
+        #expect(arguments?.participants == [member])
         #expect(receivedMeeting == meeting)
         #expect(viewModel.isLoading == false)
     }
@@ -214,8 +225,9 @@ struct CreateMeetingFormViewModelTests {
         var onSuccessCalled = false
         let viewModel = makeViewModel(mode: .instant) { _ in onSuccessCalled = true }
         viewModel.meetingTitle = "Team Standup"
-        instantUseCaseMock
-            .invokeTitleStringParticipantsMeetingMemberMeetingThrowableError = URLError(.badServerResponse)
+        createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingThrowableError =
+            URLError(.badServerResponse)
 
         // When
         await viewModel.submit()
@@ -232,11 +244,13 @@ struct CreateMeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .instant)
         viewModel.meetingTitle = "Team Standup"
         let meeting = meeting
-        instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingClosure = { _, _ in
-            // Suspend so the second submission starts while the first is in flight.
-            try await Task.sleep(for: .milliseconds(10))
-            return meeting
-        }
+        createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingClosure =
+            { _, _, _, _, _ in
+                // Suspend so the second submission starts while the first is in flight.
+                try await Task.sleep(for: .milliseconds(10))
+                return meeting
+            }
 
         // When
         let firstSubmission = Task { await viewModel.submit() }
@@ -245,7 +259,11 @@ struct CreateMeetingFormViewModelTests {
         await secondSubmission.value
 
         // Then
-        #expect(instantUseCaseMock.invokeTitleStringParticipantsMeetingMemberMeetingCallsCount == 1)
+        #expect(
+            createMeetingUseCaseMock
+                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+                1
+        )
         #expect(viewModel.isLoading == false)
     }
 

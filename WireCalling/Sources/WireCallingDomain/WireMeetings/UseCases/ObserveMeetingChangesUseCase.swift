@@ -16,17 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+package struct ObserveMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocol {
 
-// sourcery: AutoMockable
-/// Creates a new scheduled meeting via the backend API.
-package protocol CreateScheduledMeetingUseCaseProtocol: Sendable {
+    private let repository: any MeetingRepositoryProtocol
 
-    func invoke(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting
+    package init(repository: any MeetingRepositoryProtocol) {
+        self.repository = repository
+    }
+
+    package func invoke() -> AsyncStream<Void> {
+        repository.observeMeetingChanges()
+    }
 
 }
