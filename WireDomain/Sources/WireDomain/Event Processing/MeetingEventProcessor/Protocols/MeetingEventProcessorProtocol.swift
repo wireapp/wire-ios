@@ -18,13 +18,13 @@
 
 import WireNetwork
 
-/// Process meeting update events.
+/// Process meeting events.
 
 protocol MeetingEventProcessorProtocol {
 
-    /// Process a meeting update event.
+    /// Process a meeting event.
     ///
-    /// - Parameter event: A meeting update event.
+    /// - Parameter event: A meeting event.
 
     func processEvent(_ event: MeetingEvent) async throws
 
