@@ -269,7 +269,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.count == 1)
 
         // When
-        try await viewModel.deleteMeeting(meeting)
+        await viewModel.deleteMeeting(meeting)
 
         // Then
         #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 1)
@@ -277,18 +277,81 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.isEmpty)
     }
 
-    @Test("deleteMeeting propagates errors from the use case")
-    func deleteMeeting_propagatesError() async {
+    @Test("deleteMeeting flags an error and keeps the meeting when the use case fails")
+    func deleteMeeting_flagsErrorOnFailure() async {
         // Given
         let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [meeting], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
         struct DeleteError: Error {}
         deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidThrowableError = DeleteError()
 
-        // When / Then
-        await #expect(throws: DeleteError.self) {
-            try await viewModel.deleteMeeting(meeting)
+        // When
+        await viewModel.deleteMeeting(meeting)
+
+        // Then — the error is surfaced and the meeting is not removed
+        #expect(viewModel.hasDeleteError == true)
+        #expect(viewModel.loadedMeetings.count == 1)
+    }
+
+    // MARK: - Delete Confirmation
+
+    @Test("setting meetingToDelete presents the confirmation without deleting anything")
+    func meetingToDelete_presentsConfirmation() {
+        // Given
+        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+
+        // When
+        viewModel.meetingToDelete = meeting
+
+        // Then
+        #expect(viewModel.isDeleteConfirmationPresented == true)
+        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
+    }
+
+    @Test("confirmDelete deletes the pending meeting and dismisses the confirmation")
+    func confirmDelete_deletesPendingMeeting() async {
+        // Given
+        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        viewModel.meetingToDelete = meeting
+
+        // When — confirmDelete deletes in a fire-and-forget task, so wait for the use case call
+        await withCheckedContinuation { continuation in
+            deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidClosure = { _ in continuation.resume() }
+            viewModel.confirmDelete()
         }
-        #expect(viewModel.loadedMeetings.isEmpty)
+
+        // Then
+        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 1)
+        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
+        #expect(viewModel.meetingToDelete == nil)
+        #expect(viewModel.isDeleteConfirmationPresented == false)
+    }
+
+    @Test("confirmDelete does nothing when no meeting is pending")
+    func confirmDelete_withoutPendingMeeting() {
+        // When
+        viewModel.confirmDelete()
+
+        // Then
+        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
+    }
+
+    @Test("dismissing the confirmation clears the pending meeting without deleting it")
+    func dismissConfirmation_cancelsDelete() {
+        // Given
+        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        viewModel.meetingToDelete = meeting
+
+        // When — the cancel button dismisses the alert, which resets the binding
+        viewModel.isDeleteConfirmationPresented = false
+
+        // Then
+        #expect(viewModel.meetingToDelete == nil)
+        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
     }
 
     // MARK: - Formatting
