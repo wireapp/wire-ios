@@ -38,8 +38,6 @@
 "wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
 "wireMeetings.list.delete.alert.delete.button" = "Excluir";
 "wireMeetings.list.delete.alert.cancel.button" = "Cancelar";
-"wireMeetings.list.delete.error.alert.title" = "Algo deu errado";
-"wireMeetings.list.delete.error.alert.ok" = "OK";
 
 // MARK: - Schedule a meeting
 
