@@ -73,9 +73,7 @@ struct MeetingsView: View {
                 onEdit: { _ in
                     // TODO: [WPB-25501] Implement UI
                 },
-                onDelete: { meeting in
-                    viewModel.meetingToDelete = meeting
-                }
+                onDelete: { viewModel.meetingToDelete = $0 }
             )
 
             if viewModel.hasMore {
