@@ -45,21 +45,18 @@ protocol ProcessCallingEventsUseCaseProtocol {
 final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
 
     private let callingService: any AVSCallingEventServiceProtocol
-    private let clientID: String
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let userLocalStore: any UserLocalStoreProtocol
     private let isFederationEnabled: Bool
 
     public init(
         callingService: any AVSCallingEventServiceProtocol,
-        clientID: String,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
         isFederationEnabled: Bool,
         accountID: UUID
     ) {
         self.callingService = callingService
-        self.clientID = clientID
         self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
         self.isFederationEnabled = isFederationEnabled
@@ -93,7 +90,7 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
                         serverTime: params.serverTime,
                         conversationId: params.conversationId,
                         userId: params.userId,
-                        clientId: clientID,
+                        clientId: params.clientId,
                         conversationType: params.conversationType
                     )
                 }

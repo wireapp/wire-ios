@@ -209,7 +209,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         shared {
             ProcessCallingEventsUseCase(
                 callingService: callingService,
-                clientID: clientID,
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
                 isFederationEnabled: isFederationEnabled,
