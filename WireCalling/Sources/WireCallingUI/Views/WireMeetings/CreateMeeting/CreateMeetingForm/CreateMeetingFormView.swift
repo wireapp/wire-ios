@@ -263,8 +263,7 @@ private extension MeetingRepeatOption {
         viewModel: CreateMeetingFormViewModel(
             mode: .instant,
             searchMembersUseCase: MockSearchMembersUseCase(),
-            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
-            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+            createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             currentDateProvider: .system
         )
     )
@@ -275,8 +274,7 @@ private extension MeetingRepeatOption {
         viewModel: CreateMeetingFormViewModel(
             mode: .scheduled,
             searchMembersUseCase: MockSearchMembersUseCase(),
-            createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
-            createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+            createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             currentDateProvider: .system
         )
     )
@@ -286,11 +284,10 @@ private extension MeetingRepeatOption {
     let viewModel = CreateMeetingFormViewModel(
         mode: .scheduled,
         searchMembersUseCase: MockSearchMembersUseCase(),
-        createInstantMeetingUseCase: CreateInstantMeetingUseCaseProtocolMock(),
-        createScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocolMock(),
+        createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
         currentDateProvider: .system
     )
-    viewModel.selectedMembers = Array([Member].mock.shuffled().prefix(3))
+    viewModel.selectedMembers = Array([MeetingMember].mock.shuffled().prefix(3))
     return CreateMeetingFormView(viewModel: viewModel)
 }
 
@@ -298,15 +295,15 @@ private extension MeetingRepeatOption {
 
 private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
 
-    let members: [Member] = .mock
+    let members: [MeetingMember] = .mock
 
-    func invoke(query: String) async throws -> [Member] {
+    func invoke(query: String) async throws -> [MeetingMember] {
         guard !query.isEmpty else { return members }
         return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
 }
 
-private extension [Member] {
+private extension [MeetingMember] {
     static var mock: Self {
         [
             .init(name: "Martin Koch-Johansen", handle: "username"),
@@ -322,7 +319,7 @@ private extension [Member] {
     }
 }
 
-private extension Member {
+private extension MeetingMember {
 
     init(
         name: String,

@@ -16,28 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireCallingDomain
+public import Foundation
+public import WireFoundation
 
-import WireFoundation
+// TODO: [WPB-20278] Update the model
+public struct MeetingMember: Hashable, Identifiable, Sendable {
 
-package extension Meeting {
+    public let qualifiedID: QualifiedID
+    public let name: String
+    public let handle: String
 
-    static func fixture(
-        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration),
-            recurrence: .none,
-            members: [],
-            conversationID: QualifiedID(id: UUID(), domain: "")
-        )
+    public var id: UUID {
+        qualifiedID.id
+    }
+
+    public init(
+        qualifiedID: QualifiedID,
+        name: String,
+        handle: String
+    ) {
+        self.qualifiedID = qualifiedID
+        self.name = name
+        self.handle = handle
     }
 
 }
