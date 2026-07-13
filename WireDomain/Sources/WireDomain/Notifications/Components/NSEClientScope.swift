@@ -163,10 +163,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 eventBatches.append(batch)
             }
 
-            _ = callKitReportingCoordinator
+            let coordinator = callKitReportingCoordinator
             try await processCallingEventsUseCase.invoke(
                 eventBatches: eventBatches,
-                callKitReportingCoordinator: callKitReportingCoordinator
+                callKitReportingCoordinator: coordinator
             )
 
             notificationEventStream = AsyncStream<[UpdateEvent]> { continuation in
