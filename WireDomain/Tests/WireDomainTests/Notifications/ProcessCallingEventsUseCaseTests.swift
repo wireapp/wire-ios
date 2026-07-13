@@ -43,7 +43,6 @@ final class ProcessCallingEventsUseCaseTests: XCTestCase {
         )
         sut = ProcessCallingEventsUseCase(
             callingService: callingService,
-            clientID: "client-1",
             conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore,
             isFederationEnabled: false,
