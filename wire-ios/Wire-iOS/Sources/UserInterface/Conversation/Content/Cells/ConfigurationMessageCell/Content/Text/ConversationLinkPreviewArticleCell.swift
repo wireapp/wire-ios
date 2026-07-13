@@ -131,7 +131,8 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
     let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : Locators.ActiveConversationPage.linkPreviewCell.rawValue
+        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : Locators.ActiveConversationPage.linkPreviewCell
+            .rawValue
     }
 
     let accessibilityLabel: String?

@@ -113,19 +113,16 @@ final class SettingsTests: WireUITestCase {
             .disableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-        
             // Open conversation and send first link
             .openConversation()
             .sendMessage("First link: https://github.com/wireapp/wire-ios")
             .goBackToConversationPage()
-        
             // Enable link previews
             .openSettings()
             .openOptionsMenu()
             .enableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-        
             // Open conversation and send first link
             .openConversation()
             .sendMessage("Second link: https://github.com/wireapp/wire-android")
