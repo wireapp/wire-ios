@@ -20,6 +20,17 @@ import CallKit
 import Foundation
 import WireLogging
 
+protocol CallKitReporterProtocol: Sendable {
+    func reportNewIncomingVoIPPushPayload(_ payload: [String: Any]) async throws
+}
+
+struct CallKitReporter: CallKitReporterProtocol {
+
+    func reportNewIncomingVoIPPushPayload(_ payload: [String: Any]) async throws {
+        try await CXProvider.reportNewIncomingVoIPPushPayload(payload)
+    }
+}
+
 /// Coordinates CallKit reporting for AVS calling-event callback results.
 ///
 /// `AVSCallingEventService` invokes its callbacks only after the NSE has finished
@@ -34,39 +45,42 @@ actor CallKitReportingCoordinator {
     // MARK: - Properties
 
     private let accountID: UUID
+    private let callKitReporter: any CallKitReporterProtocol
     private var didReportIncomingCall = false
     private var callerNamesByConversationID: [String: String] = [:]
-    private var pendingTasks: [UUID: Task<Void, Never>] = [:]
+    private let pendingTaskStore = PendingTaskStore()
 
     // MARK: - Init
 
     init(
         accountID: UUID,
-        avsService: any AVSCallingEventServiceProtocol
+        avsService: any AVSCallingEventServiceProtocol,
+        callKitReporter: any CallKitReporterProtocol = CallKitReporter()
     ) {
         self.accountID = accountID
+        self.callKitReporter = callKitReporter
 
         avsService.onIncomingCall = { [self] conversationId, userId, shouldRing, isVideoCall in
-            Task {
+            registerPendingTask(Task {
                 await self.handleIncomingCall(
                     conversationId: conversationId,
                     userId: userId,
                     shouldRing: shouldRing,
                     isVideoCall: isVideoCall
                 )
-            }
+            })
         }
 
         avsService.onMissedCall = { [self] conversationId, _, _ in
-            Task {
+            registerPendingTask(Task {
                 await self.handleCallClosed(reason: CallClosedReason.canceled, conversationId: conversationId)
-            }
+            })
         }
 
         avsService.onCallClosed = { [self] reason, conversationId in
-            Task {
+            registerPendingTask(Task {
                 await self.handleCallClosed(reason: reason, conversationId: conversationId)
-            }
+            })
         }
     }
 
@@ -84,7 +98,7 @@ actor CallKitReportingCoordinator {
     func waitForCompletion() async throws {
         while true {
             try Task.checkCancellation()
-            let snapshot = Array(pendingTasks.values)
+            let snapshot = pendingTaskStore.drain()
             guard !snapshot.isEmpty else { break }
             for task in snapshot {
                 await task.value
@@ -94,14 +108,8 @@ actor CallKitReportingCoordinator {
 
     // MARK: - Private Helpers
 
-    private func registerPendingTask(_ task: Task<Void, Never>) {
-        let id = UUID()
-        pendingTasks[id] = task
-
-        Task {
-            await task.value
-            pendingTasks.removeValue(forKey: id)
-        }
+    nonisolated private func registerPendingTask(_ task: Task<Void, Never>) {
+        pendingTaskStore.register(task)
     }
 
     private func callerName(for conversationID: AVSIdentifier) -> String? {
@@ -119,7 +127,7 @@ actor CallKitReportingCoordinator {
         userId: String,
         shouldRing: Bool,
         isVideoCall: Bool
-    ) {
+    ) async {
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else {
             WireLogger.calling.error(
                 "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
@@ -139,29 +147,21 @@ actor CallKitReportingCoordinator {
             "callerName": callerName ?? ""
         ]
 
-        let task = Task {
-            await withCheckedContinuation { continuation in
-                CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
-                    if let error {
-                        WireLogger.calling.error(
-                            "CallKitReportingCoordinator: report incoming failed: \(error)",
-                            attributes: .newNSE, .safePublic
-                        )
-                    } else {
-                        WireLogger.calling.info(
-                            "CallKitReportingCoordinator: report incoming done",
-                            attributes: .newNSE, .safePublic
-                        )
-                    }
-                    continuation.resume()
-                }
-            }
+        do {
+            try await callKitReporter.reportNewIncomingVoIPPushPayload(callKitContent)
+            WireLogger.calling.info(
+                "CallKitReportingCoordinator: report incoming done",
+                attributes: .newNSE, .safePublic
+            )
+        } catch {
+            WireLogger.calling.error(
+                "CallKitReportingCoordinator: report incoming failed: \(error)",
+                attributes: .newNSE, .safePublic
+            )
         }
-
-        registerPendingTask(task)
     }
 
-    private func handleCallClosed(reason: CallClosedReason, conversationId: String) {
+    private func handleCallClosed(reason: CallClosedReason, conversationId: String) async {
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else {
             WireLogger.calling.error(
                 "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
@@ -186,18 +186,34 @@ actor CallKitReportingCoordinator {
         didReportIncomingCall = false
         removeCallerName(for: conversationID)
 
-        let task = Task {
-            do {
-                try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
-            } catch {
-                WireLogger.calling.error(
-                    "CallKitReportingCoordinator: stop ring failed: \(error)",
-                    attributes: .newNSE, .safePublic
-                )
-            }
+        do {
+            try await callKitReporter.reportNewIncomingVoIPPushPayload(callKitContent)
+        } catch {
+            WireLogger.calling.error(
+                "CallKitReportingCoordinator: stop ring failed: \(error)",
+                attributes: .newNSE, .safePublic
+            )
         }
+    }
+}
 
-        registerPendingTask(task)
+private final class PendingTaskStore: @unchecked Sendable {
+
+    private let lock = NSLock()
+    private var tasks: [Task<Void, Never>] = []
+
+    func register(_ task: Task<Void, Never>) {
+        lock.lock()
+        tasks.append(task)
+        lock.unlock()
+    }
+
+    func drain() -> [Task<Void, Never>] {
+        lock.lock()
+        defer { lock.unlock() }
+        let snapshot = tasks
+        tasks.removeAll()
+        return snapshot
     }
 }
 

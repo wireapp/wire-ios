@@ -20,7 +20,7 @@ import avs
 import Foundation
 import WireLogging
 
-public enum CallClosedReason: Int32 {
+public enum CallClosedReason: Int32, Sendable {
     case normal
     case canceled
     case answeredElsewhere
