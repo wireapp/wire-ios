@@ -148,6 +148,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     // MARK: - AVSCallingEventServiceProtocol
 
     public func start() {
+        WireLogger.calling.debug("AVS: wcall_event_start", attributes: .newNSE, .safePublic)
         wcall_event_start(handle)
     }
 
@@ -177,6 +178,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     }
 
     public func end() {
+        WireLogger.calling.debug("AVS: wcall_event_end (evaluating batch)", attributes: .newNSE, .safePublic)
         wcall_event_end(handle)
     }
 
@@ -200,8 +202,18 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             let contextRef,
             let conversationId = conversationIdPtr.flatMap({ String(cString: $0) }),
             let userId = userIdPtr.flatMap({ String(cString: $0) })
-        else { return }
+        else {
+            WireLogger.calling.warn(
+                "AVS callback: incoming call dropped (missing context or IDs)",
+                attributes: .newNSE, .safePublic
+            )
+            return
+        }
 
+        WireLogger.calling.info(
+            "AVS callback: incoming call (shouldRing: \(shouldRingFlag == 1), video: \(isVideoCallFlag == 1))",
+            attributes: .newNSE, .safePublic
+        )
         let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         service.onIncomingCall?(
             conversationId,
@@ -222,8 +234,18 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
         guard
             let contextRef,
             let conversationId = conversationIdPtr.flatMap({ String(cString: $0) })
-        else { return }
+        else {
+            WireLogger.calling.warn(
+                "AVS callback: missed call dropped (missing context or ID)",
+                attributes: .newNSE, .safePublic
+            )
+            return
+        }
 
+        WireLogger.calling.info(
+            "AVS callback: missed call",
+            attributes: .newNSE, .safePublic
+        )
         let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         // Mirror AVSWrapper: treat messageTime=0 as "now"
         let nonZeroTime = messageTime != 0 ? messageTime : UInt32(Date().timeIntervalSince1970)
@@ -245,11 +267,22 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
         guard
             let contextRef,
             let conversationId = conversationIdPtr.flatMap({ String(cString: $0) })
-        else { return }
+        else {
+            WireLogger.calling.warn(
+                "AVS callback: call closed dropped (missing context or ID)",
+                attributes: .newNSE, .safePublic
+            )
+            return
+        }
 
+        let reason = CallClosedReason(wcall_reason: reasonCode)
+        WireLogger.calling.info(
+            "AVS callback: call closed (reason: \(reason))",
+            attributes: .newNSE, .safePublic
+        )
         let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         service.onCallClosed?(
-            CallClosedReason(wcall_reason: reasonCode),
+            reason,
             conversationId
         )
     }

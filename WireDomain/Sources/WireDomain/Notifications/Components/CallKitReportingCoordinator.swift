@@ -100,6 +100,10 @@ actor CallKitReportingCoordinator {
             try Task.checkCancellation()
             let snapshot = pendingTaskStore.drain()
             guard !snapshot.isEmpty else { break }
+            WireLogger.calling.debug(
+                "CallKitReportingCoordinator: awaiting \(snapshot.count) pending CallKit task(s)",
+                attributes: .newNSE, .safePublic
+            )
             for task in snapshot {
                 await task.value
             }
@@ -108,7 +112,7 @@ actor CallKitReportingCoordinator {
 
     // MARK: - Private Helpers
 
-    nonisolated private func registerPendingTask(_ task: Task<Void, Never>) {
+    private nonisolated func registerPendingTask(_ task: Task<Void, Never>) {
         pendingTaskStore.register(task)
     }
 
@@ -130,11 +134,16 @@ actor CallKitReportingCoordinator {
     ) async {
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else {
             WireLogger.calling.error(
-                "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
+                "CallKitReportingCoordinator: invalid conversation ID",
                 attributes: .newNSE, .safePublic
             )
             return
         }
+
+        WireLogger.calling.info(
+            "CallKitReportingCoordinator: handling incoming call (shouldRing: \(shouldRing))",
+            attributes: .newNSE, .safePublic
+        )
 
         didReportIncomingCall = shouldRing
         let callerName = callerName(for: conversationID)
@@ -164,7 +173,7 @@ actor CallKitReportingCoordinator {
     private func handleCallClosed(reason: CallClosedReason, conversationId: String) async {
         guard let conversationID = AVSIdentifier(rawValue: conversationId) else {
             WireLogger.calling.error(
-                "CallKitReportingCoordinator: invalid conversation ID: \(conversationId)",
+                "CallKitReportingCoordinator: invalid conversation ID",
                 attributes: .newNSE, .safePublic
             )
             return
@@ -176,6 +185,11 @@ actor CallKitReportingCoordinator {
             )
             return
         }
+
+        WireLogger.calling.info(
+            "CallKitReportingCoordinator: handling call closed (reason: \(reason))",
+            attributes: .newNSE, .safePublic
+        )
 
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,

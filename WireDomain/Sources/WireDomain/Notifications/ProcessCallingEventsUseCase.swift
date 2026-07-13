@@ -69,12 +69,20 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
         eventBatches: [[UpdateEvent]],
         callKitReportingCoordinator: CallKitReportingCoordinator
     ) async throws {
+        WireLogger.calling.info(
+            "ProcessCallingEvents: start (batches: \(eventBatches.count))",
+            attributes: .newNSE, .safePublic
+        )
         callingService.start()
 
         for batch in eventBatches {
             try Task.checkCancellation()
             for event in batch {
                 if let params = await avsParameters(from: event) {
+                    WireLogger.calling.debug(
+                        "ProcessCallingEvents: forwarding event to AVS (type: \(params.conversationType))",
+                        attributes: .newNSE, .safePublic
+                    )
                     await callKitReportingCoordinator.setCallerName(
                         params.callerName,
                         for: params.conversationId
@@ -94,7 +102,15 @@ final class ProcessCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
 
         callingService.end()
 
+        WireLogger.calling.info(
+            "ProcessCallingEvents: waiting for CallKit reporting to complete",
+            attributes: .newNSE, .safePublic
+        )
         try await callKitReportingCoordinator.waitForCompletion()
+        WireLogger.calling.info(
+            "ProcessCallingEvents: done",
+            attributes: .newNSE, .safePublic
+        )
     }
 
     // MARK: - Helpers
