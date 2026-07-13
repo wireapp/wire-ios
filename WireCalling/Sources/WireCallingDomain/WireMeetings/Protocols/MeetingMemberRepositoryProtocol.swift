@@ -17,9 +17,20 @@
 //
 
 // sourcery: AutoMockable
-/// Creates a new instant meeting via the backend API.
-package protocol CreateInstantMeetingUseCaseProtocol: Sendable {
+/// Searches the user's team for members so they can be added as participants
+/// to a meeting.
+///
+/// Backing implementations may serve results from local storage, the remote
+/// backend, or both.
+public protocol MeetingMemberRepositoryProtocol: Sendable {
 
-    func invoke(title: String, participants: [Member]) async throws -> Meeting
+    /// Returns team members matching the given query.
+    ///
+    /// - Parameter query: A search string matched against member name and
+    ///   handle. An empty query returns the full available pool.
+    /// - Returns: The matching team members.
+    /// - Throws: An error if the underlying source (local store or remote
+    ///   backend) fails to produce results.
+    func search(query: String) async throws -> [MeetingMember]
 
 }

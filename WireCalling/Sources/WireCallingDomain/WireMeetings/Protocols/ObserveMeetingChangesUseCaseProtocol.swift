@@ -17,20 +17,11 @@
 //
 
 // sourcery: AutoMockable
-/// Searches the user's team for members so they can be added as participants
-/// to a meeting.
-///
-/// Backing implementations may serve results from local storage, the remote
-/// backend, or both.
-public protocol MemberRepositoryProtocol: Sendable {
+/// Observes changes to stored meetings, e.g. caused by background sync.
+package protocol ObserveMeetingChangesUseCaseProtocol: Sendable {
 
-    /// Returns team members matching the given query.
-    ///
-    /// - Parameter query: A search string matched against member name and
-    ///   handle. An empty query returns the full available pool.
-    /// - Returns: The matching team members.
-    /// - Throws: An error if the underlying source (local store or remote
-    ///   backend) fails to produce results.
-    func search(query: String) async throws -> [Member]
+    /// Returns a stream that emits whenever meetings are created, updated or deleted.
+
+    func invoke() -> AsyncStream<Void>
 
 }

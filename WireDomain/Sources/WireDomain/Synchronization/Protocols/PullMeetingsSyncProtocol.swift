@@ -16,28 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-public import WireFoundation
+// sourcery: AutoMockable
+/// An object to keep the local meetings up to date
+/// with the remote meetings.
+protocol PullMeetingsSyncProtocol {
 
-// TODO: [WPB-20278] Update the model
-public struct Member: Hashable, Identifiable, Sendable {
+    /// Fetch all meetings from remote, then replace
+    /// the locally stored meetings.
 
-    public let qualifiedID: QualifiedID
-    public let name: String
-    public let handle: String
-
-    public var id: UUID {
-        qualifiedID.id
-    }
-
-    public init(
-        qualifiedID: QualifiedID,
-        name: String,
-        handle: String
-    ) {
-        self.qualifiedID = qualifiedID
-        self.name = name
-        self.handle = handle
-    }
+    func pull() async throws
 
 }

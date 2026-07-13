@@ -20,14 +20,12 @@ import WireCallingDomain
 import WireLogging
 import WireSyncEngine
 
-struct WireMeetingsMemberRepository: MemberRepositoryProtocol, @unchecked Sendable {
-
-    typealias Member = WireCallingDomain.Member
+struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked Sendable {
 
     let userSession: any UserSession
 
     @MainActor
-    func search(query: String) async throws -> [Member] {
+    func search(query: String) async throws -> [MeetingMember] {
         guard let searchUsersUseCase = userSession.makeSearchUsersUseCase() else {
             WireLogger.ui.error(
                 "userSession.makeSearchUsersUseCase() returned nil, can't search for meeting members",
@@ -42,8 +40,8 @@ struct WireMeetingsMemberRepository: MemberRepositoryProtocol, @unchecked Sendab
             messageProtocol: .mls // meetings are always mls
         )
         return (result.contacts + result.teamMembers).compactMap { result in
-            guard let qualifiedID = result.qualifiedID(localDomain: nil) else { return Member?.none }
-            return Member(qualifiedID: .init(qualifiedID), name: result.name ?? "", handle: result.handle ?? "")
+            guard let qualifiedID = result.qualifiedID(localDomain: nil) else { return MeetingMember?.none }
+            return MeetingMember(qualifiedID: .init(qualifiedID), name: result.name ?? "", handle: result.handle ?? "")
         }.sorted { $0.name < $1.name }
     }
 
