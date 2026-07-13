@@ -534,6 +534,7 @@ class ActiveConversationPage: PageModel {
     ) -> ActiveConversationPage {
         XCTAssertTrue(
             linkPreviewCell.waitForExistence(timeout: 10),
+            "Link preview cell did not appear",
             file: file,
             line: line
         )
