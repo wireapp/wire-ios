@@ -10,7 +10,7 @@
     "legal": "https://wire.com/legal",
     "licenseInformation": "https://start.wire.com/en-us/en-us/terms-of-use-personal-0-0",
     "askSupportArticle": "https://support.wire.com/hc/requests/new",
-    "reportAbuse": "https://support.wire.com/hc/requests/new",
+    "reportAbuse": "https://support.wire.com/hc/articles/202857164",
     "wireEnterpriseInfo": "https://wire.com/pricing",
     "legalHoldInfo": "https://support.wire.com/hc/en-us/articles/360002018278-What-is-legal-hold",
     "guestLinksInfo": "https://support.wire.com/hc/articles/360000574069-Share-a-link-with-a-person-without-a-Wire-account-to-join-a-guest-room-conversation-in-my-team",
@@ -22,5 +22,7 @@
     "howToAddConversationToCustomFolder": "https://support.wire.com/hc/en-us/articles/360002855817-Add-a-conversation-to-a-custom-folder",
     "howToChangeEmail": "https://support.wire.com/hc/en-us/articles/203762940-Change-your-email-address",
     "howToDeleteAccount": "https://support.wire.com/hc/en-us/articles/207555795-Delete-a-personal-account",
-    "learnMoreAboutChannels": "https://support.wire.com/hc/en-us/articles/25732551379101-Create-a-channel"
+    "learnMoreAboutChannels": "https://support.wire.com/hc/en-us/articles/25732551379101-Create-a-channel",
+    "learnMoreAboutE2EE": "https://support.wire.com/hc/articles/10898523878173",
+    "learnMoreAboutDrivePermissions": "https://support.wire.com/hc/en-us/articles/36679600377373-File-permissions"
 }

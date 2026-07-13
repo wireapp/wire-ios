@@ -24,9 +24,14 @@ import WireRequestStrategy
 import WireSystem
 import WireUtilities
 
+// sourcery: AutoMockable
 protocol OAuthUseCaseInterface {
 
-    func invoke(parameters: OAuthParameters) async throws -> OAuthResponse
+    func invoke(
+        parameters: OAuthParameters,
+        onWebViewPresenting: (@MainActor () -> Void)?,
+        onWebViewDismissed: (@MainActor () -> Void)?
+    ) async throws -> OAuthResponse
 
 }
 
@@ -40,7 +45,11 @@ class OAuthUseCase: OAuthUseCaseInterface {
         self.targetViewController = targetViewController
     }
 
-    func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
+    func invoke(
+        parameters: OAuthParameters,
+        onWebViewPresenting: (@MainActor () -> Void)? = nil,
+        onWebViewDismissed: (@MainActor () -> Void)? = nil
+    ) async throws -> OAuthResponse {
         logger.info("invoke authentication flow")
 
         guard let redirectURI = URL(string: "wire://e2ei/oauth2redirect") else {
@@ -76,7 +85,11 @@ class OAuthUseCase: OAuthUseCaseInterface {
                 }
         }
 
-        return try await execute(authorizationRequest: request)
+        return try await execute(
+            authorizationRequest: request,
+            onWebViewPresenting: onWebViewPresenting,
+            onWebViewDismissed: onWebViewDismissed
+        )
     }
 
     private func createAdditionalParameters(with keyauth: String, acmeAudience: String) -> [String: String]? {
@@ -112,8 +125,15 @@ class OAuthUseCase: OAuthUseCaseInterface {
     }
 
     @MainActor
-    private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> OAuthResponse {
-        let userAgent = try userAgent()
+    private func execute(
+        authorizationRequest: OIDAuthorizationRequest,
+        onWebViewPresenting: (@MainActor () -> Void)?,
+        onWebViewDismissed: (@MainActor () -> Void)?
+    ) async throws -> OAuthResponse {
+        let userAgent = try userAgent(
+            onWebViewPresenting: onWebViewPresenting,
+            onWebViewDismissed: onWebViewDismissed
+        )
         return try await withCheckedThrowingContinuation { [weak self] continuation in
             self?.currentAuthorizationFlow = OIDAuthState.authState(
                 byPresenting: authorizationRequest,
@@ -140,19 +160,27 @@ class OAuthUseCase: OAuthUseCaseInterface {
         }
     }
 
-    private func userAgent() throws -> OIDExternalUserAgent {
+    private func userAgent(
+        onWebViewPresenting: (@MainActor () -> Void)?,
+        onWebViewDismissed: (@MainActor () -> Void)?
+    ) throws -> OIDExternalUserAgent {
+        let baseAgent: OIDExternalUserAgent
         if SecurityFlags.useEmbeddedIDPUserAgent.isEnabled {
-            return WebViewUserAgent(targetViewController: targetViewController())
+            baseAgent = WebViewUserAgent(targetViewController: targetViewController())
         } else {
-            guard let userAgent = OIDExternalUserAgentIOS(
+            guard let agent = OIDExternalUserAgentIOS(
                 presenting: targetViewController(),
                 prefersEphemeralSession: true
             ) else {
                 throw OAuthError.missingOIDExternalUserAgent
             }
-
-            return userAgent
+            baseAgent = agent
         }
+        return LifecycleAwareUserAgent(
+            wrapping: baseAgent,
+            onPresented: onWebViewPresenting,
+            onDismissed: onWebViewDismissed
+        )
     }
 }
 

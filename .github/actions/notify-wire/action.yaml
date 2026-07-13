@@ -3,32 +3,50 @@ description: "Send a Wire/Slack notification about a workflow result. Requires S
 
 inputs:
   notify:
-    description: "When to notify: 'always' | 'failure' | 'never'"
+    description: "When to notify: 'always' | 'failure' | 'never' | 'custom'. Use 'custom' to send the verbatim 'text' input instead of the auto-composed CI notification."
     required: true
   status:
-    description: "Status to report: 'success' | 'failure' | 'cancelled'"
-    required: true
+    description: "Status to report: 'success' | 'failure' | 'cancelled'. Unused when notify is 'custom'."
+    required: false
+    default: "success"
   branch:
-    description: "Sanitized branch name"
-    required: true
+    description: "Sanitized branch name. Unused when notify is 'custom'."
+    required: false
+    default: ""
   label:
     description: "Short label shown in the notification title (e.g. 'Tests', 'Tests (parallel)')"
     required: false
     default: "Tests"
+  text:
+    description: "Custom message body, posted verbatim when notify is 'custom'. Must be a JSON string literal (e.g. produced by JSON.stringify) since it is interpolated directly into the Slack payload."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
   steps:
+    # Custom messages carry their own body and don't need commit context (the
+    # calling job may not even have checked out a git tree for `git` to read).
     - name: Read commit metadata
+      if: ${{ inputs.notify != 'custom' }}
       shell: bash
       run: |
         echo "WIRE_NOTIFY_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
         echo "WIRE_NOTIFY_MSG=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
 
+    - name: Notify (custom message)
+      if: ${{ inputs.notify == 'custom' }}
+      continue-on-error: true
+      uses: 8398a7/action-slack@v3
+      with:
+        status: custom
+        custom_payload: |
+          { "text": ${{ toJSON(inputs.text) }} }
+
     - name: Notify (always)
       if: ${{ inputs.notify == 'always' }}
       continue-on-error: true
-      uses: 8398a7/action-slack@v3
+      uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
       with:
         status: ${{ inputs.status }}
         text: |
@@ -42,7 +60,7 @@ runs:
     - name: Notify (failure only)
       if: ${{ inputs.notify == 'failure' && (inputs.status == 'failure' || inputs.status == 'cancelled') }}
       continue-on-error: true
-      uses: 8398a7/action-slack@v3
+      uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
       with:
         status: failure
         text: |

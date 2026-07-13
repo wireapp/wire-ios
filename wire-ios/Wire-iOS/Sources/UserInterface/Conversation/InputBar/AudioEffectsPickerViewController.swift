@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import avs
 import UIKit
 import WireCommonComponents
@@ -59,6 +60,24 @@ final class AudioEffectsPickerViewController: UIViewController {
     var normalizedLoudness: [Float] = []
     private var lastLayoutSize = CGSize.zero
 
+    /// Identifies the most recent effect-apply request. All applied effects are written to the same
+    /// `effect.wav` file on a background queue, so a completion that is no longer the latest must not
+    /// play or hand its (about-to-be-overwritten) file to the delegate.
+    private var effectApplyGeneration = 0
+
+    typealias EffectApplier = (
+        _ effect: AVSAudioEffectType,
+        _ inputPath: String,
+        _ outputPath: String,
+        _ completion: @escaping () -> Void
+    ) -> Void
+
+    /// Applies an audio effect, writing the result to `outputPath` and calling `completion` on the main
+    /// thread once done.
+    var applyEffect: EffectApplier = { effect, inputPath, outputPath, completion in
+        effect.apply(inputPath, outPath: outputPath, completion: completion)
+    }
+
     var selectedAudioEffect: AVSAudioEffectType = .none {
         didSet {
             if selectedAudioEffect == .reverse {
@@ -80,12 +99,20 @@ final class AudioEffectsPickerViewController: UIViewController {
                 return
             }
 
+            effectApplyGeneration += 1
+            let generation = effectApplyGeneration
+
             if selectedAudioEffect != .none {
                 audioPlayerController?.stop()
 
                 let effectPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("effect.wav")
                 effectPath.deleteFileAtPath()
-                selectedAudioEffect.apply(recordingPath, outPath: effectPath) {
+                applyEffect(selectedAudioEffect, recordingPath, effectPath) {
+                    // Ignore completions superseded by a newer effect change: the shared `effect.wav`
+                    // they reference is being deleted/overwritten by the latest apply, so playing it
+                    // would build an `AVAudioPlayer` from a corrupt file and silently stop playback.
+                    guard self.effectApplyGeneration == generation else { return }
+
                     self.delegate?.audioEffectsPickerDidPickEffect(
                         self,
                         effect: self.selectedAudioEffect,
@@ -123,6 +150,9 @@ final class AudioEffectsPickerViewController: UIViewController {
         audioPlayerController?.stop()
         audioPlayerController?.tearDown()
         audioPlayerController = .none
+        // The preview manages the shared audio session itself (see `AudioPlayerController`), so release
+        // it when leaving the picker. The player is already stopped above, so there is no running I/O.
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     private let collectionViewLayout: UICollectionViewFlowLayout = .init()
@@ -377,8 +407,8 @@ private protocol AudioPlayerControllerDelegate: AnyObject {
 private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
 
     let player: AVAudioPlayer
+
     weak var delegate: AudioPlayerControllerDelegate?
-    weak var mediaManager: MediaPlayerDelegate? = (UIApplication.shared.delegate as? AppDelegate)?.mediaPlaybackManager
 
     init(contentOf URL: URL) throws {
         self.player = try AVAudioPlayer(contentsOf: URL)
@@ -393,7 +423,7 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
     }
 
     func tearDown() {
-        mediaManager?.mediaPlayer(self, didChangeTo: .completed)
+        player.stop()
         player.delegate = nil
     }
 
@@ -410,7 +440,15 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
     }
 
     func play() {
-        mediaManager?.mediaPlayer(self, didChangeTo: .playing)
+        // The effect preview deliberately does NOT route through `MediaPlaybackManager`/AVS: doing so
+        // made AVS deactivate and reactivate the shared audio session on every effect change, which
+        // blocks the main thread and intermittently fails with "Session deactivation failed"
+        // (error 560030580), wedging the session so later previews are silent. Instead we activate the
+        // session once here and keep it active across effect changes; the picker releases it on teardown.
+        let session = AVAudioSession.sharedInstance()
+        try? session.setCategory(.playback, mode: .default)
+        try? session.setActive(true)
+
         player.currentTime = 0
         player.delegate = self
         player.play()
@@ -421,7 +459,7 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
     }
 
     func stop() {
-        player.pause()
+        player.stop()
     }
 
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {

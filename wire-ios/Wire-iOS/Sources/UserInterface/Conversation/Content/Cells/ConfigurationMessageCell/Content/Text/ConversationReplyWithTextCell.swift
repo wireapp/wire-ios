@@ -38,12 +38,14 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
         let userSession: UserSession?
         var isSentBySelfUser: Bool = false
         var senderAccentColor: WireAccentColor = .default
+        var quotedMessageWasDeleted: Bool = false
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor
                 && lhs.quotedMessage == rhs.quotedMessage
                 && lhs.isSentBySelfUser == rhs.isSentBySelfUser
                 && lhs.isObfuscated == rhs.isObfuscated
+                && lhs.quotedMessageWasDeleted == rhs.quotedMessageWasDeleted
                 && lhs.attributedText.isEqual(to: rhs.attributedText)
         }
     }
@@ -157,7 +159,8 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
             accentColor: object.accentColor,
             messageReplyAttachmentsViewModel: object.messageReplyAttachmentsViewModel,
             isSentBySelfUser: object.isSentBySelfUser,
-            senderAccentColor: object.senderAccentColor
+            senderAccentColor: object.senderAccentColor,
+            quotedMessageWasDeleted: object.quotedMessageWasDeleted
         )
         replyConfig.delegate = delegate
         replyContentView.configure(with: replyConfig)
@@ -341,7 +344,8 @@ final class ConversationReplyWithTextCellDescription: ConversationMessageCellDes
         isObfuscated: Bool,
         userSession: UserSession?,
         isSentBySelfUser: Bool = false,
-        senderAccentColor: WireAccentColor = .blue
+        senderAccentColor: WireAccentColor = .blue,
+        quotedMessageWasDeleted: Bool = false
     ) {
         self.configuration = View.Configuration(
             quotedMessage: quotedMessage,
@@ -351,7 +355,8 @@ final class ConversationReplyWithTextCellDescription: ConversationMessageCellDes
             isObfuscated: isObfuscated,
             userSession: userSession,
             isSentBySelfUser: isSentBySelfUser,
-            senderAccentColor: senderAccentColor
+            senderAccentColor: senderAccentColor,
+            quotedMessageWasDeleted: quotedMessageWasDeleted
         )
     }
 }

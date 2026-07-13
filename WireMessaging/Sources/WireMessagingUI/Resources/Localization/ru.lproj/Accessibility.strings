@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// MARK: - Navigation
 
+// MARK: - Navigation
 "general.loading" = "Загрузка…";
 "general.confirm" = "OK";
 "general.failure" = "Что-то пошло не так";
@@ -70,3 +70,10 @@
 "conversation.wireCells.files.folder" = "Папка";
 "conversation.wireCells.files.text" = "Текст";
 "conversation.wireCells.files.availableOffline" = "Доступно оффлайн";
+
+// MARK: - Viewer access
+"conversation.wireCells.files.readOnly" = "Только чтение";
+"conversation.wireCells.files.viewerAccess.banner.close" = "Закрыть информацию о доступе";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDrive.closeButton" = "Закрыть информацию о беседе";

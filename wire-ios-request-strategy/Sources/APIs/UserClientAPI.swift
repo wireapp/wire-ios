@@ -121,6 +121,10 @@ class UserClientAPIV14: UserClientAPIV13 {
     override var apiVersion: APIVersion { .v14 }
 }
 
-final class UserClientAPIV15: UserClientAPIV14 {
+class UserClientAPIV15: UserClientAPIV14 {
     override var apiVersion: APIVersion { .v15 }
+}
+
+final class UserClientAPIV16: UserClientAPIV15 {
+    override var apiVersion: APIVersion { .v16 }
 }

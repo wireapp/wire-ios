@@ -245,6 +245,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: cellsInternalConfig.status == .enabled
             )
 
+        case let .preventAdminlessGroups(config):
+            return FeatureState(
+                name: .preventAdminlessGroups,
+                isEnabled: config.status == .enabled
+            )
+
         case let .unknown(featureName):
             logger.warn(
                 "Unknown feature name: \(featureName)"

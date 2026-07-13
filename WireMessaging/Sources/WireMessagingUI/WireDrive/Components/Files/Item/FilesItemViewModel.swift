@@ -72,6 +72,14 @@ final class FilesItemViewModel: ObservableObject {
     let isBrowsing: Bool
     let isInRecycleBin: Bool
 
+    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
+    // TODO: [WPB-19065] Use DeveloperFlag from WireFoundation package when migrated
+    var isDrivePermissionsFlagEnabled: Bool = UserDefaults.standard.bool(forKey: "enableDrivePermissions")
+
+    var showReadOnlyIcon: Bool {
+        isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
+    }
+
     struct TagsInfo {
         let firstTag: String?
         let additionalTagsIndicator: String?
@@ -168,6 +176,15 @@ final class FilesItemViewModel: ObservableObject {
         item.isEditable
     }
 
+    func isActionDisabled(_ action: ItemAction) -> Bool {
+        switch action {
+        case .shareLink, .makeAvailableOffline, .removeAvailableOffline:
+            isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
+        default:
+            false
+        }
+    }
+
     func performAction(_ action: ItemAction) {
         switch action {
         case .restore:
@@ -235,6 +252,121 @@ final class FilesItemViewModel: ObservableObject {
         }
     #endif
 
+    var isOffline: Bool {
+        networkMonitor.currentStatus == .disconnected
+    }
+
+    var tagsInfo: TagsInfo {
+        let additionalTags = item.tags.count - 1
+        let formattedNumber: String? = if additionalTags > 0 {
+            additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
+        } else {
+            nil
+        }
+        return .init(
+            firstTag: item.tags.sortedAlphabetically.first,
+            additionalTagsIndicator: formattedNumber
+        )
+    }
+
+    var menuActions: Set<ItemAction> {
+        let isViewerMode = item.isReadOnly && isDrivePermissionsFlagEnabled
+
+        if isViewerMode {
+            return viewerMenuActions
+        } else {
+            return editorMenuActions
+        }
+
+    }
+
+    private var viewerMenuActions: Set<ItemAction> {
+        var actions: Set<ItemAction> = []
+
+        if !isInRecycleBin {
+            actions.insert(.primaryAction)
+
+            if !isOffline, isBrowsing {
+                actions.insert(.shareLink) // action visible to the user but disabled
+            }
+        }
+
+        if !isEditable, !isInRecycleBin, isBrowsing, item.kind == .file {
+            // actions visible to the user but disabled
+            if isAvailableOffline {
+                actions.insert(.removeAvailableOffline)
+            } else {
+                if !isOffline {
+                    actions.insert(.makeAvailableOffline)
+                }
+            }
+        }
+
+        return actions
+    }
+
+    private var editorMenuActions: Set<ItemAction> {
+        var actions: Set<ItemAction> = []
+
+        if !isInRecycleBin {
+            actions.insert(.primaryAction)
+
+            if !isOffline {
+                actions.insert(.shareLink)
+            }
+        }
+
+        if !isEditable, !isInRecycleBin, item.kind == .file {
+            if isAvailableOffline {
+                actions.insert(.removeAvailableOffline)
+            } else {
+                if !isOffline {
+                    actions.insert(.makeAvailableOffline)
+                }
+            }
+        }
+
+        if !isBrowsing, !isOffline {
+            if isInRecycleBin {
+                actions.formUnion([.restore, .deletePermanently])
+            } else {
+                if item.kind == .file, isEditable {
+                    actions.insert(.showVersionHistory)
+                }
+                actions.formUnion([
+                    .moveToFolder,
+                    .rename,
+                    .editTags,
+                    .deleteToRecycleBin
+                ])
+
+                if isEditable {
+                    actions.insert(.edit)
+                }
+            }
+        }
+
+        return actions
+    }
+
+    var isAvailableOffline: Bool {
+        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isDownloaded = switch fileTracker.state {
+        case .loaded:
+            true
+        default:
+            false
+        }
+
+        let isFolder = item.kind == .folder
+
+        return isAvailableOffline && isDownloaded && !isFolder
+    }
+}
+
+// MARK: - Formatting
+
+private extension FilesItemViewModel {
     private static func subtitle(
         selectedSortingKey: FilesSortingViewModel.SortingKey?,
         isBrowsing: Bool,
@@ -352,80 +484,6 @@ final class FilesItemViewModel: ObservableObject {
                 [modifiedAt, ownedBy].compactMap(\.self).first
             }
         }
-    }
-
-    var tagsInfo: TagsInfo {
-        let additionalTags = item.tags.count - 1
-        let formattedNumber: String? = if additionalTags > 0 {
-            additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
-        } else {
-            nil
-        }
-        return .init(
-            firstTag: item.tags.sortedAlphabetically.first,
-            additionalTagsIndicator: formattedNumber
-        )
-    }
-
-    var isOffline: Bool {
-        networkMonitor.currentStatus == .disconnected
-    }
-
-    var menuActions: Set<ItemAction> {
-        var actions: Set<ItemAction> = []
-
-        if !isInRecycleBin {
-            actions.insert(.primaryAction)
-
-            if !isOffline {
-                actions.insert(.shareLink)
-            }
-        }
-
-        if !isEditable, !isInRecycleBin, item.kind == .file {
-            if isAvailableOffline {
-                actions.insert(.removeAvailableOffline)
-            } else {
-                if !isOffline {
-                    actions.insert(.makeAvailableOffline)
-                }
-            }
-        }
-
-        if !isBrowsing, !isOffline {
-            if isInRecycleBin {
-                actions.insert(.restore)
-                actions.insert(.deletePermanently)
-            } else {
-                if item.kind == .file, isEditable {
-                    actions.insert(.showVersionHistory)
-                }
-                actions.insert(.moveToFolder)
-                actions.insert(.rename)
-                actions.insert(.editTags)
-                actions.insert(.deleteToRecycleBin)
-
-                if isEditable {
-                    actions.insert(.edit)
-                }
-            }
-        }
-
-        return actions
-    }
-
-    var isAvailableOffline: Bool {
-        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
-        let isDownloaded = switch fileTracker.state {
-        case .loaded:
-            true
-        default:
-            false
-        }
-
-        let isFolder = item.kind == .folder
-
-        return isAvailableOffline && isDownloaded && !isFolder
     }
 }
 

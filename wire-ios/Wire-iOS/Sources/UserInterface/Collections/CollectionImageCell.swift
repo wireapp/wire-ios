@@ -22,8 +22,6 @@ import WireDataModel
 import WireDesign
 import WireSystem
 
-private let zmLog = ZMSLog(tag: "UI")
-
 final class CollectionImageCell: CollectionCell {
 
     static let maxCellSize: CGFloat = 100

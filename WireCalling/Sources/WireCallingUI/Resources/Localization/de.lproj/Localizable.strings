@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// MARK: - Meetings List
 
+// MARK: - Meetings List
 
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Letzte";
@@ -25,13 +25,19 @@
 "wireMeetings.list.actions.scheduleMeeting" = "Meeting planen";
 "wireMeetings.list.actions.showAll" = "Alle anzeigen";
 "wireMeetings.list.emptyState.next.title" = "Noch keine bevorstehenden Meetings";
-"wireMeetings.list.emptyState.next.subtitle" = "Beginnen Sie ein Meeting mit Team-Mitgliedern, Gästen oder Externen.";
+"wireMeetings.list.emptyState.next.subtitle" = "Ein Meeting mit Team-Mitgliedern starten";
 "wireMeetings.list.emptyState.past.title" = "Noch keine vergangenen Meetings";
 "wireMeetings.list.emptyState.past.subtitle" = "Alle bisherigen Meetings finden Sie hier.";
 "wireMeetings.list.header.today" = "Heute";
 "wireMeetings.list.header.tomorrow" = "Morgen";
 "wireMeetings.list.header.yesterday" = "Gestern";
 "wireMeetings.list.header.ongoing" = "Aktuell";
+"wireMeetings.list.actions.edit" = "Meeting bearbeiten";
+"wireMeetings.list.actions.delete" = "Meeting für alle löschen";
+"wireMeetings.list.delete.alert.title" = "Meeting für alle löschen";
+"wireMeetings.list.delete.alert.subtitle" = "Das Meeting wird für Sie und alle anderen gelöscht. Alle Teilnehmer werden darüber informiert.";
+"wireMeetings.list.delete.alert.delete.button" = "Löschen";
+"wireMeetings.list.delete.alert.cancel.button" = "Abbrechen";
 
 // MARK: - Schedule a meeting
 
@@ -39,20 +45,17 @@
 "wireMeetings.schedule.future.title" = "Neues Meeting";
 "wireMeetings.schedule.cancel.button" = "Abbrechen";
 "wireMeetings.schedule.schedule.button" = "Planen";
-"wireMeetings.schedule.next.button" = "Weiter";
+"wireMeetings.schedule.select.button" = "Auswählen";
+"wireMeetings.schedule.start.button" = "Start";
 "wireMeetings.schedule.setupTitle.header" = "Titel";
 "wireMeetings.schedule.setupTitle.placeholder" = "Meeting-Titel eingeben";
 "wireMeetings.schedule.setupParticipants.header" = "Teilnehmer";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Teilnehmer hinzufügen";
-"wireMeetings.schedule.allowGuests.title" = "Gäste zulassen";
+"wireMeetings.schedule.error.alert.title" = "Ein Fehler ist aufgetreten";
+"wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Gastzugang deaktivieren?";
-"wireMeetings.schedule.disableGuestAccess.alert.subtitle" = "Aktuelle Gäste werden aus der Unterhaltung entfernt. Neue Gäste können nicht hinzugefügt werden.";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Deaktivieren";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Abbrechen";
-"wireMeetings.schedule.setupPassword.header" = "Passwort (optional)";
-"wireMeetings.schedule.password.placeholder" = "Passwort eingeben";
-"wireMeetings.schedule.confirmedPassword.placeholder" = "Passwort bestätigen";
-"wireMeetings.schedule.confirmedPassword.error" = "Passwörter stimmen nicht überein";
 "wireMeetings.schedule.time.starts" = "Beginnt";
 "wireMeetings.schedule.time.ends" = "Endet";
 "wireMeetings.schedule.time.repeats" = "Wiederholt sich";
@@ -62,3 +65,14 @@
 "wireMeetings.schedule.time.everyTwoWeeks" = "Alle 2 Wochen";
 "wireMeetings.schedule.time.monthly" = "Monatlich";
 "wireMeetings.schedule.time.yearly" = "Jährlich";
+"wireMeetings.schedule.members.title" = "Teilnehmer";
+"wireMeetings.schedule.members.cancel.button" = "Abbrechen";
+"wireMeetings.schedule.members.select.button" = "Auswählen";
+"wireMeetings.schedule.members.search.field.placeholder" = "Namen eingeben";
+"wireMeetings.schedule.members.empty.title" = "Keine Ergebnisse gefunden";
+"wireMeetings.schedule.members.empty.description" = "Versuchen Sie, Ihre Suche anzupassen";
+"wireMeetings.schedule.members.error.title" = "Ein Fehler ist aufgetreten";
+"wireMeetings.schedule.members.error.description" = "Bitte erneut versuchen";
+"wireMeetings.schedule.members.retry.button" = "Wiederholen";
+"wireMeetings.schedule.members.selected.title" = "Ausgewählt";
+"wireMeetings.schedule.members.contacts.title" = "Kontakte";

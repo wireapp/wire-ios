@@ -114,10 +114,7 @@ final class ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory(
-            passwordValidator: AuthenticationPasswordValidator(),
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
-        )
+        WireMeetingsFactory()
     }
 
 }
@@ -153,14 +150,23 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
         return await context.perform {
             driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
                 if let name = conversation.name {
-                    let participants: [WireDriveConversation.Participant] = conversation.participants
-                        .compactMap { item -> WireDriveConversation.Participant? in
+                    let participants: [WireDriveParticipant] = conversation.participants
+                        .compactMap { item -> WireDriveParticipant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
+                            // TODO: [WPB-25941] Remove developer flag when feature is complete
                             let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
-                            let role: WireDriveConversation.Participant.Role = if isDrivePermissionsEnabled {
-                                item.isGuest(in: conversation) ? .viewer : .editor
+                            let role: WireDriveParticipant.Role = if isDrivePermissionsEnabled {
+                                conversation.matchesTeam(with: item) ? .editor : .viewer
                             } else {
                                 .editor
+                            }
+
+                            let userType: WireDriveParticipant.UserType = if item.isFederated {
+                                .federated
+                            } else if item.isExternalPartner {
+                                .external
+                            } else {
+                                !item.isGuest(in: conversation) || item.isSelfUser ? .member : .guest
                             }
 
                             return .init(
@@ -169,7 +175,8 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                                 role: role,
                                 isSelfUser: item.isSelfUser,
                                 id: id.uuidString + "@" + domain,
-                                iconData: WireDriveConversation.Participant.IconData(
+                                userType: userType,
+                                iconData: WireDriveParticipant.IconData(
                                     initials: item.initials ?? "",
                                     color: item.accentColor,
                                     image: item.previewImageData.flatMap(UIImage.init)

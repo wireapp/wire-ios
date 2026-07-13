@@ -353,17 +353,30 @@ extension BlockerViewController {
         }
 
         let oauthUseCase = OAuthUseCase(targetViewController: { rootViewController })
+        let enrollmentFlow = E2EIEnrollmentFlow(
+            oauthUseCase: oauthUseCase,
+            targetVC: { rootViewController }
+        )
 
-        let certificateChain = try await activeUserSession
-            .enrollE2EICertificate
-            .invoke(authenticate: oauthUseCase.invoke)
+        enrollmentFlow.showActivityIndicator()
 
-        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
-        successEnrollmentViewController.certificateDetails = certificateChain
-        successEnrollmentViewController.onOkTapped = { viewController in
-            viewController.dismiss(animated: true)
+        do {
+            let certificateChain = try await activeUserSession
+                .enrollE2EICertificate
+                .invoke(authenticate: enrollmentFlow.authenticate)
+
+            enrollmentFlow.dismissActivityIndicator()
+
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+            successEnrollmentViewController.certificateDetails = certificateChain
+            successEnrollmentViewController.onOkTapped = { viewController in
+                viewController.dismiss(animated: true)
+            }
+            successEnrollmentViewController.presentOverAll()
+        } catch {
+            enrollmentFlow.dismissActivityIndicator()
+            throw error
         }
-        successEnrollmentViewController.presentOverAll()
     }
 
 }

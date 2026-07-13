@@ -6,5 +6,4 @@ templates:
 output:
   ${DERIVED_SOURCES_DIR}
 args:
-  autoMockablePackageImports: ["WireCallingData"]
-  autoMockablePublicImports: ["WireCallingDomain", "Foundation"]
+  autoMockablePublicImports: ["Foundation", "WireCallingData", "WireCallingDomain"]

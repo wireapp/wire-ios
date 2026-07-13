@@ -19,9 +19,8 @@
 import CoreTelephony
 import Foundation
 import SystemConfiguration
+import WireLogging
 import WireUtilities
-
-private let zmLog = ZMSLog(tag: "NetworkStatus")
 
 public enum ServerReachability {
     /// Backend can be reached.
@@ -94,12 +93,12 @@ public final class NetworkStatus: NetworkStatusObservable {
                 CFRunLoopGetCurrent(),
                 CFRunLoopMode.defaultMode!.rawValue
             ) {
-                zmLog.info("Scheduled network reachability callback in runloop")
+                WireLogger.network.info("Scheduled network reachability callback in runloop")
             } else {
-                zmLog.error("Error scheduling network reachability in runloop")
+                WireLogger.network.error("Error scheduling network reachability in runloop")
             }
         } else {
-            zmLog.error("Error setting network reachability callback")
+            WireLogger.network.error("Error setting network reachability callback")
         }
     }
 
@@ -120,16 +119,16 @@ public final class NetworkStatus: NetworkStatusObservable {
 
             switch (reachable, connectionRequired) {
             case (true, false):
-                zmLog.info("Reachability status: reachable and connected.")
+                WireLogger.network.info("Reachability status: reachable and connected.")
                 returnValue = .ok
             case (true, true):
-                zmLog.info("Reachability status: reachable but connection required.")
+                WireLogger.network.info("Reachability status: reachable but connection required.")
             case (false, _):
-                zmLog.info("Reachability status: not reachable.")
+                WireLogger.network.info("Reachability status: not reachable.")
             }
 
         } else {
-            zmLog.info("Reachability status could not be determined.")
+            WireLogger.network.info("Reachability status could not be determined.")
         }
 
         return returnValue

@@ -20,12 +20,17 @@ import WireCoreCrypto
 import WireLogging
 
 /// A wrapper object for CoreCrypto that ensures transactions are executed
-/// within a background task (if a task manager is provided).
+/// within a background task managed by the given `BackgroundTaskExecuter`.
 public final class SafeCoreCrypto {
 
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
     let coreCrypto: any CoreCryptoProtocol
 
-    public init(coreCrypto: any CoreCryptoProtocol) {
+    public init(
+        backgroundTaskExecuter: any BackgroundTaskExecuter,
+        coreCrypto: any CoreCryptoProtocol
+    ) {
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         self.coreCrypto = coreCrypto
     }
 
@@ -33,23 +38,18 @@ public final class SafeCoreCrypto {
         try await coreCrypto.registerEpochObserver(epochObserver)
     }
 
-    /// Perform a transaction within an expiring activity to ensure the
-    /// transaction has additional time to complete while the app transitions
-    /// to a suspended state.
-    ///
-    /// This is particularly important when running in the main app because
-    /// if the app is suspended during a transaction, then core crypto will
-    /// hold on to a file lock used to coordinate cross-process concurrency
-    /// and effectively block app extensions from being able to start their
-    /// own transactions. This can lead to the Notification Service Extension
-    /// being blocked and not process any notifications until the main app
-    /// is resumed and the transaction is completed and the file lock released.
-    ///
     public func transaction<Result>(
-        block: @escaping @Sendable (any CoreCryptoContextProtocol) async throws -> Result
+        block: @escaping (any CoreCryptoContextProtocol) async throws -> Result
     ) async throws -> Result {
-        try await withExpiringActivity(reason: "core crypto transaction") { [coreCrypto] in
+        if BackgroundTaskContext.isBackgroundTask {
             try await coreCrypto.transaction(block)
+        } else {
+            try await withBackgroundTask(
+                name: "core crypto transaction",
+                executer: backgroundTaskExecuter
+            ) { [coreCrypto] in
+                try await coreCrypto.transaction(block)
+            }
         }
     }
 

@@ -176,7 +176,13 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons, isWireDriveEnabled: conversation.isWireDriveEnabled)
+        let showDriveViewerBanner = conversation.isWireDriveEnabled && userSession.selfUser
+            .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
+        let inputBar = InputBar(
+            buttons: inputBarButtons,
+            isWireDriveEnabled: conversation.isWireDriveEnabled,
+            showDriveViewerBanner: showDriveViewerBanner
+        )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
@@ -400,6 +406,19 @@ final class ConversationInputBarViewController: UIViewController,
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
+        // TODO: [WPB-25941] Remove developer flag when feature is complete
+        if DeveloperFlag.enableDrivePermissions.isOn {
+            if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
+                [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
+                    $0.isEnabled = false
+                    $0.setBackgroundImageColor(
+                        ColorTheme.Buttons.Secondary.disabled,
+                        for: .disabled
+                    )
+                }
+            }
+        }
+
         setupNotificationCenter()
         setupInputLanguageObserver()
         setupViews()
@@ -535,6 +554,7 @@ final class ConversationInputBarViewController: UIViewController,
         hourglassButton.layer.borderWidth = 1
         hourglassButton.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
         hourglassButton.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
+        hourglassButton.setBackgroundImageColor(ColorTheme.Buttons.Secondary.disabled, for: .disabled)
         hourglassButton.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
 
     }
@@ -746,7 +766,7 @@ final class ConversationInputBarViewController: UIViewController,
                 AVSMediaManager.sharedInstance().playKnockSound()
                 self.notificationFeedbackGenerator.notificationOccurred(.success)
             } catch {
-                Logging.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
+                WireLogger.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
             }
         }
 
@@ -1288,9 +1308,19 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
             let observed = await observeDraftsUseCase.invoke()
             for await drafts in observed {
+                let previousIdentifiers = Set(await attachmentsCarouselViewModel.draftsLocalIdentifiers)
                 await attachmentsCarouselViewModel.update(with: drafts)
                 await self?.syncCarouselVisible(drafts: drafts)
                 await self?.setAttachments(drafts: drafts)
+
+                let newIdentifiers = Set(drafts.compactMap(\.localIdentifier))
+                for identifier in previousIdentifiers.symmetricDifference(newIdentifiers) {
+                    if previousIdentifiers.contains(identifier) {
+                        await self?.cameraKeyboardViewController?.deselectItem(withLocalIdentifier: identifier)
+                    } else {
+                        await self?.cameraKeyboardViewController?.selectItem(withLocalIdentifier: identifier)
+                    }
+                }
             }
         }
     }

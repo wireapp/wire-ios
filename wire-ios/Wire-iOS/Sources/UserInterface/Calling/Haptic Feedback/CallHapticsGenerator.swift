@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLogging
 import WireUtilities
 
 protocol CallHapticsGeneratorType {
@@ -52,7 +53,7 @@ final class CallHapticsGenerator: CallHapticsGeneratorType {
     private let notificationGenerator = UINotificationFeedbackGenerator()
 
     func trigger(event: CallHapticsEvent) {
-        Log.calling.debug("Triggering haptic feedback event: \(event.rawValue)")
+        WireLogger.calling.debug("Triggering haptic feedback event: \(event.rawValue)")
         prepareFeedback(for: event)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.executeFeedback(for: event)

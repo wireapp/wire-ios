@@ -307,8 +307,13 @@ final class SettingsClientViewController: UIViewController,
 
         switch clientSection {
         case .resetSession:
-            userClient.resetSession()
             activityIndicator.start()
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                await userSession.resetProteusSession.invoke(userClient: userClient)
+                activityIndicator.stop()
+                presentResetSessionSuccessAlert()
+            }
 
         case .removeDevice:
             removalObserver = nil
@@ -406,24 +411,23 @@ final class SettingsClientViewController: UIViewController,
         if let tableView {
             tableView.reloadData()
         }
+    }
 
-        if changeInfo.sessionHasBeenReset {
-            activityIndicator.stop()
-            let alert = UIAlertController(
-                title: "",
-                message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success,
-                preferredStyle: .alert
-            )
-            let okAction = UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .default,
-                handler: { [unowned alert] _ in
-                    alert.dismiss(animated: true, completion: .none)
-                }
-            )
-            alert.addAction(okAction)
-            present(alert, animated: true, completion: .none)
-        }
+    private func presentResetSessionSuccessAlert() {
+        let alert = UIAlertController(
+            title: "",
+            message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success,
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default,
+            handler: { [unowned alert] _ in
+                alert.dismiss(animated: true, completion: .none)
+            }
+        )
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: .none)
     }
 }
 

@@ -50,7 +50,7 @@ final class FilesFilteringViewModel: ObservableObject {
         var tags: Set<String>
         var types: Set<WireDriveFileType>
         var conversations: Set<WireDriveConversation>
-        var owners: Set<WireDriveConversation.Participant>
+        var owners: Set<WireDriveParticipant>
 
         /// Meaning of values:
         /// - `true`: show only files with links

@@ -547,6 +547,15 @@ public class MockUserSession: UserSession {
 
     public var underlyingGetUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol!
 
+    // MARK: - resetProteusSession
+
+    public var resetProteusSession: ResetProteusSessionUseCaseProtocol {
+        get { return underlyingResetProteusSession }
+        set(value) { underlyingResetProteusSession = value }
+    }
+
+    public var underlyingResetProteusSession: ResetProteusSessionUseCaseProtocol!
+
     // MARK: - isUserE2EICertifiedUseCase
 
     public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {

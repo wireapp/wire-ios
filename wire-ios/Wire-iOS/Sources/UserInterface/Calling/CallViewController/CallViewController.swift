@@ -19,6 +19,7 @@
 import avs
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 
 protocol CallViewControllerDelegate: AnyObject {
@@ -359,7 +360,7 @@ final class CallViewController: UIViewController {
     private func updateIdleTimer() {
         let disabled = callInfoConfiguration.disableIdleTimer
         UIApplication.shared.isIdleTimerDisabled = disabled
-        Log.calling.debug("Updated idle timer: \(disabled ? "disabled" : "enabled")")
+        WireLogger.calling.debug("Updated idle timer: \(disabled ? "disabled" : "enabled")")
     }
 
     private func alertVideoUnavailable() {
@@ -417,7 +418,7 @@ final class CallViewController: UIViewController {
             try voiceChannel.setVideoCaptureDevice(newType)
             cameraType = newType
         } catch {
-            Log.calling.error("error toggling capture device: \(error)")
+            WireLogger.calling.error("error toggling capture device: \(error)")
         }
     }
 
@@ -557,7 +558,7 @@ extension CallViewController: ConstantBitRateAudioObserver {
 extension CallViewController: CallInfoRootViewControllerDelegate {
 
     func callingActionsViewPerformAction(_ action: CallAction) {
-        Log.calling.debug("request to perform call action: \(action)")
+        WireLogger.calling.debug("request to perform call action: \(action)")
         guard let userSession = userSession as? ZMUserSession else { return }
 
         switch action {

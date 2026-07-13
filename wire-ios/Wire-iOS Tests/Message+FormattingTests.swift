@@ -206,20 +206,33 @@ class Message_FormattingTests: XCTestCase {
         XCTAssertEqual(linkDetected.absoluteString, previewURL)
     }
 
-    func testThatItUsesCorrectUTF16OffsetForMention() {
+    func testThatItUsesCorrectUTF16OffsetForMention() throws {
         // given
-        let textMessageData = createTextMessageData(withMessageTemplate: "Z͉̬͎̞̙ͅA̻̹͉̪̰͐̂ͯ̈̔L̵̝͍̒̇̄͋̂ͬG̴͈̬̝̝̙̺̀̌̎ͭ̇̚O̿̔ͪ̓̋ͭ҉̘̻̗̜̗͎̗@͍ͣͯ́ͨ̄̆̐Z̾ͪ̾ͥ̎Ả͖̫͔̮ͪͧ̔ͨ̀L̰͖̹͚̲̈́ͩ͋͒̅G̴͆Ö̬̬̰̱̦̱͛̅̔ͩ̇̔")
+        let textMessageData = createTextMessageData(withMessageTemplate: "Z͉̬͎̞̙ͅA̻̹͉̪̰͐̂ͯ̈̔L̵̝͍̒̇̄͋̂ͬG̴͈̬̝̝̙̺̀̌̎ͭ̇̚O̿̔ͪ̓̋ͭ҉̘̻̗̜̗͎̗@͍ͣͯ́ͨ̄̆̐@aliceZ̾ͪ̾ͥ̎Ả͖̫͔̮ͪͧ̔ͨ̀L̰͖̹͚̲̈́ͩ͋͒̅G̴͆Ö̬̬̰̱̦̱͛̅̔ͩ̇̔")
 
         // when
         let mockUser = SwiftMockLoader.mockUsers()[0]
 
-        let mention = Mention(range: NSRange(location: 57, length: 54), user: mockUser)
+        // Range of @alice
+        let mention = Mention(range: NSRange(location: 66, length: 6), user: mockUser)
         textMessageData.mentions = [mention]
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
+
+        let formattedText = NSAttributedString.format(
+            message: textMessageData,
+            isObfuscated: false,
+            accentColor: .red
+        )
+
+        let actualLink = try XCTUnwrap(
+            formattedText.attributes(
+                at: mention.range.location + 1,
+                effectiveRange: nil
+            )[.link] as? URL
+        )
 
         // then
         XCTAssertEqual(
-            formattedText.attributes(at: mention.range.location + 1, effectiveRange: nil)[.link] as! URL,
+            actualLink,
             mention.link
         )
     }

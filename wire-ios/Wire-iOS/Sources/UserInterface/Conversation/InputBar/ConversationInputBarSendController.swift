@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 final class ConversationInputBarSendController: NSObject {
@@ -47,7 +48,8 @@ final class ConversationInputBarSendController: NSObject {
                 )
                 self.feedbackGenerator.impactOccurred()
             } catch {
-                Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+                WireLogger.messageProcessing
+                    .warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
         } completionHandler: {
             completionHandler?()
@@ -89,7 +91,8 @@ final class ConversationInputBarSendController: NSObject {
                     )
                 }
             } catch {
-                Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
+                WireLogger.messageProcessing
+                    .warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }
         }
     }
@@ -125,7 +128,7 @@ final class ConversationInputBarSendController: NSObject {
                     in: conversation
                 )
             } catch {
-                Logging.messageProcessing
+                WireLogger.messageProcessing
                     .warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
             }
         }

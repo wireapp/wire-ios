@@ -41,6 +41,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
+        DeveloperFlag.enableDrivePermissions.enable(false)
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
     }
 
@@ -186,10 +187,26 @@ extension ConversationViewControllerSnapshotTests {
         snapshotHelper.verify(matching: sut)
     }
 
+    func testThatViewerAccessBannerIsVisibleForAGuestInAWireDriveConversation() {
+        // given
+        let mockConversation = createTeamGroupConversation()
+        UIColor.setAccentOverride(.green)
+        DeveloperFlag.enableDrivePermissions.enable(true)
+
+        // when, conversation is a Wire Drive conversation and self user is a guest
+        mockConversation.cellsState = .ready
+        let mockUser = MockUserType.createSelfUser(name: "Bob")
+        mockUser.isGuestInConversation = true
+        createSut(conversation: mockConversation, mockUser: mockUser)
+
+        // then
+        snapshotHelper.verify(matching: sut)
+    }
+
     // MARK: - Helper Method
 
-    private func createSut(conversation: ZMConversation) {
-        userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
+    private func createSut(conversation: ZMConversation, mockUser: MockUserType = .createSelfUser(name: "Bob")) {
+        userSession = UserSessionMock(mockUser: mockUser)
         userSession.coreDataStack = coreDataStack
         userSession.mockConversationList = ConversationList(
             allConversations: [conversation],

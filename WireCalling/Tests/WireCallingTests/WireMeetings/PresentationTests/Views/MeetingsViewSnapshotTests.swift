@@ -17,8 +17,10 @@
 //
 
 import SwiftUI
+import WireFoundation
 import WireTestingPackage
 import XCTest
+
 @testable import WireCallingDomain
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
@@ -36,10 +38,10 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    // MARK: - Next Tab Empty State
+    // MARK: - Empty State
 
     @MainActor
-    func testEmptyNextTabColorSchemeVariants() {
+    func testEmptyStateColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
@@ -56,52 +58,11 @@ final class MeetingsViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testEmptyNextTabDynamicTypeVariants() {
+    func testEmptyStateDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
             MeetingsView(viewModel: createEmptyViewModel())
-        }
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-    // MARK: - Past Tab Empty State
-
-    @MainActor
-    func testEmptyPastTabColorSchemeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let viewModel = createEmptyViewModel()
-        viewModel.selectedTab = .past
-
-        let view = NavigationStack {
-            MeetingsView(viewModel: viewModel)
-        }
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testEmptyPastTabDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let viewModel = createEmptyViewModel()
-        viewModel.selectedTab = .past
-
-        let view = NavigationStack {
-            MeetingsView(viewModel: viewModel)
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -116,27 +77,27 @@ final class MeetingsViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func createEmptyViewModel() -> MeetingsViewModel {
-        let mockRepository = MockMeetingsRepositoryProtocol()
-        mockRepository.fetchOngoingMeetingsAt_MockValue = []
-        mockRepository.hasUpcomingMeetingsAfter_MockValue = false
+        let mockRepository = MeetingRepositoryProtocolMock()
+        mockRepository.hasUpcomingMeetingsAfterDateDateBoolReturnValue = false
 
-        let pastMeetingsUseCase = MockFetchPastMeetingsUseCaseProtocol()
-        pastMeetingsUseCase.invoke_MockValue = []
-
-        let upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
-        upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockValue = PaginatedGroupedMeetings(
-            groups: [],
+        let upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReturnValue = PaginatedMeetings(
+            meetings: [],
             hasMore: false,
             nextOffset: 0
         )
 
+        let observeMeetingChangesUseCase = ObserveMeetingChangesUseCaseProtocolMock()
+        observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = AsyncStream { $0.finish() }
+
         return MeetingsViewModel(
-            repository: mockRepository,
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-            pastMeetingsUseCase: pastMeetingsUseCase,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase
         )
     }
+
 }

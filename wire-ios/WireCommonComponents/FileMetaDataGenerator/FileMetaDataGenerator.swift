@@ -22,8 +22,6 @@ import MobileCoreServices
 import WireDataModel
 import WireLogging
 
-private let zmLog = ZMSLog(tag: "UI")
-
 public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
 
     @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")
@@ -96,7 +94,7 @@ private extension AVAsset {
         do {
             reader = try AVAssetReader(asset: self)
         } catch {
-            zmLog.error("Cannot read asset metadata for \(self): \(error)")
+            WireLogger.ui.error("Cannot read asset metadata for \(self): \(error)")
             return .none
         }
 

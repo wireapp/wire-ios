@@ -19,9 +19,8 @@
 import AVFoundation
 import PhotosUI
 import UIKit
+import WireLogging
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "ConversationInputBarViewController - Image Picker")
 
 extension ConversationInputBarViewController {
 
@@ -29,6 +28,7 @@ extension ConversationInputBarViewController {
         sourceType: UIImagePickerController.SourceType,
         mediaTypes: [String],
         allowsEditing: Bool,
+        preSelectedAssetIdentifiers: [String] = [],
         pointToView: UIView
     ) {
 
@@ -50,6 +50,7 @@ extension ConversationInputBarViewController {
                 // non-nil.
                 var config = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
                 config.selectionLimit = 0
+                config.preselectedAssetIdentifiers = preSelectedAssetIdentifiers
                 config.filter = .any(of: [.images, .videos])
 
                 let picker = PHPickerViewController(configuration: config)
@@ -94,7 +95,7 @@ extension ConversationInputBarViewController {
     ) {
         guard let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL else {
             parent?.dismiss(animated: true)
-            zmLog.error("Video not provided form \(picker): info \(info)")
+            WireLogger.ui.error("Video not provided from \(picker): info \(info)")
             return
         }
         guard let selfUser = ZMUser.selfUser() else {
@@ -111,7 +112,7 @@ extension ConversationInputBarViewController {
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
         } catch {
-            zmLog.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
+            WireLogger.ui.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
             return
         }
 

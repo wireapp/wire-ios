@@ -172,4 +172,30 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         let mention = Mention(range: NSRange(location: 0, length: 8), user: selfUser)
         verify(message: createMessage(messageText: messageText, mentions: [mention]))
     }
+
+    func testThatItHandlesMalformedMentionRange_MissingAtSymbol() {
+        // Test case for the bug where another app incorrectly sends a mention range
+        // that starts one character after the '@' symbol (e.g., location: 7 instead of 6)
+        // This should be automatically corrected to include the '@'
+        let messageText = "Hello @Bruno! How are you?"
+
+        // Malformed range: starts at 'B' (index 7) instead of '@' (index 6)
+        let malformedMention = Mention(range: NSRange(location: 7, length: 5), user: otherUser)
+
+        // The fix should automatically adjust this to location: 6, length: 6
+        // and render correctly as "@Bruno" instead of "@@runo"
+        verify(message: createMessage(messageText: messageText, mentions: [malformedMention]))
+    }
+
+    func testThatItHandlesMultipleMentionsWithOneMalformed() {
+        let messageText = "Hey @Bruno and @Me, let's meet!"
+
+        // First mention is malformed (starts at 'B' instead of '@')
+        let malformedMention = Mention(range: NSRange(location: 5, length: 5), user: otherUser)
+
+        // Second mention is correct
+        let correctMention = Mention(range: NSRange(location: 15, length: 3), user: selfUser)
+
+        verify(message: createMessage(messageText: messageText, mentions: [malformedMention, correctMention]))
+    }
 }

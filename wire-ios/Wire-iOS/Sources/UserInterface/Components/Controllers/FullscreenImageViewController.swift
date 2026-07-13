@@ -19,11 +19,10 @@
 import FLAnimatedImage
 import UIKit
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "UI")
 
 protocol ScreenshotProvider: UIViewController {
     func backgroundScreenshot(for fullscreenController: FullscreenImageViewController) -> UIView?
@@ -544,7 +543,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     func setSelectedByMenu(_ selected: Bool, animated: Bool) {
-        zmLog.debug("Setting selected: \(selected) animated: \(animated)")
+        WireLogger.ui.debug("Setting selected: \(selected) animated: \(animated)")
 
         if selected {
 

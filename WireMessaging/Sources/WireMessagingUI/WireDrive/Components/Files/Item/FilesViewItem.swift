@@ -85,6 +85,7 @@ extension FilesViewItem {
     static func fromNode(_ node: WireDriveNode) -> FilesViewItem? {
         guard let eTag = node.eTag else { return nil }
 
+        // TODO: [WPB-26057] When backend ready, remove this code, the self user role (editor/viewer) on a file will come from the BE.
         guard let selfUser = node.conversation?.participants.first(where: \.isSelfUser) else {
             WireLogger.wireDrive.error("Self user not found - cannot establish file permission - discarding item")
             return nil
@@ -118,6 +119,7 @@ extension FilesViewItem {
     static func fromLocalAsset(
         _ asset: WireDriveLocalAsset,
         conversationName: String?,
+        isReadOnly: Bool,
         assetsPath: String?
     ) -> FilesViewItem {
 
@@ -172,7 +174,7 @@ extension FilesViewItem {
             isEditable: false, // change later if we want to edit files in offline mode.
             publicLinkID: nil, // change later if we want to be able to share a public link in offline mode.
             conversationName: asset.conversationName,
-            isReadOnly: false,
+            isReadOnly: isReadOnly,
             size: asset.size
         )
     }

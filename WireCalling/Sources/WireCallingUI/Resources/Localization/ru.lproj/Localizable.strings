@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// MARK: - Meetings List
 
+// MARK: - Meetings List
 
 "wireMeetings.list.title" = "Встречи";
 "wireMeetings.list.tabs.past" = "Прошлые";
@@ -25,13 +25,19 @@
 "wireMeetings.list.actions.scheduleMeeting" = "Запланировать встречу";
 "wireMeetings.list.actions.showAll" = "Показать все";
 "wireMeetings.list.emptyState.next.title" = "Предстоящих встреч пока нет";
-"wireMeetings.list.emptyState.next.subtitle" = "Начните встречу с членами команды, гостями или внешними участниками.";
+"wireMeetings.list.emptyState.next.subtitle" = "Начать встречу с членами команды";
 "wireMeetings.list.emptyState.past.title" = "Прошлых встреч пока нет";
 "wireMeetings.list.emptyState.past.subtitle" = "Здесь вы найдете все предыдущие встречи.";
 "wireMeetings.list.header.today" = "Сегодня";
 "wireMeetings.list.header.tomorrow" = "Завтра";
 "wireMeetings.list.header.yesterday" = "Вчера";
 "wireMeetings.list.header.ongoing" = "В настоящее время";
+"wireMeetings.list.actions.edit" = "Изменить встречу";
+"wireMeetings.list.actions.delete" = "Удалить встречу для всех";
+"wireMeetings.list.delete.alert.title" = "Удалить встречу для всех";
+"wireMeetings.list.delete.alert.subtitle" = "Встреча будет удалена для вас и всех остальных. Все участники будут уведомлены.";
+"wireMeetings.list.delete.alert.delete.button" = "Удалить";
+"wireMeetings.list.delete.alert.cancel.button" = "Отмена";
 
 // MARK: - Schedule a meeting
 
@@ -39,20 +45,17 @@
 "wireMeetings.schedule.future.title" = "Новая встреча";
 "wireMeetings.schedule.cancel.button" = "Отмена";
 "wireMeetings.schedule.schedule.button" = "Расписание";
-"wireMeetings.schedule.next.button" = "Далее";
+"wireMeetings.schedule.select.button" = "Выбрать";
+"wireMeetings.schedule.start.button" = "Начать";
 "wireMeetings.schedule.setupTitle.header" = "Название";
 "wireMeetings.schedule.setupTitle.placeholder" = "Введите название встречи";
 "wireMeetings.schedule.setupParticipants.header" = "Участники";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Добавить участников";
-"wireMeetings.schedule.allowGuests.title" = "Разрешить гостей";
+"wireMeetings.schedule.error.alert.title" = "Что-то пошло не так";
+"wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Отключить доступ гостей?";
-"wireMeetings.schedule.disableGuestAccess.alert.subtitle" = "Текущие гости будут удалены из беседы. Новые гости допущены не будут.";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Отключить";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Отмена";
-"wireMeetings.schedule.setupPassword.header" = "Пароль (необязательно)";
-"wireMeetings.schedule.password.placeholder" = "Введите пароль";
-"wireMeetings.schedule.confirmedPassword.placeholder" = "Подтвердить пароль";
-"wireMeetings.schedule.confirmedPassword.error" = "Пароли не совпадают";
 "wireMeetings.schedule.time.starts" = "Начало";
 "wireMeetings.schedule.time.ends" = "Конец";
 "wireMeetings.schedule.time.repeats" = "Повторы";
@@ -62,3 +65,14 @@
 "wireMeetings.schedule.time.everyTwoWeeks" = "Каждые 2 недели";
 "wireMeetings.schedule.time.monthly" = "Ежемесячно";
 "wireMeetings.schedule.time.yearly" = "Ежегодно";
+"wireMeetings.schedule.members.title" = "Участники";
+"wireMeetings.schedule.members.cancel.button" = "Отмена";
+"wireMeetings.schedule.members.select.button" = "Выбрать";
+"wireMeetings.schedule.members.search.field.placeholder" = "Введите название";
+"wireMeetings.schedule.members.empty.title" = "Ничего не найдено";
+"wireMeetings.schedule.members.empty.description" = "Попробуйте изменить условия поиска";
+"wireMeetings.schedule.members.error.title" = "Что-то пошло не так";
+"wireMeetings.schedule.members.error.description" = "Повторите попытку";
+"wireMeetings.schedule.members.retry.button" = "Повторить";
+"wireMeetings.schedule.members.selected.title" = "Выбрано";
+"wireMeetings.schedule.members.contacts.title" = "Контакты";

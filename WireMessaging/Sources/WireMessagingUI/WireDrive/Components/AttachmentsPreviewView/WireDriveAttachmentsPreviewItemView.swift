@@ -114,6 +114,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
         .onAppear(perform: viewModel.startPolling)
         .onDisappear(perform: viewModel.stopPolling)
         .onTapGesture(perform: onTap)
+        .quickFilePreview($viewModel.quickPreviewItem)
     }
 
     private func refresh() {

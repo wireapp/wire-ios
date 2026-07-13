@@ -89,6 +89,17 @@ public struct Journal: JournalProtocol {
         }
     }
 
+    /// Get or set an optional date value.
+
+    public subscript(_ key: JournalKey<Date?>) -> Date? {
+        get {
+            storage.object(forKey: rawKey(for: key)) as? Date? ?? key.defaultValue
+        }
+        nonmutating set {
+            storage.set(newValue, forKey: rawKey(for: key))
+        }
+    }
+
     /// Delete all values in the journal.
 
     public func erase() {

@@ -93,7 +93,8 @@ final class ConversationRepositoryTests: XCTestCase {
             Scaffolding.conversation,
             Scaffolding.mlsPublicKeys
         )
-        conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationsLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         // When
 
@@ -108,7 +109,8 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(pubKeys, Scaffolding.mlsPublicKeys)
         XCTAssertEqual(conversationsAPI.getMLSOneToOneConversationUserIDIn_Invocations.count, 1)
         XCTAssertEqual(
-            conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
     }
@@ -145,7 +147,8 @@ final class ConversationRepositoryTests: XCTestCase {
             failed: []
         )
 
-        conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationsLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         // When
 
@@ -158,7 +161,8 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(
-            conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
     }
@@ -286,7 +290,8 @@ final class ConversationRepositoryTests: XCTestCase {
     func testStoreConversation_It_Invokes_Local_Store_Method() async {
         // Mock
 
-        conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        conversationsLocalStore
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         // When
 
@@ -298,7 +303,8 @@ final class ConversationRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(
-            conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
+                .count,
             1
         )
     }

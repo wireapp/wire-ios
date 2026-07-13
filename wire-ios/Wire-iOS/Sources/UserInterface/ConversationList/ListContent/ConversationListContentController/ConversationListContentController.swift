@@ -48,6 +48,7 @@ final class ConversationListContentController: UICollectionViewController {
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
+    private var contextMenuActionController: ConversationActionController?
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
@@ -260,6 +261,8 @@ final class ConversationListContentController: UICollectionViewController {
             return nil
         }
 
+        let title = L10n.Localizable.ConversationList.ContextMenu.title(conversation.displayNameWithFallback)
+
         let actionProvider: UIContextMenuActionProvider = { _ in
             let actions = conversation.listActions.map { action in
                 UIAction(title: action.title, image: nil) { _ in
@@ -269,11 +272,12 @@ final class ConversationListContentController: UICollectionViewController {
                         sourceView: collectionView.cellForItem(at: indexPath)!,
                         userSession: self.userSession
                     )
+                    self.contextMenuActionController = actionController
                     actionController.handleAction(action)
                 }
             }
 
-            return UIMenu(title: conversation.displayNameWithFallback, children: actions)
+            return UIMenu(title: title, children: actions)
         }
 
         return UIContextMenuConfiguration(

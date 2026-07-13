@@ -19,8 +19,10 @@
 import WireFoundation
 import XCTest
 
+/// [core-messenger]
 final class BackupRestoreHistoryTests: WireUITestCase {
 
+    /// [critical]
     @MainActor
     func testCreateBackupAndRestoreHistoryWithPassword_TC_8928_TC_8930_TC_8805() async throws {
         var (messageFromOwner, teamOwner, activeConversationPage) = try await createTeamConversationAndSendMessage()

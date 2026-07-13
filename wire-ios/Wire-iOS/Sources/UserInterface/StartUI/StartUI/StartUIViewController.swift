@@ -28,8 +28,6 @@ import WireReusableUIComponents
 import WireSyncEngine
 import WireUtilities
 
-private let zmLog = ZMSLog(tag: "StartUIViewController")
-
 final class StartUIViewController: UIViewController {
 
     // MARK: - Properties
@@ -319,7 +317,6 @@ final class StartUIViewController: UIViewController {
     @objc
     func performSearch() {
         let searchString = searchController.searchBar.text ?? ""
-        zmLog.info("Search for \(searchString)")
 
         if groupSelector.group == .people {
             if searchString.isEmpty {

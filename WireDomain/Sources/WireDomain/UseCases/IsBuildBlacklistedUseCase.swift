@@ -43,7 +43,7 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
         api: any BlacklistAPI
     ) {
         #if DEBUG
-            let currentBuildNumber = UITestConfig.environment.isBuildBlacklisted ? "0" : currentBuildNumber
+            let currentBuildNumber = UITestConfig.environment?.isBuildBlacklisted == true ? "0" : currentBuildNumber
         #endif
 
         self.currentBuildNumber = DeveloperOverrides.buildNumber ?? currentBuildNumber

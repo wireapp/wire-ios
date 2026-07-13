@@ -254,6 +254,8 @@ public protocol UserSession: AnyObject {
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 
+    var resetProteusSession: ResetProteusSessionUseCaseProtocol { get }
+
     var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol { get }
 
     var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }

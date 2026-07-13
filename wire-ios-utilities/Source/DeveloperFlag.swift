@@ -33,6 +33,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
+    case preventAdminlessGroups
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
@@ -42,8 +43,11 @@ public enum DeveloperFlag: String, CaseIterable {
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
+    case simulateMainAppRequiredError
+    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     case enableDrivePermissions
     case unSafeLogsForPublic
+    case useBackgroundTaskAPIInAppBackgroundTaskExecuter
 
     public var description: String {
         switch self {
@@ -80,6 +84,9 @@ public enum DeveloperFlag: String, CaseIterable {
         case .newRegistration:
             "Turn on to use the new registration flow"
 
+        case .preventAdminlessGroups:
+            "Turn on to prevent last admins from leaving groups without promoting someone else"
+
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
 
@@ -107,11 +114,17 @@ public enum DeveloperFlag: String, CaseIterable {
         case .showNSEErrors:
             "Turn on to show Notification Service Extension errors as notifications"
 
+        case .simulateMainAppRequiredError:
+            "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
+
         case .enableDrivePermissions:
             "Turn on to enable drive permissions"
 
         case .unSafeLogsForPublic:
             "Turn on to write all logs (including debug and non-public) to disk in release builds"
+
+        case .useBackgroundTaskAPIInAppBackgroundTaskExecuter:
+            "Turn on to use Apple's UIApplication task API directly in AppBackgroundTaskExecuter"
         }
     }
 

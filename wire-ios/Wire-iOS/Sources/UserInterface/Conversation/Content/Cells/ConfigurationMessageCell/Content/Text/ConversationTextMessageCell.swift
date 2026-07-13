@@ -341,7 +341,8 @@ extension ConversationTextMessageCellDescription {
                 isObfuscated: message.isObfuscated,
                 userSession: userSession,
                 isSentBySelfUser: message.isSentBySelfUser,
-                senderAccentColor: message.senderUser?.wireAccentColor ?? .blue
+                senderAccentColor: message.senderUser?.wireAccentColor ?? .blue,
+                quotedMessageWasDeleted: quotedMessage == nil && textMessageData.quotedMessageIsDeleted
             )
             cells.append(AnyConversationMessageCellDescription(combinedCell))
         } else if hasText {

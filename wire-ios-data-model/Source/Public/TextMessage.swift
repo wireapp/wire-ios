@@ -39,6 +39,7 @@ final class TextMessage: ZMMessage, TextMessageData {
     var hasQuote: Bool { false }
     var quoteMessage: (any ZMConversationMessage)? { nil }
     var isQuotingSelf: Bool { false }
+    var quotedMessageIsDeleted: Bool { false }
 
     override func shortDebugDescription() -> String {
         super.shortDebugDescription() + (text.map { "'\($0)'" } ?? "<nil>")

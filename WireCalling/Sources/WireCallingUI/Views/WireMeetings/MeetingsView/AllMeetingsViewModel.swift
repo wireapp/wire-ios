@@ -16,67 +16,60 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SwiftUI
 package import WireCallingDomain
-import WireCallingDomainSupport
 package import WireFoundation
-package import WireReusableUIComponents
+
+import SwiftUI
+import WireCallingDomainSupport
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
-package final class AllMeetingsViewModel: ObservableObject {
+@Observable
+@MainActor
+package final class AllMeetingsViewModel {
+
+    private let makeFormViewModel: @MainActor (
+        _ mode: CreateMeetingFormViewModel.Mode,
+        _ onSuccess: @escaping (Meeting) -> Void
+    ) -> CreateMeetingFormViewModel
 
     package let meetingsViewModel: MeetingsViewModel
 
-    @Published var isCreateInstantMeetingPresented: Bool = false
-    @Published var isScheduleMeetingPresented: Bool = false
-
-    private let passwordValidator: any PasswordValidator
-    private let isContextMenuAllowed: Bool
+    var presentedFormMode: CreateMeetingFormViewModel.Mode?
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        passwordValidator: any PasswordValidator,
-        isContextMenuAllowed: Bool
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
+        makeFormViewModel: @escaping @MainActor (
+            _ mode: CreateMeetingFormViewModel.Mode,
+            _ onSuccess: @escaping (Meeting) -> Void
+        ) -> CreateMeetingFormViewModel
     ) {
         self.meetingsViewModel = MeetingsViewModel(
-            repository: repository,
             currentDateProvider: currentDateProvider,
             formatter: formatter,
-            pastMeetingsUseCase: pastMeetingsUseCase,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase
         )
-        self.passwordValidator = passwordValidator
-        self.isContextMenuAllowed = isContextMenuAllowed
+        self.makeFormViewModel = makeFormViewModel
     }
 
     // MARK: - Public Interface
 
     func createInstantMeetingTapped() {
-        isCreateInstantMeetingPresented = true
+        presentedFormMode = .instant
     }
 
     func scheduleMeetingTapped() {
-        isScheduleMeetingPresented = true
+        presentedFormMode = .scheduled
     }
 
-    func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel(
-            passwordValidator: passwordValidator,
-            isContextMenuAllowed: isContextMenuAllowed
-        )
-    }
-
-    func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel(
-            passwordValidator: passwordValidator,
-            isContextMenuAllowed: isContextMenuAllowed
-        )
+    func makeMeetingFormViewModel(mode: CreateMeetingFormViewModel.Mode) -> CreateMeetingFormViewModel {
+        makeFormViewModel(mode) { [weak self] _ in
+            self?.presentedFormMode = nil
+        }
     }
 
 }

@@ -62,6 +62,9 @@ package final class FilesViewModel: ObservableObject {
 
     private let setNavigation: ([FilesViewItem]) -> Void
     private var subscriptions = Set<AnyCancellable>()
+    private var selfUser: WireDriveConversation.Participant?
+    private var selfUserID: String? { selfUser?.id }
+
     let cellName: String? // nil when browsing all files
     let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     let nodesRepository: any WireDriveNodesRepositoryProtocol
@@ -73,6 +76,12 @@ package final class FilesViewModel: ObservableObject {
     let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
     var failedItemActions: [FilesViewItem.ID: FilesItemViewModel.ItemAction] = [:]
+    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
+    var isDrivePermissionsFlagEnabled: Bool = UserDefaults.standard.bool(forKey: "enableDrivePermissions")
+
+    var selfUserRole: WireDriveConversation.Participant.Role {
+        selfUser?.role ?? .viewer
+    }
 
     var navigationTitle: String {
         if let title {
@@ -80,21 +89,27 @@ package final class FilesViewModel: ObservableObject {
         } else {
             if isRecycleBin {
                 Strings.RecycleBin.navigationTitle
+            } else if isBrowsing {
+                Strings.AllFiles.navigationTitle
             } else {
                 Strings.Files.navigationTitle
             }
         }
     }
 
-    private var selfUserID: String? {
-        conversations
-            .flatMap(\.participants)
-            .first(where: \.isSelfUser)?.id
+    var navigationSubtitle: String? {
+        if selfUserRole == .viewer, !isBrowsing, isDrivePermissionsFlagEnabled {
+            Strings.Files.ViewerAccess.navigationSubtitle
+        } else {
+            nil
+        }
     }
+
+    var state: FilesListStateController.State { filesController.state }
 
     @Published var searchText = ""
     @Published var alert: AlertModel?
-    @Published var viewingURL: URL?
+    @Published var quickPreviewItem: QuickPreviewItem?
     @Published var sheetNavigation: SheetNavigation?
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
@@ -102,10 +117,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
     @Published var networkMonitor: NetworkMonitor
     @Published var filesController: FilesListStateController
-
-    var state: FilesListStateController.State {
-        filesController.state
-    }
+    @Published var showReadOnlyBanner: Bool = false
 
     // MARK: init
 
@@ -142,7 +154,7 @@ package final class FilesViewModel: ObservableObject {
 
     func setup() async {
         setupFilesStateController()
-        await fetchConversations()
+        await fetchConversations(then: fetchSelfUser)
         await fetchTemplates()
         bindSearch()
     }
@@ -176,9 +188,17 @@ package final class FilesViewModel: ObservableObject {
             )
 
             let items: [FilesViewItem] = offlineAssets.map { asset in
-                .fromLocalAsset(
+                // TODO: [WPB-26057] When backend ready, remove this code, the self user role (editor/viewer) will come from the BE and will have to be stored locally in `WireDriveLocalAsset`
+                let selfUserRole = conversations
+                    .first(where: { $0.name == asset.conversationName })?
+                    .participants
+                    .first(where: { $0.isSelfUser })?
+                    .role
+
+                return .fromLocalAsset(
                     asset,
                     conversationName: conversationName,
+                    isReadOnly: (selfUserRole ?? .viewer) == .viewer,
                     assetsPath: assetsPath
                 )
             }
@@ -228,13 +248,23 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    private func fetchConversations() async {
+    private func fetchConversations(then handler: () -> Void) async {
         let allDriveConversations = await useCases.getDriveConversations.invoke()
 
         if let cellName {
             conversations = allDriveConversations.filter { $0.id == cellName }
         } else {
             conversations = allDriveConversations
+        }
+
+        handler()
+    }
+
+    private func fetchSelfUser() {
+        selfUser = conversations.flatMap(\.participants).first(where: \.isSelfUser)
+
+        if let selfUser {
+            showReadOnlyBanner = !isBrowsing && selfUser.role == .viewer && isDrivePermissionsFlagEnabled
         }
     }
 
@@ -329,9 +359,9 @@ package final class FilesViewModel: ObservableObject {
             case .pending, .failed:
                 _ = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
             case .downloaded:
-                viewingURL = nil
+                quickPreviewItem = nil
                 let url = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
-                viewingURL = url
+                quickPreviewItem = QuickPreviewItem.fromFilesViewItem(item, url: url)
             case .downloading:
                 await useCases.getAsset.cancelDownload(nodeID: item.id)
             }

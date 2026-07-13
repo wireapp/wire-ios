@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.field.email_only.placeholder" = "El. paštas";
+"authentication.identity.input.field.email_only.title" = "El. paštas";
 "authentication.identity.input.submit" = "Kitas";
 
 "cloud_user_login.title" = "Enter your password to log in";
@@ -87,6 +89,8 @@
 "switch_backend_confirmation.show_details" = "Show details";
 "switch_backend.error.title.logged_in" = "Nepavyko perjungti serverių";
 "switch_backend.error.message.logged_in" = "Esate prisijungę. Norėdami perjungti serverį, atsijunkite nuo visų paskyrų ir bandykite dar kartą.";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "Gavote el. laišką";
 "verification_code.message" = "Įrašykite patvirtinimo kodą, kuris buvo išsiųstas į %@.";
@@ -117,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "Ši paskyra daugiau nebeturi įgaliojimų prisijungti.";
 "authentication.error.message.incorrect_sso_code" = "Įsitikinkite, kad jūsų įmonės SSO prieigos kodas be klaidos, ir bandykite dar kartą.";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "GERAI";
 

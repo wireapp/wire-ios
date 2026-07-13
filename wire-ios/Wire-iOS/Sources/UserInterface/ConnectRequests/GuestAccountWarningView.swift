@@ -20,7 +20,13 @@ import UIKit
 import WireDesign
 
 final class GuestAccountWarningView: UIView {
+    enum Variant {
+        case oneOnOne
+        case group(driveEnabled: Bool)
+        case channel(driveEnabled: Bool)
+    }
 
+    private let variant: Variant
     private let stackView = UIStackView(axis: .vertical)
 
     private let titleLabel = DynamicFontLabel(
@@ -44,7 +50,8 @@ final class GuestAccountWarningView: UIView {
 
     // MARK: - Setup
 
-    init() {
+    init(variant: Variant) {
+        self.variant = variant
         super.init(frame: .zero)
         setupViews()
         setupConstraints()
@@ -64,7 +71,12 @@ final class GuestAccountWarningView: UIView {
         stackView.alignment = .fill
         stackView.spacing = 16
 
-        let title = L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wire
+        let title = switch variant {
+        case .oneOnOne, .group(driveEnabled: false), .channel(driveEnabled: false):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wire
+        default: // Drive enabled title
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wireCells
+        }
 
         titleLabel.numberOfLines = 0
         titleLabel.text = title
@@ -73,13 +85,23 @@ final class GuestAccountWarningView: UIView {
         stackView.addArrangedSubview(titleLabel)
 
         messageLabel.numberOfLines = 0
-        messageLabel.text = L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireOneOnOne
+        messageLabel.text = switch variant {
+        case .oneOnOne:
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireOneOnOne
+        case .group(driveEnabled: false):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireGroup
+        case .channel(driveEnabled: false):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireChannel
+        default: // Drive enabled message
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells
+        }
+
         messageLabel.isAccessibilityElement = true
 
         stackView.addArrangedSubview(messageLabel)
 
         let linkText = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
-        let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
+        let linkUrl = WireURLs.shared.learnMoreAboutE2EE
 
         let linkAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumSemiboldFont,

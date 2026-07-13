@@ -289,36 +289,6 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
     }
 
-    /// Resets the session between the client and the selfClient
-    /// Can be called several times without issues
-
-    public func resetSession() {
-        guard
-            let uiMOC = managedObjectContext?.zm_userInterface,
-            let syncMOC = uiMOC.zm_sync
-        else {
-            return
-        }
-
-        WaitingGroupTask(context: syncMOC) {
-            guard let syncClient = await syncMOC.perform({
-                (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
-            }) else {
-                return
-            }
-
-            // Delete session and fingerprint
-            try? await syncClient.deleteSession()
-
-            await syncMOC.perform {
-                // Mark that we need notify the other party about the session reset
-                syncClient.needsToNotifyOtherUserAboutSessionReset = true
-
-                syncMOC.saveOrRollback()
-            }
-        }
-    }
-
     public func resolveDecryptionFailedSystemMessages() {
         let request = NSBatchUpdateRequest(entityName: ZMSystemMessage.entityName())
 

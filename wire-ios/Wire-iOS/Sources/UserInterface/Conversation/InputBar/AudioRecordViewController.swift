@@ -21,10 +21,9 @@ import MobileCoreServices
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSyncEngine
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "UI")
 
 protocol AudioRecordBaseViewController: AnyObject {
     var delegate: AudioRecordViewControllerDelegate? { get set }
@@ -134,7 +133,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         let shouldSend = upperThird && sender.state == .ended
 
         guard recorder.stopRecording() else {
-            return zmLog.warn("Stopped recording but did not get file URL")
+            return WireLogger.ui.warn("Stopped recording but did not get file URL")
         }
 
         if shouldSend {
@@ -450,7 +449,9 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     func sendAudio() {
         recorder.stopPlaying()
-        guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to send as audio file") }
+        guard let url = recorder.fileURL else {
+            return WireLogger.ui.warn("Nil url passed to send as audio file")
+        }
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return

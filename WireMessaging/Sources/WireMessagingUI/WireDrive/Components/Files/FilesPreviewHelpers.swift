@@ -28,7 +28,10 @@ import WireMessagingDomainSupport
 extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
-    static func preview(isBrowsing: Bool = false) -> FilesViewModel {
+    static func preview(
+        isBrowsing: Bool = false,
+        selfUserRole: WireDriveConversation.Participant.Role = .editor
+    ) -> FilesViewModel {
         let cache = mockFileCache()
         let localAssetStore = MockWireDriveLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
@@ -96,7 +99,7 @@ extension FilesViewModel {
                     nodesAPI: previewPublicLinkApi()
                 ),
                 getDriveConversations: WireDriveGetConversationsUseCase(
-                    nodesAPI: previewConversationsApi()
+                    nodesAPI: previewConversationsApi(selfUserRole: selfUserRole)
                 ),
                 getFileTemplates: WireDriveFetchFileTemplatesUseCase(
                     repository: previewNodesRepository()
@@ -302,10 +305,11 @@ private func previewTagsApi() -> some NodesAPIProtocol {
     return mock
 }
 
-private func previewConversationsApi() -> some NodesAPIProtocol {
+private func previewConversationsApi(selfUserRole: WireDriveConversation.Participant
+    .Role = .editor) -> some NodesAPIProtocol {
     let mock = MockNodesAPIProtocol()
     mock.getDriveConversations_MockMethod = {
-        .mocked()
+        .mocked(selfUserRole: selfUserRole)
     }
     return mock
 }

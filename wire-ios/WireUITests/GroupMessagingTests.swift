@@ -19,6 +19,7 @@
 import WireFoundation
 import XCTest
 
+/// [core-messenger]
 final class GroupMessagingTests: WireUITestCase {
 
     private typealias ReturnedTeam = (
@@ -60,7 +61,6 @@ final class GroupMessagingTests: WireUITestCase {
     private func fixtureMediaURLs() -> MediaURLs {
         let testDataDirectory = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
-            .deletingLastPathComponent()
             .appendingPathComponent("TestServicesData")
 
         let imageURL = testDataDirectory.appendingPathComponent("Img/testImage.jpg")
@@ -74,6 +74,7 @@ final class GroupMessagingTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testSendTextAndAudioInGroupConversation_TC_8833_8835() async throws {
 
@@ -220,6 +221,7 @@ final class GroupMessagingTests: WireUITestCase {
         }
     }
 
+    /// [critical]
     @MainActor
     func testSendImageAndVideoInGroupConversation_TC_8834_8836() async throws {
 
@@ -296,6 +298,38 @@ final class GroupMessagingTests: WireUITestCase {
             expectedSenderName: groupTeam.teamMember.name,
             failureMessage: "Expected MP4 video attachment not found"
         )
+    }
+
+    @MainActor
+    func testSendAndReceiveFileInGroupConversation_TC_8837_8844() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+
+        _ = try login(user: groupTeam.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        // WHEN
+        let activeConversationPage = try app.loginUser(
+            email: groupTeam.teamMember.email,
+            password: groupTeam.teamMember.password
+        )
+        .acceptPopup()
+        .openConversation()
+        .uploadFile()
+
+        // THEN - file is sent
+        activeConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+
+        let receivedConversationPage = try activeConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: groupTeam.teamOwner.name)
+            .openConversation()
+
+        // THEN - file is received
+        receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
     @MainActor

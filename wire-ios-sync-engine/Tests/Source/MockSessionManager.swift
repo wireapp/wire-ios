@@ -59,6 +59,11 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
         lastRequestToShowConversationsList = session
     }
 
+    var lastRequestToActivateAccount: ZMUserSession?
+    func activateAccount(of session: ZMUserSession) {
+        lastRequestToActivateAccount = session
+    }
+
     func showUserProfile(user: UserType) {
         lastRequestToShowUserProfile = user
     }

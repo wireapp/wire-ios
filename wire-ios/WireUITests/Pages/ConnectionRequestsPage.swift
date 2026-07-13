@@ -29,12 +29,21 @@ class ConnectionRequestsPage: PageModel {
         app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
     }
 
+    var rejectRequestButton: XCUIElement {
+        app.buttons[Locators.ConnectionRequestsPage.ignoreRequestButton.rawValue]
+    }
+
     var userNameInfo: XCUIElement {
         app.staticTexts[Locators.ConnectionRequestsPage.username.rawValue].firstMatch
     }
 
     func acceptConnectionRequest() throws -> ActiveConversationPage {
         acceptRequestButton.tap()
+        return try ActiveConversationPage()
+    }
+
+    func rejectConnectionRequest() throws -> ActiveConversationPage {
+        rejectRequestButton.tap()
         return try ActiveConversationPage()
     }
 

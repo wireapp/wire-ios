@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// MARK: - Navigation
 
+// MARK: - Navigation
 "general.loading" = "Загрузка…";
 "general.confirm" = "OK";
 "general.failure" = "Что-то пошло не так";
@@ -117,7 +117,9 @@
 
 // MARK: - Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Общий диск";
+"conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Доступ для просмотра";
 "conversation.wireCells.allFiles.navigationTitle" = "Диск";
+"conversation.wireCells.files.viewerAccess.banner" = "У вас есть доступ для просмотра общего диска. Вы не можете загружать, редактировать или управлять файлами.";
 "conversation.wireCells.files.item.subtitle" = "%@ от %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ в %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
@@ -142,6 +144,7 @@
 "conversation.wireCells.files.noData.title" = "Файлов и папок пока нет";
 "conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе.";
 "conversation.wireCells.files.noData.learnMore" = "Узнайте больше об общем диске";
+
 "conversation.wireCells.allFiles.noData.title" = "Пока файлов нет";
 "conversation.wireCells.allFiles.noData.message" = "Для бесед, в которых используется общий диск, все файлы можно найти здесь.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Подробнее";
@@ -193,7 +196,6 @@
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Подробнее о корзине";
 "conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
-"conversation.wireCells.recycleBin.emptyFolder.message" = "Эта папка пуста.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Удалить навсегда";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Удалить навсегда";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "Это приведет к необратимому удалению файла \"%@\"  для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
@@ -205,6 +207,8 @@
 "conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "Эта папка \"%@\" будет восстановлена со всеми файлами и подпапками и снова станет доступной для всех участников этой беседы.";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Восстановить родительскую папку";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Вы не можете восстановить папки или файлы из удаленной папки. Чтобы восстановить нужный элемент, вы должны восстановить его родительскую папку.\n\n Папка \"%@\" будет восстановлена со всеми файлами и подпапками и станет доступной всем участникам этой беседы.";
+"conversation.wireCells.recycleBin.emptyFolder.title" = "Пустая папка";
+"conversation.wireCells.recycleBin.emptyFolder.message" = "Эта папка не содержит файлов или папок.";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Добавить или удалить теги";
@@ -330,3 +334,11 @@
 "conversation.wireCells.filter.fileType.typeName.code" = "Код";
 "conversation.wireCells.filter.fileType.typeName.archive" = "Архивы";
 "conversation.wireCells.filter.fileType.typeName.text" = "Текстовые файлы";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDriveToggleSection.title" = "Общий диск";
+"conversation.details.sharedDriveToggleSection.footer.title" = "Постоянно для этой беседы.";
+"conversation.details.sharedDriveAccessSection.header.title" = "Доступ к общему диску";
+"conversation.details.sharedDriveAccessSection.footer.title" = "Редакторы имеют доступ ко всем файлам и могут управлять ими. Пользователи с правами на просмотр могут только просматривать файлы; они не могут загружать, редактировать или управлять файлами и папками.";
+"conversation.details.sharedDriveAccessSection.footer.subtitle" = "Пользователи, не входящие в команду, создавшую обсуждение, по умолчанию обладают только правами на просмотр.";
+"conversation.details.sharedDriveAccessSection.you" = "Вы";

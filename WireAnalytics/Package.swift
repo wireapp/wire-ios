@@ -10,7 +10,7 @@ let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [.iOS("17.0"), .macOS(.v12)],
+    platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"]),

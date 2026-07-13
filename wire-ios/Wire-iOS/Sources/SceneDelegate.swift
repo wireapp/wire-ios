@@ -151,12 +151,18 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard appRootRouter == nil else { return }
 
         let defaultEnvironment = fetchDefaultEnvironment()
+        let appTaskExecuter = AppBackgroundTaskExecuter(
+            application: UIApplication.shared,
+            isInBackground: UIApplication.shared.applicationState == .background
+        )
+        appTaskExecuter.startObservingLifecycleNotifications()
 
         let sessionManager: SessionManager
         do {
             sessionManager = try createSessionManager(
                 defaultEnvironment: defaultEnvironment,
-                cookieStorage: AppDependencies.cookieStorage
+                cookieStorage: AppDependencies.cookieStorage,
+                backgroundTaskExecuter: appTaskExecuter
             )
         } catch {
             fatalError("sessionManager is not created")
@@ -183,6 +189,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 sessionManager: sessionManager,
                 availabilityChecker: .default,
             ),
+            backgroundTaskExecuter: appTaskExecuter,
             sceneConnectionOptions: connectionOptions
         )
 
@@ -220,7 +227,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     private func createSessionManager(
         defaultEnvironment: BackendEnvironment2,
-        cookieStorage: CookieStorage
+        cookieStorage: CookieStorage,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws -> SessionManager {
         let infoDictionary = Bundle.main.infoDictionary
 
@@ -278,7 +286,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             deleteUserLogs: deleteAllAccountsLogs,
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() },
-            logFilesProvider: LogFilesProvider()
+            logFilesProvider: LogFilesProvider(),
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         AppDependencies.voIPPushManager.delegate = sessionManager

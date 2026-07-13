@@ -59,6 +59,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             (.ok, "GetFeatureConfigsSuccessResponseV12"),
             (.ok, "GetFeatureConfigsSuccessResponseV12"),
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
+            (.ok, "GetFeatureConfigsSuccessResponseV14"),
             (.ok, "GetFeatureConfigsSuccessResponseV14")
         ])
 
@@ -289,11 +290,10 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V14_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses(
-            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV14"), count: 2)
-        )
-
         let supportedVersions = APIVersion.v14.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV14"), count: supportedVersions.count)
+        )
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in

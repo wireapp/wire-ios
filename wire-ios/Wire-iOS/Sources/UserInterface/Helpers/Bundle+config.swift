@@ -17,9 +17,8 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "Bundle")
 
 extension Bundle {
     static var developerModeEnabled: Bool {
@@ -28,7 +27,7 @@ extension Bundle {
 
     static func fileURL(for resource: String, with fileExtension: String) -> URL? {
         guard let filePath = Bundle.main.url(forResource: resource, withExtension: fileExtension) else {
-            zmLog.error("Failed to get \(resource).\(fileExtension) from bundle")
+            WireLogger.ui.error("Failed to get \(resource).\(fileExtension) from bundle")
             return nil
         }
 

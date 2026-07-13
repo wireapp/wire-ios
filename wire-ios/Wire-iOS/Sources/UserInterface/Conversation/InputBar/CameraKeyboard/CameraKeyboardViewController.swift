@@ -22,11 +22,10 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireFoundation
+import WireLogging
 import WireMessagingUI
 import WireReusableUIComponents
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "UI")
 
 // MARK: - CameraKeyboardViewControllerDelegate
 
@@ -391,7 +390,7 @@ class CameraKeyboardViewController: UIViewController {
                                     let data = image.jpegData(compressionQuality: 0.9)
                                     completeBlock(data, info?["PHImageFileUTIKey"] as? String)
                                 } else {
-                                    zmLog.error("Failure: cannot fetch image")
+                                    WireLogger.ui.error("Failure: cannot fetch image")
                                 }
                             }
                         )
@@ -419,7 +418,7 @@ class CameraKeyboardViewController: UIViewController {
                                 self.activityIndicator.stop()
                             }
                             guard let data else {
-                                zmLog.error("Failure: cannot fetch image")
+                                WireLogger.ui.error("Failure: cannot fetch image")
                                 return
                             }
 
@@ -646,16 +645,39 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         delegate?.cameraKeyboardViewController(self, didDeselectImage: asset)
     }
 
-    func deselectItem(withLocalIdentifier localIdentifier: String) {
-        let indexPath = collectionView
-            .indexPathsForSelectedItems?
-            .first(where: {
-                let assetCell = collectionView.cellForItem(at: $0) as? AssetCell
-                return assetCell?.representedAssetIdentifier == localIdentifier
-            })
+    var selectedAssetIdentifiers: [String] {
+        guard let assetLibrary,
+              let selectedIndexPaths = collectionView.indexPathsForSelectedItems else {
+            return []
+        }
+        return selectedIndexPaths
+            .filter { CameraKeyboardSection(rawValue: UInt($0.section)) == .photos }
+            .compactMap { try? assetLibrary.asset(atIndex: UInt($0.item)).localIdentifier }
+    }
 
-        if let indexPath {
-            collectionView.deselectItem(at: indexPath, animated: true)
+    func deselectItem(withLocalIdentifier localIdentifier: String) {
+        guard let assetLibrary else { return }
+
+        for index in 0 ..< assetLibrary.count {
+            guard let asset = try? assetLibrary.asset(atIndex: index) else { continue }
+            if asset.localIdentifier == localIdentifier {
+                let indexPath = IndexPath(item: Int(index), section: Int(CameraKeyboardSection.photos.rawValue))
+                collectionView.deselectItem(at: indexPath, animated: true)
+                return
+            }
+        }
+    }
+
+    func selectItem(withLocalIdentifier localIdentifier: String) {
+        guard let assetLibrary else { return }
+
+        for index in 0 ..< assetLibrary.count {
+            guard let asset = try? assetLibrary.asset(atIndex: index) else { continue }
+            if asset.localIdentifier == localIdentifier {
+                let indexPath = IndexPath(item: Int(index), section: Int(CameraKeyboardSection.photos.rawValue))
+                collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+                return
+            }
         }
     }
 

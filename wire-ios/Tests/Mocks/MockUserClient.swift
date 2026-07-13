@@ -48,10 +48,6 @@ final class MockUserClient: NSObject, UserClientType {
         false
     }
 
-    func resetSession() {
-        // No-op
-    }
-
     func fetchFingerprintOrPrekeys() {
         // No-op
     }

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSyncEngine
 
 extension ConversationInputBarViewController {
@@ -60,7 +61,7 @@ extension ConversationInputBarViewController: LocationSelectionViewControllerDel
                 let useCase = self.userSession.makeAppendLocationMessageUseCase()
                 try useCase.invoke(withLocationData: locationData, in: conversation)
             } catch {
-                Logging.messageProcessing
+                WireLogger.messageProcessing
                     .warn("Failed to append location message. Reason: \(error.localizedDescription)")
             }
         }

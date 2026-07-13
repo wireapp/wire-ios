@@ -16,48 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 package import WireFoundation
+
+import Foundation
 
 package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
 
-    private let repository: any MeetingsRepositoryProtocol
+    private let repository: any MeetingRepositoryProtocol
     private let currentDateProvider: any CurrentDateProviding
-    private let grouper: MeetingsGrouper
-    private let calendar = Calendar.current
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
-        currentDateProvider: any CurrentDateProviding,
-        grouper: MeetingsGrouper = MeetingsGrouper()
+        repository: any MeetingRepositoryProtocol,
+        currentDateProvider: any CurrentDateProviding
     ) {
         self.repository = repository
         self.currentDateProvider = currentDateProvider
-        self.grouper = grouper
     }
 
-    package func invoke(limitToTwoDays: Bool, pageSize: Int, offset: Int) -> PaginatedGroupedMeetings {
-        let now = currentDateProvider.now
-        var meetings = repository.fetchMeetingsStarting(
-            after: now,
+    package func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
+        // The list shows all meetings of the current day — including ones
+        // that already started or ended — and of the following day.
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: currentDateProvider.now)
+        let endOfTomorrow = calendar.date(byAdding: .day, value: 2, to: startOfToday)
+            ?? startOfToday.addingTimeInterval(48 * 3600)
+        let meetings = try await repository.fetchMeetings(
+            in: startOfToday ..< endOfTomorrow,
             offset: offset,
-            limit: pageSize
+            limit: pageSize + 1
         )
 
-        if limitToTwoDays {
-            guard let tomorrowEnd = calendar.todayAndTomorrowRange(using: currentDateProvider)?.end else {
-                return PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: offset)
-            }
-            meetings = meetings.filter { $0.start < tomorrowEnd }
-        }
         let hasMore = meetings.count > pageSize
-        let paginatedMeetings = hasMore ? Array(meetings.prefix(pageSize)) : meetings
-        let groups = grouper.group(paginatedMeetings, byHours: true, sort: .ascending)
+        let page = hasMore ? Array(meetings.prefix(pageSize)) : meetings
 
-        return PaginatedGroupedMeetings(
-            groups: groups,
+        return PaginatedMeetings(
+            meetings: page,
             hasMore: hasMore,
-            nextOffset: offset + pageSize
+            nextOffset: offset + page.count
         )
     }
 

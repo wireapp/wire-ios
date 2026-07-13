@@ -52,6 +52,7 @@ final class IncomingConnectionView: UIView {
     var user: UserType {
         didSet {
             setupLabelText()
+            userImageView.showsInitialsOnly = user.isOnPublicCloudDomain
             userImageView.user = user
         }
     }
@@ -99,6 +100,7 @@ final class IncomingConnectionView: UIView {
         userImageView.accessibilityLabel = "user image"
         userImageView.shouldDesaturate = false
         userImageView.size = .big
+        userImageView.showsInitialsOnly = user.isOnPublicCloudDomain
         userImageView.user = user
 
         updateFederatedIndicator()

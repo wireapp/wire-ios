@@ -24,6 +24,7 @@ struct DeveloperFlagsView: View {
     // MARK: - Properties
 
     @StateObject var viewModel: DeveloperFlagsViewModel
+    @State private var showRestartAlert = false
 
     // MARK: - Views
 
@@ -31,6 +32,11 @@ struct DeveloperFlagsView: View {
         List(viewModel.flags, id: \.self) { flag in
             cell(for: flag)
                 .padding([.top, .bottom])
+        }
+        .alert("Restart required", isPresented: $showRestartAlert) {
+            Button("Restart now", role: .destructive) { exit(0) }
+        } message: {
+            Text("This flag is read when the app launches. Restart the app for the change to take effect.")
         }
     }
 
@@ -44,10 +50,15 @@ struct DeveloperFlagsView: View {
     }
 
     private func binding(for flag: DeveloperFlag) -> Binding<Bool> {
-        var flag = flag
+        var mutableFlag = flag
         return Binding(
-            get: { flag.isOn },
-            set: { flag.isOn = $0 }
+            get: { mutableFlag.isOn },
+            set: { newValue in
+                mutableFlag.isOn = newValue
+                if viewModel.flagsRequiringRestart.contains(flag) {
+                    showRestartAlert = true
+                }
+            }
         )
     }
 }

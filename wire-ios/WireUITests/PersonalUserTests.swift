@@ -18,8 +18,50 @@
 
 import XCTest
 
+/// [core-messenger]
 final class PersonalUsersTests: WireUITestCase {
 
+    private typealias ConversationFilterTeam = (
+        teamOwner: UserInfo,
+        teamMember: UserInfo,
+        groupName: String,
+        channelName: String
+    )
+
+    @MainActor
+    private func registerTeamForConversationFilter() async throws -> ConversationFilterTeam {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let channelName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, teamMembers, qualifiedIDs, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .channel(channelName)
+        )
+
+        try await UserHelper.default.createGroupConversations(
+            qualifiedIds: qualifiedIDs,
+            owner: teamOwner,
+            groupName: groupName
+        )
+
+        return (
+            teamOwner,
+            try XCTUnwrap(teamMembers.first),
+            groupName,
+            channelName
+        )
+    }
+
+    @MainActor
+    private func loginAndCreateOneOnOneConversation(for user: UserInfo) throws -> ConversationsPage {
+        try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .openUserDetailsInContactList()
+            .tapStartConversationButton()
+            .goBackToConversationPage()
+    }
+
+    /// [critical]
     @MainActor
     func testRegisterAsPersonalUser_TC_8971() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
@@ -57,6 +99,7 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
     }
 
+    /// [critical]
     @MainActor
     func testLoginAsExistingPersonalUser_TC_8804() async throws {
         let user = try await UserHelper.default.createPersonalUser()
@@ -69,18 +112,20 @@ final class PersonalUsersTests: WireUITestCase {
             .enterPassword(user.password)
     }
 
+    /// [critical]
     @MainActor
-    func testPersonalAccountLifecycle_TC_8807_TC_8810_TC_8819_TC_8826_TC_8867_TC_9450() async throws {
+    func testSearchUserAndConnectionRequestLifecycle_TC_8806_8807_8808_8809_8810() async throws {
         let userA = try await UserHelper.default.createPersonalUser()
         let userB = try await UserHelper.default.createPersonalUser()
-        let messageFromUserB = "Hello from \(userB.name)"
+        let userC = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
 
         let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
             .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapSearchBox()
             .searchUserByUserHandle(userB.username)
-            .tapSearchedUserCell()
+            .tapSearchedUserCell(handle: userB.username)
 
         let userNameB = try XCTUnwrap(userDetailsPage.getUserName())
         XCTAssertEqual(userNameB, "@\(userB.username)", "username didn't match @\(userB.username)")
@@ -90,6 +135,7 @@ final class PersonalUsersTests: WireUITestCase {
             .closeNewConversationPage()
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
+
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
             .acceptPopup()
             .openPendingRequest()
@@ -97,41 +143,70 @@ final class PersonalUsersTests: WireUITestCase {
         let userNameA = try XCTUnwrap(connectionRequestsPage.getUserName())
         XCTAssertEqual(userNameA, "@\(userA.username)", "username didn't match @\(userA.username)")
 
-        var conversationsPage = try connectionRequestsPage.acceptConnectionRequest()
-            .sendMessage(messageFromUserB)
+        let conversationsPage = try connectionRequestsPage.acceptConnectionRequest()
             .goBackToConversationPage()
 
         let nameA = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(nameA, userA.name, "name didn't match \(userA.name)")
 
-        conversationsPage = try conversationsPage.openUserProfilePage()
-            .switchUserAccountForUser(withName: userA.name)
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
 
-        let nameUserB = try XCTUnwrap(conversationsPage.getNameLabel())
-        XCTAssertEqual(nameUserB, userB.name, "name didn't match \(userB.name)")
+        let secondConnectionRequestsPage = try conversationsPage.openPendingRequest()
+        let userNameC = try XCTUnwrap(secondConnectionRequestsPage.getUserName())
+        XCTAssertEqual(userNameC, "@\(userC.username)", "username didn't match @\(userC.username)")
 
-        let activeConversationPage = try conversationsPage.openConversation()
+        let otherUserConversationPage = try secondConnectionRequestsPage.rejectConnectionRequest()
+            .goBackToConversationPage()
 
-        let fetchMessages = activeConversationPage.fetchMessages()
-        XCTAssertTrue(
-            fetchMessages.contains(messageFromUserB),
-            "Expected message '\(messageFromUserB)' not found in sent messages: \(fetchMessages)"
+        XCTAssertFalse(
+            otherUserConversationPage.conversationCell(named: userC.name).exists,
+            "Conversation with rejected user \(userC.name) is still shown after rejecting @\(userC.username) request"
         )
+    }
 
-        var accountSettingsPage = try activeConversationPage.goBackToConversationPage()
+    /// [critical]
+    @MainActor
+    func testBlockAndDeleteUser_TC_8867_9450() async throws {
+
+        let userB = try await UserHelper.default.createPersonalUser()
+        let userA = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
+
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
+        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: userB, userId: userA.id)
+
+        _ = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let conversationsPage = try app.loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
             .longPressForMoreOptionOnConversation()
             .blockUser()
-            .openSettings()
-            .openAccountSettings()
 
-        let accountNameUserA = try XCTUnwrap(accountSettingsPage.getAccountName())
+        let blockedConversationCell = conversationsPage.conversationCell.buttons[userA.name]
+
+        XCTAssertFalse(
+            blockedConversationCell.exists,
+            "Blocked conversation is still visible after blocking"
+        )
+
+        var accountSettingsPage = try conversationsPage.openSettings()
+            .openAccountSettings()
+        let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
+
         accountSettingsPage = try accountSettingsPage.deleteAccount()
             .openSettings()
             .openAccountSettings()
 
-        let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
+        let accountNameUserA = try XCTUnwrap(accountSettingsPage.getAccountName())
 
-        XCTAssertNotEqual(accountNameUserA, accountNameUserB, "Account name didn't change after deleting")
+        XCTAssertNotEqual(
+            accountNameUserA,
+            accountNameUserB,
+            "Account name didn't change after deleting, still showing deleted one"
+        )
     }
 
     @MainActor
@@ -174,7 +249,7 @@ final class PersonalUsersTests: WireUITestCase {
 
         XCTAssertTrue(
             conversationsPage.textFilteredByFavourites.exists,
-            "'Filtered by Favorites' label did not appear"
+            "Favorites filter label did not appear"
         )
 
         XCTAssertTrue(
@@ -197,7 +272,70 @@ final class PersonalUsersTests: WireUITestCase {
 
         XCTAssertTrue(
             conversationsPage.textFilteredByOneOnOne.exists,
-            "'Filtered by Favorites' label did not appear"
+            "OneOnOne filter label did not appear"
+        )
+    }
+
+    @MainActor
+    func testFilterConversationByGroupsChannelsAndOneOnOne_TC_8875_8876_8877() async throws {
+        // GIVEN
+        let team = try await registerTeamForConversationFilter()
+
+        // WHEN
+        let conversationsPage = try loginAndCreateOneOnOneConversation(for: team.teamOwner)
+
+        // WHEN - Filtering by group
+        _ = try conversationsPage.filterConversationByGroup()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.groupName).waitForExistence(timeout: 5),
+            "Group conversation did not appear"
+        )
+
+        // WHEN - Filtering by channel
+        _ = try conversationsPage.filterConversationByChannel()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.channelName).waitForExistence(timeout: 5),
+            "Channel conversation did not appear"
+        )
+
+        // WHEN - Filtering by OneOnOne
+        _ = try conversationsPage.filterConversationByOneOnOne()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.teamMember.name).waitForExistence(timeout: 5),
+            "OneOnOne conversation did not appear"
+        )
+    }
+
+    @MainActor
+    func testMoveConversationToFolderAndFilterByFolder_TC_8870_8878() async throws {
+        // GIVEN
+        let team = try await registerTeamForConversationFilter()
+
+        // WHEN
+        let conversationsPage = try app.loginUser(email: team.teamOwner.email, password: team.teamOwner.password)
+            .acceptPopup()
+            .longPressForMoreOptionOnConversation(named: team.groupName)
+            .moveConversationToNewFolder(named: team.groupName)
+            .filterConversationByFolder(named: team.groupName)
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage
+                .conversationCell(named: team.groupName)
+                .waitForExistence(timeout: 5),
+            "Conversation moved to folder did not appear in folder filter"
+        )
+
+        XCTAssertEqual(
+            conversationsPage.conversationCells.count,
+            1,
+            "Expected only one conversation to be visible after filtering by folder"
         )
     }
 }

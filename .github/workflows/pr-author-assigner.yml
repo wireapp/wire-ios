@@ -7,6 +7,6 @@ jobs:
     assign-author:
         runs-on: ubuntu-24.04
         steps:
-            -   uses: samspills/assign-pr-to-author@v1.0.2
+            -   uses: samspills/assign-pr-to-author@b313feb250ff414d3aff26525b986f080ee7bd7a # v1.0.2
                 with:
                     repo-token: '${{ secrets.GITHUB_TOKEN }}'

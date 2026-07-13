@@ -19,9 +19,8 @@
 import SafariServices
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSystem
-
-private let log = ZMSLog(tag: "link opening")
 
 extension URL {
 
@@ -31,7 +30,7 @@ extension URL {
         if opened {
             return true
         } else {
-            log.debug("Did not open \"\(self)\" in a twitter application or third party browser.")
+            WireLogger.ui.debug("Did not open \"\(self)\" in a twitter application or third party browser.")
             guard UIApplication.shared.canOpenURL(self) else { return false }
             UIApplication.shared.open(self)
             return true

@@ -40,7 +40,6 @@ class IncomingCallPage: PageModel {
 
     func acceptIncommingCall() throws -> OngoingCallPage {
         acceptButton.tap()
-        turnOffMicrophoneButton.tap()
         return try OngoingCallPage()
     }
 }

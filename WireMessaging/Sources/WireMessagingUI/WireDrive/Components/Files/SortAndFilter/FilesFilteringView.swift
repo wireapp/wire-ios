@@ -238,7 +238,7 @@ struct FilesFilteringView: View {
         viewModel.filtersSelection.hasFilterSelected
     }
 
-    private var conversationsParticipants: Set<WireDriveConversation.Participant> {
+    private var conversationsParticipants: Set<WireDriveParticipant> {
         Set(conversations.flatMap(\.participants))
     }
 
@@ -266,7 +266,7 @@ struct FilesFilteringView: View {
                 tags: [],
                 types: [.audio],
                 conversations: [],
-                owners: Set([WireDriveConversation.Participant].mocked().dropFirst()),
+                owners: Set([WireDriveParticipant].mocked().dropFirst()),
                 sharedLink: true
             ),
             isBrowsing: true,

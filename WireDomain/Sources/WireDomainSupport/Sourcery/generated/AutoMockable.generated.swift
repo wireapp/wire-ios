@@ -30,6 +30,7 @@ import WireDataModel
 import WireDomainPackage
 import WireCoreCrypto
 import Combine
+import WireCallingDomain
 
 @testable import WireDomain
 
@@ -739,17 +740,17 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool)] = []
-    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod: ((WireDomain.Conversation, Date, Bool, Bool) async -> Void)?
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool, markAsRead: Bool)] = []
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod: ((WireDomain.Conversation, Date, Bool, Bool, Bool) async -> Void)?
 
-    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool) async {
-        storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled, isMLSEnabled: isMLSEnabled))
+    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool, markAsRead: Bool) async {
+        storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled, isMLSEnabled: isMLSEnabled, markAsRead: markAsRead))
 
-        guard let mock = storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod else {
-            fatalError("no mock for `storeConversationTimestampIsFederationEnabledIsMLSEnabled`")
+        guard let mock = storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod else {
+            fatalError("no mock for `storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead`")
         }
 
-        await mock(conversation, timestamp, isFederationEnabled, isMLSEnabled)
+        await mock(conversation, timestamp, isFederationEnabled, isMLSEnabled, markAsRead)
     }
 
     // MARK: - storeConversation
@@ -3556,6 +3557,34 @@ public class MockPullMLSStatusSyncProtocol: PullMLSStatusSyncProtocol {
 
 }
 
+class MockPullMeetingsSyncProtocol: PullMeetingsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
 public class MockPullPendingUpdateEventsSyncProtocol: PullPendingUpdateEventsSyncProtocol {
 
     // MARK: - Life cycle
@@ -4093,6 +4122,30 @@ public class MockResetMLSConversationLockRepositoryProtocol: ResetMLSConversatio
         }
 
         mock(conversationID)
+    }
+
+}
+
+public class MockResetProteusSessionUseCaseProtocol: ResetProteusSessionUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUserClient_Invocations: [UserClient] = []
+    public var invokeUserClient_MockMethod: ((UserClient) async -> Void)?
+
+    public func invoke(userClient: UserClient) async {
+        invokeUserClient_Invocations.append(userClient)
+
+        guard let mock = invokeUserClient_MockMethod else {
+            fatalError("no mock for `invokeUserClient`")
+        }
+
+        await mock(userClient)
     }
 
 }

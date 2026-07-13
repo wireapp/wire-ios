@@ -61,8 +61,8 @@ final class GroupConversationHeaderView: UIView {
         ])
     }
 
-    private func makeGuestWarningBanner() -> UIView {
-        let warningView = GuestAccountWarningView()
+    private func makeGuestWarningBanner(variant: GuestAccountWarningView.Variant) -> UIView {
+        let warningView = GuestAccountWarningView(variant: variant)
         warningView.translatesAutoresizingMaskIntoConstraints = false
         let container = UIView()
         container.backgroundColor = SemanticColors.View.backgroundGreen
@@ -72,7 +72,10 @@ final class GroupConversationHeaderView: UIView {
     }
 
     private func populate(conversation: ZMConversation, selfUser: any UserType) {
-        let bannerView = makeGuestWarningBanner()
+        let variant: GuestAccountWarningView.Variant = conversation
+            .isChannel ? .channel(driveEnabled: conversation.isWireDriveEnabled) :
+            .group(driveEnabled: conversation.isWireDriveEnabled)
+        let bannerView = makeGuestWarningBanner(variant: variant)
         stackView.addArrangedSubview(bannerView)
         stackView.setCustomSpacing(16, after: bannerView)
 
@@ -87,7 +90,11 @@ final class GroupConversationHeaderView: UIView {
            selfUser.canAddUser(to: conversation),
            conversation.conversationType == .group,
            conversation.allowGuests {
-            let guestsView = GuestsAllowedView(isChannel: conversation.isChannel)
+            let guestsView = GuestsAllowedView(
+                isChannel: conversation.isChannel,
+                isWireDriveEnabled: conversation.isWireDriveEnabled
+            )
+
             guestsView.onInviteTapped = { [weak self] in
                 guard let self else { return }
                 delegate?.conversationMessageWantsToOpenGuestOptionsFromView(self, sourceView: guestsView)
@@ -111,11 +118,12 @@ final class GroupConversationHeaderView: UIView {
         }
 
         if conversation.isWireDriveEnabled {
-            let fileCollabDesc = ConversationFileCollaborationSystemMessageCellDescription()
-            let fileCollabCell =
-                ConversationWarningSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>()
-            fileCollabCell.configure(with: fileCollabDesc.configuration, animated: false)
-            stackView.addArrangedSubview(fileCollabCell)
+            let sharedDriveDesc = ConversationSharedDriveSystemMessageCellDescription(
+                selfUserRole: conversation.isTeamConversation ? .editor : .viewer
+            )
+            let sharedDriveCell = ConversationSharedDriveSystemMessageCellDescription.View()
+            sharedDriveCell.configure(with: sharedDriveDesc.configuration, animated: false)
+            stackView.addArrangedSubview(sharedDriveCell)
 
             let timerDescription = ConversationMessageTimerSystemMessageCellDescription(state: .unavailable)
             let timerCell = ConversationWarningSystemMessageCell<ConversationMessageTimerSystemMessageCellDescription>()

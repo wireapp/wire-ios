@@ -18,6 +18,7 @@
 
 import XCTest
 
+/// [core-messenger]
 final class SSOTests: WireUITestCase {
 
     private func registerTeamOwnerWithSSOEnabled() async throws -> UserInfo {
@@ -25,6 +26,12 @@ final class SSOTests: WireUITestCase {
         let teamID = try XCTUnwrap(teamOwner.teamID, "teamOwner.teamID is nil")
         try await ssoHelper.enableSSOFeature(teamID: teamID)
         return teamOwner
+    }
+
+    private func createSSOUser() async throws -> UserInfo {
+        let teamOwner = try await registerTeamOwnerWithSSOEnabled()
+        let ssoMember = UserGenerator.generateUniqueUserInfo()
+        return try await ssoHelper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
     }
 
     @MainActor
@@ -35,12 +42,15 @@ final class SSOTests: WireUITestCase {
             .acceptFirstTimeAlert()
     }
 
+    /// [critical]
     @MainActor
     func testSSOLoginWithSSOCodeAndNoResetPassword_TC_8966_TC_10850() async throws {
+        // Skipped: Okta license removed, so the SSO IdP backing this test is no longer available.
+        // Re-enable once a replacement SSO provider is configured.
+        throw XCTSkip("Okta license removed - SSO IdP unavailable")
+
         // GIVEN
-        let teamOwner = try await registerTeamOwnerWithSSOEnabled()
-        let ssoMember = UserGenerator.generateUniqueUserInfo()
-        let ssoUser = try await ssoHelper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
+        let ssoUser = try await createSSOUser()
         let ssoCode = try ssoHelper.getSSOCode()
 
         // WHEN
@@ -61,13 +71,56 @@ final class SSOTests: WireUITestCase {
         )
     }
 
+    /// [critical]
+    @MainActor
+    func testReloginSSO_TC_8970() async throws {
+        // Skipped: Okta license removed, so the SSO IdP backing this test is no longer available.
+        // Re-enable once a replacement SSO provider is configured.
+        throw XCTSkip("Okta license removed - SSO IdP unavailable")
+
+        // GIVEN
+        let ssoUser = try await createSSOUser()
+        let ssoCode = try ssoHelper.getSSOCode()
+
+        // WHEN
+        _ = try await loginWithSSOCode(
+            email: ssoUser.email,
+            password: ssoUser.password,
+            ssoCode: ssoCode
+        )
+        .acceptPopupOnTeamMemberSetup()
+        .setUsername(ssoUser.username)
+        .openSettings()
+        .openAccountSettings()
+        .logoutWithoutPassword()
+
+        // AND Perform Relogin
+        let conversationsPage = try await loginWithSSOCode(
+            email: ssoUser.email,
+            password: ssoUser.password,
+            ssoCode: ssoCode
+        )
+        .acceptPopup()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.pageMainElement.exists,
+            "Conversations page did not appear after SSO relogin"
+        )
+    }
+
     @MainActor
     func testSCIMManagedUserCannotChangeAccountFields_TC_10851() async throws {
+        // Skipped: Okta license removed, so the SSO IdP backing this test is no longer available.
+        // Re-enable once a replacement SSO provider is configured.
+        throw XCTSkip("Okta license removed - SSO IdP unavailable")
 
         // GIVEN
         let teamOwner = try await registerTeamOwnerWithSSOEnabled()
-        let scimMember = UserGenerator.generateUniqueUserInfo()
-        let scimUser = try await ssoHelper.createSCIMManagedSSOUser(owner: teamOwner, ssoUser: scimMember)
+        let scimUser = try await ssoHelper.createSCIMManagedSSOUser(
+            owner: teamOwner,
+            ssoUser: UserGenerator.generateUniqueUserInfo()
+        )
         let ssoCode = try ssoHelper.getSSOCode()
 
         // WHEN
@@ -92,6 +145,7 @@ final class SSOTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testSSOLoginWithClaimedDomain_TC_8967() async throws {
 

@@ -152,6 +152,19 @@ final class DeviceInfoViewModelTests: XCTestCase {
         await fulfillment(of: [expectation])
     }
 
+    func testThatItCallsResetSessionMethodInDeviceActionsHandlerAndShowsSuccess_WhenResetSessionIsCalled() async {
+        let expectation = expectation(description: "resetSession should be called")
+        mockDeviceActionsHandler.resetSession_MockMethod = {
+            expectation.fulfill()
+        }
+
+        XCTAssertFalse(deviceInfoViewModel.showResetSessionSuccess)
+        await deviceInfoViewModel.resetSession()
+
+        await fulfillment(of: [expectation])
+        XCTAssertTrue(deviceInfoViewModel.showResetSessionSuccess)
+    }
+
     func testThatItCallsEnrollMethodInDeviceActionsHandler_WhenEnrolClientMethodIsCalled() async {
         let expectation = expectation(description: "enrollClient should be called")
         mockDeviceActionsHandler.enrollClient_MockMethod = {

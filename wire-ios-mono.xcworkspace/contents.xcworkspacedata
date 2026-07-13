@@ -89,6 +89,12 @@
          location = "group:beta_app_release.yml">
       </FileRef>
       <FileRef
+         location = "group:create_release_branch.yml">
+      </FileRef>
+      <FileRef
+         location = "group:sbom.yml">
+      </FileRef>
+      <FileRef
          location = "group:c1_c2_c3_app_release_production.yml">
       </FileRef>
       <FileRef
@@ -99,6 +105,9 @@
       </FileRef>
       <FileRef
          location = "group:changelog.yml">
+      </FileRef>
+      <FileRef
+         location = "group:gov_app_release.yml">
       </FileRef>
       <FileRef
          location = "group:cherry-pick-from-release-to-develop.yml">
@@ -135,6 +144,9 @@
       </FileRef>
       <FileRef
          location = "group:swiftformat.yml">
+      </FileRef>
+      <FileRef
+         location = "group:ios_release_status.yml">
       </FileRef>
       <FileRef
          location = "group:swiftlint.yml">
@@ -261,6 +273,9 @@
       location = "group:WireBackup">
    </FileRef>
    <FileRef
+      location = "group:WireCalling">
+   </FileRef>
+   <FileRef
       location = "group:WireData">
    </FileRef>
    <FileRef
@@ -283,8 +298,5 @@
    </FileRef>
    <FileRef
       location = "group:WirePlugins">
-   </FileRef>
-   <FileRef
-      location = "group:WireCalling">
    </FileRef>
 </Workspace>

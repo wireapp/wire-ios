@@ -42,6 +42,28 @@ extension ZMClientMessage: TextMessageData {
         underlyingMessage?.textData?.hasQuote ?? false
     }
 
+    public var quotedMessageIsDeleted: Bool {
+        // The `quote` relationship is cleared when the quoted message is deleted (its `replies`
+        // set is emptied), so a deleted quote and a quote we never received both leave `quote ==
+        // nil`. Resolve the quoted nonce to distinguish them: a deleted message survives as a
+        // hidden tombstone (`hasBeenDeleted`), whereas an unseen message has no local object.
+        guard quote == nil,
+              hasQuote,
+              let managedObjectContext,
+              let conversation,
+              let quotedMessageID = underlyingMessage?.textData?.quote.quotedMessageID,
+              let nonce = UUID(uuidString: quotedMessageID),
+              let quotedMessage = ZMOTRMessage.fetch(
+                  withNonce: nonce,
+                  for: conversation,
+                  in: managedObjectContext
+              )
+        else {
+            return false
+        }
+        return quotedMessage.hasBeenDeleted
+    }
+
     public var messageText: String? {
         underlyingMessage?.textData?.content.removingExtremeCombiningCharacters
     }

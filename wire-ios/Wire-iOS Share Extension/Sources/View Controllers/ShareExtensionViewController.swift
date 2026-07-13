@@ -35,7 +35,6 @@ import WireShareEngine
 import WireUtilities
 
 typealias Completion = () -> Void
-private let zmLog = ZMSLog(tag: "UI")
 
 /// The delay after which a progess view controller will be displayed if all messages are not yet sent.
 private let progressDisplayDelay: TimeInterval = 0.5
@@ -138,6 +137,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func setup() {
         DeveloperOverrides.storage = .shared()
+        DeveloperFlag.storage = .applicationGroup
         setUpObserver()
         setUpDatadog()
     }
@@ -162,12 +162,12 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
 
+        if let sortedAttachments = extensionContext?.attachments.sorted {
+            attachments = sortedAttachments
+        }
+
         Task { @MainActor in
             await updateAccount(currentAccount)
-
-            if let sortedAttachments = extensionContext?.attachments.sorted {
-                attachments = sortedAttachments
-            }
         }
     }
 
@@ -222,6 +222,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue
         )
+
+        if DeveloperFlag.simulateMainAppRequiredError.isOn {
+            throw SharingSessionLoader.Failure.mainAppRequired(message: "simulated developer flag")
+        }
+
         sharingSession = try await loader.load()
     }
 
@@ -334,7 +339,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             case .startingSending:
                 WireLogger.shareExtension.info("progress event: start sending")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                    guard postContent.sentAllSendables, self.progressViewController == nil else { return }
+                    guard !postContent.sentAllSendables, self.progressViewController == nil else { return }
                     self.presentSendingProgress(mode: .sending)
                 }
 

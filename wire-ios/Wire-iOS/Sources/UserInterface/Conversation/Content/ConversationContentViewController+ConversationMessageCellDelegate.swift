@@ -68,9 +68,19 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
 
         let actionView = view.targetView(for: message, dataSource: dataSource)
         let shouldDismissModal = action != .delete && action != .copy
-        if messagePresenter.modalTargetController?.presentedViewController != nil,
+        if let modalTargetController = messagePresenter.modalTargetController,
+           let presented = modalTargetController.presentedViewController,
            shouldDismissModal {
-            messagePresenter.modalTargetController?.dismiss(animated: true) {
+            // Only animate the dismissal when no transition is already in flight.
+            // A presented controller that is still being presented/dismissed (e.g. the
+            // system context-menu zoom morph on iOS 18+) collides with an animated
+            // dismiss and aborts inside _UIZoomTransitionController via
+            // -[UIView _morphPreviewFromCurrentState:...]. A non-animated dismiss
+            // bypasses the zoom transition controller entirely.
+            let isTransitioning = presented.isBeingPresented
+                || presented.isBeingDismissed
+                || modalTargetController.transitionCoordinator != nil
+            modalTargetController.dismiss(animated: !isTransitioning) {
                 self.messageAction(
                     actionId: action,
                     for: message,

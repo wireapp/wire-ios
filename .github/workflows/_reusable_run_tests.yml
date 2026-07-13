@@ -19,7 +19,7 @@ on:
       run_critical_flows:
         type: boolean
         required: true
-      kalium_ref:
+      ui_test_tags:
         type: string
         required: false
         default: ''
@@ -31,6 +31,10 @@ on:
         type: string
         required: true
         default: 'failure' # values: always | failure | never
+      timeout_minutes:
+        type: number
+        required: false
+        default: 90
 
     secrets:
       ZENKINS_USERNAME:
@@ -53,7 +57,7 @@ jobs:
   run-tests:
     name: Run tests
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
-    timeout-minutes: 90
+    timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
       contents: read
       pull-requests: write
@@ -67,7 +71,7 @@ jobs:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ inputs.branch }}
           lfs: 'true'
@@ -93,17 +97,17 @@ jobs:
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
         id: xcode-version
 
-      - uses: maxim-lobanov/setup-xcode@v1.6.0
+      - uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd # v1.6.0
         with:
           xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
 
       - name: Load .env file
-        uses: xom9ikk/dotenv@v2
+        uses: xom9ikk/dotenv@d0a56edc74279820eabbe34477511327e710d0de # v2.4.0
         with:
           path: fastlane/
 
       - name: Restore Carthage Cache
-        uses: actions/cache@v3
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
         id: cache-carthage
         with:
           path: Carthage
@@ -117,7 +121,7 @@ jobs:
         uses: ./.github/actions/cache-swift-packages
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           bundler-cache: true
 
@@ -136,7 +140,7 @@ jobs:
 
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
-        uses: 1password/install-cli-action@v1
+        uses: 1password/install-cli-action@143a85f84a90555d121cde2ff5872e393a47ab9f # v1.0.0
 
       - name: Generate env file
         if: ${{ inputs.run_critical_flows }}
@@ -144,18 +148,22 @@ jobs:
           bundle exec fastlane generate_env
 
       - name: Setup Kalium Testservice
-        if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        if: ${{ inputs.run_critical_flows }}
         uses: ./.github/actions/kalium-testservice/setup
-        with:
-          kalium_ref: ${{ inputs.kalium_ref }}
 
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
+        env:
+          UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
         run: |
-          bundle exec fastlane run_uitests
+          if [ -n "$UI_TEST_TAGS" ]; then
+            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS"
+          else
+            bundle exec fastlane run_uitests
+          fi
 
       - name: Stop Kalium Testservice
-        if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        if: ${{ always() && inputs.run_critical_flows }}
         uses: ./.github/actions/kalium-testservice/stop
         with:
           print_logs_on_failure: ${{ job.status != 'success' }}
@@ -211,6 +219,11 @@ jobs:
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
 
+      - name: Annotate test failures
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        run: ruby scripts/annotate_test_failures.rb
+
       - name: Extract test summary
         if: ${{ always() }}
         id: test-summary
@@ -220,7 +233,7 @@ jobs:
 
       - name: Upload .xcresult files as artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: artifacts/**/*.xcresult
@@ -234,7 +247,7 @@ jobs:
           xcrun swift test --package-path ./scripts
 
       - name: Upload Failed snapshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
           name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
@@ -243,7 +256,7 @@ jobs:
             xcodebuild*.log
 
       - name: Upload Test Reports as Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
@@ -255,7 +268,7 @@ jobs:
 
       - name: Publish Test Results Summary
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        uses: EnricoMi/publish-unit-test-result-action/macos@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         with:
           files: |
             build/reports/*.junit
@@ -322,7 +335,7 @@ jobs:
 
 
       - name: Archiving DerivedData Logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
           name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
@@ -340,11 +353,11 @@ jobs:
           echo "commit_message=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
 
       - name: Always Notify on Wire
-        uses: 8398a7/action-slack@v3
+        uses: ./.github/actions/notify-wire
         continue-on-error: true
         if: ${{ inputs.notify == 'always' && always() }}
         with:
-          status: ${{ job.status }}
+          notify: custom
           text: |
             📋 **XCTest Run Summary for ${{ env.SANITIZED_BRANCH }}**
 
@@ -358,11 +371,11 @@ jobs:
             ${{ steps.test-summary.outputs.report_message }}
 
       - name: Only Notify on Wire failures
-        uses: 8398a7/action-slack@v3
+        uses: ./.github/actions/notify-wire
         continue-on-error: true
         if: ${{ inputs.notify == 'failure' && failure() }}
         with:
-          status: ${{ job.status }}
+          notify: custom
           text: |
             📋 **🚨 XCTest Run Summary for ${{ env.SANITIZED_BRANCH }} failed 🆘**
 
@@ -374,45 +387,6 @@ jobs:
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
             ${{ steps.test-summary.outputs.report_message }}
-
-  analyze-xcresults:
-    needs: run-tests
-    name: Analyze xcresults
-    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' && needs.run-tests.outputs.xcresult_files != '' && needs.run-tests.outputs.xcresult_files != '[]' }}
-    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
-    strategy:
-      matrix:
-        xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
-      fail-fast: false # avoid to fail one job
-    steps:
-      - name: Sanitize branch name
-        run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
-          else
-            BRANCH="${GITHUB_REF#refs/heads/}"
-          fi
-          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
-          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
-
-      - name: Download .xcresult files
-        uses: actions/download-artifact@v4
-        with:
-          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
-          path: ./artifacts
-
-      - name: Display downloaded files
-        run: ls -R
-      
-      - name: Analyze .xcresult file
-        continue-on-error: true
-        uses: wireapp/analyze-xcoderesults-action@228125b6d1488f02b1d80e2040cbfac88c2b1cb3
-        with:
-          results: ${{ matrix.xcresult_file }}
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-test-results-datadadog:
     name: Upload to Datadog
@@ -432,7 +406,7 @@ jobs:
           SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
           echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ inputs.branch }}
           lfs: 'false'
@@ -440,7 +414,7 @@ jobs:
 
       - name: Download tests results
         id: download-test-results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         continue-on-error: true
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
@@ -450,4 +424,3 @@ jobs:
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
-

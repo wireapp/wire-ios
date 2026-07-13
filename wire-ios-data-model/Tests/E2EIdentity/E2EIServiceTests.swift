@@ -38,7 +38,10 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: mockCoreCrypto
+        )
         sut = E2EIService(
             e2eIdentity: mockE2eIdentity,
             coreCryptoProvider: mockCoreCryptoProvider,

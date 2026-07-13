@@ -29,6 +29,7 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSyncEngine
+import WireSystem
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

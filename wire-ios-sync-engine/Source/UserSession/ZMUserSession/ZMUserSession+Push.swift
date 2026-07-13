@@ -206,11 +206,23 @@ extension ZMUserSession {
         // TODO: [WPB-17220] new NSE - callback action is currently broken - disabling this action for now
 //        case NotificationActionIdentifier.callbackIdentifier:
 //            callback(with: userInfo, completionHandler: completionHandler)
+        case UNNotificationDefaultActionIdentifier where Self.isIncomingCallCategory(categoryIdentifier):
+            // Default tap on an incoming-call notification: switch to this session's account
+            // but do not navigate to the conversation. The post-activation flow
+            // (AppRootRouter `.authenticated` → updateActiveCallPresentationState) will
+            // present the incoming-call UI.
+            sessionManager?.activateAccount(of: self)
+            completionHandler()
         default:
             showContent(for: userInfo)
             completionHandler()
         }
 
+    }
+
+    private static func isIncomingCallCategory(_ categoryIdentifier: String) -> Bool {
+        categoryIdentifier == WireDomain.NotificationCategory.incomingCall.rawValue
+            || categoryIdentifier == PushNotificationCategory.incomingCall.rawValue
     }
 
 }

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 
 enum CallDegradationReason: Equatable {
     case invalidCertificate
@@ -99,7 +100,7 @@ final class CallDegradationController: UIViewController {
             !alertViewController.isBeingPresented
         else { return }
 
-        Log.calling.debug("Presenting alert about degraded call")
+        WireLogger.calling.debug("Presenting alert about degraded call")
         targetViewController?.present(alertViewController, animated: !ProcessInfo.processInfo.isRunningTests)
     }
 }

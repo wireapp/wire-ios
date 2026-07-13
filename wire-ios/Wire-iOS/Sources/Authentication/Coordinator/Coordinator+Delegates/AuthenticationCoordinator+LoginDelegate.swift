@@ -25,7 +25,7 @@ extension AuthenticationCoordinator: LoginDelegate {
         eventResponderChain.handleEvent(ofType: .authenticationFailure(error as NSError))
     }
 
-    /// Invoked when requesting a login code succeded
+    /// Invoked when requesting a login code succeeded
     func loginCodeRequestDidSucceed() {
         eventResponderChain.handleEvent(ofType: .loginCodeAvailable)
     }
@@ -42,7 +42,7 @@ extension AuthenticationCoordinator: LoginDelegate {
 
     /// Invoked when the authentication succeeded and the user now has a valid
     func authenticationDidSucceed() {
-        log.info("Received \"authentication did succeed\" event. Ignoring, waiting for client registration event.")
+        logger.info("Received \"authentication did succeed\" event. Ignoring, waiting for client registration event.")
     }
 
     /// Invoked when we have provided correct credentials and have an opportunity to import backup

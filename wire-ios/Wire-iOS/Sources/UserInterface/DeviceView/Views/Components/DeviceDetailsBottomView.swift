@@ -34,7 +34,9 @@ struct DeviceDetailsBottomView: View {
     var resetSessionView: some View {
         HStack {
             Button {
-                viewModel.resetSession()
+                Task {
+                    await viewModel.resetSession()
+                }
             } label: {
                 Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
                     .padding(.all, ViewConstants.Padding.standard)

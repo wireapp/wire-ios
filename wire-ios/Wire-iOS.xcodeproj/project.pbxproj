@@ -153,6 +153,8 @@
 		EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4929719CDC0008B894 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; };
 		EEE25B5A29719DA80008B894 /* WireImages.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FADE000000000000000000A2 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A1 /* WireDomainSupport.framework */; };
+		FADE000000000000000000A3 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A1 /* WireDomainSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -427,6 +429,7 @@
 		EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libPhoneNumberiOS.xcframework; path = ../Carthage/Build/libPhoneNumberiOS.xcframework; sourceTree = "<group>"; };
 		EEE25B5829719DA80008B894 /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCommonComponents.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FADE000000000000000000A1 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -515,6 +518,7 @@
 				AccountViewSnapshotTests.swift,
 				AddParticipantsViewControllerSnapshotTests.swift,
 				AnalyticsTrackingManager/AnalyticsTrackingAvailabilityCheckerTests.swift,
+				AppBackgroundTaskExecuterTests.swift,
 				AppLockModuleViewTests.swift,
 				AppStateCalculatorTests.swift,
 				ArticleViewTests.swift,
@@ -585,8 +589,8 @@
 				ConversationCell/BurstTimestampSenderMessageCellDescriptionTests.swift,
 				ConversationCell/CompositeMessageCellTests.swift,
 				ConversationCell/ConversationChannelHistoryAvailableCellSnapshotTests.swift,
-				ConversationCell/ConversationFileCollaborationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationRenamedCellTests.swift,
+				ConversationCell/ConversationSharedDriveSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageChannelHistoryDepthSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageMlsSupportSnapshotTests.swift,
@@ -599,8 +603,8 @@
 				ConversationContentViewControllerTests.swift,
 				ConversationCreationControllerSnapshotTests.swift,
 				ConversationDetail/ConversationDetailsTests.swift,
-				ConversationDetail/GroupDetailsFileCollaborationCellTests.swift,
 				ConversationDetail/GroupDetailsReceiptOptionsCellTests.swift,
+				ConversationDetail/GroupDetailsSharedDriveCellTests.swift,
 				ConversationDetail/GroupDetailsTimeoutOptionsCellTests.swift,
 				ConversationDetail/GroupDetailsViewControllerSnapshotTests.swift,
 				ConversationDetail/ServiceDetailViewControllerSnapshotTests.swift,
@@ -1014,6 +1018,7 @@
 				598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
 				59C951C22E2B67E3002C0A3E /* WireLoggingSupport in Frameworks */,
 				591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */,
+				FADE000000000000000000A2 /* WireDomainSupport.framework in Frameworks */,
 				595BE7A42E32367F00ED9088 /* WireAnalyticsSupport in Frameworks */,
 				5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */,
 			);
@@ -1036,6 +1041,7 @@
 				59CB3F212F6AEB6D003616C7 /* WireData in Frameworks */,
 				59B768432D2D58BE007B5F1E /* WireFoundationSupport in Frameworks */,
 				591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */,
+				FADE000000000000000000A3 /* WireDomainSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1195,6 +1201,7 @@
 				EE33C48C296485FA00C058D1 /* WireShareEngine.framework */,
 				EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */,
 				0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */,
+				FADE000000000000000000A1 /* WireDomainSupport.framework */,
 				EEE25B4329719C950008B894 /* WireSystem.framework */,
 				598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */,
 				E6C25FC42AFFAAC300406A1C /* WireTesting.framework */,
@@ -1737,7 +1744,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n    \"$PROJECT_DIR/..\"\n\n# Lint\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --fix \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --strict \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n";
+			shellScript = "# Format & lint the whole repo (mirrors local `format --all`)\n\"$PROJECT_DIR/../scripts/format.sh\" --all\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;

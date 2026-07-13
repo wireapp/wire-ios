@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "¡Simplemente introduce tu dirección de correo electrónico para empezar!";
 "authentication.identity.input.field.placeholder" = "Correo electrónico o código SSO";
 "authentication.identity.input.field.title" = "Correo electrónico o código SSO";
+"authentication.identity.input.field.email_only.placeholder" = "Email";
+"authentication.identity.input.field.email_only.title" = "Email";
 "authentication.identity.input.submit" = "Siguiente";
 
 "cloud_user_login.title" = "Introduce tu contraseña para iniciar sesión";
@@ -87,6 +89,8 @@
 "switch_backend_confirmation.show_details" = "Ver detalles";
 "switch_backend.error.title.logged_in" = "No se puede cambiar de servidor";
 "switch_backend.error.message.logged_in" = "Ya has iniciado sesión. Para cambiar a este servidor, cierra la sesión de todas las cuentas e inténtalo de nuevo.";
+"switch_backend.error.title.blocked" = "Switching backends is blocked";
+"switch_backend.error.message.blocked" = "You can’t log in to a different backend at this point. Log out first, then log in to another backend.";
 
 "verification_code.title" = "Tienes correo electrónico";
 "verification_code.message" = "Introduce el código de verificación que enviamos a %@.";
@@ -117,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Por favor acepte la invitación a su equipo primero y siga los pasos para crear su cuenta.";
 "authentication.error.message.account_suspended" = "Esta cuenta ya no está autorizada a iniciar sesión.";
 "authentication.error.message.incorrect_sso_code" = "Por favor, verifique el código de acceso SSO de su empresa e inténtelo de nuevo.";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "OK";
 

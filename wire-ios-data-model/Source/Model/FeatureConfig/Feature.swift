@@ -48,6 +48,7 @@ public class Feature: ZMManagedObject {
         case mls
         case mlsMigration
         case selfDeletingMessages
+        case preventAdminlessGroups
 
     }
 
@@ -243,7 +244,8 @@ public class Feature: ZMManagedObject {
              .e2ei,
              .fileSharing,
              .mls,
-             .mlsMigration:
+             .mlsMigration,
+             .preventAdminlessGroups:
             break
         }
     }

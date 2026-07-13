@@ -190,6 +190,11 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
             ),
+            SearchUserImageStrategy(
+                applicationStatus: applicationStatusDirectory,
+                managedObjectContext: syncMOC,
+                searchUsersCache: searchUsersCache
+            ),
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -303,7 +308,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         flowManager: FlowManagerType,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
         initiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol,
-        metadata: BackendMetadataProvider
+        metadata: BackendMetadataProvider,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         syncContext.performAndWait {
             let httpClient = HttpClientImpl(
@@ -325,7 +331,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 incrementalSyncObserver: incrementalSyncObserver,
                 initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
                 featureRepository: LegacyFeatureRepository(context: syncContext),
-                apiVersion: metadata.apiVersion
+                apiVersion: metadata.apiVersion,
+                backgroundTaskExecuter: backgroundTaskExecuter
             )
 
             let strategies: [Any] = [

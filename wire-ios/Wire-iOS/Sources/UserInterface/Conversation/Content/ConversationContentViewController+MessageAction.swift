@@ -236,7 +236,7 @@ extension ConversationContentViewController: SignatureObserver {
                 do {
                     try self?.conversation.appendFile(with: cmsFileMetadata)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
+                    WireLogger.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }
             }
         }

@@ -25,8 +25,6 @@ import WireUtilitiesPackage
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 
-private let zmLog = ZMSLog(tag: "ConversationInputBarViewController+Files")
-
 extension ConversationInputBarViewController {
 
     @discardableResult
@@ -34,7 +32,7 @@ extension ConversationInputBarViewController {
         do {
             try FileManager.default.removeItem(atPath: path)
         } catch {
-            zmLog.error("Cannot delete folder at path \(path): \(error)")
+            WireLogger.ui.error("Cannot delete folder at path \(path): \(error)")
 
             return false
         }
@@ -111,7 +109,7 @@ extension ConversationInputBarViewController {
                 try ZIPFoundationFileArchiver().zipResources(at: files.map(\.url), into: archiveURL)
                 uploadFile(at: archiveURL)
             } catch {
-                zmLog.error("Cannot archive files at URLs: \(files.map(\.url))")
+                WireLogger.ui.error("Cannot archive files at URLs: \(files.map(\.url))")
             }
         }
     }
@@ -127,7 +125,7 @@ extension ConversationInputBarViewController {
         }
 
         guard let fileSize: UInt64 = url.fileSize else {
-            zmLog.error("Cannot get file size on selected file:")
+            WireLogger.ui.error("Cannot get file size on selected file:")
             parent?.dismiss(animated: true)
             return completion()
         }
@@ -154,7 +152,7 @@ extension ConversationInputBarViewController {
                     let useCase = userSession.makeAppendFileMessageUseCase()
                     try useCase.invoke(with: metadata, in: conversation)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
+                    WireLogger.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }
 
                 completion()

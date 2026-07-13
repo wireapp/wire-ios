@@ -54,7 +54,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 15)
+        try XCTAssertCount(storeInvocations, count: 16)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -134,6 +134,13 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[14].name, .simplifiedUserConnectionRequestQRCode)
         XCTAssertFalse(storeInvocations[14].isEnabled)
         XCTAssertNil(storeInvocations[14].config)
+
+        XCTAssertEqual(storeInvocations[15].name, .preventAdminlessGroups)
+        XCTAssertTrue(storeInvocations[15].isEnabled)
+        XCTAssertEqual(
+            storeInvocations[15].config as? Feature.PreventAdminlessGroups.Config,
+            Scaffolding.preventAdminlessGroupsFeatureConfig.toDomainModel()
+        )
     }
 
 }
@@ -155,7 +162,8 @@ private enum Scaffolding {
         .mls(mlsFeatureConfig),
         .mlsMigration(mlsMigrationFeatureConfig),
         .selfDeletingMessages(selfDeletingMessagesFeatureConfig),
-        .simplifiedUserConnectionRequestQRCode(simplifiedUserConnectionRequestQRCodeConfig)
+        .simplifiedUserConnectionRequestQRCode(simplifiedUserConnectionRequestQRCodeConfig),
+        .preventAdminlessGroups(preventAdminlessGroupsFeatureConfig)
     ]
 
     static let appLockFeatureConfig = AppLockFeatureConfig(
@@ -236,6 +244,13 @@ private enum Scaffolding {
 
     static let assetAuditLogFeatureConfig = AssetAuditLogFeatureConfig(
         status: .enabled
+    )
+
+    static let preventAdminlessGroupsFeatureConfig = PreventAdminlessGroupsFeatureConfig(
+        status: .enabled,
+        promotionStrategy: "alphabetical",
+        deletionTimeout: 30,
+        reminderTimeouts: [7, 1]
     )
 
 }

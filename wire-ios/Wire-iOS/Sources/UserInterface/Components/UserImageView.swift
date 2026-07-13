@@ -33,6 +33,11 @@ class UserImageView: AvatarImageView, UserObserving {
         didSet { updateUserImage() }
     }
 
+    /// When `true`, the remote profile image is not loaded and only the user's initials are displayed.
+    var showsInitialsOnly = false {
+        didSet { updateUser() }
+    }
+
     /// Whether the badge indicator is enabled.
     var indicatorEnabled: Bool = false {
         didSet { badgeIndicator.isHidden = !indicatorEnabled }
@@ -143,6 +148,12 @@ class UserImageView: AvatarImageView, UserObserving {
         let updateBlock = {
             self.avatar = avatar
             self.container.backgroundColor = self.containerBackgroundColor(for: user)
+            self.accessibilityValue = switch avatar {
+            case .image:
+                "image"
+            case .text:
+                "initials"
+            }
         }
 
         if animated, !ProcessInfo.processInfo.isRunningTests {
@@ -160,6 +171,7 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Updates the image for the user.
     fileprivate func updateUserImage() {
+        guard !showsInitialsOnly else { return }
         guard
             let user,
             let userSession

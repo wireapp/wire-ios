@@ -4,8 +4,9 @@
 # It is triggered whenever a pull request is merged into any `release/*` branch.
 #
 # Target branch selection:
-# - If the source branch is the LTS release branch (vars.LTS_RELEASE, e.g. release/cycle-4.16),
-#   targets `develop` directly, skipping any future release branches.
+# - If the source branch is the LTS release branch (vars.LTS_RELEASE, e.g. release/cycle-4.16)
+#   or the tracked GOV release branch (vars.GOV_RELEASE), targets `develop` directly, skipping
+#   any future release branches.
 # - Gets all release branches and sorts them
 # - Finds the position of the source branch in the sorted list
 # - Selects the next branch in the sorted list, or `develop` if no next branch exists
@@ -44,7 +45,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           lfs: 'true'
           token: ${{ secrets.SUBMODULE_PAT }}
@@ -52,7 +53,7 @@ jobs:
           submodules: recursive
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.x'
 
@@ -60,11 +61,12 @@ jobs:
         id: target-branch
         env:
           LTS_RELEASE: ${{ vars.LTS_RELEASE }}
+          GOV_RELEASE: ${{ vars.GOV_RELEASE }}
         run: |
           scripts/determine-cherry-pick-target.py "${{ github.event.pull_request.base.ref }}"
 
       - name: Cherry pick to target branch
-        uses: wireapp/action-auto-cherry-pick@v1.0.2
+        uses: wireapp/action-auto-cherry-pick@a4a732fe8b79e3fae70362e6271b8982be5b1bc1 # v1.0.2
         with:
           target-branch: ${{ steps.target-branch.outputs.target }}
           pr-labels: 'cherry-pick'

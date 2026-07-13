@@ -132,7 +132,8 @@ final class ConversationViewController: UIViewController {
                     conversationCreationRepository: conversationCreationRepository,
                     isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
                     areLegacyBotsAvailable: areLegacyBotsAvailable,
-                    isAppsFeatureEnabled: isAppsFeatureEnabled
+                    isAppsFeatureEnabled: isAppsFeatureEnabled,
+                    wireMessagingFactory: wireMessagingFactory
                 )
             case .`self`, .oneOnOne, .connection:
                 viewController = createUserDetailViewController()
@@ -419,11 +420,6 @@ final class ConversationViewController: UIViewController {
     override func accessibilityPerformEscape() -> Bool {
         mainCoordinator.hideConversation()
         return true
-    }
-
-    @objc
-    func onBackButtonPressed(_ backButton: UIButton?) {
-        mainCoordinator.hideConversation()
     }
 
     private func setupContentViewController() {

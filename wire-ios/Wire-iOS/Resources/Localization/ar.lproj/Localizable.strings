@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "موافق";
 "general.next" = "التالي";
 "general.cancel" = "إلغاء";
@@ -148,6 +148,7 @@
 
 
 // Conversation List - Filter Conversations
+"conversation_list.context_menu.title" = "%@ options";
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "المفضلة";
 "conversation_list.filter.groups.title" = "المجموعات";
@@ -387,6 +388,7 @@
 "conversation.create.file_management.title" = "Shared Drive";
 "conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.create.file_management.learnMore" = "معرفة المزيد";
+"conversation.create.file_management.sharedDriveAccess" = "People outside your team can view files, not upload or edit.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "مكالمة جارية";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "You can’t record an audio message during a call.";
@@ -568,6 +570,7 @@
 "content.system.conversation.you.removed" = "قام %@ بإزالة %@";
 "content.system.conversation.you.removed.legalhold" = "%@ were removed from this conversation because legal hold has been activated.";
 "content.system.conversation.you.left" = "غادر %@";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "حُذِف %@ من الفريق.";
 "content.system.conversation.guest.joined" = "انضم %@";
 "content.system.conversation.guest.you_joined" = "You joined";
@@ -635,7 +638,12 @@
 "content.system.channel.guest.joined" = "%@ joined the channel";
 "content.system.channel.guest.you_joined" = "You joined the channel";
 
-"content.system.file_collaboration.enabled" = "Shared Drive is on";
+"content.system.file_collaboration.sharedDriveState" = "Shared Drive is %@";
+"content.system.file_collaboration.sharedDriveState.enabled" = "on";
+"content.system.file_collaboration.enabled.editor_access" = "You have editor access. People outside your team only have viewer access.";
+"content.system.file_collaboration.enabled.viewer_access" = "You can view, but you can’t upload, edit, or manage files.";
+"content.system.file_collaboration.enabled.learn_more" = "معرفة المزيد";
+"content.system.file_collaboration.drive_viewer_access.title" = "Guests have view-only access to files in this conversation.";
 
 // read receipt
 
@@ -735,6 +743,7 @@
 "content.message.reply.original_timestamp.date" = "Original message from %@";
 "content.message.reply.original_timestamp.time" = "Original message from %@";
 "content.message.reply.broken_message" = "لا يمكنك رؤية هذه الرسالة.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "تم تعديله";
 
 "content.message.open_link_alert.title" = "فتح الرابط";
@@ -979,6 +988,19 @@
 "meta.leave_conversation_button_leave" = "غادر";
 "meta.leave_conversation_button_leave_and_delete" = "Leave and clear content";
 
+// Admin selection (promote new admin before leaving)
+"admin_selection.title" = "New admin";
+"admin_selection.promote" = "Promote";
+"admin_selection.info_banner" = "After you promote a new admin, you leave the group.";
+"admin_selection.promotion_error" = "Failed to promote user to admin.";
+
+// Last admin leave flow
+"last_admin_leave.title" = "Leave \"%@\"?";
+"last_admin_leave.promote_or_delete_message" = "You're the only admin.\nPromote another participant before leaving, or delete the group if it is no longer needed.";
+"last_admin_leave.promote_new_admin" = "Promote new admin";
+"last_admin_leave.no_eligible_candidates_message" = "You're the only admin. The other participants can't be admins.\nAdd at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.";
+"last_admin_leave.delete_group" = "Delete group";
+
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ بدأ باستخدام جهاز جديد.";
 "meta.degraded.degradation_reason_message.plural" = "%@ بدأ باستخدام جهاز جديد.";
@@ -1066,6 +1088,7 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list
@@ -1113,6 +1136,8 @@
 "group_details.channel_history_options_cell.title" = "Conversation history";
 "group_details.file_collaboration_cell.title" = "Shared Drive";
 "group_details.file_collaboration_cell.subtitle" = "مفعل";
+"group_details.file_collaboration_cell.subtitle.editor_access" = "Editor access";
+"group_details.file_collaboration_cell.subtitle.viewer_access" = "Viewer access";
 "group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
 "group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
@@ -1155,8 +1180,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";
@@ -1550,6 +1575,7 @@
 
 "guest_room.allow_guests.title" = "السماح بالضيوف";
 "guest_room.allow_guests.subtitle" = "إتاحة هذه المحادثة لأشخاص خارج فريقك.";
+"guest_room.allow_guests.shared_drive.subtitle" = "Guests can’t upload, edit, or manage files in Shared Drive.";
 "guest_room.remove_guests.message" = "Current guests will be removed from the conversation. New guests will not be allowed.";
 "guest_room.remove_guests.action" = "إزالة";
 "guest_room.revoke_link.message" = "New guests will not be able to join with this link. Current guests will still have access.";

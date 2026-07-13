@@ -1,0 +1,330 @@
+# GitHub Action: Create a release cycle
+#
+# Manually dispatched. Given a cycle version "Major.Minor" (e.g. 4.21) it:
+#   1. Creates & pushes the release branch  release/cycle-<Major.Minor>.
+#      Pushing it automatically triggers the Beta TestFlight
+#      build (see beta_app_release.yml — it listens on release/cycle-*).
+#   2. Opens a DRAFT GitHub release titled with the app version
+#      (from Version.xcconfig), listing the JIRA tickets that landed since
+#      the previous cycle, ready to be edited before publishing.
+#   3. Opens a PR against develop that bumps the Edge (develop) minor version,
+#      assigning the wireapp/ios team as reviewer and the dispatcher as assignee.
+#   4. Posts an announcement on Wire.
+#   5. Prints a link to open the final release-notes PR
+#
+# Notes:
+# - Uses SUBMODULE_PAT (not GITHUB_TOKEN) to push the release branch so the
+#   downstream Beta workflow is actually triggered.
+
+name: Create release branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Cycle version (Major.Minor), e.g. 4.21'
+        required: true
+        type: string
+      ticket:
+        description: 'JIRA ticket for the Edge bump PR title'
+        required: false
+        default: 'WPB-XXX'
+        type: string
+      commit_sha:
+        description: 'Commit to branch from (defaults to HEAD of develop)'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  XCCONFIG: wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig
+  BUILD_ASSETS_REPO: wireapp/wire-ios-build-assets
+  REVIEWER_TEAM: wireapp/ios
+  CHANGELOG_WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/changelog.yml
+
+jobs:
+  create-release-branch:
+    runs-on: ubuntu-24.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
+
+    steps:
+      - name: Validate version input
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::version must be Major.Minor (e.g. 4.21), got: $VERSION"
+            exit 1
+          fi
+          echo "VERSION=$VERSION"        >> "$GITHUB_ENV"
+          echo "MAJOR=${VERSION%%.*}"    >> "$GITHUB_ENV"
+          echo "MINOR=${VERSION##*.}"    >> "$GITHUB_ENV"
+          echo "RELEASE_BRANCH=release/cycle-${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Checkout develop
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: develop
+          token: ${{ secrets.SUBMODULE_PAT }}
+          fetch-depth: 0
+
+      - name: Resolve base ref to branch from
+        env:
+          INPUT_SHA: ${{ inputs.commit_sha }}
+        run: |
+          set -euo pipefail
+          if [[ -n "$INPUT_SHA" ]]; then
+            if ! git cat-file -e "${INPUT_SHA}^{commit}" 2>/dev/null; then
+              echo "::error::commit '$INPUT_SHA' not found in the repository"
+              exit 1
+            fi
+            BASE_SHA="$(git rev-parse "${INPUT_SHA}^{commit}")"
+            echo "Branching from explicit commit ${BASE_SHA}"
+          else
+            BASE_SHA="$(git rev-parse refs/remotes/origin/develop)"
+            echo "Branching from HEAD of develop (${BASE_SHA})"
+          fi
+          echo "BASE_SHA=$BASE_SHA" >> "$GITHUB_ENV"
+
+      - name: Compute versions and guard against duplicates
+        run: |
+          set -euo pipefail
+
+          if git ls-remote --exit-code --heads origin "$RELEASE_BRANCH" >/dev/null 2>&1; then
+            echo "::error::branch '$RELEASE_BRANCH' already exists on origin"
+            exit 1
+          fi
+
+          APP_VERSION="$(git show "${BASE_SHA}:${XCCONFIG}" \
+            | grep -E '^[[:space:]]*WIRE_SHORT_VERSION[[:space:]]*=' \
+            | head -1 | sed -E 's/.*=[[:space:]]*//' | tr -d '[:space:]')"
+          if [[ -z "$APP_VERSION" ]]; then
+            echo "::error::could not read WIRE_SHORT_VERSION from $XCCONFIG"
+            exit 1
+          fi
+
+          if [[ "${APP_VERSION%.*}" != "$VERSION" ]]; then
+            echo "::warning::develop is at $APP_VERSION but cutting cycle $VERSION"
+          fi
+
+          echo "APP_VERSION=$APP_VERSION"                 >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=appstore/${APP_VERSION}"      >> "$GITHUB_ENV"
+          echo "NEXT_VERSION=${MAJOR}.$((MINOR + 1)).0"   >> "$GITHUB_ENV"
+
+      - name: Configure git author
+        env:
+          ACTOR: ${{ github.actor }}
+        run: |
+          git config user.name "$ACTOR"
+          git config user.email "${ACTOR}@users.noreply.github.com"
+
+      - name: Create and push the release branch (triggers Beta build)
+        run: |
+          set -euo pipefail
+          git push origin "${BASE_SHA}:refs/heads/${RELEASE_BRANCH}"
+          echo "Pushed ${RELEASE_BRANCH} from ${BASE_SHA} — Beta TestFlight build will start automatically."
+
+      - name: Collect tickets since the previous cycle
+        run: |
+          set -euo pipefail
+          PREV_BRANCH="$(git ls-remote --heads origin 'release/cycle-*' \
+            | sed -E 's#.*refs/heads/##' \
+            | sort -V \
+            | awk -v cur="$RELEASE_BRANCH" '$0==cur{exit} {prev=$0} END{print prev}')"
+
+          if [[ -n "$PREV_BRANCH" ]] && git rev-parse --verify -q "origin/${PREV_BRANCH}" >/dev/null; then
+            RANGE="origin/${PREV_BRANCH}..${BASE_SHA}"
+            echo "Comparing against previous cycle: ${PREV_BRANCH}"
+          else
+            LAST_TAG="$(git tag | grep -E '^appstore/[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)"
+            RANGE="${LAST_TAG}..${BASE_SHA}"
+            echo "::warning::no previous release branch — comparing against ${LAST_TAG}"
+          fi
+
+          TICKETS="$(git log "$RANGE" --pretty=format:'%s%n%b' 2>/dev/null \
+            | grep -oiE 'WPB-[0-9]+' | tr 'a-z' 'A-Z' | sort -u -t- -k2 -n || true)"
+          COUNT="$(printf '%s\n' "$TICKETS" | grep -c . || true)"
+
+          {
+            echo "TICKET_COUNT=$COUNT"
+            echo "TICKET_KEYS<<EOF"
+            echo "$TICKETS"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
+      # Resolve each WPB key to its JIRA title and issue type, then group them
+      # into the release-note sections: bugs under Fix, improvements under
+      # Improvements, everything else under New.
+      - name: Resolve JIRA titles for the draft release
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          JIRA_BASE_URL: https://wearezeta.atlassian.net
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        with:
+          script: |
+            const base = process.env.JIRA_BASE_URL;
+            const token = process.env.JIRA_TOKEN;
+            const keys = (process.env.TICKET_KEYS || '')
+              .split('\n').map((s) => s.trim()).filter(Boolean);
+            const auth = token ? `Basic ${Buffer.from(token).toString('base64')}` : null;
+            if (!auth) core.warning('JIRA_TOKEN not set — listing tickets without titles or grouping');
+            const fetchIssue = async (key) => {
+              try {
+                const res = await fetch(`${base}/rest/api/3/issue/${key}?fields=summary,issuetype`, {
+                  headers: { Authorization: auth, Accept: 'application/json' },
+                });
+                if (res.ok) {
+                  const f = (await res.json()).fields || {};
+                  let summary = f.summary || null;
+                  // Tickets are often prefixed with a platform tag like "[iOS] " — drop it.
+                  if (summary) summary = summary.replace(/^\s*\[[^\]]*\]\s*/, '');
+                  return { summary, type: (f.issuetype && f.issuetype.name) || '' };
+                }
+                core.warning(`Jira ${key}: ${res.status} ${await res.text()}`);
+              } catch (e) {
+                core.warning(`Jira ${key}: ${e.message}`);
+              }
+              return { summary: null, type: '' };
+            };
+            const buckets = { New: [], Improvements: [], Fix: [] };
+            for (const key of keys) {
+              const { summary, type } = auth ? await fetchIssue(key) : { summary: null, type: '' };
+              const link = `[${key}](${base}/browse/${key})`;
+              const line = summary ? `• ${summary} (${link})` : `• ${link}`;
+              const t = type.toLowerCase();
+              if (t === 'bug') buckets.Fix.push(line);
+              else if (t === 'improvement') buckets.Improvements.push(line);
+              else buckets.New.push(line);
+            }
+            const section = (name) => `**${name}:**\n` + (buckets[name].length ? buckets[name].join('\n') : '•');
+            core.exportVariable('TICKET_SECTIONS', ['New', 'Improvements', 'Fix'].map(section).join('\n\n'));
+            core.info(`Grouped ${keys.length} ticket(s): New=${buckets.New.length} Improvements=${buckets.Improvements.length} Fix=${buckets.Fix.length}`);
+
+      - name: Create draft GitHub release
+        run: |
+          set -euo pipefail
+          TICKET_SECTIONS="${TICKET_SECTIONS:-**New:**
+          •
+
+          **Improvements:**
+          •
+
+          **Fix:**
+          •}"
+          RELEASE_NOTES_PR_LINK="${{ github.server_url }}/${BUILD_ASSETS_REPO}/compare?expand=1"
+          echo "RELEASE_NOTES_PR_LINK=$RELEASE_NOTES_PR_LINK" >> "$GITHUB_ENV"
+
+          # Full change log compares the previous appstore tag with this release's tag.
+          PREV_APPSTORE_TAG="$(git tag | grep -E '^appstore/[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)"
+          if [[ -n "$PREV_APPSTORE_TAG" ]]; then
+            FULL_CHANGELOG_URL="${{ github.server_url }}/${{ github.repository }}/compare/${PREV_APPSTORE_TAG}...${RELEASE_TAG}"
+          else
+            FULL_CHANGELOG_URL="$CHANGELOG_WORKFLOW_URL"
+          fi
+
+          BODY="$(cat <<EOF
+          > [!NOTE]
+          > **Edit the release notes before publishing.**
+          > You can use the [changelog action](${CHANGELOG_WORKFLOW_URL}) to prefill them.
+
+          ${TICKET_SECTIONS}
+
+          [Full change log](${FULL_CHANGELOG_URL})
+
+          ---
+
+          📝 **Final release notes** → open the PR on \`${BUILD_ASSETS_REPO}\`:
+          ${RELEASE_NOTES_PR_LINK}
+          EOF
+          )"
+
+          gh release create "$RELEASE_TAG" \
+            --draft \
+            --title "$APP_VERSION" \
+            --target "$RELEASE_BRANCH" \
+            --notes "$BODY"
+
+      - name: Open Edge version-bump PR against develop
+        env:
+          TICKET: ${{ inputs.ticket }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          set -euo pipefail
+          BUMP_BRANCH="chore/bump-edge-version-${NEXT_VERSION}"
+
+          git checkout -b "$BUMP_BRANCH" origin/develop
+          sed -i -E "s/^([[:space:]]*WIRE_SHORT_VERSION[[:space:]]*=[[:space:]]*).*/\1${NEXT_VERSION}/" "$XCCONFIG"
+          git add "$XCCONFIG"
+          git commit -m "chore: bump Edge version - ${TICKET}"
+          git push -u origin "$BUMP_BRANCH"
+
+          BODY="$(cat <<EOF
+          <!--do not remove the jira markers to link tickets automatically -->
+          <!--jira-description-action-hidden-marker-start-->
+
+          <!--jira-description-action-hidden-marker-end-->
+
+          ### Issue
+
+          Cutting the \`${RELEASE_BRANCH}\` release cycle. This PR bumps the Edge
+          (develop) version from \`${APP_VERSION}\` to \`${NEXT_VERSION}\` so develop
+          keeps building the next cycle.
+
+          ### Testing
+
+          Version bump only — no functional changes. Verify the Edge build reports
+          version \`${NEXT_VERSION}\`.
+
+          ---
+
+          ### Checklist
+
+          - [x] Title contains a reference JIRA issue number like \`[WPB-XXX]\`.
+          - [x] Description is filled and free of optional paragraphs.
+          - [ ] Adds/updates automated tests.
+          EOF
+          )"
+
+          gh pr create \
+            --base develop \
+            --head "$BUMP_BRANCH" \
+            --title "chore: bump Edge version - ${TICKET}" \
+            --body "$BODY" \
+            --reviewer "$REVIEWER_TEAM" \
+            --assignee "$ACTOR"
+
+      - name: Announce on Wire
+        continue-on-error: true
+        uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
+        with:
+          notify: custom
+          text: '**${{ env.RELEASE_BRANCH }}** branch has been created. please (re) target your work to this branch if necessary.'
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Release cycle ${RELEASE_BRANCH:-?} cut"
+            echo ""
+            echo "| Item | Value |"
+            echo "|---|---|"
+            echo "| Release branch | \`${RELEASE_BRANCH:-?}\` (Beta build triggered) |"
+            echo "| Draft release | **${APP_VERSION:-?}** (tag \`${RELEASE_TAG:-?}\`) |"
+            echo "| Edge bump | ${APP_VERSION:-?} → ${NEXT_VERSION:-?} (PR against develop) |"
+            echo "| Tickets in cycle | ${TICKET_COUNT:-?} |"
+            echo ""
+            echo "### Next steps"
+            echo "1. Edit & publish the [draft release](${{ github.server_url }}/${{ github.repository }}/releases)."
+            echo "2. Open the **final release-notes PR** on \`${BUILD_ASSETS_REPO}\`:"
+            echo "   ${RELEASE_NOTES_PR_LINK:-https://github.com/${BUILD_ASSETS_REPO}/compare?expand=1}"
+            echo "3. Review & merge the Edge version-bump PR."
+          } >> "$GITHUB_STEP_SUMMARY"

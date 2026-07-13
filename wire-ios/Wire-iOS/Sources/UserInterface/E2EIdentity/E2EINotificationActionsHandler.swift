@@ -46,11 +46,12 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private var isUpdateMode: Bool = false
+    private var isUpdateFlowActive: Bool = false
 
     private let targetVC: () -> UIViewController
     private var observer: NSObjectProtocol?
 
-    private weak var alertForE2EIChange: UIAlertController?
+    private var enrollmentFlow: E2EIEnrollmentFlow?
 
     private let durationFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -98,13 +99,22 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         NotificationCenter.default.removeObserver(observer)
     }
 
+    @MainActor
     func getCertificate() async {
+        isUpdateFlowActive = true
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
+        let enrollmentFlow = E2EIEnrollmentFlow(oauthUseCase: oauthUseCase, targetVC: targetVC)
+        self.enrollmentFlow = enrollmentFlow
+        enrollmentFlow.showActivityIndicator()
+
         do {
-            let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+            let certificateDetails = try await enrollCertificateUseCase
+                .invoke(authenticate: enrollmentFlow.authenticate)
             stopCertificateEnrollmentSnoozerUseCase.invoke()
-            await confirmSuccessfulEnrollment(certificateDetails)
+            confirmSuccessfulEnrollment(certificateDetails)
         } catch {
+            enrollmentFlow.dismissActivityIndicator()
+            self.enrollmentFlow = nil
             let canCancel = gracePeriodEndDate == nil || gracePeriodEndDate?.isInThePast == false
             await showGetCertificateErrorAlert(canCancel: canCancel, retry: getCertificate)
         }
@@ -165,6 +175,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             }
 
         } cancelled: { [weak self] in
+            self?.isUpdateFlowActive = false
             self?.isUpdateMode = false
         }
         await presentScreen(viewController: alert)
@@ -172,6 +183,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     @MainActor
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) {
+        isUpdateFlowActive = false
+        enrollmentFlow?.dismissActivityIndicator()
+        enrollmentFlow = nil
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
         stopCertificateEnrollmentSnoozerUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController(isUpdateMode: isUpdateMode)
@@ -180,7 +194,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             viewController.dismiss(animated: true)
             self.isUpdateMode = false
         }
-
         presentScreen(viewController: successScreen)
     }
 
@@ -194,14 +207,15 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
         typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
 
-        guard alertForE2EIChange == nil else { return }
+        guard !isUpdateFlowActive else { return }
+        isUpdateFlowActive = true
 
         let alert = UIAlertController.alertForE2EIChangeWithActions(
             title: E2EIUpdateStrings.title,
             message: canRemindLater ? E2EIUpdateStrings.message : E2EIUpdateStrings.expiredMessage,
             enrollButtonText: E2EIUpdateStrings.title,
             canRemindLater: canRemindLater
-        ) { action in
+        ) { [weak self] action in
 
             switch action {
             case .getCertificate:
@@ -209,14 +223,14 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
                     await self?.getCertificate()
                 }
             case .remindLater:
+                self?.isUpdateFlowActive = false
                 Task { [weak self] in
                     await self?.snoozeReminder()
                 }
             case .learnMore:
-                break
+                self?.isUpdateFlowActive = false
             }
         }
-        alertForE2EIChange = alert
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
 
         presentScreen(viewController: alert)

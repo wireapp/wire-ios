@@ -45,6 +45,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let journal: Journal
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     public init(
         selfClientID: String,
@@ -59,7 +60,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
-        earService: EARServiceInterface
+        earService: EARServiceInterface,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -74,6 +76,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.earService = earService
+        self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
     public func perform() async throws -> Token {
@@ -168,7 +171,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 do {
                     // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
                     // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
-                    try await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
+                    try await withBackgroundTask(
+                        name: "processLiveStream IncrementalSync",
+                        executer: backgroundTaskExecuter
+                    ) {
                         await processLiveEvents(
                             liveEventStream: liveEventStream,
                             processedEnvelopeIDs: processedEnvelopeIDs,
@@ -394,12 +400,22 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         do {
             for item in envelopesWithObjectIDs {
+                // Important: this batch of events may be large so completing
+                // the event processing may take time. If the sync is suspended
+                // during this loop we may not reach a cancellation check before
+                // the app is suspended. Therefore, check for cancellation before
+                // EACH event is processed.
+                try Task.checkCancellation()
 
                 guard !earService.isLocked || item.envelope.isBackgroundAccessible else {
                     throw Failure.databaseLocked
                 }
 
                 for event in item.envelope.events {
+                    // In practice there's only one event per envelope, but add
+                    // a check here anyway just in case.
+                    try Task.checkCancellation()
+
                     do {
                         logger.debug(
                             "processing pending event: \(event.name)",
@@ -447,6 +463,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         public func suspend() async {
             task.cancel()
+            await task.value
             await closePushChannel()
         }
     }

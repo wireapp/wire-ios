@@ -17,11 +17,13 @@
 //
 
 import Down
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireLocators
+import WireMessagingUI
 
 extension Settings {
     var returnKeyType: UIReturnKeyType {
@@ -110,8 +112,18 @@ final class InputBar: UIView {
 
     private let inputBarVerticalInset: CGFloat = 34
     private let isWireDriveEnabled: Bool
+    private let showDriveViewerBanner: Bool
     static let rightIconSize: CGFloat = 32
     private let textViewFont = FontSpec.normalRegularFont.font!
+
+    private lazy var driveViewerAccessBanner: UIView = {
+        let banner = ConversationViewerAccessBanner(
+            backgroundColor: ColorTheme.Buttons.Secondary.disabled,
+            onClose: { [weak self] in self?.onDriveViewerAccessBannerClosed() }
+        )
+        let hostingController = UIHostingController(rootView: banner)
+        return hostingController.view
+    }()
 
     /// Container for `textView`, `leftAccessoryView` and `rightAccessoryStackView`.
     private let upperContainer = UIView()
@@ -227,13 +239,14 @@ final class InputBar: UIView {
         textView.isScrollEnabled = true
     }
 
-    required init(buttons: [UIButton], isWireDriveEnabled: Bool) {
+    required init(buttons: [UIButton], isWireDriveEnabled: Bool, showDriveViewerBanner: Bool) {
         self.buttonsView = InputBarButtonsView(buttons: buttons)
         self.secondaryButtonsView = InputBarSecondaryButtonsView(
             editBarView: editingView,
             markdownBarView: markdownView
         )
         self.isWireDriveEnabled = isWireDriveEnabled
+        self.showDriveViewerBanner = showDriveViewerBanner
 
         super.init(frame: CGRect.zero)
 
@@ -244,6 +257,18 @@ final class InputBar: UIView {
 
         // Input container
         addSubview(inputContainer)
+
+        // Viewer access banner
+        if showDriveViewerBanner {
+            inputContainer.addArrangedSubview(driveViewerAccessBanner)
+            [driveViewerAccessBanner, self].forEach {
+                $0.layer.cornerRadius = 12
+                $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+                $0.clipsToBounds = true
+            }
+
+        }
+
         inputContainer.addArrangedSubview(upperContainer)
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
 
@@ -341,7 +366,9 @@ final class InputBar: UIView {
         textView.backgroundColor = .clear
 
         markdownView.delegate = textView
-        addBorder(for: .top)
+        if !showDriveViewerBanner {
+            addBorder(for: .top)
+        }
         updateReturnKey()
 
         updateInputBar(withState: inputBarState, animated: false)
@@ -600,6 +627,13 @@ final class InputBar: UIView {
                         .resolvedColor(with: traitCollection),
                     for: .normal
                 )
+
+            button
+                .setBackgroundImageColor(
+                    ColorTheme.Buttons.Secondary.disabled.resolvedColor(with: traitCollection),
+                    for: .disabled
+                )
+
             button.setBorderColor(
                 SemanticColors.Button.borderInputBarItemEnabled.resolvedColor(with: traitCollection),
                 for: .normal
@@ -665,6 +699,15 @@ final class InputBar: UIView {
             let hasChanges = text != trimmedText && canUndo
             editingView.confirmButton.isEnabled = hasChanges
         }
+    }
+
+    private func onDriveViewerAccessBannerClosed() {
+        inputContainer.removeArrangedSubview(driveViewerAccessBanner)
+        driveViewerAccessBanner.removeFromSuperview()
+        addBorder(for: .top)
+        layer.cornerRadius = 0
+        layer.maskedCorners = []
+        clipsToBounds = false
     }
 }
 

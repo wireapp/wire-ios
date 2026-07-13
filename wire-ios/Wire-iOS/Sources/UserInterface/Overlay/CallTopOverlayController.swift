@@ -21,6 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 // MARK: - CallTopOverlayControllerDelegate
@@ -114,7 +115,7 @@ final class CallTopOverlayController: UIViewController {
 
         view.clipsToBounds = true
         view.backgroundColor = ColorTheme.Base.positive
-        view.accessibilityIdentifier = "OpenOngoingCallButton"
+        view.accessibilityIdentifier = Locators.ActiveConversationPage.openOngoingCallButton.rawValue
         view.shouldGroupAccessibilityChildren = true
         view.isAccessibilityElement = true
         view.accessibilityLabel = L10n.Localizable.Voice.TopOverlay.accessibilityTitle

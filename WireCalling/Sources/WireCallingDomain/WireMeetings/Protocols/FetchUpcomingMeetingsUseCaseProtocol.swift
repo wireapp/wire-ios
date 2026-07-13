@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // sourcery: AutoMockable
-/// Fetches upcoming meetings
+/// Fetches the meetings shown in the meetings list: all meetings of the
+/// current day — including ones that already started or ended — and of
+/// the following day.
 package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
 
-    func invoke(limitToTwoDays: Bool, pageSize: Int, offset: Int) -> PaginatedGroupedMeetings
+    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
 
 }

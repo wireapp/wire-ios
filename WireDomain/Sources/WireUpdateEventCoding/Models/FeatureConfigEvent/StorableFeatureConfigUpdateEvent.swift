@@ -139,6 +139,15 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     )
                 )
             )
+        case let .preventAdminlessGroups(config):
+            .preventAdminlessGroups(
+                StorablePreventAdminlessGroupsFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    promotionStrategy: config.promotionStrategy,
+                    deletionTimeout: config.deletionTimeout,
+                    reminderTimeouts: config.reminderTimeouts
+                )
+            )
         case let .simplifiedUserConnectionRequestQRCode(config):
             .simplifiedUserConnectionRequestQRCode(
                 StorableBasicFeatureConfig(
@@ -276,6 +285,15 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: config.status.toAPIModel()
                 )
             )
+        case let .preventAdminlessGroups(config):
+            .preventAdminlessGroups(
+                PreventAdminlessGroupsFeatureConfig(
+                    status: config.status.toAPIModel(),
+                    promotionStrategy: config.promotionStrategy,
+                    deletionTimeout: config.deletionTimeout,
+                    reminderTimeouts: config.reminderTimeouts
+                )
+            )
         case let .simplifiedUserConnectionRequestQRCode(config):
             .simplifiedUserConnectionRequestQRCode(
                 SimplifiedUserConnectionRequestQRCodeConfig(
@@ -327,6 +345,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case simplifiedUserConnectionRequestQRCode(StorableBasicFeatureConfig)
     case cells(StorableBasicFeatureConfig)
     case cellsInternal(StorableCellsInternalFeatureConfig)
+    case preventAdminlessGroups(StorablePreventAdminlessGroupsFeatureConfig)
     case unknown(featureName: String)
 
 }
@@ -471,4 +490,11 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
 struct StorableCellsInternalFeatureConfig: Codable, Equatable, Sendable {
     let status: StorableFeatureConfigStatus
     let backendURL: URL
+}
+
+struct StorablePreventAdminlessGroupsFeatureConfig: Codable, Equatable, Sendable {
+    let status: StorableFeatureConfigStatus
+    let promotionStrategy: String
+    let deletionTimeout: Int
+    let reminderTimeouts: [Int]
 }

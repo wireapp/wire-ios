@@ -46,6 +46,7 @@ final class UserSessionLoader {
     private let flowManager: FlowManagerType
     private let logFilesProvider: LogFilesProviding
     private let isDeveloperModeEnabled: Bool
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     private let accountID: UUID
     private let backendStore: BackendEnvironmentStore
@@ -71,7 +72,8 @@ final class UserSessionLoader {
         flowManager: FlowManagerType,
         logFilesProvider: LogFilesProviding,
         isDeveloperModeEnabled: Bool,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws {
         self.account = account
         self.accountManager = accountManager
@@ -89,6 +91,7 @@ final class UserSessionLoader {
         self.flowManager = flowManager
         self.logFilesProvider = logFilesProvider
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
+        self.backgroundTaskExecuter = backgroundTaskExecuter
 
         self.accountID = account.userIdentifier
         let accountDataURL = AccountURLs(root: sharedContainerURL).accountData
@@ -367,14 +370,8 @@ final class UserSessionLoader {
             return
         }
 
-        let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
-            ActorBasedUpdateEventMigratorDAO(context: eventContext)
-        } else {
-            UpdateEventMigratorDAO(context: eventContext)
-        }
-
         let migrator = UpdateEventMigrator(
-            dao: dao,
+            dao: ActorBasedUpdateEventMigratorDAO(context: eventContext),
             localDomain: metadata.domain,
             earService: earService
         )
@@ -437,7 +434,8 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -558,7 +556,8 @@ final class UserSessionLoader {
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
             faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
-            updateBackendMetadataUseCase: updateBackendMetadataUseCase
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         userSession.setup(

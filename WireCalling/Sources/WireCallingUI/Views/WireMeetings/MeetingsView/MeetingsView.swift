@@ -18,14 +18,14 @@
 
 import SwiftUI
 import WireCallingDomain
-import WireCallingDomainSupport
 import WireDesign
+import WireFoundation
 
 struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @ObservedObject private var viewModel: MeetingsViewModel
+    @State private var viewModel: MeetingsViewModel
 
     init(viewModel: MeetingsViewModel) {
         self.viewModel = viewModel
@@ -33,106 +33,63 @@ struct MeetingsView: View {
 
     var body: some View {
         VStack {
-            Picker("", selection: $viewModel.selectedTab) {
-                ForEach(MeetingsViewModel.Tab.allCases, id: \.self) { tab in
-                    Text(tab.title).tag(tab)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .accessibilityIdentifier("meetingsListPicker")
-
             content.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
-        .onAppear {
-            viewModel.loadInitialData()
+        .task {
+            await viewModel.loadInitialData()
         }
-        .onChange(of: viewModel.selectedTab) { _, newValue in
-            if newValue == .past {
-                viewModel.refreshPastMeetings()
-            } else {
-                viewModel.refreshOngoingMeetings()
-            }
+        .task {
+            // Never returns on its own; the task is cancelled by SwiftUI when the view disappears.
+            await viewModel.observeMeetingChanges()
         }
     }
 
     @ViewBuilder private var content: some View {
-        if viewModel.selectedTab == .next {
-            if viewModel.ongoingMeetings.isEmpty, viewModel.groupedNextMeetings.isEmpty {
-                MeetingsEmptyStateView(
-                    title: Strings.EmptyState.Next.title,
-                    subtitle: Strings.EmptyState.Next.subtitle
-                )
-            } else {
-                nextTabContent
-            }
+
+        if viewModel.groupedUpcomingMeetings.isEmpty {
+            MeetingsEmptyStateView(
+                title: Strings.EmptyState.Next.title,
+                subtitle: Strings.EmptyState.Next.subtitle
+            )
         } else {
-            if viewModel.groupedPastMeetings.isEmpty {
-                MeetingsEmptyStateView(
-                    title: Strings.EmptyState.Past.title,
-                    subtitle: Strings.EmptyState.Past.subtitle
-                )
-            } else {
-                pastTabContent
-            }
+            meetingsList
         }
     }
 
-    @ViewBuilder private var nextTabContent: some View {
+    @ViewBuilder private var meetingsList: some View {
         List {
-            if !viewModel.ongoingMeetings.isEmpty {
-                Section {
-                    ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
-                        MeetingRow(meeting: meeting)
-                    }
-                } header: {
-                    SectionTitle(Strings.Header.ongoing)
-                }
-            }
             GroupedSections(
-                groups: viewModel.groupedNextMeetings,
+                groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
+                formatTimeRange: viewModel.formatTimeRange(for:),
+                onEdit: { _ in
+                    // TODO: [WPB-25501] Implement UI
+                },
+                onDelete: { _ in
+                    // TODO: [WPB-25514] Implement UI
+                }
             )
 
-            if viewModel.showMoreButton {
-                Button {
-                    viewModel.showAll = true
-                } label: {
-                    Text(Strings.Actions.showAll)
-                        .font(for: .buttonBig)
+            if viewModel.hasMore {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
                 }
-                .wireButtonStyle(.secondary)
                 .listRowBackground(Color.clear)
+                .task { await viewModel.loadMoreIfNeeded() }
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.grouped)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
-            viewModel.refreshOngoingMeetings()
-            viewModel.showAll = false
+            await viewModel.loadInitialData()
         }
     }
 
-    @ViewBuilder private var pastTabContent: some View {
-        List {
-            GroupedSections(
-                groups: viewModel.groupedPastMeetings,
-                formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
-            )
-        }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(ColorTheme.Backgrounds.surface.color)
-        .refreshable {
-            viewModel.refreshPastMeetings()
-        }
-    }
 }
 
 @ViewBuilder
@@ -145,22 +102,22 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
-    let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
+    let groups: [(day: Date, meetings: [Meeting])]
     let formatDay: (Date) -> String
-    let formatTime: (Date) -> String
+    let formatTimeRange: (Meeting) -> String
+    let onEdit: (Meeting) -> Void
+    let onDelete: (Meeting) -> Void
+
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
-                ForEach(dayGroup.timeSlots, id: \.time) { slot in
-                    Section {
-                        ForEach(slot.meetings, id: \.id) { meeting in
-                            MeetingRow(meeting: meeting)
-                        }
-                    } header: {
-                        Text(formatTime(slot.time))
-                            .font(for: .subline1)
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    }
+                ForEach(dayGroup.meetings, id: \.id) { meeting in
+                    MeetingRow(
+                        meeting: meeting,
+                        formatTimeRange: formatTimeRange,
+                        onEdit: { onEdit(meeting) },
+                        onDelete: { onDelete(meeting) }
+                    )
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
@@ -169,60 +126,133 @@ private struct GroupedSections: View {
     }
 }
 
-// MARK: - Row
-
-private struct MeetingRow: View {
-    let meeting: Meeting
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(ColorTheme.Backgrounds.surface.color)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    )
-                    .frame(width: 31, height: 31)
-
-                Image(systemName: "video.fill").font(.system(size: 15))
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(meeting.title)
-                    .font(for: .body2)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    .lineLimit(2)
-
-                Text("Meeting date")
-                    .font(for: .subline1)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
-                HStack(spacing: 6) {
-                    Label("Design", systemImage: "person.3.fill")
-                        .font(for: .subline1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
-                .padding(.top, 2)
-            }
-
-            Spacer()
-
-            Image(systemName: "ellipsis")
-                .rotationEffect(.degrees(90))
-                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-        }
-        .contentShape(Rectangle())
-        .padding(.vertical, 6)
-    }
+#Preview("empty") {
+    MeetingsView(
+        viewModel: MeetingsViewModel(
+            currentDateProvider: .system,
+            formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase()
+        )
+    )
 }
 
-#Preview {
-    MeetingsView(viewModel: MeetingsViewModel(
-        repository: MockMeetingsRepositoryProtocol(),
-        currentDateProvider: .system,
-        formatter: MeetingsFormatter(),
-        pastMeetingsUseCase: MockFetchPastMeetingsUseCaseProtocol(),
-        upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol()
+#Preview("non-empty") {
+    MeetingsView(
+        viewModel: MeetingsViewModel(
+            currentDateProvider: .system,
+            formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(meetings: previewMeetings()),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase()
+        )
     )
-    )
+}
+
+private struct PreviewFetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
+
+    var meetings = [Meeting]()
+
+    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
+        .init(meetings: meetings, hasMore: false, nextOffset: 0)
+    }
+
+}
+
+private struct PreviewObserveMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocol {
+
+    func invoke() -> AsyncStream<Void> {
+        AsyncStream { $0.finish() }
+    }
+
+}
+
+private func previewMeetings() -> [Meeting] {
+    let calendar = Calendar.current
+    let now = Date()
+
+    func day(_ offset: Int, hour: Int, minute: Int = 0) -> Date {
+        calendar.date(
+            bySettingHour: hour,
+            minute: minute,
+            second: 0,
+            of: calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: now))!
+        )!
+    }
+
+    func member(_ name: String) -> MeetingMember {
+        MeetingMember(
+            qualifiedID: QualifiedID(id: UUID(), domain: ""),
+            name: name,
+            handle: name.lowercased().replacingOccurrences(of: " ", with: "")
+        )
+    }
+
+    func meeting(_ title: String, start: Date, end: Date, members: [MeetingMember]) -> Meeting {
+        Meeting(
+            id: QualifiedID(id: UUID(), domain: ""),
+            title: title,
+            start: start,
+            end: end,
+            recurrence: nil,
+            members: members,
+            conversationID: QualifiedID(id: UUID(), domain: ""),
+            creatorID: QualifiedID(id: UUID(), domain: "")
+        )
+    }
+
+    return [
+        // TODAY — two meetings at the same time to exercise time grouping
+        meeting(
+            "Standup",
+            start: day(0, hour: 7),
+            end: day(0, hour: 7, minute: 30),
+            members: []
+        ),
+        meeting(
+            "iOS team update",
+            start: day(0, hour: 7),
+            end: day(0, hour: 7, minute: 20),
+            members: [member("User1")]
+        ),
+        meeting(
+            "Candidate interview",
+            start: day(0, hour: 16),
+            end: day(0, hour: 16, minute: 45),
+            members: [member("User1")]
+        ),
+        meeting(
+            "Design review",
+            start: day(0, hour: 17),
+            end: day(0, hour: 18),
+            members: [member("User1")]
+        ),
+
+        // TOMORROW
+        meeting(
+            "Sprint planning",
+            start: day(1, hour: 7),
+            end: day(1, hour: 8),
+            members: [member("User1")]
+        ),
+        meeting(
+            "Daily sync",
+            start: day(1, hour: 7),
+            end: day(1, hour: 7, minute: 20),
+            members: [member("User1"), member("User2")]
+        ),
+        meeting(
+            "Architecture Forum",
+            start: day(1, hour: 13),
+            end: day(1, hour: 14),
+            members: [member("User1"), member("User2"), member("User3")]
+        ),
+
+        // NEXT WEEK
+        meeting(
+            "Sprint Review (all teams)",
+            start: day(7, hour: 16),
+            end: day(7, hour: 16, minute: 30),
+            members: [member("User1")]
+        )
+    ]
 }

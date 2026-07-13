@@ -21,7 +21,7 @@ import XCTest
 
 class PhotosAppPage: PageModel {
     private let photosApp: XCUIApplication
-    private let timeout: TimeInterval = 2
+    private let timeout: TimeInterval = 5
 
     override var pageMainElement: XCUIElement {
         photosApp.windows.firstMatch
@@ -33,21 +33,21 @@ class PhotosAppPage: PageModel {
     }
 
     var continueButtonOnWhatsNewPhotosApp: XCUIElement {
-        photosApp.buttons[Locators.ShareExtensionPage.continueButton.rawValue].firstMatch
+        photosApp.buttons[Locators.PhotosAppPage.continueButton.rawValue].firstMatch
     }
 
-    var firstImageTile: XCUIElement {
-        photosApp.images[Locators.ShareExtensionPage.imageTile.rawValue].firstMatch
+    var imageTile: XCUIElement {
+        photosApp.images[Locators.PhotosAppPage.imageTile.rawValue].firstMatch
     }
 
     var shareButton: XCUIElement {
         photosApp.buttons
-            .matching(identifier: Locators.ShareExtensionPage.shareButton.rawValue)
+            .matching(identifier: Locators.PhotosAppPage.shareButton.rawValue)
             .firstMatch
     }
 
     var shareToWireApp: XCUIElement {
-        photosApp.cells["Wire"].firstMatch
+        photosApp.cells[Locators.ShareExtensionPage.wire.rawValue].firstMatch
     }
 
     var chooseConversation: XCUIElement {
@@ -58,6 +58,48 @@ class PhotosAppPage: PageModel {
         photosApp.buttons[Locators.ShareExtensionPage.sendButtonOnShareExtension.rawValue].firstMatch
     }
 
+    var shareExtensionSearchField: XCUIElement {
+        photosApp.searchFields.allElementsBoundByIndex.first(where: \.isHittable)
+            ?? photosApp.searchFields.firstMatch
+    }
+
+    var selectImage: XCUIElement {
+        photosApp.buttons[Locators.PhotosAppPage.select.rawValue].firstMatch
+    }
+
+    func accountCell(named name: String) -> XCUIElement {
+        let accountName = photosApp.staticTexts[name].firstMatch
+        if accountName.exists {
+            return accountName
+        }
+
+        return photosApp.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@ OR identifier == %@", name, name))
+            .firstMatch
+    }
+
+    func conversationCell(named name: String) -> XCUIElement {
+        let exactCell = photosApp.cells.matching(NSPredicate(format: "label == %@", name)).firstMatch
+        if exactCell.exists {
+            return exactCell
+        }
+
+        let exactText = photosApp.staticTexts[name].firstMatch
+        if exactText.exists {
+            return exactText
+        }
+
+        return photosApp.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@ OR identifier == %@", name, name))
+            .firstMatch
+    }
+
+    func visibleShareExtensionLabels() -> [String] {
+        let labels = photosApp.staticTexts.allElementsBoundByIndex + photosApp.cells.allElementsBoundByIndex
+        return Array(labels.map(\.label).filter { !$0.isEmpty }.prefix(20))
+    }
+
+    @discardableResult
     func selectConversation(name: String) -> XCUIElement {
         let conversationCell = photosApp.staticTexts[name]
         XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
@@ -73,13 +115,15 @@ class PhotosAppPage: PageModel {
     }
 
     @discardableResult
-    func openFirstImage() throws -> PhotosAppPage {
+    func selectImageFromPhotos() throws -> PhotosAppPage {
         try continueWhatsNewIfPresent()
-        XCTAssertTrue(firstImageTile.waitForExistence(timeout: 10))
+        XCTAssertTrue(imageTile.waitForExistence(timeout: 10))
+        selectImage.tap()
         // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
-        firstImageTile
+        imageTile
             .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
             .tap()
+
         return self
     }
 
@@ -92,9 +136,12 @@ class PhotosAppPage: PageModel {
     }
 
     func chooseConversationAndSend(name: String) throws {
-        defer { photosApp.terminate() }
 
-        chooseConversation.waitAndTap()
+        XCTAssertTrue(
+            chooseConversation.waitForExistence(timeout: timeout),
+            "chooseConversation, didn't show up"
+        )
+        chooseConversation.tap()
 
         let conversationToSend = selectConversation(name: name)
         XCTAssertTrue(
@@ -102,10 +149,10 @@ class PhotosAppPage: PageModel {
             "Tap to chooseConversation, didn't pass"
         )
         conversationToSend.waitAndTap()
-
-        XCTAssertTrue(sendButton.waitForExistence(timeout: timeout))
         sendButton.waitAndTap()
 
-        XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
+        XCTAssertFalse(
+            sendButton.waitForExistence(timeout: 5)
+        )
     }
 }

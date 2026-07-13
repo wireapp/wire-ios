@@ -25,6 +25,13 @@ var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 typealias ProfileImageCompletion = (_ image: UIImage?, _ cacheHit: Bool) -> Void
 
 extension UserType {
+
+    /// Whether the user is on the public Wire cloud domain (wire.com or the staging equivalent).
+    /// Used to decide whether to hide the profile picture for incoming connection requests.
+    var isOnPublicCloudDomain: Bool {
+        domain == "wire.com" || domain == "staging.zinfra.io"
+    }
+
     func fetchProfileImage(
         session: UserSession,
         imageCache: ImageCache<UIImage>,

@@ -32,6 +32,10 @@ public enum SecurityFlags {
     case collapseOwnMessages
     case openLinksExternally
 
+    /// Whether accounts from more than one backend can be added in the same app.
+
+    case multibackendSupport
+
     /// Whether encryption at rest is enabled and can't be disabled.
 
     case forceEncryptionAtRest
@@ -74,6 +78,8 @@ public enum SecurityFlags {
             "UseEmbeddedIDPUserAgent"
         case .openLinksExternally:
             "OpenLinksExternally"
+        case .multibackendSupport:
+            "MultibackendSupport"
         }
     }
 

@@ -45,7 +45,7 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
 final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
 
     /// The handle to the OS log for authentication events.
-    let log = ZMSLog(tag: "Authentication")
+    let logger = WireLogger.authentication
 
     /// The navigation controller that presents the authentication interface.
     private(set) weak var presenter: UINavigationController? {
@@ -237,7 +237,7 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
 extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreatedSessionObserver {
 
     func sessionManagerCreated(userSession: ZMUserSession) {
-        log.info("Session manager created session: \(userSession)")
+        logger.info("Session manager created session: \(userSession)")
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
@@ -270,22 +270,22 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
     fileprivate func registerPostLoginObserversIfNeeded() {
         guard postLoginObservers.isEmpty else {
-            log.warn("Post login observers are already registered.")
+            logger.warn("Post login observers are already registered.")
             return
         }
 
         guard let selfUser = statusProvider.selfUser else {
-            log.error("Post login observers were not registered because there is no self user.")
+            logger.error("Post login observers were not registered because there is no self user.")
             return
         }
 
         guard let sharedSession = statusProvider.sharedUserSession else {
-            log.error("Post login observers were not registered because there is no user session.")
+            logger.error("Post login observers were not registered because there is no user session.")
             return
         }
 
         guard let userProfile = statusProvider.selfUserProfile else {
-            log.error("Post login observers were not registered because there is no user profile.")
+            logger.error("Post login observers were not registered because there is no user profile.")
             return
         }
 
@@ -637,7 +637,7 @@ extension AuthenticationCoordinator {
 
     private func startRegistration(_ unverifiedEmail: String) {
         guard case let .createCredentials(unregisteredUser) = stateController.currentStep, let presenter else {
-            log.error("Cannot start phone registration outside of registration flow.")
+            logger.error("Cannot start phone registration outside of registration flow.")
             return
         }
 
@@ -673,7 +673,7 @@ extension AuthenticationCoordinator {
     /// Updates a value of the unregistered user and notifies the responder chain of the success.
     private func updateUnregisteredUser<T>(_ keyPath: ReferenceWritableKeyPath<UnregisteredUser, T?>, _ newValue: T) {
         guard case let .incrementalUserCreation(unregisteredUser, _) = stateController.currentStep else {
-            log.error("Cannot update unregistered user outide of the incremental user creation flow")
+            logger.error("Cannot update unregistered user outide of the incremental user creation flow")
             return
         }
 
@@ -749,7 +749,7 @@ extension AuthenticationCoordinator {
         case let .enterActivationCode(credential, user):
             sendActivationCode(credential, user, isResend: true)
         default:
-            log.error("Cannot send verification code in the current state (\(stateController.currentStep)")
+            logger.error("Cannot send verification code in the current state (\(stateController.currentStep))")
         }
     }
 
@@ -764,7 +764,7 @@ extension AuthenticationCoordinator {
         case let .enterActivationCode(unverifiedEmail, user):
             activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code)
         default:
-            log.error("Cannot continue flow with user code in the current state (\(stateController.currentStep)")
+            logger.error("Cannot continue flow with user code in the current state (\(stateController.currentStep))")
         }
     }
 
@@ -773,12 +773,12 @@ extension AuthenticationCoordinator {
     /// Sets th e-mail and password credentials for the current user.
     private func setEmailCredentialsForCurrentUser(_ credentials: UserEmailCredentials) {
         guard case .addEmailAndPassword = stateController.currentStep else {
-            log.error("Cannot save e-mail and password outside of designated step.")
+            logger.error("Cannot save e-mail and password outside of designated step.")
             return
         }
 
         guard let profile = statusProvider.selfUserProfile else {
-            log.error("Cannot save e-mail and password outside of designated step.")
+            logger.error("Cannot save e-mail and password outside of designated step.")
             return
         }
 
@@ -811,7 +811,7 @@ extension AuthenticationCoordinator {
         case .companyLogin:
             return true
         default:
-            log.warn("Cannot start company login in step: \(stateController.currentStep)")
+            logger.warn("Cannot start company login in step: \(stateController.currentStep)")
             return false
         }
     }
@@ -830,7 +830,7 @@ extension AuthenticationCoordinator {
         companyLoginController?.startAutomaticSSOFlow()
     }
 
-    /// Call this method when the corrdinated view controller appears, to detect the sso code and display it if needed.
+    /// Call this method when the coordinated view controller appears, to detect the SSO code and display it if needed.
     func detectSSOCodeIfPossible() {
         if canStartCompanyLogin {
             companyLoginController?.isAutoDetectionEnabled = true
@@ -843,7 +843,7 @@ extension AuthenticationCoordinator {
     /// Call this method when company login fails or is cancelled by the user.
     func cancelCompanyLogin() {
         guard case .companyLogin = stateController.currentStep else {
-            log.error("Cannot cancel company login outside of the dedicated flow.")
+            logger.error("Cannot cancel company login outside of the dedicated flow.")
             return
         }
 
@@ -864,7 +864,8 @@ extension AuthenticationCoordinator {
 
         Task { @MainActor in
             do {
-                let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+                let certificateChain = try await e2eiCertificateUseCase
+                    .invoke(authenticate: { try await oauthUseCase.invoke(parameters: $0) })
                 executeActions([
                     .hideLoadingView,
                     .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)

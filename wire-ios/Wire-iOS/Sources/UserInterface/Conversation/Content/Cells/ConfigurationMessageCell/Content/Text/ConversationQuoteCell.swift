@@ -44,10 +44,15 @@ final class ConversationReplyContentView: UIView {
         var isSentBySelfUser: Bool = false
         var senderAccentColor: WireAccentColor = .default
 
+        /// `true` when there is a quote but the quoted message is `nil` because it was deleted
+        /// (as opposed to a quote we cannot resolve / are not allowed to see).
+        var quotedMessageWasDeleted: Bool = false
+
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
                 lhs.quotedMessage == rhs.quotedMessage &&
-                lhs.isSentBySelfUser == rhs.isSentBySelfUser
+                lhs.isSentBySelfUser == rhs.isSentBySelfUser &&
+                lhs.quotedMessageWasDeleted == rhs.quotedMessageWasDeleted
         }
 
         var showDetails: Bool {
@@ -117,15 +122,18 @@ final class ConversationReplyContentView: UIView {
                 .font: UIFont.smallSemiboldFont,
                 .foregroundColor: textColor
             ]
+            // A nil quote means the original message is not in our copy of the conversation: it
+            // was either deleted or we simply cannot see it (e.g. joined the conversation later).
+            // The two are distinguished upstream via `quotedMessageWasDeleted`.
             guard quotedMessage != nil else {
-                let deletedAttributes: [NSAttributedString.Key: AnyObject] = [
+                let attributes: [NSAttributedString.Key: AnyObject] = [
                     .font: UIFont.mediumFont.italic,
                     .foregroundColor: textColor
                 ]
-                return .text(NSAttributedString(
-                    string: L10n.Localizable.Content.Message.Reply.deletedMessage,
-                    attributes: deletedAttributes
-                ))
+                let string = quotedMessageWasDeleted
+                    ? L10n.Localizable.Content.Message.Reply.deletedMessage
+                    : L10n.Localizable.Content.Message.Reply.brokenMessage
+                return .text(NSAttributedString(string: string, attributes: attributes))
             }
             switch quotedMessage {
             case let message? where message.isMultipart:
