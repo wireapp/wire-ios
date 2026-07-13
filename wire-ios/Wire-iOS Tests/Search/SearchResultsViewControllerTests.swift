@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import XCTest
 @testable import Wire
 
@@ -44,5 +45,53 @@ final class SearchResultsViewControllerTests: XCTestCase {
 
         // THEN
         XCTAssertNil(sut)
+    }
+
+    func testThatSelectionChangesDoNotReloadContacts() {
+        let fixture = makeContactsSectionController()
+
+        fixture.selection.add(fixture.user)
+        fixture.selection.remove(fixture.user)
+        fixture.selection.replace([fixture.user])
+
+        XCTAssertEqual(fixture.collectionView.reloadDataCallCount, 0)
+    }
+
+    private func makeContactsSectionController() -> (
+        sectionController: ContactsSectionController,
+        selection: UserSelection,
+        collectionView: ReloadTrackingCollectionView,
+        user: UserType
+    ) {
+        let sectionController = ContactsSectionController()
+        let selection = UserSelection()
+        let collectionView = ReloadTrackingCollectionView()
+        let user = MockUserType.createUser(name: "Alice")
+
+        sectionController.selection = selection
+        sectionController.allowsSelection = true
+        sectionController.contacts = [user]
+        sectionController.prepareForUse(in: collectionView)
+
+        return (sectionController, selection, collectionView, user)
+    }
+}
+
+private final class ReloadTrackingCollectionView: UICollectionView {
+
+    private(set) var reloadDataCallCount = 0
+
+    init() {
+        super.init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func reloadData() {
+        reloadDataCallCount += 1
+        super.reloadData()
     }
 }
