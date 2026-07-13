@@ -220,7 +220,18 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             )
 
             for envelope in envelopes {
+                // Important: this batch of events may be large so completing
+                // the event processing may take time. If the sync is suspended
+                // during this loop we may not reach a cancellation check before
+                // the app is suspended. Therefore, check for cancellation before
+                // EACH event is processed.
+                try Task.checkCancellation()
+
                 for event in envelope.events {
+                    // In practice there's only one event per envelope, but add
+                    // a check here anyway just in case.
+                    try Task.checkCancellation()
+
                     do {
                         logger.debug(
                             "processing pending event: \(event.name)",

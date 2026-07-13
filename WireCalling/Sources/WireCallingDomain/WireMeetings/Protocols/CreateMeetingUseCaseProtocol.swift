@@ -16,13 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum RepeatOption: CaseIterable, Sendable {
+package import Foundation
 
-    case never
-    case daily
-    case weekly
-    case every2Weeks
-    case monthly
-    case yearly
+// sourcery: AutoMockable
+/// Creates a new meeting via the backend API, syncs the conversation the
+/// backend created for it and adds the selected participants.
+///
+/// Instant and scheduled meetings share this use case; an instant meeting
+/// is simply one that starts now.
+package protocol CreateMeetingUseCaseProtocol: Sendable {
+
+    func invoke(
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?,
+        participants: [MeetingMember]
+    ) async throws -> Meeting
 
 }
