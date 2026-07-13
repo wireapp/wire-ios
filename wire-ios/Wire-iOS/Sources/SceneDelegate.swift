@@ -67,14 +67,14 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidDisconnect(_ scene: UIScene) {
         WireLogger.sceneDelegate.info(
-            "sceneDidDisconnect: (activationState = \(scene.activationState)",
+            "sceneDidDisconnect: (activationState = \(scene.activationState))",
             attributes: .safePublic
         )
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
         WireLogger.sceneDelegate.info(
-            "sceneDidBecomeActive: (activationState = \(scene.activationState)",
+            "sceneDidBecomeActive: (activationState = \(scene.activationState))",
             attributes: .safePublic
         )
     }
@@ -165,7 +165,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 backgroundTaskExecuter: appTaskExecuter
             )
         } catch {
-            fatalError("sessionManager is not created")
+            fatalError("sessionManager is not created: \(error)")
         }
 
         guard let window else {

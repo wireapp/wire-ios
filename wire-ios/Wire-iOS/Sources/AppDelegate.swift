@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.connectedScenes.compactMap { $0.delegate as? SceneDelegate }.first
     }
 
-    // MARK: - Public propertie
+    // MARK: - Public properties
 
     var mainWindow: UIWindow? {
         sceneDelegate?.window

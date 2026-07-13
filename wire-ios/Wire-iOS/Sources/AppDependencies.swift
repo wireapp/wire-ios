@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import UIKit
 import WireNetwork
 import WireSyncEngine
 
