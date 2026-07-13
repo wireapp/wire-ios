@@ -98,9 +98,9 @@ extension ConversationActionController {
             let eligibleCandidates = eligibleAdminCandidates(in: conversation)
             let hasEligibleCandidates = !eligibleCandidates.isEmpty
             let groupName = conversation.displayNameWithFallback
-            let canDelete = zmSession.selfUser.canDeleteConversation(conversation)
+            let canSelfUserDeleteConversation = zmSession.selfUser.canDeleteConversation(conversation)
 
-            switch (hasEligibleCandidates, canDelete) {
+            switch (hasEligibleCandidates, canSelfUserDeleteConversation) {
 
             // no eligibles candidates and admin can delete group
             case (false, true):

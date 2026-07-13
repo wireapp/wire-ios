@@ -21,7 +21,7 @@ import WireLocators
 
 enum LastAdminLeaveAlert {
 
-    /// Eligible candidates exist and self can delete the group.
+    /// Eligible candidates exist and self user can delete the group.
     static func promoteOrDelete(
         groupName: String,
         onPromote: @escaping () -> Void,
@@ -38,7 +38,7 @@ enum LastAdminLeaveAlert {
         return alert
     }
 
-    /// No eligible candidates, but self can delete the group.
+    /// No eligible candidates, but self user can delete the group.
     static func deleteOnly(
         groupName: String,
         onDelete: @escaping () -> Void
@@ -53,7 +53,7 @@ enum LastAdminLeaveAlert {
         return alert
     }
 
-    /// Eligible candidates exist, but self cannot delete the group (e.g. not a team member).
+    /// Eligible candidates exist, but self user cannot delete the group (e.g. not a team member).
     static func promoteOnly(
         groupName: String,
         onPromote: @escaping () -> Void
@@ -68,7 +68,7 @@ enum LastAdminLeaveAlert {
         return alert
     }
 
-    /// No eligible candidates and self cannot delete the group: leaving is blocked entirely.
+    /// No eligible candidates and self user cannot delete the group: leaving is blocked entirely.
     static func cannotLeave(groupName: String) -> UIAlertController {
         let alert = UIAlertController(
             title: L10n.Localizable.LastAdminLeave.cannotLeaveTitle(groupName),
