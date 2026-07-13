@@ -20,6 +20,7 @@ import Foundation
 import WireCallingDomain
 import WireDataModel
 import WireDomain
+import WireFoundation
 
 /// Bridges `WireDomain`'s `ConversationRepositoryProtocol` into `WireCallingDomain`'s
 /// `MeetingConversationRepositoryProtocol`, so the meetings feature can pull meeting

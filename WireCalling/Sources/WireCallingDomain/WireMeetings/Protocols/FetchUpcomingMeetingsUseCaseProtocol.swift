@@ -17,9 +17,11 @@
 //
 
 // sourcery: AutoMockable
-/// Fetches upcoming meetings
+/// Fetches the meetings shown in the meetings list: all meetings of the
+/// current day — including ones that already started or ended — and of
+/// the following day.
 package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
 
-    func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings
+    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings
 
 }
