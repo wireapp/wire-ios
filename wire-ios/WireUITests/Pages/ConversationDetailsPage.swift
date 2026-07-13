@@ -102,8 +102,7 @@ class ConversationDetailsPage: PageModel {
     }
 
     func unarchiveOptionsConversationDetails() throws -> ConversationsPage {
-        archiveOptionConversationDetailsButton.tap()
-        return try ConversationsPage()
+        try archiveOptionsConversationDetails()
     }
 
     func clearContentOptionsConversationDetails() throws -> Self {
