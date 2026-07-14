@@ -156,6 +156,9 @@ final class ConversationListAccessoryView: UIView {
         let iconTintColor = IconColors.foregroundDefaultWhite
 
         switch icon {
+        case .scheduledForDeletion:
+            configureScheduledForDeletionIcon()
+            return iconView
         case .pendingConnection:
             // TODO: [WPB-17197] update format of icon
             iconView.setTemplateIcon(.clock, size: iconSize)
@@ -298,6 +301,13 @@ final class ConversationListAccessoryView: UIView {
             ])
 
         }
+    }
+
+    private func configureScheduledForDeletionIcon() {
+        iconView.setTemplateIcon(.exclamationMark, size: iconSize)
+        iconView.tintColor = IconColors.foregroundExclamationMarkInSystemMessage
+        badgeView.backgroundColor = ViewColors.backgroundDefaultWhite
+        accessibilityValue = ConversationsListAccessibility.ScheduledForDeletionStatus.value
     }
 
     private func configureSilencedNotificationsIcon() {
