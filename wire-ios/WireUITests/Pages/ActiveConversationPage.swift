@@ -528,6 +528,25 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
+    func verifyReadReceiptsSystemMessage(
+        enabled: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        let expected = enabled
+            ? "You turned read receipts on for everyone"
+            : "You turned read receipts off for everyone"
+        let predicate = NSPredicate(format: "label CONTAINS[c] %@", expected)
+        XCTAssertTrue(
+            app.descendants(matching: .any).matching(predicate).firstMatch.waitForExistence(timeout: 10),
+            "Expected read-receipts system message '\(expected)' not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
     func verifyLinkPreviewCell(
         file: StaticString = #filePath,
         line: UInt = #line

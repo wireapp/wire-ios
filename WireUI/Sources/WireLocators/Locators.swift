@@ -232,6 +232,7 @@ public enum Locators {
         case adminCell
         case memberCell
         case close
+        case readReceiptsSwitch
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
