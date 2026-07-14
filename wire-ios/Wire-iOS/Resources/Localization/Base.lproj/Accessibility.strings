@@ -218,6 +218,7 @@
 
 "conversationsList.accountButton.hint" = "Double tap to open profile and settings";
 "conversationsList.silencedStatus.value" = "Silenced";
+"conversationsList.scheduledForDeletionStatus.value" = "Will be deleted soon";
 "conversationsList.mentionStatus.value" = "You are mentioned";
 "conversationsList.replyStatus.value" = "Reply";
 "conversationsList.badgeView.value" = "New messages: %d";

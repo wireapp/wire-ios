@@ -798,6 +798,10 @@ internal enum L10n {
         /// Reply
         internal static let value = L10n.tr("Accessibility", "conversationsList.replyStatus.value", fallback: "Reply")
       }
+      internal enum ScheduledForDeletionStatus {
+        /// Will be deleted soon
+        internal static let value = L10n.tr("Accessibility", "conversationsList.scheduledForDeletionStatus.value", fallback: "Will be deleted soon")
+      }
       internal enum SilencedStatus {
         /// Silenced
         internal static let value = L10n.tr("Accessibility", "conversationsList.silencedStatus.value", fallback: "Silenced")
@@ -2415,6 +2419,12 @@ internal enum L10n {
             internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState.enabled", fallback: "on")
           }
         }
+        internal enum MessageConversationScheduledForDeletion {
+          /// This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)
+          internal static func text(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.text", String(describing: p1), String(describing: p2), fallback: "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)")
+          }
+        }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")
@@ -2976,6 +2986,8 @@ internal enum L10n {
         }
         /// Poor connection
         internal static let poorConnection = L10n.tr("Localizable", "conversation.status.poor_connection", fallback: "Poor connection")
+        /// Will be deleted soon
+        internal static let scheduledForDeletion = L10n.tr("Localizable", "conversation.status.scheduled_for_deletion", fallback: "Will be deleted soon")
         /// Muted
         internal static let silenced = L10n.tr("Localizable", "conversation.status.silenced", fallback: "Muted")
         /// Someone
