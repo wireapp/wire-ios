@@ -262,6 +262,7 @@ public enum Locators {
         case addAccountOrTeamButton
         case userProfilePicture
         case close
+        case status
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
