@@ -21,6 +21,7 @@ import WireLocators
 
 enum LastAdminLeaveAlert {
 
+    /// Eligible candidates exist and self user can delete the group.
     static func promoteOrDelete(
         groupName: String,
         onPromote: @escaping () -> Void,
@@ -31,17 +32,13 @@ enum LastAdminLeaveAlert {
             message: L10n.Localizable.LastAdminLeave.promoteOrDeleteMessage,
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.LastAdminLeave.promoteNewAdmin,
-            style: .default,
-            accessibilityIdentifier: Locators.LastAdminLeaveAlert.promoteNewAdmin.rawValue,
-            handler: { _ in onPromote() }
-        ))
+        alert.addAction(makePromoteNewAdminAction(onPromote: onPromote))
         alert.addAction(makeDeleteGroupAction(onDelete: onDelete))
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel))
         return alert
     }
 
+    /// No eligible candidates, but self user can delete the group.
     static func deleteOnly(
         groupName: String,
         onDelete: @escaping () -> Void
@@ -54,6 +51,41 @@ enum LastAdminLeaveAlert {
         alert.addAction(makeDeleteGroupAction(onDelete: onDelete))
         alert.addAction(UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel))
         return alert
+    }
+
+    /// Eligible candidates exist, but self user cannot delete the group (e.g. not a team member).
+    static func promoteOnly(
+        groupName: String,
+        onPromote: @escaping () -> Void
+    ) -> UIAlertController {
+        let alert = UIAlertController(
+            title: L10n.Localizable.LastAdminLeave.title(groupName),
+            message: L10n.Localizable.LastAdminLeave.promoteOnlyMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(makePromoteNewAdminAction(onPromote: onPromote))
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel))
+        return alert
+    }
+
+    /// No eligible candidates and self user cannot delete the group: leaving is blocked entirely.
+    static func cannotLeave(groupName: String) -> UIAlertController {
+        let alert = UIAlertController(
+            title: L10n.Localizable.LastAdminLeave.cannotLeaveTitle(groupName),
+            message: L10n.Localizable.LastAdminLeave.cannotLeaveMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
+        return alert
+    }
+
+    private static func makePromoteNewAdminAction(onPromote: @escaping () -> Void) -> UIAlertAction {
+        UIAlertAction(
+            title: L10n.Localizable.LastAdminLeave.promoteNewAdmin,
+            style: .default,
+            accessibilityIdentifier: Locators.LastAdminLeaveAlert.promoteNewAdmin.rawValue,
+            handler: { _ in onPromote() }
+        )
     }
 
     private static func makeDeleteGroupAction(onDelete: @escaping () -> Void) -> UIAlertAction {
