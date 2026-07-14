@@ -192,7 +192,7 @@ final class TeamManageTests: WireUITestCase {
             .openConversation()
             .goBackToConversationPage()
             .openArchived()
-        
+
         // [WPB-3772]: BUG: just opening an archived conversation must not unarchive it.
         XCTAssertTrue(
             stillArchivedPage.conversationExists(withName: groupName),
