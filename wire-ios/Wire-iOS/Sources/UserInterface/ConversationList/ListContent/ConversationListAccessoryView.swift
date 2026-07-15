@@ -304,7 +304,12 @@ final class ConversationListAccessoryView: UIView {
     }
 
     private func configureScheduledForDeletionIcon() {
-        iconView.setTemplateIcon(.exclamationMarkCircle, size: iconSize)
+        let targetSize = CGSize(width: 14, height: 14)
+        let resizedIcon = UIGraphicsImageRenderer(size: targetSize).image { _ in
+            UIImage(resource: .attention).draw(in: CGRect(origin: .zero, size: targetSize))
+        }.withRenderingMode(.alwaysTemplate)
+
+        iconView.image = resizedIcon
         iconView.tintColor = IconColors.foregroundExclamationMarkInSystemMessage
         badgeView.backgroundColor = ViewColors.backgroundDefaultWhite
     }

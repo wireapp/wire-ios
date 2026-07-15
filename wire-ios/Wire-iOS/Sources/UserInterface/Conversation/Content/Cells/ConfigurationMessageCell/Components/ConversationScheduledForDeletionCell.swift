@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireCommonComponents
 import WireDataModel
 import WireDesign
 
@@ -30,6 +29,7 @@ final class ConversationScheduledForDeletionSystemMessageCell:
     struct Configuration {
         let attributedText: NSAttributedString?
         var icon: UIImage?
+        var iconTintColor: UIColor?
     }
 
     override init(frame: CGRect) {
@@ -50,6 +50,7 @@ final class ConversationScheduledForDeletionSystemMessageCell:
     func configure(with object: Configuration, animated: Bool) {
         attributedText = object.attributedText
         imageView.image = object.icon
+        imageView.tintColor = object.iconTintColor
     }
 }
 
@@ -82,12 +83,13 @@ final class ConversationScheduledForDeletionCellDescription: ConversationMessage
             range: NSRange(location: 0, length: attributedText.length)
         )
 
-        let icon = StyleKitIcon.exclamationMarkCircle.makeImage(
-            size: 16,
-            color: redColor
-        )
+        let icon = UIImage(resource: .attention).withRenderingMode(.alwaysTemplate)
 
-        self.configuration = View.Configuration(attributedText: attributedText, icon: icon)
+        self.configuration = View.Configuration(
+            attributedText: attributedText,
+            icon: icon,
+            iconTintColor: redColor
+        )
         self.accessibilityLabel = configuration.attributedText?.string
     }
 }
