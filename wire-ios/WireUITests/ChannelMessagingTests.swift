@@ -51,9 +51,22 @@ final class ChannelMessagingTests: WireUITestCase {
             .acceptPopup()
     }
 
+    @MainActor
+    private func addTeamMemberToChannel(
+        _ teamWithChannelConversation: ReturnedTeam
+    ) throws -> ActiveConversationPage {
+        try ConversationsPage()
+            .openConversation()
+            .openConversationDetails()
+            .appParticipantToConversation()
+            .tapMemberCells(withLabelPrefixes: [teamWithChannelConversation.teamMember.name])
+            .addSelectedParticipant()
+            .closeConversationDetails()
+    }
+
     /// [critical]
     @MainActor
-    func testSendText_Image_AudioInChannelConversation_TC_8847_8848_8849_8852() async throws {
+    func testSendTextImageAudioAndPingInChannelConversation_TC_8847_8848_8849_8852() async throws {
 
         // GIVEN
         let message = UserGenerator.generateRandomMessage()
@@ -91,6 +104,73 @@ final class ChannelMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testReceiveImageAudioAndPingInChannelConversation_TC_8855_8856_8859() async throws {
+
+        // GIVEN
+        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+
+        _ = try login(user: teamWithChannelConversation.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: teamWithChannelConversation.teamMember.email,
+            password: teamWithChannelConversation.teamMember.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
+
+        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+
+        // WHEN
+        try await testServicesClient.sendImage(
+            user: teamWithChannelConversation.teamMember,
+            fileURL: mediaURLs.imageURL,
+            type: mediaURLs.imageExtension,
+            conversationId: teamWithChannelConversation.conversationId,
+            domain: teamWithChannelConversation.conversationDomain
+        )
+
+        try await testServicesClient.sendFile(
+            type: "audio",
+            user: teamWithChannelConversation.teamMember,
+            fileName: "audio-message",
+            filepath: nil,
+            convoId: teamWithChannelConversation.conversationId,
+            domain: teamWithChannelConversation.conversationDomain,
+            audio: TestServiceMediaFixtures.audioMetadata()
+        )
+
+        try await testServicesClient.sendPing(
+            user: teamWithChannelConversation.teamMember,
+            conversationId: teamWithChannelConversation.conversationId,
+            domain: teamWithChannelConversation.conversationDomain
+        )
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.element(boundBy: 1).waitForExistence(timeout: 5),
+            "Expected image and audio attachments not found"
+        )
+
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            teamWithChannelConversation.teamMember.name,
+            "Sender info didn't match expected value \(teamWithChannelConversation.teamMember.name)"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage
+                .receivedPing(for: teamWithChannelConversation.teamMember.name)
+                .waitForExistence(timeout: 2),
+            "Expected ping message from \(teamWithChannelConversation.teamMember.name) not found"
+        )
+    }
+
+    @MainActor
     func testSendAndReceiveFileInChannelConversation_TC_8851_8858() async throws {
 
         // GIVEN
@@ -108,13 +188,7 @@ final class ChannelMessagingTests: WireUITestCase {
         .openUserProfilePage()
         .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
 
-        let activeConversationPage = try ConversationsPage()
-            .openConversation()
-            .openConversationDetails()
-            .appParticipantToConversation()
-            .tapMemberCells(withLabelPrefixes: [teamWithChannelConversation.teamMember.name])
-            .addSelectedParticipant()
-            .closeConversationDetails()
+        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
 
         // WHEN
         activeConversationPage.uploadFile()
