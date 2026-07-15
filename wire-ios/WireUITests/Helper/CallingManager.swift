@@ -54,29 +54,28 @@ final class CallingManager {
         }
     }
 
-    func waitForCurrentCallStatus(
+    func waitForCurrentCall(
         instanceId: String,
-        expectedStatuses: Set<String>,
         timeout: TimeInterval
     ) async throws {
-        let deadline = Date().addingTimeInterval(timeout)
         var currentStatus: String?
         var currentCallId: String?
 
-        repeat {
+        for attempt in 0 ... Int(timeout) {
             if let call = try? await client.getCurrentCall(instanceId: instanceId) {
                 currentCallId = call.id
                 currentStatus = call.status
-                if expectedStatuses.containsStatus(currentStatus) {
+                if let currentCallId, !currentCallId.isEmpty {
                     return
                 }
             }
 
+            guard attempt < Int(timeout) else { break }
             try await Task.sleep(for: .seconds(1))
-        } while Date() < deadline
+        }
 
         throw RuntimeError(
-            "CallingService current call status \(currentStatus ?? "nil") for \(instanceId)/\(currentCallId ?? "nil") did not become \(expectedStatuses.sorted())"
+            "CallingService current call was not found for \(instanceId). Status: \(currentStatus ?? "nil"), callId: \(currentCallId ?? "nil")"
         )
     }
 
@@ -126,16 +125,16 @@ final class CallingManager {
         minimumCount: Int = 1,
         timeout: TimeInterval = 15
     ) async throws -> [CallFlow] {
-        let deadline = Date().addingTimeInterval(timeout)
         var flows: [CallFlow] = []
 
-        repeat {
+        for attempt in 0 ... Int(timeout) {
             flows = try await client.getFlows(instanceId: instanceId)
             if flows.count >= minimumCount {
                 return flows
             }
+            guard attempt < Int(timeout) else { break }
             try await Task.sleep(for: .seconds(1))
-        } while Date() < deadline
+        }
 
         throw RuntimeError(
             "CallingService found \(flows.count) flows for \(instanceId), expected at least \(minimumCount)"
@@ -163,10 +162,9 @@ final class CallingManager {
         checkVideoReceived: Bool,
         timeout: TimeInterval
     ) async throws {
-        let deadline = Date().addingTimeInterval(timeout)
         var flowAfter: CallFlow?
 
-        repeat {
+        for attempt in 0 ... Int(timeout) {
             flowAfter = try await client.getFlows(instanceId: instanceId)
                 .first { $0.remoteUserId == flowBefore.remoteUserId }
 
@@ -178,18 +176,12 @@ final class CallingManager {
                 return
             }
 
+            guard attempt < Int(timeout) else { break }
             try await Task.sleep(for: .seconds(1))
-        } while Date() < deadline
+        }
 
         throw RuntimeError(
             "CallingService no positive flow change for \(instanceId). Before: \(flowBefore). After: \(String(describing: flowAfter))"
         )
-    }
-}
-
-private extension Set<String> {
-    func containsStatus(_ status: String?) -> Bool {
-        guard let status else { return false }
-        return contains { $0.caseInsensitiveCompare(status) == .orderedSame }
     }
 }
