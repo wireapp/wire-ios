@@ -4,12 +4,12 @@ updates:
     directory: "/wire-ios-mono.xcworkspace/xcshareddata/swiftpm"
     schedule:
       interval: "weekly"
-    exclude-paths:
-      - "/wire-ios-build-assets"
+    cooldown:
+      default-days: 3
 
   - package-ecosystem: "bundler"
     directory: "/"
     schedule:
       interval: "weekly"
-    exclude-paths:
-      - "/wire-ios-build-assets"
+    cooldown:
+      default-days: 3
