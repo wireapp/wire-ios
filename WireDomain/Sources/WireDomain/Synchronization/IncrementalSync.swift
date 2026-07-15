@@ -400,12 +400,22 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         do {
             for item in envelopesWithObjectIDs {
+                // Important: this batch of events may be large so completing
+                // the event processing may take time. If the sync is suspended
+                // during this loop we may not reach a cancellation check before
+                // the app is suspended. Therefore, check for cancellation before
+                // EACH event is processed.
+                try Task.checkCancellation()
 
                 guard !earService.isLocked || item.envelope.isBackgroundAccessible else {
                     throw Failure.databaseLocked
                 }
 
                 for event in item.envelope.events {
+                    // In practice there's only one event per envelope, but add
+                    // a check here anyway just in case.
+                    try Task.checkCancellation()
+
                     do {
                         logger.debug(
                             "processing pending event: \(event.name)",
