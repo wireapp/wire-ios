@@ -25,6 +25,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
     static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
 
     private var text: String
+    private let accessibilityLabel: String?
     private let presentationStyle: PresentationStyle
 
     weak var viewController: UIViewController?
@@ -46,6 +47,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
 
     init(
         text: String,
+        accessibilityLabel: String? = nil,
         identifier: String? = .none,
         previewGenerator: PreviewGeneratorType? = .none,
         presentationStyle: PresentationStyle,
@@ -53,6 +55,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
         settingsCoordinator: AnySettingsCoordinator
     ) {
         self.text = text
+        self.accessibilityLabel = accessibilityLabel
         self.identifier = identifier
         self.previewGenerator = previewGenerator
         self.presentationStyle = presentationStyle
@@ -65,6 +68,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
     func featureCell(_ cell: SettingsCellType) {
         if let tableCell = cell as? SettingsAppearanceCell {
             tableCell.configure(with: .appearance(title: text))
+            tableCell.accessibilityLabel = accessibilityLabel ?? text
             tableCell.accessibilityIdentifier = identifier
 
             if let previewGenerator {
