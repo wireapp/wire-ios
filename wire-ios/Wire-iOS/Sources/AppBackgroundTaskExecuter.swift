@@ -158,26 +158,30 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         let name = name ?? "unnamed"
 
         guard let activity = backgroundActivityFactory.startBackgroundActivity(name: name) else {
-            WireLogger.backgroundActivity.debug("background task \(name) cannot begin (BackgroundActivityFactory)")
+            WireLogger.backgroundActivity.debug("background task \(name) cannot begin")
             throw CancellationError()
         }
 
         let task = Task {
-            WireLogger.backgroundActivity.debug("will start background task: \(name) (BackgroundActivityFactory)")
+            WireLogger.backgroundActivity.debug("will start background task: \(name)")
 
             do {
                 let result = try await operation()
-                WireLogger.backgroundActivity.debug("did end background task: \(name) (BackgroundActivityFactory)")
+                WireLogger.backgroundActivity.debug("did end background task: \(name)")
                 return result
             } catch {
-                WireLogger.backgroundActivity.warn("did fail background task: \(name) (BackgroundActivityFactory)")
+                if error is CancellationError {
+                    WireLogger.backgroundActivity.debug("did cancel background task: \(name)")
+                } else {
+                    WireLogger.backgroundActivity.warn("did fail background task: \(name)")
+                }
                 throw error
             }
         }
 
         activity.expirationHandler = {
             WireLogger.backgroundActivity.warn(
-                "background task \(name) expiring soon (BackgroundActivityFactory). Cancelling..."
+                "background task \(name) expiring soon. Cancelling..."
             )
             task.cancel()
         }
