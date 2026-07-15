@@ -99,6 +99,12 @@ final class AuthenticationInterfaceBuilder {
                 authenticationCoordinator: authenticationCoordinator
             )
 
+        case .noDefaultBackend:
+            return NoDefaultBackendViewController()
+
+        case .backendConfigured:
+            return BackendConfiguredViewController()
+
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
             landingViewController.configure(with: featureProvider)

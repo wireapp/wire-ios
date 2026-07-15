@@ -16,13 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireTestingPackage
+import XCTest
 
-public extension Bundle {
-    static var backendBundle: Bundle? {
-        guard let backendBundlePath = Bundle.appMainBundle.path(forResource: "Backend", ofType: "bundle")
-        else { return nil }
-        guard let bundle = Bundle(path: backendBundlePath) else { fatalError("Could not load backend.bundle") }
-        return bundle
+@testable import Wire
+
+final class BackendConfiguredViewControllerTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var sut: BackendConfiguredViewController!
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+        accentColor = .blue
+    }
+
+    override func tearDown() {
+        sut = nil
+        snapshotHelper = nil
+        super.tearDown()
+    }
+
+    // MARK: - Snapshot Tests
+
+    @MainActor
+    func testForAllScreenSizes() {
+        sut = BackendConfiguredViewController()
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 }
