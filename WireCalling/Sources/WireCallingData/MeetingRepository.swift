@@ -158,7 +158,6 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
-            members: [],
             conversationID: conversationID,
             creatorID: creatorID
         )

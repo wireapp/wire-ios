@@ -76,8 +76,8 @@ struct MeetingRow: View {
                     .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                if !meeting.members.isEmpty {
-                    MemberAvatarsView(members: meeting.members)
+                if let conversation = meeting.conversation, !conversation.participants.isEmpty {
+                    MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
                         .padding(.top, 2)
                 }
             }
@@ -93,7 +93,13 @@ struct MeetingRow: View {
             start: Date(),
             end: Date(),
             recurrence: .none,
-            members: [],
+            conversation: MeetingConversation(
+                id: QualifiedID(id: UUID(), domain: ""),
+                participants: [
+                    MeetingMember(qualifiedID: QualifiedID(id: UUID(), domain: ""), name: "Alice Smith", handle: "alice", initials: "AS"),
+                    MeetingMember(qualifiedID: QualifiedID(id: UUID(), domain: ""), name: "Bob Jones", handle: "bob", initials: "BJ")
+                ]
+            ),
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         ),

@@ -17,14 +17,23 @@
 //
 
 public import Foundation
+public import UIKit
 public import WireFoundation
 
-// TODO: [WPB-20278] Update the model
-public struct MeetingMember: Hashable, Identifiable, Sendable {
+public struct MeetingMember: Identifiable, Sendable {
 
     public let qualifiedID: QualifiedID
     public let name: String
     public let handle: String
+
+    /// The member's initials, used as an avatar fallback when no image is available.
+    public let initials: String
+
+    /// The member's accent color, used as the background behind the initials.
+    public let accentColor: WireAccentColor
+
+    /// The member's profile image, if available; when `nil` the initials are shown instead.
+    public let avatarImage: UIImage?
 
     public var id: UUID {
         qualifiedID.id
@@ -33,11 +42,33 @@ public struct MeetingMember: Hashable, Identifiable, Sendable {
     public init(
         qualifiedID: QualifiedID,
         name: String,
-        handle: String
+        handle: String,
+        initials: String = "",
+        accentColor: WireAccentColor = .default,
+        avatarImage: UIImage? = nil
     ) {
         self.qualifiedID = qualifiedID
         self.name = name
         self.handle = handle
+        self.initials = initials
+        self.accentColor = accentColor
+        self.avatarImage = avatarImage
+    }
+
+}
+
+// MARK: - Hashable
+
+// Identity is keyed on `qualifiedID` only, so a `Set<MeetingMember>` dedupes by user
+// and the non-`Hashable`/mutable avatar payload doesn't affect membership or equality.
+extension MeetingMember: Hashable {
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(qualifiedID)
+    }
+
+    public static func == (lhs: MeetingMember, rhs: MeetingMember) -> Bool {
+        lhs.qualifiedID == rhs.qualifiedID
     }
 
 }

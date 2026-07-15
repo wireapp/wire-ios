@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import UIKit
 import WireCallingData
 import WireCallingDomain
 import WireDataModel
@@ -147,7 +148,12 @@ private extension StoredMeeting {
             let creatorID = creator?.qualifiedID
         else { return nil }
 
-        guard let conversationID = conversation?.qualifiedID else { return nil }
+        guard let conversation, let conversationID = conversation.qualifiedID else { return nil }
+
+        let domainConversationID = QualifiedID(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
 
         return Meeting(
             id: QualifiedID(id: remoteIdentifier, domain: domain ?? ""),
@@ -155,11 +161,11 @@ private extension StoredMeeting {
             start: start,
             end: end,
             recurrence: toDomainRecurrence(),
-            members: [],
-            conversationID: QualifiedID(
-                id: conversationID.uuid,
-                domain: conversationID.domain
+            conversation: MeetingConversation(
+                id: domainConversationID,
+                participants: conversation.toMeetingMembers()
             ),
+            conversationID: domainConversationID,
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
     }
@@ -178,6 +184,26 @@ private extension StoredMeeting {
             interval: Int(recurrenceInterval),
             until: recurrenceUntil
         )
+    }
+
+}
+
+private extension ZMConversation {
+
+    /// Maps the conversation's participants to meeting members, mirroring the Wire Drive
+    /// `ZMConversation` → participant mapping. Must be called on the conversation's context.
+    func toMeetingMembers() -> Set<MeetingMember> {
+        Set(localParticipants.compactMap { user -> MeetingMember? in
+            guard let qualifiedID = user.qualifiedID else { return nil }
+            return MeetingMember(
+                qualifiedID: QualifiedID(id: qualifiedID.uuid, domain: qualifiedID.domain),
+                name: user.name ?? "",
+                handle: user.handle ?? "",
+                initials: user.initials ?? "",
+                accentColor: user.accentColor ?? .default,
+                avatarImage: user.previewImageData.flatMap(UIImage.init(data:))
+            )
+        })
     }
 
 }

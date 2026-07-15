@@ -30,7 +30,7 @@ struct MemberAvatarsView: View {
     var body: some View {
         if members.count == 1 {
             HStack(spacing: 6) {
-                circle()
+                avatar(for: members[0])
 
                 if !members[0].name.isEmpty {
                     Text(members[0].name)
@@ -44,8 +44,8 @@ struct MemberAvatarsView: View {
 
             HStack(spacing: 6) {
                 HStack(spacing: -overlap) {
-                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, _ in
-                        circle()
+                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, member in
+                        avatar(for: member)
                             .zIndex(Double(maxVisible - index))
                     }
                 }
@@ -59,13 +59,28 @@ struct MemberAvatarsView: View {
         }
     }
 
-    private func circle() -> some View {
-        Circle()
-            .fill(Color.gray.opacity(0.35))
-            .frame(width: circleSize, height: circleSize)
-            .overlay(
-                Circle().strokeBorder(ColorTheme.Backgrounds.surface.color, lineWidth: 2)
-            )
+    /// Renders a member's avatar: their profile image when available, otherwise their
+    /// initials on an accent-colored background — the same image-or-initials fallback
+    /// that `UserCell.avatarImageView` (`UserImageView`) performs in UIKit.
+    private func avatar(for member: MeetingMember) -> some View {
+        Group {
+            if let image = member.avatarImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Text(member.initials)
+                    .font(for: .subline1)
+                    .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(member.accentColor))
+            }
+        }
+        .frame(width: circleSize, height: circleSize)
+        .clipShape(Circle())
+        .overlay(
+            Circle().strokeBorder(ColorTheme.Backgrounds.surface.color, lineWidth: 2)
+        )
     }
 }
 
