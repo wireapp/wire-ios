@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2026 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,33 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
+import WireTestingPackage
 import XCTest
+
 @testable import Wire
 
-final class URL_WireTests: XCTestCase {
+final class BackendConfiguredViewControllerTests: XCTestCase {
 
-    var be: BackendEnvironment!
+    // MARK: - Properties
+
+    private var sut: BackendConfiguredViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        let bundle = Bundle.backendBundle!
-        let defaults = UserDefaults(suiteName: "URLWireTests")!
-        EnvironmentType.default.save(in: defaults)
-        be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)
+        snapshotHelper = SnapshotHelper()
+        accentColor = .blue
     }
 
     override func tearDown() {
-        be = nil
+        sut = nil
+        snapshotHelper = nil
         super.tearDown()
     }
 
-    func testThatAccountURLsAreLoadedCorrectly() {
-        let accountsURL = URL(string: "https://account.wire.com")!
-        XCTAssertEqual(be.accountsURL, accountsURL)
-    }
+    // MARK: - Snapshot Tests
 
-    func test_passwordReset_URLIsCorrect() {
-        XCTAssertEqual(URL.wr_passwordReset, be.accountsURL.appendingPathComponent("forgot"))
+    @MainActor
+    func testForAllScreenSizes() {
+        sut = BackendConfiguredViewController()
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 }

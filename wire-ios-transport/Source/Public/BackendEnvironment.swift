@@ -85,13 +85,17 @@ public enum EnvironmentType: Equatable {
 public extension EnvironmentType {
     internal static let defaultsKey = "ZMBackendEnvironmentType"
 
-    init(userDefaults: UserDefaults) {
+    init?(userDefaults: UserDefaults) {
         if let value = userDefaults.string(forKey: EnvironmentType.defaultsKey) {
             self.init(stringValue: value)
         } else {
+<<<<<<< HEAD
             Logging.backendEnvironment
                 .error("Could not load environment type from user defaults, falling back to default")
             self = .default
+=======
+            return nil
+>>>>>>> f744733f3c (feat: support no default backend app - WPB-26207 (#4974))
         }
     }
 
@@ -108,6 +112,7 @@ public final class BackendEnvironment: NSObject {
     let proxySettings: ProxySettingsProvider?
     let certificateTrust: BackendTrustProvider
     let type: EnvironmentType
+    public let supportEmail: String? // provided by deeplink - optional
 
     public init(
         title: String,
@@ -115,7 +120,8 @@ public final class BackendEnvironment: NSObject {
         environmentType: EnvironmentType,
         endpoints: BackendEndpointsProvider,
         proxySettings: ProxySettingsProvider?,
-        certificateTrust: BackendTrustProvider
+        certificateTrust: BackendTrustProvider,
+        supportEmail: String?
     ) {
         self.title = title
         self.type = environmentType
@@ -123,6 +129,7 @@ public final class BackendEnvironment: NSObject {
         self.proxySettings = proxySettings
         self.certificateTrust = certificateTrust
         self.trustData = trustData
+        self.supportEmail = supportEmail
     }
 
     convenience init?(environmentType: EnvironmentType, data: Data) {
@@ -131,6 +138,7 @@ public final class BackendEnvironment: NSObject {
             let endpoints: BackendEndpoints
             let apiProxy: ProxySettings?
             let pinnedKeys: [TrustData]?
+            let supportEmail: String?
         }
 
         let decoder = JSONDecoder()
@@ -148,7 +156,8 @@ public final class BackendEnvironment: NSObject {
                 environmentType: environmentType,
                 endpoints: backendData.endpoints,
                 proxySettings: backendData.apiProxy,
-                certificateTrust: certificateTrust
+                certificateTrust: certificateTrust,
+                supportEmail: backendData.supportEmail
             )
         } catch {
             Logging.backendEnvironment.error("Could not decode information from data: \(error)")

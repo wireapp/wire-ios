@@ -20,7 +20,14 @@ import XCTest
 @testable import Wire
 
 final class WireEmailTests: XCTestCase {
+<<<<<<< HEAD
     func testThatSupportEmailIsCorrect() {
         XCTAssertEqual(WireEmail.shared.supportEmail, "calling-ios@wire.com")
+=======
+    func testThatCallingSupportEmailIsCorrect() throws {
+        let email = try XCTUnwrap(WireEmail.shared())
+
+        XCTAssertEqual(email.callingSupportEmail, "calling-ios@wire.com")
+>>>>>>> f744733f3c (feat: support no default backend app - WPB-26207 (#4974))
     }
 }

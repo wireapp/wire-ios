@@ -531,9 +531,15 @@
 				AudioRecordViewControllerTests.swift,
 				Authentication/AuthenticationInterfaceBuilderTests.swift,
 				Authentication/AuthenticationStateControllerTests.swift,
+<<<<<<< HEAD
 				Authentication/CookieStorageTests.swift,
 				Authentication/Helpers/RegistrationAnalyticsTrackerTests.swift,
+=======
+				Authentication/BackendConfiguredViewControllerTests.swift,
+>>>>>>> f744733f3c (feat: support no default backend app - WPB-26207 (#4974))
 				Authentication/MockAuthenticationFeatureProvider.swift,
+				Authentication/NoDefaultBackendViewControllerTests.swift,
+				Authentication/NoDefaultBackendViewModelTests.swift,
 				AvailabilityLabelTests.swift,
 				"AVAsset/AVURLAsset+conversionTests.swift",
 				Backup/BackupExcluderTests.swift,

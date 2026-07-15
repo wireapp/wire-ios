@@ -21,34 +21,112 @@ import WireLogging
 import WireTransport
 
 public extension BackendEnvironment {
-    static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
-    static var shared: BackendEnvironment = {
-        let environmentType = if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
+
+    static func reset() {
+        if let loaded = BackendEnvironment.load() {
+            BackendEnvironment.shared = loaded
+        }
+    }
+
+    private static func load() -> BackendEnvironment? {
+        let environmentType: EnvironmentType? = if let typeOverride = AutomationHelper.sharedHelper
+            .backendEnvironmentTypeOverride() {
             EnvironmentType(stringValue: typeOverride)
         } else {
             // read from userDefaults first
             EnvironmentType(userDefaults: .applicationGroup)
         }
 
-        guard let environment = BackendEnvironment(type: environmentType) else {
-            fatalError("Malformed backend configuration data")
+        if Bundle.backendBundle == nil, environmentType == nil {
+            return BackendEnvironment.defaultNoBackend
+        }
+
+        let finalEnvironmentType: EnvironmentType
+        if let environmentType {
+            finalEnvironmentType = environmentType
+        } else {
+            WireLogger.environment.info("fallback to production environment", attributes: .safePublic)
+            finalEnvironmentType = .production
+        }
+
+        guard let environment = BackendEnvironment(type: finalEnvironmentType) else {
+            return nil
         }
         return environment
+    }
+
+    static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
+    static var shared: BackendEnvironment = {
+        if let loaded = BackendEnvironment.load() {
+            loaded
+        } else {
+            fatalError("Malformed backend configuration data")
+        }
     }() {
         didSet {
             AutomationHelper.sharedHelper.disableBackendTypeOverride()
             shared.save(in: .applicationGroup)
             NotificationCenter.default.post(name: backendSwitchNotification, object: shared)
+<<<<<<< HEAD
             WireLogger.backend.debug("Shared backend environment did change to: \(shared.title)")
+=======
+            WireLogger.environment.debug("Shared backend environment did change to: \(shared.title)")
+>>>>>>> f744733f3c (feat: support no default backend app - WPB-26207 (#4974))
         }
     }
 
     convenience init?(type: EnvironmentType?) {
-        self.init(
-            userDefaults: .applicationGroupCombinedWithStandard,
-            configurationBundle: .backendBundle,
-            environmentType: type
-        )
+        if let bundle = Bundle.backendBundle {
+            self.init(
+                userDefaults: .applicationGroupCombinedWithStandard,
+                configurationBundle: bundle,
+                environmentType: type
+            )
+        } else {
+            self.init(userDefaults: .applicationGroupCombinedWithStandard)
+        }
     }
 
+    static var defaultNoBackend = BackendEnvironment(
+        title: "No default backend",
+        trustData: [],
+        environmentType: .production,
+        endpoints: NoBackendEndpointsProvider(),
+        proxySettings: nil,
+        certificateTrust: NoBackendTrustProvider(),
+        supportEmail: nil
+    )
+}
+
+class NoBackendTrustProvider: NSObject, BackendTrustProvider {
+    func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
+        false
+    }
+
+    var bundleIdentifier: String = "com.wire.no-default-backend"
+}
+
+class NoBackendEndpointsProvider: NSObject, BackendEndpointsProvider {
+    var backendURL: URL
+
+    var backendWSURL: URL
+
+    var blackListURL: URL
+
+    var teamsURL: URL
+
+    var accountsURL: URL
+
+    var websiteURL: URL
+
+    var countlyURL: URL?
+
+    override init() {
+        self.websiteURL = URL(string: "https://example.com")!
+        self.backendURL = URL(string: "https://example.com")!
+        self.backendWSURL = URL(string: "wss://example.com")!
+        self.blackListURL = URL(string: "https://example.com")!
+        self.teamsURL = URL(string: "https://example.com")!
+        self.accountsURL = URL(string: "https://example.com")!
+    }
 }

@@ -32,13 +32,17 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
 
     @MainActor
     func presentMailComposer(fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration) {
+<<<<<<< HEAD
         let mailRecipient = WireEmail.shared.supportEmail
+=======
+        let mailRecipient = WireEmail.shared()?.callingSupportEmail
+>>>>>>> f744733f3c (feat: support no default backend app - WPB-26207 (#4974))
 
         guard MFMailComposeViewController.canSendMail() else {
             // we will be stuck on the blocker screen after that
             // considering this an edge case for now
             return DebugAlert.displayFallbackActivityController(
-                email: mailRecipient,
+                email: mailRecipient ?? L10n.Localizable.Self.Settings.TechnicalReport.noMailRecipient,
                 from: self,
                 popoverPresentationConfiguration: fallbackActivityPopoverConfiguration
             )
@@ -46,7 +50,9 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
 
         let mailComposeViewController = MFMailComposeViewController()
         mailComposeViewController.mailComposeDelegate = self
-        mailComposeViewController.setToRecipients([mailRecipient])
+        if let mailRecipient {
+            mailComposeViewController.setToRecipients([mailRecipient])
+        }
         mailComposeViewController.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
         let body = MFMailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)

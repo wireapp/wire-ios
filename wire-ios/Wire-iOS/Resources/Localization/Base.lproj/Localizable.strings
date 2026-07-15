@@ -1469,6 +1469,7 @@
 "self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Detailed logs could contain personal data";
 "self.settings.technical_report.no_mail_alert" = "No mail client detected. Tap \"OK\" and send logs manually to: ";
+"self.settings.technical_report.no_mail_recipient" = "no recipient available";
 
 "self.settings.technical_report.mail_body.firstline" = "Explain what happened so that we can understand and reproduce the problem:";
 "self.settings.technical_report.mail_body.section1" = "What Happened?";
@@ -1554,6 +1555,20 @@
 "landing.custom_backend.alert.title" = "On-premises Backend";
 "landing.custom_backend.alert.message.backend-name" = "Backend name:";
 "landing.custom_backend.alert.message.backend-url" = "Backend URL:";
+
+// No default backend
+
+"no_default_backend.title" = "Setup";
+"no_default_backend.subheadline" = "Set up your app";
+"no_default_backend.paragraph" = "To get started, enter the link or scan the QR code provided by your administration.";
+"no_default_backend.text_field.caption" = "Configuration link";
+"no_default_backend.text_field.placeholder" = "Enter link or scan QR code";
+"no_default_backend.button.configure" = "Set Up";
+"no_default_backend.error" = "Something went wrong. Check the link and your connection, then try again.";
+"no_default_backend.setup.message" = "Your app is set up";
+"no_default_backend.setup.subtitle" = "In the next step, you can log in";
+"no_default_backend.setup.button.continue" = "Continue";
+"no_default_backend.scanner.title" = "Scan QR code";
 
 // Create team
 
