@@ -164,9 +164,15 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
         let task = Task {
             WireLogger.backgroundActivity.debug("will start background task: \(name) (BackgroundActivityFactory)")
-            let result = try await operation()
-            WireLogger.backgroundActivity.debug("did end background task: \(name) (BackgroundActivityFactory)")
-            return result
+
+            do {
+                let result = try await operation()
+                WireLogger.backgroundActivity.debug("did end background task: \(name) (BackgroundActivityFactory)")
+                return result
+            } catch {
+                WireLogger.backgroundActivity.warn("did fail background task: \(name) (BackgroundActivityFactory)")
+                throw error
+            }
         }
 
         activity.expirationHandler = {
