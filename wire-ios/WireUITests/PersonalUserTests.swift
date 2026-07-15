@@ -53,8 +53,7 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     private func loginAndCreateOneOnOneConversation(for user: UserInfo) throws -> ConversationsPage {
-        try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        try skipUiLogin(user: user)
             .tapPlusButtonToCreateGroup()
             .openUserDetailsInContactList()
             .tapStartConversationButton()
@@ -120,8 +119,7 @@ final class PersonalUsersTests: WireUITestCase {
         let userC = try await UserHelper.default.createPersonalUser()
         let domain = BackendTarget.staging.domainInfo
 
-        let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
-            .acceptPopup()
+        let userDetailsPage = try skipUiLogin(user: userA)
             .tapPlusButtonToCreateGroup()
             .tapSearchBox()
             .searchUserByUserHandle(userB.username)
@@ -175,8 +173,7 @@ final class PersonalUsersTests: WireUITestCase {
         try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
         try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: userB, userId: userA.id)
 
-        _ = try app.loginUser(email: userA.email, password: userA.password)
-            .acceptPopup()
+        _ = try skipUiLogin(user: userA)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
@@ -218,8 +215,7 @@ final class PersonalUsersTests: WireUITestCase {
                 conversation: .group(groupName)
             )
 
-        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let conversationsPage = try skipUiLogin(user: teamOwner, waitingForConversationNames: [groupName])
             .longPressForMoreOptionOnConversation()
             .markConversationAsFavourite()
             .longPressForMoreOptionOnConversation()
@@ -239,8 +235,7 @@ final class PersonalUsersTests: WireUITestCase {
                 conversation: .group(groupName)
             )
 
-        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let conversationsPage = try skipUiLogin(user: teamOwner, waitingForConversationNames: [groupName])
             .longPressForMoreOptionOnConversation()
             .markConversationAsFavourite()
             .filterConversationByFavourite()
@@ -318,8 +313,10 @@ final class PersonalUsersTests: WireUITestCase {
         let team = try await registerTeamForConversationFilter()
 
         // WHEN
-        let conversationsPage = try app.loginUser(email: team.teamOwner.email, password: team.teamOwner.password)
-            .acceptPopup()
+        let conversationsPage = try skipUiLogin(
+            user: team.teamOwner,
+            waitingForConversationNames: [team.groupName]
+        )
             .longPressForMoreOptionOnConversation(named: team.groupName)
             .moveConversationToNewFolder(named: team.groupName)
             .filterConversationByFolder(named: team.groupName)

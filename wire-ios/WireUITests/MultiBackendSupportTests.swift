@@ -23,15 +23,21 @@ final class MultiBackendSupportTests: WireUITestCase {
 
     @MainActor
     private func testLoginToBackend(
-        _ backend: BackendTarget
+        _ backend: BackendTarget,
+        skipUiLoginForDefaultBackend: Bool = false
     ) async throws -> (AccountSettingsPage, UserInfo) {
 
         let user = try await UserHelper.instance(backend: backend).createPersonalUser()
+        let shouldSkipUiLogin = skipUiLoginForDefaultBackend && backend == .staging
 
-        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+        let conversationsPage = if shouldSkipUiLogin {
+            try skipUiLogin(user: user)
+        } else {
+            try app.loginUser(email: user.email, password: user.password)
+                .acceptPopup()
+        }
 
-        let accountPage = try firstTimePage
-            .acceptPopup()
+        let accountPage = try conversationsPage
             .openSettings()
             .openAccountSettings()
 
@@ -48,7 +54,10 @@ final class MultiBackendSupportTests: WireUITestCase {
     @MainActor
     func testAddMultiBackendAccounts_TC_8940() async throws {
 
-        var (accountPageBackend1, userBackend1) = try await testLoginToBackend(.staging)
+        var (accountPageBackend1, userBackend1) = try await testLoginToBackend(
+            .staging,
+            skipUiLoginForDefaultBackend: true
+        )
 
         _ = try accountPageBackend1
             .backToSettings()
@@ -99,9 +108,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         )
 
         // Login to user A
-        _ = try app
-            .loginUser(email: userA.email, password: userA.password)
-            .acceptPopup()
+        _ = try skipUiLogin(user: userA, waitingForConversationNames: [conversationA])
 
         // Login to user B
         _ = try ConversationsPage()
@@ -149,9 +156,7 @@ final class MultiBackendSupportTests: WireUITestCase {
     func testReLoginWhenMultipleBackends_TC_10550() async throws {
         // Login to account A
         let userA = try await UserHelper.instance(backend: .staging).createPersonalUser()
-        _ = try app
-            .loginUser(email: userA.email, password: userA.password)
-            .acceptPopup()
+        _ = try skipUiLogin(user: userA)
 
         // Go to Anta login
         _ = try ConversationsPage()

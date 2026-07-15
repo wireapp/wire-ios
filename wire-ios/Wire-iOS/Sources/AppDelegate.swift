@@ -68,6 +68,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         CleanUpDebugStateOperation()
     ]
     private var appStateCalculator = AppStateCalculator()
+    #if DEBUG
+        private var uiTestAuthenticationBypassTask: Task<Void, Never>?
+    #endif
 
     // MARK: - Private Set Property
 
@@ -520,6 +523,9 @@ private extension AppDelegate {
 
     private func startAppRouter(launchOptions: LaunchOptions) {
         appRootRouter?.start(launchOptions: launchOptions)
+        #if DEBUG
+            startUITestAuthenticationBypassIfNeeded()
+        #endif
     }
 
     private func fetchDefaultEnvironment() -> BackendEnvironment2 {
@@ -540,6 +546,91 @@ private extension AppDelegate {
     }
 
 }
+
+#if DEBUG
+    private extension AppDelegate {
+
+        var isUITestAuthenticationBypassEnabled: Bool {
+            ProcessInfo.processInfo.arguments.contains("--uitest-skip-login")
+        }
+
+        func startUITestAuthenticationBypassIfNeeded() {
+            guard isUITestAuthenticationBypassEnabled,
+                  let authenticationBypass = UITestConfig.environment?.authenticationBypass else {
+                return
+            }
+
+            uiTestAuthenticationBypassTask = Task { @MainActor [weak self] in
+                do {
+                    try await self?.performUITestAuthenticationBypass(authenticationBypass)
+                } catch {
+                    WireLogger.authentication.error(
+                        "UITest authentication bypass failed: \(String(describing: error))",
+                        attributes: .safePublic
+                    )
+                }
+            }
+        }
+
+        @MainActor
+        func performUITestAuthenticationBypass(_ authenticationBypass: UITestAuthenticationBypass) async throws {
+            guard let sessionManager = SessionManager.shared else {
+                throw UITestAuthenticationBypassFailure.missingSessionManager
+            }
+
+            guard sessionManager.activeUserSession == nil else {
+                return
+            }
+
+            let networkStack = NetworkStack(
+                backendEnvironment: fetchDefaultEnvironment(),
+                minTLSVersion: .minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+                preferredAPIVersion: BackendInfo.preferredAPIVersion.flatMap {
+                    WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
+                },
+                proxyCredentials: nil
+            )
+            let metadata = try await networkStack.resolvedBackendMetadata()
+            let networkServices = try await networkStack.networkServices
+            let authenticationAPI = AuthenticationAPIBuilder(networkService: networkServices.rest)
+                .makeAPI(for: metadata.apiVersion)
+            let (cookies, accessToken) = try await authenticationAPI.login(
+                email: authenticationBypass.email,
+                password: authenticationBypass.password,
+                verificationCode: nil,
+                label: nil
+            )
+
+            if let expectedUserID = authenticationBypass.expectedUserID.flatMap(UUID.init(uuidString:)),
+               expectedUserID != accessToken.userID {
+                throw UITestAuthenticationBypassFailure.unexpectedUserID
+            }
+
+            let unauthenticatedSession = sessionManager.activeUnauthenticatedSession
+            unauthenticatedSession.authenticationStatus.loginCredentials = UserCredentials(
+                email: authenticationBypass.email,
+                password: authenticationBypass.password,
+                emailVerificationCode: nil
+            )
+
+            unauthenticatedSession.upgradeToAuthenticatedSession(
+                with: UserInfo(identifier: accessToken.userID, cookies: cookies),
+                newEnvironment: NewEnvironment(
+                    backendEnvironment: networkStack.backendEnvironment,
+                    metadata: metadata,
+                    cookies: cookies,
+                    proxyCredentials: await networkStack.proxyCredentials
+                )
+            )
+        }
+
+    }
+
+    private enum UITestAuthenticationBypassFailure: Error {
+        case missingSessionManager
+        case unexpectedUserID
+    }
+#endif
 
 private enum SessionManagerSetupError: Error {
 

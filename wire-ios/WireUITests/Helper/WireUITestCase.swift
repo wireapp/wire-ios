@@ -20,10 +20,13 @@
 // of using a script in the scheme, we delete the app using springboard
 
 import WireFoundation
+import WireLocators
 import WireUtilities
 import XCTest
 
 class WireUITestCase: XCTestCase {
+
+    private static let skipUiLoginLaunchArgument = "--uitest-skip-login"
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
@@ -43,20 +46,8 @@ class WireUITestCase: XCTestCase {
         uiTestConfig.useTripleTapForShakeGesture = true
         uiTestConfig.useMockAudioRecorder = true
 
-        let launchArguments = [
-            "-resetData",
-            "--useEnvStaging"
-        ]
-
         ssoHelper = SSOHelper()
-        app = XCUIApplication()
-        app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
-        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
-        app.launchArguments = launchArguments
-        var flags: [DeveloperFlag: Bool] = [.useWireAuthentication: true]
-        flags.merge(additionalDeveloperFlags()) { _, new in new }
-        app.setDeveloperFlags(flags)
-        app.launch()
+        launchApp()
 
         // In UI tests it is usually best to stop immediately when a failure occurs
         // although this does not appear to work
@@ -124,6 +115,41 @@ class WireUITestCase: XCTestCase {
             .acceptPopup()
     }
 
+    @MainActor
+    func skipUiLogin(
+        user: UserInfo,
+        waitingForConversationNames conversationNames: [String] = [],
+        timeout: TimeInterval = 15
+    ) throws -> ConversationsPage {
+        _ = try XCTUnwrap(user.email.isEmpty ? nil : user.email, "skipUiLogin requires a non-empty email")
+        _ = try XCTUnwrap(user.password.isEmpty ? nil : user.password, "skipUiLogin requires a non-empty password")
+        uiTestConfig.authenticationBypass = UITestAuthenticationBypass(
+            email: user.email,
+            password: user.password,
+            expectedUserID: user.id.isEmpty ? nil : user.id
+        )
+        if [.runningForeground, .runningBackground, .runningBackgroundSuspended].contains(app.state) {
+            app.terminate()
+        }
+        launchApp(additionalLaunchArguments: [Self.skipUiLoginLaunchArgument])
+        uiTestConfig.authenticationBypass = nil
+
+        XCTAssertTrue(
+            app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
+                .waitForExistence(timeout: timeout),
+            "Conversations page did not appear for authenticated user \(user.email)"
+        )
+
+        let conversationsPage = try ConversationsPage()
+        for conversationName in conversationNames {
+            XCTAssertTrue(
+                conversationsPage.conversationCell(named: conversationName).waitForExistence(timeout: timeout),
+                "Conversation \(conversationName) did not appear for authenticated user \(user.email)"
+            )
+        }
+        return conversationsPage
+    }
+
     func registerNotificationPermissionMonitor() {
         guard notificationPermissionMonitor == nil else { return }
 
@@ -146,6 +172,27 @@ class WireUITestCase: XCTestCase {
 
     func simulateShakeGesture() {
         app.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+    }
+
+    @MainActor
+    private func configureApp(additionalLaunchArguments: [String] = []) {
+        app = XCUIApplication()
+        app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
+        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
+        app.launchArguments = [
+            "-resetData",
+            "--useEnvStaging"
+        ] + additionalLaunchArguments
+        var flags: [DeveloperFlag: Bool] = [.useWireAuthentication: true]
+        flags.merge(additionalDeveloperFlags()) { _, new in new }
+        app.setDeveloperFlags(flags)
+    }
+
+    /// Configures and launches the app, encoding the current `uiTestConfig`.
+    @MainActor
+    func launchApp(additionalLaunchArguments: [String] = []) {
+        configureApp(additionalLaunchArguments: additionalLaunchArguments)
+        app.launch()
     }
 }
 

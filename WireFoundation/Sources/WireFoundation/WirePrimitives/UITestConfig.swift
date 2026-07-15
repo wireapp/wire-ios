@@ -39,6 +39,9 @@ public struct UITestConfig: Codable {
     /// Overrides any flags already stored in `UserDefaults`.
     public var developerFlags: [String: Bool] = [:]
 
+    /// Credentials used by UI tests to start the app in an authenticated state.
+    public var authenticationBypass: UITestAuthenticationBypass?
+
     // MARK: - Init
 
     public init() {}
@@ -64,4 +67,20 @@ public struct UITestConfig: Codable {
             return config
         }
     #endif
+}
+
+public struct UITestAuthenticationBypass: Codable {
+
+    public let email: String
+    public let password: String
+    /// Expected identifier of the fixture user. When set, the app verifies the logged-in user
+    /// matches, catching a stale or mismatched credentials configuration.
+    public let expectedUserID: String?
+
+    public init(email: String, password: String, expectedUserID: String? = nil) {
+        self.email = email
+        self.password = password
+        self.expectedUserID = expectedUserID
+    }
+
 }
