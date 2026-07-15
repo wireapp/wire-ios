@@ -16,38 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Testing
 import WireCommonComponents
 import WireTransport
-import XCTest
 
 @testable import Wire
 
-final class NoDefaultBackendViewModelTests: XCTestCase {
+final class NoDefaultBackendViewModelTests {
 
     // MARK: - Properties
 
-    private var sut: NoDefaultBackendViewModel!
-    private var sessionManager: MockBackendConfigurationSessionManager!
-    private var delegate: MockNoDefaultBackendViewModelDelegate!
+    private let sessionManager: MockBackendConfigurationSessionManaging
+    private let delegate: MockNoDefaultBackendViewModelDelegate
+    private var sut: NoDefaultBackendViewModel
 
-    override func setUp() {
-        super.setUp()
-        sessionManager = MockBackendConfigurationSessionManager()
+    private var fetchBackendEnvironmentResult: Result<BackendEnvironment, Error> = .failure(MockError.generic)
+
+    // MARK: - Life cycle
+
+    init() {
+        sessionManager = MockBackendConfigurationSessionManaging()
         delegate = MockNoDefaultBackendViewModelDelegate()
-        sut = NoDefaultBackendViewModel(sessionManager: { [weak self] in self?.sessionManager })
+        sut = NoDefaultBackendViewModel(sessionManager: { [sessionManager] in sessionManager })
         sut.delegate = delegate
-    }
 
-    override func tearDown() {
-        sut = nil
-        sessionManager = nil
-        delegate = nil
-        super.tearDown()
+        sessionManager.markNetworkSessionsAsReady_MockMethod = { _ in }
+        sessionManager.switchBackendWithoutResolvingTo_MockMethod = { _ in }
+        sessionManager.fetchBackendEnvironmentAtCompletion_MockMethod = { [weak self] _, completion in
+            completion(self?.fetchBackendEnvironmentResult ?? .failure(MockError.generic))
+        }
     }
 
     // MARK: - Invalid input
 
-    func testThatItFails_WhenNoSessionManagerIsAvailable() {
+    @Test
+    func failsWhenNoSessionManagerIsAvailable() {
         // GIVEN
         sut = NoDefaultBackendViewModel(sessionManager: { nil })
         sut.delegate = delegate
@@ -56,105 +59,83 @@ final class NoDefaultBackendViewModelTests: XCTestCase {
         sut.submitConfigurationLink("https://example.com/config.json")
 
         // THEN
-        XCTAssertEqual(delegate.failureMessages, [L10n.Localizable.NoDefaultBackend.error])
-        XCTAssertTrue(sessionManager.fetchBackendEnvironmentURLs.isEmpty)
+        #expect(delegate.failureMessages == [L10n.Localizable.NoDefaultBackend.error])
+        #expect(sessionManager.fetchBackendEnvironmentAtCompletion_Invocations.isEmpty)
     }
 
-    func testThatItFails_WhenInputIsEmpty() {
+    @Test(arguments: [
+        "",
+        "   \n  ",
+        "wire://not-a-supported-host"
+    ])
+    func failsWhenInputIsInvalid(input: String) {
         // WHEN
-        sut.submitConfigurationLink("")
+        sut.submitConfigurationLink(input)
 
         // THEN
-        XCTAssertEqual(delegate.failureMessages, [L10n.Localizable.NoDefaultBackend.error])
-        XCTAssertTrue(sessionManager.fetchBackendEnvironmentURLs.isEmpty)
-    }
-
-    func testThatItFails_WhenInputIsOnlyWhitespace() {
-        // WHEN
-        sut.submitConfigurationLink("   \n  ")
-
-        // THEN
-        XCTAssertEqual(delegate.failureMessages, [L10n.Localizable.NoDefaultBackend.error])
-        XCTAssertTrue(sessionManager.fetchBackendEnvironmentURLs.isEmpty)
-    }
-
-    func testThatItFails_WhenInputIsNotAValidConfigurationDeepLink() {
-        // WHEN
-        sut.submitConfigurationLink("wire://not-a-supported-host")
-
-        // THEN
-        XCTAssertEqual(delegate.failureMessages, [L10n.Localizable.NoDefaultBackend.error])
-        XCTAssertTrue(sessionManager.fetchBackendEnvironmentURLs.isEmpty)
+        #expect(delegate.failureMessages == [L10n.Localizable.NoDefaultBackend.error])
+        #expect(sessionManager.fetchBackendEnvironmentAtCompletion_Invocations.isEmpty)
     }
 
     // MARK: - Valid input
 
-    func testThatItFetchesTheBackendEnvironment_WhenInputIsAPlainURL() {
+    @Test
+    func fetchesTheBackendEnvironmentWhenInputIsAPlainURL() {
         // WHEN
         sut.submitConfigurationLink("https://example.com/config.json")
 
         // THEN
-        XCTAssertEqual(sessionManager.fetchBackendEnvironmentURLs, [URL(string: "https://example.com/config.json")!])
-        XCTAssertEqual(delegate.loadingValues, [true, false])
+        #expect(sessionManager.fetchBackendEnvironmentAtCompletion_Invocations.map { $0.url } == [
+            URL(string: "https://example.com/config.json")!
+        ])
+        #expect(delegate.loadingValues == [true, false])
     }
 
-    func testThatItRequestsConfirmation_WhenTheBackendEnvironmentIsFetchedSuccessfully() {
+    @Test
+    func requestsConfirmationWhenTheBackendEnvironmentIsFetchedSuccessfully() {
         // GIVEN
         let environment = BackendEnvironment.defaultNoBackend
-        sessionManager.fetchBackendEnvironmentResult = .success(environment)
+        fetchBackendEnvironmentResult = .success(environment)
 
         // WHEN
         sut.submitConfigurationLink("https://example.com/config.json")
 
         // THEN
-        XCTAssertEqual(delegate.confirmationRequests.count, 1)
-        XCTAssertEqual(delegate.confirmationRequests.first?.environment, environment)
-        XCTAssertTrue(sessionManager.markNetworkSessionsAsReadyValues.isEmpty, "should wait for confirmation")
-        XCTAssertTrue(sessionManager.switchedBackendEnvironments.isEmpty, "should wait for confirmation")
+        #expect(delegate.confirmationRequests.count == 1)
+        #expect(delegate.confirmationRequests.first?.environment == environment)
+        #expect(sessionManager.markNetworkSessionsAsReady_Invocations.isEmpty, "should wait for confirmation")
+        #expect(sessionManager.switchBackendWithoutResolvingTo_Invocations.isEmpty, "should wait for confirmation")
     }
 
-    func testThatItSwitchesBackend_WhenTheUserConfirmsTheSwitch() {
+    @Test(arguments: [true, false])
+    func switchesBackendOnlyWhenTheUserConfirmsTheSwitch(didConfirm: Bool) {
         // GIVEN
         let environment = BackendEnvironment.defaultNoBackend
-        sessionManager.fetchBackendEnvironmentResult = .success(environment)
+        fetchBackendEnvironmentResult = .success(environment)
         let configurationURL = URL(string: "https://example.com/config.json")!
 
         // WHEN
         sut.submitConfigurationLink(configurationURL.absoluteString)
-        delegate.confirmationRequests.first?.didConfirm(true)
+        delegate.confirmationRequests.first?.didConfirm(didConfirm)
 
         // THEN
-        XCTAssertEqual(sessionManager.markNetworkSessionsAsReadyValues, [true])
-        XCTAssertEqual(sessionManager.switchedBackendEnvironments, [environment])
-        XCTAssertEqual(delegate.loadingValues, [true, false])
-        XCTAssertEqual(delegate.configuredURLs, [configurationURL])
+        #expect(delegate.loadingValues == [true, false])
+        #expect(sessionManager.markNetworkSessionsAsReady_Invocations == (didConfirm ? [true] : []))
+        #expect(sessionManager.switchBackendWithoutResolvingTo_Invocations == (didConfirm ? [environment] : []))
+        #expect(delegate.configuredURLs == (didConfirm ? [configurationURL] : []))
     }
 
-    func testThatItDoesNotSwitchBackend_WhenTheUserDeclinesTheSwitch() {
+    @Test
+    func failsWhenFetchingTheBackendEnvironmentFails() {
         // GIVEN
-        let environment = BackendEnvironment.defaultNoBackend
-        sessionManager.fetchBackendEnvironmentResult = .success(environment)
-
-        // WHEN
-        sut.submitConfigurationLink("https://example.com/config.json")
-        delegate.confirmationRequests.first?.didConfirm(false)
-
-        // THEN
-        XCTAssertTrue(sessionManager.markNetworkSessionsAsReadyValues.isEmpty)
-        XCTAssertTrue(sessionManager.switchedBackendEnvironments.isEmpty)
-        XCTAssertTrue(delegate.configuredURLs.isEmpty)
-    }
-
-    func testThatItFails_WhenFetchingTheBackendEnvironmentFails() {
-        // GIVEN
-        sessionManager.fetchBackendEnvironmentResult = .failure(MockError.generic)
+        fetchBackendEnvironmentResult = .failure(MockError.generic)
 
         // WHEN
         sut.submitConfigurationLink("https://example.com/config.json")
 
         // THEN
-        XCTAssertEqual(delegate.loadingValues, [true, false])
-        XCTAssertEqual(delegate.failureMessages, [L10n.Localizable.NoDefaultBackend.error])
+        #expect(delegate.loadingValues == [true, false])
+        #expect(delegate.failureMessages == [L10n.Localizable.NoDefaultBackend.error])
     }
 }
 
@@ -162,27 +143,6 @@ final class NoDefaultBackendViewModelTests: XCTestCase {
 
 private enum MockError: Error {
     case generic
-}
-
-private final class MockBackendConfigurationSessionManager: BackendConfigurationSessionManaging {
-
-    var fetchBackendEnvironmentResult: Result<BackendEnvironment, Error> = .failure(MockError.generic)
-    private(set) var fetchBackendEnvironmentURLs: [URL] = []
-    private(set) var markNetworkSessionsAsReadyValues: [Bool] = []
-    private(set) var switchedBackendEnvironments: [BackendEnvironment] = []
-
-    func fetchBackendEnvironment(at url: URL, completion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
-        fetchBackendEnvironmentURLs.append(url)
-        completion(fetchBackendEnvironmentResult)
-    }
-
-    func markNetworkSessionsAsReady(_ ready: Bool) {
-        markNetworkSessionsAsReadyValues.append(ready)
-    }
-
-    func switchBackendWithoutResolving(to environment: BackendEnvironment) {
-        switchedBackendEnvironments.append(environment)
-    }
 }
 
 private final class MockNoDefaultBackendViewModelDelegate: NoDefaultBackendViewModelDelegate {
