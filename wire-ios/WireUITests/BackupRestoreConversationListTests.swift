@@ -36,7 +36,7 @@ final class BackupRestoreConversationListTests: WireUITestCase {
     /// 5. Owner receives a message in A.
     ///    -> A shows exactly 1 unread message.
     @MainActor
-    func testConversationListOrderAndUnreadAfterBackupRestore_WPB_23380() async throws {
+    func testConversationListOrderAndUnreadAfterBackupRestore_TC_11583() async throws {
 
         // GIVEN a team with one owner and one member who shares three conversations.
         let nameA = "Conversation A"
