@@ -304,10 +304,9 @@ final class ConversationListAccessoryView: UIView {
     }
 
     private func configureScheduledForDeletionIcon() {
-        iconView.setTemplateIcon(.exclamationMark, size: iconSize)
+        iconView.setTemplateIcon(.exclamationMarkCircle, size: iconSize)
         iconView.tintColor = IconColors.foregroundExclamationMarkInSystemMessage
         badgeView.backgroundColor = ViewColors.backgroundDefaultWhite
-        accessibilityValue = ConversationsListAccessibility.ScheduledForDeletionStatus.value
     }
 
     private func configureSilencedNotificationsIcon() {

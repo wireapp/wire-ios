@@ -44,6 +44,7 @@ final class ConversationScheduledForDeletionSystemMessageCell:
 
     func setupView() {
         lineView.isHidden = true
+        isAccessibilityElement = true
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -66,16 +67,24 @@ final class ConversationScheduledForDeletionCellDescription: ConversationMessage
     let accessibilityLabel: String?
 
     init(deletionDate: Date) {
-        let formattedDate = Message.spellOutDateTimeFormatter.string(from: deletionDate)
+        let formattedDate = Message.longDateFormatter.string(from: deletionDate)
         let title = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.text(
             formattedDate,
             View.readMoreURL.absoluteString
         )
-        let attributedText = NSAttributedString.markdown(from: title, style: .systemMessage)
+        let redColor = ColorTheme.Base.primary(.red)
 
-        let icon = StyleKitIcon.exclamationMark.makeImage(
+        let markdownText = NSAttributedString.markdown(from: title, style: .systemMessage)
+        let attributedText = NSMutableAttributedString(attributedString: markdownText)
+        attributedText.addAttribute(
+            .foregroundColor,
+            value: redColor,
+            range: NSRange(location: 0, length: attributedText.length)
+        )
+
+        let icon = StyleKitIcon.exclamationMarkCircle.makeImage(
             size: 16,
-            color: ColorTheme.Base.primary(.red)
+            color: redColor
         )
 
         self.configuration = View.Configuration(attributedText: attributedText, icon: icon)

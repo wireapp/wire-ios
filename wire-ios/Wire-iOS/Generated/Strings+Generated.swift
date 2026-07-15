@@ -798,10 +798,6 @@ internal enum L10n {
         /// Reply
         internal static let value = L10n.tr("Accessibility", "conversationsList.replyStatus.value", fallback: "Reply")
       }
-      internal enum ScheduledForDeletionStatus {
-        /// Will be deleted soon
-        internal static let value = L10n.tr("Accessibility", "conversationsList.scheduledForDeletionStatus.value", fallback: "Will be deleted soon")
-      }
       internal enum SilencedStatus {
         /// Silenced
         internal static let value = L10n.tr("Accessibility", "conversationsList.silencedStatus.value", fallback: "Silenced")
