@@ -34,7 +34,7 @@ protocol NoDefaultBackendViewModelDelegate: AnyObject {
 
 /// The subset of `SessionManager` behavior that `NoDefaultBackendViewModel` needs.
 /// Exists so tests can substitute a lightweight double for the real (non-mockable) `SessionManager`.
-// sourcery: AutoMockable
+/// sourcery: AutoMockable
 protocol BackendConfigurationSessionManaging: AnyObject {
     func fetchBackendEnvironment(at url: URL, completion: @escaping (Result<BackendEnvironment, Error>) -> Void)
     func markNetworkSessionsAsReady(_ ready: Bool)
