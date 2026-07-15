@@ -67,17 +67,20 @@ final class NoDefaultBackendViewModel {
             return
         }
 
-        let candidate: String = if trimmed.hasPrefix("wire://") {
-            trimmed
-        } else {
-            "wire://access/?config=\(trimmed.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? trimmed)"
+        guard let url = URL(string: trimmed) else {
+            fail()
+            return
         }
-
-        guard
-            let deeplinkURL = URL(string: candidate),
-            let action = try? URLAction(url: deeplinkURL),
-            case let .accessBackend(configurationURL) = action
-        else {
+        
+        var configurationURL: URL? = nil
+        if let action = try? URLAction(url: url), case let .accessBackend(configURL) = action {
+            configurationURL = configURL
+        } else if url.scheme == "https" || url.scheme == "http" {
+            // assume we have the configurationURL already
+            configurationURL = url
+        }
+        
+        guard let configurationURL else {
             fail()
             return
         }
