@@ -16,15 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import Foundation
 
 // sourcery: AutoMockable
 /// Repository for accessing and managing meetings.
-package protocol MeetingRepositoryProtocol: Sendable {
+///
+/// The protocol is implemented outside of this package, where the
+/// persistence layer (Core Data) and the backend API are available,
+/// and injected in.
+public protocol MeetingRepositoryProtocol: Sendable {
 
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
+    /// Returns a stream that emits whenever meetings are created, updated or deleted,
+    /// e.g. by processed sync events.
+    ///
+    /// The backend refresh performed by `fetchMeetings(in:offset:limit:)` does not emit,
+    /// so observers can safely re-fetch in response to an emission without causing a loop.
 
-    func hasUpcomingMeetings(after date: Date) -> Bool
+    func observeMeetingChanges() -> AsyncStream<Void>
 
     func createMeeting(
         title: String,
@@ -32,5 +40,44 @@ package protocol MeetingRepositoryProtocol: Sendable {
         endTime: Date,
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting
+
+    /// Stores a meeting locally without contacting the server, linking it to
+    /// locally stored entities such as its conversation and creator.
+    ///
+    /// - Parameter meeting: The meeting to store.
+
+    func storeMeeting(_ meeting: Meeting) async
+
+    /// Pulls a meeting from the server and stores it locally.
+    /// If the meeting no longer exists on the server, the locally stored copy is deleted.
+    ///
+    /// - Parameter id: The qualified id of the meeting to pull.
+
+    func pullMeeting(id: QualifiedID) async throws
+
+    /// Pulls all meetings from the server, replacing the locally stored
+    /// meetings, e.g. as part of a sync.
+    ///
+    /// Does nothing if the backend does not support the meetings endpoint.
+
+    func pullMeetings() async throws
+
+    /// Deletes a locally stored meeting without contacting the server.
+    ///
+    /// - Parameter id: The qualified id of the meeting to delete.
+
+    func deleteLocalMeeting(id: QualifiedID) async
+
+    /// Fetches stored meetings whose start date lies in the given range,
+    /// refreshing the local store from the backend first.
+    ///
+    /// - Parameters:
+    ///   - range: The half-open range the meetings' start dates must lie in.
+    ///   - offset: The number of matching meetings to skip, for pagination.
+    ///   - limit: The maximum number of meetings to return.
+
+    func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting]
+
+    func hasUpcomingMeetings(after date: Date) async throws -> Bool
 
 }

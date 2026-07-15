@@ -17,9 +17,13 @@
 //
 
 // sourcery: AutoMockable
-/// Creates a new instant meeting via the backend API.
-package protocol CreateInstantMeetingUseCaseProtocol: Sendable {
+/// An object to keep the local meetings up to date
+/// with the remote meetings.
+protocol PullMeetingsSyncProtocol {
 
-    func invoke(title: String, participants: [MeetingMember]) async throws -> Meeting
+    /// Fetch all meetings from remote, then replace
+    /// the locally stored meetings.
+
+    func pull() async throws
 
 }

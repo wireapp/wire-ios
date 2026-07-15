@@ -105,6 +105,7 @@ class ContactsSectionController: SearchSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let user = contacts[indexPath.row]
+        setSelected(true, for: collectionView.cellForItem(at: indexPath) as? UserCell, in: collectionView)
         selection?.add(user)
 
         delegate?.searchSectionController(self, didSelectUser: user, at: indexPath)
@@ -112,7 +113,28 @@ class ContactsSectionController: SearchSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let user = contacts[indexPath.row]
+        setSelected(false, for: collectionView.cellForItem(at: indexPath) as? UserCell, in: collectionView)
         selection?.remove(user)
+    }
+
+    private func updateVisibleSelectionStates() {
+        guard allowsSelection, let collectionView else { return }
+        collectionView.visibleCells.compactMap { $0 as? UserCell }.forEach { cell in
+            guard let user = cell.avatarImageView.user else { return }
+            setSelected(selection?.users.contains(user) ?? false, for: cell, in: collectionView)
+        }
+    }
+
+    private func setSelected(_ selected: Bool, for cell: UserCell?, in collectionView: UICollectionView) {
+        guard let cell else { return }
+        if let indexPath = collectionView.indexPath(for: cell) {
+            if selected {
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            } else {
+                collectionView.deselectItem(at: indexPath, animated: false)
+            }
+        }
+        cell.isSelected = selected
     }
 
 }
@@ -120,15 +142,15 @@ class ContactsSectionController: SearchSectionController {
 extension ContactsSectionController: UserSelectionObserver {
 
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType]) {
-        collectionView?.reloadData()
+        updateVisibleSelectionStates()
     }
 
     func userSelection(_ userSelection: UserSelection, didAddUser user: UserType) {
-        collectionView?.reloadData()
+        updateVisibleSelectionStates()
     }
 
     func userSelection(_ userSelection: UserSelection, didRemoveUser user: UserType) {
-        collectionView?.reloadData()
+        updateVisibleSelectionStates()
     }
 
 }
