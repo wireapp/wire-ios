@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
-package struct CreateScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocol {
+package struct ObserveMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocol {
 
     private let repository: any MeetingRepositoryProtocol
 
@@ -26,18 +24,8 @@ package struct CreateScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProto
         self.repository = repository
     }
 
-    package func invoke(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting {
-        try await repository.createMeeting(
-            title: title,
-            startTime: startTime,
-            endTime: endTime,
-            recurrence: recurrence
-        )
+    package func invoke() -> AsyncStream<Void> {
+        repository.observeMeetingChanges()
     }
 
 }

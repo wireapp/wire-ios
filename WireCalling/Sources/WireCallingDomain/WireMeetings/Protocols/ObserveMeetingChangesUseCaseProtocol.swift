@@ -16,29 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireCallingDomain
+// sourcery: AutoMockable
+/// Observes changes to stored meetings, e.g. caused by background sync.
+package protocol ObserveMeetingChangesUseCaseProtocol: Sendable {
 
-import WireFoundation
+    /// Returns a stream that emits whenever meetings are created, updated or deleted.
 
-package extension Meeting {
-
-    static func fixture(
-        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration),
-            recurrence: .none,
-            members: [],
-            conversationID: QualifiedID(id: UUID(), domain: ""),
-            creatorID: QualifiedID(id: UUID(), domain: "")
-        )
-    }
+    func invoke() -> AsyncStream<Void>
 
 }
