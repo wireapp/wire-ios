@@ -145,12 +145,13 @@ class AccountSettingsPage: PageModel {
 
     func selectProfileColor(_ color: ProfileColor) throws -> AccountSettingsPage {
         colorCell.waitAndTap()
-        let colorOption = app.staticTexts[color.displayName].firstMatch
+        let colorOption = app.buttons[color.displayName].firstMatch
         XCTAssertTrue(
             colorOption.waitForExistence(timeout: 5),
             "\(color.displayName) color option did not appear"
         )
         colorOption.tap()
+        XCTAssertTrue(colorOption.isSelected, "\(color.displayName) color option was not selected")
         XCTAssertTrue(backToPreviousPage.waitAndTap(), "Failed to navigate back from the color picker")
         return try AccountSettingsPage()
     }
