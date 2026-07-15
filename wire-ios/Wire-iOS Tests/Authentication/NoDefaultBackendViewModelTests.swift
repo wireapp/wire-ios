@@ -35,9 +35,9 @@ final class NoDefaultBackendViewModelTests {
     // MARK: - Life cycle
 
     init() {
-        sessionManager = MockBackendConfigurationSessionManaging()
-        delegate = MockNoDefaultBackendViewModelDelegate()
-        sut = NoDefaultBackendViewModel(sessionManager: { [sessionManager] in sessionManager })
+        self.sessionManager = MockBackendConfigurationSessionManaging()
+        self.delegate = MockNoDefaultBackendViewModelDelegate()
+        self.sut = NoDefaultBackendViewModel(sessionManager: { [sessionManager] in sessionManager })
         sut.delegate = delegate
 
         sessionManager.markNetworkSessionsAsReady_MockMethod = { _ in }
@@ -79,14 +79,19 @@ final class NoDefaultBackendViewModelTests {
 
     // MARK: - Valid input
 
-    @Test
-    func fetchesTheBackendEnvironmentWhenInputIsAPlainURL() {
+    @Test(arguments: [
+        ("https://example.com/config.json", URL(string: "https://example.com/config.json")!),
+        ("wire://access/?config=https://example.com/config.json", URL(string: "https://example.com/config.json")!),
+        ("wire-gov://access/?config=https://example.com/config.json", URL(string: "https://example.com/config.json")!)
+
+    ])
+    func fetchesTheBackendEnvironmentWhenInputIsAPlainURL(url: String, expectedConfig: URL) {
         // WHEN
-        sut.submitConfigurationLink("https://example.com/config.json")
+        sut.submitConfigurationLink(url)
 
         // THEN
-        #expect(sessionManager.fetchBackendEnvironmentAtCompletion_Invocations.map { $0.url } == [
-            URL(string: "https://example.com/config.json")!
+        #expect(sessionManager.fetchBackendEnvironmentAtCompletion_Invocations.map(\.url) == [
+            expectedConfig
         ])
         #expect(delegate.loadingValues == [true, false])
     }

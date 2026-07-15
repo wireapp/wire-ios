@@ -72,15 +72,15 @@ final class NoDefaultBackendViewModel {
             fail()
             return
         }
-        
-        var configurationURL: URL? = nil
+
+        var configurationURL: URL?
         if let action = try? URLAction(url: url), case let .accessBackend(configURL) = action {
             configurationURL = configURL
         } else if url.scheme == "https" || url.scheme == "http" {
             // assume we have the configurationURL already
             configurationURL = url
         }
-        
+
         guard let configurationURL else {
             fail()
             return
