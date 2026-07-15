@@ -47,8 +47,7 @@ package final class CreateMeetingFormViewModel {
 
     let mode: Mode
     let searchMembersUseCase: any SearchMembersUseCaseProtocol
-    private let createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol
-    private let createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol
+    private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
     private let currentDateProvider: any CurrentDateProviding
     private let onSuccess: (Meeting) -> Void
 
@@ -109,15 +108,13 @@ package final class CreateMeetingFormViewModel {
     package init(
         mode: Mode,
         searchMembersUseCase: any SearchMembersUseCaseProtocol,
-        createInstantMeetingUseCase: any CreateInstantMeetingUseCaseProtocol,
-        createScheduledMeetingUseCase: any CreateScheduledMeetingUseCaseProtocol,
+        createMeetingUseCase: any CreateMeetingUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
         self.searchMembersUseCase = searchMembersUseCase
-        self.createInstantMeetingUseCase = createInstantMeetingUseCase
-        self.createScheduledMeetingUseCase = createScheduledMeetingUseCase
+        self.createMeetingUseCase = createMeetingUseCase
         self.currentDateProvider = currentDateProvider
         self.onSuccess = onSuccess
 
@@ -139,48 +136,51 @@ package final class CreateMeetingFormViewModel {
     }
 
     func submit() async {
+        // TODO: [WPB-20274] reloadLoadedMeetings() sets futureOffset = 0 before calling load(pageSize:), but
+        // load(pageSize:) catches errors internally and does not restore the previous offset on failure. If the fetch
+        // throws, futureOffset stays at 0 while loadedMeetings still contains the previously loaded page(s), which can
+        // corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data
+        // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
+        // futureOffset (and possibly coalesce missed reloads while isLoading is true).
         guard !isLoading else { return }
         isLoading = true
         hasError = false
         defer { isLoading = false }
-        switch mode {
-        case .instant:
-            await createInstantMeeting()
-        case .scheduled:
-            await scheduleMeeting()
+        do {
+            let meeting = try await createMeeting()
+            onSuccess(meeting)
+        } catch {
+            let errorType = Swift.type(of: error)
+            WireLogger.search.error("failed to create meeting: \(String(describing: errorType))")
+            hasError = true
         }
     }
 
     // MARK: - Private
 
-    private func createInstantMeeting() async {
-        do {
-            let meeting = try await createInstantMeetingUseCase.invoke(
-                title: meetingTitle,
-                participants: selectedMembers
-            )
-            onSuccess(meeting)
-        } catch {
-            let errorType = Swift.type(of: error)
-            WireLogger.search.error("failed to create instant meeting: \(String(describing: errorType))")
-            hasError = true
+    /// Both modes create the meeting the same way; an instant meeting simply
+    /// starts now and lasts one hour instead of using the schedule fields.
+    private func createMeeting() async throws -> Meeting {
+        let startTime: Date
+        let endTime: Date
+        let recurrence: MeetingRecurrence?
+        switch mode {
+        case .instant:
+            startTime = currentDateProvider.now
+            endTime = startTime.addingTimeInterval(.oneHour)
+            recurrence = nil
+        case .scheduled:
+            startTime = startDate
+            endTime = endDate
+            recurrence = repeatOption.toRecurrence()
         }
-    }
-
-    private func scheduleMeeting() async {
-        do {
-            let meeting = try await createScheduledMeetingUseCase.invoke(
-                title: meetingTitle,
-                startTime: startDate,
-                endTime: endDate,
-                recurrence: repeatOption.toRecurrence()
-            )
-            onSuccess(meeting)
-        } catch {
-            let errorType = Swift.type(of: error)
-            WireLogger.search.error("failed to create instant meeting: \(String(describing: errorType))")
-            hasError = true
-        }
+        return try await createMeetingUseCase.invoke(
+            title: meetingTitle,
+            startTime: startTime,
+            endTime: endTime,
+            recurrence: recurrence,
+            participants: selectedMembers
+        )
     }
 
 }

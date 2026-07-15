@@ -95,16 +95,24 @@ extension ConversationActionController {
 
             guard let zmSession = session as? ZMUserSession else { return }
 
-            let eligibleCandidates = self.eligibleAdminCandidates(in: conversation)
+            let eligibleCandidates = eligibleAdminCandidates(in: conversation)
+            let hasEligibleCandidates = !eligibleCandidates.isEmpty
             let groupName = conversation.displayNameWithFallback
-            if eligibleCandidates.isEmpty {
+            let canSelfUserDeleteConversation = zmSession.selfUser.canDeleteConversation(conversation)
+
+            switch (hasEligibleCandidates, canSelfUserDeleteConversation) {
+
+            // no eligibles candidates and admin can delete group
+            case (false, true):
                 self.present(LastAdminLeaveAlert.deleteOnly(groupName: groupName) { [weak self] in
                     self?.requestDeleteGroupResult { [weak self] confirmed in
                         guard let self, confirmed else { return }
                         handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
                     }
                 })
-            } else {
+
+            // eligible candidates and admin can delete group
+            case (true, true):
                 self.present(LastAdminLeaveAlert.promoteOrDelete(groupName: groupName) { [weak self] in
                     self?.presentAdminSelection(for: conversation, candidates: eligibleCandidates)
                 } onDelete: { [weak self] in
@@ -113,6 +121,16 @@ extension ConversationActionController {
                         handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
                     }
                 })
+
+            // eligible candidates and admin cannot delete group
+            case (true, false):
+                self.present(LastAdminLeaveAlert.promoteOnly(groupName: groupName) { [weak self] in
+                    self?.presentAdminSelection(for: conversation, candidates: eligibleCandidates)
+                })
+
+            // no eligible candidates and admin cannot delete group
+            case (false, false):
+                self.present(LastAdminLeaveAlert.cannotLeave(groupName: groupName))
             }
         }
     }
