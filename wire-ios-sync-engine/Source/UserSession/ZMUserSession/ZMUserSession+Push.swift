@@ -102,6 +102,15 @@ public extension ZMUserSession {
         sessionManager?.configurePushToken(session: self)
     }
 
+    /// Discards the cached token and asks APNs for the current one.
+    ///
+    /// The refreshed token is stored and synchronized with the backend from
+    /// `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`.
+    func refreshPushToken() {
+        PushTokenStorage.pushToken = nil
+        sessionManager?.configurePushToken(session: self)
+    }
+
 }
 
 // MARK: - UNUserNotificationCenterDelegate
