@@ -37,6 +37,12 @@ struct MeetingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
+        .alert(
+            Strings.Delete.Error.Alert.title,
+            isPresented: $viewModel.hasDeleteError
+        ) {
+            Button(Strings.Delete.Error.Alert.ok, role: .cancel) {}
+        }
         .task {
             await viewModel.loadInitialData()
         }
@@ -67,9 +73,7 @@ struct MeetingsView: View {
                 onEdit: { _ in
                     // TODO: [WPB-25501] Implement UI
                 },
-                onDelete: { _ in
-                    // TODO: [WPB-25514] Implement UI
-                }
+                onDelete: { viewModel.meetingToDelete = $0 }
             )
 
             if viewModel.hasMore {
@@ -87,6 +91,17 @@ struct MeetingsView: View {
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
             await viewModel.loadInitialData()
+        }
+        .alert(
+            Strings.Delete.Alert.title,
+            isPresented: $viewModel.isDeleteConfirmationPresented
+        ) {
+            Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
+                viewModel.confirmDelete()
+            }
+            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
+        } message: {
+            Text(Strings.Delete.Alert.subtitle)
         }
     }
 
@@ -132,7 +147,8 @@ private struct GroupedSections: View {
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
-            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase()
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
         )
     )
 }
@@ -143,7 +159,8 @@ private struct GroupedSections: View {
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(meetings: previewMeetings()),
-            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase()
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
         )
     )
 }
@@ -163,6 +180,12 @@ private struct PreviewObserveMeetingChangesUseCase: ObserveMeetingChangesUseCase
     func invoke() -> AsyncStream<Void> {
         AsyncStream { $0.finish() }
     }
+
+}
+
+private struct PreviewDeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
+
+    func invoke(meetingID: QualifiedID) async throws {}
 
 }
 

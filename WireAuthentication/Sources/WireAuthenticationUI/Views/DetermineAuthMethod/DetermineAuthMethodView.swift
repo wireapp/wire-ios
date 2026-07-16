@@ -112,6 +112,7 @@ package struct DetermineAuthMethodView: View {
         Text(Strings.Identity.Input.body)
             .multilineTextAlignment(.center)
             .font(for: .body1)
+            .accessibilityHeading(.h1)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.trailing)
