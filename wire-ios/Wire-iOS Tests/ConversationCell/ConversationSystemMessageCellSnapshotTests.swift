@@ -77,7 +77,7 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
         let message = makeMessage(messageType: .promotedToGroupAdmin)
         verify(message: message)
     }
-    
+
     func test_conversationScheduledForDeletion() {
         let message = makeMessage(messageType: .conversationScheduledForDeletion)
         message.systemMessageData?.conversationScheduledDeletionDate = .distantFuture

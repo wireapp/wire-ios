@@ -108,7 +108,7 @@ struct WireURLs: Codable {
 
     /// Link to an article explaining the Drive permissions.
     let learnMoreAboutDrivePermissions: URL
-    
+
     /// Link to an article explaining the Adminless Group Prevention feature
     let learnMoreAboutAdminlessGroupPrevention: URL
 

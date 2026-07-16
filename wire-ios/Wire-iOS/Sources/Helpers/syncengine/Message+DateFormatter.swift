@@ -34,7 +34,7 @@ extension Message {
         shortDateFormatter.timeStyle = .none
         return shortDateFormatter
     }()
-    
+
     static let longDateFormatter: DateFormatter = {
         var longDateFormatter = DateFormatter()
         longDateFormatter.dateStyle = .long
