@@ -33,7 +33,11 @@ package extension Meeting {
             id: id,
             title: title,
             start: start,
-            end: start.addingTimeInterval(duration)
+            end: start.addingTimeInterval(duration),
+            recurrence: .none,
+            members: [],
+            conversationID: QualifiedID(id: UUID(), domain: ""),
+            creatorID: QualifiedID(id: UUID(), domain: "")
         )
     }
 

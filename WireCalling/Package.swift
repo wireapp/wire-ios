@@ -11,14 +11,17 @@ let package = Package(
     platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
+        .library(name: "WireCallingDomainSupport", targets: ["WireCallingDomainSupport"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
     dependencies: [
+        .package(path: "../WireData"),
         .package(path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI")
+        .package(name: "WireUI", path: "../WireUI"),
+        .package(path: "../WireNetwork")
     ],
     targets: [
         .target(
@@ -40,7 +43,9 @@ let package = Package(
             name: "WireCallingData",
             dependencies: [
                 "WireCallingDomain",
-                "WireLogging"
+                "WireData",
+                "WireLogging",
+                "WireNetwork"
             ]
         ),
         .target(
@@ -48,7 +53,8 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireCallingUI",
-                "WireCallingData"
+                "WireCallingData",
+                "WireNetwork"
             ]
         ),
         .target(
@@ -57,19 +63,22 @@ let package = Package(
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
-                "WireFoundation"
+                "WireFoundation",
+                "WireLogging"
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
+                "WireCallingAssembly",
                 "WireCallingUI",
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
                 "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
+                .product(name: "WireFoundationSupport", package: "WireFoundation"),
+                .product(name: "WireNetworkSupport", package: "WireNetwork")
             ],
         ),
     ]

@@ -49,6 +49,8 @@ on:
         required: true
       DATADOG_CLIENT_TOKEN:
         required: true
+      GOV_SUBFOLDER_PRODUCTION:
+        required: true
       C1_S3_SUBFOLDER_RESTRICTED:
         required: true
       C1_S3_SUBFOLDER_PRODUCTION:
@@ -69,6 +71,8 @@ on:
         required: true  
       SUBMODULE_PAT:
         required: true
+      JIRA_TOKEN:
+        required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -83,7 +87,9 @@ jobs:
     uses: ./.github/workflows/changelog.yml
     with:
       is_cloud_build: ${{ inputs.is_cloud_build }}
-      
+    secrets:
+      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+
   build_and_release:
     if: always()
     timeout-minutes: 60
@@ -103,6 +109,7 @@ jobs:
       DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
       DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
       ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
+      GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
       C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
       C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
       C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
@@ -166,9 +173,7 @@ jobs:
         uses: gerlero/brew-install@5e2f576b2a0ede9d50a5b08c0099c70fdda0b0b9 # v1.1.2
         with:
           packages: imagemagick ghostscript freetype
-          
-      - name: Run setup
-        run: sh ./setup.sh
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:

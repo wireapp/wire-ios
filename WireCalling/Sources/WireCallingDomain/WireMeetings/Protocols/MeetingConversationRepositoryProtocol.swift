@@ -16,21 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Searches the user's team for members so they can be added as participants
-/// to a meeting.
-///
-/// Backing implementations may serve results from local storage, the remote
-/// backend, or both.
-public protocol MemberRepositoryProtocol: Sendable {
+public import Foundation
 
-    /// Returns team members matching the given query.
-    ///
-    /// - Parameter query: A search string matched against member name and
-    ///   handle. An empty query returns the full available pool.
-    /// - Returns: The matching team members.
-    /// - Throws: An error if the underlying source (local store or remote
-    ///   backend) fails to produce results.
-    func search(query: String) async throws -> [Member]
+// sourcery: AutoMockable
+public protocol MeetingConversationRepositoryProtocol: Sendable {
+
+    /// Fetch and setup conversation if needed.
+    func pullConversation(id: UUID, domain: String) async throws
+
+    /// Add participants to the underlying MLS conversation.
+    func addParticipants(_ participants: [MeetingMember], to conversationID: QualifiedID) async throws
 
 }

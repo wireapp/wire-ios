@@ -32,11 +32,13 @@ public struct WireLogger: LoggerProtocol, Sendable {
     private nonisolated(unsafe) static var provider: (any LoggerProtocol)?
 
     public let tag: String
+    private let instanceAttributes: LogAttributes
 
     // MARK: - Initialization
 
-    public init(tag: String) {
+    public init(tag: String, instanceAttributes: LogAttributes = [:]) {
         self.tag = tag
+        self.instanceAttributes = instanceAttributes
     }
 
     // MARK: - LoggerProtocol
@@ -85,7 +87,7 @@ public struct WireLogger: LoggerProtocol, Sendable {
     }
 
     private func finalizedAttributes(_ attributes: [LogAttributes]) -> LogAttributes {
-        var finalizedAttributes = flattenArray(attributes)
+        var finalizedAttributes = flattenArray(attributes + [instanceAttributes])
 
         if !tag.isEmpty {
             finalizedAttributes[.tag] = tag

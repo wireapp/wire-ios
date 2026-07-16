@@ -35,17 +35,9 @@ final class OneOnOneConversationHeaderView: UIView, Copyable {
     private let firstLabel = UILabel()
     private let secondLabel = UILabel()
     private let labelContainer = UIStackView(axis: .vertical)
-    private let userImageView: BadgeUserImageView = {
-        let view = BadgeUserImageView()
-        // Match the conversation list: show the full-colour image (or the blocked badge) rather
-        // than a desaturated avatar for a blocked user.
-        view.shouldDesaturate = false
-        view.badgeIconSize = .custom(130)
-        return view
-    }()
-
+    private let userImageView = UserImageView()
     private let guestIndicator = LabelIndicator(context: .guest)
-    private let guestWarningView = GuestAccountWarningView()
+    private let guestWarningView = GuestAccountWarningView(variant: .oneOnOne)
     private let guestWarningContainer = UIView()
     private let userSession: UserSession
 

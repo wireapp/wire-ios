@@ -141,19 +141,6 @@ public final class OneOnOneSource {
 
             // update just to be sure
             mlsConversation.needsToBeUpdatedFromBackend = true
-
-            // Carry over the most recent `lastModifiedDate` from the proteus side so the MLS
-            // row lands in the same slot in the conversation list when the link flips.
-            // Without this the MLS conversation may have an older timestamp and appear far
-            // down the list (or out of view), making it look like the row disappeared
-            // after block/unblock. [WPB-24403]
-            let mostRecentProteusDate = proteusConversations
-                .compactMap(\.lastModifiedDate)
-                .max()
-            if let mostRecentProteusDate,
-               (mlsConversation.lastModifiedDate ?? .distantPast) < mostRecentProteusDate {
-                mlsConversation.lastModifiedDate = mostRecentProteusDate
-            }
         }
         // switch active conversation
         otherUser.oneOnOneConversation = mlsConversation

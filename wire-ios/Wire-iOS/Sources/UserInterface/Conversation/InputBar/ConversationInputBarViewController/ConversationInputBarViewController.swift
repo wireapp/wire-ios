@@ -616,17 +616,8 @@ final class ConversationInputBarViewController: UIViewController,
         updateButtonStates()
     }
 
-    /// Hides the input bar when the self user has blocked the other user, so it can be replaced by
-    /// the "You blocked this user" bar. See `ConversationViewController`.
-    var isHiddenForBlockedUser = false {
-        didSet {
-            guard isHiddenForBlockedUser != oldValue else { return }
-            updateInputBarVisibility()
-        }
-    }
-
     func updateInputBarVisibility() {
-        view.isHidden = conversation.isReadOnly || isHiddenForBlockedUser
+        view.isHidden = conversation.isReadOnly
     }
 
     @objc
@@ -1317,9 +1308,19 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
             let observed = await observeDraftsUseCase.invoke()
             for await drafts in observed {
+                let previousIdentifiers = Set(await attachmentsCarouselViewModel.draftsLocalIdentifiers)
                 await attachmentsCarouselViewModel.update(with: drafts)
                 await self?.syncCarouselVisible(drafts: drafts)
                 await self?.setAttachments(drafts: drafts)
+
+                let newIdentifiers = Set(drafts.compactMap(\.localIdentifier))
+                for identifier in previousIdentifiers.symmetricDifference(newIdentifiers) {
+                    if previousIdentifiers.contains(identifier) {
+                        await self?.cameraKeyboardViewController?.deselectItem(withLocalIdentifier: identifier)
+                    } else {
+                        await self?.cameraKeyboardViewController?.selectItem(withLocalIdentifier: identifier)
+                    }
+                }
             }
         }
     }

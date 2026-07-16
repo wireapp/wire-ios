@@ -21,7 +21,7 @@ import WireCallingDomain
 import WireDesign
 
 struct MemberAvatarsView: View {
-    let members: [Member]
+    let members: [MeetingMember]
 
     private let maxVisible = 5
     private let circleSize: CGFloat = 24

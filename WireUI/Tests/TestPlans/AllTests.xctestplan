@@ -16,10 +16,6 @@
     ],
     "environmentVariableEntries" : [
       {
-        "key" : "CI",
-        "value" : "${CI}"
-      },
-      {
         "enabled" : false,
         "key" : "SNAPSHOT_TESTING_RECORD",
         "value" : "failed"

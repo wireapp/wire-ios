@@ -32,6 +32,7 @@ public enum MeetingFrequency: String, Codable, Sendable {
 public struct MeetingRecurrence: Encodable, Sendable {
 
     public let frequency: MeetingFrequency
+    /// Contains a positive integer representing at which intervals the recurrence rule repeats
     public let interval: Int?
     public let until: Date?
 
@@ -76,7 +77,7 @@ struct MeetingRecurrenceV16: Decodable {
 
 // MARK: - MeetingResponse
 
-public struct MeetingResponse {
+public struct MeetingResponse: Sendable {
 
     public let id: QualifiedID
     public let title: String

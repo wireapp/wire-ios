@@ -127,10 +127,10 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     /// Builds a view model whose initial search resolves to `searchResults` and
     /// waits for the init-time async search to complete before returning.
     @MainActor
-    private func makeSettledViewModel(searchResults: [Member]) async -> MemberSelectionViewModel {
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = searchResults
-        let viewModel = MemberSelectionViewModel(source: repository)
+    private func makeSettledViewModel(searchResults: [MeetingMember]) async -> MemberSelectionViewModel {
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMeetingMemberReturnValue = searchResults
+        let viewModel = MemberSelectionViewModel(source: useCase)
         while viewModel.isSearching {
             await Task.yield()
         }
@@ -141,18 +141,18 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     /// stays in the loading state when snapshotted.
     @MainActor
     private func makeLoadingViewModel() -> MemberSelectionViewModel {
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberClosure = { _ in
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMeetingMemberClosure = { _ in
             try? await Task.sleep(for: .seconds(60))
             return []
         }
-        return MemberSelectionViewModel(source: repository)
+        return MemberSelectionViewModel(source: useCase)
     }
 }
 
 // MARK: - Mock fixtures
 
-private extension [Member] {
+private extension [MeetingMember] {
     static var mock: Self {
         [
             .init(name: "Martin Koch-Johansen", handle: "username"),
@@ -168,7 +168,7 @@ private extension [Member] {
     }
 }
 
-private extension Member {
+private extension MeetingMember {
 
     init(name: String, handle: String) {
         self.init(

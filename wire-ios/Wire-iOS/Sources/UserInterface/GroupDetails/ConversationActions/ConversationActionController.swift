@@ -54,7 +54,8 @@ final class ConversationActionController {
             (conversation as? ZMConversation)?.listActions ?? []
         }
 
-        let title = context == .list ? conversation.displayName : nil
+        let listMenuTitle = L10n.Localizable.ConversationList.ContextMenu.title(conversation.displayNameWithFallback)
+        let title = context == .list ? listMenuTitle : nil
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())

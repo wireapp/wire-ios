@@ -16,14 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
 // sourcery: AutoMockable
-/// Repository for accessing Meetings
-package protocol MeetingsRepositoryProtocol: Sendable {
+/// Creates a new instant meeting via the backend API.
+package protocol CreateInstantMeetingUseCaseProtocol: Sendable {
 
-    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
-
-    func hasUpcomingMeetings(after date: Date) -> Bool
+    func invoke(title: String, participants: [MeetingMember]) async throws -> Meeting
 
 }

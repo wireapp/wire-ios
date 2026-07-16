@@ -574,6 +574,8 @@ struct ConversationEventPayloadProcessor {
                     .group
                 case .channel:
                     .channel
+                case .meeting:
+                    .meeting
                 }
             } ?? .none
 
@@ -643,18 +645,9 @@ struct ConversationEventPayloadProcessor {
         }
 
         guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
-            // The other participant is absent from the synced member list. This is exactly what the
-            // backend returns to the party that was *blocked*: it removes the blocker from the 1:1
-            // member list (Proteus and MLS) without notifying this side. We must not tear down an
-            // established 1:1 — forcing it read-only and marking the MLS group invalid (which wipes
-            // it and drops the user back to the read-only Proteus conversation) — when we still have
-            // a linked one-on-one user. Only do so when there is genuinely no user behind the
-            // conversation (e.g. a malformed/empty 1:1 that was never linked). [WPB-24403]
-            if localConversation.oneOnOneUser == nil {
-                localConversation.isForcedReadOnly = true
-                if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
-                    localConversation.mlsStatus = .invalid
-                }
+            localConversation.isForcedReadOnly = true
+            if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
+                localConversation.mlsStatus = .invalid
             }
             return
         }

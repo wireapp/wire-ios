@@ -148,6 +148,7 @@
 
 
 // Conversation List - Filter Conversations
+"conversation_list.context_menu.title" = "%@ Optionen";
 "conversation_list.filter.all_conversations.title" = "Alle Unterhaltungen";
 "conversation_list.filter.favorites.title" = "Favoriten";
 "conversation_list.filter.groups.title" = "Gruppen";
@@ -387,6 +388,7 @@
 "conversation.create.file_management.title" = "Geteiltes Drive";
 "conversation.create.file_management.subtitle" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in Geteiltes Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 "conversation.create.file_management.learnMore" = "Mehr erfahren";
+"conversation.create.file_management.sharedDriveAccess" = "Personen außerhalb Ihres Teams können Dateien lesen, jedoch weder hochladen noch bearbeiten.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiver Anruf";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Audionachrichten können während eines Anrufs nicht aufgenommen werden.";
@@ -636,8 +638,12 @@
 "content.system.channel.guest.joined" = "%@ ist dem Channel beigetreten";
 "content.system.channel.guest.you_joined" = "Sie sind dem Channel beigetreten";
 
-"content.system.file_collaboration.sharedDriveState" = "Geteiltes Drive %@";
-"content.system.file_collaboration.sharedDriveState.enabled" = "aktiv";
+"content.system.file_collaboration.sharedDriveState" = "Geteiltes Drive ist %@";
+"content.system.file_collaboration.sharedDriveState.enabled" = "an";
+"content.system.file_collaboration.enabled.editor_access" = "Sie haben Bearbeitungsrechte. Personen außerhalb Ihres Teams haben lediglich Leserechte.";
+"content.system.file_collaboration.enabled.viewer_access" = "Sie können Dateien lesen, aber nicht hochladen, bearbeiten oder verwalten.";
+"content.system.file_collaboration.enabled.learn_more" = "Mehr erfahren";
+"content.system.file_collaboration.drive_viewer_access.title" = "Guests have view-only access to files in this conversation.";
 
 // read receipt
 
@@ -982,6 +988,19 @@
 "meta.leave_conversation_button_leave" = "Verlassen";
 "meta.leave_conversation_button_leave_and_delete" = "Verlassen und Verlauf löschen";
 
+// Admin selection (promote new admin before leaving)
+"admin_selection.title" = "Neuer Admin";
+"admin_selection.promote" = "Ernennen";
+"admin_selection.info_banner" = "Nachdem Sie einen neuen Admin ernannt haben, verlassen Sie die Gruppe.";
+"admin_selection.promotion_error" = "Failed to promote user to admin.";
+
+// Last admin leave flow
+"last_admin_leave.title" = "\"%s\" verlassen?";
+"last_admin_leave.promote_or_delete_message" = "Sie sind der einzige Admin.\nErnennen Sie vor dem Verlassen der Gruppe einen anderen Teilnehmer zum Admin oder löschen Sie die Gruppe, wenn sie nicht mehr benötigt wird.";
+"last_admin_leave.promote_new_admin" = "Neuen Admin ernennen";
+"last_admin_leave.no_eligible_candidates_message" = "Sie sind der einzige Admin. Die anderen Teilnehmer können keine Admins sein.\nFügen Sie mindestens ein Team-Mitglied hinzu und ernennen Sie es zum Admin, bevor Sie gehen. Alternativ löschen Sie die Gruppe, wenn sie nicht mehr benötigt wird.";
+"last_admin_leave.delete_group" = "Gruppe löschen";
+
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ hat begonnen, ein neues Gerät zu nutzen.";
 "meta.degraded.degradation_reason_message.plural" = "%@ hat begonnen, neue Geräte zu nutzen.";
@@ -1117,6 +1136,8 @@
 "group_details.channel_history_options_cell.title" = "Gesprächsverlauf";
 "group_details.file_collaboration_cell.title" = "Geteiltes Drive";
 "group_details.file_collaboration_cell.subtitle" = "An";
+"group_details.file_collaboration_cell.subtitle.editor_access" = "Bearbeiter-Zugriff";
+"group_details.file_collaboration_cell.subtitle.viewer_access" = "Betrachter-Zugriff";
 "group_details.file_collaboration_cell.footer" = "Dauerhaft aktiv für diese Unterhaltung";
 "group_details.timeout_options_disabled.footer" = "Die Funktion ist für Unterhaltungen mit Geteiltes Drive nicht verfügbar.";
 
@@ -1500,7 +1521,7 @@
 "name.guidance.tooshort" = "Mindestens 2 Zeichen";
 "name.guidance.toolong" = "Zu viele Zeichen";
 
-"email.placeholder" = "E-Mail";
+"email.placeholder" = "E-Mail-Adresse";
 "email.guidance.invalid" = "Ungültige E-Mail-Adresse";
 "email.guidance.tooshort" = "E-Mail-Adresse ist zu kurz";
 "email.guidance.toolong" = "Zu viele Zeichen";
@@ -1554,6 +1575,7 @@
 
 "guest_room.allow_guests.title" = "Gäste zulassen";
 "guest_room.allow_guests.subtitle" = "Öffne diese Unterhaltung für Personen außerhalb des Teams.";
+"guest_room.allow_guests.shared_drive.subtitle" = "Gäste können in Geteiltes Drive keine Dateien hochladen, bearbeiten oder verwalten.";
 "guest_room.remove_guests.message" = "Aktuelle Gäste werden aus der Unterhaltung entfernt. Neue Gäste können nicht hinzugefügt werden.";
 "guest_room.remove_guests.action" = "Entfernen";
 "guest_room.revoke_link.message" = "Neue Gäste werden sich nicht mehr mit diesem Link anmelden können. Aktuelle Gäste haben weiterhin Zugang zum Gästebereich.";

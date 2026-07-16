@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UserNotifications
+package import Foundation
 
-public protocol NotificationServiceProtocol {
-    func didReceive(
-        _ request: UNNotificationRequest,
-        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
-    )
+// sourcery: AutoMockable
+/// Repository for accessing and managing meetings.
+package protocol MeetingRepositoryProtocol: Sendable {
 
-    func serviceExtensionTimeWillExpire()
+    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
+
+    func hasUpcomingMeetings(after date: Date) -> Bool
+
+    func createMeeting(
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?
+    ) async throws -> Meeting
+
 }

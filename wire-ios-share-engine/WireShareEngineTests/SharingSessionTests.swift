@@ -45,6 +45,8 @@ final class SharingSessionTests: BaseSharingSessionTests {
         activeConnection = createConversation(type: .connection, archived: false)
         archivedConversation = createConversation(type: .group, archived: true)
         archivedConnection = createConversation(type: .connection, archived: true)
+        moc.saveOrRollback()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
     }
 
     override func tearDown() {
@@ -53,6 +55,7 @@ final class SharingSessionTests: BaseSharingSessionTests {
         activeConnection = nil
         archivedConversation = nil
         archivedConnection = nil
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
         super.tearDown()
     }
 
@@ -66,7 +69,5 @@ final class SharingSessionTests: BaseSharingSessionTests {
         let conversations = sharingSession.writebleArchivedConversations.map { $0 as! ZMConversation }
         XCTAssertEqual(conversations, [archivedConversation])
     }
-
-    // MARK: - Init
 
 }

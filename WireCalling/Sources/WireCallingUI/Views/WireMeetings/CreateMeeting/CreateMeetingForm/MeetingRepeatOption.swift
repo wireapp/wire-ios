@@ -16,28 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-public import WireFoundation
+enum MeetingRepeatOption: Int, CaseIterable, Sendable {
 
-// TODO: [WPB-20278] Update the model
-public struct Member: Hashable, Identifiable, Sendable {
-
-    public let qualifiedID: QualifiedID
-    public let name: String
-    public let handle: String
-
-    public var id: UUID {
-        qualifiedID.id
-    }
-
-    public init(
-        qualifiedID: QualifiedID,
-        name: String,
-        handle: String
-    ) {
-        self.qualifiedID = qualifiedID
-        self.name = name
-        self.handle = handle
-    }
+    case never
+    case daily
+    case weekly
+    case every2Weeks
+    case monthly
+    case yearly
 
 }
