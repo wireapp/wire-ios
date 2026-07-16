@@ -208,6 +208,29 @@ final class ConversationListCellTests: XCTestCase {
         verify(otherUserConversation)
     }
 
+    func testThatItRendersScheduledForDeletionConversation() {
+        // WHEN
+        let status = ConversationStatus(
+            isGroup: true,
+            hasMessages: false,
+            hasUnsentMessages: false,
+            messagesRequiringAttention: [],
+            messagesRequiringAttentionByType: [:],
+            isTyping: false,
+            mutedMessageTypes: [],
+            isOngoingCall: false,
+            isBlocked: false,
+            isSelfAnActiveMember: true,
+            hasSelfMention: false,
+            hasSelfReply: false,
+            isScheduledForDeletion: true
+        )
+        otherUserConversation.status = status
+
+        // THEN
+        verify(otherUserConversation)
+    }
+
     func testThatItRendersConversationWithNewMessage() {
         // WHEN
 
