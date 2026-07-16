@@ -471,6 +471,10 @@ platform :ios do
         base_configuration_folder = "wire-ios-build-assets/#{override_folder}/#{build_type}"
         configuration_path = options[:configuration_path]
 
+        # Start from a clean slate so files that aren't part of the chosen configuration
+        # (e.g. Backend.bundle) don't linger from the default checked-out configuration
+        sh "rm -rf ../wire-ios/Configuration"
+
         if configuration_path.nil? || configuration_path.empty?
             sh "cd .. && ./setup.sh -o \'./#{base_configuration_folder}\'"
         else
@@ -510,7 +514,6 @@ platform :ios do
     desc "Example: fastlane configure_local build_type:\"Playground\" configuration_path:\"Gov/AppStore\""
     lane :configure_local do |options|
         UI.user_error! "Pass build_type parameter, e.g. fastlane configure_local build_type:Playground" if options[:build_type].nil?
-        sh "rm -rf ../Configuration"
         apply_configuration_override(options)
         UI.success("wire-ios/Configuration is set up:")
         sh "ls -la ../wire-ios/Configuration"
