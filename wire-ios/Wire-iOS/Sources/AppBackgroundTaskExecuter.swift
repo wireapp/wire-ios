@@ -117,9 +117,6 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
             WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
             operationState.task?.cancel()
-
-            // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
-            endBackgroundTask(operationState)
         }
         defer { endBackgroundTask(operationState) }
 
