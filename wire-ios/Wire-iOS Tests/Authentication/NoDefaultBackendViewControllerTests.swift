@@ -16,33 +16,46 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
+import WireTestingPackage
 import XCTest
+
 @testable import Wire
 
-final class URL_WireTests: XCTestCase {
+final class NoDefaultBackendViewControllerTests: XCTestCase {
 
-    var be: BackendEnvironment!
+    // MARK: - Properties
+
+    private var sut: NoDefaultBackendViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        let bundle = Bundle.backendBundle!
-        let defaults = UserDefaults(suiteName: "URLWireTests")!
-        EnvironmentType.production.save(in: defaults)
-        be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)
+        snapshotHelper = SnapshotHelper()
+        accentColor = .blue
     }
 
     override func tearDown() {
-        be = nil
+        sut = nil
+        snapshotHelper = nil
         super.tearDown()
     }
 
-    func testThatAccountURLsAreLoadedCorrectly() {
-        let accountsURL = URL(string: "https://account.wire.com")!
-        XCTAssertEqual(be.accountsURL, accountsURL)
+    // MARK: - Snapshot Tests
+
+    @MainActor
+    func testForAllScreenSizes() {
+        sut = NoDefaultBackendViewController()
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 
-    func test_passwordReset_URLIsCorrect() {
-        XCTAssertEqual(URL.wr_passwordReset, be.accountsURL.appendingPathComponent("forgot"))
+    @MainActor
+    func testThatItShowsAnErrorMessage() {
+        sut = NoDefaultBackendViewController()
+        sut.loadViewIfNeeded()
+        sut.noDefaultBackendViewModel(
+            NoDefaultBackendViewModel(),
+            didFailWithMessage: "This configuration link is not valid."
+        )
+        snapshotHelper.verify(matching: sut)
     }
 }
