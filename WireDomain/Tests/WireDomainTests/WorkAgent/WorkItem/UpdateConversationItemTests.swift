@@ -63,7 +63,7 @@ struct UpdateConversationItemTests {
     }
 
     @Test("It does not delete 1:1 conversation if not found")
-    func startsDeleteOneOnOneConversationIfNotFound() async throws {
+    func startDoesNotDeleteOneOnOneConversationIfNotFound() async throws {
         // Given
         repository.isGroupConversationIdDomain_MockValue = false
         repository.pullConversationIdDomain_MockError = ConversationRepositoryError.conversationNotFound
