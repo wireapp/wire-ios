@@ -218,6 +218,36 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     }
 
+    public func updateConversationScheduledDeletion(
+        scheduledDeletionDate: Date,
+        conversationID: UUID,
+        conversationDomain: String?,
+        date: Date
+    ) async {
+
+        let conversation = await fetchOrCreateConversation(
+            id: conversationID,
+            domain: conversationDomain
+        )
+
+        let messageType = SystemMessageType.conversationScheduledForDeletion(
+            scheduledDeletionDate: scheduledDeletionDate,
+            date: date
+        )
+
+        await messageRepository.addSystemMessage(
+            messageType: messageType,
+            conversationID: conversationID,
+            conversationDomain: conversationDomain
+        )
+
+        await conversationsLocalStore.storeConversation(
+            scheduledDeletionDate: scheduledDeletionDate,
+            conversation: conversation
+        )
+
+    }
+
     public func deleteConversation(
         id: UUID,
         domain: String?

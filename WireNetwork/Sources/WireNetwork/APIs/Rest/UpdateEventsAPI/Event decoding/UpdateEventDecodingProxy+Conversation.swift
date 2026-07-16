@@ -94,6 +94,10 @@ extension UpdateEventDecodingProxy {
         case .mlsReset:
             let event = try ConversationMLSResetEventDecoder().decode(from: container)
             updateEvent = .conversation(.mlsReset(event))
+
+        case .adminlessReminder:
+            let event = try ConversationAdminlessReminderEventDecoder().decode(from: container)
+            updateEvent = .conversation(.adminlessReminder(event))
         }
     }
 

@@ -707,6 +707,10 @@ public final class ClientSessionComponent {
         lockRepository: resetMLSConversationLockRepository
     )
 
+    private lazy var adminlessReminderEventProcessor = ConversationAdminlessReminderEventProcessor(
+        repository: conversationRepository
+    )
+
     public private(set) lazy var meetingRepository = MeetingRepository(
         meetingsAPI: meetingsAPI,
         localStore: MeetingLocalStore(context: syncContext)
@@ -728,7 +732,8 @@ public final class ClientSessionComponent {
         renameEventProcessor: conversationRenameEventProcessor,
         typingEventProcessor: conversationTypingEventProcessor,
         addPermissionEventProcessor: addPermissionEventProcessor,
-        mlsResetEventProcessor: mlsResetEventProcessor
+        mlsResetEventProcessor: mlsResetEventProcessor,
+        adminlessReminderEventProcessor: adminlessReminderEventProcessor
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {

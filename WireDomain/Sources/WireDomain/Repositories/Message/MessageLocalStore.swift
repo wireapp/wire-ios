@@ -998,6 +998,17 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
+
+        case let .conversationScheduledForDeletion(scheduledDeletionDate, date):
+
+            let systemMessage = await createSystemMessage(
+                messageType: .conversationScheduledForDeletion,
+                sender: nil,
+                timestamp: date,
+                conversationScheduledDeletionDate: scheduledDeletionDate
+            )
+
+            return [systemMessage]
         }
     }
 
@@ -1013,7 +1024,8 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         messageTimer: Double? = nil,
         relevantForStatus: Bool = true,
         removedReason: ZMParticipantsRemovedReason = .none,
-        domains: [String]? = nil
+        domains: [String]? = nil,
+        conversationScheduledDeletionDate: Date? = nil
     ) async -> ZMSystemMessage {
         await context.perform { [context] in
             let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
@@ -1024,6 +1036,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             systemMessage.clients = clients ?? Set()
             systemMessage.serverTimestamp = timestamp
             systemMessage.text = text
+            systemMessage.conversationScheduledDeletionDate = conversationScheduledDeletionDate
 
             if let duration {
                 systemMessage.duration = duration

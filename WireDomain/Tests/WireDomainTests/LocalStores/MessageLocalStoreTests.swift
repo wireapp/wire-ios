@@ -306,6 +306,8 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.userRemovedFromTeam])
         case .promotedToGroupAdmin:
             (messagesCount: 1, [.promotedToGroupAdmin])
+        case .conversationScheduledForDeletion:
+            (messagesCount: 1, [.conversationScheduledForDeletion])
         }
     }
 
@@ -354,6 +356,11 @@ final class MessageLocalStoreTests: XCTestCase {
             .channelHistoryDepthModified(sender: .init(id: userID, domain: domain1)),
             .promotedToGroupAdmin(
                 user: (id: userID, domain: domain1),
+                sender: (id: userID, domain: domain1),
+                date: date
+            ),
+            .conversationScheduledForDeletion(
+                scheduledDeletionDate: date,
                 sender: (id: userID, domain: domain1),
                 date: date
             )
