@@ -1251,11 +1251,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 for: localConversation
             )
 
+            // `/conversations/list` is known to return incomplete data for 1:1s (see comment above on
+            // `setNeedsToBeUpdatedFromBackend: false`) — e.g. it omits the other member when that user has
+            // blocked self. Don't let a stale/partial payload remove the other participant from a 1:1;
+            // membership there is fixed by the connection, not by this list response.
             commonUpdate(
                 from: conversation,
                 for: localConversation,
                 serverTimestamp: serverTimestamp,
-                isFederationEnabled: isFederationEnabled
+                isFederationEnabled: isFederationEnabled,
+                shouldRemoveParticipants: false
             )
 
             linkOneOnOneUserIfNeeded(for: localConversation)

@@ -805,7 +805,11 @@ struct ConversationEventPayloadProcessor {
             updateAttributes(from: payload, for: conversation, context: context)
             assignMessageProtocol(from: payload, for: conversation, in: context)
             updateMetadata(from: payload, for: conversation, context: context)
-            updateMembers(from: payload, for: conversation, context: context)
+            // `/conversations/list` is known to return incomplete data for 1:1s (see comment above on
+            // `setNeedsToBeUpdatedFromBackend: false`) — e.g. it omits the other member when that user has
+            // blocked self. Don't let a stale/partial payload remove the other participant from a 1:1;
+            // membership there is fixed by the connection, not by this list response.
+            updateMembers(from: payload, for: conversation, shouldRemoveParticipants: false, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             updateConversationStatus(from: payload, for: conversation)
             linkOneOnOneUserIfNeeded(for: conversation)
