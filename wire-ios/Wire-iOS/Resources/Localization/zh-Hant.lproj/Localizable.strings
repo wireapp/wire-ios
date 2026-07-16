@@ -318,6 +318,7 @@
 "conversation.input_bar.verified" = "已驗證";
 "conversation.input_bar.placeholder" = "請輸入訊息";
 "conversation.input_bar.placeholder_ephemeral" = "自動刪除訊息";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "向上滑動來發送";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "點擊來發送";

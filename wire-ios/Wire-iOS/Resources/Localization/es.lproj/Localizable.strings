@@ -318,6 +318,7 @@
 "conversation.input_bar.verified" = "Verificado";
 "conversation.input_bar.placeholder" = "Escribe un mensaje";
 "conversation.input_bar.placeholder_ephemeral" = "Mensajes con auto-borrado";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Desliza hacia arriba para enviar";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Pulsa para enviar";

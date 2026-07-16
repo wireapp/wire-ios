@@ -318,6 +318,7 @@
 "conversation.input_bar.verified" = "Верифицировано";
 "conversation.input_bar.placeholder" = "Введите сообщение";
 "conversation.input_bar.placeholder_ephemeral" = "Самоудаляющееся сообщение";
+"conversation.input_bar.blocked_user" = "Вы заблокировали этого пользователя";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Проведите вверх для отправки";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Нажмите для отправки";

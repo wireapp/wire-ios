@@ -318,6 +318,7 @@
 "conversation.input_bar.verified" = "Preverjena";
 "conversation.input_bar.placeholder" = "Napiši sporočilo";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Podrsajte navzgor za pošiljanje";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tapni za pošiljanje";

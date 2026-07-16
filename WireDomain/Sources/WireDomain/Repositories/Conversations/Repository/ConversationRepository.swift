@@ -218,6 +218,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     }
 
+    public func isGroupConversation(id: UUID, domain: String?) async -> Bool {
+        guard let conversation = await fetchConversation(id: id, domain: domain) else {
+            return false
+        }
+        return await conversationsLocalStore.isGroupConversation(conversation)
+    }
+
     public func deleteConversation(
         id: UUID,
         domain: String?
