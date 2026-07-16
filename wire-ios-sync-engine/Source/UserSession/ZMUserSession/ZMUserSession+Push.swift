@@ -106,7 +106,7 @@ public extension ZMUserSession {
     ///
     /// The refreshed token is stored and synchronized with the backend from
     /// `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`.
-    func refreshPushToken() {
+    public func refreshPushToken() {
         PushTokenStorage.pushToken = nil
         sessionManager?.configurePushToken(session: self)
     }
