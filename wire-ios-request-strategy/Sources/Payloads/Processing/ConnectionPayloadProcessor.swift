@@ -57,10 +57,19 @@ final class ConnectionPayloadProcessor {
             return
         }
 
+        let previousConversationID = connection.to.oneOnOneConversation?.remoteIdentifier
+        let previousConversationDomain = connection.to.oneOnOneConversation?.domain
+        var didCreateConversation = false
         let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: payload.qualifiedConversationID?.domain,
-            in: context
+            in: context,
+            created: &didCreateConversation
+        )
+        // TEMP DEBUG [WPB-24403 duplicate-user]: confirm whether the backend sends a different
+        // conversation id on connection status changes (e.g. block/unblock).
+        WireLogger.eventProcessing.warn(
+            "[legacy] updateOrCreateConnection status=\(payload.status) userID=\(userID) userDomain=\(payload.qualifiedTo?.domain ?? "nil") conversationID=\(conversationID) conversationDomain=\(payload.qualifiedConversationID?.domain ?? "nil") previousConversationID=\(previousConversationID?.uuidString ?? "nil") previousConversationDomain=\(previousConversationDomain ?? "nil") didCreateConversation=\(didCreateConversation)"
         )
 
         conversation.needsToBeUpdatedFromBackend = true

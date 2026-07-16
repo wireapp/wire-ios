@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireLogging
 
 final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
@@ -42,7 +43,14 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
             let connection = try storedConnection(from: connectionInfo)
 
-            let conversation = try storedConversation(from: connectionInfo, with: connection)
+            let previousConversationID = connection.to.oneOnOneConversation?.remoteIdentifier
+            let previousConversationDomain = connection.to.oneOnOneConversation?.domain
+            let (conversation, didCreateConversation) = try storedConversation(from: connectionInfo, with: connection)
+            // TEMP DEBUG [WPB-24403 duplicate-user]: confirm whether the backend sends a different
+            // conversation id on connection status changes (e.g. block/unblock).
+            WireLogger.eventProcessing.warn(
+                "[domain] storeConnection status=\(connectionInfo.status) userID=\((connectionInfo.receiverID ?? connectionInfo.receiverQualifiedID?.uuid)?.uuidString ?? "nil") userDomain=\(connectionInfo.receiverQualifiedID?.domain ?? "nil") conversationID=\(conversation.remoteIdentifier?.uuidString ?? "nil") conversationDomain=\(connectionInfo.qualifiedConversationID?.domain ?? "nil") previousConversationID=\(previousConversationID?.uuidString ?? "nil") previousConversationDomain=\(previousConversationDomain ?? "nil") didCreateConversation=\(didCreateConversation)"
+            )
 
             conversation.needsToBeUpdatedFromBackend = false
             conversation.lastModifiedDate = connectionInfo.lastUpdate
@@ -95,16 +103,19 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
     private func storedConversation(
         from connection: ConnectionInfo,
         with storedConnection: ZMConnection
-    ) throws -> ZMConversation {
+    ) throws -> (ZMConversation, created: Bool) {
         guard let conversationID = connection.conversationID ?? connection.qualifiedConversationID?.uuid else {
             throw ConnectionsRepositoryError.missingConversationId
         }
 
-        return ZMConversation.fetchOrCreate(
+        var created = false
+        let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: connection.qualifiedConversationID?.domain,
-            in: context
+            in: context,
+            created: &created
         )
+        return (conversation, created)
     }
 
     /// Create or update  connection locally related to the connection's sender
