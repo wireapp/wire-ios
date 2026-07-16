@@ -27,6 +27,8 @@ import WireSystem
 /// The subset of `UIApplication`'s background task APIs that `AppBackgroundTaskExecuter` depends on.
 public protocol BackgroundTaskApplication: AnyObject, Sendable {
 
+    nonisolated var backgroundTimeRemaining: TimeInterval { get }
+
     nonisolated func beginBackgroundTask(
         withName taskName: String?,
         expirationHandler handler: (@MainActor @Sendable () -> Void)?
@@ -104,8 +106,8 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
     ) async throws -> T {
         let name = name ?? "unnamed"
 
-        guard applicationState.isInBackground != true else {
-            WireLogger.backgroundActivity.debug("background task \(name) cannot begin in the background")
+        if applicationState.isInBackground && application.backgroundTimeRemaining < 5 {
+            WireLogger.backgroundActivity.debug("background task \(name) cannot begin. Not enough time")
             throw CancellationError()
         }
 
