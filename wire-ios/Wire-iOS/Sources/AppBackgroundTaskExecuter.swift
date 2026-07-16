@@ -129,9 +129,19 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         // Don't start the task until we have a valid background task ID.
         let task = Task {
             WireLogger.backgroundActivity.debug("will start background task: \(name)")
-            let result = try await operation()
-            WireLogger.backgroundActivity.debug("did end background task: \(name)")
-            return result
+            do {
+                let result = try await operation()
+                WireLogger.backgroundActivity.debug("did end background task: \(name)")
+                return result
+            } catch {
+                if error is CancellationError {
+                    WireLogger.backgroundActivity.debug("did cancel background task: \(name)")
+                } else {
+                    let errorDescription = (error as NSError).safeForLoggingDescription
+                    WireLogger.backgroundActivity.warn("did fail background task: \(name), error: \(errorDescription)")
+                }
+                throw error
+            }
         }
         operationState.task = task
 
