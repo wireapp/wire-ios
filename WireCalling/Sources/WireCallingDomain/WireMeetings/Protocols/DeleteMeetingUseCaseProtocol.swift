@@ -16,28 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
-package struct CreateScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocol {
+// sourcery: AutoMockable
+/// Deletes a meeting by its ID.
+package protocol DeleteMeetingUseCaseProtocol: Sendable {
 
-    private let repository: any MeetingRepositoryProtocol
-
-    package init(repository: any MeetingRepositoryProtocol) {
-        self.repository = repository
-    }
-
-    package func invoke(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting {
-        try await repository.createMeeting(
-            title: title,
-            startTime: startTime,
-            endTime: endTime,
-            recurrence: recurrence
-        )
-    }
+    func invoke(meetingID: QualifiedID) async throws
 
 }

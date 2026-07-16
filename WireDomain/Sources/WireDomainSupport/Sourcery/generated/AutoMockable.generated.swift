@@ -30,6 +30,7 @@ import WireDataModel
 import WireDomainPackage
 import WireCoreCrypto
 import Combine
+import WireCallingDomain
 
 @testable import WireDomain
 
@@ -3559,6 +3560,34 @@ public class MockPullMLSStatusSyncProtocol: PullMLSStatusSyncProtocol {
     public var pull_MockMethod: (() async throws -> Void)?
 
     public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullMeetingsSyncProtocol: PullMeetingsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
         pull_Invocations.append(())
 
         if let error = pull_MockError {
