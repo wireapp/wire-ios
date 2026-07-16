@@ -5,11 +5,11 @@ updates:
     schedule:
       interval: "weekly"
     cooldown:
-      default-days: 3
+      default-days: 7
 
   - package-ecosystem: "bundler"
     directory: "/"
     schedule:
       interval: "weekly"
     cooldown:
-      default-days: 3
+      default-days: 7
