@@ -48,19 +48,25 @@ class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     }
 
     private static func makeBlockedImage() -> UIImage {
-        let side: CGFloat = 40
-        let glyphSide = side * 0.5
-        let glyph = StyleKitIcon.block.makeImage(size: .custom(glyphSide), color: .white)
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: side, height: side))
-        return renderer.image { context in
-            UIColor.black.setFill()
-            context.cgContext.fillEllipse(in: CGRect(x: 0, y: 0, width: side, height: side))
-            glyph.draw(in: CGRect(
-                x: (side - glyphSide) / 2,
-                y: (side - glyphSide) / 2,
-                width: glyphSide,
-                height: glyphSide
-            ))
+        struct Cache {
+            static let image: UIImage = {
+                let side: CGFloat = 40
+                let glyphSide = side * 0.5
+                let glyph = StyleKitIcon.block.makeImage(size: .custom(glyphSide), color: .white)
+                let renderer = UIGraphicsImageRenderer(size: CGSize(width: side, height: side))
+                return renderer.image { context in
+                    UIColor.black.setFill()
+                    context.cgContext.fillEllipse(in: CGRect(x: 0, y: 0, width: side, height: side))
+                    glyph.draw(in: CGRect(
+                        x: (side - glyphSide) / 2,
+                        y: (side - glyphSide) / 2,
+                        width: glyphSide,
+                        height: glyphSide
+                    ))
+                }
+            }()
         }
+
+        return Cache.image
     }
 }
