@@ -39,7 +39,6 @@ struct AppBackgroundTaskExecuterTests {
         application.endBackgroundTask_MockMethod = { _ in }
 
         self.sut = AppBackgroundTaskExecuter(application: application, isInBackground: false)
-        DeveloperFlag.useBackgroundTaskAPIInAppBackgroundTaskExecuter.enable(true, storage: .temporary())
     }
 
     @Test
