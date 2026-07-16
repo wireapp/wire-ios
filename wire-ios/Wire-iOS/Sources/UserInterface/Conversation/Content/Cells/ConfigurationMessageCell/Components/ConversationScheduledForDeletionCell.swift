@@ -44,7 +44,13 @@ final class ConversationScheduledForDeletionSystemMessageCell:
 
     func setupView() {
         lineView.isHidden = true
-        isAccessibilityElement = true
+
+        // Rely on `textLabel`'s own native accessibility (which exposes the embedded "Read more" link via
+        // VoiceOver's link rotor) instead of treating the whole cell as one opaque element. Only one of
+        // `isAccessibilityElement`/`textLabel.isAccessibilityElement` should be true at a time, otherwise
+        // VoiceOver announces the content twice.
+        isAccessibilityElement = false
+        textLabel.isAccessibilityElement = true
     }
 
     func configure(with object: Configuration, animated: Bool) {
