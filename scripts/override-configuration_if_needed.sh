@@ -25,13 +25,11 @@ cd $DIR/..
 
 CONFIGURATION_LOCATION=wire-ios/Configuration
 OVERRIDES_DIR=
-CONFIGURATION_PATH=
 
 usage()
 {
-    echo "usage: download_assets.sh [-o | --override_with path] [-c | --configuration_path path] [-h | --help]"
+    echo "usage: download_assets.sh [[-o | --override_with path] | [-h | --help]]"
     echo "Example: \$ download-assets.sh -o Configuration"
-    echo "Example: \$ download-assets.sh -o Configuration -c ./wire-ios-build-assets/Gov/AppStore"
 }
 
 while [ "$1" != "" ]; do
@@ -41,9 +39,6 @@ while [ "$1" != "" ]; do
     case $OPTION in
         -o | --override_with)       OVERRIDES_DIR=$1
                                     echo "Overriding with configuration files in: ${OVERRIDES_DIR}"
-                                    ;;
-        -c | --configuration_path)  CONFIGURATION_PATH=$1
-                                    echo "Overriding with configuration files in: ${CONFIGURATION_PATH} (leaving out Debug.xcconfig and Release.xcconfig)"
                                     ;;
         -h | --help )               usage
                                     exit
@@ -61,13 +56,4 @@ if [ ! -z "${OVERRIDES_DIR}" ]; then
     cp -RL "${OVERRIDES_DIR}" "${CONFIGURATION_LOCATION}"
 else
     echo "No custom configuration specified, skipped copying"
-fi
-
-if [ ! -z "${CONFIGURATION_PATH}" ]; then
-    # Add trailing slash if not present so that rsync copies contents of directory
-    [[ "${CONFIGURATION_PATH}" != */ ]] && CONFIGURATION_PATH="${CONFIGURATION_PATH}/"
-    echo "✅ Copying '${CONFIGURATION_PATH}' over to '${CONFIGURATION_LOCATION}' (keeping Debug.xcconfig and Release.xcconfig from the base configuration)"
-    rsync -aL --exclude='Debug.xcconfig' --exclude='Release.xcconfig' "${CONFIGURATION_PATH}" "${CONFIGURATION_LOCATION}"
-else
-    echo "No configuration path specified, skipped copying"
 fi

@@ -480,12 +480,21 @@ platform :ios do
 
             `echo BUILD_VERSION=#{build.version_from_xcconfig} >> ./.post_build/.env`
 
-            setup_command = "cd .. && ./setup.sh -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
+            base_configuration_folder = "wire-ios-build-assets/#{override_folder}/#{build_type}"
             configuration_path = options[:configuration_path]
-            unless configuration_path.nil? || configuration_path.empty?
-                setup_command += " -c \'./wire-ios-build-assets/#{configuration_path}\'"
+
+            if configuration_path.nil? || configuration_path.empty?
+                sh "cd .. && ./setup.sh -o \'./#{base_configuration_folder}\'"
+            else
+                # Use the requested configuration as the base (so none of Playground's files
+                # can interfere with it), then restore Debug.xcconfig/Release.xcconfig from Playground
+                configuration_folder = "wire-ios-build-assets/#{configuration_path}"
+                sh "cd .. && ./setup.sh -o \'./#{configuration_folder}\'"
+
+                UI.message("Restoring Debug.xcconfig and Release.xcconfig from '#{base_configuration_folder}'")
+                sh "cp -L '../#{base_configuration_folder}/Debug.xcconfig' '../wire-ios/Configuration/Debug.xcconfig'"
+                sh "cp -L '../#{base_configuration_folder}/Release.xcconfig' '../wire-ios/Configuration/Release.xcconfig'"
             end
-            sh setup_command
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
 
