@@ -461,6 +461,61 @@ platform :ios do
         end
     end
 
+    # Copies the build's configuration into wire-ios/Configuration.
+    # When options[:configuration_path] is set, that configuration is used as the base
+    # (so none of the build_type/override_folder's files can interfere with it), and
+    # Debug.xcconfig/Release.xcconfig are restored from the build_type/override_folder afterwards.
+    def apply_configuration_override(options)
+        build_type = options[:build_type]
+        override_folder = options[:override_folder] || "Cloud"
+        base_configuration_folder = "wire-ios-build-assets/#{override_folder}/#{build_type}"
+        configuration_path = options[:configuration_path]
+
+        if configuration_path.nil? || configuration_path.empty?
+            sh "cd .. && ./setup.sh -o \'./#{base_configuration_folder}\'"
+        else
+            configuration_folder = "wire-ios-build-assets/#{configuration_path}"
+            sh "cd .. && ./setup.sh -o \'./#{configuration_folder}\'"
+
+            UI.message("Restoring Debug.xcconfig and Release.xcconfig from '#{base_configuration_folder}'")
+            ["Debug.xcconfig", "Release.xcconfig"].each do |xcconfig_file|
+                restore_xcconfig_keeping_appicon(
+                    configuration_file: "../wire-ios/Configuration/#{xcconfig_file}",
+                    replacement_file: "../#{base_configuration_folder}/#{xcconfig_file}"
+                )
+            end
+        end
+    end
+
+    # Copies replacement_file over configuration_file, but keeps configuration_file's
+    # original APPICON_NAME (so the app icon from configuration_path's config is kept,
+    # not the one from build_type/override_folder's config).
+    def restore_xcconfig_keeping_appicon(configuration_file:, replacement_file:)
+        original_appicon_line = File.exist?(configuration_file) ?
+            File.readlines(configuration_file).find { |line| line.strip.start_with?("APPICON_NAME") } :
+            nil
+
+        sh "cp -L '#{replacement_file}' '#{configuration_file}'"
+
+        content = File.readlines(configuration_file)
+        if original_appicon_line.nil?
+            content = content.reject { |line| line.strip.start_with?("APPICON_NAME") }
+        else
+            content = content.map { |line| line.strip.start_with?("APPICON_NAME") ? original_appicon_line : line }
+        end
+        File.write(configuration_file, content.join)
+    end
+
+    desc "Set up wire-ios/Configuration locally, without signing/building/uploading"
+    desc "Example: fastlane configure_local build_type:\"Playground\" configuration_path:\"Gov/AppStore\""
+    lane :configure_local do |options|
+        UI.user_error! "Pass build_type parameter, e.g. fastlane configure_local build_type:Playground" if options[:build_type].nil?
+        sh "rm -rf ../Configuration"
+        apply_configuration_override(options)
+        UI.success("wire-ios/Configuration is set up:")
+        sh "ls -la ../wire-ios/Configuration"
+    end
+
     # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
         xcode_version = options[:xcode_version]
@@ -468,33 +523,14 @@ platform :ios do
         build_type = options[:build_type]
         # Delete configurations in case we switch to different branch or repo
         sh "rm -rf ../Configuration"
-        if build_type.nil? 
+        if build_type.nil?
             sh "cd .. && ./setup.sh"
         else
-            override_folder = options[:override_folder]
-            if override_folder.nil? 
-                override_folder = "Cloud"
-            end
-
             build = Build.new(options: options)
 
             `echo BUILD_VERSION=#{build.version_from_xcconfig} >> ./.post_build/.env`
 
-            base_configuration_folder = "wire-ios-build-assets/#{override_folder}/#{build_type}"
-            configuration_path = options[:configuration_path]
-
-            if configuration_path.nil? || configuration_path.empty?
-                sh "cd .. && ./setup.sh -o \'./#{base_configuration_folder}\'"
-            else
-                # Use the requested configuration as the base (so none of Playground's files
-                # can interfere with it), then restore Debug.xcconfig/Release.xcconfig from Playground
-                configuration_folder = "wire-ios-build-assets/#{configuration_path}"
-                sh "cd .. && ./setup.sh -o \'./#{configuration_folder}\'"
-
-                UI.message("Restoring Debug.xcconfig and Release.xcconfig from '#{base_configuration_folder}'")
-                sh "cp -L '../#{base_configuration_folder}/Debug.xcconfig' '../wire-ios/Configuration/Debug.xcconfig'"
-                sh "cp -L '../#{base_configuration_folder}/Release.xcconfig' '../wire-ios/Configuration/Release.xcconfig'"
-            end
+            apply_configuration_override(options)
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
 
