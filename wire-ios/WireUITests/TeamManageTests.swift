@@ -165,31 +165,55 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
-    /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     @MainActor
-    func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
+    func testArchiveOpenAndUnarchiveConversation_TC_8872_8873() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
 
-        let teamNames = try await UserHelper.default.registerTeamWith2Members(teamOwner: teamOwner)
-
+        // Archive the group via conversation details.
         let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup()
-            .tapPlusButtonToCreateGroup()
-            .tapNewGroupButton()
-            .enterGroupName(groupName)
-            .tapMemberCells(withLabelPrefixes: teamNames)
-            .doneSelectingMembers()
+            .openConversation()
             .openConversationDetails()
             .moreOptionsConversationDetails()
             .archiveOptionsConversationDetails()
             .openArchived()
+
+        XCTAssertTrue(
+            archivedConversationPage.conversationExists(withName: groupName),
+            "Group \(groupName) not showing in archived"
+        )
+
+        let stillArchivedPage = try archivedConversationPage
             .openConversation()
             .goBackToConversationPage()
             .openArchived()
 
-        XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
+        // [WPB-3772]: BUG: just opening an archived conversation must not unarchive it.
+        XCTAssertTrue(
+            stillArchivedPage.conversationExists(withName: groupName),
+            "Group \(groupName) gets unarchived after only opening it"
+        )
+
+        let conversationsPage = try stillArchivedPage
+            .openConversation()
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .unarchiveOptionsConversationDetails()
+
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: groupName).waitForExistence(timeout: 5),
+            "Group \(groupName) should be back in the recent conversation list after unarchiving"
+        )
+
+        XCTAssertFalse(
+            try conversationsPage.openArchived().conversationExists(withName: groupName),
+            "Group \(groupName) should no longer be in the archived list after unarchiving"
+        )
     }
 
     /// [critical]

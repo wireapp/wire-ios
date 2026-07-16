@@ -326,6 +326,7 @@ extension SettingsCellDescriptorFactory {
         }
         return SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.picture.capitalized,
+            accessibilityLabel: L10n.Localizable.Self.Settings.AccountPictureGroup.Alert.title,
             identifier: Locators.AccountSettingsPage.pictureCell.rawValue,
             previewGenerator: previewGenerator,
             presentationStyle: .alert,

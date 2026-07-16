@@ -428,6 +428,10 @@ class ActiveConversationPage: PageModel {
         uploadFileButton.waitAndTap()
         browseFileOption.waitAndTap()
 
+        if browseFileOption.waitForExistence(timeout: 3), !browseFileOption.isSelected {
+            browseFileOption.tap()
+        }
+
         XCTAssertTrue(
             fileCell(named: fileName).waitForExistence(timeout: 5),
             "Seeded file '\(fileName)' didn't show up"

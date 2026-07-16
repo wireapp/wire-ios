@@ -30,11 +30,21 @@ package final class MeetingsViewModel {
 
     private(set) var loadedMeetings: [Meeting] = []
     private(set) var hasMore: Bool = false
+    var hasDeleteError = false
+
+    /// The meeting awaiting delete confirmation, or `nil` if no confirmation is in progress.
+    var meetingToDelete: Meeting?
+
+    var isDeleteConfirmationPresented: Bool {
+        get { meetingToDelete != nil }
+        set { if !newValue { meetingToDelete = nil } }
+    }
 
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
+    private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
 
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 10
@@ -47,12 +57,14 @@ package final class MeetingsViewModel {
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
         self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
+        self.deleteMeetingUseCase = deleteMeetingUseCase
     }
 
     // MARK: - Public Interface
@@ -87,6 +99,26 @@ package final class MeetingsViewModel {
 
     func formatTimeRange(for meeting: Meeting) -> String {
         formatter.timeRange(from: meeting.start, to: meeting.end)
+    }
+
+    /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture
+    /// `meetingToDelete` before the alert dismissal clears it via `isDeleteConfirmationPresented`.
+    func confirmDelete() {
+        guard let meeting = meetingToDelete else { return }
+        meetingToDelete = nil
+        Task {
+            await deleteMeeting(meeting)
+        }
+    }
+
+    func deleteMeeting(_ meeting: Meeting) async {
+        do {
+            try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
+            loadedMeetings.removeAll { $0.id == meeting.id }
+        } catch {
+            hasDeleteError = true
+            WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
+        }
     }
 
     // MARK: - Private Methods
