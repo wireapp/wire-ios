@@ -17,12 +17,12 @@
 //
 
 import Foundation
+import WireTransport
 
-public extension Bundle {
-    static var backendBundle: Bundle? {
-        guard let backendBundlePath = Bundle.appMainBundle.path(forResource: "Backend", ofType: "bundle")
-        else { return nil }
-        guard let bundle = Bundle(path: backendBundlePath) else { fatalError("Could not load backend.bundle") }
-        return bundle
+extension AuthenticationCoordinator: BackendConfiguredViewControllerDelegate {
+    func backendConfiguredViewControllerDidTapContinue() {
+        // reset the static environment so other places get the right env.
+        // it will also start the auth flow -> provideCredentials...
+        BackendEnvironment.reset()
     }
 }

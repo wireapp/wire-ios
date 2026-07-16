@@ -35,6 +35,8 @@ final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandle
     ) -> [AuthenticationCoordinatorAction]? {
         if DeveloperFlag.useWireAuthentication.isOn {
             [.transition(.wireAuthenticationModule, mode: .reset)]
+        } else if Bundle.backendBundle == nil, currentStep != .backendConfigured {
+            [.transition(.noDefaultBackend, mode: .reset)]
         } else if featureProvider.allowOnlyEmailLogin {
             // Hide the landing screen if account creation is disabled.
             [.transition(.provideCredentials(nil), mode: .reset)]
