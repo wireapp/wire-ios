@@ -28,9 +28,9 @@ import WireLogging
 /// `GET /conversations/{id}` for a 1:1 once the connection is blocked, and the work item
 /// blindly deleted the local conversation in that case. This migration restores those
 /// conversations so the user can see and unblock them from the conversation list.
-struct AppVersionMigration_4_22_0: AppVersionMigration {
+struct AppVersionMigration_4_25_0: AppVersionMigration {
 
-    let version: SemanticVersion = "4.22.0"
+    let version: SemanticVersion = "4.25.0"
     let coreDataStack: CoreDataStackProtocol
 
     func perform() async throws {
