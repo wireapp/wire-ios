@@ -821,6 +821,24 @@ public final class ClientSessionComponent {
         )
     }
 
+    /// Debug-only: simulates receiving a `conversation.adminless-reminder` backend event, routing it through
+    /// the same `conversationEventProcessor` a real incoming event would use, so it can be verified without
+    /// waiting on the backend to actually send one.
+    public func debugSimulateAdminlessReminderEvent(
+        conversationID: WireDataModel.QualifiedID,
+        scheduledDeletionDate: Date
+    ) async throws {
+        let event = ConversationAdminlessReminderEvent(
+            conversationID: WireNetwork.ConversationID(id: conversationID.uuid, domain: conversationID.domain),
+            senderID: WireNetwork.UserID(id: selfUserID, domain: backendMetadata.domain),
+            timestamp: Date(),
+            scheduledDeletionDate: scheduledDeletionDate
+        )
+
+        try await conversationEventProcessor.processEvent(.adminlessReminder(event))
+        try await databaseSaver.save()
+    }
+
     // MARK: - Other
 
     public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
