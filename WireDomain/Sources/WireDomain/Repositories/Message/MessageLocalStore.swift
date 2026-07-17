@@ -1001,9 +1001,20 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
         case let .conversationScheduledForDeletion(scheduledDeletionDate, date):
 
+            // @Alex - passing the self user is a workaround.
+            //
+            // `ConversationSystemMessageCellDescription.cells(for:...)` has a top-level
+            // guard requiring `message.senderUser `to be non-nil for any system message
+            // cell to render
+            //
+            // However, the conversation scheduled for deletion event should be sender agnostic.
+            // We should rework the UI layer to accept system messages with no sender, if it makes sense...
+            
+            let selfUser = await fetchSelfUser()
+
             let systemMessage = await createSystemMessage(
                 messageType: .conversationScheduledForDeletion,
-                sender: nil,
+                sender: selfUser, // we should pass nil here
                 timestamp: date,
                 conversationScheduledDeletionDate: scheduledDeletionDate
             )
