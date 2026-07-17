@@ -1000,6 +1000,9 @@
 "last_admin_leave.promote_new_admin" = "Neuen Admin ernennen";
 "last_admin_leave.no_eligible_candidates_message" = "Sie sind der einzige Admin. Die anderen Teilnehmer können keine Admins sein.\nFügen Sie mindestens ein Team-Mitglied hinzu und ernennen Sie es zum Admin, bevor Sie gehen. Alternativ löschen Sie die Gruppe, wenn sie nicht mehr benötigt wird.";
 "last_admin_leave.delete_group" = "Gruppe löschen";
+"last_admin_leave.promote_only_message" = "Sie sind der einzige Admin.\nErnennen Sie einen anderen Teilnehmer, bevor Sie gehen.";
+"last_admin_leave.cannot_leave_title" = "Cannot leave \"%@\".";
+"last_admin_leave.cannot_leave_message" = "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ hat begonnen, ein neues Gerät zu nutzen.";
