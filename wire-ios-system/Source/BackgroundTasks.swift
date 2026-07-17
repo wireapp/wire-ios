@@ -32,8 +32,13 @@ public func withBackgroundTask<T: Sendable>(
     executer: any BackgroundTaskExecuter,
     operation: @escaping @isolated(any) () async throws -> T
 ) async throws -> T {
-    try await BackgroundTaskContext.$isBackgroundTask.withValue(true) {
-        try await executer.execute(name: name, operation: operation)
+    // If we are already in a background task, just execute the operation directly
+    if BackgroundTaskContext.isBackgroundTask {
+        try await operation()
+    } else {
+        try await BackgroundTaskContext.$isBackgroundTask.withValue(true) {
+            try await executer.execute(name: name, operation: operation)
+        }
     }
 }
 

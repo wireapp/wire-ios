@@ -27,6 +27,8 @@ import WireSystem
 /// The subset of `UIApplication`'s background task APIs that `AppBackgroundTaskExecuter` depends on.
 public protocol BackgroundTaskApplication: AnyObject, Sendable {
 
+    nonisolated var backgroundTimeRemaining: TimeInterval { get }
+
     nonisolated func beginBackgroundTask(
         withName taskName: String?,
         expirationHandler handler: (@MainActor @Sendable () -> Void)?
@@ -89,10 +91,10 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         name: String?,
         operation: @escaping @isolated(any) () async throws -> T
     ) async throws -> T {
-        if DeveloperFlag.useBackgroundTaskAPIInAppBackgroundTaskExecuter.isOn {
-            try await executeUsingBackgroundTaskAPI(name: name, operation: operation)
-        } else {
+        if DeveloperFlag.useBackgroundActivityFactoryInAppBackgroundTaskExecuter.isOn {
             try await executeUsingBackgroundActivityFactory(name: name, operation: operation)
+        } else {
+            try await executeUsingBackgroundTaskAPI(name: name, operation: operation)
         }
     }
 
@@ -104,8 +106,8 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
     ) async throws -> T {
         let name = name ?? "unnamed"
 
-        guard applicationState.isInBackground != true else {
-            WireLogger.backgroundActivity.debug("background task \(name) cannot begin in the background")
+        if applicationState.isInBackground && application.backgroundTimeRemaining < 5 {
+            WireLogger.backgroundActivity.debug("background task \(name) cannot begin. Not enough time")
             throw CancellationError()
         }
 
@@ -115,9 +117,6 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
 
             WireLogger.backgroundActivity.warn("background task \(name) expiring soon. Cancelling...")
             operationState.task?.cancel()
-
-            // Eagerly end the background task to avoid the app being killed in case that cancellation takes too long.
-            endBackgroundTask(operationState)
         }
         defer { endBackgroundTask(operationState) }
 
@@ -129,9 +128,19 @@ public struct AppBackgroundTaskExecuter: BackgroundTaskExecuter {
         // Don't start the task until we have a valid background task ID.
         let task = Task {
             WireLogger.backgroundActivity.debug("will start background task: \(name)")
-            let result = try await operation()
-            WireLogger.backgroundActivity.debug("did end background task: \(name)")
-            return result
+            do {
+                let result = try await operation()
+                WireLogger.backgroundActivity.debug("did end background task: \(name)")
+                return result
+            } catch {
+                if error is CancellationError {
+                    WireLogger.backgroundActivity.debug("did cancel background task: \(name)")
+                } else {
+                    let errorDescription = (error as NSError).safeForLoggingDescription
+                    WireLogger.backgroundActivity.warn("did fail background task: \(name), error: \(errorDescription)")
+                }
+                throw error
+            }
         }
         operationState.task = task
 

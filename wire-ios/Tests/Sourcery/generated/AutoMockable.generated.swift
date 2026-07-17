@@ -207,6 +207,15 @@ public class MockBackgroundTaskApplication: BackgroundTaskApplication, @unchecke
 
     public init() {}
 
+    // MARK: - backgroundTimeRemaining
+
+    public var backgroundTimeRemaining: TimeInterval {
+        get { return underlyingBackgroundTimeRemaining }
+        set(value) { underlyingBackgroundTimeRemaining = value }
+    }
+
+    public var underlyingBackgroundTimeRemaining: TimeInterval!
+
 
     // MARK: - beginBackgroundTask
 
