@@ -28,7 +28,6 @@ public enum CallClosedReason: Int32, Sendable {
     case internalError
     case inputOutputError
     case stillOngoing
-    case securityDegraded
     case outdatedClient
     case datachannel
     case timeoutECONN
