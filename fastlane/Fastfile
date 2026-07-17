@@ -478,6 +478,10 @@ platform :ios do
         if configuration_path.nil? || configuration_path.empty?
             sh "cd .. && ./setup.sh -o \'./#{base_configuration_folder}\'"
         else
+            unless configuration_path.match?(%r{\A[A-Za-z0-9_-]+(/[A-Za-z0-9_-]+)*\z})
+                UI.user_error! "Invalid configuration_path: '#{configuration_path}'. Only letters, numbers, underscores, hyphens and '/' are allowed."
+            end
+
             configuration_folder = "wire-ios-build-assets/#{configuration_path}"
             sh "cd .. && ./setup.sh -o \'./#{configuration_folder}\'"
 
@@ -524,8 +528,6 @@ platform :ios do
         xcode_version = options[:xcode_version]
 
         build_type = options[:build_type]
-        # Delete configurations in case we switch to different branch or repo
-        sh "rm -rf ../Configuration"
         if build_type.nil?
             sh "cd .. && ./setup.sh"
         else

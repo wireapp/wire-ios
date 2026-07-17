@@ -164,7 +164,7 @@ jobs:
          # Restore Swift Package Dependencies Cache
       - name: Restore Swift Package Dependencies Cache
         id: cache-swift-packages
-        uses: actions/cache@v3
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ${{ env.PACKAGES_DIR }}
           key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_COUNTLY }}-${{ env.ENABLE_DATADOG }}
