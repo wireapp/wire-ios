@@ -43,7 +43,7 @@ final class URL_WireTests: XCTestCase {
         guard let be else {
             throw XCTSkip("skipping test because no Backend bundle is present")
         }
-            
+
         let accountsURL = URL(string: "https://account.wire.com")!
         XCTAssertEqual(be.accountsURL, accountsURL)
     }
