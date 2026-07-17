@@ -471,11 +471,8 @@ platform :ios do
         base_configuration_folder = "wire-ios-build-assets/#{override_folder}/#{build_type}"
         configuration_path = options[:configuration_path]
 
-        # Start from a clean slate so files that aren't part of the chosen configuration
-        # (e.g. Backend.bundle) don't linger from the default checked-out configuration
-        sh "rm -rf ../wire-ios/Configuration"
-
         if configuration_path.nil? || configuration_path.empty?
+            clean_configuration_folder_if_gov(override_folder)
             sh "cd .. && ./setup.sh -o \'./#{base_configuration_folder}\'"
         else
             unless configuration_path.match?(%r{\A[A-Za-z0-9_-]+(/[A-Za-z0-9_-]+)*\z})
@@ -483,6 +480,7 @@ platform :ios do
             end
 
             configuration_folder = "wire-ios-build-assets/#{configuration_path}"
+            clean_configuration_folder_if_gov(configuration_path.split("/").first)
             sh "cd .. && ./setup.sh -o \'./#{configuration_folder}\'"
 
             UI.message("Restoring Debug.xcconfig and Release.xcconfig from '#{base_configuration_folder}'")
@@ -493,6 +491,15 @@ platform :ios do
                 )
             end
         end
+    end
+
+    # Gov ships a fully self-contained configuration, so it needs a clean slate to avoid
+    # leftover files (e.g. Backend.bundle) from the committed wire-ios/Configuration.
+    # Other configurations (Playground, Beta, ...) only override specific files on top
+    # of what's already committed, so they must not be cleaned.
+    def clean_configuration_folder_if_gov(folder)
+        return unless folder == "Gov"
+        sh "rm -rf ../wire-ios/Configuration"
     end
 
     # Copies replacement_file over configuration_file, but keeps configuration_file's
