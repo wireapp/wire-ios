@@ -49,6 +49,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case unSafeLogsForPublic
     case enableNSEHelper
     case useBackgroundTaskAPIInAppBackgroundTaskExecuter
+    case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
 
     public var description: String {
         switch self {
@@ -129,6 +130,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .useBackgroundTaskAPIInAppBackgroundTaskExecuter:
             "Turn on to use Apple's UIApplication task API directly in AppBackgroundTaskExecuter"
+
+        case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
+            "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
         }
     }
 

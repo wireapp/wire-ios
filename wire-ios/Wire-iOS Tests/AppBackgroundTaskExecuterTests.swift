@@ -32,13 +32,13 @@ struct AppBackgroundTaskExecuterTests {
     @MainActor
     init() {
         self.application = MockBackgroundTaskApplication()
+        application.underlyingBackgroundTimeRemaining = 30
         application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, _ in
             UIBackgroundTaskIdentifier(rawValue: 99)
         }
         application.endBackgroundTask_MockMethod = { _ in }
 
         self.sut = AppBackgroundTaskExecuter(application: application, isInBackground: false)
-        DeveloperFlag.useBackgroundTaskAPIInAppBackgroundTaskExecuter.enable(true, storage: .temporary())
     }
 
     @Test
@@ -110,6 +110,10 @@ struct AppBackgroundTaskExecuterTests {
     @Test
     func `firing the expiration handler cancels the operation`() async throws {
         // given
+        application.beginBackgroundTaskWithNameExpirationHandler_MockMethod = { _, _ in
+            UIBackgroundTaskIdentifier(rawValue: 42)
+        }
+
         let task = Task {
             try await sut.execute(name: "task") {
                 try await Task.sleep(for: .seconds(10))
@@ -123,12 +127,14 @@ struct AppBackgroundTaskExecuterTests {
         await #expect(throws: CancellationError.self) {
             _ = try await task.value
         }
+        #expect(application.endBackgroundTask_Invocations == [UIBackgroundTaskIdentifier(rawValue: 42)])
     }
 
     @Test
     @MainActor
-    func `throws CancellationError when the app is in the background`() async throws {
+    func `throws CancellationError when the app is in the background with insufficient time`() async throws {
         // given
+        application.underlyingBackgroundTimeRemaining = 3
         let sut = AppBackgroundTaskExecuter(application: application, isInBackground: true)
         let didRunOperation = OSAllocatedUnfairLock(initialState: false)
 
@@ -141,6 +147,21 @@ struct AppBackgroundTaskExecuterTests {
         }
         #expect(didRunOperation.withLock { $0 } == false)
         #expect(application.beginBackgroundTaskWithNameExpirationHandler_Invocations.isEmpty)
+    }
+
+    @Test
+    @MainActor
+    func `executes the operation when the app is in the background with sufficient time`() async throws {
+        // given
+        application.underlyingBackgroundTimeRemaining = 10
+        let sut = AppBackgroundTaskExecuter(application: application, isInBackground: true)
+
+        // when
+        let result = try await sut.execute(name: "task") { "done" }
+
+        // then
+        #expect(result == "done")
+        #expect(!application.beginBackgroundTaskWithNameExpirationHandler_Invocations.isEmpty)
     }
 
     @Test
