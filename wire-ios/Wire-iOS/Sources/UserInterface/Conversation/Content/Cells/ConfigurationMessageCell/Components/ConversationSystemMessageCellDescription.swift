@@ -36,7 +36,9 @@ enum ConversationSystemMessageCellDescription {
               let sender = message.senderUser,
               let conversation = message.conversationLike
         else {
-            assertionFailure("Invalid system message")
+            WireLogger.conversation.warn(
+                "Skipping invalid system message: missing systemMessageData, sender, or conversation"
+            )
             return []
         }
 

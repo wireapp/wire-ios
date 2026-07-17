@@ -16,17 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import WireCallingDomain
 
-// sourcery: AutoMockable
-/// Creates a new scheduled meeting via the backend API.
-package protocol CreateScheduledMeetingUseCaseProtocol: Sendable {
+struct PullMeetingsSync: PullMeetingsSyncProtocol {
 
-    func invoke(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting
+    let repository: any MeetingRepositoryProtocol
+
+    func pull() async throws {
+        try await repository.pullMeetings()
+    }
 
 }

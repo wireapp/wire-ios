@@ -428,6 +428,10 @@ class ActiveConversationPage: PageModel {
         uploadFileButton.waitAndTap()
         browseFileOption.waitAndTap()
 
+        if browseFileOption.waitForExistence(timeout: 3), !browseFileOption.isSelected {
+            browseFileOption.tap()
+        }
+
         XCTAssertTrue(
             fileCell(named: fileName).waitForExistence(timeout: 5),
             "Seeded file '\(fileName)' didn't show up"
@@ -534,6 +538,7 @@ class ActiveConversationPage: PageModel {
     ) -> ActiveConversationPage {
         XCTAssertTrue(
             linkPreviewCell.waitForExistence(timeout: 10),
+            "Link preview cell did not appear",
             file: file,
             line: line
         )
