@@ -361,7 +361,6 @@ final class MessageLocalStoreTests: XCTestCase {
             ),
             .conversationScheduledForDeletion(
                 scheduledDeletionDate: date,
-                sender: (id: userID, domain: domain1),
                 date: date
             )
         ]

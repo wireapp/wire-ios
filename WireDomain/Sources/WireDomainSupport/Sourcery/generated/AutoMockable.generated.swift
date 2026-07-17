@@ -2023,17 +2023,17 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
 
     // MARK: - updateConversationScheduledDeletion
 
-    public var updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainSenderIDSenderDomainDate_Invocations: [(scheduledDeletionDate: Date, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String?, date: Date)] = []
-    public var updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainSenderIDSenderDomainDate_MockMethod: ((Date, UUID, String?, UUID, String?, Date) async -> Void)?
+    public var updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_Invocations: [(scheduledDeletionDate: Date, conversationID: UUID, conversationDomain: String?, date: Date)] = []
+    public var updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_MockMethod: ((Date, UUID, String?, Date) async -> Void)?
 
-    public func updateConversationScheduledDeletion(scheduledDeletionDate: Date, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String?, date: Date) async {
-        updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainSenderIDSenderDomainDate_Invocations.append((scheduledDeletionDate: scheduledDeletionDate, conversationID: conversationID, conversationDomain: conversationDomain, senderID: senderID, senderDomain: senderDomain, date: date))
+    public func updateConversationScheduledDeletion(scheduledDeletionDate: Date, conversationID: UUID, conversationDomain: String?, date: Date) async {
+        updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_Invocations.append((scheduledDeletionDate: scheduledDeletionDate, conversationID: conversationID, conversationDomain: conversationDomain, date: date))
 
-        guard let mock = updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainSenderIDSenderDomainDate_MockMethod else {
-            fatalError("no mock for `updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainSenderIDSenderDomainDate`")
+        guard let mock = updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_MockMethod else {
+            fatalError("no mock for `updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate`")
         }
 
-        await mock(scheduledDeletionDate, conversationID, conversationDomain, senderID, senderDomain, date)
+        await mock(scheduledDeletionDate, conversationID, conversationDomain, date)
     }
 
     // MARK: - fetchConversationGuestLink
