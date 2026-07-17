@@ -522,6 +522,11 @@ private extension AppDelegate {
     }
 
     private func startAppRouter(launchOptions: LaunchOptions) {
+        #if DEBUG
+            if uiTestAuthenticationBypass != nil {
+                appRootRouter?.startUITestAuthenticationBypass()
+            }
+        #endif
         appRootRouter?.start(launchOptions: launchOptions)
         #if DEBUG
             startUITestAuthenticationBypassIfNeeded()
@@ -554,9 +559,16 @@ private extension AppDelegate {
             ProcessInfo.processInfo.arguments.contains("--uitest-skip-login")
         }
 
+        var uiTestAuthenticationBypass: UITestAuthenticationBypass? {
+            guard isUITestAuthenticationBypassEnabled else {
+                return nil
+            }
+
+            return UITestConfig.environment?.authenticationBypass
+        }
+
         func startUITestAuthenticationBypassIfNeeded() {
-            guard isUITestAuthenticationBypassEnabled,
-                  let authenticationBypass = UITestConfig.environment?.authenticationBypass else {
+            guard let authenticationBypass = uiTestAuthenticationBypass else {
                 return
             }
 
@@ -564,6 +576,8 @@ private extension AppDelegate {
                 do {
                     try await self?.performUITestAuthenticationBypass(authenticationBypass)
                 } catch {
+                    self?.appRootRouter?.finishUITestAuthenticationBypass()
+                    self?.appRootRouter?.reload()
                     WireLogger.authentication.error(
                         "UITest authentication bypass failed: \(String(describing: error))",
                         attributes: .safePublic

@@ -45,6 +45,9 @@ final class AppRootRouter {
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
     private let teamMetadataRefresher = TeamMetadataRefresher(selfUserProvider: SelfUser.provider)
+    #if DEBUG
+        private var suppressUnauthenticatedFlowForUITestAuthenticationBypass = false
+    #endif
 
     // MARK: - Private Set Property
 
@@ -239,6 +242,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showLaunchScreen(isLoading: true, completion: completion)
         case let .unauthenticated(accountID, environment, error):
             screenCurtainWindow.userSession = nil
+            #if DEBUG
+                guard !suppressUnauthenticatedFlowForUITestAuthenticationBypass else {
+                    showLaunchScreen(isLoading: true, completion: completion)
+                    return
+                }
+            #endif
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(
                 accountID: accountID,
@@ -247,6 +256,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 completion: completion
             )
         case let .authenticated(userSession):
+            #if DEBUG
+                suppressUnauthenticatedFlowForUITestAuthenticationBypass = false
+            #endif
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
             screenCurtainWindow.userSession = userSession
@@ -538,6 +550,20 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         )
     }
 }
+
+#if DEBUG
+    extension AppRootRouter {
+        @MainActor
+        func startUITestAuthenticationBypass() {
+            suppressUnauthenticatedFlowForUITestAuthenticationBypass = true
+        }
+
+        @MainActor
+        func finishUITestAuthenticationBypass() {
+            suppressUnauthenticatedFlowForUITestAuthenticationBypass = false
+        }
+    }
+#endif
 
 extension AppRootRouter {
     @MainActor
