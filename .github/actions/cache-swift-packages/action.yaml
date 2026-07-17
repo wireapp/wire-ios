@@ -4,12 +4,12 @@ description: "Restore the SPM checkouts cache and always reconcile workspace sta
 runs:
   using: "composite"
   steps:
-    - name: Restore Swift Package Dependencies Cache
-      id: cache-swift-packages
-      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-      with:
-        path: ${{ env.PACKAGES_DIR }}
-        key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+    # - name: Restore Swift Package Dependencies Cache
+    #   id: cache-swift-packages
+    #   uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+    #   with:
+    #     path: ${{ env.PACKAGES_DIR }}
+    #     key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
     # Always run resolve, even on cache hit. On a hit, the checkouts are reused
     # (no network) and this step only re-evaluates Package.swift against the
@@ -27,12 +27,12 @@ runs:
     # (refs/heads/gh-readonly-queue/*) are sandboxed scopes that no other run can
     # read from, so saving there just consumes the 10 GB repo cache quota and can
     # evict develop's cache (the one all PRs actually benefit from).
-    - name: Save Swift Package Dependencies Cache
-      if: >-
-        steps.cache-swift-packages.outputs.cache-hit != 'true' &&
-        startsWith(github.ref, 'refs/heads/') &&
-        !startsWith(github.ref, 'refs/heads/gh-readonly-queue/')
-      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-      with:
-        path: ${{ env.PACKAGES_DIR }}
-        key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+    # - name: Save Swift Package Dependencies Cache
+    #   if: >-
+    #     steps.cache-swift-packages.outputs.cache-hit != 'true' &&
+    #     startsWith(github.ref, 'refs/heads/') &&
+    #     !startsWith(github.ref, 'refs/heads/gh-readonly-queue/')
+    #   uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+    #   with:
+    #     path: ${{ env.PACKAGES_DIR }}
+    #     key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
