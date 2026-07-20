@@ -31,14 +31,12 @@ struct MeetingRepositoryTests {
 
     private let meetingsAPI = MockMeetingsAPI()
     private let localStore = MeetingLocalStoreProtocolMock()
-    private let conversationPuller = MeetingConversationPullerProtocolMock()
     private let sut: MeetingRepository
 
     init() {
         self.sut = MeetingRepository(
             meetingsAPI: meetingsAPI,
-            localStore: localStore,
-            conversationPuller: conversationPuller
+            localStore: localStore
         )
     }
 
@@ -52,10 +50,11 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.pullMeeting(id: Scaffolding.meetingID)
+        let meeting = try await sut.pullMeeting(id: Scaffolding.meetingID)
 
         // Then
 
+        #expect(meeting?.id == Scaffolding.meetingID)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
         #expect(
@@ -70,39 +69,6 @@ struct MeetingRepositoryTests {
     }
 
     @Test
-    func pullMeetingPullsMeetingConversationBeforeStoringMeeting() async throws {
-        // Mock
-
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
-
-        // When
-
-        try await sut.pullMeeting(id: Scaffolding.meetingID)
-
-        // Then
-
-        let pulled = conversationPuller.pullConversationIfUnknownIdUUIDDomainStringVoidReceivedArguments
-        #expect(pulled?.id == Scaffolding.meetingResponse.conversationID.id)
-        #expect(pulled?.domain == Scaffolding.meetingResponse.conversationID.domain)
-    }
-
-    @Test
-    func pullMeetingThrowsAndStoresNothingWhenPullingTheConversationFails() async {
-        // Mock
-
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
-        conversationPuller.pullConversationIfUnknownIdUUIDDomainStringVoidThrowableError =
-            MeetingsAPIError.accessDenied
-
-        // When / Then
-
-        await #expect(throws: (any Error).self) {
-            try await sut.pullMeeting(id: Scaffolding.meetingID)
-        }
-        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
-    }
-
-    @Test
     func pullMeetingDeletesMeetingMissingFromBackendResponse() async throws {
         // Mock
 
@@ -110,10 +76,11 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.pullMeeting(id: Scaffolding.meetingID)
+        let meeting = try await sut.pullMeeting(id: Scaffolding.meetingID)
 
         // Then
 
+        #expect(meeting == nil)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
     }

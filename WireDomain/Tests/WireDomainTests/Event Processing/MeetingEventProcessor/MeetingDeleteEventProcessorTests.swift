@@ -136,23 +136,28 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
 
     //MARK: - pullMeeting
 
-    var pullMeetingIdQualifiedIDVoidThrowableError: (any Error)?
-    var pullMeetingIdQualifiedIDVoidCallsCount = 0
-    var pullMeetingIdQualifiedIDVoidCalled: Bool {
-        return pullMeetingIdQualifiedIDVoidCallsCount > 0
+    var pullMeetingIdQualifiedIDMeetingThrowableError: (any Error)?
+    var pullMeetingIdQualifiedIDMeetingCallsCount = 0
+    var pullMeetingIdQualifiedIDMeetingCalled: Bool {
+        return pullMeetingIdQualifiedIDMeetingCallsCount > 0
     }
-    var pullMeetingIdQualifiedIDVoidReceivedId: (QualifiedID)?
-    var pullMeetingIdQualifiedIDVoidReceivedInvocations: [(QualifiedID)] = []
-    var pullMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async throws -> Void)?
+    var pullMeetingIdQualifiedIDMeetingReceivedId: (QualifiedID)?
+    var pullMeetingIdQualifiedIDMeetingReceivedInvocations: [(QualifiedID)] = []
+    var pullMeetingIdQualifiedIDMeetingReturnValue: Meeting?
+    var pullMeetingIdQualifiedIDMeetingClosure: ((QualifiedID) async throws -> Meeting?)?
 
-    func pullMeeting(id: QualifiedID) async throws {
-        pullMeetingIdQualifiedIDVoidCallsCount += 1
-        pullMeetingIdQualifiedIDVoidReceivedId = id
-        pullMeetingIdQualifiedIDVoidReceivedInvocations.append(id)
-        if let error = pullMeetingIdQualifiedIDVoidThrowableError {
+    func pullMeeting(id: QualifiedID) async throws -> Meeting? {
+        pullMeetingIdQualifiedIDMeetingCallsCount += 1
+        pullMeetingIdQualifiedIDMeetingReceivedId = id
+        pullMeetingIdQualifiedIDMeetingReceivedInvocations.append(id)
+        if let error = pullMeetingIdQualifiedIDMeetingThrowableError {
             throw error
         }
-        try await pullMeetingIdQualifiedIDVoidClosure?(id)
+        if let pullMeetingIdQualifiedIDMeetingClosure = pullMeetingIdQualifiedIDMeetingClosure {
+            return try await pullMeetingIdQualifiedIDMeetingClosure(id)
+        } else {
+            return pullMeetingIdQualifiedIDMeetingReturnValue
+        }
     }
 
     //MARK: - pullMeetings

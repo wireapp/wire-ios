@@ -18,6 +18,8 @@
 
 import WireCallingData
 import WireCallingDomain
+import WireDataModelSupport
+import WireDomainSupport
 import WireNetwork
 import XCTest
 
@@ -27,18 +29,22 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
 
     private var sut: MeetingCreateEventProcessor!
     private var repository: MeetingRepositoryProtocolMock!
+    private var conversationRepository: MockConversationRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         repository = MeetingRepositoryProtocolMock()
+        conversationRepository = MockConversationRepositoryProtocol()
         sut = MeetingCreateEventProcessor(
-            repository: repository
+            repository: repository,
+            conversationRepository: conversationRepository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
         repository = nil
+        conversationRepository = nil
         sut = nil
     }
 
@@ -51,13 +57,13 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.pullMeetingIdQualifiedIDVoidReceivedInvocations, [Scaffolding.meetingID])
+        XCTAssertEqual(repository.pullMeetingIdQualifiedIDMeetingReceivedInvocations, [Scaffolding.meetingID])
     }
 
     func testProcessEvent_It_Throws_When_Pulling_Meeting_Fails() async {
         // Mock
 
-        repository.pullMeetingIdQualifiedIDVoidThrowableError = MeetingsAPIError.meetingNotFound
+        repository.pullMeetingIdQualifiedIDMeetingThrowableError = MeetingsAPIError.meetingNotFound
 
         // When / Then
 
@@ -65,8 +71,62 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
             try await sut.processEvent(Scaffolding.event)
             XCTFail("expected an error to be thrown")
         } catch {
-            XCTAssertEqual(repository.pullMeetingIdQualifiedIDVoidReceivedInvocations, [Scaffolding.meetingID])
+            XCTAssertEqual(repository.pullMeetingIdQualifiedIDMeetingReceivedInvocations, [Scaffolding.meetingID])
         }
+    }
+
+    func testProcessEvent_It_Pulls_Unknown_Conversation_And_Stores_Meeting_Again() async throws {
+        // Mock
+
+        repository.pullMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.meeting
+        conversationRepository.fetchConversationIdDomain_MockValue = .some(nil)
+        conversationRepository.pullConversationIdDomain_MockMethod = { _, _ in }
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        XCTAssertEqual(conversationRepository.pullConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationRepository.pullConversationIdDomain_Invocations.first?.id,
+            Scaffolding.conversationID.id
+        )
+        XCTAssertEqual(
+            conversationRepository.pullConversationIdDomain_Invocations.first?.domain,
+            Scaffolding.conversationID.domain
+        )
+        XCTAssertEqual(repository.storeMeetingMeetingMeetingVoidReceivedInvocations.map(\.id), [Scaffolding.meetingID])
+    }
+
+    func testProcessEvent_It_Does_Not_Pull_Conversation_When_It_Is_Already_Known() async throws {
+        // Mock
+
+        let coreDataStackHelper = CoreDataStackHelper()
+        let coreDataStack = try await coreDataStackHelper.createStack()
+        let context = coreDataStack.syncContext
+        let conversation = await context.perform {
+            ModelHelper().createGroupConversation(
+                id: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+        }
+
+        repository.pullMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.meeting
+        conversationRepository.fetchConversationIdDomain_MockValue = conversation
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        XCTAssertTrue(conversationRepository.pullConversationIdDomain_Invocations.isEmpty)
+        XCTAssertTrue(repository.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+
+        try coreDataStackHelper.cleanupDirectory()
     }
 
     private enum Scaffolding {
@@ -74,6 +134,25 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
         static let meetingID = WireNetwork.QualifiedID(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
             domain: "example.com"
+        )
+
+        static let conversationID = WireNetwork.QualifiedID(
+            id: UUID(uuidString: "b57f1571-6a29-4e5d-9d45-a576a2d4b6b7")!,
+            domain: "example.com"
+        )
+
+        static let meeting = Meeting(
+            id: meetingID,
+            title: "Team Sync",
+            start: Date(timeIntervalSince1970: 1_000_000),
+            end: Date(timeIntervalSince1970: 1_003_600),
+            recurrence: nil,
+            members: [],
+            conversationID: conversationID,
+            creatorID: WireNetwork.QualifiedID(
+                id: UUID(uuidString: "cd2c1465-4bd6-4a5e-9d47-90e99a473ce5")!,
+                domain: "example.com"
+            )
         )
 
         static let event = MeetingCreateEvent(meetingID: meetingID)
@@ -151,23 +230,28 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
 
     //MARK: - pullMeeting
 
-    var pullMeetingIdQualifiedIDVoidThrowableError: (any Error)?
-    var pullMeetingIdQualifiedIDVoidCallsCount = 0
-    var pullMeetingIdQualifiedIDVoidCalled: Bool {
-        return pullMeetingIdQualifiedIDVoidCallsCount > 0
+    var pullMeetingIdQualifiedIDMeetingThrowableError: (any Error)?
+    var pullMeetingIdQualifiedIDMeetingCallsCount = 0
+    var pullMeetingIdQualifiedIDMeetingCalled: Bool {
+        return pullMeetingIdQualifiedIDMeetingCallsCount > 0
     }
-    var pullMeetingIdQualifiedIDVoidReceivedId: (QualifiedID)?
-    var pullMeetingIdQualifiedIDVoidReceivedInvocations: [(QualifiedID)] = []
-    var pullMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async throws -> Void)?
+    var pullMeetingIdQualifiedIDMeetingReceivedId: (QualifiedID)?
+    var pullMeetingIdQualifiedIDMeetingReceivedInvocations: [(QualifiedID)] = []
+    var pullMeetingIdQualifiedIDMeetingReturnValue: Meeting?
+    var pullMeetingIdQualifiedIDMeetingClosure: ((QualifiedID) async throws -> Meeting?)?
 
-    func pullMeeting(id: QualifiedID) async throws {
-        pullMeetingIdQualifiedIDVoidCallsCount += 1
-        pullMeetingIdQualifiedIDVoidReceivedId = id
-        pullMeetingIdQualifiedIDVoidReceivedInvocations.append(id)
-        if let error = pullMeetingIdQualifiedIDVoidThrowableError {
+    func pullMeeting(id: QualifiedID) async throws -> Meeting? {
+        pullMeetingIdQualifiedIDMeetingCallsCount += 1
+        pullMeetingIdQualifiedIDMeetingReceivedId = id
+        pullMeetingIdQualifiedIDMeetingReceivedInvocations.append(id)
+        if let error = pullMeetingIdQualifiedIDMeetingThrowableError {
             throw error
         }
-        try await pullMeetingIdQualifiedIDVoidClosure?(id)
+        if let pullMeetingIdQualifiedIDMeetingClosure = pullMeetingIdQualifiedIDMeetingClosure {
+            return try await pullMeetingIdQualifiedIDMeetingClosure(id)
+        } else {
+            return pullMeetingIdQualifiedIDMeetingReturnValue
+        }
     }
 
     //MARK: - pullMeetings

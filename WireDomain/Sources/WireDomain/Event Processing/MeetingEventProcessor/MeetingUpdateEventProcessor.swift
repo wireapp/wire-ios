@@ -22,9 +22,27 @@ import WireNetwork
 struct MeetingUpdateEventProcessor: MeetingUpdateEventProcessorProtocol {
 
     let repository: any MeetingRepositoryProtocol
+    let conversationRepository: any ConversationRepositoryProtocol
 
     func processEvent(_ event: MeetingUpdateEvent) async throws {
-        try await repository.pullMeeting(id: event.meetingID)
+        guard let meeting = try await repository.pullMeeting(id: event.meetingID) else { return }
+
+        // The backend doesn't send a conversation.create event for the meeting's
+        // conversation (see `CreateMeetingUseCase`), so a meeting created on
+        // another client references a conversation this client doesn't know yet.
+        // Pull it and store the meeting again so the two are linked; meetings
+        // without a locally stored conversation are not listed.
+        let conversationID = meeting.conversationID
+        guard await conversationRepository.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) == nil else { return }
+
+        try await conversationRepository.pullConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        )
+        await repository.storeMeeting(meeting)
     }
 
 }

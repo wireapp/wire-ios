@@ -31,19 +31,16 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     private let meetingsAPI: any MeetingsAPI
     private let localStore: any MeetingLocalStoreProtocol
-    private let conversationPuller: any MeetingConversationPullerProtocol
     private let changeBroadcaster = AsyncMulticaster<Void>()
 
     // MARK: - Object lifecycle
 
     public init(
         meetingsAPI: any MeetingsAPI,
-        localStore: any MeetingLocalStoreProtocol,
-        conversationPuller: any MeetingConversationPullerProtocol
+        localStore: any MeetingLocalStoreProtocol
     ) {
         self.meetingsAPI = meetingsAPI
         self.localStore = localStore
-        self.conversationPuller = conversationPuller
     }
 
     // MARK: - Public
@@ -78,29 +75,21 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.broadcast()
     }
 
-    public func pullMeeting(id: QualifiedID) async throws {
+    @discardableResult
+    public func pullMeeting(id: QualifiedID) async throws -> Meeting? {
         // There is no endpoint to fetch a single meeting,
         // so refetch the list to get the details.
         let meetings = try await meetingsAPI.listMeetings()
 
-        if let response = meetings.first(where: { $0.id == id }) {
-            let meeting = response.toDomainMeeting()
-            // The backend doesn't send a conversation.create event for meeting
-            // conversations (see `CreateMeetingUseCase`), so a meeting created
-            // on another client references a conversation this client doesn't
-            // know yet. Pull it before storing the meeting, as meetings without
-            // a locally stored conversation cannot be linked to it and are not
-            // listed.
-            try await conversationPuller.pullConversationIfUnknown(
-                id: meeting.conversationID.id,
-                domain: meeting.conversationID.domain
-            )
+        let meeting = meetings.first(where: { $0.id == id })?.toDomainMeeting()
+        if let meeting {
             await localStore.storeMeeting(meeting)
         } else {
             // The meeting no longer exists on the backend.
             await localStore.deleteMeeting(id: id)
         }
         changeBroadcaster.broadcast()
+        return meeting
     }
 
     public func pullMeetings() async throws {
