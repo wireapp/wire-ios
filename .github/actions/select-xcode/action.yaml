@@ -1,0 +1,26 @@
+name: "Select Xcode"
+description: "Set DEVELOPER_DIR from .xcode-version so concurrent runners on the same machine don't fight over the global xcode-select setting."
+
+outputs:
+  XCODE_VERSION:
+    description: "The Xcode version read from .xcode-version"
+    value: ${{ steps.select.outputs.XCODE_VERSION }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set DEVELOPER_DIR from .xcode-version
+      id: select
+      shell: bash
+      run: |
+        XCODE_VERSION=$(cat .xcode-version)
+        DEVELOPER_DIR="/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer"
+
+        if [ ! -d "$DEVELOPER_DIR" ]; then
+          echo "::error::Xcode ${XCODE_VERSION} not found at ${DEVELOPER_DIR}"
+          exit 1
+        fi
+
+        echo "DEVELOPER_DIR=$DEVELOPER_DIR" >> "$GITHUB_ENV"
+        echo "XCODE_VERSION=$XCODE_VERSION" >> "$GITHUB_OUTPUT"
+        echo "Selected Xcode ${XCODE_VERSION} via DEVELOPER_DIR=${DEVELOPER_DIR}"

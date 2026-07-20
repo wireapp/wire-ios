@@ -24,8 +24,23 @@ platform :ios do
         ENV['IOS_VERSION']
     end
 
-    def appstoreconnect_api_key_file_path 
+    def appstoreconnect_api_key_file_path
         './fastlane/appstoreconnect_api_key.json'
+    end
+
+    def verify_xcode_version
+        required = File.read("../.xcode-version").strip
+        selected = sh("xcodebuild -version", log: false).match(/^Xcode (.*)$/)[1]
+        unless selected == required
+            UI.user_error!(
+                "Xcode version mismatch.\n" \
+                "Expected: #{required}\n" \
+                "Actual:   #{selected}\n" \
+                "Set DEVELOPER_DIR to the correct Xcode, e.g.:\n" \
+                "  export DEVELOPER_DIR=/Applications/Xcode_#{required}.app/Contents/Developer"
+            )
+        end
+        UI.success("Xcode version is correct: #{selected}")
     end
 
     def is_running_on_ci 
@@ -356,7 +371,7 @@ platform :ios do
     end
 
     def run_tests_frameworks(schemas, options)
-        ensure_xcode_version
+        verify_xcode_version
         # hardcoded values that are required - not meaningful for testing
         options[:build_type] = "Development"
         options[:build_number] = 1
@@ -392,7 +407,7 @@ platform :ios do
 
  
     def build_and_upload_app(options)
-        ensure_xcode_version
+        verify_xcode_version
         options[:build_number] = generate_build_number
         prepare_for_release(options)
         build = Build.new(options: options)
@@ -517,8 +532,6 @@ platform :ios do
 
     # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
-        xcode_version = options[:xcode_version]
-
         build_type = options[:build_type]
         # Delete configurations in case we switch to different branch or repo
         sh "rm -rf ../Configuration"

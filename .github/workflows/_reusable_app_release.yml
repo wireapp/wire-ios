@@ -144,13 +144,9 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: ${{ needs.changelog.outputs.changelog-name }}    
-      - name: Retrieve Xcode version
-        run: |
-          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+      - name: Select Xcode
         id: xcode-version
-      - uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd # v1.6.0
-        with:
-          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+        uses: ./.github/actions/select-xcode
       - name: Restore Carthage Cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: cache-carthage
