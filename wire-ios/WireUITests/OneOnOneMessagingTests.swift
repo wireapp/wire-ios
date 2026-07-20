@@ -84,9 +84,6 @@ final class OneOnOneMessagingTests: WireUITestCase {
             .getConversationId(matching: .conversationType(.group))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
 
-        let durationInMillis = 5000
-        let normalizedLoudness = (0 ..< 10).map { _ in Int.random(in: 0 ... 255) }
-
         // WHEN member sends text and audio file
         try await testServicesClient.sendText(
             user: teamOwner,
@@ -102,10 +99,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
             filepath: nil,
             convoId: conversationId,
             domain: conversationDomain,
-            audio: [
-                "durationInMillis": durationInMillis,
-                "normalizedLoudness": normalizedLoudness
-            ]
+            audio: TestServiceMediaFixtures.audioMetadata()
         )
 
         // THEN
@@ -137,30 +131,22 @@ final class OneOnOneMessagingTests: WireUITestCase {
             .getConversationId(matching: .conversationType(.group))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
 
-        let imageURL = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .appendingPathComponent("TestServicesData/Img/testImage.jpg")
-        let imageExtension = imageURL.pathExtension
-
-        let videoURL = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .appendingPathComponent("TestServicesData/Video/testVideo.mp4")
-        let videoExtension = videoURL.pathExtension
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
         // WHEN member sends image and video files
         try await testServicesClient.sendImage(
             user: teamOwner,
-            fileURL: imageURL,
-            type: imageExtension,
+            fileURL: mediaURLs.imageURL,
+            type: mediaURLs.imageExtension,
             conversationId: conversationId,
             domain: conversationDomain
         )
 
         try await testServicesClient.sendFile(
-            type: videoExtension,
+            type: mediaURLs.videoExtension,
             user: teamOwner,
             fileName: "testVideo.mp4",
-            filepath: videoURL.path,
+            filepath: mediaURLs.videoURL.path,
             convoId: conversationId,
             domain: conversationDomain
         )
@@ -214,41 +200,40 @@ final class OneOnOneMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testSendPingInOneOnOneConversation_TC_8824() async throws {
+    func testSendAndReceivePingInOneOnOneConversation_TC_8824_8831() async throws {
 
         // GIVEN
-        let (_, activeConversationPage) = try await openOneOnOneConversation()
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
+        let member = try XCTUnwrap(teamMembers.first)
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
 
         // WHEN
-        activeConversationPage.sendPing()
+        let activeConversationPage = try app.loginUser(email: member.email, password: member.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .openUserDetailsInContactList()
+            .tapStartConversationButton()
+            .sendPing()
 
-        // THEN
+        // THEN - ping is sent
         try activeConversationPage.verifyPingSent()
-    }
 
-    @MainActor
-    func testReceivePingInOneOnOneConversation_TC_8831() async throws {
+        let receivedConversationPage = try activeConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
 
-        // GIVEN
-        let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
-
-        let (conversationId, domain) = try await UserHelper.default
-            .getConversationId(matching: .conversationType(.group))
-        let conversationDomain = try XCTUnwrap(domain, "domain is nil")
-
-        // WHEN
-        try await testServicesClient.sendPing(
-            user: teamOwner,
-            conversationId: conversationId,
-            domain: conversationDomain
-        )
-
-        // THEN
+        // THEN - ping is received
         XCTAssertTrue(
-            activeConversationPage
-                .receivedPing(for: teamOwner.name)
+            receivedConversationPage
+                .receivedPing(for: member.name)
                 .waitForExistence(timeout: 2),
-            "Expected ping message from \(teamOwner.name) not found"
+            "Expected ping message from \(member.name) not found"
         )
     }
 }

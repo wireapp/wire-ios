@@ -154,11 +154,11 @@ jobs:
                             }
                         }
 
-                        core.setOutput('result', lines.join('\n'));
+                        core.setOutput('summary', lines.join('\n'));
 
             -   name: Post to Wire
                 continue-on-error: true
                 uses: ./.github/actions/notify-wire
                 with:
                     notify: custom
-                    text: ${{ steps.build-summary.outputs.result }}
+                    text: ${{ steps.build-summary.outputs.summary }}

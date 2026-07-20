@@ -69,11 +69,11 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
     // MARK: - Update meeting
 
     override func updateMeeting(
-        meetingID: QualifiedID,
+        id: QualifiedID,
         parameters: UpdateMeetingParameters
     ) async throws -> MeetingResponse {
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let path = "\(pathPrefix)/meetings/\(meetingID.domain)/\(meetingID.id.uuidString.lowercased())"
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.put)
@@ -95,8 +95,8 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
 
     // MARK: - Delete meeting
 
-    override func deleteMeeting(meetingID: QualifiedID) async throws {
-        let path = "\(pathPrefix)/meetings/\(meetingID.domain)/\(meetingID.id.uuidString.lowercased())"
+    override func deleteMeeting(id: QualifiedID) async throws {
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.delete)
