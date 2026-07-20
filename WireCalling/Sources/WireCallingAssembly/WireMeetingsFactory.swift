@@ -43,11 +43,13 @@ public struct WireMeetingsFactory {
             currentDateProvider: .system
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
+        let deleteMeetingUseCase = DeleteMeetingUseCase(repository: meetingRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
             makeFormViewModel: { mode, onSuccess in
                 CreateMeetingFormViewModel(
                     mode: mode,
