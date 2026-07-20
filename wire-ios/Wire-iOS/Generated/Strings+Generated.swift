@@ -2399,8 +2399,8 @@ internal enum L10n {
             return L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState", String(describing: p1), fallback: "Shared Drive is %@")
           }
           internal enum DriveViewerAccess {
-            /// Guests have view-only access to files in this conversation.
-            internal static let title = L10n.tr("Localizable", "content.system.file_collaboration.drive_viewer_access.title", fallback: "Guests have view-only access to files in this conversation.")
+            /// People outside your team can join this conversation as viewers.
+            internal static let title = L10n.tr("Localizable", "content.system.file_collaboration.drive_viewer_access.title", fallback: "People outside your team can join this conversation as viewers.")
           }
           internal enum Enabled {
             /// You have editor access. People outside your team only have viewer access.
