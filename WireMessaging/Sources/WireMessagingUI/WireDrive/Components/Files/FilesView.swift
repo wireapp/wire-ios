@@ -98,7 +98,7 @@ private extension FilesView {
             }
         }
 
-        if showMoreActionsButton {
+        if !viewModel.isRecycleBin, !viewModel.isOffline {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -120,10 +120,6 @@ private extension FilesView {
         }
     }
 
-    var showMoreActionsButton: Bool {
-        !viewModel.isRecycleBin && !viewModel.isOffline && viewModel.selfUserRole == .editor
-    }
-
     var closeButton: some View {
         Button(
             action: { onDismissContainer() },
@@ -138,6 +134,34 @@ private extension FilesView {
 
     var moreActionsButton: some View {
         Menu {
+            switch viewModel.selfUserRole {
+            case .editor:
+                editorActions
+            case .viewer:
+                viewerActions
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+        }
+        .tint(ColorTheme.Base.primary(accentColor).color)
+    }
+
+    private var viewerActions: some View {
+        Button {
+            onOpenRecycleBin()
+        } label: {
+            Label {
+                Text(Strings.Files.openRecycleBin)
+            } icon: {
+                Image(systemName: "trash")
+                    .tint(ColorTheme.Backgrounds.onBackground.color)
+            }
+        }
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
+    }
+
+    private var editorActions: some View {
+        Group {
             Button {
                 viewModel.onCreate(target: .folder)
             } label: {
@@ -185,10 +209,7 @@ private extension FilesView {
                 }
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
-        } label: {
-            Image(systemName: "ellipsis.circle")
         }
-        .tint(ColorTheme.Base.primary(accentColor).color)
     }
 }
 
