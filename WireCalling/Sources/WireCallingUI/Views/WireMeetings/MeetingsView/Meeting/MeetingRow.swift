@@ -48,7 +48,7 @@ struct MeetingRow: View {
                 )
 
             VStack(alignment: .leading, spacing: 2) {
-                HStack(alignment: .firstTextBaseline) {
+                HStack(alignment: .top) {
                     Text(meeting.title)
                         .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
@@ -72,11 +72,9 @@ struct MeetingRow: View {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-                            // Grow the hit target to ~44x44pt without affecting layout:
-                            // the padding is hittable via contentShape and compensated
-                            // by the negative padding on the Menu below.
+                            // The padding is part of the tap target via contentShape.
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 20)
+                            .padding(.vertical, 8)
                             .contentShape(Rectangle())
                     }
                 }
@@ -87,7 +85,6 @@ struct MeetingRow: View {
 
                 if !meeting.members.isEmpty {
                     MemberAvatarsView(members: meeting.members)
-                        .padding(.top, 2)
                 }
             }
         }
