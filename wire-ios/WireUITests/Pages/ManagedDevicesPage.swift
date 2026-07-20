@@ -31,7 +31,7 @@ class ManagedDevicesPage: PageModel {
 
     static func removeDeviceAndContinueIfShown(app: XCUIApplication) throws -> ConversationsPage {
         let manageDevicesButton = app.buttons[Locators.ManageDevicesPage.manageDevices.rawValue].firstMatch
-        
+
         // This page is optional after SSO login, so avoid ManagedDevicesPage() init waiting for it.
         guard manageDevicesButton.waitForExistence(timeout: 2) else {
             return try ConversationsPage()

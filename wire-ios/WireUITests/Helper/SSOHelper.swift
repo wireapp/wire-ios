@@ -473,7 +473,8 @@ final class SSOHelper {
     }
 
     private func keycloakURL(path: [String]) throws -> URL {
-        path.reduce(try EnvironmentVariables().keycloakURL) {
+        let base = try keycloakBaseURL ?? EnvironmentVariables().keycloakURL
+        return path.reduce(base) {
             $0.appendingPathComponent($1)
         }
     }
