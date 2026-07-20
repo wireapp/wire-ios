@@ -29,23 +29,23 @@ class ManagedDevicesPage: PageModel {
         app.buttons[Locators.ManageDevicesPage.manageDevices.rawValue].firstMatch
     }
 
-    var removeDevice: XCUIElement {
-        app.images[Locators.ManageDevicesPage.removeDevice.rawValue].firstMatch
-    }
+    static func removeDeviceAndContinueIfShown(app: XCUIApplication) throws -> ConversationsPage {
+        let manageDevicesButton = app.buttons[Locators.ManageDevicesPage.manageDevices.rawValue].firstMatch
+        
+        // This page is optional after SSO login, so avoid ManagedDevicesPage() init waiting for it.
+        guard manageDevicesButton.waitForExistence(timeout: 2) else {
+            return try ConversationsPage()
+        }
 
-    var deleteDevice: XCUIElement {
-        app.buttons[Locators.ManageDevicesPage.deleteDevice.rawValue].firstMatch
+        manageDevicesButton.tap()
+        app.images[Locators.ManageDevicesPage.removeDevice.rawValue].firstMatch.waitAndTap()
+        app.buttons[Locators.ManageDevicesPage.deleteDevice.rawValue].firstMatch.waitAndTap()
+
+        return try ConversationsPage()
     }
 
     func removeDeviceAndContinueIfShown() throws -> ConversationsPage {
-        guard manageDevicesButton.exists else {
-            return try ConversationsPage()
-        }
-        manageDevicesButton.tap()
-        removeDevice.tap()
-        deleteDevice.tap()
-
-        return try ConversationsPage()
+        try Self.removeDeviceAndContinueIfShown(app: app)
     }
 
 }

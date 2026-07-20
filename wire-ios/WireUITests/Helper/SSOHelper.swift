@@ -17,59 +17,54 @@
 //
 
 import Foundation
-import OktaSdk
 import WireNetwork
 
 @MainActor
 final class SSOHelper {
     private let userHelper: UserHelper
     private let httpClient: HttpClient
-    private let oktaBaseURL: URL
+    private let keycloakBaseURL: URL?
 
-    private var oktaApplicationId: String?
-    private var oktaUserIds: [String] = []
-    private var oktaClient: OktaClient?
+    private var keycloakSAMLClientId: String?
+    private var keycloakUserIds: [String] = []
     private var scimAuthToken: String?
     private(set) var identityProviderId: String?
 
     init(
         userHelper: UserHelper = UserHelper.default,
         httpClient: HttpClient = HttpClient(),
-        oktaBaseURL: URL = .init(string: "https://dev-500508.oktapreview.com")!
+        keycloakBaseURL: URL? = nil
     ) {
         self.userHelper = userHelper
         self.httpClient = httpClient
-        self.oktaBaseURL = oktaBaseURL
+        self.keycloakBaseURL = keycloakBaseURL
     }
 
     @discardableResult
     func createSSOUserAsSelf(user: UserInfo) async throws -> UserInfo {
-        let owner = try await createSSOUserForOkta(user: user)
-        return try await addUserToOkta(user: owner)
+        let owner = try await createSSOUserForKeycloak(user: user)
+        return try await addUserToKeycloak(user: owner)
     }
 
     @discardableResult
     func createSSOUser(owner: UserInfo, ssoUser: UserInfo) async throws -> UserInfo {
-        _ = try await createSSOUserForOkta(user: owner)
-        return try await addUserToOkta(user: ssoUser)
+        _ = try await createSSOUserForKeycloak(user: owner)
+        return try await addUserToKeycloak(user: ssoUser)
     }
 
     @discardableResult
     func createSCIMManagedSSOUser(owner: UserInfo, ssoUser: UserInfo) async throws -> UserInfo {
-        _ = try await createSSOUserForOkta(user: owner)
+        _ = try await createSSOUserForKeycloak(user: owner)
 
-        ssoUser.password = "SSO\(ssoUser.password)"
-        ssoUser.isSSOUser = true
+        prepareSSOUser(ssoUser)
 
-        let oktaUserId = try await createOktaUser(
-            name: ssoUser.name,
+        _ = try await createKeycloakUser(
+            username: ssoUser.email,
+            firstName: ssoUser.name,
+            lastName: ssoUser.name,
             email: ssoUser.email,
             password: ssoUser.password
         )
-
-        if oktaApplicationId != nil {
-            try await assignUserToApplication(userId: oktaUserId)
-        }
 
         ssoUser.id = try await createSCIMUser(owner: owner, user: ssoUser)
         userHelper.addUser(ssoUser)
@@ -77,32 +72,26 @@ final class SSOHelper {
     }
 
     @discardableResult
-    func createSSOUserForOkta(user: UserInfo) async throws -> UserInfo {
-        let finalizeURL = getFinalizeURLDependingOnBackend()
-        let appLabel = "SSO-\(user.teamName)"
-
-        _ = try await createOktaApplication(label: appLabel, finalizeURL: finalizeURL)
-        let metadata = try await getOktaApplicationMetadata()
-        identityProviderId = try await createIdentityProvider(user: user, metadata: metadata)
-
+    func createSSOUserForKeycloak(user: UserInfo) async throws -> UserInfo {
+        let teamID = try teamID(for: user)
+        let metadata = try await getKeycloakMetadata()
+        identityProviderId = try await createIdentityProviderV2(user: user, metadata: metadata)
+        try await createKeycloakSAMLClient(teamID: teamID)
         return user
     }
 
     @discardableResult
-    func addUserToOkta(user: UserInfo) async throws -> UserInfo {
-        user.password = "SSO\(user.password)"
-        user.name = user.email
-        user.isSSOUser = true
+    func addUserToKeycloak(user: UserInfo) async throws -> UserInfo {
+        prepareSSOUser(user)
 
-        let oktaUserId = try await createOktaUser(
-            name: user.name,
+        _ = try await createKeycloakUser(
+            username: user.email,
+            firstName: user.name,
+            lastName: user.name,
             email: user.email,
             password: user.password
         )
 
-        if oktaApplicationId != nil {
-            try await assignUserToApplication(userId: oktaUserId)
-        }
         userHelper.addUser(user)
         return user
     }
@@ -115,221 +104,6 @@ final class SSOHelper {
         )
     }
 
-    @discardableResult
-    func createOktaApplication(label: String, finalizeURL: String) async throws -> String {
-        let application = SamlApplication(
-            label: label,
-            signOnMode: .saml20,
-            visibility: ApplicationVisibility(autoSubmitToolbar: false),
-            credentials: ApplicationCredentials(
-                userNameTemplate: ApplicationCredentialsUsernameTemplate(
-                    template: "${fn:substringBefore(source.login, \"@\")}",
-                    type: "BUILT_IN"
-                )
-            ),
-            settings: SamlApplicationSettings(
-                signOn: SamlApplicationSettingsSignOn(
-                    assertionSigned: true,
-                    audience: finalizeURL,
-                    authnContextClassRef: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
-                    destination: finalizeURL,
-                    digestAlgorithm: "SHA256",
-                    honorForceAuthn: true,
-                    idpIssuer: "https://www.okta.com/${org.externalKey}",
-                    recipient: finalizeURL,
-                    requestCompressed: false,
-                    responseSigned: true,
-                    signatureAlgorithm: "RSA_SHA256",
-                    ssoAcsUrl: finalizeURL,
-                    subjectNameIdFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
-                    subjectNameIdTemplate: "${user.email}"
-                )
-            )
-        )
-
-        let data = try JSONEncoder().encode(application)
-
-        let (responseData, response) = try await sendOktaRequest(
-            path: ["apps"],
-            method: .post,
-            body: data
-        )
-
-        guard response.statusCode == 200 else {
-            throw RuntimeError(
-                "createOktaApplication failed: HTTP \(response.statusCode) \(String(data: responseData, encoding: .utf8) ?? "")"
-            )
-        }
-
-        let object = try JSONSerialization.jsonObject(with: responseData, options: [])
-        guard let json = object as? [String: Any],
-              let applicationId = json["id"] as? String else {
-            throw RuntimeError("createOktaApplication: failed to parse application id")
-        }
-
-        oktaApplicationId = applicationId
-
-        let everyoneGroupId = try await fetchGroupId(named: "Everyone")
-        try await assignApplicationToGroup(applicationId: applicationId, groupId: everyoneGroupId)
-        try await waitForAppGroupLink(applicationId: applicationId, groupId: everyoneGroupId)
-
-        return applicationId
-    }
-
-    func fetchGroupId(named groupName: String) async throws -> String {
-        let groups = try await oktaSDKClient()
-            .group
-            .listGroups(q: groupName, limit: 100)
-            .result
-
-        if let group = groups.first(where: { $0.profile?.name == groupName }),
-           let id = group.id {
-            return id
-        }
-
-        throw RuntimeError("fetchGroupId: group not found: \(groupName)")
-    }
-
-    func assignApplicationToGroup(applicationId: String, groupId: String) async throws {
-        _ = try await oktaSDKClient()
-            .application
-            .createApplicationGroupAssignment(
-                appId: applicationId,
-                groupId: groupId,
-                applicationGroupAssignment: ApplicationGroupAssignment()
-            )
-    }
-
-    private func waitForAppGroupLink(applicationId: String, groupId: String) async throws {
-        for _ in 0 ..< 30 {
-            do {
-                _ = try await oktaSDKClient()
-                    .application
-                    .getApplicationGroupAssignment(appId: applicationId, groupId: groupId)
-                return
-            } catch {
-                // ignore
-            }
-
-            try await Task.sleep(for: .seconds(0.7))
-        }
-
-        throw RuntimeError("waitForAppGroupLink: timed out")
-    }
-
-    func getOktaApplicationMetadata() async throws -> String {
-        guard let oktaApplicationId else {
-            throw RuntimeError("getOktaApplicationMeta oktaApplicationId is nil")
-        }
-
-        let url = oktaURL(path: ["apps", oktaApplicationId, "sso", "saml", "metadata"])
-
-        let (data, response) = try await httpClient.send(
-            url: url,
-            method: .get,
-            body: Data(),
-            headers: [
-                HttpClient.HeaderKey.accept: "application/xml",
-                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
-                HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
-            ]
-        )
-
-        guard response.statusCode == 200 else {
-            throw RuntimeError(
-                "getOktaApplicationMetadata failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
-            )
-        }
-
-        guard let xml = String(data: data, encoding: .utf8), !xml.isEmpty else {
-            throw RuntimeError("getOktaApplicationMeta empty response")
-        }
-
-        return xml
-    }
-
-    func createIdentityProvider(user: UserInfo, metadata: String) async throws -> String {
-        let accessToken = try await userHelper.fetchAccessToken(email: user.email, password: user.password)
-
-        let url = userHelper.backendURL
-            .appendingPathComponent(String(describing: userHelper.apiVersion))
-            .appendingPathComponent("identity-providers")
-
-        let metadataBody = Data(metadata.utf8)
-        let (data, response) = try await httpClient.send(
-            url: url,
-            method: .post,
-            body: metadataBody,
-            headers: [
-                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
-                HttpClient.HeaderKey.contentType: "application/xml",
-                HttpClient.HeaderKey.authorization: "Bearer \(accessToken.token)"
-            ]
-        )
-
-        guard response.statusCode == 200 || response.statusCode == 201 else {
-            throw RuntimeError(
-                "createIdentityProvider failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
-            )
-        }
-
-        let object = try JSONSerialization.jsonObject(with: data, options: [])
-        guard let json = object as? [String: Any],
-              let id = json["id"] as? String else {
-            throw RuntimeError("createIdentityProvider: failed to parse identity provider id")
-        }
-
-        return id
-    }
-
-    @discardableResult
-    func createOktaUser(name: String, email: String, password: String) async throws -> String {
-        let profile = UserProfile(
-            email: email,
-            firstName: name,
-            lastName: name,
-            login: email
-        )
-
-        let credentials = UserCredentials(
-            password: PasswordCredential(value: password),
-            recoveryQuestion: RecoveryQuestionCredential(
-                answer: "fortytwo",
-                question: "What is the answer to life, the universe and everything?"
-            )
-        )
-
-        let request = CreateUserRequest(
-            credentials: credentials,
-            profile: profile
-        )
-
-        let user = try await oktaSDKClient()
-            .user
-            .createUser(body: request, activate: true)
-            .result
-
-        guard let id = user.id else {
-            throw RuntimeError("createOktaUser: failed to parse Okta user id")
-        }
-
-        oktaUserIds.append(id)
-        return id
-    }
-
-    func assignUserToApplication(userId: String) async throws {
-        guard let oktaApplicationId else {
-            throw RuntimeError("assignUserToApplication: oktaApplicationId is nil")
-        }
-
-        _ = try await oktaSDKClient()
-            .application
-            .assignUserToApplication(
-                appId: oktaApplicationId,
-                appUser: AppUser(id: userId)
-            )
-    }
-
     func getSSOCode() throws -> String {
         guard let identityProviderId else {
             throw RuntimeError("getSSOCode: identityProviderId is nil")
@@ -337,50 +111,202 @@ final class SSOHelper {
         return "wire-\(identityProviderId)"
     }
 
-    func cleanUpOktaResources() async {
-        if let appId = oktaApplicationId {
-            await cleanUpOktaApplication(appId)
-            oktaApplicationId = nil
+    func cleanUpSSOResources() async {
+        if let keycloakSAMLClientId {
+            await cleanUpKeycloakSAMLClient(keycloakSAMLClientId)
+            self.keycloakSAMLClientId = nil
         }
 
-        for userId in oktaUserIds {
-            await cleanUpOktaUser(userId)
+        for userId in keycloakUserIds {
+            await cleanUpKeycloakUser(userId)
         }
-        oktaUserIds.removeAll()
+        keycloakUserIds.removeAll()
     }
 
-    private func cleanUpOktaApplication(_ appId: String) async {
-        do {
-            let applicationClient = try oktaSDKClient().application
-            try await applicationClient.deactivateApplication(appId: appId)
-            try await applicationClient.deleteApplication(appId: appId)
-        } catch {
-            print("❌ Failed to clean up Okta application \(appId): \(error)")
-        }
+    private func prepareSSOUser(_ user: UserInfo) {
+        user.password = "SSO\(user.password)"
+        user.name = user.email
+        user.isSSOUser = true
     }
 
-    private func cleanUpOktaUser(_ userId: String) async {
-        do {
-            let userClient = try oktaSDKClient().user
-            try await userClient.deactivateUser(userId: userId, sendEmail: false)
-            try await userClient.deactivateOrDeleteUser(userId: userId, sendEmail: false)
-        } catch {
-            print("❌ Failed to clean up Okta user \(userId): \(error)")
+    private func teamID(for user: UserInfo) throws -> UUID {
+        guard let teamID = user.teamID else {
+            throw RuntimeError("teamID is nil")
         }
+        return teamID
     }
 
-    private func sendOktaRequest(
-        path: [String],
-        method: HttpClient.Method,
-        body: Data
-    ) async throws -> (Data, HTTPURLResponse) {
-        let url = oktaURL(path: path)
-        return try await httpClient.send(
+    private func getKeycloakMetadata() async throws -> String {
+        let url = try keycloakURL(path: ["realms", Self.realm, "protocol", "saml", "descriptor"])
+        let (data, response) = try await httpClient.send(
             url: url,
-            method: method,
-            body: body,
-            headers: try oktaJSONHeaders()
+            method: .get,
+            body: Data(),
+            headers: [
+                HttpClient.HeaderKey.accept: Self.applicationXML,
+                HttpClient.HeaderKey.contentType: Self.applicationXML
+            ]
         )
+
+        guard response.statusCode == 200 else {
+            throw RuntimeError(
+                "getKeycloakMetadata failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        guard let xml = String(data: data, encoding: .utf8), !xml.isEmpty else {
+            throw RuntimeError("getKeycloakMetadata empty response")
+        }
+
+        return xml
+    }
+
+    private func createIdentityProviderV2(user: UserInfo, metadata: String) async throws -> String {
+        let accessToken = try await userHelper.fetchAccessToken(email: user.email, password: user.password)
+        let url = try identityProvidersV2URL()
+
+        let (data, response) = try await httpClient.send(
+            url: url,
+            method: .post,
+            body: Data(metadata.utf8),
+            headers: [
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.contentType: Self.applicationXML,
+                HttpClient.HeaderKey.authorization: "Bearer \(accessToken.token)"
+            ]
+        )
+
+        guard response.statusCode == 200 || response.statusCode == 201 else {
+            throw RuntimeError(
+                "createIdentityProviderV2 failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        let object = try JSONSerialization.jsonObject(with: data, options: [])
+        guard let json = object as? [String: Any],
+              let id = json["id"] as? String else {
+            throw RuntimeError("createIdentityProviderV2: failed to parse identity provider id")
+        }
+
+        return id
+    }
+
+    private func createKeycloakSAMLClient(teamID: UUID) async throws {
+        let finalizeURL = getFinalizeURL(teamID: teamID)
+        let requestBody: [String: Any] = [
+            "clientId": finalizeURL,
+            "enabled": true,
+            "adminUrl": "",
+            "baseUrl": "",
+            "rootUrl": "",
+            "name": "",
+            "description": "",
+            "redirectUris": [finalizeURL],
+            "webOrigins": [sanitizedBackendURL()],
+            "protocol": "saml",
+            "attributes": [
+                "display.on.consent.screen": "false",
+                "saml.encrypt": "false",
+                "saml_assertion_consumer_url_post": finalizeURL,
+                "saml.client.signature": "false",
+                "saml.artifact.binding": "false",
+                "saml.assertion.signature": "true",
+                "saml.onetimeuse.condition": "false",
+                "saml.server.signature.keyinfo.ext": "false",
+                "saml.server.signature.keyinfo.xmlSigKeyInfoKeyNameTransformer": "NONE"
+            ]
+        ]
+
+        let (data, response) = try await sendKeycloakRequest(
+            path: ["admin", "realms", Self.realm, "clients"],
+            method: .post,
+            body: try JSONSerialization.data(withJSONObject: requestBody, options: [])
+        )
+
+        guard response.statusCode == 201 else {
+            throw RuntimeError(
+                "createKeycloakSAMLClient failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        guard let location = response.value(forHTTPHeaderField: "Location"),
+              let id = location.split(separator: "/").last else {
+            throw RuntimeError("createKeycloakSAMLClient: missing Location header")
+        }
+
+        keycloakSAMLClientId = String(id)
+    }
+
+    @discardableResult
+    private func createKeycloakUser(
+        username: String,
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String
+    ) async throws -> String {
+        let requestBody: [String: Any] = [
+            "username": username,
+            "firstName": firstName,
+            "lastName": lastName,
+            "email": email,
+            "emailVerified": true,
+            "enabled": true,
+            "credentials": [
+                [
+                    "type": "password",
+                    "value": password,
+                    "temporary": false
+                ]
+            ]
+        ]
+
+        let (data, response) = try await sendKeycloakRequest(
+            path: ["admin", "realms", Self.realm, "users"],
+            method: .post,
+            body: try JSONSerialization.data(withJSONObject: requestBody, options: [])
+        )
+
+        guard response.statusCode == 201 else {
+            throw RuntimeError(
+                "createKeycloakUser failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        guard let location = response.value(forHTTPHeaderField: "Location"),
+              let id = location.split(separator: "/").last else {
+            throw RuntimeError("createKeycloakUser: missing Location header")
+        }
+
+        let userId = String(id)
+        keycloakUserIds.append(userId)
+        return userId
+    }
+
+    private func cleanUpKeycloakSAMLClient(_ clientId: String) async {
+        do {
+            _ = try await sendKeycloakRequest(
+                path: ["admin", "realms", Self.realm, "clients", clientId],
+                method: .delete,
+                body: Data(),
+                expectedStatusCodes: [204]
+            )
+        } catch {
+            print("Failed to clean up Keycloak SAML client \(clientId): \(error)")
+        }
+    }
+
+    private func cleanUpKeycloakUser(_ userId: String) async {
+        do {
+            _ = try await sendKeycloakRequest(
+                path: ["admin", "realms", Self.realm, "users", userId],
+                method: .delete,
+                body: Data(),
+                expectedStatusCodes: [204]
+            )
+        } catch {
+            print("Failed to clean up Keycloak user \(userId): \(error)")
+        }
     }
 
     @discardableResult
@@ -408,37 +334,6 @@ final class SSOHelper {
         }
 
         return id
-    }
-
-    private func getSCIMProfile(userId: String) async throws -> [String: Any] {
-        let (data, response) = try await sendSCIMRequest(
-            path: ["Users", userId],
-            method: .get,
-            body: Data()
-        ) {
-            try scimAuthorizationHeader()
-        }
-
-        try verifySCIMResponse(data: data, response: response, operation: "getSCIMProfile")
-
-        let object = try JSONSerialization.jsonObject(with: data, options: [])
-        guard let profile = object as? [String: Any] else {
-            throw RuntimeError("getSCIMProfile: failed to parse profile")
-        }
-
-        return profile
-    }
-
-    private func updateSCIMProfile(userId: String, profile: [String: Any]) async throws {
-        let (data, response) = try await sendSCIMRequest(
-            path: ["Users", userId],
-            method: .put,
-            body: try JSONSerialization.data(withJSONObject: profile, options: [])
-        ) {
-            try scimAuthorizationHeader()
-        }
-
-        try verifySCIMResponse(data: data, response: response, operation: "updateSCIMProfile")
     }
 
     private func sendSCIMRequest(
@@ -506,19 +401,80 @@ final class SSOHelper {
         return "Bearer \(try await createSCIMAuthToken(owner: owner))"
     }
 
-    private func scimAuthorizationHeader() throws -> String {
-        guard let scimAuthToken else {
-            throw RuntimeError("SCIM auth token is missing")
-        }
-
-        return "Bearer \(scimAuthToken)"
-    }
-
     private func verifySCIMResponse(data: Data, response: HTTPURLResponse, operation: String) throws {
         guard response.statusCode < 400 else {
             throw RuntimeError(
                 "\(operation) failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
             )
+        }
+    }
+
+    private func sendKeycloakRequest(
+        path: [String],
+        method: HttpClient.Method,
+        body: Data,
+        expectedStatusCodes: Set<Int> = [200, 201, 204]
+    ) async throws -> (Data, HTTPURLResponse) {
+        let (data, response) = try await httpClient.send(
+            url: try keycloakURL(path: path),
+            method: method,
+            body: body,
+            headers: try await keycloakJSONHeaders()
+        )
+
+        guard expectedStatusCodes.contains(response.statusCode) else {
+            throw RuntimeError(
+                "Keycloak request failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        return (data, response)
+    }
+
+    private func keycloakJSONHeaders() async throws -> [String: String] {
+        [
+            HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+            HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+            HttpClient.HeaderKey.authorization: "Bearer \(try await keycloakAccessToken())"
+        ]
+    }
+
+    private func keycloakAccessToken() async throws -> String {
+        let body = formURLEncodedBody([
+            "client_id": "admin-cli",
+            "username": Self.adminUser,
+            "password": try keycloakAdminPassword(),
+            "grant_type": "password"
+        ])
+
+        let (data, response) = try await httpClient.send(
+            url: try keycloakURL(path: ["realms", Self.realm, "protocol", "openid-connect", "token"]),
+            method: .post,
+            body: Data(body.utf8),
+            headers: [
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.contentType: Self.formURLEncoded
+            ]
+        )
+
+        guard response.statusCode == 200 else {
+            throw RuntimeError(
+                "keycloakAccessToken failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        let object = try JSONSerialization.jsonObject(with: data, options: [])
+        guard let json = object as? [String: Any],
+              let token = json["access_token"] as? String else {
+            throw RuntimeError("keycloakAccessToken: failed to parse access_token")
+        }
+
+        return token
+    }
+
+    private func keycloakURL(path: [String]) throws -> URL {
+        path.reduce(try EnvironmentVariables().keycloakURL) {
+            $0.appendingPathComponent($1)
         }
     }
 
@@ -532,67 +488,51 @@ final class SSOHelper {
         }
     }
 
-    private func oktaURL(path: [String]) -> URL {
-        path.reduce(
-            oktaBaseURL
-                .appendingPathComponent("api")
-                .appendingPathComponent("v1")
-        ) { partialURL, component in
-            partialURL.appendingPathComponent(component)
+    private func identityProvidersV2URL() throws -> URL {
+        let base = userHelper.backendURL
+            .appendingPathComponent(String(describing: userHelper.apiVersion))
+            .appendingPathComponent("identity-providers")
+
+        guard var components = URLComponents(url: base, resolvingAgainstBaseURL: false) else {
+            throw RuntimeError("Invalid identity provider URL")
         }
+        components.queryItems = [URLQueryItem(name: "api_version", value: "v2")]
+
+        guard let url = components.url else {
+            throw RuntimeError("Invalid identity provider v2 URL")
+        }
+        return url
     }
 
-    private func oktaJSONHeaders() throws -> [String: String] {
-        [
-            HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
-            HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
-            HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
-        ]
+    private func getFinalizeURL(teamID: UUID) -> String {
+        "\(sanitizedBackendURL())/sso/finalize-login/\(teamID.uuidString.lowercased())"
     }
 
-    private func oktaSDKClient() throws -> OktaClient {
-        if let oktaClient {
-            return oktaClient
-        }
-
-        guard var domain = oktaBaseURL.host else {
-            throw RuntimeError("Invalid Okta base URL: \(oktaBaseURL)")
-        }
-
-        if let port = oktaBaseURL.port {
-            domain += ":\(port)"
-        }
-
-        let client = OktaClient(
-            configuration: .init(
-                apiKey: try oktaAPIKey(),
-                domain: domain
-            )
-        )
-        oktaClient = client
-        return client
-    }
-
-    private func oktaAPIKey() throws -> String {
-        let apiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"]?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard let apiKey, !apiKey.isEmpty else {
-            throw RuntimeError("Missing OKTA_API_KEY_IOS")
-        }
-
-        return apiKey
-    }
-
-    private func oktaAuthorizationHeader() throws -> String {
-        "SSWS \(try oktaAPIKey())"
-    }
-
-    private func getFinalizeURLDependingOnBackend() -> String {
+    private func sanitizedBackendURL() -> String {
         let backend = userHelper.backendURL.absoluteString
-        let sanitizedBackend = backend.hasSuffix("/") ? String(backend.dropLast()) : backend
-        return sanitizedBackend + "/sso/finalize-login"
+        return backend.hasSuffix("/") ? String(backend.dropLast()) : backend
     }
 
-    private static let scimWireUserSchema = "urn:ietf:params:scim:schemas:extension:wire:1.0:User"
+    private func keycloakAdminPassword() throws -> String {
+        try EnvironmentVariables().keycloakAdminPassword
+    }
+
+    private func formURLEncodedBody(_ values: [String: String]) -> String {
+        values
+            .map { key, value in
+                "\(formURLEncode(key))=\(formURLEncode(value))"
+            }
+            .joined(separator: "&")
+    }
+
+    private func formURLEncode(_ value: String) -> String {
+        var allowed = CharacterSet.alphanumerics
+        allowed.insert(charactersIn: "-._*")
+        return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
+    }
+
+    private static let realm = "master"
+    private static let adminUser = "admin"
+    private static let applicationXML = "application/xml"
+    private static let formURLEncoded = "application/x-www-form-urlencoded"
 }

@@ -70,7 +70,7 @@ class WireUITestCase: XCTestCase {
         await callingServiceClient.destroyCreatedInstances()
         await testServicesClient.deleteInstances()
         await UserHelper.deleteCreatedUsers()
-        await ssoHelper.cleanUpOktaResources()
+        await ssoHelper.cleanUpSSOResources()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
