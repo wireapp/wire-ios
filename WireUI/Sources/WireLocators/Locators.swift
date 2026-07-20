@@ -198,6 +198,8 @@ public enum Locators {
         case guestsArePresent = "Guests are present"
         case conversationBackground
         case openOngoingCallButton
+        case readReceiptsDisabledSystemMessage
+        case readReceiptsEnabledSystemMessage
 
     }
 

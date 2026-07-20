@@ -534,13 +534,12 @@ class ActiveConversationPage: PageModel {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> ActiveConversationPage {
-        let expected = enabled
-            ? "You turned read receipts on for everyone"
-            : "You turned read receipts off for everyone"
-        let predicate = NSPredicate(format: "label CONTAINS[c] %@", expected)
+        let identifier = enabled
+            ? Locators.ActiveConversationPage.readReceiptsEnabledSystemMessage.rawValue
+            : Locators.ActiveConversationPage.readReceiptsDisabledSystemMessage.rawValue
         XCTAssertTrue(
-            app.descendants(matching: .any).matching(predicate).firstMatch.waitForExistence(timeout: 10),
-            "Expected read-receipts system message '\(expected)' not found",
+            app.descendants(matching: .any)[identifier].firstMatch.waitForExistence(timeout: 10),
+            "Expected read-receipts system message with identifier '\(identifier)' not found",
             file: file,
             line: line
         )
