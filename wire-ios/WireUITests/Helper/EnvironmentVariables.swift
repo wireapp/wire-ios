@@ -75,7 +75,7 @@ struct EnvironmentVariables {
     let callingBackend: String
     let callingInstanceTypeName: String
     let callingInstanceTypeVersion: String
-    let oktaApiKey: String
+//    let oktaApiKey: String
     let ssoClaimedUserEmail: String
     let ssoClaimedUserPassword: String
     let ssoClaimedDomainCode: String
@@ -161,10 +161,10 @@ struct EnvironmentVariables {
             throw Failure.missingCallingInstanceTypeVersion
         }
 
-        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
-              !oktaApiKey.isEmpty else {
-            throw Failure.missingOktaApiKey
-        }
+//        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
+//              !oktaApiKey.isEmpty else {
+//            throw Failure.missingOktaApiKey
+//        }
 
         guard let ssoClaimedUserEmail = ProcessInfo.processInfo.environment["SSO_CLAIMED_USER_EMAIL"],
               !ssoClaimedUserEmail.isEmpty else {
@@ -203,7 +203,7 @@ struct EnvironmentVariables {
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
-        self.oktaApiKey = oktaApiKey
+//        self.oktaApiKey = oktaApiKey
         self.ssoClaimedUserEmail = ssoClaimedUserEmail
         self.ssoClaimedUserPassword = ssoClaimedUserPassword
         self.ssoClaimedDomainCode = ssoClaimedDomainCode
