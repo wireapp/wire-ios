@@ -339,8 +339,8 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "conversation.bulletListButton.description", fallback: "Use bullet list")
       }
       internal enum CameraButton {
-        /// Take or select a photo
-        internal static let description = L10n.tr("Accessibility", "conversation.cameraButton.description", fallback: "Take or select a photo")
+        /// Take or select a photo, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.cameraButton.description", fallback: "Take or select a photo, disabled in viewer access")
       }
       internal enum CodeButton {
         /// Use code format
@@ -429,8 +429,8 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "conversation.sendButton.description", fallback: "Send this message")
       }
       internal enum SketchButton {
-        /// Open sketch to draw or write
-        internal static let description = L10n.tr("Accessibility", "conversation.sketchButton.description", fallback: "Open sketch to draw or write")
+        /// Open sketch to draw or write, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.sketchButton.description", fallback: "Open sketch to draw or write, disabled in viewer access")
       }
       internal enum TimerButton {
         /// Set a timer for self-deleting messages
@@ -481,16 +481,16 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "conversation.titleViewForOneToOne.hint", fallback: "Double tap to open profile")
       }
       internal enum UploadFileButton {
-        /// Share a file
-        internal static let description = L10n.tr("Accessibility", "conversation.uploadFileButton.description", fallback: "Share a file")
+        /// Share a file, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.uploadFileButton.description", fallback: "Share a file, disabled in viewer access")
       }
       internal enum VerifiedIcon {
         /// Verified
         internal static let description = L10n.tr("Accessibility", "conversation.verifiedIcon.description", fallback: "Verified")
       }
       internal enum VideoButton {
-        /// Record a video
-        internal static let description = L10n.tr("Accessibility", "conversation.videoButton.description", fallback: "Record a video")
+        /// Record a video, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.videoButton.description", fallback: "Record a video, disabled in viewer access")
       }
     }
     internal enum ConversationAnnouncement {

@@ -72,7 +72,7 @@
 "conversation.wireCells.files.availableOffline" = "Available offline";
 
 // MARK: - Viewer access
-"conversation.wireCells.files.readOnly" = "Read only";
+"conversation.wireCells.files.readOnly" = "Viewer access";
 "conversation.wireCells.files.viewerAccess.banner.close" = "Close access info";
 
 // MARK: - Conversation details shared drive options
