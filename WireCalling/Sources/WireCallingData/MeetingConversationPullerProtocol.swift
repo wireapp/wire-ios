@@ -16,9 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum MeetingEventCodingKeys: String, CodingKey {
+public import Foundation
 
-    case qualifiedID = "data" // TODO: restore correct value "qualified_id" when backend is fixed
-    case time
+// sourcery: AutoMockable
+/// Makes conversations referenced by meetings available in the local store.
+///
+/// The protocol is implemented outside of this package, where the
+/// persistence layer (Core Data) and the backend API are available,
+/// and injected in.
+public protocol MeetingConversationPullerProtocol: Sendable {
+
+    /// Pulls a conversation from the backend and stores it locally,
+    /// unless it is already stored.
+    ///
+    /// - Parameters:
+    ///   - id: The ID of the conversation.
+    ///   - domain: The domain of the conversation.
+
+    func pullConversationIfUnknown(id: UUID, domain: String) async throws
 
 }

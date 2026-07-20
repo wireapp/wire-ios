@@ -31,16 +31,19 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     private let meetingsAPI: any MeetingsAPI
     private let localStore: any MeetingLocalStoreProtocol
+    private let conversationPuller: any MeetingConversationPullerProtocol
     private let changeBroadcaster = AsyncMulticaster<Void>()
 
     // MARK: - Object lifecycle
 
     public init(
         meetingsAPI: any MeetingsAPI,
-        localStore: any MeetingLocalStoreProtocol
+        localStore: any MeetingLocalStoreProtocol,
+        conversationPuller: any MeetingConversationPullerProtocol
     ) {
         self.meetingsAPI = meetingsAPI
         self.localStore = localStore
+        self.conversationPuller = conversationPuller
     }
 
     // MARK: - Public
@@ -80,8 +83,19 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         // so refetch the list to get the details.
         let meetings = try await meetingsAPI.listMeetings()
 
-        if let meeting = meetings.first(where: { $0.id == id }) {
-            await localStore.storeMeeting(meeting.toDomainMeeting())
+        if let response = meetings.first(where: { $0.id == id }) {
+            let meeting = response.toDomainMeeting()
+            // The backend doesn't send a conversation.create event for meeting
+            // conversations (see `CreateMeetingUseCase`), so a meeting created
+            // on another client references a conversation this client doesn't
+            // know yet. Pull it before storing the meeting, as meetings without
+            // a locally stored conversation cannot be linked to it and are not
+            // listed.
+            try await conversationPuller.pullConversationIfUnknown(
+                id: meeting.conversationID.id,
+                domain: meeting.conversationID.domain
+            )
+            await localStore.storeMeeting(meeting)
         } else {
             // The meeting no longer exists on the backend.
             await localStore.deleteMeeting(id: id)

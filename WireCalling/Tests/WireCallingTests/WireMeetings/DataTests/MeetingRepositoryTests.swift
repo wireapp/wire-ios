@@ -31,12 +31,14 @@ struct MeetingRepositoryTests {
 
     private let meetingsAPI = MockMeetingsAPI()
     private let localStore = MeetingLocalStoreProtocolMock()
+    private let conversationPuller = MeetingConversationPullerProtocolMock()
     private let sut: MeetingRepository
 
     init() {
         self.sut = MeetingRepository(
             meetingsAPI: meetingsAPI,
-            localStore: localStore
+            localStore: localStore,
+            conversationPuller: conversationPuller
         )
     }
 
@@ -65,6 +67,39 @@ struct MeetingRepositoryTests {
                 == Scaffolding.meetingResponse.creatorID
         )
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
+    @Test
+    func pullMeetingPullsMeetingConversationBeforeStoringMeeting() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+
+        // When
+
+        try await sut.pullMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        let pulled = conversationPuller.pullConversationIfUnknownIdUUIDDomainStringVoidReceivedArguments
+        #expect(pulled?.id == Scaffolding.meetingResponse.conversationID.id)
+        #expect(pulled?.domain == Scaffolding.meetingResponse.conversationID.domain)
+    }
+
+    @Test
+    func pullMeetingThrowsAndStoresNothingWhenPullingTheConversationFails() async {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        conversationPuller.pullConversationIfUnknownIdUUIDDomainStringVoidThrowableError =
+            MeetingsAPIError.accessDenied
+
+        // When / Then
+
+        await #expect(throws: (any Error).self) {
+            try await sut.pullMeeting(id: Scaffolding.meetingID)
+        }
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
     }
 
     @Test

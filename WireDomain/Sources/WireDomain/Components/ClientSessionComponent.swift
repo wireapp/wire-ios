@@ -709,7 +709,8 @@ public final class ClientSessionComponent {
 
     public private(set) lazy var meetingRepository = MeetingRepository(
         meetingsAPI: meetingsAPI,
-        localStore: MeetingLocalStore(context: syncContext)
+        localStore: MeetingLocalStore(context: syncContext),
+        conversationPuller: MeetingConversationPuller(conversationRepository: conversationRepository)
     )
 
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
