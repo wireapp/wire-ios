@@ -72,11 +72,15 @@ struct MeetingRow: View {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-                            // The padding is part of the tap target via contentShape.
+                            // The design's padding is 12/8; the extra 12pt of vertical
+                            // padding grows the tap target to ~44pt and is cancelled
+                            // out by the negative padding below, so the layout keeps
+                            // the design's spacing.
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
+                    .padding(.vertical, -12)
                 }
 
                 Text(formatTimeRange(meeting))
