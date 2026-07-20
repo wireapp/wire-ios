@@ -86,123 +86,81 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
 private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @unchecked Sendable {
     typealias MeetingRecurrence = WireCallingDomain.MeetingRecurrence
 
-    public init() {}
+    init() {}
 
-    // MARK: - observeMeetingChanges
+    //MARK: - observeMeetingChanges
 
-    public var observeMeetingChangesAsyncStreamVoidCallsCount = 0
-    public var observeMeetingChangesAsyncStreamVoidCalled: Bool {
-        observeMeetingChangesAsyncStreamVoidCallsCount > 0
+    var observeMeetingChangesAsyncStreamVoidCallsCount = 0
+    var observeMeetingChangesAsyncStreamVoidCalled: Bool {
+        return observeMeetingChangesAsyncStreamVoidCallsCount > 0
     }
+    var observeMeetingChangesAsyncStreamVoidReturnValue: AsyncStream<Void>!
+    var observeMeetingChangesAsyncStreamVoidClosure: (() -> AsyncStream<Void>)?
 
-    public var observeMeetingChangesAsyncStreamVoidReturnValue: AsyncStream<Void>!
-    public var observeMeetingChangesAsyncStreamVoidClosure: (() -> AsyncStream<Void>)?
-
-    public func observeMeetingChanges() -> AsyncStream<Void> {
+    func observeMeetingChanges() -> AsyncStream<Void> {
         observeMeetingChangesAsyncStreamVoidCallsCount += 1
-        if let observeMeetingChangesAsyncStreamVoidClosure {
+        if let observeMeetingChangesAsyncStreamVoidClosure = observeMeetingChangesAsyncStreamVoidClosure {
             return observeMeetingChangesAsyncStreamVoidClosure()
         } else {
             return observeMeetingChangesAsyncStreamVoidReturnValue
         }
     }
 
-    // MARK: - createMeeting
+    //MARK: - createMeeting
 
-    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingThrowableError: (
-        any Error
-    )?
-    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount = 0
-    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCalled: Bool {
-        createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount > 0
+    var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingThrowableError: (any Error)?
+    var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount = 0
+    var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCalled: Bool {
+        return createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount > 0
     }
+    var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments: (title: String, startTime: Date, endTime: Date, recurrence: MeetingRecurrence?)?
+    var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedInvocations: [(title: String, startTime: Date, endTime: Date, recurrence: MeetingRecurrence?)] = []
+    var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue: Meeting!
+    var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure: ((String, Date, Date, MeetingRecurrence?) async throws -> Meeting)?
 
-    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments: (
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    )?
-    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedInvocations: [(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    )] = []
-    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue: Meeting!
-    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure: ((
-        String,
-        Date,
-        Date,
-        MeetingRecurrence?
-    ) async throws -> Meeting)?
-
-    public func createMeeting(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting {
+    func createMeeting(title: String, startTime: Date, endTime: Date, recurrence: MeetingRecurrence?) async throws -> Meeting {
         createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount += 1
-        createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments = (
-            title: title,
-            startTime: startTime,
-            endTime: endTime,
-            recurrence: recurrence
-        )
-        createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedInvocations.append((
-            title: title,
-            startTime: startTime,
-            endTime: endTime,
-            recurrence: recurrence
-        ))
-        if let error =
-            createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingThrowableError {
+        createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments = (title: title, startTime: startTime, endTime: endTime, recurrence: recurrence)
+        createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedInvocations.append((title: title, startTime: startTime, endTime: endTime, recurrence: recurrence))
+        if let error = createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingThrowableError {
             throw error
         }
-        if let createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure {
-            return try await createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure(
-                title,
-                startTime,
-                endTime,
-                recurrence
-            )
+        if let createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure = createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure {
+            return try await createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure(title, startTime, endTime, recurrence)
         } else {
             return createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue
         }
     }
 
-    // MARK: - storeMeeting
+    //MARK: - storeMeeting
 
-    public var storeMeetingMeetingMeetingVoidCallsCount = 0
-    public var storeMeetingMeetingMeetingVoidCalled: Bool {
-        storeMeetingMeetingMeetingVoidCallsCount > 0
+    var storeMeetingMeetingMeetingVoidCallsCount = 0
+    var storeMeetingMeetingMeetingVoidCalled: Bool {
+        return storeMeetingMeetingMeetingVoidCallsCount > 0
     }
+    var storeMeetingMeetingMeetingVoidReceivedMeeting: (Meeting)?
+    var storeMeetingMeetingMeetingVoidReceivedInvocations: [(Meeting)] = []
+    var storeMeetingMeetingMeetingVoidClosure: ((Meeting) async -> Void)?
 
-    public var storeMeetingMeetingMeetingVoidReceivedMeeting: Meeting?
-    public var storeMeetingMeetingMeetingVoidReceivedInvocations: [Meeting] = []
-    public var storeMeetingMeetingMeetingVoidClosure: ((Meeting) async -> Void)?
-
-    public func storeMeeting(_ meeting: Meeting) async {
+    func storeMeeting(_ meeting: Meeting) async {
         storeMeetingMeetingMeetingVoidCallsCount += 1
         storeMeetingMeetingMeetingVoidReceivedMeeting = meeting
         storeMeetingMeetingMeetingVoidReceivedInvocations.append(meeting)
         await storeMeetingMeetingMeetingVoidClosure?(meeting)
     }
 
-    // MARK: - pullMeeting
+    //MARK: - pullMeeting
 
-    public var pullMeetingIdQualifiedIDVoidThrowableError: (any Error)?
-    public var pullMeetingIdQualifiedIDVoidCallsCount = 0
-    public var pullMeetingIdQualifiedIDVoidCalled: Bool {
-        pullMeetingIdQualifiedIDVoidCallsCount > 0
+    var pullMeetingIdQualifiedIDVoidThrowableError: (any Error)?
+    var pullMeetingIdQualifiedIDVoidCallsCount = 0
+    var pullMeetingIdQualifiedIDVoidCalled: Bool {
+        return pullMeetingIdQualifiedIDVoidCallsCount > 0
     }
+    var pullMeetingIdQualifiedIDVoidReceivedId: (QualifiedID)?
+    var pullMeetingIdQualifiedIDVoidReceivedInvocations: [(QualifiedID)] = []
+    var pullMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async throws -> Void)?
 
-    public var pullMeetingIdQualifiedIDVoidReceivedId: QualifiedID?
-    public var pullMeetingIdQualifiedIDVoidReceivedInvocations: [QualifiedID] = []
-    public var pullMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async throws -> Void)?
-
-    public func pullMeeting(id: QualifiedID) async throws {
+    func pullMeeting(id: QualifiedID) async throws {
         pullMeetingIdQualifiedIDVoidCallsCount += 1
         pullMeetingIdQualifiedIDVoidReceivedId = id
         pullMeetingIdQualifiedIDVoidReceivedInvocations.append(id)
@@ -212,17 +170,16 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         try await pullMeetingIdQualifiedIDVoidClosure?(id)
     }
 
-    // MARK: - pullMeetings
+    //MARK: - pullMeetings
 
-    public var pullMeetingsVoidThrowableError: (any Error)?
-    public var pullMeetingsVoidCallsCount = 0
-    public var pullMeetingsVoidCalled: Bool {
-        pullMeetingsVoidCallsCount > 0
+    var pullMeetingsVoidThrowableError: (any Error)?
+    var pullMeetingsVoidCallsCount = 0
+    var pullMeetingsVoidCalled: Bool {
+        return pullMeetingsVoidCallsCount > 0
     }
+    var pullMeetingsVoidClosure: (() async throws -> Void)?
 
-    public var pullMeetingsVoidClosure: (() async throws -> Void)?
-
-    public func pullMeetings() async throws {
+    func pullMeetings() async throws {
         pullMeetingsVoidCallsCount += 1
         if let error = pullMeetingsVoidThrowableError {
             throw error
@@ -230,89 +187,90 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         try await pullMeetingsVoidClosure?()
     }
 
-    // MARK: - deleteLocalMeeting
+    //MARK: - deleteLocalMeeting
 
-    public var deleteLocalMeetingIdQualifiedIDVoidCallsCount = 0
-    public var deleteLocalMeetingIdQualifiedIDVoidCalled: Bool {
-        deleteLocalMeetingIdQualifiedIDVoidCallsCount > 0
+    var deleteLocalMeetingIdQualifiedIDVoidCallsCount = 0
+    var deleteLocalMeetingIdQualifiedIDVoidCalled: Bool {
+        return deleteLocalMeetingIdQualifiedIDVoidCallsCount > 0
     }
+    var deleteLocalMeetingIdQualifiedIDVoidReceivedId: (QualifiedID)?
+    var deleteLocalMeetingIdQualifiedIDVoidReceivedInvocations: [(QualifiedID)] = []
+    var deleteLocalMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async -> Void)?
 
-    public var deleteLocalMeetingIdQualifiedIDVoidReceivedId: QualifiedID?
-    public var deleteLocalMeetingIdQualifiedIDVoidReceivedInvocations: [QualifiedID] = []
-    public var deleteLocalMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async -> Void)?
-
-    public func deleteLocalMeeting(id: QualifiedID) async {
+    func deleteLocalMeeting(id: QualifiedID) async {
         deleteLocalMeetingIdQualifiedIDVoidCallsCount += 1
         deleteLocalMeetingIdQualifiedIDVoidReceivedId = id
         deleteLocalMeetingIdQualifiedIDVoidReceivedInvocations.append(id)
         await deleteLocalMeetingIdQualifiedIDVoidClosure?(id)
     }
 
-    // MARK: - fetchMeetings
+    //MARK: - deleteMeeting
 
-    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingThrowableError: (any Error)?
-    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount = 0
-    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCalled: Bool {
-        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount > 0
+    var deleteMeetingIdQualifiedIDVoidThrowableError: (any Error)?
+    var deleteMeetingIdQualifiedIDVoidCallsCount = 0
+    var deleteMeetingIdQualifiedIDVoidCalled: Bool {
+        return deleteMeetingIdQualifiedIDVoidCallsCount > 0
+    }
+    var deleteMeetingIdQualifiedIDVoidReceivedId: (QualifiedID)?
+    var deleteMeetingIdQualifiedIDVoidReceivedInvocations: [(QualifiedID)] = []
+    var deleteMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async throws -> Void)?
+
+    func deleteMeeting(id: QualifiedID) async throws {
+        deleteMeetingIdQualifiedIDVoidCallsCount += 1
+        deleteMeetingIdQualifiedIDVoidReceivedId = id
+        deleteMeetingIdQualifiedIDVoidReceivedInvocations.append(id)
+        if let error = deleteMeetingIdQualifiedIDVoidThrowableError {
+            throw error
+        }
+        try await deleteMeetingIdQualifiedIDVoidClosure?(id)
     }
 
-    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments: (
-        range: Range<Date>,
-        offset: Int,
-        limit: Int
-    )?
-    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedInvocations: [(
-        range: Range<Date>,
-        offset: Int,
-        limit: Int
-    )] = []
-    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue: [Meeting]!
-    public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure: ((Range<Date>, Int, Int) async throws
-        -> [Meeting])?
+    //MARK: - fetchMeetings
 
-    public func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting] {
+    var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingThrowableError: (any Error)?
+    var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount = 0
+    var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCalled: Bool {
+        return fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount > 0
+    }
+    var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments: (range: Range<Date>, offset: Int, limit: Int)?
+    var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedInvocations: [(range: Range<Date>, offset: Int, limit: Int)] = []
+    var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue: [Meeting]!
+    var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure: ((Range<Date>, Int, Int) async throws -> [Meeting])?
+
+    func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting] {
         fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount += 1
-        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments = (
-            range: range,
-            offset: offset,
-            limit: limit
-        )
-        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedInvocations.append((
-            range: range,
-            offset: offset,
-            limit: limit
-        ))
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedArguments = (range: range, offset: offset, limit: limit)
+        fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReceivedInvocations.append((range: range, offset: offset, limit: limit))
         if let error = fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingThrowableError {
             throw error
         }
-        if let fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure {
+        if let fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure = fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure {
             return try await fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingClosure(range, offset, limit)
         } else {
             return fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue
         }
     }
 
-    // MARK: - hasUpcomingMeetings
+    //MARK: - hasUpcomingMeetings
 
-    public var hasUpcomingMeetingsAfterDateDateBoolThrowableError: (any Error)?
-    public var hasUpcomingMeetingsAfterDateDateBoolCallsCount = 0
-    public var hasUpcomingMeetingsAfterDateDateBoolCalled: Bool {
-        hasUpcomingMeetingsAfterDateDateBoolCallsCount > 0
+    var hasUpcomingMeetingsAfterDateDateBoolThrowableError: (any Error)?
+    var hasUpcomingMeetingsAfterDateDateBoolCallsCount = 0
+    var hasUpcomingMeetingsAfterDateDateBoolCalled: Bool {
+        return hasUpcomingMeetingsAfterDateDateBoolCallsCount > 0
     }
+    var hasUpcomingMeetingsAfterDateDateBoolReceivedDate: (Date)?
+    var hasUpcomingMeetingsAfterDateDateBoolReceivedInvocations: [(Date)] = []
+    var hasUpcomingMeetingsAfterDateDateBoolReturnValue: Bool!
+    var hasUpcomingMeetingsAfterDateDateBoolClosure: ((Date) async throws -> Bool)?
 
-    public var hasUpcomingMeetingsAfterDateDateBoolReceivedDate: Date?
-    public var hasUpcomingMeetingsAfterDateDateBoolReceivedInvocations: [Date] = []
-    public var hasUpcomingMeetingsAfterDateDateBoolReturnValue: Bool!
-    public var hasUpcomingMeetingsAfterDateDateBoolClosure: ((Date) async throws -> Bool)?
-
-    public func hasUpcomingMeetings(after date: Date) async throws -> Bool {
+    func hasUpcomingMeetings(after date: Date) async throws -> Bool {
         hasUpcomingMeetingsAfterDateDateBoolCallsCount += 1
         hasUpcomingMeetingsAfterDateDateBoolReceivedDate = date
         hasUpcomingMeetingsAfterDateDateBoolReceivedInvocations.append(date)
         if let error = hasUpcomingMeetingsAfterDateDateBoolThrowableError {
             throw error
         }
-        if let hasUpcomingMeetingsAfterDateDateBoolClosure {
+        if let hasUpcomingMeetingsAfterDateDateBoolClosure = hasUpcomingMeetingsAfterDateDateBoolClosure {
             return try await hasUpcomingMeetingsAfterDateDateBoolClosure(date)
         } else {
             return hasUpcomingMeetingsAfterDateDateBoolReturnValue
