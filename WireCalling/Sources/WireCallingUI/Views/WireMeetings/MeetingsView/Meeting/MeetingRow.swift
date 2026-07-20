@@ -28,6 +28,7 @@ struct MeetingRow: View {
     let formatTimeRange: (Meeting) -> String
     let onEdit: () -> Void
     let onDelete: () -> Void
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             ZStack {
@@ -68,6 +69,11 @@ struct MeetingRow: View {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+                            // Grow the hit target to ~44x44pt without affecting layout:
+                            // the padding is hittable via contentShape and compensated
+                            // by the negative padding on the Menu below.
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
                 }
