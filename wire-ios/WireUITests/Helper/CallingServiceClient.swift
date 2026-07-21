@@ -371,7 +371,16 @@ final class CallingServiceClient {
     }
 
     func getFlows(instanceId: String) async throws -> [CallFlow] {
-        try await performFlowsGet(instanceId: instanceId).filter(\.isValid)
+        let rawFlows = try await performFlowsGet(instanceId: instanceId)
+        let validFlows = rawFlows.filter(\.isValid)
+
+        if validFlows.isEmpty {
+            print("CallingService flows empty for \(instanceId). Raw flows: \(rawFlows)")
+        } else if validFlows.count != rawFlows.count {
+            print("CallingService filtered invalid flows for \(instanceId). Raw flows: \(rawFlows). Valid flows: \(validFlows)")
+        }
+
+        return validFlows
     }
 }
 
