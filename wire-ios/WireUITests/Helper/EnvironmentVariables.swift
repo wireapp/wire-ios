@@ -30,7 +30,7 @@ struct EnvironmentVariables {
         case missingCallingBackend
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
-//        case missingOktaApiKey
+        case missingOktaApiKey
         case missingSSOClaimedUserEmail
         case missingSSOClaimedUserPassword
         case missingSSOClaimedDomainCode
@@ -48,7 +48,7 @@ struct EnvironmentVariables {
             case .missingCallingBackend: "Missing env var: PREDEFINED_BACKEND"
             case .missingCallingInstanceTypeName: "Missing env var: CALLING_INSTANCE_TYPE_NAME"
             case .missingCallingInstanceTypeVersion: "Missing env var: CALLING_INSTANCE_TYPE_VERSION"
-//            case .missingOktaApiKey: "Missing env var: OKTA_API_KEY_IOS"
+            case .missingOktaApiKey: "Missing env var: OKTA_API_KEY_IOS"
             case .missingSSOClaimedUserEmail: "Missing env var: SSO_CLAIMED_USER_EMAIL"
             case .missingSSOClaimedUserPassword: "Missing env var: SSO_CLAIMED_USER_PASSWORD"
             case .missingSSOClaimedDomainCode: "Missing env var: SSO_CLAIMED_DOMAIN_CODE"
@@ -75,7 +75,7 @@ struct EnvironmentVariables {
     let callingBackend: String
     let callingInstanceTypeName: String
     let callingInstanceTypeVersion: String
-//    let oktaApiKey: String
+    let oktaApiKey: String
     let ssoClaimedUserEmail: String
     let ssoClaimedUserPassword: String
     let ssoClaimedDomainCode: String
@@ -161,10 +161,10 @@ struct EnvironmentVariables {
             throw Failure.missingCallingInstanceTypeVersion
         }
 
-//        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
-//              !oktaApiKey.isEmpty else {
-//            throw Failure.missingOktaApiKey
-//        }
+        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
+              !oktaApiKey.isEmpty else {
+            throw Failure.missingOktaApiKey
+        }
 
         guard let ssoClaimedUserEmail = ProcessInfo.processInfo.environment["SSO_CLAIMED_USER_EMAIL"],
               !ssoClaimedUserEmail.isEmpty else {
@@ -203,7 +203,7 @@ struct EnvironmentVariables {
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
-//        self.oktaApiKey = oktaApiKey
+        self.oktaApiKey = oktaApiKey
         self.ssoClaimedUserEmail = ssoClaimedUserEmail
         self.ssoClaimedUserPassword = ssoClaimedUserPassword
         self.ssoClaimedDomainCode = ssoClaimedDomainCode
