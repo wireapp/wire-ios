@@ -46,25 +46,18 @@ done
 
 # CHECK PREREQUISITES
 
-## Xcode — resolve DEVELOPER_DIR so all tools use the right version
-## without mutating the global xcode-select setting.
-repository_xcode_version=$(cat .xcode-version)
-
-if [[ -z "${DEVELOPER_DIR-}" ]]; then
-    candidate="/Applications/Xcode_${repository_xcode_version}.app/Contents/Developer"
-    if [[ -d "$candidate" ]]; then
-        export DEVELOPER_DIR="$candidate"
-    fi
-fi
-
+## Xcode
 hash xcodebuild 2>/dev/null || die "Can't find Xcode, please install from the App Store"
-local_xcode_version=$(xcodebuild -version | sed -n "s/Xcode //p")
+local_xcode_version=`xcodebuild -version | sed -n "s/Xcode //p"`
 LOCAL_XCODE_VERSION=( ${local_xcode_version//./ } )
+
+repository_xcode_version=`cat .xcode-version`
 REPOSITORY_XCODE_VERSION=( ${repository_xcode_version//./ } )
+
 
 [[ ${LOCAL_XCODE_VERSION[0]} -gt ${REPOSITORY_XCODE_VERSION[0]} ||
 ( ${LOCAL_XCODE_VERSION[0]} -eq ${REPOSITORY_XCODE_VERSION[0]} && ${LOCAL_XCODE_VERSION[1]} -ge ${REPOSITORY_XCODE_VERSION[1]} ) ]] ||
-die "Xcode version for the repository should be at least ${repository_xcode_version}. The current local version is ${local_xcode_version}. If you have multiple versions of Xcode installed, please run: export DEVELOPER_DIR=/Applications/Xcode_${repository_xcode_version}.app/Contents/Developer"
+die "Xcode version for the repository should be at least ${repository_xcode_version}. The current local version is ${local_xcode_version}. If you have multiple versions of Xcode installed, please run: sudo xcode-select --switch /Applications/Xcode_${repository_xcode_version}.app"
 
 # SETUP
 
