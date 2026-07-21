@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import SwiftSyntax
 
 struct MockGenerator {
@@ -135,8 +136,8 @@ struct MockGenerator {
         }
         let returnType = returnTypeRaw ?? ""
 
-        let paramInternalNames: [String] = params.map { $0.internalName }
-        let paramTypes: [String] = params.map { $0.type.trimmedDescription }
+        let paramInternalNames: [String] = params.map(\.internalName)
+        let paramTypes: [String] = params.map(\.type.trimmedDescription)
 
         var lines: [String] = []
         lines.append("// MARK: - \(name)")
@@ -161,7 +162,10 @@ struct MockGenerator {
         // Mock method closure hook.
         let closureParams = paramTypes.joined(separator: ", ")
         let closureReturn = hasReturn ? returnType : "Void"
-        lines.append("\(acl)var \(identifier)_MockMethod: ((\(closureParams))\(asyncKw)\(throwsKw) -> \(closureReturn))?")
+        lines
+            .append(
+                "\(acl)var \(identifier)_MockMethod: ((\(closureParams))\(asyncKw)\(throwsKw) -> \(closureReturn))?"
+            )
 
         // Fallback return value.
         if hasReturn {
@@ -218,7 +222,7 @@ struct MockGenerator {
     /// or single-element closure argument. Function types (e.g. `() -> Void`) and any/some
     /// existentials need to be parenthesised so that trailing `!`/`?` bind to the whole type.
     private func wrapForIUO(_ type: String) -> String {
-        if type.contains("->") || type.hasPrefix("any ") || type.hasPrefix("some ") {
+        if type.range(of: "->") != nil || type.hasPrefix("any ") || type.hasPrefix("some ") {
             return "(" + type + ")"
         }
         return type

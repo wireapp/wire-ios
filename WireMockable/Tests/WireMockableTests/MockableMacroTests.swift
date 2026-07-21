@@ -39,7 +39,8 @@ final class MockableMacroTests: XCTestCase {
 
             #if DEBUG
             public final class FooMock: Foo {
-                public init() {}
+                public init() {
+                }
             }
             #endif
             """,
@@ -62,7 +63,8 @@ final class MockableMacroTests: XCTestCase {
 
             #if DEBUG
             final class FooMock: Foo {
-                init() {}
+                init() {
+                }
 
                 // MARK: - ping
 
@@ -95,7 +97,8 @@ final class MockableMacroTests: XCTestCase {
 
             #if DEBUG
             public final class UserServiceMock: UserService {
-                public init() {}
+                public init() {
+                }
 
                 // MARK: - loadUser
 
@@ -132,7 +135,8 @@ final class MockableMacroTests: XCTestCase {
 
             #if DEBUG
             final class FooMock: Foo {
-                init() {}
+                init() {
+                }
 
                 // MARK: - doThing
 
@@ -169,13 +173,18 @@ final class MockableMacroTests: XCTestCase {
 
             #if DEBUG
             final class FooMock: Foo {
-                init() {}
+                init() {
+                }
 
                 // MARK: - name
 
                 var name: String {
-                    get { underlyingName }
-                    set { underlyingName = newValue }
+                    get {
+                        underlyingName
+                    }
+                    set {
+                        underlyingName = newValue
+                    }
                 }
                 var underlyingName: String!
             }
@@ -200,7 +209,8 @@ final class MockableMacroTests: XCTestCase {
 
             #if DEBUG
             final class FooMock: Foo {
-                init() {}
+                init() {
+                }
 
                 // MARK: - nickname
 
@@ -223,7 +233,8 @@ final class MockableMacroTests: XCTestCase {
 
             #if DEBUG
             public final class FooMock: Foo, @unchecked Sendable {
-                public init() {}
+                public init() {
+                }
             }
             #endif
             """,
