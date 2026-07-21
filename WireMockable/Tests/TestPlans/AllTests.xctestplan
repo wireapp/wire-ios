@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "29FB012B-3FF1-4D3D-A78C-967800B7B398",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "performanceAntipatternCheckerEnabled" : true,
+    "region" : "DE"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireMockable",
+        "identifier" : "WireMockableTests",
+        "name" : "WireMockableTests"
+      }
+    }
+  ],
+  "version" : 1
+}
