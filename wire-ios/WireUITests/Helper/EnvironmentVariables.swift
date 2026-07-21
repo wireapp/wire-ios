@@ -30,7 +30,8 @@ struct EnvironmentVariables {
         case missingCallingBackend
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
-        case missingOktaApiKey
+        case missingKeycloakURL
+        case missingKeycloakAdminPassword
         case missingSSOClaimedUserEmail
         case missingSSOClaimedUserPassword
         case missingSSOClaimedDomainCode
@@ -48,7 +49,8 @@ struct EnvironmentVariables {
             case .missingCallingBackend: "Missing env var: PREDEFINED_BACKEND"
             case .missingCallingInstanceTypeName: "Missing env var: CALLING_INSTANCE_TYPE_NAME"
             case .missingCallingInstanceTypeVersion: "Missing env var: CALLING_INSTANCE_TYPE_VERSION"
-            case .missingOktaApiKey: "Missing env var: OKTA_API_KEY_IOS"
+            case .missingKeycloakURL: "Missing env var: KEYCLOAK_URL"
+            case .missingKeycloakAdminPassword: "Missing env var: KEYCLOAK_ADMIN_PASSWORD"
             case .missingSSOClaimedUserEmail: "Missing env var: SSO_CLAIMED_USER_EMAIL"
             case .missingSSOClaimedUserPassword: "Missing env var: SSO_CLAIMED_USER_PASSWORD"
             case .missingSSOClaimedDomainCode: "Missing env var: SSO_CLAIMED_DOMAIN_CODE"
@@ -75,7 +77,8 @@ struct EnvironmentVariables {
     let callingBackend: String
     let callingInstanceTypeName: String
     let callingInstanceTypeVersion: String
-    let oktaApiKey: String
+    let keycloakURL: URL
+    let keycloakAdminPassword: String
     let ssoClaimedUserEmail: String
     let ssoClaimedUserPassword: String
     let ssoClaimedDomainCode: String
@@ -161,9 +164,14 @@ struct EnvironmentVariables {
             throw Failure.missingCallingInstanceTypeVersion
         }
 
-        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
-              !oktaApiKey.isEmpty else {
-            throw Failure.missingOktaApiKey
+        guard let keycloakURL = ProcessInfo.processInfo.environment["KEYCLOAK_URL"],
+              !keycloakURL.isEmpty else {
+            throw Failure.missingKeycloakURL
+        }
+
+        guard let keycloakAdminPassword = ProcessInfo.processInfo.environment["KEYCLOAK_ADMIN_PASSWORD"],
+              !keycloakAdminPassword.isEmpty else {
+            throw Failure.missingKeycloakAdminPassword
         }
 
         guard let ssoClaimedUserEmail = ProcessInfo.processInfo.environment["SSO_CLAIMED_USER_EMAIL"],
@@ -203,7 +211,8 @@ struct EnvironmentVariables {
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
-        self.oktaApiKey = oktaApiKey
+        self.keycloakURL = URL(string: "https://\(keycloakURL)")!
+        self.keycloakAdminPassword = keycloakAdminPassword
         self.ssoClaimedUserEmail = ssoClaimedUserEmail
         self.ssoClaimedUserPassword = ssoClaimedUserPassword
         self.ssoClaimedDomainCode = ssoClaimedDomainCode
