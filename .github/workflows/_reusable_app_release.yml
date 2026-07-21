@@ -27,6 +27,10 @@ on:
       produce_debug_builds:
         type: boolean
         default: false
+      configuration_path:
+        type: string
+        required: false
+        default: ''
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -52,26 +56,32 @@ on:
       GOV_SUBFOLDER_PRODUCTION:
         required: true
       C1_S3_SUBFOLDER_RESTRICTED:
-        required: true
+        required: false
       C1_S3_SUBFOLDER_PRODUCTION:
-        required: true
+        required: false
       C3_S3_SUBFOLDER_RESTRICTED:
-        required: true
+        required: false
       C3_S3_SUBFOLDER_PRODUCTION:
-        required: true
+        required: false
       PLAYGROUND_TESTFLIGHT_LINK:
-        required: true
+        required: false
       BETA_TESTFLIGHT_LINK:
-        required: true
+        required: false
       EDGE_TESTFLIGHT_LINK:
-        required: true
+        required: false
       COUNTLY_PRODUCTION_KEY:
-        required: true
+        required: false
       COUNTLY_INTERNAL_KEY:
-        required: true  
+        required: false
       SUBMODULE_PAT:
         required: true
+<<<<<<< HEAD
       JIRA_TOKEN:
+=======
+      WIRE_IOS_BUILD_WEBHOOK:
+        required: false
+      WIRE_IOS_CI_WEBHOOK:
+>>>>>>> 84ee25f254 (fix: Gov pipeline for release 3.120 branch - WPB-26202 (#4997))
         required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -161,8 +171,23 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
+<<<<<<< HEAD
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+=======
+         # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_COUNTLY }}-${{ env.ENABLE_DATADOG }}
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+>>>>>>> 84ee25f254 (fix: Gov pipeline for release 3.120 branch - WPB-26202 (#4997))
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
@@ -181,13 +206,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: Trigger build
-        run: bundle exec fastlane ${{ inputs.fastlane_action }}
+        run: bundle exec fastlane "${FASTLANE_ACTION_INPUT}" configuration_path:"${CONFIGURATION_PATH_INPUT}"
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
+<<<<<<< HEAD
       - name: Check for duplicate symbol implementations
         if: always()
         continue-on-error: true
         run: ./scripts/check_duplicate_classes.sh .
+=======
+          FASTLANE_ACTION_INPUT: ${{ inputs.fastlane_action }}
+          CONFIGURATION_PATH_INPUT: ${{ inputs.configuration_path }}
+>>>>>>> 84ee25f254 (fix: Gov pipeline for release 3.120 branch - WPB-26202 (#4997))
       - name: Archiving Logs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()

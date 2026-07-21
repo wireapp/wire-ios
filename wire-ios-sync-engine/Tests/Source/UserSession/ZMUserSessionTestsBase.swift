@@ -79,7 +79,12 @@ class ZMUserSessionTestsBase: MessagingTest {
                 countlyURL: nil
             ),
             proxySettings: nil,
+<<<<<<< HEAD
             certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
+=======
+            certificateTrust: ServerCertificateTrust(trustData: []),
+            supportEmail: nil
+>>>>>>> 84ee25f254 (fix: Gov pipeline for release 3.120 branch - WPB-26202 (#4997))
         )
 
         wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(

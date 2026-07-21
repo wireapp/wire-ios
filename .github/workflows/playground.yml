@@ -5,10 +5,19 @@ on:
     inputs:
       distribute_externals:
         type: boolean
+<<<<<<< HEAD
         description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees'
         default: true
+=======
+        description: 'Distribute externally'
+        default: false
+      configuration_path:
+        type: string
+        description: 'configuration folder (keeps Playground Release.xcconfig)'
+        default: ''
+>>>>>>> 84ee25f254 (fix: Gov pipeline for release 3.120 branch - WPB-26202 (#4997))
 
-permissions: 
+permissions:
   checks: write
 
 jobs:
@@ -19,5 +28,9 @@ jobs:
       datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
+<<<<<<< HEAD
       notify_secret: WIRE_IOS_BUILD_WEBHOOK
+=======
+      configuration_path: ${{ inputs.configuration_path }}
+>>>>>>> 84ee25f254 (fix: Gov pipeline for release 3.120 branch - WPB-26202 (#4997))
     secrets: inherit
