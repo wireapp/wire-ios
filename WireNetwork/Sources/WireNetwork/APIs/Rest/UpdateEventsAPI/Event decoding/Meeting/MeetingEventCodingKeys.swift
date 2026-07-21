@@ -22,6 +22,7 @@ enum MeetingEventCodingKeys: String, CodingKey {
     case time
 
     // TODO: [WPB-26733] remove once the backend no longer sends the qualified ID under "data"
+    // revert commit c76b59db669eec08127f83bb2005a1f176bcb62a
     case legacyQualifiedID = "data"
 
 }
