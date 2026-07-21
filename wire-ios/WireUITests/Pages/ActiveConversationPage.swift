@@ -115,7 +115,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var labelSharedDriveIsOn: XCUIElement {
-        app.links.containing(NSPredicate(format: "value CONTAINS[c] %@", "Shared Drive is on")).firstMatch
+        app.links.containing(NSPredicate(format: "value CONTAINS[c] %@", Locators.ActiveConversationPage.labelSharedDriveON.rawValue)).firstMatch
     }
 
     var sharedDriveButton: XCUIElement {
