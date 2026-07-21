@@ -16,7 +16,7 @@ runs:
         XCODE_VERSION=$(cat .xcode-version)
 
         if ! command -v xcodes >/dev/null 2>&1; then
-          echo "::error::'xcodes' CLI is required to locate Xcode ${XCODE_VERSION}. Install it (e.g. 'brew install xcodesorg/made/xcodes') or adjust this action to match your runner setup."
+          echo "::error::'xcodes' CLI is required to locate Xcode ${XCODE_VERSION}."
           exit 1
         fi
 
