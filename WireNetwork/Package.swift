@@ -11,7 +11,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.19.3"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
         .package(path: "../WireFoundation")
