@@ -127,6 +127,7 @@ public enum Locators {
         // changing existing references across the app.
         case accountHeader = "Account"
         case pictureCell
+        case profilePictureImagePreview
         case colorCell
         case conversationBackgroundSwitch = "ConversationBackgroundSwitch"
         case nameField = "NameField"
