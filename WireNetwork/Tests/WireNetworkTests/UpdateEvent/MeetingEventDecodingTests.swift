@@ -51,6 +51,24 @@ final class MeetingEventDecodingTests: XCTestCase {
         )
     }
 
+    // TODO: [WPB-26733] remove this test and the file MeetingCreateLegacyDataKey.json once the backend no longer sends the qualified ID under "data"
+    func testDecodingMeetingCreateEventWithLegacyDataKey() throws {
+        // Given
+        let mockEventData = try MockJSONPayloadResource(name: "MeetingCreateLegacyDataKey")
+
+        // When
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .meeting(.create(MeetingCreateEvent(meetingID: Scaffolding.meetingID)))
+        )
+    }
+
     func testDecodingMeetingDeleteEvent() throws {
         // Given
         let mockEventData = try MockJSONPayloadResource(name: "MeetingDelete")
