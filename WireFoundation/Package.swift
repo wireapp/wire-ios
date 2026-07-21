@@ -41,7 +41,7 @@ let package = Package(
         .target(
             name: "WireFoundation",
             dependencies: [
-                .product(name: "WireMockable", package: "WireMockable")
+                "WireMockable"
             ]
         ),
         .testTarget(
