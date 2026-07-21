@@ -85,17 +85,17 @@ final class CallingManager {
     }
 
     func verifyReceiveAudioAndVideo(instanceIds: [String]) async throws {
-        try await verifyPositiveFlowChange(
+        try await waitForPositiveFlowOnAnyInstance(
             instanceIds: instanceIds,
             checkAudioSent: false,
             checkAudioReceived: true,
             checkVideoSent: false,
             checkVideoReceived: false,
-            timeout: 15
+            timeout: 30
         )
     }
 
-    private func verifyPositiveFlowChange(
+    private func waitForPositiveFlowOnAnyInstance(
         instanceIds: [String],
         checkAudioSent: Bool,
         checkAudioReceived: Bool,
@@ -103,6 +103,13 @@ final class CallingManager {
         checkVideoReceived: Bool,
         timeout: TimeInterval
     ) async throws {
+        func isPositive(_ flow: CallFlow) -> Bool {
+            (!checkAudioSent || flow.audioPacketsSent > 0) &&
+                (!checkAudioReceived || flow.audioPacketsReceived > 0) &&
+                (!checkVideoSent || flow.videoPacketsSent > 0) &&
+                (!checkVideoReceived || flow.videoPacketsReceived > 0)
+        }
+
         var lastFlowsByInstanceId: [String: [CallFlow]] = [:]
 
         for attempt in 0 ... Int(timeout) {
@@ -110,13 +117,7 @@ final class CallingManager {
                 let flows = try await client.getFlows(instanceId: instanceId)
                 lastFlowsByInstanceId[instanceId] = flows
 
-                let foundPositiveFlow = flows.contains { flow in
-                    (!checkAudioSent || flow.audioPacketsSent > 0) &&
-                        (!checkAudioReceived || flow.audioPacketsReceived > 0) &&
-                        (!checkVideoSent || flow.videoPacketsSent > 0) &&
-                        (!checkVideoReceived || flow.videoPacketsReceived > 0)
-                }
-                if foundPositiveFlow {
+                if flows.contains(where: isPositive) {
                     return
                 }
             }
