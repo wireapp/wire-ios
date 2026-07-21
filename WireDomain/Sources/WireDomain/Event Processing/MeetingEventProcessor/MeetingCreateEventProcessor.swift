@@ -25,13 +25,15 @@ struct MeetingCreateEventProcessor: MeetingCreateEventProcessorProtocol {
     let conversationRepository: any ConversationRepositoryProtocol
 
     func processEvent(_ event: MeetingCreateEvent) async throws {
+        // A nil meeting no longer exists on the backend; its local copy
+        // was already deleted, so there is nothing left to link.
         guard let meeting = try await repository.pullMeeting(id: event.meetingID) else { return }
 
-        // The backend doesn't send a conversation.create event for the meeting's
-        // conversation (see `CreateMeetingUseCase`), so a meeting created on
-        // another client references a conversation this client doesn't know yet.
-        // Pull it and store the meeting again so the two are linked; meetings
-        // without a locally stored conversation are not listed.
+        // The meeting's conversation arrives via its own conversation.create-meeting
+        // event, but that event isn't guaranteed to have been processed before this
+        // one. If the conversation isn't stored locally yet, pull it and store the
+        // meeting again so the two are linked; meetings without a locally stored
+        // conversation are not listed.
         let conversationID = meeting.conversationID
         guard await conversationRepository.fetchConversation(
             id: conversationID.id,
