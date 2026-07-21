@@ -294,6 +294,9 @@
       location = "group:WireMessaging">
    </FileRef>
    <FileRef
+      location = "group:WireMockable">
+   </FileRef>
+   <FileRef
       location = "group:WireNetwork">
    </FileRef>
    <FileRef
