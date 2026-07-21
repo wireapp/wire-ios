@@ -28,23 +28,27 @@ struct MeetingRow: View {
     let formatTimeRange: (Meeting) -> String
     let onEdit: () -> Void
     let onDelete: () -> Void
+
+    @ScaledMetric private var iconBoxSize: CGFloat = 31
+    @ScaledMetric private var iconFontSize: CGFloat = 15
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(ColorTheme.Backgrounds.surface.color)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    )
-                    .frame(width: 31, height: 31)
-
-                Image(systemName: "calendar")
-                    .font(.system(size: 15))
-            }
+            Image(systemName: "calendar")
+                .font(.system(size: iconFontSize, weight: .semibold))
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .frame(width: iconBoxSize, height: iconBoxSize)
+                .background(
+                    ColorTheme.Backgrounds.surface.color,
+                    in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
+                )
 
             VStack(alignment: .leading, spacing: 2) {
-                HStack(alignment: .firstTextBaseline) {
+                HStack(alignment: .top) {
                     Text(meeting.title)
                         .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
@@ -68,8 +72,15 @@ struct MeetingRow: View {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+                            // The design's padding is 12/8; the extra 12pt of vertical
+                            // padding grows the tap target to ~44pt and is cancelled
+                            // out by the negative padding below, so the layout keeps
+                            // the design's spacing.
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
+                    .padding(.vertical, -12)
                 }
 
                 Text(formatTimeRange(meeting))
@@ -78,7 +89,6 @@ struct MeetingRow: View {
 
                 if !meeting.members.isEmpty {
                     MemberAvatarsView(members: meeting.members)
-                        .padding(.top, 2)
                 }
             }
         }
