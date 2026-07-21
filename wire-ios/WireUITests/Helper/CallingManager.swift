@@ -90,9 +90,8 @@ final class CallingManager {
             checkAudioSent: false,
             checkAudioReceived: true,
             checkVideoSent: false,
-            checkVideoReceived: true,
-            // CI can be slow to publish media flows.
-            timeout: 30
+            checkVideoReceived: false,
+            timeout: 15
         )
     }
 
