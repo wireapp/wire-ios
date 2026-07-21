@@ -182,6 +182,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             XCTAssertEqual(message.linkPreviewState, .done)
             XCTAssertNil(message.expirationDate)
+            XCTAssertFalse(syncMOC.hasChanges)
         }
     }
 
