@@ -242,6 +242,40 @@ final class MockableMacroTests: XCTestCase {
         )
     }
 
+    func testLabelOnlyParameterGetsSynthesizedInternalName() {
+        assertMacroExpansion(
+            """
+            @Mockable
+            protocol Foo {
+                func doThing(_: Int, name: String)
+            }
+            """,
+            expandedSource: """
+            protocol Foo {
+                func doThing(_: Int, name: String)
+            }
+
+            #if DEBUG
+            final class FooMock: Foo {
+                init() {
+                }
+
+                // MARK: - doThing
+
+                var doThingName_Invocations: [(arg0: Int, name: String)] = []
+                var doThingName_MockMethod: ((Int, String) -> Void)?
+
+                func doThing(_ arg0: Int, name: String) {
+                    doThingName_Invocations.append((arg0: arg0, name: name))
+                    doThingName_MockMethod?(arg0, name)
+                }
+            }
+            #endif
+            """,
+            macros: macros
+        )
+    }
+
     func testForwardsAttributesToMockClass() {
         assertMacroExpansion(
             """

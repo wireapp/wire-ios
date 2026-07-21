@@ -149,7 +149,9 @@ struct MockGenerator {
         }
         let returnType = returnTypeRaw ?? ""
 
-        let paramInternalNames: [String] = params.map(\.internalName)
+        let paramInternalNames: [String] = params.enumerated().map { index, param in
+            param.synthesizedInternalName(fallbackIndex: index)
+        }
         let paramTypes: [String] = params.map(\.type.trimmedDescription)
 
         var lines: [String] = []
@@ -187,8 +189,12 @@ struct MockGenerator {
 
         lines.append("")
 
-        // Function implementation.
-        lines.append("\(acl)func \(name)\(decl.signature.trimmedDescription) {")
+        // Function implementation. We reconstruct the parameter clause so that
+        // any label-only parameter (e.g. `_: Int`) gets a synthesized internal
+        // name that we can reference in the generated body.
+        let paramClause = renderedParameterClause(params: params, internalNames: paramInternalNames)
+        let returnClause = hasReturn ? " -> \(returnType)" : ""
+        lines.append("\(acl)func \(name)\(paramClause)\(asyncKw)\(throwsKw)\(returnClause) {")
 
         if params.isEmpty {
             lines.append("    \(trackingName) += 1")
@@ -214,6 +220,26 @@ struct MockGenerator {
         lines.append("}")
 
         return lines.joined(separator: "\n")
+    }
+
+    /// Rebuilds the `(…)` parameter clause of the emitted function, inserting a
+    /// synthesized internal name for any label-only parameter (`_: Int` →
+    /// `_ arg0: Int`) so the generated body has an identifier to reference.
+    private func renderedParameterClause(
+        params: [FunctionParameterSyntax],
+        internalNames: [String]
+    ) -> String {
+        let rendered = zip(params, internalNames).map { param, internalName in
+            let external = param.firstName.text
+            let namePart = external == internalName ? internalName : "\(external) \(internalName)"
+            let variadic = param.ellipsis != nil ? "..." : ""
+            var result = "\(namePart): \(param.type.trimmedDescription)\(variadic)"
+            if let defaultValue = param.defaultValue {
+                result += " \(defaultValue.trimmedDescription)"
+            }
+            return result
+        }
+        return "(\(rendered.joined(separator: ", ")))"
     }
 
     private func methodIdentifier(name: String, params: [FunctionParameterSyntax]) -> String {
@@ -243,15 +269,15 @@ struct MockGenerator {
 }
 
 private extension FunctionParameterSyntax {
-    /// The identifier used to reference the parameter inside the function body.
-    /// Uses the internal (second) name when the parameter has an external label,
-    /// otherwise the first name. Falls back to `_` for parameters with only a label.
-    var internalName: String {
+    /// The identifier used to reference the parameter inside the generated body.
+    /// Uses `secondName` when present, else `firstName`, else `argN` for
+    /// label-only parameters (`_:`), where `N` is `fallbackIndex`.
+    func synthesizedInternalName(fallbackIndex: Int) -> String {
         if let second = secondName?.text {
             return second
         }
         let first = firstName.text
-        return first == "_" ? "_" : first
+        return first == "_" ? "arg\(fallbackIndex)" : first
     }
 }
 
