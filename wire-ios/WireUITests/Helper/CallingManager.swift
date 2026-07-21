@@ -104,41 +104,29 @@ final class CallingManager {
         timeout: TimeInterval = 15
     ) async throws {
         for instanceId in instanceIds {
-            let flowsBefore = try await waitForFlows(instanceId: instanceId)
+            var flows: [CallFlow] = []
 
-            for flowBefore in flowsBefore {
-                try await assertPositiveFlowChange(
-                    instanceId: instanceId,
-                    flowBefore: flowBefore,
-                    checkAudioSent: checkAudioSent,
-                    checkAudioReceived: checkAudioReceived,
-                    checkVideoSent: checkVideoSent,
-                    checkVideoReceived: checkVideoReceived,
-                    timeout: timeout
-                )
+            for attempt in 0 ... Int(timeout) {
+                flows = try await client.getFlows(instanceId: instanceId)
+
+                let hasPositiveFlow = flows.contains { flow in
+                    (!checkAudioSent || flow.audioPacketsSent > 0) &&
+                        (!checkAudioReceived || flow.audioPacketsReceived > 0) &&
+                        (!checkVideoSent || flow.videoPacketsSent > 0) &&
+                        (!checkVideoReceived || flow.videoPacketsReceived > 0)
+                }
+                if hasPositiveFlow {
+                    return
+                }
+
+                guard attempt < Int(timeout) else { break }
+                try await Task.sleep(for: .seconds(1))
             }
+
+            throw RuntimeError(
+                "CallingService no positive flow for \(instanceId). Flows: \(flows)"
+            )
         }
-    }
-
-    private func waitForFlows(
-        instanceId: String,
-        minimumCount: Int = 1,
-        timeout: TimeInterval = 15
-    ) async throws -> [CallFlow] {
-        var flows: [CallFlow] = []
-
-        for attempt in 0 ... Int(timeout) {
-            flows = try await client.getFlows(instanceId: instanceId)
-            if flows.count >= minimumCount {
-                return flows
-            }
-            guard attempt < Int(timeout) else { break }
-            try await Task.sleep(for: .seconds(1))
-        }
-
-        throw RuntimeError(
-            "CallingService found \(flows.count) flows for \(instanceId), expected at least \(minimumCount)"
-        )
     }
 
     private func requireCurrentCallId(instanceId: String) async throws -> String {
@@ -151,37 +139,5 @@ final class CallingManager {
             throw RuntimeError("CallingService call id is nil or empty")
         }
         return callId
-    }
-
-    private func assertPositiveFlowChange(
-        instanceId: String,
-        flowBefore: CallFlow,
-        checkAudioSent: Bool,
-        checkAudioReceived: Bool,
-        checkVideoSent: Bool,
-        checkVideoReceived: Bool,
-        timeout: TimeInterval
-    ) async throws {
-        var flowAfter: CallFlow?
-
-        for attempt in 0 ... Int(timeout) {
-            flowAfter = try await client.getFlows(instanceId: instanceId)
-                .first { $0.remoteUserId == flowBefore.remoteUserId }
-
-            if let flowAfter,
-               !checkAudioSent || flowAfter.audioPacketsSent > flowBefore.audioPacketsSent,
-               !checkAudioReceived || flowAfter.audioPacketsReceived > flowBefore.audioPacketsReceived,
-               !checkVideoSent || flowAfter.videoPacketsSent > flowBefore.videoPacketsSent,
-               !checkVideoReceived || flowAfter.videoPacketsReceived > flowBefore.videoPacketsReceived {
-                return
-            }
-
-            guard attempt < Int(timeout) else { break }
-            try await Task.sleep(for: .seconds(1))
-        }
-
-        throw RuntimeError(
-            "CallingService no positive flow change for \(instanceId). Before: \(flowBefore). After: \(String(describing: flowAfter))"
-        )
     }
 }
