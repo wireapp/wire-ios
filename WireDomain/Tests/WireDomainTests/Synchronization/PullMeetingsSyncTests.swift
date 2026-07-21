@@ -189,7 +189,7 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         if let error = pullMeetingIdQualifiedIDMeetingThrowableError {
             throw error
         }
-        if let pullMeetingIdQualifiedIDMeetingClosure = pullMeetingIdQualifiedIDMeetingClosure {
+        if let pullMeetingIdQualifiedIDMeetingClosure {
             return try await pullMeetingIdQualifiedIDMeetingClosure(id)
         } else {
             return pullMeetingIdQualifiedIDMeetingReturnValue
