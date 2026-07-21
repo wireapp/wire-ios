@@ -1,5 +1,5 @@
 name: "Select Xcode"
-description: "Set DEVELOPER_DIR from .xcode-version so concurrent runners on the same machine don't fight over the global xcode-select setting."
+description: "Reads .xcode-version and set DEVELOPER_DIR environment variable and XCODE_VERSION output."
 
 outputs:
   XCODE_VERSION:
@@ -14,12 +14,16 @@ runs:
       shell: bash
       run: |
         XCODE_VERSION=$(cat .xcode-version)
-        DEVELOPER_DIR="/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer"
+        XCODE_APP=$(xcodes installed "$XCODE_VERSION" | head -n 1 | awk -F'\t' '{print $NF}')
 
-        if [ ! -d "$DEVELOPER_DIR" ]; then
-          echo "::error::Xcode ${XCODE_VERSION} not found at ${DEVELOPER_DIR}"
+        if [ -z "$XCODE_APP" ] || [ ! -d "$XCODE_APP" ]; then
+          echo "::error::Xcode ${XCODE_VERSION} not found via 'xcodes installed'"
+          echo "Installed Xcodes:"
+          xcodes installed || true
           exit 1
         fi
+
+        DEVELOPER_DIR="${XCODE_APP}/Contents/Developer"
 
         echo "DEVELOPER_DIR=$DEVELOPER_DIR" >> "$GITHUB_ENV"
         echo "XCODE_VERSION=$XCODE_VERSION" >> "$GITHUB_OUTPUT"
