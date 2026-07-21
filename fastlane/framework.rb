@@ -14,6 +14,7 @@ class Framework
             "WireMessaging",
             "WireCalling",
             "WireLogging",
+            "WireMockable",
             "WireUI",
             "wire-ios-canvas",
             "wire-ios-data-model",
@@ -121,7 +122,15 @@ class Framework
         frameworks["WireUI"].add_dependency(frameworks["WireDomain"])
         
         frameworks["WireAnalytics"].add_dependency(frameworks["WireLogging"])
-        
+
+        # Any change to WireMockable can affect the expansion of `@Mockable` in
+        # every consumer, so treat it as a dependency of every other framework
+        # to force a full CI run on macro changes.
+        frameworks.each_value do |framework|
+            next if framework == frameworks["WireMockable"]
+            framework.add_dependency(frameworks["WireMockable"])
+        end
+
         frameworks
     end
 
@@ -177,6 +186,8 @@ class Framework
             "WireAnalyticsAll" # if a package has multiple targets, fastlane does not found <Package>-Package
         when "WireLogging"
             "WireLoggingAll" # if a package has multiple targets, fastlane does not find <Package>-Package
+        when "WireMockable"
+            name
         when "wire-ios-mocktransport"
             "WireMockTransport"
         else
