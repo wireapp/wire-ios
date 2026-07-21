@@ -28,33 +28,22 @@ struct MemberAvatarsView: View {
     private let overlap: CGFloat = 8
 
     var body: some View {
-        if members.count == 1 {
-            HStack(spacing: 6) {
-                avatar(for: members[0])
+        // Show up to `maxVisible` overlapping avatars; any remaining participants
+        // are represented by a trailing "+N" count.
+        let overflow = members.count - maxVisible
 
-                if !members[0].name.isEmpty {
-                    Text(members[0].name)
-                        .font(for: .subline1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                        .lineLimit(1)
+        HStack(spacing: 6) {
+            HStack(spacing: -overlap) {
+                ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, member in
+                    avatar(for: member)
+                        .zIndex(Double(maxVisible - index))
                 }
             }
-        } else {
-            let overflow = members.count - maxVisible
 
-            HStack(spacing: 6) {
-                HStack(spacing: -overlap) {
-                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, member in
-                        avatar(for: member)
-                            .zIndex(Double(maxVisible - index))
-                    }
-                }
-
-                if overflow > 0 {
-                    Text("+\(overflow)")
-                        .font(for: .subline1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
+            if overflow > 0 {
+                Text("+\(overflow)")
+                    .font(for: .subline1)
+                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
             }
         }
     }
