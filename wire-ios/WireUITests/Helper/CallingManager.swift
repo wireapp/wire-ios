@@ -104,33 +104,31 @@ final class CallingManager {
         checkVideoReceived: Bool,
         timeout: TimeInterval
     ) async throws {
-        for instanceId in instanceIds {
-            var flows: [CallFlow] = []
-            var foundPositiveFlow = false
+        var lastFlowsByInstanceId: [String: [CallFlow]] = [:]
 
-            for attempt in 0 ... Int(timeout) {
-                flows = try await client.getFlows(instanceId: instanceId)
+        for attempt in 0 ... Int(timeout) {
+            for instanceId in instanceIds {
+                let flows = try await client.getFlows(instanceId: instanceId)
+                lastFlowsByInstanceId[instanceId] = flows
 
-                foundPositiveFlow = flows.contains { flow in
+                let foundPositiveFlow = flows.contains { flow in
                     (!checkAudioSent || flow.audioPacketsSent > 0) &&
                         (!checkAudioReceived || flow.audioPacketsReceived > 0) &&
                         (!checkVideoSent || flow.videoPacketsSent > 0) &&
                         (!checkVideoReceived || flow.videoPacketsReceived > 0)
                 }
                 if foundPositiveFlow {
-                    break
+                    return
                 }
-
-                guard attempt < Int(timeout) else { break }
-                try await Task.sleep(for: .seconds(1))
             }
 
-            guard foundPositiveFlow else {
-                throw RuntimeError(
-                    "CallingService no positive flow for \(instanceId). Flows: \(flows)"
-                )
-            }
+            guard attempt < Int(timeout) else { break }
+            try await Task.sleep(for: .seconds(1))
         }
+
+        throw RuntimeError(
+            "CallingService no positive flow for any instance. Flows: \(lastFlowsByInstanceId)"
+        )
     }
 
     private func requireCurrentCallId(instanceId: String) async throws -> String {

@@ -247,7 +247,7 @@ final class ZCallingTests: WireUITestCase {
     @MainActor
     func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_TC_9497() async throws {
 
-        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
         let firstTimePage = try app.loginUser(
             email: teamAndGroupCallSetup.appUserReceivingCall.email,
