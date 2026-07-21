@@ -1,4 +1,4 @@
-name: "Select Xcode"
+name: "Setup Xcode"
 description: "Reads .xcode-version and set DEVELOPER_DIR environment variable and XCODE_VERSION output."
 
 outputs:
