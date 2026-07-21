@@ -37,6 +37,7 @@ final class PullResourcesSyncTests: XCTestCase {
     private var pullConversationLabelsSync: MockPullConversationLabelsSyncProtocol!
     private var pullAllFeatureConfigsSync: MockPullAllFeatureConfigsSyncProtocol!
     private var pullMLSStatusSync: MockPullMLSStatusSyncProtocol!
+    private var pullMeetingsSync: MockPullMeetingsSyncProtocol!
 
     override func setUp() async throws {
         pullSelfUserSync = MockPullSelfUserSyncProtocol()
@@ -52,6 +53,7 @@ final class PullResourcesSyncTests: XCTestCase {
         pullConversationLabelsSync = MockPullConversationLabelsSyncProtocol()
         pullAllFeatureConfigsSync = MockPullAllFeatureConfigsSyncProtocol()
         pullMLSStatusSync = MockPullMLSStatusSyncProtocol()
+        pullMeetingsSync = MockPullMeetingsSyncProtocol()
 
         sut = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
@@ -66,7 +68,8 @@ final class PullResourcesSyncTests: XCTestCase {
             pullKnownUsersSync: pullKnownUsersSync,
             pullConversationLabelsSync: pullConversationLabelsSync,
             pullAllFeatureConfigsSync: pullAllFeatureConfigsSync,
-            pullMLSStatusSync: pullMLSStatusSync
+            pullMLSStatusSync: pullMLSStatusSync,
+            pullMeetingsSync: pullMeetingsSync
         )
     }
 
@@ -84,6 +87,7 @@ final class PullResourcesSyncTests: XCTestCase {
         pullConversationLabelsSync = nil
         pullAllFeatureConfigsSync = nil
         pullMLSStatusSync = nil
+        pullMeetingsSync = nil
         sut = nil
     }
 
@@ -106,6 +110,7 @@ final class PullResourcesSyncTests: XCTestCase {
         pullConversationLabelsSync.pull_MockMethod = {}
         pullAllFeatureConfigsSync.pull_MockMethod = {}
         pullMLSStatusSync.pull_MockMethod = {}
+        pullMeetingsSync.pull_MockMethod = {}
 
         // When
         try await sut.pull()
@@ -124,6 +129,7 @@ final class PullResourcesSyncTests: XCTestCase {
         XCTAssertEqual(pullConversationLabelsSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullAllFeatureConfigsSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullMLSStatusSync.pull_Invocations.count, 1)
+        XCTAssertEqual(pullMeetingsSync.pull_Invocations.count, 1)
     }
 
     func testPull_Resources_Are_Called_In_Right_Order() async throws {
@@ -188,6 +194,10 @@ final class PullResourcesSyncTests: XCTestCase {
             callOrder.append("pullMLSStatusSync")
         }
 
+        pullMeetingsSync.pull_MockMethod = {
+            callOrder.append("pullMeetingsSync")
+        }
+
         // When
         try await sut.pull()
 
@@ -205,7 +215,8 @@ final class PullResourcesSyncTests: XCTestCase {
             "pullSelfLegalholdInfoSync",
             "pullConversationLabelsSync",
             "pullAllFeatureConfigsSync",
-            "pullMLSStatusSync"
+            "pullMLSStatusSync",
+            "pullMeetingsSync"
         ])
     }
 

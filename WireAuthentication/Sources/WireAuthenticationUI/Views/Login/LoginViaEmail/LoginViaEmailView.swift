@@ -180,6 +180,7 @@ package struct LoginViaEmailView: View {
             Text(Strings.CreateAccountOrTeam.title)
                 .multilineTextAlignment(.center)
                 .font(for: .body1)
+                .accessibilityHeading(.h1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 

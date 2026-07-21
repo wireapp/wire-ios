@@ -43,6 +43,7 @@ public extension WireLogger {
     static let localStorage = WireLogger(tag: "local-storage")
     static let mainCoordinator = WireLogger(tag: "main-coordinator")
     static let messaging = WireLogger(tag: "messaging")
+    static let meetings = WireLogger(tag: "meetings")
     static let mls = WireLogger(tag: "mls")
     static let notifications = WireLogger(tag: "notifications")
     static let performance = WireLogger(tag: "performance")
