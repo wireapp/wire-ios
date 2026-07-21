@@ -16,5 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 4.25.0
-MAJOR_VERSION = 4
+import Foundation
+
+// sourcery: AutoMockable
+/// Deletes a meeting by its ID.
+package protocol DeleteMeetingUseCaseProtocol: Sendable {
+
+    func invoke(meetingID: QualifiedID) async throws
+
+}

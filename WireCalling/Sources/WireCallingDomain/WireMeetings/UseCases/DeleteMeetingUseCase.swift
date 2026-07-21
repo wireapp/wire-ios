@@ -16,5 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 4.25.0
-MAJOR_VERSION = 4
+package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
+
+    private let repository: any MeetingRepositoryProtocol
+
+    package init(repository: any MeetingRepositoryProtocol) {
+        self.repository = repository
+    }
+
+    package func invoke(meetingID: QualifiedID) async throws {
+        try await repository.deleteMeeting(id: meetingID)
+    }
+
+}

@@ -1000,6 +1000,9 @@
 "last_admin_leave.promote_new_admin" = "Назначить нового администратора";
 "last_admin_leave.no_eligible_candidates_message" = "Вы - единственный администратор. Другие участники не могут быть администраторами.\nДобавьте хотя бы одного члена команды и назначьте его администратором, прежде чем покинуть. Или удалите группу, если она больше не нужна.";
 "last_admin_leave.delete_group" = "Удалить группу";
+"last_admin_leave.promote_only_message" = "Вы единственный администратор.\nНазначьте другого пользователя, прежде чем покинуть.";
+"last_admin_leave.cannot_leave_title" = "Невозможно покинуть \"%@\".";
+"last_admin_leave.cannot_leave_message" = "В этой группе нет администраторов с соответствующими правами. Как обычный пользователь вы не можете удалить группу. Для этого добавьте еще одного участника команды и назначьте его администратором.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
@@ -1491,7 +1494,7 @@
 "settings.debugging_tools.debug_command.title" = "Команда отладки";
 "settings.debugging_tools.debug_command.command_not_recognized" = "Команда не распознана";
 "settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Ошибка: вариант для исправления недоступен";
-"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Исправление ключей удаления MLS";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Восстановление неисправных ключей удаления MLS";
 "settings.debugging_tools.repair_mls_removal_keys.success_message" = "Найдено: %d поврежденных бесед\nИсправлено: %d бесед";
 "settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Ошибка восстановления";
 "settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Ошибка: %@";
