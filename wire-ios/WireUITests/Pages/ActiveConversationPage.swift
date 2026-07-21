@@ -115,7 +115,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var labelSharedDriveIsOn: XCUIElement {
-        app.links[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
+        app.links.containing(NSPredicate(format: "value CONTAINS[c] %@", "Shared Drive is on")).firstMatch
     }
 
     var sharedDriveButton: XCUIElement {
@@ -314,6 +314,7 @@ class ActiveConversationPage: PageModel {
     func waitToUploadToFinishAndSend() {
         XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
         sendButton.waitAndTap()
+        XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
     }
 
     func openSharedDrive() throws -> SharedDriveFilesPage {
