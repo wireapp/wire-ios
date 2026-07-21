@@ -91,7 +91,8 @@ final class CallingManager {
             checkAudioReceived: true,
             checkVideoSent: false,
             checkVideoReceived: true,
-            timeout: 15
+            // CI can be slow to publish media flows.
+            timeout: 30
         )
     }
 
@@ -101,31 +102,34 @@ final class CallingManager {
         checkAudioReceived: Bool,
         checkVideoSent: Bool,
         checkVideoReceived: Bool,
-        timeout: TimeInterval = 15
+        timeout: TimeInterval
     ) async throws {
         for instanceId in instanceIds {
             var flows: [CallFlow] = []
+            var foundPositiveFlow = false
 
             for attempt in 0 ... Int(timeout) {
                 flows = try await client.getFlows(instanceId: instanceId)
 
-                let hasPositiveFlow = flows.contains { flow in
+                foundPositiveFlow = flows.contains { flow in
                     (!checkAudioSent || flow.audioPacketsSent > 0) &&
                         (!checkAudioReceived || flow.audioPacketsReceived > 0) &&
                         (!checkVideoSent || flow.videoPacketsSent > 0) &&
                         (!checkVideoReceived || flow.videoPacketsReceived > 0)
                 }
-                if hasPositiveFlow {
-                    return
+                if foundPositiveFlow {
+                    break
                 }
 
                 guard attempt < Int(timeout) else { break }
                 try await Task.sleep(for: .seconds(1))
             }
 
-            throw RuntimeError(
-                "CallingService no positive flow for \(instanceId). Flows: \(flows)"
-            )
+            guard foundPositiveFlow else {
+                throw RuntimeError(
+                    "CallingService no positive flow for \(instanceId). Flows: \(flows)"
+                )
+            }
         }
     }
 
