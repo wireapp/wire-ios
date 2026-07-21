@@ -64,25 +64,44 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
 
     private var handle: UInt32
     private var contextPointer: UnsafeMutableRawPointer?
+    private let userID: String
+    private let clientID: String
 
     // MARK: - Init
 
-    // AVS registers C-level callbacks with a handle created in init. Calling
-    // wcall_event_create a second time returns the same handle, so callbacks
-    // always fire through the first instance's contextRef. We keep one instance
-    // per process so the handle and contextRef are stable across NSE invocations.
-    private nonisolated(unsafe) static var processInstance: AVSCallingEventService?
+    // Per the AVS team: wcall_event_create must be called once per account and
+    // returns a distinct handle per (userID, clientID). The `arg` context pointer
+    // passed at creation is handed back verbatim in every callback for that handle,
+    // so each account's callbacks can be routed to its own instance. The NSE is a
+    // long-lived process shared across accounts, so we cache one instance per
+    // identity and reuse it across NSE invocations, keeping each account's handle
+    // and contextRef stable while isolating accounts from one another.
+    private nonisolated(unsafe) static var processInstances: [String: AVSCallingEventService] = [:]
+    private static let instancesLock = NSLock()
 
     public static func shared(userID: String, clientID: String) -> AVSCallingEventService {
-        if let existing = processInstance {
+        let key = "\(userID)|\(clientID)"
+        instancesLock.lock()
+        defer { instancesLock.unlock() }
+        if let existing = processInstances[key] {
+            WireLogger.calling.info(
+                "AVS-DIAG: shared() reusing instance for account=\(userID) (cached count=\(processInstances.count))",
+                attributes: .newNSE, .safePublic
+            )
             return existing
         }
         let instance = AVSCallingEventService(userID: userID, clientID: clientID)
-        processInstance = instance
+        processInstances[key] = instance
+        WireLogger.calling.info(
+            "AVS-DIAG: shared() created new instance for account=\(userID) (cached count=\(processInstances.count))",
+            attributes: .newNSE, .safePublic
+        )
         return instance
     }
 
     public init(userID: String, clientID: String) {
+        self.userID = userID
+        self.clientID = clientID
         self.handle = 0
         wcall_set_log_handler({ _, msgPtr, _ in
             guard let msg = msgPtr.flatMap({ String(cString: $0) }) else { return }
@@ -98,6 +117,18 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             Self.closedCallHandler,
             contextPointer
         )
+        WireLogger.calling.info(
+            "AVS-DIAG: called wcall_event_create for userID=\(userID), clientID=\(clientID), (handle=\(self.handle)), contextPointer=\(contextPointer)",
+            attributes: .newNSE, .safePublic
+        )
+        WireLogger.calling.info(
+            """
+            AVS-DIAG: wcall_event_create returned handle=\(handle) \
+            context=\(contextPointer.map(String.init(describing:)) ?? "nil") \
+            account=\(userID) client=\(clientID)
+            """,
+            attributes: .newNSE, .safePublic
+        )
     }
 
     deinit {
@@ -109,7 +140,10 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     // MARK: - AVSCallingEventServiceProtocol
 
     public func start() {
-        WireLogger.calling.debug("AVS: wcall_event_start", attributes: .newNSE, .safePublic)
+        WireLogger.calling.debug(
+            "AVS-DIAG: wcall_event_start handle=\(handle) account=\(userID)",
+            attributes: .newNSE, .safePublic
+        )
         wcall_event_start(handle)
     }
 
@@ -139,7 +173,10 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     }
 
     public func end() {
-        WireLogger.calling.debug("AVS: wcall_event_end (evaluating batch)", attributes: .newNSE, .safePublic)
+        WireLogger.calling.debug(
+            "AVS-DIAG: wcall_event_end (evaluating batch) handle=\(handle) account=\(userID)",
+            attributes: .newNSE, .safePublic
+        )
         wcall_event_end(handle)
     }
 
@@ -171,11 +208,16 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             return
         }
 
+        let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         WireLogger.calling.info(
-            "AVS callback: incoming call (shouldRing: \(shouldRingFlag == 1), video: \(isVideoCallFlag == 1))",
+            """
+            AVS-DIAG: incoming callback arg=\(contextRef) \
+            resolved handle=\(service.handle) account=\(service.userID) \
+            payload conversationId=\(conversationId) userId=\(userId) \
+            (shouldRing: \(shouldRingFlag == 1), video: \(isVideoCallFlag == 1))
+            """,
             attributes: .newNSE, .safePublic
         )
-        let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         service.onIncomingCall?(
             conversationId,
             userId,
@@ -203,11 +245,15 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             return
         }
 
+        let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         WireLogger.calling.info(
-            "AVS callback: missed call",
+            """
+            AVS-DIAG: missed callback arg=\(contextRef) \
+            resolved handle=\(service.handle) account=\(service.userID) \
+            payload conversationId=\(conversationId)
+            """,
             attributes: .newNSE, .safePublic
         )
-        let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         // Mirror AVSWrapper: treat messageTime=0 as "now"
         let nonZeroTime = messageTime != 0 ? messageTime : UInt32(Date().timeIntervalSince1970)
         service.onMissedCall?(
@@ -237,11 +283,15 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
         }
 
         let reason = CallClosedReason(wcall_reason: reasonCode)
+        let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         WireLogger.calling.info(
-            "AVS callback: call closed (reason: \(reason))",
+            """
+            AVS-DIAG: closed callback arg=\(contextRef) \
+            resolved handle=\(service.handle) account=\(service.userID) \
+            payload conversationId=\(conversationId) reason=\(reason)
+            """,
             attributes: .newNSE, .safePublic
         )
-        let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
         service.onCallClosed?(
             reason,
             conversationId
