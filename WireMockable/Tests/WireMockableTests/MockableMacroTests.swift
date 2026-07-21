@@ -242,6 +242,44 @@ final class MockableMacroTests: XCTestCase {
         )
     }
 
+    func testOptionalReturnTypeUsesNilStorage() {
+        assertMacroExpansion(
+            """
+            @Mockable
+            protocol Foo {
+                func find(id: Int) -> String?
+            }
+            """,
+            expandedSource: """
+            protocol Foo {
+                func find(id: Int) -> String?
+            }
+
+            #if DEBUG
+            final class FooMock: Foo {
+                init() {
+                }
+
+                // MARK: - find
+
+                var findId_Invocations: [Int] = []
+                var findId_MockMethod: ((Int) -> String?)?
+                var findId_MockValue: String?
+
+                func find(id: Int) -> String? {
+                    findId_Invocations.append(id)
+                    if let mock = findId_MockMethod {
+                        return mock(id)
+                    }
+                    return findId_MockValue
+                }
+            }
+            #endif
+            """,
+            macros: macros
+        )
+    }
+
     func testLabelOnlyParameterGetsSynthesizedInternalName() {
         assertMacroExpansion(
             """

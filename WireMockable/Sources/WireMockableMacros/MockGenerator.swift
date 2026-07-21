@@ -141,13 +141,16 @@ struct MockGenerator {
         let throwsKw = isThrows ? " throws" : ""
         let callPrefix = (isThrows ? "try " : "") + (isAsync ? "await " : "")
 
-        let returnTypeRaw = decl.signature.returnClause?.type.trimmedDescription
+        let returnTypeSyntax = decl.signature.returnClause?.type
+        let returnTypeRaw = returnTypeSyntax?.trimmedDescription
         let hasReturn = if let returnTypeRaw {
             returnTypeRaw != "Void" && returnTypeRaw != "()"
         } else {
             false
         }
         let returnType = returnTypeRaw ?? ""
+        let returnIsOptional = returnTypeSyntax?.is(OptionalTypeSyntax.self) == true
+            || returnTypeSyntax?.is(ImplicitlyUnwrappedOptionalTypeSyntax.self) == true
 
         let paramInternalNames: [String] = params.enumerated().map { index, param in
             param.synthesizedInternalName(fallbackIndex: index)
@@ -182,9 +185,15 @@ struct MockGenerator {
                 "\(acl)var \(identifier)_MockMethod: ((\(closureParams))\(asyncKw)\(throwsKw) -> \(closureReturn))?"
             )
 
-        // Fallback return value.
+        // Fallback return value. For optional / IUO return types the storage
+        // uses the return type as-is (Swift defaults it to nil), otherwise we
+        // wrap in an implicitly-unwrapped optional so tests must assign a value.
         if hasReturn {
-            lines.append("\(acl)var \(identifier)_MockValue: \(wrapForIUO(returnType))!")
+            if returnIsOptional {
+                lines.append("\(acl)var \(identifier)_MockValue: \(returnType)")
+            } else {
+                lines.append("\(acl)var \(identifier)_MockValue: \(wrapForIUO(returnType))!")
+            }
         }
 
         lines.append("")
