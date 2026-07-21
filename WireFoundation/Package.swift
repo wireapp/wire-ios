@@ -19,7 +19,8 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.20"),
-        .package(path: "../WirePlugins")
+        .package(path: "../WirePlugins"),
+        .package(path: "../WireMockable")
     ],
     targets: [
         .binaryTarget(
@@ -37,7 +38,12 @@ let package = Package(
             dependencies: ["WireCrypto", "WireTestingPackage"]
         ),
 
-        .target(name: "WireFoundation"),
+        .target(
+            name: "WireFoundation",
+            dependencies: [
+                .product(name: "WireMockable", package: "WireMockable")
+            ]
+        ),
         .testTarget(
             name: "WireFoundationTests",
             dependencies: [

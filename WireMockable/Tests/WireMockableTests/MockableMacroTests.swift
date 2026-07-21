@@ -242,6 +242,29 @@ final class MockableMacroTests: XCTestCase {
         )
     }
 
+    func testForwardsAttributesToMockClass() {
+        assertMacroExpansion(
+            """
+            @Mockable
+            @MainActor
+            public protocol Foo {}
+            """,
+            expandedSource: """
+            @MainActor
+            public protocol Foo {}
+
+            #if DEBUG
+            @MainActor
+            public final class FooMock: Foo {
+                public init() {
+                }
+            }
+            #endif
+            """,
+            macros: macros
+        )
+    }
+
     func testNonProtocolEmitsDiagnostic() {
         assertMacroExpansion(
             """

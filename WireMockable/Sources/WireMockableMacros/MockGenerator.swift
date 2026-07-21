@@ -44,14 +44,27 @@ struct MockGenerator {
             .joined(separator: "\n")
 
         let inheritance = protocolName + (conformsToSendable ? ", @unchecked Sendable" : "")
+        let attributesPrefix = forwardedAttributes.isEmpty ? "" : forwardedAttributes + "\n"
 
         return """
         #if DEBUG
-        \(accessLevelPrefix)final class \(protocolName)Mock: \(inheritance) {
+        \(attributesPrefix)\(accessLevelPrefix)final class \(protocolName)Mock: \(inheritance) {
         \(indented)
         }
         #endif
         """
+    }
+
+    /// Attributes on the protocol that should be reapplied to the mock class,
+    /// e.g. `@MainActor` or `@available(...)`. The `@Mockable` attribute itself is excluded.
+    private var forwardedAttributes: String {
+        protocolDecl.attributes
+            .compactMap { element -> String? in
+                guard case let .attribute(attr) = element else { return nil }
+                if attr.attributeName.trimmedDescription == "Mockable" { return nil }
+                return attr.trimmedDescription
+            }
+            .joined(separator: "\n")
     }
 
     // MARK: - Metadata

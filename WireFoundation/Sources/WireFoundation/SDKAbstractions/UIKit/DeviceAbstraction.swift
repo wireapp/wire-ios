@@ -18,8 +18,10 @@
 
 public import UIKit
 
-// sourcery: AutoMockable
+import WireMockable
+
 /// A protocol which allows for abstracting `UIDevice`.
+@Mockable
 @MainActor
 public protocol DeviceAbstraction {
     var userInterfaceIdiom: UIUserInterfaceIdiom { get }
