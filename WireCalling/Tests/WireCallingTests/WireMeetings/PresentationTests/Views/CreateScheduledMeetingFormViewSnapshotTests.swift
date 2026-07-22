@@ -86,6 +86,7 @@ final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
             mode: .scheduled,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
             currentDateProvider: dateProviderMock
         )
     }
