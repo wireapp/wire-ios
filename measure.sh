@@ -1,11 +1,13 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-xcodebuild clean \
-  -workspace wire-ios-mono.xcworkspace \
-  -scheme Wire-iOS \
-  -skipPackagePluginValidation \
-  -skipMacroValidation
+# Dedicated build directories so cleaning here never touches Xcode's own caches.
+# DerivedData is wiped before each run; SourcePackages (downloaded package
+# sources and binary artifacts) is kept to avoid re-downloading.
+DERIVED_DATA=".measure/DerivedData"
+SOURCE_PACKAGES=".measure/SourcePackages"
+
+rm -rf "$DERIVED_DATA"
 
 time \
 xcodebuild build-for-testing \
@@ -13,6 +15,8 @@ xcodebuild build-for-testing \
   -scheme Wire-iOS \
   -testPlan AllTests \
   -destination 'platform=iOS Simulator,name=iPhone 17 (Tests)' \
+  -derivedDataPath "$DERIVED_DATA" \
+  -clonedSourcePackagesDirPath "$SOURCE_PACKAGES" \
   -skipPackagePluginValidation \
   -skipMacroValidation \
   CODE_SIGNING_ALLOWED=NO
