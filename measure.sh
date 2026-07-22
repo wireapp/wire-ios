@@ -9,6 +9,14 @@ SOURCE_PACKAGES=".measure/SourcePackages"
 
 rm -rf "$DERIVED_DATA"
 
+# Resolve and download all packages up front so the timed build measures
+# compilation only, not network fetches.
+xcodebuild -resolvePackageDependencies \
+  -workspace wire-ios-mono.xcworkspace \
+  -scheme Wire-iOS \
+  -derivedDataPath "$DERIVED_DATA" \
+  -clonedSourcePackagesDirPath "$SOURCE_PACKAGES"
+
 time \
 xcodebuild build-for-testing \
   -workspace wire-ios-mono.xcworkspace \
