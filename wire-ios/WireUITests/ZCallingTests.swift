@@ -239,7 +239,6 @@ final class ZCallingTests: WireUITestCase {
             activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
             "Ongoing call still visible after hanging up the call"
         )
-
     }
 
     /// Call participant switches from audio call to video call and back
@@ -275,15 +274,27 @@ final class ZCallingTests: WireUITestCase {
             try await callingManager.waitForCurrentCallStatus(
                 instanceId: instanceId,
                 expectedStatuses: ["ACTIVE"],
-                timeout: 60
+                timeout: 30
             )
         }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
 
         try ongoingCallPage.turnOnVideo()
 
         for instanceId in acceptingIds {
-            _ = try await callingManager.switchVideoOn(instanceId: instanceId)
+            try await callingManager.switchVideoOn(instanceId: instanceId)
         }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
 
         XCTAssertTrue(
             ongoingCallPage.turnOffCameraButton.waitForExistence(timeout: 10),
@@ -291,10 +302,8 @@ final class ZCallingTests: WireUITestCase {
         )
 
         for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
-            ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
+            _ = ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
         }
-
-        try await callingManager.verifyReceiveAudioAndVideo(instanceIds: acceptingIds)
 
         try ongoingCallPage.turnOffVideo()
         XCTAssertTrue(

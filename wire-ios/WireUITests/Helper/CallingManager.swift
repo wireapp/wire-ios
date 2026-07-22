@@ -84,93 +84,52 @@ final class CallingManager {
         )
     }
 
-    func switchVideoOn(instanceId: String) async throws -> CallResponse {
+    func switchVideoOn(instanceId: String) async throws {
         let callId = try await requireCurrentCallId(instanceId: instanceId)
-        return try await client.switchVideoOn(instanceId: instanceId, callId: callId)
+        try await client.switchVideoOn(instanceId: instanceId, callId: callId)
     }
 
-    func verifyReceiveAudioAndVideo(instanceIds: [String]) async throws {
-        try await verifyPositiveFlowChangeOnAnyInstance(
-            instanceIds: instanceIds,
-            checkAudioSent: false,
-            checkAudioReceived: true,
-            checkVideoSent: false,
-            checkVideoReceived: false,
-            timeout: 60
-        )
-    }
-
-    private func verifyPositiveFlowChangeOnAnyInstance(
+    func verifyPeerConnections(
         instanceIds: [String],
-        checkAudioSent: Bool,
-        checkAudioReceived: Bool,
-        checkVideoSent: Bool,
-        checkVideoReceived: Bool,
+        expectedCount: Int,
         timeout: TimeInterval
     ) async throws {
-        let baseline = try await waitForFlowsOnAnyInstance(
-            instanceIds: instanceIds,
-            timeout: timeout
-        )
+        precondition(expectedCount >= 0, "Expected peer connection count must not be negative")
 
-        func hasPositiveChange(from flowBefore: CallFlow, to flowAfter: CallFlow) -> Bool {
-            (!checkAudioSent || flowAfter.audioPacketsSent > flowBefore.audioPacketsSent) &&
-                (!checkAudioReceived || flowAfter.audioPacketsReceived > flowBefore.audioPacketsReceived) &&
-                (!checkVideoSent || flowAfter.videoPacketsSent > flowBefore.videoPacketsSent) &&
-                (!checkVideoReceived || flowAfter.videoPacketsReceived > flowBefore.videoPacketsReceived)
-        }
-
-        var lastRawFlows: [CallFlow] = []
-        var lastValidFlows: [CallFlow] = []
-
-        for attempt in 0 ... Int(timeout) {
-            lastRawFlows = try await client.getRawFlows(instanceId: baseline.instanceId)
-            lastValidFlows = lastRawFlows.filter(\.isValid)
-
-            for flowBefore in baseline.flows {
-                if let flowAfter = lastValidFlows.first(where: { $0.remoteUserId == flowBefore.remoteUserId }),
-                   hasPositiveChange(from: flowBefore, to: flowAfter) {
-                    return
-                }
-            }
-
-            guard attempt < Int(timeout) else { break }
-            try await Task.sleep(for: .seconds(1))
-        }
-
-        throw RuntimeError(
-            "CallingService no positive flow change for \(baseline.instanceId). " +
-                "Before: \(baseline.flows). After raw: \(lastRawFlows). After valid: \(lastValidFlows)"
-        )
-    }
-
-    private func waitForFlowsOnAnyInstance(
-        instanceIds: [String],
-        timeout: TimeInterval
-    ) async throws -> (instanceId: String, flows: [CallFlow]) {
         var lastRawFlowsByInstanceId: [String: [CallFlow]] = [:]
         var lastValidFlowsByInstanceId: [String: [CallFlow]] = [:]
+        var lastFlowErrorByInstanceId: [String: String] = [:]
 
-        for attempt in 0 ... Int(timeout) {
-            for instanceId in instanceIds {
-                let rawFlows = try await client.getRawFlows(instanceId: instanceId)
-                let validFlows = rawFlows.filter(\.isValid)
-                lastRawFlowsByInstanceId[instanceId] = rawFlows
-                lastValidFlowsByInstanceId[instanceId] = validFlows
+        for instanceId in instanceIds {
+            var didFindExpectedCount = false
 
-                if !validFlows.isEmpty {
-                    return (instanceId, validFlows)
+            for attempt in 0 ... Int(timeout) {
+                do {
+                    let rawFlows = try await client.getRawFlows(instanceId: instanceId)
+                    let validFlows = rawFlows.filter(\.isValid)
+                    lastRawFlowsByInstanceId[instanceId] = rawFlows
+                    lastValidFlowsByInstanceId[instanceId] = validFlows
+
+                    if validFlows.count == expectedCount {
+                        didFindExpectedCount = true
+                        break
+                    }
+                } catch {
+                    lastFlowErrorByInstanceId[instanceId] = "\(error)"
                 }
+
+                guard attempt < Int(timeout) else { break }
+                try await Task.sleep(for: .seconds(1))
             }
 
-            guard attempt < Int(timeout) else { break }
-            try await Task.sleep(for: .seconds(1))
+            guard didFindExpectedCount else {
+                throw RuntimeError(
+                    "CallingService peer connection count did not reach \(expectedCount) for \(instanceId). " +
+                        "Raw flows: \(lastRawFlowsByInstanceId). Valid flows: \(lastValidFlowsByInstanceId). " +
+                        "Errors: \(lastFlowErrorByInstanceId)"
+                )
+            }
         }
-
-        throw RuntimeError(
-            "CallingService found no valid flows for any instance. " +
-                "Raw flows: \(lastRawFlowsByInstanceId). Valid flows: \(lastValidFlowsByInstanceId)"
-        )
     }
 
     private func requireCurrentCallId(instanceId: String) async throws -> String {
