@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 import WireMockable
 
-@Mockable
+// sourcery: AutoMockable
 /// Provides an up-to-date access token for wire drive API.
+@Mockable
 public protocol AccessTokenProvider: Sendable {
 
     func accessToken() async throws -> WireDriveAccessToken
