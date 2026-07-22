@@ -41,6 +41,19 @@ public protocol MeetingRepositoryProtocol: Sendable {
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting
 
+    /// Updates a meeting on the server and refreshes the locally stored copy.
+    /// For recurring meetings the whole series is updated.
+    ///
+    /// - Parameter id: The qualified id of the meeting to update.
+
+    func updateMeeting(
+        id: QualifiedID,
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?
+    ) async throws -> Meeting
+
     /// Stores a meeting locally without contacting the server, linking it to
     /// locally stored entities such as its conversation and creator.
     ///

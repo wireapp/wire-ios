@@ -70,6 +70,27 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         return meeting
     }
 
+    public func updateMeeting(
+        id: QualifiedID,
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: WireCallingDomain.MeetingRecurrence?
+    ) async throws -> Meeting {
+        let response = try await meetingsAPI.updateMeeting(
+            id: id,
+            parameters: UpdateMeetingParameters(
+                title: title,
+                startTime: startTime,
+                endTime: endTime,
+                recurrence: recurrence?.toNetworkRecurrence()
+            )
+        )
+        let meeting = response.toDomainMeeting()
+        await storeMeeting(meeting)
+        return meeting
+    }
+
     public func storeMeeting(_ meeting: Meeting) async {
         await localStore.storeMeeting(meeting)
         changeBroadcaster.broadcast()

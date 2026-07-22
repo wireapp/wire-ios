@@ -27,4 +27,7 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     /// Add participants to the underlying MLS conversation.
     func addParticipants(_ participants: [MeetingMember], to conversationID: QualifiedID) async throws
 
+    /// Remove participants from the underlying MLS conversation.
+    func removeParticipants(_ participants: [MeetingMember], from conversationID: QualifiedID) async throws
+
 }
