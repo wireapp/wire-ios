@@ -54,17 +54,13 @@ public struct UpdateMeetingParameters: Encodable, Sendable {
         if let endTime {
             try container.encode(ISO8601DateFormatter.internetDateTime.string(from: endTime), forKey: .endTime)
         }
-        // Recurrence is encoded as an explicit `null` so that turning a
-        // recurring meeting into a one-off one clears the recurrence on the
-        // backend.
-        // TODO: verify with the backend team whether an omitted field
-        // would also clear it (PUT-as-full-replacement) or leave it unchanged;
-        // if omitted means "unchanged", `nil` here can't express both
-        // "clear" and "don't touch" and this needs a tri-state instead.
-        if let recurrence {
-            try container.encode(recurrence, forKey: .recurrence)
-        } else {
-            try container.encodeNil(forKey: .recurrence)
-        }
+        // A `nil` recurrence is omitted rather than encoded as `null`:
+        // the backend's Recurrence parser rejects explicit `null` with a
+        // 400 bad-request (verified 2026-07-22).
+        // TODO: clarify with the backend team how to turn a recurring
+        // meeting into a one-off one: if an omitted field clears the
+        // recurrence (PUT-as-full-replacement), this is already correct;
+        // if it leaves it unchanged, clearing needs backend support.
+        try container.encodeIfPresent(recurrence, forKey: .recurrence)
     }
 }
