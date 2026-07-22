@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 import WireMockable
 
+// sourcery: AutoMockable
 @Mockable
 public protocol ConversationCreationRepositoryProtocol {
 

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 import WireMockable
 
+// sourcery: AutoMockable
 /// Fetches the meetings shown in the meetings list: all meetings of the
 /// current day — including ones that already started or ended — and of
 /// the following day.

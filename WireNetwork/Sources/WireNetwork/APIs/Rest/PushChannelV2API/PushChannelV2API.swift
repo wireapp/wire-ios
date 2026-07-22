@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 import WireMockable
 
+// sourcery: AutoMockable
 /// An API access object for endpoints concerning the push channel.
 @Mockable
 public protocol PushChannelV2API {

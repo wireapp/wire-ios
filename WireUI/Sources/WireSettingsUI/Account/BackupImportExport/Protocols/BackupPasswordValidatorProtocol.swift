@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 import WireMockable
 
+// sourcery: AutoMockable
 /// Determines if a given password is valid for encrypting a backup.
 @Mockable
 public protocol BackupPasswordValidatorProtocol {

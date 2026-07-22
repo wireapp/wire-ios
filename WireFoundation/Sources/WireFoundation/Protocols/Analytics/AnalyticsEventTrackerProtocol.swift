@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 import WireMockable
 
+// sourcery: AutoMockable
 /// An object that tracks analytic events.
 @Mockable
 public protocol AnalyticsEventTrackerProtocol: AnyObject {

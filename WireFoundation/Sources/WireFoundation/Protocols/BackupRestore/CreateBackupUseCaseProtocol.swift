@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 import WireMockable
 
+// sourcery: AutoMockable
 /// A use case to export the current app state using a provided `password`.
 @Mockable
 public protocol CreateBackupUseCaseProtocol: Sendable {
