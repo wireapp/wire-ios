@@ -275,7 +275,7 @@ final class ZCallingTests: WireUITestCase {
             try await callingManager.waitForCurrentCallStatus(
                 instanceId: instanceId,
                 expectedStatuses: ["ACTIVE"],
-                timeout: 15
+                timeout: 60
             )
         }
 

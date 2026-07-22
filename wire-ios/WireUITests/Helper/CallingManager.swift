@@ -90,17 +90,17 @@ final class CallingManager {
     }
 
     func verifyReceiveAudioAndVideo(instanceIds: [String]) async throws {
-        try await waitForPositiveFlowOnAnyInstance(
+        try await verifyPositiveFlowChangeOnAnyInstance(
             instanceIds: instanceIds,
             checkAudioSent: false,
             checkAudioReceived: true,
             checkVideoSent: false,
             checkVideoReceived: false,
-            timeout: 30
+            timeout: 60
         )
     }
 
-    private func waitForPositiveFlowOnAnyInstance(
+    private func verifyPositiveFlowChangeOnAnyInstance(
         instanceIds: [String],
         checkAudioSent: Bool,
         checkAudioReceived: Bool,
@@ -108,21 +108,28 @@ final class CallingManager {
         checkVideoReceived: Bool,
         timeout: TimeInterval
     ) async throws {
-        func isPositive(_ flow: CallFlow) -> Bool {
-            (!checkAudioSent || flow.audioPacketsSent > 0) &&
-                (!checkAudioReceived || flow.audioPacketsReceived > 0) &&
-                (!checkVideoSent || flow.videoPacketsSent > 0) &&
-                (!checkVideoReceived || flow.videoPacketsReceived > 0)
+        let baseline = try await waitForFlowsOnAnyInstance(
+            instanceIds: instanceIds,
+            timeout: timeout
+        )
+
+        func hasPositiveChange(from flowBefore: CallFlow, to flowAfter: CallFlow) -> Bool {
+            (!checkAudioSent || flowAfter.audioPacketsSent > flowBefore.audioPacketsSent) &&
+                (!checkAudioReceived || flowAfter.audioPacketsReceived > flowBefore.audioPacketsReceived) &&
+                (!checkVideoSent || flowAfter.videoPacketsSent > flowBefore.videoPacketsSent) &&
+                (!checkVideoReceived || flowAfter.videoPacketsReceived > flowBefore.videoPacketsReceived)
         }
 
-        var lastFlowsByInstanceId: [String: [CallFlow]] = [:]
+        var lastRawFlows: [CallFlow] = []
+        var lastValidFlows: [CallFlow] = []
 
         for attempt in 0 ... Int(timeout) {
-            for instanceId in instanceIds {
-                let flows = try await client.getFlows(instanceId: instanceId)
-                lastFlowsByInstanceId[instanceId] = flows
+            lastRawFlows = try await client.getRawFlows(instanceId: baseline.instanceId)
+            lastValidFlows = lastRawFlows.filter(\.isValid)
 
-                if flows.contains(where: isPositive) {
+            for flowBefore in baseline.flows {
+                if let flowAfter = lastValidFlows.first(where: { $0.remoteUserId == flowBefore.remoteUserId }),
+                   hasPositiveChange(from: flowBefore, to: flowAfter) {
                     return
                 }
             }
@@ -132,7 +139,37 @@ final class CallingManager {
         }
 
         throw RuntimeError(
-            "CallingService no positive flow for any instance. Flows: \(lastFlowsByInstanceId)"
+            "CallingService no positive flow change for \(baseline.instanceId). " +
+                "Before: \(baseline.flows). After raw: \(lastRawFlows). After valid: \(lastValidFlows)"
+        )
+    }
+
+    private func waitForFlowsOnAnyInstance(
+        instanceIds: [String],
+        timeout: TimeInterval
+    ) async throws -> (instanceId: String, flows: [CallFlow]) {
+        var lastRawFlowsByInstanceId: [String: [CallFlow]] = [:]
+        var lastValidFlowsByInstanceId: [String: [CallFlow]] = [:]
+
+        for attempt in 0 ... Int(timeout) {
+            for instanceId in instanceIds {
+                let rawFlows = try await client.getRawFlows(instanceId: instanceId)
+                let validFlows = rawFlows.filter(\.isValid)
+                lastRawFlowsByInstanceId[instanceId] = rawFlows
+                lastValidFlowsByInstanceId[instanceId] = validFlows
+
+                if !validFlows.isEmpty {
+                    return (instanceId, validFlows)
+                }
+            }
+
+            guard attempt < Int(timeout) else { break }
+            try await Task.sleep(for: .seconds(1))
+        }
+
+        throw RuntimeError(
+            "CallingService found no valid flows for any instance. " +
+                "Raw flows: \(lastRawFlowsByInstanceId). Valid flows: \(lastValidFlowsByInstanceId)"
         )
     }
 

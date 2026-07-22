@@ -370,8 +370,12 @@ final class CallingServiceClient {
         try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "switchVideoOn"])
     }
 
+    func getRawFlows(instanceId: String) async throws -> [CallFlow] {
+        try await performFlowsGet(instanceId: instanceId)
+    }
+
     func getFlows(instanceId: String) async throws -> [CallFlow] {
-        try await performFlowsGet(instanceId: instanceId).filter(\.isValid)
+        try await getRawFlows(instanceId: instanceId).filter(\.isValid)
     }
 }
 
