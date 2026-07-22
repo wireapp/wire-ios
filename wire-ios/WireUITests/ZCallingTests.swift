@@ -272,9 +272,10 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertEqual(responses.count, acceptingIds.count)
 
         for instanceId in acceptingIds {
-            try await callingManager.waitForCurrentCall(
+            try await callingManager.waitForCurrentCallStatus(
                 instanceId: instanceId,
-                timeout: 10
+                expectedStatuses: ["ACTIVE"],
+                timeout: 15
             )
         }
 

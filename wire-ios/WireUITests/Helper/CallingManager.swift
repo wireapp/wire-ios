@@ -54,10 +54,14 @@ final class CallingManager {
         }
     }
 
-    func waitForCurrentCall(
+    func waitForCurrentCallStatus(
         instanceId: String,
+        expectedStatuses: Set<String>,
         timeout: TimeInterval
     ) async throws {
+        precondition(!expectedStatuses.isEmpty, "No call statuses provided")
+
+        let expectedStatuses = Set(expectedStatuses.map { $0.uppercased() })
         var currentStatus: String?
         var currentCallId: String?
 
@@ -65,7 +69,7 @@ final class CallingManager {
             if let call = try? await client.getCurrentCall(instanceId: instanceId) {
                 currentCallId = call.id
                 currentStatus = call.status
-                if let currentCallId, !currentCallId.isEmpty {
+                if let currentStatus, expectedStatuses.contains(currentStatus.uppercased()) {
                     return
                 }
             }
@@ -75,7 +79,8 @@ final class CallingManager {
         }
 
         throw RuntimeError(
-            "CallingService current call was not found for \(instanceId). Status: \(currentStatus ?? "nil"), callId: \(currentCallId ?? "nil")"
+            "CallingService current call did not reach status \(expectedStatuses.sorted()) for \(instanceId). " +
+                "Status: \(currentStatus ?? "nil"), callId: \(currentCallId ?? "nil")"
         )
     }
 
