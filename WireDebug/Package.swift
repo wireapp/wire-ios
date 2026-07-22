@@ -11,10 +11,10 @@ let package = Package(
         .library(name: "WireViewsDebugUI", targets: ["WireViewsDebugUI"])
     ],
     dependencies: [
-        .package(name: "WireAuthentication", path: "../WireAuthentication"),
-        .package(name: "WireMessaging", path: "../WireMessaging"),
+        .package(path: "../WireAuthentication"),
+        .package(path: "../WireMessaging"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
-        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireFoundation"),
         .package(path: "../WireUI")
     ],
     targets: [

@@ -18,7 +18,10 @@
 
 package import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 package protocol NodesAPIProtocol: Sendable {
     func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireDrivePreCheckResult
 
