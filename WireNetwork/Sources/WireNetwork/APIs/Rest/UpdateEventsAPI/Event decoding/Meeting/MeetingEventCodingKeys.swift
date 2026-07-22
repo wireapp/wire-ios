@@ -21,20 +21,4 @@ enum MeetingEventCodingKeys: String, CodingKey {
     case qualifiedID = "qualified_id"
     case time
 
-    // TODO: [WPB-26733] remove once the backend no longer sends the qualified ID under "data"
-    // revert commit c76b59db669eec08127f83bb2005a1f176bcb62a
-    case legacyQualifiedID = "data"
-
-}
-
-// TODO: [WPB-26733] remove once the backend no longer sends the qualified ID under "data"
-extension KeyedDecodingContainer<MeetingEventCodingKeys> {
-
-    /// Decodes the meeting's qualified ID, falling back to the incorrect `data` key
-    /// which the backend currently sends instead of `qualified_id`.
-    func decodeQualifiedID() throws -> QualifiedIDV0 {
-        try decodeIfPresent(QualifiedIDV0.self, forKey: .qualifiedID)
-            ?? decode(QualifiedIDV0.self, forKey: .legacyQualifiedID)
-    }
-
 }

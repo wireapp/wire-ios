@@ -21,14 +21,10 @@ struct MeetingDeleteEventDecoder {
     func decode(
         from container: KeyedDecodingContainer<MeetingEventCodingKeys>
     ) throws -> MeetingDeleteEvent {
-        // TODO: [WPB-26733] restore this code once the backend no longer sends the qualified ID under "data"
-        // let qualifiedID = try container.decode(
-        //     QualifiedIDV0.self,
-        //     forKey: .qualifiedID
-        // )
-
-        // TODO: [WPB-26733] remove this code once the backend no longer sends the qualified ID under "data"
-        let qualifiedID = try container.decodeQualifiedID()
+        let qualifiedID = try container.decode(
+            QualifiedIDV0.self,
+            forKey: .qualifiedID
+        )
 
         return MeetingDeleteEvent(meetingID: qualifiedID.toAPIModel())
     }
