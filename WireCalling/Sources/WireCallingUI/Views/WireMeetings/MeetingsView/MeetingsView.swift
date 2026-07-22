@@ -27,8 +27,16 @@ struct MeetingsView: View {
 
     @State private var viewModel: MeetingsViewModel
 
-    init(viewModel: MeetingsViewModel) {
+    /// Called when the user chooses "Edit meeting" in a meeting's menu.
+    /// Presenting the edit UI is up to the owner of this view.
+    private let onEditMeeting: (Meeting) -> Void
+
+    init(
+        viewModel: MeetingsViewModel,
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in }
+    ) {
         self.viewModel = viewModel
+        self.onEditMeeting = onEditMeeting
     }
 
     var body: some View {
@@ -70,9 +78,7 @@ struct MeetingsView: View {
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
                 formatTimeRange: viewModel.formatTimeRange(for:),
-                onEdit: { _ in
-                    // TODO: [WPB-25501] Implement UI
-                },
+                onEdit: { onEditMeeting($0) },
                 onDelete: { viewModel.meetingToDelete = $0 }
             )
 

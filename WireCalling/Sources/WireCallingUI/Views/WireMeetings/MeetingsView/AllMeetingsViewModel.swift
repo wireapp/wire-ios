@@ -68,6 +68,10 @@ package final class AllMeetingsViewModel {
         presentedFormMode = .scheduled
     }
 
+    func editMeetingTapped(_ meeting: Meeting) {
+        presentedFormMode = .edit(meeting)
+    }
+
     func makeMeetingFormViewModel(mode: CreateMeetingFormViewModel.Mode) -> CreateMeetingFormViewModel {
         makeFormViewModel(mode) { [weak self] _ in
             self?.presentedFormMode = nil
