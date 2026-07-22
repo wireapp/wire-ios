@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireMessagingDomain
 import WireLocators
+import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
