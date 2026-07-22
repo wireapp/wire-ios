@@ -47,6 +47,7 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireData",
+                "WireFoundation",
                 "WireLogging",
                 "WireNetwork",
                 "WireMockable"
@@ -57,7 +58,8 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireCallingUI",
-                "WireCallingData"
+                "WireCallingData",
+                "WireFoundation"
             ]
         ),
         .target(
