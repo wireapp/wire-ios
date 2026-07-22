@@ -651,6 +651,14 @@ public final class MLSService: MLSServiceInterface {
             return true
         }
 
+        // The legacy action layer represents transport failures with status 0
+        // and proxy authentication failures with HTTP status 407.
+        if let actionFailure = error as? ClaimMLSKeyPackageAction.Failure,
+           case let .unknown(status) = actionFailure,
+           status == 0 || status == 407 {
+            return true
+        }
+
         if let urlError = error as? URLError {
             switch urlError.code {
             case .notConnectedToInternet, .networkConnectionLost:

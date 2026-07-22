@@ -884,15 +884,14 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
 
-        // Mock claiming a key package. Works for user1, throws for user2 and user3
-        mockActionsProvider
-            .claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { userID, _, _, _, _ in
-                if userID == userID1 {
-                    return [keyPackage]
-                } else {
-                    throw ClaimMLSKeyPackageAction.Failure.emptyKeyPackages
-                }
-            }
+        // Mock claiming a key package. Works for user1, throws for user2 and user3.
+        let controller = KeyPackageClaimController(outcomes: [
+            user1.id: .success([keyPackage]),
+            user2.id: .failure(ClaimMLSKeyPackageAction.Failure.emptyKeyPackages),
+            user3.id: .failure(ClaimMLSKeyPackageAction.Failure.emptyKeyPackages)
+        ])
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut()
 
         // Then
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [user2, user3])) {
@@ -965,17 +964,52 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         try await operation.value
     }
 
-    func test_FatalKeyPackageClaim_StopsWaitingClaimsButAllowsActiveClaimsToFinish() async {
+    func test_NoNetworkKeyPackageClaimFailure_StopsWaitingClaims() async {
+        // Given
+        let failingUser = MLSUser(id: .create(), domain: localDomain)
+        let waitingUser = MLSUser(id: .create(), domain: localDomain)
+        // The legacy claim action represents a no-network transport failure with status 0.
+        let controller = KeyPackageClaimController(
+            outcomes: [
+                failingUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 0)),
+                waitingUser.id: .success([createKeyPackage(userID: waitingUser.id, domain: waitingUser.domain)])
+            ],
+            suspendsClaims: true
+        )
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut(maxConcurrentKeyPackageClaims: 1)
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+
+        let operation = Task { () -> Error? in
+            do {
+                try await self.sut.addMembersToConversation(with: [failingUser, waitingUser], for: self.groupID)
+                return nil
+            } catch {
+                return error
+            }
+        }
+        await controller.waitUntilStarted(count: 1)
+        await controller.release(userID: failingUser.id)
+        let error = await operation.value
+
+        // Then
+        let snapshot = await controller.snapshot()
+        XCTAssertFalse(snapshot.startedUserIDs.contains(waitingUser.id))
+        XCTAssertEqual(
+            error as? ClaimMLSKeyPackageAction.Failure,
+            ClaimMLSKeyPackageAction.Failure.unknown(status: 0)
+        )
+    }
+
+    func test_NoNetworkKeyPackageClaimFailure_AllowsActiveClaimsToFinishBeforeReturning() async {
         // Given
         let failingUser = MLSUser(id: .create(), domain: localDomain)
         let activeUser = MLSUser(id: .create(), domain: localDomain)
-        let waitingUser = MLSUser(id: .create(), domain: localDomain)
-        let users = [failingUser, activeUser, waitingUser]
+        // The legacy claim action represents a no-network transport failure with status 0.
         let controller = KeyPackageClaimController(
             outcomes: [
-                failingUser.id: .failure(URLError(.notConnectedToInternet)),
-                activeUser.id: .success([createKeyPackage(userID: activeUser.id, domain: activeUser.domain)]),
-                waitingUser.id: .success([createKeyPackage(userID: waitingUser.id, domain: waitingUser.domain)])
+                failingUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 0)),
+                activeUser.id: .success([createKeyPackage(userID: activeUser.id, domain: activeUser.domain)])
             ],
             suspendsClaims: true
         )
@@ -986,7 +1020,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let operation = Task { () -> Error? in
             do {
-                try await self.sut.addMembersToConversation(with: users, for: self.groupID)
+                try await self.sut.addMembersToConversation(with: [failingUser, activeUser], for: self.groupID)
                 await completion.markCompleted()
                 return nil
             } catch {
@@ -997,24 +1031,22 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await controller.waitUntilStarted(count: 2)
         await controller.release(userID: failingUser.id)
         await controller.waitUntilFinished(count: 1)
-        for _ in 0 ..< 10 {
-            await Task.yield()
-        }
 
-        // Then waiting work did not start, and the operation is still waiting for the other active claim.
+        // Then the operation is still waiting for the other active claim.
         var snapshot = await controller.snapshot()
-        XCTAssertFalse(snapshot.startedUserIDs.contains(waitingUser.id))
         XCTAssertFalse(snapshot.finishedUserIDs.contains(activeUser.id))
         let operationIsCompleted = await completion.isCompleted
         XCTAssertFalse(operationIsCompleted)
 
-        await controller.finishAllClaims()
+        await controller.release(userID: activeUser.id)
         let error = await operation.value
 
         snapshot = await controller.snapshot()
         XCTAssertTrue(snapshot.finishedUserIDs.contains(activeUser.id))
-        XCTAssertFalse(snapshot.startedUserIDs.contains(waitingUser.id))
-        XCTAssertEqual((error as? URLError)?.code, .notConnectedToInternet)
+        XCTAssertEqual(
+            error as? ClaimMLSKeyPackageAction.Failure,
+            ClaimMLSKeyPackageAction.Failure.unknown(status: 0)
+        )
     }
 
     func test_ProxyFailure_AbortsKeyPackageClaimsAndDoesNotStartWaitingClaim() async {
@@ -1023,7 +1055,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let waitingUser = MLSUser(id: .create(), domain: localDomain)
         let controller = KeyPackageClaimController(
             outcomes: [
-                failingUser.id: .failure(NetworkStackError.proxyCredentialsRequired),
+                failingUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 407)),
                 waitingUser.id: .success([createKeyPackage(userID: waitingUser.id, domain: waitingUser.domain)])
             ]
         )
@@ -1035,10 +1067,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         do {
             try await sut.addMembersToConversation(with: [failingUser, waitingUser], for: groupID)
             XCTFail("expected proxy failure")
-        } catch let error as NetworkStackError {
-            guard case .proxyCredentialsRequired = error else {
-                return XCTFail("unexpected network stack error: \(error)")
-            }
+        } catch let error as ClaimMLSKeyPackageAction.Failure {
+            XCTAssertEqual(error, .unknown(status: 407))
         } catch {
             XCTFail("unexpected error: \(error)")
         }
@@ -1063,18 +1093,30 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             let controller = KeyPackageClaimController(outcomes: [
                 firstUser.id: .success(firstUserKeyPackages),
                 secondUser.id: .success([secondUserKeyPackage])
-            ])
+            ], suspendsClaims: maxConcurrentClaims > 1)
             mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
             createSut(maxConcurrentKeyPackageClaims: maxConcurrentClaims)
             mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
 
-            var addedKeyPackages = [WireDataModel.KeyPackage]()
+            let recorder = KeyPackageRecorder()
             mockMLSActionExecutor.mockAddMembers = { keyPackages, _ in
-                addedKeyPackages = keyPackages
+                await recorder.record(keyPackages)
             }
 
-            try await sut.addMembersToConversation(with: successfulUsers, for: groupID)
-            return addedKeyPackages
+            if maxConcurrentClaims > 1 {
+                let operation = Task {
+                    try await self.sut.addMembersToConversation(with: successfulUsers, for: self.groupID)
+                }
+                await controller.waitUntilStarted(count: 2)
+                await controller.release(userID: secondUser.id)
+                await controller.waitUntilFinished(count: 1)
+                await controller.release(userID: firstUser.id)
+                try await operation.value
+            } else {
+                try await sut.addMembersToConversation(with: successfulUsers, for: groupID)
+            }
+
+            return await recorder.keyPackages
         }
 
         let missingUser = MLSUser(id: .create(), domain: localDomain)
@@ -3683,6 +3725,14 @@ private actor AsyncCompletionFlag {
 
     func markCompleted() {
         isCompleted = true
+    }
+}
+
+private actor KeyPackageRecorder {
+    private(set) var keyPackages = [WireDataModel.KeyPackage]()
+
+    func record(_ keyPackages: [WireDataModel.KeyPackage]) {
+        self.keyPackages = keyPackages
     }
 }
 
