@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import SwiftSyntaxMacros
+public import SwiftSyntax
+
 import SwiftDiagnostics
-import SwiftSyntax
-import SwiftSyntaxMacros
+import SwiftSyntaxBuilder
 
 public struct MockableMacro: PeerMacro {
 
