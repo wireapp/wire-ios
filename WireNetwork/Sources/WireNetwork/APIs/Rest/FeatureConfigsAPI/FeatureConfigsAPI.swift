@@ -20,8 +20,8 @@ import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// An API access object for endpoints concerning feature configs.
+@Mockable
 public protocol FeatureConfigsAPI {
 
     /// Get all feature configs.

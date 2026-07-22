@@ -21,12 +21,12 @@ public import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// Repository for accessing and managing meetings.
 ///
 /// The protocol is implemented outside of this package, where the
 /// persistence layer (Core Data) and the backend API are available,
 /// and injected in.
+@Mockable
 public protocol MeetingRepositoryProtocol: Sendable {
 
     /// Returns a stream that emits whenever meetings are created, updated or deleted,

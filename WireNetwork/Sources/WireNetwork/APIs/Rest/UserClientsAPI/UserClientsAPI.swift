@@ -21,8 +21,8 @@ import WireMockable
 public typealias UserClientID = String
 
 // sourcery: AutoMockable
-@Mockable
 /// An API access object for endpoints concerning user clients.
+@Mockable
 public protocol UserClientsAPI {
 
     /// Register a new client

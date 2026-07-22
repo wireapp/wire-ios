@@ -21,12 +21,12 @@ package import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// Creates a new meeting via the backend API, syncs the conversation the
 /// backend created for it and adds the selected participants.
 ///
 /// Instant and scheduled meetings share this use case; an instant meeting
 /// is simply one that starts now.
+@Mockable
 package protocol CreateMeetingUseCaseProtocol: Sendable {
 
     func invoke(

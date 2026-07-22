@@ -37,8 +37,8 @@ public struct WireDriveNodeCacheItem: Equatable, Sendable {
 }
 
 // sourcery: AutoMockable
-@Mockable
 /// Caches `WireDriveNode` values.
+@Mockable
 package protocol WireDriveNodeCacheProtocol: Sendable {
 
     /// Sets a `WireDriveNodeCacheItem` for a given `nodeID`.

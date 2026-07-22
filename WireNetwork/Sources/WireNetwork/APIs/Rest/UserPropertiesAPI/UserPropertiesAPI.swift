@@ -20,8 +20,8 @@ import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// An API access object for endpoints concerning user properties.
+@Mockable
 public protocol UserPropertiesAPI {
 
     /// Indicates whether typing indicators is enabled.

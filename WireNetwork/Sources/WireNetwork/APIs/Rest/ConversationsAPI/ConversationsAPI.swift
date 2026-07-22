@@ -21,8 +21,8 @@ public import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// Access to conversations API.
+@Mockable
 public protocol ConversationsAPI {
 
     /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.

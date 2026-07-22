@@ -21,8 +21,8 @@ public import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// An API access object for endpoints concerning update events.
+@Mockable
 public protocol UpdateEventsAPI {
 
     /// Get the last (most recent) update event for the self client.

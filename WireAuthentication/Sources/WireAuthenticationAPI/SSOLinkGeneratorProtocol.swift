@@ -20,8 +20,8 @@ import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
+@Mockable
 public protocol SSOLinkGeneratorProtocol: Sendable {
 
     /// Generates the URL for the SSO authentication screen.

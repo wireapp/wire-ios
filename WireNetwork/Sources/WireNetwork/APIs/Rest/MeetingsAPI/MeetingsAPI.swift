@@ -19,8 +19,8 @@
 // sourcery: AutoMockable
 import WireMockable
 
-@Mockable
 /// An API access object for endpoints concerning meetings.
+@Mockable
 public protocol MeetingsAPI: Sendable {
 
     /// Fetch all meetings for the authenticated user.

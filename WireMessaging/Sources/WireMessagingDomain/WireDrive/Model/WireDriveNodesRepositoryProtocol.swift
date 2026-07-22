@@ -21,8 +21,8 @@ package import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// A repository of `WireDriveNode` objects.
+@Mockable
 package protocol WireDriveNodesRepositoryProtocol: Sendable {
 
     /// Fetches a node with the specified ID.

@@ -21,8 +21,8 @@ public import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// Mirrors the API of `Countly`.
+@Mockable
 public protocol CountlyProtocol {
 
     func resetInstance()

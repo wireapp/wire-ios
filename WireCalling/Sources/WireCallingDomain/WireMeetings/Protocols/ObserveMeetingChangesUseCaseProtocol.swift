@@ -19,8 +19,8 @@
 // sourcery: AutoMockable
 import WireMockable
 
-@Mockable
 /// Observes changes to stored meetings, e.g. caused by background sync.
+@Mockable
 package protocol ObserveMeetingChangesUseCaseProtocol: Sendable {
 
     /// Returns a stream that emits whenever meetings are created, updated or deleted.

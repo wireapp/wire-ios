@@ -22,8 +22,8 @@ import WireNetwork
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// Allows for setting up and tearing down an analytics events tracker and submitting tracking events.
+@Mockable
 public protocol RegistrationAnalyticsTrackerProtocol {
 
     /// The current analytics identifier.

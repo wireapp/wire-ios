@@ -19,10 +19,10 @@
 // sourcery: AutoMockable
 import WireMockable
 
-@Mockable
 /// Fetches the meetings shown in the meetings list: all meetings of the
 /// current day — including ones that already started or ended — and of
 /// the following day.
+@Mockable
 package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
 
     func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings

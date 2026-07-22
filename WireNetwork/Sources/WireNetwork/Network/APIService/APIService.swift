@@ -22,12 +22,12 @@ import WireFoundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// A service for network communication to a specific backend.
 ///
 /// An api service allows api clients to communicate to a target backend.
 /// It may provide additional functionality, such as providing authentication
 /// headers if needed.
+@Mockable
 public protocol APIServiceProtocol {
 
     /// Execute a request to the backend.

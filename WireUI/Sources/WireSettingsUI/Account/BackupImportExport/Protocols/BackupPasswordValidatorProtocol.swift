@@ -19,8 +19,8 @@
 // sourcery: AutoMockable
 import WireMockable
 
-@Mockable
 /// Determines if a given password is valid for encrypting a backup.
+@Mockable
 public protocol BackupPasswordValidatorProtocol {
 
     func isPasswordValid(_ password: String) -> Bool

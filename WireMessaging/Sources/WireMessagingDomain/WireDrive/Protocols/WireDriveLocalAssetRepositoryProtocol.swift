@@ -22,8 +22,8 @@ package import Combine
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// Repository for accessing & updating `WireDriveLocalAsset`s.
+@Mockable
 package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
 
     /// Returns a `WireCellsLocalAsset` for the given `nodeID` or nil if metadata for the asset has has never been

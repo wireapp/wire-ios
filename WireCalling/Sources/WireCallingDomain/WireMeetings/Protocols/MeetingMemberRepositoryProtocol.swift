@@ -19,12 +19,12 @@
 // sourcery: AutoMockable
 import WireMockable
 
-@Mockable
 /// Searches the user's team for members so they can be added as participants
 /// to a meeting.
 ///
 /// Backing implementations may serve results from local storage, the remote
 /// backend, or both.
+@Mockable
 public protocol MeetingMemberRepositoryProtocol: Sendable {
 
     /// Returns team members matching the given query.

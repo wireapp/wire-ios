@@ -19,9 +19,9 @@
 // sourcery: AutoMockable
 import WireMockable
 
-@Mockable
 /// Searches the user's team for members so they can be added as participants
 /// to a meeting.
+@Mockable
 package protocol SearchMembersUseCaseProtocol: Sendable {
 
     func invoke(query: String) async throws -> [MeetingMember]

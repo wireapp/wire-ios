@@ -19,8 +19,8 @@
 // sourcery: AutoMockable
 import WireMockable
 
-@Mockable
 /// An API access object for endpoints concerning the push channel.
+@Mockable
 public protocol PushChannelAPI {
 
     /// Create a new push channel.

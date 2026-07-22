@@ -20,8 +20,8 @@ import Foundation
 import WireMockable
 
 // sourcery: AutoMockable
-@Mockable
 /// Deletes a meeting by its ID.
+@Mockable
 package protocol DeleteMeetingUseCaseProtocol: Sendable {
 
     func invoke(meetingID: QualifiedID) async throws
