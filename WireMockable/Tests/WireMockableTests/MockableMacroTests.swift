@@ -337,6 +337,60 @@ final class MockableMacroTests: XCTestCase {
         )
     }
 
+    func testMethodInsideIfConfigIsMockedInsideMatchingIfConfig() {
+        assertMacroExpansion(
+            """
+            @Mockable
+            protocol Foo {
+                func always()
+
+                #if DEBUG
+                    func debugOnly(id: Int) async throws
+                #endif
+            }
+            """,
+            expandedSource: """
+            protocol Foo {
+                func always()
+
+                #if DEBUG
+                    func debugOnly(id: Int) async throws
+                #endif
+            }
+
+            #if DEBUG
+            final class FooMock: Foo {
+                init() {
+                }
+
+                // MARK: - always
+
+                var always_CallsCount: Int = 0
+                var always_MockMethod: (() -> Void)?
+
+                func always() {
+                    always_CallsCount += 1
+                    always_MockMethod?()
+                }
+
+                #if DEBUG
+                // MARK: - debugOnly
+
+                var debugOnlyId_Invocations: [Int] = []
+                var debugOnlyId_MockMethod: ((Int) async throws -> Void)?
+
+                func debugOnly(id: Int) async throws {
+                    debugOnlyId_Invocations.append(id)
+                    try await debugOnlyId_MockMethod?(id)
+                }
+                #endif
+            }
+            #endif
+            """,
+            macros: macros
+        )
+    }
+
     func testEscapingClosureParameterStripsEscapingOutsideParameterPosition() {
         assertMacroExpansion(
             """

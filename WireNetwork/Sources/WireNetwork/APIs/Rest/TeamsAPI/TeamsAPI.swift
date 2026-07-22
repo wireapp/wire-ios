@@ -18,8 +18,11 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning teams.
+@Mockable
 public protocol TeamsAPI {
 
     /// Get the team metadata for a specific team.

@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning connections.
+@Mockable
 public protocol ConnectionsAPI {
 
     /// Fetch all connections .
