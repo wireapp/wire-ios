@@ -509,6 +509,7 @@ public enum Locators {
 
         public enum FileMenu: String {
             case deleteToRecycleBin
+            case deletePermanently
             case restore
 
             public var identifier: String {
