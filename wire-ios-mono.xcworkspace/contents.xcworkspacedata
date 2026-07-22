@@ -302,4 +302,7 @@
    <FileRef
       location = "group:WirePlugins">
    </FileRef>
+   <FileRef
+      location = "group:measure.sh">
+   </FileRef>
 </Workspace>
