@@ -19,6 +19,7 @@ let package = Package(
     dependencies: [
         .package(path: "../WireData"),
         .package(path: "../WireFoundation"),
+        .package(path: "../WireMockable"),
         .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
@@ -29,7 +30,8 @@ let package = Package(
             name: "WireCallingDomain",
             dependencies: [
                 "WireFoundation",
-                "WireLogging"
+                "WireLogging",
+                "WireMockable"
             ]
         ),
         .target(
@@ -46,7 +48,8 @@ let package = Package(
                 "WireCallingDomain",
                 "WireData",
                 "WireLogging",
-                "WireNetwork"
+                "WireNetwork",
+                "WireMockable"
             ]
         ),
         .target(

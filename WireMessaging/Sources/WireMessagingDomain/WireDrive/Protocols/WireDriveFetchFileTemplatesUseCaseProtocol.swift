@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 public protocol WireDriveFetchFileTemplatesUseCaseProtocol: Sendable {
     func invoke() async throws -> [WireDriveFileTemplate]
 }

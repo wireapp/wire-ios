@@ -19,7 +19,10 @@
 public import WireFoundation
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol BackupLocalStoreProtocol: Sendable {
 
     /// Returns the number of all stored users, conversations and messages in the local data store, including deleted

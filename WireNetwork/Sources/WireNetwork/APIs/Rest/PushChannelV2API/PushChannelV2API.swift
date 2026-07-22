@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 /// An API access object for endpoints concerning the push channel.
 public protocol PushChannelV2API {
 

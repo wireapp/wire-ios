@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 public protocol ImportBackupUseCaseProtocol: Sendable {
 
     /// Returns `true` if the implementation will replace the existing data or `false` if existing data is not modified.

@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 /// Make a direct connection to a server to receive update events.
 public protocol PushChannelProtocol: Sendable {
 

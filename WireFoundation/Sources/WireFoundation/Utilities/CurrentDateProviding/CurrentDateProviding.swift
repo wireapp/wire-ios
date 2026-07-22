@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 /// Abstracts accessing the current system date in order to be mockable in unit tests.
 public protocol CurrentDateProviding: Sendable {
     var now: Date { get }

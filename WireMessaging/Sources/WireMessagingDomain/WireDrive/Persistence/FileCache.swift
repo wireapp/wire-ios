@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol FileCache: Sendable {
 
     func saveFile(at url: URL, key: String) async throws

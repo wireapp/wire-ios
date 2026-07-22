@@ -18,6 +18,7 @@ let package = Package(
         .package(url: "https://github.com/awslabs/aws-sdk-swift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireMockable"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI"),
@@ -31,6 +32,7 @@ let package = Package(
                 .product(name: "CellsSDK", package: "cells-sdk-swift"),
                 "WireFoundation",
                 "WireLogging",
+                "WireMockable",
                 "WireAnalytics"
             ]
         ),
@@ -40,6 +42,7 @@ let package = Package(
                 "WireData",
                 "WireMessagingDomain",
                 "WireLogging",
+                "WireMockable",
                 .product(name: "AWSS3", package: "aws-sdk-swift"),
                 .product(name: "CellsSDK", package: "cells-sdk-swift"),
                 .product(name: "Collections", package: "swift-collections")
@@ -70,7 +73,8 @@ let package = Package(
             name: "WireMessagingDomainSupport",
             dependencies: [
                 "WireMessagingDomain",
-                "WireMessagingData"
+                "WireMessagingData",
+                "WireMockable"
             ],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),

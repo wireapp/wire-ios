@@ -19,8 +19,10 @@
 public import Foundation
 
 import WireLogging
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol NetworkServiceProtocol: Sendable {
 
     func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)

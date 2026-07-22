@@ -13,6 +13,7 @@ let package = Package(
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.0")),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
+        .package(path: "../WireMockable"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -22,6 +23,7 @@ let package = Package(
                 "KaliumBackup",
                 "WireFoundation",
                 "WireLogging",
+                "WireMockable",
                 .product(name: "WireUtilitiesPackage", package: "WireFoundation")
             ]
         ),

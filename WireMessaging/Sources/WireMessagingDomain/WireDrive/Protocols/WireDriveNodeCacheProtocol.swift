@@ -18,6 +18,8 @@
 
 package import Foundation
 
+import WireMockable
+
 /// A cached `WireDriveNode`.
 ///
 /// A `nil` value indicates that the node was not found on the server, for example it may have been deleted. This is
@@ -35,6 +37,7 @@ public struct WireDriveNodeCacheItem: Equatable, Sendable {
 }
 
 // sourcery: AutoMockable
+@Mockable
 /// Caches `WireDriveNode` values.
 package protocol WireDriveNodeCacheProtocol: Sendable {
 

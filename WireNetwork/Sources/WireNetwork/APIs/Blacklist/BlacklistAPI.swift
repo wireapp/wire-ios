@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 // An API access object for fetching the build number blacklist.
 public protocol BlacklistAPI {
 

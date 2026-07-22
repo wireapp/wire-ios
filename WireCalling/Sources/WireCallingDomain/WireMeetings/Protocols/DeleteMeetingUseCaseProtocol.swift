@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 /// Deletes a meeting by its ID.
 package protocol DeleteMeetingUseCaseProtocol: Sendable {
 

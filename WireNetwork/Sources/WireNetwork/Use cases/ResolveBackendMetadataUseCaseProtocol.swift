@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol ResolveBackendMetadataUseCaseProtocol: Sendable {
 
     /// Resolve the metadata of the currently connected backend.

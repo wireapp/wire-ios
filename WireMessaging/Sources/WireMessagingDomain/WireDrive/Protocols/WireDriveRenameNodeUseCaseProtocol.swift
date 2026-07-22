@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol WireDriveRenameNodeUseCaseProtocol: Sendable {
 
     func invoke(

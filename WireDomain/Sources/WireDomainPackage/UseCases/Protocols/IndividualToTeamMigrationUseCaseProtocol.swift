@@ -18,6 +18,8 @@
 
 public import Foundation
 
+import WireMockable
+
 public enum IndividualToTeamMigrationError: Error, Sendable {
     case userAlreadyInTeam
     case generic(any Error)
@@ -34,6 +36,7 @@ public struct IndividualToTeamMigrationResult: Sendable {
 }
 
 // sourcery: AutoMockable
+@Mockable
 /// Sends a request to the backend to migrate the user to a team.
 public protocol IndividualToTeamMigrationUseCaseProtocol: Sendable {
     func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult

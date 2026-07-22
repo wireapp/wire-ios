@@ -18,7 +18,10 @@
 
 package import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 package protocol WireDriveEditingURLRepositoryProtocol: Sendable {
 
     /// Returns a URL to an online editor where the document can be edited.

@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol AuthenticationAPI: Sendable {
 
     /// Login via email

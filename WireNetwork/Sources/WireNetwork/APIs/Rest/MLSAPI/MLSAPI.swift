@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol MLSAPI {
 
     /// Fetch the info of MLS support on the backend available from ``APIVersion`` v5.

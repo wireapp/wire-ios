@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol FileDownloading: Sendable {
 
     func download(from url: URL) -> (progress: AsyncThrowingStream<Double, any Error>, download: Task<

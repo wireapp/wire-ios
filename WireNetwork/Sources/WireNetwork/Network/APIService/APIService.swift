@@ -19,8 +19,10 @@
 public import Foundation
 
 import WireFoundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 /// A service for network communication to a specific backend.
 ///
 /// An api service allows api clients to communicate to a target backend.

@@ -25,8 +25,10 @@ import SmithyIdentity
 import SmithyStreams
 import WireLogging
 import WireMessagingDomain
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 package protocol S3ClientProtocol: Sendable {
 
     func getObject(input: GetObjectInput) async throws -> GetObjectOutput

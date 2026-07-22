@@ -11,10 +11,14 @@ let package = Package(
         .library(name: "WireLoggingSupport", targets: ["WireLoggingSupport"])
     ],
     dependencies: [
+        .package(path: "../WireMockable"),
         .package(path: "../WirePlugins")
     ],
     targets: [
-        .target(name: "WireLogging"),
+        .target(
+            name: "WireLogging",
+            dependencies: ["WireMockable"]
+        ),
         .target(
             name: "WireLoggingSupport",
             dependencies: ["WireLogging"],

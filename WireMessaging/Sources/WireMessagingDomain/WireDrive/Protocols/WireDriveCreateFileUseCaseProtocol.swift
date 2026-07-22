@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 package protocol WireDriveCreateFileUseCaseProtocol: Sendable {
 
     /// Creates a new file or folder on the server.

@@ -19,8 +19,10 @@
 public import WireCallingDomain
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 /// A local store dedicated to meetings.
 /// The store uses the injected context to perform `CoreData` operations on meeting objects.
 public protocol MeetingLocalStoreProtocol: Sendable {

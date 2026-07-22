@@ -18,8 +18,10 @@
 
 import Foundation
 import WireFoundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 @MainActor
 public protocol BackgroundImportCoordinatorProtocol {
 

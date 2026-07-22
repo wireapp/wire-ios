@@ -18,7 +18,10 @@
 
 package import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 package protocol DraftsRepositoryProtocol: Sendable {
 
     func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>

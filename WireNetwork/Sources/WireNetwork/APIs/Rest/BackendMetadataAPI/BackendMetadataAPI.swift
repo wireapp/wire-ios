@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol BackendMetadataAPI: Sendable {
 
     /// Fetch the info of the local backend.

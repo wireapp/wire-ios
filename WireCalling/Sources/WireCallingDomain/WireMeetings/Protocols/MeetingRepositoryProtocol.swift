@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 /// Repository for accessing and managing meetings.
 ///
 /// The protocol is implemented outside of this package, where the

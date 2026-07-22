@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol MeetingConversationRepositoryProtocol: Sendable {
 
     /// Fetch and setup conversation if needed.

@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol LogFilesProviding {
 
     /// All log file URLs to include in the archive.

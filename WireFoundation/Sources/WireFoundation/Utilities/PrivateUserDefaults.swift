@@ -18,6 +18,8 @@
 
 public import Foundation
 
+import WireMockable
+
 public final class PrivateUserDefaults<Key: DefaultsKey> {
 
     // MARK: - Properties
@@ -129,6 +131,7 @@ public extension PrivateUserDefaults where Key == Never {
 }
 
 // sourcery: AutoMockable
+@Mockable
 public protocol UserDefaultsProtocol {
     func set(_ value: Any?, forKey defaultName: String)
     func object(forKey defaultName: String) -> Any?

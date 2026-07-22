@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol URLSessionWebSocketTaskProtocol: Sendable {
 
     var isOpen: Bool { get }

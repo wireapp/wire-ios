@@ -19,6 +19,7 @@ let package = Package(
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
         .package(path: "../WireUI"),
+        .package(path: "../WireMockable"),
         .package(path: "../WirePlugins"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "26.0.0"),
@@ -37,7 +38,10 @@ let package = Package(
 
         .target(
             name: "WireAuthenticationAPI",
-            dependencies: ["WireNetwork"]
+            dependencies: [
+                "WireNetwork",
+                "WireMockable"
+            ]
         ),
         .target(
             name: "WireAuthenticationAPISupport",

@@ -19,8 +19,10 @@
 import Foundation
 import WireFoundation
 import WireLogging
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol AuthenticationManagerProtocol {
 
     func getValidAccessToken() async throws -> AccessToken

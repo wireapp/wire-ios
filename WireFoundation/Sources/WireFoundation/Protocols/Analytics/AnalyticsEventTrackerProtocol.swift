@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 /// An object that tracks analytic events.
 public protocol AnalyticsEventTrackerProtocol: AnyObject {
 

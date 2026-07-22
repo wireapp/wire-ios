@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 /// Access to conversations API.
 public protocol ConversationsAPI {
 

@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 public protocol PasswordValidator {
 
     func isPasswordValid(_ password: String) -> Bool

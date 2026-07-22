@@ -19,7 +19,10 @@
 package import Combine
 package import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 @MainActor
 package protocol WireDriveLocalAssetStoreProtocol: Sendable {
 

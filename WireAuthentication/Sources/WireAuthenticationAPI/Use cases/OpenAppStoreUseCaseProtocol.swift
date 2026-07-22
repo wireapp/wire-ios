@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol OpenAppStoreUseCaseProtocol: Sendable {
 
     @MainActor

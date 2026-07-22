@@ -18,7 +18,10 @@
 
 package import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 package protocol WireDriveNodeUploadManagerProtocol: Sendable {
     /// Starts file upload. Returns the new node after pre-checking.
     func upload(

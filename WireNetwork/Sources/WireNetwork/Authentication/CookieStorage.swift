@@ -21,8 +21,10 @@ import os
 public import WireFoundation
 
 import WireCrypto
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol CookieStorageProtocol: Sendable {
 
     func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws

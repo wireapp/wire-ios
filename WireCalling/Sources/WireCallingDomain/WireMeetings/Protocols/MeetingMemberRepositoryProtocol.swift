@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 /// Searches the user's team for members so they can be added as participants
 /// to a meeting.
 ///

@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 public protocol ConversationCreationRepositoryProtocol {
 
     /// Legacy services (bots) are deprecated and cannot be set up any more. However, teams who have bots already set up

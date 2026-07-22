@@ -16,9 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMockable
+
 public typealias UserClientID = String
 
 // sourcery: AutoMockable
+@Mockable
 /// An API access object for endpoints concerning user clients.
 public protocol UserClientsAPI {
 

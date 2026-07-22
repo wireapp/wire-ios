@@ -63,6 +63,7 @@ let package = Package(
         .target(
             name: "WireUtilitiesPackage",
             dependencies: [
+                "WireMockable",
                 .product(name: "ZIPFoundation", package: "ZIPFoundation")
             ]
         ),

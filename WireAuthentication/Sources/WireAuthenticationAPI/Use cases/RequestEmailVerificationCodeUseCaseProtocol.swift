@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol RequestEmailVerificationCodeUseCaseProtocol: Sendable {
 
     func invoke(email: String) async throws

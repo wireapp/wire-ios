@@ -18,7 +18,10 @@
 
 package import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 /// Generates `WireDriveDraft.Metadata` for files at the given URLs
 package protocol WireDriveDraftMetadataRepositoryProtocol: Sendable {
 

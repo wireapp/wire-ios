@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 /// Make a direct connection to a server to receive update events and acknowledge them.
 public protocol PushChannelV2Protocol: Sendable {
 

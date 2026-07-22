@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol FileUnarchiverProtocol: Sendable {
 
     /// Extract the zip file at `sourceURL` and place the contents in the provided `destinationURL` directory.

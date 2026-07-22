@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol RegisterPersonalAccountUseCaseProtocol: Sendable {
 
     func invoke(

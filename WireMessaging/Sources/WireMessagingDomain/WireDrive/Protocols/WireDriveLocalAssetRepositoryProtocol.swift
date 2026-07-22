@@ -19,7 +19,10 @@
 package import Foundation
 package import Combine
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 /// Repository for accessing & updating `WireDriveLocalAsset`s.
 package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
 

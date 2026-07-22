@@ -22,6 +22,7 @@ let package = Package(
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
+        .package(path: "../WireMockable"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -30,6 +31,7 @@ let package = Package(
             dependencies: [
                 .product(name: "WireFoundation", package: "WireFoundation"),
                 .product(name: "WireLogging", package: "WireLogging"),
+                "WireMockable",
             ]
         ),
         .target(

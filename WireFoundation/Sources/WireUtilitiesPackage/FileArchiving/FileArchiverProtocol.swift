@@ -18,7 +18,10 @@
 
 public import Foundation
 
+import WireMockable
+
 // sourcery: AutoMockable
+@Mockable
 public protocol FileArchiverProtocol: Sendable {
 
     /// Creates a zip file at `destinationURL` from the file or directory at `sourceURL`.

@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 /// An API access object for endpoints concerning people and apps search.
 public protocol SearchAPI {
 

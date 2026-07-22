@@ -17,6 +17,9 @@
 //
 
 // sourcery: AutoMockable
+import WireMockable
+
+@Mockable
 /// Provides an up-to-date access token for wire drive API.
 public protocol AccessTokenProvider: Sendable {
 

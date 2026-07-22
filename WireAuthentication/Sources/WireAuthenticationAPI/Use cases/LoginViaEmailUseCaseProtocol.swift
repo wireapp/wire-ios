@@ -18,8 +18,10 @@
 
 import Foundation
 import WireNetwork
+import WireMockable
 
 // sourcery: AutoMockable
+@Mockable
 public protocol LoginViaEmailUseCaseProtocol: Sendable {
 
     func invoke(
