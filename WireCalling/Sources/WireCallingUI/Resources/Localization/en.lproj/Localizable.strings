@@ -45,8 +45,10 @@
 
 "wireMeetings.schedule.now.title" = "Meet now";
 "wireMeetings.schedule.future.title" = "New meeting";
+"wireMeetings.schedule.edit.title" = "Edit meeting";
 "wireMeetings.schedule.cancel.button" = "Cancel";
 "wireMeetings.schedule.schedule.button" = "Schedule";
+"wireMeetings.schedule.save.button" = "Save";
 "wireMeetings.schedule.select.button" = "Select";
 "wireMeetings.schedule.start.button" = "Start";
 "wireMeetings.schedule.setupTitle.header" = "Title";

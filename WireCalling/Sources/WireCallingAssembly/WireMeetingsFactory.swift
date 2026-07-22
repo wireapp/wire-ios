@@ -38,6 +38,10 @@ public struct WireMeetingsFactory {
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
+        let updateMeetingUseCase = UpdateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
         let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
             repository: meetingRepository,
             currentDateProvider: .system
@@ -55,6 +59,7 @@ public struct WireMeetingsFactory {
                     mode: mode,
                     searchMembersUseCase: searchMembersUseCase,
                     createMeetingUseCase: createMeetingUseCase,
+                    updateMeetingUseCase: updateMeetingUseCase,
                     currentDateProvider: .system,
                     onSuccess: onSuccess
                 )

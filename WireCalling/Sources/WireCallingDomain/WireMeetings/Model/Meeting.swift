@@ -25,7 +25,7 @@ public import Foundation
 /// categorized as past, ongoing, or upcoming based on their start and end times
 /// relative to the current time.
 
-public struct Meeting: Equatable, Sendable {
+public struct Meeting: Hashable, Sendable {
 
     public let id: QualifiedID
 

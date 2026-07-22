@@ -35,14 +35,18 @@ struct CreateMeetingFormView: View {
         NavigationStack {
             Form {
                 titleSection
-                if viewModel.mode == .scheduled {
+                if viewModel.mode != .instant {
                     scheduleSection
                 }
                 participantsSection
             }
             .listSectionSpacing(.compact)
             .onAppear {
-                isTitleFieldFocused = true
+                // When editing, the title is already filled in, so there is
+                // no need to bring up the keyboard right away.
+                if !viewModel.mode.isEdit {
+                    isTitleFieldFocused = true
+                }
             }
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
@@ -80,6 +84,8 @@ struct CreateMeetingFormView: View {
             Strings.Now.title
         case .scheduled:
             Strings.Future.title
+        case .edit:
+            Strings.Edit.title
         }
     }
 
@@ -89,6 +95,8 @@ struct CreateMeetingFormView: View {
             Strings.Start.button
         case .scheduled:
             Strings.Schedule.button
+        case .edit:
+            Strings.Save.button
         }
     }
 
@@ -264,6 +272,7 @@ private extension MeetingRepeatOption {
             mode: .instant,
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
             currentDateProvider: .system
         )
     )
@@ -275,6 +284,7 @@ private extension MeetingRepeatOption {
             mode: .scheduled,
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
             currentDateProvider: .system
         )
     )
@@ -285,10 +295,34 @@ private extension MeetingRepeatOption {
         mode: .scheduled,
         searchMembersUseCase: MockSearchMembersUseCase(),
         createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+        updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
         currentDateProvider: .system
     )
     viewModel.selectedMembers = Array([MeetingMember].mock.shuffled().prefix(3))
     return CreateMeetingFormView(viewModel: viewModel)
+}
+
+#Preview("Edit mode") {
+    CreateMeetingFormView(
+        viewModel: CreateMeetingFormViewModel(
+            mode: .edit(
+                Meeting(
+                    id: QualifiedID(id: UUID(), domain: ""),
+                    title: "Design review",
+                    start: Date().addingTimeInterval(.oneHour),
+                    end: Date().addingTimeInterval(2 * TimeInterval.oneHour),
+                    recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
+                    members: Array([MeetingMember].mock.prefix(3)),
+                    conversationID: QualifiedID(id: UUID(), domain: ""),
+                    creatorID: QualifiedID(id: UUID(), domain: "")
+                )
+            ),
+            searchMembersUseCase: MockSearchMembersUseCase(),
+            createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+            currentDateProvider: .system
+        )
+    )
 }
 
 // MARK: - Mock
