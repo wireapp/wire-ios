@@ -101,7 +101,7 @@ final class AccountManagementTests: WireUITestCase {
 
     @MainActor
     func testViewLoggedInDevicesVerifyAndDeleteDevice_TC_8952_8953() async throws {
-
+        // GIVEN
         let user = try await UserHelper.default.createPersonalUser()
         let deviceName = "device123"
 
@@ -115,13 +115,14 @@ final class AccountManagementTests: WireUITestCase {
             verificationCode: nil,
             deviceName: deviceName
         )
-
+        // WHEN
         let deviceDetailsPage = try conversationsPage
             .openSettings()
             .openDevices()
             .verifyLoggedInDevicesListContains(deviceName)
             .openDeviceDetails(named: deviceName)
 
+        // THEN
         _ = try await deviceDetailsPage
             .verifyDevice()
             .backgroundAndResume(app: app, forDelay: 2)
