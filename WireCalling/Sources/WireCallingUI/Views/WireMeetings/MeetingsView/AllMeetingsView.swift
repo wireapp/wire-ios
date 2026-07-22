@@ -61,7 +61,7 @@ package struct AllMeetingsView: View {
         .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .sheet(item: $viewModel.presentedFormMode) { mode in
-            CreateMeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
+            MeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
         }
     }
 }

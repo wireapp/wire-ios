@@ -46,7 +46,7 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateMeetingFormView(viewModel: makeViewModel())
+            MeetingFormView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -63,7 +63,7 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateMeetingFormView(viewModel: makeViewModel())
+            MeetingFormView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -79,7 +79,7 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func makeViewModel() -> CreateMeetingFormViewModel {
+    private func makeViewModel() -> MeetingFormViewModel {
         let dateProviderMock = CurrentDateProvidingMock()
         dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
 
@@ -106,7 +106,7 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
             creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )
 
-        return CreateMeetingFormViewModel(
+        return MeetingFormViewModel(
             mode: .edit(meeting),
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),

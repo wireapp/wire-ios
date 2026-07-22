@@ -26,7 +26,7 @@ import XCTest
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
-final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
+final class InstantMeetingFormViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -46,7 +46,7 @@ final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateMeetingFormView(viewModel: makeViewModel())
+            MeetingFormView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -63,7 +63,7 @@ final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateMeetingFormView(viewModel: makeViewModel())
+            MeetingFormView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -79,11 +79,11 @@ final class CreateScheduledMeetingFormViewSnapshotTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func makeViewModel() -> CreateMeetingFormViewModel {
+    private func makeViewModel() -> MeetingFormViewModel {
         let dateProviderMock = CurrentDateProvidingMock()
-        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
-        return CreateMeetingFormViewModel(
-            mode: .scheduled,
+        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-07-06T14:18:00+02:00")
+        return MeetingFormViewModel(
+            mode: .instant,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),

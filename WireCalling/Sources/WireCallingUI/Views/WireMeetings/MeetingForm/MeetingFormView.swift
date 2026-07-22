@@ -22,11 +22,11 @@ import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
 
-struct CreateMeetingFormView: View {
+struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
-    @State private(set) var viewModel: CreateMeetingFormViewModel
+    @State private(set) var viewModel: MeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
     @FocusState private var isTitleFieldFocused: Bool
@@ -267,8 +267,8 @@ private extension MeetingRepeatOption {
 // MARK: - Preview
 
 #Preview("Now mode") {
-    CreateMeetingFormView(
-        viewModel: CreateMeetingFormViewModel(
+    MeetingFormView(
+        viewModel: MeetingFormViewModel(
             mode: .instant,
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
@@ -279,8 +279,8 @@ private extension MeetingRepeatOption {
 }
 
 #Preview("Scheduled mode") {
-    CreateMeetingFormView(
-        viewModel: CreateMeetingFormViewModel(
+    MeetingFormView(
+        viewModel: MeetingFormViewModel(
             mode: .scheduled,
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
@@ -291,7 +291,7 @@ private extension MeetingRepeatOption {
 }
 
 #Preview("Scheduled mode with selected members") {
-    let viewModel = CreateMeetingFormViewModel(
+    let viewModel = MeetingFormViewModel(
         mode: .scheduled,
         searchMembersUseCase: MockSearchMembersUseCase(),
         createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
@@ -299,12 +299,12 @@ private extension MeetingRepeatOption {
         currentDateProvider: .system
     )
     viewModel.selectedMembers = Array([MeetingMember].mock.shuffled().prefix(3))
-    return CreateMeetingFormView(viewModel: viewModel)
+    return MeetingFormView(viewModel: viewModel)
 }
 
 #Preview("Edit mode") {
-    CreateMeetingFormView(
-        viewModel: CreateMeetingFormViewModel(
+    MeetingFormView(
+        viewModel: MeetingFormViewModel(
             mode: .edit(
                 Meeting(
                     id: QualifiedID(id: UUID(), domain: ""),

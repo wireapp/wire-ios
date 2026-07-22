@@ -26,12 +26,12 @@ import WireFoundationSupport
 @testable import WireCallingUI
 
 @MainActor
-struct CreateMeetingFormViewModelTests {
+struct MeetingFormViewModelTests {
 
     private let createMeetingUseCaseMock = CreateMeetingUseCaseProtocolMock()
     private let updateMeetingUseCaseMock = UpdateMeetingUseCaseProtocolMock()
     private let dateProviderMock = CurrentDateProvidingMock()
-    private let viewModel: CreateMeetingFormViewModel
+    private let viewModel: MeetingFormViewModel
 
     private let member = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
@@ -52,7 +52,7 @@ struct CreateMeetingFormViewModelTests {
 
     init() {
         dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-07-06T14:18:00+02:00")
-        self.viewModel = CreateMeetingFormViewModel(
+        self.viewModel = MeetingFormViewModel(
             mode: .instant,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: createMeetingUseCaseMock,
@@ -62,10 +62,10 @@ struct CreateMeetingFormViewModelTests {
     }
 
     private func makeViewModel(
-        mode: CreateMeetingFormViewModel.Mode,
+        mode: MeetingFormViewModel.Mode,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
-    ) -> CreateMeetingFormViewModel {
-        CreateMeetingFormViewModel(
+    ) -> MeetingFormViewModel {
+        MeetingFormViewModel(
             mode: mode,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: createMeetingUseCaseMock,

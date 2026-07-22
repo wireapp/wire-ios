@@ -55,7 +55,7 @@ public struct WireMeetingsFactory {
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
             makeFormViewModel: { mode, onSuccess in
-                CreateMeetingFormViewModel(
+                MeetingFormViewModel(
                     mode: mode,
                     searchMembersUseCase: searchMembersUseCase,
                     createMeetingUseCase: createMeetingUseCase,

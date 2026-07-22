@@ -24,7 +24,7 @@ import WireLogging
 
 @Observable
 @MainActor
-package final class CreateMeetingFormViewModel {
+package final class MeetingFormViewModel {
 
     /// Determines whether the form creates a meeting (starting immediately
     /// or scheduled for a future date and time) or edits an existing one.
