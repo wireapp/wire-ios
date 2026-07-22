@@ -26,16 +26,7 @@ struct MockGenerator {
     func makeMockSource() -> String {
         var body: [String] = []
         body.append("\(accessLevelPrefix)init() {}")
-
-        for member in protocolDecl.memberBlock.members {
-            if let varDecl = member.decl.as(VariableDeclSyntax.self),
-               let source = makeProperty(varDecl) {
-                body.append(source)
-            } else if let funcDecl = member.decl.as(FunctionDeclSyntax.self),
-                      let source = makeMethod(funcDecl) {
-                body.append(source)
-            }
-        }
+        body.append(contentsOf: memberSources(from: protocolDecl.memberBlock.members))
 
         let joined = body.joined(separator: "\n\n")
         let indented = joined
@@ -53,6 +44,46 @@ struct MockGenerator {
         }
         #endif
         """
+    }
+
+    /// Emit mock source for every property/method in `members`, descending into
+    /// any `#if`/`#elseif`/`#else` blocks and re-wrapping their contents with the
+    /// same conditions so the mock only exposes those members when the protocol
+    /// does.
+    private func memberSources(from members: MemberBlockItemListSyntax) -> [String] {
+        var results: [String] = []
+        for member in members {
+            if let varDecl = member.decl.as(VariableDeclSyntax.self),
+               let source = makeProperty(varDecl) {
+                results.append(source)
+            } else if let funcDecl = member.decl.as(FunctionDeclSyntax.self),
+                      let source = makeMethod(funcDecl) {
+                results.append(source)
+            } else if let ifConfigDecl = member.decl.as(IfConfigDeclSyntax.self),
+                      let source = renderIfConfig(ifConfigDecl) {
+                results.append(source)
+            }
+        }
+        return results
+    }
+
+    private func renderIfConfig(_ decl: IfConfigDeclSyntax) -> String? {
+        var lines: [String] = []
+        var producedAny = false
+        for clause in decl.clauses {
+            let keyword = clause.poundKeyword.text
+            let condition = clause.condition.map { " \($0.trimmedDescription)" } ?? ""
+            lines.append("\(keyword)\(condition)")
+            if let nested = clause.elements?.as(MemberBlockItemListSyntax.self) {
+                let inner = memberSources(from: nested)
+                if !inner.isEmpty {
+                    producedAny = true
+                    lines.append(inner.joined(separator: "\n\n"))
+                }
+            }
+        }
+        lines.append("#endif")
+        return producedAny ? lines.joined(separator: "\n") : nil
     }
 
     /// Attributes on the protocol that should be reapplied to the mock class,
