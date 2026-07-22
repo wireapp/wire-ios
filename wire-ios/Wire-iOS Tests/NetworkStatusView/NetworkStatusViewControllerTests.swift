@@ -55,7 +55,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     var sutRoot: NetworkStatusViewController!
     var sutList: NetworkStatusViewController!
 
-    var mockDevice: DeviceAbstractionMock!
+    var mockDevice: DeviceAbstractionProtocolMock_!
     var mockApplication: MockApplication!
     var mockConversationRoot: MockConversationRootViewController!
     var mockConversationList: MockConversationListViewController!

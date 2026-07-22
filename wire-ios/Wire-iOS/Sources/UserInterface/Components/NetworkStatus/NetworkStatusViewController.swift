@@ -49,7 +49,7 @@ final class NetworkStatusViewController: UIViewController {
     private var state: NetworkStatusViewState = .online
     private var finishedViewWillAppear: Bool = false
 
-    private var device: DeviceAbstraction
+    private var device: any DeviceAbstractionProtocol
     private var application: ApplicationProtocol
 
     let userSession: UserSession
@@ -60,7 +60,7 @@ final class NetworkStatusViewController: UIViewController {
     /// - Parameter application: Provide this param for testing only
     /// - Parameter userSession: The user session to observe network state from
     convenience init(
-        device: DeviceAbstraction,
+        device: any DeviceAbstractionProtocol,
         application: ApplicationProtocol,
         userSession: UserSession
     ) {
