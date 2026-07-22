@@ -320,7 +320,7 @@ struct MockGenerator {
             guard case let .attribute(attr) = element else { return true }
             return attr.attributeName.trimmedDescription != "escaping"
         }
-        if filteredAttributes.isEmpty && attributed.specifiers.isEmpty {
+        if filteredAttributes.isEmpty, attributed.specifiers.isEmpty {
             return attributed.baseType.trimmedDescription
         }
         var stripped = attributed

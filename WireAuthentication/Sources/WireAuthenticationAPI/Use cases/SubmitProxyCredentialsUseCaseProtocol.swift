@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireNetwork
 import WireMockable
+import WireNetwork
 
 // sourcery: AutoMockable
 @Mockable

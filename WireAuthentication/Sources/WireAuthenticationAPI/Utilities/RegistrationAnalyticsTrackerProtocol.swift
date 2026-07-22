@@ -18,8 +18,8 @@
 
 public import Foundation
 
-import WireNetwork
 import WireMockable
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Allows for setting up and tearing down an analytics events tracker and submitting tracking events.
