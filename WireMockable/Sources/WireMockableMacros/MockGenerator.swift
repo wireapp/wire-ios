@@ -324,7 +324,7 @@ struct MockGenerator {
             return attributed.baseType.trimmedDescription
         }
         var stripped = attributed
-        stripped.attributes = AttributeListSyntax(filteredAttributes)
+        stripped.attributes = filteredAttributes
         return stripped.trimmedDescription
     }
 }

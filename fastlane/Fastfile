@@ -629,7 +629,9 @@ platform :ios do
             scheme: scheme,
             skip_detect_devices: true,
             configuration: "Debug",
-            sdk: "iphonesimulator",
+            # No `sdk:` here — `-sdk` would override SDKROOT for every target in
+            # the build graph, including macro plugin executables that must be
+            # built for macOS. The destination alone selects the platform.
             destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
             # code_coverage: true,
             derived_data_path: "DerivedData",
