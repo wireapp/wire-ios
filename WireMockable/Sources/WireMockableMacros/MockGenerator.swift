@@ -155,7 +155,9 @@ struct MockGenerator {
         let paramInternalNames: [String] = params.enumerated().map { index, param in
             param.synthesizedInternalName(fallbackIndex: index)
         }
-        let paramTypes: [String] = params.map(\.type.trimmedDescription)
+        // `@escaping` is only valid in function parameter position, so we strip
+        // it from the types used inside tuple storage and closure argument lists.
+        let paramTypes: [String] = params.map { typeForNonParameterPosition($0.type) }
 
         var lines: [String] = []
         lines.append("// MARK: - \(name)")
@@ -274,6 +276,25 @@ struct MockGenerator {
             return "(" + type + ")"
         }
         return type
+    }
+
+    /// Returns the textual form of `type` with `@escaping` removed. The attribute is only
+    /// valid on function parameters; when the same type appears in a tuple element or a
+    /// closure's argument list the compiler rejects it, so we strip it there.
+    private func typeForNonParameterPosition(_ type: TypeSyntax) -> String {
+        guard let attributed = type.as(AttributedTypeSyntax.self) else {
+            return type.trimmedDescription
+        }
+        let filteredAttributes = attributed.attributes.filter { element in
+            guard case let .attribute(attr) = element else { return true }
+            return attr.attributeName.trimmedDescription != "escaping"
+        }
+        if filteredAttributes.isEmpty && attributed.specifiers.isEmpty {
+            return attributed.baseType.trimmedDescription
+        }
+        var stripped = attributed
+        stripped.attributes = AttributeListSyntax(filteredAttributes)
+        return stripped.trimmedDescription
     }
 }
 

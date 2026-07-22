@@ -337,6 +337,40 @@ final class MockableMacroTests: XCTestCase {
         )
     }
 
+    func testEscapingClosureParameterStripsEscapingOutsideParameterPosition() {
+        assertMacroExpansion(
+            """
+            @Mockable
+            protocol Foo {
+                func run(onProgress: @escaping @Sendable (Int) -> Void) async throws
+            }
+            """,
+            expandedSource: """
+            protocol Foo {
+                func run(onProgress: @escaping @Sendable (Int) -> Void) async throws
+            }
+
+            #if DEBUG
+            final class FooMock: Foo {
+                init() {
+                }
+
+                // MARK: - run
+
+                var runOnProgress_Invocations: [@Sendable (Int) -> Void] = []
+                var runOnProgress_MockMethod: ((@Sendable (Int) -> Void) async throws -> Void)?
+
+                func run(onProgress: @escaping @Sendable (Int) -> Void) async throws {
+                    runOnProgress_Invocations.append(onProgress)
+                    try await runOnProgress_MockMethod?(onProgress)
+                }
+            }
+            #endif
+            """,
+            macros: macros
+        )
+    }
+
     func testNonProtocolEmitsDiagnostic() {
         assertMacroExpansion(
             """

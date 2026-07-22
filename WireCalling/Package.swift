@@ -23,7 +23,7 @@ let package = Package(
         .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI")
+        .package(path: "../WireUI")
     ],
     targets: [
         .target(

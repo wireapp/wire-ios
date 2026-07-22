@@ -29,7 +29,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
-        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
         .package(path: "../WireMockable"),
         .package(path: "../WirePlugins")

@@ -17,11 +17,11 @@ let package = Package(
         .package(url: "https://github.com/pydio/cells-sdk-swift.git", from: "0.1.1-alpha17"),
         .package(url: "https://github.com/awslabs/aws-sdk-swift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
-        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireFoundation"),
         .package(path: "../WireMockable"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI"),
+        .package(path: "../WireUI"),
         .package(path: "../WireData"),
         .package(path: "../WireAnalytics")
     ],
