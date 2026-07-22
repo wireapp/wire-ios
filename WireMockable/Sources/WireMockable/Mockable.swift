@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Attach to a protocol declaration to generate a `ProtocolNameMock` class
+/// Attach to a protocol declaration to generate a `ProtocolNameMock_` class
 /// suitable for use in unit tests. The generated class is wrapped in
 /// `#if DEBUG` / `#endif` so it is not included in release builds.
+///
+/// The trailing underscore keeps the macro-generated mock from clashing with
+/// existing Sourcery `AutoMockable` output (`ProtocolNameMock`) during the
+/// migration period.
 ///
 /// Example:
 /// ```swift
@@ -31,7 +35,7 @@
 ///
 /// generates (in DEBUG builds):
 /// ```swift
-/// public final class UserServiceMock: UserService {
+/// public final class UserServiceMock_: UserService {
 ///     public init() {}
 ///
 ///     public var currentUser: String {
@@ -53,5 +57,5 @@
 ///     }
 /// }
 /// ```
-@attached(peer, names: suffixed(Mock))
+@attached(peer, names: suffixed(Mock_))
 public macro Mockable() = #externalMacro(module: "WireMockableMacros", type: "MockableMacro")

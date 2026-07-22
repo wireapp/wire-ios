@@ -48,7 +48,7 @@ struct MockGenerator {
 
         return """
         #if DEBUG
-        \(attributesPrefix)\(accessLevelPrefix)final class \(protocolName)Mock: \(inheritance) {
+        \(attributesPrefix)\(accessLevelPrefix)final class \(protocolName)Mock_: \(inheritance) {
         \(indented)
         }
         #endif

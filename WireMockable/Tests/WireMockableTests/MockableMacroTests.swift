@@ -38,7 +38,7 @@ final class MockableMacroTests: XCTestCase {
             public protocol Foo {}
 
             #if DEBUG
-            public final class FooMock: Foo {
+            public final class FooMock_: Foo {
                 public init() {
                 }
             }
@@ -62,7 +62,7 @@ final class MockableMacroTests: XCTestCase {
             }
 
             #if DEBUG
-            final class FooMock: Foo {
+            final class FooMock_: Foo {
                 init() {
                 }
 
@@ -96,7 +96,7 @@ final class MockableMacroTests: XCTestCase {
             }
 
             #if DEBUG
-            public final class UserServiceMock: UserService {
+            public final class UserServiceMock_: UserService {
                 public init() {
                 }
 
@@ -134,7 +134,7 @@ final class MockableMacroTests: XCTestCase {
             }
 
             #if DEBUG
-            final class FooMock: Foo {
+            final class FooMock_: Foo {
                 init() {
                 }
 
@@ -172,7 +172,7 @@ final class MockableMacroTests: XCTestCase {
             }
 
             #if DEBUG
-            final class FooMock: Foo {
+            final class FooMock_: Foo {
                 init() {
                 }
 
@@ -208,7 +208,7 @@ final class MockableMacroTests: XCTestCase {
             }
 
             #if DEBUG
-            final class FooMock: Foo {
+            final class FooMock_: Foo {
                 init() {
                 }
 
@@ -232,7 +232,7 @@ final class MockableMacroTests: XCTestCase {
             public protocol Foo: Sendable {}
 
             #if DEBUG
-            public final class FooMock: Foo, @unchecked Sendable {
+            public final class FooMock_: Foo, @unchecked Sendable {
                 public init() {
                 }
             }
@@ -256,7 +256,7 @@ final class MockableMacroTests: XCTestCase {
             }
 
             #if DEBUG
-            final class FooMock: Foo {
+            final class FooMock_: Foo {
                 init() {
                 }
 
@@ -294,7 +294,7 @@ final class MockableMacroTests: XCTestCase {
             }
 
             #if DEBUG
-            final class FooMock: Foo {
+            final class FooMock_: Foo {
                 init() {
                 }
 
@@ -327,7 +327,7 @@ final class MockableMacroTests: XCTestCase {
 
             #if DEBUG
             @MainActor
-            public final class FooMock: Foo {
+            public final class FooMock_: Foo {
                 public init() {
                 }
             }
