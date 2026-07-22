@@ -57,10 +57,6 @@ public struct UpdateMeetingParameters: Encodable, Sendable {
         // A `nil` recurrence is omitted rather than encoded as `null`:
         // the backend's Recurrence parser rejects explicit `null` with a
         // 400 bad-request (verified 2026-07-22).
-        // TODO: clarify with the backend team how to turn a recurring
-        // meeting into a one-off one: if an omitted field clears the
-        // recurrence (PUT-as-full-replacement), this is already correct;
-        // if it leaves it unchanged, clearing needs backend support.
         try container.encodeIfPresent(recurrence, forKey: .recurrence)
     }
 }
