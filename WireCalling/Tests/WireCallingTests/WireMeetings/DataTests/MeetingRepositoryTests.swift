@@ -50,10 +50,11 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.pullMeeting(id: Scaffolding.meetingID)
+        let meeting = try await sut.pullMeeting(id: Scaffolding.meetingID)
 
         // Then
 
+        #expect(meeting?.id == Scaffolding.meetingID)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
         #expect(
@@ -75,10 +76,11 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.pullMeeting(id: Scaffolding.meetingID)
+        let meeting = try await sut.pullMeeting(id: Scaffolding.meetingID)
 
         // Then
 
+        #expect(meeting == nil)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
     }

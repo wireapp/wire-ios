@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -57,6 +58,8 @@ final class FilesItemViewModel: ObservableObject {
                 Accessibility.Files.ViewerAccess.makeAvailableOffline
             case .shareLink:
                 Accessibility.Files.ViewerAccess.shareLink
+            case .deletePermanently:
+                Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
             default:
                 "\(self)"
             }
