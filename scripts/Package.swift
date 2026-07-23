@@ -39,6 +39,11 @@ let package = Package(
             checksum: "24e066b23da58275a89a83cae05bf40cad8a48faacf10facbfa5c350efe02608"
         ),
         .binaryTarget(
+            name: "mockolo",
+            url: "https://github.com/uber/mockolo/releases/download/2.6.1/mockolo.artifactbundle.zip",
+            checksum: "8ed3fd73a7b76b87b3d53cd702e5b977443d4ffd00d50161200e2526fc08e7bf"
+        ),
+        .binaryTarget(
             name: "SwiftLintBinary",
             url: "https://github.com/realm/SwiftLint/releases/download/0.61.0/SwiftLintBinary.artifactbundle.zip",
             checksum: "b765105fa5c5083fbcd35260f037b9f0d70e33992d0a41ba26f5f78a17dc65e7"
