@@ -306,7 +306,8 @@ struct SettingsCellDescriptorFactory {
             presentationAction: {
                 WireURLs.shared.legal.browserControllerOrOpenExternally()
             },
-            previewGenerator: .none
+            previewGenerator: .none,
+            accessibilityTraits: .link
         )
 
         let shortVersion = Bundle.main.shortVersionString ?? "Unknown"
@@ -332,7 +333,8 @@ struct SettingsCellDescriptorFactory {
             presentationAction: {
                 WireURLs.shared.website.browserControllerOrOpenExternally()
             },
-            previewGenerator: .none
+            previewGenerator: .none,
+            accessibilityTraits: .link
         )
 
         let websiteSection = SettingsSectionDescriptor(cellDescriptors: [websiteButton])

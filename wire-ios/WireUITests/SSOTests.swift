@@ -103,7 +103,6 @@ final class SSOTests: WireUITestCase {
 
     @MainActor
     func testSCIMManagedUserCannotChangeAccountFields_TC_10851() async throws {
-
         // GIVEN
         let teamOwner = try await registerTeamOwnerWithSSOEnabled()
         let scimUser = try await ssoHelper.createSCIMManagedSSOUser(
@@ -151,7 +150,7 @@ final class SSOTests: WireUITestCase {
             .acceptFirstTimeAlert()
 
         // THEN
-        let conversationsPage = try ManagedDevicesPage().removeDeviceAndContinueIfShown()
+        let conversationsPage = try ManagedDevicesPage.removeDeviceAndContinueIfShown(app: app)
 
         XCTAssertTrue(
             conversationsPage.pageMainElement.waitForExistence(timeout: 2),

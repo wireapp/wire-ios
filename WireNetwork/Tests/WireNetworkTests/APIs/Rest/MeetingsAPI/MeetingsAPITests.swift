@@ -68,7 +68,7 @@ final class MeetingsAPITests: XCTestCase {
         )
 
         try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
-            _ = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
+            _ = try await sut.updateMeeting(id: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
         }
     }
 
@@ -76,7 +76,7 @@ final class MeetingsAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([(.ok, nil)])
 
         try await apiSnapshotHelper.verifyRequest(for: [.v16], apiService: apiService) { sut in
-            try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+            try await sut.deleteMeeting(id: Scaffolding.meetingID)
         }
     }
 
@@ -144,7 +144,7 @@ final class MeetingsAPITests: XCTestCase {
 
         // When
         let result = try await sut.updateMeeting(
-            meetingID: Scaffolding.meetingID,
+            id: Scaffolding.meetingID,
             parameters: Scaffolding.updateParameters
         )
 
@@ -164,7 +164,7 @@ final class MeetingsAPITests: XCTestCase {
             // When / Then
             await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
                 _ = try await sut.updateMeeting(
-                    meetingID: Scaffolding.meetingID,
+                    id: Scaffolding.meetingID,
                     parameters: Scaffolding.updateParameters
                 )
             }
@@ -181,7 +181,7 @@ final class MeetingsAPITests: XCTestCase {
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.invalidOperation) {
-            _ = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
+            _ = try await sut.updateMeeting(id: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
         }
     }
 
@@ -195,7 +195,7 @@ final class MeetingsAPITests: XCTestCase {
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.accessDenied) {
-            _ = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
+            _ = try await sut.updateMeeting(id: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
         }
     }
 
@@ -209,7 +209,7 @@ final class MeetingsAPITests: XCTestCase {
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.meetingNotFound) {
-            _ = try await sut.updateMeeting(meetingID: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
+            _ = try await sut.updateMeeting(id: Scaffolding.meetingID, parameters: Scaffolding.updateParameters)
         }
     }
 
@@ -253,7 +253,7 @@ final class MeetingsAPITests: XCTestCase {
         let sut = APIVersion.v16.buildAPI(apiService: apiService)
 
         // When / Then - no throw expected
-        try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+        try await sut.deleteMeeting(id: Scaffolding.meetingID)
     }
 
     func testDeleteMeeting_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
@@ -266,7 +266,7 @@ final class MeetingsAPITests: XCTestCase {
 
             // When / Then
             await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
-                try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+                try await sut.deleteMeeting(id: Scaffolding.meetingID)
             }
         }
     }
@@ -281,7 +281,7 @@ final class MeetingsAPITests: XCTestCase {
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.accessDenied) {
-            try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+            try await sut.deleteMeeting(id: Scaffolding.meetingID)
         }
     }
 
@@ -295,7 +295,7 @@ final class MeetingsAPITests: XCTestCase {
 
         // When / Then
         await XCTAssertThrowsErrorAsync(MeetingsAPIError.meetingNotFound) {
-            try await sut.deleteMeeting(meetingID: Scaffolding.meetingID)
+            try await sut.deleteMeeting(id: Scaffolding.meetingID)
         }
     }
 

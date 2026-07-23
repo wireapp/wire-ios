@@ -81,7 +81,7 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
                 iconImageView.image = image
                 iconImageView.backgroundColor = UIColor.clear
                 subtitleLabel.text = nil
-                accessibilityValue = "image"
+                accessibilityValue = nil
                 titleLabelToIconInset.isActive = true
                 accessibilityTraits = [.button]
             case let .color(color):
@@ -97,7 +97,7 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
                 iconImageView.image = .none
                 accessibilityValue = nil
                 titleLabelToIconInset.isActive = false
-                accessibilityTraits = []
+                accessibilityTraits = [.button]
             }
             layoutIfNeeded()
         }
@@ -115,6 +115,8 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     func configure(with configuration: CellConfiguration) {
         guard case let .appearance(title) = configuration else { preconditionFailure() }
         titleLabel.text = title
+        accessibilityLabel = title
+        accessibilityTraits = [.button]
     }
 
     // MARK: - Helpers

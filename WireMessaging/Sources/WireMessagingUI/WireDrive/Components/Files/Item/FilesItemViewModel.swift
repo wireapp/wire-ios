@@ -18,9 +18,11 @@
 
 import Combine
 import Foundation
+import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 /// A view model for a single item in the `FilesView`.
 ///
@@ -50,6 +52,19 @@ final class FilesItemViewModel: ObservableObject {
         case deletePermanently
         case makeAvailableOffline
         case removeAvailableOffline
+
+        var accessibilityLabel: String {
+            switch self {
+            case .makeAvailableOffline:
+                Accessibility.Files.ViewerAccess.makeAvailableOffline
+            case .shareLink:
+                Accessibility.Files.ViewerAccess.shareLink
+            case .deletePermanently:
+                Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
+            default:
+                "\(self)"
+            }
+        }
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -275,12 +290,10 @@ final class FilesItemViewModel: ObservableObject {
     private var viewerMenuActions: Set<ItemAction> {
         var actions: Set<ItemAction> = []
 
-        if !isInRecycleBin {
-            actions.insert(.primaryAction)
+        actions.insert(.primaryAction)
 
-            if !isOffline, isBrowsing {
-                actions.insert(.shareLink) // action visible to the user but disabled
-            }
+        if !isInRecycleBin, !isOffline, isBrowsing {
+            actions.insert(.shareLink) // action visible to the user but disabled
         }
 
         if !isEditable, !isInRecycleBin, isBrowsing, item.kind == .file {
@@ -300,12 +313,10 @@ final class FilesItemViewModel: ObservableObject {
     private var editorMenuActions: Set<ItemAction> {
         var actions: Set<ItemAction> = []
 
-        if !isInRecycleBin {
-            actions.insert(.primaryAction)
+        actions.insert(.primaryAction)
 
-            if !isOffline {
-                actions.insert(.shareLink)
-            }
+        if !isInRecycleBin, !isOffline {
+            actions.insert(.shareLink)
         }
 
         if !isEditable, !isInRecycleBin, item.kind == .file {

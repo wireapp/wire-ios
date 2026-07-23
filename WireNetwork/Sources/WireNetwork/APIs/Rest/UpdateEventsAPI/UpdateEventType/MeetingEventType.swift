@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Creates a new instant meeting via the backend API.
-package protocol CreateInstantMeetingUseCaseProtocol: Sendable {
+enum MeetingEventType: String {
 
-    func invoke(title: String, participants: [Member]) async throws -> Meeting
+    case create = "meeting.create"
+    case delete = "meeting.delete"
+    case update = "meeting.update"
 
 }

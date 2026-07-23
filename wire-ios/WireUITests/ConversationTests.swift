@@ -52,19 +52,15 @@ final class ConversationTests: WireUITestCase {
 
     @MainActor
     func testLeaveGroup_TC_8861() async throws {
-        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
-        let userA = try XCTUnwrap(stagingTeam.teamOwner)
-        let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
-
-        let conversationsPage = try await loginToBackend(user: userA)
-
-        // WHEN
-        let activeConversationPage = try conversationsPage
-            .tapPlusButtonToCreateGroup()
-            .tapNewGroupButton()
-            .enterGroupName("test")
-            .tapMemberCells(withLabelPrefixes: [userB.name])
-            .doneSelectingMembers()
+        // GIVEN
+        let (_, members, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 2,
+            conversation: .group("Test")
+        )
+        let activeConversationPage = try app.loginUser(email: members[0].email, password: members[0].password)
+            .acceptPopup()
+            .openConversation()
+            // WHEN
             .sendMessage("test")
             .openConversationDetails()
             .moreOptionsConversationDetails()
@@ -81,19 +77,15 @@ final class ConversationTests: WireUITestCase {
 
     @MainActor
     func testLeaveAndClearGroup_TC_10525() async throws {
-        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
-        let userA = try XCTUnwrap(stagingTeam.teamOwner)
-        let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
-
-        let conversationsPage = try await loginToBackend(user: userA)
-
-        // WHEN
-        let activeConversationPage = try conversationsPage
-            .tapPlusButtonToCreateGroup()
-            .tapNewGroupButton()
-            .enterGroupName("test")
-            .tapMemberCells(withLabelPrefixes: [userB.name])
-            .doneSelectingMembers()
+        // GIVEN
+        let (_, members, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 2,
+            conversation: .group("Test")
+        )
+        let activeConversationPage = try app.loginUser(email: members[0].email, password: members[0].password)
+            .acceptPopup()
+            .openConversation()
+            // WHEN
             .sendMessage("test")
             .openConversationDetails()
             .moreOptionsConversationDetails()

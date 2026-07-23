@@ -16,28 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireCallingDomain
+struct MeetingDeleteEventDecoder {
 
-import WireFoundation
-
-package extension Meeting {
-
-    static func fixture(
-        id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration),
-            recurrence: .none,
-            members: [],
-            conversationID: QualifiedID(id: UUID(), domain: "")
+    func decode(
+        from container: KeyedDecodingContainer<MeetingEventCodingKeys>
+    ) throws -> MeetingDeleteEvent {
+        let qualifiedID = try container.decode(
+            QualifiedIDV0.self,
+            forKey: .qualifiedID
         )
+
+        return MeetingDeleteEvent(meetingID: qualifiedID.toAPIModel())
     }
 
 }

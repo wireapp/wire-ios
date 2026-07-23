@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+struct MeetingUpdateEventDecoder {
 
-// sourcery: AutoMockable
-/// Creates a new scheduled meeting via the backend API.
-package protocol CreateScheduledMeetingUseCaseProtocol: Sendable {
+    func decode(
+        from container: KeyedDecodingContainer<MeetingEventCodingKeys>
+    ) throws -> MeetingUpdateEvent {
+        let qualifiedID = try container.decode(
+            QualifiedIDV0.self,
+            forKey: .qualifiedID
+        )
 
-    func invoke(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting
+        return MeetingUpdateEvent(meetingID: qualifiedID.toAPIModel())
+    }
 
 }

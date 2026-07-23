@@ -16,28 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+/// An event where a meeting was deleted.
 
-package struct CreateScheduledMeetingUseCase: CreateScheduledMeetingUseCaseProtocol {
+public struct MeetingDeleteEvent: Equatable, Sendable {
 
-    private let repository: any MeetingRepositoryProtocol
+    /// The qualified id of the deleted meeting.
 
-    package init(repository: any MeetingRepositoryProtocol) {
-        self.repository = repository
-    }
+    public let meetingID: QualifiedID
 
-    package func invoke(
-        title: String,
-        startTime: Date,
-        endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting {
-        try await repository.createMeeting(
-            title: title,
-            startTime: startTime,
-            endTime: endTime,
-            recurrence: recurrence
-        )
+    public init(meetingID: QualifiedID) {
+        self.meetingID = meetingID
     }
 
 }

@@ -104,15 +104,13 @@ public extension ZMUser {
     @objc(canDeleteConversation:)
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         if isChannelAdmin(conversation) {
             return true
         }
         return hasRoleWithAction(
             actionName: ConversationAction.deleteConversation.name,
             conversation: conversation
-        ) && conversation.creator == self
-            && selfUser.hasTeam && selfUser.teamIdentifier == teamIdentifier
+        ) && conversation.matchesTeam(with: self)
     }
 
     @objc(canModifyOtherMemberInConversation:)
