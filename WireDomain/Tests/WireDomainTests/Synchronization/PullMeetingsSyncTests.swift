@@ -170,24 +170,30 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
 
     // MARK: - pullMeeting
 
-    public var pullMeetingIdQualifiedIDVoidThrowableError: (any Error)?
-    public var pullMeetingIdQualifiedIDVoidCallsCount = 0
-    public var pullMeetingIdQualifiedIDVoidCalled: Bool {
-        pullMeetingIdQualifiedIDVoidCallsCount > 0
+    public var pullMeetingIdQualifiedIDMeetingThrowableError: (any Error)?
+    public var pullMeetingIdQualifiedIDMeetingCallsCount = 0
+    public var pullMeetingIdQualifiedIDMeetingCalled: Bool {
+        pullMeetingIdQualifiedIDMeetingCallsCount > 0
     }
 
-    public var pullMeetingIdQualifiedIDVoidReceivedId: QualifiedID?
-    public var pullMeetingIdQualifiedIDVoidReceivedInvocations: [QualifiedID] = []
-    public var pullMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async throws -> Void)?
+    public var pullMeetingIdQualifiedIDMeetingReceivedId: QualifiedID?
+    public var pullMeetingIdQualifiedIDMeetingReceivedInvocations: [QualifiedID] = []
+    public var pullMeetingIdQualifiedIDMeetingReturnValue: Meeting?
+    public var pullMeetingIdQualifiedIDMeetingClosure: ((QualifiedID) async throws -> Meeting?)?
 
-    public func pullMeeting(id: QualifiedID) async throws {
-        pullMeetingIdQualifiedIDVoidCallsCount += 1
-        pullMeetingIdQualifiedIDVoidReceivedId = id
-        pullMeetingIdQualifiedIDVoidReceivedInvocations.append(id)
-        if let error = pullMeetingIdQualifiedIDVoidThrowableError {
+    @discardableResult
+    public func pullMeeting(id: QualifiedID) async throws -> Meeting? {
+        pullMeetingIdQualifiedIDMeetingCallsCount += 1
+        pullMeetingIdQualifiedIDMeetingReceivedId = id
+        pullMeetingIdQualifiedIDMeetingReceivedInvocations.append(id)
+        if let error = pullMeetingIdQualifiedIDMeetingThrowableError {
             throw error
         }
-        try await pullMeetingIdQualifiedIDVoidClosure?(id)
+        if let pullMeetingIdQualifiedIDMeetingClosure {
+            return try await pullMeetingIdQualifiedIDMeetingClosure(id)
+        } else {
+            return pullMeetingIdQualifiedIDMeetingReturnValue
+        }
     }
 
     // MARK: - pullMeetings
@@ -225,6 +231,10 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         deleteLocalMeetingIdQualifiedIDVoidReceivedInvocations.append(id)
         await deleteLocalMeetingIdQualifiedIDVoidClosure?(id)
     }
+
+    // MARK: - deleteMeeting
+
+    func deleteMeeting(id: QualifiedID) async throws {}
 
     // MARK: - fetchMeetings
 

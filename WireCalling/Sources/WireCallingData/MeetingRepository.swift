@@ -75,18 +75,21 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.broadcast()
     }
 
-    public func pullMeeting(id: QualifiedID) async throws {
+    @discardableResult
+    public func pullMeeting(id: QualifiedID) async throws -> Meeting? {
         // There is no endpoint to fetch a single meeting,
         // so refetch the list to get the details.
         let meetings = try await meetingsAPI.listMeetings()
 
-        if let meeting = meetings.first(where: { $0.id == id }) {
-            await localStore.storeMeeting(meeting.toDomainMeeting())
+        let meeting = meetings.first(where: { $0.id == id })?.toDomainMeeting()
+        if let meeting {
+            await localStore.storeMeeting(meeting)
         } else {
             // The meeting no longer exists on the backend.
             await localStore.deleteMeeting(id: id)
         }
         changeBroadcaster.broadcast()
+        return meeting
     }
 
     public func pullMeetings() async throws {
@@ -103,6 +106,17 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     }
 
     public func deleteLocalMeeting(id: QualifiedID) async {
+        await localStore.deleteMeeting(id: id)
+        changeBroadcaster.broadcast()
+    }
+
+    public func deleteMeeting(id: QualifiedID) async throws {
+        do {
+            try await meetingsAPI.deleteMeeting(id: id)
+        } catch MeetingsAPIError.meetingNotFound {
+            // The meeting is already gone from the backend,
+            // so only the local copy is left to delete.
+        }
         await localStore.deleteMeeting(id: id)
         changeBroadcaster.broadcast()
     }

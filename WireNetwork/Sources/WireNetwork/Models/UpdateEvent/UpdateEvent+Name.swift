@@ -109,6 +109,15 @@ public extension UpdateEvent {
             case .create:
                 "team.create"
             }
+        case let .meeting(event):
+            switch event {
+            case .create:
+                "meeting.create"
+            case .delete:
+                "meeting.delete"
+            case .update:
+                "meeting.update"
+            }
         case let .unknown(eventType):
             "unknown.\(eventType)"
         }
