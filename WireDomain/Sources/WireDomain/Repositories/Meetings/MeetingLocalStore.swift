@@ -38,6 +38,15 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         }
     }
 
+    func storedMeeting(id: WireCallingDomain.QualifiedID) async -> Meeting? {
+        await context.perform { [context] in
+            let request = StoredMeeting.fetchRequest()
+            request.predicate = Self.predicate(id: .init(uuid: id.id, domain: id.domain))
+            request.fetchLimit = 1
+            return (try? context.fetch(request).first)?.toDomainMeeting()
+        }
+    }
+
     func storeMeeting(_ meeting: Meeting) async {
         await context.perform { [context] in
             Self.upsert(meeting, in: context)

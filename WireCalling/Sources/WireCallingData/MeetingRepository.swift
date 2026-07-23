@@ -67,7 +67,11 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         )
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
-        return meeting
+        // The stored copy has its members populated from the conversation.
+        // Right after creation the conversation is not pulled yet, so the
+        // store can't provide the meeting and the mapped one is returned;
+        // its empty member list is accurate at this point.
+        return await localStore.storedMeeting(id: meeting.id) ?? meeting
     }
 
     public func updateMeeting(
@@ -88,7 +92,8 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         )
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
-        return meeting
+        // The stored copy has its members populated from the conversation.
+        return await localStore.storedMeeting(id: meeting.id) ?? meeting
     }
 
     public func storeMeeting(_ meeting: Meeting) async {
@@ -110,7 +115,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             await localStore.deleteMeeting(id: id) // TODO: need to delete the conversation?
         }
         changeBroadcaster.broadcast()
-        return meeting
+        guard let meeting else { return nil }
+        // The stored copy has its members populated from the conversation.
+        return await localStore.storedMeeting(id: meeting.id) ?? meeting
     }
 
     public func pullMeetings() async throws {
@@ -186,6 +193,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
 private extension MeetingResponse {
 
+    /// The backend's meeting responses carry no member data, so `members`
+    /// is empty here. The local store populates it from the meeting's
+    /// conversation, the source of truth, whenever a meeting is read.
     func toDomainMeeting() -> Meeting {
         Meeting(
             id: id,

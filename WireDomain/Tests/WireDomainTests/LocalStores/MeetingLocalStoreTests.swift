@@ -178,6 +178,57 @@ final class MeetingLocalStoreTests: XCTestCase {
         XCTAssertEqual(meeting.members.map(\.qualifiedID), [Scaffolding.memberAliceID, Scaffolding.memberBobID])
     }
 
+    func testStoredMeeting_It_Returns_Meeting_With_Members() async throws {
+        // Given
+
+        await context.perform { [modelHelper, context] in
+            let alice = modelHelper!.createUser(
+                id: Scaffolding.memberAliceID.id,
+                domain: Scaffolding.memberAliceID.domain,
+                name: "Alice Archer",
+                handle: "alice",
+                in: context
+            )
+            _ = modelHelper!.createUser(
+                id: Scaffolding.creatorID.id,
+                domain: Scaffolding.creatorID.domain,
+                in: context
+            )
+            _ = modelHelper!.createGroupConversation(
+                id: Scaffolding.conversationID.id,
+                with: [alice],
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+        }
+
+        await sut.storeMeeting(Scaffolding.meeting)
+
+        // When
+
+        let meeting = await sut.storedMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        let unwrappedMeeting = try XCTUnwrap(meeting)
+        XCTAssertEqual(unwrappedMeeting.id, Scaffolding.meetingID)
+        XCTAssertEqual(unwrappedMeeting.members.map(\.qualifiedID), [Scaffolding.memberAliceID])
+    }
+
+    func testStoredMeeting_It_Returns_Nil_For_Unknown_Meeting() async throws {
+        // Given
+
+        await sut.storeMeeting(Scaffolding.meeting)
+
+        // When
+
+        let meeting = await sut.storedMeeting(id: .init(id: UUID(), domain: Scaffolding.meetingID.domain))
+
+        // Then
+
+        XCTAssertNil(meeting)
+    }
+
     func testDeleteMeeting_It_Removes_Stored_Meeting() async throws {
         // Given
 
