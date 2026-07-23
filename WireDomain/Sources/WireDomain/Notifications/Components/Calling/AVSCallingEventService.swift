@@ -156,6 +156,14 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
         clientId: String,
         conversationType: Int32
     ) {
+        WireLogger.calling.info(
+            """
+            AVS-DIAG: process feeding conversationId=\(conversationId) \
+            handle=\(handle) account=\(userID) \
+            ownContext=\(contextPointer.map(String.init(describing:)) ?? "nil")
+            """,
+            attributes: .newNSE, .safePublic
+        )
         data.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) in
             guard let bytes = ptr.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return }
             wcall_event_process(
@@ -178,6 +186,19 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             attributes: .newNSE, .safePublic
         )
         wcall_event_end(handle)
+    }
+
+    // MARK: - Diagnostics
+
+    /// Describes every registered instance as "account=context", so a callback log
+    /// can show the full set of distinct contexts we passed to wcall_event_create
+    /// next to the single `arg` AVS actually hands back.
+    private static func knownContextsDescription() -> String {
+        instancesLock.lock()
+        defer { instancesLock.unlock() }
+        return processInstances.values
+            .map { "\($0.userID)@\($0.contextPointer.map(String.init(describing:)) ?? "nil")" }
+            .joined(separator: ", ")
     }
 
     // MARK: - Static C Callbacks
@@ -213,6 +234,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             """
             AVS-DIAG: incoming callback arg=\(contextRef) \
             resolved handle=\(service.handle) account=\(service.userID) \
+            knownContexts=[\(AVSCallingEventService.knownContextsDescription())] \
             payload conversationId=\(conversationId) userId=\(userId) \
             (shouldRing: \(shouldRingFlag == 1), video: \(isVideoCallFlag == 1))
             """,
@@ -250,6 +272,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             """
             AVS-DIAG: missed callback arg=\(contextRef) \
             resolved handle=\(service.handle) account=\(service.userID) \
+            knownContexts=[\(AVSCallingEventService.knownContextsDescription())] \
             payload conversationId=\(conversationId)
             """,
             attributes: .newNSE, .safePublic
@@ -288,6 +311,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             """
             AVS-DIAG: closed callback arg=\(contextRef) \
             resolved handle=\(service.handle) account=\(service.userID) \
+            knownContexts=[\(AVSCallingEventService.knownContextsDescription())] \
             payload conversationId=\(conversationId) reason=\(reason)
             """,
             attributes: .newNSE, .safePublic
