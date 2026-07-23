@@ -87,6 +87,7 @@ final class InstantMeetingFormViewSnapshotTests: XCTestCase {
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+            fetchParticipantsUseCase: FetchMeetingParticipantsUseCaseProtocolMock(),
             currentDateProvider: dateProviderMock
         )
     }

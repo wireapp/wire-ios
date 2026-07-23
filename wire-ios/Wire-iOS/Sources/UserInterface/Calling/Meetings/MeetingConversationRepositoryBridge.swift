@@ -37,6 +37,35 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         try await conversationRepository.pullConversation(id: id, domain: domain)
     }
 
+    func fetchParticipants(
+        of conversationID: WireCallingDomain.QualifiedID
+    ) async throws -> [MeetingMember] {
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else { return [] }
+
+        let objectID = conversation.objectID
+        let syncContext = contextProvider.syncContext
+
+        return await syncContext.perform {
+            guard let conv = ZMConversation.existingObject(for: objectID, in: syncContext) else { return [] }
+            return conv.localParticipantsExcludingSelf
+                .compactMap { user -> MeetingMember? in
+                    guard let id = user.remoteIdentifier else { return nil }
+                    return MeetingMember(
+                        qualifiedID: WireCallingDomain.QualifiedID(
+                            id: id,
+                            domain: user.domain ?? conversationID.domain
+                        ),
+                        name: user.name ?? "",
+                        handle: user.handle ?? ""
+                    )
+                }
+                .sorted { $0.name < $1.name }
+        }
+    }
+
     func addParticipants(
         _ participants: [MeetingMember],
         to conversationID: WireCallingDomain.QualifiedID

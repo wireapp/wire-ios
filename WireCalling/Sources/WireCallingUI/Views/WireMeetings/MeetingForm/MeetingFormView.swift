@@ -48,6 +48,9 @@ struct MeetingFormView: View {
                     isTitleFieldFocused = true
                 }
             }
+            .task {
+                await viewModel.loadParticipants()
+            }
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
             .navigationTitle(navigationTitle)
@@ -273,6 +276,7 @@ private extension MeetingRepeatOption {
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+            fetchParticipantsUseCase: FetchMeetingParticipantsUseCaseProtocolMock(),
             currentDateProvider: .system
         )
     )
@@ -285,6 +289,7 @@ private extension MeetingRepeatOption {
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+            fetchParticipantsUseCase: FetchMeetingParticipantsUseCaseProtocolMock(),
             currentDateProvider: .system
         )
     )
@@ -296,6 +301,7 @@ private extension MeetingRepeatOption {
         searchMembersUseCase: MockSearchMembersUseCase(),
         createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
         updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+        fetchParticipantsUseCase: FetchMeetingParticipantsUseCaseProtocolMock(),
         currentDateProvider: .system
     )
     viewModel.selectedMembers = Array([MeetingMember].mock.shuffled().prefix(3))
@@ -303,7 +309,10 @@ private extension MeetingRepeatOption {
 }
 
 #Preview("Edit mode") {
-    MeetingFormView(
+    let fetchParticipantsUseCase = FetchMeetingParticipantsUseCaseProtocolMock()
+    fetchParticipantsUseCase.invokeConversationIDQualifiedIDMeetingMemberReturnValue =
+        Array([MeetingMember].mock.prefix(3))
+    return MeetingFormView(
         viewModel: MeetingFormViewModel(
             mode: .edit(
                 Meeting(
@@ -312,7 +321,7 @@ private extension MeetingRepeatOption {
                     start: Date().addingTimeInterval(.oneHour),
                     end: Date().addingTimeInterval(2 * TimeInterval.oneHour),
                     recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
-                    members: Array([MeetingMember].mock.prefix(3)),
+                    members: [],
                     conversationID: QualifiedID(id: UUID(), domain: ""),
                     creatorID: QualifiedID(id: UUID(), domain: "")
                 )
@@ -320,6 +329,7 @@ private extension MeetingRepeatOption {
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+            fetchParticipantsUseCase: fetchParticipantsUseCase,
             currentDateProvider: .system
         )
     )

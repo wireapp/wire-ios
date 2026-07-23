@@ -30,6 +30,7 @@ struct MeetingFormViewModelTests {
 
     private let createMeetingUseCaseMock = CreateMeetingUseCaseProtocolMock()
     private let updateMeetingUseCaseMock = UpdateMeetingUseCaseProtocolMock()
+    private let fetchParticipantsUseCaseMock = FetchMeetingParticipantsUseCaseProtocolMock()
     private let dateProviderMock = CurrentDateProvidingMock()
     private let viewModel: MeetingFormViewModel
 
@@ -57,6 +58,7 @@ struct MeetingFormViewModelTests {
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: createMeetingUseCaseMock,
             updateMeetingUseCase: updateMeetingUseCaseMock,
+            fetchParticipantsUseCase: fetchParticipantsUseCaseMock,
             currentDateProvider: dateProviderMock
         )
     }
@@ -70,6 +72,7 @@ struct MeetingFormViewModelTests {
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: createMeetingUseCaseMock,
             updateMeetingUseCase: updateMeetingUseCaseMock,
+            fetchParticipantsUseCase: fetchParticipantsUseCaseMock,
             currentDateProvider: dateProviderMock,
             onSuccess: onSuccess
         )
@@ -276,6 +279,70 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.endDate == meeting.end)
         #expect(viewModel.repeatOption == .every2Weeks)
         #expect(viewModel.selectedMembers == meeting.members)
+    }
+
+    @Test("loadParticipants pre-selects the conversation's participants when editing")
+    func loadParticipants_EditMode_PreselectsConversationParticipants() async {
+        // Given
+        let meeting = makeEditableMeeting()
+        let viewModel = makeViewModel(mode: .edit(meeting))
+        fetchParticipantsUseCaseMock.invokeConversationIDQualifiedIDMeetingMemberReturnValue = [member]
+
+        // When
+        await viewModel.loadParticipants()
+
+        // Then
+        #expect(
+            fetchParticipantsUseCaseMock
+                .invokeConversationIDQualifiedIDMeetingMemberReceivedConversationID == meeting.conversationID
+        )
+        #expect(viewModel.selectedMembers == [member])
+    }
+
+    @Test("loadParticipants makes the loaded participants the baseline for saving")
+    func loadParticipants_EditMode_LoadedParticipantsAreSaveBaseline() async {
+        // Given
+        let viewModel = makeViewModel(mode: .edit(makeEditableMeeting()))
+        fetchParticipantsUseCaseMock.invokeConversationIDQualifiedIDMeetingMemberReturnValue = [member]
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
+            meeting
+
+        // When
+        await viewModel.loadParticipants()
+        viewModel.selectedMembers = []
+        await viewModel.submit()
+
+        // Then
+        let arguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+        #expect(arguments?.meeting.members == [member])
+        #expect(arguments?.participants.isEmpty == true)
+    }
+
+    @Test("loadParticipants does nothing when not editing")
+    func loadParticipants_NonEditMode_DoesNothing() async {
+        // When
+        await viewModel.loadParticipants()
+
+        // Then
+        #expect(fetchParticipantsUseCaseMock.invokeConversationIDQualifiedIDMeetingMemberCallsCount == 0)
+    }
+
+    @Test("loadParticipants keeps the selection and baseline when loading fails")
+    func loadParticipants_Failure_KeepsSelection() async {
+        // Given
+        let meeting = makeEditableMeeting()
+        let viewModel = makeViewModel(mode: .edit(meeting))
+        fetchParticipantsUseCaseMock.invokeConversationIDQualifiedIDMeetingMemberThrowableError =
+            URLError(.badServerResponse)
+
+        // When
+        await viewModel.loadParticipants()
+
+        // Then
+        #expect(viewModel.selectedMembers == meeting.members)
+        #expect(viewModel.mode == .edit(meeting))
     }
 
     @Test(
