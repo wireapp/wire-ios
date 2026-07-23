@@ -16,38 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents an update event received from the backend
-/// that can be used to incrementally update the state of
-/// the client.
+import WireNetwork
 
-public enum UpdateEvent: Equatable, Sendable {
+struct MeetingEventProcessor: MeetingEventProcessorProtocol {
 
-    /// A conversation event.
+    let createEventProcessor: any MeetingCreateEventProcessorProtocol
+    let deleteEventProcessor: any MeetingDeleteEventProcessorProtocol
+    let updateEventProcessor: any MeetingUpdateEventProcessorProtocol
 
-    case conversation(ConversationEvent)
+    func processEvent(_ event: MeetingEvent) async throws {
+        switch event {
+        case let .create(event):
+            try await createEventProcessor.processEvent(event)
 
-    /// A feature config event.
+        case let .delete(event):
+            await deleteEventProcessor.processEvent(event)
 
-    case featureConfig(FeatureConfigEvent)
-
-    /// A federation event.
-
-    case federation(FederationEvent)
-
-    /// A user event.
-
-    case user(UserEvent)
-
-    /// A team event.
-
-    case team(TeamEvent)
-
-    /// A meeting event.
-
-    case meeting(MeetingEvent)
-
-    /// An event that is not known by the client.
-
-    case unknown(eventType: String)
+        case let .update(event):
+            try await updateEventProcessor.processEvent(event)
+        }
+    }
 
 }
