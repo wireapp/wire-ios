@@ -86,6 +86,7 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
             await managedObjectContext.perform {
                 object.markAsSent()
                 completion()
+                self.managedObjectContext.enqueueDelayedSave()
             }
             managedObjectContext.leaveAllGroups(groups)
         }

@@ -93,6 +93,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_MockMethod = { _, _ in }
 
+        mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockValue = .some(nil)
+
         createSut()
     }
 
@@ -1593,6 +1595,20 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         return (conversation, outOfSync)
     }
 
+    @discardableResult
+    private func insertMLSConversation(
+        groupID: MLSGroupID,
+        mlsStatus: MLSGroupStatus? = nil
+    ) -> ZMConversation {
+        var conversation: ZMConversation!
+        uiMOC.performAndWait {
+            conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.mlsStatus = mlsStatus
+        }
+        return conversation
+    }
+
     // MARK: - Wipe Groups
 
     func test_WipeGroup_IsSuccessfull() async throws {
@@ -1875,6 +1891,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let group1 = MLSGroupID.random()
         let group2 = MLSGroupID.random()
+        insertMLSConversation(groupID: group1)
+        insertMLSConversation(groupID: group2)
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
@@ -1927,6 +1945,101 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
+    func test_UpdateKeyMaterial_SkipsGroupWithInvalidMLSStatus() async throws {
+        // Given a group whose conversation has been marked as having an invalid MLS group.
+        let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID, mlsStatus: .invalid)
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in }
+
+        // When
+        try await sut.updateKeyMaterial(for: groupID)
+
+        // Then it did not attempt to update key material.
+        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 0)
+        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 0)
+    }
+
+    func test_UpdateKeyMaterial_SkipsGroupWithNoBackingConversationThatIsNotASubgroup() async throws {
+        // Given a group with no backing conversation and no known subgroup entry.
+        let groupID = MLSGroupID.random()
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in }
+
+        // When
+        try await sut.updateKeyMaterial(for: groupID)
+
+        // Then it did not attempt to update key material.
+        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 0)
+        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 0)
+    }
+
+    func test_UpdateKeyMaterial_ProceedsForSubgroupWithNoBackingConversation() async throws {
+        // Given a subgroup id, which by design has no backing conversation.
+        let parentID = MLSGroupID.random()
+        let subgroupID = MLSGroupID.random()
+        mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockMethod = {
+            $0 == subgroupID ? (parentID: parentID, type: .conference) : nil
+        }
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        var updateKeyMaterialArguments = [MLSGroupID]()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { updateKeyMaterialArguments.append($0) }
+
+        // When
+        try await sut.updateKeyMaterial(for: subgroupID)
+
+        // Then it proceeded with updating key material.
+        XCTAssertEqual(updateKeyMaterialArguments, [subgroupID])
+    }
+
+    func test_UpdateKeyMaterial_ProceedsForConversationWithNoMLSStatusSetYet() async throws {
+        // Given a conversation whose mlsGroupID is set but mlsStatus hasn't been assigned yet,
+        // e.g. right after the self group's group id was persisted but before CoreCrypto setup.
+        let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID, mlsStatus: nil)
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        var updateKeyMaterialArguments = [MLSGroupID]()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { updateKeyMaterialArguments.append($0) }
+
+        // When
+        try await sut.updateKeyMaterial(for: groupID)
+
+        // Then it proceeded with updating key material.
+        XCTAssertEqual(updateKeyMaterialArguments, [groupID])
+    }
+
+    func test_UpdateKeyMaterialForAllStaleGroups_SkipsGroupsWithInvalidMLSStatus() async throws {
+        // Given one valid stale group and one with an invalid MLS status.
+        let validGroup = MLSGroupID.random()
+        let invalidGroup = MLSGroupID.random()
+        insertMLSConversation(groupID: validGroup)
+        insertMLSConversation(groupID: invalidGroup, mlsStatus: .invalid)
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        mockStaleMLSKeyDetector.groupsWithStaleKeyingMaterial = [validGroup, invalidGroup]
+
+        var updateKeyMaterialArguments = Set<MLSGroupID>()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { updateKeyMaterialArguments.insert($0) }
+
+        keyMaterialUpdatedExpectation = customExpectation(description: "did update key material")
+
+        // When
+        await sut.updateKeyMaterialForAllStaleGroupsIfNeeded()
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
+
+        // Then only the valid group had its key material updated.
+        XCTAssertEqual(updateKeyMaterialArguments, [validGroup])
+
+        // Then the invalid group was not reported to the detector as updated.
+        XCTAssertFalse(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations.contains(invalidGroup))
+    }
+
     // Note: these tests are asserting the behavior of the retry mechanism only, which
     // is used in various operations, such as adding members or removing clients. For
     // these tests, we will just pick one operation.
@@ -1934,6 +2047,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_RetryOnCommitFailure_SingleRetry() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID)
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
@@ -1962,6 +2076,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_RetryOnCommitFailure_MultipleRetries() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID)
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
@@ -1990,6 +2105,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_RetryOnCommitFailure_Keep_Throwing_Commit_Error_Prevents_Infinite_Loop() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID)
 
         // Since `retryOnCommitFailure` is a recursive function for specific error
         // `mlsClientMismatch`, we'll try to create an infinite loop by keep throwing the same error over and over
@@ -2020,6 +2136,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_RetryOnCommitFailure_Keep_Throwing_External_Commit_Error_Prevents_Infinite_Loop() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID)
 
         // Since `retryOnCommitFailure` is a recursive function for specific error
         // `mlsClientMismatch`, we'll try to create an infinite loop by keep throwing the same error over and over
@@ -2049,6 +2166,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_RetryOnCommitFailure_ChainMultipleRecoverableOperations() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID)
 
         // Mock two failures to commit pending proposals, then a success.
         var mockCommitPendingProposalsCount = 0
@@ -2146,6 +2264,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_RetryOnCommitFailure_CommitPendingProposalsAfterRetry() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID)
 
         var mockCommitPendingProposalsCount = 0
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
@@ -2183,6 +2302,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_RetryOnCommitFailure_ItGivesUp() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID)
         let unrecoverableError = MLSAPIError.mlsError("unrecoverable-error", "give up")
 
         // Mock no pending proposals.
@@ -2215,6 +2335,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let group1 = MLSGroupID.random()
         let group2 = MLSGroupID.random()
         let group3 = MLSGroupID.random()
+        insertMLSConversation(groupID: group1)
+        insertMLSConversation(groupID: group2)
+        insertMLSConversation(groupID: group3)
 
         mockStaleMLSKeyDetector.groupsWithStaleKeyingMaterial = [group1, group2, group3]
 
@@ -2259,6 +2382,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let epoch = 0
         let epochTimestamp = Date()
         let externalSender = ExternalSenderKey(bytes: Data.random())
+
+        mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockMethod = {
+            $0 == subgroupID ? (parentID: parentID, type: .conference) : nil
+        }
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
             MLSSubgroup(
@@ -2340,6 +2467,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let epoch = 1
         let epochTimestamp = Date(timeIntervalSinceNow: -.oneDay)
         let externalSender = ExternalSenderKey(bytes: Data.random())
+
+        mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockMethod = {
+            $0 == subgroupID ? (parentID: parentID, type: .conference) : nil
+        }
 
         mockActionsProvider
             .deleteSubgroupConversationIDDomainSubgroupTypeEpochGroupIDContext_MockMethod = { _, _, _, _, _, _ in
@@ -2811,6 +2942,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
+        insertMLSConversation(groupID: groupID)
         let expectation1 = customExpectation(description: "CreateConversation should be called")
         let expectation2 = customExpectation(description: "UpdateKeyMaterial should be called")
 

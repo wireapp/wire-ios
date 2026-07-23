@@ -35,7 +35,10 @@ extension UpdateEventDecodingProxy {
             let event = try ConversationCodeUpdateEventDecoder().decode(from: container)
             updateEvent = .conversation(.codeUpdate(event))
 
-        case .create:
+        // Meeting conversations arrive as a dedicated event type but carry
+        // the same payload as a regular conversation creation, with the
+        // meeting group type, so both decode into the same event.
+        case .create, .createMeeting:
             let event = try ConversationCreateEventDecoder().decode(from: container)
             updateEvent = .conversation(.create(event))
 

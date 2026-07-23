@@ -72,7 +72,8 @@ class TestServicesClient {
         email: String,
         password: String,
         name: String,
-        verificationCode: String?
+        verificationCode: String?,
+        deviceName: String = "device\(Int.random(in: 10_000 ... 99_999))"
     ) async throws -> String {
 
         if let cachedInstanceId = instanceCache[email] {
@@ -87,7 +88,7 @@ class TestServicesClient {
             "password": password,
             "name": name,
             "developmentApiEnabled": true,
-            "deviceName": "device\(Int.random(in: 10_000 ... 99_999))"
+            "deviceName": deviceName
         ]
 
         let (responseData, response) = try await sendHttpRequest(

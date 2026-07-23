@@ -712,6 +712,20 @@ public final class ClientSessionComponent {
         localStore: MeetingLocalStore(context: syncContext)
     )
 
+    private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
+        repository: meetingRepository,
+        conversationRepository: conversationRepository
+    )
+
+    private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
+        repository: meetingRepository
+    )
+
+    private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
+        repository: meetingRepository,
+        conversationRepository: conversationRepository
+    )
+
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
         createEventProcessor: conversationCreateEventProcessor,
@@ -763,12 +777,19 @@ public final class ClientSessionComponent {
             createEventProcessor: teamCreateEventProcessor
         )
 
+        let meetingEventProcessor = MeetingEventProcessor(
+            createEventProcessor: meetingCreateEventProcessor,
+            deleteEventProcessor: meetingDeleteEventProcessor,
+            updateEventProcessor: meetingUpdateEventProcessor
+        )
+
         return UpdateEventProcessor(
             conversationEventProcessor: conversationEventProcessor,
             featureConfigEventProcessor: featureConfigEventProcessor,
             federationEventProcessor: federationEventProcessor,
             userEventProcessor: userEventProcessor,
-            teamEventProcessor: teamEventProcessor
+            teamEventProcessor: teamEventProcessor,
+            meetingEventProcessor: meetingEventProcessor
         )
     }()
 
