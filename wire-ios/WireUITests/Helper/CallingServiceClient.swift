@@ -380,6 +380,10 @@ final class CallingServiceClient {
     func getRawFlows(instanceId: String) async throws -> [CallFlow] {
         try await performFlowsGet(instanceId: instanceId)
     }
+
+    func getFlows(instanceId: String) async throws -> [CallFlow] {
+        try await getRawFlows(instanceId: instanceId).filter(\.isValid)
+    }
 }
 
 struct InstanceType: Encodable {
@@ -428,7 +432,6 @@ struct CallFlow: Decodable, Equatable {
         audioPacketsReceived != -1 ||
             audioPacketsSent != -1 ||
             videoPacketsReceived != -1 ||
-            videoPacketsSent != -1 ||
-            !remoteUserId.isEmpty
+            videoPacketsSent != -1
     }
 }
