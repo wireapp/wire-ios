@@ -52,8 +52,10 @@ public protocol MeetingRepositoryProtocol: Sendable {
     /// If the meeting no longer exists on the server, the locally stored copy is deleted.
     ///
     /// - Parameter id: The qualified id of the meeting to pull.
+    /// - Returns: The pulled meeting, or `nil` if it no longer exists on the server.
 
-    func pullMeeting(id: QualifiedID) async throws
+    @discardableResult
+    func pullMeeting(id: QualifiedID) async throws -> Meeting?
 
     /// Pulls all meetings from the server, replacing the locally stored
     /// meetings, e.g. as part of a sync.
@@ -67,6 +69,12 @@ public protocol MeetingRepositoryProtocol: Sendable {
     /// - Parameter id: The qualified id of the meeting to delete.
 
     func deleteLocalMeeting(id: QualifiedID) async
+
+    /// Deletes a meeting on the server and removes the locally stored copy.
+    ///
+    /// - Parameter id: The qualified id of the meeting to delete.
+
+    func deleteMeeting(id: QualifiedID) async throws
 
     /// Fetches stored meetings whose start date lies in the given range,
     /// refreshing the local store from the backend first.

@@ -50,10 +50,11 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.pullMeeting(id: Scaffolding.meetingID)
+        let meeting = try await sut.pullMeeting(id: Scaffolding.meetingID)
 
         // Then
 
+        #expect(meeting?.id == Scaffolding.meetingID)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
         #expect(
@@ -75,10 +76,11 @@ struct MeetingRepositoryTests {
 
         // When
 
-        try await sut.pullMeeting(id: Scaffolding.meetingID)
+        let meeting = try await sut.pullMeeting(id: Scaffolding.meetingID)
 
         // Then
 
+        #expect(meeting == nil)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
     }
@@ -177,6 +179,53 @@ struct MeetingRepositoryTests {
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
     }
 
+    // MARK: - deleteMeeting
+
+    @Test
+    func deleteMeetingDeletesMeetingViaAPIAndFromLocalStore() async throws {
+        // Mock
+
+        meetingsAPI.deleteMeetingId_MockMethod = { _ in }
+
+        // When
+
+        try await sut.deleteMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(meetingsAPI.deleteMeetingId_Invocations == [Scaffolding.meetingID])
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
+    }
+
+    @Test
+    func deleteMeetingDeletesLocalCopyWhenMeetingIsAlreadyGoneFromBackend() async throws {
+        // Mock
+
+        meetingsAPI.deleteMeetingId_MockError = MeetingsAPIError.meetingNotFound
+
+        // When
+
+        try await sut.deleteMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
+    }
+
+    @Test
+    func deleteMeetingThrowsAndKeepsLocalCopyWhenDeletingFails() async {
+        // Mock
+
+        meetingsAPI.deleteMeetingId_MockError = MeetingsAPIError.accessDenied
+
+        // When / Then
+
+        await #expect(throws: (any Error).self) {
+            try await sut.deleteMeeting(id: Scaffolding.meetingID)
+        }
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
     // MARK: - observeMeetingChanges
 
     @Test
@@ -204,6 +253,22 @@ struct MeetingRepositoryTests {
         // When
 
         await sut.deleteLocalMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(await changes.next() != nil)
+    }
+
+    @Test
+    func deleteMeetingBroadcastsMeetingChange() async throws {
+        // Mock
+
+        meetingsAPI.deleteMeetingId_MockMethod = { _ in }
+        var changes = sut.observeMeetingChanges().makeAsyncIterator()
+
+        // When
+
+        try await sut.deleteMeeting(id: Scaffolding.meetingID)
 
         // Then
 

@@ -29,13 +29,6 @@ final class GroupMessagingTests: WireUITestCase {
         conversationDomain: String
     )
 
-    private struct MediaURLs {
-        let imageURL: URL
-        let imageExtension: String
-        let videoURL: URL
-        let videoExtension: String
-    }
-
     @MainActor
     private func registerGroupTeam() async throws -> ReturnedTeam {
         let groupName = UserGenerator.generateRandomConversationName()
@@ -56,22 +49,6 @@ final class GroupMessagingTests: WireUITestCase {
     private func login(user: UserInfo) throws -> ConversationsPage {
         try app.loginUser(email: user.email, password: user.password)
             .acceptPopup()
-    }
-
-    private func fixtureMediaURLs() -> MediaURLs {
-        let testDataDirectory = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .appendingPathComponent("TestServicesData")
-
-        let imageURL = testDataDirectory.appendingPathComponent("Img/testImage.jpg")
-        let videoURL = testDataDirectory.appendingPathComponent("Video/testVideo.mp4")
-
-        return MediaURLs(
-            imageURL: imageURL,
-            imageExtension: imageURL.pathExtension,
-            videoURL: videoURL,
-            videoExtension: videoURL.pathExtension
-        )
     }
 
     /// [critical]
@@ -108,9 +85,6 @@ final class GroupMessagingTests: WireUITestCase {
         let groupTeam = try await registerGroupTeam()
         let conversationsPage = try login(user: groupTeam.teamOwner)
 
-        let durationInMillis = 5000
-        let normalizedLoudness = (0 ..< 10).map { _ in Int.random(in: 0 ... 255) }
-
         // WHEN member sends text and audio file
         try await testServicesClient.sendText(
             user: groupTeam.teamMember,
@@ -126,10 +100,7 @@ final class GroupMessagingTests: WireUITestCase {
             filepath: nil,
             convoId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain,
-            audio: [
-                "durationInMillis": durationInMillis,
-                "normalizedLoudness": normalizedLoudness
-            ]
+            audio: TestServiceMediaFixtures.audioMetadata()
         )
 
         XCTAssertTrue(
@@ -256,7 +227,7 @@ final class GroupMessagingTests: WireUITestCase {
         // GIVEN
         let groupTeam = try await registerGroupTeam()
         let conversationsPage = try login(user: groupTeam.teamOwner)
-        let mediaURLs = fixtureMediaURLs()
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
         // WHEN
         try await testServicesClient.sendImage(
@@ -333,39 +304,36 @@ final class GroupMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testSendPingInGroupConversation_TC_8838() async throws {
+    func testSendAndReceivePingInGroupConversation_TC_8838_8845() async throws {
 
         // GIVEN
         let groupTeam = try await registerGroupTeam()
 
-        // WHEN
-        let activeConversationPage = try login(user: groupTeam.teamMember)
-            .openConversation()
-            .sendPing()
-
-        // THEN
-        try activeConversationPage.verifyPingSent()
-    }
-
-    @MainActor
-    func testReceivePingInGroupConversation_TC_8845() async throws {
-
-        // GIVEN
-        let groupTeam = try await registerGroupTeam()
-        let conversationsPage = try login(user: groupTeam.teamOwner)
+        _ = try login(user: groupTeam.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
 
         // WHEN
-        try await testServicesClient.sendPing(
-            user: groupTeam.teamMember,
-            conversationId: groupTeam.conversationId,
-            domain: groupTeam.conversationDomain
+        let activeConversationPage = try app.loginUser(
+            email: groupTeam.teamMember.email,
+            password: groupTeam.teamMember.password
         )
+        .acceptPopup()
+        .openConversation()
+        .sendPing()
 
-        let activeConversationPage = try conversationsPage.openConversation()
+        // THEN - ping is sent
+        try activeConversationPage.verifyPingSent()
 
-        // THEN
+        let receivedConversationPage = try activeConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: groupTeam.teamOwner.name)
+            .openConversation()
+
+        // THEN - ping is received
         XCTAssertTrue(
-            activeConversationPage
+            receivedConversationPage
                 .receivedPing(for: groupTeam.teamMember.name)
                 .waitForExistence(timeout: 2),
             "Expected ping message from \(groupTeam.teamMember.name) not found"
