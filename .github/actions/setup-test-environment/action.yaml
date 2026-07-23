@@ -28,15 +28,9 @@ runs:
         echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a "$GITHUB_ENV"
         echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> "$GITHUB_OUTPUT"
 
-    - name: Retrieve Xcode version
-      id: xcode-version
-      shell: bash
-      run: echo "XCODE_VERSION=$(cat .xcode-version)" >> "$GITHUB_OUTPUT"
-
     - name: Setup Xcode
-      uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd # v1.6.0
-      with:
-        xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+      id: xcode-version
+      uses: ./.github/actions/setup-xcode
 
     - name: Load .env file
       uses: xom9ikk/dotenv@d0a56edc74279820eabbe34477511327e710d0de # v2.4.0
