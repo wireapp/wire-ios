@@ -107,7 +107,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             await localStore.storeMeeting(meeting)
         } else {
             // The meeting no longer exists on the backend.
-            await localStore.deleteMeeting(id: id)
+            await localStore.deleteMeeting(id: id) // TODO: need to delete the conversation?
         }
         changeBroadcaster.broadcast()
         return meeting

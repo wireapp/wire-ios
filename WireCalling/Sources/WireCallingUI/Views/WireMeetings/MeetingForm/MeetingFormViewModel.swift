@@ -55,13 +55,10 @@ package final class MeetingFormViewModel {
         }
     }
 
-    /// In edit mode the associated meeting is replaced once the conversation
-    /// participants are loaded, so its members reflect what the form shows.
-    private(set) var mode: Mode
+    let mode: Mode
     let searchMembersUseCase: any SearchMembersUseCaseProtocol
     private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
     private let updateMeetingUseCase: any UpdateMeetingUseCaseProtocol
-    private let fetchParticipantsUseCase: any FetchMeetingParticipantsUseCaseProtocol
     private let currentDateProvider: any CurrentDateProviding
     private let onSuccess: (Meeting) -> Void
 
@@ -129,7 +126,6 @@ package final class MeetingFormViewModel {
         searchMembersUseCase: any SearchMembersUseCaseProtocol,
         createMeetingUseCase: any CreateMeetingUseCaseProtocol,
         updateMeetingUseCase: any UpdateMeetingUseCaseProtocol,
-        fetchParticipantsUseCase: any FetchMeetingParticipantsUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
@@ -137,7 +133,6 @@ package final class MeetingFormViewModel {
         self.searchMembersUseCase = searchMembersUseCase
         self.createMeetingUseCase = createMeetingUseCase
         self.updateMeetingUseCase = updateMeetingUseCase
-        self.fetchParticipantsUseCase = fetchParticipantsUseCase
         self.currentDateProvider = currentDateProvider
         self.onSuccess = onSuccess
 
@@ -157,34 +152,6 @@ package final class MeetingFormViewModel {
 
     func clearTitle() {
         meetingTitle = ""
-    }
-
-    /// Pre-selects the current participants when editing a meeting. They come
-    /// from the meeting's conversation, the source of truth for its members,
-    /// and become the baseline for the participant diff on save. If loading
-    /// fails, the baseline and the selection both stay as they are, so saving
-    /// can only add participants, never accidentally remove them.
-    func loadParticipants() async {
-        guard case .edit(let meeting) = mode else { return }
-        do {
-            let members = try await fetchParticipantsUseCase.invoke(conversationID: meeting.conversationID)
-            selectedMembers = members
-            mode = .edit(
-                Meeting(
-                    id: meeting.id,
-                    title: meeting.title,
-                    start: meeting.start,
-                    end: meeting.end,
-                    recurrence: meeting.recurrence,
-                    members: members,
-                    conversationID: meeting.conversationID,
-                    creatorID: meeting.creatorID
-                )
-            )
-        } catch {
-            let errorType = Swift.type(of: error)
-            WireLogger.meetings.error("failed to load meeting participants: \(String(describing: errorType))")
-        }
     }
 
     func makeMemberSelectionViewModel() -> MemberSelectionViewModel {

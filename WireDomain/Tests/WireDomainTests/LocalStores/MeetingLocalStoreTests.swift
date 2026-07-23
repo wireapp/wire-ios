@@ -127,6 +127,57 @@ final class MeetingLocalStoreTests: XCTestCase {
         }
     }
 
+    func testStoredMeetings_It_Populates_Members_From_Conversation_Participants() async throws {
+        // Given
+
+        await context.perform { [modelHelper, context] in
+            let selfUser = modelHelper!.createSelfUser(
+                id: UUID(),
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+            let bob = modelHelper!.createUser(
+                id: Scaffolding.memberBobID.id,
+                domain: Scaffolding.memberBobID.domain,
+                name: "Bob Baker",
+                handle: "bob",
+                in: context
+            )
+            let alice = modelHelper!.createUser(
+                id: Scaffolding.memberAliceID.id,
+                domain: Scaffolding.memberAliceID.domain,
+                name: "Alice Archer",
+                handle: "alice",
+                in: context
+            )
+            _ = modelHelper!.createUser(
+                id: Scaffolding.creatorID.id,
+                domain: Scaffolding.creatorID.domain,
+                in: context
+            )
+            _ = modelHelper!.createGroupConversation(
+                id: Scaffolding.conversationID.id,
+                with: [selfUser, bob, alice],
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+        }
+
+        await sut.storeMeeting(Scaffolding.meeting)
+
+        // When
+
+        let meetings = await sut.storedMeetings()
+
+        // Then
+
+        let meeting = try XCTUnwrap(meetings.first)
+        XCTAssertEqual(meeting.members.count, 2, "the self user should be excluded")
+        XCTAssertEqual(meeting.members.map(\.name), ["Alice Archer", "Bob Baker"], "members should be sorted by name")
+        XCTAssertEqual(meeting.members.map(\.handle), ["alice", "bob"])
+        XCTAssertEqual(meeting.members.map(\.qualifiedID), [Scaffolding.memberAliceID, Scaffolding.memberBobID])
+    }
+
     func testDeleteMeeting_It_Removes_Stored_Meeting() async throws {
         // Given
 
@@ -175,6 +226,16 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         static let conversationID = WireNetwork.QualifiedID(
             id: UUID(uuidString: "5a4c5b1c-2b5e-4b8a-9d4d-1a6e0e6a1b2c")!,
+            domain: "example.com"
+        )
+
+        static let memberAliceID = WireNetwork.QualifiedID(
+            id: UUID(uuidString: "0f8b0c2f-6cb0-4c11-9b0f-1e2d3c4b5a69")!,
+            domain: "example.com"
+        )
+
+        static let memberBobID = WireNetwork.QualifiedID(
+            id: UUID(uuidString: "7c1d2e3f-4a5b-4c6d-8e9f-0a1b2c3d4e5f")!,
             domain: "example.com"
         )
 

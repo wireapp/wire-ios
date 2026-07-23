@@ -147,7 +147,7 @@ private extension StoredMeeting {
             let creatorID = creator?.qualifiedID
         else { return nil }
 
-        guard let conversationID = conversation?.qualifiedID else { return nil }
+        guard let conversation, let conversationID = conversation.qualifiedID else { return nil }
 
         return Meeting(
             id: QualifiedID(id: remoteIdentifier, domain: domain ?? ""),
@@ -155,7 +155,7 @@ private extension StoredMeeting {
             start: start,
             end: end,
             recurrence: toDomainRecurrence(),
-            members: [],
+            members: conversation.toDomainMembers(),
             conversationID: QualifiedID(id: conversationID.uuid, domain: conversationID.domain),
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
@@ -175,6 +175,27 @@ private extension StoredMeeting {
             interval: Int(recurrenceInterval),
             until: recurrenceUntil
         )
+    }
+
+}
+
+private extension ZMConversation {
+
+    /// The meeting's members are not part of the backend's meeting responses;
+    /// the participants of the meeting's conversation are the source of truth.
+    /// The self user is excluded, matching the participant selection in the
+    /// meeting forms, where the creator is implicit.
+    func toDomainMembers() -> [MeetingMember] {
+        localParticipantsExcludingSelf
+            .compactMap { user -> MeetingMember? in
+                guard let id = user.remoteIdentifier else { return nil }
+                return MeetingMember(
+                    qualifiedID: QualifiedID(id: id, domain: user.domain ?? ""),
+                    name: user.name ?? "",
+                    handle: user.handle ?? ""
+                )
+            }
+            .sorted { $0.name < $1.name }
     }
 
 }

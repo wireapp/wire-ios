@@ -24,11 +24,6 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     /// Fetch and setup conversation if needed.
     func pullConversation(id: UUID, domain: String) async throws
 
-    /// The current participants of the underlying conversation, excluding
-    /// the self user. Returns an empty list when the conversation is not
-    /// known locally.
-    func fetchParticipants(of conversationID: QualifiedID) async throws -> [MeetingMember]
-
     /// Add participants to the underlying MLS conversation.
     func addParticipants(_ participants: [MeetingMember], to conversationID: QualifiedID) async throws
 

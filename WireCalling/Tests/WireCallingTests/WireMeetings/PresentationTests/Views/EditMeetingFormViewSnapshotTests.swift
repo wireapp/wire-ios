@@ -106,17 +106,11 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
             creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )
 
-        // Stub the loaded participants with the meeting's members, so the
-        // snapshot stays the same whether or not the load task has run.
-        let fetchParticipantsUseCase = FetchMeetingParticipantsUseCaseProtocolMock()
-        fetchParticipantsUseCase.invokeConversationIDQualifiedIDMeetingMemberReturnValue = meeting.members
-
         return MeetingFormViewModel(
             mode: .edit(meeting),
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
-            fetchParticipantsUseCase: fetchParticipantsUseCase,
             currentDateProvider: dateProviderMock
         )
     }
