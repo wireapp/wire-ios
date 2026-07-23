@@ -45,7 +45,7 @@ public struct ConversationViewerAccessBanner: View {
             .accessibilityLabel(Accessibility.Files.ViewerAccess.Banner.close)
         }
         .padding(.horizontal, 24)
-        .frame(height: 46)
+        .frame(height: 32)
         .background(backgroundColor.color)
     }
 }

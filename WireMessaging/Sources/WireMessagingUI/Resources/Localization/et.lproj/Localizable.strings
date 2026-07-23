@@ -119,7 +119,7 @@
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
 "conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Viewer access";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
-"conversation.wireCells.files.viewerAccess.banner" = "You have viewer access for Shared Drive. You can’t upload, edit, or manage files.";
+"conversation.wireCells.files.viewerAccess.banner" = "Viewer access: you can’t upload or edit files.";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
