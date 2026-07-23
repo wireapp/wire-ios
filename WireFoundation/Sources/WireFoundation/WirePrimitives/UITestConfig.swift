@@ -54,7 +54,6 @@ public struct UITestConfig: Codable {
     }
 
     #if DEBUG
-        /// Returns `UITestConfig` decoded from base64 app environment if set.
         public static var environment: UITestConfig? {
             guard
                 let value = ProcessInfo.processInfo.environment[environmentKey],

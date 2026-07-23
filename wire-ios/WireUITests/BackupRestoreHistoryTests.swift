@@ -46,8 +46,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .enterPassword(teamOwner.password)
 
         activeConversationPage = try loginAndVerifyPreviousMessageIsNotShown(
-            email: teamOwner.email,
-            password: teamOwner.password,
+            user: teamOwner,
             message: messageFromOwner
         )
 
@@ -101,8 +100,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .enterPassword(teamOwner.password)
 
         activeConversationPage = try loginAndVerifyPreviousMessageIsNotShown(
-            email: teamOwner.email,
-            password: teamOwner.password,
+            user: teamOwner,
             message: messageFromOwner
         )
 
@@ -144,8 +142,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             conversation: .group(groupName)
         )
 
-        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let activeConversationPage = try skipUiLogin(user: teamOwner)
             .openConversation()
             .sendMessage(messageFromOwner)
 
@@ -163,16 +160,11 @@ final class BackupRestoreHistoryTests: WireUITestCase {
 
     @MainActor
     private func loginAndVerifyPreviousMessageIsNotShown(
-        email: String,
-        password: String,
+        user: UserInfo,
         message: String
     ) throws -> ActiveConversationPage {
-        let activeConversationPage = try app.loginUser(
-            email: email,
-            password: password
-        )
-        .acceptPopup()
-        .openConversation()
+        let activeConversationPage = try skipUiLogin(user: user)
+            .openConversation()
 
         let sentMessages = activeConversationPage.fetchMessages()
         XCTAssertFalse(

@@ -47,8 +47,7 @@ final class GroupMessagingTests: WireUITestCase {
 
     @MainActor
     private func login(user: UserInfo) throws -> ConversationsPage {
-        try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        try skipUiLogin(user: user)
     }
 
     /// [critical]
@@ -138,8 +137,7 @@ final class GroupMessagingTests: WireUITestCase {
         let userB = teamMembers[0]
 
         // ...login user A, then add user B as a second account in the app
-        _ = try app.loginUser(email: userA.email, password: userA.password)
-            .acceptPopup()
+        _ = try skipUiLogin(user: userA)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 

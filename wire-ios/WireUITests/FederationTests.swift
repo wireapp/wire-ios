@@ -27,11 +27,11 @@ final class FederationTests: WireUITestCase {
 
         try switchBackend(target: .bella)
         let bellaTeam = try await UserHelper.instance(backend: .bella).registerTeam(withMemberCount: 0)
-        _ = try await loginToBackend(user: bellaTeam.teamOwner)
+        _ = try skipUiLogin(user: bellaTeam.teamOwner)
 
         try switchBackend(target: .anta)
         let antaTeam = try await UserHelper.instance(backend: .anta).registerTeam(withMemberCount: 0)
-        let conversationsPage = try await loginToBackend(user: antaTeam.teamOwner)
+        let conversationsPage = try skipUiLogin(user: antaTeam.teamOwner)
 
         // WHEN
         let federatedHandle = "@\(bellaTeam.teamOwner.username)@\(BackendTarget.bella.domainInfo)"

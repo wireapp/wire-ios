@@ -29,8 +29,7 @@ final class AccountManagementTests: WireUITestCase {
 
         let user = try await UserHelper.default.createPersonalUser()
 
-        let accountSettingPage = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        let accountSettingPage = try skipUiLogin(user: user)
             .openSettings()
             .openAccountSettings()
             .tapNameField()
@@ -56,8 +55,7 @@ final class AccountManagementTests: WireUITestCase {
 
         let user = try await UserHelper.default.createPersonalUser()
 
-        let page = try await app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        let page = try await skipUiLogin(user: user)
             .openSettings()
             .openOptionsMenu()
             .enableLockWithPasscode()
@@ -80,8 +78,7 @@ final class AccountManagementTests: WireUITestCase {
 
         let user = try await UserHelper.default.createPersonalUser()
 
-        let verifyEmailPage = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        let verifyEmailPage = try skipUiLogin(user: user)
             .openSettings()
             .openAccountSettings()
             .tapEmailField()

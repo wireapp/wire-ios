@@ -120,7 +120,6 @@ class WireUITestCase: XCTestCase {
     @MainActor
     func skipUiLogin(
         user: UserInfo,
-        waitingForConversationNames conversationNames: [String] = [],
         timeout: TimeInterval = 15
     ) throws -> ConversationsPage {
         _ = try XCTUnwrap(user.email.isEmpty ? nil : user.email, "skipUiLogin requires a non-empty email")
@@ -143,12 +142,6 @@ class WireUITestCase: XCTestCase {
         )
 
         let conversationsPage = try ConversationsPage()
-        for conversationName in conversationNames {
-            XCTAssertTrue(
-                conversationsPage.conversationCell(named: conversationName).waitForExistence(timeout: timeout),
-                "Conversation \(conversationName) did not appear for authenticated user \(user.email)"
-            )
-        }
         return conversationsPage
     }
 

@@ -47,8 +47,7 @@ final class ChannelMessagingTests: WireUITestCase {
 
     @MainActor
     private func login(user: UserInfo) throws -> ConversationsPage {
-        try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        try skipUiLogin(user: user)
     }
 
     @MainActor

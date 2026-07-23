@@ -94,11 +94,7 @@ final class ZCallingTests: WireUITestCase {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 
-        let firstTimePage = try app.loginUser(
-            email: teamAndGroupCallSetup.appUserReceivingCall.email,
-            password: teamAndGroupCallSetup.appUserReceivingCall.password
-        )
-        _ = try firstTimePage.acceptPopup()
+        _ = try skipUiLogin(user: teamAndGroupCallSetup.appUserReceivingCall)
 
         let instances: [CallingServiceInstance]
 
@@ -139,11 +135,7 @@ final class ZCallingTests: WireUITestCase {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
 
-        let firstTimePage = try app.loginUser(
-            email: teamAndGroupCallSetup.appUserReceivingCall.email,
-            password: teamAndGroupCallSetup.appUserReceivingCall.password
-        )
-        _ = try firstTimePage.acceptPopup()
+        _ = try skipUiLogin(user: teamAndGroupCallSetup.appUserReceivingCall)
 
         let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
         let ownerInstanceId = try requireOwnerInstanceId(from: instances)
@@ -180,13 +172,8 @@ final class ZCallingTests: WireUITestCase {
         // GIVEN
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
-        let firstTimePage = try app.loginUser(
-            email: teamAndGroupCallSetup.teamOwner.email,
-            password: teamAndGroupCallSetup.teamOwner.password
-        )
-
         // WHEN
-        let ongoingCallPage = try firstTimePage.acceptPopup()
+        let ongoingCallPage = try skipUiLogin(user: teamAndGroupCallSetup.teamOwner)
             .openConversation()
             .initiateCall()
 
@@ -220,13 +207,8 @@ final class ZCallingTests: WireUITestCase {
         // GIVEN
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
-        let firstTimePage = try app.loginUser(
-            email: teamAndGroupCallSetup.teamOwner.email,
-            password: teamAndGroupCallSetup.teamOwner.password
-        )
-
         // WHEN
-        let ongoingCallPage = try await firstTimePage.acceptPopup()
+        let ongoingCallPage = try await skipUiLogin(user: teamAndGroupCallSetup.teamOwner)
             .openConversation()
             .initiateCall()
             .minimizeCallUI()
@@ -249,11 +231,7 @@ final class ZCallingTests: WireUITestCase {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
 
-        let firstTimePage = try app.loginUser(
-            email: teamAndGroupCallSetup.appUserReceivingCall.email,
-            password: teamAndGroupCallSetup.appUserReceivingCall.password
-        )
-        let conversationsPage = try firstTimePage.acceptPopup()
+        let conversationsPage = try skipUiLogin(user: teamAndGroupCallSetup.appUserReceivingCall)
 
         let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
         let acceptingIds = instances.compactMap(\.id).filter { !$0.isEmpty }

@@ -35,7 +35,7 @@ class RemoveUserTests: WireUITestCase {
         let member1 = try await UserHelper.default.createPersonalUser()
         let member2 = try await UserHelper.default.createPersonalUser()
 
-        _ = try await loginToBackend(user: member2)
+        _ = try skipUiLogin(user: member2)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
@@ -91,7 +91,7 @@ class RemoveUserTests: WireUITestCase {
         let member1 = try XCTUnwrap(team.teamMembers.first)
         let member2 = try XCTUnwrap(team.teamMembers.last)
 
-        _ = try await loginToBackend(user: member2)
+        _ = try skipUiLogin(user: member2)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 

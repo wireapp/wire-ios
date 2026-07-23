@@ -215,7 +215,13 @@ final class PersonalUsersTests: WireUITestCase {
                 conversation: .group(groupName)
             )
 
-        let conversationsPage = try skipUiLogin(user: teamOwner, waitingForConversationNames: [groupName])
+        let conversationsPage = try skipUiLogin(user: teamOwner)
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: groupName).waitForExistence(timeout: 15),
+            "Conversation \(groupName) did not appear for authenticated user \(teamOwner.email)"
+        )
+
+        _ = try conversationsPage
             .longPressForMoreOptionOnConversation()
             .markConversationAsFavourite()
             .longPressForMoreOptionOnConversation()
@@ -235,7 +241,13 @@ final class PersonalUsersTests: WireUITestCase {
                 conversation: .group(groupName)
             )
 
-        let conversationsPage = try skipUiLogin(user: teamOwner, waitingForConversationNames: [groupName])
+        let conversationsPage = try skipUiLogin(user: teamOwner)
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: groupName).waitForExistence(timeout: 15),
+            "Conversation \(groupName) did not appear for authenticated user \(teamOwner.email)"
+        )
+
+        _ = try conversationsPage
             .longPressForMoreOptionOnConversation()
             .markConversationAsFavourite()
             .filterConversationByFavourite()
@@ -313,10 +325,13 @@ final class PersonalUsersTests: WireUITestCase {
         let team = try await registerTeamForConversationFilter()
 
         // WHEN
-        let conversationsPage = try skipUiLogin(
-            user: team.teamOwner,
-            waitingForConversationNames: [team.groupName]
+        let conversationsPage = try skipUiLogin(user: team.teamOwner)
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.groupName).waitForExistence(timeout: 15),
+            "Conversation \(team.groupName) did not appear for authenticated user \(team.teamOwner.email)"
         )
+
+        _ = try conversationsPage
             .longPressForMoreOptionOnConversation(named: team.groupName)
             .moveConversationToNewFolder(named: team.groupName)
             .filterConversationByFolder(named: team.groupName)

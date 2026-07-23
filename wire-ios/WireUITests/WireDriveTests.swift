@@ -56,10 +56,9 @@ final class WireDriveTests: WireUITestCase {
         return guest
     }
 
+    @MainActor
     private func loginAndOpenConversation(for user: UserInfo) throws -> ActiveConversationPage {
-        try app
-            .loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        try skipUiLogin(user: user)
             .openConversation()
     }
 
@@ -88,6 +87,7 @@ final class WireDriveTests: WireUITestCase {
         return (teamOwner, teamMembers)
     }
 
+    @MainActor
     private func uploadSketchAttachment(
         message: String,
         for user: UserInfo
@@ -99,6 +99,7 @@ final class WireDriveTests: WireUITestCase {
         return activeConversationPage
     }
 
+    @MainActor
     private func uploadSketchAndOpenSharedDrive(
         message: String,
         for user: UserInfo
@@ -116,8 +117,7 @@ final class WireDriveTests: WireUITestCase {
         let (teamOwner, teamMembers) = try await createTeamAndEnableDrive()
 
         // WHEN
-        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let activeConversationPage = try skipUiLogin(user: teamOwner)
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enableShareDriveSwitch()
@@ -138,8 +138,7 @@ final class WireDriveTests: WireUITestCase {
         let (teamOwner, teamMembers) = try await createTeamAndEnableDrive(channelEnabled: true)
 
         // WHEN
-        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let activeConversationPage = try skipUiLogin(user: teamOwner)
             .tapPlusButtonToCreateGroup()
             .tapNewChannelButton()
             .enableShareDriveSwitch()
@@ -293,9 +292,7 @@ final class WireDriveTests: WireUITestCase {
         let guest = try await createDriveEnabledConversationWithGuest(groupName: groupName)
 
         // WHEN
-        let conversationsPage = try app
-            .loginUser(email: guest.email, password: guest.password)
-            .acceptPopup()
+        let conversationsPage = try skipUiLogin(user: guest)
 
         // THEN
         conversationsPage.verifyDriveTabButtonIsHidden()

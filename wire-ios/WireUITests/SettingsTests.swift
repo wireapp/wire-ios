@@ -27,8 +27,7 @@ final class SettingsTests: WireUITestCase {
         let user = try await UserHelper.default.createPersonalUser()
 
         // WHEN
-        let optionsPage = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        let optionsPage = try skipUiLogin(user: user)
             .openSettings()
             .openOptionsMenu()
             // THEN - system theme is selected by default as light
@@ -55,8 +54,7 @@ final class SettingsTests: WireUITestCase {
         let user = try await UserHelper.default.createPersonalUser()
 
         // WHEN
-        let accountSettingsPage = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        let accountSettingsPage = try skipUiLogin(user: user)
             .openSettings()
             .openAccountSettings()
             .setProfilePictureFromLibrary()
@@ -80,8 +78,7 @@ final class SettingsTests: WireUITestCase {
         let profileColor = AccountSettingsPage.ProfileColor.purple
 
         // WHEN
-        let settingsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let settingsPage = try skipUiLogin(user: teamOwner)
             .openSettings()
             .openAccountSettings()
             .selectProfileColor(profileColor)
@@ -106,8 +103,7 @@ final class SettingsTests: WireUITestCase {
         )
 
         // Login & Disable link previews
-        let conversationPage = try app.loginUser(email: stagingTeam.email, password: stagingTeam.password)
-            .acceptPopup()
+        let conversationPage = try skipUiLogin(user: stagingTeam)
             .openSettings()
             .openOptionsMenu()
             .disableCreateLinkPreviews()

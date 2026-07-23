@@ -27,8 +27,7 @@ final class TeamManageTests: WireUITestCase {
     func testMigratePersonalUserToTeam_TC_9452() async throws {
         let user = try await UserHelper.default.createPersonalUser()
 
-        let conversationPage = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        let conversationPage = try skipUiLogin(user: user)
             .openUserProfilePage()
             .tapCreateTeamButton()
             .tapContinue()
@@ -87,8 +86,7 @@ final class TeamManageTests: WireUITestCase {
 
         let teamMemberNames = try await UserHelper.default.registerTeamWith2Members(teamOwner: teamOwner)
 
-        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let activeConversationPage = try skipUiLogin(user: teamOwner)
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
@@ -137,8 +135,7 @@ final class TeamManageTests: WireUITestCase {
             groupName: groupName
         )
 
-        let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let conversationDetailsPage = try skipUiLogin(user: teamOwner)
             .openConversation()
             .openConversationDetails()
             .openUserDetailsPage(byName: teamMembers[0].name)
@@ -175,8 +172,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         // Archive the group via conversation details.
-        let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        let archivedConversationPage = try skipUiLogin(user: teamOwner)
             .openConversation()
             .openConversationDetails()
             .moreOptionsConversationDetails()
@@ -226,8 +222,7 @@ final class TeamManageTests: WireUITestCase {
                 conversation: .group(UserGenerator.generateRandomConversationName())
             )
 
-        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        _ = try skipUiLogin(user: teamOwner)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 

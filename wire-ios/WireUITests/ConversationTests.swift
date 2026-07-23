@@ -26,7 +26,7 @@ final class ConversationTests: WireUITestCase {
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
 
-        let conversationsPage = try await loginToBackend(user: userA)
+        let conversationsPage = try skipUiLogin(user: userA)
 
         // WHEN
         try conversationsPage
@@ -57,8 +57,7 @@ final class ConversationTests: WireUITestCase {
             withMemberCount: 2,
             conversation: .group("Test")
         )
-        let activeConversationPage = try app.loginUser(email: members[0].email, password: members[0].password)
-            .acceptPopup()
+        let activeConversationPage = try skipUiLogin(user: members[0])
             .openConversation()
             // WHEN
             .sendMessage("test")
@@ -82,8 +81,7 @@ final class ConversationTests: WireUITestCase {
             withMemberCount: 2,
             conversation: .group("Test")
         )
-        let activeConversationPage = try app.loginUser(email: members[0].email, password: members[0].password)
-            .acceptPopup()
+        let activeConversationPage = try skipUiLogin(user: members[0])
             .openConversation()
             // WHEN
             .sendMessage("test")

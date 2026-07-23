@@ -108,7 +108,11 @@ final class MultiBackendSupportTests: WireUITestCase {
         )
 
         // Login to user A
-        _ = try skipUiLogin(user: userA, waitingForConversationNames: [conversationA])
+        let conversationsPageAsA = try skipUiLogin(user: userA)
+        XCTAssertTrue(
+            conversationsPageAsA.conversationCell(named: conversationA).waitForExistence(timeout: 15),
+            "Conversation \(conversationA) did not appear for authenticated user \(userA.email)"
+        )
 
         // Login to user B
         _ = try ConversationsPage()

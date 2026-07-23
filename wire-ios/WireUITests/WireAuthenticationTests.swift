@@ -49,9 +49,7 @@ final class WireAuthenticationTests: WireUITestCase {
     func testLogout_TC_8946() async throws {
         // Login user A
         let userA = try await UserHelper.default.createPersonalUser()
-        _ = try app
-            .loginUser(email: userA.email, password: userA.password)
-            .acceptPopup()
+        _ = try skipUiLogin(user: userA)
 
         // Login to user B
         let userB = try await UserHelper.default.createPersonalUser()

@@ -108,11 +108,7 @@ final class ShareExtensionTests: WireUITestCase {
                 member.name
             }
 
-        let firstTimePage = try app.loginUser(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let conversationsPage = try firstTimePage.acceptPopup()
+        let conversationsPage = try skipUiLogin(user: teamOwner)
 
         return (
             teamOwner: teamOwner,

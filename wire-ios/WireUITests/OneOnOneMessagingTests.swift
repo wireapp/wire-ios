@@ -26,8 +26,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
     private func openOneOnOneConversation() async throws
         -> (teamOwner: UserInfo, activeConversationPage: ActiveConversationPage) {
         let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
-        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
-        let activeConversationPage = try firstTimePage.acceptPopup()
+        let activeConversationPage = try skipUiLogin(user: teamMembers[0])
             .tapPlusButtonToCreateGroup()
             .openUserDetailsInContactList()
             .tapStartConversationButton()
@@ -172,8 +171,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
         let member = try XCTUnwrap(teamMembers.first)
 
-        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        _ = try skipUiLogin(user: teamOwner)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
@@ -206,8 +204,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
         let member = try XCTUnwrap(teamMembers.first)
 
-        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        _ = try skipUiLogin(user: teamOwner)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 

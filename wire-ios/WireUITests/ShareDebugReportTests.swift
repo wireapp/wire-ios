@@ -60,7 +60,7 @@ final class ShareDebugReportTests: WireUITestCase {
     func testShakeGesture_onConversationScreen_presentsShareDebugActionSheet_TC_10854() async throws {
         // GIVEN
         let user = try await UserHelper.default.createPersonalUser()
-        _ = try await loginToBackend(user: user)
+        _ = try skipUiLogin(user: user)
 
         // WHEN
         simulateShakeGesture()
@@ -93,7 +93,7 @@ final class ShareDebugReportTests: WireUITestCase {
             groupName: groupName
         )
 
-        let conversationsPage = try await loginToBackend(user: owner)
+        let conversationsPage = try skipUiLogin(user: owner)
         let settingsPage = try conversationsPage.openSettings()
         XCTAssertTrue(
             settingsPage.shareDebugBanner.waitForExistence(timeout: 10),

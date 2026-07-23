@@ -35,8 +35,7 @@ class AdminPromotionTests: WireUITestCase {
         )
         let member = try XCTUnwrap(teamMembers.first)
 
-        let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
-            .acceptPopup()
+        let conversationDetailsPage = try skipUiLogin(user: owner)
             .openConversation()
             .openConversationDetails()
             .moreOptionsConversationDetails()
@@ -79,8 +78,7 @@ class AdminPromotionTests: WireUITestCase {
             conversation: .group(groupName)
         )
 
-        let conversationsPage = try app.loginUser(email: owner.email, password: owner.password)
-            .acceptPopup()
+        let conversationsPage = try skipUiLogin(user: owner)
             .openConversation()
             .openConversationDetails()
             .moreOptionsConversationDetails()
@@ -109,8 +107,7 @@ class AdminPromotionTests: WireUITestCase {
             conversation: .group(groupName)
         )
 
-        let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
-            .acceptPopup()
+        let conversationDetailsPage = try skipUiLogin(user: owner)
             .openConversation()
             .openConversationDetails()
             .moreOptionsConversationDetails()
