@@ -27,7 +27,7 @@ public import Foundation
 
 public struct Meeting: Equatable, Sendable {
 
-    public let id: UUID
+    public let id: QualifiedID
 
     public let title: String
 
@@ -35,24 +35,32 @@ public struct Meeting: Equatable, Sendable {
 
     public let end: Date
 
-    public let repeatOption: RepeatOption
+    public let recurrence: MeetingRecurrence?
 
-    public let members: [Member]
+    public let members: [MeetingMember]
+
+    public let conversationID: QualifiedID
+
+    public let creatorID: QualifiedID
 
     public init(
-        id: UUID,
+        id: QualifiedID,
         title: String,
         start: Date,
         end: Date,
-        repeatOption: RepeatOption = .never,
-        members: [Member] = []
+        recurrence: MeetingRecurrence?,
+        members: [MeetingMember],
+        conversationID: QualifiedID,
+        creatorID: QualifiedID
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
-        self.repeatOption = repeatOption
+        self.recurrence = recurrence
         self.members = members
+        self.conversationID = conversationID
+        self.creatorID = creatorID
     }
 
 }

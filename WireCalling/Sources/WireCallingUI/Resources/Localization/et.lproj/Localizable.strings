@@ -38,6 +38,8 @@
 "wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
 "wireMeetings.list.delete.alert.delete.button" = "Kustuta";
 "wireMeetings.list.delete.alert.cancel.button" = "Tühista";
+"wireMeetings.list.delete.error.alert.title" = "Midagi läks valesti";
+"wireMeetings.list.delete.error.alert.ok" = "OK";
 
 // MARK: - Schedule a meeting
 
@@ -45,11 +47,14 @@
 "wireMeetings.schedule.future.title" = "New meeting";
 "wireMeetings.schedule.cancel.button" = "Tühista";
 "wireMeetings.schedule.schedule.button" = "Schedule";
+"wireMeetings.schedule.select.button" = "Select";
 "wireMeetings.schedule.start.button" = "Start";
 "wireMeetings.schedule.setupTitle.header" = "Title";
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupParticipants.header" = "Osalejad";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Lisa osalejaid";
+"wireMeetings.schedule.error.alert.title" = "Midagi läks valesti";
+"wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Tühista";
@@ -62,3 +67,14 @@
 "wireMeetings.schedule.time.everyTwoWeeks" = "Every 2 weeks";
 "wireMeetings.schedule.time.monthly" = "Monthly";
 "wireMeetings.schedule.time.yearly" = "Yearly";
+"wireMeetings.schedule.members.title" = "Osalejad";
+"wireMeetings.schedule.members.cancel.button" = "Tühista";
+"wireMeetings.schedule.members.select.button" = "Select";
+"wireMeetings.schedule.members.search.field.placeholder" = "Enter a name";
+"wireMeetings.schedule.members.empty.title" = "No result found";
+"wireMeetings.schedule.members.empty.description" = "Try to adjust your search";
+"wireMeetings.schedule.members.error.title" = "Midagi läks valesti";
+"wireMeetings.schedule.members.error.description" = "Please try again";
+"wireMeetings.schedule.members.retry.button" = "Retry";
+"wireMeetings.schedule.members.selected.title" = "Selected";
+"wireMeetings.schedule.members.contacts.title" = "Kontaktid";

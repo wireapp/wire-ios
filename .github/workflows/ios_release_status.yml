@@ -35,11 +35,14 @@ jobs:
       # Optional: full branch name of the current LTS C-build release (e.g. release/cycle-4.18).
       # When set, an extra LTS section is appended to the report.
       LTS_RELEASE: ${{ vars.LTS_RELEASE }}
+      # Optional: full branch name of an additionally tracked release (e.g. release/cycle-4.20).
+      # When set, and the Jira version isn't yet released, an extra GOV section is appended to the report.
+      GOV_RELEASE: ${{ vars.GOV_RELEASE }}
     steps:
       # Needed so the local ./.github/actions/notify-wire composite action is available.
       # Only .github is required, and no LFS objects.
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: .github
           lfs: 'false'
@@ -253,6 +256,28 @@ jobs:
               }
             }
 
+            // ── GOV Builds (optional, only if vars.GOV_RELEASE is set
+            //                and the Jira version isn't yet released) ────────
+            let gov = null;
+            if (process.env.GOV_RELEASE) {
+              const govBranch  = process.env.GOV_RELEASE;
+              const govVersion = await readVersionFromRef(govBranch);
+              const govName    = `iOS v${govVersion}`;
+              const govQ       = jqlEscape(govName);
+              const govJira    = await findJiraVersion(govVersion);
+              if (govJira?.released) {
+                core.info(`GOV ${govName} is already released in Jira — skipping section`);
+              } else {
+                const govTotalJql = `project = ${project} AND fixVersion = "${govQ}"`;
+                const govTotal    = await countIssues(govTotalJql);
+                const govOpenJql  = `project = ${project} AND fixVersion = "${govQ}" AND statusCategory != Done`;
+                const govOpen     = await countIssues(govOpenJql);
+                const govOpenItems = govOpen > 0 ? (await listIssues(govOpenJql, ['summary', 'status', 'assignee'])).issues : [];
+                const daysToGov  = govJira ? daysBetween(govJira.releaseDate) : null;
+                gov = { govBranch, govName, govJira, govTotal, govOpen, govOpenItems, daysToGov };
+              }
+            }
+
             // ── Render Slack-flavoured Markdown ───────────────────────────────
             // Each live release is rendered as its own self-contained message so
             // they can be posted to Wire separately (one message per release).
@@ -326,21 +351,39 @@ jobs:
               }
             }
 
+            // GOV Builds (optional)
+            let govLines = null;
+            if (gov) {
+              govLines = [dateTitle, ''];
+              govLines.push(`*⬛ GOV Builds - ${releaseLink(gov.govJira, gov.govName)} (\`${gov.govBranch}\`)*`);
+              govLines.push(`  • ${driverLabel(gov.govJira?.driver)}`);
+              if (gov.daysToGov != null) {
+                const label = gov.daysToGov >= 0 ? 'until release' : 'past release';
+                govLines.push(`  • ${Math.abs(gov.daysToGov)} day(s) ${label} (${gov.govJira.releaseDate})`);
+              } else {
+                govLines.push(`  • ⚠️ no release date on Jira version`);
+              }
+              govLines.push(`  • ${gov.govOpen} of ${gov.govTotal} tickets not done`);
+              if (gov.govOpen > 0) {
+                govLines.push(...renderGroupedByStatus(gov.govOpenItems));
+              }
+            }
+
             const edgeMsg = edgeLines.join('\n');
             const betaMsg = betaLines.join('\n');
             const prodMsg = prodLines.join('\n');
             const ltsMsg  = ltsLines ? ltsLines.join('\n') : '';
+            const govMsg  = govLines ? govLines.join('\n') : '';
 
-            // One Slack payload string per release. JSON.stringify so the value is a
-            // valid JSON string literal when interpolated into the action-slack payload.
-            // LTS is '' when no LTS_RELEASE is configured — its post step is skipped.
-            core.setOutput('edge', JSON.stringify(edgeMsg));
-            core.setOutput('beta', JSON.stringify(betaMsg));
-            core.setOutput('prod', JSON.stringify(prodMsg));
-            core.setOutput('lts', ltsMsg ? JSON.stringify(ltsMsg) : '');
+            // LTS/GOV are '' when their vars aren't configured — their post steps are skipped.
+            core.setOutput('edge', edgeMsg);
+            core.setOutput('beta', betaMsg);
+            core.setOutput('prod', prodMsg);
+            core.setOutput('lts', ltsMsg);
+            core.setOutput('gov', govMsg);
 
             await core.summary
-              .addRaw([edgeMsg, betaMsg, prodMsg, ltsMsg].filter(Boolean).join('\n\n'))
+              .addRaw([edgeMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
               .write();
 
       - name: Post Edge to Wire
@@ -370,3 +413,10 @@ jobs:
         with:
           notify: custom
           text: ${{ steps.build.outputs.lts }}
+
+      - name: Post GOV to Wire
+        if: env.SLACK_WEBHOOK_URL != '' && steps.build.outputs.gov != ''
+        uses: ./.github/actions/notify-wire
+        with:
+          notify: custom
+          text: ${{ steps.build.outputs.gov }}

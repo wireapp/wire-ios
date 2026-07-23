@@ -347,7 +347,11 @@ final class AuthenticationInterfaceBuilder {
             ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
-            registrationAnalyticsTracker: registrationAnalyticsTracker
+            registrationAnalyticsTracker: registrationAnalyticsTracker,
+            isAccountAlreadyLoggedIn: { userID in
+                SessionManager.shared?.accountManager.accounts.contains { $0.userIdentifier == userID } ?? false
+            },
+            overrideAllowEmailLoginOnly: featureProvider.allowOnlyEmailLogin
         )
 
         return (

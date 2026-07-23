@@ -30,7 +30,8 @@ struct EnvironmentVariables {
         case missingCallingBackend
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
-        case missingOktaApiKey
+        case missingKeycloakURL
+        case missingKeycloakAdminPassword
         case missingSSOClaimedUserEmail
         case missingSSOClaimedUserPassword
         case missingSSOClaimedDomainCode
@@ -48,7 +49,8 @@ struct EnvironmentVariables {
             case .missingCallingBackend: "Missing env var: PREDEFINED_BACKEND"
             case .missingCallingInstanceTypeName: "Missing env var: CALLING_INSTANCE_TYPE_NAME"
             case .missingCallingInstanceTypeVersion: "Missing env var: CALLING_INSTANCE_TYPE_VERSION"
-            case .missingOktaApiKey: "Missing env var: OKTA_API_KEY_IOS"
+            case .missingKeycloakURL: "Missing env var: KEYCLOAK_URL"
+            case .missingKeycloakAdminPassword: "Missing env var: KEYCLOAK_ADMIN_PASSWORD"
             case .missingSSOClaimedUserEmail: "Missing env var: SSO_CLAIMED_USER_EMAIL"
             case .missingSSOClaimedUserPassword: "Missing env var: SSO_CLAIMED_USER_PASSWORD"
             case .missingSSOClaimedDomainCode: "Missing env var: SSO_CLAIMED_DOMAIN_CODE"
@@ -75,7 +77,8 @@ struct EnvironmentVariables {
     let callingBackend: String
     let callingInstanceTypeName: String
     let callingInstanceTypeVersion: String
-    let oktaApiKey: String
+    let keycloakURL: URL
+    let keycloakAdminPassword: String
     let ssoClaimedUserEmail: String
     let ssoClaimedUserPassword: String
     let ssoClaimedDomainCode: String
@@ -161,9 +164,14 @@ struct EnvironmentVariables {
             throw Failure.missingCallingInstanceTypeVersion
         }
 
-        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
-              !oktaApiKey.isEmpty else {
-            throw Failure.missingOktaApiKey
+        guard let keycloakURL = ProcessInfo.processInfo.environment["KEYCLOAK_URL"],
+              !keycloakURL.isEmpty else {
+            throw Failure.missingKeycloakURL
+        }
+
+        guard let keycloakAdminPassword = ProcessInfo.processInfo.environment["KEYCLOAK_ADMIN_PASSWORD"],
+              !keycloakAdminPassword.isEmpty else {
+            throw Failure.missingKeycloakAdminPassword
         }
 
         guard let ssoClaimedUserEmail = ProcessInfo.processInfo.environment["SSO_CLAIMED_USER_EMAIL"],
@@ -185,22 +193,66 @@ struct EnvironmentVariables {
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
-        self.callingServiceUsername = callingServiceUsername
-        self.callingServicePassword = callingServicePassword
+        let callingServiceEnvironment = Self.callingServiceEnvironment(
+            defaultURLString: callingServiceURLString,
+            defaultUsername: callingServiceUsername,
+            defaultPassword: callingServicePassword
+        )
+
+        self.callingServiceUsername = callingServiceEnvironment.username
+        self.callingServicePassword = callingServiceEnvironment.password
         self.antaDeepLinkURL = URL(string: "https://\(antaDeeplinkURL)")!
         self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
         self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
         self.bellaDeepLinkURL = URL(string: "https://\(bellaDeeplinkURL)")!
         self.bellaInbucketURL = URL(string: "https://\(bellaInbucketURL)")!
         self.bellaBackendURL = URL(string: "https://\(backendURLBellaString)")!
-        self.callingServiceURL = URL(string: "https://\(callingServiceURLString)")!
+        self.callingServiceURL = callingServiceEnvironment.url
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
-        self.oktaApiKey = oktaApiKey
+        self.keycloakURL = URL(string: "https://\(keycloakURL)")!
+        self.keycloakAdminPassword = keycloakAdminPassword
         self.ssoClaimedUserEmail = ssoClaimedUserEmail
         self.ssoClaimedUserPassword = ssoClaimedUserPassword
         self.ssoClaimedDomainCode = ssoClaimedDomainCode
+    }
+
+    private static func callingServiceEnvironment(
+        defaultURLString: String,
+        defaultUsername: String,
+        defaultPassword: String
+    ) -> (url: URL, username: String, password: String) {
+        let environment = ProcessInfo.processInfo.environment
+        let isCI = environment["CI"]?.lowercased() == "true"
+
+        if !isCI,
+           let internalURLString = environment["CALLINGSERVICE_INTERNAL_URL"],
+           let internalUsername = environment["CALLINGSERVICE_INTERNAL_USERNAME"],
+           let internalPassword = environment["CALLINGSERVICE_INTERNAL_PASSWORD"],
+           !internalURLString.isEmpty,
+           !internalUsername.isEmpty,
+           !internalPassword.isEmpty {
+            return (
+                url: callingServiceURL(from: internalURLString, defaultScheme: "http"),
+                username: internalUsername,
+                password: internalPassword
+            )
+        }
+
+        return (
+            url: callingServiceURL(from: defaultURLString, defaultScheme: "https"),
+            username: defaultUsername,
+            password: defaultPassword
+        )
+    }
+
+    private static func callingServiceURL(from value: String, defaultScheme: String) -> URL {
+        if value.contains("://") {
+            URL(string: value)!
+        } else {
+            URL(string: "\(defaultScheme)://\(value)")!
+        }
     }
 
     func inbucketURL(for target: BackendTarget) -> URL {

@@ -77,8 +77,9 @@ final class MeetingsViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func createEmptyViewModel() -> MeetingsViewModel {
-        let mockRepository = MeetingsRepositoryProtocolMock()
+        let mockRepository = MeetingRepositoryProtocolMock()
         mockRepository.hasUpcomingMeetingsAfterDateDateBoolReturnValue = false
 
         let upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
@@ -88,10 +89,15 @@ final class MeetingsViewSnapshotTests: XCTestCase {
             nextOffset: 0
         )
 
+        let observeMeetingChangesUseCase = ObserveMeetingChangesUseCaseProtocolMock()
+        observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = AsyncStream { $0.finish() }
+
         return MeetingsViewModel(
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: DeleteMeetingUseCaseProtocolMock()
         )
     }
 

@@ -38,6 +38,8 @@
 "wireMeetings.list.delete.alert.subtitle" = "Встреча будет удалена для вас и всех остальных. Все участники будут уведомлены.";
 "wireMeetings.list.delete.alert.delete.button" = "Удалить";
 "wireMeetings.list.delete.alert.cancel.button" = "Отмена";
+"wireMeetings.list.delete.error.alert.title" = "Что-то пошло не так";
+"wireMeetings.list.delete.error.alert.ok" = "OK";
 
 // MARK: - Schedule a meeting
 
@@ -45,11 +47,14 @@
 "wireMeetings.schedule.future.title" = "Новая встреча";
 "wireMeetings.schedule.cancel.button" = "Отмена";
 "wireMeetings.schedule.schedule.button" = "Расписание";
+"wireMeetings.schedule.select.button" = "Выбрать";
 "wireMeetings.schedule.start.button" = "Начать";
 "wireMeetings.schedule.setupTitle.header" = "Название";
 "wireMeetings.schedule.setupTitle.placeholder" = "Введите название встречи";
 "wireMeetings.schedule.setupParticipants.header" = "Участники";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Добавить участников";
+"wireMeetings.schedule.error.alert.title" = "Что-то пошло не так";
+"wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Отключить доступ гостей?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Отключить";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Отмена";
@@ -62,3 +67,14 @@
 "wireMeetings.schedule.time.everyTwoWeeks" = "Каждые 2 недели";
 "wireMeetings.schedule.time.monthly" = "Ежемесячно";
 "wireMeetings.schedule.time.yearly" = "Ежегодно";
+"wireMeetings.schedule.members.title" = "Участники";
+"wireMeetings.schedule.members.cancel.button" = "Отмена";
+"wireMeetings.schedule.members.select.button" = "Выбрать";
+"wireMeetings.schedule.members.search.field.placeholder" = "Введите название";
+"wireMeetings.schedule.members.empty.title" = "Ничего не найдено";
+"wireMeetings.schedule.members.empty.description" = "Попробуйте изменить условия поиска";
+"wireMeetings.schedule.members.error.title" = "Что-то пошло не так";
+"wireMeetings.schedule.members.error.description" = "Повторите попытку";
+"wireMeetings.schedule.members.retry.button" = "Повторить";
+"wireMeetings.schedule.members.selected.title" = "Выбрано";
+"wireMeetings.schedule.members.contacts.title" = "Контакты";

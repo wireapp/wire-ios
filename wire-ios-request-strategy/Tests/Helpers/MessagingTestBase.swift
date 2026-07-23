@@ -570,7 +570,7 @@ extension MessagingTestBase {
             coreCryptoKeyMigrationManager: mockKeyMigrationManager,
             allowCreation: true,
             localDomain: owningDomain,
-            backgroundTaskManager: nil
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
 
         // Initialize CoreCrypto (this calls proteusInit internally)

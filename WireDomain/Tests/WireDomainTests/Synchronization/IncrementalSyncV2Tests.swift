@@ -63,7 +63,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
-            backgroundTaskManager: nil,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
             coreCrypto: coreCrypto
         )
         journal = Journal(
@@ -91,6 +91,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
             createPushChannelState: {
                 self.pushChannelState
             },
@@ -751,8 +752,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         let token = try await sut.perform()
         await token.suspend()
 
-        try XCTAssertCount(pushChannel.close_Invocations, count: 1)
-        try XCTAssertCount(pushChannelState.markAsClosed_Invocations, count: 1)
+        // The push channel closes twice - once after the push channel completes and again on token.suspend()
+        try XCTAssertCount(pushChannel.close_Invocations, count: 2)
+        try XCTAssertCount(pushChannelState.markAsClosed_Invocations, count: 2)
 
     }
 
@@ -922,6 +924,80 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Broken conversation IDs are stored
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
+    }
+
+    func testPerform_CancelledDuringLargeBatch_CancellationCheckIsReached() async throws {
+        // Given: A large batch of stored events
+        let largeEventCount = 100
+        var largeEventBatch: [(UpdateEventEnvelope, NSManagedObjectID)] = []
+        for i in 0 ..< largeEventCount {
+            let event = Scaffolding.createEvent(
+                message: "message \(i)",
+                timeIntervalSinceNow: TimeInterval(-i)
+            )
+            largeEventBatch.append((event, NSManagedObjectID()))
+        }
+
+        setPendingEvents(envelopes: largeEventBatch)
+
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+        databaseSaver.save_MockMethod = {}
+
+        // Setup push channel
+        let pushChannel = MockPushChannelV2Protocol()
+        pushChannel.open_MockValue = AsyncThrowingStream { _ in }
+        pushChannel.close_MockMethod = {}
+        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
+        pushChannelState.markAsOpen_MockMethod = {}
+        pushChannelState.markAsClosed_MockMethod = {}
+
+        // Cancel the task after processing a few events to simulate
+        // cancellation during the batch processing
+        var processedEventCount = 0
+        let cancelAfterCount = 10
+        let expectation = expectation(description: "task cancelled")
+        var taskToCancel: Task<Void, any Error>?
+
+        processor.processEvent_MockMethod = { _ in
+            processedEventCount += 1
+            if processedEventCount == cancelAfterCount {
+                taskToCancel?.cancel()
+                expectation.fulfill()
+            }
+        }
+
+        // When: Start sync and cancel during processing
+        taskToCancel = Task {
+            _ = try await self.sut.perform()
+        }
+
+        // Wait for cancellation to occur
+        await fulfillment(of: [expectation], timeout: 5)
+
+        // Then: Should throw CancellationError
+        do {
+            _ = try await taskToCancel!.value
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // Expected - cancellation check was reached
+            XCTAssertTrue(true, "Cancellation check was successfully reached during batch processing")
+        } catch {
+            XCTFail("Expected CancellationError but got: \(error)")
+        }
+
+        // Verify that:
+        // 1. Some events were processed (at least up to the cancellation point)
+        XCTAssertGreaterThanOrEqual(processedEventCount, cancelAfterCount)
+
+        // 2. Not all events were processed (cancellation stopped processing)
+        XCTAssertLessThan(processedEventCount, largeEventCount)
+
+        // 3. Push channel was closed
+        XCTAssertEqual(pushChannel.close_Invocations.count, 1)
+
+        // 4. Push channel state was marked as closed
+        XCTAssertEqual(pushChannelState.markAsClosed_Invocations.count, 1)
     }
 
     private func setPendingEvents(envelopes: [(UpdateEventEnvelope, NSManagedObjectID)]) {

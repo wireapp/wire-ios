@@ -21,6 +21,13 @@ import XCTest
 
 class AccountSettingsPage: PageModel {
 
+    struct ProfileColor {
+        static let purple = ProfileColor(displayName: "Purple", accentID: 7)
+
+        let displayName: String
+        let accentID: Int
+    }
+
     override var pageMainElement: XCUIElement {
         accountHeader
     }
@@ -77,6 +84,30 @@ class AccountSettingsPage: PageModel {
         app.descendants(matching: .any)[Locators.AccountSettingsPage.resetPasswordField.rawValue].firstMatch
     }
 
+    var pictureCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.pictureCell.rawValue].firstMatch
+    }
+
+    var colorCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.colorCell.rawValue].firstMatch
+    }
+
+    var conversationBackgroundSwitch: XCUIElement {
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.conversationBackgroundSwitch.rawValue].firstMatch
+    }
+
+    var chooseFromLibraryButton: XCUIElement {
+        app.sheets.firstMatch.buttons.element(boundBy: 0)
+    }
+
+    var confirmImageButton: XCUIElement {
+        app.buttons[Locators.AccountSettingsPage.ok.rawValue].firstMatch
+    }
+
+    var photoGridImageTile: XCUIElement {
+        app.images[Locators.PhotosAppPage.imageTile.rawValue].firstMatch
+    }
+
     func getAccountName() -> String? {
         XCTAssertTrue(
             nameField.waitForExistence(timeout: 5.0),
@@ -110,6 +141,85 @@ class AccountSettingsPage: PageModel {
     func tapNameField() throws -> AccountSettingsPage {
         nameField.tap()
         return self
+    }
+
+    func selectProfileColor(_ color: ProfileColor) throws -> AccountSettingsPage {
+        colorCell.waitAndTap()
+        let colorOption = app.buttons[color.displayName].firstMatch
+        XCTAssertTrue(
+            colorOption.waitForExistence(timeout: 5),
+            "\(color.displayName) color option did not appear"
+        )
+        colorOption.tap()
+        XCTAssertTrue(colorOption.isSelected, "\(color.displayName) color option was not selected")
+        XCTAssertTrue(backToPreviousPage.waitAndTap(), "Failed to navigate back from the color picker")
+        return try AccountSettingsPage()
+    }
+
+    @discardableResult
+    func enableConversationBackground(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> AccountSettingsPage {
+        if conversationBackgroundSwitch.value as? String != "1" {
+            conversationBackgroundSwitch.tap()
+        }
+
+        XCTAssertTrue(
+            conversationBackgroundSwitch.value as? String == "1",
+            "Conversation background should be enabled",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func setProfilePictureFromLibrary() throws -> AccountSettingsPage {
+        pictureCell.waitAndTap()
+        XCTAssertTrue(
+            chooseFromLibraryButton.waitForExistence(timeout: 5),
+            "Choose from Library did not appear"
+        )
+        chooseFromLibraryButton.tap()
+        selectImageFromPhotoPicker()
+
+        XCTAssertTrue(
+            confirmImageButton.waitForExistence(timeout: 5),
+            "Profile image confirmation did not appear"
+        )
+        confirmImageButton.tap()
+        XCTAssertTrue(pictureCell.waitForExistence(timeout: 10), "Account settings did not reappear")
+        XCTAssertTrue(
+            waitForPicturePreview(timeout: 10),
+            "Profile picture preview did not appear after selecting image"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyProfileColor(
+        _ color: ProfileColor,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> AccountSettingsPage {
+        XCTAssertTrue(
+            colorCell.waitForExistence(timeout: 5),
+            "Color cell did not appear",
+            file: file,
+            line: line
+        )
+        XCTAssertEqual(
+            colorCell.value as? String,
+            color.displayName,
+            "Profile color preview should show \(color.displayName)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func hasProfilePicturePreview() -> Bool {
+        pictureCell.value as? String == "image"
     }
 
     func tapUsernameField() throws -> UsernameUpdatePage {
@@ -149,12 +259,34 @@ class AccountSettingsPage: PageModel {
     }
 
     func goBackToSettingsPage() throws -> SettingsPage {
-        backToPreviousPage.tap()
+        backToPreviousPage.waitAndTap()
         return try SettingsPage()
     }
 
     func tapOnResetPasswordButton() throws -> WebViewPage {
         resetPasswordButton.tap()
         return try WebViewPage()
+    }
+
+    private func selectImageFromPhotoPicker(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        _ = app.buttons[Locators.PhotosAppPage.select.rawValue].firstMatch.waitAndTap(timeout: 2)
+        XCTAssertTrue(
+            photoGridImageTile.waitForExistence(timeout: 10),
+            "No selectable library image appeared",
+            file: file,
+            line: line
+        )
+        photoGridImageTile
+            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+            .tap()
+    }
+
+    private func waitForPicturePreview(timeout: TimeInterval) -> Bool {
+        let predicate = NSPredicate(format: "value == %@", "image")
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: pictureCell)
+        return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
     }
 }

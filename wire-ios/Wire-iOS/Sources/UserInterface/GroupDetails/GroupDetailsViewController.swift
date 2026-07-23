@@ -46,6 +46,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     private let areLegacyBotsAvailable: Bool
     private let isAppsFeatureEnabled: Bool
+    private let wireMessagingFactory: WireMessagingFactoryProtocol
 
     var didCompleteInitialSync = false {
         didSet { collectionViewController.sections = computeVisibleSections() }
@@ -63,7 +64,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         areLegacyBotsAvailable: Bool,
-        isAppsFeatureEnabled: Bool
+        isAppsFeatureEnabled: Bool,
+        wireMessagingFactory: WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
@@ -74,6 +76,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.collectionViewController = SectionCollectionViewController()
         self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.wireMessagingFactory = wireMessagingFactory
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -666,6 +669,80 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         )
 
         navigationController?.pushViewController(historyView, animated: animated)
+    }
+
+    func presentSharedDriveOptions(animated: Bool) {
+        guard let conversation = conversation as? ZMConversation else { return }
+        let wireDriveParticipants = getWireDriveParticipants(from: conversation)
+
+        let onCloseSharedDriveOptions: () -> Void = { [weak self] in
+            self?.presentingViewController?.dismiss(animated: true)
+        }
+
+        let sharedDriveOptionsView = wireMessagingFactory.makeConversationSharedDrivedOptionsView(
+            participants: wireDriveParticipants,
+            onClose: onCloseSharedDriveOptions
+        )
+
+        navigationController?.pushViewController(sharedDriveOptionsView, animated: animated)
+    }
+
+    private func getWireDriveParticipants(from conversation: ZMConversation) -> [WireDriveParticipant] {
+        conversation.participants
+            .compactMap { item -> WireDriveParticipant? in
+                guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
+                // TODO: [WPB-25941] Remove developer flag when feature is complete
+                let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
+                let role: WireDriveParticipant.Role = if isDrivePermissionsEnabled {
+                    conversation.matchesTeam(with: item) ? .editor : .viewer
+                } else {
+                    .editor
+                }
+
+                let userStatus = userStatuses[item.remoteIdentifier] ?? UserStatus()
+
+                let userType: WireDriveParticipant.UserType = if item.isFederated {
+                    .federated
+                } else if item.isExternalPartner {
+                    .external
+                } else {
+                    !item.isGuest(in: conversation) || item.isSelfUser ? .member : .guest
+                }
+
+                var verificationBadges: [WireDriveParticipant.VerificationBadge] = []
+
+                if userStatus.isE2EICertified {
+                    verificationBadges.append(.e2EICertified)
+                }
+
+                if userStatus.isProteusVerified {
+                    verificationBadges.append(.proteusVerified)
+                }
+
+                let participantState: WireDriveParticipant.State = if item.isBlocked {
+                    .blocked
+                } else if item.isPendingApproval {
+                    .pendingApproval
+                } else {
+                    .none
+                }
+
+                return .init(
+                    handle: item.handle ?? "-",
+                    displayName: item.name ?? "-",
+                    role: role,
+                    isSelfUser: item.isSelfUser,
+                    id: id.uuidString + "@" + domain,
+                    userType: userType,
+                    verificationBadges: verificationBadges,
+                    state: participantState,
+                    iconData: WireDriveParticipant.IconData(
+                        initials: item.initials ?? "",
+                        color: item.accentColor,
+                        image: item.previewImageData.flatMap(UIImage.init)
+                    )
+                )
+            }
     }
 }
 

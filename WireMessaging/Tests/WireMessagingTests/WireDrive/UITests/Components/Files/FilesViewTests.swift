@@ -95,10 +95,7 @@ final class FilesViewTests: XCTestCase {
             editingURLRepository: editingURLRepository
         )
 
-        nodesApi.getDriveConversations_MockValue = [
-            .mocked(),
-            .mocked()
-        ]
+        nodesApi.getDriveConversations_MockValue = .mocked(selfUserRole: .editor)
 
         driveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
 
@@ -317,7 +314,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesView_LoadingState() async {
-        let view = makeFilesView(state: .loading)
+        let view = await makeFilesView(state: .loading)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -329,7 +326,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesView_NoDataState() async {
-        let view = makeFilesView(state: .received(items: []))
+        let view = await makeFilesView(state: .received(items: []))
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -341,7 +338,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesView_PendingState() async {
-        let view = makeFilesView(state: .pending)
+        let view = await makeFilesView(state: .pending)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -353,7 +350,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesView_ErrorState() async {
-        let view = makeFilesView(state: .error(isConnectionError: false))
+        let view = await makeFilesView(state: .error(isConnectionError: false))
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -364,9 +361,16 @@ final class FilesViewTests: XCTestCase {
     }
 
     @MainActor
-    func testFilesView_ViewerOnlyBanner() async {
-        let view = makeFilesView(state: .received(items: []), isReadOnly: true)
+    func testFilesView_ViewerOnly() async {
+        // Given
+        let nodesApi = MockNodesAPIProtocol()
+        nodesApi.getDriveConversations_MockValue = .mocked()
+        driveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
 
+        // When
+        let view = await makeFilesView(state: .received(items: []), isReadOnly: true)
+
+        // Then
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light", record: record)
@@ -405,7 +409,7 @@ final class FilesViewTests: XCTestCase {
         state: FilesListStateController.State,
         isBrowsing: Bool = false,
         isReadOnly: Bool = false
-    ) -> some View {
+    ) async -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
                 fetchNodes: fetchNodesUseCase,
@@ -447,6 +451,8 @@ final class FilesViewTests: XCTestCase {
             isBrowsing: isBrowsing,
             networkMonitor: networkMonitor
         )
+
+        await filesViewModel.setup()
 
         filesViewModel.filesController.state = state
         filesViewModel.filesController.hasMore = false

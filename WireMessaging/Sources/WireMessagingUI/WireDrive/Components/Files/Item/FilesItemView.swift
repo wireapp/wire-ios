@@ -60,7 +60,13 @@ struct FilesItemView: View {
                 Spacer()
 
                 Menu {
-                    menuContent()
+                    if viewModel.showReadOnlyIcon {
+                        Section(Strings.Files.ViewerAccess.navigationSubtitle) {
+                            menuContent()
+                        }
+                    } else {
+                        menuContent()
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
@@ -275,7 +281,7 @@ struct FilesItemView: View {
                     Strings.Files.Item.Menu.shareLink,
                     systemImage: "square.and.arrow.up"
                 )
-            }
+            }.disabled(viewModel.isActionDisabled(.shareLink))
         }
 
         menuItem(.makeAvailableOffline) { item in
@@ -286,7 +292,7 @@ struct FilesItemView: View {
                     Strings.Files.Item.Menu.makeAvailableOffline,
                     systemImage: "arrow.down.circle"
                 )
-            }
+            }.disabled(viewModel.isActionDisabled(.makeAvailableOffline))
         }
 
         menuItem(.removeAvailableOffline) { item in
@@ -297,7 +303,7 @@ struct FilesItemView: View {
                     Strings.Files.Item.Menu.removeAvailableOffline,
                     systemImage: "xmark.circle"
                 )
-            }
+            }.disabled(viewModel.isActionDisabled(.removeAvailableOffline))
         }
 
         menuItem(.showVersionHistory) { item in
@@ -377,6 +383,7 @@ struct FilesItemView: View {
     ) -> some View {
         if viewModel.menuActions.contains(itemAction) {
             menuItem(itemAction)
+                .accessibilityLabel(itemAction.accessibilityLabel)
                 .accessibilityIdentifier("fileMenu.\(itemAction)")
         }
     }

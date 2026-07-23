@@ -257,4 +257,14 @@ public extension WireMessagingFactory {
         )
     }
 
+    @MainActor
+    func makeConversationSharedDrivedOptionsViewController(
+        participants: [WireDriveParticipant],
+        onClose: @escaping () -> Void
+    ) -> UIViewController {
+        let viewModel = ConversationSharedDriveOptionsViewModel(participants: participants)
+        let view = ConversationSharedDriveOptionsView(viewModel: viewModel, onClose: onClose)
+        return UIHostingController(rootView: view)
+    }
+
 }

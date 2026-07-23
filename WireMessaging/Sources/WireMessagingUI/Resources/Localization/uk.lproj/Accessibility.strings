@@ -72,5 +72,8 @@
 "conversation.wireCells.files.availableOffline" = "Available offline";
 
 // MARK: - Viewer access
+"conversation.wireCells.files.readOnly" = "Viewer access";
 "conversation.wireCells.files.viewerAccess.banner.close" = "Close access info";
-"conversation.wireCells.files.readOnly" = "Read only";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDrive.closeButton" = "Закрити деталі розмови";

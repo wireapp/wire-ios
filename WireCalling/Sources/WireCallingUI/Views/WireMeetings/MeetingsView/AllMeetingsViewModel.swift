@@ -25,9 +25,13 @@ import WireCallingDomainSupport
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
 @Observable
+@MainActor
 package final class AllMeetingsViewModel {
 
-    let memberRepository: any MemberRepositoryProtocol
+    private let makeFormViewModel: @MainActor (
+        _ mode: CreateMeetingFormViewModel.Mode,
+        _ onSuccess: @escaping (Meeting) -> Void
+    ) -> CreateMeetingFormViewModel
 
     package let meetingsViewModel: MeetingsViewModel
 
@@ -37,14 +41,21 @@ package final class AllMeetingsViewModel {
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        memberRepository: any MemberRepositoryProtocol
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        makeFormViewModel: @escaping @MainActor (
+            _ mode: CreateMeetingFormViewModel.Mode,
+            _ onSuccess: @escaping (Meeting) -> Void
+        ) -> CreateMeetingFormViewModel
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase
         )
-        self.memberRepository = memberRepository
+        self.makeFormViewModel = makeFormViewModel
     }
 
     // MARK: - Public Interface
@@ -58,7 +69,9 @@ package final class AllMeetingsViewModel {
     }
 
     func makeMeetingFormViewModel(mode: CreateMeetingFormViewModel.Mode) -> CreateMeetingFormViewModel {
-        CreateMeetingFormViewModel(mode: mode, memberRepository: memberRepository)
+        makeFormViewModel(mode) { [weak self] _ in
+            self?.presentedFormMode = nil
+        }
     }
 
 }

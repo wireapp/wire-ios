@@ -24,7 +24,9 @@ import WireCallingDomain
 protocol WireMeetingsFactoryProtocol {
     @MainActor
     func makeMeetingsView(
-        memberRepository: any MemberRepositoryProtocol
+        meetingRepository: any MeetingRepositoryProtocol,
+        memberRepository: any MeetingMemberRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
     ) -> UIViewController
 }
 

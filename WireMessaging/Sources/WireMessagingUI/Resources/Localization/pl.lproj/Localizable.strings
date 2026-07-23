@@ -119,7 +119,7 @@
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
 "conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Viewer access";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
-"conversation.wireCells.files.viewerAccess.banner" = "You have view access for Shared Drive. You can’t upload, edit, or manage files.";
+"conversation.wireCells.files.viewerAccess.banner" = "You have viewer access for Shared Drive. You can’t upload, edit, or manage files.";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
@@ -144,6 +144,7 @@
 "conversation.wireCells.files.noData.title" = "There are no files or folders yet";
 "conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here.";
 "conversation.wireCells.files.noData.learnMore" = "Learn more about Shared Drive";
+
 "conversation.wireCells.allFiles.noData.title" = "There are no files yet";
 "conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Więcej informacji";
@@ -195,7 +196,6 @@
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
-"conversation.wireCells.recycleBin.emptyFolder.message" = "This folder is empty.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "This will permanently delete the file \"%@\" for all participants. Everyone will lose access and there is no way to recover the file.";
@@ -207,6 +207,8 @@
 "conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "This folder \"%@\" with all files and subfolders will be restored and available again to everyone in this conversation.";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Restore Parent Folder";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "You can’t restore folders or files from a deleted folder. To restore the desired item, you must restore its parent folder.\n\nThe folder \"%@\" with all files and subfolders will be restored and available to everyone in this conversation.";
+"conversation.wireCells.recycleBin.emptyFolder.title" = "Empty folder";
+"conversation.wireCells.recycleBin.emptyFolder.message" = "This folder doesn't contain any files or folders.";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Add or remove tags";
@@ -332,3 +334,11 @@
 "conversation.wireCells.filter.fileType.typeName.code" = "Code";
 "conversation.wireCells.filter.fileType.typeName.archive" = "Archives";
 "conversation.wireCells.filter.fileType.typeName.text" = "Text files";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDriveToggleSection.title" = "Shared Drive";
+"conversation.details.sharedDriveToggleSection.footer.title" = "Permanently on for this conversation.";
+"conversation.details.sharedDriveAccessSection.header.title" = "Shared drive access";
+"conversation.details.sharedDriveAccessSection.footer.title" = "Editors can access and manage all files. Viewers can only read files, they can't upload, edit, or manage files and folders.";
+"conversation.details.sharedDriveAccessSection.footer.subtitle" = "People outside the team that created the conversation are viewers by default.";
+"conversation.details.sharedDriveAccessSection.you" = "Ty";

@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "只需输入您的电子邮件地址即可开始！";
 "authentication.identity.input.field.placeholder" = "电子邮件或 SSO 代码";
 "authentication.identity.input.field.title" = "电子邮件或 SSO 代码";
+"authentication.identity.input.field.email_only.placeholder" = "电邮箱地址";
+"authentication.identity.input.field.email_only.title" = "电邮箱地址";
 "authentication.identity.input.submit" = "继续";
 
 "cloud_user_login.title" = "键入密码来登录";
@@ -119,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "请先接受您的团队的邀请，然后按照步骤创建您的账户。";
 "authentication.error.message.account_suspended" = "此账户不再被授权登录";
 "authentication.error.message.incorrect_sso_code" = "请验证您的公司SSO访问代码并重试。";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "好";
 

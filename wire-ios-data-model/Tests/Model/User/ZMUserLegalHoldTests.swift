@@ -88,6 +88,10 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
             let conversation = createConversation(in: syncMOC)
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
+            // `userDidAcceptLegalHoldRequest` fetches the affected conversations with a predicate that filters on the
+            // persisted `effectiveConversationType` (populated in `-willSave`). Persist so the conversation is found.
+            syncMOC.saveOrRollback()
+
             let legalHoldRequest = LegalHoldRequest.mockRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
 

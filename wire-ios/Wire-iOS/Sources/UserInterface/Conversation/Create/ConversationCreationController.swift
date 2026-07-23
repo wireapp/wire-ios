@@ -56,6 +56,7 @@ final class ConversationCreationController: UIViewController {
 
     private var preSelectedParticipants: UserSet?
     private var values: ConversationCreationValues
+    private var nextButtonWasEnabled = false
 
     weak var delegate: ConversationCreationControllerDelegate?
 
@@ -75,7 +76,7 @@ final class ConversationCreationController: UIViewController {
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
-            userSession.isWireDriveEnabled ? fileManagementSection : nil
+            userSession.isWireDriveEnabled ? sharedDriveSection : nil
         ].compactMap(\.self)
 
         if let firstSection = sections.first {
@@ -146,11 +147,11 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var fileManagementSection = {
-        let section = ConversationCreateFileManagementSectionController(values: values)
+    private lazy var sharedDriveSection = {
+        let section = ConversationCreateSharedDriveSectionController(values: values)
 
-        section.toggleAction = { [unowned self] enableFileManagement in
-            values.enableFileManagement = enableFileManagement
+        section.toggleAction = { [unowned self] enableSharedDrive in
+            values.enableSharedDrive = enableSharedDrive
             updateOptions()
         }
 
@@ -213,6 +214,14 @@ final class ConversationCreationController: UIViewController {
         setupNavigationBar()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if UIAccessibility.isVoiceOverRunning {
+            UIAccessibility.post(notification: .screenChanged, argument: CreateGroupName.title)
+        }
+    }
+
     // MARK: - Methods
 
     override var prefersStatusBarHidden: Bool {
@@ -271,8 +280,8 @@ final class ConversationCreationController: UIViewController {
 
         nextButtonItem.accessibilityIdentifier = Locators.CreateGroupPage.newGroupNextButton.rawValue
         nextButtonItem.tintColor = UIColor.accent()
-        nextButtonItem.isEnabled = isGroupNameValid()
         navigationItem.rightBarButtonItem = nextButtonItem
+        setNextButtonEnabled(isGroupNameValid(), announceChange: false)
     }
 
     func proceedWith(value: WireTextField.Value) {
@@ -322,7 +331,17 @@ final class ConversationCreationController: UIViewController {
         guestsSection.configure(with: values)
         appsSection.configure(with: values)
         encryptionProtocolSection.configure(with: values)
-        fileManagementSection.configure(with: values)
+        sharedDriveSection.configure(with: values)
+    }
+
+    private func setNextButtonEnabled(_ isEnabled: Bool, announceChange: Bool) {
+        navigationItem.rightBarButtonItem?.isEnabled = isEnabled
+
+        if announceChange, isEnabled, !nextButtonWasEnabled {
+            UIAccessibility.post(notification: .layoutChanged, argument: navigationItem.rightBarButtonItem)
+        }
+
+        nextButtonWasEnabled = isEnabled
     }
 }
 
@@ -410,7 +429,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableSharedDrive : nil,
                 isMLSEnabled: session.isBackendMLSEnabled
             )
 
@@ -539,8 +558,8 @@ extension ConversationCreationController: WireTextFieldDelegate {
     func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value) {
         errorSection.clearError()
         switch value {
-        case .error: navigationItem.rightBarButtonItem?.isEnabled = false
-        case let .valid(text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
+        case .error: setNextButtonEnabled(false, announceChange: true)
+        case let .valid(text): setNextButtonEnabled(!text.isEmpty, announceChange: true)
         }
 
     }

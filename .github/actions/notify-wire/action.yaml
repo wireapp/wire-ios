@@ -37,11 +37,11 @@ runs:
     - name: Notify (custom message)
       if: ${{ inputs.notify == 'custom' }}
       continue-on-error: true
-      uses: 8398a7/action-slack@v3
+      uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
       with:
         status: custom
         custom_payload: |
-          { "text": ${{ inputs.text }} }
+          { "text": ${{ toJSON(inputs.text) }} }
 
     - name: Notify (always)
       if: ${{ inputs.notify == 'always' }}

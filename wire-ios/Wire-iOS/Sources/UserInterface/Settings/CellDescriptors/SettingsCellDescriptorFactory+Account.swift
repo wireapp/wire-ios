@@ -23,6 +23,7 @@ import WireDataModel
 import WireDesign
 import WireDomain
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireNetwork
 import WireSettingsUI
@@ -325,6 +326,8 @@ extension SettingsCellDescriptorFactory {
         }
         return SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.picture.capitalized,
+            accessibilityLabel: L10n.Localizable.Self.Settings.AccountPictureGroup.Alert.title,
+            identifier: Locators.AccountSettingsPage.pictureCell.rawValue,
             previewGenerator: previewGenerator,
             presentationStyle: .alert,
             presentationAction: presentationAction,
@@ -335,6 +338,7 @@ extension SettingsCellDescriptorFactory {
     private func colorElement() -> any SettingsCellDescriptorType {
         SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
+            identifier: Locators.AccountSettingsPage.colorCell.rawValue,
             previewGenerator: colorElementPreviewGenerator,
             presentationStyle: .navigation,
             presentationAction: colorElementPresentationAction,
@@ -348,7 +352,7 @@ extension SettingsCellDescriptorFactory {
             settingsProperty:
             settingsPropertyFactory.property(.conversationBackground),
             inverse: false,
-            identifier: "ConversationBackgroundSwitch"
+            identifier: Locators.AccountSettingsPage.conversationBackgroundSwitch.rawValue
         )
     }
 

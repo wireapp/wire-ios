@@ -18,23 +18,30 @@
 
 package import WireFoundation
 
+import Foundation
+
 package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
 
-    private let repository: any MeetingsRepositoryProtocol
+    private let repository: any MeetingRepositoryProtocol
     private let currentDateProvider: any CurrentDateProviding
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
+        repository: any MeetingRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding
     ) {
         self.repository = repository
         self.currentDateProvider = currentDateProvider
     }
 
-    package func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings {
-        let now = currentDateProvider.now
-        let meetings = repository.fetchMeetingsStarting(
-            after: now,
+    package func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
+        // The list shows all meetings of the current day — including ones
+        // that already started or ended — and of the following day.
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: currentDateProvider.now)
+        let endOfTomorrow = calendar.date(byAdding: .day, value: 2, to: startOfToday)
+            ?? startOfToday.addingTimeInterval(48 * 3600)
+        let meetings = try await repository.fetchMeetings(
+            in: startOfToday ..< endOfTomorrow,
             offset: offset,
             limit: pageSize + 1
         )

@@ -19,6 +19,8 @@
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.field.email_only.placeholder" = "Email";
+"authentication.identity.input.field.email_only.title" = "Email";
 "authentication.identity.input.submit" = "Далі";
 
 "cloud_user_login.title" = "Enter your password to log in";
@@ -119,6 +121,8 @@
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "Даний акаунт був заблокований.";
 "authentication.error.message.incorrect_sso_code" = "Будь ласка, упевніться, що це вірний код SSO вашої команди, та повторіть спробу.";
+"authentication.error.title.already_logged_in" = "Account in use";
+"authentication.error.message.already_logged_in" = "You are already logged in with those credentials on this device.";
 
 "authentication.error.confirm" = "OK";
 

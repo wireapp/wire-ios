@@ -146,7 +146,7 @@ struct MemberSelectionView: View {
         .textCase(nil)
     }
 
-    private func row(for member: Member) -> some View {
+    private func row(for member: MeetingMember) -> some View {
         let isSelected = viewModel.isSelected(member)
         return Button {
             viewModel.toggleSelection(member)
@@ -187,26 +187,26 @@ struct MemberSelectionView: View {
 // MARK: - Preview
 
 #Preview("success") {
-    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockMemberSource()))
+    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockSearchMembersUseCase()))
 }
 
 #Preview("empty") {
-    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockMemberSource(members: [])))
+    MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockSearchMembersUseCase(members: [])))
 }
 
 #Preview("failure") {
     MemberSelectionView(
-        viewModel: MemberSelectionViewModel(source: MockMemberSource(error: URLError(.badServerResponse)))
+        viewModel: MemberSelectionViewModel(source: MockSearchMembersUseCase(error: URLError(.badServerResponse)))
     )
 }
 
 // MARK: - Mock
 
-private struct MockMemberSource: MemberRepositoryProtocol {
+private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
 
-    let result: Result<[Member], any Error>
+    let result: Result<[MeetingMember], any Error>
 
-    init(members: [Member] = .mock) {
+    init(members: [MeetingMember] = .mock) {
         self.result = .success(members)
     }
 
@@ -214,7 +214,7 @@ private struct MockMemberSource: MemberRepositoryProtocol {
         self.result = .failure(error)
     }
 
-    func search(query: String) async throws -> [Member] {
+    func invoke(query: String) async throws -> [MeetingMember] {
         switch result {
         case let .failure(error):
             throw error
@@ -225,7 +225,7 @@ private struct MockMemberSource: MemberRepositoryProtocol {
     }
 }
 
-private extension [Member] {
+private extension [MeetingMember] {
     static var mock: Self {
         [
             .init(name: "Martin Koch-Johansen", handle: "username"),
@@ -241,7 +241,7 @@ private extension [Member] {
     }
 }
 
-private extension Member {
+private extension MeetingMember {
 
     init(
         name: String,

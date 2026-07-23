@@ -68,6 +68,24 @@ class UserProfilePage: PageModel {
         teamNameOnAccountPage.value as? String
     }
 
+    @discardableResult
+    func verifyProfilePictureIsSet(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        let actualValue = userProfilePicture.value as? String
+        let expectedValue = "image"
+
+        XCTAssertEqual(
+            actualValue,
+            expectedValue,
+            "User profile picture did not show selected image",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
     func tapAddAccountOrTeamButton() throws -> WelcomePage {
         addAccountOrTeamButton.tap()
         return try WelcomePage()

@@ -27,6 +27,7 @@
 import CoreLocation
 import SwiftUI
 import WireDataModel
+import WireNetwork
 import WireSyncEngine
 import WireAccountImageUI
 import WireCallingDomain
@@ -196,6 +197,57 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
         }
 
         mock(appStateCalculator, appState, completion)
+    }
+
+}
+
+public class MockBackgroundTaskApplication: BackgroundTaskApplication, @unchecked Sendable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - backgroundTimeRemaining
+
+    public var backgroundTimeRemaining: TimeInterval {
+        get { return underlyingBackgroundTimeRemaining }
+        set(value) { underlyingBackgroundTimeRemaining = value }
+    }
+
+    public var underlyingBackgroundTimeRemaining: TimeInterval!
+
+
+    // MARK: - beginBackgroundTask
+
+    public var beginBackgroundTaskWithNameExpirationHandler_Invocations: [(taskName: String?, handler: (@MainActor @Sendable () -> Void)?)] = []
+    public var beginBackgroundTaskWithNameExpirationHandler_MockMethod: ((String?, (@MainActor @Sendable () -> Void)?) -> UIBackgroundTaskIdentifier)?
+    public var beginBackgroundTaskWithNameExpirationHandler_MockValue: UIBackgroundTaskIdentifier?
+
+    public func beginBackgroundTask(withName taskName: String?, expirationHandler handler: (@MainActor @Sendable () -> Void)?) -> UIBackgroundTaskIdentifier {
+        beginBackgroundTaskWithNameExpirationHandler_Invocations.append((taskName: taskName, handler: handler))
+
+        if let mock = beginBackgroundTaskWithNameExpirationHandler_MockMethod {
+            return mock(taskName, handler)
+        } else if let mock = beginBackgroundTaskWithNameExpirationHandler_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `beginBackgroundTaskWithNameExpirationHandler`")
+        }
+    }
+
+    // MARK: - endBackgroundTask
+
+    public var endBackgroundTask_Invocations: [UIBackgroundTaskIdentifier] = []
+    public var endBackgroundTask_MockMethod: ((UIBackgroundTaskIdentifier) -> Void)?
+
+    public func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
+        endBackgroundTask_Invocations.append(identifier)
+
+        guard let mock = endBackgroundTask_MockMethod else {
+            fatalError("no mock for `endBackgroundTask`")
+        }
+
+        mock(identifier)
     }
 
 }
@@ -1700,20 +1752,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsViewMemberRepository_Invocations: [any MemberRepositoryProtocol] = []
-    var makeMeetingsViewMemberRepository_MockMethod: ((any MemberRepositoryProtocol) -> UIViewController)?
-    var makeMeetingsViewMemberRepository_MockValue: UIViewController?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_Invocations: [(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol)] = []
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockMethod: ((any MeetingRepositoryProtocol, any MeetingMemberRepositoryProtocol, any MeetingConversationRepositoryProtocol) -> UIViewController)?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView(memberRepository: any MemberRepositoryProtocol) -> UIViewController {
-        makeMeetingsViewMemberRepository_Invocations.append(memberRepository)
+    func makeMeetingsView(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol) -> UIViewController {
+        makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_Invocations.append((meetingRepository: meetingRepository, memberRepository: memberRepository, conversationRepository: conversationRepository))
 
-        if let mock = makeMeetingsViewMemberRepository_MockMethod {
-            return mock(memberRepository)
-        } else if let mock = makeMeetingsViewMemberRepository_MockValue {
+        if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockMethod {
+            return mock(meetingRepository, memberRepository, conversationRepository)
+        } else if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsViewMemberRepository`")
+            fatalError("no mock for `makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository`")
         }
     }
 
@@ -1940,6 +1992,25 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeConversationCellProviderInsetsProvider`")
+        }
+    }
+
+    // MARK: - makeConversationSharedDrivedOptionsView
+
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations: [(participants: [WireDriveParticipant], onClose: () -> Void)] = []
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod: (([WireDriveParticipant], @escaping () -> Void) -> UIViewController)?
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue: UIViewController?
+
+    @MainActor
+    func makeConversationSharedDrivedOptionsView(participants: [WireDriveParticipant], onClose: @escaping () -> Void) -> UIViewController {
+        makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations.append((participants: participants, onClose: onClose))
+
+        if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod {
+            return mock(participants, onClose)
+        } else if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeConversationSharedDrivedOptionsViewParticipantsOnClose`")
         }
     }
 

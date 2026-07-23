@@ -27,20 +27,20 @@ import WireFoundation
 @MainActor
 struct MemberSelectionViewModelTests {
 
-    private let memberRepository: MemberRepositoryProtocolMock
+    private let searchMembersUseCase: SearchMembersUseCaseProtocolMock
     private let onSelectRecorder: OnSelectRecorder
     private let viewModel: MemberSelectionViewModel
 
     init() {
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = []
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMeetingMemberReturnValue = []
 
         let recorder = OnSelectRecorder()
 
-        self.memberRepository = repository
+        self.searchMembersUseCase = useCase
         self.onSelectRecorder = recorder
         self.viewModel = MemberSelectionViewModel(
-            source: repository,
+            source: useCase,
             onSelect: { recorder.calls.append($0) }
         )
     }
@@ -60,7 +60,7 @@ struct MemberSelectionViewModelTests {
         // Then
         #expect(viewModel.isSelected(.alice))
         #expect(viewModel.selectedMembers.count == 1)
-        #expect(viewModel.selectedMembers.first?.id == Member.alice.id)
+        #expect(viewModel.selectedMembers.first?.id == MeetingMember.alice.id)
     }
 
     @Test("toggleSelection removes an already-selected member")
@@ -103,7 +103,7 @@ struct MemberSelectionViewModelTests {
 
         // Then
         #expect(viewModel.filteredUnselected.count == 1)
-        #expect(viewModel.filteredUnselected.first?.id == Member.bob.id)
+        #expect(viewModel.filteredUnselected.first?.id == MeetingMember.bob.id)
     }
 
     @Test("filteredUnselected returns all results when nothing is selected")
@@ -128,7 +128,7 @@ struct MemberSelectionViewModelTests {
 
         // Then
         #expect(onSelectRecorder.calls.count == 1)
-        #expect(onSelectRecorder.calls.first?.map(\.id) == [Member.alice, Member.bob].map(\.id))
+        #expect(onSelectRecorder.calls.first?.map(\.id) == [MeetingMember.alice, MeetingMember.bob].map(\.id))
     }
 
     @Test("toggleSelection alone does not invoke onSelect")
@@ -145,12 +145,12 @@ struct MemberSelectionViewModelTests {
     @Test("initialSelection seeds selectedMembers")
     func initialSelection_seedsSelectedMembers() {
         // Given
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = []
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMeetingMemberReturnValue = []
 
         // When
         let viewModel = MemberSelectionViewModel(
-            source: repository,
+            source: useCase,
             initialSelection: [.alice]
         )
 
@@ -164,15 +164,15 @@ struct MemberSelectionViewModelTests {
     @Test("initial search populates searchResults")
     func initialSearch_populatesSearchResults() async {
         // Given
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberReturnValue = [.alice, .bob]
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMeetingMemberReturnValue = [.alice, .bob]
 
         // When
-        let viewModel = MemberSelectionViewModel(source: repository)
+        let viewModel = MemberSelectionViewModel(source: useCase)
         await waitForSearchToSettle(viewModel)
 
         // Then
-        #expect(viewModel.searchResults.map(\.id) == [Member.alice, Member.bob].map(\.id))
+        #expect(viewModel.searchResults.map(\.id) == [MeetingMember.alice, MeetingMember.bob].map(\.id))
         #expect(viewModel.hasSearchError == false)
         #expect(viewModel.isSearching == false)
     }
@@ -180,11 +180,11 @@ struct MemberSelectionViewModelTests {
     @Test("search failure sets hasSearchError and clears searchResults")
     func searchFailure_setsHasSearchError() async {
         // Given
-        let repository = MemberRepositoryProtocolMock()
-        repository.searchQueryStringMemberThrowableError = TestError.failure
+        let useCase = SearchMembersUseCaseProtocolMock()
+        useCase.invokeQueryStringMeetingMemberThrowableError = TestError.failure
 
         // When
-        let viewModel = MemberSelectionViewModel(source: repository)
+        let viewModel = MemberSelectionViewModel(source: useCase)
         await waitForSearchToSettle(viewModel)
 
         // Then
@@ -209,18 +209,18 @@ private enum TestError: Error {
 }
 
 private final class OnSelectRecorder {
-    var calls: [[Member]] = []
+    var calls: [[MeetingMember]] = []
 }
 
-private extension Member {
+private extension MeetingMember {
 
-    static let alice = Member(
+    static let alice = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: ""),
         name: "Alice",
         handle: "alice"
     )
 
-    static let bob = Member(
+    static let bob = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: ""),
         name: "Bob",
         handle: "bob"

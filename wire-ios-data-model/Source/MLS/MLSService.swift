@@ -336,10 +336,38 @@ public final class MLSService: MLSServiceInterface {
     }
 
     func updateKeyMaterial(for groupID: MLSGroupID) async throws {
+        guard await !hasInvalidMLSState(for: groupID) else {
+            WireLogger.mls.warn(
+                "skipping key material update for group with invalid MLS state (\(groupID.safeForLoggingDescription))"
+            )
+            return
+        }
+
         try await commitPendingProposals(in: groupID)
         try await retryOnCommitFailure(for: groupID) { [weak self] in
             try await self?.internalUpdateKeyMaterial(for: groupID)
         }
+    }
+
+    /// Checks whether this group is in an invalid MLS state: either its backing conversation
+    /// has been explicitly marked as having an invalid MLS group (e.g. after the other party in
+    /// a 1:1 was deleted), or it has no backing conversation at all and isn't a known subgroup.
+    /// A parent group's `mlsGroupID` is always persisted on its `ZMConversation` before any
+    /// CoreCrypto setup happens, so a missing conversation for a non-subgroup id is a real anomaly.
+    private func hasInvalidMLSState(for groupID: MLSGroupID) async -> Bool {
+        guard let context else { return false }
+
+        let (conversationFound, mlsStatus) = await context.perform {
+            let conversation = ZMConversation.fetch(with: groupID, in: context)
+            return (conversation != nil, conversation?.mlsStatus)
+        }
+
+        guard conversationFound else {
+            let isSubgroup = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) != nil
+            return !isSubgroup
+        }
+
+        return mlsStatus == .invalid
     }
 
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
