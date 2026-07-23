@@ -20,8 +20,7 @@ import Foundation
 package import Combine
 
 /// Fetches nodes for a particular configuration, and mutating the injected WireDriveNodesCollection.
-@MainActor
-package final class WireDriveFetchNodesUseCase {
+package final class WireDriveFetchNodesUseCase: Sendable {
 
     /// The type of request.
     package enum Request {
@@ -35,13 +34,15 @@ package final class WireDriveFetchNodesUseCase {
     }
 
     private let repository: any WireDriveNodesRepositoryProtocol
-    private var state: WireDriveNodesCollection
+    private let state: WireDriveNodesCollection
 
-    private var subscriptions = Set<AnyCancellable>()
-    private let _nodes = PassthroughSubject<[WireDriveNode], Never>()
-    package var nodes: AnyPublisher<[WireDriveNode], Never> { _nodes.eraseToAnyPublisher() }
-    private var searchTerm: String?
-    private var currentTask: Task<(nodes: [WireDriveNode], nextOffset: Int?), any Error>?
+    /// Emits the nodes held by the injected collection, replaying the current value to new subscribers.
+    @MainActor
+    package var nodes: AnyPublisher<[WireDriveNode], Never> { state.observeNodes() }
+
+    @MainActor private var searchTerm: String?
+
+    @MainActor private var currentTask: Task<(nodes: [WireDriveNode], nextOffset: Int?), any Error>?
 
     /// Initializes the use case with the required parameters.
     /// - Parameters:
@@ -52,20 +53,11 @@ package final class WireDriveFetchNodesUseCase {
     ) {
         self.state = state
         self.repository = repository
-        startNodesObservation()
     }
 
-    private func startNodesObservation() {
-        state.observeNodes()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] nodes in
-                self?._nodes.send(nodes)
-            }.store(in: &subscriptions)
-    }
-
+    @MainActor
     package func clearNodes() {
-        state = WireDriveNodesCollection()
-        startNodesObservation()
+        state.setNodes([])
     }
 
     /// Invokes the use case with the given `request` mutating the injected WireDriveNodesCollection.
@@ -75,16 +67,16 @@ package final class WireDriveFetchNodesUseCase {
     ) async throws -> (nodes: [WireDriveNode], hasMore: Bool) {
         switch request {
         case let .reload(searchTerm):
-            setSearchTerm(searchTerm)
-            cancelCurrentTask()
-            state.setNodes([])
+            await setSearchTerm(searchTerm)
+            await cancelCurrentTask()
+            await state.setNodes([])
         case .loadMore:
             break
         }
 
-        let task = loadMoreTask(configuration: configuration)
+        let task = await loadMoreTask(configuration: configuration)
         let (newNodes, nextOffset) = try await task.value
-        let allNodes = appendNodes(newNodes)
+        let allNodes = await appendNodes(newNodes)
 
         return (allNodes, nextOffset != nil)
     }

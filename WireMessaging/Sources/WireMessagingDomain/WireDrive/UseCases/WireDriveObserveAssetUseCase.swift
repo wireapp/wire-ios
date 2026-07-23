@@ -19,8 +19,7 @@
 package import Combine
 package import Foundation
 
-@MainActor
-package final class WireDriveObserveAssetUseCase {
+package final class WireDriveObserveAssetUseCase: Sendable {
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
 
     package init(
@@ -29,6 +28,7 @@ package final class WireDriveObserveAssetUseCase {
         self.localAssetRepository = localAssetRepository
     }
 
+    @MainActor
     package func invoke(nodeID: UUID) -> AnyPublisher<WireDriveLocalAsset?, Never> {
         localAssetRepository.observeAsset(nodeID: nodeID)
     }
