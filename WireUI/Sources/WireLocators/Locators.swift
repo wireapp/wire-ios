@@ -198,6 +198,8 @@ public enum Locators {
         case guestsArePresent = "Guests are present"
         case conversationBackground
         case openOngoingCallButton
+        case readReceiptsDisabledSystemMessage
+        case readReceiptsEnabledSystemMessage
 
     }
 
@@ -232,6 +234,7 @@ public enum Locators {
         case adminCell
         case memberCell
         case close
+        case readReceiptsSwitch
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
