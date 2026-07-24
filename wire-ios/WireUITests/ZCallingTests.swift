@@ -327,6 +327,14 @@ final class ZCallingTests: WireUITestCase {
         _ = try await callingManager.switchScreenSharingOn(instanceId: ownerInstanceId)
 
         // THEN
-        ongoingCallPage.isOtherParticipantScreenSharingVisible(for: teamAndGroupCallSetup.teamOwner.name)
+        ongoingCallPage
+            .isOtherParticipantScreenSharingVisible(for: teamAndGroupCallSetup.teamOwner.name)
+            .verifyScreenSharingQRCodes(
+                for: teamAndGroupCallSetup.teamOwner.name,
+                expectedContentInQRCode: [
+                    "http://screen-right",
+                    "http://screen-bottom"
+                ]
+            )
     }
 }

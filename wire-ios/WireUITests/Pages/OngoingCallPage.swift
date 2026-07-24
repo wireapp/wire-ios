@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import UIKit
 import WireLocators
 import XCTest
+import ZXingCpp
 
 class OngoingCallPage: PageModel {
 
@@ -125,6 +127,51 @@ class OngoingCallPage: PageModel {
             "screen share is not visible for \(participantName)"
         )
         return self
+    }
+
+    /// Verifies QR payloads rendered inside another participant's screen-share tile.
+    @discardableResult
+    func verifyScreenSharingQRCodes(
+        for participantName: String,
+        expectedContentInQRCode: [String],
+    ) -> OngoingCallPage {
+        let tile = screenSharingView(for: participantName)
+        let expectedPayloads = Set(expectedContentInQRCode)
+        let deadline = Date().addingTimeInterval(6)
+        var decodedPayloads = Set<String>()
+
+        repeat {
+            decodedPayloads = Set(readQRCodes(from: tile.screenshot()))
+            if expectedPayloads.isSubset(of: decodedPayloads) {
+                return self
+            }
+
+            RunLoop.current.run(until: Date().addingTimeInterval(2))
+        } while Date() < deadline
+
+        XCTAssertTrue(
+            expectedPayloads.isSubset(of: decodedPayloads),
+            "Expected QR payloads \(expectedPayloads.sorted()) for \(participantName), decoded \(decodedPayloads.sorted())"
+        )
+        return self
+    }
+
+    /// Reads QR codes from an XCTest screenshot using ZXing and returns decoded text values.
+    func readQRCodes(from screenshot: XCUIScreenshot) -> [String] {
+        guard let cgImage = screenshot.image.cgImage else {
+            return []
+        }
+
+        let options = ZXIReaderOptions()
+        options.tryHarder = true
+        options.tryRotate = true
+        options.tryInvert = true
+        options.maxNumberOfSymbols = 10
+
+        let reader = ZXIBarcodeReader(options: options)
+        let results = (try? reader.read(cgImage)) ?? []
+
+        return results.map(\.text).filter { !$0.isEmpty }
     }
 
     private func tapEndCallButton() {
