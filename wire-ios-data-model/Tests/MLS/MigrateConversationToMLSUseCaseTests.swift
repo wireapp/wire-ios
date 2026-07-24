@@ -137,6 +137,20 @@ final class MigrateConversationToMLSUseCaseTests: ZMBaseManagedObjectTest {
         )
     }
 
+    func testInvoke_NonTeamGroupConversation_ThrowsUnsupportedConversation() async throws {
+        let conversationID = await createConversation(messageProtocol: .proteus, belongsToTeam: false)
+
+        await XCTAssertThrowsErrorAsync(
+            MigrateConversationToMLSUseCase.Failure.unsupportedConversation,
+            when: {
+                try await self.sut.invoke(
+                    conversationID: conversationID,
+                    syncContext: self.syncMOC
+                )
+            }
+        )
+    }
+
     func testInvoke_MissingConversation_ThrowsConversationNotFound() async throws {
         await XCTAssertThrowsErrorAsync(
             MigrateConversationToMLSUseCase.Failure.conversationNotFound,
@@ -156,11 +170,12 @@ final class MigrateConversationToMLSUseCaseTests: ZMBaseManagedObjectTest {
     private func createConversation(
         messageProtocol: MessageProtocol,
         conversationType: ZMConversationType = .group,
-        groupID: MLSGroupID = .random()
+        groupID: MLSGroupID = .random(),
+        belongsToTeam: Bool = true
     ) async -> QualifiedID {
         await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.teamIdentifier = .create()
+            selfUser.teamIdentifier = belongsToTeam ? .create() : nil
             selfUser.domain = "example.com"
 
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)

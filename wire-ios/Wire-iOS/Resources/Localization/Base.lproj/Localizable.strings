@@ -964,6 +964,17 @@
 "shortcut.mark_all_as_read.title" = "Mark All as Read";
 "meta.menu.configure_notifications" = "Notifications…";
 "meta.menu.open_self_profile" = "Open Profile";
+"meta.menu.migrate_to_mls" = "Migrate to MLS";
+"meta.menu.mls_migration.confirmation.title" = "Migrate conversation to MLS?";
+"meta.menu.mls_migration.confirmation.message" = "This internal action bypasses the normal MLS rollout conditions and immediately migrates this conversation.";
+"meta.menu.mls_migration.confirmation.button" = "Migrate";
+"meta.menu.mls_migration.success.title" = "MLS migration completed";
+"meta.menu.mls_migration.success.message" = "The conversation now uses MLS.";
+"meta.menu.mls_migration.failure.title" = "MLS migration failed";
+"meta.menu.mls_migration.failure.conversation_not_found" = "The conversation could not be found.";
+"meta.menu.mls_migration.failure.unsupported_conversation" = "Only team group conversations can be migrated.";
+"meta.menu.mls_migration.failure.missing_mls_service" = "The MLS service is unavailable.";
+"meta.menu.mls_migration.failure.missing_mls_group_id" = "The conversation does not have an MLS group ID.";
 
 // Delete conversation
 "meta.menu.delete_content.dialog_title" = "Clear content?";

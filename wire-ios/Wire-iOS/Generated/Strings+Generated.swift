@@ -4659,6 +4659,8 @@ internal enum L10n {
         internal static let markRead = L10n.tr("Localizable", "meta.menu.mark_read", fallback: "Mark as Read")
         /// Mark as Unread
         internal static let markUnread = L10n.tr("Localizable", "meta.menu.mark_unread", fallback: "Mark as Unread")
+        /// Migrate to MLS
+        internal static let migrateToMls = L10n.tr("Localizable", "meta.menu.migrate_to_mls", fallback: "Migrate to MLS")
         /// Move to…
         internal static let moveToFolder = L10n.tr("Localizable", "meta.menu.move_to_folder", fallback: "Move to…")
         /// Open Profile
@@ -4696,6 +4698,34 @@ internal enum L10n {
           internal static let dialogTitle = L10n.tr("Localizable", "meta.menu.delete_content.dialog_title", fallback: "Clear content?")
           /// Also leave the conversation
           internal static let leaveAsWellMessage = L10n.tr("Localizable", "meta.menu.delete_content.leave_as_well_message", fallback: "Also leave the conversation")
+        }
+        internal enum MlsMigration {
+          internal enum Confirmation {
+            /// Migrate
+            internal static let button = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.button", fallback: "Migrate")
+            /// This internal action bypasses the normal MLS rollout conditions and immediately migrates this conversation.
+            internal static let message = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.message", fallback: "This internal action bypasses the normal MLS rollout conditions and immediately migrates this conversation.")
+            /// Migrate conversation to MLS?
+            internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.title", fallback: "Migrate conversation to MLS?")
+          }
+          internal enum Failure {
+            /// The conversation could not be found.
+            internal static let conversationNotFound = L10n.tr("Localizable", "meta.menu.mls_migration.failure.conversation_not_found", fallback: "The conversation could not be found.")
+            /// The conversation does not have an MLS group ID.
+            internal static let missingMlsGroupId = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_group_id", fallback: "The conversation does not have an MLS group ID.")
+            /// The MLS service is unavailable.
+            internal static let missingMlsService = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_service", fallback: "The MLS service is unavailable.")
+            /// MLS migration failed
+            internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.failure.title", fallback: "MLS migration failed")
+            /// Only team group conversations can be migrated.
+            internal static let unsupportedConversation = L10n.tr("Localizable", "meta.menu.mls_migration.failure.unsupported_conversation", fallback: "Only team group conversations can be migrated.")
+          }
+          internal enum Success {
+            /// The conversation now uses MLS.
+            internal static let message = L10n.tr("Localizable", "meta.menu.mls_migration.success.message", fallback: "The conversation now uses MLS.")
+            /// MLS migration completed
+            internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.success.title", fallback: "MLS migration completed")
+          }
         }
         internal enum Silence {
           /// Mute

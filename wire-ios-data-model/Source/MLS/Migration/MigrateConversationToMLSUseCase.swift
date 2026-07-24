@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
+
 public protocol MigrateConversationToMLSUseCaseProtocol {
 
     /// Migrates one team group conversation from Proteus or mixed mode to MLS.
@@ -84,7 +85,8 @@ public final class MigrateConversationToMLSUseCase: MigrateConversationToMLSUseC
 
             let selfUser = ZMUser.selfUser(in: context)
             guard conversation.conversationType == .group,
-                  conversation.teamRemoteIdentifier == selfUser.teamIdentifier
+                  let selfTeamIdentifier = selfUser.teamIdentifier,
+                  conversation.teamRemoteIdentifier == selfTeamIdentifier
             else {
                 throw Failure.unsupportedConversation
             }
@@ -184,23 +186,6 @@ public final class MigrateConversationToMLSUseCase: MigrateConversationToMLSUseC
             qualifiedID: conversationID,
             context: syncContext.notificationContext
         )
-    }
-
-}
-
-extension MigrateConversationToMLSUseCase.Failure: LocalizedError {
-
-    public var errorDescription: String? {
-        switch self {
-        case .conversationNotFound:
-            "The conversation could not be found."
-        case .unsupportedConversation:
-            "Only team group conversations can be migrated."
-        case .missingMLSService:
-            "The MLS service is unavailable."
-        case .missingMLSGroupID:
-            "The conversation does not have an MLS group ID."
-        }
     }
 
 }

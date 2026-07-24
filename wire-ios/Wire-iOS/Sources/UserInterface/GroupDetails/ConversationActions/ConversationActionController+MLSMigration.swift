@@ -24,14 +24,14 @@ extension ConversationActionController {
 
     func requestMLSMigration(for conversation: ZMConversation) {
         let controller = UIAlertController(
-            title: "Migrate conversation to MLS?",
-            message: "This internal action bypasses the normal MLS rollout conditions and immediately migrates this conversation.",
+            title: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.title,
+            message: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.message,
             preferredStyle: .alert
         )
         controller.addAction(.cancel())
         controller.addAction(
             UIAlertAction(
-                title: "Migrate",
+                title: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.button,
                 style: .destructive,
                 accessibilityIdentifier: Locators.ConversationDetailsActions.migrateToMLS.rawValue
             ) { [weak self] _ in
@@ -68,8 +68,8 @@ extension ConversationActionController {
 
     private func presentMLSMigrationSuccess() {
         let controller = UIAlertController(
-            title: "MLS migration completed",
-            message: "The conversation now uses MLS.",
+            title: L10n.Localizable.Meta.Menu.MlsMigration.Success.title,
+            message: L10n.Localizable.Meta.Menu.MlsMigration.Success.message,
             preferredStyle: .alert
         )
         controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
@@ -78,12 +78,29 @@ extension ConversationActionController {
 
     private func presentMLSMigrationFailure(_ error: Error) {
         let controller = UIAlertController(
-            title: "MLS migration failed",
-            message: error.localizedDescription,
+            title: L10n.Localizable.Meta.Menu.MlsMigration.Failure.title,
+            message: localizedDescription(for: error),
             preferredStyle: .alert
         )
         controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
         present(controller)
+    }
+
+    private func localizedDescription(for error: Error) -> String {
+        guard let failure = error as? MigrateConversationToMLSUseCase.Failure else {
+            return error.localizedDescription
+        }
+
+        return switch failure {
+        case .conversationNotFound:
+            L10n.Localizable.Meta.Menu.MlsMigration.Failure.conversationNotFound
+        case .unsupportedConversation:
+            L10n.Localizable.Meta.Menu.MlsMigration.Failure.unsupportedConversation
+        case .missingMLSService:
+            L10n.Localizable.Meta.Menu.MlsMigration.Failure.missingMlsService
+        case .missingMLSGroupID:
+            L10n.Localizable.Meta.Menu.MlsMigration.Failure.missingMlsGroupId
+        }
     }
 
 }

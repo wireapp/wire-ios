@@ -41,17 +41,11 @@ extension ZMConversation {
     }
 
     var listActions: [Action] {
-        var listActions = actions.filter { $0 != .delete }
-
-        if canMigrateToMLSFromDeveloperMenu {
-            listActions.append(.migrateToMLS)
-        }
-
-        return listActions
+        addingMLSMigrationActionIfNeeded(to: actions.filter { $0 != .delete })
     }
 
     var detailActions: [Action] {
-        actions.filter { $0 != .configureNotifications }
+        addingMLSMigrationActionIfNeeded(to: actions.filter { $0 != .configureNotifications })
     }
 
     private var actions: [Action] {
@@ -156,6 +150,14 @@ extension ZMConversation {
 
         return teamRemoteIdentifier == ZMUser.selfUser(in: managedObjectContext).teamIdentifier
     }
+
+    private func addingMLSMigrationActionIfNeeded(to actions: [Action]) -> [Action] {
+        guard canMigrateToMLSFromDeveloperMenu else {
+            return actions
+        }
+
+        return actions + [.migrateToMLS]
+    }
 }
 
 extension ZMConversation.Action {
@@ -203,7 +205,7 @@ extension ZMConversation.Action {
         case let .favorite(isFavorite: favorited):
             return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
         case .migrateToMLS:
-            return "Migrate to MLS"
+            return MetaMenuLocale.migrateToMls
         }
     }
 
