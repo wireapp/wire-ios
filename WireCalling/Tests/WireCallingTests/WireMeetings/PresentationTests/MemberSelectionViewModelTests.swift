@@ -128,7 +128,8 @@ struct MemberSelectionViewModelTests {
 
         // Then
         #expect(onSelectRecorder.calls.count == 1)
-        #expect(onSelectRecorder.calls.first?.map(\.qualifiedID) == [MeetingMember.alice, MeetingMember.bob].map(\.qualifiedID))
+        #expect(onSelectRecorder.calls.first?.map(\.qualifiedID) == [MeetingMember.alice, MeetingMember.bob]
+            .map(\.qualifiedID))
     }
 
     @Test("toggleSelection alone does not invoke onSelect")
@@ -172,7 +173,8 @@ struct MemberSelectionViewModelTests {
         await waitForSearchToSettle(viewModel)
 
         // Then
-        #expect(viewModel.searchResults.map(\.qualifiedID) == [MeetingMember.alice, MeetingMember.bob].map(\.qualifiedID))
+        #expect(viewModel.searchResults.map(\.qualifiedID) == [MeetingMember.alice, MeetingMember.bob]
+            .map(\.qualifiedID))
         #expect(viewModel.hasSearchError == false)
         #expect(viewModel.isSearching == false)
     }

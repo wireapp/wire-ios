@@ -37,10 +37,6 @@ public struct Meeting: Equatable, Sendable {
 
     public let recurrence: MeetingRecurrence?
 
-    /// The meeting's conversation. Its `participants` are populated when the meeting
-    /// is read from the local store (resolved from the linked conversation); a meeting
-    /// built straight from a network response carries the conversation id with an empty
-    /// participants set, since the backend response doesn't include them.
     public let conversation: MeetingConversation
 
     public let creatorID: QualifiedID
