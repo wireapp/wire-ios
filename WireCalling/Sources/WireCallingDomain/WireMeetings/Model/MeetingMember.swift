@@ -17,7 +17,6 @@
 //
 
 public import Foundation
-public import UIKit
 public import WireFoundation
 
 public struct MeetingMember: Identifiable, Sendable {
@@ -32,8 +31,8 @@ public struct MeetingMember: Identifiable, Sendable {
     /// The member's accent color, used as the background behind the initials.
     public let accentColor: WireAccentColor
 
-    /// The member's profile image, if available; when `nil` the initials are shown instead.
-    public let avatarImage: UIImage?
+    /// The member's profile image data, if available; when `nil` the initials are shown instead.
+    public let avatarImageData: Data?
 
     public var id: UUID {
         qualifiedID.id
@@ -45,14 +44,14 @@ public struct MeetingMember: Identifiable, Sendable {
         handle: String,
         initials: String = "",
         accentColor: WireAccentColor = .default,
-        avatarImage: UIImage? = nil
+        avatarImageData: Data? = nil
     ) {
         self.qualifiedID = qualifiedID
         self.name = name
         self.handle = handle
         self.initials = initials
         self.accentColor = accentColor
-        self.avatarImage = avatarImage
+        self.avatarImageData = avatarImageData
     }
 
 }

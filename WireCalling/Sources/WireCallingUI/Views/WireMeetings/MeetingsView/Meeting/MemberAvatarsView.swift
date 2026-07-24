@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import UIKit
 import WireCallingDomain
 import WireDesign
 
@@ -67,7 +68,7 @@ struct MemberAvatarsView: View {
     /// that `UserCell.avatarImageView` (`UserImageView`) performs in UIKit.
     private func avatar(for member: MeetingMember) -> some View {
         Group {
-            if let image = member.avatarImage {
+            if let data = member.avatarImageData, let image = UIImage(data: data) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()

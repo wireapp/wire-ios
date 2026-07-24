@@ -17,7 +17,6 @@
 //
 
 import CoreData
-import UIKit
 import WireCallingData
 import WireCallingDomain
 import WireDataModel
@@ -201,7 +200,7 @@ private extension ZMConversation {
                 handle: user.handle ?? "",
                 initials: user.initials ?? "",
                 accentColor: user.accentColor ?? .default,
-                avatarImage: user.previewImageData.flatMap(UIImage.init(data:))
+                avatarImageData: user.previewImageData
             )
         })
     }
