@@ -138,19 +138,15 @@ final class AccountManagementTests: WireUITestCase {
         // 7 instances to register 7 clients
         let deviceNames = (1 ... 7).map { "device-\($0)" }
 
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            for deviceName in deviceNames {
-                group.addTask {
-                    _ = try await self.testServicesClient.getInstanceId(
-                        email: user.email,
-                        password: user.password,
-                        name: user.name,
-                        verificationCode: nil,
-                        deviceName: deviceName
-                    )
-                }
-            }
-            try await group.waitForAll()
+        for deviceName in deviceNames {
+            _ = try await testServicesClient.getInstanceId(
+                email: user.email,
+                password: user.password,
+                name: user.name,
+                verificationCode: nil,
+                deviceName: deviceName,
+                useCache: false
+            )
         }
 
         // WHEN
