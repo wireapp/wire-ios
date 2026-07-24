@@ -42,7 +42,6 @@ public protocol MeetingRepositoryProtocol: Sendable {
     ) async throws -> Meeting
 
     /// Updates a meeting on the server and refreshes the locally stored copy.
-    /// For recurring meetings the whole series is updated.
     ///
     /// - Parameter id: The qualified id of the meeting to update.
 

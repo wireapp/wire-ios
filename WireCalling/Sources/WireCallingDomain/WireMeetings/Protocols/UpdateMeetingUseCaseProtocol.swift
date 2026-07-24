@@ -21,8 +21,6 @@ package import Foundation
 // sourcery: AutoMockable
 /// Updates an existing meeting via the backend API and adjusts the
 /// participants of its conversation to match the given selection.
-///
-/// For recurring meetings the whole series is updated.
 package protocol UpdateMeetingUseCaseProtocol: Sendable {
 
     /// - Parameters:
