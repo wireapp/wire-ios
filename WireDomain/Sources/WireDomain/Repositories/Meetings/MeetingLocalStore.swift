@@ -156,10 +156,7 @@ private extension StoredMeeting {
             end: end,
             recurrence: toDomainRecurrence(),
             members: [],
-            conversationID: QualifiedID(
-                id: conversationID.uuid,
-                domain: conversationID.domain
-            ),
+            conversationID: QualifiedID(id: conversationID.uuid, domain: conversationID.domain),
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
     }
