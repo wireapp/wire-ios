@@ -196,7 +196,7 @@ final class FilesItemViewModel: ObservableObject {
         case .deletePermanently:
             Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
         default:
-            "\(self)"
+            "\(action)"
         }
     }
 
