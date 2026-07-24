@@ -90,7 +90,7 @@ package final class MeetingFormViewModel {
     /// start lies in the past, its original day stays selectable.
     var startDateRange: PartialRangeFrom<Date> {
         var earliest = currentDateProvider.now
-        if case .edit(let meeting) = mode {
+        if case let .edit(meeting) = mode {
             earliest = min(earliest, meeting.start)
         }
         return Calendar.current.startOfDay(for: earliest)...
@@ -141,7 +141,7 @@ package final class MeetingFormViewModel {
             let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
             self.startDate = startDate
             self.endDate = startDate.addingTimeInterval(30 * TimeInterval.oneMinute)
-        case .edit(let meeting):
+        case let .edit(meeting):
             self.startDate = meeting.start
             self.endDate = meeting.end
             self.meetingTitle = meeting.title
@@ -207,7 +207,7 @@ package final class MeetingFormViewModel {
                 recurrence: repeatOption.toRecurrence(),
                 participants: selectedMembers
             )
-        case .edit(let meeting):
+        case let .edit(meeting):
             return try await updateMeetingUseCase.invoke(
                 meeting: meeting,
                 title: meetingTitle,
