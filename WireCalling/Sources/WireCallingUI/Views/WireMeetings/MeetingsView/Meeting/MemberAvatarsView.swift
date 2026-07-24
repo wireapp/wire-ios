@@ -28,22 +28,36 @@ struct MemberAvatarsView: View {
     private let overlap: CGFloat = 8
 
     var body: some View {
-        // Show up to `maxVisible` overlapping avatars; any remaining participants
-        // are represented by a trailing "+N" count.
-        let overflow = members.count - maxVisible
+        if let member = members.first, members.count == 1 {
+            // A single participant shows their avatar next to their name.
+            HStack(spacing: 6) {
+                avatar(for: member)
 
-        HStack(spacing: 6) {
-            HStack(spacing: -overlap) {
-                ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, member in
-                    avatar(for: member)
-                        .zIndex(Double(maxVisible - index))
+                if !member.name.isEmpty {
+                    Text(member.name)
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        .lineLimit(1)
                 }
             }
+        } else {
+            // Show up to `maxVisible` overlapping avatars; any remaining participants
+            // are represented by a trailing "+N" count.
+            let overflow = members.count - maxVisible
 
-            if overflow > 0 {
-                Text("+\(overflow)")
-                    .font(for: .subline1)
-                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            HStack(spacing: 6) {
+                HStack(spacing: -overlap) {
+                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, member in
+                        avatar(for: member)
+                            .zIndex(Double(maxVisible - index))
+                    }
+                }
+
+                if overflow > 0 {
+                    Text("+\(overflow)")
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                }
             }
         }
     }
