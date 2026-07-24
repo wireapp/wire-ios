@@ -201,7 +201,8 @@ struct UpdateMeetingUseCaseTests {
             )
         }
         #expect(meetingRepository
-            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount == 0)
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount ==
+            0)
     }
 
     @Test("invoke keeps the implicit creator out of the participant diff")
