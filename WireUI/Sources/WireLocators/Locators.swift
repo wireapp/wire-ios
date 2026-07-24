@@ -278,6 +278,14 @@ public enum Locators {
         case status
     }
 
+    public enum UserProfileStatusPicker: String {
+        case none
+        case available
+        case busy
+        case away
+        case okButton = "OK"
+    }
+
     public enum CreateGroupPage: AutoPrefixedEnum {
 
         case groupNameField

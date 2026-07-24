@@ -22,32 +22,32 @@ import XCTest
 /// User Account/profile page
 class UserProfilePage: PageModel {
 
+    override var pageMainElement: XCUIElement {
+        userProfilePicture
+    }
+
     enum UserAvailabilityStatus: String {
         case none = "None"
         case available = "Available"
         case busy = "Busy"
         case away = "Away"
 
-        var alertTitleHeader: String {
+        var identifier: String {
             switch self {
             case .none:
-                "No status set"
+                Locators.UserProfileStatusPicker.none.rawValue
             case .available:
-                "You are set to Available"
+                Locators.UserProfileStatusPicker.available.rawValue
             case .busy:
-                "You are set to Busy"
+                Locators.UserProfileStatusPicker.busy.rawValue
             case .away:
-                "You are set to Away"
+                Locators.UserProfileStatusPicker.away.rawValue
             }
         }
 
         var expectedValue: String {
             self == .none ? "" : rawValue
         }
-    }
-
-    override var pageMainElement: XCUIElement {
-        userProfilePicture
     }
 
     var qrCodeButton: XCUIElement {
@@ -80,6 +80,10 @@ class UserProfilePage: PageModel {
 
     var statusButton: XCUIElement {
         app.descendants(matching: .any)[Locators.UserProfilePage.status.rawValue].firstMatch
+    }
+
+    var okButton: XCUIElement {
+        app.buttons[Locators.UserProfileStatusPicker.okButton.rawValue].firstMatch
     }
 
     func tapCreateTeamButton() throws -> TeamSetupStepsPage {
@@ -127,7 +131,7 @@ class UserProfilePage: PageModel {
             line: line
         )
 
-        let statusOption = app.buttons[status.rawValue].firstMatch
+        let statusOption = app.buttons[status.identifier].firstMatch
         XCTAssertTrue(
             statusOption.waitAndTap(),
             "\(status.rawValue) option did not appear",
@@ -163,9 +167,12 @@ class UserProfilePage: PageModel {
 
     @discardableResult
     private func dismissStatusConfirmationPopup(for status: UserAvailabilityStatus) -> UserProfilePage {
-        let title = app.alerts[status.alertTitleHeader].firstMatch
-        XCTAssertTrue(title.waitForExistence(timeout: 5), "\(status.alertTitleHeader) popup did not appear")
-        XCTAssertTrue(title.buttons["OK"].waitAndTap(), "Could not dismiss \(status.rawValue) popup")
+        let confirmationPopup = app.alerts.firstMatch
+        XCTAssertTrue(confirmationPopup.waitForExistence(timeout: 3), "Status confirmation popup did not appear")
+        XCTAssertTrue(
+            okButton.waitAndTap(),
+            "Could not dismiss \(status.rawValue) popup"
+        )
 
         return self
     }
