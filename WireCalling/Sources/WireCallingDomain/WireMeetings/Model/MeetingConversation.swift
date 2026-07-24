@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
 public import WireFoundation
 
 /// The conversation backing a ``Meeting``, along with its participants.
