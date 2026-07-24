@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 struct DeviceDetailsBottomView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -66,6 +67,7 @@ struct DeviceDetailsBottomView: View {
                     .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                     .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
+            .accessibilityIdentifier(Locators.DeviceDetailsPage.removeDeviceButton.rawValue)
             Spacer()
         }
         .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
