@@ -25,12 +25,12 @@ extension UITraitEnvironment {
         traitCollection.horizontalSizeClass == .regular
     }
 
-    func isIPadRegular(device: any DeviceAbstractionProtocol = DeviceWrapper(device: .current)) -> Bool {
+    func isIPadRegular(device: some DeviceAbstractionProtocol = DeviceWrapper(device: .current)) -> Bool {
         device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
     }
 
     func isIPadRegularPortrait(
-        device: any DeviceAbstractionProtocol = DeviceWrapper(device: .current)
+        device: some DeviceAbstractionProtocol = DeviceWrapper(device: .current)
     ) -> Bool {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
             return false

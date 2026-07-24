@@ -60,7 +60,7 @@ final class NetworkStatusViewController: UIViewController {
     /// - Parameter application: Provide this param for testing only
     /// - Parameter userSession: The user session to observe network state from
     convenience init(
-        device: any DeviceAbstractionProtocol,
+        device: some DeviceAbstractionProtocol,
         application: ApplicationProtocol,
         userSession: UserSession
     ) {
