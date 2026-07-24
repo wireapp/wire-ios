@@ -17,7 +17,7 @@
 //
 
 import Foundation
-
+import CoreData
 public protocol MigrateConversationToMLSUseCaseProtocol {
 
     /// Migrates one team group conversation from Proteus or mixed mode to MLS.
