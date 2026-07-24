@@ -123,7 +123,7 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
         let label = UILabel()
         label.font = AuthenticationStepController.errorMessageFont
         label.textColor = SemanticColors.Label.textErrorDefault
-        label.textAlignment = .center
+        label.textAlignment = .natural
         label.numberOfLines = 0
         label.isHidden = true
         label.accessibilityIdentifier = "validation-failure"
