@@ -19,7 +19,8 @@
 import Foundation
 import PackagePlugin
 
-@main struct RunMockoloPlugin: BuildToolPlugin {
+@main
+struct RunMockoloPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
         guard let sourceModule = target.sourceModule else { return [] }
         let generatedSourceURL = context.pluginWorkDirectoryURL.appending(path: "GeneratedMocks.swift")
