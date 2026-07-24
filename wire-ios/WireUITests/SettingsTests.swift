@@ -137,4 +137,34 @@ final class SettingsTests: WireUITestCase {
             .verifyLinkPreviewCell()
     }
 
+    @MainActor
+    func testUpdateReadReceiptSettingOnGroupConversation_TC_8947() async throws {
+
+        // GIVEN - a group conversation (read receipts are on by default)
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (team, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+
+        let activeConversationPage = try app.loginUser(email: team.email, password: team.password)
+            .acceptPopup()
+            .openConversation()
+
+        // WHEN - read receipts are turned off
+        _ = try activeConversationPage
+            .openConversationDetails()
+            .toggleGroupReadReceipts()
+            .closeConversationDetails()
+            // THEN - a system message confirms read receipts are off
+            .verifyReadReceiptsSystemMessage(enabled: false)
+
+        // WHEN - read receipts are turned back on
+        _ = try activeConversationPage
+            .openConversationDetails()
+            .toggleGroupReadReceipts()
+            .closeConversationDetails()
+            // THEN - a system message confirms read receipts are on
+            .verifyReadReceiptsSystemMessage(enabled: true)
+    }
 }
