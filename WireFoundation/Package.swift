@@ -42,6 +42,9 @@ let package = Package(
             name: "WireFoundation",
             dependencies: [
                 "WireMockable"
+            ],
+            plugins: [
+                .plugin(name: "RunMockolo", package: "WirePlugins"),
             ]
         ),
         .testTarget(
