@@ -85,6 +85,16 @@ class OngoingCallPage: PageModel {
         ).firstMatch
     }
 
+    func screenSharingView(for participantName: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            NSPredicate(
+                format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+                participantName,
+                Locators.OngoingCallPage.sharesScreenDescription.rawValue
+            )
+        ).firstMatch
+    }
+
     @discardableResult
     func isOtherParticipantVideoTileVisible(
         for participantName: String,
@@ -100,6 +110,19 @@ class OngoingCallPage: PageModel {
             tile.identifier.localizedCaseInsensitiveContains(participantName) ||
                 tile.label.localizedCaseInsensitiveContains(participantName),
             "Remote video tile did not match participant \(participantName). Identifier: \(tile.identifier). Label: \(tile.label)"
+        )
+        return self
+    }
+
+    @discardableResult
+    func isOtherParticipantScreenSharingVisible(
+        for participantName: String,
+        timeout: TimeInterval = 15
+    ) -> OngoingCallPage {
+        let tile = screenSharingView(for: participantName)
+        XCTAssertTrue(
+            tile.waitForExistence(timeout: timeout),
+            "screen share is not visible for \(participantName)"
         )
         return self
     }
