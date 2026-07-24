@@ -5,16 +5,26 @@ import PackageDescription
 let package = Package(
     name: "WirePlugins",
     products: [
+        .plugin(name: "RunMockolo", targets: ["RunMockolo"]),
         .plugin(name: "SourceryPlugin", targets: ["SourceryPlugin"]),
         .plugin(name: "SwiftGenPlugin", targets: ["SwiftGenPlugin"])
     ],
     targets: [
         .binaryTarget(
+            name: "mockolo",
+            url: "https://github.com/uber/mockolo/releases/download/2.6.1/mockolo.artifactbundle.zip",
+            checksum: "8ed3fd73a7b76b87b3d53cd702e5b977443d4ffd00d50161200e2526fc08e7bf"
+        ),
+        .plugin(
+            name: "RunMockolo",
+            capability: .buildTool(),
+            dependencies: [.target(name: "mockolo")]
+        ),
+        .binaryTarget(
             name: "sourcery",
             url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.3.0/sourcery-2.3.0.artifactbundle.zip",
             checksum: "2fb2ae820c4d12f77232bacba5ee719fff9d61c71c3e8c6067691b2e90aa4ba7"
         ),
-
         .plugin(
             name: "SourceryPlugin",
             capability: .buildTool(),
