@@ -21,8 +21,8 @@ public import UIKit
 import WireMockable
 
 /// A protocol which allows for abstracting `UIDevice`.
+/// @mockable
 @Mockable
-@mockable
 @MainActor
 public protocol DeviceAbstraction { // TODO: rename DeviceAbstractionProtocol
     var userInterfaceIdiom: UIUserInterfaceIdiom { get }

@@ -16,22 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import PackagePlugin
 
 @main struct RunMockoloPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
-        let generatedSourcePath = context.pluginWorkDirectory.appending("GeneratedMocks.swift")
-        let packageRoot = context.package.directory
+        let generatedSourceURL = context.pluginWorkDirectoryURL.appending(path: "GeneratedMocks.swift")
+        let packageRootURL = context.package.directoryURL
 
         return [
             .prebuildCommand(
                 displayName: "Run mockolo",
-                executable: try context.tool(named: "mockolo").path,
+                executable: try context.tool(named: "mockolo").url,
                 arguments: [
-                    "-s", packageRoot.appending("Sources", "MyModule").string,
-                    "-d", generatedSourcePath,
+                    "-s", packageRootURL.appending(path: "Sources/MyModule").path(percentEncoded: false),
+                    "-d", generatedSourceURL.path(percentEncoded: false),
                 ],
-                outputFilesDirectory: context.pluginWorkDirectory
+                outputFilesDirectory: context.pluginWorkDirectoryURL
             ),
         ]
     }
