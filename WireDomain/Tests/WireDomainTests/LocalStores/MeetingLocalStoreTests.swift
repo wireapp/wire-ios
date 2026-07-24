@@ -106,7 +106,6 @@ final class MeetingLocalStoreTests: XCTestCase {
             start: Scaffolding.meeting.start,
             end: Scaffolding.meeting.end,
             recurrence: nil,
-            members: [],
             conversationID: Scaffolding.conversationID,
             creatorID: Scaffolding.creatorID
         )
@@ -127,7 +126,7 @@ final class MeetingLocalStoreTests: XCTestCase {
         }
     }
 
-    func testStoredMeetings_It_Populates_Members_From_Conversation_Participants() async throws {
+    func testStoredMeetings_It_Populates_Participants_From_The_Conversation() async throws {
         // Given
 
         await context.perform { [modelHelper, context] in
@@ -172,13 +171,18 @@ final class MeetingLocalStoreTests: XCTestCase {
         // Then
 
         let meeting = try XCTUnwrap(meetings.first)
-        XCTAssertEqual(meeting.members.count, 2, "the self user should be excluded")
-        XCTAssertEqual(meeting.members.map(\.name), ["Alice Archer", "Bob Baker"], "members should be sorted by name")
-        XCTAssertEqual(meeting.members.map(\.handle), ["alice", "bob"])
-        XCTAssertEqual(meeting.members.map(\.qualifiedID), [Scaffolding.memberAliceID, Scaffolding.memberBobID])
+        let conversation = try XCTUnwrap(meeting.conversation)
+        XCTAssertEqual(conversation.id, Scaffolding.conversationID)
+        XCTAssertEqual(conversation.participants.count, 3, "all local participants, including the self user")
+        let alice = try XCTUnwrap(conversation.participants.first { $0.qualifiedID == Scaffolding.memberAliceID })
+        XCTAssertEqual(alice.name, "Alice Archer")
+        XCTAssertEqual(alice.handle, "alice")
+        let bob = try XCTUnwrap(conversation.participants.first { $0.qualifiedID == Scaffolding.memberBobID })
+        XCTAssertEqual(bob.name, "Bob Baker")
+        XCTAssertEqual(bob.handle, "bob")
     }
 
-    func testStoredMeeting_It_Returns_Meeting_With_Members() async throws {
+    func testStoredMeeting_It_Returns_Meeting_With_Participants() async throws {
         // Given
 
         await context.perform { [modelHelper, context] in
@@ -212,7 +216,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         let unwrappedMeeting = try XCTUnwrap(meeting)
         XCTAssertEqual(unwrappedMeeting.id, Scaffolding.meetingID)
-        XCTAssertEqual(unwrappedMeeting.members.map(\.qualifiedID), [Scaffolding.memberAliceID])
+        XCTAssertEqual(unwrappedMeeting.conversation?.participants.map(\.qualifiedID), [Scaffolding.memberAliceID])
     }
 
     func testStoredMeeting_It_Returns_Nil_For_Unknown_Meeting() async throws {
@@ -302,7 +306,6 @@ final class MeetingLocalStoreTests: XCTestCase {
                 interval: 2,
                 until: recurrenceUntil
             ),
-            members: [],
             conversationID: conversationID,
             creatorID: creatorID
         )

@@ -410,7 +410,7 @@ struct MeetingRepositoryTests {
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
     }
 
-    @Test("createMeeting returns the stored copy, which has its members populated")
+    @Test("createMeeting returns the stored copy, which has its participants populated")
     func createMeetingReturnsStoredCopy() async throws {
         // Mock
 
@@ -430,7 +430,7 @@ struct MeetingRepositoryTests {
 
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
         #expect(meeting == Scaffolding.storedMeeting)
-        #expect(meeting.members == [Scaffolding.member])
+        #expect(meeting.conversation?.participants == [Scaffolding.member])
     }
 
     @Test("createMeeting falls back to the mapped meeting when the store can't provide it")
@@ -452,10 +452,10 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(meeting.id == Scaffolding.meetingID)
-        #expect(meeting.members.isEmpty)
+        #expect(meeting.conversation == nil)
     }
 
-    @Test("pullMeeting returns the stored copy, which has its members populated")
+    @Test("pullMeeting returns the stored copy, which has its participants populated")
     func pullMeetingReturnsStoredCopy() async throws {
         // Mock
 
@@ -470,7 +470,7 @@ struct MeetingRepositoryTests {
 
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
         #expect(meeting == Scaffolding.storedMeeting)
-        #expect(meeting?.members == [Scaffolding.member])
+        #expect(meeting?.conversation?.participants == [Scaffolding.member])
     }
 
     private enum Scaffolding {
@@ -502,14 +502,17 @@ struct MeetingRepositoryTests {
         )
 
         /// The meeting as the local store provides it,
-        /// with its members populated from the conversation.
+        /// with its participants populated from the conversation.
         static let storedMeeting = Meeting(
             id: meetingID,
             title: meetingResponse.title,
             start: meetingResponse.startTime,
             end: meetingResponse.endTime,
             recurrence: nil,
-            members: [member],
+            conversation: MeetingConversation(
+                id: meetingResponse.conversationID,
+                participants: [member]
+            ),
             conversationID: meetingResponse.conversationID,
             creatorID: meetingResponse.creatorID
         )
@@ -521,7 +524,6 @@ struct MeetingRepositoryTests {
                 start: start,
                 end: start.addingTimeInterval(3600),
                 recurrence: nil,
-                members: [],
                 conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
                 creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
             )

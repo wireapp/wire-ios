@@ -312,7 +312,10 @@ private extension MeetingRepeatOption {
                     start: Date().addingTimeInterval(.oneHour),
                     end: Date().addingTimeInterval(2 * TimeInterval.oneHour),
                     recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
-                    members: Array([MeetingMember].mock.prefix(3)),
+                    conversation: MeetingConversation(
+                        id: QualifiedID(id: UUID(), domain: ""),
+                        participants: Set([MeetingMember].mock.prefix(3))
+                    ),
                     conversationID: QualifiedID(id: UUID(), domain: ""),
                     creatorID: QualifiedID(id: UUID(), domain: "")
                 )

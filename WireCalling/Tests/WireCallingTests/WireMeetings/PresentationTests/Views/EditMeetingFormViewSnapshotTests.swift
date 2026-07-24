@@ -90,18 +90,21 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
             start: start,
             end: start.addingTimeInterval(.oneHour),
             recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
-            members: [
-                MeetingMember(
-                    qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
-                    name: "Katie Armstrong",
-                    handle: "katie"
-                ),
-                MeetingMember(
-                    qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
-                    name: "Marco Weissnat",
-                    handle: "marco"
-                )
-            ],
+            conversation: MeetingConversation(
+                id: QualifiedID(id: UUID(), domain: "example.com"),
+                participants: [
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
+                        name: "Katie Armstrong",
+                        handle: "katie"
+                    ),
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
+                        name: "Marco Weissnat",
+                        handle: "marco"
+                    )
+                ]
+            ),
             conversationID: QualifiedID(id: UUID(), domain: "example.com"),
             creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )

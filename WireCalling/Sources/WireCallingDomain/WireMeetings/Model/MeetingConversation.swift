@@ -25,7 +25,7 @@ public import WireFoundation
 /// plus the set of members participating in it. It is resolved from the locally
 /// stored conversation when a meeting is fetched, so the UI can show participant
 /// avatars without an additional lookup.
-public struct MeetingConversation: Equatable, Sendable {
+public struct MeetingConversation: Hashable, Sendable {
 
     public let id: QualifiedID
 

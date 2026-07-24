@@ -45,7 +45,6 @@ struct MeetingFormViewModelTests {
         start: .distantPast,
         end: .distantFuture,
         recurrence: nil,
-        members: [],
         conversationID: QualifiedID(id: UUID(), domain: "example.com"),
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
@@ -88,7 +87,10 @@ struct MeetingFormViewModelTests {
             start: start,
             end: start.addingTimeInterval(.oneHour),
             recurrence: recurrence,
-            members: [member],
+            conversation: MeetingConversation(
+                id: QualifiedID(id: UUID(), domain: "example.com"),
+                participants: [member]
+            ),
             conversationID: QualifiedID(id: UUID(), domain: "example.com"),
             creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )
@@ -275,7 +277,7 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.startDate == meeting.start)
         #expect(viewModel.endDate == meeting.end)
         #expect(viewModel.repeatOption == .every2Weeks)
-        #expect(viewModel.selectedMembers == meeting.members)
+        #expect(viewModel.selectedMembers == [member])
     }
 
     @Test(
