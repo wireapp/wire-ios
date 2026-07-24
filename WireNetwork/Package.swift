@@ -23,6 +23,9 @@ let package = Package(
                 .product(name: "WireFoundation", package: "WireFoundation"),
                 .product(name: "WireLogging", package: "WireLogging"),
                 .product(name: "WireCrypto", package: "WireFoundation")
+            ],
+            plugins: [
+                .plugin(name: "RunMockolo", package: "WirePlugins"),
             ]
         ),
         .target(

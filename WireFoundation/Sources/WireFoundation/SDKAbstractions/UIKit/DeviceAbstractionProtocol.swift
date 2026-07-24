@@ -18,8 +18,9 @@
 
 public import UIKit
 
-/// A protocol which allows for abstracting `UIDevice`.
 /// @mockable
+
+/// A protocol which allows for abstracting `UIDevice`.
 @MainActor
 public protocol DeviceAbstractionProtocol {
     var userInterfaceIdiom: UIUserInterfaceIdiom { get }

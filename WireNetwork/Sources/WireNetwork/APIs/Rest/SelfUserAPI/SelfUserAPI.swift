@@ -17,11 +17,9 @@
 //
 
 import Foundation
-import WireMockable
 
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning self user.
-@Mockable
 public protocol SelfUserAPI {
 
     /// Get user details for self user
