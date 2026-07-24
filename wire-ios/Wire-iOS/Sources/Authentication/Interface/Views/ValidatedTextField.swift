@@ -128,13 +128,16 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     ///   - kind: the type of text field
     ///   - leftInset: placeholder left inset
     ///   - cornerRadius: optional corner radius override
+    ///   - overrideIsContextMenuAllowed: if true, the context menu will be enabled despite SecurityFlag settings.
+    ///                                   This should only be used in exceptional cases.
     init(
         kind: Kind = .unknown,
         leftInset: CGFloat = 8,
         accessoryTrailingInset: CGFloat = 16,
         cornerRadius: CGFloat? = nil,
         setNewColors: Bool = false,
-        style: TextFieldStyle
+        style: TextFieldStyle,
+        overrideIsContextMenuAllowed: Bool = false
     ) {
 
         self.textFieldValidator = TextFieldValidator()
@@ -165,7 +168,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
             textFieldAttributes: textFieldAttributes,
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+            isContextMenuAllowed: overrideIsContextMenuAllowed || SecurityFlags.clipboard.isEnabled
         )
         setupTextFieldProperties()
 

@@ -208,6 +208,7 @@ extension URLActionRouter: PresentationDelegate {
                 return
             }
 
+<<<<<<< HEAD
             if DeveloperFlag.useWireAuthentication.isOn {
                 if let sessionManager, sessionManager.activeUserSession?.isLoggedIn == true {
                     // allows switching backend from current session
@@ -218,6 +219,12 @@ extension URLActionRouter: PresentationDelegate {
                     decisionHandler(SecurityFlags.customBackend.isEnabled)
                 }
 
+=======
+            // This action is handled in WireAuthentication,
+            // or in NoDefaultBackendViewController for Wire Gov
+            if DeveloperFlag.useWireAuthentication.isOn || Bundle.backendBundle == nil {
+                decisionHandler(SecurityFlags.customBackend.isEnabled)
+>>>>>>> f239466b56 (fix: Wire Gov landing page - WPB-26207 (#5061))
             } else {
                 // Switching backend is handled below, so pass false here.
                 decisionHandler(false)
