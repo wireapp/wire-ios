@@ -536,6 +536,24 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
+    func verifyReadReceiptsSystemMessage(
+        enabled: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        let identifier = enabled
+            ? Locators.ActiveConversationPage.readReceiptsEnabledSystemMessage.rawValue
+            : Locators.ActiveConversationPage.readReceiptsDisabledSystemMessage.rawValue
+        XCTAssertTrue(
+            app.descendants(matching: .any)[identifier].firstMatch.waitForExistence(timeout: 10),
+            "Expected read-receipts system message with identifier '\(identifier)' not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
     func verifyLinkPreviewCell(
         file: StaticString = #filePath,
         line: UInt = #line

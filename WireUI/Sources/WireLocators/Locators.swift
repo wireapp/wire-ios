@@ -151,6 +151,19 @@ public enum Locators {
         case systemOption
     }
 
+    public enum DeviceDetailsPage: String {
+
+        case removeDeviceButton
+        case verifiedSwitch
+        case ok = "OK"
+    }
+
+    public enum DevicesPage: String {
+
+        case deviceNameLabel = "device name"
+        case title = "Devices"
+    }
+
     public enum ActiveConversationPage: String {
 
         case videoCallBarButton
@@ -198,6 +211,8 @@ public enum Locators {
         case guestsArePresent = "Guests are present"
         case conversationBackground
         case openOngoingCallButton
+        case readReceiptsDisabledSystemMessage
+        case readReceiptsEnabledSystemMessage
 
     }
 
@@ -232,6 +247,7 @@ public enum Locators {
         case adminCell
         case memberCell
         case close
+        case readReceiptsSwitch
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
