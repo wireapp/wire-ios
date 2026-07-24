@@ -19,7 +19,7 @@
 public import Foundation
 public import WireFoundation
 
-public struct MeetingMember: Identifiable, Sendable {
+public struct MeetingMember: Sendable {
 
     public let qualifiedID: QualifiedID
     public let name: String
@@ -33,10 +33,6 @@ public struct MeetingMember: Identifiable, Sendable {
 
     /// The member's profile image data, if available; when `nil` the initials are shown instead.
     public let avatarImageData: Data?
-
-    public var id: UUID {
-        qualifiedID.id
-    }
 
     public init(
         qualifiedID: QualifiedID,
