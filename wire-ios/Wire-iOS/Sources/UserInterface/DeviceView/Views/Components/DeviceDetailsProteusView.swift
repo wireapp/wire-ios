@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -64,6 +65,7 @@ struct DeviceDetailsProteusView: View {
                 Divider()
 
                 Toggle(L10n.Localizable.Device.verified, isOn: $isVerified)
+                    .accessibilityIdentifier(Locators.DeviceDetailsPage.verifiedSwitch.rawValue)
                     .font(FontSpec.headerSemiboldFont.swiftUIFont)
                     .padding(.all, ViewConstants.Padding.standard)
                     .onChange(of: isVerified) { value in
