@@ -39,11 +39,11 @@
 "conversation.timerButton.description" = "Définir une minuterie pour les messages auto-supprimés";
 "conversation.mentionButton.description" = "Mentionner quelqu'un";
 "conversation.cameraButton.description" = "Prendre ou choisir une photo";
-"conversation.sketchButton.description" = "Open sketch to draw or write";
+"conversation.sketchButton.description" = "Open sketch to draw or write, disabled in viewer access";
 "conversation.gifButton.description" = "Select a GIF";
 "conversation.audioButton.description" = "Record an audio message";
 "conversation.pingButton.description" = "Send a ping";
-"conversation.uploadFileButton.description" = "Share a file";
+"conversation.uploadFileButton.description" = "Share a file, disabled in viewer access";
 "conversation.locationButton.description" = "Share your location";
 "conversation.videoButton.description" = "Enregistrer une vidéo";
 "conversation.moreButton.description" = "Open more messaging options";

@@ -38,8 +38,8 @@
 "conversation.hideFormattingButton.description" = "Hide formatting options";
 "conversation.timerButton.description" = "自動削除メッセージのタイマーを設定します";
 "conversation.mentionButton.description" = "Mention someone";
-"conversation.cameraButton.description" = "Take or select a photo";
-"conversation.sketchButton.description" = "Open sketch to draw or write";
+"conversation.cameraButton.description" = "Take or select a photo, disabled in viewer access";
+"conversation.sketchButton.description" = "Open sketch to draw or write, disabled in viewer access";
 "conversation.gifButton.description" = "Select a GIF";
 "conversation.audioButton.description" = "Record an audio message";
 "conversation.pingButton.description" = "pingを送信";

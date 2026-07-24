@@ -18,9 +18,11 @@
 
 import Combine
 import Foundation
+import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 /// A view model for a single item in the `FilesView`.
 ///
@@ -49,6 +51,19 @@ final class FilesItemViewModel: ObservableObject {
         case deletePermanently
         case makeAvailableOffline
         case removeAvailableOffline
+
+        var accessibilityLabel: String {
+            switch self {
+            case .makeAvailableOffline:
+                Accessibility.Files.ViewerAccess.makeAvailableOffline
+            case .shareLink:
+                Accessibility.Files.ViewerAccess.shareLink
+            case .deletePermanently:
+                Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
+            default:
+                "\(self)"
+            }
+        }
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
