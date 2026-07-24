@@ -53,15 +53,15 @@ extension ConversationActionController {
 
         let useCase = MigrateConversationToMLSUseCase()
 
-        Task { @MainActor [weak self] in
+        Task { [weak self] in
             do {
                 try await useCase.invoke(
                     conversationID: conversationID,
                     syncContext: syncContext
                 )
-                self?.presentMLSMigrationSuccess()
+                await MainActor.run { self?.presentMLSMigrationSuccess() }
             } catch {
-                self?.presentMLSMigrationFailure(error)
+                await MainActor.run { self?.presentMLSMigrationFailure(error) }
             }
         }
     }
