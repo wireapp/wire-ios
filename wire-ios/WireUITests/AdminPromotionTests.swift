@@ -127,4 +127,56 @@ class AdminPromotionTests: WireUITestCase {
         )
     }
 
+    @MainActor
+    func testAdmin_notLastAdmin_leavesGroupWithoutAdminSelectionModal_TC_11031() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+
+        let (owner, teamMembers, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 2,
+            conversation: .group(groupName)
+        )
+        let secondAdmin = try XCTUnwrap(teamMembers.last)
+
+        let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openConversation()
+            .openConversationDetails()
+            .openUserDetailsPage(byName: secondAdmin.name)
+            .enableGroupAdmin()
+            .goBackToConversationDetailsPage()
+
+        XCTAssertTrue(
+            conversationDetailsPage.adminCell(named: secondAdmin.name).waitForExistence(timeout: 5),
+            "Second admin should appear in the admin section"
+        )
+
+        let leavingConversationDetailsPage = try conversationDetailsPage
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+
+        XCTAssertFalse(
+            leavingConversationDetailsPage.promoteNewAdminButton.exists,
+            "Admin selection modal should not appear when self user is not the last admin"
+        )
+
+        let leftConversationDetailsPage = try leavingConversationDetailsPage
+            .leaveConversation()
+
+        XCTAssertTrue(
+            leftConversationDetailsPage.userCell(named: owner.name).waitForNonExistence(timeout: 0.5),
+            "Owner should not appear in participant list after leaving"
+        )
+
+        let activeConversationPage = try leftConversationDetailsPage.closeConversationDetails()
+
+        XCTAssertTrue(
+            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 5),
+            "'you left' system message missing"
+        )
+        XCTAssertFalse(
+            activeConversationPage.inputMessageField.exists,
+            "Input bar still showing available after leaving"
+        )
+    }
+
 }

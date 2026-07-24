@@ -53,6 +53,14 @@ class UserDetailsPage: PageModel {
         app.buttons[Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue].firstMatch
     }
 
+    var groupAdminToggle: XCUIElement {
+        app.switches[Locators.UserDetailsPage.groupAdminToggle.rawValue].firstMatch
+    }
+
+    var backToConversationDetailsButton: XCUIElement {
+        app.navigationBars.buttons.element(boundBy: 0)
+    }
+
     func getUserName() -> String? {
         userNameInfo.value as? String
     }
@@ -65,6 +73,20 @@ class UserDetailsPage: PageModel {
     func closeProfilePage() throws -> NewConversationPage {
         closeProfileButton.tap()
         return try NewConversationPage()
+    }
+
+    func goBackToConversationDetailsPage() throws -> ConversationDetailsPage {
+        backToConversationDetailsButton.waitAndTap()
+        return try ConversationDetailsPage()
+    }
+
+    @discardableResult
+    func enableGroupAdmin() -> Self {
+        if (groupAdminToggle.value as? String) != "1" {
+            groupAdminToggle.waitAndTap()
+        }
+
+        return self
     }
 
     func removeParticipantFromConversation() throws -> ConversationDetailsPage {

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLocators
 import WireUtilities
 
 extension CellConfiguration {
@@ -28,7 +29,7 @@ extension CellConfiguration {
         .iconToggle(
             title: L10n.Localizable.Profile.Profile.GroupAdminOptions.title,
             subtitle: "",
-            identifier: "cell.profile.group_admin_options",
+            identifier: Locators.UserDetailsPage.groupAdminToggle.rawValue,
             titleIdentifier: "label.groupAdminOptions.description",
             icon: .groupAdmin,
             color: nil,
