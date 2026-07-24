@@ -331,6 +331,7 @@ final class ZCallingTests: WireUITestCase {
             .isOtherParticipantScreenSharingVisible(for: teamAndGroupCallSetup.teamOwner.name)
             .verifyScreenSharingQRCodes(
                 for: teamAndGroupCallSetup.teamOwner.name,
+                // Calling service screen-share test image uses the same QR marker payloads as zautomation.
                 expectedContentInQRCode: [
                     "http://screen-right",
                     "http://screen-bottom"
