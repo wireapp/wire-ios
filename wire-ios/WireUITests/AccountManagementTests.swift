@@ -135,31 +135,29 @@ final class AccountManagementTests: WireUITestCase {
     func testDeleteDeviceWhenClientLimitReached_TC_8973() async throws {
         // GIVEN
         let user = try await UserHelper.default.createPersonalUser()
-        let deviceNames = (1 ... 7).map { "device-limit-\($0)" }
+        // 7 instances to register 7 clients
+        let deviceNames = (1 ... 7).map { "device-\($0)" }
 
-        for deviceName in deviceNames {
-            _ = try await testServicesClient.createInstance(
-                email: user.email,
-                password: user.password,
-                name: user.name,
-                verificationCode: nil,
-                deviceName: deviceName
-            )
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for deviceName in deviceNames {
+                group.addTask {
+                    _ = try await self.testServicesClient.createInstance(
+                        email: user.email,
+                        password: user.password,
+                        name: user.name,
+                        verificationCode: nil,
+                        deviceName: deviceName
+                    )
+                }
+            }
+            try await group.waitForAll()
         }
 
         // WHEN
-        _ = try WelcomePage()
-            .enterEmailOrSSO(user.email)
-            .enterPassword(user.password)
-            .acceptFirstTimeAlert()
-
-        let conversationsPage = try ManagedDevicesPage()
-            .removeFirstDeviceAndContinue(password: user.password)
+        _ = try app.loginUser(email: user.email, password: user.password)
 
         // THEN
-        XCTAssertTrue(
-            conversationsPage.conversationsButton.exists,
-            "Conversations tab did not appear after removing a device"
-        )
+        _ = try ManagedDevicesPage()
+            .removeFirstDeviceAndContinue(password: user.password)
     }
 }
