@@ -80,24 +80,6 @@ class TestServicesClient {
             return cachedInstanceId
         }
 
-        let instanceId = try await createInstance(
-            email: email,
-            password: password,
-            name: name,
-            verificationCode: verificationCode,
-            deviceName: deviceName
-        )
-        instanceCache[email] = instanceId
-        return instanceId
-    }
-
-    func createInstance(
-        email: String,
-        password: String,
-        name: String,
-        verificationCode: String?,
-        deviceName: String = "device\(Int.random(in: 10_000 ... 99_999))"
-    ) async throws -> String {
         let url = URL(string: "\(testServiceURL)/api/v1/instance")
         guard let requestUrl = url else { fatalError() }
 
@@ -126,6 +108,7 @@ class TestServicesClient {
             CreateInstanceResponse.self,
             from: responseData
         )
+        instanceCache[email] = instanceResponse.instanceId
         await createdInstances.add(instanceResponse.instanceId)
         return instanceResponse.instanceId
     }

@@ -141,7 +141,7 @@ final class AccountManagementTests: WireUITestCase {
         try await withThrowingTaskGroup(of: Void.self) { group in
             for deviceName in deviceNames {
                 group.addTask {
-                    _ = try await self.testServicesClient.createInstance(
+                    _ = try await self.testServicesClient.getInstanceId(
                         email: user.email,
                         password: user.password,
                         name: user.name,
