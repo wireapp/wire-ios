@@ -151,6 +151,19 @@ public enum Locators {
         case systemOption
     }
 
+    public enum DeviceDetailsPage: String {
+
+        case removeDeviceButton
+        case verifiedSwitch
+        case ok = "OK"
+    }
+
+    public enum DevicesPage: String {
+
+        case deviceNameLabel = "device name"
+        case title = "Devices"
+    }
+
     public enum ActiveConversationPage: String {
 
         case videoCallBarButton
