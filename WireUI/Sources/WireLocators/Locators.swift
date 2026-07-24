@@ -127,6 +127,7 @@ public enum Locators {
         // changing existing references across the app.
         case accountHeader = "Account"
         case pictureCell
+        case profilePictureImagePreview
         case colorCell
         case conversationBackgroundSwitch = "ConversationBackgroundSwitch"
         case nameField = "NameField"
@@ -511,6 +512,7 @@ public enum Locators {
 
         public enum FileMenu: String {
             case deleteToRecycleBin
+            case deletePermanently
             case restore
 
             public var identifier: String {
