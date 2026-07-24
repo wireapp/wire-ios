@@ -21,15 +21,15 @@ import PackagePlugin
 
 @main struct RunMockoloPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
+        guard let sourceModule = target.sourceModule else { return [] }
         let generatedSourceURL = context.pluginWorkDirectoryURL.appending(path: "GeneratedMocks.swift")
-        let packageRootURL = context.package.directoryURL
 
         return [
             .prebuildCommand(
                 displayName: "Run mockolo",
                 executable: try context.tool(named: "mockolo").url,
                 arguments: [
-                    "-s", packageRootURL.appending(path: "Sources/MyModule").path(percentEncoded: false),
+                    "-s", sourceModule.directoryURL.path(percentEncoded: false),
                     "-d", generatedSourceURL.path(percentEncoded: false),
                 ],
                 outputFilesDirectory: context.pluginWorkDirectoryURL
