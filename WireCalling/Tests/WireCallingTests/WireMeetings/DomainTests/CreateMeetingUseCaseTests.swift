@@ -42,7 +42,6 @@ struct CreateMeetingUseCaseTests {
         start: .distantPast,
         end: .distantFuture,
         recurrence: nil,
-        members: [],
         conversationID: QualifiedID(id: UUID(), domain: "example.com"),
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )

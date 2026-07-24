@@ -439,7 +439,6 @@ struct MeetingRepositoryTests {
                 start: start,
                 end: start.addingTimeInterval(3600),
                 recurrence: nil,
-                members: [],
                 conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
                 creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
             )

@@ -144,8 +144,18 @@ private extension MeetingRecurrence {
             conversation: MeetingConversation(
                 id: QualifiedID(id: UUID(), domain: ""),
                 participants: [
-                    MeetingMember(qualifiedID: QualifiedID(id: UUID(), domain: ""), name: "Alice Smith", handle: "alice", initials: "AS"),
-                    MeetingMember(qualifiedID: QualifiedID(id: UUID(), domain: ""), name: "Bob Jones", handle: "bob", initials: "BJ")
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                        name: "Alice Smith",
+                        handle: "alice",
+                        initials: "AS"
+                    ),
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                        name: "Bob Jones",
+                        handle: "bob",
+                        initials: "BJ"
+                    )
                 ]
             ),
             conversationID: QualifiedID(id: UUID(), domain: ""),
