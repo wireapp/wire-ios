@@ -95,7 +95,7 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
     // (via SecurityFlag.clipboard).
     //
     // This is the landing page for the Wire Gov edition, but we want
-    // to be allow the user to paste in the configuration link. Therefore
+    // to allow the user to paste in the configuration link. Therefore
     // we override the SecurityFlag.clipboard setting and allow the
     // context menu here.
     private let configurationTextField = ValidatedTextField(
