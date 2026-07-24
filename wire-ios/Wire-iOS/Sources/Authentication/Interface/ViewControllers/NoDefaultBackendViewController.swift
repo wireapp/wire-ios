@@ -154,6 +154,7 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
         configureSubviews()
         createConstraints()
         configureObservers()
+        setUpDeepLinkHandling()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -320,6 +321,13 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
 
         scrollView.contentInset.bottom = overlap
         scrollView.verticalScrollIndicatorInsets.bottom = overlap
+    }
+
+    private func setUpDeepLinkHandling() {
+        authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors { [weak self] configURL in
+            self?.configurationTextField.text = configURL.absoluteString
+            self?.updateConfigureButtonEnabled()
+        }
     }
 
     // MARK: - QR scanner

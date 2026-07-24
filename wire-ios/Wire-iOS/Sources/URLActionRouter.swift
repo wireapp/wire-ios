@@ -210,7 +210,9 @@ extension URLActionRouter: PresentationDelegate {
                 presentLocalizedErrorAlert(localizedError)
             }
 
-            if DeveloperFlag.useWireAuthentication.isOn {
+            // This action is handled in WireAuthentication,
+            // or in NoDefaultBackendViewcontroller for Wire Gov
+            if DeveloperFlag.useWireAuthentication.isOn || Bundle.backendBundle == nil {
                 decisionHandler(SecurityFlags.customBackend.isEnabled)
             } else {
                 // Switching backend is handled below, so pass false here.
