@@ -38,6 +38,8 @@
 "wireMeetings.list.delete.alert.subtitle" = "Das Meeting wird für Sie und alle anderen gelöscht. Alle Teilnehmer werden darüber informiert.";
 "wireMeetings.list.delete.alert.delete.button" = "Löschen";
 "wireMeetings.list.delete.alert.cancel.button" = "Abbrechen";
+"wireMeetings.list.delete.error.alert.title" = "Ein Fehler ist aufgetreten";
+"wireMeetings.list.delete.error.alert.ok" = "OK";
 
 // MARK: - Schedule a meeting
 
@@ -46,7 +48,7 @@
 "wireMeetings.schedule.cancel.button" = "Abbrechen";
 "wireMeetings.schedule.schedule.button" = "Planen";
 "wireMeetings.schedule.select.button" = "Auswählen";
-"wireMeetings.schedule.start.button" = "Start";
+"wireMeetings.schedule.start.button" = "Starten";
 "wireMeetings.schedule.setupTitle.header" = "Titel";
 "wireMeetings.schedule.setupTitle.placeholder" = "Meeting-Titel eingeben";
 "wireMeetings.schedule.setupParticipants.header" = "Teilnehmer";

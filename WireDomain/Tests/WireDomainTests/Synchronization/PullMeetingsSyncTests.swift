@@ -226,6 +226,10 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         await deleteLocalMeetingIdQualifiedIDVoidClosure?(id)
     }
 
+    // MARK: - deleteMeeting
+
+    func deleteMeeting(id: QualifiedID) async throws {}
+
     // MARK: - fetchMeetings
 
     public var fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingThrowableError: (any Error)?

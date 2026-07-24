@@ -115,7 +115,10 @@ class ActiveConversationPage: PageModel {
     }
 
     var labelSharedDriveIsOn: XCUIElement {
-        app.links[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
+        app.links.containing(NSPredicate(
+            format: "value CONTAINS[c] %@",
+            Locators.ActiveConversationPage.labelSharedDriveON.rawValue
+        )).firstMatch
     }
 
     var sharedDriveButton: XCUIElement {
@@ -314,6 +317,7 @@ class ActiveConversationPage: PageModel {
     func waitToUploadToFinishAndSend() {
         XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
         sendButton.waitAndTap()
+        XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
     }
 
     func openSharedDrive() throws -> SharedDriveFilesPage {
@@ -427,6 +431,10 @@ class ActiveConversationPage: PageModel {
 
         uploadFileButton.waitAndTap()
         browseFileOption.waitAndTap()
+
+        if browseFileOption.waitForExistence(timeout: 3), !browseFileOption.isSelected {
+            browseFileOption.tap()
+        }
 
         XCTAssertTrue(
             fileCell(named: fileName).waitForExistence(timeout: 5),
@@ -552,6 +560,7 @@ class ActiveConversationPage: PageModel {
     ) -> ActiveConversationPage {
         XCTAssertTrue(
             linkPreviewCell.waitForExistence(timeout: 10),
+            "Link preview cell did not appear",
             file: file,
             line: line
         )
