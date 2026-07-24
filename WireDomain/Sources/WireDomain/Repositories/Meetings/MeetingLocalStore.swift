@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import UIKit
 import WireCallingData
 import WireCallingDomain
 import WireDataModel
@@ -158,14 +159,22 @@ private extension StoredMeeting {
 
         guard let conversation, let conversationID = conversation.qualifiedID else { return nil }
 
+        let domainConversationID = QualifiedID(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
         return Meeting(
             id: QualifiedID(id: remoteIdentifier, domain: domain ?? ""),
             title: title,
             start: start,
             end: end,
             recurrence: toDomainRecurrence(),
-            members: conversation.toDomainMembers(),
-            conversationID: QualifiedID(id: conversationID.uuid, domain: conversationID.domain),
+            conversation: MeetingConversation(
+                id: domainConversationID,
+                participants: conversation.toMeetingMembers()
+            ),
+            conversationID: domainConversationID,
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
     }
@@ -190,21 +199,20 @@ private extension StoredMeeting {
 
 private extension ZMConversation {
 
-    /// The meeting's members are not part of the backend's meeting responses;
-    /// the participants of the meeting's conversation are the source of truth.
-    /// The self user is excluded, matching the participant selection in the
-    /// meeting forms, where the creator is implicit.
-    func toDomainMembers() -> [MeetingMember] {
-        localParticipantsExcludingSelf
-            .compactMap { user -> MeetingMember? in
-                guard let id = user.remoteIdentifier else { return nil }
-                return MeetingMember(
-                    qualifiedID: QualifiedID(id: id, domain: user.domain ?? ""),
-                    name: user.name ?? "",
-                    handle: user.handle ?? ""
-                )
-            }
-            .sorted { $0.name < $1.name }
+    /// Maps the conversation's participants to meeting members, mirroring the Wire Drive
+    /// `ZMConversation` → participant mapping. Must be called on the conversation's context.
+    func toMeetingMembers() -> Set<MeetingMember> {
+        Set(localParticipants.compactMap { user -> MeetingMember? in
+            guard let qualifiedID = user.qualifiedID else { return nil }
+            return MeetingMember(
+                qualifiedID: QualifiedID(id: qualifiedID.uuid, domain: qualifiedID.domain),
+                name: user.name ?? "",
+                handle: user.handle ?? "",
+                initials: user.initials ?? "",
+                accentColor: user.accentColor ?? .default,
+                avatarImage: user.previewImageData.flatMap(UIImage.init(data:))
+            )
+        })
     }
 
 }
