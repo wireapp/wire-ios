@@ -432,7 +432,8 @@ final class ZClientViewController: UIViewController {
             conversationRepository: MeetingConversationRepositoryBridge(
                 conversationRepository: conversationRepository,
                 contextProvider: userSession.contextProvider
-            )
+            ),
+            callStateRepository: MeetingCallStateRepositoryBridge(userSession: userSession)
         )
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder

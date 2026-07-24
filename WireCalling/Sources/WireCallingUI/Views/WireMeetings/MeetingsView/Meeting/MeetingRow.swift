@@ -26,6 +26,8 @@ struct MeetingRow: View {
 
     let meeting: Meeting
     let formatTimeRange: (Meeting) -> String
+    /// Whether the self user is currently attending (in the call of) this meeting.
+    var isAttending: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
 
@@ -97,8 +99,24 @@ struct MeetingRow: View {
                     MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
                         .padding(.top, 2)
                 }
+
+                if isAttending {
+                    attendingLabel
+                        .padding(.top, 2)
+                }
             }
         }
+    }
+
+    private var attendingLabel: some View {
+        HStack(spacing: 6) {
+            Image(.videoCall)
+                .renderingMode(.template)
+
+            Text(Strings.attending)
+        }
+        .font(for: .body2)
+        .foregroundStyle(Color(WireAccentColor.blue))
     }
 
     private func recurrenceBadge(_ title: String) -> some View {
@@ -152,6 +170,7 @@ private extension MeetingRecurrence {
             creatorID: QualifiedID(id: UUID(), domain: "")
         ),
         formatTimeRange: { _ in "Today" },
+        isAttending: true,
         onEdit: {},
         onDelete: {}
     )

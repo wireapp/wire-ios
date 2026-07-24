@@ -50,6 +50,11 @@ struct MeetingsView: View {
             // Never returns on its own; the task is cancelled by SwiftUI when the view disappears.
             await viewModel.observeMeetingChanges()
         }
+        .task {
+            // Tracks which meetings the self user is currently attending (in a call).
+            // Never returns on its own; cancelled by SwiftUI when the view disappears.
+            await viewModel.observeAttendedMeetings()
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -70,6 +75,7 @@ struct MeetingsView: View {
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
                 formatTimeRange: viewModel.formatTimeRange(for:),
+                isAttending: viewModel.isAttending(_:),
                 onEdit: { _ in
                     // TODO: [WPB-25501] Implement UI
                 },
@@ -120,6 +126,7 @@ private struct GroupedSections: View {
     let groups: [(day: Date, meetings: [Meeting])]
     let formatDay: (Date) -> String
     let formatTimeRange: (Meeting) -> String
+    let isAttending: (Meeting) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
 
@@ -130,6 +137,7 @@ private struct GroupedSections: View {
                     MeetingRow(
                         meeting: meeting,
                         formatTimeRange: formatTimeRange,
+                        isAttending: isAttending(meeting),
                         onEdit: { onEdit(meeting) },
                         onDelete: { onDelete(meeting) }
                     )

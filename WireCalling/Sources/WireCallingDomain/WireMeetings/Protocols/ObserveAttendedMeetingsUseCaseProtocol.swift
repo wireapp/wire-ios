@@ -16,19 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
+public import Foundation
 
 // sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingRepository: any MeetingRepositoryProtocol,
-        memberRepository: any MeetingMemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol,
-        callStateRepository: any MeetingCallStateRepositoryProtocol
-    ) -> UIViewController
-}
+/// Observes which meeting conversations the self user is currently attending
+/// (i.e. joined a call in).
+package protocol ObserveAttendedMeetingsUseCaseProtocol: Sendable {
 
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}
+    /// Returns a stream that emits the set of attended conversation ids, updating
+    /// whenever call state changes.
+
+    func invoke() -> AsyncStream<Set<QualifiedID>>
+
+}

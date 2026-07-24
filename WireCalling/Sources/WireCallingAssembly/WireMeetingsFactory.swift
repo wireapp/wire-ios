@@ -32,7 +32,8 @@ public struct WireMeetingsFactory {
     public func makeMeetingsView(
         meetingRepository: any MeetingRepositoryProtocol,
         memberRepository: any MeetingMemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
+        conversationRepository: any MeetingConversationRepositoryProtocol,
+        callStateRepository: any MeetingCallStateRepositoryProtocol
     ) -> UIViewController {
         let createMeetingUseCase = CreateMeetingUseCase(
             meetingRepository: meetingRepository,
@@ -44,12 +45,14 @@ public struct WireMeetingsFactory {
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
         let deleteMeetingUseCase = DeleteMeetingUseCase(repository: meetingRepository)
+        let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callStateRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
             makeFormViewModel: { mode, onSuccess in
                 CreateMeetingFormViewModel(
                     mode: mode,

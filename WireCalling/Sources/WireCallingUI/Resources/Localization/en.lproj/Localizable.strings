@@ -32,6 +32,7 @@
 "wireMeetings.list.header.tomorrow" = "Tomorrow";
 "wireMeetings.list.header.yesterday" = "Yesterday";
 "wireMeetings.list.header.ongoing" = "Ongoing";
+"wireMeetings.list.attending" = "Attending";
 "wireMeetings.list.actions.edit" = "Edit meeting";
 "wireMeetings.list.actions.delete" = "Delete meeting for all";
 "wireMeetings.list.delete.alert.title" = "Delete meeting for all";

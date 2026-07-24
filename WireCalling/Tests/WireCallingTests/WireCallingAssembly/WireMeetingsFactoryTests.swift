@@ -35,7 +35,8 @@ struct WireMeetingsFactoryTests {
         let viewController = factory.makeMeetingsView(
             meetingRepository: MeetingRepositoryProtocolMock(),
             memberRepository: MeetingMemberRepositoryProtocolMock(),
-            conversationRepository: MeetingConversationRepositoryProtocolMock()
+            conversationRepository: MeetingConversationRepositoryProtocolMock(),
+            callStateRepository: MeetingCallStateRepositoryProtocolMock()
         )
 
         // Then
