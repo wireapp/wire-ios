@@ -14,8 +14,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.19.3"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(path: "../WireFoundation"),
-        .package(path: "../WireMockable")
+        .package(path: "../WireFoundation")
     ],
     targets: [
         .target(
@@ -23,8 +22,7 @@ let package = Package(
             dependencies: [
                 .product(name: "WireFoundation", package: "WireFoundation"),
                 .product(name: "WireLogging", package: "WireLogging"),
-                .product(name: "WireCrypto", package: "WireFoundation"),
-                "WireMockable"
+                .product(name: "WireCrypto", package: "WireFoundation")
             ]
         ),
         .target(
