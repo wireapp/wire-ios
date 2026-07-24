@@ -211,7 +211,7 @@ extension URLActionRouter: PresentationDelegate {
             }
 
             // This action is handled in WireAuthentication,
-            // or in NoDefaultBackendViewcontroller for Wire Gov
+            // or in NoDefaultBackendViewController for Wire Gov
             if DeveloperFlag.useWireAuthentication.isOn || Bundle.backendBundle == nil {
                 decisionHandler(SecurityFlags.customBackend.isEnabled)
             } else {
