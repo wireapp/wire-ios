@@ -37,12 +37,11 @@ public struct Meeting: Equatable, Sendable {
 
     public let recurrence: MeetingRecurrence?
 
-    /// The meeting's conversation and its participants, resolved from the local
-    /// store when available. `nil` when the conversation has not been fetched yet
-    /// (e.g. a meeting built straight from a network response).
-    public let conversation: MeetingConversation?
-
-    public let conversationID: QualifiedID
+    /// The meeting's conversation. Its `participants` are populated when the meeting
+    /// is read from the local store (resolved from the linked conversation); a meeting
+    /// built straight from a network response carries the conversation id with an empty
+    /// participants set, since the backend response doesn't include them.
+    public let conversation: MeetingConversation
 
     public let creatorID: QualifiedID
 
@@ -52,8 +51,7 @@ public struct Meeting: Equatable, Sendable {
         start: Date,
         end: Date,
         recurrence: MeetingRecurrence?,
-        conversation: MeetingConversation? = nil,
-        conversationID: QualifiedID,
+        conversation: MeetingConversation,
         creatorID: QualifiedID
     ) {
         self.id = id
@@ -62,7 +60,6 @@ public struct Meeting: Equatable, Sendable {
         self.end = end
         self.recurrence = recurrence
         self.conversation = conversation
-        self.conversationID = conversationID
         self.creatorID = creatorID
     }
 
