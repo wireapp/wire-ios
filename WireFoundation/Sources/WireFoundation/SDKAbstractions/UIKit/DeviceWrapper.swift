@@ -26,9 +26,10 @@ public struct DeviceWrapper {
     public init(device: UIDevice) {
         self.device = device
     }
+
 }
 
-extension DeviceWrapper: DeviceAbstraction {
+extension DeviceWrapper: DeviceAbstractionProtocol {
 
     public var userInterfaceIdiom: UIUserInterfaceIdiom {
         device.userInterfaceIdiom
@@ -41,11 +42,13 @@ extension DeviceWrapper: DeviceAbstraction {
     public var model: String {
         device.model
     }
+
 }
 
-public extension DeviceAbstraction where Self == DeviceWrapper {
+public extension DeviceAbstractionProtocol where Self == DeviceWrapper {
 
     static var current: Self {
         .init(device: .current)
     }
+
 }
