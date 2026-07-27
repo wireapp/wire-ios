@@ -863,11 +863,15 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         let userIDs = users.map { $0.remoteIdentifier.transportString() }
         let data = ["user_ids": userIDs]
+        // The payload encodes the time via `transportString`, truncating it to millisecond
+        // precision. Base it on the last message so the event always sorts after existing
+        // messages, even if both were created within the same millisecond.
+        let time = conversation.lastMessage?.serverTimestamp?.addingTimeInterval(5) ?? Date()
         let payload = payloadForMessage(
             in: conversation,
             type: EventConversationMemberJoin,
             data: data,
-            time: Date(),
+            time: time,
             from: actionUser
         )
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -889,11 +893,13 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     func simulateRemoving(users: Set<ZMUser>, conversation: ZMConversation, by actionUser: ZMUser) -> ZMSystemMessage {
         let userIDs = users.map { $0.remoteIdentifier.transportString() }
         let data = ["user_ids": userIDs]
+        // See simulateAdding(users:conversation:by:) for why the time is based on the last message.
+        let time = conversation.lastMessage?.serverTimestamp?.addingTimeInterval(5) ?? Date()
         let payload = payloadForMessage(
             in: conversation,
             type: EventConversationMemberLeave,
             data: data,
-            time: Date(),
+            time: time,
             from: actionUser
         )
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
