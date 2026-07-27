@@ -1736,36 +1736,46 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
-    func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() async {
+    func test_UploadKeyPackages_CountsBackendPackagesOnlyWhenAConversationIsPending() async {
         // Given
         await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
-
-        // expectation
-        let countUnclaimedKeyPackages = XCTestExpectation(description: "Count unclaimed key packages")
-        countUnclaimedKeyPackages.isInverted = true
-
-        // mock that we queried kp count recently
         privateUserDefaults.set(Date(), forKey: .keyPackageQueriedTime)
-
-        // mock that there are enough kp locally
         mockCoreCryptoContext.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
-
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
-            countUnclaimedKeyPackages.fulfill()
-            return 0
-        }
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockValue =
+            sut.targetUnclaimedKeyPackageCount
 
         // When
         await sut.uploadKeyPackagesIfNeeded()
 
         // Then
-        await fulfillment(of: [countUnclaimedKeyPackages], timeout: 1)
+        XCTAssertTrue(mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations.isEmpty)
+
+        // When
+        _ = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = UUID()
+            conversation.domain = self.localDomain
+            conversation.mlsGroupID = .random()
+            conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
+            conversation.conversationType = .oneOnOne
+            conversation.epoch = 1
+            return conversation
+        }
+        await sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        XCTAssertEqual(
+            mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations.count,
+            1
+        )
     }
 
     enum TestError: Error {
         case failedToCountUnclaimedKeyPackages
+        case pendingJoinFailed
     }
 
     func test_CountUnclaimedKeyPackages_DoesNotSetKeyPackageQueriedTime_IfItFails() async {
@@ -1816,9 +1826,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertNotNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
-    func test_UploadKeyPackages_DoesNotSetKeyPackageQueriedTime_WhenGenerationFails() async {
+    func test_UploadKeyPackages_ClearsKeyPackageQueriedTime_WhenGenerationFails() async {
         // Given
         await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
+        privateUserDefaults.set(Date(), forKey: .keyPackageQueriedTime)
 
         // mock that we don't have enough unclaimed kp locally
         mockCoreCryptoContext.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
