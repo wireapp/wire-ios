@@ -109,11 +109,15 @@ struct MeetingRow: View {
         HStack(spacing: 6) {
             Image(.videoCall)
                 .renderingMode(.template)
+                .accessibilityHidden(true)
 
             Text(Strings.attending)
         }
         .font(for: .body2)
-        .foregroundStyle(Color(WireAccentColor.blue))
+        .foregroundStyle(ColorTheme.Base.primary(.blue).color)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("attendingLabel")
+        .accessibilityLabel(Text(Strings.attending))
     }
 
     private func recurrenceBadge(_ title: String) -> some View {
