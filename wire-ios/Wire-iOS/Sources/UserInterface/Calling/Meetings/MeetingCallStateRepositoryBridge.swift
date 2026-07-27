@@ -40,10 +40,8 @@ final class MeetingCallStateRepositoryBridge: MeetingCallStateRepositoryProtocol
             }
             let token = userSession.addConferenceCallStateObserver(observer)
 
-            // Emit the current value straight away so the UI is correct before the first change.
             continuation.yield(currentAttendedConversationIDs())
 
-            // Keep the observer and its registration token alive for the stream's lifetime.
             continuation.onTermination = { _ in
                 withExtendedLifetime((observer, token)) {}
             }
@@ -68,7 +66,6 @@ final class MeetingCallStateRepositoryBridge: MeetingCallStateRepositoryProtocol
 
 }
 
-/// Small adapter that turns the delegate-style call-state callback into a closure.
 private final class CallStateChangeObserver: WireCallCenterCallStateObserver {
 
     private let onChange: () -> Void
