@@ -26,7 +26,6 @@ struct MeetingRow: View {
 
     let meeting: Meeting
     let formatTimeRange: (Meeting) -> String
-    /// Whether the self user is currently attending (in the call of) this meeting.
     var isAttending: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void

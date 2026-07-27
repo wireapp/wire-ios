@@ -51,8 +51,6 @@ struct MeetingsView: View {
             await viewModel.observeMeetingChanges()
         }
         .task {
-            // Tracks which meetings the self user is currently attending (in a call).
-            // Never returns on its own; cancelled by SwiftUI when the view disappears.
             await viewModel.observeAttendedMeetings()
         }
     }

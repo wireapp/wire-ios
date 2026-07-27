@@ -99,8 +99,6 @@ package final class MeetingsViewModel {
         }
     }
 
-    /// Keeps `attendingConversationIDs` in sync with the ongoing calls the self user has joined.
-    /// Runs until the surrounding task is cancelled.
     func observeAttendedMeetings() async {
         guard let observeAttendedMeetingsUseCase else { return }
         for await ids in observeAttendedMeetingsUseCase.invoke() {

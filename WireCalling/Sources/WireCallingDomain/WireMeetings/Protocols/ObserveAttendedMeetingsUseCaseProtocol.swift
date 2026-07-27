@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 // sourcery: AutoMockable
 /// Observes which meeting conversations the self user is currently attending
-/// (i.e. joined a call in).
+
 package protocol ObserveAttendedMeetingsUseCaseProtocol: Sendable {
 
     /// Returns a stream that emits the set of attended conversation ids, updating

@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 // sourcery: AutoMockable
 /// Reports which conversations the self user is currently in a call in.
-///
-/// The protocol is implemented outside of this package, where the calling
-/// stack (`WireSyncEngine`) is available, and injected in.
+
 public protocol MeetingCallStateRepositoryProtocol: Sendable {
 
     /// Emits the set of conversation ids the self user is currently in a call in.
