@@ -15,6 +15,7 @@
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       }
     ],
+    "diagnosticCollectionPolicy" : "Never",
     "environmentVariableEntries" : [
 
     ],
