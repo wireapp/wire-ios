@@ -202,11 +202,11 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
         let eventContainer = PersistentContainer(
             name: "ZMEventModel",
-            managedObjectModel: CoreDataStack.loadEventsModel()
+            managedObjectModel: CoreDataStack.eventsModel
         )
         let messagesContainer = PersistentContainer(
             name: "zmessaging",
-            managedObjectModel: CoreDataStack.loadMessagingModel()
+            managedObjectModel: CoreDataStack.messagingModel
         )
 
         let description: NSPersistentStoreDescription
@@ -460,7 +460,7 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
     // once creates duplicate NSEntityDescriptions claiming the same NSManagedObject
     // subclasses, which breaks class-based entity lookup (`+entity`). The shared
     // instances must never be mutated.
-    private static let messagingModel: NSManagedObjectModel = {
+    public static let messagingModel: NSManagedObjectModel = {
         let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
@@ -473,7 +473,7 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         return result
     }()
 
-    private static let eventsModel: NSManagedObjectModel = {
+    public static let eventsModel: NSManagedObjectModel = {
         let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
@@ -485,14 +485,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
         return result
     }()
-
-    public static func loadMessagingModel() -> NSManagedObjectModel {
-        messagingModel
-    }
-
-    public static func loadEventsModel() -> NSManagedObjectModel {
-        eventsModel
-    }
 
     // MARK: - Migration
 
