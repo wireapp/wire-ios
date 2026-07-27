@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 final class GroupDetailsReceiptOptionsCell: IconToggleCell {
 
@@ -27,7 +28,7 @@ final class GroupDetailsReceiptOptionsCell: IconToggleCell {
         super.setUp()
 
         accessibilityIdentifier = "cell.groupdetails.receiptoptions"
-        toggle.accessibilityIdentifier = "ReadReceiptsSwitch"
+        toggle.accessibilityIdentifier = Locators.ConversationDetailsPage.readReceiptsSwitch.rawValue
 
         title = L10n.Localizable.GroupDetails.ReceiptOptionsCell.title
 
