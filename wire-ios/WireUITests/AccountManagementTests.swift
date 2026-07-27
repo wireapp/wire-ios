@@ -130,4 +130,30 @@ final class AccountManagementTests: WireUITestCase {
             .deleteDevice(password: user.password)
             .verifyDeviceIsDeleted(named: deviceName)
     }
+
+    @MainActor
+    func testDeleteDeviceWhenClientLimitReached_TC_8973() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+        // 7 instances to register 7 clients
+        let deviceNames = (1 ... 7).map { "device-\($0)" }
+
+        for deviceName in deviceNames {
+            _ = try await testServicesClient.getInstanceId(
+                email: user.email,
+                password: user.password,
+                name: user.name,
+                verificationCode: nil,
+                deviceName: deviceName,
+                useCache: false
+            )
+        }
+
+        // WHEN
+        _ = try app.loginUser(email: user.email, password: user.password)
+
+        // THEN
+        _ = try ManagedDevicesPage()
+            .removeFirstDeviceAndContinue(password: user.password)
+    }
 }
