@@ -278,6 +278,15 @@ public enum Locators {
         case addAccountOrTeamButton
         case userProfilePicture
         case close
+        case status
+    }
+
+    public enum UserProfileStatusPicker: String {
+        case none
+        case available
+        case busy
+        case away
+        case okButton = "OK"
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
