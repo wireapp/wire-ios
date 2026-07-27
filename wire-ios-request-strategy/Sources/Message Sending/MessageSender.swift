@@ -403,8 +403,18 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            if mlsStatus?.isOne(of: .pendingJoinAfterReset, .pendingJoin) == true,
-               conversationID.domain == mlsService.localDomain {
+            let conversationExists = try await mlsService.conversationExists(groupID: groupID)
+            let isUnestablishedGroup: Bool = if conversationExists {
+                try await mlsService.epoch(for: groupID) == 0
+            } else {
+                false
+            }
+
+            if isUnestablishedGroup, conversationID.domain == mlsService.localDomain {
+                try await mlsService.wipeGroup(groupID)
+                try await mlsService.reEstablishPendingGroup(groupID: groupID)
+            } else if mlsStatus?.isOne(of: .pendingJoinAfterReset, .pendingJoin) == true,
+                      conversationID.domain == mlsService.localDomain {
                 try await mlsService.reEstablishPendingGroup(groupID: groupID)
             }
 

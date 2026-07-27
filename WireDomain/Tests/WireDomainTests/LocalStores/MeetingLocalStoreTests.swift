@@ -106,8 +106,7 @@ final class MeetingLocalStoreTests: XCTestCase {
             start: Scaffolding.meeting.start,
             end: Scaffolding.meeting.end,
             recurrence: nil,
-            members: [],
-            conversationID: Scaffolding.conversationID,
+            conversation: MeetingConversation(qualifiedID: Scaffolding.conversationID, participants: []),
             creatorID: Scaffolding.creatorID
         )
 
@@ -190,8 +189,7 @@ final class MeetingLocalStoreTests: XCTestCase {
                 interval: 2,
                 until: recurrenceUntil
             ),
-            members: [],
-            conversationID: conversationID,
+            conversation: MeetingConversation(qualifiedID: conversationID, participants: []),
             creatorID: creatorID
         )
 

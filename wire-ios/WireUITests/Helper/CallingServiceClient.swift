@@ -315,17 +315,16 @@ final class CallingServiceClient {
     private func performCallPut(
         instanceId: String,
         pathComponents: [String]
-    ) async throws -> CallResponse {
+    ) async throws {
         let endpoint = instanceEndpoint(instanceId: instanceId, pathComponents: pathComponents)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: CallingServiceEmptyBody(), method: .put)
-        guard code.statusCode == 200 else {
+        guard (200 ... 299).contains(code.statusCode) else {
             logEndpointFailure(method: "PUT", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
                 "CallingService call failed: PUT \(endpoint.path) HTTP \(code.statusCode). " +
                     (String(data: data, encoding: .utf8) ?? "")
             )
         }
-        return try JSONDecoder().decode(CallResponse.self, from: data)
     }
 
     private func performFlowsGet(instanceId: String) async throws -> [CallFlow] {
@@ -336,11 +335,19 @@ final class CallingServiceClient {
             method: .get
         )
         guard code.statusCode == 200 else {
+            let responseBody = String(data: data, encoding: .utf8) ?? ""
             throw RuntimeError(
-                "CallingService failed to get flows for \(instanceId): HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService failed to get flows for \(instanceId): HTTP \(code.statusCode). \(responseBody)"
             )
         }
-        return try JSONDecoder().decode([CallFlow].self, from: data)
+        do {
+            return try JSONDecoder().decode([CallFlow].self, from: data)
+        } catch {
+            let responseBody = String(data: data, encoding: .utf8) ?? ""
+            throw RuntimeError(
+                "CallingService failed to decode flows for \(instanceId). Body: \(responseBody). Error: \(error)"
+            )
+        }
     }
 
     func acceptNext(instanceId: String, request: CallRequest) async throws -> CallResponse {
@@ -366,12 +373,16 @@ final class CallingServiceClient {
         return call
     }
 
-    func switchVideoOn(instanceId: String, callId: String) async throws -> CallResponse {
+    func switchVideoOn(instanceId: String, callId: String) async throws {
         try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "switchVideoOn"])
     }
 
+    func getRawFlows(instanceId: String) async throws -> [CallFlow] {
+        try await performFlowsGet(instanceId: instanceId)
+    }
+
     func getFlows(instanceId: String) async throws -> [CallFlow] {
-        try await performFlowsGet(instanceId: instanceId).filter(\.isValid)
+        try await getRawFlows(instanceId: instanceId).filter(\.isValid)
     }
 }
 
@@ -421,7 +432,6 @@ struct CallFlow: Decodable, Equatable {
         audioPacketsReceived != -1 ||
             audioPacketsSent != -1 ||
             videoPacketsReceived != -1 ||
-            videoPacketsSent != -1 ||
-            !remoteUserId.isEmpty
+            videoPacketsSent != -1
     }
 }

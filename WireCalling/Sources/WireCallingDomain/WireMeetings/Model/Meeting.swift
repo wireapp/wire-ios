@@ -37,9 +37,7 @@ public struct Meeting: Equatable, Sendable {
 
     public let recurrence: MeetingRecurrence?
 
-    public let members: [MeetingMember]
-
-    public let conversationID: QualifiedID
+    public let conversation: MeetingConversation
 
     public let creatorID: QualifiedID
 
@@ -49,8 +47,7 @@ public struct Meeting: Equatable, Sendable {
         start: Date,
         end: Date,
         recurrence: MeetingRecurrence?,
-        members: [MeetingMember],
-        conversationID: QualifiedID,
+        conversation: MeetingConversation,
         creatorID: QualifiedID
     ) {
         self.id = id
@@ -58,8 +55,7 @@ public struct Meeting: Equatable, Sendable {
         self.start = start
         self.end = end
         self.recurrence = recurrence
-        self.members = members
-        self.conversationID = conversationID
+        self.conversation = conversation
         self.creatorID = creatorID
     }
 

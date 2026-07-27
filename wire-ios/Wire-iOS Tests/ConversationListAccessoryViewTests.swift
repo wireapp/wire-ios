@@ -154,4 +154,11 @@ final class ConversationListAccessoryViewTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    func testThatItShowsScheduledForDeletion() {
+        // WHEN
+        sut.icon = ConversationStatusIcon.scheduledForDeletion
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
 }
