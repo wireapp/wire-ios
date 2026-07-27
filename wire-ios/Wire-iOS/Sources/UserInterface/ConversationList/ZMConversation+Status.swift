@@ -25,19 +25,15 @@ import WireSyncEngine
 // Describes the icon to be shown for the conversation in the list.
 enum ConversationStatusIcon: Equatable {
     case pendingConnection
-
+    case scheduledForDeletion
     case typing
-
     case unreadMessages(count: Int)
     case unreadPing
     case missedCall
     case mention
     case reply
-
     case silenced
-
     case playingMedia
-
     case activeCall(showJoin: Bool)
 }
 
@@ -57,6 +53,7 @@ struct ConversationStatus {
     let isSelfAnActiveMember: Bool
     let hasSelfMention: Bool
     let hasSelfReply: Bool
+    let isScheduledForDeletion: Bool
 }
 
 // Describes the conversation message.
@@ -274,6 +271,23 @@ extension ZMConversation {
     static func statusRegularStyle() -> [NSAttributedString.Key: AnyObject] {
         statusStyle.regularStyle
     }
+}
+
+// "Will be deleted soon"
+final class ScheduledForDeletionMatcher: ConversationStatusMatcher {
+    func isMatching(with status: ConversationStatus) -> Bool {
+        status.isScheduledForDeletion
+    }
+
+    func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
+        L10n.Localizable.Conversation.Status.scheduledForDeletion && type(of: self).regularStyle
+    }
+
+    func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon? {
+        .scheduledForDeletion
+    }
+
+    var combinesWith: [ConversationStatusMatcher] = []
 }
 
 // "You left"
@@ -753,6 +767,7 @@ final class UsernameMatcher: ConversationStatusMatcher {
 // Matchers priorities (highest first):
 //
 // (SecurityAlert)
+// (ScheduledForDeletion)
 // (SelfUserLeftMatcher)
 // (Blocked)
 // (Calling)
@@ -773,6 +788,7 @@ private var allMatchers: [ConversationStatusMatcher] = {
 
     return [
         SecurityAlertMatcher(),
+        ScheduledForDeletionMatcher(),
         SelfUserLeftMatcher(),
         BlockedMatcher(),
         CallingMatcher(),
@@ -869,7 +885,8 @@ extension ZMConversation {
             isBlocked: connectedUser?.isBlocked ?? false,
             isSelfAnActiveMember: isSelfAnActiveMember,
             hasSelfMention: estimatedUnreadSelfMentionCount > 0,
-            hasSelfReply: estimatedUnreadSelfReplyCount > 0
+            hasSelfReply: estimatedUnreadSelfReplyCount > 0,
+            isScheduledForDeletion: isScheduledForDeletion
         )
     }
 }

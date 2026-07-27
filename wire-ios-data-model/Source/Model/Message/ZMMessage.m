@@ -92,6 +92,7 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
 NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
 NSString * const ZMMessageButtonStatesKey = @"buttonStates";
 NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
+NSString * const ZMSystemMessageConversationScheduledDeletionDateKey = @"conversationScheduledDeletionDate";
 
 @interface ZMMessage ()
 
@@ -614,7 +615,8 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
                              ZMMessageNeedsLinkAttachmentsUpdateKey,
                              ZMMessageDiscoveredClientsKey,
                              ZMMessageButtonStatesKey,
-                             ZMMessageDecryptionErrorCodeKey
+                             ZMMessageDecryptionErrorCodeKey,
+                             ZMSystemMessageConversationScheduledDeletionDateKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -675,6 +677,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 @dynamic messageTimer;
 @dynamic relevantForConversationStatus;
 @dynamic decryptionErrorCode;
+@dynamic conversationScheduledDeletionDate;
 
 - (instancetype)initWithNonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
