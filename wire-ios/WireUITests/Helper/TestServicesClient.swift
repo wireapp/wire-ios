@@ -73,10 +73,11 @@ class TestServicesClient {
         password: String,
         name: String,
         verificationCode: String?,
-        deviceName: String = "device\(Int.random(in: 10_000 ... 99_999))"
+        deviceName: String = "device\(Int.random(in: 10_000 ... 99_999))",
+        useCache: Bool = true
     ) async throws -> String {
 
-        if let cachedInstanceId = instanceCache[email] {
+        if useCache, let cachedInstanceId = instanceCache[email] {
             return cachedInstanceId
         }
 
@@ -108,7 +109,9 @@ class TestServicesClient {
             CreateInstanceResponse.self,
             from: responseData
         )
-        instanceCache[email] = instanceResponse.instanceId
+        if useCache {
+            instanceCache[email] = instanceResponse.instanceId
+        }
         await createdInstances.add(instanceResponse.instanceId)
         return instanceResponse.instanceId
     }

@@ -211,6 +211,8 @@ public enum Locators {
         case guestsArePresent = "Guests are present"
         case conversationBackground
         case openOngoingCallButton
+        case readReceiptsDisabledSystemMessage
+        case readReceiptsEnabledSystemMessage
 
     }
 
@@ -245,6 +247,7 @@ public enum Locators {
         case adminCell
         case memberCell
         case close
+        case readReceiptsSwitch
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
@@ -399,6 +402,7 @@ public enum Locators {
         case manageDevices
         case removeDevice = "minus.circle.fill"
         case deleteDevice = "Delete"
+        case ok = "OK"
     }
 
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
