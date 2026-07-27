@@ -54,8 +54,6 @@ public struct MeetingMember: Sendable {
 
 // MARK: - Hashable
 
-// Identity is keyed on `qualifiedID` only, so a `Set<MeetingMember>` dedupes by user
-// and the non-`Hashable`/mutable avatar payload doesn't affect membership or equality.
 extension MeetingMember: Hashable {
 
     public func hash(into hasher: inout Hasher) {
