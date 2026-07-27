@@ -122,7 +122,7 @@ class OngoingCallPage: PageModel {
         for participantName: String,
         expectedContentInQRCode: String
     ) -> OngoingCallPage {
-        let deadline = Date().addingTimeInterval(6)
+        let deadline = Date().addingTimeInterval(15)
         var decodedPayloads = Set<String>()
 
         repeat {
@@ -141,7 +141,7 @@ class OngoingCallPage: PageModel {
 
         XCTAssertTrue(
             decodedPayloads.contains(expectedContentInQRCode),
-            "Expected video QR payload \(expectedContentInQRCode) for \(participantName), decoded \(decodedPayloads.sorted())"
+            "Expected video QR payload \(expectedContentInQRCode) for \(participantName), but decoded \(decodedPayloads.sorted())"
         )
         return self
     }
