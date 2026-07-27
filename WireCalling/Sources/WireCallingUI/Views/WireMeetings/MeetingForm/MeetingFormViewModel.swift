@@ -24,12 +24,13 @@ import WireLogging
 
 @Observable
 @MainActor
-package final class CreateMeetingFormViewModel {
+package final class MeetingFormViewModel {
 
-    /// Determines whether the meeting starts immediately on submit or is
-    /// scheduled for a future date and time. Drives the form layout
-    /// (schedule fields appear only in `.scheduled`), the navigation title,
-    /// and the primary action button's label and behavior.
+    /// Determines whether the form creates a meeting (starting immediately
+    /// or scheduled for a future date and time) or edits an existing one.
+    /// Drives the form layout (schedule fields are hidden in `.instant`),
+    /// the navigation title, and the primary action button's label and
+    /// behavior.
     package enum Mode: Hashable, Identifiable {
 
         /// Start the meeting immediately. The schedule section
@@ -42,12 +43,22 @@ package final class CreateMeetingFormViewModel {
         /// screen is titled "Schedule a meeting".
         case scheduled
 
+        /// Edit an existing meeting. The form is pre-filled with the
+        /// meeting's data; the action button reads "Save" and the screen
+        /// is titled "Edit meeting".
+        case edit(Meeting)
+
         package var id: Self { self }
+
+        var isEdit: Bool {
+            if case .edit = self { true } else { false }
+        }
     }
 
     let mode: Mode
     let searchMembersUseCase: any SearchMembersUseCaseProtocol
     private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
+    private let updateMeetingUseCase: any UpdateMeetingUseCaseProtocol
     private let currentDateProvider: any CurrentDateProviding
     private let onSuccess: (Meeting) -> Void
 
@@ -75,9 +86,14 @@ package final class CreateMeetingFormViewModel {
     }
 
     /// Meetings can't be scheduled on a past day, but any time
-    /// of the current day is allowed.
+    /// of the current day is allowed. When editing a meeting whose
+    /// start lies in the past, its original day stays selectable.
     var startDateRange: PartialRangeFrom<Date> {
-        Calendar.current.startOfDay(for: currentDateProvider.now)...
+        var earliest = currentDateProvider.now
+        if case let .edit(meeting) = mode {
+            earliest = min(earliest, meeting.start)
+        }
+        return Calendar.current.startOfDay(for: earliest)...
     }
 
     /// The end date must always be after the start date.
@@ -109,18 +125,33 @@ package final class CreateMeetingFormViewModel {
         mode: Mode,
         searchMembersUseCase: any SearchMembersUseCaseProtocol,
         createMeetingUseCase: any CreateMeetingUseCaseProtocol,
+        updateMeetingUseCase: any UpdateMeetingUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
         self.searchMembersUseCase = searchMembersUseCase
         self.createMeetingUseCase = createMeetingUseCase
+        self.updateMeetingUseCase = updateMeetingUseCase
         self.currentDateProvider = currentDateProvider
         self.onSuccess = onSuccess
 
-        let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
-        self.startDate = startDate
-        self.endDate = startDate.addingTimeInterval(30 * TimeInterval.oneMinute)
+        switch mode {
+        case .instant, .scheduled:
+            let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
+            self.startDate = startDate
+            self.endDate = startDate.addingTimeInterval(30 * TimeInterval.oneMinute)
+        case let .edit(meeting):
+            self.startDate = meeting.start
+            self.endDate = meeting.end
+            self.meetingTitle = meeting.title
+            self.repeatOption = MeetingRepeatOption(recurrence: meeting.recurrence)
+            // The participants come from the meeting's conversation; the
+            // creator is implicit in the selection, matching the create flow.
+            self.selectedMembers = (meeting.conversation?.participants ?? [])
+                .filter { $0.qualifiedID != meeting.creatorID }
+                .sorted { $0.name < $1.name }
+        }
     }
 
     func clearTitle() {
@@ -147,40 +178,49 @@ package final class CreateMeetingFormViewModel {
         hasError = false
         defer { isLoading = false }
         do {
-            let meeting = try await createMeeting()
+            let meeting = try await saveMeeting()
             onSuccess(meeting)
         } catch {
             let errorType = Swift.type(of: error)
-            WireLogger.search.error("failed to create meeting: \(String(describing: errorType))")
+            WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
             hasError = true
         }
     }
 
     // MARK: - Private
 
-    /// Both modes create the meeting the same way; an instant meeting simply
-    /// starts now and lasts one hour instead of using the schedule fields.
-    private func createMeeting() async throws -> Meeting {
-        let startTime: Date
-        let endTime: Date
-        let recurrence: MeetingRecurrence?
+    /// The create modes create the meeting the same way; an instant meeting
+    /// simply starts now and lasts one hour instead of using the schedule
+    /// fields. Editing updates the existing meeting with the form values.
+    private func saveMeeting() async throws -> Meeting {
         switch mode {
         case .instant:
-            startTime = currentDateProvider.now
-            endTime = startTime.addingTimeInterval(.oneHour)
-            recurrence = nil
+            let startTime = currentDateProvider.now
+            return try await createMeetingUseCase.invoke(
+                title: meetingTitle,
+                startTime: startTime,
+                endTime: startTime.addingTimeInterval(.oneHour),
+                recurrence: nil,
+                participants: selectedMembers
+            )
         case .scheduled:
-            startTime = startDate
-            endTime = endDate
-            recurrence = repeatOption.toRecurrence()
+            return try await createMeetingUseCase.invoke(
+                title: meetingTitle,
+                startTime: startDate,
+                endTime: endDate,
+                recurrence: repeatOption.toRecurrence(),
+                participants: selectedMembers
+            )
+        case let .edit(meeting):
+            return try await updateMeetingUseCase.invoke(
+                meeting: meeting,
+                title: meetingTitle,
+                startTime: startDate,
+                endTime: endDate,
+                recurrence: repeatOption.toRecurrence(),
+                participants: selectedMembers
+            )
         }
-        return try await createMeetingUseCase.invoke(
-            title: meetingTitle,
-            startTime: startTime,
-            endTime: endTime,
-            recurrence: recurrence,
-            participants: selectedMembers
-        )
     }
 
 }
@@ -205,6 +245,21 @@ private extension Date {
 }
 
 private extension MeetingRepeatOption {
+
+    /// Inverse of `toRecurrence()`, for pre-filling the repeat picker when
+    /// editing. Recurrences the picker can't represent (e.g. an interval
+    /// other than 1, or 2 for weekly) collapse to the option with the same
+    /// frequency, so saving may normalize an exotic recurrence.
+    init(recurrence: MeetingRecurrence?) {
+        self = switch (recurrence?.frequency, recurrence?.interval) {
+        case (nil, _): .never
+        case (.daily, _): .daily
+        case (.weekly, 2): .every2Weeks
+        case (.weekly, _): .weekly
+        case (.monthly, _): .monthly
+        case (.yearly, _): .yearly
+        }
+    }
 
     func toRecurrence() -> MeetingRecurrence? {
         switch self {

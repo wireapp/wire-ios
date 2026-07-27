@@ -26,7 +26,7 @@ import XCTest
 @testable import WireCallingDomainSupport
 @testable import WireCallingUI
 
-final class CreateInstantMeetingFormViewSnapshotTests: XCTestCase {
+final class EditMeetingFormViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -39,14 +39,14 @@ final class CreateInstantMeetingFormViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    // MARK: - Empty State
+    // MARK: - Pre-filled Form
 
     @MainActor
-    func testEmptyStateColorSchemeVariants() {
+    func testPrefilledFormColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateMeetingFormView(viewModel: makeViewModel())
+            MeetingFormView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -59,11 +59,11 @@ final class CreateInstantMeetingFormViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testEmptyStateDynamicTypeVariants() {
+    func testPrefilledFormDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            CreateMeetingFormView(viewModel: makeViewModel())
+            MeetingFormView(viewModel: makeViewModel())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -79,13 +79,40 @@ final class CreateInstantMeetingFormViewSnapshotTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func makeViewModel() -> CreateMeetingFormViewModel {
+    private func makeViewModel() -> MeetingFormViewModel {
         let dateProviderMock = CurrentDateProvidingMock()
-        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-07-06T14:18:00+02:00")
-        return CreateMeetingFormViewModel(
-            mode: .instant,
+        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
+
+        let start = try! Date.ISO8601FormatStyle().parse("2026-06-12T10:00:00+02:00")
+        let meeting = Meeting(
+            id: QualifiedID(id: UUID(), domain: "example.com"),
+            title: "Design review",
+            start: start,
+            end: start.addingTimeInterval(.oneHour),
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
+            conversation: MeetingConversation(
+                participants: [
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
+                        name: "Katie Armstrong",
+                        handle: "katie"
+                    ),
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
+                        name: "Marco Weissnat",
+                        handle: "marco"
+                    )
+                ]
+            ),
+            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
+            creatorID: QualifiedID(id: UUID(), domain: "example.com")
+        )
+
+        return MeetingFormViewModel(
+            mode: .edit(meeting),
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
             currentDateProvider: dateProviderMock
         )
     }
