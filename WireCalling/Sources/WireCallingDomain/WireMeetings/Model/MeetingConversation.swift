@@ -19,8 +19,6 @@
 public import WireFoundation
 
 /// The conversation backing a ``Meeting``, along with its participants.
-
-// `Hashable` because `Meeting` needs it for `MeetingFormViewModel.Mode`.
 public struct MeetingConversation: Hashable, Sendable {
 
     public let qualifiedID: QualifiedID
