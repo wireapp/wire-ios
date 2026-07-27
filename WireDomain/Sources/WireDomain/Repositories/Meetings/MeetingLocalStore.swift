@@ -17,7 +17,6 @@
 //
 
 import CoreData
-import UIKit
 import WireCallingData
 import WireCallingDomain
 import WireDataModel

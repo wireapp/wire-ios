@@ -17,7 +17,6 @@
 //
 
 public import Foundation
-public import UIKit
 public import WireFoundation
 
 public struct MeetingMember: Sendable {
