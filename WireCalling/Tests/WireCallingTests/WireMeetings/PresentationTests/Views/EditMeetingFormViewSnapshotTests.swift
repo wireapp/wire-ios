@@ -104,6 +104,7 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
                     )
                 ]
             ),
+            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
             creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )
 
