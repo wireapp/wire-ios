@@ -30,4 +30,7 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     /// Remove participants from the underlying MLS conversation.
     func removeParticipants(_ participants: [MeetingMember], from conversationID: QualifiedID) async throws
 
+    /// Set the name of the underlying conversation.
+    func setConversationName(_ name: String, for conversationID: QualifiedID) async throws
+
 }

@@ -100,6 +100,33 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         }
     }
 
+    func setConversationName(
+        _ name: String,
+        for conversationID: WireCallingDomain.QualifiedID
+    ) async throws {
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else { return }
+
+        let objectID = conversation.objectID
+        // The name must be changed on the view context: only view context
+        // saves update `keysThatHaveLocalModifications`, which is what the
+        // request strategy uses to push the new name to the backend.
+        // Note that this is the regular conversation-rename pipeline, so it
+        // also inserts a "... renamed the conversation" system message.
+        let viewContext = contextProvider.viewContext
+
+        await viewContext.perform {
+            guard
+                let conv = ZMConversation.existingObject(for: objectID, in: viewContext),
+                conv.userDefinedName != name
+            else { return }
+            conv.userDefinedName = name
+            _ = viewContext.saveOrRollback()
+        }
+    }
+
     /// Resolves the meeting members and the conversation into their managed
     /// objects on the sync context and hands them to `operation`. Members
     /// unknown to the local store are skipped.

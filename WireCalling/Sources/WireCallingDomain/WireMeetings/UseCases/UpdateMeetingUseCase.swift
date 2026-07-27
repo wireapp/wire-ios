@@ -59,6 +59,12 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             recurrence: recurrence
         )
 
+        // Mirror the new title onto the underlying conversation, which the
+        // backend doesn't rename on a meeting update.
+        if title != meeting.title {
+            try await conversationRepository.setConversationName(title, for: meeting.conversationID)
+        }
+
         // The creator is implicit in the form's participant selection, so it
         // is excluded from the baseline too — otherwise every update would
         // try to remove the creator from the conversation.
@@ -85,5 +91,3 @@ package enum UpdateMeetingUseCaseError: Error {
     case conversationNotResolved
 
 }
-
-// TODO: meeting title should be set to conversation

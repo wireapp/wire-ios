@@ -97,6 +97,52 @@ struct UpdateMeetingUseCaseTests {
         #expect(result == meeting)
     }
 
+    @Test("invoke renames the underlying conversation when the title changed")
+    func invokeRenamesConversation() async throws {
+        // Given
+        meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
+            meeting
+
+        // When
+        _ = try await useCase.invoke(
+            meeting: meeting,
+            title: "Renamed Standup",
+            startTime: meeting.start,
+            endTime: meeting.end,
+            recurrence: nil,
+            participants: [Self.keptMember, Self.removedMember]
+        )
+
+        // Then
+        let nameArguments = conversationRepository
+            .setConversationNameNameStringForConversationIDQualifiedIDVoidReceivedArguments
+        #expect(nameArguments?.name == "Renamed Standup")
+        #expect(nameArguments?.conversationID == meeting.conversationID)
+    }
+
+    @Test("invoke leaves the conversation name unchanged when the title didn't change")
+    func invokeWithUnchangedTitleDoesNotRenameConversation() async throws {
+        // Given
+        meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
+            meeting
+
+        // When
+        _ = try await useCase.invoke(
+            meeting: meeting,
+            title: meeting.title,
+            startTime: meeting.start,
+            endTime: meeting.end,
+            recurrence: nil,
+            participants: [Self.keptMember, Self.removedMember]
+        )
+
+        // Then
+        #expect(conversationRepository
+            .setConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
+    }
+
     @Test("invoke adds newly selected members and removes deselected ones")
     func invokeAddsAndRemovesParticipants() async throws {
         // Given
@@ -162,13 +208,15 @@ struct UpdateMeetingUseCaseTests {
         await #expect(throws: URLError.self) {
             _ = try await useCase.invoke(
                 meeting: meeting,
-                title: meeting.title,
+                title: "Renamed Standup",
                 startTime: meeting.start,
                 endTime: meeting.end,
                 recurrence: nil,
                 participants: [Self.addedMember]
             )
         }
+        #expect(conversationRepository
+            .setConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(conversationRepository
             .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(conversationRepository
