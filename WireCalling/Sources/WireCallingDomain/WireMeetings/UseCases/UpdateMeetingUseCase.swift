@@ -85,3 +85,5 @@ package enum UpdateMeetingUseCaseError: Error {
     case conversationNotResolved
 
 }
+
+// TODO: meeting title should be set to conversation
