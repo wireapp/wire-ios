@@ -312,7 +312,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     public var lastPrekeyID: UInt16 {
         get async {
-            UInt16.max
+            (try? CoreCrypto.proteusLastResortPrekeyId()) ?? UInt16.max
         }
     }
 
