@@ -19,7 +19,6 @@
 import Foundation
 
 /// Observes which meeting conversations the self user is currently attending
-///
 // sourcery: AutoMockable
 package protocol ObserveAttendedMeetingsUseCaseProtocol: Sendable {
 
