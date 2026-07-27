@@ -119,7 +119,7 @@
 "conversation.wireCells.files.navigationTitle" = "Общий диск";
 "conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Доступ для просмотра";
 "conversation.wireCells.allFiles.navigationTitle" = "Диск";
-"conversation.wireCells.files.viewerAccess.banner" = "У вас есть доступ для просмотра общего диска. Вы не можете загружать, редактировать или управлять файлами.";
+"conversation.wireCells.files.viewerAccess.banner" = "Viewer access: you can’t upload or edit files.";
 "conversation.wireCells.files.item.subtitle" = "%@ от %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ в %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
