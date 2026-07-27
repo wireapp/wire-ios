@@ -18,12 +18,10 @@
 
 import Foundation
 
-/// Observes which meeting conversations the self user is currently attending
 // sourcery: AutoMockable
 package protocol ObserveAttendedMeetingsUseCaseProtocol: Sendable {
 
-    /// Returns a stream that emits the set of attended conversation ids, updating
-    /// whenever call state changes.
+    /// Observes which meeting conversations the self user is currently attending
 
     func invoke() -> AsyncStream<Set<QualifiedID>>
 
