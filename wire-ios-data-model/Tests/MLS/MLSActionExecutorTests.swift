@@ -375,13 +375,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func test_JoinGroup() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let mockCommit = Data.random()
         let mockGroupInfo = groupInfoBase64.base64DecodedData!
-        let mockGroupInfoBundle = GroupInfoBundle(
-            encryptionType: .plaintext,
-            ratchetTreeType: .full,
-            payload: Data()
-        )
 
         // Mock join by external commit
         var mockJoinByExternalCommitArguments = [GroupInfo]()
@@ -393,7 +387,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         let ref = CredentialRef(noPointer: .init())
-
         mockCoreCrypto.findCredentials_ClientId_MockValue = [ref]
 
         mockCoreCryptoContext
@@ -407,10 +400,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then core crypto creates conversation init bundle
         XCTAssertEqual(mockJoinByExternalCommitArguments.count, 1)
-//        XCTAssertEqual(
-//            mockJoinByExternalCommitArguments.first,
-//            mockGroupInfo // TODO jacob allow comparing group info
-//        )
     }
 
     // MARK: - Decrypt Message
