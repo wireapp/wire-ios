@@ -202,6 +202,30 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
         XCTAssertTrue(status.isBlocked)
     }
 
+    func testThatItReturnsStatusForScheduledForDeletion() {
+        // GIVEN
+        let sut = createGroupConversation()
+        sut.scheduledDeletionDate = Date()
+
+        // WHEN
+        let status = sut.status
+
+        // THEN
+        XCTAssertTrue(status.isScheduledForDeletion)
+    }
+
+    func testThatItReturnsStatusForNotScheduledForDeletion() {
+        // GIVEN
+        let sut = createGroupConversation()
+        sut.scheduledDeletionDate = nil
+
+        // WHEN
+        let status = sut.status
+
+        // THEN
+        XCTAssertFalse(status.isScheduledForDeletion)
+    }
+
     func testThatItDetectsMentions() {
         // GIVEN
         let sut = otherUserConversation!

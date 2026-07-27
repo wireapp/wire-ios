@@ -20,7 +20,7 @@ public import Foundation
 public import UIKit
 public import WireFoundation
 
-public struct MeetingMember: Identifiable, Sendable {
+public struct MeetingMember: Sendable {
 
     public let qualifiedID: QualifiedID
     public let name: String
@@ -32,12 +32,8 @@ public struct MeetingMember: Identifiable, Sendable {
     /// The member's accent color, used as the background behind the initials.
     public let accentColor: WireAccentColor
 
-    /// The member's profile image, if available; when `nil` the initials are shown instead.
-    public let avatarImage: UIImage?
-
-    public var id: UUID {
-        qualifiedID.id
-    }
+    /// The member's profile image data, if available; when `nil` the initials are shown instead.
+    public let avatarImageData: Data?
 
     public init(
         qualifiedID: QualifiedID,
@@ -45,22 +41,20 @@ public struct MeetingMember: Identifiable, Sendable {
         handle: String,
         initials: String = "",
         accentColor: WireAccentColor = .default,
-        avatarImage: UIImage? = nil
+        avatarImageData: Data? = nil
     ) {
         self.qualifiedID = qualifiedID
         self.name = name
         self.handle = handle
         self.initials = initials
         self.accentColor = accentColor
-        self.avatarImage = avatarImage
+        self.avatarImageData = avatarImageData
     }
 
 }
 
 // MARK: - Hashable
 
-// Identity is keyed on `qualifiedID` only, so a `Set<MeetingMember>` dedupes by user
-// and the non-`Hashable`/mutable avatar payload doesn't affect membership or equality.
 extension MeetingMember: Hashable {
 
     public func hash(into hasher: inout Hasher) {

@@ -16,22 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import Foundation
 
-/// The conversation backing a ``Meeting``, along with its participants.
+public extension ZMConversation {
 
-public struct MeetingConversation: Equatable, Sendable {
+    @objc internal static let scheduledDeletionDateKey = "scheduledDeletionDate"
 
-    public let qualifiedID: QualifiedID
+    /// The date at which the backend will automatically delete this conversation because it has no eligible
+    /// admins, as communicated by a `conversation.adminless-reminder` event. `nil` if no deletion is scheduled.
+    @NSManaged var scheduledDeletionDate: Date?
 
-    public let participants: Set<MeetingMember>
-
-    public init(
-        qualifiedID: QualifiedID,
-        participants: Set<MeetingMember>
-    ) {
-        self.qualifiedID = qualifiedID
-        self.participants = participants
+    /// Whether this conversation is scheduled to be automatically deleted due to having no eligible admins.
+    var isScheduledForDeletion: Bool {
+        scheduledDeletionDate != nil
     }
-
 }

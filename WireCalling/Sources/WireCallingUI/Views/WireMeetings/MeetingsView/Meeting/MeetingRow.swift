@@ -48,23 +48,23 @@ struct MeetingRow: View {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
                 )
-
+            
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .top) {
                     Text(meeting.title)
                         .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                         .lineLimit(2)
-
+                    
                     Spacer()
-
+                    
                     Menu {
                         Button {
                             onEdit()
                         } label: {
                             Label(Strings.Actions.edit, systemImage: "pencil")
                         }
-
+                        
                         Button(role: .destructive) {
                             onDelete()
                         } label: {
@@ -74,35 +74,33 @@ struct MeetingRow: View {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-                            // The design's padding is 12/8; the extra 12pt of vertical
-                            // padding grows the tap target to ~44pt and is cancelled
-                            // out by the negative padding below, so the layout keeps
-                            // the design's spacing.
+                        // The design's padding is 12/8; the extra 12pt of vertical
+                        // padding grows the tap target to ~44pt and is cancelled
+                        // out by the negative padding below, so the layout keeps
+                        // the design's spacing.
                             .padding(.horizontal, 12)
                             .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
                     .padding(.vertical, -12)
                 }
-
+                
                 HStack(spacing: 8) {
                     Text(formatTimeRange(meeting))
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
+                    
                     if let recurrence = meeting.recurrence {
                         recurrenceBadge(recurrence.title)
                     }
                 }
-
-                if let conversation = meeting.conversation, !conversation.participants.isEmpty {
-                    MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
+                
+                if !meeting.conversation.participants.isEmpty {
+                    MemberAvatarsView(members: meeting.conversation.participants.sorted { $0.name < $1.name })
                         .padding(.top, 2)
                 }
-
                 if isAttending {
                     attendingLabel
-                        .padding(.top, 2)
                 }
             }
         }
@@ -160,13 +158,22 @@ private extension MeetingRecurrence {
             end: Date(),
             recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
             conversation: MeetingConversation(
-                id: QualifiedID(id: UUID(), domain: ""),
+                qualifiedID: QualifiedID(id: UUID(), domain: ""),
                 participants: [
-                    MeetingMember(qualifiedID: QualifiedID(id: UUID(), domain: ""), name: "Alice Smith", handle: "alice", initials: "AS"),
-                    MeetingMember(qualifiedID: QualifiedID(id: UUID(), domain: ""), name: "Bob Jones", handle: "bob", initials: "BJ")
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                        name: "Alice Smith",
+                        handle: "alice",
+                        initials: "AS"
+                    ),
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                        name: "Bob Jones",
+                        handle: "bob",
+                        initials: "BJ"
+                    )
                 ]
             ),
-            conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         ),
         formatTimeRange: { _ in "Today" },

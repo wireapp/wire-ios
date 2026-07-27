@@ -375,7 +375,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationCellNameKey,
             ZMConversationWireCellsMessageAttachmentDraftsKey,
             ZMConversationCellsState,
-            ZMConversationParentMeetingKey
+            ZMConversationParentMeetingKey,
+            ZMConversation.scheduledDeletionDateKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
