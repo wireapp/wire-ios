@@ -313,9 +313,9 @@ private extension MeetingRepeatOption {
                     end: Date().addingTimeInterval(2 * TimeInterval.oneHour),
                     recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
                     conversation: MeetingConversation(
-                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
                         participants: Set([MeetingMember].mock.prefix(3))
                     ),
+                    conversationID: QualifiedID(id: UUID(), domain: ""),
                     creatorID: QualifiedID(id: UUID(), domain: "")
                 )
             ),

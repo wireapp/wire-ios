@@ -26,10 +26,8 @@ package protocol UpdateMeetingUseCaseProtocol: Sendable {
     /// - Parameters:
     ///   - meeting: The meeting to update, as it was before editing.
     ///     Its conversation's participants are the baseline for the
-    ///     participant changes, so it must be a meeting provided by the
-    ///     local store: a meeting mapped straight from a network response
-    ///     carries an empty participant list, which would make every
-    ///     selected participant look newly added.
+    ///     participant changes; if the conversation has not been resolved
+    ///     from the local store, the update fails without changing anything.
     ///   - participants: The complete participant selection after editing;
     ///     members missing from it are removed from the conversation,
     ///     new ones are added.

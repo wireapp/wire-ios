@@ -430,7 +430,7 @@ struct MeetingRepositoryTests {
 
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
         #expect(meeting == Scaffolding.storedMeeting)
-        #expect(meeting.conversation.participants == [Scaffolding.member])
+        #expect(meeting.conversation?.participants == [Scaffolding.member])
     }
 
     @Test("createMeeting falls back to the mapped meeting when the store can't provide it")
@@ -452,7 +452,7 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(meeting.id == Scaffolding.meetingID)
-        #expect(meeting.conversation.participants.isEmpty)
+        #expect(meeting.conversation == nil)
     }
 
     @Test("pullMeeting returns the stored copy, which has its participants populated")
@@ -470,7 +470,7 @@ struct MeetingRepositoryTests {
 
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
         #expect(meeting == Scaffolding.storedMeeting)
-        #expect(meeting?.conversation.participants == [Scaffolding.member])
+        #expect(meeting?.conversation?.participants == [Scaffolding.member])
     }
 
     private enum Scaffolding {
@@ -509,10 +509,8 @@ struct MeetingRepositoryTests {
             start: meetingResponse.startTime,
             end: meetingResponse.endTime,
             recurrence: nil,
-            conversation: MeetingConversation(
-                qualifiedID: meetingResponse.conversationID,
-                participants: [member]
-            ),
+            conversation: MeetingConversation(participants: [member]),
+            conversationID: meetingResponse.conversationID,
             creatorID: meetingResponse.creatorID
         )
 
@@ -523,10 +521,7 @@ struct MeetingRepositoryTests {
                 start: start,
                 end: start.addingTimeInterval(3600),
                 recurrence: nil,
-                conversation: MeetingConversation(
-                    qualifiedID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-                    participants: []
-                ),
+                conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
                 creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
             )
         }

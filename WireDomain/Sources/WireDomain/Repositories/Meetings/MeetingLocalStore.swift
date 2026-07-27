@@ -102,8 +102,8 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         storedMeeting.recurrenceInterval = Int64(meeting.recurrence?.interval ?? 0)
         storedMeeting.recurrenceUntil = meeting.recurrence?.until
         storedMeeting.conversation = ZMConversation.fetch(
-            with: meeting.conversation.qualifiedID.id,
-            domain: meeting.conversation.qualifiedID.domain,
+            with: meeting.conversationID.id,
+            domain: meeting.conversationID.domain,
             in: context
         )
         storedMeeting.creator = ZMUser.fetch(
@@ -170,9 +170,9 @@ private extension StoredMeeting {
             end: end,
             recurrence: toDomainRecurrence(),
             conversation: MeetingConversation(
-                qualifiedID: domainConversationID,
                 participants: conversation.toMeetingMembers()
             ),
+            conversationID: domainConversationID,
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
     }

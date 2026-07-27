@@ -37,7 +37,13 @@ public struct Meeting: Hashable, Sendable {
 
     public let recurrence: MeetingRecurrence?
 
-    public let conversation: MeetingConversation
+    /// The participants of the meeting's conversation, resolved from the
+    /// local store when the meeting is read. `nil` when the conversation has
+    /// not been fetched yet (e.g. a meeting built straight from a network
+    /// response).
+    public let conversation: MeetingConversation?
+
+    public let conversationID: QualifiedID
 
     public let creatorID: QualifiedID
 
@@ -47,7 +53,8 @@ public struct Meeting: Hashable, Sendable {
         start: Date,
         end: Date,
         recurrence: MeetingRecurrence?,
-        conversation: MeetingConversation,
+        conversation: MeetingConversation? = nil,
+        conversationID: QualifiedID,
         creatorID: QualifiedID
     ) {
         self.id = id
@@ -56,6 +63,7 @@ public struct Meeting: Hashable, Sendable {
         self.end = end
         self.recurrence = recurrence
         self.conversation = conversation
+        self.conversationID = conversationID
         self.creatorID = creatorID
     }
 

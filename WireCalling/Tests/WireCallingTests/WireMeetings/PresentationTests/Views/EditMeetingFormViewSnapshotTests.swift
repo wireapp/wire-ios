@@ -91,7 +91,6 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
             end: start.addingTimeInterval(.oneHour),
             recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
             conversation: MeetingConversation(
-                qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
                 participants: [
                     MeetingMember(
                         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),

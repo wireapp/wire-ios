@@ -193,9 +193,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
 private extension MeetingResponse {
 
-    /// The backend's meeting responses carry no member data, so `members`
-    /// is empty here. The local store populates it from the meeting's
-    /// conversation, the source of truth, whenever a meeting is read.
+    /// The backend's meeting responses carry no participant data, so
+    /// `conversation` stays `nil` here. The local store resolves it from the
+    /// linked conversation, the source of truth, whenever a meeting is read.
     func toDomainMeeting() -> Meeting {
         Meeting(
             id: id,
@@ -203,9 +203,7 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
-            // The backend response has no participants; they are resolved from the
-            // linked conversation when the meeting is read back from the local store.
-            conversation: MeetingConversation(qualifiedID: conversationID, participants: []),
+            conversationID: conversationID,
             creatorID: creatorID
         )
     }

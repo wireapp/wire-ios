@@ -45,10 +45,7 @@ struct MeetingFormViewModelTests {
         start: .distantPast,
         end: .distantFuture,
         recurrence: nil,
-        conversation: MeetingConversation(
-            qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
-            participants: []
-        ),
+        conversationID: QualifiedID(id: UUID(), domain: "example.com"),
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
 
@@ -90,10 +87,8 @@ struct MeetingFormViewModelTests {
             start: start,
             end: start.addingTimeInterval(.oneHour),
             recurrence: recurrence,
-            conversation: MeetingConversation(
-                qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
-                participants: [member]
-            ),
+            conversation: MeetingConversation(participants: [member]),
+            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
             creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )
     }

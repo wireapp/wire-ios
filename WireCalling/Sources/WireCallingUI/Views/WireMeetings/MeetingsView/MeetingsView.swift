@@ -233,10 +233,8 @@ private func previewMeetings() -> [Meeting] {
             start: start,
             end: end,
             recurrence: nil,
-            conversation: MeetingConversation(
-                qualifiedID: QualifiedID(id: UUID(), domain: ""),
-                participants: Set(members)
-            ),
+            conversation: MeetingConversation(participants: Set(members)),
+            conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         )
     }

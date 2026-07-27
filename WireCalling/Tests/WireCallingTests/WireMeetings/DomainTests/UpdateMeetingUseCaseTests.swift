@@ -55,9 +55,9 @@ struct UpdateMeetingUseCaseTests {
         end: .distantFuture,
         recurrence: nil,
         conversation: MeetingConversation(
-            qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
             participants: [Self.keptMember, Self.removedMember]
         ),
+        conversationID: QualifiedID(id: UUID(), domain: "example.com"),
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
 
@@ -118,11 +118,11 @@ struct UpdateMeetingUseCaseTests {
         let addArguments = conversationRepository
             .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidReceivedArguments
         #expect(addArguments?.participants == [Self.addedMember])
-        #expect(addArguments?.conversationID == meeting.conversation.qualifiedID)
+        #expect(addArguments?.conversationID == meeting.conversationID)
         let removeArguments = conversationRepository
             .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments
         #expect(removeArguments?.participants == [Self.removedMember])
-        #expect(removeArguments?.conversationID == meeting.conversation.qualifiedID)
+        #expect(removeArguments?.conversationID == meeting.conversationID)
     }
 
     @Test("invoke leaves the participants unchanged when the selection matches the members")
@@ -175,6 +175,35 @@ struct UpdateMeetingUseCaseTests {
             .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidCallsCount == 0)
     }
 
+    @Test("invoke throws when the meeting's conversation is not resolved")
+    func invokeWithoutResolvedConversationThrows() async {
+        // Given
+        let meeting = Meeting(
+            id: QualifiedID(id: UUID(), domain: "example.com"),
+            title: "Team Standup",
+            start: .distantPast,
+            end: .distantFuture,
+            recurrence: nil,
+            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
+            creatorID: QualifiedID(id: UUID(), domain: "example.com")
+        )
+
+        // When / Then
+        await #expect(throws: UpdateMeetingUseCaseError.conversationNotResolved) {
+            _ = try await useCase.invoke(
+                meeting: meeting,
+                title: meeting.title,
+                startTime: meeting.start,
+                endTime: meeting.end,
+                recurrence: nil,
+                participants: [Self.addedMember]
+            )
+        }
+        #expect(meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount ==
+            0)
+    }
+
     @Test("invoke keeps the implicit creator out of the participant diff")
     func invokeExcludesCreatorFromDiff() async throws {
         // Given
@@ -190,9 +219,9 @@ struct UpdateMeetingUseCaseTests {
             end: .distantFuture,
             recurrence: nil,
             conversation: MeetingConversation(
-                qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
                 participants: [creatorMember, Self.keptMember]
             ),
+            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
             creatorID: creatorMember.qualifiedID
         )
         meetingRepository

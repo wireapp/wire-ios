@@ -49,10 +49,10 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
         // The backend creates a conversation for the meeting but doesn't
         // notify this client about it, so pull it explicitly.
         try await conversationRepository.pullConversation(
-            id: meeting.conversation.qualifiedID.id,
-            domain: meeting.conversation.qualifiedID.domain
+            id: meeting.conversationID.id,
+            domain: meeting.conversationID.domain
         )
-        try await conversationRepository.addParticipants(participants, to: meeting.conversation.qualifiedID)
+        try await conversationRepository.addParticipants(participants, to: meeting.conversationID)
         // Store the meeting again now that its conversation exists locally,
         // so the two are linked; meetings without a local conversation are
         // not listed.

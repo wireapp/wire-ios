@@ -41,6 +41,13 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         recurrence: MeetingRecurrence?,
         participants: [MeetingMember]
     ) async throws -> Meeting {
+        // The participant diff below needs the conversation's current members
+        // as its baseline; without it, every existing participant would look
+        // newly added. Fail before mutating anything.
+        guard let conversation = meeting.conversation else {
+            throw UpdateMeetingUseCaseError.conversationNotResolved
+        }
+
         // Update the meeting itself first: it can fail with a permission
         // error (only the creator may edit), in which case the participants
         // should stay untouched.
@@ -55,7 +62,7 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         // The creator is implicit in the form's participant selection, so it
         // is excluded from the baseline too — otherwise every update would
         // try to remove the creator from the conversation.
-        let previousMembers = meeting.conversation.participants
+        let previousMembers = conversation.participants
             .filter { $0.qualifiedID != meeting.creatorID }
             .sorted { $0.name < $1.name }
         let previousIDs = Set(previousMembers.map(\.qualifiedID))
@@ -63,11 +70,18 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         let membersToAdd = participants.filter { !previousIDs.contains($0.qualifiedID) }
         let membersToRemove = previousMembers.filter { !selectedIDs.contains($0.qualifiedID) }
 
-        let conversationID = meeting.conversation.qualifiedID
-        try await conversationRepository.addParticipants(membersToAdd, to: conversationID)
-        try await conversationRepository.removeParticipants(membersToRemove, from: conversationID)
+        try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
+        try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
 
         return updatedMeeting
     }
+
+}
+
+package enum UpdateMeetingUseCaseError: Error {
+
+    /// The meeting's conversation has not been resolved from the local store,
+    /// so there is no baseline to diff the selected participants against.
+    case conversationNotResolved
 
 }

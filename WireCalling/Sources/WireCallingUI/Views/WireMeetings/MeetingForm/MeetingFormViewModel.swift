@@ -148,7 +148,7 @@ package final class MeetingFormViewModel {
             self.repeatOption = MeetingRepeatOption(recurrence: meeting.recurrence)
             // The participants come from the meeting's conversation; the
             // creator is implicit in the selection, matching the create flow.
-            self.selectedMembers = meeting.conversation.participants
+            self.selectedMembers = (meeting.conversation?.participants ?? [])
                 .filter { $0.qualifiedID != meeting.creatorID }
                 .sorted { $0.name < $1.name }
         }
