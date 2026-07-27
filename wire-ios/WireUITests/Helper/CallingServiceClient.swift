@@ -377,12 +377,14 @@ final class CallingServiceClient {
         try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "switchVideoOn"])
     }
 
-    func switchScreenSharingOn(instanceId: String, callId: String) async throws -> CallResponse {
+    func switchScreenSharingOn(instanceId: String, callId: String) async throws {
         try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "switchScreensharingOn"])
     }
 
-    func switchScreenSharingOff(instanceId: String, callId: String) async throws -> CallResponse {
+    func switchScreenSharingOff(instanceId: String, callId: String) async throws {
         try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "switchScreensharingOff"])
+    }
+
     func getRawFlows(instanceId: String) async throws -> [CallFlow] {
         try await performFlowsGet(instanceId: instanceId)
     }

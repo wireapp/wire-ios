@@ -89,28 +89,16 @@ final class CallingManager {
         try await client.switchVideoOn(instanceId: instanceId, callId: callId)
     }
 
-    func switchScreenSharingOn(instanceId: String) async throws -> CallResponse {
+    func switchScreenSharingOn(instanceId: String) async throws {
         let callId = try await requireCurrentCallId(instanceId: instanceId)
-        return try await client.switchScreenSharingOn(instanceId: instanceId, callId: callId)
+        try await client.switchScreenSharingOn(instanceId: instanceId, callId: callId)
     }
 
-    func switchScreenSharingOff(instanceId: String) async throws -> CallResponse {
+    func switchScreenSharingOff(instanceId: String) async throws {
         let callId = try await requireCurrentCallId(instanceId: instanceId)
-        return try await client.switchScreenSharingOff(instanceId: instanceId, callId: callId)
+        try await client.switchScreenSharingOff(instanceId: instanceId, callId: callId)
     }
 
-    func verifyReceiveAudioAndVideo(instanceIds: [String]) async throws {
-        try await verifyPositiveFlowChange(
-            instanceIds: instanceIds,
-            checkAudioSent: false,
-            checkAudioReceived: true,
-            checkVideoSent: false,
-            checkVideoReceived: true,
-            timeout: 15
-        )
-    }
-
-    private func verifyPositiveFlowChange(
     func verifyPeerConnections(
         instanceIds: [String],
         expectedCount: Int,

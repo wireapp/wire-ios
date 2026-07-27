@@ -333,7 +333,11 @@ final class ZCallingTests: WireUITestCase {
         )
 
         let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
-        try await callingManager.waitForCurrentCall(instanceId: ownerInstanceId, timeout: 10)
+        try await callingManager.waitForCurrentCallStatus(
+            instanceId: ownerInstanceId,
+            expectedStatuses: ["ACTIVE"],
+            timeout: 30
+        )
         _ = try await callingManager.switchScreenSharingOn(instanceId: ownerInstanceId)
 
         // THEN
