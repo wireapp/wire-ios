@@ -107,7 +107,10 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                 continue
             }
 
-            let clientID = deserializedClientId.deviceId.toHexString()
+            // Caution: deviceId.toHexString() produces a 16 char 0-padded string,
+            // whereas UserClient's id is an 8 char hex string without leading 0s.
+            // Therefore we hex encode the raw UInt64 client id.
+            let clientID = String(format: "%llx", deserializedClientId.deviceId.toU64())
             let (name, handle, domain) = await syncContext.perform {
                 let client = UserClient.fetchExistingUserClient(with: clientID, in: self.syncContext)
                 return (client?.user?.name, client?.user?.handle, client?.user?.domain)
