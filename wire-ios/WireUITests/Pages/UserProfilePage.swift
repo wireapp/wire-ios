@@ -26,6 +26,30 @@ class UserProfilePage: PageModel {
         userProfilePicture
     }
 
+    enum UserAvailabilityStatus: String {
+        case none = "None"
+        case available = "Available"
+        case busy = "Busy"
+        case away = "Away"
+
+        var identifier: String {
+            switch self {
+            case .none:
+                Locators.UserProfileStatusPicker.none.rawValue
+            case .available:
+                Locators.UserProfileStatusPicker.available.rawValue
+            case .busy:
+                Locators.UserProfileStatusPicker.busy.rawValue
+            case .away:
+                Locators.UserProfileStatusPicker.away.rawValue
+            }
+        }
+
+        var expectedValue: String {
+            self == .none ? "" : rawValue
+        }
+    }
+
     var qrCodeButton: XCUIElement {
         app.buttons[Locators.UserProfilePage.qrCodeButton.rawValue]
     }
@@ -52,6 +76,14 @@ class UserProfilePage: PageModel {
 
     var addAccountOrTeamButton: XCUIElement {
         app.descendants(matching: .button)[Locators.UserProfilePage.addAccountOrTeamButton.rawValue].firstMatch
+    }
+
+    var statusButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.UserProfilePage.status.rawValue].firstMatch
+    }
+
+    var okButton: XCUIElement {
+        app.buttons[Locators.UserProfileStatusPicker.okButton.rawValue].firstMatch
     }
 
     func tapCreateTeamButton() throws -> TeamSetupStepsPage {
@@ -83,6 +115,65 @@ class UserProfilePage: PageModel {
             file: file,
             line: line
         )
+        return self
+    }
+
+    @discardableResult
+    func setUserStatus(
+        _ status: UserAvailabilityStatus,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        XCTAssertTrue(
+            statusButton.waitAndTap(),
+            "Status button did not appear",
+            file: file,
+            line: line
+        )
+
+        let statusOption = app.buttons[status.identifier].firstMatch
+        XCTAssertTrue(
+            statusOption.waitAndTap(),
+            "\(status.rawValue) option did not appear",
+            file: file,
+            line: line
+        )
+
+        return dismissStatusConfirmationPopup(for: status)
+    }
+
+    @discardableResult
+    func verifyUserStatus(
+        _ status: UserAvailabilityStatus,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        XCTAssertTrue(
+            statusButton.waitForExistence(timeout: 5),
+            "Status button did not appear",
+            file: file,
+            line: line
+        )
+        XCTAssertEqual(
+            statusButton.value as? String ?? "",
+            status.expectedValue,
+            "Selected status did not match \(status.rawValue)",
+            file: file,
+            line: line
+        )
+
+        return self
+    }
+
+    @discardableResult
+    private func dismissStatusConfirmationPopup(for status: UserAvailabilityStatus) -> UserProfilePage {
+        let confirmationPopup = app.alerts.firstMatch
+        XCTAssertTrue(confirmationPopup.waitForExistence(timeout: 3), "Status confirmation popup did not appear")
+        XCTAssertTrue(
+            okButton.waitAndTap(),
+            "Could not dismiss \(status.rawValue) popup"
+        )
+
         return self
     }
 
