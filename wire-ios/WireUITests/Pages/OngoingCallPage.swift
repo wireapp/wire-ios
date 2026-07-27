@@ -116,6 +116,36 @@ class OngoingCallPage: PageModel {
         return self
     }
 
+    /// Verifies QR payload rendered inside another participant's video tile.
+    @discardableResult
+    func verifyParticipantVideoQRCode(
+        for participantName: String,
+        expectedContentInQRCode: String
+    ) -> OngoingCallPage {
+        let deadline = Date().addingTimeInterval(6)
+        var decodedPayloads = Set<String>()
+
+        repeat {
+            let screenshot = XCUIScreen.main.screenshot().image
+            // Zooming out(.5x) the Video QR screenshot to better read
+            decodedPayloads = Set(readQRCodes(from: screenshot) + readQRCodes(from: resize(
+                screenshot,
+                by: 0.5
+            )))
+            if decodedPayloads.contains(expectedContentInQRCode) {
+                return self
+            }
+
+            RunLoop.current.run(until: Date().addingTimeInterval(2))
+        } while Date() < deadline
+
+        XCTAssertTrue(
+            decodedPayloads.contains(expectedContentInQRCode),
+            "Expected video QR payload \(expectedContentInQRCode) for \(participantName), decoded \(decodedPayloads.sorted())"
+        )
+        return self
+    }
+
     @discardableResult
     func isOtherParticipantScreenSharingVisible(
         for participantName: String,
@@ -158,7 +188,11 @@ class OngoingCallPage: PageModel {
 
     /// Reads QR codes from an XCTest screenshot using ZXing and returns decoded text values.
     func readQRCodes(from screenshot: XCUIScreenshot) -> [String] {
-        guard let cgImage = screenshot.image.cgImage else {
+        readQRCodes(from: screenshot.image)
+    }
+
+    private func readQRCodes(from image: UIImage) -> [String] {
+        guard let cgImage = image.cgImage else {
             return []
         }
 
@@ -172,6 +206,15 @@ class OngoingCallPage: PageModel {
         let results = (try? reader.read(cgImage)) ?? []
 
         return results.map(\.text).filter { !$0.isEmpty }
+    }
+
+    private func resize(_ image: UIImage, by scale: CGFloat) -> UIImage {
+        let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: size)
+
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 
     private func tapEndCallButton() {

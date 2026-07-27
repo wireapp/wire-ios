@@ -302,7 +302,12 @@ final class ZCallingTests: WireUITestCase {
         )
 
         for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
-            _ = ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
+            ongoingCallPage
+                .isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
+                .verifyParticipantVideoQRCode(
+                    for: callingServiceUser.name,
+                    expectedContentInQRCode: callingServiceUser.email
+                )
         }
 
         try ongoingCallPage.turnOffVideo()
@@ -312,6 +317,7 @@ final class ZCallingTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testParticipantCanSeeSharedScreen_TC_8891() async throws {
         // GIVEN
