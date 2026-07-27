@@ -237,7 +237,7 @@ struct MeetingsViewModelTests {
         let other = Meeting.fixture(title: "Other", start: mockDateProvider.now.addingTimeInterval(7200))
 
         let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
-        observeAttendedMeetingsUseCase.invokeAsyncStreamSetQualifiedIDReturnValue = stream
+        observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
 
         // When
         continuation.yield([attended.conversation.qualifiedID])
@@ -256,7 +256,7 @@ struct MeetingsViewModelTests {
         let meeting = Meeting.fixture(title: "Meeting", start: mockDateProvider.now.addingTimeInterval(3600))
 
         let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
-        observeAttendedMeetingsUseCase.invokeAsyncStreamSetQualifiedIDReturnValue = stream
+        observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
 
         // When — the self user joins the call and later leaves it
         continuation.yield([meeting.conversation.qualifiedID])
@@ -285,7 +285,7 @@ struct MeetingsViewModelTests {
 
         // Then
         #expect(viewModel.attendingConversationIDs.isEmpty)
-        #expect(observeAttendedMeetingsUseCase.invokeAsyncStreamSetQualifiedIDCallsCount == 0)
+        #expect(observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDCallsCount == 0)
     }
 
     // MARK: - Grouping
