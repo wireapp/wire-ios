@@ -17,7 +17,6 @@
 //
 
 import CoreData
-import UIKit
 import WireCallingData
 import WireCallingDomain
 import WireDataModel
@@ -103,8 +102,8 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         storedMeeting.recurrenceInterval = Int64(meeting.recurrence?.interval ?? 0)
         storedMeeting.recurrenceUntil = meeting.recurrence?.until
         storedMeeting.conversation = ZMConversation.fetch(
-            with: meeting.conversationID.id,
-            domain: meeting.conversationID.domain,
+            with: meeting.conversation.qualifiedID.id,
+            domain: meeting.conversation.qualifiedID.domain,
             in: context
         )
         storedMeeting.creator = ZMUser.fetch(
@@ -171,10 +170,9 @@ private extension StoredMeeting {
             end: end,
             recurrence: toDomainRecurrence(),
             conversation: MeetingConversation(
-                id: domainConversationID,
+                qualifiedID: domainConversationID,
                 participants: conversation.toMeetingMembers()
             ),
-            conversationID: domainConversationID,
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
     }
@@ -210,7 +208,7 @@ private extension ZMConversation {
                 handle: user.handle ?? "",
                 initials: user.initials ?? "",
                 accentColor: user.accentColor ?? .default,
-                avatarImage: user.previewImageData.flatMap(UIImage.init(data:))
+                avatarImageData: user.previewImageData
             )
         })
     }

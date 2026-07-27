@@ -106,7 +106,7 @@ final class MeetingLocalStoreTests: XCTestCase {
             start: Scaffolding.meeting.start,
             end: Scaffolding.meeting.end,
             recurrence: nil,
-            conversationID: Scaffolding.conversationID,
+            conversation: MeetingConversation(qualifiedID: Scaffolding.conversationID, participants: []),
             creatorID: Scaffolding.creatorID
         )
 
@@ -172,7 +172,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         let meeting = try XCTUnwrap(meetings.first)
         let conversation = try XCTUnwrap(meeting.conversation)
-        XCTAssertEqual(conversation.id, Scaffolding.conversationID)
+        XCTAssertEqual(conversation.qualifiedID, Scaffolding.conversationID)
         XCTAssertEqual(conversation.participants.count, 3, "all local participants, including the self user")
         let alice = try XCTUnwrap(conversation.participants.first { $0.qualifiedID == Scaffolding.memberAliceID })
         XCTAssertEqual(alice.name, "Alice Archer")
@@ -216,7 +216,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         let unwrappedMeeting = try XCTUnwrap(meeting)
         XCTAssertEqual(unwrappedMeeting.id, Scaffolding.meetingID)
-        XCTAssertEqual(unwrappedMeeting.conversation?.participants.map(\.qualifiedID), [Scaffolding.memberAliceID])
+        XCTAssertEqual(unwrappedMeeting.conversation.participants.map(\.qualifiedID), [Scaffolding.memberAliceID])
     }
 
     func testStoredMeeting_It_Returns_Nil_For_Unknown_Meeting() async throws {
@@ -306,7 +306,7 @@ final class MeetingLocalStoreTests: XCTestCase {
                 interval: 2,
                 until: recurrenceUntil
             ),
-            conversationID: conversationID,
+            conversation: MeetingConversation(qualifiedID: conversationID, participants: []),
             creatorID: creatorID
         )
 

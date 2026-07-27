@@ -430,7 +430,7 @@ struct MeetingRepositoryTests {
 
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
         #expect(meeting == Scaffolding.storedMeeting)
-        #expect(meeting.conversation?.participants == [Scaffolding.member])
+        #expect(meeting.conversation.participants == [Scaffolding.member])
     }
 
     @Test("createMeeting falls back to the mapped meeting when the store can't provide it")
@@ -452,7 +452,7 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(meeting.id == Scaffolding.meetingID)
-        #expect(meeting.conversation == nil)
+        #expect(meeting.conversation.participants.isEmpty)
     }
 
     @Test("pullMeeting returns the stored copy, which has its participants populated")
@@ -470,7 +470,7 @@ struct MeetingRepositoryTests {
 
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
         #expect(meeting == Scaffolding.storedMeeting)
-        #expect(meeting?.conversation?.participants == [Scaffolding.member])
+        #expect(meeting?.conversation.participants == [Scaffolding.member])
     }
 
     private enum Scaffolding {
@@ -510,10 +510,9 @@ struct MeetingRepositoryTests {
             end: meetingResponse.endTime,
             recurrence: nil,
             conversation: MeetingConversation(
-                id: meetingResponse.conversationID,
+                qualifiedID: meetingResponse.conversationID,
                 participants: [member]
             ),
-            conversationID: meetingResponse.conversationID,
             creatorID: meetingResponse.creatorID
         )
 
@@ -524,7 +523,10 @@ struct MeetingRepositoryTests {
                 start: start,
                 end: start.addingTimeInterval(3600),
                 recurrence: nil,
-                conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
+                conversation: MeetingConversation(
+                    qualifiedID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
+                    participants: []
+                ),
                 creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
             )
         }

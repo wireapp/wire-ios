@@ -203,7 +203,9 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
-            conversationID: conversationID,
+            // The backend response has no participants; they are resolved from the
+            // linked conversation when the meeting is read back from the local store.
+            conversation: MeetingConversation(qualifiedID: conversationID, participants: []),
             creatorID: creatorID
         )
     }

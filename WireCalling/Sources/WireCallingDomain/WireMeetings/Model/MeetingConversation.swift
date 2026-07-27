@@ -19,22 +19,19 @@
 public import WireFoundation
 
 /// The conversation backing a ``Meeting``, along with its participants.
-///
-/// Mirrors the Wire Drive `WireDriveConversation` shape: a conversation identifier
-/// plus the set of members participating in it. It is resolved from the locally
-/// stored conversation when a meeting is fetched, so the UI can show participant
-/// avatars without an additional lookup.
+
+// `Hashable` because `Meeting` needs it for `MeetingFormViewModel.Mode`.
 public struct MeetingConversation: Hashable, Sendable {
 
-    public let id: QualifiedID
+    public let qualifiedID: QualifiedID
 
     public let participants: Set<MeetingMember>
 
     public init(
-        id: QualifiedID,
+        qualifiedID: QualifiedID,
         participants: Set<MeetingMember>
     ) {
-        self.id = id
+        self.qualifiedID = qualifiedID
         self.participants = participants
     }
 

@@ -147,7 +147,7 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
             start: Date(timeIntervalSince1970: 1_000_000),
             end: Date(timeIntervalSince1970: 1_003_600),
             recurrence: nil,
-            conversationID: conversationID,
+            conversation: MeetingConversation(qualifiedID: conversationID, participants: []),
             creatorID: WireNetwork.QualifiedID(
                 id: UUID(uuidString: "cd2c1465-4bd6-4a5e-9d47-90e99a473ce5")!,
                 domain: "example.com"

@@ -402,6 +402,7 @@ public enum Locators {
         case manageDevices
         case removeDevice = "minus.circle.fill"
         case deleteDevice = "Delete"
+        case ok = "OK"
     }
 
     public enum TeamSetupStepsPage: AutoPrefixedEnum {

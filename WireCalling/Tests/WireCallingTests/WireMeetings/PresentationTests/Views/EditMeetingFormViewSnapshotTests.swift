@@ -91,7 +91,7 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
             end: start.addingTimeInterval(.oneHour),
             recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
             conversation: MeetingConversation(
-                id: QualifiedID(id: UUID(), domain: "example.com"),
+                qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
                 participants: [
                     MeetingMember(
                         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
@@ -105,7 +105,6 @@ final class EditMeetingFormViewSnapshotTests: XCTestCase {
                     )
                 ]
             ),
-            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
             creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )
 
