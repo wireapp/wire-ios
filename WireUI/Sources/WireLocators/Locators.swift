@@ -127,6 +127,7 @@ public enum Locators {
         // changing existing references across the app.
         case accountHeader = "Account"
         case pictureCell
+        case profilePictureImagePreview
         case colorCell
         case conversationBackgroundSwitch = "ConversationBackgroundSwitch"
         case nameField = "NameField"
@@ -278,6 +279,15 @@ public enum Locators {
         case addAccountOrTeamButton
         case userProfilePicture
         case close
+        case status
+    }
+
+    public enum UserProfileStatusPicker: String {
+        case none
+        case available
+        case busy
+        case away
+        case okButton = "OK"
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
@@ -402,6 +412,7 @@ public enum Locators {
         case manageDevices
         case removeDevice = "minus.circle.fill"
         case deleteDevice = "Delete"
+        case ok = "OK"
     }
 
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
@@ -525,6 +536,7 @@ public enum Locators {
 
         public enum FileMenu: String {
             case deleteToRecycleBin
+            case deletePermanently
             case restore
 
             public var identifier: String {

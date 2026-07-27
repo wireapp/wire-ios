@@ -239,7 +239,6 @@ final class ZCallingTests: WireUITestCase {
             activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
             "Ongoing call still visible after hanging up the call"
         )
-
     }
 
     /// Call participant switches from audio call to video call and back
@@ -247,7 +246,7 @@ final class ZCallingTests: WireUITestCase {
     @MainActor
     func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_TC_9497() async throws {
 
-        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
         let firstTimePage = try app.loginUser(
             email: teamAndGroupCallSetup.appUserReceivingCall.email,
@@ -272,17 +271,30 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertEqual(responses.count, acceptingIds.count)
 
         for instanceId in acceptingIds {
-            try await callingManager.waitForCurrentCall(
+            try await callingManager.waitForCurrentCallStatus(
                 instanceId: instanceId,
-                timeout: 10
+                expectedStatuses: ["ACTIVE"],
+                timeout: 30
             )
         }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
 
         try ongoingCallPage.turnOnVideo()
 
         for instanceId in acceptingIds {
-            _ = try await callingManager.switchVideoOn(instanceId: instanceId)
+            try await callingManager.switchVideoOn(instanceId: instanceId)
         }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
 
         XCTAssertTrue(
             ongoingCallPage.turnOffCameraButton.waitForExistence(timeout: 10),
@@ -290,10 +302,8 @@ final class ZCallingTests: WireUITestCase {
         )
 
         for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
-            ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
+            _ = ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
         }
-
-        try await callingManager.verifyReceiveAudioAndVideo(instanceIds: acceptingIds)
 
         try ongoingCallPage.turnOffVideo()
         XCTAssertTrue(

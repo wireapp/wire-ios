@@ -44,8 +44,10 @@ struct CreateMeetingFormViewModelTests {
         start: .distantPast,
         end: .distantFuture,
         recurrence: nil,
-        members: [],
-        conversationID: QualifiedID(id: UUID(), domain: "example.com"),
+        conversation: MeetingConversation(
+            qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
+            participants: []
+        ),
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
 

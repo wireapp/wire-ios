@@ -83,16 +83,54 @@ struct MeetingRow: View {
                     .padding(.vertical, -12)
                 }
 
-                Text(formatTimeRange(meeting))
-                    .font(for: .subline1)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                HStack(spacing: 8) {
+                    Text(formatTimeRange(meeting))
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                if !meeting.members.isEmpty {
-                    MemberAvatarsView(members: meeting.members)
+                    if let recurrence = meeting.recurrence {
+                        recurrenceBadge(recurrence.title)
+                    }
+                }
+
+                if !meeting.conversation.participants.isEmpty {
+                    MemberAvatarsView(members: meeting.conversation.participants.sorted { $0.name < $1.name })
+                        .padding(.top, 2)
                 }
             }
         }
     }
+
+    private func recurrenceBadge(_ title: String) -> some View {
+        Text(title)
+            .font(for: .subline1)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
+            )
+    }
+}
+
+// MARK: - Recurrence label
+
+private extension MeetingRecurrence {
+
+    private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
+
+    var title: String {
+        switch (frequency, interval) {
+        case (.daily, _): Strings.daily
+        case (.weekly, 2): Strings.everyTwoWeeks
+        case (.weekly, 4): Strings.everyFourWeeks
+        case (.weekly, _): Strings.weekly
+        case (.monthly, _): Strings.monthly
+        case (.yearly, _): Strings.yearly
+        }
+    }
+
 }
 
 #Preview {
@@ -102,9 +140,24 @@ struct MeetingRow: View {
             title: "Meeting1",
             start: Date(),
             end: Date(),
-            recurrence: .none,
-            members: [],
-            conversationID: QualifiedID(id: UUID(), domain: ""),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            conversation: MeetingConversation(
+                qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                participants: [
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                        name: "Alice Smith",
+                        handle: "alice",
+                        initials: "AS"
+                    ),
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                        name: "Bob Jones",
+                        handle: "bob",
+                        initials: "BJ"
+                    )
+                ]
+            ),
             creatorID: QualifiedID(id: UUID(), domain: "")
         ),
         formatTimeRange: { _ in "Today" },
