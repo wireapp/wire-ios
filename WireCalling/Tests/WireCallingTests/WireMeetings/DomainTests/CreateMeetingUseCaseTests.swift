@@ -42,8 +42,10 @@ struct CreateMeetingUseCaseTests {
         start: .distantPast,
         end: .distantFuture,
         recurrence: nil,
-        members: [],
-        conversationID: QualifiedID(id: UUID(), domain: "example.com"),
+        conversation: MeetingConversation(
+            qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
+            participants: []
+        ),
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
 
@@ -97,12 +99,12 @@ struct CreateMeetingUseCaseTests {
 
         // Then
         let pullArguments = conversationRepository.pullConversationIdUUIDDomainStringVoidReceivedArguments
-        #expect(pullArguments?.id == meeting.conversationID.id)
-        #expect(pullArguments?.domain == meeting.conversationID.domain)
+        #expect(pullArguments?.id == meeting.conversation.qualifiedID.id)
+        #expect(pullArguments?.domain == meeting.conversation.qualifiedID.domain)
         let addArguments = conversationRepository
             .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidReceivedArguments
         #expect(addArguments?.participants == [participant])
-        #expect(addArguments?.conversationID == meeting.conversationID)
+        #expect(addArguments?.conversationID == meeting.conversation.qualifiedID)
     }
 
     @Test("invoke stores the meeting again after its conversation was pulled")

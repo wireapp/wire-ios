@@ -32,7 +32,7 @@ struct MemberSelectionView: View {
             List {
                 Section {
                     if viewModel.isSelectedExpanded {
-                        ForEach(viewModel.selectedMembers) { row(for: $0) }
+                        ForEach(viewModel.selectedMembers, id: \.qualifiedID) { row(for: $0) }
                     }
                 } header: {
                     sectionHeader(
@@ -82,7 +82,7 @@ struct MemberSelectionView: View {
 
     @ViewBuilder private var contactsContent: some View {
         if !viewModel.filteredUnselected.isEmpty {
-            ForEach(viewModel.filteredUnselected) { row(for: $0) }
+            ForEach(viewModel.filteredUnselected, id: \.qualifiedID) { row(for: $0) }
         } else if viewModel.isSearching {
             HStack {
                 Spacer()

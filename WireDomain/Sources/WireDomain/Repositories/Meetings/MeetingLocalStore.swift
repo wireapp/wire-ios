@@ -93,8 +93,8 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         storedMeeting.recurrenceInterval = Int64(meeting.recurrence?.interval ?? 0)
         storedMeeting.recurrenceUntil = meeting.recurrence?.until
         storedMeeting.conversation = ZMConversation.fetch(
-            with: meeting.conversationID.id,
-            domain: meeting.conversationID.domain,
+            with: meeting.conversation.qualifiedID.id,
+            domain: meeting.conversation.qualifiedID.domain,
             in: context
         )
         storedMeeting.creator = ZMUser.fetch(
@@ -147,7 +147,12 @@ private extension StoredMeeting {
             let creatorID = creator?.qualifiedID
         else { return nil }
 
-        guard let conversationID = conversation?.qualifiedID else { return nil }
+        guard let conversation, let conversationID = conversation.qualifiedID else { return nil }
+
+        let domainConversationID = QualifiedID(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
 
         return Meeting(
             id: QualifiedID(id: remoteIdentifier, domain: domain ?? ""),
@@ -155,8 +160,10 @@ private extension StoredMeeting {
             start: start,
             end: end,
             recurrence: toDomainRecurrence(),
-            members: [],
-            conversationID: QualifiedID(id: conversationID.uuid, domain: conversationID.domain),
+            conversation: MeetingConversation(
+                qualifiedID: domainConversationID,
+                participants: conversation.toMeetingMembers()
+            ),
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
     }
@@ -175,6 +182,26 @@ private extension StoredMeeting {
             interval: Int(recurrenceInterval),
             until: recurrenceUntil
         )
+    }
+
+}
+
+private extension ZMConversation {
+
+    /// Maps the conversation's participants to meeting members, mirroring the Wire Drive
+    /// `ZMConversation` → participant mapping. Must be called on the conversation's context.
+    func toMeetingMembers() -> Set<MeetingMember> {
+        Set(localParticipants.compactMap { user -> MeetingMember? in
+            guard let qualifiedID = user.qualifiedID else { return nil }
+            return MeetingMember(
+                qualifiedID: QualifiedID(id: qualifiedID.uuid, domain: qualifiedID.domain),
+                name: user.name ?? "",
+                handle: user.handle ?? "",
+                initials: user.initials ?? "",
+                accentColor: user.accentColor ?? .default,
+                avatarImageData: user.previewImageData
+            )
+        })
     }
 
 }

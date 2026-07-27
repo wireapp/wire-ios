@@ -229,6 +229,13 @@ enum ConversationSystemMessageCellDescription {
         case .userRemovedFromTeam:
             let cell = UserRemovedFromTeamSystemMessageCellDescription()
             return [AnyConversationMessageCellDescription(cell)]
+
+        case .conversationScheduledForDeletion:
+            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate else {
+                break
+            }
+            let cell = ConversationScheduledForDeletionCellDescription(deletionDate: deletionDate)
+            return [AnyConversationMessageCellDescription(cell)]
         }
 
         return []
