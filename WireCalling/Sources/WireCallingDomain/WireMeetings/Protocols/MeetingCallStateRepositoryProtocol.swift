@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // sourcery: AutoMockable
 /// Reports which conversations the self user is currently in a call in.
-
 public protocol MeetingCallStateRepositoryProtocol: Sendable {
 
     /// Emits the set of conversation ids the self user is currently in a call in.
