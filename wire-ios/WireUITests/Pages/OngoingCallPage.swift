@@ -122,7 +122,7 @@ class OngoingCallPage: PageModel {
         for participantName: String,
         expectedContentInQRCode: String
     ) -> OngoingCallPage {
-        let deadline = Date().addingTimeInterval(15)
+        let deadline = Date().addingTimeInterval(30)
         var decodedPayloads = Set<String>()
 
         repeat {
