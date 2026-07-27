@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
@@ -29,6 +30,8 @@ struct MeetingRow: View {
     var isAttending: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     @ScaledMetric private var iconBoxSize: CGFloat = 31
     @ScaledMetric private var iconFontSize: CGFloat = 15
@@ -114,9 +117,9 @@ struct MeetingRow: View {
             Text(Strings.attending)
         }
         .font(for: .body2)
-        .foregroundStyle(ColorTheme.Base.primary(.blue).color)
+        .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
         .accessibilityElement(children: .combine)
-        .accessibilityIdentifier("attendingLabel")
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingDetails.attendingLabel)
         .accessibilityLabel(Text(Strings.attending))
     }
 
