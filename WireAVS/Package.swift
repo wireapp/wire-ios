@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import Foundation
 import PackageDescription
@@ -17,8 +17,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "WireAVS",
-            url: "https://github.com/wireapp/wire-avs/releases/download/10.4.5/avs.xcframework.zip",
-            checksum: "2061baefbc05c6d27e8243d34c2f24e3f4f2277625aaeaf332c0b2c0a0ef8110"
+            url: "https://github.com/wireapp/wire-avs/releases/download/10.4.28/avs.xcframework.zip",
+            checksum: "ceaefc593a00ae9a168611aeabf13de0f97d0cb6fe50c26ac40b289c98e3b7d6"
         )
     ]
 )
