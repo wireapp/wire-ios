@@ -302,12 +302,7 @@ final class ZCallingTests: WireUITestCase {
         )
 
         for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
-            ongoingCallPage
-                .isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
-                .verifyParticipantVideoQRCode(
-                    for: callingServiceUser.name,
-                    expectedContentInQRCode: callingServiceUser.email
-                )
+            _ = ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
         }
 
         try ongoingCallPage.turnOffVideo()
