@@ -78,7 +78,7 @@ NSString *const ZMConversationMigratedToMLS = @"migratedToMLS";
 NSString *const ZMConversationCellNameKey = @"cellName";
 NSString *const ZMConversationWireCellsMessageAttachmentDraftsKey = @"wireCellsMessageAttachmentDrafts";
 NSString *const ZMConversationCellsState = @"cellsState";
-NSString *const ZMConversationParentMeetingKey = @"parentMeeting";
+NSString *const ZMConversationMeetingsKey = @"meetings";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -170,7 +170,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic labels;
 @dynamic participantRoles;
 @dynamic nonTeamRoles;
-@dynamic parentMeeting;
+@dynamic meetings;
 
 @synthesize pendingLastReadServerTimestamp;
 @synthesize previousLastReadServerTimestamp;
@@ -375,7 +375,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationCellNameKey,
             ZMConversationWireCellsMessageAttachmentDraftsKey,
             ZMConversationCellsState,
-            ZMConversationParentMeetingKey,
+            ZMConversationMeetingsKey,
             ZMConversation.scheduledDeletionDateKey
         };
         
