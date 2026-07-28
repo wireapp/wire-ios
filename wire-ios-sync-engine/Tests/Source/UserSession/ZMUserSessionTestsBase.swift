@@ -76,8 +76,7 @@ class ZMUserSessionTestsBase: MessagingTest {
                 countlyURL: nil
             ),
             proxySettings: nil,
-            certificateTrust: ServerCertificateTrust(trustData: []),
-            supportEmail: nil
+            certificateTrust: ServerCertificateTrust(trustData: [])
         )
 
         wireAPIBackendEnvironment = WireAPI.BackendEnvironment(

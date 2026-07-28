@@ -7,12 +7,8 @@ on:
         type: boolean
         description: 'Distribute externally'
         default: false
-      configuration_path:
-        type: string
-        description: 'configuration folder (keeps Playground Release.xcconfig)'
-        default: ''
 
-permissions:
+permissions: 
   checks: write
 
 jobs:
@@ -23,5 +19,4 @@ jobs:
       datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
-      configuration_path: ${{ inputs.configuration_path }}
     secrets: inherit

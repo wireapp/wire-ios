@@ -273,7 +273,7 @@ platform :ios do
         options[:build_type] = "AppStore"
         options[:override_folder] = "Gov"
         options[:s3_subfolder] = ENV['GOV_SUBFOLDER_PRODUCTION']
-        options[:upload_app_store] = true # can be changed to `upload_testflight` if we want to wait for build processing
+        options[:upload_testflight] = true
         options[:produce_debug_builds] = ENV['DEBUG_BUILDS'] == "1" || ENV['DEBUG_BUILDS'] == "true"
         save_app_name('Wire Gov')
         build_and_upload_app(options)
@@ -461,88 +461,26 @@ platform :ios do
         end
     end
 
-    # Copies the build's configuration into wire-ios/Configuration.
-    # When options[:configuration_path] is set, that configuration is used as the base
-    # (so none of the build_type/override_folder's files can interfere with it), and
-    # Debug.xcconfig/Release.xcconfig are restored from the build_type/override_folder afterwards.
-    def apply_configuration_override(options)
-        build_type = options[:build_type]
-        override_folder = options[:override_folder] || "Cloud"
-        base_configuration_folder = "wire-ios-build-assets/#{override_folder}/#{build_type}"
-        configuration_path = options[:configuration_path]
-
-        if configuration_path.nil? || configuration_path.empty?
-            clean_configuration_folder_if_gov(override_folder)
-            sh "cd .. && ./setup.sh -o \'./#{base_configuration_folder}\'"
-        else
-            unless configuration_path.match?(%r{\A[A-Za-z0-9_-]+(/[A-Za-z0-9_-]+)*\z})
-                UI.user_error! "Invalid configuration_path: '#{configuration_path}'. Only letters, numbers, underscores, hyphens and '/' are allowed."
-            end
-
-            configuration_folder = "wire-ios-build-assets/#{configuration_path}"
-            clean_configuration_folder_if_gov(configuration_path.split("/").first)
-            sh "cd .. && ./setup.sh -o \'./#{configuration_folder}\'"
-
-            UI.message("Restoring Debug.xcconfig and Release.xcconfig from '#{base_configuration_folder}'")
-            ["Debug.xcconfig", "Release.xcconfig"].each do |xcconfig_file|
-                restore_xcconfig_keeping_appicon(
-                    configuration_file: "../wire-ios/Configuration/#{xcconfig_file}",
-                    replacement_file: "../#{base_configuration_folder}/#{xcconfig_file}"
-                )
-            end
-        end
-    end
-
-    # Gov ships a fully self-contained configuration, so it needs a clean slate to avoid
-    # leftover files (e.g. Backend.bundle) from the committed wire-ios/Configuration.
-    # Other configurations (Playground, Beta, ...) only override specific files on top
-    # of what's already committed, so they must not be cleaned.
-    def clean_configuration_folder_if_gov(folder)
-        return unless folder == "Gov"
-        sh "rm -rf ../wire-ios/Configuration"
-    end
-
-    # Copies replacement_file over configuration_file, but keeps configuration_file's
-    # original APPICON_NAME (so the app icon from configuration_path's config is kept,
-    # not the one from build_type/override_folder's config).
-    def restore_xcconfig_keeping_appicon(configuration_file:, replacement_file:)
-        original_appicon_line = File.exist?(configuration_file) ?
-            File.readlines(configuration_file).find { |line| line.strip.start_with?("APPICON_NAME") } :
-            nil
-
-        sh "cp -L '#{replacement_file}' '#{configuration_file}'"
-
-        content = File.readlines(configuration_file)
-        if original_appicon_line.nil?
-            content = content.reject { |line| line.strip.start_with?("APPICON_NAME") }
-        else
-            content = content.map { |line| line.strip.start_with?("APPICON_NAME") ? original_appicon_line : line }
-        end
-        File.write(configuration_file, content.join)
-    end
-
-    desc "Set up wire-ios/Configuration locally, without signing/building/uploading"
-    desc "Example: fastlane configure_local build_type:\"Playground\" configuration_path:\"Gov/AppStore\""
-    lane :configure_local do |options|
-        UI.user_error! "Pass build_type parameter, e.g. fastlane configure_local build_type:Playground" if options[:build_type].nil?
-        apply_configuration_override(options)
-        UI.success("wire-ios/Configuration is set up:")
-        sh "ls -la ../wire-ios/Configuration"
-    end
-
     # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
         xcode_version = options[:xcode_version]
 
         build_type = options[:build_type]
-        if build_type.nil?
+        # Delete configurations in case we switch to different branch or repo
+        sh "rm -rf ../Configuration"
+        if build_type.nil? 
             sh "cd .. && ./setup.sh"
         else
+            override_folder = options[:override_folder]
+            if override_folder.nil? 
+                override_folder = "Cloud"
+            end
+
             build = Build.new(options: options)
 
             `echo BUILD_VERSION=#{build.version_from_xcconfig} >> ./.post_build/.env`
 
-            apply_configuration_override(options)
+            sh "cd .. && ./setup.sh -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
 
@@ -690,23 +628,15 @@ platform :ios do
             groups += options[:extra_distribution_groups]
         end
 
-        begin
-            upload_to_testflight(
-                api_key_path: appstoreconnect_api_key_file_path,
-                ipa: "#{build.artifact_path(with_filename: true)}.ipa",
-                skip_waiting_for_build_processing: false,
-                distribute_external: true,
-                groups: groups,
-                submit_beta_review: true,
-                changelog: changelog(build)
-            )
-        rescue Spaceship::UnexpectedResponse => e
-            UI.error("TestFlight upload skipped: #{e.message}")
-            export_env_path = "./.post_build/.env"
-            FileUtils.mkdir_p("./.post_build")
-            error_line = e.message.tr("\n", ' ').strip.gsub('"', '\\"')
-            File.open(export_env_path, 'a') { |f| f.puts "TESTFLIGHT_ERROR=\"#{error_line}\"" }
-        end
+        upload_to_testflight(
+            api_key_path: appstoreconnect_api_key_file_path,
+            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
+            skip_waiting_for_build_processing: false,
+            distribute_external: true,
+            groups: groups,
+            submit_beta_review: true,
+            changelog: changelog(build)
+        )
     end
 
     # Changelog for current build

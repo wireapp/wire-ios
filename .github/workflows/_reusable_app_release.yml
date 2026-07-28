@@ -22,10 +22,6 @@ on:
         type: boolean
         required: false
         default: false
-      configuration_path:
-        type: string
-        required: false
-        default: ''
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -51,29 +47,25 @@ on:
       GOV_SUBFOLDER_PRODUCTION:
         required: true
       C1_S3_SUBFOLDER_RESTRICTED:
-        required: false
+        required: true
       C1_S3_SUBFOLDER_PRODUCTION:
-        required: false
+        required: true
       C3_S3_SUBFOLDER_RESTRICTED:
-        required: false
+        required: true
       C3_S3_SUBFOLDER_PRODUCTION:
-        required: false
+        required: true
       PLAYGROUND_TESTFLIGHT_LINK:
-        required: false
+        required: true
       BETA_TESTFLIGHT_LINK:
-        required: false
+        required: true
       EDGE_TESTFLIGHT_LINK:
-        required: false
+        required: true
       COUNTLY_PRODUCTION_KEY:
-        required: false
+        required: true
       COUNTLY_INTERNAL_KEY:
-        required: false
+        required: true  
       SUBMODULE_PAT:
         required: true
-      WIRE_IOS_BUILD_WEBHOOK:
-        required: false
-      WIRE_IOS_CI_WEBHOOK:
-        required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -89,8 +81,6 @@ jobs:
       is_cloud_build: ${{ inputs.is_cloud_build }}
       
   build_and_release:
-    if: always()
-    timeout-minutes: 60
     needs: changelog
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     env:
@@ -134,25 +124,25 @@ jobs:
         run: |
             echo "::add-mask::${{ secrets.CLIENT_NAME_C1_C2_C3 }}"
             echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@v4
         with:
           lfs: 'false'
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
       - name: Download changelog     
         id: download_changelog
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@v4
         with:
           name: ${{ needs.changelog.outputs.changelog-name }}    
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
         id: xcode-version
-      - uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd # v1.6.0
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
       - name: Restore Carthage Cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@v4
         id: cache-carthage
         with:
           path: Carthage
@@ -164,7 +154,7 @@ jobs:
          # Restore Swift Package Dependencies Cache
       - name: Restore Swift Package Dependencies Cache
         id: cache-swift-packages
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@v3
         with:
           path: ${{ env.PACKAGES_DIR }}
           key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_COUNTLY }}-${{ env.ENABLE_DATADOG }}
@@ -175,23 +165,21 @@ jobs:
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
+        uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: Trigger build
-        run: bundle exec fastlane "${FASTLANE_ACTION_INPUT}" configuration_path:"${CONFIGURATION_PATH_INPUT}"
+        run: bundle exec fastlane ${{ inputs.fastlane_action }}
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
-          FASTLANE_ACTION_INPUT: ${{ inputs.fastlane_action }}
-          CONFIGURATION_PATH_INPUT: ${{ inputs.configuration_path }}
       - name: Archiving Logs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: build-logs (${{ github.run_id }} - ${{ github.run_attempt}})
@@ -202,17 +190,17 @@ jobs:
 
       - name: Archiving env variables
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         with:
           name: post-build-env-${{ inputs.fastlane_action }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             **/.post_build/*.env
       - name: Load .env file
         if: always()
-        uses: xom9ikk/dotenv@ac290ca23a42155a0cba1031d23afa46240116a9 # v2.3.0
+        uses: xom9ikk/dotenv@v2.3.0
         with:
           path: fastlane/.post_build
-      - uses: akiojin/decode-base64-github-action@82bef0d9c88d987dc48c45218029b8b8426b3e33 # v1.0.2
+      - uses: akiojin/decode-base64-github-action@v1.0.2
         id: base64-decoded-S3_PATHS
         with:
           base64: ${{ env.S3_PATHS }}

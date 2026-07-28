@@ -22,16 +22,14 @@ import XCTest
 
 final class URL_WireTests: XCTestCase {
 
-    var be: BackendEnvironment?
+    var be: BackendEnvironment!
 
     override func setUp() {
         super.setUp()
-
+        let bundle = Bundle.backendBundle!
         let defaults = UserDefaults(suiteName: "URLWireTests")!
         EnvironmentType.production.save(in: defaults)
-        if let bundle = Bundle.backendBundle {
-            be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)
-        }
+        be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)
     }
 
     override func tearDown() {
@@ -39,19 +37,12 @@ final class URL_WireTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatAccountURLsAreLoadedCorrectly() throws {
-        guard let be else {
-            throw XCTSkip("skipping test because no Backend bundle is present")
-        }
-
+    func testThatAccountURLsAreLoadedCorrectly() {
         let accountsURL = URL(string: "https://account.wire.com")!
         XCTAssertEqual(be.accountsURL, accountsURL)
     }
 
-    func test_passwordReset_URLIsCorrect() throws {
-        guard let be else {
-            throw XCTSkip("skipping test because no Backend bundle is present")
-        }
+    func test_passwordReset_URLIsCorrect() {
         XCTAssertEqual(URL.wr_passwordReset, be.accountsURL.appendingPathComponent("forgot"))
     }
 }
