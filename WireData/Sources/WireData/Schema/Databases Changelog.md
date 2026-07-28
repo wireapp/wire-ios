@@ -10,6 +10,18 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.140.0
+
+* changed relationship Conversation-Meeting to 1:n, renamed Conversation.parentMeeting to Conversation.meetings
+
+### 2.139.0
+
+* TODO: https://github.com/wireapp/wire-ios/pull/5019
+
+### 2.138.0
+
+* created Meeting entity with a relation to Conversation  
+
 ### 2.137.0
 
 * added `Meeting` entity
