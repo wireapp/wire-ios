@@ -54,6 +54,7 @@ final class ConversationScheduledForDeletionSystemMessageCell:
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        textLabel.linkTextAttributes = [:]
         attributedText = object.attributedText
         imageView.image = object.icon
         imageView.tintColor = object.iconTintColor
@@ -76,18 +77,32 @@ final class ConversationScheduledForDeletionCellDescription: ConversationMessage
     init(deletionDate: Date) {
         let formattedDate = Message.longDateFormatter.string(from: deletionDate)
         let title = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.text(
-            formattedDate,
-            View.readMoreURL.absoluteString
+            formattedDate
         )
+        let readMore = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.ReadMore.text
         let redColor = ColorTheme.Base.primary(.red)
 
-        let markdownText = NSAttributedString.markdown(from: title, style: .systemMessage)
-        let attributedText = NSMutableAttributedString(attributedString: markdownText)
+        let text = NSAttributedString(string: title + "\n\(readMore)")
+        let attributedText = NSMutableAttributedString(attributedString: text)
         attributedText.addAttribute(
             .foregroundColor,
             value: redColor,
-            range: NSRange(location: 0, length: attributedText.length)
+            range: NSRange(location: 0, length: NSAttributedString(string: title).length)
         )
+
+        let nsString = attributedText.string as NSString
+        let range = nsString.range(of: readMore)
+
+        if range.location != NSNotFound {
+            let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+                .font: UIFont.mediumSemiboldFont,
+                .foregroundColor: ColorTheme.Buttons.Secondary.onEnabled,
+                .link: View.readMoreURL as AnyObject,
+                .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+                .underlineColor: ColorTheme.Buttons.Secondary.onEnabled
+            ]
+            attributedText.addAttributes(linkAttributes, range: range)
+        }
 
         let icon = UIImage(resource: .attention).withRenderingMode(.alwaysTemplate)
 

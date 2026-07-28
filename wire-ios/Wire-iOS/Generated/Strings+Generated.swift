@@ -2416,9 +2416,13 @@ internal enum L10n {
           }
         }
         internal enum MessageConversationScheduledForDeletion {
-          /// This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)
-          internal static func text(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.text", String(describing: p1), String(describing: p2), fallback: "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)")
+          /// This group will be automatically deleted on %@, as there are no eligible group admins.
+          internal static func text(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.text", String(describing: p1), fallback: "This group will be automatically deleted on %@, as there are no eligible group admins.")
+          }
+          internal enum ReadMore {
+            /// Read more
+            internal static let text = L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.read_more.text", fallback: "Read more")
           }
         }
         internal enum MessageLegalHold {

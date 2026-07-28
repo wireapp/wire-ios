@@ -10,6 +10,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.139.0
+
+* added `scheduledDeletionDate` attribute on the Conversation entity
+
 ### 2.137.0
 
 * added `Meeting` entity

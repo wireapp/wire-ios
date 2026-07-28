@@ -1009,7 +1009,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             //
             // However, the conversation scheduled for deletion event should be sender agnostic.
             // We should rework the UI layer to accept system messages with no sender, if it makes sense...
-            
+
             let selfUser = await fetchSelfUser()
 
             let systemMessage = await createSystemMessage(

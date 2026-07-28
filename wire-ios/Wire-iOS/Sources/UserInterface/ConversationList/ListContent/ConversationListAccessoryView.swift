@@ -311,7 +311,7 @@ final class ConversationListAccessoryView: UIView {
 
         iconView.image = resizedIcon
         iconView.tintColor = IconColors.foregroundExclamationMarkInSystemMessage
-        badgeView.backgroundColor = ViewColors.backgroundDefaultWhite
+        badgeView.backgroundColor = .clear
     }
 
     private func configureSilencedNotificationsIcon() {
