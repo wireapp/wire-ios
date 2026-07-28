@@ -28,9 +28,13 @@ package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    private(set) var loadedMeetings: [Meeting] = []
+    private(set) var loadedOccurrences: [MeetingOccurrence] = []
     private(set) var hasMore: Bool = false
     var hasDeleteError = false
+
+    package var loadedMeetings: [Meeting] {
+        loadedOccurrences.map(\.meeting)
+    }
 
     /// Conversation ids of the meetings the self user is currently attending (joined a call in).
     private(set) var attendingConversationIDs: Set<QualifiedID> = []
@@ -51,8 +55,8 @@ package final class MeetingsViewModel {
     private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
 
     private var futureOffset: Int = 0
-    private let initialPageSize: Int = 10
-    private let pageSize: Int = 5
+    private let initialPageSize: Int = 20
+    private let pageSize: Int = 20
     private var isLoading: Bool = false
 
     private let grouper = MeetingsGrouper()
@@ -76,12 +80,12 @@ package final class MeetingsViewModel {
     // MARK: - Public Interface
 
     var groupedUpcomingMeetings: GroupedMeetings {
-        grouper.group(loadedMeetings)
+        grouper.group(loadedOccurrences)
     }
 
     func loadInitialData() async {
         futureOffset = 0
-        loadedMeetings = []
+        loadedOccurrences = []
         hasMore = false
         await load(pageSize: initialPageSize)
     }
@@ -111,12 +115,20 @@ package final class MeetingsViewModel {
         attendingConversationIDs.contains(meeting.conversationID)
     }
 
+    func isAttending(_ occurrence: MeetingOccurrence) -> Bool {
+        attendingConversationIDs.contains(occurrence.conversationID)
+    }
+
     func formatDay(_ date: Date) -> String {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
     }
 
     func formatTimeRange(for meeting: Meeting) -> String {
         formatter.timeRange(from: meeting.start, to: meeting.end)
+    }
+
+    func formatTimeRange(for occurrence: MeetingOccurrence) -> String {
+        formatter.timeRange(from: occurrence.start, to: occurrence.end)
     }
 
     /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture
@@ -132,7 +144,7 @@ package final class MeetingsViewModel {
     func deleteMeeting(_ meeting: Meeting) async {
         do {
             try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
-            loadedMeetings.removeAll { $0.id == meeting.id }
+            loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
         } catch {
             hasDeleteError = true
             WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
@@ -145,7 +157,7 @@ package final class MeetingsViewModel {
     /// change can insert or remove meetings anywhere in the loaded range.
     private func reloadLoadedMeetings() async {
         guard !isLoading else { return }
-        let reloadSize = max(loadedMeetings.count, initialPageSize)
+        let reloadSize = max(loadedOccurrences.count, initialPageSize)
         futureOffset = 0
         await load(pageSize: reloadSize)
     }
@@ -157,9 +169,9 @@ package final class MeetingsViewModel {
         do {
             let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
             if futureOffset == 0 {
-                loadedMeetings = result.meetings
+                loadedOccurrences = result.occurrences
             } else {
-                loadedMeetings += result.meetings
+                loadedOccurrences += result.occurrences
             }
 
             futureOffset = result.nextOffset

@@ -127,23 +127,23 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
-    let groups: [(day: Date, meetings: [Meeting])]
+    let groups: [(day: Date, meetings: [MeetingOccurrence])]
     let formatDay: (Date) -> String
-    let formatTimeRange: (Meeting) -> String
-    let isAttending: (Meeting) -> Bool
+    let formatTimeRange: (MeetingOccurrence) -> String
+    let isAttending: (MeetingOccurrence) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
 
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
-                ForEach(dayGroup.meetings, id: \.id) { meeting in
+                ForEach(dayGroup.meetings, id: \.id) { occurrence in
                     MeetingRow(
-                        meeting: meeting,
+                        occurrence: occurrence,
                         formatTimeRange: formatTimeRange,
-                        isAttending: isAttending(meeting),
-                        onEdit: { onEdit(meeting) },
-                        onDelete: { onDelete(meeting) }
+                        isAttending: isAttending(occurrence),
+                        onEdit: { onEdit(occurrence.meeting) },
+                        onDelete: { onDelete(occurrence.meeting) }
                     )
                 }
             } header: {

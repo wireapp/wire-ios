@@ -22,8 +22,12 @@ import Foundation
 
 package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
 
+    private static let maximumPageSize = 20
+    private static let sourceMeetingFetchLimit = Int.max / 2
+
     private let repository: any MeetingRepositoryProtocol
     private let currentDateProvider: any CurrentDateProviding
+    private let occurrencePaginator = MeetingOccurrencePaginator()
 
     package init(
         repository: any MeetingRepositoryProtocol,
@@ -34,23 +38,33 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
     }
 
     package func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
-        // The list shows all meetings of the current day — including ones
-        // that already started or ended — and of the following day.
+        let pageSize = min(max(pageSize, 0), Self.maximumPageSize)
+        guard pageSize > 0 else {
+            return PaginatedMeetings(occurrences: [], hasMore: false, nextOffset: offset)
+        }
+
+        // The list starts at the beginning of today, so meetings earlier
+        // today remain visible and recurring meetings can produce future
+        // occurrence rows even when their source meeting started in the past.
         let calendar = Calendar.current
         let startOfToday = calendar.startOfDay(for: currentDateProvider.now)
-        let endOfTomorrow = calendar.date(byAdding: .day, value: 2, to: startOfToday)
-            ?? startOfToday.addingTimeInterval(48 * 3600)
-        let meetings = try await repository.fetchMeetings(
-            in: startOfToday ..< endOfTomorrow,
+        let sourceMeetings = try await repository.fetchMeetings(
+            in: Date.distantPast ..< Date.distantFuture,
+            offset: 0,
+            limit: Self.sourceMeetingFetchLimit
+        )
+        let occurrences = occurrencePaginator.occurrences(
+            for: sourceMeetings,
+            startingAt: startOfToday,
             offset: offset,
             limit: pageSize + 1
         )
 
-        let hasMore = meetings.count > pageSize
-        let page = hasMore ? Array(meetings.prefix(pageSize)) : meetings
+        let hasMore = occurrences.count > pageSize
+        let page = hasMore ? Array(occurrences.prefix(pageSize)) : occurrences
 
         return PaginatedMeetings(
-            meetings: page,
+            occurrences: page,
             hasMore: hasMore,
             nextOffset: offset + page.count
         )
