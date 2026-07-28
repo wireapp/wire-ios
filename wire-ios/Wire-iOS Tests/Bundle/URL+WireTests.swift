@@ -26,7 +26,7 @@ final class URL_WireTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        let bundle = Bundle.backendBundle!
+        let bundle = Bundle.backendBundle
         let defaults = UserDefaults(suiteName: "URLWireTests")!
         EnvironmentType.production.save(in: defaults)
         be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)

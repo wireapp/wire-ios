@@ -194,59 +194,6 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
 
 }
 
-class MockBackendConfigurationSessionManaging: BackendConfigurationSessionManaging {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - fetchBackendEnvironment
-
-    var fetchBackendEnvironmentAtCompletion_Invocations: [(url: URL, completion: (Result<BackendEnvironment, Error>) -> Void)] = []
-    var fetchBackendEnvironmentAtCompletion_MockMethod: ((URL, @escaping (Result<BackendEnvironment, Error>) -> Void) -> Void)?
-
-    func fetchBackendEnvironment(at url: URL, completion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
-        fetchBackendEnvironmentAtCompletion_Invocations.append((url: url, completion: completion))
-
-        guard let mock = fetchBackendEnvironmentAtCompletion_MockMethod else {
-            fatalError("no mock for `fetchBackendEnvironmentAtCompletion`")
-        }
-
-        mock(url, completion)
-    }
-
-    // MARK: - markNetworkSessionsAsReady
-
-    var markNetworkSessionsAsReady_Invocations: [Bool] = []
-    var markNetworkSessionsAsReady_MockMethod: ((Bool) -> Void)?
-
-    func markNetworkSessionsAsReady(_ ready: Bool) {
-        markNetworkSessionsAsReady_Invocations.append(ready)
-
-        guard let mock = markNetworkSessionsAsReady_MockMethod else {
-            fatalError("no mock for `markNetworkSessionsAsReady`")
-        }
-
-        mock(ready)
-    }
-
-    // MARK: - switchBackendWithoutResolving
-
-    var switchBackendWithoutResolvingTo_Invocations: [BackendEnvironment] = []
-    var switchBackendWithoutResolvingTo_MockMethod: ((BackendEnvironment) -> Void)?
-
-    func switchBackendWithoutResolving(to environment: BackendEnvironment) {
-        switchBackendWithoutResolvingTo_Invocations.append(environment)
-
-        guard let mock = switchBackendWithoutResolvingTo_MockMethod else {
-            fatalError("no mock for `switchBackendWithoutResolvingTo`")
-        }
-
-        mock(environment)
-    }
-
-}
-
 class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
     // MARK: - Life cycle

@@ -73,8 +73,7 @@ class BackendEnvironmentTests: XCTestCase {
             environmentType: environmentType,
             endpoints: endpoints,
             proxySettings: proxySettings,
-            certificateTrust: trust,
-            supportEmail: nil
+            certificateTrust: trust
         )
     }
 
@@ -113,11 +112,10 @@ class BackendEnvironmentTests: XCTestCase {
             return
         }
 
-        guard let envType = EnvironmentType(userDefaults: defaultsCustom),
-              let environment = BackendEnvironment(
-                  environmentType: envType,
-                  data: data
-              ) else {
+        guard let environment = BackendEnvironment(
+            environmentType: EnvironmentType(userDefaults: defaultsCustom),
+            data: data
+        ) else {
             XCTFail("Could not read environment data from Backend.bundle")
             return
 

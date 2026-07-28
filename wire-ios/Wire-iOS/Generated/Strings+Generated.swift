@@ -897,16 +897,6 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "messageAction.unlikeButton.description", fallback: "Unlike the picture")
       }
     }
-    internal enum NoDefaultBackend {
-      internal enum CloseButton {
-        /// Close QR code scanner
-        internal static let description = L10n.tr("Accessibility", "noDefaultBackend.closeButton.description", fallback: "Close QR code scanner")
-      }
-      internal enum QrCodeButton {
-        /// Scan QR code
-        internal static let description = L10n.tr("Accessibility", "noDefaultBackend.qrCodeButton.description", fallback: "Scan QR code")
-      }
-    }
     internal enum NotificationConversationSettings {
       internal enum CloseButton {
         /// Close notification settings
@@ -4376,40 +4366,6 @@ internal enum L10n {
         internal static let tooshort = L10n.tr("Localizable", "name.guidance.tooshort", fallback: "At least 2 characters")
       }
     }
-    internal enum NoDefaultBackend {
-      /// Something went wrong. Check the link and your connection, then try again.
-      internal static let error = L10n.tr("Localizable", "no_default_backend.error", fallback: "Something went wrong. Check the link and your connection, then try again.")
-      /// To get started, enter the link or scan the QR code provided by your administration.
-      internal static let paragraph = L10n.tr("Localizable", "no_default_backend.paragraph", fallback: "To get started, enter the link or scan the QR code provided by your administration.")
-      /// Set up your app
-      internal static let subheadline = L10n.tr("Localizable", "no_default_backend.subheadline", fallback: "Set up your app")
-      /// Setup
-      internal static let title = L10n.tr("Localizable", "no_default_backend.title", fallback: "Setup")
-      internal enum Button {
-        /// Set Up
-        internal static let configure = L10n.tr("Localizable", "no_default_backend.button.configure", fallback: "Set Up")
-      }
-      internal enum Scanner {
-        /// Scan QR code
-        internal static let title = L10n.tr("Localizable", "no_default_backend.scanner.title", fallback: "Scan QR code")
-      }
-      internal enum Setup {
-        /// Your app is set up
-        internal static let message = L10n.tr("Localizable", "no_default_backend.setup.message", fallback: "Your app is set up")
-        /// In the next step, you can log in
-        internal static let subtitle = L10n.tr("Localizable", "no_default_backend.setup.subtitle", fallback: "In the next step, you can log in")
-        internal enum Button {
-          /// Continue
-          internal static let `continue` = L10n.tr("Localizable", "no_default_backend.setup.button.continue", fallback: "Continue")
-        }
-      }
-      internal enum TextField {
-        /// Configuration link
-        internal static let caption = L10n.tr("Localizable", "no_default_backend.text_field.caption", fallback: "Configuration link")
-        /// Enter link or scan QR code
-        internal static let placeholder = L10n.tr("Localizable", "no_default_backend.text_field.placeholder", fallback: "Enter link or scan QR code")
-      }
-    }
     internal enum Notifications {
       /// %@ - %@
       internal static func inConversation(_ p1: Any, _ p2: Any) -> String {
@@ -5858,8 +5814,6 @@ internal enum L10n {
           internal static let info = L10n.tr("Localizable", "self.settings.technical_report.info", fallback: "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.")
           /// No mail client detected. Tap "OK" and send logs manually to: 
           internal static let noMailAlert = L10n.tr("Localizable", "self.settings.technical_report.no_mail_alert", fallback: "No mail client detected. Tap \"OK\" and send logs manually to: ")
-          /// no recipient available
-          internal static let noMailRecipient = L10n.tr("Localizable", "self.settings.technical_report.no_mail_recipient", fallback: "no recipient available")
           /// Detailed logs could contain personal data
           internal static let privacyWarning = L10n.tr("Localizable", "self.settings.technical_report.privacy_warning", fallback: "Detailed logs could contain personal data")
           /// Send Report

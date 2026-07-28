@@ -137,8 +137,6 @@
 "serviceConversationSettings.closeButton.description" = "Close service settings";
 "guestConversationSettings.closeButton.description" = "Close guest settings";
 "addParticipantsConversationSettings.closeButton.description" = "Close add participants option";
-"noDefaultBackend.closeButton.description" = "Close QR code scanner";
-"noDefaultBackend.qrCodeButton.description" = "Scan QR code";
 
 "conversationDetails.optionButton.hint" = "Double tap to open settings";
 "conversationDetails.closeButton.description" = "Close conversation details";

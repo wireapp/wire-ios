@@ -137,8 +137,6 @@
 "serviceConversationSettings.closeButton.description" = "Dienst-Einstellungen schließen";
 "guestConversationSettings.closeButton.description" = "Gästeeinstellungen schließen";
 "addParticipantsConversationSettings.closeButton.description" = "Ansicht Teilnehmer hinzufügen schließen";
-"noDefaultBackend.closeButton.description" = "QR-Code-Scanner schließen";
-"noDefaultBackend.qrCodeButton.description" = "QR-Code scannen";
 
 "conversationDetails.optionButton.hint" = "Doppeltippen, um Einstellungen zu öffnen";
 "conversationDetails.closeButton.description" = "Unterhaltungsdetails schließen";

@@ -170,11 +170,11 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let userID = user?.remoteIdentifier?.transportString() ?? ""
         let device = UIDevice.current.name
         let userDescription = "\(user?.name ?? "") [user: \(userID)] [device: \(device)]"
-        let mail: String? = shareWithAVS ? WireEmail.shared()?.callingSupportEmail : WireEmail.shared()?.supportEmail
+        let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
             return DebugAlert.displayFallbackActivityController(
-                email: mail ?? L10n.Localizable.Self.Settings.TechnicalReport.noMailRecipient,
+                email: mail,
                 from: presentingViewController,
                 popoverPresentationConfiguration: fallbackActivityPopoverConfiguration
             )
@@ -184,9 +184,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let alert = DebugLogSender()
 
         let mailVC = MFMailComposeViewController()
-        if let mail {
-            mailVC.setToRecipients([mail])
-        }
+        mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
         let body = mailVC.prefilledBody(withMessage: message)
         mailVC.setMessageBody(body, isHTML: false)

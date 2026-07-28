@@ -108,8 +108,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
             environmentType: .production,
             endpoints: endpoints,
             proxySettings: nil,
-            certificateTrust: trust,
-            supportEmail: nil
+            certificateTrust: trust
         )
         sut = UnauthenticatedTransportSession(
             environment: environment,

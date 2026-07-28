@@ -51,7 +51,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
 
     weak var viewController: UIViewController?
 
-    private let mailRecipient = WireEmail.shared()?.callingSupportEmail
+    private let mailRecipient = WireEmail.shared.callingSupportEmail
     private let mainCoordinator: any MainCoordinatorProtocol
 
     init(mainCoordinator: any MainCoordinatorProtocol) {
@@ -88,14 +88,13 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
     func presentMailComposer() {
         let mailComposeViewController = MFMailComposeViewController()
         mailComposeViewController.mailComposeDelegate = self
-        if let mailRecipient {
-            mailComposeViewController.setToRecipients([mailRecipient])
-        }
+        mailComposeViewController.setToRecipients([mailRecipient])
         mailComposeViewController.setSubject(L10n.Localizable.Self.Settings.TechnicalReport.Mail.subject)
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
         activityIndicator.stop()
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
         Task.detached(priority: .userInitiated) { [activityIndicator] in
             await mailComposeViewController.attachLogs()
 
@@ -111,7 +110,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         guard let viewController else { return }
 
         DebugAlert.displayFallbackActivityController(
-            email: mailRecipient ?? L10n.Localizable.Self.Settings.TechnicalReport.noMailRecipient,
+            email: mailRecipient,
             from: viewController,
             popoverPresentationConfiguration: .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
         )
