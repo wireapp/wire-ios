@@ -55,18 +55,18 @@ final class MemberSelectionViewModel {
     // MARK: - Derived state
 
     var filteredUnselected: [MeetingMember] {
-        let selectedIDs = Set(selectedMembers.map(\.id))
-        return searchResults.filter { !selectedIDs.contains($0.id) }
+        let selectedIDs = Set(selectedMembers.map(\.qualifiedID))
+        return searchResults.filter { !selectedIDs.contains($0.qualifiedID) }
     }
 
     func isSelected(_ member: MeetingMember) -> Bool {
-        selectedMembers.contains { $0.id == member.id }
+        selectedMembers.contains { $0.qualifiedID == member.qualifiedID }
     }
 
     // MARK: - Actions
 
     func toggleSelection(_ member: MeetingMember) {
-        if let index = selectedMembers.firstIndex(where: { $0.id == member.id }) {
+        if let index = selectedMembers.firstIndex(where: { $0.qualifiedID == member.qualifiedID }) {
             selectedMembers.remove(at: index)
         } else {
             selectedMembers.append(member)

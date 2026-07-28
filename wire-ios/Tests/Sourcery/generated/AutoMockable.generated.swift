@@ -207,6 +207,15 @@ public class MockBackgroundTaskApplication: BackgroundTaskApplication, @unchecke
 
     public init() {}
 
+    // MARK: - backgroundTimeRemaining
+
+    public var backgroundTimeRemaining: TimeInterval {
+        get { return underlyingBackgroundTimeRemaining }
+        set(value) { underlyingBackgroundTimeRemaining = value }
+    }
+
+    public var underlyingBackgroundTimeRemaining: TimeInterval!
+
 
     // MARK: - beginBackgroundTask
 
@@ -1743,20 +1752,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_Invocations: [(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol)] = []
-    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockMethod: ((any MeetingRepositoryProtocol, any MeetingMemberRepositoryProtocol, any MeetingConversationRepositoryProtocol) -> UIViewController)?
-    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockValue: UIViewController?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallStateRepository_Invocations: [(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol, callStateRepository: any MeetingCallStateRepositoryProtocol)] = []
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallStateRepository_MockMethod: ((any MeetingRepositoryProtocol, any MeetingMemberRepositoryProtocol, any MeetingConversationRepositoryProtocol, any MeetingCallStateRepositoryProtocol) -> UIViewController)?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallStateRepository_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol) -> UIViewController {
-        makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_Invocations.append((meetingRepository: meetingRepository, memberRepository: memberRepository, conversationRepository: conversationRepository))
+    func makeMeetingsView(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol, callStateRepository: any MeetingCallStateRepositoryProtocol) -> UIViewController {
+        makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallStateRepository_Invocations.append((meetingRepository: meetingRepository, memberRepository: memberRepository, conversationRepository: conversationRepository, callStateRepository: callStateRepository))
 
-        if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockMethod {
-            return mock(meetingRepository, memberRepository, conversationRepository)
-        } else if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockValue {
+        if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallStateRepository_MockMethod {
+            return mock(meetingRepository, memberRepository, conversationRepository, callStateRepository)
+        } else if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallStateRepository_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository`")
+            fatalError("no mock for `makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallStateRepository`")
         }
     }
 

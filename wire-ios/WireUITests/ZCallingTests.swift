@@ -112,7 +112,7 @@ final class ZCallingTests: WireUITestCase {
         )
 
         let acceptingIds = instances.dropFirst().compactMap(\.id).filter { !$0.isEmpty }
-        let responses = try await callingServiceClient.acceptNextCalls(
+        let responses = try await callingManager.acceptNextCalls(
             instanceIds: acceptingIds,
             conversationId: teamAndGroupCallSetup.conversationId
         )
@@ -156,7 +156,7 @@ final class ZCallingTests: WireUITestCase {
 
         let acceptingIds = instances.dropFirst().compactMap(\.id).filter { !$0.isEmpty }
         if !acceptingIds.isEmpty {
-            _ = try await callingServiceClient.acceptNextCalls(
+            _ = try await callingManager.acceptNextCalls(
                 instanceIds: acceptingIds,
                 conversationId: teamAndGroupCallSetup.conversationId
             )
@@ -234,8 +234,81 @@ final class ZCallingTests: WireUITestCase {
             .resumeCallUI()
 
         // THEN
-        _ = try ongoingCallPage.hangUpOngoingCall()
-            .verifyNoCallOngoingAfterHangUp()
+        let activeConversationPage = try ongoingCallPage.hangUpOngoingCall()
+        XCTAssertTrue(
+            activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
+            "Ongoing call still visible after hanging up the call"
+        )
+    }
 
+    /// Call participant switches from audio call to video call and back
+    /// [critical]
+    @MainActor
+    func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_TC_9497() async throws {
+
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        let conversationsPage = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let acceptingIds = instances.compactMap(\.id).filter { !$0.isEmpty }
+        XCTAssertEqual(acceptingIds.count, teamAndGroupCallSetup.callingServiceUsers.count)
+
+        async let acceptingResponses = callingManager.acceptNextCalls(
+            instanceIds: acceptingIds,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let ongoingCallPage = try conversationsPage
+            .openConversation()
+            .initiateCall()
+
+        let responses = try await acceptingResponses
+        XCTAssertEqual(responses.count, acceptingIds.count)
+
+        for instanceId in acceptingIds {
+            try await callingManager.waitForCurrentCallStatus(
+                instanceId: instanceId,
+                expectedStatuses: ["ACTIVE"],
+                timeout: 30
+            )
+        }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
+
+        try ongoingCallPage.turnOnVideo()
+
+        for instanceId in acceptingIds {
+            try await callingManager.switchVideoOn(instanceId: instanceId)
+        }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
+
+        XCTAssertTrue(
+            ongoingCallPage.turnOffCameraButton.waitForExistence(timeout: 10),
+            "Camera did not switch on"
+        )
+
+        for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
+            _ = ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
+        }
+
+        try ongoingCallPage.turnOffVideo()
+        XCTAssertTrue(
+            ongoingCallPage.turnOnCameraButton.waitForExistence(timeout: 10),
+            "Camera did not switch off"
+        )
     }
 }

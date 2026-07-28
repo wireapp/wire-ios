@@ -26,11 +26,12 @@ import WireFoundationSupport
 @testable import WireCallingUI
 
 @MainActor
-struct CreateMeetingFormViewModelTests {
+struct MeetingFormViewModelTests {
 
     private let createMeetingUseCaseMock = CreateMeetingUseCaseProtocolMock()
+    private let updateMeetingUseCaseMock = UpdateMeetingUseCaseProtocolMock()
     private let dateProviderMock = CurrentDateProvidingMock()
-    private let viewModel: CreateMeetingFormViewModel
+    private let viewModel: MeetingFormViewModel
 
     private let member = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
@@ -44,31 +45,51 @@ struct CreateMeetingFormViewModelTests {
         start: .distantPast,
         end: .distantFuture,
         recurrence: nil,
-        members: [],
         conversationID: QualifiedID(id: UUID(), domain: "example.com"),
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
 
     init() {
         dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-07-06T14:18:00+02:00")
-        self.viewModel = CreateMeetingFormViewModel(
+        self.viewModel = MeetingFormViewModel(
             mode: .instant,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: createMeetingUseCaseMock,
+            updateMeetingUseCase: updateMeetingUseCaseMock,
             currentDateProvider: dateProviderMock
         )
     }
 
     private func makeViewModel(
-        mode: CreateMeetingFormViewModel.Mode,
+        mode: MeetingFormViewModel.Mode,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
-    ) -> CreateMeetingFormViewModel {
-        CreateMeetingFormViewModel(
+    ) -> MeetingFormViewModel {
+        MeetingFormViewModel(
             mode: mode,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: createMeetingUseCaseMock,
+            updateMeetingUseCase: updateMeetingUseCaseMock,
             currentDateProvider: dateProviderMock,
             onSuccess: onSuccess
+        )
+    }
+
+    /// A meeting fixture for edit mode, starting tomorrow relative to the
+    /// mocked current date unless a start date is given.
+    private func makeEditableMeeting(
+        start: Date? = nil,
+        recurrence: MeetingRecurrence? = MeetingRecurrence(frequency: .weekly, interval: 2)
+    ) -> Meeting {
+        let start = start ?? dateProviderMock.now.addingTimeInterval(86_400)
+        return Meeting(
+            id: QualifiedID(id: UUID(), domain: "example.com"),
+            title: "Design Review",
+            start: start,
+            end: start.addingTimeInterval(.oneHour),
+            recurrence: recurrence,
+            conversation: MeetingConversation(participants: [member]),
+            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
+            creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )
     }
 
@@ -227,6 +248,108 @@ struct CreateMeetingFormViewModelTests {
         viewModel.meetingTitle = "Team Standup"
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingThrowableError =
+            URLError(.badServerResponse)
+
+        // When
+        await viewModel.submit()
+
+        // Then
+        #expect(viewModel.hasError == true)
+        #expect(viewModel.isLoading == false)
+        #expect(onSuccessCalled == false)
+    }
+
+    // MARK: - Edit Mode Tests
+
+    @Test("edit mode pre-fills the form with the meeting's values")
+    func editMode_PrefillsForm() {
+        // Given
+        let meeting = makeEditableMeeting()
+
+        // When
+        let viewModel = makeViewModel(mode: .edit(meeting))
+
+        // Then
+        #expect(viewModel.meetingTitle == meeting.title)
+        #expect(viewModel.startDate == meeting.start)
+        #expect(viewModel.endDate == meeting.end)
+        #expect(viewModel.repeatOption == .every2Weeks)
+        #expect(viewModel.selectedMembers == [member])
+    }
+
+    @Test(
+        "edit mode maps the meeting's recurrence to the matching repeat option",
+        arguments: [
+            (nil, MeetingRepeatOption.never),
+            (MeetingRecurrence(frequency: .daily, interval: 1), .daily),
+            (MeetingRecurrence(frequency: .weekly, interval: 1), .weekly),
+            (MeetingRecurrence(frequency: .weekly, interval: 2), .every2Weeks),
+            (MeetingRecurrence(frequency: .monthly, interval: 1), .monthly),
+            (MeetingRecurrence(frequency: .yearly, interval: 1), .yearly)
+        ] as [(MeetingRecurrence?, MeetingRepeatOption)]
+    )
+    func editMode_MapsRecurrence(recurrence: MeetingRecurrence?, expected: MeetingRepeatOption) {
+        // When
+        let viewModel = makeViewModel(mode: .edit(makeEditableMeeting(recurrence: recurrence)))
+
+        // Then
+        #expect(viewModel.repeatOption == expected)
+    }
+
+    @Test("startDateRange allows the original start day when editing a meeting that started in the past")
+    func startDateRange_EditModePastMeeting() {
+        // Given
+        let meeting = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-3 * 86_400))
+
+        // When
+        let viewModel = makeViewModel(mode: .edit(meeting))
+
+        // Then
+        #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: meeting.start))
+    }
+
+    @Test("submit in edit mode updates the meeting with the form values and calls onSuccess")
+    func submit_EditMode_Success() async {
+        // Given
+        var receivedMeeting: Meeting?
+        let original = makeEditableMeeting()
+        let viewModel = makeViewModel(mode: .edit(original)) { receivedMeeting = $0 }
+        viewModel.meetingTitle = "Updated Title"
+        viewModel.repeatOption = .daily
+        viewModel.selectedMembers = []
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
+            meeting
+
+        // When
+        await viewModel.submit()
+
+        // Then
+        let arguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+        #expect(arguments?.meeting == original)
+        #expect(arguments?.title == "Updated Title")
+        #expect(arguments?.startTime == viewModel.startDate)
+        #expect(arguments?.endTime == viewModel.endDate)
+        #expect(arguments?.recurrence == MeetingRecurrence(frequency: .daily, interval: 1))
+        #expect(arguments?.participants.isEmpty == true)
+        #expect(
+            createMeetingUseCaseMock
+                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+                0
+        )
+        #expect(receivedMeeting == meeting)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.hasError == false)
+    }
+
+    @Test("submit in edit mode sets the error flag when the use case fails")
+    func submit_EditMode_Failure_SetsError() async {
+        // Given
+        var onSuccessCalled = false
+        let viewModel = makeViewModel(mode: .edit(makeEditableMeeting())) { _ in onSuccessCalled = true }
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingThrowableError =
             URLError(.badServerResponse)
 
         // When

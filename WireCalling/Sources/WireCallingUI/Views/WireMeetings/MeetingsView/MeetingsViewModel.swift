@@ -32,6 +32,9 @@ package final class MeetingsViewModel {
     private(set) var hasMore: Bool = false
     var hasDeleteError = false
 
+    /// Conversation ids of the meetings the self user is currently attending (joined a call in).
+    private(set) var attendingConversationIDs: Set<QualifiedID> = []
+
     /// The meeting awaiting delete confirmation, or `nil` if no confirmation is in progress.
     var meetingToDelete: Meeting?
 
@@ -45,6 +48,7 @@ package final class MeetingsViewModel {
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
     private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+    private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
 
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 10
@@ -58,13 +62,15 @@ package final class MeetingsViewModel {
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
-        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
         self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
         self.deleteMeetingUseCase = deleteMeetingUseCase
+        self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
     }
 
     // MARK: - Public Interface
@@ -91,6 +97,18 @@ package final class MeetingsViewModel {
         for await _ in observeMeetingChangesUseCase.invoke() {
             await reloadLoadedMeetings()
         }
+    }
+
+    func observeAttendedMeetings() async {
+        guard let observeAttendedMeetingsUseCase else { return }
+        for await ids in observeAttendedMeetingsUseCase.invoke() {
+            attendingConversationIDs = ids
+        }
+    }
+
+    /// Whether the self user is currently attending (joined the call of) the given meeting.
+    func isAttending(_ meeting: Meeting) -> Bool {
+        attendingConversationIDs.contains(meeting.conversationID)
     }
 
     func formatDay(_ date: Date) -> String {

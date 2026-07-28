@@ -19,6 +19,8 @@
 import Foundation
 import WireNetwork
 
+/// Thin HTTP client for CallingService endpoints.
+/// Keeps request/response encoding and raw API calls separate from test flow orchestration.
 final class CallingServiceClient {
 
     private let userHelper = UserHelper.default
@@ -60,16 +62,17 @@ final class CallingServiceClient {
     }
 
     enum Constants {
-        static let CONNECT_TIMEOUT: TimeInterval = 360
-        static let RESPONSE_TIMEOUT: TimeInterval = 360
-        static let CALLING_RESPONSE_TIMEOUT: TimeInterval = 600
+        static let connectTimeout: TimeInterval = 360
+        static let responseTimeout: TimeInterval = 360
+        static let instanceTimeoutMilliseconds: Double = 1000 * 60 * 10
+        static let callTimeoutMilliseconds: Double = 1000 * 60 * 60 * 2
 
     }
 
     private lazy var session: URLSession = {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = Constants.CONNECT_TIMEOUT
-        config.timeoutIntervalForResource = Constants.RESPONSE_TIMEOUT
+        config.timeoutIntervalForRequest = Constants.connectTimeout
+        config.timeoutIntervalForResource = Constants.responseTimeout
         return URLSession(configuration: config)
     }()
 
@@ -86,13 +89,19 @@ final class CallingServiceClient {
     }
 
     func instanceEndpoint(instanceId: String, path: String) -> URL {
-        let cleanPath = path.hasPrefix("/") ? String(path.dropFirst()) : path
-        return callingServiceURL
+        instanceEndpoint(instanceId: instanceId, pathComponents: [path])
+    }
+
+    func instanceEndpoint(instanceId: String, pathComponents: [String]) -> URL {
+        let instanceURL = callingServiceURL
             .appendingPathComponent("api")
             .appendingPathComponent("v1")
             .appendingPathComponent("instance")
             .appendingPathComponent(instanceId)
-            .appendingPathComponent(cleanPath)
+
+        return pathComponents.reduce(instanceURL) { url, pathComponent in
+            url.appendingPathComponent(pathComponent)
+        }
     }
 
     func sendHttpRequest(
@@ -168,7 +177,7 @@ final class CallingServiceClient {
                 name: instanceTypeName,
                 version: instanceTypeVersion
             ),
-            timeout: Constants.RESPONSE_TIMEOUT
+            timeout: Constants.instanceTimeoutMilliseconds
         )
 
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: body, method: .post)
@@ -288,34 +297,16 @@ final class CallingServiceClient {
 
     private func performCall(
         instanceId: String,
-        path: String,
+        pathComponents: [String],
         request: some Encodable
     ) async throws -> CallResponse {
-        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
+        let endpoint = instanceEndpoint(instanceId: instanceId, pathComponents: pathComponents)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: request, method: .post)
         guard code.statusCode == 200 else {
             logEndpointFailure(method: "POST", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
-                "CallingService call failed: POST \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
-            )
-        }
-        return try JSONDecoder().decode(CallResponse.self, from: data)
-    }
-
-    private func performCallGet(
-        instanceId: String,
-        path: String
-    ) async throws -> CallResponse {
-        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
-        let (data, code) = try await sendHttpRequest(
-            endpoint: endpoint,
-            body: CallingServiceEmptyBody?.none,
-            method: .get
-        )
-        guard code.statusCode == 200 else {
-            logEndpointFailure(method: "GET", endpoint: endpoint, statusCode: code.statusCode, data: data)
-            throw RuntimeError(
-                "CallingService call failed: GET \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService call failed: POST \(endpoint.path) HTTP \(code.statusCode). " +
+                    (String(data: data, encoding: .utf8) ?? "")
             )
         }
         return try JSONDecoder().decode(CallResponse.self, from: data)
@@ -323,29 +314,44 @@ final class CallingServiceClient {
 
     private func performCallPut(
         instanceId: String,
-        path: String
-    ) async throws -> CallResponse {
-        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
+        pathComponents: [String]
+    ) async throws {
+        let endpoint = instanceEndpoint(instanceId: instanceId, pathComponents: pathComponents)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: CallingServiceEmptyBody(), method: .put)
-        guard code.statusCode == 200 else {
+        guard (200 ... 299).contains(code.statusCode) else {
             logEndpointFailure(method: "PUT", endpoint: endpoint, statusCode: code.statusCode, data: data)
             throw RuntimeError(
-                "CallingService call failed: PUT \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService call failed: PUT \(endpoint.path) HTTP \(code.statusCode). " +
+                    (String(data: data, encoding: .utf8) ?? "")
             )
         }
-        return try JSONDecoder().decode(CallResponse.self, from: data)
     }
 
-    func start(instanceId: String, request: StartCallBody) async throws -> CallResponse {
-        try await performCall(instanceId: instanceId, path: "/call/start", request: request)
-    }
-
-    func startVideo(instanceId: String, request: StartCallBody) async throws -> CallResponse {
-        try await performCall(instanceId: instanceId, path: "/call/startVideo", request: request)
+    private func performFlowsGet(instanceId: String) async throws -> [CallFlow] {
+        let endpoint = instanceEndpoint(instanceId: instanceId, path: "flows")
+        let (data, code) = try await sendHttpRequest(
+            endpoint: endpoint,
+            body: CallingServiceEmptyBody?.none,
+            method: .get
+        )
+        guard code.statusCode == 200 else {
+            let responseBody = String(data: data, encoding: .utf8) ?? ""
+            throw RuntimeError(
+                "CallingService failed to get flows for \(instanceId): HTTP \(code.statusCode). \(responseBody)"
+            )
+        }
+        do {
+            return try JSONDecoder().decode([CallFlow].self, from: data)
+        } catch {
+            let responseBody = String(data: data, encoding: .utf8) ?? ""
+            throw RuntimeError(
+                "CallingService failed to decode flows for \(instanceId). Body: \(responseBody). Error: \(error)"
+            )
+        }
     }
 
     func acceptNext(instanceId: String, request: CallRequest) async throws -> CallResponse {
-        try await performCall(instanceId: instanceId, path: "/call/acceptNext", request: request)
+        try await performCall(instanceId: instanceId, pathComponents: ["call", "acceptNext"], request: request)
     }
 
     func startCall(
@@ -354,46 +360,29 @@ final class CallingServiceClient {
     ) async throws -> CallResponse {
         let request = StartCallBody(
             conversationId: conversationId,
-            timeout: Constants.CALLING_RESPONSE_TIMEOUT
+            timeout: Constants.callTimeoutMilliseconds
         )
-        return try await start(instanceId: instanceId, request: request)
+        return try await performCall(instanceId: instanceId, pathComponents: ["call", "start"], request: request)
     }
 
-    func startVideoCall(
-        instanceId: String,
-        conversationId: String
-    ) async throws -> CallResponse {
-        let request = StartCallBody(
-            conversationId: conversationId,
-            timeout: Constants.CALLING_RESPONSE_TIMEOUT
-        )
-        return try await startVideo(instanceId: instanceId, request: request)
-    }
-
-    func acceptNextCalls(
-        instanceIds: [String],
-        conversationId: String
-    ) async throws -> [String: CallResponse] {
-        precondition(!instanceIds.isEmpty, "No instance IDs provided")
-
-        return try await withThrowingTaskGroup(of: (String, CallResponse).self) { group in
-            for instanceId in instanceIds {
-                group.addTask {
-                    let request = CallRequest(
-                        conversationId: conversationId,
-                        timeout: Constants.CALLING_RESPONSE_TIMEOUT
-                    )
-                    let response = try await self.acceptNext(instanceId: instanceId, request: request)
-                    return (instanceId, response)
-                }
-            }
-
-            var results: [String: CallResponse] = [:]
-            for try await (id, response) in group {
-                results[id] = response
-            }
-            return results
+    func getCurrentCall(instanceId: String) async throws -> CallResponse {
+        let instance = try await getInstanceStatus(instanceIds: [instanceId]).first
+        guard let call = instance?.currentCall else {
+            throw RuntimeError("CallingService currentCall is nil for \(instanceId)")
         }
+        return call
+    }
+
+    func switchVideoOn(instanceId: String, callId: String) async throws {
+        try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "switchVideoOn"])
+    }
+
+    func getRawFlows(instanceId: String) async throws -> [CallFlow] {
+        try await performFlowsGet(instanceId: instanceId)
+    }
+
+    func getFlows(instanceId: String) async throws -> [CallFlow] {
+        try await getRawFlows(instanceId: instanceId).filter(\.isValid)
     }
 }
 
@@ -405,6 +394,7 @@ struct InstanceType: Encodable {
 struct CallingServiceInstance: Decodable {
     let id: String
     let instanceStatus: String?
+    let currentCall: CallResponse?
 }
 
 struct CreateInstanceBody: Encodable {
@@ -429,4 +419,19 @@ struct CallingServiceEmptyBody: Encodable {}
 struct CallResponse: Decodable {
     let id: String?
     let status: String?
+}
+
+struct CallFlow: Decodable, Equatable {
+    let audioPacketsReceived: Int
+    let audioPacketsSent: Int
+    let videoPacketsReceived: Int
+    let videoPacketsSent: Int
+    let remoteUserId: String
+
+    var isValid: Bool {
+        audioPacketsReceived != -1 ||
+            audioPacketsSent != -1 ||
+            videoPacketsReceived != -1 ||
+            videoPacketsSent != -1
+    }
 }

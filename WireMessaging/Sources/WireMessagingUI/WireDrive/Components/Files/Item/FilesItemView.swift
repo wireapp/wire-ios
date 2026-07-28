@@ -60,7 +60,13 @@ struct FilesItemView: View {
                 Spacer()
 
                 Menu {
-                    menuContent()
+                    if viewModel.showReadOnlyIcon {
+                        Section(Strings.Files.ViewerAccess.navigationSubtitle) {
+                            menuContent()
+                        }
+                    } else {
+                        menuContent()
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
@@ -377,6 +383,7 @@ struct FilesItemView: View {
     ) -> some View {
         if viewModel.menuActions.contains(itemAction) {
             menuItem(itemAction)
+                .accessibilityLabel(itemAction.accessibilityLabel)
                 .accessibilityIdentifier("fileMenu.\(itemAction)")
         }
     }

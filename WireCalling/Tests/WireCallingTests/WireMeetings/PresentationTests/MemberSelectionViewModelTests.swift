@@ -60,7 +60,7 @@ struct MemberSelectionViewModelTests {
         // Then
         #expect(viewModel.isSelected(.alice))
         #expect(viewModel.selectedMembers.count == 1)
-        #expect(viewModel.selectedMembers.first?.id == MeetingMember.alice.id)
+        #expect(viewModel.selectedMembers.first?.qualifiedID == MeetingMember.alice.qualifiedID)
     }
 
     @Test("toggleSelection removes an already-selected member")
@@ -103,7 +103,7 @@ struct MemberSelectionViewModelTests {
 
         // Then
         #expect(viewModel.filteredUnselected.count == 1)
-        #expect(viewModel.filteredUnselected.first?.id == MeetingMember.bob.id)
+        #expect(viewModel.filteredUnselected.first?.qualifiedID == MeetingMember.bob.qualifiedID)
     }
 
     @Test("filteredUnselected returns all results when nothing is selected")
@@ -128,7 +128,8 @@ struct MemberSelectionViewModelTests {
 
         // Then
         #expect(onSelectRecorder.calls.count == 1)
-        #expect(onSelectRecorder.calls.first?.map(\.id) == [MeetingMember.alice, MeetingMember.bob].map(\.id))
+        #expect(onSelectRecorder.calls.first?.map(\.qualifiedID) == [MeetingMember.alice, MeetingMember.bob]
+            .map(\.qualifiedID))
     }
 
     @Test("toggleSelection alone does not invoke onSelect")
@@ -172,7 +173,8 @@ struct MemberSelectionViewModelTests {
         await waitForSearchToSettle(viewModel)
 
         // Then
-        #expect(viewModel.searchResults.map(\.id) == [MeetingMember.alice, MeetingMember.bob].map(\.id))
+        #expect(viewModel.searchResults.map(\.qualifiedID) == [MeetingMember.alice, MeetingMember.bob]
+            .map(\.qualifiedID))
         #expect(viewModel.hasSearchError == false)
         #expect(viewModel.isSearching == false)
     }
