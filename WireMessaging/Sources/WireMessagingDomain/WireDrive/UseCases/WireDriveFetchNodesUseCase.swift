@@ -37,8 +37,7 @@ package final class WireDriveFetchNodesUseCase: Sendable {
     private let state: WireDriveNodesCollection
 
     /// Emits the nodes held by the injected collection, replaying the current value to new subscribers.
-    @MainActor
-    package var nodes: AnyPublisher<[WireDriveNode], Never> { state.observeNodes() }
+    @MainActor package var nodes: AnyPublisher<[WireDriveNode], Never> { state.observeNodes() }
 
     @MainActor private var searchTerm: String?
 
