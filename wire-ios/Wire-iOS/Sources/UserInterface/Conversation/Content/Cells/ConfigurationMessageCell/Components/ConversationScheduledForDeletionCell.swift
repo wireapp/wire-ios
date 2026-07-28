@@ -79,31 +79,31 @@ final class ConversationScheduledForDeletionCellDescription: ConversationMessage
         let title = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.text(
             formattedDate
         )
-        let readMore = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.ReadMore.text
         let redColor = ColorTheme.Base.primary(.red)
 
-        let text = NSAttributedString(string: title + "\n\(readMore)")
-        let attributedText = NSMutableAttributedString(attributedString: text)
-        attributedText.addAttribute(
-            .foregroundColor,
-            value: redColor,
-            range: NSRange(location: 0, length: NSAttributedString(string: title).length)
+        var attributedText: NSMutableAttributedString
+        let baseAttributes: [NSAttributedString.Key: AnyObject] = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+            .foregroundColor: redColor
+        ]
+
+        attributedText = .init(
+            string: title,
+            attributes: baseAttributes
         )
 
-        let nsString = attributedText.string as NSString
-        let range = nsString.range(of: readMore)
+        let readMore = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.ReadMore.text
+        let linkUrl = View.readMoreURL
+        let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+            .foregroundColor: ColorTheme.Buttons.Secondary.onEnabled,
+            .link: linkUrl as AnyObject,
+            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+            .underlineColor: ColorTheme.Buttons.Secondary.onEnabled
+        ]
 
-        if range.location != NSNotFound {
-            let linkAttributes: [NSAttributedString.Key: AnyObject] = [
-                .font: UIFont.mediumSemiboldFont,
-                .foregroundColor: ColorTheme.Buttons.Secondary.onEnabled,
-                .link: View.readMoreURL as AnyObject,
-                .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
-                .underlineColor: ColorTheme.Buttons.Secondary.onEnabled
-            ]
-            attributedText.addAttributes(linkAttributes, range: range)
-        }
-
+        let spaceBetweenParagraphs = "\n"
+        attributedText.append(.init(string: spaceBetweenParagraphs + readMore, attributes: linkAttributes))
         let icon = UIImage(resource: .attention).withRenderingMode(.alwaysTemplate)
 
         self.configuration = View.Configuration(
