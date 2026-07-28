@@ -159,7 +159,8 @@ extension WireTransport.BackendEnvironment {
             environmentType: EnvironmentType(type),
             endpoints: endpoints,
             proxySettings: proxySettings,
-            certificateTrust: certificateTrust
+            certificateTrust: certificateTrust,
+            supportEmail: nil
         )
     }
 
