@@ -367,4 +367,133 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
+
+    // MARK: - Adminless groups (403 requiresAdmin)
+
+    func testThatItReturnsRequiresAdmin_On403WithEligibleMembers() {
+        syncMOC.performGroupedAndWait { [self] in
+            // given
+            var action = RemoveParticipantAction(user: user, conversation: conversation)
+            let memberID = UUID()
+            let expectation = customExpectation(description: "Result Handler was called")
+            action.onResult { result in
+                guard case let .failure(ConversationRemoveParticipantError.requiresAdmin(members)) = result else {
+                    return
+                }
+                XCTAssertEqual(members.count, 1)
+                XCTAssertEqual(members.first?.id, memberID)
+                XCTAssertEqual(members.first?.domain, "wire.com")
+                expectation.fulfill()
+            }
+
+            let payload: [String: Any] = [
+                "eligible_members": [["id": memberID.uuidString, "domain": "wire.com"]]
+            ]
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
+
+            // when
+            sut.handleResponse(response, action: action)
+
+            // then
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
+
+    func testThatItSkipsMalformedEligibleMembers_On403() {
+        syncMOC.performGroupedAndWait { [self] in
+            // given
+            var action = RemoveParticipantAction(user: user, conversation: conversation)
+            let goodID = UUID()
+            let expectation = customExpectation(description: "Result Handler was called")
+            action.onResult { result in
+                guard case let .failure(ConversationRemoveParticipantError.requiresAdmin(members)) = result else {
+                    return
+                }
+                // The entry missing `domain` and the non-UUID `id` are dropped by the failable init.
+                XCTAssertEqual(members.map(\.id), [goodID])
+                expectation.fulfill()
+            }
+
+            let payload: [String: Any] = [
+                "eligible_members": [
+                    ["id": goodID.uuidString, "domain": "wire.com"],
+                    ["id": goodID.uuidString],
+                    ["id": "not-a-uuid", "domain": "wire.com"]
+                ]
+            ]
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
+
+            // when
+            sut.handleResponse(response, action: action)
+
+            // then
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
+
+    func testThatItFallsThroughToKnownError_On403WithoutEligibleMembers() {
+        syncMOC.performGroupedAndWait { [self] in
+            // given
+            var action = RemoveParticipantAction(user: user, conversation: conversation)
+            let expectation = customExpectation(description: "Result Handler was called")
+            action.onResult { result in
+                guard case let .failure(error) = result else { return }
+                if case ConversationRemoveParticipantError.invalidOperation = error {
+                    expectation.fulfill()
+                }
+            }
+
+            let response = ZMTransportResponse(
+                payload: ["label": "invalid-op"] as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
+
+            // when
+            sut.handleResponse(response, action: action)
+
+            // then
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
+
+    func testThatItReturnsRequiresAdminWithNoMembers_On403WithEmptyEligibleMembers() {
+        syncMOC.performGroupedAndWait { [self] in
+            // given — an empty `eligible_members` still maps to `requiresAdmin`, with no members.
+            var action = RemoveParticipantAction(user: user, conversation: conversation)
+            let expectation = customExpectation(description: "Result Handler was called")
+            action.onResult { result in
+                guard case let .failure(ConversationRemoveParticipantError.requiresAdmin(members)) = result else {
+                    return
+                }
+                XCTAssertTrue(members.isEmpty)
+                expectation.fulfill()
+            }
+
+            let payload: [String: Any] = ["eligible_members": [[String: Any]]()]
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
+
+            // when
+            sut.handleResponse(response, action: action)
+
+            // then
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
 }
