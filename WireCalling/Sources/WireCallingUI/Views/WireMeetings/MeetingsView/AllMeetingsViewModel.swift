@@ -29,13 +29,13 @@ import WireCallingDomainSupport
 package final class AllMeetingsViewModel {
 
     private let makeFormViewModel: @MainActor (
-        _ mode: CreateMeetingFormViewModel.Mode,
+        _ mode: MeetingFormViewModel.Mode,
         _ onSuccess: @escaping (Meeting) -> Void
-    ) -> CreateMeetingFormViewModel
+    ) -> MeetingFormViewModel
 
     package let meetingsViewModel: MeetingsViewModel
 
-    var presentedFormMode: CreateMeetingFormViewModel.Mode?
+    var presentedFormMode: MeetingFormViewModel.Mode?
 
     package init(
         currentDateProvider: any CurrentDateProviding,
@@ -44,9 +44,9 @@ package final class AllMeetingsViewModel {
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         makeFormViewModel: @escaping @MainActor (
-            _ mode: CreateMeetingFormViewModel.Mode,
+            _ mode: MeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting) -> Void
-        ) -> CreateMeetingFormViewModel
+        ) -> MeetingFormViewModel
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
@@ -68,7 +68,11 @@ package final class AllMeetingsViewModel {
         presentedFormMode = .scheduled
     }
 
-    func makeMeetingFormViewModel(mode: CreateMeetingFormViewModel.Mode) -> CreateMeetingFormViewModel {
+    func editMeetingTapped(_ meeting: Meeting) {
+        presentedFormMode = .edit(meeting)
+    }
+
+    func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {
         makeFormViewModel(mode) { [weak self] _ in
             self?.presentedFormMode = nil
         }

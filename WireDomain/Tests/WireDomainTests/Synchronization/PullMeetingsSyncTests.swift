@@ -150,6 +150,85 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         }
     }
 
+    // MARK: - updateMeeting
+
+    public var updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingThrowableError: (
+        any Error
+    )?
+    public var updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount =
+        0
+    public var updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCalled: Bool {
+        updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount > 0
+    }
+
+    public var updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments: (
+        id: QualifiedID,
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?
+    )?
+    public var updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedInvocations: [
+        (
+            id: QualifiedID,
+            title: String,
+            startTime: Date,
+            endTime: Date,
+            recurrence: MeetingRecurrence?
+        )
+    ] = []
+    public var updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue: Meeting!
+    public var updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure: (
+        (
+            QualifiedID,
+            String,
+            Date,
+            Date,
+            MeetingRecurrence?
+        ) async throws -> Meeting
+    )?
+
+    public func updateMeeting(
+        id: QualifiedID,
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: MeetingRecurrence?
+    ) async throws -> Meeting {
+        updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount += 1
+        updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments =
+            (
+                id: id,
+                title: title,
+                startTime: startTime,
+                endTime: endTime,
+                recurrence: recurrence
+            )
+        updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedInvocations
+            .append((
+                id: id,
+                title: title,
+                startTime: startTime,
+                endTime: endTime,
+                recurrence: recurrence
+            ))
+        if let error =
+            updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingThrowableError {
+            throw error
+        }
+        if let updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure {
+            return try await updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure(
+                id,
+                title,
+                startTime,
+                endTime,
+                recurrence
+            )
+        } else {
+            return updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue
+        }
+    }
+
     // MARK: - storeMeeting
 
     public var storeMeetingMeetingMeetingVoidCallsCount = 0
@@ -234,7 +313,25 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
 
     // MARK: - deleteMeeting
 
-    func deleteMeeting(id: QualifiedID) async throws {}
+    public var deleteMeetingIdQualifiedIDVoidThrowableError: (any Error)?
+    public var deleteMeetingIdQualifiedIDVoidCallsCount = 0
+    public var deleteMeetingIdQualifiedIDVoidCalled: Bool {
+        deleteMeetingIdQualifiedIDVoidCallsCount > 0
+    }
+
+    public var deleteMeetingIdQualifiedIDVoidReceivedId: QualifiedID?
+    public var deleteMeetingIdQualifiedIDVoidReceivedInvocations: [QualifiedID] = []
+    public var deleteMeetingIdQualifiedIDVoidClosure: ((QualifiedID) async throws -> Void)?
+
+    public func deleteMeeting(id: QualifiedID) async throws {
+        deleteMeetingIdQualifiedIDVoidCallsCount += 1
+        deleteMeetingIdQualifiedIDVoidReceivedId = id
+        deleteMeetingIdQualifiedIDVoidReceivedInvocations.append(id)
+        if let error = deleteMeetingIdQualifiedIDVoidThrowableError {
+            throw error
+        }
+        try await deleteMeetingIdQualifiedIDVoidClosure?(id)
+    }
 
     // MARK: - fetchMeetings
 

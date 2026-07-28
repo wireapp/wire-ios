@@ -120,6 +120,9 @@ final class ZMConversationMissedCallSystemMessageTests: ZMConversationTestsBase 
             let timestamp = Date()
             let first = conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
             let intermediate = try! conversation.appendText(content: "Answer the call, please!") as! ZMMessage
+            // Pin the timestamp: `awakeFromInsert` floors the current time to whole milliseconds,
+            // which can otherwise place this message before `first` and collapse `second` into it.
+            intermediate.serverTimestamp = timestamp.addingTimeInterval(50)
 
             // when
             let second = conversation.appendMissedCallMessage(fromUser: user, at: timestamp.addingTimeInterval(100))
