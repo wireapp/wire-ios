@@ -136,7 +136,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             let eligibleMembers = (dictionary?["eligible_members"] as? [[AnyHashable: Any]])?
                 .compactMap(ConversationRemoveParticipantError.EligibleMember.init(payload:))
 
-            guard let eligibleMembers else {
+            guard let eligibleMembers, !eligibleMembers.isEmpty else {
                 fallthrough
             }
 
