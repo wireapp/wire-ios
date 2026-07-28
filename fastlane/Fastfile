@@ -639,7 +639,8 @@ platform :ios do
             cloned_source_packages_path: ENV['PACKAGES_DIR'],
             disable_package_automatic_updates: true,
             skip_package_dependencies_resolution: true,
-            number_of_retries: build.number_of_retries
+            number_of_retries: build.number_of_retries,
+            xcargs: "-collect-test-diagnostics never" # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
         }
         run_tests_options[:only_testing] = options[:only_testing] if options[:only_testing]&.any?
         run_tests_options[:skip_testing] = options[:skip_testing] if options[:skip_testing]&.any?
