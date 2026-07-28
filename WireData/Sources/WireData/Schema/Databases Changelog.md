@@ -16,7 +16,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ### 2.139.0
 
-* TODO: https://github.com/wireapp/wire-ios/pull/5019
+* added Conversation.scheduledDeletionDate and SystemMessage.conversationScheduledDeletionDate properties.
 
 ### 2.138.0
 
