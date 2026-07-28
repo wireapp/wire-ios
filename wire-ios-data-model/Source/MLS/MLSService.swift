@@ -1030,6 +1030,7 @@ public final class MLSService: MLSServiceInterface {
                 logger.info("pending conversation recovery batch: recovered \(recovered) of \(batch.count)")
             }
 
+            // Return whether another batch should be processed immediately.
             return recovered == batch.count && pendingConversations.count > batch.count
         } catch {
             logger.error("failed pending conversation recovery batch: \(String(reflecting: error))")
