@@ -25,21 +25,6 @@ public enum ConversationRemoveParticipantError: Error, Equatable {
     case failedToRemoveMLSMembers
     // Otherwise, the conversation would be left without an admin.
     case requiresAdmin([EligibleMember])
-
-    public static func == (lhs: ConversationRemoveParticipantError, rhs: ConversationRemoveParticipantError) -> Bool {
-        switch (lhs, rhs) {
-        case let (.requiresAdmin(eligibleMembers1), .requiresAdmin(eligibleMembers2)):
-            eligibleMembers1 == eligibleMembers2
-        case (.conversationNotFound, .conversationNotFound):
-            true
-        case (.failedToRemoveMLSMembers, .failedToRemoveMLSMembers):
-            true
-        case (.invalidOperation, .invalidOperation):
-            true
-        default:
-            false
-        }
-    }
 }
 
 public class RemoveParticipantAction: EntityAction {
