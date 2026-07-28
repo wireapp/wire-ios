@@ -90,7 +90,19 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
         return label
     }()
 
-    private let configurationTextField = ValidatedTextField(kind: .unknown, style: .default)
+    // Exceptional case: in the Wire Gov edition, the context menu
+    // (including copy/paste actions) is disabled app wide
+    // (via SecurityFlag.clipboard).
+    //
+    // This is the landing page for the Wire Gov edition, but we want
+    // to allow the user to paste in the configuration link. Therefore
+    // we override the SecurityFlag.clipboard setting and allow the
+    // context menu here.
+    private let configurationTextField = ValidatedTextField(
+        kind: .unknown,
+        style: .default,
+        overrideIsContextMenuAllowed: true
+    )
 
     private let qrCodeButton: IconButton = {
         let button = IconButton()
@@ -111,7 +123,7 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
         let label = UILabel()
         label.font = AuthenticationStepController.errorMessageFont
         label.textColor = SemanticColors.Label.textErrorDefault
-        label.textAlignment = .center
+        label.textAlignment = .natural
         label.numberOfLines = 0
         label.isHidden = true
         label.accessibilityIdentifier = "validation-failure"
@@ -142,6 +154,7 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
         configureSubviews()
         createConstraints()
         configureObservers()
+        setUpDeepLinkHandling()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -308,6 +321,13 @@ final class NoDefaultBackendViewController: UIViewController, AuthenticationCoor
 
         scrollView.contentInset.bottom = overlap
         scrollView.verticalScrollIndicatorInsets.bottom = overlap
+    }
+
+    private func setUpDeepLinkHandling() {
+        authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors { [weak self] configURL in
+            self?.configurationTextField.text = configURL.absoluteString
+            self?.updateConfigureButtonEnabled()
+        }
     }
 
     // MARK: - QR scanner
