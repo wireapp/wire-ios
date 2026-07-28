@@ -240,12 +240,12 @@ struct MeetingsViewModelTests {
         observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
 
         // When
-        continuation.yield([attended.conversation.qualifiedID])
+        continuation.yield([attended.conversationID])
         continuation.finish()
         await viewModel.observeAttendedMeetings()
 
         // Then
-        #expect(viewModel.attendingConversationIDs == [attended.conversation.qualifiedID])
+        #expect(viewModel.attendingConversationIDs == [attended.conversationID])
         #expect(viewModel.isAttending(attended) == true)
         #expect(viewModel.isAttending(other) == false)
     }
@@ -259,7 +259,7 @@ struct MeetingsViewModelTests {
         observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
 
         // When — the self user joins the call and later leaves it
-        continuation.yield([meeting.conversation.qualifiedID])
+        continuation.yield([meeting.conversationID])
         continuation.yield([])
         continuation.finish()
         await viewModel.observeAttendedMeetings()
