@@ -1124,11 +1124,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(conversationMLSStatus, .ready)
     }
 
-    func test_PerformPendingJoins_It_JoinsViaExternalCommit_FederationGroup() async throws {
+    func test_RecoverPendingConversationBatchIfNeeded_JoinsPendingConversationOnlyOnce() async {
         // Given
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
-        let domain = localDomain
         let conversation = await uiMOC.perform { [uiMOC] in
             let conversation = ZMConversation.insertNewObject(in: uiMOC)
             conversation.remoteIdentifier = conversationID
@@ -1140,22 +1139,41 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
             conversation.epoch = 0
             conversation.domain = "foreign.domain"
+            conversation.addParticipantAndUpdateConversationState(
+                user: ZMUser.selfUser(in: uiMOC),
+                role: nil
+            )
             XCTAssertNotEqual(conversation.domain, self.localDomain)
             return conversation
         }
+        await uiMOC.perform {
+            XCTAssertTrue(self.uiMOC.saveOrRollback())
+        }
+
         // mock
-        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
         mockMLSActionExecutor.mockJoinGroup = { _, _ in }
 
         // When
-        try await sut.performPendingJoins()
+        _ = await sut.recoverPendingConversationBatchIfNeeded()
 
         // Then
         XCTAssertEqual(
             mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations.count,
             1
         )
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
+
+        let persistedStatus = await uiMOC.perform {
+            self.uiMOC.refresh(conversation, mergeChanges: false)
+            return conversation.mlsStatus
+        }
+        XCTAssertEqual(persistedStatus, .ready)
+
+        // When
+        _ = await sut.recoverPendingConversationBatchIfNeeded()
+
+        // Then
         XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
     }
 
