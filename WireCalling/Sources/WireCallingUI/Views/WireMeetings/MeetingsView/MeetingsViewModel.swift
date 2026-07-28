@@ -108,7 +108,7 @@ package final class MeetingsViewModel {
 
     /// Whether the self user is currently attending (joined the call of) the given meeting.
     func isAttending(_ meeting: Meeting) -> Bool {
-        attendingConversationIDs.contains(meeting.conversation.qualifiedID)
+        attendingConversationIDs.contains(meeting.conversationID)
     }
 
     func formatDay(_ date: Date) -> String {

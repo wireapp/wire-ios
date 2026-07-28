@@ -97,8 +97,8 @@ struct MeetingRow: View {
                     }
                 }
 
-                if !meeting.conversation.participants.isEmpty {
-                    MemberAvatarsView(members: meeting.conversation.participants.sorted { $0.name < $1.name })
+                if let conversation = meeting.conversation, !conversation.participants.isEmpty {
+                    MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
                         .padding(.top, 2)
                 }
                 if isAttending {
@@ -164,7 +164,6 @@ private extension MeetingRecurrence {
             end: Date(),
             recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
             conversation: MeetingConversation(
-                qualifiedID: QualifiedID(id: UUID(), domain: ""),
                 participants: [
                     MeetingMember(
                         qualifiedID: QualifiedID(id: UUID(), domain: ""),
@@ -180,6 +179,7 @@ private extension MeetingRecurrence {
                     )
                 ]
             ),
+            conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         ),
         formatTimeRange: { _ in "Today" },

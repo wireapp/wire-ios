@@ -431,7 +431,11 @@ final class ZClientViewController: UIViewController {
             memberRepository: memberRepository,
             conversationRepository: MeetingConversationRepositoryBridge(
                 conversationRepository: conversationRepository,
-                contextProvider: userSession.contextProvider
+                contextProvider: userSession.contextProvider,
+                participantsService: ConversationParticipantsService(
+                    context: userSession.contextProvider.syncContext,
+                    localDomain: userSession.selfUser.domain
+                )
             ),
             callStateRepository: MeetingCallStateRepositoryBridge(userSession: userSession)
         )
