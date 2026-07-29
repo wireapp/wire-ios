@@ -128,13 +128,15 @@ struct MeetingFormView: View {
                 label: Strings.Time.starts,
                 date: $viewModel.startDate,
                 range: viewModel.startDateRange,
+                maximumDate: nil,
                 dateField: .startDate,
                 timeField: .startTime
             )
             dateTimeRow(
                 label: Strings.Time.ends,
                 date: $viewModel.endDate,
-                range: viewModel.endDateRange,
+                range: viewModel.endDateRange.lowerBound...,
+                maximumDate: viewModel.endDateRange.upperBound,
                 dateField: .endDate,
                 timeField: .endTime
             )
@@ -185,9 +187,12 @@ struct MeetingFormView: View {
         label: String,
         date: Binding<Date>,
         range: PartialRangeFrom<Date>,
+        maximumDate: Date?,
         dateField: ExpandedField,
         timeField: ExpandedField
     ) -> some View {
+        let isDateFieldEnabled = dateField != .endDate
+
         HStack {
             Text(label)
             Spacer()
@@ -198,7 +203,8 @@ struct MeetingFormView: View {
                 toggleExpansion(dateField)
             }
             // we currently don't allow to select/edit the end date
-            .disabled(dateField == .endDate)
+            .disabled(!isDateFieldEnabled)
+            .accessibilityHidden(!isDateFieldEnabled)
             pill(
                 text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
                 isSelected: expandedField == timeField
@@ -213,22 +219,34 @@ struct MeetingFormView: View {
                 .labelsHidden()
         }
         if expandedField == timeField {
-            timePicker(date: date, range: range)
+            timePicker(date: date, range: range, maximumDate: maximumDate)
         }
     }
 
     @ViewBuilder
-    private func timePicker(date: Binding<Date>, range: PartialRangeFrom<Date>) -> some View {
+    private func timePicker(date: Binding<Date>, range: PartialRangeFrom<Date>, maximumDate: Date?) -> some View {
         #if canImport(UIKit)
             MinuteIntervalTimePicker(
                 selection: date,
                 range: range,
+                maximumDate: maximumDate,
                 minuteInterval: Self.timePickerMinuteInterval
             )
         #else
-            DatePicker("", selection: date, in: range, displayedComponents: .hourAndMinute)
+            if let maximumDate {
+                DatePicker(
+                    "",
+                    selection: date,
+                    in: range.lowerBound ... maximumDate,
+                    displayedComponents: .hourAndMinute
+                )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
+            } else {
+                DatePicker("", selection: date, in: range, displayedComponents: .hourAndMinute)
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+            }
         #endif
     }
 
@@ -269,6 +287,7 @@ struct MeetingFormView: View {
 
         @Binding var selection: Date
         let range: PartialRangeFrom<Date>
+        let maximumDate: Date?
         let minuteInterval: Int
 
         func makeUIView(context: Context) -> UIDatePicker {
@@ -277,6 +296,7 @@ struct MeetingFormView: View {
             datePicker.preferredDatePickerStyle = .wheels
             datePicker.minuteInterval = minuteInterval
             datePicker.minimumDate = range.lowerBound
+            datePicker.maximumDate = maximumDate
             datePicker.date = selection
             datePicker.addTarget(
                 context.coordinator,
@@ -289,6 +309,7 @@ struct MeetingFormView: View {
         func updateUIView(_ datePicker: UIDatePicker, context: Context) {
             datePicker.minuteInterval = minuteInterval
             datePicker.minimumDate = range.lowerBound
+            datePicker.maximumDate = maximumDate
 
             if abs(datePicker.date.timeIntervalSince(selection)) > 0.5 {
                 datePicker.date = selection

@@ -64,8 +64,7 @@ package final class MeetingFormViewModel {
 
     private static let timePickerMinuteInterval = 15
 
-    /// The smallest allowed interval between start and end date, matching
-    /// the minute granularity of the time picker.
+    /// The smallest selectable interval between start and end time.
     private static let minimumDuration = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
 
     var meetingTitle: String = ""
@@ -74,15 +73,17 @@ package final class MeetingFormViewModel {
     /// so the meeting duration is preserved.
     var startDate: Date {
         didSet {
-            endDate = endDate.addingTimeInterval(startDate.timeIntervalSince(oldValue))
+            let shiftedEndDate = endDate.addingTimeInterval(startDate.timeIntervalSince(oldValue))
+            endDate = Self.adjustedEndDate(shiftedEndDate, forStartDate: startDate)
         }
     }
 
-    /// The end date is always after the start date.
+    /// The end date follows the start date's calendar day and can't go past 23:45.
     var endDate: Date {
         didSet {
-            if endDate < startDate.addingTimeInterval(Self.minimumDuration) {
-                endDate = startDate.addingTimeInterval(Self.minimumDuration)
+            let adjustedEndDate = Self.adjustedEndDate(endDate, forStartDate: startDate)
+            if adjustedEndDate != endDate {
+                endDate = adjustedEndDate
             }
         }
     }
@@ -98,9 +99,11 @@ package final class MeetingFormViewModel {
         return Calendar.current.startOfDay(for: earliest)...
     }
 
-    /// The end date must always be after the start date.
-    var endDateRange: PartialRangeFrom<Date> {
-        startDate.addingTimeInterval(Self.minimumDuration)...
+    /// The end time must stay on the start date and can't go past 23:45.
+    var endDateRange: ClosedRange<Date> {
+        let latestEndDate = Self.latestEndDate(for: startDate)
+        let earliestEndDate = min(startDate.addingTimeInterval(Self.minimumDuration), latestEndDate)
+        return earliestEndDate ... latestEndDate
     }
 
     var repeatOption: MeetingRepeatOption = .never
@@ -152,10 +155,10 @@ package final class MeetingFormViewModel {
         case .instant, .scheduled:
             let startDate = currentDateProvider.now.roundedUpToNextMinuteInterval(Self.timePickerMinuteInterval)
             self.startDate = startDate
-            self.endDate = startDate.addingTimeInterval(60 * TimeInterval.oneMinute)
+            self.endDate = Self.adjustedEndDate(startDate.addingTimeInterval(.oneHour), forStartDate: startDate)
         case let .edit(meeting):
             self.startDate = meeting.start
-            self.endDate = meeting.end
+            self.endDate = Self.adjustedEndDate(meeting.end, forStartDate: meeting.start)
             self.meetingTitle = meeting.title
             self.repeatOption = MeetingRepeatOption(recurrence: meeting.recurrence)
             // The participants come from the meeting's conversation; the
@@ -233,6 +236,44 @@ package final class MeetingFormViewModel {
                 participants: selectedMembers
             )
         }
+    }
+
+    private static func adjustedEndDate(
+        _ proposedEndDate: Date,
+        forStartDate startDate: Date,
+        calendar: Calendar = .current
+    ) -> Date {
+        let latestEndDate = latestEndDate(for: startDate, calendar: calendar)
+        if proposedEndDate > latestEndDate {
+            return latestEndDate
+        }
+
+        let proposedTimeComponents = calendar.dateComponents(
+            [.hour, .minute, .second, .nanosecond],
+            from: proposedEndDate
+        )
+        var endDateComponents = calendar.dateComponents([.year, .month, .day], from: startDate)
+        endDateComponents.hour = proposedTimeComponents.hour
+        endDateComponents.minute = proposedTimeComponents.minute
+        endDateComponents.second = proposedTimeComponents.second
+        endDateComponents.nanosecond = proposedTimeComponents.nanosecond
+
+        let endDateOnStartDay = calendar.date(from: endDateComponents) ?? proposedEndDate
+        let earliestEndDate = min(startDate.addingTimeInterval(minimumDuration), latestEndDate)
+
+        return min(max(endDateOnStartDay, earliestEndDate), latestEndDate)
+    }
+
+    private static func latestEndDate(for startDate: Date, calendar: Calendar = .current) -> Date {
+        var components = calendar.dateComponents([.year, .month, .day], from: startDate)
+        components.hour = 23
+        components.minute = 45
+        components.second = 0
+        components.nanosecond = 0
+
+        return calendar.date(from: components) ?? calendar.startOfDay(for: startDate).addingTimeInterval(
+            TimeInterval.oneDay - TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
+        )
     }
 
 }
