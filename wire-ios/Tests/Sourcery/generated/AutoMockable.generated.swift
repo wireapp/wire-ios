@@ -30,6 +30,7 @@ import WireDataModel
 import WireNetwork
 import WireSyncEngine
 import WireAccountImageUI
+import WireCallingAssembly
 import WireCallingDomain
 import WireMessagingDomain
 import WireMessagingUI
