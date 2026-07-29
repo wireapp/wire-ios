@@ -20,14 +20,18 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     let meeting: Meeting
     let formatTimeRange: (Meeting) -> String
+    var isAttending: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     @ScaledMetric private var iconBoxSize: CGFloat = 31
     @ScaledMetric private var iconFontSize: CGFloat = 15
@@ -83,16 +87,72 @@ struct MeetingRow: View {
                     .padding(.vertical, -12)
                 }
 
-                Text(formatTimeRange(meeting))
-                    .font(for: .subline1)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                HStack(spacing: 8) {
+                    Text(formatTimeRange(meeting))
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                if !meeting.members.isEmpty {
-                    MemberAvatarsView(members: meeting.members)
+                    if let recurrence = meeting.recurrence {
+                        recurrenceBadge(recurrence.title)
+                    }
+                }
+
+                if let conversation = meeting.conversation, !conversation.participants.isEmpty {
+                    MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
+                        .padding(.top, 2)
+                }
+                if isAttending {
+                    attendingLabel
                 }
             }
         }
     }
+
+    private var attendingLabel: some View {
+        HStack(spacing: 6) {
+            Image(.videoCall)
+                .renderingMode(.template)
+                .accessibilityHidden(true)
+
+            Text(Strings.attending)
+        }
+        .font(for: .body2)
+        .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingDetails.attendingLabel)
+        .accessibilityLabel(Text(Strings.attending))
+    }
+
+    private func recurrenceBadge(_ title: String) -> some View {
+        Text(title)
+            .font(for: .subline1)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
+            )
+    }
+}
+
+// MARK: - Recurrence label
+
+private extension MeetingRecurrence {
+
+    private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
+
+    var title: String {
+        switch (frequency, interval) {
+        case (.daily, _): Strings.daily
+        case (.weekly, 2): Strings.everyTwoWeeks
+        case (.weekly, 4): Strings.everyFourWeeks
+        case (.weekly, _): Strings.weekly
+        case (.monthly, _): Strings.monthly
+        case (.yearly, _): Strings.yearly
+        }
+    }
+
 }
 
 #Preview {
@@ -102,12 +162,28 @@ struct MeetingRow: View {
             title: "Meeting1",
             start: Date(),
             end: Date(),
-            recurrence: .none,
-            members: [],
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            conversation: MeetingConversation(
+                participants: [
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                        name: "Alice Smith",
+                        handle: "alice",
+                        initials: "AS"
+                    ),
+                    MeetingMember(
+                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                        name: "Bob Jones",
+                        handle: "bob",
+                        initials: "BJ"
+                    )
+                ]
+            ),
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         ),
         formatTimeRange: { _ in "Today" },
+        isAttending: true,
         onEdit: {},
         onDelete: {}
     )

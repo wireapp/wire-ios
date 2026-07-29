@@ -19,25 +19,49 @@
 public import Foundation
 public import WireFoundation
 
-// TODO: [WPB-20278] Update the model
-public struct MeetingMember: Hashable, Identifiable, Sendable {
+public struct MeetingMember: Sendable {
 
     public let qualifiedID: QualifiedID
     public let name: String
     public let handle: String
 
-    public var id: UUID {
-        qualifiedID.id
-    }
+    /// The member's initials, used as an avatar fallback when no image is available.
+    public let initials: String
+
+    /// The member's accent color, used as the background behind the initials.
+    public let accentColor: WireAccentColor
+
+    /// The member's profile image data, if available; when `nil` the initials are shown instead.
+    public let avatarImageData: Data?
 
     public init(
         qualifiedID: QualifiedID,
         name: String,
-        handle: String
+        handle: String,
+        initials: String = "",
+        accentColor: WireAccentColor = .default,
+        avatarImageData: Data? = nil
     ) {
         self.qualifiedID = qualifiedID
         self.name = name
         self.handle = handle
+        self.initials = initials
+        self.accentColor = accentColor
+        self.avatarImageData = avatarImageData
+    }
+
+}
+
+// MARK: - Hashable
+
+extension MeetingMember: Hashable {
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(qualifiedID)
+    }
+
+    public static func == (lhs: MeetingMember, rhs: MeetingMember) -> Bool {
+        lhs.qualifiedID == rhs.qualifiedID
     }
 
 }

@@ -35,10 +35,15 @@ extension Message {
         return shortDateFormatter
     }()
 
-    static let spellOutDateTimeFormatter: DateFormatter = {
+    static let longDateFormatter: DateFormatter = {
         var longDateFormatter = DateFormatter()
         longDateFormatter.dateStyle = .long
         longDateFormatter.timeStyle = .short
+        return longDateFormatter
+    }()
+
+    static let spellOutDateTimeFormatter: DateFormatter = {
+        var longDateFormatter = Message.longDateFormatter
         longDateFormatter.doesRelativeDateFormatting = true
         return longDateFormatter
     }()
