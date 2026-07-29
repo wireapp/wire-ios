@@ -192,6 +192,8 @@ struct MeetingFormView: View {
             ) {
                 toggleExpansion(dateField)
             }
+            // we currently don't allow to select/edit the end date
+            .disabled(dateField == .endDate)
             pill(
                 text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
                 isSelected: expandedField == timeField
