@@ -34,6 +34,7 @@ struct MeetingsViewModelTests {
     private let upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock
     private let observeMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocolMock
     private let deleteMeetingUseCase: DeleteMeetingUseCaseProtocolMock
+    private let observeAttendedMeetingsUseCase: ObserveAttendedMeetingsUseCaseProtocolMock
     private let viewModel: MeetingsViewModel
 
     init() throws {
@@ -43,12 +44,14 @@ struct MeetingsViewModelTests {
         self.upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
         self.observeMeetingChangesUseCase = ObserveMeetingChangesUseCaseProtocolMock()
         self.deleteMeetingUseCase = DeleteMeetingUseCaseProtocolMock()
+        self.observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCaseProtocolMock()
         self.viewModel = MeetingsViewModel(
             currentDateProvider: mockDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
-            deleteMeetingUseCase: deleteMeetingUseCase
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
     }
 
@@ -59,6 +62,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.isEmpty)
         #expect(viewModel.hasMore == false)
         #expect(viewModel.groupedUpcomingMeetings.isEmpty)
+        #expect(viewModel.attendingConversationIDs.isEmpty)
     }
 
     // MARK: - loadInitialData
@@ -224,6 +228,66 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.count == 12)
     }
 
+    // MARK: - observeAttendedMeetings
+
+    @Test("the initially emitted set populates attendingConversationIDs and isAttending")
+    func observeAttendedMeetings_appliesInitialValue() async {
+        // Given
+        let attended = Meeting.fixture(title: "Attended", start: mockDateProvider.now.addingTimeInterval(3600))
+        let other = Meeting.fixture(title: "Other", start: mockDateProvider.now.addingTimeInterval(7200))
+
+        let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
+        observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
+
+        // When
+        continuation.yield([attended.conversationID])
+        continuation.finish()
+        await viewModel.observeAttendedMeetings()
+
+        // Then
+        #expect(viewModel.attendingConversationIDs == [attended.conversationID])
+        #expect(viewModel.isAttending(attended) == true)
+        #expect(viewModel.isAttending(other) == false)
+    }
+
+    @Test("a subsequent emission replaces the attending set")
+    func observeAttendedMeetings_appliesSubsequentUpdates() async {
+        // Given
+        let meeting = Meeting.fixture(title: "Meeting", start: mockDateProvider.now.addingTimeInterval(3600))
+
+        let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
+        observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
+
+        // When — the self user joins the call and later leaves it
+        continuation.yield([meeting.conversationID])
+        continuation.yield([])
+        continuation.finish()
+        await viewModel.observeAttendedMeetings()
+
+        // Then — the latest emitted set wins
+        #expect(viewModel.attendingConversationIDs.isEmpty)
+        #expect(viewModel.isAttending(meeting) == false)
+    }
+
+    @Test("observeAttendedMeetings returns immediately when no use case is provided")
+    func observeAttendedMeetings_withoutUseCase() async {
+        // Given — a view model created without the optional use case
+        let viewModel = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase
+        )
+
+        // When
+        await viewModel.observeAttendedMeetings()
+
+        // Then
+        #expect(viewModel.attendingConversationIDs.isEmpty)
+        #expect(observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDCallsCount == 0)
+    }
+
     // MARK: - Grouping
 
     @Test("groupedUpcomingMeetings groups by day ascending and sorts within a day by start then title")
@@ -384,10 +448,7 @@ private extension Meeting {
             start: start,
             end: start.addingTimeInterval(duration),
             recurrence: nil,
-            conversation: MeetingConversation(
-                qualifiedID: QualifiedID(id: UUID(), domain: ""),
-                participants: []
-            ),
+            conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         )
     }

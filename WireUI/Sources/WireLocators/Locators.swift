@@ -656,4 +656,12 @@ public enum Locators {
     public enum AlertActions: AutoPrefixedEnum {
         case confirm
     }
+
+    public enum WireMeetings {
+
+        public enum MeetingDetails: String {
+            case attendingLabel = "Attending Label"
+        }
+
+    }
 }

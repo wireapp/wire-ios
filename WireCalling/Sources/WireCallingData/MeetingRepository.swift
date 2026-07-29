@@ -67,7 +67,33 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         )
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
-        return meeting
+        // The stored copy has its members populated from the conversation.
+        // Right after creation the conversation is not pulled yet, so the
+        // store can't provide the meeting and the mapped one is returned;
+        // its empty member list is accurate at this point.
+        return await localStore.storedMeeting(id: meeting.id) ?? meeting
+    }
+
+    public func updateMeeting(
+        id: QualifiedID,
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: WireCallingDomain.MeetingRecurrence?
+    ) async throws -> Meeting {
+        let response = try await meetingsAPI.updateMeeting(
+            id: id,
+            parameters: UpdateMeetingParameters(
+                title: title,
+                startTime: startTime,
+                endTime: endTime,
+                recurrence: recurrence?.toNetworkRecurrence()
+            )
+        )
+        let meeting = response.toDomainMeeting()
+        await storeMeeting(meeting)
+        // The stored copy has its members populated from the conversation.
+        return await localStore.storedMeeting(id: meeting.id) ?? meeting
     }
 
     public func storeMeeting(_ meeting: Meeting) async {
@@ -89,7 +115,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             await localStore.deleteMeeting(id: id)
         }
         changeBroadcaster.broadcast()
-        return meeting
+        guard let meeting else { return nil }
+        // The stored copy has its members populated from the conversation.
+        return await localStore.storedMeeting(id: meeting.id) ?? meeting
     }
 
     public func pullMeetings() async throws {
@@ -165,6 +193,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
 private extension MeetingResponse {
 
+    /// The backend's meeting responses carry no participant data, so
+    /// `conversation` stays `nil` here. The local store resolves it from the
+    /// linked conversation, the source of truth, whenever a meeting is read.
     func toDomainMeeting() -> Meeting {
         Meeting(
             id: id,
@@ -172,9 +203,7 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
-            // The backend response has no participants; they are resolved from the
-            // linked conversation when the meeting is read back from the local store.
-            conversation: MeetingConversation(qualifiedID: conversationID, participants: []),
+            conversationID: conversationID,
             creatorID: creatorID
         )
     }
