@@ -25,7 +25,7 @@ public import Foundation
 /// categorized as past, ongoing, or upcoming based on their start and end times
 /// relative to the current time.
 
-public struct Meeting: Equatable, Sendable {
+public struct Meeting: Hashable, Sendable {
 
     public let id: QualifiedID
 
@@ -37,9 +37,15 @@ public struct Meeting: Equatable, Sendable {
 
     public let recurrence: MeetingRecurrence?
 
-    public let members: [Member]
+    /// The participants of the meeting's conversation, resolved from the
+    /// local store when the meeting is read. `nil` when the conversation has
+    /// not been fetched yet (e.g. a meeting built straight from a network
+    /// response).
+    public let conversation: MeetingConversation?
 
     public let conversationID: QualifiedID
+
+    public let creatorID: QualifiedID
 
     public init(
         id: QualifiedID,
@@ -47,16 +53,18 @@ public struct Meeting: Equatable, Sendable {
         start: Date,
         end: Date,
         recurrence: MeetingRecurrence?,
-        members: [Member],
-        conversationID: QualifiedID
+        conversation: MeetingConversation? = nil,
+        conversationID: QualifiedID,
+        creatorID: QualifiedID
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
         self.recurrence = recurrence
-        self.members = members
+        self.conversation = conversation
         self.conversationID = conversationID
+        self.creatorID = creatorID
     }
 
 }

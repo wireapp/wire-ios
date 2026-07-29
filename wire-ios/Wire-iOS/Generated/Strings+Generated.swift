@@ -339,8 +339,8 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "conversation.bulletListButton.description", fallback: "Use bullet list")
       }
       internal enum CameraButton {
-        /// Take or select a photo
-        internal static let description = L10n.tr("Accessibility", "conversation.cameraButton.description", fallback: "Take or select a photo")
+        /// Take or select a photo, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.cameraButton.description", fallback: "Take or select a photo, disabled in viewer access")
       }
       internal enum CodeButton {
         /// Use code format
@@ -429,8 +429,8 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "conversation.sendButton.description", fallback: "Send this message")
       }
       internal enum SketchButton {
-        /// Open sketch to draw or write
-        internal static let description = L10n.tr("Accessibility", "conversation.sketchButton.description", fallback: "Open sketch to draw or write")
+        /// Open sketch to draw or write, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.sketchButton.description", fallback: "Open sketch to draw or write, disabled in viewer access")
       }
       internal enum TimerButton {
         /// Set a timer for self-deleting messages
@@ -481,16 +481,16 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "conversation.titleViewForOneToOne.hint", fallback: "Double tap to open profile")
       }
       internal enum UploadFileButton {
-        /// Share a file
-        internal static let description = L10n.tr("Accessibility", "conversation.uploadFileButton.description", fallback: "Share a file")
+        /// Share a file, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.uploadFileButton.description", fallback: "Share a file, disabled in viewer access")
       }
       internal enum VerifiedIcon {
         /// Verified
         internal static let description = L10n.tr("Accessibility", "conversation.verifiedIcon.description", fallback: "Verified")
       }
       internal enum VideoButton {
-        /// Record a video
-        internal static let description = L10n.tr("Accessibility", "conversation.videoButton.description", fallback: "Record a video")
+        /// Record a video, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.videoButton.description", fallback: "Record a video, disabled in viewer access")
       }
     }
     internal enum ConversationAnnouncement {
@@ -2399,8 +2399,8 @@ internal enum L10n {
             return L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState", String(describing: p1), fallback: "Shared Drive is %@")
           }
           internal enum DriveViewerAccess {
-            /// Guests have view-only access to files in this conversation.
-            internal static let title = L10n.tr("Localizable", "content.system.file_collaboration.drive_viewer_access.title", fallback: "Guests have view-only access to files in this conversation.")
+            /// People outside your team can join this conversation as viewers.
+            internal static let title = L10n.tr("Localizable", "content.system.file_collaboration.drive_viewer_access.title", fallback: "People outside your team can join this conversation as viewers.")
           }
           internal enum Enabled {
             /// You have editor access. People outside your team only have viewer access.
@@ -2413,6 +2413,12 @@ internal enum L10n {
           internal enum SharedDriveState {
             /// on
             internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState.enabled", fallback: "on")
+          }
+        }
+        internal enum MessageConversationScheduledForDeletion {
+          /// This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)
+          internal static func text(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.text", String(describing: p1), String(describing: p2), fallback: "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)")
           }
         }
         internal enum MessageLegalHold {
@@ -2976,6 +2982,8 @@ internal enum L10n {
         }
         /// Poor connection
         internal static let poorConnection = L10n.tr("Localizable", "conversation.status.poor_connection", fallback: "Poor connection")
+        /// Will be deleted soon
+        internal static let scheduledForDeletion = L10n.tr("Localizable", "conversation.status.scheduled_for_deletion", fallback: "Will be deleted soon")
         /// Muted
         internal static let silenced = L10n.tr("Localizable", "conversation.status.silenced", fallback: "Muted")
         /// Someone
@@ -4312,6 +4320,12 @@ internal enum L10n {
       }
     }
     internal enum LastAdminLeave {
+      /// There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.
+      internal static let cannotLeaveMessage = L10n.tr("Localizable", "last_admin_leave.cannot_leave_message", fallback: "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.")
+      /// Cannot leave "%@".
+      internal static func cannotLeaveTitle(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "last_admin_leave.cannot_leave_title", String(describing: p1), fallback: "Cannot leave \"%@\".")
+      }
       /// Delete group
       internal static let deleteGroup = L10n.tr("Localizable", "last_admin_leave.delete_group", fallback: "Delete group")
       /// You're the only admin. The other participants can't be admins.
@@ -4319,6 +4333,9 @@ internal enum L10n {
       internal static let noEligibleCandidatesMessage = L10n.tr("Localizable", "last_admin_leave.no_eligible_candidates_message", fallback: "You're the only admin. The other participants can't be admins.\nAdd at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.")
       /// Promote new admin
       internal static let promoteNewAdmin = L10n.tr("Localizable", "last_admin_leave.promote_new_admin", fallback: "Promote new admin")
+      /// You're the only admin.
+      /// Promote another participant before leaving.
+      internal static let promoteOnlyMessage = L10n.tr("Localizable", "last_admin_leave.promote_only_message", fallback: "You're the only admin.\nPromote another participant before leaving.")
       /// You're the only admin.
       /// Promote another participant before leaving, or delete the group if it is no longer needed.
       internal static let promoteOrDeleteMessage = L10n.tr("Localizable", "last_admin_leave.promote_or_delete_message", fallback: "You're the only admin.\nPromote another participant before leaving, or delete the group if it is no longer needed.")

@@ -27,8 +27,16 @@ struct MeetingsView: View {
 
     @State private var viewModel: MeetingsViewModel
 
-    init(viewModel: MeetingsViewModel) {
+    /// Called when the user chooses "Edit meeting" in a meeting's menu.
+    /// Presenting the edit UI is up to the owner of this view.
+    private let onEditMeeting: (Meeting) -> Void
+
+    init(
+        viewModel: MeetingsViewModel,
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in }
+    ) {
         self.viewModel = viewModel
+        self.onEditMeeting = onEditMeeting
     }
 
     var body: some View {
@@ -37,8 +45,21 @@ struct MeetingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
-        .onAppear {
-            viewModel.loadInitialData()
+        .alert(
+            Strings.Delete.Error.Alert.title,
+            isPresented: $viewModel.hasDeleteError
+        ) {
+            Button(Strings.Delete.Error.Alert.ok, role: .cancel) {}
+        }
+        .task {
+            await viewModel.loadInitialData()
+        }
+        .task {
+            // Never returns on its own; the task is cancelled by SwiftUI when the view disappears.
+            await viewModel.observeMeetingChanges()
+        }
+        .task {
+            await viewModel.observeAttendedMeetings()
         }
     }
 
@@ -60,12 +81,9 @@ struct MeetingsView: View {
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
                 formatTimeRange: viewModel.formatTimeRange(for:),
-                onEdit: { _ in
-                    // TODO: [WPB-25501] Implement UI
-                },
-                onDelete: { _ in
-                    // TODO: [WPB-25514] Implement UI
-                }
+                isAttending: viewModel.isAttending(_:),
+                onEdit: { onEditMeeting($0) },
+                onDelete: { viewModel.meetingToDelete = $0 }
             )
 
             if viewModel.hasMore {
@@ -75,14 +93,25 @@ struct MeetingsView: View {
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
-                .onAppear { viewModel.loadMoreIfNeeded() }
+                .task { await viewModel.loadMoreIfNeeded() }
             }
         }
         .listStyle(.grouped)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
-            viewModel.loadInitialData()
+            await viewModel.loadInitialData()
+        }
+        .alert(
+            Strings.Delete.Alert.title,
+            isPresented: $viewModel.isDeleteConfirmationPresented
+        ) {
+            Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
+                viewModel.confirmDelete()
+            }
+            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
+        } message: {
+            Text(Strings.Delete.Alert.subtitle)
         }
     }
 
@@ -101,6 +130,7 @@ private struct GroupedSections: View {
     let groups: [(day: Date, meetings: [Meeting])]
     let formatDay: (Date) -> String
     let formatTimeRange: (Meeting) -> String
+    let isAttending: (Meeting) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
 
@@ -111,6 +141,7 @@ private struct GroupedSections: View {
                     MeetingRow(
                         meeting: meeting,
                         formatTimeRange: formatTimeRange,
+                        isAttending: isAttending(meeting),
                         onEdit: { onEdit(meeting) },
                         onDelete: { onDelete(meeting) }
                     )
@@ -127,7 +158,21 @@ private struct GroupedSections: View {
         viewModel: MeetingsViewModel(
             currentDateProvider: .system,
             formatter: MeetingsFormatter(),
-            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase()
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
+        )
+    )
+}
+
+#Preview("non-empty") {
+    MeetingsView(
+        viewModel: MeetingsViewModel(
+            currentDateProvider: .system,
+            formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(meetings: previewMeetings()),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
         )
     )
 }
@@ -136,8 +181,126 @@ private struct PreviewFetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase
 
     var meetings = [Meeting]()
 
-    func invoke(pageSize: Int, offset: Int) -> PaginatedMeetings {
+    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
         .init(meetings: meetings, hasMore: false, nextOffset: 0)
     }
 
+}
+
+private struct PreviewObserveMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocol {
+
+    func invoke() -> AsyncStream<Void> {
+        AsyncStream { $0.finish() }
+    }
+
+}
+
+private struct PreviewDeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
+
+    func invoke(meetingID: QualifiedID) async throws {}
+
+}
+
+private func previewMeetings() -> [Meeting] {
+    let calendar = Calendar.current
+    let now = Date()
+
+    func day(_ offset: Int, hour: Int, minute: Int = 0) -> Date {
+        calendar.date(
+            bySettingHour: hour,
+            minute: minute,
+            second: 0,
+            of: calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: now))!
+        )!
+    }
+
+    func member(_ name: String) -> MeetingMember {
+        let initials = name
+            .split(separator: " ")
+            .compactMap(\.first)
+            .prefix(2)
+            .map(String.init)
+            .joined()
+        let colors = WireAccentColor.allCases
+        let accentColor = colors[abs(name.hashValue) % colors.count]
+        return MeetingMember(
+            qualifiedID: QualifiedID(id: UUID(), domain: ""),
+            name: name,
+            handle: name.lowercased().replacingOccurrences(of: " ", with: ""),
+            initials: initials.uppercased(),
+            accentColor: accentColor
+        )
+    }
+
+    func meeting(_ title: String, start: Date, end: Date, members: [MeetingMember] = []) -> Meeting {
+        Meeting(
+            id: QualifiedID(id: UUID(), domain: ""),
+            title: title,
+            start: start,
+            end: end,
+            recurrence: nil,
+            conversation: MeetingConversation(participants: Set(members)),
+            conversationID: QualifiedID(id: UUID(), domain: ""),
+            creatorID: QualifiedID(id: UUID(), domain: "")
+        )
+    }
+
+    return [
+        // TODAY — two meetings at the same time to exercise time grouping
+        meeting(
+            "Standup",
+            start: day(0, hour: 7),
+            end: day(0, hour: 7, minute: 30)
+        ),
+        meeting(
+            "iOS team update",
+            start: day(0, hour: 7),
+            end: day(0, hour: 7, minute: 20),
+            members: [member("Alice Smith")]
+        ),
+        meeting(
+            "Candidate interview",
+            start: day(0, hour: 16),
+            end: day(0, hour: 16, minute: 45),
+            members: [member("Bob Jones")]
+        ),
+        meeting(
+            "Design review",
+            start: day(0, hour: 17),
+            end: day(0, hour: 18),
+            members: [member("Carla Diaz")]
+        ),
+
+        // TOMORROW
+        meeting(
+            "Sprint planning",
+            start: day(1, hour: 7),
+            end: day(1, hour: 8),
+            members: [member("Dan Ford")]
+        ),
+        meeting(
+            "Daily sync",
+            start: day(1, hour: 7),
+            end: day(1, hour: 7, minute: 20),
+            members: [member("Eve North"), member("Finn Ray")]
+        ),
+        meeting(
+            "Architecture Forum",
+            start: day(1, hour: 13),
+            end: day(1, hour: 14),
+            members: [member("Grace Kim"), member("Hugo Vela"), member("Ivan Cole")]
+        ),
+
+        // NEXT WEEK — many members to exercise the "+N" overflow
+        meeting(
+            "Sprint Review (all teams)",
+            start: day(7, hour: 16),
+            end: day(7, hour: 16, minute: 30),
+            members: [
+                member("Alice Smith"), member("Bob Jones"), member("Carla Diaz"),
+                member("Dan Ford"), member("Eve North"), member("Finn Ray"),
+                member("Grace Kim")
+            ]
+        )
+    ]
 }

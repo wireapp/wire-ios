@@ -100,43 +100,30 @@ final class SettingsTests: WireUITestCase {
 
     @MainActor
     func testCreateLinkPreviewsOption_TC_8951() async throws {
-        let stagingTeam = try await UserHelper.default.registerTeam(withMemberCount: 2)
-        let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
-        let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
+        let (stagingTeam, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 2,
+            conversation: .group("Test")
+        )
 
-        // Login & create conversation
-        _ = try await loginToBackend(user: userA)
-            .tapPlusButtonToCreateGroup()
-            .tapNewGroupButton()
-            .enterGroupName("Test")
-            .tapMemberCells(withLabelPrefixes: [userB.name])
-            .doneSelectingMembers()
-            .goBackToConversationPage()
-
-        // Disable link previews
-        _ = try ConversationsPage()
+        // Login & Disable link previews
+        let conversationPage = try app.loginUser(email: stagingTeam.email, password: stagingTeam.password)
+            .acceptPopup()
             .openSettings()
             .openOptionsMenu()
             .disableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-
-        // Open conversation and send first link
-        _ = try ConversationsPage()
+            // Open conversation and send first link
             .openConversation()
             .sendMessage("First link: https://github.com/wireapp/wire-ios")
             .goBackToConversationPage()
-
-        // Enable link previews
-        _ = try ConversationsPage()
+            // Enable link previews
             .openSettings()
             .openOptionsMenu()
             .enableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-
-        // Open conversation and send first link
-        let conversationPage = try ConversationsPage()
+            // Open conversation and send first link
             .openConversation()
             .sendMessage("Second link: https://github.com/wireapp/wire-android")
 
@@ -150,4 +137,34 @@ final class SettingsTests: WireUITestCase {
             .verifyLinkPreviewCell()
     }
 
+    @MainActor
+    func testUpdateReadReceiptSettingOnGroupConversation_TC_8947() async throws {
+
+        // GIVEN - a group conversation (read receipts are on by default)
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (team, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+
+        let activeConversationPage = try app.loginUser(email: team.email, password: team.password)
+            .acceptPopup()
+            .openConversation()
+
+        // WHEN - read receipts are turned off
+        _ = try activeConversationPage
+            .openConversationDetails()
+            .toggleGroupReadReceipts()
+            .closeConversationDetails()
+            // THEN - a system message confirms read receipts are off
+            .verifyReadReceiptsSystemMessage(enabled: false)
+
+        // WHEN - read receipts are turned back on
+        _ = try activeConversationPage
+            .openConversationDetails()
+            .toggleGroupReadReceipts()
+            .closeConversationDetails()
+            // THEN - a system message confirms read receipts are on
+            .verifyReadReceiptsSystemMessage(enabled: true)
+    }
 }

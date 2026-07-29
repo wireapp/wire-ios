@@ -17,35 +17,39 @@
 //
 
 import SwiftUI
+import UIKit
 import WireCallingDomain
 import WireDesign
 
 struct MemberAvatarsView: View {
-    let members: [Member]
+    let members: [MeetingMember]
 
     private let maxVisible = 5
     private let circleSize: CGFloat = 24
     private let overlap: CGFloat = 8
 
     var body: some View {
-        if members.count == 1 {
+        if let member = members.first, members.count == 1 {
+            // A single participant shows their avatar next to their name.
             HStack(spacing: 6) {
-                circle()
+                avatar(for: member)
 
-                if !members[0].name.isEmpty {
-                    Text(members[0].name)
+                if !member.name.isEmpty {
+                    Text(member.name)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                         .lineLimit(1)
                 }
             }
         } else {
+            // Show up to `maxVisible` overlapping avatars; any remaining participants
+            // are represented by a trailing "+N" count.
             let overflow = members.count - maxVisible
 
             HStack(spacing: 6) {
                 HStack(spacing: -overlap) {
-                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, _ in
-                        circle()
+                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, member in
+                        avatar(for: member)
                             .zIndex(Double(maxVisible - index))
                     }
                 }
@@ -59,13 +63,25 @@ struct MemberAvatarsView: View {
         }
     }
 
-    private func circle() -> some View {
-        Circle()
-            .fill(Color.gray.opacity(0.35))
-            .frame(width: circleSize, height: circleSize)
-            .overlay(
-                Circle().strokeBorder(ColorTheme.Backgrounds.surface.color, lineWidth: 2)
-            )
+    private func avatar(for member: MeetingMember) -> some View {
+        Group {
+            if let data = member.avatarImageData, let image = UIImage(data: data) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Text(member.initials)
+                    .font(for: .subline1)
+                    .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(member.accentColor))
+            }
+        }
+        .frame(width: circleSize, height: circleSize)
+        .clipShape(Circle())
+        .overlay(
+            Circle().strokeBorder(ColorTheme.Backgrounds.surface.color, lineWidth: 2)
+        )
     }
 }
 

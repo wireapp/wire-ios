@@ -18,10 +18,8 @@
 
 public import UIKit
 public import WireCallingDomain
-public import WireNetwork
 
 import SwiftUI
-import WireCallingData
 import WireCallingUI
 import WireFoundation
 
@@ -32,31 +30,39 @@ public struct WireMeetingsFactory {
 
     @MainActor
     public func makeMeetingsView(
-        meetingsAPI: any MeetingsAPI,
-        memberRepository: any MemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
+        meetingRepository: any MeetingRepositoryProtocol,
+        memberRepository: any MeetingMemberRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol,
+        callStateRepository: any MeetingCallStateRepositoryProtocol
     ) -> UIViewController {
-        let meetingRepository = MeetingRepository.demo(meetingsAPI: meetingsAPI)
-        let createInstantMeetingUseCase = CreateInstantMeetingUseCase(
+        let createMeetingUseCase = CreateMeetingUseCase(
             meetingRepository: meetingRepository,
-            conversationRepository: conversationRepository,
-            dateProvider: .system
+            conversationRepository: conversationRepository
+        )
+        let updateMeetingUseCase = UpdateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
         )
         let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
             repository: meetingRepository,
             currentDateProvider: .system
         )
-        let createScheduledMeetingUseCase = CreateScheduledMeetingUseCase(repository: meetingRepository)
+        let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
+        let deleteMeetingUseCase = DeleteMeetingUseCase(repository: meetingRepository)
+        let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callStateRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
             makeFormViewModel: { mode, onSuccess in
-                CreateMeetingFormViewModel(
+                MeetingFormViewModel(
                     mode: mode,
                     searchMembersUseCase: searchMembersUseCase,
-                    createInstantMeetingUseCase: createInstantMeetingUseCase,
-                    createScheduledMeetingUseCase: createScheduledMeetingUseCase,
+                    createMeetingUseCase: createMeetingUseCase,
+                    updateMeetingUseCase: updateMeetingUseCase,
                     currentDateProvider: .system,
                     onSuccess: onSuccess
                 )

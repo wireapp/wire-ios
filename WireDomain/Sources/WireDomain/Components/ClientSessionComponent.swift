@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireCallingData
 import WireCoreCrypto
 import WireDataModel
 import WireFoundation
@@ -357,6 +358,10 @@ public final class ClientSessionComponent {
         store: updateEventsLocalStore
     )
 
+    private lazy var pullMeetingsSync = PullMeetingsSync(
+        repository: meetingRepository
+    )
+
     // MARK: - Push syncs
 
     private lazy var pushSupportedProtocolsSync = PushSupportedProtocolsSync(
@@ -383,7 +388,8 @@ public final class ClientSessionComponent {
             pullKnownUsersSync: pullKnownUsersSync,
             pullConversationLabelsSync: pullConversationLabelsSync,
             pullAllFeatureConfigsSync: pullAllFeatureConfigsSync,
-            pullMLSStatusSync: pullMLSStatusSync
+            pullMLSStatusSync: pullMLSStatusSync,
+            pullMeetingsSync: pullMeetingsSync
         )
 
         return InitialSync(
@@ -701,6 +707,25 @@ public final class ClientSessionComponent {
         lockRepository: resetMLSConversationLockRepository
     )
 
+    public private(set) lazy var meetingRepository = MeetingRepository(
+        meetingsAPI: meetingsAPI,
+        localStore: MeetingLocalStore(context: syncContext)
+    )
+
+    private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
+        repository: meetingRepository,
+        conversationRepository: conversationRepository
+    )
+
+    private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
+        repository: meetingRepository
+    )
+
+    private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
+        repository: meetingRepository,
+        conversationRepository: conversationRepository
+    )
+
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
         createEventProcessor: conversationCreateEventProcessor,
@@ -752,12 +777,19 @@ public final class ClientSessionComponent {
             createEventProcessor: teamCreateEventProcessor
         )
 
+        let meetingEventProcessor = MeetingEventProcessor(
+            createEventProcessor: meetingCreateEventProcessor,
+            deleteEventProcessor: meetingDeleteEventProcessor,
+            updateEventProcessor: meetingUpdateEventProcessor
+        )
+
         return UpdateEventProcessor(
             conversationEventProcessor: conversationEventProcessor,
             featureConfigEventProcessor: featureConfigEventProcessor,
             federationEventProcessor: federationEventProcessor,
             userEventProcessor: userEventProcessor,
-            teamEventProcessor: teamEventProcessor
+            teamEventProcessor: teamEventProcessor,
+            meetingEventProcessor: meetingEventProcessor
         )
     }()
 

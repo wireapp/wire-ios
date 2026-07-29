@@ -21,6 +21,6 @@
 /// to a meeting.
 package protocol SearchMembersUseCaseProtocol: Sendable {
 
-    func invoke(query: String) async throws -> [Member]
+    func invoke(query: String) async throws -> [MeetingMember]
 
 }

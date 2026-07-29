@@ -20,6 +20,7 @@ package import WireCallingDomain
 package import WireFoundation
 
 import Foundation
+import WireLogging
 
 @Observable
 @MainActor
@@ -29,10 +30,25 @@ package final class MeetingsViewModel {
 
     private(set) var loadedMeetings: [Meeting] = []
     private(set) var hasMore: Bool = false
+    var hasDeleteError = false
+
+    /// Conversation ids of the meetings the self user is currently attending (joined a call in).
+    private(set) var attendingConversationIDs: Set<QualifiedID> = []
+
+    /// The meeting awaiting delete confirmation, or `nil` if no confirmation is in progress.
+    var meetingToDelete: Meeting?
+
+    var isDeleteConfirmationPresented: Bool {
+        get { meetingToDelete != nil }
+        set { if !newValue { meetingToDelete = nil } }
+    }
 
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+    private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
+    private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+    private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
 
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 10
@@ -44,11 +60,17 @@ package final class MeetingsViewModel {
     package init(
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
+        self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
+        self.deleteMeetingUseCase = deleteMeetingUseCase
+        self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
     }
 
     // MARK: - Public Interface
@@ -57,16 +79,36 @@ package final class MeetingsViewModel {
         grouper.group(loadedMeetings)
     }
 
-    func loadInitialData() {
+    func loadInitialData() async {
         futureOffset = 0
         loadedMeetings = []
         hasMore = false
-        load(pageSize: initialPageSize)
+        await load(pageSize: initialPageSize)
     }
 
-    func loadMoreIfNeeded() {
+    func loadMoreIfNeeded() async {
         guard hasMore, !isLoading else { return }
-        load(pageSize: pageSize)
+        await load(pageSize: pageSize)
+    }
+
+    /// Reloads the loaded meetings whenever they are changed outside of this screen,
+    /// e.g. by background sync. Runs until the surrounding task is cancelled.
+    func observeMeetingChanges() async {
+        for await _ in observeMeetingChangesUseCase.invoke() {
+            await reloadLoadedMeetings()
+        }
+    }
+
+    func observeAttendedMeetings() async {
+        guard let observeAttendedMeetingsUseCase else { return }
+        for await ids in observeAttendedMeetingsUseCase.invoke() {
+            attendingConversationIDs = ids
+        }
+    }
+
+    /// Whether the self user is currently attending (joined the call of) the given meeting.
+    func isAttending(_ meeting: Meeting) -> Bool {
+        attendingConversationIDs.contains(meeting.conversationID)
     }
 
     func formatDay(_ date: Date) -> String {
@@ -77,21 +119,55 @@ package final class MeetingsViewModel {
         formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
+    /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture
+    /// `meetingToDelete` before the alert dismissal clears it via `isDeleteConfirmationPresented`.
+    func confirmDelete() {
+        guard let meeting = meetingToDelete else { return }
+        meetingToDelete = nil
+        Task {
+            await deleteMeeting(meeting)
+        }
+    }
+
+    func deleteMeeting(_ meeting: Meeting) async {
+        do {
+            try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
+            loadedMeetings.removeAll { $0.id == meeting.id }
+        } catch {
+            hasDeleteError = true
+            WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
+        }
+    }
+
     // MARK: - Private Methods
 
-    private func load(pageSize: Int) {
+    /// Re-fetches everything that is currently loaded in a single page, because a
+    /// change can insert or remove meetings anywhere in the loaded range.
+    private func reloadLoadedMeetings() async {
+        guard !isLoading else { return }
+        let reloadSize = max(loadedMeetings.count, initialPageSize)
+        futureOffset = 0
+        await load(pageSize: reloadSize)
+    }
+
+    private func load(pageSize: Int) async {
         isLoading = true
-        let result = upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
+        defer { isLoading = false }
 
-        if futureOffset == 0 {
-            loadedMeetings = result.meetings
-        } else {
-            loadedMeetings += result.meetings
+        do {
+            let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
+            if futureOffset == 0 {
+                loadedMeetings = result.meetings
+            } else {
+                loadedMeetings += result.meetings
+            }
+
+            futureOffset = result.nextOffset
+            hasMore = result.hasMore
+        } catch {
+            hasMore = false
+            WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
         }
-
-        futureOffset = result.nextOffset
-        hasMore = result.hasMore
-        isLoading = false
     }
 
 }

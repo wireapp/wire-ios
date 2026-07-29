@@ -101,6 +101,10 @@ class ConversationDetailsPage: PageModel {
         return try ConversationsPage()
     }
 
+    func unarchiveOptionsConversationDetails() throws -> ConversationsPage {
+        try archiveOptionsConversationDetails()
+    }
+
     func clearContentOptionsConversationDetails() throws -> Self {
         clearContentOptionConversationDetailsButton.tap()
         return self
@@ -128,6 +132,16 @@ class ConversationDetailsPage: PageModel {
 
     var deleteConversationButton: XCUIElement {
         app.buttons[Locators.LastAdminLeaveAlert.deleteGroup.rawValue].firstMatch
+    }
+
+    var readReceiptsSwitch: XCUIElement {
+        app.switches[Locators.ConversationDetailsPage.readReceiptsSwitch.rawValue].firstMatch
+    }
+
+    @discardableResult
+    func toggleGroupReadReceipts() -> ConversationDetailsPage {
+        readReceiptsSwitch.waitAndTap()
+        return self
     }
 
     func appParticipantToConversation() throws -> SelectParticipantsPage {

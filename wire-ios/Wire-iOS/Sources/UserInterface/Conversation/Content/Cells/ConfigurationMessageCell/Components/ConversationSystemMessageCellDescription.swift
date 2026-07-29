@@ -36,7 +36,9 @@ enum ConversationSystemMessageCellDescription {
               let sender = message.senderUser,
               let conversation = message.conversationLike
         else {
-            assertionFailure("Invalid system message")
+            WireLogger.conversation.warn(
+                "Skipping invalid system message: missing systemMessageData, sender, or conversation"
+            )
             return []
         }
 
@@ -226,6 +228,13 @@ enum ConversationSystemMessageCellDescription {
 
         case .userRemovedFromTeam:
             let cell = UserRemovedFromTeamSystemMessageCellDescription()
+            return [AnyConversationMessageCellDescription(cell)]
+
+        case .conversationScheduledForDeletion:
+            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate else {
+                break
+            }
+            let cell = ConversationScheduledForDeletionCellDescription(deletionDate: deletionDate)
             return [AnyConversationMessageCellDescription(cell)]
         }
 

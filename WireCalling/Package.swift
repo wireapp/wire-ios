@@ -11,16 +11,18 @@ let package = Package(
     platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
+        .library(name: "WireCallingDomainSupport", targets: ["WireCallingDomainSupport"]),
+        .library(name: "WireCallingData", targets: ["WireCallingData"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
     dependencies: [
         .package(path: "../WireData"),
         .package(path: "../WireFoundation"),
+        .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI"),
-        .package(path: "../WireNetwork")
+        .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
         .target(
@@ -52,8 +54,7 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireCallingUI",
-                "WireCallingData",
-                "WireNetwork"
+                "WireCallingData"
             ]
         ),
         .target(
@@ -70,12 +71,14 @@ let package = Package(
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
+                "WireCallingAssembly",
                 "WireCallingUI",
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
                 "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
+                .product(name: "WireFoundationSupport", package: "WireFoundation"),
+                .product(name: "WireNetworkSupport", package: "WireNetwork")
             ],
         ),
     ]

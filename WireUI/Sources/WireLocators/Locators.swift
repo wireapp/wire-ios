@@ -127,6 +127,7 @@ public enum Locators {
         // changing existing references across the app.
         case accountHeader = "Account"
         case pictureCell
+        case profilePictureImagePreview
         case colorCell
         case conversationBackgroundSwitch = "ConversationBackgroundSwitch"
         case nameField = "NameField"
@@ -151,6 +152,19 @@ public enum Locators {
         case systemOption
     }
 
+    public enum DeviceDetailsPage: String {
+
+        case removeDeviceButton
+        case verifiedSwitch
+        case ok = "OK"
+    }
+
+    public enum DevicesPage: String {
+
+        case deviceNameLabel = "device name"
+        case title = "Devices"
+    }
+
     public enum ActiveConversationPage: String {
 
         case videoCallBarButton
@@ -162,7 +176,7 @@ public enum Locators {
         case sharedDriveButton
         case ephemeralTimeSelectionButton
         case message
-        case linkPreviewCell = "LinkPreviewCell"
+        case linkPreviewCell
         case imageCell
         case videoCell
         case videoPlayButton
@@ -198,6 +212,8 @@ public enum Locators {
         case guestsArePresent = "Guests are present"
         case conversationBackground
         case openOngoingCallButton
+        case readReceiptsDisabledSystemMessage
+        case readReceiptsEnabledSystemMessage
 
     }
 
@@ -232,6 +248,7 @@ public enum Locators {
         case adminCell
         case memberCell
         case close
+        case readReceiptsSwitch
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
@@ -262,6 +279,15 @@ public enum Locators {
         case addAccountOrTeamButton
         case userProfilePicture
         case close
+        case status
+    }
+
+    public enum UserProfileStatusPicker: String {
+        case none
+        case available
+        case busy
+        case away
+        case okButton = "OK"
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
@@ -386,6 +412,7 @@ public enum Locators {
         case manageDevices
         case removeDevice = "minus.circle.fill"
         case deleteDevice = "Delete"
+        case ok = "OK"
     }
 
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
@@ -457,6 +484,7 @@ public enum Locators {
         case speakerButton = "CallSpeakerButton"
         case timeLabel
         case minimizeCall
+        case sharesScreenDescription = "Shares screen"
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"
@@ -508,6 +536,7 @@ public enum Locators {
 
         public enum FileMenu: String {
             case deleteToRecycleBin
+            case deletePermanently
             case restore
 
             public var identifier: String {
@@ -626,5 +655,13 @@ public enum Locators {
 
     public enum AlertActions: AutoPrefixedEnum {
         case confirm
+    }
+
+    public enum WireMeetings {
+
+        public enum MeetingDetails: String {
+            case attendingLabel = "Attending Label"
+        }
+
     }
 }

@@ -109,6 +109,9 @@ struct WireURLs: Codable {
     /// Link to an article explaining the Drive permissions.
     let learnMoreAboutDrivePermissions: URL
 
+    /// Link to an article explaining the Adminless Group Prevention feature
+    let learnMoreAboutAdminlessGroupPrevention: URL
+
     static var shared: WireURLs = {
         do {
             return try WireURLs(forResource: "url", withExtension: "json")
@@ -152,6 +155,7 @@ struct WireURLs: Codable {
         case learnMoreAboutChannels
         case learnMoreAboutE2EE
         case learnMoreAboutDrivePermissions
+        case learnMoreAboutAdminlessGroupPrevention
     }
 
     enum WireURLsError: Error {

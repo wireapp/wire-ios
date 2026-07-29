@@ -71,10 +71,16 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
         verify(message: message)
     }
 
-    // MARK: Group Admin
+    // MARK: Adminless groups
 
     func test_promotedToGroupAdmin() {
         let message = makeMessage(messageType: .promotedToGroupAdmin)
+        verify(message: message)
+    }
+
+    func test_conversationScheduledForDeletion() {
+        let message = makeMessage(messageType: .conversationScheduledForDeletion)
+        message.systemMessageData?.conversationScheduledDeletionDate = .distantFuture
         verify(message: message)
     }
 
