@@ -152,7 +152,7 @@ package final class MeetingFormViewModel {
         case .instant, .scheduled:
             let startDate = currentDateProvider.now.roundedUpToNextMinuteInterval(Self.timePickerMinuteInterval)
             self.startDate = startDate
-            self.endDate = startDate.addingTimeInterval(30 * TimeInterval.oneMinute)
+            self.endDate = startDate.addingTimeInterval(60 * TimeInterval.oneMinute)
         case let .edit(meeting):
             self.startDate = meeting.start
             self.endDate = meeting.end
