@@ -311,4 +311,46 @@ final class ZCallingTests: WireUITestCase {
             "Camera did not switch off"
         )
     }
+
+    /// [critical]
+    @MainActor
+    func testParticipantCanSeeSharedScreen_TC_8891() async throws {
+        // GIVEN
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        _ = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let ownerInstanceId = try requireOwnerInstanceId(from: instances)
+
+        // WHEN
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
+        try await callingManager.waitForCurrentCallStatus(
+            instanceId: ownerInstanceId,
+            expectedStatuses: ["ACTIVE"],
+            timeout: 30
+        )
+        _ = try await callingManager.switchScreenSharingOn(instanceId: ownerInstanceId)
+
+        // THEN
+        ongoingCallPage
+            .isOtherParticipantScreenSharingVisible(for: teamAndGroupCallSetup.teamOwner.name)
+            .verifyScreenSharingQRCodes(
+                for: teamAndGroupCallSetup.teamOwner.name,
+                // Calling service screen-share test image uses the same QR marker payloads as zautomation.
+                expectedContentInQRCode: [
+                    "http://screen-right",
+                    "http://screen-bottom"
+                ]
+            )
+    }
 }
