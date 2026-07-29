@@ -61,7 +61,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
-            (.ok, "GetFeatureConfigsSuccessResponseV14")
+            (.ok, "GetFeatureConfigsSuccessResponseV17")
         ])
 
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
@@ -287,11 +287,11 @@ final class FeatureConfigsAPITests: XCTestCase {
         }
     }
 
-    // MARK: - V14
+    // MARK: - V14 to V16
 
-    func testGetFeatureConfigs_SuccessResponse_200_V14_And_Next_Versions_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V14_To_V16_Then_Verify_Requests() async throws {
         // Given
-        let supportedVersions = APIVersion.v14.andNextVersions
+        let supportedVersions = [APIVersion.v14, .v15, .v16]
         let apiService = MockAPIServiceProtocol.withResponses(
             Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV14"), count: supportedVersions.count)
         )
@@ -303,6 +303,26 @@ final class FeatureConfigsAPITests: XCTestCase {
             // Then
             let resultSet = Set(result)
             let expectedSet = Scaffolding.featureConfigsV14
+            XCTAssertEqual(resultSet, expectedSet)
+        }
+    }
+
+    // MARK: - V17
+
+    func testGetFeatureConfigs_SuccessResponse_200_V17_And_Next_Versions_Then_Verify_Requests() async throws {
+        // Given
+        let supportedVersions = APIVersion.v17.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV17"), count: supportedVersions.count)
+        )
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV17
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -706,6 +726,15 @@ extension FeatureConfigsAPITests {
         static let featureConfigsV14: Set<FeatureConfig> = featureConfigsV12.union([
             .assetAuditLog(.init(status: .enabled)),
             .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!))
+        ])
+
+        static let featureConfigsV17: Set<FeatureConfig> = featureConfigsV14.union([
+            .preventAdminlessGroups(.init(
+                status: .enabled,
+                promotionStrategy: "alphabetical",
+                deletionTimeout: 7,
+                reminderTimeouts: [2, 4, 6]
+            ))
         ])
 
     }
