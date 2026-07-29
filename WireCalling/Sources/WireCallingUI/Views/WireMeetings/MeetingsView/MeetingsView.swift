@@ -83,6 +83,7 @@ struct MeetingsView: View {
                 formatDay: viewModel.formatDay(_:),
                 formatTimeRange: viewModel.formatTimeRange(for:),
                 isAttending: viewModel.isAttending(_:),
+                isHappeningNow: viewModel.isHappeningNow(_:),
                 onEdit: { onEditMeeting($0) },
                 onDelete: { viewModel.meetingToDelete = $0 }
             )
@@ -133,6 +134,7 @@ private struct GroupedSections: View {
     let formatDay: (Date) -> String
     let formatTimeRange: (Meeting) -> String
     let isAttending: (Meeting) -> Bool
+    let isHappeningNow: (Meeting) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
 
@@ -142,18 +144,16 @@ private struct GroupedSections: View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
                 ForEach(dayGroup.meetings, id: \.id) { meeting in
-                    let isAttending = isAttending(meeting)
                     MeetingRow(
                         meeting: meeting,
                         formatTimeRange: formatTimeRange,
-                        isAttending: isAttending,
+                        isAttending: isAttending(meeting),
                         onEdit: { onEdit(meeting) },
                         onDelete: { onDelete(meeting) }
                     )
-                    .background {
-                        guard isAttending else { return Color.clear }
-                        return Color(wireAccentColor.secondaryUIColor)
-                    }
+                    .listRowBackground(
+                        isHappeningNow(meeting) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
+                    )
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))

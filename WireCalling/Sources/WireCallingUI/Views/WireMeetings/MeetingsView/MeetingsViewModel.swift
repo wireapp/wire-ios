@@ -111,6 +111,12 @@ package final class MeetingsViewModel {
         attendingConversationIDs.contains(meeting.conversationID)
     }
 
+    /// Whether the meeting's scheduled time range contains the current time.
+    func isHappeningNow(_ meeting: Meeting) -> Bool {
+        let now = currentDateProvider.now
+        return meeting.start <= now && now < meeting.end
+    }
+
     func formatDay(_ date: Date) -> String {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
     }
