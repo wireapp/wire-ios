@@ -261,6 +261,31 @@ struct MeetingFormViewModelTests {
 
     // MARK: - Edit Mode Tests
 
+    @Test(
+        "availableRepeatOptions hides yearly unless yearly is selected",
+        arguments: [
+            (
+                MeetingRepeatOption.never,
+                [.never, .daily, .weekly, .every2Weeks, .monthly]
+            ),
+            (
+                MeetingRepeatOption.yearly,
+                [.never, .daily, .weekly, .every2Weeks, .monthly, .yearly]
+            )
+        ] as [(MeetingRepeatOption, [MeetingRepeatOption])]
+    )
+    func availableRepeatOptions_HidesYearlyUnlessSelected(
+        repeatOption: MeetingRepeatOption,
+        expectedOptions: [MeetingRepeatOption]
+    ) {
+        // Given
+        let viewModel = makeViewModel(mode: .scheduled)
+        viewModel.repeatOption = repeatOption
+
+        // Then
+        #expect(viewModel.availableRepeatOptions == expectedOptions)
+    }
+
     @Test("edit mode pre-fills the form with the meeting's values")
     func editMode_PrefillsForm() {
         // Given
