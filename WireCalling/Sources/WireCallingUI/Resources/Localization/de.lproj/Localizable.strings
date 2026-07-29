@@ -66,6 +66,7 @@
 "wireMeetings.schedule.time.weekly" = "Wöchentlich";
 "wireMeetings.schedule.time.everyTwoWeeks" = "Alle 2 Wochen";
 "wireMeetings.schedule.time.monthly" = "Monatlich";
+"wireMeetings.schedule.time.yearly" = "Jährlich";
 "wireMeetings.schedule.members.title" = "Teilnehmer";
 "wireMeetings.schedule.members.cancel.button" = "Abbrechen";
 "wireMeetings.schedule.members.select.button" = "Auswählen";

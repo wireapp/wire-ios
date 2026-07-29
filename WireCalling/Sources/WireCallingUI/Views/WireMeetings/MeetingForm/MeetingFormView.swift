@@ -258,6 +258,8 @@ private extension MeetingRepeatOption {
             Strings.everyTwoWeeks
         case .monthly:
             Strings.monthly
+        case .yearly:
+            Strings.yearly
         }
     }
 }

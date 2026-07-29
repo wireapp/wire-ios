@@ -66,6 +66,7 @@
 "wireMeetings.schedule.time.weekly" = "Weekly";
 "wireMeetings.schedule.time.everyTwoWeeks" = "Every 2 weeks";
 "wireMeetings.schedule.time.monthly" = "Monthly";
+"wireMeetings.schedule.time.yearly" = "Yearly";
 "wireMeetings.schedule.members.title" = "Учасники";
 "wireMeetings.schedule.members.cancel.button" = "Скасувати";
 "wireMeetings.schedule.members.select.button" = "Select";
