@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 struct MeetingsView: View {
 
@@ -127,6 +128,7 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
+
     let groups: [(day: Date, meetings: [Meeting])]
     let formatDay: (Date) -> String
     let formatTimeRange: (Meeting) -> String
@@ -134,17 +136,24 @@ private struct GroupedSections: View {
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
                 ForEach(dayGroup.meetings, id: \.id) { meeting in
+                    let isAttending = isAttending(meeting)
                     MeetingRow(
                         meeting: meeting,
                         formatTimeRange: formatTimeRange,
-                        isAttending: isAttending(meeting),
+                        isAttending: isAttending,
                         onEdit: { onEdit(meeting) },
                         onDelete: { onDelete(meeting) }
                     )
+                    .background {
+                        guard isAttending else { return Color.clear }
+                        return Color(wireAccentColor.secondaryUIColor)
+                    }
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
