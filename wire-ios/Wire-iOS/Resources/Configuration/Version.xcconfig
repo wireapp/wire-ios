@@ -16,5 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 4.25.0
 MAJOR_VERSION = 4
+=======
+WIRE_SHORT_VERSION = 3.120.10
+MAJOR_VERSION = 3
+>>>>>>> 2534d10032 (fix: version number for Wire Gov release - WPB-27578 (#5075))
