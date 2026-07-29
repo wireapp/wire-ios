@@ -396,8 +396,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         provider.reportNewIncomingCall(
             with: call.id,
             update: update
-        ) { [weak self] error in
-            guard let error, let self else { return }
+        ) { [logger, callRegister] error in
+            guard let error else { return }
 
             switch error {
             case CXErrorCodeIncomingCallError.callUUIDAlreadyExists:
