@@ -54,6 +54,14 @@ class UserProfilePage: PageModel {
         app.buttons[Locators.UserProfilePage.qrCodeButton.rawValue]
     }
 
+    var nameInfo: XCUIElement {
+        app.descendants(matching: .any)[Locators.UserProfilePage.name.rawValue].firstMatch
+    }
+
+    var usernameInfo: XCUIElement {
+        app.descendants(matching: .any)[Locators.UserProfilePage.username.rawValue].firstMatch
+    }
+
     var userProfilePicture: XCUIElement {
         app.buttons[Locators.UserProfilePage.userProfilePicture.rawValue]
     }
@@ -101,6 +109,66 @@ class UserProfilePage: PageModel {
     }
 
     @discardableResult
+    func verifyName(
+        _ name: String,
+    ) -> UserProfilePage {
+
+        XCTAssertEqual(
+            nameInfo.value as? String ?? nameInfo.label,
+            name,
+            "Name did not match \(name)",
+
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyUsername(
+        _ username: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        let expectedUsername = "@\(username)"
+
+        XCTAssertEqual(
+            usernameInfo.value as? String ?? usernameInfo.label,
+            expectedUsername,
+            "Username did not match \(expectedUsername)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyAddedAccountInfo(
+        for name: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        let predicate = NSPredicate(format: "label BEGINSWITH %@", name)
+        let accountButton = app.buttons.containing(predicate).firstMatch
+
+        XCTAssertTrue(
+            accountButton.waitForExistence(timeout: 5),
+            "Added account info did not appear for \(name)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyProfileQRCodeButton(
+    ) -> UserProfilePage {
+        XCTAssertTrue(
+            qrCodeButton.exists,
+            "Profile QR code button is not showing",
+        )
+        return self
+    }
+
+    @discardableResult
     func verifyProfilePictureIsSet(
         file: StaticString = #filePath,
         line: UInt = #line
@@ -145,21 +213,11 @@ class UserProfilePage: PageModel {
     @discardableResult
     func verifyUserStatus(
         _ status: UserAvailabilityStatus,
-        file: StaticString = #filePath,
-        line: UInt = #line
     ) -> UserProfilePage {
-        XCTAssertTrue(
-            statusButton.waitForExistence(timeout: 5),
-            "Status button did not appear",
-            file: file,
-            line: line
-        )
         XCTAssertEqual(
             statusButton.value as? String ?? "",
             status.expectedValue,
             "Selected status did not match \(status.rawValue)",
-            file: file,
-            line: line
         )
 
         return self
