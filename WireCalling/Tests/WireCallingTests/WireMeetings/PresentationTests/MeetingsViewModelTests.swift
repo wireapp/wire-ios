@@ -437,6 +437,22 @@ struct MeetingsViewModelTests {
         #expect(viewModel.isHappeningNow(ended) == false)
     }
 
+    @Test("refreshCurrentDate updates time-based meeting state")
+    func refreshCurrentDate_updatesTimeBasedMeetingState() {
+        let start = mockDateProvider.now.addingTimeInterval(60)
+        let meeting = Meeting.fixture(title: "Soon", start: start, duration: 60)
+
+        #expect(viewModel.isHappeningNow(meeting) == false)
+
+        mockDateProvider.now = start
+        viewModel.refreshCurrentDate()
+        #expect(viewModel.isHappeningNow(meeting) == true)
+
+        mockDateProvider.now = start.addingTimeInterval(60)
+        viewModel.refreshCurrentDate()
+        #expect(viewModel.isHappeningNow(meeting) == false)
+    }
+
     // MARK: - Formatting
 
     @Test("formatTimeRange delegates to the formatter")

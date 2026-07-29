@@ -21,6 +21,7 @@ import Testing
 import WireCallingAssembly
 import WireCallingDomainSupport
 import WireCallingUI
+import WireFoundation
 
 @Suite("WireMeetingsFactory Tests")
 @MainActor
@@ -37,7 +38,7 @@ struct WireMeetingsFactoryTests {
             memberRepository: MeetingMemberRepositoryProtocolMock(),
             conversationRepository: MeetingConversationRepositoryProtocolMock(),
             callStateRepository: MeetingCallStateRepositoryProtocolMock(),
-            accentColorState: WireMeetingsAccentColorState()
+            accentColorState: WireMeetingsAccentColorState(wireAccentColor: .purple)
         )
 
         // Then

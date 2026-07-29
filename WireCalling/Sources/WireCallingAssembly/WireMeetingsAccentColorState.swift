@@ -24,7 +24,7 @@ public final class WireMeetingsAccentColorState {
 
     public var wireAccentColor: WireAccentColor
 
-    public init(wireAccentColor: WireAccentColor = .default) {
+    public init(wireAccentColor: WireAccentColor) {
         self.wireAccentColor = wireAccentColor
     }
 

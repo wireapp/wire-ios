@@ -28,9 +28,13 @@ package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
+    private static let currentDateRefreshInterval: Duration = .seconds(30)
+
     private(set) var loadedMeetings: [Meeting] = []
     private(set) var hasMore: Bool = false
     var hasDeleteError = false
+
+    private(set) var currentDate: Date
 
     /// Conversation ids of the meetings the self user is currently attending (joined a call in).
     private(set) var attendingConversationIDs: Set<QualifiedID> = []
@@ -71,6 +75,7 @@ package final class MeetingsViewModel {
         self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
         self.deleteMeetingUseCase = deleteMeetingUseCase
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
+        self.currentDate = currentDateProvider.now
     }
 
     // MARK: - Public Interface
@@ -106,6 +111,24 @@ package final class MeetingsViewModel {
         }
     }
 
+    /// Periodically refreshes the observable current date so time-based meeting state
+    /// updates while the meetings list remains on screen.
+    func observeCurrentDate() async {
+        while !Task.isCancelled {
+            refreshCurrentDate()
+
+            do {
+                try await Task.sleep(for: Self.currentDateRefreshInterval)
+            } catch {
+                return
+            }
+        }
+    }
+
+    func refreshCurrentDate() {
+        currentDate = currentDateProvider.now
+    }
+
     /// Whether the self user is currently attending (joined the call of) the given meeting.
     func isAttending(_ meeting: Meeting) -> Bool {
         attendingConversationIDs.contains(meeting.conversationID)
@@ -113,12 +136,11 @@ package final class MeetingsViewModel {
 
     /// Whether the meeting's scheduled time range contains the current time.
     func isHappeningNow(_ meeting: Meeting) -> Bool {
-        let now = currentDateProvider.now
-        return meeting.start <= now && now < meeting.end
+        meeting.start <= currentDate && currentDate < meeting.end
     }
 
     func formatDay(_ date: Date) -> String {
-        formatter.dayHeader(for: date, now: currentDateProvider.now)
+        formatter.dayHeader(for: date, now: currentDate)
     }
 
     func formatTimeRange(for meeting: Meeting) -> String {

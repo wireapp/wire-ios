@@ -243,7 +243,9 @@ final class ZClientViewController: UIViewController {
         self.colorSchemeController = .init(userSession: userSession)
 
         self.wireMeetingsFactory = wireMeetingsFactory
-        self.meetingsAccentColorState = WireMeetingsAccentColorState(wireAccentColor: userSession.selfUser.wireAccentColor)
+        self.meetingsAccentColorState = WireMeetingsAccentColorState(
+            wireAccentColor: userSession.selfUser.wireAccentColor
+        )
         self.wireMessagingFactory = wireMessagingFactory
         self.proximityMonitorManager = ProximityMonitorManager(userSession: userSession)
 

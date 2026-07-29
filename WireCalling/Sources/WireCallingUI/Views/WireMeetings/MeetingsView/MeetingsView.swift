@@ -62,6 +62,9 @@ struct MeetingsView: View {
         .task {
             await viewModel.observeAttendedMeetings()
         }
+        .task {
+            await viewModel.observeCurrentDate()
+        }
     }
 
     @ViewBuilder private var content: some View {
