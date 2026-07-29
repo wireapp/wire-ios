@@ -102,6 +102,16 @@ package final class MeetingFormViewModel {
     }
 
     var repeatOption: MeetingRepeatOption = .never
+    var availableRepeatOptions: [MeetingRepeatOption] {
+        // We don't want to show the Yearly option, however, if a meeting exists with yearly, we want to be able to
+        // display it properly and allow changing the option.
+        if repeatOption == .yearly {
+            MeetingRepeatOption.allCases
+        } else {
+            MeetingRepeatOption.allCases.filter { $0 != .yearly }
+        }
+    }
+
     var selectedMembers: [MeetingMember] = []
     private(set) var isLoading = false
 

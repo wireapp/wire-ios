@@ -134,7 +134,7 @@ struct MeetingFormView: View {
                 timeField: .endTime
             )
             Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
-                ForEach(MeetingRepeatOption.allCases, id: \.self) { option in
+                ForEach(viewModel.availableRepeatOptions, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
                 }
