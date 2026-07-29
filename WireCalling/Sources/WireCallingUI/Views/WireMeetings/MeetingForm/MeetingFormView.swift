@@ -17,6 +17,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
@@ -24,6 +27,7 @@ import WireFoundation
 
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
+    private static let timePickerMinuteInterval = 15
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -209,10 +213,23 @@ struct MeetingFormView: View {
                 .labelsHidden()
         }
         if expandedField == timeField {
-            DatePicker("", selection: date, in: range, displayedComponents: .hourAndMinute)
-                .datePickerStyle(.wheel)
-                .labelsHidden()
+            timePicker(date: date, range: range)
         }
+    }
+
+    @ViewBuilder
+    private func timePicker(date: Binding<Date>, range: PartialRangeFrom<Date>) -> some View {
+        #if canImport(UIKit)
+        MinuteIntervalTimePicker(
+            selection: date,
+            range: range,
+            minuteInterval: Self.timePickerMinuteInterval
+        )
+        #else
+        DatePicker("", selection: date, in: range, displayedComponents: .hourAndMinute)
+            .datePickerStyle(.wheel)
+            .labelsHidden()
+        #endif
     }
 
     private func pill(
@@ -246,6 +263,54 @@ struct MeetingFormView: View {
         case endTime
     }
 }
+
+#if canImport(UIKit)
+private struct MinuteIntervalTimePicker: UIViewRepresentable {
+
+    @Binding var selection: Date
+    let range: PartialRangeFrom<Date>
+    let minuteInterval: Int
+
+    func makeUIView(context: Context) -> UIDatePicker {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .time
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.minuteInterval = minuteInterval
+        datePicker.minimumDate = range.lowerBound
+        datePicker.date = selection
+        datePicker.addTarget(context.coordinator, action: #selector(Coordinator.valueChanged(_:)), for: .valueChanged)
+        return datePicker
+    }
+
+    func updateUIView(_ datePicker: UIDatePicker, context: Context) {
+        datePicker.minuteInterval = minuteInterval
+        datePicker.minimumDate = range.lowerBound
+
+        if abs(datePicker.date.timeIntervalSince(selection)) > 0.5 {
+            datePicker.date = selection
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(selection: $selection)
+    }
+
+    final class Coordinator: NSObject {
+
+        private let selection: Binding<Date>
+
+        init(selection: Binding<Date>) {
+            self.selection = selection
+        }
+
+        @MainActor
+        @objc
+        func valueChanged(_ datePicker: UIDatePicker) {
+            selection.wrappedValue = datePicker.date
+        }
+    }
+}
+#endif
 
 private extension MeetingRepeatOption {
 

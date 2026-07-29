@@ -151,6 +151,19 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: dateProviderMock.now))
     }
 
+    @Test("scheduled mode starts at the next quarter-hour boundary")
+    func scheduledMode_StartsAtNextQuarterHourBoundary() throws {
+        // Given
+        dateProviderMock.now = try Date.ISO8601FormatStyle().parse("2026-07-06T14:02:00+02:00")
+
+        // When
+        let viewModel = makeViewModel(mode: .scheduled)
+
+        // Then
+        let expectedStartDate = try Date.ISO8601FormatStyle().parse("2026-07-06T14:15:00+02:00")
+        #expect(viewModel.startDate == expectedStartDate)
+    }
+
     @Test("endDateRange starts after the start date")
     func endDateRange_StartsAfterStartDate() {
         #expect(viewModel.endDateRange.lowerBound > viewModel.startDate)

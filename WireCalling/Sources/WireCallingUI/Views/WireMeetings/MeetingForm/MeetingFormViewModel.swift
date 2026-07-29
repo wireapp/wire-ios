@@ -62,9 +62,11 @@ package final class MeetingFormViewModel {
     private let currentDateProvider: any CurrentDateProviding
     private let onSuccess: (Meeting) -> Void
 
+    private static let timePickerMinuteInterval = 15
+
     /// The smallest allowed interval between start and end date, matching
     /// the minute granularity of the time picker.
-    private static let minimumDuration: TimeInterval = .oneMinute
+    private static let minimumDuration = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
 
     var meetingTitle: String = ""
 
@@ -148,7 +150,7 @@ package final class MeetingFormViewModel {
 
         switch mode {
         case .instant, .scheduled:
-            let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
+            let startDate = currentDateProvider.now.roundedUpToNextMinuteInterval(Self.timePickerMinuteInterval)
             self.startDate = startDate
             self.endDate = startDate.addingTimeInterval(30 * TimeInterval.oneMinute)
         case let .edit(meeting):
@@ -237,19 +239,21 @@ package final class MeetingFormViewModel {
 
 private extension Date {
 
-    /// Returns the date rounded up to the next half-hour boundary
-    /// (e.g. 10:12 -> 10:30, 10:42 -> 11:00). Dates already on a
-    /// boundary are returned unchanged.
-    func roundedUpToNextHalfHour(calendar: Calendar = .current) -> Date {
-        let components = calendar.dateComponents([.minute, .second], from: self)
-        // How far past the last half-hour boundary this date is:
-        // minutes past the boundary (minute % 30) converted to seconds, plus the seconds.
-        let minutesPastBoundary = (components.minute ?? 0) % 30
-        let secondsPastBoundary = TimeInterval(minutesPastBoundary) * .oneMinute + TimeInterval(components.second ?? 0)
-        // Exactly on a boundary — nothing to round.
+    /// Returns the date rounded up to the next interval boundary
+    /// (e.g. 10:02 -> 10:15 for a 15-minute interval). Dates already
+    /// on a boundary are returned unchanged.
+    func roundedUpToNextMinuteInterval(_ minuteInterval: Int, calendar: Calendar = .current) -> Date {
+        precondition(minuteInterval > 0 && 60.isMultiple(of: minuteInterval))
+
+        let components = calendar.dateComponents([.minute, .second, .nanosecond], from: self)
+        let minutesPastBoundary = (components.minute ?? 0) % minuteInterval
+        let secondsPastBoundary = TimeInterval(minutesPastBoundary) * .oneMinute
+            + TimeInterval(components.second ?? 0)
+            + TimeInterval(components.nanosecond ?? 0) / 1_000_000_000
+
         guard secondsPastBoundary > 0 else { return self }
-        // Add the remaining time up to the next boundary.
-        return addingTimeInterval(30 * .oneMinute - secondsPastBoundary)
+
+        return addingTimeInterval(TimeInterval(minuteInterval) * .oneMinute - secondsPastBoundary)
     }
 
 }
