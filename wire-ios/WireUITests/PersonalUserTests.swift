@@ -338,4 +338,35 @@ final class PersonalUsersTests: WireUITestCase {
             "Expected only one conversation to be visible after filtering by folder"
         )
     }
+
+    @MainActor
+    func testSearchConversation_TC_8866() async throws {
+
+        let team = try await registerTeamForConversationFilter()
+
+        let conversationsPage = try loginAndCreateOneOnOneConversation(for: team.teamOwner)
+
+        //  Search by group and verify
+        try conversationsPage.searchConversation(named: team.groupName)
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.groupName).waitForExistence(timeout: 5),
+            "Expected conversation 'Group' not in search result"
+        )
+
+        // Search by channel and verify
+        try conversationsPage.clearConversationSearch()
+            .searchConversation(named: team.channelName)
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.channelName).waitForExistence(timeout: 5),
+            "Expected conversation 'Channel' not in search result"
+        )
+
+        // Search by OneOnOne and verify
+        try conversationsPage.clearConversationSearch()
+            .searchConversation(named: team.teamMember.name)
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.teamMember.name).waitForExistence(timeout: 5),
+            "Expected conversation 'OneOnOne' not in search result"
+        )
+    }
 }
