@@ -69,8 +69,8 @@ package final class MeetingFormViewModel {
 
     var meetingTitle: String = ""
 
-    /// Changing the start date shifts the end date by the same amount,
-    /// so the meeting duration is preserved.
+    /// Changing the start date normally preserves duration. If that would pass
+    /// the same-day limit, the end time is clamped instead.
     var startDate: Date {
         didSet {
             let shiftedEndDate = endDate.addingTimeInterval(startDate.timeIntervalSince(oldValue))
@@ -99,7 +99,7 @@ package final class MeetingFormViewModel {
         return Calendar.current.startOfDay(for: earliest)...
     }
 
-    /// The end time must stay on the start date and can't go past 23:45.
+    /// Acceptance: the end picker must stay on the start date, with 23:45 as the latest available time.
     var endDateRange: ClosedRange<Date> {
         let latestEndDate = Self.latestEndDate(for: startDate)
         let earliestEndDate = min(startDate.addingTimeInterval(Self.minimumDuration), latestEndDate)
@@ -243,6 +243,7 @@ package final class MeetingFormViewModel {
         forStartDate startDate: Date,
         calendar: Calendar = .current
     ) -> Date {
+        // The hard limit is independent from the start time: no end time past 23:45 on the selected start date.
         let latestEndDate = latestEndDate(for: startDate, calendar: calendar)
         if proposedEndDate > latestEndDate {
             return latestEndDate

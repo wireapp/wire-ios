@@ -202,7 +202,7 @@ struct MeetingFormView: View {
             ) {
                 toggleExpansion(dateField)
             }
-            // we currently don't allow to select/edit the end date
+            // Acceptance: the end date is visible but not editable, and VoiceOver ignores this disabled control.
             .disabled(!isDateFieldEnabled)
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
