@@ -54,7 +54,8 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireCallingUI",
-                "WireCallingData"
+                "WireCallingData",
+                .product(name: "WireDesign", package: "WireUI")
             ]
         ),
         .target(

@@ -36,11 +36,12 @@ struct WireMeetingsFactoryTests {
             meetingRepository: MeetingRepositoryProtocolMock(),
             memberRepository: MeetingMemberRepositoryProtocolMock(),
             conversationRepository: MeetingConversationRepositoryProtocolMock(),
-            callStateRepository: MeetingCallStateRepositoryProtocolMock()
+            callStateRepository: MeetingCallStateRepositoryProtocolMock(),
+            accentColorState: WireMeetingsAccentColorState()
         )
 
         // Then
-        #expect(viewController is UIHostingController<AllMeetingsView>)
+        #expect(viewController is UIHostingController<AnyView>)
     }
 
 }

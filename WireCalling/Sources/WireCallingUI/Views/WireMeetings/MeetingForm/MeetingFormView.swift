@@ -26,6 +26,7 @@ struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.wireAccentColor) private var wireAccentColor
     @State private(set) var viewModel: MeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
@@ -219,15 +220,17 @@ struct MeetingFormView: View {
         isSelected: Bool,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
+        let accentColor = ColorTheme.Base.primary(wireAccentColor).color
+
+        return Button(action: action) {
             Text(text)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.15))
+                        .fill(isSelected ? accentColor.opacity(0.15) : Color.secondary.opacity(0.15))
                 )
-                .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+                .foregroundStyle(isSelected ? accentColor : Color.primary)
         }
         .buttonStyle(.plain)
     }
