@@ -17,9 +17,6 @@
 //
 
 import SwiftUI
-#if canImport(UIKit)
-    import UIKit
-#endif
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
@@ -225,29 +222,12 @@ struct MeetingFormView: View {
 
     @ViewBuilder
     private func timePicker(date: Binding<Date>, range: PartialRangeFrom<Date>, maximumDate: Date?) -> some View {
-        #if canImport(UIKit)
-            MinuteIntervalTimePicker(
-                selection: date,
-                range: range,
-                maximumDate: maximumDate,
-                minuteInterval: Self.timePickerMinuteInterval
-            )
-        #else
-            if let maximumDate {
-                DatePicker(
-                    "",
-                    selection: date,
-                    in: range.lowerBound ... maximumDate,
-                    displayedComponents: .hourAndMinute
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-            } else {
-                DatePicker("", selection: date, in: range, displayedComponents: .hourAndMinute)
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
-            }
-        #endif
+        MinuteIntervalTimePicker(
+            selection: date,
+            range: range,
+            maximumDate: maximumDate,
+            minuteInterval: Self.timePickerMinuteInterval
+        )
     }
 
     private func pill(
@@ -282,60 +262,58 @@ struct MeetingFormView: View {
     }
 }
 
-#if canImport(UIKit)
-    private struct MinuteIntervalTimePicker: UIViewRepresentable {
+private struct MinuteIntervalTimePicker: UIViewRepresentable {
 
-        @Binding var selection: Date
-        let range: PartialRangeFrom<Date>
-        let maximumDate: Date?
-        let minuteInterval: Int
+    @Binding var selection: Date
+    let range: PartialRangeFrom<Date>
+    let maximumDate: Date?
+    let minuteInterval: Int
 
-        func makeUIView(context: Context) -> UIDatePicker {
-            let datePicker = UIDatePicker()
-            datePicker.datePickerMode = .time
-            datePicker.preferredDatePickerStyle = .wheels
-            datePicker.minuteInterval = minuteInterval
-            datePicker.minimumDate = range.lowerBound
-            datePicker.maximumDate = maximumDate
+    func makeUIView(context: Context) -> UIDatePicker {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .time
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.minuteInterval = minuteInterval
+        datePicker.minimumDate = range.lowerBound
+        datePicker.maximumDate = maximumDate
+        datePicker.date = selection
+        datePicker.addTarget(
+            context.coordinator,
+            action: #selector(Coordinator.valueChanged(_:)),
+            for: .valueChanged
+        )
+        return datePicker
+    }
+
+    func updateUIView(_ datePicker: UIDatePicker, context: Context) {
+        datePicker.minuteInterval = minuteInterval
+        datePicker.minimumDate = range.lowerBound
+        datePicker.maximumDate = maximumDate
+
+        if abs(datePicker.date.timeIntervalSince(selection)) > 0.5 {
             datePicker.date = selection
-            datePicker.addTarget(
-                context.coordinator,
-                action: #selector(Coordinator.valueChanged(_:)),
-                for: .valueChanged
-            )
-            return datePicker
-        }
-
-        func updateUIView(_ datePicker: UIDatePicker, context: Context) {
-            datePicker.minuteInterval = minuteInterval
-            datePicker.minimumDate = range.lowerBound
-            datePicker.maximumDate = maximumDate
-
-            if abs(datePicker.date.timeIntervalSince(selection)) > 0.5 {
-                datePicker.date = selection
-            }
-        }
-
-        func makeCoordinator() -> Coordinator {
-            Coordinator(selection: $selection)
-        }
-
-        final class Coordinator: NSObject {
-
-            private let selection: Binding<Date>
-
-            init(selection: Binding<Date>) {
-                self.selection = selection
-            }
-
-            @MainActor
-            @objc
-            func valueChanged(_ datePicker: UIDatePicker) {
-                selection.wrappedValue = datePicker.date
-            }
         }
     }
-#endif
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(selection: $selection)
+    }
+
+    final class Coordinator: NSObject {
+
+        private let selection: Binding<Date>
+
+        init(selection: Binding<Date>) {
+            self.selection = selection
+        }
+
+        @MainActor
+        @objc
+        func valueChanged(_ datePicker: UIDatePicker) {
+            selection.wrappedValue = datePicker.date
+        }
+    }
+}
 
 private extension MeetingRepeatOption {
 
