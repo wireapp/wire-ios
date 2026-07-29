@@ -4590,6 +4590,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock()
     }
 
+    // MARK: - recoverPendingConversationBatchIfNeeded
+
+    public var recoverPendingConversationBatchIfNeeded_Invocations: [Void] = []
+    public var recoverPendingConversationBatchIfNeeded_MockMethod: (() async -> Bool)?
+    public var recoverPendingConversationBatchIfNeeded_MockValue: Bool?
+
+    public func recoverPendingConversationBatchIfNeeded() async -> Bool {
+        recoverPendingConversationBatchIfNeeded_Invocations.append(())
+
+        if let mock = recoverPendingConversationBatchIfNeeded_MockMethod {
+            return await mock()
+        } else if let mock = recoverPendingConversationBatchIfNeeded_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `recoverPendingConversationBatchIfNeeded`")
+        }
+    }
+
     // MARK: - wipeGroup
 
     public var wipeGroup_Invocations: [MLSGroupID] = []
