@@ -456,6 +456,14 @@ final class InputBar: UIView {
             buttonInnerContainer.trailingAnchor.constraint(equalTo: buttonContainer.trailingAnchor),
             rowTopInsetConstraint
         ])
+
+        if showDriveViewerBanner {
+            driveViewerAccessBanner.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                driveViewerAccessBanner.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor),
+                driveViewerAccessBanner.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor)
+            ])
+        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

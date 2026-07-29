@@ -22,11 +22,11 @@ import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
 
-struct CreateMeetingFormView: View {
+struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
 
     @Environment(\.dismiss) private var dismiss
-    @State private(set) var viewModel: CreateMeetingFormViewModel
+    @State private(set) var viewModel: MeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
     @FocusState private var isTitleFieldFocused: Bool
@@ -35,14 +35,18 @@ struct CreateMeetingFormView: View {
         NavigationStack {
             Form {
                 titleSection
-                if viewModel.mode == .scheduled {
+                if viewModel.mode != .instant {
                     scheduleSection
                 }
                 participantsSection
             }
             .listSectionSpacing(.compact)
             .onAppear {
-                isTitleFieldFocused = true
+                // When editing, the title is already filled in, so there is
+                // no need to bring up the keyboard right away.
+                if !viewModel.mode.isEdit {
+                    isTitleFieldFocused = true
+                }
             }
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
@@ -80,6 +84,8 @@ struct CreateMeetingFormView: View {
             Strings.Now.title
         case .scheduled:
             Strings.Future.title
+        case .edit:
+            Strings.Edit.title
         }
     }
 
@@ -89,6 +95,8 @@ struct CreateMeetingFormView: View {
             Strings.Start.button
         case .scheduled:
             Strings.Schedule.button
+        case .edit:
+            Strings.Save.button
         }
     }
 
@@ -259,36 +267,64 @@ private extension MeetingRepeatOption {
 // MARK: - Preview
 
 #Preview("Now mode") {
-    CreateMeetingFormView(
-        viewModel: CreateMeetingFormViewModel(
+    MeetingFormView(
+        viewModel: MeetingFormViewModel(
             mode: .instant,
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
             currentDateProvider: .system
         )
     )
 }
 
 #Preview("Scheduled mode") {
-    CreateMeetingFormView(
-        viewModel: CreateMeetingFormViewModel(
+    MeetingFormView(
+        viewModel: MeetingFormViewModel(
             mode: .scheduled,
             searchMembersUseCase: MockSearchMembersUseCase(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
             currentDateProvider: .system
         )
     )
 }
 
 #Preview("Scheduled mode with selected members") {
-    let viewModel = CreateMeetingFormViewModel(
+    let viewModel = MeetingFormViewModel(
         mode: .scheduled,
         searchMembersUseCase: MockSearchMembersUseCase(),
         createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+        updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
         currentDateProvider: .system
     )
     viewModel.selectedMembers = Array([MeetingMember].mock.shuffled().prefix(3))
-    return CreateMeetingFormView(viewModel: viewModel)
+    return MeetingFormView(viewModel: viewModel)
+}
+
+#Preview("Edit mode") {
+    MeetingFormView(
+        viewModel: MeetingFormViewModel(
+            mode: .edit(
+                Meeting(
+                    id: QualifiedID(id: UUID(), domain: ""),
+                    title: "Design review",
+                    start: Date().addingTimeInterval(.oneHour),
+                    end: Date().addingTimeInterval(2 * TimeInterval.oneHour),
+                    recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
+                    conversation: MeetingConversation(
+                        participants: Set([MeetingMember].mock.prefix(3))
+                    ),
+                    conversationID: QualifiedID(id: UUID(), domain: ""),
+                    creatorID: QualifiedID(id: UUID(), domain: "")
+                )
+            ),
+            searchMembersUseCase: MockSearchMembersUseCase(),
+            createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+            currentDateProvider: .system
+        )
+    )
 }
 
 // MARK: - Mock

@@ -29,6 +29,10 @@ class ManagedDevicesPage: PageModel {
         app.buttons[Locators.ManageDevicesPage.manageDevices.rawValue].firstMatch
     }
 
+    var passwordField: XCUIElement {
+        app.secureTextFields.firstMatch
+    }
+
     static func removeDeviceAndContinueIfShown(app: XCUIApplication) throws -> ConversationsPage {
         let manageDevicesButton = app.buttons[Locators.ManageDevicesPage.manageDevices.rawValue].firstMatch
 
@@ -37,15 +41,32 @@ class ManagedDevicesPage: PageModel {
             return try ConversationsPage()
         }
 
+        return try removeFirstDeviceAndContinue(app: app, manageDevicesButton: manageDevicesButton)
+    }
+
+    func removeDeviceAndContinueIfShown() throws -> ConversationsPage {
+        try Self.removeDeviceAndContinueIfShown(app: app)
+    }
+
+    func removeFirstDeviceAndContinue(password: String) throws -> ConversationsPage {
+        manageDevicesButton.tap()
+        app.images[Locators.ManageDevicesPage.removeDevice.rawValue].firstMatch.waitAndTap()
+        app.buttons[Locators.ManageDevicesPage.deleteDevice.rawValue].firstMatch.waitAndTap()
+        try passwordField.tapIfKeyboardNotFocused().typeText(password)
+        app.buttons[Locators.ManageDevicesPage.ok.rawValue].firstMatch.waitAndTap()
+
+        return try ConversationsPage()
+    }
+
+    private static func removeFirstDeviceAndContinue(
+        app: XCUIApplication,
+        manageDevicesButton: XCUIElement
+    ) throws -> ConversationsPage {
         manageDevicesButton.tap()
         app.images[Locators.ManageDevicesPage.removeDevice.rawValue].firstMatch.waitAndTap()
         app.buttons[Locators.ManageDevicesPage.deleteDevice.rawValue].firstMatch.waitAndTap()
 
         return try ConversationsPage()
-    }
-
-    func removeDeviceAndContinueIfShown() throws -> ConversationsPage {
-        try Self.removeDeviceAndContinueIfShown(app: app)
     }
 
 }

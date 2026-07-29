@@ -134,6 +134,16 @@ class ConversationDetailsPage: PageModel {
         app.buttons[Locators.LastAdminLeaveAlert.deleteGroup.rawValue].firstMatch
     }
 
+    var readReceiptsSwitch: XCUIElement {
+        app.switches[Locators.ConversationDetailsPage.readReceiptsSwitch.rawValue].firstMatch
+    }
+
+    @discardableResult
+    func toggleGroupReadReceipts() -> ConversationDetailsPage {
+        readReceiptsSwitch.waitAndTap()
+        return self
+    }
+
     func appParticipantToConversation() throws -> SelectParticipantsPage {
         addParticipantsButton.tap()
         return try SelectParticipantsPage()
