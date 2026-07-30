@@ -317,9 +317,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case let .completeWireAuthenticationLogin((result, trackingConsent)):
                 if let account = sessionManager.accountManager.account(with: result.userID),
-                   let previousIdentityProviderID = account.lastSSOIdentityProviderID,
                    let identityProviderID = result.multiIngressIdentityProviderID,
-                   previousIdentityProviderID != identityProviderID {
+                   account.lastSSOIdentityProviderID != identityProviderID {
                     presentSSOIdentityChangeAlert(for: (result, trackingConsent))
                     return
                 }
