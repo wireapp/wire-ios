@@ -769,7 +769,7 @@ final class UserHelper {
         try await login(user: &userA)
         try await login(user: &userB)
 
-        // Connects with personal user user
+        // Connects with personal user
         let domain = BackendTarget.staging.domainInfo
         try await sendConnectionRequestToUser(domain: domain, userId: userA.id)
         try await acceptConnectionRequestFromUser(domain: domain, user1: userA, userId: userB.id)
