@@ -150,6 +150,7 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
 
         collectionView.alwaysBounceVertical = true
+        collectionView.allowsFocus = true
         collectionView.allowsSelection = true
         collectionView.allowsMultipleSelection = false
         collectionView.contentInset = .zero

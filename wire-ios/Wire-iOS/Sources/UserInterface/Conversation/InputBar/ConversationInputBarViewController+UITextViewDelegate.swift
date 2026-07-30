@@ -84,6 +84,8 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         }
 
         if text == "\t" {
+            setNeedsFocusUpdate()
+            updateFocusIfNeeded()
             textView.resignFirstResponder()
             UIAccessibility.post(
                 notification: .layoutChanged,
