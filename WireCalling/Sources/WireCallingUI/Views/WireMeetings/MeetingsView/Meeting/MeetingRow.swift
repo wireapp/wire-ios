@@ -173,13 +173,19 @@ private extension MeetingRecurrence {
                     qualifiedID: QualifiedID(id: UUID(), domain: ""),
                     name: "Alice Smith",
                     handle: "alice",
-                    initials: "AS"
+                    isSelfUser: true,
+                    initials: "AS",
+                    accentColor: .default,
+                    avatarImageData: nil
                 ),
                 MeetingMember(
                     qualifiedID: QualifiedID(id: UUID(), domain: ""),
                     name: "Bob Jones",
                     handle: "bob",
-                    initials: "BJ"
+                    isSelfUser: false,
+                    initials: "BJ",
+                    accentColor: .default,
+                    avatarImageData: nil
                 )
             ]
         ),

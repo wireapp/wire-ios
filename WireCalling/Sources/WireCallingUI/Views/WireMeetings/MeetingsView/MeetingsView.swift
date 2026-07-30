@@ -238,8 +238,10 @@ private func previewMeetings() -> [Meeting] {
             qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
             handle: name.lowercased().replacingOccurrences(of: " ", with: ""),
+            isSelfUser: false,
             initials: initials.uppercased(),
-            accentColor: accentColor
+            accentColor: accentColor,
+            avatarImageData: nil
         )
     }
 
