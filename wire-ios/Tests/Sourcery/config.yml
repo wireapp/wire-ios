@@ -6,5 +6,5 @@ templates:
 output:
   ./generated
 args:
-  autoMockableImports: ["CoreLocation", "SwiftUI", "WireDataModel", "WireNetwork", "WireSyncEngine", "WireAccountImageUI", "WireCallingDomain", "WireMessagingDomain", "WireMessagingUI", "WireFoundation"]
+  autoMockableImports: ["CoreLocation", "SwiftUI", "WireDataModel", "WireNetwork", "WireSyncEngine", "WireAccountImageUI", "WireCallingAssembly", "WireCallingDomain", "WireMessagingDomain", "WireMessagingUI", "WireFoundation"]
   autoMockableTestableImports: ["Wire", "WireCommonComponents"]
