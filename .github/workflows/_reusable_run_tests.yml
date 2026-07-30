@@ -56,7 +56,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    runs-on: sam-test
     timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
       contents: read
