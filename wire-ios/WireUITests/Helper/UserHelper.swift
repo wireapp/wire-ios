@@ -479,12 +479,12 @@ final class UserHelper {
     ///   - owner: group owner
     ///   - groupName: groupName
     ///   - driveEnabled: bool
-    func createGroupConversations(
+    @discardableResult func createGroupConversations(
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
         groupName: String,
         driveEnabled: Bool = false
-    ) async throws {
+    ) async throws -> Conversation {
 
         let params = CreateGroupConversationParameters(
             groupType: .group,
@@ -509,7 +509,7 @@ final class UserHelper {
         )
         authenticationManager.accessToken = accessToken
 
-        _ = try await conversationsAPI.createGroupConversation(parameters: params)
+        return try await conversationsAPI.createGroupConversation(parameters: params)
     }
 
     /// Create channel conversation
@@ -762,37 +762,38 @@ final class UserHelper {
     }
     
     func connectTeamUserWithPersonalUser() async throws -> (teamOwner: UserInfo, personalUser: UserInfo) {
-        let (userA, _, _, _) = try await registerTeam(withMemberCount: 1, driveEnabled: true)
-        let userB = try await createPersonalUser()
+        var (userA, _, _, _) = try await registerTeam(withMemberCount: 1, driveEnabled: true)
+        var userB = try await createPersonalUser()
 
-        // User A
-        let (_, accessTokenUserA) = try await authenticationAPI.login(
-            email: userA.email,
-            password: userA.password,
-            verificationCode: nil,
-            label: nil
-        )
-        authenticationManager.accessToken = accessTokenUserA
-        let selfUserA = try await selfUserAPI.getSelfUser()
-        userA.id = selfUserA.id.uuidString
+        try await login(user: &userA)
+        try await login(user: &userB)
 
-        // User B
-        let (_, accessTokenUserB) = try await authenticationAPI.login(
-            email: userB.email,
-            password: userB.password,
-            verificationCode: nil,
-            label: nil
-        )
-        authenticationManager.accessToken = accessTokenUserB
-        let selfUserB = try await selfUserAPI.getSelfUser()
-        userB.id = selfUserB.id.uuidString
-
-        // Connects with guest user
+        // Connects with personal user user
         let domain = BackendTarget.staging.domainInfo
         try await sendConnectionRequestToUser(domain: domain, userId: userA.id)
         try await acceptConnectionRequestFromUser(domain: domain, user1: userA, userId: userB.id)
 
         return (teamOwner: userA, personalUser: userB)
+    }
+    
+    func login(user: inout UserInfo) async throws {
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: user.email,
+            password: user.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
+        let selfUser = try await selfUserAPI.getSelfUser()
+        user.id = selfUser.id.uuidString
+    }
+    
+    func updateRole(_ role: String, userID: UserID, conversationID: ConversationID) async throws {
+        try await conversationsAPI.updateRole(role, userID: userID, conversationID: conversationID)
+    }
+    
+    func removeParticipant(userID: UserID, conversationID: ConversationID) async throws {
+        try await conversationsAPI.removeParticipant(userID: userID, conversationID: conversationID)
     }
 }
 
