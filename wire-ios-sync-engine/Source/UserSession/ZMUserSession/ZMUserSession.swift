@@ -1336,7 +1336,7 @@ extension ZMUserSession: SyncAgentDelegate {
             await mlsService.uploadKeyPackagesIfNeeded()
             while mlsFeature.isEnabled,
                   isBackendMLSEnabled,
-                  application.applicationState == .active { // TODO: UIApplication.applicationState must be used from main thread only
+                  await MainActor.run(body: { [application] in application.applicationState == .active }) {
                 guard await mlsService.recoverPendingConversationBatchIfNeeded() else {
                     break
                 }
