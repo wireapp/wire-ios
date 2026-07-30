@@ -479,7 +479,8 @@ final class UserHelper {
     ///   - owner: group owner
     ///   - groupName: groupName
     ///   - driveEnabled: bool
-    @discardableResult func createGroupConversations(
+    @discardableResult
+    func createGroupConversations(
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
         groupName: String,
@@ -717,7 +718,7 @@ final class UserHelper {
         try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
         try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
     }
-    
+
     /// Unlock and enable Prevent Adminless Groups feature
     /// - Parameter teamID: teamID where this needs to be enabled
     func unlockAndEnablePreventAdminlessGroupsFeature(teamID: UUID) async throws {
@@ -760,7 +761,7 @@ final class UserHelper {
 
         return (userA, userB)
     }
-    
+
     func connectTeamUserWithPersonalUser() async throws -> (teamOwner: UserInfo, personalUser: UserInfo) {
         var (userA, _, _, _) = try await registerTeam(withMemberCount: 1, driveEnabled: true)
         var userB = try await createPersonalUser()
@@ -775,7 +776,7 @@ final class UserHelper {
 
         return (teamOwner: userA, personalUser: userB)
     }
-    
+
     func login(user: inout UserInfo) async throws {
         let (_, accessToken) = try await authenticationAPI.login(
             email: user.email,
@@ -787,11 +788,11 @@ final class UserHelper {
         let selfUser = try await selfUserAPI.getSelfUser()
         user.id = selfUser.id.uuidString
     }
-    
+
     func updateRole(_ role: String, userID: UserID, conversationID: ConversationID) async throws {
         try await conversationsAPI.updateRole(role, userID: userID, conversationID: conversationID)
     }
-    
+
     func removeParticipant(userID: UserID, conversationID: ConversationID) async throws {
         try await conversationsAPI.removeParticipant(userID: userID, conversationID: conversationID)
     }

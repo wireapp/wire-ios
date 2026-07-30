@@ -24,7 +24,7 @@ class ConversationsAPIV7: ConversationsAPIV6 {
     override var oneToOneConversationsPath: String {
         "\(pathPrefix)/one2one-conversations"
     }
-    
+
     override func updateRole(
         _ role: String,
         userID: UserID,
@@ -46,7 +46,6 @@ class ConversationsAPIV7: ConversationsAPIV6 {
 
         try ResponseParser()
             .success(code: .ok)
-            .success(code: .noContent)
             .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
             .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.insufficientAuthorization)
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)

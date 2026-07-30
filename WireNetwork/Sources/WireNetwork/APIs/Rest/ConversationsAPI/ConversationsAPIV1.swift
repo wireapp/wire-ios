@@ -50,7 +50,7 @@ class ConversationsAPIV1: ConversationsAPIV0 {
                 .parse(code: response.statusCode, data: data)
         }
     }
-    
+
     override func removeParticipant(
         userID: UserID,
         conversationID: ConversationID

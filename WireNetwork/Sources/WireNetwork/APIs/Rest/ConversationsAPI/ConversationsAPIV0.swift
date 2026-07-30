@@ -243,7 +243,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         }
 
     }
-    
+
     func updateRole(
         _ role: String,
         userID: UserID,
@@ -265,13 +265,12 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
         try ResponseParser()
             .success(code: .ok)
-            .success(code: .noContent)
             .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
             .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.insufficientAuthorization)
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
             .parse(code: response.statusCode, data: data)
     }
-    
+
     func removeParticipant(
         userID: UserID,
         conversationID: ConversationID
@@ -286,7 +285,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             request,
             requiringAccessToken: true
         )
-        
+
         guard response.statusCode == HTTPStatusCode.ok.rawValue else {
             throw ConversationsAPIError.invalidBody
         }
@@ -298,11 +297,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
 struct ConversationUpdateRoleV0: Encodable {
     let role: String
-    
+
     enum CodingKeys: String, CodingKey {
         case role = "conversation_role"
     }
-    
+
 }
 
 struct CreateGroupConversationParametersV0: Encodable {

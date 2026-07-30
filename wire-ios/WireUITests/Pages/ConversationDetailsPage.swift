@@ -57,7 +57,7 @@ class ConversationDetailsPage: PageModel {
     var userCells: XCUIElementQuery {
         app.staticTexts.matching(identifier: Locators.ConversationDetailsPage.userCellName.rawValue)
     }
-    
+
     var cannotLeaveAlert: XCUIElement {
         app.alerts.firstMatch
     }
@@ -118,7 +118,7 @@ class ConversationDetailsPage: PageModel {
         leaveConversationOptionConversationDetailsButton.tap()
         return self
     }
-    
+
     func tapCannotLeaveAlert() throws -> Self {
         if cannotLeaveAlert.waitForExistence(timeout: 1) {
             cannotLeaveAlert.buttons.firstMatch.tap()
