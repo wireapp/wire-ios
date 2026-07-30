@@ -38,6 +38,24 @@ public extension AccentColor {
             SemanticColors.Accent.purple
         }
     }
+
+    var secondaryUIColor: UIColor {
+        switch self {
+        case .blue:
+            SemanticColors.Accent.Secondary.blue
+        case .green:
+            SemanticColors.Accent.Secondary.green
+        case .red:
+            SemanticColors.Accent.Secondary.red
+        case .amber:
+            SemanticColors.Accent.Secondary.amber
+        case .turquoise:
+            SemanticColors.Accent.Secondary.turquoise
+        case .purple:
+            SemanticColors.Accent.Secondary.purple
+        }
+    }
+
 }
 
 #Preview {
