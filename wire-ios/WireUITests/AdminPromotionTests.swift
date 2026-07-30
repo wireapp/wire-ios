@@ -181,7 +181,7 @@ class AdminPromotionTests: WireUITestCase {
     }
 
     private func createGroupConversationWithTeamMemberAndLastPersonalUserAdmin(groupName: String) async throws
-        ->  (teamMember: UserInfo, personalUser: UserInfo) {
+        -> (teamMember: UserInfo, personalUser: UserInfo) {
         let (teamMember, personalUser) = try await UserHelper.default.connectTeamUserWithPersonalUser()
 
         let domain = BackendTarget.staging.domainInfo
