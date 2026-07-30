@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireAuthenticationAPI
 import WireDomain
 import WireFoundation
 import WireLogging
@@ -315,6 +316,14 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 unauthenticatedSession.continueAfterBackupImportStep()
 
             case let .completeWireAuthenticationLogin((result, trackingConsent)):
+                if let account = sessionManager.accountManager.account(with: result.userID),
+                   let previousIdentityProviderID = account.lastSSOIdentityProviderID,
+                   let identityProviderID = result.multiIngressIdentityProviderID,
+                   previousIdentityProviderID != identityProviderID {
+                    presentSSOIdentityChangeAlert(for: (result, trackingConsent))
+                    return
+                }
+
                 // Don't store the env here... pass it along when upgrading
                 // to an authenticated session.
 
@@ -359,8 +368,15 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 )
                 unauthenticatedSession.upgradeToAuthenticatedSession(
                     with: userInfo,
-                    newEnvironment: newEnvironment
+                    newEnvironment: newEnvironment,
+                    multiIngressIdentityProviderID: result.multiIngressIdentityProviderID
                 )
+
+            case let .purgeRetainedAccountAndContinue(context):
+                purgeRetainedAccountAndContinue(context)
+
+            case .restartWireAuthentication:
+                restartWireAuthentication()
 
             case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
@@ -562,6 +578,54 @@ extension AuthenticationCoordinator {
             presentAlert(for: alertModel)
         } else {
             deleteSession(eraseData: true)
+        }
+    }
+
+    private func presentSSOIdentityChangeAlert(
+        for context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
+    ) {
+        typealias Strings = L10n.Localizable.SsoIdentityChanged
+
+        let deleteAction = AuthenticationCoordinatorAlertAction(
+            title: Strings.deleteDataAndContinue,
+            coordinatorActions: [.showLoadingView, .purgeRetainedAccountAndContinue(context)],
+            style: .destructive
+        )
+        let cancelAction = AuthenticationCoordinatorAlertAction(
+            title: L10n.Localizable.General.cancel,
+            coordinatorActions: [.restartWireAuthentication],
+            style: .cancel
+        )
+
+        stopActivityIndicator()
+        presentAlert(for: AuthenticationCoordinatorAlert(
+            title: Strings.title,
+            message: Strings.message,
+            actions: [cancelAction, deleteAction]
+        ))
+    }
+
+    private func purgeRetainedAccountAndContinue(
+        _ context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
+    ) {
+        do {
+            try sessionManager.purgeRetainedAccountData(for: context.0.userID)
+            executeActions([.completeWireAuthenticationLogin(context)])
+        } catch {
+            logger.error("Failed to purge retained account data: \(error)")
+            restartWireAuthentication(error: NSError(userSessionErrorCode: .unknownError, userInfo: nil))
+        }
+    }
+
+    private func restartWireAuthentication(error: Error? = nil) {
+        let error = error as NSError?
+        stopActivityIndicator()
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            stateDidChange(stateController.currentStep, mode: .reset)
+            if let error {
+                presenter?.showAlert(for: error)
+            }
         }
     }
 

@@ -6383,6 +6383,14 @@ internal enum L10n {
       /// Tap colors to change brush size
       internal static let initialHint = L10n.tr("Localizable", "sketchpad.initial_hint", fallback: "Tap colors to change brush size")
     }
+    internal enum SsoIdentityChanged {
+      /// Delete data and continue
+      internal static let deleteDataAndContinue = L10n.tr("Localizable", "sso_identity_changed.delete_data_and_continue", fallback: "Delete data and continue")
+      /// This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.
+      internal static let message = L10n.tr("Localizable", "sso_identity_changed.message", fallback: "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.")
+      /// Different identity provider detected
+      internal static let title = L10n.tr("Localizable", "sso_identity_changed.title", fallback: "Different identity provider detected")
+    }
     internal enum SystemStatusBar {
       internal enum NoInternet {
         /// There seems to be a problem with your Internet connection. Please make sure it’s working.
