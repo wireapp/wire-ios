@@ -199,6 +199,43 @@ struct FetchUpcomingMeetingsUseCaseTests {
         #expect(result.nextOffset == 3)
     }
 
+    @Test("invoke fast-forwards daily recurrences that started years before today")
+    func invoke_FastForwardsLongRunningDailyRecurrence() async throws {
+        // Given
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: try Date.ISO8601FormatStyle().parse("2026-07-11T12:00:00Z"))
+        let mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = startOfToday.addingTimeInterval(12 * 3600)
+
+        let sourceStart = calendar.date(
+            byAdding: .year,
+            value: -6,
+            to: startOfToday.addingTimeInterval(9 * 3600)
+        )!
+        let meeting = Meeting.fixture(
+            title: "Daily sync",
+            start: sourceStart,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [meeting]
+
+        let useCase = FetchUpcomingMeetingsUseCase(
+            repository: repository,
+            currentDateProvider: mockDateProvider
+        )
+
+        // When
+        let result = try await useCase.invoke(pageSize: 2, offset: 0)
+
+        // Then
+        #expect(result.occurrences.map(\.start) == [
+            startOfToday.addingTimeInterval(9 * 3600),
+            startOfToday.addingTimeInterval(33 * 3600)
+        ])
+        #expect(result.hasMore)
+        #expect(result.nextOffset == 2)
+    }
+
     @Test("invoke paginates repeated meeting occurrences")
     func invoke_PaginatesRepeatedOccurrences() async throws {
         // Given

@@ -67,7 +67,15 @@ package struct MeetingOccurrencePaginator {
             return OccurrenceCursor(meeting: meeting, occurrenceStart: meeting.start)
         }
 
-        var occurrenceStart = meeting.start
+        guard recurrence.until.map({ $0 >= lowerBound }) ?? true else {
+            return nil
+        }
+
+        var occurrenceStart = fastForwardOccurrenceStart(
+            from: meeting.start,
+            recurrence: recurrence,
+            lowerBound: lowerBound
+        )
         while occurrenceStart < lowerBound {
             guard let nextStart = nextOccurrenceStart(after: occurrenceStart, recurrence: recurrence),
                   nextStart > occurrenceStart else {
@@ -86,6 +94,45 @@ package struct MeetingOccurrencePaginator {
         }
 
         return OccurrenceCursor(meeting: meeting, occurrenceStart: occurrenceStart)
+    }
+
+    private func fastForwardOccurrenceStart(
+        from start: Date,
+        recurrence: MeetingRecurrence,
+        lowerBound: Date
+    ) -> Date {
+        guard start < lowerBound else { return start }
+
+        // Daily and weekly recurrences can jump close to the requested lower bound by whole
+        // intervals. `makeCursor` still performs the final one-by-one advancement so edge
+        // cases around time-of-day and DST keep matching repeated Calendar additions.
+        //
+        // Monthly and yearly recurrences intentionally stay on the step-by-step path because
+        // adding several months or years at once can differ from repeated additions for
+        // end-of-month and leap-day start dates.
+        let interval = max(recurrence.interval, 1)
+        let elapsedDays = max(calendar.dateComponents([.day], from: start, to: lowerBound).day ?? 0, 0)
+        let intervalsToSkip: Int
+        let component: Calendar.Component
+
+        switch recurrence.frequency {
+        case .daily:
+            intervalsToSkip = elapsedDays / interval
+            component = .day
+        case .weekly:
+            intervalsToSkip = (elapsedDays / 7) / interval
+            component = .weekOfYear
+        case .monthly, .yearly:
+            return start
+        }
+
+        guard intervalsToSkip > 0 else { return start }
+
+        return calendar.date(
+            byAdding: component,
+            value: intervalsToSkip * interval,
+            to: start
+        ) ?? start
     }
 
     private func sort(_ lhs: OccurrenceCursor, _ rhs: OccurrenceCursor) -> Bool {
