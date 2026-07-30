@@ -453,6 +453,41 @@ struct MeetingsViewModelTests {
         #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
     }
 
+    // MARK: - Meeting State
+
+    @Test("isHappeningNow is true only while the meeting is in progress")
+    func isHappeningNow() {
+        let startingNow = Meeting.fixture(title: "Starting now", start: mockDateProvider.now)
+        let ongoing = Meeting.fixture(title: "Ongoing", start: mockDateProvider.now.addingTimeInterval(-60))
+        let future = Meeting.fixture(title: "Future", start: mockDateProvider.now.addingTimeInterval(60))
+        let ended = Meeting.fixture(
+            title: "Ended",
+            start: mockDateProvider.now.addingTimeInterval(-3600),
+            duration: 3600
+        )
+
+        #expect(viewModel.isHappeningNow(startingNow) == true)
+        #expect(viewModel.isHappeningNow(ongoing) == true)
+        #expect(viewModel.isHappeningNow(future) == false)
+        #expect(viewModel.isHappeningNow(ended) == false)
+    }
+
+    @Test("refreshCurrentDate updates time-based meeting state")
+    func refreshCurrentDate_updatesTimeBasedMeetingState() {
+        let start = mockDateProvider.now.addingTimeInterval(60)
+        let meeting = Meeting.fixture(title: "Soon", start: start, duration: 60)
+
+        #expect(viewModel.isHappeningNow(meeting) == false)
+
+        mockDateProvider.now = start
+        viewModel.refreshCurrentDate()
+        #expect(viewModel.isHappeningNow(meeting) == true)
+
+        mockDateProvider.now = start.addingTimeInterval(60)
+        viewModel.refreshCurrentDate()
+        #expect(viewModel.isHappeningNow(meeting) == false)
+    }
+
     // MARK: - Formatting
 
     @Test("formatTimeRange delegates to the formatter")

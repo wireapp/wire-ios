@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 struct MeetingsView: View {
 
@@ -61,6 +62,9 @@ struct MeetingsView: View {
         .task {
             await viewModel.observeAttendedMeetings()
         }
+        .task {
+            await viewModel.observeCurrentDate()
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -82,6 +86,7 @@ struct MeetingsView: View {
                 formatDay: viewModel.formatDay(_:),
                 formatTimeRange: viewModel.formatTimeRange(for:),
                 isAttending: viewModel.isAttending(_:),
+                isHappeningNow: viewModel.isHappeningNow(_:),
                 onEdit: { onEditMeeting($0) },
                 onDelete: { viewModel.meetingToDelete = $0 }
             )
@@ -131,8 +136,11 @@ private struct GroupedSections: View {
     let formatDay: (Date) -> String
     let formatTimeRange: (MeetingOccurrence) -> String
     let isAttending: (MeetingOccurrence) -> Bool
+    let isHappeningNow: (MeetingOccurrence) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
@@ -144,6 +152,9 @@ private struct GroupedSections: View {
                         isAttending: isAttending(occurrence),
                         onEdit: { onEdit(occurrence.meeting) },
                         onDelete: { onDelete(occurrence.meeting) }
+                    )
+                    .listRowBackground(
+                        isHappeningNow(occurrence) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
                     )
                 }
             } header: {

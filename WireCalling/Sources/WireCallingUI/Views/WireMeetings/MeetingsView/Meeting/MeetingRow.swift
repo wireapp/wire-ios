@@ -107,6 +107,7 @@ struct MeetingRow: View {
                 }
                 if isAttending {
                     attendingLabel
+                        .padding(.top, 10)
                 }
             }
         }
