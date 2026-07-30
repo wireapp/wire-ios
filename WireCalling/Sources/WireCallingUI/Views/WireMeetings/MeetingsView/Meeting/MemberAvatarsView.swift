@@ -28,11 +28,9 @@ struct MemberAvatarsView: View {
     private let circleSize: CGFloat = 24
     private let overlap: CGFloat = 8
 
-    private var orderedMembers: [MeetingMember] {
-        members.sorted(by: areInDisplayOrder)
-    }
-
     var body: some View {
+        let orderedMembers = members.sorted(by: areInDisplayOrder)
+
         if let member = orderedMembers.first, orderedMembers.count == 1 {
             // A single participant shows their avatar next to their name.
             HStack(spacing: 6) {
