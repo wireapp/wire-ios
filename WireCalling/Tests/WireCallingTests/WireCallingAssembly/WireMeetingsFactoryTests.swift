@@ -21,6 +21,7 @@ import Testing
 import WireCallingAssembly
 import WireCallingDomainSupport
 import WireCallingUI
+import WireFoundation
 
 @Suite("WireMeetingsFactory Tests")
 @MainActor
@@ -35,11 +36,13 @@ struct WireMeetingsFactoryTests {
         let viewController = factory.makeMeetingsView(
             meetingRepository: MeetingRepositoryProtocolMock(),
             memberRepository: MeetingMemberRepositoryProtocolMock(),
-            conversationRepository: MeetingConversationRepositoryProtocolMock()
+            conversationRepository: MeetingConversationRepositoryProtocolMock(),
+            callStateRepository: MeetingCallStateRepositoryProtocolMock(),
+            accentColorState: WireMeetingsAccentColorState(wireAccentColor: .purple)
         )
 
         // Then
-        #expect(viewController is UIHostingController<AllMeetingsView>)
+        #expect(viewController is UIHostingController<AnyView>)
     }
 
 }

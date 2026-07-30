@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 struct MeetingsView: View {
 
@@ -27,8 +28,16 @@ struct MeetingsView: View {
 
     @State private var viewModel: MeetingsViewModel
 
-    init(viewModel: MeetingsViewModel) {
+    /// Called when the user chooses "Edit meeting" in a meeting's menu.
+    /// Presenting the edit UI is up to the owner of this view.
+    private let onEditMeeting: (Meeting) -> Void
+
+    init(
+        viewModel: MeetingsViewModel,
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in }
+    ) {
         self.viewModel = viewModel
+        self.onEditMeeting = onEditMeeting
     }
 
     var body: some View {
@@ -50,6 +59,12 @@ struct MeetingsView: View {
             // Never returns on its own; the task is cancelled by SwiftUI when the view disappears.
             await viewModel.observeMeetingChanges()
         }
+        .task {
+            await viewModel.observeAttendedMeetings()
+        }
+        .task {
+            await viewModel.observeCurrentDate()
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -70,9 +85,9 @@ struct MeetingsView: View {
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
                 formatTimeRange: viewModel.formatTimeRange(for:),
-                onEdit: { _ in
-                    // TODO: [WPB-25501] Implement UI
-                },
+                isAttending: viewModel.isAttending(_:),
+                isHappeningNow: viewModel.isHappeningNow(_:),
+                onEdit: { onEditMeeting($0) },
                 onDelete: { viewModel.meetingToDelete = $0 }
             )
 
@@ -117,11 +132,16 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
+
     let groups: [(day: Date, meetings: [Meeting])]
     let formatDay: (Date) -> String
     let formatTimeRange: (Meeting) -> String
+    let isAttending: (Meeting) -> Bool
+    let isHappeningNow: (Meeting) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
@@ -130,8 +150,12 @@ private struct GroupedSections: View {
                     MeetingRow(
                         meeting: meeting,
                         formatTimeRange: formatTimeRange,
+                        isAttending: isAttending(meeting),
                         onEdit: { onEdit(meeting) },
                         onDelete: { onDelete(meeting) }
+                    )
+                    .listRowBackground(
+                        isHappeningNow(meeting) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
                     )
                 }
             } header: {
@@ -227,10 +251,8 @@ private func previewMeetings() -> [Meeting] {
             start: start,
             end: end,
             recurrence: nil,
-            conversation: MeetingConversation(
-                qualifiedID: QualifiedID(id: UUID(), domain: ""),
-                participants: Set(members)
-            ),
+            conversation: MeetingConversation(participants: Set(members)),
+            conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         )
     }

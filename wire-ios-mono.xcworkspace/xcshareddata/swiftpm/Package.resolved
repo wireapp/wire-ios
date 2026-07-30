@@ -270,6 +270,15 @@
           "revision": "22787ffb59de99e5dc1fbfe80b19c97a904ad48d",
           "version": "0.9.20"
         }
+      },
+      {
+        "package": "ZXingCpp",
+        "repositoryURL": "https://github.com/zxing-cpp/zxing-cpp",
+        "state": {
+          "branch": null,
+          "revision": "287c85df6f961c8efbfb5ffd736cd9457b8b890e",
+          "version": "3.1.1"
+        }
       }
     ]
   },

@@ -410,6 +410,69 @@ struct MeetingRepositoryTests {
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
     }
 
+    @Test("createMeeting returns the stored copy, which has its participants populated")
+    func createMeetingReturnsStoredCopy() async throws {
+        // Mock
+
+        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+        localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
+
+        // When
+
+        let meeting = try await sut.createMeeting(
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: nil
+        )
+
+        // Then
+
+        #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
+        #expect(meeting == Scaffolding.storedMeeting)
+        #expect(meeting.conversation?.participants == [Scaffolding.member])
+    }
+
+    @Test("createMeeting falls back to the mapped meeting when the store can't provide it")
+    func createMeetingFallsBackToMappedMeeting() async throws {
+        // Mock — storedMeeting(id:) is not stubbed and returns nil, like right
+        // after creation, when the meeting's conversation is not pulled yet.
+
+        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+
+        // When
+
+        let meeting = try await sut.createMeeting(
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: nil
+        )
+
+        // Then
+
+        #expect(meeting.id == Scaffolding.meetingID)
+        #expect(meeting.conversation == nil)
+    }
+
+    @Test("pullMeeting returns the stored copy, which has its participants populated")
+    func pullMeetingReturnsStoredCopy() async throws {
+        // Mock
+
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
+
+        // When
+
+        let meeting = try await sut.pullMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
+        #expect(meeting == Scaffolding.storedMeeting)
+        #expect(meeting?.conversation?.participants == [Scaffolding.member])
+    }
+
     private enum Scaffolding {
 
         static let referenceDate = Date(timeIntervalSince1970: 500_000)
@@ -432,6 +495,25 @@ struct MeetingRepositoryTests {
             updatedAt: Date(timeIntervalSince1970: 900_000)
         )
 
+        static let member = MeetingMember(
+            qualifiedID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
+            name: "Katie Armstrong",
+            handle: "katie"
+        )
+
+        /// The meeting as the local store provides it,
+        /// with its participants populated from the conversation.
+        static let storedMeeting = Meeting(
+            id: meetingID,
+            title: meetingResponse.title,
+            start: meetingResponse.startTime,
+            end: meetingResponse.endTime,
+            recurrence: nil,
+            conversation: MeetingConversation(participants: [member]),
+            conversationID: meetingResponse.conversationID,
+            creatorID: meetingResponse.creatorID
+        )
+
         static func meeting(title: String, start: Date) -> Meeting {
             Meeting(
                 id: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
@@ -439,10 +521,7 @@ struct MeetingRepositoryTests {
                 start: start,
                 end: start.addingTimeInterval(3600),
                 recurrence: nil,
-                conversation: MeetingConversation(
-                    qualifiedID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-                    participants: []
-                ),
+                conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
                 creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
             )
         }

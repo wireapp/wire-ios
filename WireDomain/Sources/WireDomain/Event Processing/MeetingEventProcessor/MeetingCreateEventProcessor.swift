@@ -34,7 +34,7 @@ struct MeetingCreateEventProcessor: MeetingCreateEventProcessorProtocol {
         // one. If the conversation isn't stored locally yet, pull it and store the
         // meeting again so the two are linked; meetings without a locally stored
         // conversation are not listed.
-        let conversationID = meeting.conversation.qualifiedID
+        let conversationID = meeting.conversationID
         guard await conversationRepository.fetchConversation(
             id: conversationID.id,
             domain: conversationID.domain
