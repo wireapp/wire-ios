@@ -33,7 +33,8 @@ public struct WireMeetingsFactory {
         meetingRepository: any MeetingRepositoryProtocol,
         memberRepository: any MeetingMemberRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol,
-        callStateRepository: any MeetingCallStateRepositoryProtocol
+        callStateRepository: any MeetingCallStateRepositoryProtocol,
+        accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
         let createMeetingUseCase = CreateMeetingUseCase(
             meetingRepository: meetingRepository,
@@ -68,7 +69,14 @@ public struct WireMeetingsFactory {
                 )
             }
         )
-        return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
+        return UIHostingController(
+            rootView: AnyView(
+                WireMeetingsRootView(
+                    viewModel: meetingsViewModel,
+                    accentColorState: accentColorState
+                )
+            )
+        )
     }
 
 }
