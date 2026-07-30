@@ -39,6 +39,7 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
 
     package func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
         let pageSize = min(max(pageSize, 0), Self.maximumPageSize)
+        let offset = max(offset, 0)
         guard pageSize > 0 else {
             return PaginatedMeetings(occurrences: [], hasMore: false, nextOffset: offset)
         }

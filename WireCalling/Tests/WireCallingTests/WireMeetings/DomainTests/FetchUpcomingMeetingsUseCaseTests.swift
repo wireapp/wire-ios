@@ -232,6 +232,34 @@ struct FetchUpcomingMeetingsUseCaseTests {
         #expect(result.nextOffset == 4)
     }
 
+    @Test("invoke clamps negative offsets to the first page")
+    func invoke_ClampsNegativeOffset() async throws {
+        // Given
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: try Date.ISO8601FormatStyle().parse("2026-07-11T12:00:00Z"))
+        let mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = startOfToday.addingTimeInterval(12 * 3600)
+
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
+            Meeting.fixture(title: "First", start: startOfToday.addingTimeInterval(9 * 3600)),
+            Meeting.fixture(title: "Second", start: startOfToday.addingTimeInterval(10 * 3600)),
+            Meeting.fixture(title: "Third", start: startOfToday.addingTimeInterval(11 * 3600))
+        ]
+
+        let useCase = FetchUpcomingMeetingsUseCase(
+            repository: repository,
+            currentDateProvider: mockDateProvider
+        )
+
+        // When
+        let result = try await useCase.invoke(pageSize: 2, offset: -5)
+
+        // Then
+        #expect(result.meetings.map(\.title) == ["First", "Second"])
+        #expect(result.hasMore)
+        #expect(result.nextOffset == 2)
+    }
+
     @Test("invoke stops recurrence expansion at the until date")
     func invoke_StopsAtRecurrenceUntilDate() async throws {
         // Given
