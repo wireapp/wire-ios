@@ -189,7 +189,6 @@ class ConversationsPage: PageModel {
 
     @discardableResult
     func searchConversation(named name: String) throws -> ConversationsPage {
-        app.swipeDown()
         try conversationSearchBar.tapIfKeyboardNotFocused().typeText(name)
         return self
     }
