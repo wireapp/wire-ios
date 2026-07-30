@@ -102,7 +102,7 @@ struct MeetingRow: View {
                 }
 
                 if let conversation = meeting.conversation, !conversation.participants.isEmpty {
-                    MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
+                    MemberAvatarsView(members: Array(conversation.participants))
                         .padding(.top, 2)
                 }
                 if isAttending {

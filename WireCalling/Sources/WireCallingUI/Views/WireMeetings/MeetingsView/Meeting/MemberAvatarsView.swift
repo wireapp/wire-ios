@@ -28,8 +28,12 @@ struct MemberAvatarsView: View {
     private let circleSize: CGFloat = 24
     private let overlap: CGFloat = 8
 
+    private var orderedMembers: [MeetingMember] {
+        members.sorted(by: areInDisplayOrder)
+    }
+
     var body: some View {
-        if let member = members.first, members.count == 1 {
+        if let member = orderedMembers.first, orderedMembers.count == 1 {
             // A single participant shows their avatar next to their name.
             HStack(spacing: 6) {
                 avatar(for: member)
@@ -44,13 +48,14 @@ struct MemberAvatarsView: View {
         } else {
             // Show up to `maxVisible` overlapping avatars; any remaining participants
             // are represented by a trailing "+N" count.
-            let overflow = members.count - maxVisible
+            let visibleMembers = Array(orderedMembers.prefix(maxVisible))
+            let overflow = orderedMembers.count - maxVisible
 
             HStack(spacing: 6) {
                 HStack(spacing: -overlap) {
-                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, member in
+                    ForEach(Array(visibleMembers.enumerated()), id: \.offset) { index, member in
                         avatar(for: member)
-                            .zIndex(Double(maxVisible - index))
+                            .zIndex(Double(index))
                     }
                 }
 
@@ -61,6 +66,19 @@ struct MemberAvatarsView: View {
                 }
             }
         }
+    }
+
+    private func areInDisplayOrder(_ lhs: MeetingMember, _ rhs: MeetingMember) -> Bool {
+        if lhs.isSelfUser != rhs.isSelfUser {
+            return lhs.isSelfUser
+        }
+
+        let nameComparison = lhs.name.localizedCaseInsensitiveCompare(rhs.name)
+        if nameComparison != .orderedSame {
+            return nameComparison == .orderedAscending
+        }
+
+        return lhs.handle.localizedCaseInsensitiveCompare(rhs.handle) == .orderedAscending
     }
 
     private func avatar(for member: MeetingMember) -> some View {
