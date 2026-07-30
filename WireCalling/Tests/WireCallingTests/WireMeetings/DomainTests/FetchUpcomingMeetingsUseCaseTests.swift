@@ -297,6 +297,65 @@ struct FetchUpcomingMeetingsUseCaseTests {
         #expect(result.nextOffset == 2)
     }
 
+    @Test("invoke reuses the source meeting snapshot when loading subsequent pages")
+    func invoke_ReusesSourceMeetingSnapshotForSubsequentPages() async throws {
+        // Given
+        let mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2026-07-11T12:00:00Z")
+
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
+            Meeting.fixture(title: "First", start: mockDateProvider.now.addingTimeInterval(3600)),
+            Meeting.fixture(title: "Second", start: mockDateProvider.now.addingTimeInterval(7200)),
+            Meeting.fixture(title: "Third", start: mockDateProvider.now.addingTimeInterval(10_800))
+        ]
+
+        let useCase = FetchUpcomingMeetingsUseCase(
+            repository: repository,
+            currentDateProvider: mockDateProvider
+        )
+
+        // When
+        let firstPage = try await useCase.invoke(pageSize: 2, offset: 0)
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
+            Meeting.fixture(title: "Refetched", start: mockDateProvider.now.addingTimeInterval(14_400))
+        ]
+        let secondPage = try await useCase.invoke(pageSize: 2, offset: firstPage.nextOffset)
+
+        // Then
+        #expect(repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount == 1)
+        #expect(firstPage.meetings.map(\.title) == ["First", "Second"])
+        #expect(secondPage.meetings.map(\.title) == ["Third"])
+        #expect(!secondPage.hasMore)
+    }
+
+    @Test("invoke refreshes the source meeting snapshot when pagination restarts")
+    func invoke_RefreshesSourceMeetingSnapshotWhenOffsetIsZero() async throws {
+        // Given
+        let mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2026-07-11T12:00:00Z")
+
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
+            Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        ]
+
+        let useCase = FetchUpcomingMeetingsUseCase(
+            repository: repository,
+            currentDateProvider: mockDateProvider
+        )
+
+        // When
+        let initialPage = try await useCase.invoke(pageSize: 2, offset: 0)
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
+            Meeting.fixture(title: "Refreshed", start: mockDateProvider.now.addingTimeInterval(7200))
+        ]
+        let refreshedPage = try await useCase.invoke(pageSize: 2, offset: 0)
+
+        // Then
+        #expect(repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingCallsCount == 2)
+        #expect(initialPage.meetings.map(\.title) == ["Initial"])
+        #expect(refreshedPage.meetings.map(\.title) == ["Refreshed"])
+    }
+
     @Test("invoke stops recurrence expansion at the until date")
     func invoke_StopsAtRecurrenceUntilDate() async throws {
         // Given

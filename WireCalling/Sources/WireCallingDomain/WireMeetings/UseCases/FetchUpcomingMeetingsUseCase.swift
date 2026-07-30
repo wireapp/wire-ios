@@ -20,7 +20,7 @@ package import WireFoundation
 
 import Foundation
 
-package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
+package actor FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
 
     private static let maximumPageSize = 20
     private static let sourceMeetingFetchLimit = Int.max / 2
@@ -28,6 +28,7 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
     private let repository: any MeetingRepositoryProtocol
     private let currentDateProvider: any CurrentDateProviding
     private let occurrencePaginator = MeetingOccurrencePaginator()
+    private var sourceMeetingSnapshot: SourceMeetingSnapshot?
 
     package init(
         repository: any MeetingRepositoryProtocol,
@@ -44,19 +45,10 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
             return PaginatedMeetings(occurrences: [], hasMore: false, nextOffset: offset)
         }
 
-        // The list starts at the beginning of today, so meetings earlier
-        // today remain visible and recurring meetings can produce future
-        // occurrence rows even when their source meeting started in the past.
-        let calendar = Calendar.current
-        let startOfToday = calendar.startOfDay(for: currentDateProvider.now)
-        let sourceMeetings = try await repository.fetchMeetings(
-            in: Date.distantPast ..< Date.distantFuture,
-            offset: 0,
-            limit: Self.sourceMeetingFetchLimit
-        )
+        let snapshot = try await sourceMeetingSnapshot(refresh: offset == 0)
         let occurrences = occurrencePaginator.occurrences(
-            for: sourceMeetings,
-            startingAt: startOfToday,
+            for: snapshot.meetings,
+            startingAt: snapshot.startOfToday,
             offset: offset,
             limit: pageSize + 1
         )
@@ -71,4 +63,31 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
         )
     }
 
+    private func sourceMeetingSnapshot(refresh: Bool) async throws -> SourceMeetingSnapshot {
+        if !refresh, let sourceMeetingSnapshot {
+            return sourceMeetingSnapshot
+        }
+
+        // Occurrence pagination works on expanded rows, not raw meeting rows. We refresh
+        // and load all source meetings at the start of a paging session, then reuse that
+        // snapshot for load-more requests so scrolling does not repeatedly hit the backend
+        // and reload the full local meeting set.
+        let calendar = Calendar.current
+        let snapshot = SourceMeetingSnapshot(
+            startOfToday: calendar.startOfDay(for: currentDateProvider.now),
+            meetings: try await repository.fetchMeetings(
+                in: Date.distantPast ..< Date.distantFuture,
+                offset: 0,
+                limit: Self.sourceMeetingFetchLimit
+            )
+        )
+        sourceMeetingSnapshot = snapshot
+        return snapshot
+    }
+
+}
+
+private struct SourceMeetingSnapshot: Sendable {
+    let startOfToday: Date
+    let meetings: [Meeting]
 }
