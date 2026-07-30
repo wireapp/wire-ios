@@ -82,9 +82,45 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
         let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
-        XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
+        let conversationTitle = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS[c] %@", groupName)
+        ).firstMatch
+        XCTAssertTrue(conversationTitle.waitForExistence(timeout: 10), "Conversation title mismatch")
 
         return ongoingCallPage
+    }
+
+    private func startCallAndAccept(
+        ownerInstanceId: String,
+        conversationId: String,
+        groupName: String
+    ) async throws -> OngoingCallPage {
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: conversationId
+        )
+
+        return try acceptIncomingCall(groupName: groupName)
+    }
+
+    private func verifyOngoingCallBannerAndResume(
+        ongoingCallPage: OngoingCallPage,
+        conversationName: String
+    ) throws -> OngoingCallPage {
+        XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
+
+        let activeConversationPage = try ongoingCallPage.minimizeCallUI()
+
+        XCTAssertTrue(
+            activeConversationPage.openOngoingCallButton.waitForExistence(timeout: 5),
+            "Ongoing call banner did not appear"
+        )
+        XCTAssertTrue(
+            activeConversationPage.conversationTitleButton.label.contains(conversationName),
+            "Account did not switch to the expected call conversation"
+        )
+
+        return try activeConversationPage.resumeCallUI()
     }
 
     /// Team Owner creates group conversation and initiates a group call with members via calling service
@@ -352,5 +388,75 @@ final class ZCallingTests: WireUITestCase {
                     "http://screen-bottom"
                 ]
             )
+    }
+
+    @MainActor
+    func testJoinCallForInactiveAccountInForegroundAndActiveAccountInBackground_TC_8900_TC_8898() async throws {
+        // GIVEN
+        let backgroundCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+        let foregroundCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let backgroundOwnerInstances = try await createCallingServiceInstances(users: [backgroundCallSetup.teamOwner])
+        let backgroundOwnerInstanceId = try requireOwnerInstanceId(from: backgroundOwnerInstances)
+
+        let foregroundOwnerInstances = try await createCallingServiceInstances(users: [foregroundCallSetup.teamOwner])
+        let foregroundOwnerInstanceId = try requireOwnerInstanceId(from: foregroundOwnerInstances)
+
+        _ = try app.loginUser(
+            email: backgroundCallSetup.appUserReceivingCall.email,
+            password: backgroundCallSetup.appUserReceivingCall.password
+        )
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: foregroundCallSetup.appUserReceivingCall.email,
+            password: foregroundCallSetup.appUserReceivingCall.password
+        )
+            .acceptPopup()
+
+        XCTAssertTrue(
+            try ConversationsPage()
+                .conversationCell(named: foregroundCallSetup.groupName)
+                .waitForExistence(timeout: 10),
+            "Foreground account group conversation did not appear"
+        )
+
+        // WHEN - inactive account receives a call while the app is in background.
+        await XCUIDevice.shared.press(.home)
+        try await Task.sleep(for: .seconds(2))
+
+        _ = try await callingServiceClient.startCall(
+            instanceId: backgroundOwnerInstanceId,
+            conversationId: backgroundCallSetup.conversationId
+        )
+
+        await app.activate()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5), "App did not return to foreground")
+
+        var ongoingCallPage = try acceptIncomingCall(groupName: backgroundCallSetup.groupName)
+
+        // THEN
+        ongoingCallPage = try verifyOngoingCallBannerAndResume(
+            ongoingCallPage: ongoingCallPage,
+            conversationName: backgroundCallSetup.groupName
+        )
+        let activeConversationPage = try ongoingCallPage.hangUpOngoingCall()
+        try activeConversationPage.verifyNoCallOngoingAfterHangUp()
+
+        // WHEN - inactive account receives a call while the app is in foreground.
+        ongoingCallPage = try await startCallAndAccept(
+            ownerInstanceId: foregroundOwnerInstanceId,
+            conversationId: foregroundCallSetup.conversationId,
+            groupName: foregroundCallSetup.groupName
+        )
+
+        // THEN
+        ongoingCallPage = try verifyOngoingCallBannerAndResume(
+            ongoingCallPage: ongoingCallPage,
+            conversationName: foregroundCallSetup.groupName
+        )
+        _ = try ongoingCallPage.hangUpOngoingCall()
     }
 }
