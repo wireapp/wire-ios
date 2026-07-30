@@ -46,7 +46,9 @@ final class ConversationAdminlessReminderEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Repo_Methods() async {
         // Mock
 
-        repository.updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_MockMethod = { _, _, _, _ in }
+        repository
+            .updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_MockMethod =
+            { _, _, _, _ in }
 
         // When
 
@@ -54,7 +56,12 @@ final class ConversationAdminlessReminderEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_Invocations.count, 1)
+        XCTAssertEqual(
+            repository
+                .updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_Invocations
+                .count,
+            1
+        )
     }
 
     private enum Scaffolding {
