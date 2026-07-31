@@ -54,6 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ дн.";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ нед.";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ нед.";
+"conversation.cameraButtonDisabled.description" = "Take or select a photo, disabled in viewer access";
+"conversation.sketchButtonDisabled.description" = "Open sketch to draw or write, disabled in viewer access";
+"conversation.uploadFileButtonDisabled.description" = "Share a file, disabled in viewer access";
+"conversation.videoButtonDisabled.description" = "Record a video, disabled in viewer access";
 
 "conversation.headerButton.description" = "Использовать заголовок";
 "conversation.boldButton.description" = "Использовать полужирный текст";

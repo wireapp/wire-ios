@@ -16,20 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
+import SwiftUI
+import WireCallingUI
+import WireDesign
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingRepository: any MeetingRepositoryProtocol,
-        memberRepository: any MeetingMemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol,
-        callStateRepository: any MeetingCallStateRepositoryProtocol,
+struct WireMeetingsRootView: View {
+
+    @State private var accentColorState: WireMeetingsAccentColorState
+
+    private let viewModel: AllMeetingsViewModel
+
+    init(
+        viewModel: AllMeetingsViewModel,
         accentColorState: WireMeetingsAccentColorState
-    ) -> UIViewController
-}
+    ) {
+        self.viewModel = viewModel
+        self._accentColorState = State(initialValue: accentColorState)
+    }
 
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}
+    var body: some View {
+        let wireAccentColor = accentColorState.wireAccentColor
+
+        AllMeetingsView(viewModel: viewModel)
+            .environment(\.wireAccentColor, wireAccentColor)
+            .tint(ColorTheme.Base.primary(wireAccentColor).color)
+    }
+
+}

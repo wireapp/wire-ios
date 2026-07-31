@@ -54,6 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ 天";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ 周";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ 周";
+"conversation.cameraButtonDisabled.description" = "Take or select a photo, disabled in viewer access";
+"conversation.sketchButtonDisabled.description" = "Open sketch to draw or write, disabled in viewer access";
+"conversation.uploadFileButtonDisabled.description" = "Share a file, disabled in viewer access";
+"conversation.videoButtonDisabled.description" = "Record a video, disabled in viewer access";
 
 "conversation.headerButton.description" = "使用标题";
 "conversation.boldButton.description" = "使用粗体文本";
