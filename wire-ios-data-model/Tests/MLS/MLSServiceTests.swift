@@ -1720,9 +1720,12 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
         privateUserDefaults.set(Date(), forKey: .keyPackageQueriedTime)
-        mockCoreCryptoContext.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
-            UInt64(self.sut.targetUnclaimedKeyPackageCount)
-        }
+
+
+        mockCoreCryptoContext.getKeyPackages_MockValue = createKeyPackagesRefs(
+            amount: sut.targetUnclaimedKeyPackageCount
+        )
+
         mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockValue =
             sut.targetUnclaimedKeyPackageCount
 
