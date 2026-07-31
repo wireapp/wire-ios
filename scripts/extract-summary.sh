@@ -225,17 +225,19 @@ TESTINY_FAILED="$(jq -r '.testiny_failed' <<< "$SUMMARY")"
 TESTINY_SKIPPED="$(jq -r '.testiny_skipped' <<< "$SUMMARY")"
 FAILED_DETAILS="$(jq -r '.failed_details | if length == 0 then "None" else join("\n") end' <<< "$SUMMARY")"
 
-REPORT_MESSAGE="--------------------------------------
-**XCTest Methods:** total ${TOTAL} | passed ${PASSED} | failed ${FAILED} | skipped ${SKIPPED}
---------------------------------------"
-
 if [ "$TESTINY_TOTAL" -gt 0 ]; then
-  REPORT_MESSAGE="${REPORT_MESSAGE}
+  REPORT_MESSAGE="**XCTest Methods:** Total ${TOTAL} | Passed ${PASSED} | Failed ${FAILED} | Skipped ${SKIPPED}
 
 **Total Testiny Test Cases:** ${TESTINY_TOTAL}
 ✅ **Passed:** ${TESTINY_PASSED}
 ❌ **Failed:** ${TESTINY_FAILED}
 ⏭️ **Skipped:** ${TESTINY_SKIPPED}
+--------------------------------------"
+else
+  REPORT_MESSAGE="**Total Tests:** ${TOTAL}
+✅ **Passed:** ${PASSED}
+❌ **Failed:** ${FAILED}
+⏭️ **Skipped:** ${SKIPPED}
 --------------------------------------"
 fi
 
