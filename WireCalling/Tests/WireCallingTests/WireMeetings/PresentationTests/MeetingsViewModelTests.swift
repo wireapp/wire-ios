@@ -251,6 +251,41 @@ struct MeetingsViewModelTests {
         #expect(viewModel.isAttending(other) == false)
     }
 
+    @Test("isAttending is true only for the currently happening occurrence")
+    func isAttendingOccurrence_requiresCurrentOccurrence() async {
+        // Given
+        let meeting = Meeting.fixture(
+            title: "Daily",
+            start: mockDateProvider.now.addingTimeInterval(-60),
+            duration: 120,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let currentOccurrence = MeetingOccurrence(meeting: meeting)
+        let pastOccurrence = MeetingOccurrence(
+            meeting: meeting,
+            start: mockDateProvider.now.addingTimeInterval(-86_400),
+            end: mockDateProvider.now.addingTimeInterval(-86_400 + 120)
+        )
+        let futureOccurrence = MeetingOccurrence(
+            meeting: meeting,
+            start: mockDateProvider.now.addingTimeInterval(86_400),
+            end: mockDateProvider.now.addingTimeInterval(86_400 + 120)
+        )
+
+        let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
+        observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
+
+        // When
+        continuation.yield([meeting.conversationID])
+        continuation.finish()
+        await viewModel.observeAttendedMeetings()
+
+        // Then
+        #expect(viewModel.isAttending(currentOccurrence) == true)
+        #expect(viewModel.isAttending(pastOccurrence) == false)
+        #expect(viewModel.isAttending(futureOccurrence) == false)
+    }
+
     @Test("a subsequent emission replaces the attending set")
     func observeAttendedMeetings_appliesSubsequentUpdates() async {
         // Given

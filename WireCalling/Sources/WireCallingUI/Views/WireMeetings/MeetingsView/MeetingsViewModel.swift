@@ -139,7 +139,7 @@ package final class MeetingsViewModel {
     }
 
     func isAttending(_ occurrence: MeetingOccurrence) -> Bool {
-        attendingConversationIDs.contains(occurrence.conversationID)
+        attendingConversationIDs.contains(occurrence.conversationID) && isHappeningNow(occurrence)
     }
 
     /// Whether the meeting's scheduled time range contains the current time.
