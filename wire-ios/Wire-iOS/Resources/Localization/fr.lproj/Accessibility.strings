@@ -38,7 +38,7 @@
 "conversation.hideFormattingButton.description" = "Masquer les options de formatage";
 "conversation.timerButton.description" = "Définir une minuterie pour les messages auto-supprimés";
 "conversation.mentionButton.description" = "Mentionner quelqu'un";
-"conversation.cameraButton.description" = "Prendre ou choisir une photo";
+"conversation.cameraButton.description" = "Take or select a photo";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Select a GIF";
 "conversation.audioButton.description" = "Record an audio message";

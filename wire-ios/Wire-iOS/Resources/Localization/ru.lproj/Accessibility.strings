@@ -38,12 +38,12 @@
 "conversation.hideFormattingButton.description" = "Скрыть параметры форматирования";
 "conversation.timerButton.description" = "Установите таймер для самоудаления сообщений";
 "conversation.mentionButton.description" = "Упомянуть кого-нибудь";
-"conversation.cameraButton.description" = "Сделать или выбрать фото";
-"conversation.sketchButton.description" = "Открыть скетч для рисования или записи";
+"conversation.cameraButton.description" = "Take or select a photo";
+"conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Выбрать GIF";
 "conversation.audioButton.description" = "Запись аудиосообщения";
 "conversation.pingButton.description" = "Отправить пинг";
-"conversation.uploadFileButton.description" = "Поделиться файлом";
+"conversation.uploadFileButton.description" = "Share a file";
 "conversation.locationButton.description" = "Поделиться местоположением";
 "conversation.videoButton.description" = "Записать видео";
 "conversation.moreButton.description" = "Открыть дополнительные параметры обмена сообщениями";

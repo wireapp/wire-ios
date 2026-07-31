@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "devre dışı";
 
 "conversation.status.secutity_alert.default" = "Yeni güvenlik uyarısı";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "Bir mesaj yazıyor…";
 "conversation.status.typing.group" = "%@: bir mesaj yazıyor…";
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "Bu konuşma için yasal bekletme özelliği devre dışı bırakıldı";
 
 "content.system.message_legal_hold.learn_more" = "Daha fazla bilgi";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
 
 //
 "content.system.is_verified" = "Tüm parmak izleri doğrulanmış";

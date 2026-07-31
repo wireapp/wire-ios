@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "deaktiviert";
 
 "conversation.status.secutity_alert.default" = "Neue Sicherheitswarnung";
+"conversation.status.scheduled_for_deletion" = "Wird bald gelöscht";
 
 "conversation.status.typing" = "Schreibt eine Nachricht…";
 "conversation.status.typing.group" = "%@: schreibt eine Nachricht…";
@@ -643,7 +644,7 @@
 "content.system.file_collaboration.enabled.editor_access" = "Sie haben Bearbeitungsrechte. Personen außerhalb Ihres Teams haben lediglich Leserechte.";
 "content.system.file_collaboration.enabled.viewer_access" = "Sie können Dateien lesen, aber nicht hochladen, bearbeiten oder verwalten.";
 "content.system.file_collaboration.enabled.learn_more" = "Mehr erfahren";
-"content.system.file_collaboration.drive_viewer_access.title" = "People outside your team can join this conversation as viewers.";
+"content.system.file_collaboration.drive_viewer_access.title" = "Personen außerhalb Ihres Teams können an dieser Unterhaltung als Betrachter beitreten.";
 
 // read receipt
 
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "Die gesetzliche Aufbewahrung wurde für diese Unterhaltung deaktiviert";
 
 "content.system.message_legal_hold.learn_more" = "Mehr erfahren";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "Diese Gruppe wird am %@ automatisch gelöscht, da es keine berechtigten Gruppen-Admins gibt. [Mehr erfahren](%@)";
 
 //
 "content.system.is_verified" = "Alle Fingerabdrücke sind überprüft";
