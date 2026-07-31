@@ -130,6 +130,18 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         case 204:
             action.notifyResult(.success(()))
 
+        case 403:
+            let payload = response.payload
+            let dictionary = payload?.asDictionary()
+            let eligibleMembers = (dictionary?["eligible_members"] as? [[AnyHashable: Any]])?
+                .compactMap(ConversationRemoveParticipantError.EligibleMember.init(payload:))
+
+            guard let eligibleMembers, !eligibleMembers.isEmpty else {
+                fallthrough
+            }
+
+            action.notifyResult(.failure(ConversationRemoveParticipantError.requiresAdmin(eligibleMembers)))
+
         default:
             action.notifyResult(.failure(ConversationRemoveParticipantError(response: response) ?? .unknown))
         }
