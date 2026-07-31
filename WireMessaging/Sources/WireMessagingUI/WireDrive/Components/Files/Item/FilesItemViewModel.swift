@@ -51,19 +51,6 @@ final class FilesItemViewModel: ObservableObject {
         case deletePermanently
         case makeAvailableOffline
         case removeAvailableOffline
-
-        var accessibilityLabel: String {
-            switch self {
-            case .makeAvailableOffline:
-                Accessibility.Files.ViewerAccess.makeAvailableOffline
-            case .shareLink:
-                Accessibility.Files.ViewerAccess.shareLink
-            case .deletePermanently:
-                Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
-            default:
-                "\(self)"
-            }
-        }
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -197,6 +184,19 @@ final class FilesItemViewModel: ObservableObject {
             isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
         default:
             false
+        }
+    }
+
+    func accessibilitylabel(for action: ItemAction) -> String {
+        switch action {
+        case .makeAvailableOffline where showReadOnlyIcon:
+            Accessibility.Files.ViewerAccess.makeAvailableOffline
+        case .shareLink where showReadOnlyIcon:
+            Accessibility.Files.ViewerAccess.shareLink
+        case .deletePermanently:
+            Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
+        default:
+            "\(action)"
         }
     }
 

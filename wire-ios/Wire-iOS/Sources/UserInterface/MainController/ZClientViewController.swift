@@ -214,6 +214,7 @@ final class ZClientViewController: UIViewController {
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
     private let wireMeetingsFactory: any WireMeetingsFactoryProtocol
+    private let meetingsAccentColorState: WireMeetingsAccentColorState
     let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
@@ -242,6 +243,9 @@ final class ZClientViewController: UIViewController {
         self.colorSchemeController = .init(userSession: userSession)
 
         self.wireMeetingsFactory = wireMeetingsFactory
+        self.meetingsAccentColorState = WireMeetingsAccentColorState(
+            wireAccentColor: userSession.selfUser.wireAccentColor
+        )
         self.wireMessagingFactory = wireMessagingFactory
         self.proximityMonitorManager = ProximityMonitorManager(userSession: userSession)
 
@@ -436,7 +440,9 @@ final class ZClientViewController: UIViewController {
                     context: userSession.contextProvider.syncContext,
                     localDomain: userSession.selfUser.domain
                 )
-            )
+            ),
+            callStateRepository: MeetingCallStateRepositoryBridge(userSession: userSession),
+            accentColorState: meetingsAccentColorState
         )
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
@@ -976,6 +982,7 @@ extension ZClientViewController: UserObserving {
 
             if changeInfo.accentColorValueChanged {
                 sidebarUpdateNeeded = true
+                meetingsAccentColorState.wireAccentColor = userSession.selfUser.wireAccentColor
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate
                 appDelegate.mainWindow?.tintColor = UIColor.accent()
             }

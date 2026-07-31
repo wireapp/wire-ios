@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "отключено";
 
 "conversation.status.secutity_alert.default" = "Новое оповещение безопасности";
+"conversation.status.scheduled_for_deletion" = "Будет удалена в ближайшее время";
 
 "conversation.status.typing" = "Печатает сообщение…";
 "conversation.status.typing.group" = "%@: печатает сообщение…";
@@ -643,7 +644,7 @@
 "content.system.file_collaboration.enabled.editor_access" = "У вас есть права редактора. У пользователей, не входящих в вашу команду, есть только права просмотра.";
 "content.system.file_collaboration.enabled.viewer_access" = "Вы можете просматривать файлы, но не можете загружать, редактировать или управлять ими.";
 "content.system.file_collaboration.enabled.learn_more" = "Подробнее";
-"content.system.file_collaboration.drive_viewer_access.title" = "Гости имеют доступ к файлам в этом чате только для просмотра.";
+"content.system.file_collaboration.drive_viewer_access.title" = "Пользователи не из вашей команды могут присоединиться к этой беседе в качестве наблюдателей.";
 
 // read receipt
 
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "Для этой беседы деактивированы юридические ограничения";
 
 "content.system.message_legal_hold.learn_more" = "Подробнее";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "Эта группа будет автоматически удалена %@, так как в ней нет подходящих администраторов. [Подробнее](%@)";
 
 //
 "content.system.is_verified" = "Все отпечатки верифицированы";
