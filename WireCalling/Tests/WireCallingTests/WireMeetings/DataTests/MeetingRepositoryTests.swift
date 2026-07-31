@@ -498,7 +498,11 @@ struct MeetingRepositoryTests {
         static let member = MeetingMember(
             qualifiedID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
             name: "Katie Armstrong",
-            handle: "katie"
+            handle: "katie",
+            isSelfUser: false,
+            initials: "",
+            accentColor: .default,
+            avatarImageData: nil
         )
 
         /// The meeting as the local store provides it,

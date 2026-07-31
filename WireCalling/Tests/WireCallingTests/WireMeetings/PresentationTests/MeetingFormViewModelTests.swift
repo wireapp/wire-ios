@@ -36,7 +36,11 @@ struct MeetingFormViewModelTests {
     private let member = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Katie Armstrong",
-        handle: "katie"
+        handle: "katie",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private let meeting = Meeting(
@@ -85,7 +89,7 @@ struct MeetingFormViewModelTests {
             id: QualifiedID(id: UUID(), domain: "example.com"),
             title: "Design Review",
             start: start,
-            end: start.addingTimeInterval(.oneHour),
+            end: start.addingTimeInterval(TimeInterval.oneHour),
             recurrence: recurrence,
             conversation: MeetingConversation(participants: [member]),
             conversationID: QualifiedID(id: UUID(), domain: "example.com"),
@@ -292,7 +296,7 @@ struct MeetingFormViewModelTests {
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.startTime == dateProviderMock.now)
-        #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(.oneHour))
+        #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(TimeInterval.oneHour))
         #expect(arguments?.recurrence == nil)
         #expect(arguments?.participants == [member])
         #expect(receivedMeeting == meeting)
@@ -416,13 +420,62 @@ struct MeetingFormViewModelTests {
     @Test("startDateRange allows the original start day when editing a meeting that started in the past")
     func startDateRange_EditModePastMeeting() {
         // Given
-        let meeting = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-3 * 86_400))
+        let meeting = makeEditableMeeting(
+            start: dateProviderMock.now.addingTimeInterval(-3 * 86_400),
+            recurrence: nil
+        )
 
         // When
         let viewModel = makeViewModel(mode: .edit(meeting))
 
         // Then
         #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: meeting.start))
+    }
+
+    @Test("edit mode pre-fills recurring meetings that started in the past with the next occurrence")
+    func editMode_PastRecurringMeetingUsesNextOccurrence() throws {
+        // Given
+        let originalStart = try makeDate(year: 2026, month: 7, day: 5, hour: 9, minute: 0)
+        let meeting = makeEditableMeeting(
+            start: originalStart,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 7, hour: 9, minute: 0)
+        let expectedEnd = try makeDate(year: 2026, month: 7, day: 7, hour: 10, minute: 0)
+
+        // When
+        let viewModel = makeViewModel(mode: .edit(meeting))
+
+        // Then
+        #expect(viewModel.startDate == expectedStart)
+        #expect(viewModel.endDate == expectedEnd)
+        #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: dateProviderMock.now))
+    }
+
+    @Test("submit in edit mode sends the next occurrence time for a recurring meeting that started in the past")
+    func submit_EditModePastRecurringMeeting_UsesNextOccurrenceTime() async throws {
+        // Given
+        let originalStart = try makeDate(year: 2026, month: 7, day: 5, hour: 9, minute: 0)
+        let original = makeEditableMeeting(
+            start: originalStart,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let viewModel = makeViewModel(mode: .edit(original))
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
+            meeting
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 7, hour: 9, minute: 0)
+        let expectedEnd = try makeDate(year: 2026, month: 7, day: 7, hour: 10, minute: 0)
+
+        // When
+        await viewModel.submit()
+
+        // Then
+        let arguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+        #expect(arguments?.meeting == original)
+        #expect(arguments?.startTime == expectedStart)
+        #expect(arguments?.endTime == expectedEnd)
     }
 
     @Test("submit in edit mode updates the meeting with the form values and calls onSuccess")

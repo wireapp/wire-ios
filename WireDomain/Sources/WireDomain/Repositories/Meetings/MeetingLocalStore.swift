@@ -206,6 +206,7 @@ private extension ZMConversation {
                 qualifiedID: QualifiedID(id: qualifiedID.uuid, domain: qualifiedID.domain),
                 name: user.name ?? "",
                 handle: user.handle ?? "",
+                isSelfUser: user.isSelfUser,
                 initials: user.initials ?? "",
                 accentColor: user.accentColor ?? .default,
                 avatarImageData: user.previewImageData

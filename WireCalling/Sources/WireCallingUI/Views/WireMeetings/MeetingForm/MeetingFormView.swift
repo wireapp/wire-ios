@@ -437,7 +437,11 @@ private extension MeetingMember {
         self.init(
             qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
-            handle: handle
+            handle: handle,
+            isSelfUser: false,
+            initials: "",
+            accentColor: .default,
+            avatarImageData: nil
         )
     }
 }

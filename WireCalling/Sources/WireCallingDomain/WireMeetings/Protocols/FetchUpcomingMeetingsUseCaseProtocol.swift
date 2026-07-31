@@ -17,9 +17,9 @@
 //
 
 // sourcery: AutoMockable
-/// Fetches the meetings shown in the meetings list: all meetings of the
-/// current day — including ones that already started or ended — and of
-/// the following day.
+/// Fetches the meeting occurrences shown in the meetings list, starting
+/// at the beginning of the current day. Occurrences earlier today are
+/// included even when they have already started or ended.
 package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
 
     func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings

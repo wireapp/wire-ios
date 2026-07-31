@@ -90,10 +90,12 @@ package final class MeetingFormViewModel {
 
     /// Meetings can't be scheduled on a past day, but any time
     /// of the current day is allowed. When editing a meeting whose
-    /// start lies in the past, its original day stays selectable.
+    /// start lies in the past, its original day stays selectable unless
+    /// it is recurring; recurring meetings are moved to their next editable
+    /// occurrence so the backend receives a non-past start date.
     var startDateRange: PartialRangeFrom<Date> {
         var earliest = currentDateProvider.now
-        if case let .edit(meeting) = mode {
+        if case let .edit(meeting) = mode, meeting.recurrence == nil {
             earliest = min(earliest, meeting.start)
         }
         return Calendar.current.startOfDay(for: earliest)...
@@ -155,10 +157,14 @@ package final class MeetingFormViewModel {
         case .instant, .scheduled:
             let startDate = currentDateProvider.now.roundedUpToNextMinuteInterval(Self.timePickerMinuteInterval)
             self.startDate = startDate
-            self.endDate = Self.adjustedEndDate(startDate.addingTimeInterval(.oneHour), forStartDate: startDate)
+            self.endDate = Self.adjustedEndDate(
+                startDate.addingTimeInterval(TimeInterval.oneHour),
+                forStartDate: startDate
+            )
         case let .edit(meeting):
-            self.startDate = meeting.start
-            self.endDate = Self.adjustedEndDate(meeting.end, forStartDate: meeting.start)
+            let editableTimeRange = Self.editableTimeRange(for: meeting, now: currentDateProvider.now)
+            self.startDate = editableTimeRange.start
+            self.endDate = Self.adjustedEndDate(editableTimeRange.end, forStartDate: editableTimeRange.start)
             self.meetingTitle = meeting.title
             self.repeatOption = MeetingRepeatOption(recurrence: meeting.recurrence)
             // The participants come from the meeting's conversation; the
@@ -214,7 +220,7 @@ package final class MeetingFormViewModel {
             return try await createMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startTime,
-                endTime: startTime.addingTimeInterval(.oneHour),
+                endTime: startTime.addingTimeInterval(TimeInterval.oneHour),
                 recurrence: nil,
                 participants: selectedMembers
             )
@@ -236,6 +242,20 @@ package final class MeetingFormViewModel {
                 participants: selectedMembers
             )
         }
+    }
+
+    private static func editableTimeRange(for meeting: Meeting, now: Date) -> (start: Date, end: Date) {
+        guard meeting.recurrence != nil, meeting.start < now else {
+            return (meeting.start, meeting.end)
+        }
+
+        guard let nextOccurrence = MeetingOccurrencePaginator()
+            .occurrences(for: [meeting], startingAt: now, offset: 0, limit: 1)
+            .first else {
+            return (meeting.start, meeting.end)
+        }
+
+        return (nextOccurrence.start, nextOccurrence.end)
     }
 
     private static func adjustedEndDate(
