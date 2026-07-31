@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "已禁用";
 
 "conversation.status.secutity_alert.default" = "新安全提醒";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "正在输入...";
 "conversation.status.typing.group" = "%@︰正在输入...";
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "此对话解除证据保全状态";
 
 "content.system.message_legal_hold.learn_more" = "更多信息";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
 
 //
 "content.system.is_verified" = "所有的指纹完成验证";
