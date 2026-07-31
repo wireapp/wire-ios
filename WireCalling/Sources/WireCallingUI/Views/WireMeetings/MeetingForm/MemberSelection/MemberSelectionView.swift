@@ -25,6 +25,7 @@ struct MemberSelectionView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Members
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.wireAccentColor) private var wireAccentColor
     @State private(set) var viewModel: MemberSelectionViewModel
 
     var body: some View {
@@ -129,7 +130,9 @@ struct MemberSelectionView: View {
     }
 
     private func sectionHeader(title: String, isExpanded: Binding<Bool>) -> some View {
-        Button {
+        let accentColor = ColorTheme.Base.primary(wireAccentColor).color
+
+        return Button {
             withAnimation { isExpanded.wrappedValue.toggle() }
         } label: {
             HStack {
@@ -139,7 +142,7 @@ struct MemberSelectionView: View {
                 Spacer()
                 Image(systemName: "chevron.down")
                     .rotationEffect(.degrees(isExpanded.wrappedValue ? 0 : -90))
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(accentColor)
             }
         }
         .buttonStyle(.plain)
@@ -148,6 +151,8 @@ struct MemberSelectionView: View {
 
     private func row(for member: MeetingMember) -> some View {
         let isSelected = viewModel.isSelected(member)
+        let accentColor = ColorTheme.Base.primary(wireAccentColor).color
+
         return Button {
             viewModel.toggleSelection(member)
         } label: {
@@ -177,7 +182,7 @@ struct MemberSelectionView: View {
 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.title)
-                    .foregroundStyle(isSelected ? Color.accentColor : Color.secondary.opacity(0.5))
+                    .foregroundStyle(isSelected ? accentColor : Color.secondary.opacity(0.5))
             }
         }
         .buttonStyle(.plain)

@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "desativado";
 
 "conversation.status.secutity_alert.default" = "Novo alerta de segurança";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "Digitando uma mensagem…";
 "conversation.status.typing.group" = "%@: está digitando…";
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "Proteção jurídica desativada para esta conversa";
 
 "content.system.message_legal_hold.learn_more" = "Mais informação";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
 
 //
 "content.system.is_verified" = "Todas as impressões digitais são verificadas";
