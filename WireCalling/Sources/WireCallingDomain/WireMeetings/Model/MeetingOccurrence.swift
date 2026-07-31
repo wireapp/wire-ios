@@ -32,13 +32,15 @@ package struct MeetingOccurrenceID: Hashable, Sendable {
 
 package struct MeetingOccurrence: Hashable, Identifiable, Sendable {
 
-    package let id: MeetingOccurrenceID
     package let meeting: Meeting
     package let start: Date
     package let end: Date
 
+    package var id: MeetingOccurrenceID {
+        MeetingOccurrenceID(meetingID: meeting.id, start: start)
+    }
+
     package init(meeting: Meeting, start: Date, end: Date) {
-        self.id = MeetingOccurrenceID(meetingID: meeting.id, start: start)
         self.meeting = meeting
         self.start = start
         self.end = end
