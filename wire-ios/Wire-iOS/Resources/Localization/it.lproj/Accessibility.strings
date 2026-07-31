@@ -43,7 +43,7 @@
 "conversation.gifButton.description" = "Scegli una GIF";
 "conversation.audioButton.description" = "Record an audio message";
 "conversation.pingButton.description" = "Send a ping";
-"conversation.uploadFileButton.description" = "Share a file";
+"conversation.uploadFileButton.description" = "Condividi un file";
 "conversation.locationButton.description" = "Condividi la tua location";
 "conversation.videoButton.description" = "Registra un video";
 "conversation.moreButton.description" = "Open more messaging options";

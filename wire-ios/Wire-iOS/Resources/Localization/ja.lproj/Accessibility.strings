@@ -43,7 +43,7 @@
 "conversation.gifButton.description" = "Select a GIF";
 "conversation.audioButton.description" = "Record an audio message";
 "conversation.pingButton.description" = "pingを送信";
-"conversation.uploadFileButton.description" = "Share a file";
+"conversation.uploadFileButton.description" = "ファイルを共有";
 "conversation.locationButton.description" = "Share your location";
 "conversation.videoButton.description" = "ビデオを録画";
 "conversation.moreButton.description" = "Open more messaging options";

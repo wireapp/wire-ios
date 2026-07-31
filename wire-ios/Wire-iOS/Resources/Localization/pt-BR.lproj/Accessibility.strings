@@ -38,12 +38,12 @@
 "conversation.hideFormattingButton.description" = "Ocultar opções de formatação";
 "conversation.timerButton.description" = "Definir um temporizador para auto-exclusão de mensagens";
 "conversation.mentionButton.description" = "Mencionar alguém";
-"conversation.cameraButton.description" = "Take or select a photo";
-"conversation.sketchButton.description" = "Open sketch to draw or write";
+"conversation.cameraButton.description" = "Tire ou selecione uma foto";
+"conversation.sketchButton.description" = "Abra o esboço para desenhar ou escrever";
 "conversation.gifButton.description" = "Selecione um GIF";
 "conversation.audioButton.description" = "Gravar uma mensagem de áudio";
 "conversation.pingButton.description" = "Enviar um ping";
-"conversation.uploadFileButton.description" = "Share a file";
+"conversation.uploadFileButton.description" = "Compartilhar um arquivo";
 "conversation.locationButton.description" = "Compartilhar sua localização";
 "conversation.videoButton.description" = "Gravar um vídeo";
 "conversation.moreButton.description" = "Abrir mais opções de mensagens";

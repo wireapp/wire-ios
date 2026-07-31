@@ -38,12 +38,12 @@
 "conversation.hideFormattingButton.description" = "Приховати параметри форматування";
 "conversation.timerButton.description" = "Встановіть таймер для тимчасових повідомлень";
 "conversation.mentionButton.description" = "Згадати когось";
-"conversation.cameraButton.description" = "Take or select a photo";
-"conversation.sketchButton.description" = "Open sketch to draw or write";
+"conversation.cameraButton.description" = "Зробити або вибрати знімок";
+"conversation.sketchButton.description" = "Відкрити ескіз для малювання чи запису";
 "conversation.gifButton.description" = "Вибрати GIF";
 "conversation.audioButton.description" = "Записати аудіоповідомлення";
 "conversation.pingButton.description" = "Надіслати пінг";
-"conversation.uploadFileButton.description" = "Share a file";
+"conversation.uploadFileButton.description" = "Поділитися файлом";
 "conversation.locationButton.description" = "Поділися розташуванням";
 "conversation.videoButton.description" = "Записати відео";
 "conversation.moreButton.description" = "Відкрити більше налаштувань повідомлень";
