@@ -631,12 +631,16 @@ public final class ZMUserSession: NSObject {
         if let apiVersion = resolvedBackendMetadata.apiVersion,
            let e2eiAPI = apiProvider.e2eIAPI(apiVersion: apiVersion) {
 
+            let e2eiConfig = coreDataStack.viewContext.performAndWait {
+                e2eiFeature.config
+            }
+
             let hooks = PKIEnvironmentTransport(
                 selfClientId: clientID,
                 e2eiApi: e2eiAPI,
                 crlURLbuilder: CRLURLBuilder(
-                    shouldUseProxy: e2eiFeature.config.useProxyOnMobile ?? false,
-                    proxyURLString: e2eiFeature.config.crlProxy
+                    shouldUseProxy: e2eiConfig.useProxyOnMobile ?? false,
+                    proxyURLString: e2eiConfig.crlProxy
                 ),
                 oauthAuthenticate: nil
             )
