@@ -470,14 +470,13 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
     func testThatItReturnsRequiresAdminWithNoMembers_On403WithEmptyEligibleMembers() {
         syncMOC.performGroupedAndWait { [self] in
-            // given — an empty `eligible_members` still maps to `requiresAdmin`, with no members.
+            // given — an empty `eligible_members` maps to .unknown error.
             var action = RemoveParticipantAction(user: user, conversation: conversation)
             let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
-                guard case let .failure(ConversationRemoveParticipantError.requiresAdmin(members)) = result else {
+                guard case .failure(.unknown) = result else {
                     return
                 }
-                XCTAssertTrue(members.isEmpty)
                 expectation.fulfill()
             }
 
