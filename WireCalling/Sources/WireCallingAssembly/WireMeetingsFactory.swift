@@ -32,7 +32,9 @@ public struct WireMeetingsFactory {
     public func makeMeetingsView(
         meetingRepository: any MeetingRepositoryProtocol,
         memberRepository: any MeetingMemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
+        conversationRepository: any MeetingConversationRepositoryProtocol,
+        callStateRepository: any MeetingCallStateRepositoryProtocol,
+        accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
         let createMeetingUseCase = CreateMeetingUseCase(
             meetingRepository: meetingRepository,
@@ -48,12 +50,14 @@ public struct WireMeetingsFactory {
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
         let deleteMeetingUseCase = DeleteMeetingUseCase(repository: meetingRepository)
+        let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callStateRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
             makeFormViewModel: { mode, onSuccess in
                 MeetingFormViewModel(
                     mode: mode,
@@ -65,7 +69,14 @@ public struct WireMeetingsFactory {
                 )
             }
         )
-        return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
+        return UIHostingController(
+            rootView: AnyView(
+                WireMeetingsRootView(
+                    viewModel: meetingsViewModel,
+                    accentColorState: accentColorState
+                )
+            )
+        )
     }
 
 }

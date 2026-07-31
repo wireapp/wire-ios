@@ -20,14 +20,18 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     let meeting: Meeting
     let formatTimeRange: (Meeting) -> String
+    var isAttending: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     @ScaledMetric private var iconBoxSize: CGFloat = 31
     @ScaledMetric private var iconFontSize: CGFloat = 15
@@ -97,8 +101,27 @@ struct MeetingRow: View {
                     MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
                         .padding(.top, 2)
                 }
+                if isAttending {
+                    attendingLabel
+                        .padding(.top, 10)
+                }
             }
         }
+    }
+
+    private var attendingLabel: some View {
+        HStack(spacing: 6) {
+            Image(.videoCall)
+                .renderingMode(.template)
+                .accessibilityHidden(true)
+
+            Text(Strings.attending)
+        }
+        .font(for: .body2)
+        .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingDetails.attendingLabel)
+        .accessibilityLabel(Text(Strings.attending))
     }
 
     private func recurrenceBadge(_ title: String) -> some View {
@@ -161,6 +184,7 @@ private extension MeetingRecurrence {
             creatorID: QualifiedID(id: UUID(), domain: "")
         ),
         formatTimeRange: { _ in "Today" },
+        isAttending: true,
         onEdit: {},
         onDelete: {}
     )
