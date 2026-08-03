@@ -27,7 +27,8 @@ protocol WireMeetingsFactoryProtocol {
         meetingRepository: any MeetingRepositoryProtocol,
         memberRepository: any MeetingMemberRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol,
-        callStateRepository: any MeetingCallStateRepositoryProtocol
+        callStateRepository: any MeetingCallStateRepositoryProtocol,
+        accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController
 }
 
