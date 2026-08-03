@@ -58,6 +58,10 @@ class ConversationDetailsPage: PageModel {
         app.staticTexts.matching(identifier: Locators.ConversationDetailsPage.userCellName.rawValue)
     }
 
+    var cannotLeaveAlert: XCUIElement {
+        app.alerts.firstMatch
+    }
+
     func userCell(named name: String) -> XCUIElement {
         let predicate = NSPredicate(format: "label CONTAINS %@", name)
         return userCells.matching(predicate).firstMatch
@@ -112,6 +116,13 @@ class ConversationDetailsPage: PageModel {
 
     func leaveOptionsConversationDetails() throws -> Self {
         leaveConversationOptionConversationDetailsButton.tap()
+        return self
+    }
+
+    func tapCannotLeaveAlert() throws -> Self {
+        if cannotLeaveAlert.waitForExistence(timeout: 1) {
+            cannotLeaveAlert.buttons.firstMatch.tap()
+        }
         return self
     }
 
