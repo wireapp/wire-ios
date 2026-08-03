@@ -59,6 +59,7 @@ struct MeetingsViewModelTests {
 
     @Test("initial state is empty")
     func initialState() {
+        #expect(viewModel.loadedOccurrences.isEmpty)
         #expect(viewModel.loadedMeetings.isEmpty)
         #expect(viewModel.hasMore == false)
         #expect(viewModel.groupedUpcomingMeetings.isEmpty)
@@ -84,7 +85,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.hasMore == true)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?
-            .pageSize == 10)
+            .pageSize == 20)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?
             .offset == 0)
     }
@@ -139,7 +140,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.hasMore == false)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
-            .pageSize == 5)
+            .pageSize == 20)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
             .offset == 10)
     }
@@ -191,8 +192,8 @@ struct MeetingsViewModelTests {
 
     @Test("a meeting change event re-fetches the entire loaded range in one page")
     func meetingChangeEvent_refetchesLoadedRange() async {
-        // Given — 12 loaded meetings (initial page of 10 plus a page of 2)
-        let meetings = (0 ..< 12).map { index in
+        // Given — 25 loaded meetings (initial page of 20 plus a page of 5)
+        let meetings = (0 ..< 25).map { index in
             Meeting.fixture(
                 title: "Meeting \(index)",
                 start: mockDateProvider.now.addingTimeInterval(Double(index + 1) * 3600)
@@ -200,14 +201,14 @@ struct MeetingsViewModelTests {
         }
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, offset in
             if offset == 0 {
-                PaginatedMeetings(meetings: Array(meetings.prefix(10)), hasMore: true, nextOffset: 10)
+                PaginatedMeetings(meetings: Array(meetings.prefix(20)), hasMore: true, nextOffset: 20)
             } else {
-                PaginatedMeetings(meetings: Array(meetings.suffix(2)), hasMore: false, nextOffset: 12)
+                PaginatedMeetings(meetings: Array(meetings.suffix(5)), hasMore: false, nextOffset: 25)
             }
         }
         await viewModel.loadInitialData()
         await viewModel.loadMoreIfNeeded()
-        #expect(viewModel.loadedMeetings.count == 12)
+        #expect(viewModel.loadedMeetings.count == 25)
 
         let (changes, changeContinuation) = AsyncStream<Void>.makeStream()
         observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = changes
@@ -220,12 +221,12 @@ struct MeetingsViewModelTests {
         changeContinuation.finish()
         await viewModel.observeMeetingChanges()
 
-        // Then — a single fetch covering all 12 loaded meetings
+        // Then — a single fetch covering all 25 loaded meetings
         let lastInvocation = upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations
             .last
-        #expect(lastInvocation?.pageSize == 12)
+        #expect(lastInvocation?.pageSize == 25)
         #expect(lastInvocation?.offset == 0)
-        #expect(viewModel.loadedMeetings.count == 12)
+        #expect(viewModel.loadedMeetings.count == 25)
     }
 
     // MARK: - observeAttendedMeetings
@@ -248,6 +249,41 @@ struct MeetingsViewModelTests {
         #expect(viewModel.attendingConversationIDs == [attended.conversationID])
         #expect(viewModel.isAttending(attended) == true)
         #expect(viewModel.isAttending(other) == false)
+    }
+
+    @Test("isAttending is true only for the currently happening occurrence")
+    func isAttendingOccurrence_requiresCurrentOccurrence() async {
+        // Given
+        let meeting = Meeting.fixture(
+            title: "Daily",
+            start: mockDateProvider.now.addingTimeInterval(-60),
+            duration: 120,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let currentOccurrence = MeetingOccurrence(meeting: meeting)
+        let pastOccurrence = MeetingOccurrence(
+            meeting: meeting,
+            start: mockDateProvider.now.addingTimeInterval(-86_400),
+            end: mockDateProvider.now.addingTimeInterval(-86_400 + 120)
+        )
+        let futureOccurrence = MeetingOccurrence(
+            meeting: meeting,
+            start: mockDateProvider.now.addingTimeInterval(86_400),
+            end: mockDateProvider.now.addingTimeInterval(86_400 + 120)
+        )
+
+        let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
+        observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
+
+        // When
+        continuation.yield([meeting.conversationID])
+        continuation.finish()
+        await viewModel.observeAttendedMeetings()
+
+        // Then
+        #expect(viewModel.isAttending(currentOccurrence) == true)
+        #expect(viewModel.isAttending(pastOccurrence) == false)
+        #expect(viewModel.isAttending(futureOccurrence) == false)
     }
 
     @Test("a subsequent emission replaces the attending set")
@@ -339,6 +375,40 @@ struct MeetingsViewModelTests {
         #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 1)
         #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
         #expect(viewModel.loadedMeetings.isEmpty)
+    }
+
+    @Test("deleteMeeting removes every loaded occurrence for the meeting series")
+    func deleteMeeting_removesEveryOccurrenceForSeries() async {
+        // Given
+        let meeting = Meeting.fixture(
+            title: "Daily",
+            start: mockDateProvider.now,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let tomorrow = mockDateProvider.now.addingTimeInterval(86_400)
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(
+                occurrences: [
+                    MeetingOccurrence(meeting: meeting),
+                    MeetingOccurrence(
+                        meeting: meeting,
+                        start: tomorrow,
+                        end: tomorrow.addingTimeInterval(3600)
+                    )
+                ],
+                hasMore: false,
+                nextOffset: 2
+            )
+        }
+        await viewModel.loadInitialData()
+        #expect(viewModel.loadedOccurrences.count == 2)
+
+        // When
+        await viewModel.deleteMeeting(meeting)
+
+        // Then
+        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
+        #expect(viewModel.loadedOccurrences.isEmpty)
     }
 
     @Test("deleteMeeting flags an error and keeps the meeting when the use case fails")
@@ -475,14 +545,15 @@ private extension Meeting {
         id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
         title: String,
         start: Date,
-        duration: TimeInterval = 3600
+        duration: TimeInterval = 3600,
+        recurrence: MeetingRecurrence? = nil
     ) -> Meeting {
         Meeting(
             id: id,
             title: title,
             start: start,
             end: start.addingTimeInterval(duration),
-            recurrence: nil,
+            recurrence: recurrence,
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         )
