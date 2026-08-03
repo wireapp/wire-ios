@@ -21,7 +21,9 @@ runs:
     - name: Generate Allure Report
       if: always()
       shell: bash
-      run: bash ./scripts/run-generate-allure-report.sh "${{ inputs.xcresult_search_path }}"
+      env:
+        XCRESULT_SEARCH_PATH: ${{ inputs.xcresult_search_path }}
+      run: bash ./scripts/run-generate-allure-report.sh "$XCRESULT_SEARCH_PATH"
         
     - name: Upload Allure Report Artifact
       if: ${{ env.ALLURE_REPORT_AVAILABLE == 'true' }}
@@ -35,4 +37,5 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
-      run: bash ./scripts/run-update-comment.sh "Test Results" "${{ inputs.allure_artifact_name }}"
+        ALLURE_ARTIFACT_NAME: ${{ inputs.allure_artifact_name }}
+      run: bash ./scripts/run-update-comment.sh "Test Results" "$ALLURE_ARTIFACT_NAME"

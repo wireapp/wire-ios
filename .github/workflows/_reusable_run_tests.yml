@@ -190,13 +190,18 @@ jobs:
 
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
+        env:
+          FOLDERS: ${{ inputs.folders }}
+          ALL: ${{ inputs.all }}
         run: |
-          bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
-          
+          bundle exec fastlane test_frameworks folders:"$FOLDERS" all:"$ALL"
+
       - name: "Test frameworks without dependencies"
         if: ${{ inputs.test_dependencies == false }}
+        env:
+          FOLDERS: ${{ inputs.folders }}
         run: |
-          bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
+          bundle exec fastlane test_only_frameworks folders:"$FOLDERS"
 
       - name: Check for duplicate symbol implementations
         if: always()
@@ -306,7 +311,7 @@ jobs:
           {
             echo "## 📊 Allure Report Generated Successfully";
             echo "";
-            echo "**Artifact Name:** \`html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}\`";
+            echo "**Artifact Name:** \`html-report-${GITHUB_RUN_NUMBER}-${SANITIZED_BRANCH}\`";
             echo "";
             echo "### 📥 How to View the Report";
             echo "";
