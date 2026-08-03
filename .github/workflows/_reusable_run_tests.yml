@@ -390,11 +390,15 @@ jobs:
     if: ${{ always() && needs.run-tests.result != 'skipped' }}
     steps:
       - name: Sanitize branch name
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$EVENT_NAME" == "pull_request" ] || [ "$EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$HEAD_REF"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi
