@@ -25,8 +25,7 @@ final class UserProfileTests: WireUITestCase {
     private func openTeamUserProfilePage() async throws -> UserProfilePage {
         let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 0)
 
-        return try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
+        return try skipUiLogin(user: teamOwner)
             .openUserProfilePage()
     }
 

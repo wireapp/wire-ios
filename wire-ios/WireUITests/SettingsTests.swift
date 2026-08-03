@@ -143,8 +143,7 @@ final class SettingsTests: WireUITestCase {
             conversation: .group(groupName)
         )
 
-        let activeConversationPage = try app.loginUser(email: team.email, password: team.password)
-            .acceptPopup()
+        let activeConversationPage = try skipUiLogin(user: team)
             .openConversation()
 
         // WHEN - read receipts are turned off

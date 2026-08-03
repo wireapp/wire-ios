@@ -102,8 +102,7 @@ final class AccountManagementTests: WireUITestCase {
         let user = try await UserHelper.default.createPersonalUser()
         let deviceName = "device123"
 
-        let conversationsPage = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
+        let conversationsPage = try skipUiLogin(user: user)
 
         _ = try await testServicesClient.getInstanceId(
             email: user.email,

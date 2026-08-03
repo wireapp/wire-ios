@@ -296,11 +296,7 @@ final class ZCallingTests: WireUITestCase {
         // GIVEN
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
-        let firstTimePage = try app.loginUser(
-            email: teamAndGroupCallSetup.appUserReceivingCall.email,
-            password: teamAndGroupCallSetup.appUserReceivingCall.password
-        )
-        _ = try firstTimePage.acceptPopup()
+        _ = try skipUiLogin(user: teamAndGroupCallSetup.appUserReceivingCall)
 
         let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
         let ownerInstanceId = try requireOwnerInstanceId(from: instances)

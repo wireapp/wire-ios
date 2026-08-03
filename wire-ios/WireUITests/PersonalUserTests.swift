@@ -356,8 +356,7 @@ final class PersonalUsersTests: WireUITestCase {
         // GIVEN
         let team = try await registerTeamForConversationFilter()
 
-        let conversationsPage = try app.loginUser(email: team.teamOwner.email, password: team.teamOwner.password)
-            .acceptPopup()
+        let conversationsPage = try skipUiLogin(user: team.teamOwner)
 
         //  Search by group and verify
         try conversationsPage.searchConversation(named: team.groupName)
