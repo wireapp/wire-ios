@@ -155,7 +155,7 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
 private extension [MeetingMember] {
     static var mock: Self {
         [
-            .init(name: "Martin Koch-Johansen", handle: "username"),
+            .init(name: "Martin Koch-Johansen", handle: "username", isSelfUser: true),
             .init(name: "Olga Heaney", handle: "username"),
             .init(name: "Margarete Springer", handle: "username"),
             .init(name: "Lorenzo Schmeler", handle: ""),
@@ -170,11 +170,27 @@ private extension [MeetingMember] {
 
 private extension MeetingMember {
 
-    init(name: String, handle: String) {
+    init(
+        name: String,
+        handle: String,
+        isSelfUser: Bool = false
+    ) {
+        let initials = name
+            .split(separator: " ")
+            .compactMap(\.first)
+            .prefix(2)
+            .map(String.init)
+            .joined()
+            .uppercased()
+
         self.init(
             qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
-            handle: handle
+            handle: handle,
+            isSelfUser: isSelfUser,
+            initials: initials,
+            accentColor: .random,
+            avatarImageData: nil
         )
     }
 
