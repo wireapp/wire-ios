@@ -269,7 +269,7 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
     ) async throws {
         fatalError("not implemented")
     }
-    
+
     func updateRole(
         _ role: String,
         userID: WireNetwork.UserID,
@@ -277,7 +277,7 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
     ) async throws {
         fatalError("not implemented")
     }
-    
+
     func removeParticipant(
         userID: WireNetwork.UserID,
         conversationID: WireNetwork.ConversationID
