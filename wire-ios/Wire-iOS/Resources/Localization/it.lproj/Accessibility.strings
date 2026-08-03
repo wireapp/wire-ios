@@ -38,8 +38,8 @@
 "conversation.hideFormattingButton.description" = "Hide formatting options";
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
 "conversation.mentionButton.description" = "Mention someone";
-"conversation.cameraButton.description" = "Take or select a photo, disabled in viewer access";
-"conversation.sketchButton.description" = "Open sketch to draw or write, disabled in viewer access";
+"conversation.cameraButton.description" = "Take or select a photo";
+"conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Scegli una GIF";
 "conversation.audioButton.description" = "Record an audio message";
 "conversation.pingButton.description" = "Send a ping";
@@ -54,6 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ day";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ week";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ weeks";
+"conversation.cameraButtonDisabled.description" = "Take or select a photo, disabled in viewer access";
+"conversation.sketchButtonDisabled.description" = "Open sketch to draw or write, disabled in viewer access";
+"conversation.uploadFileButtonDisabled.description" = "Share a file, disabled in viewer access";
+"conversation.videoButtonDisabled.description" = "Record a video, disabled in viewer access";
 
 "conversation.headerButton.description" = "Use a heading";
 "conversation.boldButton.description" = "Use bolded text";
