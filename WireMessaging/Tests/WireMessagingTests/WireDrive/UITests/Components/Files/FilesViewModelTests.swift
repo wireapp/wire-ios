@@ -51,8 +51,11 @@ final class FilesViewModelTests {
 
         self.sut = FilesViewModel(
             useCases: .init(
-                fetchNodes: WireDriveFetchNodesPageUseCase(
-                    configuration: .conversationFileView(root: .path("some-cell")),
+                fetchNodesPage: WireDriveFetchNodesPageUseCase(
+                    repository: nodesRepository
+                ),
+                fetchNodes: WireDriveFetchNodesUseCase(
+                    state: WireDriveNodesCollection(),
                     repository: nodesRepository
                 ),
                 deleteNodes: WireDriveDeleteNodesUseCase(
@@ -100,11 +103,14 @@ final class FilesViewModelTests {
                 ),
                 getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                     localAssetRepository: localAssetRepository
+                ),
+                observeAsset: WireDriveObserveAssetUseCase(localAssetRepository: localAssetRepository),
+                moveNode: WireDriveMoveNodeUseCase(
+                    nodesRepository: nodesRepository,
+                    localAssetRepository: localAssetRepository
                 )
             ),
             isCellsStatePending: false,
-            localAssetRepository: localAssetRepository,
-            nodesRepository: nodesRepository,
             isBrowsing: false,
             networkMonitor: networkMonitor
         )

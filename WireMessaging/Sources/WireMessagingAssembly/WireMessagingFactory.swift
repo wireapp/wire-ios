@@ -176,8 +176,11 @@ public extension WireMessagingFactory {
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
                     useCases: .init(
-                        fetchNodes: WireDriveFetchNodesPageUseCase(
-                            configuration: .filesBrowserView,
+                        fetchNodesPage: WireDriveFetchNodesPageUseCase(
+                            repository: nodesAPI
+                        ),
+                        fetchNodes: WireDriveFetchNodesUseCase(
+                            state: WireDriveNodesCollection(),
                             repository: nodesAPI
                         ),
                         deleteNodes: WireDriveDeleteNodesUseCase(
@@ -225,11 +228,16 @@ public extension WireMessagingFactory {
                         ),
                         getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                             localAssetRepository: localAssetRepository
+                        ),
+                        observeAsset: WireDriveObserveAssetUseCase(
+                            localAssetRepository: localAssetRepository
+                        ),
+                        moveNode: WireDriveMoveNodeUseCase(
+                            nodesRepository: nodesAPI,
+                            localAssetRepository: localAssetRepository
                         )
                     ),
                     isCellsStatePending: false,
-                    localAssetRepository: localAssetRepository,
-                    nodesRepository: nodesAPI,
                     isBrowsing: true
                 )
             )
