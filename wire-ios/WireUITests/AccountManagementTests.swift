@@ -96,4 +96,61 @@ final class AccountManagementTests: WireUITestCase {
 
     }
 
+    @MainActor
+    func testViewLoggedInDevicesVerifyAndDeleteDevice_TC_8952_8953() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+        let deviceName = "device123"
+
+        let conversationsPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+
+        _ = try await testServicesClient.getInstanceId(
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            verificationCode: nil,
+            deviceName: deviceName
+        )
+        // WHEN
+        let deviceDetailsPage = try conversationsPage
+            .openSettings()
+            .openDevices()
+            .verifyLoggedInDevicesListContains(deviceName)
+            .openDeviceDetails(named: deviceName)
+
+        // THEN
+        _ = try await deviceDetailsPage
+            .verifyDevice()
+            .backgroundAndResume(app: app, forDelay: 2)
+            .verifyDeviceIsStillVerified()
+            .deleteDevice(password: user.password)
+            .verifyDeviceIsDeleted(named: deviceName)
+    }
+
+    @MainActor
+    func testDeleteDeviceWhenClientLimitReached_TC_8973() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+        // 7 instances to register 7 clients
+        let deviceNames = (1 ... 7).map { "device-\($0)" }
+
+        for deviceName in deviceNames {
+            _ = try await testServicesClient.getInstanceId(
+                email: user.email,
+                password: user.password,
+                name: user.name,
+                verificationCode: nil,
+                deviceName: deviceName,
+                useCache: false
+            )
+        }
+
+        // WHEN
+        _ = try app.loginUser(email: user.email, password: user.password)
+
+        // THEN
+        _ = try ManagedDevicesPage()
+            .removeFirstDeviceAndContinue(password: user.password)
+    }
 }

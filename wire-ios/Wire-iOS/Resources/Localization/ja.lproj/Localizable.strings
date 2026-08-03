@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "無効";
 
 "conversation.status.secutity_alert.default" = "新規セキュリティアラート";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "メッセージを入力中";
 "conversation.status.typing.group" = "%@: メッセージの入力中";
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "この会話は法的所有権による制限から解除されました。";
 
 "content.system.message_legal_hold.learn_more" = "もっと知る";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
 
 //
 "content.system.is_verified" = "すべてのフィンガープリントは確認済みです";

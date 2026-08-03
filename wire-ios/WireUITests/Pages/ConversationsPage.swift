@@ -48,6 +48,10 @@ class ConversationsPage: PageModel {
         app.buttons.matching(identifier: Locators.ConversationsPage.conversationCell.rawValue)
     }
 
+    var conversationSearchBar: XCUIElement {
+        app.searchFields[Locators.ConversationsPage.conversationSearchBar.rawValue].firstMatch
+    }
+
     func conversationCell(named name: String) -> XCUIElement {
         app.buttons.matching(
             NSPredicate(
@@ -181,6 +185,21 @@ class ConversationsPage: PageModel {
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {
         plusButtonToCreateGroup.tap()
         return try NewConversationPage()
+    }
+
+    @discardableResult
+    func searchConversation(named name: String) throws -> ConversationsPage {
+        try conversationSearchBar.tapIfKeyboardNotFocused().typeText(name)
+        return self
+    }
+
+    @discardableResult
+    func clearConversationSearch() throws -> ConversationsPage {
+        let clearButton = conversationSearchBar.buttons[
+            Locators.ConversationsPage.conversationSearchClearButton.rawValue
+        ].firstMatch
+        XCTAssertTrue(clearButton.waitAndTap(), "Conversation search clear button did not appear")
+        return self
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {

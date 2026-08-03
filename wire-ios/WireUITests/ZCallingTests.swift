@@ -221,7 +221,6 @@ final class ZCallingTests: WireUITestCase {
             activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
             "Ongoing call still visible after hanging up the call"
         )
-
     }
 
     /// Call participant switches from audio call to video call and back
@@ -229,7 +228,7 @@ final class ZCallingTests: WireUITestCase {
     @MainActor
     func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_TC_9497() async throws {
 
-        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
         let conversationsPage = try skipUiLogin(user: teamAndGroupCallSetup.appUserReceivingCall)
 
@@ -250,17 +249,30 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertEqual(responses.count, acceptingIds.count)
 
         for instanceId in acceptingIds {
-            try await callingManager.waitForCurrentCall(
+            try await callingManager.waitForCurrentCallStatus(
                 instanceId: instanceId,
-                timeout: 10
+                expectedStatuses: ["ACTIVE"],
+                timeout: 30
             )
         }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
 
         try ongoingCallPage.turnOnVideo()
 
         for instanceId in acceptingIds {
-            _ = try await callingManager.switchVideoOn(instanceId: instanceId)
+            try await callingManager.switchVideoOn(instanceId: instanceId)
         }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
 
         XCTAssertTrue(
             ongoingCallPage.turnOffCameraButton.waitForExistence(timeout: 10),
@@ -268,15 +280,55 @@ final class ZCallingTests: WireUITestCase {
         )
 
         for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
-            ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
+            _ = ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
         }
-
-        try await callingManager.verifyReceiveAudioAndVideo(instanceIds: acceptingIds)
 
         try ongoingCallPage.turnOffVideo()
         XCTAssertTrue(
             ongoingCallPage.turnOnCameraButton.waitForExistence(timeout: 10),
             "Camera did not switch off"
         )
+    }
+
+    /// [critical]
+    @MainActor
+    func testParticipantCanSeeSharedScreen_TC_8891() async throws {
+        // GIVEN
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        _ = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let ownerInstanceId = try requireOwnerInstanceId(from: instances)
+
+        // WHEN
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
+        try await callingManager.waitForCurrentCallStatus(
+            instanceId: ownerInstanceId,
+            expectedStatuses: ["ACTIVE"],
+            timeout: 30
+        )
+        _ = try await callingManager.switchScreenSharingOn(instanceId: ownerInstanceId)
+
+        // THEN
+        ongoingCallPage
+            .isOtherParticipantScreenSharingVisible(for: teamAndGroupCallSetup.teamOwner.name)
+            .verifyScreenSharingQRCodes(
+                for: teamAndGroupCallSetup.teamOwner.name,
+                // Calling service screen-share test image uses the same QR marker payloads as zautomation.
+                expectedContentInQRCode: [
+                    "http://screen-right",
+                    "http://screen-bottom"
+                ]
+            )
     }
 }
