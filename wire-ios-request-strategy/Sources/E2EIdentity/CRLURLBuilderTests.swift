@@ -17,7 +17,7 @@
 //
 
 import XCTest
-@testable import WireSyncEngine
+@testable import WireRequestStrategy
 
 final class CRLURLBuilderTests: XCTestCase {
 

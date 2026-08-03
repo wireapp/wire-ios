@@ -79,11 +79,9 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     private let nodeID: UUID
     private let nodeName: String
     private let onFinish: () -> Void
-    private let nodesRepository: any WireDriveNodesRepositoryProtocol
-    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let moveNodeUseCase: WireDriveMoveNodeUseCase
     private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
-
+    private let fetchNodesUseCase: WireDriveFetchNodesUseCase
     @Published var navigationPath: [FilesNavigationItem]
 
     init(
@@ -91,10 +89,9 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         nodeID: UUID,
         nodeName: String,
         onFinish: @escaping () -> Void,
-        nodesRepository: any WireDriveNodesRepositoryProtocol,
-        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         moveNodeUseCase: WireDriveMoveNodeUseCase,
-        createFileUseCase: any WireDriveCreateFileUseCaseProtocol
+        createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
+        fetchNodesUseCase: WireDriveFetchNodesUseCase
     ) {
         self.navigationPath = FilesNavigationItem.items(for: containerPath)
         self.rootPath = containerPath.components(separatedBy: "/").first ?? ""
@@ -102,10 +99,9 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         self.nodeID = nodeID
         self.nodeName = nodeName
         self.onFinish = onFinish
-        self.nodesRepository = nodesRepository
         self.moveNodeUseCase = moveNodeUseCase
         self.createFileUseCase = createFileUseCase
-        self.localAssetRepository = localAssetRepository
+        self.fetchNodesUseCase = fetchNodesUseCase
     }
 
     func makeView(path: String) -> some View {
@@ -114,8 +110,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     }
 
     private func makeViewModel(path: String) -> MoveToFolderPageViewModel {
-        let nodesCollection = WireDriveNodesCollection()
-        return MoveToFolderPageViewModel(
+        MoveToFolderPageViewModel(
             containerPath: path,
             originalContainerPath: originalContainerPath,
             nodeID: nodeID,
@@ -126,12 +121,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
             onFinish: { [weak self] in
                 self?.onFinish()
             },
-            nodesCollection: nodesCollection,
-            fetchNodesUseCase: WireDriveFetchNodesUseCase(
-                state: nodesCollection,
-                configuration: .moveToFolder(root: path),
-                repository: nodesRepository
-            ),
+            fetchNodesUseCase: fetchNodesUseCase,
             moveNodeUseCase: moveNodeUseCase,
             createFileUseCase: createFileUseCase
         )

@@ -62,6 +62,8 @@ public enum Locators {
         case bottomBarSettingsButton
         case bottomBarDriveButton
         case createGroupOrSearchButton
+        case conversationSearchBar
+        case conversationSearchClearButton = "Clear text"
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"

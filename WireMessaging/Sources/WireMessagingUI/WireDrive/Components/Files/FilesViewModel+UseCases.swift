@@ -20,7 +20,8 @@ package import WireMessagingDomain
 
 package extension FilesViewModel {
     struct UseCases {
-        let fetchNodes: WireDriveFetchNodesPageUseCase
+        let fetchNodesPage: WireDriveFetchNodesPageUseCase
+        let fetchNodes: WireDriveFetchNodesUseCase
         let deleteNodes: WireDriveDeleteNodesUseCase
         let restoreNodes: WireDriveRestoreNodesUseCase
         let renameNode: any WireDriveRenameNodeUseCaseProtocol
@@ -41,9 +42,12 @@ package extension FilesViewModel {
         let makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase
         let removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase
         let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
+        let observeAsset: WireDriveObserveAssetUseCase
+        let moveNode: WireDriveMoveNodeUseCase
 
         package init(
-            fetchNodes: WireDriveFetchNodesPageUseCase,
+            fetchNodesPage: WireDriveFetchNodesPageUseCase,
+            fetchNodes: WireDriveFetchNodesUseCase,
             deleteNodes: WireDriveDeleteNodesUseCase,
             restoreNodes: WireDriveRestoreNodesUseCase,
             renameNode: any WireDriveRenameNodeUseCaseProtocol,
@@ -63,8 +67,11 @@ package extension FilesViewModel {
             getFileTemplates: any WireDriveFetchFileTemplatesUseCaseProtocol,
             makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase,
             removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase,
-            getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
+            getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase,
+            observeAsset: WireDriveObserveAssetUseCase,
+            moveNode: WireDriveMoveNodeUseCase
         ) {
+            self.fetchNodesPage = fetchNodesPage
             self.fetchNodes = fetchNodes
             self.deleteNodes = deleteNodes
             self.restoreNodes = restoreNodes
@@ -86,6 +93,8 @@ package extension FilesViewModel {
             self.makeAssetAvailableOffline = makeAssetAvailableOffline
             self.removeAssetAvailableOffline = removeAssetAvailableOffline
             self.getOfflineAvailableAssets = getOfflineAvailableAssets
+            self.observeAsset = observeAsset
+            self.moveNode = moveNode
         }
     }
 }
