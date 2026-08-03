@@ -62,6 +62,8 @@ public enum Locators {
         case bottomBarSettingsButton
         case bottomBarDriveButton
         case createGroupOrSearchButton
+        case conversationSearchBar
+        case conversationSearchClearButton = "Clear text"
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"
@@ -484,6 +486,7 @@ public enum Locators {
         case speakerButton = "CallSpeakerButton"
         case timeLabel
         case minimizeCall
+        case sharesScreenDescription = "Shares screen"
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"

@@ -62,46 +62,63 @@ package final class MeetingFormViewModel {
     private let currentDateProvider: any CurrentDateProviding
     private let onSuccess: (Meeting) -> Void
 
-    /// The smallest allowed interval between start and end date, matching
-    /// the minute granularity of the time picker.
-    private static let minimumDuration: TimeInterval = .oneMinute
+    private static let timePickerMinuteInterval = 15
+
+    /// The smallest selectable interval between start and end time.
+    private static let minimumDuration = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
 
     var meetingTitle: String = ""
 
-    /// Changing the start date shifts the end date by the same amount,
-    /// so the meeting duration is preserved.
+    /// Changing the start date normally preserves duration. If that would pass
+    /// the same-day limit, the end time is clamped instead.
     var startDate: Date {
         didSet {
-            endDate = endDate.addingTimeInterval(startDate.timeIntervalSince(oldValue))
+            let shiftedEndDate = endDate.addingTimeInterval(startDate.timeIntervalSince(oldValue))
+            endDate = Self.adjustedEndDate(shiftedEndDate, forStartDate: startDate)
         }
     }
 
-    /// The end date is always after the start date.
+    /// The end date follows the start date's calendar day and can't go past 23:45.
     var endDate: Date {
         didSet {
-            if endDate < startDate.addingTimeInterval(Self.minimumDuration) {
-                endDate = startDate.addingTimeInterval(Self.minimumDuration)
+            let adjustedEndDate = Self.adjustedEndDate(endDate, forStartDate: startDate)
+            if adjustedEndDate != endDate {
+                endDate = adjustedEndDate
             }
         }
     }
 
     /// Meetings can't be scheduled on a past day, but any time
     /// of the current day is allowed. When editing a meeting whose
-    /// start lies in the past, its original day stays selectable.
+    /// start lies in the past, its original day stays selectable unless
+    /// it is recurring; recurring meetings are moved to their next editable
+    /// occurrence so the backend receives a non-past start date.
     var startDateRange: PartialRangeFrom<Date> {
         var earliest = currentDateProvider.now
-        if case let .edit(meeting) = mode {
+        if case let .edit(meeting) = mode, meeting.recurrence == nil {
             earliest = min(earliest, meeting.start)
         }
         return Calendar.current.startOfDay(for: earliest)...
     }
 
-    /// The end date must always be after the start date.
-    var endDateRange: PartialRangeFrom<Date> {
-        startDate.addingTimeInterval(Self.minimumDuration)...
+    /// Acceptance: the end picker must stay on the start date, with 23:45 as the latest available time.
+    var endDateRange: ClosedRange<Date> {
+        let latestEndDate = Self.latestEndDate(for: startDate)
+        let earliestEndDate = min(startDate.addingTimeInterval(Self.minimumDuration), latestEndDate)
+        return earliestEndDate ... latestEndDate
     }
 
     var repeatOption: MeetingRepeatOption = .never
+    var availableRepeatOptions: [MeetingRepeatOption] {
+        // We don't want to show the Yearly option, however, if a meeting exists with yearly, we want to be able to
+        // display it properly and allow changing the option.
+        if repeatOption == .yearly {
+            MeetingRepeatOption.allCases
+        } else {
+            MeetingRepeatOption.allCases.filter { $0 != .yearly }
+        }
+    }
+
     var selectedMembers: [MeetingMember] = []
     private(set) var isLoading = false
 
@@ -138,12 +155,16 @@ package final class MeetingFormViewModel {
 
         switch mode {
         case .instant, .scheduled:
-            let startDate = currentDateProvider.now.roundedUpToNextHalfHour()
+            let startDate = currentDateProvider.now.roundedUpToNextMinuteInterval(Self.timePickerMinuteInterval)
             self.startDate = startDate
-            self.endDate = startDate.addingTimeInterval(30 * TimeInterval.oneMinute)
+            self.endDate = Self.adjustedEndDate(
+                startDate.addingTimeInterval(TimeInterval.oneHour),
+                forStartDate: startDate
+            )
         case let .edit(meeting):
-            self.startDate = meeting.start
-            self.endDate = meeting.end
+            let editableTimeRange = Self.editableTimeRange(for: meeting, now: currentDateProvider.now)
+            self.startDate = editableTimeRange.start
+            self.endDate = Self.adjustedEndDate(editableTimeRange.end, forStartDate: editableTimeRange.start)
             self.meetingTitle = meeting.title
             self.repeatOption = MeetingRepeatOption(recurrence: meeting.recurrence)
             // The participants come from the meeting's conversation; the
@@ -199,7 +220,7 @@ package final class MeetingFormViewModel {
             return try await createMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startTime,
-                endTime: startTime.addingTimeInterval(.oneHour),
+                endTime: startTime.addingTimeInterval(TimeInterval.oneHour),
                 recurrence: nil,
                 participants: selectedMembers
             )
@@ -223,23 +244,78 @@ package final class MeetingFormViewModel {
         }
     }
 
+    private static func editableTimeRange(for meeting: Meeting, now: Date) -> (start: Date, end: Date) {
+        guard meeting.recurrence != nil, meeting.start < now else {
+            return (meeting.start, meeting.end)
+        }
+
+        guard let nextOccurrence = MeetingOccurrencePaginator()
+            .occurrences(for: [meeting], startingAt: now, offset: 0, limit: 1)
+            .first else {
+            return (meeting.start, meeting.end)
+        }
+
+        return (nextOccurrence.start, nextOccurrence.end)
+    }
+
+    private static func adjustedEndDate(
+        _ proposedEndDate: Date,
+        forStartDate startDate: Date,
+        calendar: Calendar = .current
+    ) -> Date {
+        // The hard limit is independent from the start time: no end time past 23:45 on the selected start date.
+        let latestEndDate = latestEndDate(for: startDate, calendar: calendar)
+        if proposedEndDate > latestEndDate {
+            return latestEndDate
+        }
+
+        let proposedTimeComponents = calendar.dateComponents(
+            [.hour, .minute, .second, .nanosecond],
+            from: proposedEndDate
+        )
+        var endDateComponents = calendar.dateComponents([.year, .month, .day], from: startDate)
+        endDateComponents.hour = proposedTimeComponents.hour
+        endDateComponents.minute = proposedTimeComponents.minute
+        endDateComponents.second = proposedTimeComponents.second
+        endDateComponents.nanosecond = proposedTimeComponents.nanosecond
+
+        let endDateOnStartDay = calendar.date(from: endDateComponents) ?? proposedEndDate
+        let earliestEndDate = min(startDate.addingTimeInterval(minimumDuration), latestEndDate)
+
+        return min(max(endDateOnStartDay, earliestEndDate), latestEndDate)
+    }
+
+    private static func latestEndDate(for startDate: Date, calendar: Calendar = .current) -> Date {
+        var components = calendar.dateComponents([.year, .month, .day], from: startDate)
+        components.hour = 23
+        components.minute = 45
+        components.second = 0
+        components.nanosecond = 0
+
+        return calendar.date(from: components) ?? calendar.startOfDay(for: startDate).addingTimeInterval(
+            TimeInterval.oneDay - TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
+        )
+    }
+
 }
 
 private extension Date {
 
-    /// Returns the date rounded up to the next half-hour boundary
-    /// (e.g. 10:12 -> 10:30, 10:42 -> 11:00). Dates already on a
-    /// boundary are returned unchanged.
-    func roundedUpToNextHalfHour(calendar: Calendar = .current) -> Date {
-        let components = calendar.dateComponents([.minute, .second], from: self)
-        // How far past the last half-hour boundary this date is:
-        // minutes past the boundary (minute % 30) converted to seconds, plus the seconds.
-        let minutesPastBoundary = (components.minute ?? 0) % 30
-        let secondsPastBoundary = TimeInterval(minutesPastBoundary) * .oneMinute + TimeInterval(components.second ?? 0)
-        // Exactly on a boundary — nothing to round.
+    /// Returns the date rounded up to the next interval boundary
+    /// (e.g. 10:02 -> 10:15 for a 15-minute interval). Dates already
+    /// on a boundary are returned unchanged.
+    func roundedUpToNextMinuteInterval(_ minuteInterval: Int, calendar: Calendar = .current) -> Date {
+        precondition(minuteInterval > 0 && 60.isMultiple(of: minuteInterval))
+
+        let components = calendar.dateComponents([.minute, .second, .nanosecond], from: self)
+        let minutesPastBoundary = (components.minute ?? 0) % minuteInterval
+        let secondsPastBoundary = TimeInterval(minutesPastBoundary) * .oneMinute
+            + TimeInterval(components.second ?? 0)
+            + TimeInterval(components.nanosecond ?? 0) / 1_000_000_000
+
         guard secondsPastBoundary > 0 else { return self }
-        // Add the remaining time up to the next boundary.
-        return addingTimeInterval(30 * .oneMinute - secondsPastBoundary)
+
+        return addingTimeInterval(TimeInterval(minuteInterval) * .oneMinute - secondsPastBoundary)
     }
 
 }

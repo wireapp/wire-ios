@@ -24,8 +24,10 @@ import WireFoundation
 
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
+    private static let timePickerMinuteInterval = 15
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.wireAccentColor) private var wireAccentColor
     @State private(set) var viewModel: MeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
@@ -123,18 +125,20 @@ struct MeetingFormView: View {
                 label: Strings.Time.starts,
                 date: $viewModel.startDate,
                 range: viewModel.startDateRange,
+                maximumDate: nil,
                 dateField: .startDate,
                 timeField: .startTime
             )
             dateTimeRow(
                 label: Strings.Time.ends,
                 date: $viewModel.endDate,
-                range: viewModel.endDateRange,
+                range: viewModel.endDateRange.lowerBound...,
+                maximumDate: viewModel.endDateRange.upperBound,
                 dateField: .endDate,
                 timeField: .endTime
             )
             Picker(Strings.Time.repeats, selection: $viewModel.repeatOption) {
-                ForEach(MeetingRepeatOption.allCases, id: \.self) { option in
+                ForEach(viewModel.availableRepeatOptions, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
                 }
@@ -180,9 +184,12 @@ struct MeetingFormView: View {
         label: String,
         date: Binding<Date>,
         range: PartialRangeFrom<Date>,
+        maximumDate: Date?,
         dateField: ExpandedField,
         timeField: ExpandedField
     ) -> some View {
+        let isDateFieldEnabled = dateField != .endDate
+
         HStack {
             Text(label)
             Spacer()
@@ -192,6 +199,9 @@ struct MeetingFormView: View {
             ) {
                 toggleExpansion(dateField)
             }
+            // Acceptance: the end date is visible but not editable, and VoiceOver ignores this disabled control.
+            .disabled(!isDateFieldEnabled)
+            .accessibilityHidden(!isDateFieldEnabled)
             pill(
                 text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
                 isSelected: expandedField == timeField
@@ -206,10 +216,18 @@ struct MeetingFormView: View {
                 .labelsHidden()
         }
         if expandedField == timeField {
-            DatePicker("", selection: date, in: range, displayedComponents: .hourAndMinute)
-                .datePickerStyle(.wheel)
-                .labelsHidden()
+            timePicker(date: date, range: range, maximumDate: maximumDate)
         }
+    }
+
+    @ViewBuilder
+    private func timePicker(date: Binding<Date>, range: PartialRangeFrom<Date>, maximumDate: Date?) -> some View {
+        MinuteIntervalTimePicker(
+            selection: date,
+            range: range,
+            maximumDate: maximumDate,
+            minuteInterval: Self.timePickerMinuteInterval
+        )
     }
 
     private func pill(
@@ -217,15 +235,17 @@ struct MeetingFormView: View {
         isSelected: Bool,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
+        let accentColor = ColorTheme.Base.primary(wireAccentColor).color
+
+        return Button(action: action) {
             Text(text)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.15))
+                        .fill(isSelected ? accentColor.opacity(0.15) : Color.secondary.opacity(0.15))
                 )
-                .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+                .foregroundStyle(isSelected ? accentColor : Color.primary)
         }
         .buttonStyle(.plain)
     }
@@ -239,6 +259,59 @@ struct MeetingFormView: View {
         case startTime
         case endDate
         case endTime
+    }
+}
+
+private struct MinuteIntervalTimePicker: UIViewRepresentable {
+
+    @Binding var selection: Date
+    let range: PartialRangeFrom<Date>
+    let maximumDate: Date?
+    let minuteInterval: Int
+
+    func makeUIView(context: Context) -> UIDatePicker {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .time
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.minuteInterval = minuteInterval
+        datePicker.minimumDate = range.lowerBound
+        datePicker.maximumDate = maximumDate
+        datePicker.date = selection
+        datePicker.addTarget(
+            context.coordinator,
+            action: #selector(Coordinator.valueChanged(_:)),
+            for: .valueChanged
+        )
+        return datePicker
+    }
+
+    func updateUIView(_ datePicker: UIDatePicker, context: Context) {
+        datePicker.minuteInterval = minuteInterval
+        datePicker.minimumDate = range.lowerBound
+        datePicker.maximumDate = maximumDate
+
+        if abs(datePicker.date.timeIntervalSince(selection)) > 0.5 {
+            datePicker.date = selection
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(selection: $selection)
+    }
+
+    final class Coordinator: NSObject {
+
+        private let selection: Binding<Date>
+
+        init(selection: Binding<Date>) {
+            self.selection = selection
+        }
+
+        @MainActor
+        @objc
+        func valueChanged(_ datePicker: UIDatePicker) {
+            selection.wrappedValue = datePicker.date
+        }
     }
 }
 
@@ -364,7 +437,11 @@ private extension MeetingMember {
         self.init(
             qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
-            handle: handle
+            handle: handle,
+            isSelfUser: false,
+            initials: "",
+            accentColor: .default,
+            avatarImageData: nil
         )
     }
 }

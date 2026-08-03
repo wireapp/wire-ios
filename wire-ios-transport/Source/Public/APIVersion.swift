@@ -37,6 +37,7 @@ public enum APIVersion: Int32 {
     case v14
     case v15
     case v16
+    case v17
 }
 
 // MARK: - CaseIterable

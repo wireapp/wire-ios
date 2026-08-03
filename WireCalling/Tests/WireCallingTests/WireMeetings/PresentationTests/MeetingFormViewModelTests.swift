@@ -36,7 +36,11 @@ struct MeetingFormViewModelTests {
     private let member = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Katie Armstrong",
-        handle: "katie"
+        handle: "katie",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private let meeting = Meeting(
@@ -85,12 +89,27 @@ struct MeetingFormViewModelTests {
             id: QualifiedID(id: UUID(), domain: "example.com"),
             title: "Design Review",
             start: start,
-            end: start.addingTimeInterval(.oneHour),
+            end: start.addingTimeInterval(TimeInterval.oneHour),
             recurrence: recurrence,
             conversation: MeetingConversation(participants: [member]),
             conversationID: QualifiedID(id: UUID(), domain: "example.com"),
             creatorID: QualifiedID(id: UUID(), domain: "example.com")
         )
+    }
+
+    private func makeDate(year: Int, month: Int, day: Int, hour: Int, minute: Int) throws -> Date {
+        var components = DateComponents()
+        components.calendar = .current
+        components.timeZone = Calendar.current.timeZone
+        components.year = year
+        components.month = month
+        components.day = day
+        components.hour = hour
+        components.minute = minute
+        components.second = 0
+        components.nanosecond = 0
+
+        return try #require(components.date)
     }
 
     // MARK: - isNextButtonEnabled Tests
@@ -151,9 +170,32 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: dateProviderMock.now))
     }
 
+    @Test("scheduled mode starts at the next quarter-hour boundary")
+    func scheduledMode_StartsAtNextQuarterHourBoundary() throws {
+        // Given
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 2)
+
+        // When
+        let viewModel = makeViewModel(mode: .scheduled)
+
+        // Then
+        let expectedStartDate = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 15)
+        #expect(viewModel.startDate == expectedStartDate)
+    }
+
     @Test("endDateRange starts after the start date")
     func endDateRange_StartsAfterStartDate() {
         #expect(viewModel.endDateRange.lowerBound > viewModel.startDate)
+    }
+
+    @Test("endDateRange ends at 23:45 on the start date")
+    func endDateRange_EndsAtLatestAvailableEndTime() throws {
+        // Given
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 10, minute: 0)
+
+        // Then
+        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        #expect(viewModel.endDateRange.upperBound == expectedEndDate)
     }
 
     @Test("setting an end date before the start date is corrected to be after the start date")
@@ -165,6 +207,19 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.endDate > viewModel.startDate)
     }
 
+    @Test("setting an end date past midnight is capped to 23:45 on the start date")
+    func endDatePastMidnight_IsCappedToLatestAvailableEndTime() throws {
+        // Given
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 22, minute: 30)
+
+        // When
+        viewModel.endDate = try makeDate(year: 2026, month: 7, day: 7, hour: 0, minute: 30)
+
+        // Then
+        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        #expect(viewModel.endDate == expectedEndDate)
+    }
+
     @Test("changing the start date keeps the end date after the start date")
     func changingStartDate_KeepsEndDateAfterStartDate() {
         // When
@@ -172,6 +227,47 @@ struct MeetingFormViewModelTests {
 
         // Then
         #expect(viewModel.endDate > viewModel.startDate)
+    }
+
+    @Test("changing the start date moves the end date to the same day")
+    func changingStartDate_MovesEndDateToSameDay() throws {
+        // Given
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 30)
+        viewModel.endDate = try makeDate(year: 2026, month: 7, day: 6, hour: 15, minute: 30)
+
+        // When
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 7, hour: 14, minute: 30)
+
+        // Then
+        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 7, hour: 15, minute: 30)
+        #expect(viewModel.endDate == expectedEndDate)
+    }
+
+    @Test("changing the start time to 23:30 caps the end time at 23:45")
+    func changingStartTimeTo2330_CapsEndTimeAt2345() throws {
+        // Given
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 30)
+        viewModel.endDate = try makeDate(year: 2026, month: 7, day: 6, hour: 15, minute: 30)
+
+        // When
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 30)
+
+        // Then
+        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        #expect(viewModel.endDate == expectedEndDate)
+    }
+
+    @Test("changing the start time to 23:45 makes the end time match")
+    func changingStartTimeTo2345_MakesEndTimeMatch() throws {
+        // Given
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 30)
+        viewModel.endDate = try makeDate(year: 2026, month: 7, day: 6, hour: 15, minute: 30)
+
+        // When
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+
+        // Then
+        #expect(viewModel.endDate == viewModel.startDate)
     }
 
     // MARK: - submit Tests
@@ -200,7 +296,7 @@ struct MeetingFormViewModelTests {
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.startTime == dateProviderMock.now)
-        #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(.oneHour))
+        #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(TimeInterval.oneHour))
         #expect(arguments?.recurrence == nil)
         #expect(arguments?.participants == [member])
         #expect(receivedMeeting == meeting)
@@ -261,6 +357,31 @@ struct MeetingFormViewModelTests {
 
     // MARK: - Edit Mode Tests
 
+    @Test(
+        "availableRepeatOptions hides yearly unless yearly is selected",
+        arguments: [
+            (
+                MeetingRepeatOption.never,
+                [.never, .daily, .weekly, .every2Weeks, .monthly]
+            ),
+            (
+                MeetingRepeatOption.yearly,
+                [.never, .daily, .weekly, .every2Weeks, .monthly, .yearly]
+            )
+        ] as [(MeetingRepeatOption, [MeetingRepeatOption])]
+    )
+    func availableRepeatOptions_HidesYearlyUnlessSelected(
+        repeatOption: MeetingRepeatOption,
+        expectedOptions: [MeetingRepeatOption]
+    ) {
+        // Given
+        let viewModel = makeViewModel(mode: .scheduled)
+        viewModel.repeatOption = repeatOption
+
+        // Then
+        #expect(viewModel.availableRepeatOptions == expectedOptions)
+    }
+
     @Test("edit mode pre-fills the form with the meeting's values")
     func editMode_PrefillsForm() {
         // Given
@@ -299,13 +420,62 @@ struct MeetingFormViewModelTests {
     @Test("startDateRange allows the original start day when editing a meeting that started in the past")
     func startDateRange_EditModePastMeeting() {
         // Given
-        let meeting = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-3 * 86_400))
+        let meeting = makeEditableMeeting(
+            start: dateProviderMock.now.addingTimeInterval(-3 * 86_400),
+            recurrence: nil
+        )
 
         // When
         let viewModel = makeViewModel(mode: .edit(meeting))
 
         // Then
         #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: meeting.start))
+    }
+
+    @Test("edit mode pre-fills recurring meetings that started in the past with the next occurrence")
+    func editMode_PastRecurringMeetingUsesNextOccurrence() throws {
+        // Given
+        let originalStart = try makeDate(year: 2026, month: 7, day: 5, hour: 9, minute: 0)
+        let meeting = makeEditableMeeting(
+            start: originalStart,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 7, hour: 9, minute: 0)
+        let expectedEnd = try makeDate(year: 2026, month: 7, day: 7, hour: 10, minute: 0)
+
+        // When
+        let viewModel = makeViewModel(mode: .edit(meeting))
+
+        // Then
+        #expect(viewModel.startDate == expectedStart)
+        #expect(viewModel.endDate == expectedEnd)
+        #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: dateProviderMock.now))
+    }
+
+    @Test("submit in edit mode sends the next occurrence time for a recurring meeting that started in the past")
+    func submit_EditModePastRecurringMeeting_UsesNextOccurrenceTime() async throws {
+        // Given
+        let originalStart = try makeDate(year: 2026, month: 7, day: 5, hour: 9, minute: 0)
+        let original = makeEditableMeeting(
+            start: originalStart,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let viewModel = makeViewModel(mode: .edit(original))
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
+            meeting
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 7, hour: 9, minute: 0)
+        let expectedEnd = try makeDate(year: 2026, month: 7, day: 7, hour: 10, minute: 0)
+
+        // When
+        await viewModel.submit()
+
+        // Then
+        let arguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+        #expect(arguments?.meeting == original)
+        #expect(arguments?.startTime == expectedStart)
+        #expect(arguments?.endTime == expectedEnd)
     }
 
     @Test("submit in edit mode updates the meeting with the form values and calls onSuccess")

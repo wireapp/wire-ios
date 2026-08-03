@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "disabled";
 
 "conversation.status.secutity_alert.default" = "New security alert";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "Tipka sporočilo…";
 "conversation.status.typing.group" = "%@: tipka sporočilo…";
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "Legal hold deactivated for this conversation";
 
 "content.system.message_legal_hold.learn_more" = "Nauči se več";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
 
 //
 "content.system.is_verified" = "Vsi prstni odtisi naprav so preverjeni";

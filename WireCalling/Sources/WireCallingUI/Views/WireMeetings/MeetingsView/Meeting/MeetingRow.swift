@@ -25,8 +25,8 @@ import WireLocators
 struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    let meeting: Meeting
-    let formatTimeRange: (Meeting) -> String
+    let occurrence: MeetingOccurrence
+    let formatTimeRange: (MeetingOccurrence) -> String
     var isAttending: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
@@ -35,6 +35,10 @@ struct MeetingRow: View {
 
     @ScaledMetric private var iconBoxSize: CGFloat = 31
     @ScaledMetric private var iconFontSize: CGFloat = 15
+
+    private var meeting: Meeting {
+        occurrence.meeting
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -88,7 +92,7 @@ struct MeetingRow: View {
                 }
 
                 HStack(spacing: 8) {
-                    Text(formatTimeRange(meeting))
+                    Text(formatTimeRange(occurrence))
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
@@ -98,11 +102,12 @@ struct MeetingRow: View {
                 }
 
                 if let conversation = meeting.conversation, !conversation.participants.isEmpty {
-                    MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
+                    MemberAvatarsView(members: Array(conversation.participants))
                         .padding(.top, 2)
                 }
                 if isAttending {
                     attendingLabel
+                        .padding(.top, 10)
                 }
             }
         }
@@ -156,32 +161,40 @@ private extension MeetingRecurrence {
 }
 
 #Preview {
-    MeetingRow(
-        meeting: Meeting(
-            id: QualifiedID(id: UUID(), domain: ""),
-            title: "Meeting1",
-            start: Date(),
-            end: Date(),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
-            conversation: MeetingConversation(
-                participants: [
-                    MeetingMember(
-                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
-                        name: "Alice Smith",
-                        handle: "alice",
-                        initials: "AS"
-                    ),
-                    MeetingMember(
-                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
-                        name: "Bob Jones",
-                        handle: "bob",
-                        initials: "BJ"
-                    )
-                ]
-            ),
-            conversationID: QualifiedID(id: UUID(), domain: ""),
-            creatorID: QualifiedID(id: UUID(), domain: "")
+    let meeting = Meeting(
+        id: QualifiedID(id: UUID(), domain: ""),
+        title: "Meeting1",
+        start: Date(),
+        end: Date(),
+        recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+        conversation: MeetingConversation(
+            participants: [
+                MeetingMember(
+                    qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                    name: "Alice Smith",
+                    handle: "alice",
+                    isSelfUser: true,
+                    initials: "AS",
+                    accentColor: .default,
+                    avatarImageData: nil
+                ),
+                MeetingMember(
+                    qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                    name: "Bob Jones",
+                    handle: "bob",
+                    isSelfUser: false,
+                    initials: "BJ",
+                    accentColor: .default,
+                    avatarImageData: nil
+                )
+            ]
         ),
+        conversationID: QualifiedID(id: UUID(), domain: ""),
+        creatorID: QualifiedID(id: UUID(), domain: "")
+    )
+
+    MeetingRow(
+        occurrence: MeetingOccurrence(meeting: meeting),
         formatTimeRange: { _ in "Today" },
         isAttending: true,
         onEdit: {},
