@@ -27,7 +27,7 @@ public struct BackendMLSPublicKeys: Equatable {
         self.removal = removal
     }
 
-    func externalSenderKey(for ciphersuite: MLSCipherSuite) throws -> [ExternalSender] {
+    func externalSenderKey(for ciphersuite: MLSCipherSuite) -> [ExternalSenderKey] {
         let externalSenderData = switch ciphersuite.signature {
         case .ed25519:
             removal.ed25519
@@ -41,9 +41,7 @@ public struct BackendMLSPublicKeys: Equatable {
             removal.p521
         }
 
-        return try [externalSenderData].compactMap(\.self).map {
-            try ExternalSender.parsePublicKey(key: $0, signatureScheme: ciphersuite.coreCryptoSignatureScheme)
-        }
+        return [externalSenderData].compactMap(\.self).map(ExternalSenderKey.init)
     }
 
     public struct MLSPublicKeys: Equatable {

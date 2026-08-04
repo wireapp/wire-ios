@@ -30,6 +30,7 @@ extension ZMUserSession {
 
         let cRLsChecker = CertificateRevocationListsChecker(
             userID: userId,
+            crlAPI: CertificateRevocationListAPI(),
             mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
             fetchE2EIFeatureConfig: { [weak self] in
@@ -42,6 +43,12 @@ extension ZMUserSession {
             context: coreDataStack.syncContext
         )
         self.cRLsChecker = cRLsChecker
+
+        let cRLsDistributionPointsObserver = CRLsDistributionPointsObserver(cRLsChecker: cRLsChecker)
+        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+            from: mlsService.onNewCRLsDistributionPoints()
+        )
+        self.cRLsDistributionPointsObserver = cRLsDistributionPointsObserver
     }
 
     func checkExpiredCertificateRevocationLists() {
