@@ -25,6 +25,10 @@ import WireSystem
 // sourcery: AutoMockable
 public protocol MLSDecryptionServiceInterface {
 
+    /// Publishes an event when new CRL distribution points are found.
+
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
+
     /// Decrypts an MLS message for the given group
     ///
     /// - Parameters:
@@ -75,6 +79,7 @@ protocol DecryptedMessageBundle {
     var isActive: Bool { get }
     var commitDelay: UInt64? { get }
     var senderClientId: WireCoreCrypto.ClientId? { get }
+    var hasEpochChanged: Bool { get }
     var identity: WireCoreCrypto.WireIdentity { get }
 
 }
@@ -93,6 +98,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     private let mlsActionExecutor: MLSActionExecutorProtocol
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+
+    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
+
+    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+    }
 
     // MARK: - Life cycle
 
@@ -137,7 +148,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }
 
-        return try await mlsActionExecutor.processWelcomeMessage(Welcome(bytes: messageData), context: context)
+        return try await mlsActionExecutor.processWelcomeMessage(messageData, context: context)
     }
 
     public func decrypt(
@@ -172,6 +183,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 in: groupID,
                 context: context
             )
+
+            if let newDistributionPoints = CRLsDistributionPoints(from: decryptedMessage?.crlNewDistributionPoints) {
+                onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+            }
 
             var results = try decryptedMessage?.bufferedMessages?.compactMap { try decryptResult(from: $0) } ?? []
 

@@ -216,6 +216,7 @@ public final class ZMUserSession: NSObject {
         )
 
     var cRLsChecker: CertificateRevocationListsChecker?
+    var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
 
     // swiftlint:disable:next todo_requires_jira_link
     public var managedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
@@ -306,40 +307,51 @@ public final class ZMUserSession: NSObject {
     lazy var e2eiRepository: E2EIRepositoryInterface = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl ?? ""
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
-
-        return E2EIRepository(
-            acmeApi: acmeApi,
-            coreCryptoProvider: coreCryptoProvider,
-        )
-    }()
-
-    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext
         )
+
         let apiProvider = APIProvider(httpClient: httpClient)
+        let e2eiSetupService = E2EISetupService(
+            coreCryptoProvider: coreCryptoProvider,
+            featureRepository: featureRepository
+        )
+        let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
+
         let keyRotator = E2EIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
             context: syncContext,
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
             featureRepository: featureRepository
         )
 
-        return EnrollE2EICertificateUseCase(
-            e2eiRepository: e2eiRepository,
-            apiVersion: resolvedBackendMetadata.apiVersion,
+        let e2eiRepository = E2EIRepository(
+            acmeApi: acmeApi,
             apiProvider: apiProvider,
-            crlURLBuilder: CRLURLBuilder(
-                shouldUseProxy: e2eiFeature.config.useProxyOnMobile ?? false,
-                proxyURLString: e2eiFeature.config.crlProxy
-            ),
-            featureRepository: featureRepository,
+            e2eiSetupService: e2eiSetupService,
             keyRotator: keyRotator,
             coreCryptoProvider: coreCryptoProvider,
-            localDomain: resolvedBackendMetadata.domain,
-            context: syncContext
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
+            apiVersion: resolvedBackendMetadata.apiVersion,
+            localDomain: resolvedBackendMetadata.domain
         )
+
+        assert(
+            cRLsDistributionPointsObserver != nil,
+            "requires to execute 'setupCertificateRevocationLists' first. this is a workaround and should be refactored."
+        )
+        cRLsDistributionPointsObserver?.startObservingNewCRLsDistributionPoints(
+            from: onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+        )
+
+        return e2eiRepository
     }()
+
+    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = EnrollE2EICertificateUseCase(
+        e2eiRepository: e2eiRepository,
+        context: syncContext
+    )
 
     public private(set) var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
@@ -620,32 +632,6 @@ public final class ZMUserSession: NSObject {
 
         if let syncStateSubject = self.clientSessionComponent?.syncStateSubject {
             observeSyncStateForAVS(syncStateSubject: syncStateSubject)
-        }
-
-        let httpClient = HttpClientImpl(
-            transportSession: transportSession,
-            queue: syncContext
-        )
-        let apiProvider = APIProvider(httpClient: httpClient)
-
-        if let apiVersion = resolvedBackendMetadata.apiVersion,
-           let e2eiAPI = apiProvider.e2eIAPI(apiVersion: apiVersion) {
-
-            let e2eiConfig = coreDataStack.viewContext.performAndWait {
-                e2eiFeature.config
-            }
-
-            let hooks = PKIEnvironmentTransport(
-                selfClientId: clientID,
-                e2eiApi: e2eiAPI,
-                crlURLbuilder: CRLURLBuilder(
-                    shouldUseProxy: e2eiConfig.useProxyOnMobile ?? false,
-                    proxyURLString: e2eiConfig.crlProxy
-                ),
-                oauthAuthenticate: nil
-            )
-
-            coreCryptoProvider.registerPkiEnvironmentHooks(hooks)
         }
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
