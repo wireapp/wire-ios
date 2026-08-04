@@ -133,10 +133,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 isActive: false,
                 commitDelay: nil,
                 senderClientId: nil,
-                hasEpochChanged: false,
                 identity: .withBasicCredentials(),
                 bufferedMessages: nil,
-                crlNewDistributionPoints: nil
             )
         }
 
@@ -156,11 +154,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let messageData = Data.random()
-        let sender = MLSClientID(
-            userID: UUID.create().transportString(),
-            clientID: "client",
-            domain: "example.com"
-        )
+        let sender = MLSClientID.random()
 
         var mockDecryptMessageCount = 0
         mockMLSActionExecutor.mockDecryptMessage = {
@@ -172,11 +166,9 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 message: messageData,
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: WireCoreCryptoUniffi.ClientId(bytes: sender.rawValue.data(using: .utf8)!),
-                hasEpochChanged: false,
+                senderClientId: try sender.cryptoId(),
                 identity: .withBasicCredentials(),
                 bufferedMessages: nil,
-                crlNewDistributionPoints: nil
             )
         }
 
@@ -214,11 +206,9 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 message: messageData,
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: WireCoreCryptoUniffi.ClientId(bytes: sender.rawValue.data(using: .utf8)!),
-                hasEpochChanged: false,
+                senderClientId: try sender.cryptoId(),
                 identity: .withBasicCredentials(),
                 bufferedMessages: nil,
-                crlNewDistributionPoints: nil
             )
         }
 
@@ -274,11 +264,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let messageData = Data.random()
-        let sender = MLSClientID(
-            userID: UUID.create().transportString(),
-            clientID: "client",
-            domain: "example.com"
-        )
+        let sender = MLSClientID.random()
 
         var mockDecryptMessageCount = 0
         mockMLSActionExecutor.mockDecryptMessage = {
@@ -292,19 +278,16 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 isActive: false,
                 commitDelay: nil,
                 senderClientId: nil,
-                hasEpochChanged: false,
                 identity: .withBasicCredentials(),
                 bufferedMessages: [
                     BufferedDecryptedMessage(
                         message: messageData,
                         isActive: false,
                         commitDelay: nil,
-                        senderClientId: WireCoreCryptoUniffi.ClientId(bytes: sender.rawValue.data(using: .utf8)!),
-                        hasEpochChanged: false,
-                        identity: .withBasicCredentials(),
-                        crlNewDistributionPoints: nil
+                        senderClientId: try sender.cryptoId(),
+                        identity: .withBasicCredentials()
                     )
-                ], crlNewDistributionPoints: nil
+                ]
             )
         }
 
@@ -320,58 +303,17 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(mockDecryptMessageCount, 1)
         XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
     }
-
-    func test_Decrypt_PublishesNewDistributionPoints() async throws {
-        // Given
-        let distributionPoint = "example.domain.com"
-        let messageData = Data.random()
-        let sender = MLSClientID(
-            userID: UUID.create().transportString(),
-            clientID: "client",
-            domain: "example.com"
-        )
-        let senderData = try XCTUnwrap(sender.rawValue.data(using: .utf8))
-
-        // Mock message decryption
-        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            DecryptedMessage(
-                message: messageData,
-                isActive: false,
-                commitDelay: nil,
-                senderClientId: WireCoreCryptoUniffi.ClientId(bytes: senderData),
-                hasEpochChanged: false,
-                identity: .withBasicCredentials(),
-                bufferedMessages: nil,
-                crlNewDistributionPoints: [distributionPoint]
-            )
-        }
-
-        // Set expectation to receive new distribution points
-        let expectation = XCTestExpectation(description: "received value")
-        let cancellable = sut.onNewCRLsDistributionPoints().sink { value in
-            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
-            expectation.fulfill()
-        }
-
-        // When
-        _ = try await sut.decrypt(
-            message: messageData.base64EncodedString(),
-            for: .random(),
-            subconversationType: nil,
-            context: nil
-        )
-
-        // Then
-        await fulfillment(of: [expectation])
-        cancellable.cancel()
-    }
 }
 
 extension WireIdentity {
 
     static func withBasicCredentials() -> Self {
         .init(
-            clientId: "",
+            clientId: ClientId(
+                userId: try! Uuid(uuid: UUID().transportString()),
+                deviceId: try! DeviceId.fromHexString(hexString: "a68a96d1cc3941ab"),
+                domain: "wire.com"
+            ),
             status: .valid,
             thumbprint: "",
             credentialType: .basic,

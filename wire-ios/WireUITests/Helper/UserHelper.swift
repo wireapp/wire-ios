@@ -479,12 +479,13 @@ final class UserHelper {
     ///   - owner: group owner
     ///   - groupName: groupName
     ///   - driveEnabled: bool
+    @discardableResult
     func createGroupConversations(
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
         groupName: String,
         driveEnabled: Bool = false
-    ) async throws {
+    ) async throws -> Conversation {
 
         let params = CreateGroupConversationParameters(
             groupType: .group,
@@ -509,7 +510,7 @@ final class UserHelper {
         )
         authenticationManager.accessToken = accessToken
 
-        _ = try await conversationsAPI.createGroupConversation(parameters: params)
+        return try await conversationsAPI.createGroupConversation(parameters: params)
     }
 
     /// Create channel conversation
@@ -718,6 +719,15 @@ final class UserHelper {
         try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
     }
 
+    /// Unlock and enable Prevent Adminless Groups feature
+    /// - Parameter teamID: teamID where this needs to be enabled
+    func unlockAndEnablePreventAdminlessGroupsFeature(teamID: UUID) async throws {
+        let backOffice = BackOffice(backendURL: backendURL)
+        let basicAuth = basicAuth()
+        try await backOffice.unlockPreventAdminlessGroupsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+        try await backOffice.enablePreventAdminlessGroupsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+    }
+
     func connectDriveEnabledTeamUserWithGuestUser() async throws -> (userA: UserInfo, userB: UserInfo) {
         let (userA, _, _, _) = try await registerTeam(withMemberCount: 1, driveEnabled: true)
         let (userB, _, _, _) = try await registerTeam(withMemberCount: 1)
@@ -750,6 +760,41 @@ final class UserHelper {
         try await acceptConnectionRequestFromUser(domain: domain, user1: userA, userId: userB.id)
 
         return (userA, userB)
+    }
+
+    func connectTeamUserWithPersonalUser() async throws -> (teamOwner: UserInfo, personalUser: UserInfo) {
+        var (userA, _, _, _) = try await registerTeam(withMemberCount: 1, driveEnabled: true)
+        var userB = try await createPersonalUser()
+
+        try await login(user: &userA)
+        try await login(user: &userB)
+
+        // Connects with personal user
+        let domain = BackendTarget.staging.domainInfo
+        try await sendConnectionRequestToUser(domain: domain, userId: userA.id)
+        try await acceptConnectionRequestFromUser(domain: domain, user1: userA, userId: userB.id)
+
+        return (teamOwner: userA, personalUser: userB)
+    }
+
+    func login(user: inout UserInfo) async throws {
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: user.email,
+            password: user.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
+        let selfUser = try await selfUserAPI.getSelfUser()
+        user.id = selfUser.id.uuidString
+    }
+
+    func updateRole(_ role: String, userID: UserID, conversationID: ConversationID) async throws {
+        try await conversationsAPI.updateRole(role, userID: userID, conversationID: conversationID)
+    }
+
+    func removeParticipant(userID: UserID, conversationID: ConversationID) async throws {
+        try await conversationsAPI.removeParticipant(userID: userID, conversationID: conversationID)
     }
 }
 

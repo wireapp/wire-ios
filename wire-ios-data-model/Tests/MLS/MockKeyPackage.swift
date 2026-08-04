@@ -16,15 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import WireCoreCrypto
 
-public extension MLSClientID {
+final class MockKeyPackage: WireCoreCrypto.KeyPackage, @unchecked Sendable {
 
-    static func random() -> Self {
-        .init(
-            userID: UUID().transportString(),
-            clientID: .randomClientIdentifier(),
-            domain: .randomDomain()
-        )
+    let data: Data
+
+    init(data: Data = .random()) {
+        self.data = data
+
+        super.init(noPointer: .init())
+    }
+
+    @_documentation(visibility: private)
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        fatalError("init(unsafeFromRawPointer:) has not been implemented")
+    }
+
+    override func serialize() throws -> Data {
+        data
     }
 }
