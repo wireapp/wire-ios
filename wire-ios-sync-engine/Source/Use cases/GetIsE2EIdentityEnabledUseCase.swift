@@ -40,7 +40,7 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
         let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         return try await coreCrypto.transaction {
-            try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+            try await $0.e2eiIsEnabled(cipherSuite: ciphersuite)
         }
     }
 }

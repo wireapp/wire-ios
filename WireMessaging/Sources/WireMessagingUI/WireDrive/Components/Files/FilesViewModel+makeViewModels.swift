@@ -25,7 +25,8 @@ extension FilesViewModel {
             item: state.items[index],
             selectedSortingKey: sortingSelection.sortingKey,
             conversationName: isBrowsing ? state.items[index].conversationName : nil,
-            localAssetRepository: localAssetRepository,
+            observeAssetUseCase: useCases.observeAsset,
+            getAssetUseCase: useCases.getAsset,
             onItemAction: { [weak self] action, item in
                 guard let self else { return }
                 switch action {
@@ -90,13 +91,9 @@ extension FilesViewModel {
                 self?.sheetNavigation = nil
                 Task { await self?.reload(refreshing: true) }
             },
-            nodesRepository: nodesRepository,
-            localAssetRepository: localAssetRepository,
-            moveNodeUseCase: WireDriveMoveNodeUseCase(
-                nodesRepository: nodesRepository,
-                localAssetRepository: localAssetRepository
-            ),
-            createFileUseCase: useCases.createFile
+            moveNodeUseCase: useCases.moveNode,
+            createFileUseCase: useCases.createFile,
+            fetchNodesUseCase: useCases.fetchNodes
         )
     }
 

@@ -16,15 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import WireCoreCrypto
 
-public extension MLSClientID {
+final class MockCredentialRef: WireCoreCrypto.CredentialRef, @unchecked Sendable {
 
-    static func random() -> Self {
-        .init(
-            userID: UUID().transportString(),
-            clientID: .randomClientIdentifier(),
-            domain: .randomDomain()
-        )
+    let _cipherSuite: CipherSuite
+    let _type: CredentialType
+
+    init(cipherSuite: CipherSuite, type: CredentialType = .basic) {
+        self._cipherSuite = cipherSuite
+        self._type = type
+
+        super.init(noPointer: .init())
+    }
+
+    @_documentation(visibility: private)
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        fatalError("init(unsafeFromRawPointer:) has not been implemented")
+    }
+
+    override func cipherSuite() -> CipherSuite {
+        _cipherSuite
+    }
+
+    override func type() -> CredentialType {
+        _type
     }
 }
