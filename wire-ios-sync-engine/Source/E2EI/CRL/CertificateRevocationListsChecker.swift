@@ -22,6 +22,7 @@ import WireLogging
 
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
+    func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async
     func checkExpiredCRLs() async
 }
 
@@ -29,6 +30,8 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     // MARK: - Properties
 
+    private let crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol
+    private let crlAPI: CertificateRevocationListAPIProtocol
     private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
@@ -46,6 +49,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     public convenience init(
         userID: UUID,
+        crlAPI: CertificateRevocationListAPIProtocol,
         mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
@@ -53,6 +57,8 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         context: NSManagedObjectContext
     ) {
         self.init(
+            crlAPI: crlAPI,
+            crlExpirationDatesRepository: CRLExpirationDatesRepository(userID: userID),
             mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
             fetchE2EIFeatureConfig: fetchE2EIFeatureConfig,
@@ -62,12 +68,16 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     }
 
     init(
+        crlAPI: CertificateRevocationListAPIProtocol,
+        crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
         mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
+        self.crlAPI = crlAPI
+        self.crlExpirationDatesRepository = crlExpirationDatesRepository
         self.mlsGroupVerification = mlsGroupVerification
         self.selfClientCertificateProvider = selfClientCertificateProvider
         self.fetchE2EIFeatureConfig = fetchE2EIFeatureConfig
@@ -77,22 +87,96 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     // MARK: - Public interface
 
+    public func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async {
+
+        let newDistributionPoints = distributionPoints.urls.filter {
+            !crlExpirationDatesRepository.crlExpirationDateExists(for: $0)
+        }
+
+        await checkCertificateRevocationLists(from: newDistributionPoints)
+    }
+
     public func checkExpiredCRLs() async {
 
         WireLogger.e2ei.info("checking expired CRLs")
 
-        do {
-            try await coreCryptoProvider.coreCrypto().transaction { context in
-                try await context.checkCredentials()
+        let distributionPointsOfExpiringCRLs = crlExpirationDatesRepository
+            .fetchAllCRLExpirationDates()
+            .filter {
+                // We give 10 seconds delay to allow time for the certificate to be renewed by the server
+                // see https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/950010018/Use+case+revocation+expiration+of+an+E2EI+certificate
+                hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: $0.value)
             }
+            .keys
 
-            await notifyAboutRevokedCertificateIfNeeded()
-        } catch {
-            logger.warn("failed to check credentials: \(error)")
-        }
+        await checkCertificateRevocationLists(from: Set(distributionPointsOfExpiringCRLs))
     }
 
     // MARK: - Private methods
+
+    private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
+        let e2eiFeatureConfig = await context.perform {
+            self.fetchE2EIFeatureConfig()
+        }
+        let crlURLBuilder = CRLURLBuilder(
+            shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
+            proxyURLString: e2eiFeatureConfig?.crlProxy
+        )
+
+        var shouldNotifyAboutRevokedCertificate = false
+
+        for distributionPoint in distributionPoints {
+            do {
+                let crlURL = crlURLBuilder.getURL(from: distributionPoint)
+                let crlData = try await crlAPI.getRevocationList(from: crlURL)
+
+                // register the CRL with core crypto
+                let registration = try await coreCrypto.transaction {
+                    try await $0.e2eiRegisterCrl(crlDp: distributionPoint.absoluteString, crlDer: crlData)
+                }
+
+                // store the expiration time
+                if let expirationTimestamp = registration.expiration {
+                    let expirationDate = Date(timeIntervalSince1970: TimeInterval(expirationTimestamp))
+                    crlExpirationDatesRepository.storeCRLExpirationDate(expirationDate, for: distributionPoint)
+                }
+
+                // check if certificate is "dirty"
+                if registration.dirty {
+                    // update verification state for conversations
+                    await mlsGroupVerification.updateAllConversations()
+
+                    shouldNotifyAboutRevokedCertificate = true
+
+                }
+            } catch {
+                logger
+                    .warn(
+                        "failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))"
+                    )
+            }
+        }
+
+        if shouldNotifyAboutRevokedCertificate {
+            await notifyAboutRevokedCertificateIfNeeded()
+        }
+    }
+
+    private func hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: Date) -> Bool {
+        guard let tenSecondsAfterExpiration = tenSecondsAfter(date: expirationDate) else {
+            return expirationDate.isInThePast
+        }
+
+        return tenSecondsAfterExpiration.isInThePast
+    }
+
+    private func tenSecondsAfter(date: Date) -> Date? {
+        Calendar.current.date(
+            byAdding: .second,
+            value: 10,
+            to: date
+        )
+    }
 
     private func notifyAboutRevokedCertificateIfNeeded() async {
         do {
