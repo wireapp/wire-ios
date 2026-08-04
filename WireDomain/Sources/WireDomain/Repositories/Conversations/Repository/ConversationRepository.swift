@@ -225,10 +225,14 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         date: Date
     ) async {
 
-        let conversation = await fetchOrCreateConversation(
+        guard let conversation = await fetchConversation(
             id: conversationID,
             domain: conversationDomain
-        )
+        ) else {
+            return WireLogger.conversation.warn(
+                "Cannot set scheduled deletion date on a conversation that doesn't exist locally: \(conversationID.safeForLoggingDescription)"
+            )
+        }
 
         let messageType = SystemMessageType.conversationScheduledForDeletion(
             scheduledDeletionDate: scheduledDeletionDate,
