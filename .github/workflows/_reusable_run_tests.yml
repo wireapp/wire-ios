@@ -190,13 +190,18 @@ jobs:
 
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
+        env:
+          FOLDERS: ${{ inputs.folders }}
+          ALL: ${{ inputs.all }}
         run: |
-          bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
-          
+          bundle exec fastlane test_frameworks folders:"$FOLDERS" all:"$ALL"
+
       - name: "Test frameworks without dependencies"
         if: ${{ inputs.test_dependencies == false }}
+        env:
+          FOLDERS: ${{ inputs.folders }}
         run: |
-          bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
+          bundle exec fastlane test_only_frameworks folders:"$FOLDERS"
 
       - name: Check for duplicate symbol implementations
         if: always()
@@ -306,7 +311,7 @@ jobs:
           {
             echo "## 📊 Allure Report Generated Successfully";
             echo "";
-            echo "**Artifact Name:** \`html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}\`";
+            echo "**Artifact Name:** \`html-report-${GITHUB_RUN_NUMBER}-${SANITIZED_BRANCH}\`";
             echo "";
             echo "### 📥 How to View the Report";
             echo "";
@@ -390,11 +395,15 @@ jobs:
     if: ${{ always() && needs.run-tests.result != 'skipped' }}
     steps:
       - name: Sanitize branch name
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$EVENT_NAME" == "pull_request" ] || [ "$EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$HEAD_REF"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi
