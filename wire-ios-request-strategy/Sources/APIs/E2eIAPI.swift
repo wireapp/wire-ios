@@ -27,6 +27,20 @@ public protocol E2eIAPI {
 
 }
 
+public struct AccessTokenResponse: Decodable, Equatable {
+
+    var expiresIn: Int
+    var token: String
+    var type: String
+
+    public enum CodingKeys: String, CodingKey {
+        case expiresIn = "expires_in"
+        case token
+        case type
+    }
+
+}
+
 class E2eIAPIV5: E2eIAPI {
 
     let httpClient: HttpClient
@@ -114,8 +128,12 @@ class E2eIAPIV15: E2eIAPIV14 {
     override var apiVersion: APIVersion { .v15 }
 }
 
-final class E2eIAPIV16: E2eIAPIV15 {
+class E2eIAPIV16: E2eIAPIV15 {
     override var apiVersion: APIVersion { .v16 }
+}
+
+final class E2eIAPIV17: E2eIAPIV16 {
+    override var apiVersion: APIVersion { .v17 }
 }
 
 private enum Constant {

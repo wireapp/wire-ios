@@ -75,4 +75,15 @@ public protocol ConversationsAPI {
         allowApps: Bool
     ) async throws
 
+    func updateRole(
+        _ role: String,
+        userID: UserID,
+        conversationID: ConversationID
+    ) async throws
+
+    func removeParticipant(
+        userID: UserID,
+        conversationID: ConversationID
+    ) async throws
+
 }

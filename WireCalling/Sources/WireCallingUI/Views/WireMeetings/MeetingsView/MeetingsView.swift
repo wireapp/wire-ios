@@ -132,12 +132,11 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
-
-    let groups: [(day: Date, meetings: [Meeting])]
+    let groups: [(day: Date, meetings: [MeetingOccurrence])]
     let formatDay: (Date) -> String
-    let formatTimeRange: (Meeting) -> String
-    let isAttending: (Meeting) -> Bool
-    let isHappeningNow: (Meeting) -> Bool
+    let formatTimeRange: (MeetingOccurrence) -> String
+    let isAttending: (MeetingOccurrence) -> Bool
+    let isHappeningNow: (MeetingOccurrence) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
 
@@ -146,16 +145,16 @@ private struct GroupedSections: View {
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
-                ForEach(dayGroup.meetings, id: \.id) { meeting in
+                ForEach(dayGroup.meetings, id: \.id) { occurrence in
                     MeetingRow(
-                        meeting: meeting,
+                        occurrence: occurrence,
                         formatTimeRange: formatTimeRange,
-                        isAttending: isAttending(meeting),
-                        onEdit: { onEdit(meeting) },
-                        onDelete: { onDelete(meeting) }
+                        isAttending: isAttending(occurrence),
+                        onEdit: { onEdit(occurrence.meeting) },
+                        onDelete: { onDelete(occurrence.meeting) }
                     )
                     .listRowBackground(
-                        isHappeningNow(meeting) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
+                        isHappeningNow(occurrence) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
                     )
                 }
             } header: {
@@ -239,8 +238,10 @@ private func previewMeetings() -> [Meeting] {
             qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
             handle: name.lowercased().replacingOccurrences(of: " ", with: ""),
+            isSelfUser: false,
             initials: initials.uppercased(),
-            accentColor: accentColor
+            accentColor: accentColor,
+            avatarImageData: nil
         )
     }
 

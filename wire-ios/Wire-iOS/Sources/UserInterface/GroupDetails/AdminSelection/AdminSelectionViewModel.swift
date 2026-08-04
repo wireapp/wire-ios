@@ -59,11 +59,13 @@ final class AdminSelectionViewModel: ObservableObject {
     init(
         candidates: [UserType],
         userSession: UserSession,
+        showError: Bool = false,
         onPromote: @escaping @MainActor (UserType) async throws -> Void
     ) {
         self.userSession = userSession
         self.onPromote = onPromote
         self.candidates = candidates
+        if showError { self.promotionState = .failed }
     }
 
     func promote(user: UserType) async {

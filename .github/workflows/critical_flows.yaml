@@ -66,5 +66,5 @@ jobs:
       ui_test_tags: ${{ inputs.run_uitests && inputs.ui_test_scope != '' && format('critical,{0}', inputs.ui_test_scope) || inputs.run_uitests && 'critical' || inputs.ui_test_scope }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
-      timeout_minutes: 120
+      timeout_minutes: 150
     secrets: inherit

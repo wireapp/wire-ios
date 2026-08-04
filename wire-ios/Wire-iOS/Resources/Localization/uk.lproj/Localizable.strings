@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "вимкнене";
 
 "conversation.status.secutity_alert.default" = "Нове сповіщення про безпеку";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "Набирається повідомлення…";
 "conversation.status.typing.group" = "%@: набирає повідомлення…";
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "Для даної розмови правовий захист деактивовано";
 
 "content.system.message_legal_hold.learn_more" = "Дізнатися більше";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
 
 //
 "content.system.is_verified" = "Всі ідентифікатори були верифіковані";

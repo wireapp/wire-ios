@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "išjungtas";
 
 "conversation.status.secutity_alert.default" = "Naujas saugumo įspėjimas";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "Rašo žinutę…";
 "conversation.status.typing.group" = "%@: rašo žinutę…";
@@ -668,6 +669,10 @@
 "content.system.message_legal_hold.disabled" = "Šio susirašinėjimo teisinis sulaikymas atšauktas";
 
 "content.system.message_legal_hold.learn_more" = "Sužinoti daugiau";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
 
 //
 "content.system.is_verified" = "Visi kontroliniai kodai patvirtinti";

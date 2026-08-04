@@ -50,6 +50,26 @@ class ConversationsAPIV1: ConversationsAPIV0 {
                 .parse(code: response.statusCode, data: data)
         }
     }
+
+    override func removeParticipant(
+        userID: UserID,
+        conversationID: ConversationID
+    ) async throws {
+        let path = "\(pathPrefix)\(basePath)/\(conversationID.domain)/\(conversationID.id)/members/\(userID.domain)/\(userID.id)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.delete)
+            .build()
+
+        let (_, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        guard response.statusCode == HTTPStatusCode.ok.rawValue else {
+            throw ConversationsAPIError.invalidBody
+        }
+    }
 }
 
 // MARK: -
