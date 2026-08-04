@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireUtilities
 
 // Describes the icon to be shown for the conversation in the list.
 enum ConversationStatusIcon: Equatable {
@@ -276,7 +277,7 @@ extension ZMConversation {
 // "Will be deleted soon"
 final class ScheduledForDeletionMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
-        status.isScheduledForDeletion
+        status.isScheduledForDeletion && DeveloperFlag.preventAdminlessGroups.isOn
     }
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {

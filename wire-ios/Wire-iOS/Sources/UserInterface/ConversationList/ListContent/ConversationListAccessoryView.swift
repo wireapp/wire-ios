@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireLocators
+import WireUtilities
 
 final class ConversationListAccessoryView: UIView {
 
