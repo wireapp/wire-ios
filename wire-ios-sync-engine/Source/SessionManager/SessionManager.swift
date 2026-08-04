@@ -1220,15 +1220,15 @@ public final class SessionManager: NSObject, SessionManagerType {
             applicationContainer: sharedContainerURL
         )
 
-        if FileManager.default.fileExists(atPath: accountDataFolder.path) {
-            do {
-                try FileManager.default.removeItem(at: accountDataFolder)
-            } catch {
-                if keepAccountOnFailure {
-                    throw error
-                }
-                WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
+        do {
+            try FileManager.default.removeItem(at: accountDataFolder)
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+            // The desired state has already been reached.
+        } catch {
+            if keepAccountOnFailure {
+                throw error
             }
+            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
         }
 
         accountManager.remove(account)
