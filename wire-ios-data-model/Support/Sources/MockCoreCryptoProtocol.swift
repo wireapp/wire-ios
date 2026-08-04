@@ -400,4 +400,11 @@ public final class MockCoreCryptoProtocol: CoreCryptoProtocol {
         fatalError("not implemented")
     }
 
+    public func transactionFfiCancellable(
+        command: any WireCoreCryptoUniffi.CoreCryptoCommand,
+        cancellation: WireCoreCryptoUniffi.CoreCryptoCancellationToken
+    ) async throws {
+        fatalError("not implemented")
+    }
+
 }
