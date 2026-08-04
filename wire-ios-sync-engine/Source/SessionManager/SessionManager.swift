@@ -1192,6 +1192,23 @@ public final class SessionManager: NSObject, SessionManagerType {
         for account: Account,
         keepAccountOnFailure: Bool
     ) throws {
+        let accountID = account.userIdentifier
+        let accountDataFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountID,
+            applicationContainer: sharedContainerURL
+        )
+
+        do {
+            try FileManager.default.removeItem(at: accountDataFolder)
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+            // The desired state has already been reached.
+        } catch {
+            if keepAccountOnFailure {
+                throw error
+            }
+            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
+        }
+
         do {
             try environment.cookieStorage(for: account).removeCookies()
         } catch {
@@ -1213,23 +1230,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         Journal(userID: account.userIdentifier, storage: sharedUserDefaults).erase()
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
-
-        let accountID = account.userIdentifier
-        let accountDataFolder = CoreDataStack.accountDataFolder(
-            accountIdentifier: accountID,
-            applicationContainer: sharedContainerURL
-        )
-
-        do {
-            try FileManager.default.removeItem(at: accountDataFolder)
-        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
-            // The desired state has already been reached.
-        } catch {
-            if keepAccountOnFailure {
-                throw error
-            }
-            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
-        }
 
         accountManager.remove(account)
         guard accountManager.account(with: accountID) == nil else {
