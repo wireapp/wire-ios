@@ -21,9 +21,13 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol AcmeAPIInterface {
+    func getACMEDirectory() async throws -> Data
+    func getACMENonce(path: String) async throws -> String
     func getTrustAnchor() async throws -> String
     func getFederationCertificates() async throws -> [String]
-
+    func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
+    func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse
+    func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
 }
 
 /// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI
@@ -47,6 +51,39 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     ) {
         self.acmeDiscoveryPath = acmeDiscoveryPath
         self.httpClient = httpClient
+    }
+
+    public func getACMEDirectory() async throws -> Data {
+
+        guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
+            throw NetworkError.errorEncodingRequest
+        }
+
+        var request = URLRequest(url: acmeDirectory)
+        request.httpMethod = HTTPMethod.get
+        let (data, _) = try await httpClient.send(request)
+
+        return data
+
+    }
+
+    public func getACMENonce(path: String) async throws -> String {
+
+        guard let url = URL(string: path) else {
+            throw NetworkError.errorEncodingRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.head
+
+        let (_, response) = try await httpClient.send(request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce) else {
+            throw NetworkError.errorDecodingURLResponse(response)
+        }
+
+        return replayNonce
+
     }
 
     public func getTrustAnchor() async throws -> String {
@@ -91,6 +128,109 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         }
 
         return certificates
+    }
+
+    public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
+        guard let url = URL(string: path) else {
+            throw NetworkError.errorEncodingRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: Constant.contentType)
+        request.httpBody = requestBody
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let httpResponse = response as? HTTPURLResponse,
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
+        else {
+            throw NetworkError.errorDecodingURLResponse(response)
+        }
+        let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
+        return ACMEResponse(nonce: replayNonce, location: location, response: data)
+
+    }
+
+    public func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse {
+        guard let url = URL(string: path) else {
+            throw NetworkError.errorEncodingRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: Constant.contentType)
+        request.setValue(ContentType.json, forHTTPHeaderField: Constant.accept)
+        request.httpBody = requestBody
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let authorizationResponse = try? decoder.decode(AuthorizationResponse.self, from: data),
+            let type = authorizationResponse.challenges.first?.type,
+            let httpResponse = response as? HTTPURLResponse,
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
+        else {
+            throw NetworkError.errorDecodingURLResponse(response)
+        }
+
+        let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
+        return ACMEAuthorizationResponse(
+            nonce: replayNonce,
+            location: location,
+            response: data,
+            challengeType: type
+        )
+    }
+
+    public func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse {
+        guard let url = URL(string: path) else {
+            throw NetworkError.errorEncodingRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: Constant.contentType)
+        request.httpBody = requestBody
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let httpResponse = response as? HTTPURLResponse,
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce),
+            let challengeResponse = Challenge(data)
+        else {
+            throw NetworkError.errorDecodingURLResponse(response)
+        }
+
+        return ChallengeResponse(
+            type: challengeResponse.type,
+            url: challengeResponse.url,
+            status: challengeResponse.status,
+            token: challengeResponse.token,
+            target: challengeResponse.target,
+            nonce: replayNonce
+        )
+    }
+
+    private struct Challenge: Codable, Equatable {
+
+        var type: String
+        var url: String
+        var status: String
+        var token: String
+        var target: String
+
+    }
+
+    private struct AuthorizationResponse: Decodable {
+
+        var challenges: [AuthorizationChallenge]
+
+    }
+
+    private struct AuthorizationChallenge: Decodable {
+
+        var type: AuthorizationChallengeType
+
     }
 
 }
