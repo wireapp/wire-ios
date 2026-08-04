@@ -52,22 +52,10 @@ class AdminPromotionTests: WireUITestCase {
             "Promoted member should appear in the admin section"
         )
 
-        // Self user is no longer a participant
-        XCTAssertTrue(
-            conversationDetailsPage.userCell(named: owner.name).waitForNonExistence(timeout: 0.5),
-            "Owner should not appear in participant list after leaving"
-        )
-
-        // Active conversation shows "you left" and input is disabled
-        let activeConversationPage = try conversationDetailsPage.closeConversationDetails()
-
-        XCTAssertTrue(
-            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 5),
-            "Expected 'you left' system message"
-        )
-        XCTAssertFalse(
-            activeConversationPage.inputMessageField.exists,
-            "Input bar should not be available after leaving"
+        try verifyUserLeftGroup(
+            conversationDetailsPage,
+            leavingUserName: owner.name,
+            participantDescription: "Owner"
         )
     }
 
@@ -129,57 +117,6 @@ class AdminPromotionTests: WireUITestCase {
     }
 
     @MainActor
-    func testAdmin_notLastAdmin_leavesGroupWithoutAdminSelectionModal_TC_11031() async throws {
-        let groupName = UserGenerator.generateRandomConversationName()
-
-        let (owner, teamMembers, _, _) = try await UserHelper.default.registerTeam(
-            withMemberCount: 2,
-            conversation: .group(groupName)
-        )
-        let secondAdmin = try XCTUnwrap(teamMembers.last)
-
-        let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
-            .acceptPopup()
-            .openConversation()
-            .openConversationDetails()
-            .openUserDetailsPage(byName: secondAdmin.name)
-            .enableGroupAdmin()
-            .goBackToConversationDetailsPage()
-
-        XCTAssertTrue(
-            conversationDetailsPage.adminCell(named: secondAdmin.name).waitForExistence(timeout: 5),
-            "Second admin should appear in the admin section"
-        )
-
-        let leavingConversationDetailsPage = try conversationDetailsPage
-            .moreOptionsConversationDetails()
-            .leaveOptionsConversationDetails()
-
-        XCTAssertFalse(
-            leavingConversationDetailsPage.promoteNewAdminButton.exists,
-            "Admin selection modal should not appear when self user is not the last admin"
-        )
-
-        let leftConversationDetailsPage = try leavingConversationDetailsPage
-            .leaveConversation()
-
-        XCTAssertTrue(
-            leftConversationDetailsPage.userCell(named: owner.name).waitForNonExistence(timeout: 0.5),
-            "Owner should not appear in participant list after leaving"
-        )
-
-        let activeConversationPage = try leftConversationDetailsPage.closeConversationDetails()
-
-        XCTAssertTrue(
-            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 5),
-            "'you left' system message missing"
-        )
-        XCTAssertFalse(
-            activeConversationPage.inputMessageField.exists,
-            "Input bar still showing available after leaving"
-        )
-    }
-
     func testLastPersonalUserAdmin_CannotLeaveGroup_PromotesNewAdmin_ThenLeaveGroupSuccessfully_TC_11577() async throws {
         let groupName = "Personal User Leave Group Test"
         let (
@@ -212,22 +149,10 @@ class AdminPromotionTests: WireUITestCase {
             "Promoted member should appear in the admin section"
         )
 
-        // Personal user is no longer a participant
-        XCTAssertTrue(
-            conversationDetailsPage.userCell(named: personalUser.name).waitForNonExistence(timeout: 0.5),
-            "Personal user should not appear in participant list after leaving"
-        )
-
-        // Active conversation shows "you left" and input is disabled
-        let activeConversationPage = try conversationDetailsPage.closeConversationDetails()
-
-        XCTAssertTrue(
-            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 5),
-            "Expected 'you left' system message"
-        )
-        XCTAssertFalse(
-            activeConversationPage.inputMessageField.exists,
-            "Input bar should not be available after leaving"
+        try verifyUserLeftGroup(
+            conversationDetailsPage,
+            leavingUserName: personalUser.name,
+            participantDescription: "Personal user"
         )
     }
 
@@ -266,6 +191,93 @@ class AdminPromotionTests: WireUITestCase {
         )
 
         return (teamMember, personalUser)
+    }
+
+    @MainActor
+    private func verifyUserLeftGroup(
+        _ conversationDetailsPage: ConversationDetailsPage,
+        leavingUserName: String,
+        participantDescription: String
+    ) throws {
+        XCTAssertTrue(
+            conversationDetailsPage.userCell(named: leavingUserName).waitForNonExistence(timeout: 0.5),
+            "\(participantDescription) should not appear in participant list after leaving"
+        )
+
+        let activeConversationPage = try conversationDetailsPage.closeConversationDetails()
+
+        XCTAssertTrue(
+            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 5),
+            "Expected 'you left' system message"
+        )
+        XCTAssertFalse(
+            activeConversationPage.inputMessageField.exists,
+            "Input bar should not be available after leaving"
+        )
+    }
+
+    @MainActor
+    func testAdmin_notLastAdmin_leavesGroupWithoutAdminSelectionModal_TC_11031() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+
+        let (owner, teamMembers, qualifiedIDs, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 2
+        )
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await UserHelper.default.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+        try await UserHelper.default.createGroupConversations(
+            qualifiedIds: qualifiedIDs,
+            owner: owner,
+            groupName: groupName
+        )
+        let secondAdmin = try XCTUnwrap(teamMembers.last)
+
+        let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openConversation()
+            .openConversationDetails()
+
+        // Owner is still the only admin, so leaving should require selecting a replacement admin.
+        let adminSelectionPage = try conversationDetailsPage
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .tapPromoteNewAdmin()
+
+        XCTAssertTrue(
+            adminSelectionPage.userCell(named: secondAdmin.name).waitForExistence(timeout: 5),
+            "Eligible member should appear in the admin selection modal"
+        )
+
+        let conversationDetailsAfterCancel = try adminSelectionPage.cancelAdminSelection()
+
+        let conversationDetailsWithSecondAdmin = try conversationDetailsAfterCancel
+            .openUserDetailsPage(byName: secondAdmin.name)
+            .enableGroupAdmin()
+            .goBackToConversationDetailsPage()
+
+        XCTAssertTrue(
+            conversationDetailsWithSecondAdmin.adminCell(named: secondAdmin.name).waitForExistence(timeout: 5),
+            "Second admin should appear in the admin section"
+        )
+
+        // Once another admin exists, owner can leave directly without seeing the promote admin flow.
+        let leavingConversationDetailsPage = try conversationDetailsWithSecondAdmin
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+
+        XCTAssertFalse(
+            leavingConversationDetailsPage.promoteNewAdminButton.exists,
+            "Admin selection modal should not appear when self user is not the last admin"
+        )
+
+        let leftConversationDetailsPage = try leavingConversationDetailsPage
+            .leaveConversation()
+
+        try verifyUserLeftGroup(
+            leftConversationDetailsPage,
+            leavingUserName: owner.name,
+            participantDescription: "Owner"
+        )
     }
 
 }

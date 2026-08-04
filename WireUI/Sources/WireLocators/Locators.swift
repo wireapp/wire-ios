@@ -266,6 +266,7 @@ public enum Locators {
     }
 
     public enum AdminSelectionPage: AutoPrefixedEnum {
+        case cancelButton
         case promoteButton
         case userCell
     }

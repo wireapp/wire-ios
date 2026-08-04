@@ -25,20 +25,32 @@ class AdminSelectionPage: PageModel {
         app.buttons[Locators.AdminSelectionPage.promoteButton.rawValue].firstMatch
     }
 
-    @discardableResult
-    func selectUser(named name: String) -> Self {
+    var cancelButton: XCUIElement {
+        app.buttons[Locators.AdminSelectionPage.cancelButton.rawValue].firstMatch
+    }
+
+    func userCell(named name: String) -> XCUIElement {
         let predicate = NSPredicate(format: "label CONTAINS %@", name)
-        app.staticTexts
+        return app.staticTexts
             .matching(identifier: Locators.AdminSelectionPage.userCell.rawValue)
             .matching(predicate)
             .firstMatch
-            .tap()
+    }
+
+    @discardableResult
+    func selectUser(named name: String) -> Self {
+        userCell(named: name).tap()
         return self
     }
 
     @discardableResult
     func tapPromote() throws -> ConversationDetailsPage {
         app.buttons[Locators.AdminSelectionPage.promoteButton.rawValue].firstMatch.tap()
+        return try ConversationDetailsPage()
+    }
+
+    func cancelAdminSelection() throws -> ConversationDetailsPage {
+        cancelButton.waitAndTap()
         return try ConversationDetailsPage()
     }
 }
