@@ -16,38 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Combine
+package import Foundation
 
-struct AcmeDirectoriesResponse: Codable, Equatable {
+package final class WireDriveObserveAssetUseCase: Sendable {
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
 
-    var newNonce: String
-    var newAccount: String
-    var newOrder: String
-    var revokeCert: String
-    var keyChange: String
+    package init(
+        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    ) {
+        self.localAssetRepository = localAssetRepository
+    }
 
-}
-
-public struct ACMEResponse: Equatable {
-
-    var nonce: String
-    var location: String
-    var response: Data
-
-}
-
-public struct ACMEAuthorizationResponse: Equatable {
-
-    var nonce: String
-    var location: String
-    var response: Data
-    var challengeType: AuthorizationChallengeType
-
-}
-
-enum AuthorizationChallengeType: String, Decodable {
-
-    case DPoP = "wire-dpop-01"
-    case OIDC = "wire-oidc-01"
-
+    @MainActor
+    package func invoke(nodeID: UUID) -> AnyPublisher<WireDriveLocalAsset?, Never> {
+        localAssetRepository.observeAsset(nodeID: nodeID)
+    }
 }
