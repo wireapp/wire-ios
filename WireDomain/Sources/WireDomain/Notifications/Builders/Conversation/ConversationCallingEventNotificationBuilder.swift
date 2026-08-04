@@ -119,16 +119,20 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         conversationID: ConversationID
     ) async -> UserNotification {
         let conversation = await context.getConversation(conversationID: conversationID)
-        let caller = await context.getCaller(senderID: senderID)
+        let callerID = context.callerID(callContent: callContent)
         let selfUser = await context.getSelfUser()
         let selfUserID = await context.selfUserID(selfUser: selfUser)
-        let callerID = context.callerID(callContent: callContent)
-        let senderName = await context.callerName(caller: caller)
         let conversationName = await context.conversationName(conversation: conversation)
         let teamName = await context.teamName(selfUser: selfUser)
         let isGroupConversation = await context.isGroupConversation(conversation: conversation)
 
         if callContent.isIncomingCall {
+            // SETUP-triggered: the OTR envelope sender IS the original
+            // caller (server-authenticated), so resolve the displayed name
+            // from the envelope sender rather than the self-declared
+            // src_userid.
+            let caller = await context.getCaller(senderID: senderID)
+            let senderName = await context.callerName(caller: caller)
             return buildIncomingCallNotification(
                 selfUserID: selfUserID,
                 senderID: senderID.id,
@@ -142,6 +146,11 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
                 isVideo: callContent.isVideo
             )
         } else { // Missed call
+            // End-message-triggered: the envelope sender may not be the
+            // caller, so prefer the originator declared in the payload
+            // (src_userid), falling back to the envelope sender when absent.
+            let caller = await context.getCallStarter(callerID: callerID, senderID: senderID)
+            let senderName = await context.callerName(caller: caller)
             return await buildMissedCallNotification(
                 selfUserID: selfUserID,
                 senderID: senderID.id,
@@ -497,6 +506,26 @@ extension ConversationCallingEventNotificationBuilder {
                 id: senderID.id,
                 domain: senderID.domain
             )
+        }
+        /// Resolves the user whose name labels the call notification.
+        ///
+        /// Prefers the original caller declared in the payload
+        /// (`src_userid`) over the OTR envelope sender, so a missed or
+        /// group-incoming call is attributed to the caller rather than
+        /// the participant whose message triggered the notification.
+        /// Falls back to the envelope sender when `src_userid` is absent
+        /// (older clients / 1:1 calls, where the sender is the caller).
+        func getCallStarter(
+            callerID: UUID?,
+            senderID: UserID
+        ) async -> ZMUser {
+            if let callerID {
+                return await userLocalStore.fetchOrCreateUser(
+                    id: callerID,
+                    domain: senderID.domain
+                )
+            }
+            return await getCaller(senderID: senderID)
         }
 
         func isGroupConversation(conversation: ZMConversation) async -> Bool {
