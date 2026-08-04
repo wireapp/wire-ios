@@ -20,12 +20,12 @@ import Foundation
 
 /// Depending on the `mlsE2EId` feature flag configuration, we should use a CRL proxy or fetching the CRL directly.
 /// https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1147666542/2024-04-22+CRL+proxy+for+mobile+apps
-public struct CRLURLBuilder {
+struct CRLURLBuilder {
 
     private let shouldUseProxy: Bool
     private let proxyURL: URL?
 
-    public init(shouldUseProxy: Bool, proxyURLString: String?) {
+    init(shouldUseProxy: Bool, proxyURLString: String?) {
         self.shouldUseProxy = shouldUseProxy
 
         guard let proxyURLString else {
@@ -35,7 +35,7 @@ public struct CRLURLBuilder {
         self.proxyURL = URL(string: proxyURLString)
     }
 
-    public func getURL(from distributionPoint: URL) -> URL {
+    func getURL(from distributionPoint: URL) -> URL {
         guard let proxyURL, shouldUseProxy else {
             return distributionPoint
         }

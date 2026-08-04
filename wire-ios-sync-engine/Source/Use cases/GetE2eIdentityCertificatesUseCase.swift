@@ -48,7 +48,7 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     ) async throws -> [E2eIdentityCertificate] {
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        let clientIds = try clientIds.map { try $0.cryptoId() }
+        let clientIds = clientIds.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
         let identities = try await getWireIdentity(
             coreCrypto: coreCrypto,
             conversationId: mlsGroupId.conversationId,
@@ -57,11 +57,9 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         let identitiesAndStatus = await validateUserHandleAndName(for: identities)
 
         return identitiesAndStatus.map { identity, status in
-            let clientId = String(decoding: identity.clientId?.copyBytes() ?? Data(), as: UTF8.self)
-
-            return if let x509Identity = identity.x509Identity {
+            if let x509Identity = identity.x509Identity {
                 E2eIdentityCertificate(
-                    clientId: clientId,
+                    clientId: identity.clientId,
                     certificateDetails: x509Identity.certificate,
                     mlsThumbprint: identity.thumbprint,
                     notValidBefore: x509Identity.notBefore,
@@ -71,7 +69,7 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                 )
             } else {
                 E2eIdentityCertificate(
-                    clientId: clientId,
+                    clientId: identity.clientId,
                     certificateDetails: "",
                     mlsThumbprint: identity.thumbprint,
                     notValidBefore: .now,
@@ -100,19 +98,13 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                 continue
             }
 
-            guard
-                let deserializedClientId = identity.clientId?.deserialize()
-            else {
+            guard let mlsClientID = MLSClientID(rawValue: identity.clientId) else {
                 validatedIdentities.append((identity, .invalid))
                 continue
             }
 
-            // Caution: deviceId.toHexString() produces a 16 char 0-padded string,
-            // whereas UserClient's id is an 8 char hex string without leading 0s.
-            // Therefore we hex encode the raw UInt64 client id.
-            let clientID = String(format: "%llx", deserializedClientId.deviceId.toU64())
             let (name, handle, domain) = await syncContext.perform {
-                let client = UserClient.fetchExistingUserClient(with: clientID, in: self.syncContext)
+                let client = UserClient.fetchExistingUserClient(with: mlsClientID.clientID, in: self.syncContext)
                 return (client?.user?.name, client?.user?.handle, client?.user?.domain)
             }
 

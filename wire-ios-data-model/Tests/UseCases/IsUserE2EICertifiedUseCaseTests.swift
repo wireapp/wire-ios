@@ -45,7 +45,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         setupOneOnOneConversations(in: context)
         setupClientIDs(in: context)
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        let clientIds = clientIDs.map { try! $0.cryptoId() }
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
         mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIds
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
@@ -89,7 +89,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
                     MLSGroupID(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")?.conversationId
                 )
                 // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
-                XCTAssertEqual(userIDs, [try Uuid(uuid: "36dfe52f-157d-452b-a9c1-98f7d9c1815d")])
+                XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
                 return [
                     userIDs[0]: [
                         .with(clientID: clientIDs![0].rawValue, status: .valid),
@@ -261,7 +261,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        let clientIds = try clientIDs.map { try $0.cryptoId() }
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
         mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIds
         mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
@@ -310,7 +310,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        let clientIds = try clientIDs.map { try $0.cryptoId() }
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
         mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIds
         mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
@@ -395,11 +395,7 @@ private extension WireIdentity {
 
     static func with(clientID: String, status: DeviceStatus) -> Self {
         .init(
-            clientId: ClientId(
-                userId: try! Uuid(uuid: UUID().transportString()),
-                deviceId: try! DeviceId.fromHexString(hexString: "a68a96d1cc3941ab"),
-                domain: "wire.com"
-            ),
+            clientId: clientID,
             status: status,
             thumbprint: "F",
             credentialType: .x509,

@@ -24,8 +24,8 @@ public extension CoreCrypto {
 
     static func registerLogger() {
         if DeveloperFlag.enabledCCDebugLogs.isOn {
-            setLogger(logger: CoreCryptoLoggerProxy())
-            setMaxLogLevel(level: .debug)
+            setLogger(CoreCryptoLoggerProxy())
+            setMaxLogLevel(.debug)
         }
     }
 

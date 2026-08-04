@@ -1150,6 +1150,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    private func clearCRLExpirationDates(for account: Account) {
+        let repository = CRLExpirationDatesRepository(userID: account.userIdentifier)
+        repository.removeAllExpirationDates()
+    }
+
     private func clearCacheDirectory() {
         guard let cachesDirectoryPath = cachesDirectory else { return }
         let manager = FileManager.default
@@ -1165,6 +1170,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
         }
         account.deleteKeychainItems()
+
+        clearCRLExpirationDates(for: account)
 
         deleteUserLogs?()
 
