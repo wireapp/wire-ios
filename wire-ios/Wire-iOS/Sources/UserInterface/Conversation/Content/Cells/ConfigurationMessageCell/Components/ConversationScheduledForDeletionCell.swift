@@ -54,6 +54,7 @@ final class ConversationScheduledForDeletionSystemMessageCell:
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        textLabel.linkTextAttributes = [:]
         attributedText = object.attributedText
         imageView.image = object.icon
         imageView.tintColor = object.iconTintColor
@@ -76,19 +77,33 @@ final class ConversationScheduledForDeletionCellDescription: ConversationMessage
     init(deletionDate: Date) {
         let formattedDate = Message.longDateFormatter.string(from: deletionDate)
         let title = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.text(
-            formattedDate,
-            View.readMoreURL.absoluteString
+            formattedDate
         )
         let redColor = ColorTheme.Base.primary(.red)
 
-        let markdownText = NSAttributedString.markdown(from: title, style: .systemMessage)
-        let attributedText = NSMutableAttributedString(attributedString: markdownText)
-        attributedText.addAttribute(
-            .foregroundColor,
-            value: redColor,
-            range: NSRange(location: 0, length: attributedText.length)
+        var attributedText: NSMutableAttributedString
+        let baseAttributes: [NSAttributedString.Key: AnyObject] = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+            .foregroundColor: redColor
+        ]
+
+        attributedText = .init(
+            string: title,
+            attributes: baseAttributes
         )
 
+        let readMore = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.ReadMore.text
+        let linkUrl = View.readMoreURL
+        let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+            .foregroundColor: ColorTheme.Buttons.Secondary.onEnabled,
+            .link: linkUrl as AnyObject,
+            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+            .underlineColor: ColorTheme.Buttons.Secondary.onEnabled
+        ]
+
+        let spaceBetweenParagraphs = "\n"
+        attributedText.append(.init(string: spaceBetweenParagraphs + readMore, attributes: linkAttributes))
         let icon = UIImage(resource: .attention).withRenderingMode(.alwaysTemplate)
 
         self.configuration = View.Configuration(

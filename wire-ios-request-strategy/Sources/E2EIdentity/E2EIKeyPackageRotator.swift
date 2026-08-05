@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
+import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
@@ -24,8 +24,12 @@ import WireLogging
 
 // sourcery: AutoMockable
 public protocol E2EIKeyPackageRotating {
-    func rotateKeysAndMigrateConversations(credential: Credential) async throws
-    func uploadNewKeyPackages(credentialRef: CredentialRef) async throws
+
+    func rotateKeysAndMigrateConversations(
+        enrollment: E2eiEnrollmentProtocol,
+        certificateChain: String
+    ) async throws
+
 }
 
 public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
@@ -45,6 +49,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let context: NSManagedObjectContext
     private let newKeyPackageCount: UInt32 = 100
     private let featureRepository: LegacyFeatureRepositoryInterface
+    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
     private var coreCrypto: SafeCoreCrypto {
         get async throws {
@@ -57,31 +62,48 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext,
+        onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
         featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
+        self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
         self.featureRepository = featureRepository
     }
 
     // MARK: - Interface
 
-    public func rotateKeysAndMigrateConversations(credential: Credential) async throws {
-        let credentialRef = try await coreCrypto.transaction { context in
-            try await context.addCredential(credential: credential)
+    public func rotateKeysAndMigrateConversations(
+        enrollment: E2eiEnrollmentProtocol,
+        certificateChain: String
+    ) async throws {
+
+        // We need to cast this to `E2eiEnrollment` because we only have access
+        // to the protocol it conforms to (E2eiEnrollmentProtocol),
+        // but the `e2eiRotateAll` function below expects the `E2eiEnrollment` type
+        guard let enrollment = enrollment as? E2eiEnrollment else {
+            throw Error.invalidIdentity
         }
 
-        try await replaceCredentialsInExistingConversations(with: credentialRef)
-        try await replaceKeyPackages(with: credentialRef)
-    }
+        let crlNewDistributionPoints = try await coreCrypto.transaction { context in
+            try await context.saveX509Credential(
+                enrollment: enrollment,
+                certificateChain: certificateChain
+            )
+        }
 
-    public func uploadNewKeyPackages(credentialRef: CredentialRef) async throws {
-        try await replaceKeyPackages(with: credentialRef)
+        try await replaceKeyPackages()
+        try await replaceCredentialsInExistingConversations()
+
+        // Publish new certificate revocation lists (CRLs) distribution points
+        if let newDistributionPoints = CRLsDistributionPoints(from: crlNewDistributionPoints) {
+            onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+        }
     }
 
     // MARK: - Helpers
 
-    private func replaceCredentialsInExistingConversations(with credential: CredentialRef) async throws {
+    private func replaceCredentialsInExistingConversations() async throws {
         let mlsConversationsToMigrate = try await context.perform {
             var mlsGroupIDs = try ZMConversation.fetchConversationsWithMLSGroupStatus(
                 mlsGroupStatus: .ready,
@@ -98,10 +120,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         try await coreCrypto.transaction { context in
             for groupID in mlsConversationsToMigrate {
                 do {
-                    try await context.setConversationCredential(
-                        conversationId: groupID.conversationId,
-                        credentialRef: credential
-                    )
+                    try await context.e2eiRotate(conversationId: groupID.conversationId)
                 } catch {
                     WireLogger.e2ei
                         .warn(
@@ -112,11 +131,10 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         }
     }
 
-    private func replaceKeyPackages(with credentialRef: CredentialRef) async throws {
+    private func replaceKeyPackages() async throws {
         let mlsConfig = await featureRepository.fetchMLS().config
-        let context = context
 
-        guard let clientID = await context.perform({
+        guard let clientID = await context.perform({ [self] in
             ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
         }) else {
             throw Error.noSelfClient
@@ -126,39 +144,23 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidCiphersuite
         }
 
-        let existingCredentials = try await coreCrypto.coreCrypto.findCredentials(
-            clientId: nil,
-            publicKey: nil,
-            cipherSuite: ciphersuite.coreCryptoCipherSuite,
-            credentialType: nil,
-            earliestValidity: nil
-        )
-
-        let previousCredential = existingCredentials.first { credential in
-            credential.publicKeyHash() != credentialRef.publicKeyHash()
-        }
-
         try await coreCrypto.transaction { coreCryptoContext in
-            var newKeyPackages: [WireCoreCrypto.KeyPackage] = []
+            try await coreCryptoContext.deleteStaleKeyPackages(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite
+            )
 
-            for _ in 0 ..< self.newKeyPackageCount {
-                let keyPackage = try await coreCryptoContext.generateKeyPackage(
-                    credentialRef: credentialRef,
-                    lifetime: nil
-                )
-                newKeyPackages.append(keyPackage)
-            }
+            let newKeyPackages = try await coreCryptoContext.clientKeypackages(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite,
+                credentialType: .x509,
+                amountRequested: self.newKeyPackageCount
+            )
 
             var action = ReplaceSelfMLSKeyPackagesAction(
                 clientID: clientID,
-                keyPackages: try newKeyPackages.map { try $0.serialize().base64EncodedString() },
+                keyPackages: newKeyPackages.map { $0.copyBytes().base64EncodedString() },
                 ciphersuite: ciphersuite
             )
             try await action.perform(in: self.context.notificationContext)
-
-            if let previousCredential {
-                try await coreCryptoContext.removeCredential(credentialRef: previousCredential)
-            }
         }
     }
 
