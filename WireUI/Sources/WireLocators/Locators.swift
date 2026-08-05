@@ -284,6 +284,13 @@ public enum Locators {
         case status
     }
 
+    public enum UserProfileQRCodePage: AutoPrefixedEnum {
+        case qrCodeImage
+        case username
+        case shareProfileLinkButton
+        case shareQRCodeButton
+    }
+
     public enum UserProfileStatusPicker: String {
         case none
         case available

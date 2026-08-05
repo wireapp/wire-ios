@@ -90,6 +90,22 @@ class UserProfilePage: PageModel {
         app.descendants(matching: .any)[Locators.UserProfilePage.status.rawValue].firstMatch
     }
 
+    var profileQRCodeImage: XCUIElement {
+        app.images[Locators.UserProfileQRCodePage.qrCodeImage.rawValue].firstMatch
+    }
+
+    var profileQRCodeUsername: XCUIElement {
+        app.staticTexts[Locators.UserProfileQRCodePage.username.rawValue].firstMatch
+    }
+
+    var shareProfileLinkButton: XCUIElement {
+        app.buttons[Locators.UserProfileQRCodePage.shareProfileLinkButton.rawValue].firstMatch
+    }
+
+    var shareQRCodeButton: XCUIElement {
+        app.buttons[Locators.UserProfileQRCodePage.shareQRCodeButton.rawValue].firstMatch
+    }
+
     var okButton: XCUIElement {
         app.buttons[Locators.UserProfileStatusPicker.okButton.rawValue].firstMatch
     }
@@ -159,12 +175,37 @@ class UserProfilePage: PageModel {
     }
 
     @discardableResult
-    func verifyProfileQRCodeButton(
+    func verifyProfileQRCode(
+        username: String,
     ) -> UserProfilePage {
+        let expectedUsername = "@\(username)"
+
         XCTAssertTrue(
-            qrCodeButton.exists,
+            qrCodeButton.waitAndTap(),
             "Profile QR code button is not showing",
         )
+
+        XCTAssertTrue(
+            profileQRCodeImage.waitForExistence(timeout: 5),
+            "Profile QR code is not showing",
+        )
+
+        XCTAssertEqual(
+            profileQRCodeUsername.value as? String ?? profileQRCodeUsername.label,
+            expectedUsername,
+            "Profile QR code username did not match \(expectedUsername)",
+        )
+
+        XCTAssertTrue(
+            shareProfileLinkButton.waitForExistence(timeout: 3),
+            "Share profile link button is not showing",
+        )
+
+        XCTAssertTrue(
+            shareQRCodeButton.waitForExistence(timeout: 3),
+            "Share QR code button is not showing",
+        )
+
         return self
     }
 

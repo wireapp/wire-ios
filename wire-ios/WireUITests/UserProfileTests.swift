@@ -72,6 +72,6 @@ final class UserProfileTests: WireUITestCase {
             .verifyName(teamOwner.name)
             .verifyUsername(teamOwner.username)
             .verifyUserStatus(.none) // default
-            .verifyProfileQRCodeButton()
+            .verifyProfileQRCode(username: teamOwner.username)
     }
 }
