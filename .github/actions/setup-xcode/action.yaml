@@ -1,0 +1,36 @@
+name: "Setup Xcode"
+description: "Reads .xcode-version and set DEVELOPER_DIR environment variable and XCODE_VERSION output."
+
+outputs:
+  XCODE_VERSION:
+    description: "The Xcode version read from .xcode-version"
+    value: ${{ steps.select.outputs.XCODE_VERSION }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set DEVELOPER_DIR from .xcode-version
+      id: select
+      shell: bash
+      run: |
+        XCODE_VERSION=$(cat .xcode-version)
+
+        if ! command -v xcodes >/dev/null 2>&1; then
+          echo "::error::'xcodes' CLI is required to locate Xcode ${XCODE_VERSION}."
+          exit 1
+        fi
+
+        XCODE_APP=$(xcodes installed "$XCODE_VERSION" | head -n 1 | awk -F'\t' '{print $NF}')
+
+        if [ -z "$XCODE_APP" ] || [ ! -d "$XCODE_APP" ]; then
+          echo "::error::Xcode ${XCODE_VERSION} not found via 'xcodes installed'"
+          echo "Installed Xcodes:"
+          xcodes installed || true
+          exit 1
+        fi
+
+        DEVELOPER_DIR="${XCODE_APP}/Contents/Developer"
+
+        echo "DEVELOPER_DIR=$DEVELOPER_DIR" >> "$GITHUB_ENV"
+        echo "XCODE_VERSION=$XCODE_VERSION" >> "$GITHUB_OUTPUT"
+        echo "Selected Xcode ${XCODE_VERSION} via DEVELOPER_DIR=${DEVELOPER_DIR}"

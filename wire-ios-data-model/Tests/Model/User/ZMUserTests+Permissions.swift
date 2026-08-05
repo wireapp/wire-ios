@@ -574,14 +574,14 @@ extension ZMUserTests_Permissions {
         XCTAssertTrue(selfUser.canDeleteConversation(conversation))
     }
 
-    func testThatNoConversationCreatorWithAdminRoleCantDeleteConversation() {
-        // given
+    func testThatNonCreatorTeamAdminWithDeleteRoleCanDeleteConversation() {
+        // given: self is not the conversation's creator, but is an admin from the same team.
         makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
         conversation.conversationType = .group
         createARoleForSelfUserWith("delete_conversation")
 
         // then
-        XCTAssertFalse(selfUser.canDeleteConversation(conversation))
+        XCTAssertTrue(selfUser.canDeleteConversation(conversation))
     }
 
     func testThatGroupParticipantCantDeleteConversation() {
@@ -685,6 +685,8 @@ extension ZMUserTests_Permissions {
             self.conversation.teamRemoteIdentifier = self.team.remoteIdentifier
             let member = Member.getOrUpdateMember(for: self.selfUser, in: self.team, context: self.uiMOC)
             member.permissions = permissions
+            // Mirrors the "team" key on the self-user payload, which `teamIdentifier` is normally synced from.
+            self.selfUser.teamIdentifier = self.team.remoteIdentifier
         }
     }
 

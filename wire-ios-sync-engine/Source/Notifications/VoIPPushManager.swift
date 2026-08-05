@@ -39,6 +39,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
     public let callKitManager: CallKitManager
 
     private let pushTokenService: PushTokenServiceInterface
+    private let backgroundActivityFactory: BackgroundActivityFactory
     private let registry: PKPushRegistry
 
     public weak var delegate: VoIPPushManagerDelegate?
@@ -49,10 +50,12 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     public init(
         application: ZMApplication,
-        pushTokenService: PushTokenServiceInterface
+        pushTokenService: PushTokenServiceInterface,
+        backgroundActivityFactory: BackgroundActivityFactory = .shared
     ) {
         Self.logger.debug("init VoIPPushManager")
         self.pushTokenService = pushTokenService
+        self.backgroundActivityFactory = backgroundActivityFactory
 
         self.registry = PKPushRegistry(queue: Self.pushRegistryQueue)
         self.callKitManager = CallKitManager(
@@ -120,10 +123,10 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             let callerName = payload["callerName"] as? String,
             let hasVideo = payload["hasVideo"] as? Bool
         else {
-            Self.logger.critical("error: processing NSE push: invalid payload - \(payload)")
-            completion()
-            return
+            fatalError("error: processing NSE push: invalid payload - \(payload)")
         }
+
+        backgroundActivityFactory.resume()
 
         let handle = CallHandle(
             accountID: accountID,

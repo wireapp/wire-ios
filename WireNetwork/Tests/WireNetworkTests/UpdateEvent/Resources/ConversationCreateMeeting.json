@@ -1,5 +1,5 @@
 {
-    "type": "conversation.create",
+    "type": "conversation.create-meeting",
     "qualified_conversation": {
         "id": "a644fa88-2d83-406b-8a85-d4fd8dedad6b",
         "domain": "example.com"

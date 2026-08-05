@@ -202,11 +202,11 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
         let eventContainer = PersistentContainer(
             name: "ZMEventModel",
-            managedObjectModel: CoreDataStack.loadEventsModel()
+            managedObjectModel: CoreDataStack.eventsModel
         )
         let messagesContainer = PersistentContainer(
             name: "zmessaging",
-            managedObjectModel: CoreDataStack.loadMessagingModel()
+            managedObjectModel: CoreDataStack.messagingModel
         )
 
         let description: NSPersistentStoreDescription
@@ -456,7 +456,11 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
             .appendingPathComponent(accountIdentifier.uuidString)
     }
 
-    public static func loadMessagingModel() -> NSManagedObjectModel {
+    // The models are cached and shared across all stacks: loading a model more than
+    // once creates duplicate NSEntityDescriptions claiming the same NSManagedObject
+    // subclasses, which breaks class-based entity lookup (`+entity`). The shared
+    // instances must never be mutated.
+    public static let messagingModel: NSManagedObjectModel = {
         let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
@@ -467,9 +471,9 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         }
 
         return result
-    }
+    }()
 
-    public static func loadEventsModel() -> NSManagedObjectModel {
+    public static let eventsModel: NSManagedObjectModel = {
         let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
@@ -480,7 +484,7 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         }
 
         return result
-    }
+    }()
 
     // MARK: - Migration
 

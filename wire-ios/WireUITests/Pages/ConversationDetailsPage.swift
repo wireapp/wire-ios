@@ -58,6 +58,10 @@ class ConversationDetailsPage: PageModel {
         app.staticTexts.matching(identifier: Locators.ConversationDetailsPage.userCellName.rawValue)
     }
 
+    var cannotLeaveAlert: XCUIElement {
+        app.alerts.firstMatch
+    }
+
     func userCell(named name: String) -> XCUIElement {
         let predicate = NSPredicate(format: "label CONTAINS %@", name)
         return userCells.matching(predicate).firstMatch
@@ -101,6 +105,10 @@ class ConversationDetailsPage: PageModel {
         return try ConversationsPage()
     }
 
+    func unarchiveOptionsConversationDetails() throws -> ConversationsPage {
+        try archiveOptionsConversationDetails()
+    }
+
     func clearContentOptionsConversationDetails() throws -> Self {
         clearContentOptionConversationDetailsButton.tap()
         return self
@@ -108,6 +116,13 @@ class ConversationDetailsPage: PageModel {
 
     func leaveOptionsConversationDetails() throws -> Self {
         leaveConversationOptionConversationDetailsButton.tap()
+        return self
+    }
+
+    func tapCannotLeaveAlert() throws -> Self {
+        if cannotLeaveAlert.waitForExistence(timeout: 1) {
+            cannotLeaveAlert.buttons.firstMatch.tap()
+        }
         return self
     }
 
@@ -128,6 +143,16 @@ class ConversationDetailsPage: PageModel {
 
     var deleteConversationButton: XCUIElement {
         app.buttons[Locators.LastAdminLeaveAlert.deleteGroup.rawValue].firstMatch
+    }
+
+    var readReceiptsSwitch: XCUIElement {
+        app.switches[Locators.ConversationDetailsPage.readReceiptsSwitch.rawValue].firstMatch
+    }
+
+    @discardableResult
+    func toggleGroupReadReceipts() -> ConversationDetailsPage {
+        readReceiptsSwitch.waitAndTap()
+        return self
     }
 
     func appParticipantToConversation() throws -> SelectParticipantsPage {

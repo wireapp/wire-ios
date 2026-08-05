@@ -68,6 +68,10 @@ class AccountSettingsPage: PageModel {
         app.descendants(matching: .any)[Locators.AccountSettingsPage.deleteAccountField.rawValue].firstMatch
     }
 
+    var profilePictureImagePreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.profilePictureImagePreview.rawValue]
+    }
+
     var oKButtonOnConfirmation: XCUIElement {
         app.buttons[Locators.AccountSettingsPage.ok.rawValue]
     }
@@ -145,12 +149,13 @@ class AccountSettingsPage: PageModel {
 
     func selectProfileColor(_ color: ProfileColor) throws -> AccountSettingsPage {
         colorCell.waitAndTap()
-        let colorOption = app.staticTexts[color.displayName].firstMatch
+        let colorOption = app.buttons[color.displayName].firstMatch
         XCTAssertTrue(
             colorOption.waitForExistence(timeout: 5),
             "\(color.displayName) color option did not appear"
         )
         colorOption.tap()
+        XCTAssertTrue(colorOption.isSelected, "\(color.displayName) color option was not selected")
         XCTAssertTrue(backToPreviousPage.waitAndTap(), "Failed to navigate back from the color picker")
         return try AccountSettingsPage()
     }
@@ -189,7 +194,7 @@ class AccountSettingsPage: PageModel {
         confirmImageButton.tap()
         XCTAssertTrue(pictureCell.waitForExistence(timeout: 10), "Account settings did not reappear")
         XCTAssertTrue(
-            waitForPicturePreview(timeout: 10),
+            profilePictureImagePreview.waitForExistence(timeout: 5),
             "Profile picture preview did not appear after selecting image"
         )
         return self
@@ -215,10 +220,6 @@ class AccountSettingsPage: PageModel {
             line: line
         )
         return self
-    }
-
-    func hasProfilePicturePreview() -> Bool {
-        pictureCell.value as? String == "image"
     }
 
     func tapUsernameField() throws -> UsernameUpdatePage {
@@ -281,11 +282,5 @@ class AccountSettingsPage: PageModel {
         photoGridImageTile
             .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
             .tap()
-    }
-
-    private func waitForPicturePreview(timeout: TimeInterval) -> Bool {
-        let predicate = NSPredicate(format: "value == %@", "image")
-        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: pictureCell)
-        return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
     }
 }

@@ -33,6 +33,10 @@ class SettingsPage: PageModel {
         app.cells[Locators.SettingsPage.optionsCell.rawValue].firstMatch
     }
 
+    var devicesMenu: XCUIElement {
+        app.cells["devicesCell"].firstMatch
+    }
+
     var conversationsTab: XCUIElement {
         app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
@@ -51,6 +55,11 @@ class SettingsPage: PageModel {
     func openOptionsMenu() throws -> OptionsOnSettingsPage {
         optionsMenu.tap()
         return try OptionsOnSettingsPage()
+    }
+
+    func openDevices() throws -> DevicesPage {
+        devicesMenu.tap()
+        return try DevicesPage()
     }
 
     @discardableResult

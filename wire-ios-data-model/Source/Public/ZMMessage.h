@@ -114,7 +114,8 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeChannelHistoryDepthModified,
     ZMSystemMessageTypeUserRemovedFromTeam,
     ZMSystemMessageTypeUnknownMessageContentTypeReceived,
-    ZMSystemMessageTypePromotedToGroupAdmin
+    ZMSystemMessageTypePromotedToGroupAdmin,
+    ZMSystemMessageTypeConversationScheduledForDeletion
 };
 
 typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {
@@ -159,6 +160,9 @@ typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {
 @property (nonatomic, readonly) BOOL userIsTheSender;
 @property (nonatomic, nullable) NSNumber *messageTimer;
 @property (nonatomic, nullable) NSArray<NSString *> *domains;
+
+/// Only filled for .conversationScheduledForDeletion
+@property (nonatomic, nullable) NSDate *conversationScheduledDeletionDate;
 
 @end
 

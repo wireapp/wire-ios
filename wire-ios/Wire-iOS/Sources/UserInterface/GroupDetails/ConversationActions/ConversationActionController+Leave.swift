@@ -95,16 +95,24 @@ extension ConversationActionController {
 
             guard let zmSession = session as? ZMUserSession else { return }
 
-            let eligibleCandidates = self.eligibleAdminCandidates(in: conversation)
+            let eligibleCandidates = eligibleAdminCandidates(in: conversation)
+            let hasEligibleCandidates = !eligibleCandidates.isEmpty
             let groupName = conversation.displayNameWithFallback
-            if eligibleCandidates.isEmpty {
+            let canSelfUserDeleteConversation = zmSession.selfUser.canDeleteConversation(conversation)
+
+            switch (hasEligibleCandidates, canSelfUserDeleteConversation) {
+
+            // no eligibles candidates and admin can delete group
+            case (false, true):
                 self.present(LastAdminLeaveAlert.deleteOnly(groupName: groupName) { [weak self] in
                     self?.requestDeleteGroupResult { [weak self] confirmed in
                         guard let self, confirmed else { return }
                         handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
                     }
                 })
-            } else {
+
+            // eligible candidates and admin can delete group
+            case (true, true):
                 self.present(LastAdminLeaveAlert.promoteOrDelete(groupName: groupName) { [weak self] in
                     self?.presentAdminSelection(for: conversation, candidates: eligibleCandidates)
                 } onDelete: { [weak self] in
@@ -113,6 +121,16 @@ extension ConversationActionController {
                         handleDeleteGroupResult(confirmed, conversation: conversation, in: zmSession)
                     }
                 })
+
+            // eligible candidates and admin cannot delete group
+            case (true, false):
+                self.present(LastAdminLeaveAlert.promoteOnly(groupName: groupName) { [weak self] in
+                    self?.presentAdminSelection(for: conversation, candidates: eligibleCandidates)
+                })
+
+            // no eligible candidates and admin cannot delete group
+            case (false, false):
+                self.present(LastAdminLeaveAlert.cannotLeave(groupName: groupName))
             }
         }
     }
@@ -157,17 +175,49 @@ extension ConversationActionController {
     }
 
     @MainActor
-    private func presentAdminSelection(for conversation: ZMConversation, candidates: [UserType]) {
+    private func presentAdminSelection(
+        for conversation: ZMConversation,
+        candidates: [UserType],
+        showAlert: Bool = false
+    ) {
         let session = userSession
         let viewModel = AdminSelectionViewModel(
             candidates: candidates,
             userSession: session,
+            showError: showAlert,
             onPromote: { [weak self] user in
                 guard let self else {
                     throw CancellationError()
                 }
                 do {
-                    try await performAdminPromotion(user: user, in: conversation)
+                    try await performAdminPromotion(user: user, in: conversation) { removeParticipantResult in
+                        switch removeParticipantResult {
+                        case .success:
+                            break
+
+                        case let .failure(ConversationRemoveParticipantError.requiresAdmin(eligibleMembers)):
+                            let newEligibleCandidates: [UserType] = conversation.localParticipantsExcludingSelf
+                                .filter { participant in
+                                    guard let id = participant.qualifiedID else {
+                                        return false
+                                    }
+
+                                    return eligibleMembers.contains {
+                                        $0.id == id.uuid && $0.domain == id.domain
+                                    }
+                                }
+
+                            self.presentAdminSelection(
+                                for: conversation,
+                                candidates: newEligibleCandidates,
+                                showAlert: true
+                            )
+
+                        case let .failure(error):
+                            // error alert displayed within `removeOrShowError` method, see `showAlertForRemoval`.
+                            WireLogger.conversation.warn("remove participant failed: \(error)")
+                        }
+                    }
                 } catch {
                     WireLogger.conversation.warn("admin promotion failed: \(error)")
                     // Re-throw so AdminSelectionViewModel can set `.failed`
@@ -179,8 +229,14 @@ extension ConversationActionController {
         present(hostingController)
     }
 
+    private typealias RemoveParticipantResultHandler = (Result<Void, Error>) -> Void
+
     @MainActor
-    private func performAdminPromotion(user: UserType, in conversation: ZMConversation) async throws {
+    private func performAdminPromotion(
+        user: UserType,
+        in conversation: ZMConversation,
+        removeParticipantResultHandler: RemoveParticipantResultHandler? = nil
+    ) async throws {
         let roles = conversation.getRoles()
         guard let adminRole = roles.first(where: { $0.name == ZMConversation.defaultAdminRoleName }) else {
             throw AdminPromotionError.adminRoleNotFound
@@ -199,7 +255,7 @@ extension ConversationActionController {
             throw error
         }
         guard let selfUser = SelfUser.provider?.providedSelfUser else { return }
-        conversation.removeOrShowError(participant: selfUser)
+        conversation.removeOrShowError(participant: selfUser, completion: removeParticipantResultHandler)
     }
 
 }

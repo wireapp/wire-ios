@@ -173,11 +173,14 @@ final class ConversationInputBarViewController: UIViewController,
 
     let videoButton: IconButton = .init()
 
+    private var showDriveViewerBanner: Bool {
+        conversation.isWireDriveEnabled && userSession.selfUser
+            .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
+    }
+
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let showDriveViewerBanner = conversation.isWireDriveEnabled && userSession.selfUser
-            .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
         let inputBar = InputBar(
             buttons: inputBarButtons,
             isWireDriveEnabled: conversation.isWireDriveEnabled,
@@ -1243,15 +1246,19 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
 
-        photoButton.accessibilityLabel = Conversation.CameraButton.description
+        photoButton.accessibilityLabel = showDriveViewerBanner ? Conversation.CameraButtonDisabled
+            .description : Conversation.CameraButton.description
         mentionButton.accessibilityLabel = Conversation.MentionButton.description
-        sketchButton.accessibilityLabel = Conversation.SketchButton.description
+        sketchButton.accessibilityLabel = showDriveViewerBanner ? Conversation.SketchButtonDisabled
+            .description : Conversation.SketchButton.description
         gifButton.accessibilityLabel = Conversation.GifButton.description
         audioButton.accessibilityLabel = Conversation.AudioButton.description
         pingButton.accessibilityLabel = Conversation.PingButton.description
-        uploadFileButton.accessibilityLabel = Conversation.UploadFileButton.description
+        uploadFileButton.accessibilityLabel = showDriveViewerBanner ? Conversation.UploadFileButtonDisabled
+            .description : Conversation.UploadFileButton.description
         locationButton.accessibilityLabel = Conversation.LocationButton.description
-        videoButton.accessibilityLabel = Conversation.VideoButton.description
+        videoButton.accessibilityLabel = showDriveViewerBanner ? Conversation.VideoButtonDisabled
+            .description : Conversation.VideoButton.description
         hourglassButton.accessibilityLabel = Conversation.TimerButton.description
         sendButton.accessibilityLabel = Conversation.SendButton.description
     }

@@ -19,7 +19,7 @@ jobs:
             # Needed so the local ./.github/actions/notify-wire composite action is available.
             # Only .github is required, and no LFS objects.
             -   name: Checkout
-                uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+                uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
                 with:
                     sparse-checkout: .github
                     lfs: 'false'
@@ -154,11 +154,11 @@ jobs:
                             }
                         }
 
-                        core.setOutput('result', lines.join('\n'));
+                        core.setOutput('summary', lines.join('\n'));
 
             -   name: Post to Wire
                 continue-on-error: true
                 uses: ./.github/actions/notify-wire
                 with:
                     notify: custom
-                    text: ${{ steps.build-summary.outputs.result }}
+                    text: ${{ steps.build-summary.outputs.summary }}

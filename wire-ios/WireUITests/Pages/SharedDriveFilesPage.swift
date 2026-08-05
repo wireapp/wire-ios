@@ -78,6 +78,7 @@ class SharedDriveFilesPage: PageModel {
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> SharedDriveFilesPage {
+        XCTAssertTrue(fileIcon.waitForExistence(timeout: 3))
         XCTAssertTrue(fileIcon.exists, file: file, line: line)
         XCTAssertTrue(fileMetadataText.label.contains(".png"), file: file, line: line)
         XCTAssertTrue(fileMetadataText.label.contains(name), file: file, line: line)
@@ -103,7 +104,21 @@ class SharedDriveFilesPage: PageModel {
     }
 
     func verifyFileMovedToSharedDrive(fileName: String) -> Bool {
-        fileMetadataText.label.contains(fileName)
+        while !fileMetadataText.exists {
+            pullToRefresh()
+        }
+
+        return fileMetadataText.label.contains(fileName)
+    }
+
+    private func pullToRefresh() {
+        let table = app.tables.firstMatch
+        XCTAssertTrue(table.waitForExistence(timeout: 3))
+
+        let start = table.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
+        let end = table.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+
+        start.press(forDuration: 0.1, thenDragTo: end)
     }
 
     func createFolder() throws -> FolderPage {

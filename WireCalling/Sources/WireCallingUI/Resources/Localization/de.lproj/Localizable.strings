@@ -32,21 +32,26 @@
 "wireMeetings.list.header.tomorrow" = "Morgen";
 "wireMeetings.list.header.yesterday" = "Gestern";
 "wireMeetings.list.header.ongoing" = "Aktuell";
+"wireMeetings.list.attending" = "Anwesend";
 "wireMeetings.list.actions.edit" = "Meeting bearbeiten";
 "wireMeetings.list.actions.delete" = "Meeting für alle löschen";
 "wireMeetings.list.delete.alert.title" = "Meeting für alle löschen";
 "wireMeetings.list.delete.alert.subtitle" = "Das Meeting wird für Sie und alle anderen gelöscht. Alle Teilnehmer werden darüber informiert.";
 "wireMeetings.list.delete.alert.delete.button" = "Löschen";
 "wireMeetings.list.delete.alert.cancel.button" = "Abbrechen";
+"wireMeetings.list.delete.error.alert.title" = "Ein Fehler ist aufgetreten";
+"wireMeetings.list.delete.error.alert.ok" = "OK";
 
 // MARK: - Schedule a meeting
 
 "wireMeetings.schedule.now.title" = "Meeting starten";
 "wireMeetings.schedule.future.title" = "Neues Meeting";
+"wireMeetings.schedule.edit.title" = "Edit Meeting";
 "wireMeetings.schedule.cancel.button" = "Abbrechen";
 "wireMeetings.schedule.schedule.button" = "Planen";
+"wireMeetings.schedule.save.button" = "Bestätigen";
 "wireMeetings.schedule.select.button" = "Auswählen";
-"wireMeetings.schedule.start.button" = "Start";
+"wireMeetings.schedule.start.button" = "Starten";
 "wireMeetings.schedule.setupTitle.header" = "Titel";
 "wireMeetings.schedule.setupTitle.placeholder" = "Meeting-Titel eingeben";
 "wireMeetings.schedule.setupParticipants.header" = "Teilnehmer";
@@ -63,6 +68,7 @@
 "wireMeetings.schedule.time.daily" = "Täglich";
 "wireMeetings.schedule.time.weekly" = "Wöchentlich";
 "wireMeetings.schedule.time.everyTwoWeeks" = "Alle 2 Wochen";
+"wireMeetings.schedule.time.everyFourWeeks" = "Alle 4 Wochen";
 "wireMeetings.schedule.time.monthly" = "Monatlich";
 "wireMeetings.schedule.time.yearly" = "Jährlich";
 "wireMeetings.schedule.members.title" = "Teilnehmer";

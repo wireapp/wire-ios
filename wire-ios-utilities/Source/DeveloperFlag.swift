@@ -44,10 +44,11 @@ public enum DeveloperFlag: String, CaseIterable {
     case shakeToReport
     case showNSEErrors
     case simulateMainAppRequiredError
+    case simulateUnestablishedMLSGroup
     // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     case enableDrivePermissions
     case unSafeLogsForPublic
-    case useBackgroundTaskAPIInAppBackgroundTaskExecuter
+    case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
 
     public var description: String {
         switch self {
@@ -117,14 +118,17 @@ public enum DeveloperFlag: String, CaseIterable {
         case .simulateMainAppRequiredError:
             "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
 
+        case .simulateUnestablishedMLSGroup:
+            "Turn on to leave the next locally created MLS group unestablished at epoch 0"
+
         case .enableDrivePermissions:
             "Turn on to enable drive permissions"
 
         case .unSafeLogsForPublic:
             "Turn on to write all logs (including debug and non-public) to disk in release builds"
 
-        case .useBackgroundTaskAPIInAppBackgroundTaskExecuter:
-            "Turn on to use Apple's UIApplication task API directly in AppBackgroundTaskExecuter"
+        case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
+            "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
         }
     }
 

@@ -42,13 +42,13 @@ class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
 
     // MARK: - Update meeting
 
-    func updateMeeting(meetingID: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse {
+    func updateMeeting(id: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse {
         throw MeetingsAPIError.unsupportedEndpointForAPIVersion
     }
 
     // MARK: - Delete meeting
 
-    func deleteMeeting(meetingID: QualifiedID) async throws {
+    func deleteMeeting(id: QualifiedID) async throws {
         throw MeetingsAPIError.unsupportedEndpointForAPIVersion
     }
 

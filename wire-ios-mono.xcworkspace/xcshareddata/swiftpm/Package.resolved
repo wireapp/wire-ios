@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "AnyCodable",
-        "repositoryURL": "https://github.com/Flight-School/AnyCodable",
-        "state": {
-          "branch": null,
-          "revision": "862808b2070cd908cb04f9aafe7de83d35f81b05",
-          "version": "0.6.7"
-        }
-      },
-      {
         "package": "AppAuth",
         "repositoryURL": "https://github.com/openid/AppAuth-iOS.git",
         "state": {
@@ -125,15 +116,6 @@
           "branch": null,
           "revision": "69f7a889d2736f2621c6083ac29e0a75d158f249",
           "version": "0.25.1"
-        }
-      },
-      {
-        "package": "OktaSdk",
-        "repositoryURL": "https://github.com/okta/okta-sdk-swift.git",
-        "state": {
-          "branch": "master",
-          "revision": "306607cab760945ab2faab4d7bac7ebeb5f6a946",
-          "version": null
         }
       },
       {
@@ -287,6 +269,15 @@
           "branch": null,
           "revision": "22787ffb59de99e5dc1fbfe80b19c97a904ad48d",
           "version": "0.9.20"
+        }
+      },
+      {
+        "package": "ZXingCpp",
+        "repositoryURL": "https://github.com/zxing-cpp/zxing-cpp",
+        "state": {
+          "branch": null,
+          "revision": "885baaf0840335153c1a487fa65f9c1388702c81",
+          "version": "3.1.0"
         }
       }
     ]

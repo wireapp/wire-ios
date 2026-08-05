@@ -73,6 +73,32 @@ for XCRESULT in "${XCRESULTS[@]}"; do
       def failed_test_cases:
         test_cases | map(select((.result? // "" | ascii_downcase) == "failed"));
 
+      def testiny_ids_from_text:
+        (tostring | gsub("[^A-Za-z0-9_]"; "_")) as $text
+        | ($text | (capture("_TC_+(?<chain>.*)$"; "i")? // {}).chain? // "") as $chain
+        | if $chain == "" then []
+          else
+            (
+              reduce ($chain | split("_")[]) as $part (
+                {active: true, ids: []};
+                if .active == false then .
+                elif ($part | ascii_downcase) == "tc" then .
+                elif ($part | test("^\\d+$")) then .ids += [$part]
+                elif $part == "" then .
+                else .active = false
+                end
+              )
+              | .ids
+              | unique
+            )
+          end;
+
+      def testiny_ids:
+        [(.name? // ""), (.nodeIdentifier? // ""), (.nodeIdentifierURL? // "")]
+        | map(testiny_ids_from_text)
+        | add
+        | unique;
+
       def failure_message:
         ((.children // [])
           | map(select(.nodeType? == "Failure Message") | .name?)
@@ -106,6 +132,9 @@ for XCRESULT in "${XCRESULTS[@]}"; do
         passed: (test_cases | map(select((.result? // "" | ascii_downcase) == "passed")) | length),
         failed: (failed_test_cases | length),
         skipped: (test_cases | map(select((.result? // "" | ascii_downcase) | test("skipped|expected"))) | length),
+        testiny_passed_ids: (test_cases | map(select((.result? // "" | ascii_downcase) == "passed") | testiny_ids) | add // [] | unique),
+        testiny_failed_ids: (failed_test_cases | map(testiny_ids) | add // [] | unique),
+        testiny_skipped_ids: (test_cases | map(select((.result? // "" | ascii_downcase) | test("skipped|expected")) | testiny_ids) | add // [] | unique),
         failed_details: (
           failed_test_cases
           | map("  ❌ " + test_title + ": " + (failure_message | normalize))
@@ -150,6 +179,9 @@ for XCRESULT in "${XCRESULTS[@]}"; do
       passed: (.passedTests // 0),
       failed: (.failedTests // 0),
       skipped: ((.skippedTests // 0) + (.expectedFailures // 0)),
+      testiny_passed_ids: [],
+      testiny_failed_ids: [],
+      testiny_skipped_ids: [],
       failed_details: (
         failures
         | map("  ❌ " + failure_title + ": " + ((.failureText? // "No failure message available") | normalize))
@@ -165,11 +197,20 @@ if [ ! -s "$SUMMARY_FILE" ]; then
 fi
 
 SUMMARY="$(jq -s -c '
-  {
+  (map(.testiny_failed_ids // []) | add // [] | unique) as $testiny_failed
+  | (map(.testiny_passed_ids // []) | add // [] | unique) as $testiny_passed
+  | (map(.testiny_skipped_ids // []) | add // [] | unique) as $testiny_skipped
+  | ($testiny_passed - $testiny_failed) as $testiny_passed_only
+  | ($testiny_skipped - $testiny_failed - $testiny_passed) as $testiny_skipped_only
+  | {
     total: (map(.total) | add // 0),
     passed: (map(.passed) | add // 0),
     failed: (map(.failed) | add // 0),
     skipped: (map(.skipped) | add // 0),
+    testiny_total: (($testiny_failed + $testiny_passed_only + $testiny_skipped_only) | length),
+    testiny_passed: ($testiny_passed_only | length),
+    testiny_failed: ($testiny_failed | length),
+    testiny_skipped: ($testiny_skipped_only | length),
     failed_details: ([.[].failed_details[]] | unique | .[:20])
   }
 ' "$SUMMARY_FILE")"
@@ -178,14 +219,27 @@ TOTAL="$(jq -r '.total' <<< "$SUMMARY")"
 PASSED="$(jq -r '.passed' <<< "$SUMMARY")"
 FAILED="$(jq -r '.failed' <<< "$SUMMARY")"
 SKIPPED="$(jq -r '.skipped' <<< "$SUMMARY")"
+TESTINY_TOTAL="$(jq -r '.testiny_total' <<< "$SUMMARY")"
+TESTINY_PASSED="$(jq -r '.testiny_passed' <<< "$SUMMARY")"
+TESTINY_FAILED="$(jq -r '.testiny_failed' <<< "$SUMMARY")"
+TESTINY_SKIPPED="$(jq -r '.testiny_skipped' <<< "$SUMMARY")"
 FAILED_DETAILS="$(jq -r '.failed_details | if length == 0 then "None" else join("\n") end' <<< "$SUMMARY")"
 
-REPORT_MESSAGE="--------------------------------------
-**Total Tests:** ${TOTAL}
+if [ "$TESTINY_TOTAL" -gt 0 ]; then
+  REPORT_MESSAGE="**XCTest Methods:** Total ${TOTAL} | Passed ${PASSED} | Failed ${FAILED} | Skipped ${SKIPPED}
+
+**Total Testiny Test Cases:** ${TESTINY_TOTAL}
+✅ **Passed:** ${TESTINY_PASSED}
+❌ **Failed:** ${TESTINY_FAILED}
+⏭️ **Skipped:** ${TESTINY_SKIPPED}
+--------------------------------------"
+else
+  REPORT_MESSAGE="**Total Tests:** ${TOTAL}
 ✅ **Passed:** ${PASSED}
 ❌ **Failed:** ${FAILED}
 ⏭️ **Skipped:** ${SKIPPED}
 --------------------------------------"
+fi
 
 if [ "$FAILED" -gt 0 ] && [ "$FAILED_DETAILS" != "None" ]; then
   REPORT_MESSAGE="${REPORT_MESSAGE}
