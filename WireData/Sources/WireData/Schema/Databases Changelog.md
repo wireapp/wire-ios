@@ -17,6 +17,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 ### 2.139.0
 
 * added `Conversation.scheduledDeletionDate` and `SystemMessage.conversationScheduledDeletionDate` properties.
+* added `scheduledDeletionDate` attribute on the Conversation entity
 
 ### 2.138.0
 

@@ -49,25 +49,54 @@ class PendingResult:
     status: str
 
 
+class TestinyAPIError(RuntimeError):
+    """A Testiny API call failed. `status` is the HTTP status, or None for network errors."""
+
+    def __init__(self, message: str, status: int | None = None):
+        super().__init__(message)
+        self.status = status
+
+
+# The first `_TC_` marks where the ID chain starts, so digits earlier in the name
+# (test_2FA_TC_1234) are never read as case IDs.
+TC_CHAIN_START_RE = re.compile(r'_TC_+(?=\d)', re.IGNORECASE)
+# One `<id>` link of the chain, with an optional repeated `TC_` prefix.
+TC_ID_RE = re.compile(r'(?:TC_+)?(\d+)(?:_+|$)', re.IGNORECASE)
+
+
 def extract_tc_keys(test_name: str) -> List[str]:
     """
     Extract all TC IDs from function name.
+
+    Only the leading ID chain is read: scanning stops at the first segment that is
+    not an ID, so trailing text (test_TC_1234_retry_2) never yields a bogus TC-2.
     Supports:
         test_TC_1234
         test_TC_1234_1111_2222
         test_TC_1234_TC_1111_TC_2222
-        test_TC_1234_1111_TC_2222
+        test_TC_1234_TC__1111
     """
-    matches = re.findall(r'_TC_(\d+)', test_name, re.IGNORECASE)
-    if not matches:
+    name = test_name.strip().rstrip("()")
+    chain_start = TC_CHAIN_START_RE.search(name)
+    if chain_start is None:
         return []
 
+    chain = name[chain_start.end():]
     seen = set()
     keys: List[str] = []
-    for m in matches:
-        if m not in seen:
-            seen.add(m)
-            keys.append(f"TC-{m}")
+    pos = 0
+    while pos < len(chain):
+        match = TC_ID_RE.match(chain, pos)
+        if match is None:
+            break
+        tc_id = match.group(1)
+        if tc_id not in seen:
+            seen.add(tc_id)
+            keys.append(f"TC-{tc_id}")
+        pos = match.end()
+
+    if pos < len(chain):
+        print(f"[WARN] Ignoring trailing text '{chain[pos:]}' in test name '{test_name}'")
 
     return keys
 
@@ -213,11 +242,12 @@ def call_testiny_api(method: str, endpoint: str, body=None):
         with urllib.request.urlopen(req, timeout=30) as resp:
             return json.loads(resp.read())
     except urllib.error.HTTPError as e:
-        raise RuntimeError(
-            f"Testiny {method} {endpoint} -> {e.code}: {e.read().decode()}"
+        raise TestinyAPIError(
+            f"Testiny {method} {endpoint} -> {e.code}: {e.read().decode()}",
+            status=e.code,
         )
     except urllib.error.URLError as e:
-        raise RuntimeError(f"Network error calling {endpoint}: {e.reason}")
+        raise TestinyAPIError(f"Network error calling {endpoint}: {e.reason}")
 
 def append_ci_summary(run_id: int, run_name: str) -> None:
     github_server = os.environ.get("GITHUB_SERVER_URL")
@@ -282,14 +312,22 @@ def resolve_run(title: str, require_existing: bool) -> int:
 
 
 def find_testiny_id(tc_key: str) -> int | None:
+    """
+    Resolve a TC key to a Testiny test case id.
+
+    Returns None when the case does not exist (HTTP 404). Any other failure raises,
+    so a Testiny outage or a bad API key is not silently reported as "not found".
+    """
     numeric = re.sub(r'^TC-', '', tc_key, flags=re.IGNORECASE)
     if not numeric.isdigit():
         return None
     try:
         tc = call_testiny_api("GET", f"/testcase/{numeric}")
-        return tc["id"]
-    except Exception:
-        return None
+    except TestinyAPIError as e:
+        if e.status == 404:
+            return None
+        raise
+    return tc.get("id")
 
 
 def bulk_send(results: List[PendingResult]) -> None:
@@ -305,26 +343,33 @@ def bulk_send(results: List[PendingResult]) -> None:
 
 def resolve_test_cases(tests: List[FlatTest], run_id: int):
     results_to_upload = []
-    skipped_no_tag = 0
-    skipped_missing = 0
+    untagged: List[str] = []
+    missing: List[str] = []
+    lookup_errors = 0
 
     for t in tests:
         if not t.tc_keys:
-            skipped_no_tag += 1
+            untagged.append(t.name)
             continue
 
         status = map_status(t.status)
 
         for key in t.tc_keys:
-            tc_id = find_testiny_id(key)
+            try:
+                tc_id = find_testiny_id(key)
+            except TestinyAPIError as e:
+                print(f"[ERROR] Lookup of {key} ({t.name}) failed: {e}", file=sys.stderr)
+                lookup_errors += 1
+                continue
+
             if tc_id is None:
-                print(f"[WARN] {key} not found in Testiny")
-                skipped_missing += 1
+                print(f"[WARN] {key} not found in Testiny ({t.name})")
+                missing.append(key)
                 continue
 
             results_to_upload.append(PendingResult(run_id, tc_id, status))
 
-    return results_to_upload, skipped_no_tag, skipped_missing
+    return results_to_upload, untagged, missing, lookup_errors
 
 
 def parse_args():
@@ -355,7 +400,15 @@ def main():
 
     run_id = resolve_run(args.run_name, args.require_existing_run)
 
-    pending, skipped_no_tag, skipped_missing = resolve_test_cases(tests, run_id)
+    pending, untagged, missing, lookup_errors = resolve_test_cases(tests, run_id)
+
+    if untagged:
+        print(f"[WARN] {len(untagged)} test(s) without a usable TC id, not reported to Testiny:")
+        for name in untagged:
+            print(f"         {name}")
+
+    if missing:
+        print(f"[WARN] {len(missing)} TC id(s) not found in Testiny: {', '.join(missing)}")
 
     dedup = {}
     for r in pending:
@@ -374,6 +427,16 @@ def main():
             exit_code = 1
     else:
         print("[INFO] No results to send")
+
+    # Missing cases only warn, but a lookup that failed for another reason means
+    # results were dropped without anybody knowing, so fail the run.
+    if lookup_errors:
+        print(
+            f"[ERROR] {lookup_errors} test case lookup(s) failed (not a 'not found'); "
+            "those results were not uploaded",
+            file=sys.stderr,
+        )
+        exit_code = 1
 
     append_ci_summary(run_id, args.run_name)
     sys.exit(exit_code)

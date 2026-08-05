@@ -33,19 +33,31 @@ struct UpdateMeetingUseCaseTests {
     private static let keptMember = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Katie Armstrong",
-        handle: "katie"
+        handle: "katie",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private static let removedMember = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Marco Weissnat",
-        handle: "marco"
+        handle: "marco",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private static let addedMember = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Olga Heaney",
-        handle: "olga"
+        handle: "olga",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private let meeting = Meeting(
@@ -258,7 +270,11 @@ struct UpdateMeetingUseCaseTests {
         let creatorMember = MeetingMember(
             qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
             name: "Erika Muster",
-            handle: "erika"
+            handle: "erika",
+            isSelfUser: false,
+            initials: "",
+            accentColor: .default,
+            avatarImageData: nil
         )
         let meeting = Meeting(
             id: QualifiedID(id: UUID(), domain: "example.com"),

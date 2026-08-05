@@ -90,7 +90,7 @@ final class ZCallingTests: WireUITestCase {
     /// Team Owner creates group conversation and initiates a group call with members via calling service
     /// [critical]
     @MainActor
-    func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
+    func testMultipleUsersJoiningGroupCall_TC_8910_8880() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 
@@ -244,7 +244,7 @@ final class ZCallingTests: WireUITestCase {
     /// Call participant switches from audio call to video call and back
     /// [critical]
     @MainActor
-    func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_TC_9497() async throws {
+    func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_9497() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
