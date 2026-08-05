@@ -104,10 +104,10 @@ final class AppLockModuleViewTests: XCTestCase {
     }
 
     // @SF.Locking @TSFI.FS-IOS @S0.1
-    // Make sure presenter gets event when app enters foreground
-    func test_ItSendsEvent_WhenApplicationWillEnterForeground() {
+    // Make sure presenter gets event when the scene enters foreground
+    func test_ItSendsEvent_WhenSceneWillEnterForeground() {
         // When
-        sut.applicationWillEnterForeground()
+        sut.sceneWillEnterForeground()
 
         // Then
         XCTAssertEqual(presenter.events, [.applicationWillEnterForeground])
