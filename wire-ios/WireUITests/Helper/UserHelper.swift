@@ -666,6 +666,60 @@ final class UserHelper {
         )
     }
 
+    /// Creates a team group with configurable team-member count and total admin count.
+    /// `memberCount` excludes the owner; `groupAdminCount` includes the owner.
+    func createGroupConversationWithAdminsAndMembers(
+        groupName: String,
+        memberCount: Int,
+        groupAdminCount: Int,
+        preventAdminlessGroupsEnabled: Bool = false
+    ) async throws -> (
+        owner: UserInfo,
+        admins: [UserInfo],
+        members: [UserInfo],
+        conversation: Conversation
+    ) {
+        let (owner, teamMembers, qualifiedIDs, _) = try await registerTeam(withMemberCount: memberCount)
+
+        guard
+            groupAdminCount >= 1,
+            groupAdminCount <= memberCount + 1,
+            teamMembers.count == memberCount,
+            qualifiedIDs.count == memberCount,
+            let teamID = owner.teamID
+        else {
+            throw RuntimeError("createGroupConversationWithAdminsAndMembers: invalid team setup")
+        }
+
+        if preventAdminlessGroupsEnabled {
+            try await unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+        }
+
+        let conversation = try await createGroupConversations(
+            qualifiedIds: qualifiedIDs,
+            owner: owner,
+            groupName: groupName
+        )
+
+        guard let conversationQualifiedID = conversation.qualifiedID else {
+            throw RuntimeError("createGroupConversationWithAdminsAndMembers: conversation.qualifiedID is nil")
+        }
+
+        let promotedGroupAdminCount = groupAdminCount - 1
+        for userID in qualifiedIDs.prefix(promotedGroupAdminCount) {
+            try await updateRole(
+                "wire_admin",
+                userID: userID,
+                conversationID: conversationQualifiedID
+            )
+        }
+
+        let admins = [owner] + Array(teamMembers.prefix(promotedGroupAdminCount))
+        let members = Array(teamMembers.dropFirst(promotedGroupAdminCount))
+
+        return (owner, admins, members, conversation)
+    }
+
     /// Send connection request
     /// - Parameters:
     ///   - domain: domain info
