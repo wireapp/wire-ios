@@ -79,7 +79,6 @@ struct AdminSelectionView: View {
                     Button(L10n.Localizable.General.cancel) {
                         dismiss()
                     }
-                    .accessibilityIdentifier(Locators.AdminSelectionPage.cancelButton.rawValue)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(L10n.Localizable.AdminSelection.promote) {

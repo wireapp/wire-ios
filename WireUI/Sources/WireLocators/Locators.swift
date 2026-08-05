@@ -266,7 +266,6 @@ public enum Locators {
     }
 
     public enum AdminSelectionPage: AutoPrefixedEnum {
-        case cancelButton
         case promoteButton
         case userCell
     }
@@ -433,7 +432,6 @@ public enum Locators {
         case moreOptionRightButton
         case removeUserFromConversationConfirmation
         case removeFromConversation = "Remove From Conversation…"
-        case groupAdminToggle
         case close
     }
 

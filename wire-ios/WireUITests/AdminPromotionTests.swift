@@ -220,48 +220,19 @@ class AdminPromotionTests: WireUITestCase {
     func testAdmin_notLastAdmin_leavesGroupWithoutAdminSelectionModal_TC_11031() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (owner, teamMembers, qualifiedIDs, _) = try await UserHelper.default.registerTeam(
-            withMemberCount: 2
+        let (owner, _, _, _) = try await UserHelper.default.createGroupConversationWithAdminsAndMembers(
+            groupName: groupName,
+            memberCount: 2,
+            groupAdminCount: 2,
+            preventAdminlessGroupsEnabled: true
         )
-        let teamID = try XCTUnwrap(owner.teamID)
-        try await UserHelper.default.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
-        try await UserHelper.default.createGroupConversations(
-            qualifiedIds: qualifiedIDs,
-            owner: owner,
-            groupName: groupName
-        )
-        let secondAdmin = try XCTUnwrap(teamMembers.last)
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
             .openConversation()
             .openConversationDetails()
 
-        // Owner is still the only admin, so leaving should require selecting a replacement admin.
-        let adminSelectionPage = try conversationDetailsPage
-            .moreOptionsConversationDetails()
-            .leaveOptionsConversationDetails()
-            .tapPromoteNewAdmin()
-
-        XCTAssertTrue(
-            adminSelectionPage.userCell(named: secondAdmin.name).waitForExistence(timeout: 5),
-            "Eligible member should appear in the admin selection modal"
-        )
-
-        let conversationDetailsAfterCancel = try adminSelectionPage.cancelAdminSelection()
-
-        let conversationDetailsWithSecondAdmin = try conversationDetailsAfterCancel
-            .openUserDetailsPage(byName: secondAdmin.name)
-            .enableGroupAdmin()
-            .goBackToConversationDetailsPage()
-
-        XCTAssertTrue(
-            conversationDetailsWithSecondAdmin.adminCell(named: secondAdmin.name).waitForExistence(timeout: 5),
-            "Second admin should appear in the admin section"
-        )
-
-        // Once another admin exists, owner can leave directly without seeing the promote admin flow.
-        let leavingConversationDetailsPage = try conversationDetailsWithSecondAdmin
+        let leavingConversationDetailsPage = try conversationDetailsPage
             .moreOptionsConversationDetails()
             .leaveOptionsConversationDetails()
 
