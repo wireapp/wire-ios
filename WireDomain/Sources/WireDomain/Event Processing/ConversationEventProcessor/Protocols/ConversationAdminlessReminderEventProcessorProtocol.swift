@@ -16,24 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCoreCrypto
+import WireNetwork
 
-final class MockKeyPackage: WireCoreCrypto.KeyPackage, @unchecked Sendable {
+/// Process conversation adminless reminder events.
 
-    let data: Data
+protocol ConversationAdminlessReminderEventProcessorProtocol {
 
-    init(data: Data = .random()) {
-        self.data = data
+    /// Process a conversation adminless reminder event.
+    ///
+    /// - Parameter event: A conversation adminless reminder event.
 
-        super.init(noPointer: .init())
-    }
+    func processEvent(_ event: ConversationAdminlessReminderEvent) async
 
-    @_documentation(visibility: private)
-    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
-        fatalError("init(unsafeFromRawPointer:) has not been implemented")
-    }
-
-    override func serialize() throws -> Data {
-        data
-    }
 }

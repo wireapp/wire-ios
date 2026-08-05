@@ -38,5 +38,5 @@ enum ConversationEventType: String {
     case typing = "conversation.typing"
     case addPermissionUpdate = "conversation.add-permission-update"
     case mlsReset = "conversation.mls-reset"
-
+    case adminlessReminder = "conversation.adminless-reminder"
 }

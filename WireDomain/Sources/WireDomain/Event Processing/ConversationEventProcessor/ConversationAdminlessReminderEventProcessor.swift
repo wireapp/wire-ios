@@ -16,30 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCoreCrypto
+import WireNetwork
 
-final class MockCredentialRef: WireCoreCrypto.CredentialRef, @unchecked Sendable {
+struct ConversationAdminlessReminderEventProcessor: ConversationAdminlessReminderEventProcessorProtocol {
 
-    let _cipherSuite: CipherSuite
-    let _type: CredentialType
+    let repository: any ConversationRepositoryProtocol
 
-    init(cipherSuite: CipherSuite, type: CredentialType = .basic) {
-        self._cipherSuite = cipherSuite
-        self._type = type
+    func processEvent(_ event: ConversationAdminlessReminderEvent) async {
+        let conversationID = event.conversationID
 
-        super.init(noPointer: .init())
+        await repository.updateConversationScheduledDeletion(
+            scheduledDeletionDate: event.scheduledDeletionDate,
+            conversationID: conversationID.id,
+            conversationDomain: conversationID.domain,
+            date: event.timestamp
+        )
     }
 
-    @_documentation(visibility: private)
-    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
-        fatalError("init(unsafeFromRawPointer:) has not been implemented")
-    }
-
-    override func cipherSuite() -> CipherSuite {
-        _cipherSuite
-    }
-
-    override func type() -> CredentialType {
-        _type
-    }
 }
