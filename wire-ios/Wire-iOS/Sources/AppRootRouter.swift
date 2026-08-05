@@ -53,7 +53,7 @@ final class AppRootRouter {
     let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     private let mainWindow: UIWindow
-    private let screenCurtainWindow = ScreenCurtainWindow()
+    private let screenCurtainWindow: ScreenCurtainWindow
 
     private var rootViewController: UIViewController {
         mainWindow.rootViewController!
@@ -78,6 +78,10 @@ final class AppRootRouter {
     ) {
         self.defaultEnvironment = defaultEnvironment
         self.mainWindow = mainWindow
+        guard let windowScene = mainWindow.windowScene else {
+            fatalError("mainWindow must be attached to a UIWindowScene")
+        }
+        self.screenCurtainWindow = ScreenCurtainWindow(windowScene: windowScene)
         self.sessionManager = sessionManager
         self.backgroundTaskExecuter = backgroundTaskExecuter
         self.appStateCalculator = appStateCalculator
@@ -691,7 +695,6 @@ extension AppRootRouter: ApplicationStateObserving {
     }
 
     func applicationDidBecomeActive() {
-        updateOverlayWindowFrame()
         teamMetadataRefresher.triggerRefreshIfNeeded()
     }
 
@@ -699,17 +702,18 @@ extension AppRootRouter: ApplicationStateObserving {
         let unreadConversations = sessionManager.accountManager.totalUnreadCount
         UIApplication.shared.applicationIconBadgeNumber = unreadConversations
     }
+}
 
-    func applicationWillEnterForeground() {
-        updateOverlayWindowFrame()
+// MARK: - Scene lifecycle
+
+extension AppRootRouter {
+
+    func sceneWillResignActive() {
+        screenCurtainWindow.showIfNeeded()
     }
 
-    func updateOverlayWindowFrame(size: CGSize? = nil) {
-        if let size {
-            screenCurtainWindow.frame.size = size
-        } else {
-            screenCurtainWindow.frame = mainWindow.screen.bounds
-        }
+    func sceneDidBecomeActive() {
+        screenCurtainWindow.hide()
     }
 }
 

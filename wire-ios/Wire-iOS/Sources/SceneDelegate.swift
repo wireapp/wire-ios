@@ -77,6 +77,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             "sceneDidBecomeActive: (activationState = \(scene.activationState))",
             attributes: .safePublic
         )
+        appRootRouter?.sceneDidBecomeActive()
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
@@ -84,6 +85,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             "sceneWillResignActive: (activationState = \(scene.activationState))",
             attributes: .safePublic
         )
+        appRootRouter?.sceneWillResignActive()
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
