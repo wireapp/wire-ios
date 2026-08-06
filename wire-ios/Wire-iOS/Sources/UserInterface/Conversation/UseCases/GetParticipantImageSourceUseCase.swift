@@ -48,7 +48,7 @@ class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     }
 
     private static func makeBlockedImage() -> UIImage {
-        struct Cache {
+        enum Cache {
             static let image: UIImage = {
                 let side: CGFloat = 40
                 let glyphSide = side * 0.5

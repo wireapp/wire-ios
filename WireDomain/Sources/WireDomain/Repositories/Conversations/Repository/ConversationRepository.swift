@@ -224,7 +224,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
         return await conversationsLocalStore.isGroupConversation(conversation)
     }
-    
+
     public func updateConversationScheduledDeletion(
         scheduledDeletionDate: Date,
         conversationID: UUID,
