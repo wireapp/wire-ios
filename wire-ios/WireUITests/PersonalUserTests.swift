@@ -164,6 +164,40 @@ final class PersonalUsersTests: WireUITestCase {
         )
     }
 
+    @MainActor
+    func testPersonalUserCanAddGuestToExistingGroup_TC_11641() async throws {
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        var userA = try await UserHelper.default.createPersonalUser()
+        let userB = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
+
+        try await UserHelper.default.login(user: &userA)
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
+        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: userB, userId: userA.id)
+
+        let activeConversationPage = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .skipSelectingMembers()
+
+        // WHEN
+        let conversationDetailsPage = try activeConversationPage
+            .openConversationDetails()
+            .appParticipantToConversation()
+            .searchUserByNameOrUsername(userB.name)
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .addSelectedParticipant()
+
+        // THEN
+        XCTAssertTrue(
+            conversationDetailsPage.userCell(named: userB.name).waitForExistence(timeout: 5),
+            "Guest user \(userB.name) is not present in group \(groupName)"
+        )
+    }
+
     /// [critical]
     @MainActor
     func testBlockAndDeleteUser_TC_8867_9450() async throws {
