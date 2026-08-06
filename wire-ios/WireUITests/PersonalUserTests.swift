@@ -61,6 +61,19 @@ final class PersonalUsersTests: WireUITestCase {
             .goBackToConversationPage()
     }
 
+    @MainActor
+    private func createConnectedPersonalUsers() async throws -> (userA: UserInfo, userB: UserInfo) {
+        var userA = try await UserHelper.default.createPersonalUser()
+        let userB = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
+
+        try await UserHelper.default.login(user: &userA)
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
+        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: userB, userId: userA.id)
+
+        return (userA, userB)
+    }
+
     /// [critical]
     @MainActor
     func testRegisterAsPersonalUser_TC_8971() async throws {
@@ -164,17 +177,12 @@ final class PersonalUsersTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testPersonalUserCanAddGuestToExistingGroup_TC_11641() async throws {
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
-        var userA = try await UserHelper.default.createPersonalUser()
-        let userB = try await UserHelper.default.createPersonalUser()
-        let domain = BackendTarget.staging.domainInfo
-
-        try await UserHelper.default.login(user: &userA)
-        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
-        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: userB, userId: userA.id)
+        let (userA, userB) = try await createConnectedPersonalUsers()
 
         let activeConversationPage = try app.loginUser(email: userA.email, password: userA.password)
             .acceptPopup()
@@ -195,6 +203,30 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertTrue(
             conversationDetailsPage.userCell(named: userB.name).waitForExistence(timeout: 5),
             "Guest user \(userB.name) is not present in group \(groupName)"
+        )
+    }
+
+    @MainActor
+    func testPersonalUserCanCreateGroupWithGuest_TC_11642() async throws {
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (userA, userB) = try await createConnectedPersonalUsers()
+
+        // WHEN
+        let conversationDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .searchUserByNameOrUsername(userB.name)
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .doneSelectingMembers()
+            .openConversationDetails()
+
+        // THEN
+        XCTAssertTrue(
+            conversationDetailsPage.userCell(named: userB.name).waitForExistence(timeout: 5),
+            "Guest user \(userB.name) is not present in newly created group \(groupName)"
         )
     }
 
