@@ -427,16 +427,16 @@ final class ZCallingTests: WireUITestCase {
             email: user1InactiveCallSetup.appUserReceivingCall.email,
             password: user1InactiveCallSetup.appUserReceivingCall.password
         )
-            .acceptPopup()
-            .openUserProfilePage()
-            .tapAddAccountOrTeamButton()
+        .acceptPopup()
+        .openUserProfilePage()
+        .tapAddAccountOrTeamButton()
 
         // Second user login - which will be active.
         _ = try app.loginUser(
             email: user2ActiveAccountSetup.appUserReceivingCall.email,
             password: user2ActiveAccountSetup.appUserReceivingCall.password
         )
-            .acceptPopup()
+        .acceptPopup()
 
         // WHEN
         let user1InactiveOwnerInstances = try await createCallingServiceInstances(
