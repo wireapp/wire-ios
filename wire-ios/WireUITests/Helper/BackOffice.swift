@@ -322,6 +322,83 @@ final class BackOffice {
         }
     }
 
+    func unlockPreventAdminlessGroupsFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("preventAdminlessGroups")
+            .appendingPathComponent("unlocked")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: Data("{}".utf8),
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "preventAdminlessGroups feature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func enablePreventAdminlessGroupsFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("preventAdminlessGroups")
+
+        let payload: [String: Any] = [
+            "config": [
+                "deletionTimeoutDuration": "7d",
+                "promotionStrategy": "alphabetical",
+                "reminderTimeoutDurations": [
+                    "2d",
+                    "4d",
+                    "6d"
+                ]
+            ],
+            "status": "enabled"
+        ]
+
+        let json = try JSONSerialization.data(withJSONObject: payload, options: [])
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: json,
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "preventAdminlessGroupsBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
     func enableSSOFeature(teamId: String, basicAuth: String) async throws {
 
         let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)

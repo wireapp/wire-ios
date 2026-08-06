@@ -126,14 +126,24 @@ public extension AVURLAsset {
         fileLengthLimit: Int64? = nil,
         completion: @escaping ConvertVideoCompletion
     ) {
-        let outputURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(filename)
-        if FileManager.default.fileExists(atPath: outputURL.path) {
-            do {
-                try FileManager.default.removeItem(at: outputURL)
-            } catch let deleteError {
-                WireLogger.ui.error("Cannot delete old leftover at \(outputURL): \(deleteError)")
-            }
+        // Export into a fresh, unique subdirectory so the output path can never collide
+        // with the source asset's path. Callers hand us a source file that already lives
+        // in the temp directory (e.g. `<sender-name>-<timestamp>.mp4` from the image
+        // picker). Building the output URL directly in `NSTemporaryDirectory()` from that
+        // same filename produces the *identical* path whenever the source is already an
+        // `.mp4`. `exportVideo` would then delete the "leftover" at the output URL — which
+        // is actually the source — and the export would fail with AVError.unknown
+        // (-11800), silently dropping the attachment. A unique directory keeps input and
+        // output distinct regardless of the source's name or extension.
+        let outputDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        do {
+            try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+        } catch {
+            WireLogger.ui.error("Cannot create export directory at \(outputDirectory): \(error)")
+            return completion(nil, nil, error)
         }
+        let outputURL = outputDirectory.appendingPathComponent(filename)
 
         guard let exportSession = AVAssetExportSession(asset: self, presetName: quality) else {
             return completion(nil, nil, ConversionFailure.exportSessionUnavailable)

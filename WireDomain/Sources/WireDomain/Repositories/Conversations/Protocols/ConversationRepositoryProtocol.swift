@@ -195,6 +195,20 @@ public protocol ConversationRepositoryProtocol: Sendable {
         date: Date
     ) async
 
+    /// Updates the conversation's scheduled deletion date and inserts a system message about it.
+    /// - Parameters:
+    ///     - scheduledDeletionDate: The date at which the backend will automatically delete the conversation.
+    ///     - conversationID: The conversation ID.
+    ///     - conversationDomain: The conversation domain.
+    ///     - date: The date the reminder was sent.
+
+    func updateConversationScheduledDeletion(
+        scheduledDeletionDate: Date,
+        conversationID: UUID,
+        conversationDomain: String?,
+        date: Date
+    ) async
+
     /// Fetches the guest link for a given conversation.
     /// - parameter conversationID: The conversation id.
     /// - returns: The guest link.

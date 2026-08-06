@@ -34,8 +34,12 @@
             "value" : "$(INBUCKET_USERNAME)"
           },
           {
-            "key" : "OKTA_API_KEY_IOS",
-            "value" : "$(OKTA_API_KEY_IOS)"
+            "key" : "KEYCLOAK_URL",
+            "value" : "$(KEYCLOAK_URL)"
+          },
+          {
+            "key" : "KEYCLOAK_ADMIN_PASSWORD",
+            "value" : "$(KEYCLOAK_ADMIN_PASSWORD)"
           },
           {
             "key" : "BELLA_INBUCKET_URL",
@@ -119,10 +123,10 @@
     }
   ],
   "defaultOptions" : {
+    "defaultTestExecutionTimeAllowance" : 300,
     "environmentVariableEntries" : [
 
     ],
-    "defaultTestExecutionTimeAllowance" : 300,
     "language" : "en",
     "region" : "US",
     "testTimeoutsEnabled" : true

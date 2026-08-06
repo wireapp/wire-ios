@@ -63,6 +63,8 @@ public final class MLSService: MLSServiceInterface {
     private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
+    private let pendingConversationRecoveryLock = NSLock()
+    private var isRecoveringPendingConversations = false
     private let featureRepository: LegacyFeatureRepositoryInterface
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
@@ -92,6 +94,13 @@ public final class MLSService: MLSServiceInterface {
     // The number of days to wait until refreshing the key material for a group.
 
     private static let epochChangeBufferSize: Int = 1000
+    private static let pendingConversationRecoveryBatchSize = 10
+
+    private typealias PendingConversationRecovery = (
+        groupID: MLSGroupID,
+        qualifiedID: QualifiedID,
+        shouldResync: Bool
+    )
 
     private let maxRetryAttempts = 3
 
@@ -336,10 +345,38 @@ public final class MLSService: MLSServiceInterface {
     }
 
     func updateKeyMaterial(for groupID: MLSGroupID) async throws {
+        guard await !hasInvalidMLSState(for: groupID) else {
+            WireLogger.mls.warn(
+                "skipping key material update for group with invalid MLS state (\(groupID.safeForLoggingDescription))"
+            )
+            return
+        }
+
         try await commitPendingProposals(in: groupID)
         try await retryOnCommitFailure(for: groupID) { [weak self] in
             try await self?.internalUpdateKeyMaterial(for: groupID)
         }
+    }
+
+    /// Checks whether this group is in an invalid MLS state: either its backing conversation
+    /// has been explicitly marked as having an invalid MLS group (e.g. after the other party in
+    /// a 1:1 was deleted), or it has no backing conversation at all and isn't a known subgroup.
+    /// A parent group's `mlsGroupID` is always persisted on its `ZMConversation` before any
+    /// CoreCrypto setup happens, so a missing conversation for a non-subgroup id is a real anomaly.
+    private func hasInvalidMLSState(for groupID: MLSGroupID) async -> Bool {
+        guard let context else { return false }
+
+        let (conversationFound, mlsStatus) = await context.perform {
+            let conversation = ZMConversation.fetch(with: groupID, in: context)
+            return (conversation != nil, conversation?.mlsStatus)
+        }
+
+        guard conversationFound else {
+            let isSubgroup = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) != nil
+            return !isSubgroup
+        }
+
+        return mlsStatus == .invalid
     }
 
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
@@ -642,6 +679,7 @@ public final class MLSService: MLSServiceInterface {
 
             userDefaults.set(.now, forKey: .keyPackageQueriedTime)
         } catch {
+            userDefaults.removeObject(forKey: .keyPackageQueriedTime)
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
         }
     }
@@ -651,6 +689,11 @@ public final class MLSService: MLSServiceInterface {
             guard await featureRepository.fetchMLS().isEnabled else {
                 logger.info("shouldn't query unclaimed key packages count: MLS is not enabled")
                 return false
+            }
+
+            if let context, try await !pendingConversationsToRecover(in: context).isEmpty {
+                logger.info("pending conversations require checking the backend key-package count")
+                return true
             }
 
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
@@ -936,6 +979,94 @@ public final class MLSService: MLSServiceInterface {
         }
         if needToSave {
             await save(context)
+        }
+    }
+
+    public func recoverPendingConversationBatchIfNeeded() async -> Bool {
+        guard pendingConversationRecoveryLock.withLock({
+            guard !isRecoveringPendingConversations else { return false }
+            isRecoveringPendingConversations = true
+            return true
+        }) else {
+            return false
+        }
+        defer {
+            pendingConversationRecoveryLock.withLock {
+                isRecoveringPendingConversations = false
+            }
+        }
+
+        guard let context else { return false }
+
+        do {
+            let pendingConversations = try await pendingConversationsToRecover(in: context)
+            let batch = pendingConversations.prefix(Self.pendingConversationRecoveryBatchSize)
+
+            var recovered = 0
+            for conversation in batch {
+                do {
+                    if conversation.shouldResync {
+                        try await reEstablishPendingGroup(groupID: conversation.groupID)
+                    } else {
+                        try await joinGroup(with: conversation.groupID)
+                    }
+                    recovered += 1
+                } catch {
+                    logger.error(
+                        "failed to recover pending conversation: \(error)",
+                        attributes: [
+                            .mlsGroupID: conversation.groupID.safeForLoggingDescription,
+                            .conversationId: conversation.qualifiedID.safeForLoggingDescription
+                        ]
+                    )
+                }
+            }
+
+            if recovered > 0 {
+                await save(context)
+            }
+
+            if !batch.isEmpty {
+                logger.info("pending conversation recovery batch: recovered \(recovered) of \(batch.count)")
+            }
+
+            // Return whether another batch should be processed immediately.
+            return recovered == batch.count && pendingConversations.count > batch.count
+        } catch {
+            logger.error("failed pending conversation recovery batch: \(String(reflecting: error))")
+            return false
+        }
+    }
+
+    private func pendingConversationsToRecover(in context: NSManagedObjectContext) async throws
+        -> [PendingConversationRecovery] {
+        try await context.perform {
+            let pendingConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .pendingJoin,
+                messageProtocols: [.mls, .mixed],
+                in: context
+            ) + ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .pendingJoinAfterReset,
+                domain: self.localDomain,
+                messageProtocols: [.mls, .mixed],
+                in: context
+            )
+
+            return pendingConversations.compactMap { conversation in
+                guard conversation.conversationType != .group || conversation.isSelfAnActiveMember,
+                      let groupID = conversation.mlsGroupID,
+                      let qualifiedID = conversation.qualifiedID else {
+                    return nil
+                }
+
+                return (
+                    groupID,
+                    qualifiedID,
+                    conversation.mlsStatus == .pendingJoinAfterReset ||
+                        conversation.conversationType == .oneOnOne ||
+                        qualifiedID.domain == self.localDomain
+                )
+            }
         }
     }
 

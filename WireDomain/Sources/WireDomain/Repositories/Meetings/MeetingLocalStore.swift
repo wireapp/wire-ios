@@ -38,6 +38,15 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         }
     }
 
+    func storedMeeting(id: WireCallingDomain.QualifiedID) async -> Meeting? {
+        await context.perform { [context] in
+            let request = StoredMeeting.fetchRequest()
+            request.predicate = Self.predicate(id: .init(uuid: id.id, domain: id.domain))
+            request.fetchLimit = 1
+            return (try? context.fetch(request).first)?.toDomainMeeting()
+        }
+    }
+
     func storeMeeting(_ meeting: Meeting) async {
         await context.perform { [context] in
             Self.upsert(meeting, in: context)
@@ -147,7 +156,12 @@ private extension StoredMeeting {
             let creatorID = creator?.qualifiedID
         else { return nil }
 
-        guard let conversationID = conversation?.qualifiedID else { return nil }
+        guard let conversation, let conversationID = conversation.qualifiedID else { return nil }
+
+        let domainConversationID = QualifiedID(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
 
         return Meeting(
             id: QualifiedID(id: remoteIdentifier, domain: domain ?? ""),
@@ -155,11 +169,10 @@ private extension StoredMeeting {
             start: start,
             end: end,
             recurrence: toDomainRecurrence(),
-            members: [],
-            conversationID: QualifiedID(
-                id: conversationID.uuid,
-                domain: conversationID.domain
+            conversation: MeetingConversation(
+                participants: conversation.toMeetingMembers()
             ),
+            conversationID: domainConversationID,
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
     }
@@ -178,6 +191,27 @@ private extension StoredMeeting {
             interval: Int(recurrenceInterval),
             until: recurrenceUntil
         )
+    }
+
+}
+
+private extension ZMConversation {
+
+    /// Maps the conversation's participants to meeting members, mirroring the Wire Drive
+    /// `ZMConversation` → participant mapping. Must be called on the conversation's context.
+    func toMeetingMembers() -> Set<MeetingMember> {
+        Set(localParticipants.compactMap { user -> MeetingMember? in
+            guard let qualifiedID = user.qualifiedID else { return nil }
+            return MeetingMember(
+                qualifiedID: QualifiedID(id: qualifiedID.uuid, domain: qualifiedID.domain),
+                name: user.name ?? "",
+                handle: user.handle ?? "",
+                isSelfUser: user.isSelfUser,
+                initials: user.initials ?? "",
+                accentColor: user.accentColor ?? .default,
+                avatarImageData: user.previewImageData
+            )
+        })
     }
 
 }

@@ -51,7 +51,7 @@ final class ConversationTests: WireUITestCase {
     }
 
     @MainActor
-    func testLeaveGroup_TC_8861() async throws {
+    func testLeaveGroup_TC_8862() async throws {
         // GIVEN
         let (_, members, _, _) = try await UserHelper.default.registerTeam(
             withMemberCount: 2,

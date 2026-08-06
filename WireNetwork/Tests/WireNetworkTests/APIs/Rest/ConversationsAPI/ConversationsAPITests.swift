@@ -2135,6 +2135,57 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testUpdateRole_givenV0_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            try await sut.updateRole(
+                "wire_admin",
+                userID: .mockID1,
+                conversationID: .mockID2
+            )
+        }
+    }
+
+    func testRemoveParticipant_givenV0_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testRemoveParticipant_givenV0AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            try await sut.removeParticipant(
+                userID: .mockID1,
+                conversationID: .mockID2
+            )
+        }
+    }
+
     private enum Scaffolding {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
