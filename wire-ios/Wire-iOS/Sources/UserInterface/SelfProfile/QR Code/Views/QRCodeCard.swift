@@ -45,7 +45,6 @@ struct QRCodeCard: View {
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
-                    .accessibilityIdentifier(Locators.UserProfileQRCodePage.username.rawValue)
                 Text(profileLink)
                     .font(for: .subline1)
                     .foregroundColor(.black)

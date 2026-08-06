@@ -94,10 +94,6 @@ class UserProfilePage: PageModel {
         app.images[Locators.UserProfileQRCodePage.qrCodeImage.rawValue].firstMatch
     }
 
-    var profileQRCodeUsername: XCUIElement {
-        app.staticTexts[Locators.UserProfileQRCodePage.username.rawValue].firstMatch
-    }
-
     var shareProfileLinkButton: XCUIElement {
         app.buttons[Locators.UserProfileQRCodePage.shareProfileLinkButton.rawValue].firstMatch
     }
@@ -190,9 +186,8 @@ class UserProfilePage: PageModel {
             "Profile QR code is not showing",
         )
 
-        XCTAssertEqual(
-            profileQRCodeUsername.value as? String ?? profileQRCodeUsername.label,
-            expectedUsername,
+        XCTAssertTrue(
+            app.staticTexts[expectedUsername].firstMatch.waitForExistence(timeout: 5),
             "Profile QR code username did not match \(expectedUsername)",
         )
 

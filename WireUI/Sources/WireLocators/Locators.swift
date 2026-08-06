@@ -286,7 +286,6 @@ public enum Locators {
 
     public enum UserProfileQRCodePage: AutoPrefixedEnum {
         case qrCodeImage
-        case username
         case shareProfileLinkButton
         case shareQRCodeButton
     }
