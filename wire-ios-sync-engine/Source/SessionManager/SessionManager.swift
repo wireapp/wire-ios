@@ -263,6 +263,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         case accountLimitReached
     }
 
+    enum RetainedAccountDataError: Error {
+        case accountIsActive
+        case failedToDeleteAccountData
+    }
+
     /// Maximum number of accounts which can be logged in simultanously
     public let maxNumberAccounts: Int
 
@@ -378,6 +383,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         return environment.isAuthenticated(selectedAccount)
+    }
+
+    public func isAccountActive(_ account: Account) -> Bool {
+        backgroundUserSessions[account.userIdentifier] != nil || environment.isAuthenticated(account)
     }
 
     public var activeUnauthenticatedSession: UnauthenticatedSession {
@@ -1164,11 +1173,48 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func deleteAccountData(for account: Account) {
         WireLogger.sessionManager.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         WireLogger.session.debug("Deleting the data for account \(account)")
+
+        do {
+            try deleteAccountData(for: account, keepAccountOnFailure: false)
+        } catch {
+            WireLogger.sessionManager.critical("Failed to delete account data for \(account): \(error)")
+        }
+    }
+
+    public func purgeRetainedAccountData(for userID: UUID) throws {
+        guard let account = accountManager.account(with: userID) else { return }
+        guard !isAccountActive(account) else { throw RetainedAccountDataError.accountIsActive }
+
+        try deleteAccountData(for: account, keepAccountOnFailure: true)
+    }
+
+    private func deleteAccountData(
+        for account: Account,
+        keepAccountOnFailure: Bool
+    ) throws {
+        let accountID = account.userIdentifier
+        let accountDataFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountID,
+            applicationContainer: sharedContainerURL
+        )
+
+        do {
+            try FileManager.default.removeItem(at: accountDataFolder)
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+            // The desired state has already been reached.
+        } catch {
+            if keepAccountOnFailure {
+                throw error
+            }
+            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
+        }
+
         do {
             try environment.cookieStorage(for: account).removeCookies()
         } catch {
             WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
         }
+
         account.deleteKeychainItems()
 
         clearCRLExpirationDates(for: account)
@@ -1185,16 +1231,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
-        let accountID = account.userIdentifier
         accountManager.remove(account)
-
-        do {
-            try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(
-                accountIdentifier: accountID,
-                applicationContainer: sharedContainerURL
-            ))
-        } catch {
-            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
+        guard accountManager.account(with: accountID) == nil else {
+            throw RetainedAccountDataError.failedToDeleteAccountData
         }
     }
 
@@ -1585,6 +1624,9 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             storage: sharedUserDefaults
         )
         journal[.isInitialSyncRequired] = true
+
+        account.lastSSOIdentityProviderID = account.lastSSOIdentityProviderID ??
+            accountManager.account(with: account.userIdentifier)?.lastSSOIdentityProviderID
 
         accountManager.addAndSelect(account)
 
