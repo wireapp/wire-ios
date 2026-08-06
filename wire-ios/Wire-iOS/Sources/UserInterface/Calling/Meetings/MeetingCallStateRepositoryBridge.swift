@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireCallingDomain
 import WireDataModel
 import WireFoundation
@@ -23,14 +24,59 @@ import WireSyncEngine
 
 /// Bridges `WireSyncEngine`'s call state into `WireCallingDomain`'s
 /// `MeetingCallStateRepositoryProtocol`, so the meetings feature can tell which
-/// meetings the self user is currently attending (in a call in) without
-/// depending on `WireSyncEngine` directly.
+/// meetings the self user is currently attending (in a call in), and enter a
+/// meeting's call, without depending on `WireSyncEngine` directly.
 final class MeetingCallStateRepositoryBridge: MeetingCallStateRepositoryProtocol, @unchecked Sendable {
+
+    enum Failure: Error {
+        case noUserSession
+        case conversationNotFound
+    }
 
     private let userSession: any UserSession
 
-    init(userSession: any UserSession) {
+    /// Presents the "you are already in a call" confirmation. Weak, because it owns
+    /// the meetings UI this bridge is built for.
+    private weak var alertPresenter: UIViewController?
+
+    init(userSession: any UserSession, alertPresenter: UIViewController?) {
         self.userSession = userSession
+        self.alertPresenter = alertPresenter
+    }
+
+    /// Enters the meeting conversation's call by joining its voice channel, which
+    /// starts the conference when nobody is in it yet and joins the running one
+    /// otherwise. This is the same path the conversation screen's call button takes:
+    /// no-internet warning, microphone permission, then `voiceChannel.join`.
+    ///
+    /// The call screen itself is presented by `CallController`, which observes call
+    /// state, so there is nothing to present here.
+    func joinCall(in conversationID: WireCallingDomain.QualifiedID) async throws {
+        guard let session = userSession as? ZMUserSession else {
+            throw Failure.noUserSession
+        }
+
+        let viewContext = session.contextProvider.viewContext
+
+        try await MainActor.run {
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID.id,
+                domain: conversationID.domain,
+                in: viewContext
+            ) else {
+                throw Failure.conversationNotFound
+            }
+
+            guard let alertPresenter else {
+                conversation.startAudioCall()
+                return
+            }
+
+            // Leaves an already ongoing call first, after asking the user.
+            conversation.confirmJoiningCallIfNeeded(alertPresenter: alertPresenter) {
+                conversation.startAudioCall()
+            }
+        }
     }
 
     func observeAttendedConversations() -> AsyncStream<Set<WireCallingDomain.QualifiedID>> {

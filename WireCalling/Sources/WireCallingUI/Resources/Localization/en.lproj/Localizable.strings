@@ -29,6 +29,7 @@
 "wireMeetings.list.emptyState.next.subtitle" = "Start a meeting with team members";
 "wireMeetings.list.emptyState.past.title" = "No past meetings yet";
 "wireMeetings.list.emptyState.past.subtitle" = "You'll find all previous meetings here.";
+"wireMeetings.list.startedAt" = "Started at %@";
 "wireMeetings.list.header.today" = "Today";
 "wireMeetings.list.header.tomorrow" = "Tomorrow";
 "wireMeetings.list.header.yesterday" = "Yesterday";
@@ -40,6 +41,8 @@
 "wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
 "wireMeetings.list.delete.alert.delete.button" = "Delete";
 "wireMeetings.list.delete.alert.cancel.button" = "Cancel";
+"wireMeetings.list.join.error.alert.title" = "Could not join the meeting";
+"wireMeetings.list.join.error.alert.ok" = "OK";
 "wireMeetings.list.delete.error.alert.title" = "Something went wrong";
 "wireMeetings.list.delete.error.alert.ok" = "OK";
 

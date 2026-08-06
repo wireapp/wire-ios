@@ -160,8 +160,14 @@ package final class MeetingsViewModel {
         formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
-    func formatTimeRange(for occurrence: MeetingOccurrence) -> String {
-        formatter.timeRange(from: occurrence.start, to: occurrence.end)
+    /// The time line of a meeting row: the scheduled range normally, but "Started at …"
+    /// while the occurrence is live, matching the row's join button / attending label.
+    func formatTime(for occurrence: MeetingOccurrence) -> String {
+        if isHappeningNow(occurrence) {
+            formatter.startedAt(occurrence.start)
+        } else {
+            formatter.timeRange(from: occurrence.start, to: occurrence.end)
+        }
     }
 
     /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture

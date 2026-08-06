@@ -21,6 +21,7 @@ package import Foundation
 package protocol MeetingsFormatterProtocol {
     func dayHeader(for date: Date, now: Date) -> String
     func timeRange(from start: Date, to end: Date) -> String
+    func startedAt(_ start: Date) -> String
 }
 
 package struct MeetingsFormatter: MeetingsFormatterProtocol {
@@ -40,9 +41,14 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
     }
 
     package func timeRange(from start: Date, to end: Date) -> String {
-        let startString = DateFormatter.meetingStartTime.string(from: start)
-        let endString = DateFormatter.meetingEndTime.string(from: end)
+        // Only the end carries the period, so a range reads "7:15 - 8:00 AM".
+        let startString = DateFormatter.meetingTimeWithoutPeriod.string(from: start)
+        let endString = DateFormatter.meetingTime.string(from: end)
         return "\(startString) - \(endString)"
+    }
+
+    package func startedAt(_ start: Date) -> String {
+        Strings.startedAt(DateFormatter.meetingTime.string(from: start))
     }
 
 }
@@ -62,14 +68,14 @@ private extension DateFormatter {
 
 private extension DateFormatter {
 
-    static let meetingStartTime: DateFormatter = {
+    static let meetingTimeWithoutPeriod: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = .current
         formatter.dateFormat = "h:mm"
         return formatter
     }()
 
-    static let meetingEndTime: DateFormatter = {
+    static let meetingTime: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = .current
         formatter.dateFormat = "h:mm a"

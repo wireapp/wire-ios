@@ -37,6 +37,9 @@ package final class AllMeetingsViewModel {
     package let meetingsViewModel: MeetingsViewModel
 
     var presentedFormMode: MeetingFormViewModel.Mode?
+    var hasJoinError = false
+
+    private let joinMeetingCallUseCase: (any JoinMeetingCallUseCaseProtocol)?
 
     package init(
         currentDateProvider: any CurrentDateProviding,
@@ -45,6 +48,7 @@ package final class AllMeetingsViewModel {
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
+        joinMeetingCallUseCase: (any JoinMeetingCallUseCaseProtocol)? = nil,
         makeFormViewModel: @escaping @MainActor (
             _ mode: MeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting) -> Void
@@ -58,6 +62,7 @@ package final class AllMeetingsViewModel {
             deleteMeetingUseCase: deleteMeetingUseCase,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
+        self.joinMeetingCallUseCase = joinMeetingCallUseCase
         self.makeFormViewModel = makeFormViewModel
     }
 
@@ -76,10 +81,20 @@ package final class AllMeetingsViewModel {
     }
 
     /// The user tapped "Join" on the meeting that is taking place right now.
-    // TODO: join the occurrence's call once a join-call use case exists in `WireCallingDomain`.
-    // `MeetingCallStateRepositoryProtocol` currently only observes attended conversations.
+    ///
+    /// The call screen is presented by the app's call state observer once the call
+    /// is entered, so there is nothing to present from here.
     func joinMeetingTapped(_ occurrence: MeetingOccurrence) {
-        WireLogger.meetings.info("join meeting tapped, but joining is not wired up yet")
+        guard let joinMeetingCallUseCase else { return }
+
+        Task {
+            do {
+                try await joinMeetingCallUseCase.invoke(conversationID: occurrence.conversationID)
+            } catch {
+                hasJoinError = true
+                WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
+            }
+        }
     }
 
     func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {

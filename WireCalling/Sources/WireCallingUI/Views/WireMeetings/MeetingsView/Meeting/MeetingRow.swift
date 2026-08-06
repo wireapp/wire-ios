@@ -26,7 +26,7 @@ struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     let occurrence: MeetingOccurrence
-    let formatTimeRange: (MeetingOccurrence) -> String
+    let formatTime: (MeetingOccurrence) -> String
     var isAttending: Bool = false
     /// Whether this occurrence's scheduled window `[start, end)` contains the current time.
     /// The join button is only offered while it does; for a recurring meeting that is the
@@ -97,7 +97,7 @@ struct MeetingRow: View {
                 }
 
                 HStack(spacing: 8) {
-                    Text(formatTimeRange(occurrence))
+                    Text(formatTime(occurrence))
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
@@ -223,10 +223,12 @@ private extension MeetingRecurrence {
         creatorID: QualifiedID(id: UUID(), domain: "")
     )
 
+    let formatter = MeetingsFormatter()
+
     VStack(alignment: .leading, spacing: 24) {
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTimeRange: { _ in "Today" },
+            formatTime: { formatter.startedAt($0.start) },
             isLive: true,
             onEdit: {},
             onDelete: {},
@@ -235,7 +237,7 @@ private extension MeetingRecurrence {
 
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTimeRange: { _ in "Today" },
+            formatTime: { formatter.startedAt($0.start) },
             isAttending: true,
             isLive: true,
             onEdit: {},
@@ -244,7 +246,7 @@ private extension MeetingRecurrence {
 
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTimeRange: { _ in "Tomorrow" },
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
             onEdit: {},
             onDelete: {}
         )

@@ -90,7 +90,7 @@ struct MeetingsView: View {
             GroupedSections(
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTimeRange: viewModel.formatTimeRange(for:),
+                formatTime: viewModel.formatTime(for:),
                 isAttending: viewModel.isAttending(_:),
                 isHappeningNow: viewModel.isHappeningNow(_:),
                 onEdit: { onEditMeeting($0) },
@@ -141,7 +141,7 @@ private func SectionTitle(_ text: String) -> some View {
 private struct GroupedSections: View {
     let groups: [(day: Date, meetings: [MeetingOccurrence])]
     let formatDay: (Date) -> String
-    let formatTimeRange: (MeetingOccurrence) -> String
+    let formatTime: (MeetingOccurrence) -> String
     let isAttending: (MeetingOccurrence) -> Bool
     let isHappeningNow: (MeetingOccurrence) -> Bool
     let onEdit: (Meeting) -> Void
@@ -158,7 +158,7 @@ private struct GroupedSections: View {
 
                     MeetingRow(
                         occurrence: occurrence,
-                        formatTimeRange: formatTimeRange,
+                        formatTime: formatTime,
                         isAttending: isAttending(occurrence),
                         isLive: isLive,
                         onEdit: { onEdit(occurrence.meeting) },

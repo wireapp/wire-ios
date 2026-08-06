@@ -441,7 +441,10 @@ final class ZClientViewController: UIViewController {
                     localDomain: userSession.selfUser.domain
                 )
             ),
-            callStateRepository: MeetingCallStateRepositoryBridge(userSession: userSession),
+            callStateRepository: MeetingCallStateRepositoryBridge(
+                userSession: userSession,
+                alertPresenter: self
+            ),
             accentColorState: meetingsAccentColorState
         )
         mainTabBarController.meetingsUI = meetingsUI

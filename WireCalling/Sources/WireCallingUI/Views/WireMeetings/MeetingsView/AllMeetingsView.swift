@@ -64,5 +64,11 @@ package struct AllMeetingsView: View {
         .sheet(item: $viewModel.presentedFormMode) { mode in
             MeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
         }
+        .alert(
+            L10n.Localizable.WireMeetings.List.Join.Error.Alert.title,
+            isPresented: $viewModel.hasJoinError
+        ) {
+            Button(L10n.Localizable.WireMeetings.List.Join.Error.Alert.ok, role: .cancel) {}
+        }
     }
 }
