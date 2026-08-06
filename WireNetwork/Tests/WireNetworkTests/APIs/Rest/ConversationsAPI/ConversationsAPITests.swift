@@ -2186,6 +2186,40 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testEmptyAccessRoles_OmitsAccessRoleV2_GivenV0_V2_V3_V8_V10() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v0, .v2, .v3, .v8, .v10]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV0AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let validateRequest: (URLRequest) -> Bool = { request in
+            guard let body = request.httpBody,
+                  let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any] else {
+                return true
+            }
+
+            // then
+            // when empty access roles are provided, the field should be omitted from the request body.
+            return json["access_role_v2"] == nil
+        }
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks, validateRequest: validateRequest)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            _ = try? await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationWithEmptyAccessRolesParameters
+            )
+        }
+    }
+
     private enum Scaffolding {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
@@ -2204,6 +2238,21 @@ final class ConversationsAPITests: XCTestCase {
             accessMode: [.code, .invite],
             accessRoles: [.teamMember],
             legacyAccessRole: .teamMember,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true,
+            skipCreator: false
+        )
+
+        static let createGroupConversationWithEmptyAccessRolesParameters = CreateGroupConversationParameters(
+            groupType: .group,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.code, .invite],
+            accessRoles: [],
+            legacyAccessRole: nil,
             teamID: .mockID1,
             isReadReceiptsEnabled: true,
             skipCreator: false

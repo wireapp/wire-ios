@@ -32,16 +32,26 @@ extension MockAPIServiceProtocol {
     /// - Mock a series or responses for repeated requests
     /// - Mock a single response
     ///
-    /// - Parameter responses: The responses to return, one per request received.
+    /// - Parameters:
+    ///     - responses: The responses to return, one per request received.
+    ///     - validateRequest: An optional closure used to validate each request.
+    ///
     /// - Returns: A mock api service.
 
-    static func withResponses(_ responses: [Response]) -> MockAPIServiceProtocol {
+    static func withResponses(
+        _ responses: [Response],
+        validateRequest: ((URLRequest) -> Bool)? = nil
+    ) -> MockAPIServiceProtocol {
         let apiService = MockAPIServiceProtocol()
         var responses = responses
 
         apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
             guard !responses.isEmpty else {
                 throw "no response"
+            }
+
+            if let validateRequest, !validateRequest(request) {
+                throw "invalid request"
             }
 
             let response = responses.removeFirst()
