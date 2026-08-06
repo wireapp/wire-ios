@@ -21,6 +21,7 @@ package import WireFoundation
 
 import SwiftUI
 import WireCallingDomainSupport
+import WireLogging
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
@@ -72,6 +73,13 @@ package final class AllMeetingsViewModel {
 
     func editMeetingTapped(_ meeting: Meeting) {
         presentedFormMode = .edit(meeting)
+    }
+
+    /// The user tapped "Join" on the meeting that is taking place right now.
+    // TODO: join the occurrence's call once a join-call use case exists in `WireCallingDomain`.
+    // `MeetingCallStateRepositoryProtocol` currently only observes attended conversations.
+    func joinMeetingTapped(_ occurrence: MeetingOccurrence) {
+        WireLogger.meetings.info("join meeting tapped, but joining is not wired up yet")
     }
 
     func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {

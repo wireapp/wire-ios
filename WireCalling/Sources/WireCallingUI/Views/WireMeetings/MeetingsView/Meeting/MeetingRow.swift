@@ -28,8 +28,13 @@ struct MeetingRow: View {
     let occurrence: MeetingOccurrence
     let formatTimeRange: (MeetingOccurrence) -> String
     var isAttending: Bool = false
+    /// Whether this occurrence's scheduled window `[start, end)` contains the current time.
+    /// The join button is only offered while it does; for a recurring meeting that is the
+    /// single occurrence taking place right now, because every occurrence is its own row.
+    var isLive: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
+    var onJoin: () -> Void = {}
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -108,9 +113,34 @@ struct MeetingRow: View {
                 if isAttending {
                     attendingLabel
                         .padding(.top, 10)
+                } else if isLive {
+                    joinButton
+                        .padding(.top, 10)
                 }
             }
         }
+    }
+
+    private var joinButton: some View {
+        Button(action: onJoin) {
+            HStack(spacing: 8) {
+                Image(.videoCall)
+                    .renderingMode(.template)
+                    .accessibilityHidden(true)
+
+                Text(Strings.Actions.join)
+            }
+            .font(for: .buttonSmall)
+            .foregroundStyle(ColorTheme.Base.onPrimary.color)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 10)
+            .background(ColorTheme.Base.primary(wireAccentColor).color, in: Capsule())
+        }
+        // Without `.plain` the list row would highlight and the button would
+        // take over the whole row's tap area.
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.joinButton)
+        .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.JoinButton.description))
     }
 
     private var attendingLabel: some View {
@@ -193,11 +223,31 @@ private extension MeetingRecurrence {
         creatorID: QualifiedID(id: UUID(), domain: "")
     )
 
-    MeetingRow(
-        occurrence: MeetingOccurrence(meeting: meeting),
-        formatTimeRange: { _ in "Today" },
-        isAttending: true,
-        onEdit: {},
-        onDelete: {}
-    )
+    VStack(alignment: .leading, spacing: 24) {
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTimeRange: { _ in "Today" },
+            isLive: true,
+            onEdit: {},
+            onDelete: {},
+            onJoin: {}
+        )
+
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTimeRange: { _ in "Today" },
+            isAttending: true,
+            isLive: true,
+            onEdit: {},
+            onDelete: {}
+        )
+
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTimeRange: { _ in "Tomorrow" },
+            onEdit: {},
+            onDelete: {}
+        )
+    }
+    .padding()
 }

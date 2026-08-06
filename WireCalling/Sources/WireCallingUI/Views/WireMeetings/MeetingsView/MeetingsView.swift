@@ -32,12 +32,18 @@ struct MeetingsView: View {
     /// Presenting the edit UI is up to the owner of this view.
     private let onEditMeeting: (Meeting) -> Void
 
+    /// Called when the user taps "Join" on a meeting that is taking place right now.
+    /// Joining the call is up to the owner of this view.
+    private let onJoinMeeting: (MeetingOccurrence) -> Void
+
     init(
         viewModel: MeetingsViewModel,
-        onEditMeeting: @escaping (Meeting) -> Void = { _ in }
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in },
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in }
     ) {
         self.viewModel = viewModel
         self.onEditMeeting = onEditMeeting
+        self.onJoinMeeting = onJoinMeeting
     }
 
     var body: some View {
@@ -88,7 +94,8 @@ struct MeetingsView: View {
                 isAttending: viewModel.isAttending(_:),
                 isHappeningNow: viewModel.isHappeningNow(_:),
                 onEdit: { onEditMeeting($0) },
-                onDelete: { viewModel.meetingToDelete = $0 }
+                onDelete: { viewModel.meetingToDelete = $0 },
+                onJoin: { onJoinMeeting($0) }
             )
 
             if viewModel.hasMore {
@@ -139,6 +146,7 @@ private struct GroupedSections: View {
     let isHappeningNow: (MeetingOccurrence) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
+    let onJoin: (MeetingOccurrence) -> Void
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -146,15 +154,19 @@ private struct GroupedSections: View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
                 ForEach(dayGroup.meetings, id: \.id) { occurrence in
+                    let isLive = isHappeningNow(occurrence)
+
                     MeetingRow(
                         occurrence: occurrence,
                         formatTimeRange: formatTimeRange,
                         isAttending: isAttending(occurrence),
+                        isLive: isLive,
                         onEdit: { onEdit(occurrence.meeting) },
-                        onDelete: { onDelete(occurrence.meeting) }
+                        onDelete: { onDelete(occurrence.meeting) },
+                        onJoin: { onJoin(occurrence) }
                     )
                     .listRowBackground(
-                        isHappeningNow(occurrence) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
+                        isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear
                     )
                 }
             } header: {
