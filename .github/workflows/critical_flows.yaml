@@ -23,6 +23,15 @@ on:
           - core-messenger
           - collaboration
           - integration
+      ui_test_cases:
+        description: "Testiny case IDs to run, separated by comma/space/newline"
+        required: false
+        type: string
+      rerun_failed_from_previous:
+        description: "Rerun failed Testiny cases from previous run on this branch"
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - 'develop'
@@ -64,6 +73,8 @@ jobs:
       # - scope only       => <scope>
       # - neither          => all tests (empty tag filter)
       ui_test_tags: ${{ inputs.run_uitests && inputs.ui_test_scope != '' && format('critical,{0}', inputs.ui_test_scope) || inputs.run_uitests && 'critical' || inputs.ui_test_scope }}
+      ui_test_cases: ${{ inputs.ui_test_cases }}
+      rerun_failed_from_previous: ${{ inputs.rerun_failed_from_previous }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
       timeout_minutes: 150

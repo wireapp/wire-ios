@@ -131,6 +131,15 @@ def execute_xcresulttool(*args: str) -> dict:
         raise RuntimeError(f"xcresulttool error:\n{r.stderr.strip()}")
     return json.loads(r.stdout)
 
+def final_test_result(node: dict) -> str:
+    runs = [
+        child for child in node.get("children", [])
+        if child.get("nodeType") in ("Repetition", "Test Case Run")
+    ]
+    if runs:
+        return runs[-1].get("result", node.get("result", "unknown"))
+    return node.get("result", "unknown")
+
 def collect_test_nodes_new_api(root: dict, tests: list):
     stack = [root]
     while stack:
@@ -139,7 +148,7 @@ def collect_test_nodes_new_api(root: dict, tests: list):
             continue
         if node.get("nodeType") == "Test Case":
             name = node.get("name", "").rstrip("()")
-            result = node.get("result", "unknown")
+            result = final_test_result(node)
             tests.append({"name": name, "status": result})
         stack.extend(node.get("children", []))
 

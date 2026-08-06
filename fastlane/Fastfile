@@ -111,8 +111,18 @@ platform :ios do
     lane :run_uitests do |options|
         schemes = ["WireUITests"]
         options[:testplan] = "UITests"
-        options[:number_of_retries] = 0 # no retries
-        ui_test_filter_options(options).each { |key, value| options[key] = value }
+        options[:number_of_retries] = 1
+        options[:output_remove_retry_attempts] = true
+        requested_testiny_cases = normalize_testiny_case_ids(options[:testiny_cases])
+        explicit_tests = ui_test_identifiers_matching_testiny_cases(requested_testiny_cases)
+        UI.user_error!("No UI tests matched Testiny case id(s): #{requested_testiny_cases.join(',')}") if requested_testiny_cases.any? && explicit_tests.empty?
+        explicit_tests = normalize_test_identifiers(options[:only_testing]) if explicit_tests.empty?
+        if explicit_tests.any?
+            UI.message("Running #{explicit_tests.count} explicit UI test(s)")
+            options[:only_testing] = explicit_tests
+        else
+            ui_test_filter_options(options).each { |key, value| options[key] = value }
+        end
         begin
             run_tests_frameworks(schemes, options)
         rescue => e
@@ -640,12 +650,53 @@ platform :ios do
             disable_package_automatic_updates: true,
             skip_package_dependencies_resolution: true,
             number_of_retries: build.number_of_retries,
+            output_remove_retry_attempts: options[:output_remove_retry_attempts].to_s == "true",
             xcargs: "-collect-test-diagnostics never" # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
         }
-        run_tests_options[:only_testing] = options[:only_testing] if options[:only_testing]&.any?
-        run_tests_options[:skip_testing] = options[:skip_testing] if options[:skip_testing]&.any?
+        only_testing = normalize_test_identifiers(options[:only_testing])
+        skip_testing = normalize_test_identifiers(options[:skip_testing])
+        run_tests_options[:only_testing] = only_testing if only_testing.any?
+        run_tests_options[:skip_testing] = skip_testing if skip_testing.any?
 
         run_tests(run_tests_options)
+    end
+
+    def normalize_test_identifiers(value)
+        Array(value)
+            .flat_map { |identifier| identifier.to_s.split(/[\s,]+/) }
+            .map(&:strip)
+            .reject(&:empty?)
+            .uniq
+    end
+
+    def normalize_testiny_case_ids(value)
+        Array(value)
+            .flat_map { |id| id.to_s.split(/[\s,]+/) }
+            .map { |id| id.gsub(/\ATC[-_]?/i, "").strip }
+            .select { |id| id.match?(/\A\d+\z/) }
+            .uniq
+    end
+
+    def testiny_ids_from_test_identifier(identifier)
+        name = identifier.split("/").last
+        match = name.match(/_TC_+(.*)\z/i)
+        return [] unless match
+
+        match[1].split("_").take_while { |part| part.match?(/\A\d+\z/) }.uniq
+    end
+
+    def ui_test_identifiers_matching_testiny_cases(value)
+        requested_ids = Array(value)
+        return [] if requested_ids.empty?
+
+        matching_tests = ui_test_metadata.select do |test|
+            (requested_ids & testiny_ids_from_test_identifier(test[:identifier])).any?
+        end
+        matched_ids = matching_tests.flat_map { |test| testiny_ids_from_test_identifier(test[:identifier]) }.uniq
+        missing_ids = requested_ids - matched_ids
+        UI.message("Ignoring unmatched Testiny case id(s): #{missing_ids.join(',')}") if missing_ids.any?
+
+        matching_tests.map { |test| test[:identifier] }.uniq
     end
 
     def ui_test_filter_options(options)

@@ -70,8 +70,14 @@ for XCRESULT in "${XCRESULTS[@]}"; do
       def test_cases:
         [.. | objects | select(.nodeType? == "Test Case")];
 
+      def test_runs:
+        [(.children // [])[] | select(.nodeType? == "Repetition" or .nodeType? == "Test Case Run")];
+
+      def final_result:
+        ((test_runs | if length > 0 then .[-1].result? else .result? end) // "" | ascii_downcase);
+
       def failed_test_cases:
-        test_cases | map(select((.result? // "" | ascii_downcase) == "failed"));
+        test_cases | map(select(final_result == "failed"));
 
       def testiny_ids_from_text:
         (tostring | gsub("[^A-Za-z0-9_]"; "_")) as $text
@@ -129,12 +135,12 @@ for XCRESULT in "${XCRESULTS[@]}"; do
 
       {
         total: (test_cases | length),
-        passed: (test_cases | map(select((.result? // "" | ascii_downcase) == "passed")) | length),
+        passed: (test_cases | map(select(final_result == "passed")) | length),
         failed: (failed_test_cases | length),
-        skipped: (test_cases | map(select((.result? // "" | ascii_downcase) | test("skipped|expected"))) | length),
-        testiny_passed_ids: (test_cases | map(select((.result? // "" | ascii_downcase) == "passed") | testiny_ids) | add // [] | unique),
+        skipped: (test_cases | map(select(final_result | test("skipped|expected"))) | length),
+        testiny_passed_ids: (test_cases | map(select(final_result == "passed") | testiny_ids) | add // [] | unique),
         testiny_failed_ids: (failed_test_cases | map(testiny_ids) | add // [] | unique),
-        testiny_skipped_ids: (test_cases | map(select((.result? // "" | ascii_downcase) | test("skipped|expected")) | testiny_ids) | add // [] | unique),
+        testiny_skipped_ids: (test_cases | map(select(final_result | test("skipped|expected")) | testiny_ids) | add // [] | unique),
         failed_details: (
           failed_test_cases
           | map("  ❌ " + test_title + ": " + (failure_message | normalize))
