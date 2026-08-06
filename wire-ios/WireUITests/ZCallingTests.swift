@@ -417,83 +417,42 @@ final class ZCallingTests: WireUITestCase {
     }
 
     @MainActor
-    func testJoinCallForInactiveAccountInForegroundAndActiveAccountInBackground_TC_8900_TC_8898() async throws {
+    func testJoinCallForInactiveAccountWhenOtherAccountIsActiveInForeground_TC_8900() async throws {
         // GIVEN
-        let backgroundCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
-        let foregroundCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+        let user1InactiveCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+        let user2ActiveAccountSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
+        // First user login - which will be inactive.
         _ = try app.loginUser(
-            email: backgroundCallSetup.appUserReceivingCall.email,
-            password: backgroundCallSetup.appUserReceivingCall.password
+            email: user1InactiveCallSetup.appUserReceivingCall.email,
+            password: user1InactiveCallSetup.appUserReceivingCall.password
         )
             .acceptPopup()
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
+        // Second user login - which will be active.
         _ = try app.loginUser(
-            email: foregroundCallSetup.appUserReceivingCall.email,
-            password: foregroundCallSetup.appUserReceivingCall.password
+            email: user2ActiveAccountSetup.appUserReceivingCall.email,
+            password: user2ActiveAccountSetup.appUserReceivingCall.password
         )
             .acceptPopup()
 
-        let backgroundOwnerInstances = try await createCallingServiceInstances(users: [backgroundCallSetup.teamOwner])
-        let backgroundOwnerInstanceId = try requireOwnerInstanceId(from: backgroundOwnerInstances)
+        // WHEN
+        let user1InactiveOwnerInstances = try await createCallingServiceInstances(
+            users: [user1InactiveCallSetup.teamOwner]
+        )
+        let user1InactiveOwnerInstanceId = try requireOwnerInstanceId(from: user1InactiveOwnerInstances)
 
         _ = try await callingServiceClient.startCall(
-            instanceId: backgroundOwnerInstanceId,
-            conversationId: backgroundCallSetup.conversationId
+            instanceId: user1InactiveOwnerInstanceId,
+            conversationId: user1InactiveCallSetup.conversationId
         )
 
-        tapIncomingCallNotification(conversationName: backgroundCallSetup.groupName)
-        var ongoingCallPage = try acceptIncomingCall(groupName: backgroundCallSetup.groupName)
+        tapIncomingCallNotification(conversationName: user1InactiveCallSetup.groupName)
+        let ongoingCallPage = try acceptIncomingCall(groupName: user1InactiveCallSetup.groupName)
 
+        // THEN
         XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
-//        XCTAssertTrue(
-//            ongoingCallPage.conversationTitleButton.label.contains(conversationName),
-//            "Account did not switch to the expected call conversation"
-//        )
-
-//        let foregroundOwnerInstances = try await createCallingServiceInstances(users: [foregroundCallSetup.teamOwner])
-//        let foregroundOwnerInstanceId = try requireOwnerInstanceId(from: foregroundOwnerInstances)
-
-//        XCTAssertTrue(
-//            try ConversationsPage()
-//                .conversationCell(named: foregroundCallSetup.groupName)
-//                .waitForExistence(timeout: 10),
-//            "Foreground account group conversation did not appear"
-//        )
-
-        // WHEN - inactive account receives a call while the app is in background.
-//        await XCUIDevice.shared.press(.home)
-//        try await Task.sleep(for: .seconds(2))
-//
-//
-//
-//        await app.activate()
-//        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5), "App did not return to foreground")
-
-
-
-//        // THEN
-//        ongoingCallPage = try verifyOngoingCallBannerAndResume(
-//            ongoingCallPage: ongoingCallPage,
-//            conversationName: backgroundCallSetup.groupName
-//        )
-//        let activeConversationPage = try ongoingCallPage.hangUpOngoingCall()
-//        try activeConversationPage.verifyNoCallOngoingAfterHangUp()
-//
-//        // WHEN - inactive account receives a call while the app is in foreground.
-//        ongoingCallPage = try await startCallAndAccept(
-//            ownerInstanceId: foregroundOwnerInstanceId,
-//            conversationId: foregroundCallSetup.conversationId,
-//            groupName: foregroundCallSetup.groupName
-//        )
-//
-//        // THEN
-//        ongoingCallPage = try verifyOngoingCallBannerAndResume(
-//            ongoingCallPage: ongoingCallPage,
-//            conversationName: foregroundCallSetup.groupName
-//        )
-//        _ = try ongoingCallPage.hangUpOngoingCall()
     }
 }
