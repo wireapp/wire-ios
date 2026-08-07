@@ -479,6 +479,128 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         XCTAssertNil(userNotification)
     }
 
+    // MARK: - Caller resolution (src_userid) tests
+
+    func testMissedCall_UsesCallerDomainFromQualifiedSrcUserid() async throws {
+        await setupCallerResolutionMock()
+
+        // A qualified src_userid whose domain differs from the envelope sender's.
+        let qualifiedSrcUserid = "\(Scaffolding.callerID.uuidString)@\(Scaffolding.callerDomain)"
+        let notification = try await buildMissedCall(callerID: qualifiedSrcUserid)
+
+        let content = try XCTUnwrap(notification)
+        guard case let .text(notificationContent) = content else { return XCTFail() }
+
+        // The caller's own domain — not the sender's — is used to fetch the user.
+        XCTAssertTrue(
+            userLocalStore.fetchOrCreateUserIdDomain_Invocations.contains(where: {
+                $0.id == Scaffolding.callerID && $0.domain == Scaffolding.callerDomain
+            })
+        )
+
+        // The sender's (id, domain) is fetched once, by validation only; the
+        // missed-call name resolution must not fall back to it.
+        let senderFetchCount = userLocalStore.fetchOrCreateUserIdDomain_Invocations
+            .filter { $0.id == Scaffolding.userID.id && $0.domain == Scaffolding.userID.domain }
+            .count
+        XCTAssertEqual(senderFetchCount, 1)
+
+        // The notification is attributed to the caller, not the envelope sender.
+        XCTAssertEqual(notificationContent.title, Scaffolding.callerName)
+        XCTAssertEqual(notificationContent.userInfo["senderIDString"] as? String, Scaffolding.callerID.uuidString)
+    }
+
+    func testMissedCall_ParsesBareUuidSrcUserid() async throws {
+        await setupCallerResolutionMock()
+
+        let notification = try await buildMissedCall(callerID: Scaffolding.callerID.uuidString)
+
+        let content = try XCTUnwrap(notification)
+        guard case let .text(notificationContent) = content else { return XCTFail() }
+
+        // A bare UUID carries no domain; the caller is fetched with domain nil,
+        // never the sender's domain.
+        XCTAssertTrue(
+            userLocalStore.fetchOrCreateUserIdDomain_Invocations.contains(where: {
+                $0.id == Scaffolding.callerID && $0.domain == nil
+            })
+        )
+
+        XCTAssertEqual(notificationContent.title, Scaffolding.callerName)
+        XCTAssertEqual(notificationContent.userInfo["senderIDString"] as? String, Scaffolding.callerID.uuidString)
+    }
+
+    func testMissedCall_FallsBackToSenderWhenSrcUseridAbsent() async throws {
+        await setupCallerResolutionMock()
+
+        let notification = try await buildMissedCall(callerID: nil)
+
+        let content = try XCTUnwrap(notification)
+        guard case let .text(notificationContent) = content else { return XCTFail() }
+
+        // Without src_userid, the name resolves from the envelope sender.
+        XCTAssertEqual(notificationContent.title, Scaffolding.senderName)
+        XCTAssertNil(notificationContent.userInfo["senderIDString"])
+
+        // The sender is fetched both by validation and by the missed-call fallback.
+        let senderFetchCount = userLocalStore.fetchOrCreateUserIdDomain_Invocations
+            .filter { $0.id == Scaffolding.userID.id && $0.domain == Scaffolding.userID.domain }
+            .count
+        XCTAssertEqual(senderFetchCount, 2)
+    }
+
+    // MARK: - Caller resolution helpers
+
+    /// Shared setup for src_userid tests: disables CallKit so the regular
+    /// notification path runs, and routes `fetchOrCreateUser` / `name(for:)`
+    /// to distinct caller vs. sender users so the resolved identity is observable.
+    private func setupCallerResolutionMock() async {
+        await setupMock(isGroup: false, isTeam: false)
+        defaults.set(false, forKey: "isCallKitAvailable")
+
+        let callerUser = await context.perform { [self] in
+            modelHelper.createUser(in: context)
+        }
+        let senderUser = await context.perform { [self] in
+            modelHelper.createUser(in: context)
+        }
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockMethod = { id, _ in
+            id == Scaffolding.callerID ? callerUser : senderUser
+        }
+        userLocalStore.nameFor_MockMethod = { user in
+            if user === callerUser { return Scaffolding.callerName }
+            if user === senderUser { return Scaffolding.senderName }
+            return nil
+        }
+    }
+
+    /// Builds a missed-call (CANCEL) notification carrying the given `src_userid`.
+    private func buildMissedCall(callerID: String?) async throws -> UserNotification? {
+        var calling = Calling()
+        calling.content = setupCallingContentMock(type: "CANCEL", callerID: callerID)
+
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                userDefaults: defaults
+            ),
+            accountID: .mockID1
+        )
+
+        return await sut.buildContent(
+            calling: calling,
+            at: .now,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
+    }
+
     // MARK: - Internal tests assertion helpers
 
     private func internalCallKitTest_assertNotificationContent(
@@ -639,14 +761,16 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     private func setupCallingContentMock(
         type: String,
-        isVideo: Bool = false
+        isVideo: Bool = false,
+        callerID: String? = nil
     ) -> String {
-        """
+        let srcUserid = callerID.map { ",\n            \"src_userid\": \"\($0)\"" } ?? ""
+        return """
         {
             "type": "\(type)",
             "src_clientid": "clientid",
             "resp": false,
-            "props": { "videosend": "\(isVideo)" }
+            "props": { "videosend": "\(isVideo)" }\(srcUserid)
         }
         """
     }
@@ -726,6 +850,9 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         static let teamName = "Team1"
         static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
         static let userID = UserID(id: .mockID3, domain: "domain.com")
+        static let callerID = UUID.mockID4
+        static let callerDomain = "federation.wire.com"
+        static let callerName = "CallerName"
         static let accountID = UUID.mockID10
     }
 

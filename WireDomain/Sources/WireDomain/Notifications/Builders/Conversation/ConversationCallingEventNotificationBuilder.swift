@@ -119,7 +119,8 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         conversationID: ConversationID
     ) async -> UserNotification {
         let conversation = await context.getConversation(conversationID: conversationID)
-        let callerID = context.callerID(callContent: callContent)
+        let callerIdentity = context.callerIdentity(callContent: callContent)
+        let callerID = callerIdentity?.id
         let selfUser = await context.getSelfUser()
         let selfUserID = await context.selfUserID(selfUser: selfUser)
         let conversationName = await context.conversationName(conversation: conversation)
@@ -149,7 +150,10 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             // End-message-triggered: the envelope sender may not be the
             // caller, so prefer the originator declared in the payload
             // (src_userid), falling back to the envelope sender when absent.
-            let caller = await context.getCallStarter(callerID: callerID, senderID: senderID)
+            let caller = await context.fetchNotificationCaller(
+                callerIdentity: callerIdentity,
+                senderID: senderID
+            )
             let senderName = await context.callerName(caller: caller)
             return await buildMissedCallNotification(
                 selfUserID: selfUserID,
@@ -507,22 +511,25 @@ extension ConversationCallingEventNotificationBuilder {
                 domain: senderID.domain
             )
         }
-        /// Resolves the user whose name labels the call notification.
+        /// Resolves the user whose name labels a missed-call notification.
         ///
-        /// Prefers the original caller declared in the payload
-        /// (`src_userid`) over the OTR envelope sender, so a missed or
-        /// group-incoming call is attributed to the caller rather than
-        /// the participant whose message triggered the notification.
-        /// Falls back to the envelope sender when `src_userid` is absent
-        /// (older clients / 1:1 calls, where the sender is the caller).
-        func getCallStarter(
-            callerID: UUID?,
+        /// The call-end message that triggers a missed-call notification is often
+        /// sent by a participant other than the caller, so the name is resolved from
+        /// the original caller declared in the payload (`src_userid`) rather than the
+        /// envelope sender. `src_userid` carries the caller's own domain when
+        /// federation is enabled (`UUID@domain`), so that domain — not the sender's —
+        /// is used to fetch the user. Falls back to the envelope sender when
+        /// `src_userid` is absent (older clients / 1:1 calls, where the sender is the
+        /// caller); the name reflects this best-effort contract rather than claiming
+        /// the user always started the call.
+        func fetchNotificationCaller(
+            callerIdentity: (id: UUID, domain: String?)?,
             senderID: UserID
         ) async -> ZMUser {
-            if let callerID {
+            if let callerIdentity {
                 return await userLocalStore.fetchOrCreateUser(
-                    id: callerID,
-                    domain: senderID.domain
+                    id: callerIdentity.id,
+                    domain: callerIdentity.domain
                 )
             }
             return await getCaller(senderID: senderID)
@@ -554,10 +561,23 @@ extension ConversationCallingEventNotificationBuilder {
             await userLocalStore.teamName(for: selfUser)
         }
 
-        func callerID(
+        /// Parses the original caller from the AVS payload `src_userid`.
+        ///
+        /// AVS serializes the caller as a bare `UUID` (federation disabled) or
+        /// `UUID@domain` (federation enabled). Returning the caller's own domain —
+        /// rather than borrowing the envelope sender's — keeps cross-domain callers
+        /// attributable in federated conversations. The store layer ignores the
+        /// domain when federation is off, so passing it through unconditionally is
+        /// safe. Returns nil when `src_userid` is absent or malformed.
+        func callerIdentity(
             callContent: CallContent
-        ) -> UUID? {
-            callContent.callerUserID.flatMap(UUID.init(transportString:))
+        ) -> (id: UUID, domain: String?)? {
+            guard let raw = callContent.callerUserID else { return nil }
+            let parts = raw.components(separatedBy: "@")
+            guard (1 ... 2).contains(parts.count),
+                let id = UUID(uuidString: parts[0])
+            else { return nil }
+            return (id: id, domain: parts.count == 2 ? parts[1] : nil)
         }
 
         func increaseReadCount(
