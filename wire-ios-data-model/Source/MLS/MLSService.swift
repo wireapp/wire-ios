@@ -503,6 +503,37 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
+    /// Values passed to a key-package claim child task.
+    ///
+    /// `MLSActionsProvider` is stateless and the notification context is backed by a thread-safe
+    /// `NSPersistentStoreCoordinator` or `Account`, so both can be used by concurrent claim tasks.
+    private struct KeyPackageClaimTask: @unchecked Sendable {
+        let index: Int
+        let user: MLSUser
+        let ciphersuite: MLSCipherSuite
+        let actionsProvider: MLSActionsProviderProtocol
+        let notificationContext: NotificationContext
+
+        func execute() async -> KeyPackageClaim {
+            guard !Task.isCancelled else {
+                return KeyPackageClaim(index: index, user: user, result: .failure(CancellationError()))
+            }
+
+            do {
+                let keyPackages = try await actionsProvider.claimKeyPackages(
+                    userID: user.id,
+                    domain: user.domain,
+                    ciphersuite: ciphersuite,
+                    excludedSelfClientID: user.selfClientID,
+                    in: notificationContext
+                )
+                return KeyPackageClaim(index: index, user: user, result: .success(keyPackages))
+            } catch {
+                return KeyPackageClaim(index: index, user: user, result: .failure(error))
+            }
+        }
+    }
+
     public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
         try await commitPendingProposals(in: groupID)
         try await retryOnCommitFailure(for: groupID) { [weak self] in
@@ -626,23 +657,15 @@ public final class MLSService: MLSServiceInterface {
         notificationContext: NotificationContext,
         to group: inout TaskGroup<KeyPackageClaim>
     ) {
-        group.addTask { [actionsProvider] in
-            guard !Task.isCancelled else {
-                return KeyPackageClaim(index: index, user: user, result: .failure(CancellationError()))
-            }
-
-            do {
-                let keyPackages = try await actionsProvider.claimKeyPackages(
-                    userID: user.id,
-                    domain: user.domain,
-                    ciphersuite: ciphersuite,
-                    excludedSelfClientID: user.selfClientID,
-                    in: notificationContext
-                )
-                return KeyPackageClaim(index: index, user: user, result: .success(keyPackages))
-            } catch {
-                return KeyPackageClaim(index: index, user: user, result: .failure(error))
-            }
+        let task = KeyPackageClaimTask(
+            index: index,
+            user: user,
+            ciphersuite: ciphersuite,
+            actionsProvider: actionsProvider,
+            notificationContext: notificationContext
+        )
+        group.addTask {
+            await task.execute()
         }
     }
 
