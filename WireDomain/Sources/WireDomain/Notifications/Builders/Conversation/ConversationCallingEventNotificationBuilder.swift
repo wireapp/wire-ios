@@ -511,6 +511,7 @@ extension ConversationCallingEventNotificationBuilder {
                 domain: senderID.domain
             )
         }
+
         /// Resolves the user whose name labels a missed-call notification.
         ///
         /// The call-end message that triggers a missed-call notification is often
@@ -575,7 +576,7 @@ extension ConversationCallingEventNotificationBuilder {
             guard let raw = callContent.callerUserID else { return nil }
             let parts = raw.components(separatedBy: "@")
             guard (1 ... 2).contains(parts.count),
-                let id = UUID(uuidString: parts[0])
+                  let id = UUID(uuidString: parts[0])
             else { return nil }
             return (id: id, domain: parts.count == 2 ? parts[1] : nil)
         }
