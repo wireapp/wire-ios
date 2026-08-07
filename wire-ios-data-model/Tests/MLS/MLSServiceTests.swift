@@ -1001,7 +1001,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
-    func test_NoNetworkKeyPackageClaimFailure_AllowsActiveClaimsToFinishBeforeReturning() async {
+    func test_NoNetworkKeyPackageClaimFailure_CancelsActiveClaimsBeforeReturning() async {
         // Given
         let failingUser = MLSUser(id: .create(), domain: localDomain)
         let activeUser = MLSUser(id: .create(), domain: localDomain)
@@ -1013,7 +1013,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             ],
             suspendsClaims: true
         )
-        let completion = AsyncCompletionFlag()
         mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
         createSut(maxConcurrentKeyPackageClaims: 2)
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
@@ -1021,27 +1020,17 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let operation = Task { () -> Error? in
             do {
                 try await self.sut.addMembersToConversation(with: [failingUser, activeUser], for: self.groupID)
-                await completion.markCompleted()
                 return nil
             } catch {
-                await completion.markCompleted()
                 return error
             }
         }
         await controller.waitUntilStarted(count: 2)
         await controller.release(userID: failingUser.id)
-        await controller.waitUntilFinished(count: 1)
-
-        // Then the operation is still waiting for the other active claim.
-        var snapshot = await controller.snapshot()
-        XCTAssertFalse(snapshot.finishedUserIDs.contains(activeUser.id))
-        let operationIsCompleted = await completion.isCompleted
-        XCTAssertFalse(operationIsCompleted)
-
-        await controller.release(userID: activeUser.id)
         let error = await operation.value
 
-        snapshot = await controller.snapshot()
+        // Then
+        let snapshot = await controller.snapshot()
         XCTAssertTrue(snapshot.finishedUserIDs.contains(activeUser.id))
         XCTAssertEqual(
             error as? ClaimMLSKeyPackageAction.Failure,
@@ -3632,16 +3621,29 @@ private actor KeyPackageClaimController {
         maximumActiveCount = max(maximumActiveCount, activeCount)
         startedUserIDs.append(userID)
         resumeStartWaiters()
+        defer {
+            activeCount -= 1
+            finishedUserIDs.append(userID)
+            resumeFinishWaiters()
+        }
 
         if suspendsClaims {
-            await withCheckedContinuation { continuation in
-                blockedClaims[userID] = continuation
+            await withTaskCancellationHandler {
+                await withCheckedContinuation { continuation in
+                    if Task.isCancelled {
+                        continuation.resume()
+                    } else {
+                        blockedClaims[userID] = continuation
+                    }
+                }
+            } onCancel: {
+                Task {
+                    await self.cancelClaim(for: userID)
+                }
             }
         }
 
-        activeCount -= 1
-        finishedUserIDs.append(userID)
-        resumeFinishWaiters()
+        try Task.checkCancellation()
 
         guard let outcome = outcomes[userID] else {
             return []
@@ -3691,6 +3693,10 @@ private actor KeyPackageClaimController {
         )
     }
 
+    private func cancelClaim(for userID: UUID) {
+        blockedClaims.removeValue(forKey: userID)?.resume()
+    }
+
     private func resumeStartWaiters() {
         var pendingWaiters = [Waiter]()
 
@@ -3717,14 +3723,6 @@ private actor KeyPackageClaimController {
         }
 
         finishWaiters = pendingWaiters
-    }
-}
-
-private actor AsyncCompletionFlag {
-    private(set) var isCompleted = false
-
-    func markCompleted() {
-        isCompleted = true
     }
 }
 

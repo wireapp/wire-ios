@@ -584,10 +584,10 @@ public final class MLSService: MLSServiceInterface {
         try Task.checkCancellation()
 
         let notificationContext = context.notificationContext
-        let claims = await withTaskGroup(of: KeyPackageClaim.self) { group in
+        let (claims, fatalFailure) = await withTaskGroup(of: KeyPackageClaim.self) { group in
             var claims = [KeyPackageClaim]()
             var nextUserIndex = 0
-            var fatalFailureDetected = false
+            var fatalFailure: Error?
 
             while nextUserIndex < min(maxConcurrentKeyPackageClaims, users.count) {
                 addKeyPackageClaimTask(
@@ -603,11 +603,14 @@ public final class MLSService: MLSServiceInterface {
             while let claim = await group.next() {
                 claims.append(claim)
 
-                if claim.fatalFailure != nil || Task.isCancelled {
-                    fatalFailureDetected = true
+                if fatalFailure == nil, let claimFailure = claim.fatalFailure {
+                    fatalFailure = claimFailure
+                    group.cancelAll()
+                } else if Task.isCancelled {
+                    group.cancelAll()
                 }
 
-                if !fatalFailureDetected, nextUserIndex < users.count {
+                if fatalFailure == nil, !Task.isCancelled, nextUserIndex < users.count {
                     addKeyPackageClaimTask(
                         for: users[nextUserIndex],
                         at: nextUserIndex,
@@ -619,10 +622,14 @@ public final class MLSService: MLSServiceInterface {
                 }
             }
 
-            return claims
+            return (claims, fatalFailure)
         }
 
         try Task.checkCancellation()
+
+        if let fatalFailure {
+            throw fatalFailure
+        }
 
         var keyPackages = [KeyPackage]()
         var failedUsers = [MLSUser]()
