@@ -19,7 +19,7 @@
 // sourcery: AutoMockable
 /// Reports which conversations the self user is currently in a call in, and lets
 /// the meetings feature enter a meeting's call.
-public protocol MeetingCallStateRepositoryProtocol: Sendable {
+public protocol MeetingCallRepositoryProtocol: Sendable {
 
     /// Emits the set of conversation ids the self user is currently in a call in.
     ///
@@ -30,9 +30,6 @@ public protocol MeetingCallStateRepositoryProtocol: Sendable {
 
     /// Enters the conversation's call: starts the conference when nobody is in it
     /// yet, and joins the running one otherwise.
-    ///
-    /// Returns once the join has been requested. The call UI is presented by the
-    /// app's call state observer, not by the caller.
     func joinCall(in conversationID: QualifiedID) async throws
 
 }

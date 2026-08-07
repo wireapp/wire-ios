@@ -150,7 +150,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
             // Then
 
-            XCTAssertNil(userNotification, "expected no notification for a meeting call (\(type))")
+            XCTAssertNil(userNotification)
         }
     }
 

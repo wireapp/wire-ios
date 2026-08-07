@@ -20,9 +20,9 @@ import Foundation
 
 package struct JoinMeetingCallUseCase: JoinMeetingCallUseCaseProtocol {
 
-    private let repository: any MeetingCallStateRepositoryProtocol
+    private let repository: any MeetingCallRepositoryProtocol
 
-    package init(repository: any MeetingCallStateRepositoryProtocol) {
+    package init(repository: any MeetingCallRepositoryProtocol) {
         self.repository = repository
     }
 

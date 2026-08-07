@@ -23,10 +23,10 @@ import WireFoundation
 import WireSyncEngine
 
 /// Bridges `WireSyncEngine`'s call state into `WireCallingDomain`'s
-/// `MeetingCallStateRepositoryProtocol`, so the meetings feature can tell which
+/// `MeetingCallRepositoryProtocol`, so the meetings feature can tell which
 /// meetings the self user is currently attending (in a call in), and enter a
 /// meeting's call, without depending on `WireSyncEngine` directly.
-final class MeetingCallStateRepositoryBridge: MeetingCallStateRepositoryProtocol, @unchecked Sendable {
+final class MeetingCallRepositoryBridge: MeetingCallRepositoryProtocol, @unchecked Sendable {
 
     enum Failure: Error {
         case noUserSession
@@ -34,9 +34,6 @@ final class MeetingCallStateRepositoryBridge: MeetingCallStateRepositoryProtocol
     }
 
     private let userSession: any UserSession
-
-    /// Presents the "you are already in a call" confirmation. Weak, because it owns
-    /// the meetings UI this bridge is built for.
     private weak var alertPresenter: UIViewController?
 
     init(userSession: any UserSession, alertPresenter: UIViewController?) {
@@ -48,9 +45,6 @@ final class MeetingCallStateRepositoryBridge: MeetingCallStateRepositoryProtocol
     /// starts the conference when nobody is in it yet and joins the running one
     /// otherwise. This is the same path the conversation screen's call button takes:
     /// no-internet warning, microphone permission, then `voiceChannel.join`.
-    ///
-    /// The call screen itself is presented by `CallController`, which observes call
-    /// state, so there is nothing to present here.
     func joinCall(in conversationID: WireCallingDomain.QualifiedID) async throws {
         guard let session = userSession as? ZMUserSession else {
             throw Failure.noUserSession
@@ -72,7 +66,6 @@ final class MeetingCallStateRepositoryBridge: MeetingCallStateRepositoryProtocol
                 return
             }
 
-            // Leaves an already ongoing call first, after asking the user.
             conversation.confirmJoiningCallIfNeeded(alertPresenter: alertPresenter) {
                 conversation.startAudioCall()
             }

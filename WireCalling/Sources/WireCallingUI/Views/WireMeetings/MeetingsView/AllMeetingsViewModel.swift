@@ -80,10 +80,6 @@ package final class AllMeetingsViewModel {
         presentedFormMode = .edit(meeting)
     }
 
-    /// The user tapped "Join" on the meeting that is taking place right now.
-    ///
-    /// The call screen is presented by the app's call state observer once the call
-    /// is entered, so there is nothing to present from here.
     func joinMeetingTapped(_ occurrence: MeetingOccurrence) {
         guard let joinMeetingCallUseCase else { return }
 

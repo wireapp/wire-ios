@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 package protocol JoinMeetingCallUseCaseProtocol: Sendable {
 
-    /// Enters the call of the meeting's conversation, starting it if it is not running yet.
+    /// Enters the call of the meeting's conversation.
 
     func invoke(conversationID: QualifiedID) async throws
 

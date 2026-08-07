@@ -160,8 +160,6 @@ package final class MeetingsViewModel {
         formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
-    /// The time line of a meeting row: the scheduled range normally, but "Started at …"
-    /// while the occurrence is live, matching the row's join button / attending label.
     func formatTime(for occurrence: MeetingOccurrence) -> String {
         if isHappeningNow(occurrence) {
             formatter.startedAt(occurrence.start)

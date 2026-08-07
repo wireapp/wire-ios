@@ -28,9 +28,6 @@ struct MeetingRow: View {
     let occurrence: MeetingOccurrence
     let formatTime: (MeetingOccurrence) -> String
     var isAttending: Bool = false
-    /// Whether this occurrence's scheduled window `[start, end)` contains the current time.
-    /// The join button is only offered while it does; for a recurring meeting that is the
-    /// single occurrence taking place right now, because every occurrence is its own row.
     var isLive: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
@@ -136,8 +133,6 @@ struct MeetingRow: View {
             .padding(.vertical, 10)
             .background(ColorTheme.Base.primary(wireAccentColor).color, in: Capsule())
         }
-        // Without `.plain` the list row would highlight and the button would
-        // take over the whole row's tap area.
         .buttonStyle(.plain)
         .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.joinButton)
         .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.JoinButton.description))

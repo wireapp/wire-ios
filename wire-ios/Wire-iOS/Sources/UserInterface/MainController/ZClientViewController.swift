@@ -441,7 +441,7 @@ final class ZClientViewController: UIViewController {
                     localDomain: userSession.selfUser.domain
                 )
             ),
-            callStateRepository: MeetingCallStateRepositoryBridge(
+            callRepository: MeetingCallRepositoryBridge(
                 userSession: userSession,
                 alertPresenter: self
             ),

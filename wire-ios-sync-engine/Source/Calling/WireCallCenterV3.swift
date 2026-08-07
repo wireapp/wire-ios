@@ -628,8 +628,6 @@ public extension WireCallCenterV3 {
             isConferenceCall: conversationType.isConference
         )
 
-        // Read up front: for an MLS conference `avsStartCallHandler` below is deferred
-        // by `setUpMLSConference` and runs later, off this context.
         let isMeeting = conversation.isMeeting
 
         if conversationType.isConference, !canStartConferenceCalls {
@@ -1124,7 +1122,7 @@ extension WireCallCenterV3 {
         conversationInfo(from: conversationId)?.type
     }
 
-    /// The AVS-relevant properties of the conversation, resolved in a single fetch.
+    /// The AVS-relevant properties of the conversation.
     private func conversationInfo(
         from conversationId: AVSIdentifier
     ) -> (type: AVSConversationType, isMeeting: Bool)? {

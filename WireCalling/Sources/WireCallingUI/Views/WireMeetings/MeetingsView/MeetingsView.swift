@@ -31,9 +31,6 @@ struct MeetingsView: View {
     /// Called when the user chooses "Edit meeting" in a meeting's menu.
     /// Presenting the edit UI is up to the owner of this view.
     private let onEditMeeting: (Meeting) -> Void
-
-    /// Called when the user taps "Join" on a meeting that is taking place right now.
-    /// Joining the call is up to the owner of this view.
     private let onJoinMeeting: (MeetingOccurrence) -> Void
 
     init(

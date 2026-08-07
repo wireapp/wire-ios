@@ -404,8 +404,7 @@ extension ConversationCallingEventNotificationBuilder {
             let isConversationMuted = mutedMessagesTypes == .all
 
             // A meeting is joined deliberately from the meetings list, so its call must not
-            // ring the device. Reporting it to CallKit here would ring for the couple of
-            // seconds it takes the app to sync and let AVS cancel the call again.
+            // ring the device.
             let isMeetingConversation = await conversationLocalStore.isMeetingConversation(conversation)
             let isConversationForcedReadOnly = await conversationLocalStore.isConversationForcedReadOnly(conversation)
             let isAVSReady = userDefaults.bool(forKey: Constants.isAvsReady)
