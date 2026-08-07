@@ -954,6 +954,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func storeConversation(
+        scheduledDeletionDate: Date,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.scheduledDeletionDate = scheduledDeletionDate
+        }
+    }
+
     // MARK: - Private
 
     private func notifyTypingUsers(

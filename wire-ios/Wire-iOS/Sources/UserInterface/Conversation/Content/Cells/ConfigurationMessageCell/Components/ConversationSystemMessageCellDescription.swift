@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireLogging
 import WireSyncEngine
+import WireUtilities
 
 enum ConversationSystemMessageCellDescription {
 
@@ -231,7 +232,8 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .conversationScheduledForDeletion:
-            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate else {
+            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate,
+                  DeveloperFlag.preventAdminlessGroups.isOn else {
                 break
             }
             let cell = ConversationScheduledForDeletionCellDescription(deletionDate: deletionDate)

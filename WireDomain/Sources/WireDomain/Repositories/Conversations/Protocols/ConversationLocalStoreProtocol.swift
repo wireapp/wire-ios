@@ -400,6 +400,16 @@ public protocol ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async
 
+    /// Updates the conversation's scheduled deletion date.
+    /// - Parameters:
+    ///     - scheduledDeletionDate: The date at which the backend will automatically delete the conversation.
+    ///     - conversation: The conversation to update.
+
+    func storeConversation(
+        scheduledDeletionDate: Date,
+        conversation: ZMConversation
+    ) async
+
     /// Updates or creates a MLS group locally.
     /// - Parameters:
     ///     - groupID: The MLS group ID.

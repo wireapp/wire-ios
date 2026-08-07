@@ -312,7 +312,10 @@ public final class ProteusService: ProteusServiceInterface {
 
     public var lastPrekeyID: UInt16 {
         get async {
-            (try? CoreCrypto.proteusLastResortPrekeyId()) ?? UInt16.max
+            let lastPrekeyID = try? await coreCrypto.transaction {
+                try $0.proteusLastResortPrekeyId()
+            }
+            return lastPrekeyID ?? UInt16.max
         }
     }
 
@@ -392,7 +395,9 @@ public final class ProteusService: ProteusServiceInterface {
         }
 
         do {
-            return try CoreCrypto.proteusFingerprintPrekeybundle(prekey: prekeyData)
+            return try await coreCrypto.transaction {
+                try $0.proteusFingerprintPrekeybundle(prekey: prekeyData)
+            }
         } catch {
             logger.error("failed to get fingerprint from prekey: \(String(describing: error))")
             throw FingerprintError.failedToGetFingerprintFromPrekey

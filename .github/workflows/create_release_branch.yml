@@ -218,13 +218,13 @@ jobs:
 
           **Fix:**
           •}"
-          RELEASE_NOTES_PR_LINK="${{ github.server_url }}/${BUILD_ASSETS_REPO}/compare?expand=1"
+          RELEASE_NOTES_PR_LINK="${GITHUB_SERVER_URL}/${BUILD_ASSETS_REPO}/compare?expand=1"
           echo "RELEASE_NOTES_PR_LINK=$RELEASE_NOTES_PR_LINK" >> "$GITHUB_ENV"
 
           # Full change log compares the previous appstore tag with this release's tag.
           PREV_APPSTORE_TAG="$(git tag | grep -E '^appstore/[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)"
           if [[ -n "$PREV_APPSTORE_TAG" ]]; then
-            FULL_CHANGELOG_URL="${{ github.server_url }}/${{ github.repository }}/compare/${PREV_APPSTORE_TAG}...${RELEASE_TAG}"
+            FULL_CHANGELOG_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${PREV_APPSTORE_TAG}...${RELEASE_TAG}"
           else
             FULL_CHANGELOG_URL="$CHANGELOG_WORKFLOW_URL"
           fi
@@ -323,7 +323,7 @@ jobs:
             echo "| Tickets in cycle | ${TICKET_COUNT:-?} |"
             echo ""
             echo "### Next steps"
-            echo "1. Edit & publish the [draft release](${{ github.server_url }}/${{ github.repository }}/releases)."
+            echo "1. Edit & publish the [draft release](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases)."
             echo "2. Open the **final release-notes PR** on \`${BUILD_ASSETS_REPO}\`:"
             echo "   ${RELEASE_NOTES_PR_LINK:-https://github.com/${BUILD_ASSETS_REPO}/compare?expand=1}"
             echo "3. Review & merge the Edge version-bump PR."
