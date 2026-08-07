@@ -677,33 +677,39 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private static func isFatalKeyPackageClaimFailure(_ error: Error) -> Bool {
-        if error is CancellationError {
-            return true
-        }
+        switch error {
+        case is CancellationError:
+            true
 
-        // The legacy action layer represents transport failures with status 0
-        // and proxy authentication failures with HTTP status 407.
-        if let actionFailure = error as? ClaimMLSKeyPackageAction.Failure,
-           case let .unknown(status) = actionFailure,
-           status == 0 || status == 407 {
-            return true
-        }
+        case let actionFailure as ClaimMLSKeyPackageAction.Failure:
+            // The legacy action layer represents transport failures with status 0
+            // and proxy authentication failures with HTTP status 407.
+            switch actionFailure {
+            case let .unknown(status) where status == 0 || status == 407:
+                true
+            default:
+                false
+            }
 
-        if let urlError = error as? URLError {
+        case let urlError as URLError:
             switch urlError.code {
             case .notConnectedToInternet, .networkConnectionLost:
-                return true
+                true
             default:
-                break
+                false
             }
-        }
 
-        if let networkStackError = error as? NetworkStackError,
-           case .proxyCredentialsRequired = networkStackError {
-            return true
-        }
+        case let networkStackError as NetworkStackError:
+            switch networkStackError {
+            case .proxyCredentialsRequired:
+                true
+            default:
+                false
+            }
 
-        return false
+        default:
+            false
+        }
     }
 
     // MARK: - Remove participants from mls group
