@@ -99,6 +99,37 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
         }
     }
 
+    func testIncomingAudioCall_InMeetingConversation() {
+
+        // given
+        syncMOC.performGroupedAndWait {
+            self.conversation.conversationType = .group
+            self.conversation.groupType = .meeting
+        }
+
+        let state: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
+
+        // then
+        syncMOC.performAndWait {
+            XCTAssertNil(note(for: state))
+        }
+    }
+
+    func testMissedCall_InMeetingConversation() {
+
+        // given
+        syncMOC.performGroupedAndWait {
+            self.conversation.conversationType = .group
+            self.conversation.groupType = .meeting
+        }
+
+        // then
+        syncMOC.performAndWait {
+            XCTAssertNil(note(for: .terminating(reason: .canceled)))
+            XCTAssertNil(note(for: .terminating(reason: .timeout)))
+        }
+    }
+
     func testIncomingAudioCall_ShouldRing_False() {
 
         // given

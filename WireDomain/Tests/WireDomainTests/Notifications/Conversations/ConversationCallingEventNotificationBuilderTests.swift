@@ -113,6 +113,47 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         }
     }
 
+    /// A meeting is joined deliberately from the meetings list, so a meeting call must
+    /// produce no notification at all: neither a ringing CallKit one when it starts, nor
+    /// a "called" one when it ends.
+    func testGenerateNotification_Is_Meeting_Conversation_Produces_No_Notification() async throws {
+
+        // Mock
+
+        await setupMock(isGroup: true, isTeam: true, isMeeting: true)
+
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                userDefaults: defaults
+            ),
+            accountID: Scaffolding.accountID
+        )
+
+        for type in ["SETUP", "CANCEL"] {
+            var calling = Calling()
+            calling.content = setupCallingContentMock(type: type)
+
+            // When
+
+            let userNotification = await sut.buildContent(
+                calling: calling,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+
+            // Then
+
+            XCTAssertNil(userNotification, "expected no notification for a meeting call (\(type))")
+        }
+    }
+
     func testGenerateCallKitNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
 
         // Mock
@@ -688,7 +729,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
     private func setupMock(
         isGroup: Bool,
         isTeam: Bool,
-        isTimeout: Bool = false
+        isTimeout: Bool = false,
+        isMeeting: Bool = false
     ) async {
 
         defaults.set(true, forKey: "isAVSReady")
@@ -708,6 +750,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         userLocalStore.nameFor_MockValue = Scaffolding.senderName
         conversationLocalStore.nameFor_MockValue = Scaffolding.conversationName
         conversationLocalStore.isGroupConversation_MockValue = isGroup
+        conversationLocalStore.isMeetingConversation_MockValue = isMeeting
         userLocalStore.fetchSelfUser_MockValue = await context.perform { [self] in
             modelHelper.createSelfUser(in: context)
         }

@@ -53,4 +53,17 @@ public extension ZMConversation {
         return groupType == .channel
     }
 
+    /// Whether the conversation is the underlying conversation of a meeting.
+    ///
+    /// Returns `true` if the conversation type is `group` **and** the group type is `meeting`, otherwise false.
+    ///
+    /// Note that the group type is only sent by API v8 and newer, so this is `false`
+    /// for meeting conversations synced from an older backend.
+
+    var isMeeting: Bool {
+        guard conversationType == .group else { return false }
+
+        return groupType == .meeting
+    }
+
 }

@@ -41,7 +41,6 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
     }
 
     package func timeRange(from start: Date, to end: Date) -> String {
-        // Only the end carries the period, so a range reads "7:15 - 8:00 AM".
         let startString = DateFormatter.meetingTimeWithoutPeriod.string(from: start)
         let endString = DateFormatter.meetingTime.string(from: end)
         return "\(startString) - \(endString)"

@@ -402,6 +402,11 @@ extension ConversationCallingEventNotificationBuilder {
             let mutedMessagesTypes = await conversationLocalStore
                 .conversationMutedMessageTypesIncludingAvailability(conversation)
             let isConversationMuted = mutedMessagesTypes == .all
+
+            // A meeting is joined deliberately from the meetings list, so its call must not
+            // ring the device. Reporting it to CallKit here would ring for the couple of
+            // seconds it takes the app to sync and let AVS cancel the call again.
+            let isMeetingConversation = await conversationLocalStore.isMeetingConversation(conversation)
             let isConversationForcedReadOnly = await conversationLocalStore.isConversationForcedReadOnly(conversation)
             let isAVSReady = userDefaults.bool(forKey: Constants.isAvsReady)
             let isCallKitReady = userDefaults.bool(forKey: Constants.isCallKitAvailable)
@@ -426,6 +431,7 @@ extension ConversationCallingEventNotificationBuilder {
             return !needsToBeUpdatedFromBackend
                 && !isConversationMuted
                 && !isConversationForcedReadOnly
+                && !isMeetingConversation
                 && isAVSReady
                 && isCallKitReady
                 && !isCallTimeOut
@@ -461,6 +467,10 @@ extension ConversationCallingEventNotificationBuilder {
                 true
             let isCallerSelf = selfUser == caller
 
+            // A meeting is joined deliberately from the meetings list, so neither its
+            // incoming call nor the "called" notification after it ends are shown.
+            let isMeetingConversation = await conversationLocalStore.isMeetingConversation(conversation)
+
             let isIncomingCall = callContent.isIncomingCall
             let isEndCall = callContent.isEndCall
             let isValidState = isIncomingCall || isEndCall
@@ -468,6 +478,7 @@ extension ConversationCallingEventNotificationBuilder {
             return isValidState
                 && !isCallerSelf
                 && !isConversationMuted
+                && !isMeetingConversation
                 && !isCallTimeOut
         }
 
