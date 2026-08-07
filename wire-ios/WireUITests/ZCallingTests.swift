@@ -90,13 +90,16 @@ final class ZCallingTests: WireUITestCase {
         return ongoingCallPage
     }
 
-    private func tapIncomingCallNotification(conversationName: String) {
+    private func tapIncomingCallNotification(conversationName: String, callerName: String) {
         let incomingCallPredicate = NSPredicate(
-            format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@ OR label CONTAINS[c] %@ OR value CONTAINS[c] %@",
+            format: """
+            (label CONTAINS[c] %@ OR value CONTAINS[c] %@) AND
+            (label CONTAINS[c] %@ OR value CONTAINS[c] %@)
+            """,
             conversationName,
             conversationName,
-            "calling",
-            "calling"
+            callerName,
+            callerName
         )
         let springboardNotification = springboard.descendants(matching: .any)
             .matching(incomingCallPredicate)
@@ -406,22 +409,28 @@ final class ZCallingTests: WireUITestCase {
     @MainActor
     func testJoinCallForInactiveAndActiveAccountWhenAppInForeground_TC_8900_8897() async throws {
         // GIVEN
-        let user1InactiveAccountSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
-        let user2ActiveAccountSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+        let user1InactiveAccountSetup = try await makeTeamAndGroupCallSetup(
+            memberCount: 1,
+            groupName: "InactiveUserGroup"
+        )
+        let user2ActiveAccountSetup = try await makeTeamAndGroupCallSetup(
+            memberCount: 1,
+            groupName: "ActiveUserGroup"
+        )
 
         _ = try app.loginUser(
             email: user1InactiveAccountSetup.appUserReceivingCall.email,
             password: user1InactiveAccountSetup.appUserReceivingCall.password
         )
-        .acceptPopup()
-        .openUserProfilePage()
-        .tapAddAccountOrTeamButton()
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
 
         _ = try app.loginUser(
             email: user2ActiveAccountSetup.appUserReceivingCall.email,
             password: user2ActiveAccountSetup.appUserReceivingCall.password
         )
-        .acceptPopup()
+            .acceptPopup()
 
         let user1InactiveOwnerInstances = try await createCallingServiceInstances(
             users: [user1InactiveAccountSetup.teamOwner]
@@ -434,11 +443,22 @@ final class ZCallingTests: WireUITestCase {
             conversationId: user1InactiveAccountSetup.conversationId
         )
 
-        tapIncomingCallNotification(conversationName: user1InactiveAccountSetup.groupName)
+        // Tapping the incoming call notification switches from active account to inactive account while joining the call.
+        tapIncomingCallNotification(
+            conversationName: user1InactiveAccountSetup.groupName,
+            callerName: user1InactiveAccountSetup.teamOwner.name
+        )
         let ongoingCallPage = try acceptIncomingCall(groupName: user1InactiveAccountSetup.groupName)
 
         // THEN
         XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
+        let groupCallTitle = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS[c] %@", user1InactiveAccountSetup.groupName)
+        ).firstMatch
+        XCTAssertTrue(
+            groupCallTitle.exists,
+            "Call did not join to expected \(user1InactiveAccountSetup.groupName)"
+        )
 
         ongoingCallPage.endCallButton.tapAndWait()
         XCTAssertTrue(ongoingCallPage.timeLabel.waitForNonExistence(timeout: 5), "Call timer still visible")
