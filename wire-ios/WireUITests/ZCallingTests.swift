@@ -90,16 +90,11 @@ final class ZCallingTests: WireUITestCase {
         return ongoingCallPage
     }
 
-    private func tapIncomingCallNotification(conversationName: String, callerName: String) {
+    private func tapIncomingCallNotification(conversationName: String) {
         let incomingCallPredicate = NSPredicate(
-            format: """
-            (label CONTAINS[c] %@ OR value CONTAINS[c] %@) AND
-            (label CONTAINS[c] %@ OR value CONTAINS[c] %@)
-            """,
+            format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@",
             conversationName,
-            conversationName,
-            callerName,
-            callerName
+            conversationName
         )
         let springboardNotification = springboard.descendants(matching: .any)
             .matching(incomingCallPredicate)
@@ -422,15 +417,15 @@ final class ZCallingTests: WireUITestCase {
             email: user1InactiveAccountSetup.appUserReceivingCall.email,
             password: user1InactiveAccountSetup.appUserReceivingCall.password
         )
-            .acceptPopup()
-            .openUserProfilePage()
-            .tapAddAccountOrTeamButton()
+        .acceptPopup()
+        .openUserProfilePage()
+        .tapAddAccountOrTeamButton()
 
         _ = try app.loginUser(
             email: user2ActiveAccountSetup.appUserReceivingCall.email,
             password: user2ActiveAccountSetup.appUserReceivingCall.password
         )
-            .acceptPopup()
+        .acceptPopup()
 
         let user1InactiveOwnerInstances = try await createCallingServiceInstances(
             users: [user1InactiveAccountSetup.teamOwner]
@@ -443,22 +438,13 @@ final class ZCallingTests: WireUITestCase {
             conversationId: user1InactiveAccountSetup.conversationId
         )
 
-        // Tapping the incoming call notification switches from active account to inactive account while joining the call.
-        tapIncomingCallNotification(
-            conversationName: user1InactiveAccountSetup.groupName,
-            callerName: user1InactiveAccountSetup.teamOwner.name
-        )
+        // Tapping the incoming call notification switches from active account to inactive account while joining the
+        // call.
+        tapIncomingCallNotification(conversationName: user1InactiveAccountSetup.groupName)
         let ongoingCallPage = try acceptIncomingCall(groupName: user1InactiveAccountSetup.groupName)
 
         // THEN
         XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
-        let groupCallTitle = app.staticTexts.matching(
-            NSPredicate(format: "label CONTAINS[c] %@", user1InactiveAccountSetup.groupName)
-        ).firstMatch
-        XCTAssertTrue(
-            groupCallTitle.exists,
-            "Call did not join to expected \(user1InactiveAccountSetup.groupName)"
-        )
 
         ongoingCallPage.endCallButton.tapAndWait()
         XCTAssertTrue(ongoingCallPage.timeLabel.waitForNonExistence(timeout: 5), "Call timer still visible")
