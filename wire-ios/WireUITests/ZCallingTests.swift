@@ -137,6 +137,7 @@ final class ZCallingTests: WireUITestCase {
     }
 
     /// Team Owner creates group conversation and initiates a group call with members via calling service
+    /// [critical]
     @MainActor
     func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
@@ -290,7 +291,7 @@ final class ZCallingTests: WireUITestCase {
     }
 
     /// Call participant switches from audio call to video call and back
-
+    /// [critical]
     @MainActor
     func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_TC_9497() async throws {
 
@@ -360,6 +361,7 @@ final class ZCallingTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testParticipantCanSeeSharedScreen_TC_8891() async throws {
         // GIVEN
@@ -401,7 +403,6 @@ final class ZCallingTests: WireUITestCase {
             )
     }
 
-    /// [critical]
     @MainActor
     func testJoinCallForInactiveAndActiveAccountWhenAppInForeground_TC_8900_8897() async throws {
         // GIVEN
