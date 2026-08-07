@@ -2198,7 +2198,7 @@ final class ConversationsAPITests: XCTestCase {
         let validateRequest: (URLRequest) -> Bool = { request in
             guard let body = request.httpBody,
                   let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any] else {
-                return true
+                return false
             }
 
             // then
