@@ -85,6 +85,20 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
     }
 
+    func mockDecryptedMessage() throws -> DecryptedMessage {
+        let plaintext = Data.random(byteCount: 1)
+        let senderClientId = try ClientId(
+            userId: Uuid(uuid: UUID().uuidString),
+            deviceId: DeviceId(id: 1),
+            domain: "wire.com"
+        )
+        return DecryptedMessage.text(
+            plaintext: plaintext,
+            senderClientId: senderClientId,
+            identity: .withBasicCredentials()
+        )
+    }
+
     // MARK: - Non re-entrant
 
     // maybe it makes sense to test performNonReentrant directly instead
@@ -111,14 +125,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // Mock decrypt message
-        let decryptedMessage = DecryptedMessage(
-            message: nil,
-            isActive: false,
-            commitDelay: 0,
-            senderClientId: nil,
-            identity: .withBasicCredentials(),
-            bufferedMessages: nil
-        )
+        let decryptedMessage = try mockDecryptedMessage()
 
         mockCoreCryptoContext.decryptMessageConversationIdPayload_MockValue = decryptedMessage
 
@@ -175,14 +182,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // Mock decrypt message
-        let decryptedMessage = DecryptedMessage(
-            message: nil,
-            isActive: false,
-            commitDelay: 0,
-            senderClientId: nil,
-            identity: .withBasicCredentials(),
-            bufferedMessages: nil,
-        )
+        let decryptedMessage = try mockDecryptedMessage()
         mockCoreCryptoContext.decryptMessageConversationIdPayload_MockMethod = { _, _ in
             decryptMessageExpectation.fulfill()
             return decryptedMessage
@@ -244,7 +244,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func test_processWelcomeMessage_transactionIsNotCreatedWhenProvided() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let welcome = try Welcome(noPointer: .init())
+        let welcome = Welcome(noPointer: .init())
 
         // Mock
         mockCoreCryptoContext
@@ -276,15 +276,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             keyPackageRef: "",
             userID: .create()
         )]
-
-        let mockCommit = Data.random()
-        let mockWelcome = Welcome(noPointer: .init())
-        let mockUpdateEvent = mockMemberJoinUpdateEvent()
-        let mockGroupInfo = GroupInfoBundle(
-            encryptionType: .plaintext,
-            ratchetTreeType: .full,
-            payload: Data.random()
-        )
 
         // Mock add clients.
         var mockAddClientsArguments = [(WireCoreCryptoUniffi.ConversationId, [WireCoreCryptoUniffi.KeyPackage])]()
@@ -437,14 +428,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Given
         let groupID = MLSGroupID.random()
         let encryptedMessage = Data.random(byteCount: 1)
-        let decryptedMessage = DecryptedMessage(
-            message: nil,
-            isActive: false,
-            commitDelay: 0,
-            senderClientId: nil,
-            identity: .withBasicCredentials(),
-            bufferedMessages: nil
-        )
+        let decryptedMessage = try mockDecryptedMessage()
 
         mockCoreCryptoContext.decryptMessageConversationIdPayload_MockValue = decryptedMessage
 
@@ -452,7 +436,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let result = try await sut.decryptMessage(encryptedMessage, in: groupID, context: nil)
 
         // Then
-        XCTAssertEqual(result?.message, decryptedMessage.message)
+        XCTAssertEqual(result, decryptedMessage)
         XCTAssertEqual(mockCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
         XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 1)
     }
@@ -461,14 +445,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Given
         let groupID = MLSGroupID.random()
         let encryptedMessage = Data.random(byteCount: 1)
-        let decryptedMessage = DecryptedMessage(
-            message: nil,
-            isActive: false,
-            commitDelay: 0,
-            senderClientId: nil,
-            identity: .withBasicCredentials(),
-            bufferedMessages: nil
-        )
+        let decryptedMessage = try mockDecryptedMessage()
 
         mockCoreCryptoContext.decryptMessageConversationIdPayload_MockValue = decryptedMessage
 
@@ -476,8 +453,69 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let result = try await sut.decryptMessage(encryptedMessage, in: groupID, context: mockCoreCryptoContext)
 
         // Then
-        XCTAssertEqual(result?.message, decryptedMessage.message)
+        XCTAssertEqual(result, decryptedMessage)
         XCTAssertEqual(mockCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
         XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
     }
+}
+
+extension DecryptedMessage: @retroactive Equatable {
+
+    public static func == (
+        lhs: DecryptedMessage,
+        rhs: DecryptedMessage
+    ) -> Bool {
+        switch (lhs, rhs) {
+        case let (.text(lPlaintext, lSenderClientId, lIdentity), .text(rPlaintext, rSenderClientId, rIdentity)):
+            lPlaintext == rPlaintext && lSenderClientId == rSenderClientId && lIdentity == rIdentity
+        case let (.commit(lIsActive, lBufferedMessages, lIdentity), .commit(rIsActive, rBufferedMessages, rIdentity)):
+            lIsActive == rIsActive && lBufferedMessages == rBufferedMessages && lIdentity == rIdentity
+        case let (.proposal(lDelay, lIdentity), .proposal(rDelay, rIdentity)):
+            lDelay == rDelay && lIdentity == rIdentity
+        default:
+            false
+        }
+    }
+
+}
+
+extension BufferedDecryptedMessage: @retroactive Equatable {
+
+    public static func == (
+        lhs: BufferedDecryptedMessage,
+        rhs: BufferedDecryptedMessage
+    ) -> Bool {
+        switch (lhs, rhs) {
+        case let (.text(lPlaintext, lSenderClientId, lIdentity), .text(rPlaintext, rSenderClientId, rIdentity)):
+            lPlaintext == rPlaintext && lSenderClientId == rSenderClientId && lIdentity == rIdentity
+        case let (.commit(lIsActive, lIdentity), .commit(rIsActive, rIdentity)):
+            lIsActive == rIsActive && lIdentity == rIdentity
+        case let (.proposal(lDelay, lIdentity), .proposal(rDelay, rIdentity)):
+            lDelay == rDelay && lIdentity == rIdentity
+        default:
+            false
+        }
+    }
+
+}
+
+extension WireIdentity: @retroactive Equatable {
+
+    public static func == (
+        lhs: WireIdentity,
+        rhs: WireIdentity
+    ) -> Bool {
+        guard
+            lhs.status == rhs.status,
+            lhs.x509Identity == rhs.x509Identity,
+            lhs.clientId == rhs.clientId,
+            lhs.credentialType == rhs.credentialType,
+            lhs.thumbprint == rhs.thumbprint
+        else {
+            return false
+        }
+
+        return true
+    }
+
 }

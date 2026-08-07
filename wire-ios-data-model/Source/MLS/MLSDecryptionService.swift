@@ -69,19 +69,6 @@ public enum MLSDecryptResult: Equatable {
 
 }
 
-protocol DecryptedMessageBundle {
-
-    var message: Data? { get }
-    var isActive: Bool { get }
-    var commitDelay: UInt64? { get }
-    var senderClientId: WireCoreCrypto.ClientId? { get }
-    var identity: WireCoreCrypto.WireIdentity { get }
-
-}
-
-extension DecryptedMessage: DecryptedMessageBundle {}
-extension BufferedDecryptedMessage: DecryptedMessageBundle {}
-
 /// A class responsible for decrypting messages for MLS groups.
 /// It is also responsible for processing welcome messages and publishing events
 /// when the epoch changes or new CRL distribution points are found.
@@ -173,15 +160,11 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 context: context
             )
 
-            var results = try decryptedMessage?.bufferedMessages?.compactMap { try decryptResult(from: $0) } ?? []
-
             if let decryptedMessage {
-                if let result = try decryptResult(from: decryptedMessage) {
-                    results.append(result)
-                }
+                return try decryptResults(from: decryptedMessage)
+            } else {
+                return []
             }
-
-            return results
         } catch let CoreCryptoError.Mls(error) {
             WireLogger.mls
                 .error(
@@ -241,24 +224,38 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
     }
 
-    private func decryptResult(from messageBundle: some DecryptedMessageBundle) throws -> MLSDecryptResult? {
-        if let commitDelay = messageBundle.commitDelay {
-            return MLSDecryptResult.proposal(commitDelay)
-        }
-
-        if let message = messageBundle.message {
-            guard let clientId = messageBundle.senderClientId else {
-                // We are guaranteed to have a senderClientId with messages
-                throw MLSMessageDecryptionError.failedToDecodeSenderClientID
+    private func decryptResults(from decryptedMessage: DecryptedMessage) throws -> [MLSDecryptResult] {
+        switch decryptedMessage {
+        case let .text(plaintext, senderClientID, _):
+            let cliendID = try senderClientId(from: senderClientID).clientID
+            return [.message(plaintext, cliendID)]
+        case let .commit(isActive, bufferedMessages, identity):
+            if let bufferedMessages {
+                return try bufferedMessages.compactMap { try decryptResult(from: $0) }
+            } else {
+                return []
             }
-
-            return MLSDecryptResult.message(
-                message,
-                try senderClientId(from: clientId).clientID
-            )
+        case let .proposal(delay, _):
+            return [.proposal(delay ?? 0)]
+        @unknown default:
+            WireLogger.mls.warn("encountered unknown decrypted message type", attributes: .safePublic)
+            return []
         }
+    }
 
-        return nil
+    private func decryptResult(from decryptedMessage: BufferedDecryptedMessage) throws -> MLSDecryptResult? {
+        switch decryptedMessage {
+        case let .text(plaintext, senderClientID, _):
+            let cliendID = try senderClientId(from: senderClientID).clientID
+            return .message(plaintext, cliendID)
+        case .commit:
+            return nil
+        case let .proposal(delay, _):
+            return .proposal(delay ?? 0)
+        @unknown default:
+            WireLogger.mls.warn("encountered unknown buffered decrypted message type", attributes: .safePublic)
+            return nil
+        }
     }
 
     private func senderClientId(from clientID: ClientId) throws -> MLSClientID {

@@ -52,6 +52,44 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         super.tearDown()
     }
 
+    func mockDecryptedMessage(
+        plaintext: Data = .random(byteCount: 1),
+        senderClientId: ClientId? = nil
+    ) throws -> DecryptedMessage {
+        let senderClientId = try senderClientId ?? ClientId(
+            userId: Uuid(uuid: UUID().uuidString),
+            deviceId: DeviceId(id: 1),
+            domain: "wire.com"
+        )
+        return DecryptedMessage.text(
+            plaintext: plaintext,
+            senderClientId: senderClientId,
+            identity: .withBasicCredentials()
+        )
+    }
+
+    func mockBufferedDecryptedMessage(
+        plaintext: Data = .random(byteCount: 1),
+        senderClientId: ClientId? = nil
+    ) throws -> DecryptedMessage {
+        let senderClientId = try senderClientId ?? ClientId(
+            userId: Uuid(uuid: UUID().uuidString),
+            deviceId: DeviceId(id: 1),
+            domain: "wire.com"
+        )
+        let identity = WireIdentity.withBasicCredentials()
+        let bufferedMessage = BufferedDecryptedMessage.text(
+            plaintext: plaintext,
+            senderClientId: senderClientId,
+            identity: identity
+        )
+        return .commit(
+            isActive: true,
+            bufferedMessages: [bufferedMessage],
+            identity: identity
+        )
+    }
+
     // MARK: - Message Decryption
 
     typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
@@ -122,20 +160,18 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         XCTAssertTrue(results.isEmpty)
     }
 
-    func test_Decrypt_ReturnsEmptyResult_WhenCoreCryptoReturnsNil() async throws {
+    func test_Decrypt_ReturnsEmptyResult_WhenCoreCryptoReturnsCommitWithNoBufferedMessages() async throws {
 
         // Given
         let groupID = MLSGroupID.random()
         let messageBytes = [UInt8](Data.random())
+        let decryptedMessage = DecryptedMessage.commit(
+            isActive: true,
+            bufferedMessages: [],
+            identity: .withBasicCredentials()
+        )
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            DecryptedMessage(
-                message: nil,
-                isActive: false,
-                commitDelay: nil,
-                senderClientId: nil,
-                identity: .withBasicCredentials(),
-                bufferedMessages: nil,
-            )
+            decryptedMessage
         }
 
         // When
@@ -155,6 +191,10 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let groupID = MLSGroupID.random()
         let messageData = Data.random()
         let sender = MLSClientID.random()
+        let decryptedMessage = try mockDecryptedMessage(
+            plaintext: messageData,
+            senderClientId: sender.cryptoId()
+        )
 
         var mockDecryptMessageCount = 0
         mockMLSActionExecutor.mockDecryptMessage = {
@@ -162,14 +202,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
             XCTAssertEqual($0, messageData)
             XCTAssertEqual($1, groupID)
-            return DecryptedMessage(
-                message: messageData,
-                isActive: false,
-                commitDelay: nil,
-                senderClientId: try sender.cryptoId(),
-                identity: .withBasicCredentials(),
-                bufferedMessages: nil,
-            )
+            return decryptedMessage
         }
 
         // When
@@ -191,6 +224,10 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let subconversationGroupID = MLSGroupID.random()
         let messageData = Data.random()
         let sender = MLSClientID.random()
+        let decryptedMessage = try mockDecryptedMessage(
+            plaintext: messageData,
+            senderClientId: sender.cryptoId()
+        )
 
         mockSubconversationGroupIDRepository
             .fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
@@ -202,14 +239,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             XCTAssertEqual($0, messageData)
             XCTAssertEqual($1, subconversationGroupID)
 
-            return DecryptedMessage(
-                message: messageData,
-                isActive: false,
-                commitDelay: nil,
-                senderClientId: try sender.cryptoId(),
-                identity: .withBasicCredentials(),
-                bufferedMessages: nil,
-            )
+            return decryptedMessage
         }
 
         // When
@@ -265,6 +295,10 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let groupID = MLSGroupID.random()
         let messageData = Data.random()
         let sender = MLSClientID.random()
+        let decryptedMessage = try mockBufferedDecryptedMessage(
+            plaintext: messageData,
+            senderClientId: sender.cryptoId()
+        )
 
         var mockDecryptMessageCount = 0
         mockMLSActionExecutor.mockDecryptMessage = {
@@ -273,22 +307,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             XCTAssertEqual($0, messageData)
             XCTAssertEqual($1, groupID)
 
-            return DecryptedMessage(
-                message: nil,
-                isActive: false,
-                commitDelay: nil,
-                senderClientId: nil,
-                identity: .withBasicCredentials(),
-                bufferedMessages: [
-                    BufferedDecryptedMessage(
-                        message: messageData,
-                        isActive: false,
-                        commitDelay: nil,
-                        senderClientId: try sender.cryptoId(),
-                        identity: .withBasicCredentials()
-                    )
-                ]
-            )
+            return decryptedMessage
         }
 
         // When
