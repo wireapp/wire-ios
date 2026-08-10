@@ -77,7 +77,6 @@ final class ShareExtensionTests: WireUITestCase {
         }
     }
 
-    /// [critical]
     @MainActor
     private func createTeamAndLoginAsOwner(
         conversation: CreateConversationOption? = nil
