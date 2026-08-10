@@ -22,17 +22,28 @@ import WireUtilities
 
 final class RecurringActionService: RecurringActionServiceInterface {
 
+    private struct LastCheckDateKey: DefaultsKey {
+
+        let actionID: String
+
+        var rawValue: String {
+            "lastCheckDate_\(actionID)"
+        }
+
+    }
+
     // MARK: - Properties
 
     private(set) var actionsByID = [String: RecurringAction]()
-    private let storage: UserDefaults
+    private let storage: PrivateUserDefaults<LastCheckDateKey>
     private let dateProvider: CurrentDateProviding
 
     public init(
+        userID: UUID,
         storage: UserDefaults,
         dateProvider: CurrentDateProviding
     ) {
-        self.storage = storage
+        self.storage = PrivateUserDefaults(userID: userID, storage: storage)
         self.dateProvider = dateProvider
     }
 
@@ -72,8 +83,8 @@ final class RecurringActionService: RecurringActionServiceInterface {
 
     // MARK: - Helpers
 
-    private func key(for actionID: String) -> String {
-        "lastCheckDate_\(actionID)"
+    private func key(for actionID: String) -> LastCheckDateKey {
+        LastCheckDateKey(actionID: actionID)
     }
 
     private func lastCheckDate(for actionID: String) -> Date? {
@@ -82,5 +93,9 @@ final class RecurringActionService: RecurringActionServiceInterface {
 
     func persistLastCheckDate(for actionID: String) {
         storage.set(dateProvider.now, forKey: key(for: actionID))
+    }
+
+    private func clearLastCheckDate(for actionID: String) {
+        storage.removeObject(forKey: key(for: actionID))
     }
 }
