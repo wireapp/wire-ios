@@ -82,9 +82,56 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
         let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
-        XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
+        let conversationTitle = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS[c] %@", groupName)
+        ).firstMatch
+        XCTAssertTrue(conversationTitle.waitForExistence(timeout: 10), "Conversation title mismatch")
 
         return ongoingCallPage
+    }
+
+    private func tapIncomingCallNotification(conversationName: String) {
+        let incomingCallPredicate = NSPredicate(
+            format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@",
+            conversationName,
+            conversationName
+        )
+        let springboardNotification = springboard.descendants(matching: .any)
+            .matching(incomingCallPredicate)
+            .firstMatch
+
+        if springboardNotification.waitAndTap(timeout: 15) {
+            return
+        }
+
+        let appNotification = app.descendants(matching: .any)
+            .matching(incomingCallPredicate)
+            .firstMatch
+
+        XCTAssertTrue(
+            appNotification.waitAndTap(timeout: 3),
+            "Incoming call notification did not appear"
+        )
+    }
+
+    private func verifyOngoingCallBannerAndResume(
+        ongoingCallPage: OngoingCallPage,
+        conversationName: String
+    ) throws -> OngoingCallPage {
+        XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
+
+        let activeConversationPage = try ongoingCallPage.minimizeCallUI()
+
+        XCTAssertTrue(
+            activeConversationPage.openOngoingCallButton.waitForExistence(timeout: 5),
+            "Ongoing call banner did not appear"
+        )
+        XCTAssertTrue(
+            activeConversationPage.conversationTitleButton.label.contains(conversationName),
+            "Account did not switch to the expected call conversation"
+        )
+
+        return try activeConversationPage.resumeCallUI()
     }
 
     /// Team Owner creates group conversation and initiates a group call with members via calling service
