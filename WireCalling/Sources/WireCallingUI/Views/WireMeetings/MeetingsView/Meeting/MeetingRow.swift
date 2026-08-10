@@ -68,6 +68,17 @@ struct MeetingRow: View {
 
                     Menu {
                         Button {
+                            onJoin()
+                        } label: {
+                            Label {
+                                Text(Strings.Actions.joinNow)
+                            } icon: {
+                                Image(.videoCall)
+                                    .renderingMode(.template)
+                            }
+                        }
+
+                        Button {
                             onEdit()
                         } label: {
                             Label(Strings.Actions.edit, systemImage: "pencil")
