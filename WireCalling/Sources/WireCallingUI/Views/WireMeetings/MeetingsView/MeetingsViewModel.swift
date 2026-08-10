@@ -28,7 +28,7 @@ package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    private static let currentDateRefreshInterval: Duration = .seconds(20)
+    private static let currentDateRefreshInterval: Duration = .seconds(60)
 
     private(set) var loadedOccurrences: [MeetingOccurrence] = []
     private(set) var hasMore: Bool = false
