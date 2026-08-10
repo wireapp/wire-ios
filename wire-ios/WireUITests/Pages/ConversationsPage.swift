@@ -48,6 +48,10 @@ class ConversationsPage: PageModel {
         app.buttons.matching(identifier: Locators.ConversationsPage.conversationCell.rawValue)
     }
 
+    var joinCallButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.joinCallButton.rawValue]
+    }
+
     var conversationSearchBar: XCUIElement {
         app.searchFields[Locators.ConversationsPage.conversationSearchBar.rawValue].firstMatch
     }
@@ -268,6 +272,11 @@ class ConversationsPage: PageModel {
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }
         return try ActiveConversationPage()
+    }
+
+    func joinOngoingCall(groupName: String) throws -> OngoingCallPage {
+        joinCallButton.waitAndTap()
+        return try OngoingCallPage()
     }
 
     @discardableResult

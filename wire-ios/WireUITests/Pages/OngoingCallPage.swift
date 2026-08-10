@@ -68,6 +68,17 @@ class OngoingCallPage: PageModel {
         app.buttons[Locators.OngoingCallPage.participantIdentifier(name)]
     }
 
+    func verifyGroupNameAndTimerShowingOnceCallJoined(groupName: String) {
+        XCTAssertTrue(
+            timeLabel.waitForExistence(timeout: 10),
+            "Call timer is not showing"
+        )
+        XCTAssertTrue(
+            app.staticTexts[groupName].waitForExistence(timeout: 5),
+            "Group name mismatch"
+        )
+    }
+
     func videoView(for participantName: String) -> XCUIElement {
         app.descendants(matching: .any).matching(
             NSPredicate(

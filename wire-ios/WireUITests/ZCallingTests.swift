@@ -353,4 +353,46 @@ final class ZCallingTests: WireUITestCase {
                 ]
             )
     }
+
+    @MainActor
+    func testUserCanRejoinOngoingGroupCall_TC_9503_8886() async throws {
+        // GIVEN
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        _ = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let ownerInstanceId = try requireOwnerInstanceId(from: instances)
+
+        // WHEN
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
+        try await callingManager.waitForCurrentCallStatus(
+            instanceId: ownerInstanceId,
+            expectedStatuses: ["ACTIVE"],
+            timeout: 30
+        )
+
+        // THEN
+        ongoingCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
+            groupName: teamAndGroupCallSetup.groupName
+        )
+
+        let conversationsPage = try ongoingCallPage.endOngoingCall()
+
+        // Rejoin the call
+        let rejoinedCallPage = try conversationsPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
+
+        rejoinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
+            groupName: teamAndGroupCallSetup.groupName
+        )
+    }
 }
