@@ -1,4 +1,3 @@
-
 {
     "appLock": {
         "config": {
@@ -10,9 +9,9 @@
         "ttl": "unlimited"
     },
     "apps": {
-      "lockStatus": "locked",
-      "status": "enabled",
-      "ttl": "unlimited"
+        "lockStatus": "locked",
+        "status": "enabled",
+        "ttl": "unlimited"
     },
     "assetAuditLog": {
         "lockStatus": "locked",
@@ -38,25 +37,25 @@
         }
     },
     "cells": {
-      "lockStatus": "locked",
-      "status": "enabled",
-      "ttl": "unlimited"
+        "lockStatus": "locked",
+        "status": "enabled",
+        "ttl": "unlimited"
     },
     "cellsInternal": {
-      "config": {
-        "backend": {
-          "url": "https://example.com"
+        "config": {
+            "backend": {
+                "url": "https://example.com"
+            },
+            "collabora": {
+                "edition": "NO"
+            },
+            "storage": {
+                "teamQuotaBytes": "string"
+            }
         },
-        "collabora": {
-          "edition": "NO"
-        },
-        "storage": {
-          "teamQuotaBytes": "string"
-        }
-      },
-      "lockStatus": "locked",
-      "status": "enabled",
-      "ttl": "unlimited"
+        "lockStatus": "locked",
+        "status": "enabled",
+        "ttl": "unlimited"
     },
     "conversationGuestLinks": {
         "lockStatus": "locked",
@@ -99,7 +98,9 @@
     "mls": {
         "config": {
             "allowedCipherSuites": [
-                1, 2, 3
+                1,
+                2,
+                3
             ],
             "defaultCipherSuite": 2,
             "defaultProtocol": "proteus",
@@ -125,37 +126,12 @@
         "status": "enabled",
         "ttl": "unlimited"
     },
-    "preventAdminlessGroups": {
-      "config": {
-        "deletionTimeout": 7,
-        "deletionTimeoutDuration": "7d",
-        "promotionStrategy": "alphabetical",
-        "reminderTimeoutDurations": [
-          "2d",
-          "4d",
-          "6d"
-        ],
-        "reminderTimeouts": [
-          2,
-          4,
-          6
-        ]
-      },
-      "lockStatus": "unlocked",
-      "status": "enabled",
-      "ttl": "unlimited"
-    },
     "mlsMigration": {
         "config": {
             "finaliseRegardlessAfter": "2021-05-12T10:52:02Z",
             "startTime": "2021-05-12T10:52:02Z"
         },
         "lockStatus": "locked",
-        "status": "enabled",
-        "ttl": "unlimited"
-    },
-    "meetings": {
-        "lockStatus": "unlocked",
         "status": "enabled",
         "ttl": "unlimited"
     },
@@ -208,20 +184,25 @@
     },
     "allowedGlobalOperations": {
         "config": {
-            "mlsConversationReset":true
+            "mlsConversationReset": true
         },
-        "lockStatus":"locked",
-        "status":"enabled",
-        "ttl":"unlimited"
+        "lockStatus": "locked",
+        "status": "enabled",
+        "ttl": "unlimited"
     },
     "consumableNotifications": {
-      "lockStatus": "locked",
-      "status": "enabled",
-      "ttl": "unlimited"
+        "lockStatus": "locked",
+        "status": "enabled",
+        "ttl": "unlimited"
     },
     "simplifiedUserConnectionRequestQRCode": {
-      "lockStatus": "locked",
-      "status": "disabled",
-      "ttl": "unlimited"
+        "lockStatus": "locked",
+        "status": "disabled",
+        "ttl": "unlimited"
+    },
+    "meetings": {
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
     }
 }

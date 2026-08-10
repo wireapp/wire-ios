@@ -95,6 +95,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     func processPayload() async throws {
         // Pull pending update events.
         let eventStream: AsyncStream<[UpdateEvent]>
+        let notifications: [UserNotification]
         let publicKeys = try earService.fetchPublicKeys()
 
         if dependency.journal[.isConsumableNotificationsEnabled] {
@@ -125,7 +126,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                         "syncing events via websocket: \(String(describing: error))",
                         attributes: .incrementalSyncV3, .newNSE
                     )
-                    await pushChannelState.markAsClosed()
                 }
             }
 
@@ -146,6 +146,18 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 currentTask.cancel()
             }
 
+            do {
+                notifications = try await generateNotificationsUseCase(
+                    eventID: eventID
+                ).invoke(
+                    updateEvents: eventStream
+                )
+            } catch {
+                await pushChannelState.markAsClosed()
+                monitoringTask.cancel()
+                throw error
+            }
+
             WireLogger.sync.debug("closing push channel")
             await pushChannelState.markAsClosed()
 
@@ -154,14 +166,12 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         } else {
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
+            notifications = try await generateNotificationsUseCase(
+                eventID: eventID
+            ).invoke(
+                updateEvents: eventStream
+            )
         }
-
-        // Generate notifications from events.
-        let notifications = try await generateNotificationsUseCase(
-            eventID: eventID
-        ).invoke(
-            updateEvents: eventStream
-        )
 
         // Show notifications.
         try await showNotificationsUseCase(
@@ -381,9 +391,22 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private func generateNotificationsUseCase(eventID: UUID) -> GenerateNotificationUseCase {
         GenerateNotificationUseCase(
             conversationEventBuilder: conversationEventBuilder,
+            meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
             userEventBuilder: userEventNotificationBuilder,
             eventID: eventID
         )
+    }
+
+    private var meetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuilder {
+        shared {
+            MeetingDeleteEventNotificationBuilder(
+                meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
+                userLocalStore: userLocalStore,
+                developerFlagStorage: dependency.sharedUserDefaults,
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
     }
 
     private var conversationEventBuilder: ConversationEventNotificationBuilder {
