@@ -461,7 +461,7 @@ final class ZCallingTests: WireUITestCase {
         // THEN
         XCTAssertTrue(activeAccountOngoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
     }
-    
+
     @MainActor
     func testUserCanRejoinOngoingGroupCall_TC_9503_8886() async throws {
         // GIVEN
