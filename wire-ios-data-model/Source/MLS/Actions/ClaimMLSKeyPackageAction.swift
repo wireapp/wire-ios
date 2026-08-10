@@ -119,6 +119,6 @@ extension KeyPackage {
         guard let decodedData = keyPackage.base64DecodedData else {
             return nil
         }
-        return try? .init(bytes: decodedData)
+        return .init(bytes: decodedData)
     }
 }

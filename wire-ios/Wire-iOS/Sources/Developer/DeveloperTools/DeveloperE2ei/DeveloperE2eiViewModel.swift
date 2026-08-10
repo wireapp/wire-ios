@@ -23,6 +23,10 @@ import WireSyncEngine
 final class DeveloperE2eiViewModel: ObservableObject {
 
     private let userSession: ZMUserSession?
+    private var crlExpirationDatesRepository: CRLExpirationDatesRepository? {
+        guard let userSession else { return nil }
+        return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
+    }
 
     static let minimumCertificateExpirationTime = 360
 
@@ -36,6 +40,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     init(userSession: UserSession?) {
         self.userSession = userSession as? ZMUserSession
+        refreshCRLExpirationDates()
         Task {
             await fetchSelfClientCertificate()
         }
@@ -112,6 +117,29 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
             presentingViewController.present(alert, animated: true)
         }
+    }
+
+    func removeAllExpirationDates() {
+        guard let crlExpirationDatesRepository else { return }
+
+        crlExpirationDatesRepository.removeAllExpirationDates()
+        refreshCRLExpirationDates()
+    }
+
+    func refreshCRLExpirationDates() {
+        guard let crlExpirationDatesRepository else { return }
+
+        let expirationDates = crlExpirationDatesRepository.fetchAllCRLExpirationDates()
+
+        var formattedExpiratioDates = [String: String]()
+
+        for (url, date) in expirationDates {
+            let urlString = url.absoluteString
+            let dateString = dateFormatter.string(from: date)
+            formattedExpiratioDates[urlString] = dateString
+        }
+
+        storedCRLExpirationDatesByURL = formattedExpiratioDates
     }
 
     @MainActor

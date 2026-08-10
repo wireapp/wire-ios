@@ -2432,9 +2432,13 @@ internal enum L10n {
           }
         }
         internal enum MessageConversationScheduledForDeletion {
-          /// This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)
-          internal static func text(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.text", String(describing: p1), String(describing: p2), fallback: "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)")
+          /// This group will be automatically deleted on %@, as there are no eligible group admins.
+          internal static func text(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.text", String(describing: p1), fallback: "This group will be automatically deleted on %@, as there are no eligible group admins.")
+          }
+          internal enum ReadMore {
+            /// Read more
+            internal static let text = L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.read_more.text", fallback: "Read more")
           }
         }
         internal enum MessageLegalHold {
@@ -6398,6 +6402,14 @@ internal enum L10n {
     internal enum Sketchpad {
       /// Tap colors to change brush size
       internal static let initialHint = L10n.tr("Localizable", "sketchpad.initial_hint", fallback: "Tap colors to change brush size")
+    }
+    internal enum SsoIdentityChanged {
+      /// Delete data and continue
+      internal static let deleteDataAndContinue = L10n.tr("Localizable", "sso_identity_changed.delete_data_and_continue", fallback: "Delete data and continue")
+      /// This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.
+      internal static let message = L10n.tr("Localizable", "sso_identity_changed.message", fallback: "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.")
+      /// Different identity provider detected
+      internal static let title = L10n.tr("Localizable", "sso_identity_changed.title", fallback: "Different identity provider detected")
     }
     internal enum SystemStatusBar {
       internal enum NoInternet {

@@ -75,7 +75,7 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
         try await migrateDatabaseKeyTypeToBytes(
             path: path,
             oldKey: oldKey,
-            newKey: DatabaseKey(bytes: newKey)
+            newKey: DatabaseKey(key: newKey)
         )
         journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
 
@@ -84,8 +84,11 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
 
     public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
         do {
-            let database = try await Database.open(location: path, key: DatabaseKey(bytes: oldKey))
-            try await database.updateKey(key: DatabaseKey(bytes: newKey))
+            try await updateDatabaseKey(
+                name: path,
+                oldKey: DatabaseKey(key: oldKey),
+                newKey: DatabaseKey(key: newKey)
+            )
         } catch {
             throw CoreCryptoKeyMigrationManagerError.failedToUpdateKey(underlyingError: error)
         }

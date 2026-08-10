@@ -21,10 +21,6 @@ import Foundation
 import WireCoreCrypto
 import WireLogging
 
-enum MLSActionExecutorError: Error {
-    case failedToFindCredential
-}
-
 public protocol MLSActionExecutorProtocol {
 
     /// Processes a welcome message.
@@ -33,8 +29,11 @@ public protocol MLSActionExecutorProtocol {
     ///     - message: The welcome message to process.
     ///     - context: if provided, processing will happen within the existing transaction
     /// - Returns: The group ID of the group the welcome message was for.
+    ///
+    /// If any new CRL distribution points are found, they will be published.
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
-    func processWelcomeMessage(_ message: Welcome, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID
+    func processWelcomeMessage(_ message: Data, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID
 
     /// Creates and sends a commit bundle to add the invitees to a group.
     ///
@@ -42,6 +41,9 @@ public protocol MLSActionExecutorProtocol {
     ///   - invitees: The key packages of the clients to add.
     ///   - groupID: The group ID of the group to add members to.
     /// - Returns: Update events returned by the backend.
+    ///
+    /// If any new CRL distribution points are found, they will be published.
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
     func addMembers(
         _ invitees: [KeyPackage],
@@ -81,6 +83,9 @@ public protocol MLSActionExecutorProtocol {
     ///   - groupID: The group ID of the group to join.
     ///   - groupInfo: The group info of the group to join.
     /// - Returns: Update events returned by the backend.
+    ///
+    /// If any new CRL distribution points are found, they will be published.
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
     func joinGroup(
         _ groupID: MLSGroupID,
@@ -100,6 +105,10 @@ public protocol MLSActionExecutorProtocol {
         in groupID: MLSGroupID,
         context: CoreCryptoContextProtocol?
     ) async throws -> DecryptedMessage?
+
+    /// Returns a publisher that emits the new CRL distribution points when they are found
+
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
 
 }
 
@@ -130,6 +139,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
+    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
     private let featureRepository: LegacyFeatureRepositoryInterface
 
     private var coreCrypto: SafeCoreCrypto {
@@ -197,10 +207,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Actions
 
-    public func processWelcomeMessage(
-        _ message: Welcome,
-        context: CoreCryptoContextProtocol?
-    ) async throws -> MLSGroupID {
+    public func processWelcomeMessage(_ message: Data, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
         if let context {
             try await processWelcomeMessageInternal(message, context: context)
         } else {
@@ -211,14 +218,21 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     }
 
     private func processWelcomeMessageInternal(
-        _ message: Welcome,
+        _ message: Data,
         context: CoreCryptoContextProtocol
     ) async throws -> MLSGroupID {
-        let conversationID = try await context.processWelcomeMessage(
-            welcomeMessage: message
+        let welcomeBundle = try await context.processWelcomeMessage(
+            welcomeMessage: .init(bytes: message),
+            customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
 
-        return MLSGroupID(conversationID)
+        if let newDistributionPoints = CRLsDistributionPoints(
+            from: welcomeBundle.crlNewDistributionPoints
+        ) {
+            onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+        }
+
+        return MLSGroupID(welcomeBundle.id)
     }
 
     public func addMembers(_ invitees: [WireDataModel.KeyPackage], to groupID: MLSGroupID) async throws {
@@ -226,11 +240,17 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             do {
                 WireLogger.mls.info("adding members to group...", attributes: groupID.safeAttributes)
 
-                try await coreCrypto.transaction {
+                let crlNewDistributionPoints = try await coreCrypto.transaction {
                     try await $0.addClientsToConversation(
                         conversationId: groupID.conversationId,
                         keyPackages: invitees.compactMap(\.coreCryptoKeyPackage)
                     )
+                }
+
+                if let newDistributionPoints = CRLsDistributionPoints(
+                    from: crlNewDistributionPoints
+                ) {
+                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
                 }
 
                 WireLogger.mls.info("success: adding members to group", attributes: groupID.safeAttributes)
@@ -309,19 +329,19 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             do {
                 WireLogger.mls.info("joining group via external commit", attributes: groupID.safeAttributes)
                 let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
-                let conversationID = try await coreCrypto.transaction { [self] in
-                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite)
-                    let credentialRef = try await credentialRef(
-                        coreCrypto: coreCrypto.coreCrypto,
-                        ciphersuite: ciphersuite,
+                let conversationInitBundle = try await coreCrypto.transaction {
+                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+                    return try await $0.joinByExternalCommit(
+                        groupInfo: GroupInfo(bytes: groupInfo),
+                        customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
                         credentialType: e2eiIsEnabled ? .x509 : .basic
                     )
-                    return try await $0.joinByExternalCommit(
-                        groupInfo: try GroupInfo(bytes: groupInfo),
-                        credentialRef: credentialRef
-                    )
                 }
-                _ = conversationID
+                if let newDistributionPoints = CRLsDistributionPoints(
+                    from: conversationInitBundle.crlNewDistributionPoints
+                ) {
+                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+                }
                 WireLogger.mls.info("success: joining group via external commit", attributes: groupID.safeAttributes)
             } catch {
                 WireLogger.mls
@@ -372,23 +392,13 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
-    private func credentialRef(
-        coreCrypto: CoreCryptoProtocol,
-        ciphersuite: CipherSuite,
-        credentialType: CredentialType
-    ) async throws -> CredentialRef {
-        guard let credential = try await coreCrypto.findCredentials(
-            clientId: nil,
-            publicKey: nil,
-            cipherSuite: ciphersuite,
-            credentialType: credentialType,
-            earliestValidity: nil
-        ).first else {
-            throw MLSActionExecutorError.failedToFindCredential
-        }
+    // MARK: - CRLs distribution points publisher
 
-        return credential
+    public nonisolated
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
+
 }
 
 extension MLSActionExecutor.Action: CustomDebugStringConvertible {

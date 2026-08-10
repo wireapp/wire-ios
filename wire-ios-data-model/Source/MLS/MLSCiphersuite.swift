@@ -65,7 +65,7 @@ public enum MLSCipherSuite: Int, Codable, Equatable, CustomStringConvertible {
         }
     }
 
-    public var coreCryptoCipherSuite: WireCoreCryptoUniffi.CipherSuite {
+    public var coreCryptoCipherSuite: WireCoreCryptoUniffi.Ciphersuite {
         switch self {
         case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
             .mls128Dhkemx25519Aes128gcmSha256Ed25519
@@ -81,21 +81,6 @@ public enum MLSCipherSuite: Int, Codable, Equatable, CustomStringConvertible {
             .mls256Dhkemx448Chacha20poly1305Sha512Ed448
         case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
             .mls256Dhkemp384Aes256gcmSha384P384
-        }
-    }
-
-    public var coreCryptoSignatureScheme: WireCoreCryptoUniffi.SignatureScheme {
-        switch signature {
-        case .ed25519:
-            .ed25519
-        case .ed448:
-            .ed448
-        case .p256:
-            .ecdsaSecp256r1Sha256
-        case .p384:
-            .ecdsaSecp384r1Sha384
-        case .p521:
-            .ecdsaSecp521r1Sha512
         }
     }
 }
