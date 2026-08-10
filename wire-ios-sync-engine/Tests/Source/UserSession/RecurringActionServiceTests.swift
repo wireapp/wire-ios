@@ -52,9 +52,14 @@ final class RecurringActionServiceTests: XCTestCase {
     func testThatItPerformsActionInitially() async {
         // Given
         var actionPerformed = false
-        sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 1) {
-            actionPerformed = true
-        })
+        sut.registerAction(
+            .init(
+                id: .randomAlphanumerical(length: 5),
+                shouldRunOncePerLaunch: false,
+                interval: 1,
+                perform: { actionPerformed = true }
+            )
+        )
 
         // When
         await sut.performActionsIfNeeded()
@@ -66,9 +71,14 @@ final class RecurringActionServiceTests: XCTestCase {
     func testThatItDoesNotPerformActionTooEarly() async {
         // Given
         var actionPerformed = false
-        sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 3) {
-            actionPerformed = true
-        })
+        sut.registerAction(
+            .init(
+                id: .randomAlphanumerical(length: 5),
+                shouldRunOncePerLaunch: false,
+                interval: 3,
+                perform: { actionPerformed = true }
+            )
+        )
 
         // When
         await sut.performActionsIfNeeded()
@@ -86,9 +96,14 @@ final class RecurringActionServiceTests: XCTestCase {
         let actionID = String.randomAlphanumerical(length: 5)
 
         sut.persistLastCheckDate(for: actionID)
-        sut.registerAction(.init(id: actionID, interval: 100) {
-            actionPerformed = true
-        })
+        sut.registerAction(
+            .init(
+                id: actionID,
+                shouldRunOncePerLaunch: false,
+                interval: 100,
+                perform: { actionPerformed = true }
+            )
+        )
 
         XCTAssertFalse(actionPerformed)
 
@@ -102,9 +117,14 @@ final class RecurringActionServiceTests: XCTestCase {
     func testThatItPerformsActionAgain() async {
         // Given
         var actionPerformed = false
-        sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 3) {
-            actionPerformed = true
-        })
+        sut.registerAction(
+            .init(
+                id: .randomAlphanumerical(length: 5),
+                shouldRunOncePerLaunch: false,
+                interval: 3,
+                perform: { actionPerformed = true }
+            )
+        )
 
         // When
         await sut.performActionsIfNeeded()

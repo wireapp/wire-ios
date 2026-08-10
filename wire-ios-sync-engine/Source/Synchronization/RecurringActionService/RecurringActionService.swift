@@ -40,6 +40,10 @@ final class RecurringActionService: RecurringActionServiceInterface {
 
     public func registerAction(_ action: RecurringAction) {
         actionsByID[action.id] = action
+
+        if action.shouldRunOncePerLaunch {
+            clearLastCheckDate(for: action.id)
+        }
     }
 
     public func performActionsIfNeeded() async {

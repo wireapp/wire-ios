@@ -21,6 +21,10 @@
 extension RecurringAction {
 
     static var dummy: Self {
-        .init(id: .randomAlphanumerical(length: 16), interval: .infinity) {}
+        .init(
+            id: .randomAlphanumerical(length: 16),
+            shouldRunOncePerLaunch: false,
+            interval: .infinity
+        ) {}
     }
 }
