@@ -96,17 +96,11 @@ public extension ZMUserSession {
 
 public extension ZMUserSession {
 
-    /// Generates the local push token if needed, then syncs it with the backend.
-
-    func validatePushToken() {
-        sessionManager?.configurePushToken(session: self)
-    }
-
     /// Discards the cached token and asks APNs for the current one.
     ///
     /// The refreshed token is stored and synchronized with the backend from
     /// `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`.
-    public func refreshPushToken() {
+    func refreshPushToken() {
         PushTokenStorage.pushToken = nil
         sessionManager?.configurePushToken(session: self)
     }
