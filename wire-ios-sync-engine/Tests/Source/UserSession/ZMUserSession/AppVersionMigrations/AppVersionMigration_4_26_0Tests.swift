@@ -22,17 +22,17 @@ import WireDataModelSupport
 
 @testable import WireSyncEngine
 
-struct AppVersionMigration_4_25_0Tests {
+struct AppVersionMigration_4_26_0Tests {
 
     let coreDataHelper = CoreDataStackHelper()
     let modelHelper = ModelHelper()
 
     let stack: CoreDataStack
-    let sut: AppVersionMigration_4_25_0
+    let sut: AppVersionMigration_4_26_0
 
     init() async throws {
         self.stack = try await coreDataHelper.createStack()
-        self.sut = AppVersionMigration_4_25_0(coreDataStack: stack)
+        self.sut = AppVersionMigration_4_26_0(coreDataStack: stack)
     }
 
     @Test("Restores blocked 1:1 conversation that was marked as deleted remotely")
