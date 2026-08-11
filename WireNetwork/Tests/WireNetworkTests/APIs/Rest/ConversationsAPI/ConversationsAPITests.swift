@@ -2238,7 +2238,7 @@ final class ConversationsAPITests: XCTestCase {
             qualifiedUserIDs: [.mockID1],
             unqualifiedUserIDs: [.mockID2],
             name: "test",
-            accessMode: [.code, .invite],
+            accessMode: [.invite],
             accessRoles: [],
             legacyAccessRole: nil,
             teamID: .mockID1,

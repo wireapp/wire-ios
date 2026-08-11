@@ -1,5 +1,5 @@
 curl \
 	--request POST \
 	--header "Content-Type: application/json" \
-	--data "{\"access\":[\"invite\",\"code\"],\"conversation_role\":\"wire_member\",\"creator_client\":\"213248A1-5499-418F-8173-5010D1C1E506\",\"name\":\"test\",\"protocol\":\"mls\",\"receipt_mode\":1,\"team\":{\"managed\":false,\"teamid\":\"213248A1-5499-418F-8173-5010D1C1E506\"}}" \
+	--data "{\"access\":[\"invite\"],\"conversation_role\":\"wire_member\",\"creator_client\":\"213248A1-5499-418F-8173-5010D1C1E506\",\"name\":\"test\",\"protocol\":\"mls\",\"receipt_mode\":1,\"team\":{\"managed\":false,\"teamid\":\"213248A1-5499-418F-8173-5010D1C1E506\"}}" \
 	"/v2/conversations"
