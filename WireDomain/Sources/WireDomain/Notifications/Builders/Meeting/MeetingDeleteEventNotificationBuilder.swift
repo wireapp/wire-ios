@@ -31,6 +31,7 @@ struct MeetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuil
 
     let meetingLocalStore: any MeetingLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
+    // TODO: [WPB-25517] Remove developer flag before release
     let developerFlagStorage: UserDefaults
     let featureConfigLocalStore: any FeatureConfigLocalStoreProtocol
     let accountID: UUID
