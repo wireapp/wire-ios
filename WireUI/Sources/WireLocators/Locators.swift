@@ -365,6 +365,9 @@ public enum Locators {
 
         case theme = "Theme"
         case themeCell
+        case notificationSoundCell
+        case systemNotificationSound
+        case wireNotificationSound
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
     }

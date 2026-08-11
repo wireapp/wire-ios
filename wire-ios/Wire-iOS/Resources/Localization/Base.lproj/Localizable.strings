@@ -1356,6 +1356,10 @@
 "self.settings.notifications.push_notification.title" = "Notifications";
 "self.settings.notifications.push_notification.toogle" = "Message Previews";
 "self.settings.notifications.push_notification.footer" = "Sender name and message on the lock screen and in Notification Center.";
+"self.settings.notifications.sound.title" = "Notification Sound";
+"self.settings.notifications.sound.footer" = "System Default uses the alert sound provided by iOS. Apple does not make its other built-in alert tones available to apps.";
+"self.settings.notifications.sound.system_default.title" = "System Default";
+"self.settings.notifications.sound.wire.title" = "Wire";
 
 "self.settings.notifications.chat_alerts.toggle" = "Message Banners";
 "self.settings.notifications.chat_alerts.footer" = "New messages in other conversations.";
