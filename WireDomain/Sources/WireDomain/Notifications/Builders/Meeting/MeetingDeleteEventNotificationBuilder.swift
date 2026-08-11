@@ -49,7 +49,7 @@ struct MeetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuil
 
         let content = UNMutableNotificationContent()
         content.title = meeting.title
-        content.body = "By \(hostName) canceled this meeting"
+        content.body = String.formated(key: "push.notification.body.senderCanceledMeeting", bundle: .module, hostName)
         content.categoryIdentifier = NotificationCategory.meetingCancellation.rawValue
         content.sound = .default
         content.userInfo = [
