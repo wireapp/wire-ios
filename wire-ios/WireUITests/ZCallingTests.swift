@@ -463,7 +463,7 @@ final class ZCallingTests: WireUITestCase {
     }
 
     @MainActor
-    func testUserCanRejoinOngoingGroupCall_TC_9503_8886() async throws {
+    func testUserCanDeclineAndRejoinOngoingGroupCall_TC_9493_9503_8886() async throws {
         // GIVEN
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
@@ -482,23 +482,24 @@ final class ZCallingTests: WireUITestCase {
             conversationId: teamAndGroupCallSetup.conversationId
         )
 
-        let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
-        try await callingManager.waitForCurrentCallStatus(
-            instanceId: ownerInstanceId,
-            expectedStatuses: ["ACTIVE"],
-            timeout: 30
-        )
+        let incomingCallPage = try IncomingCallPage()
+        XCTAssertTrue(incomingCallPage.declineButton.exists, "Decline button did not show up")
 
         // THEN
-        ongoingCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
+        let conversationsPage = try incomingCallPage.declineIncomingCall()
+        XCTAssertTrue(
+            conversationsPage.joinCallButton.waitForExistence(timeout: 10),
+            "Join call button did not show up after declining the call"
+        )
+
+        let joinedCallPage = try conversationsPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
+        joinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
             groupName: teamAndGroupCallSetup.groupName
         )
 
-        let conversationsPage = try ongoingCallPage.endOngoingCall()
+        let conversationListPage = try joinedCallPage.endOngoingCall()
 
-        // Rejoin the call
-        let rejoinedCallPage = try conversationsPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
-
+        let rejoinedCallPage = try conversationListPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
         rejoinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
             groupName: teamAndGroupCallSetup.groupName
         )
