@@ -263,8 +263,6 @@ final class ZClientViewController: UIViewController {
                 .appendingPathComponent(remoteIdentifier.uuidString, isDirectory: true)
         }
 
-        NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
-
         let featureToken = NotificationCenter.default
             .addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
                 guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
@@ -549,7 +547,7 @@ final class ZClientViewController: UIViewController {
 
     @available(*, deprecated, message: "Please don't access this property, it will be deleted.")
     static var shared: ZClientViewController? {
-        (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter?.zClientViewController
+        UIApplication.shared.sceneDelegates.first?.appRootRouter?.zClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
