@@ -129,13 +129,14 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 }
             }
 
-            let monitoringTask = Task<Void, any Error> { [pushChannelCoordinator] in
+            let (pushChannelClosedStream, pushChannelClosedContinuation) = AsyncStream<Void>.makeStream()
+            let monitoringTask = Task<Void, Never> { [pushChannelCoordinator] in
                 let request = await pushChannelCoordinator.listenForYieldRequests()
-                if Task.isCancelled {
-                    return
-                }
+                guard !Task.isCancelled else { return }
+
                 WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
                 currentTask.cancel()
+                for await _ in pushChannelClosedStream {}
                 request.acknowledge()
                 WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
             }
@@ -154,15 +155,19 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 )
             } catch {
                 await pushChannelState.markAsClosed()
+                pushChannelClosedContinuation.finish()
                 monitoringTask.cancel()
+                await monitoringTask.value
                 throw error
             }
 
             WireLogger.sync.debug("closing push channel")
             await pushChannelState.markAsClosed()
+            pushChannelClosedContinuation.finish()
 
             // no need to monitor anymore let's cancel
             monitoringTask.cancel()
+            await monitoringTask.value
 
         } else {
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
