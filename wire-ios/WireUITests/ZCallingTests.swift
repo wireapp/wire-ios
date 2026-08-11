@@ -82,9 +82,56 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
         let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
-        XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
+        let conversationTitle = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS[c] %@", groupName)
+        ).firstMatch
+        XCTAssertTrue(conversationTitle.waitForExistence(timeout: 10), "Conversation title mismatch")
 
         return ongoingCallPage
+    }
+
+    private func tapIncomingCallNotification(conversationName: String) {
+        let incomingCallPredicate = NSPredicate(
+            format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@",
+            conversationName,
+            conversationName
+        )
+        let springboardNotification = springboard.descendants(matching: .any)
+            .matching(incomingCallPredicate)
+            .firstMatch
+
+        if springboardNotification.waitAndTap(timeout: 15) {
+            return
+        }
+
+        let appNotification = app.descendants(matching: .any)
+            .matching(incomingCallPredicate)
+            .firstMatch
+
+        XCTAssertTrue(
+            appNotification.waitAndTap(timeout: 3),
+            "Incoming call notification did not appear"
+        )
+    }
+
+    private func verifyOngoingCallBannerAndResume(
+        ongoingCallPage: OngoingCallPage,
+        conversationName: String
+    ) throws -> OngoingCallPage {
+        XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
+
+        let activeConversationPage = try ongoingCallPage.minimizeCallUI()
+
+        XCTAssertTrue(
+            activeConversationPage.openOngoingCallButton.waitForExistence(timeout: 5),
+            "Ongoing call banner did not appear"
+        )
+        XCTAssertTrue(
+            activeConversationPage.conversationTitleButton.label.contains(conversationName),
+            "Account did not switch to the expected call conversation"
+        )
+
+        return try activeConversationPage.resumeCallUI()
     }
 
     /// Team Owner creates group conversation and initiates a group call with members via calling service
@@ -352,5 +399,66 @@ final class ZCallingTests: WireUITestCase {
                     "http://screen-bottom"
                 ]
             )
+    }
+
+    @MainActor
+    func testJoinCallForInactiveAndActiveAccountWhenAppInForeground_TC_8900_8897() async throws {
+        // GIVEN
+        let user1InactiveAccountSetup = try await makeTeamAndGroupCallSetup(
+            memberCount: 1,
+            groupName: "InactiveUserGroup"
+        )
+        let user2ActiveAccountSetup = try await makeTeamAndGroupCallSetup(
+            memberCount: 1,
+            groupName: "ActiveUserGroup"
+        )
+
+        _ = try app.loginUser(
+            email: user1InactiveAccountSetup.appUserReceivingCall.email,
+            password: user1InactiveAccountSetup.appUserReceivingCall.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: user2ActiveAccountSetup.appUserReceivingCall.email,
+            password: user2ActiveAccountSetup.appUserReceivingCall.password
+        )
+        .acceptPopup()
+
+        let user1InactiveOwnerInstances = try await createCallingServiceInstances(
+            users: [user1InactiveAccountSetup.teamOwner]
+        )
+        let user1InactiveOwnerInstanceId = try requireOwnerInstanceId(from: user1InactiveOwnerInstances)
+
+        // WHEN - inactive account receives a call while app is in foreground.
+        _ = try await callingServiceClient.startCall(
+            instanceId: user1InactiveOwnerInstanceId,
+            conversationId: user1InactiveAccountSetup.conversationId
+        )
+
+        // Tapping the incoming call notification switches from active account to inactive account while joining the
+        // call.
+        tapIncomingCallNotification(conversationName: user1InactiveAccountSetup.groupName)
+        let ongoingCallPage = try acceptIncomingCall(groupName: user1InactiveAccountSetup.groupName)
+
+        // THEN
+        XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
+
+        ongoingCallPage.endCallButton.tapAndWait()
+        XCTAssertTrue(ongoingCallPage.timeLabel.waitForNonExistence(timeout: 5), "Call timer still visible")
+        try await callingManager.stopCurrentCall(instanceId: user1InactiveOwnerInstanceId)
+
+        // WHEN - same account receives a call while active and app is in foreground.
+        _ = try await callingServiceClient.startCall(
+            instanceId: user1InactiveOwnerInstanceId,
+            conversationId: user1InactiveAccountSetup.conversationId
+        )
+
+        let activeAccountOngoingCallPage = try acceptIncomingCall(groupName: user1InactiveAccountSetup.groupName)
+
+        // THEN
+        XCTAssertTrue(activeAccountOngoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
     }
 }
