@@ -72,18 +72,6 @@ struct PushTokenMetadata {
 
 public extension ZMUserSession {
 
-    @objc static let registerCurrentPushTokenNotificationName = Notification
-        .Name(rawValue: "ZMUserSessionResetPushTokensNotification")
-
-    func registerForRegisteringPushTokenNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(ZMUserSession.registerCurrentPushToken),
-            name: ZMUserSession.registerCurrentPushTokenNotificationName,
-            object: nil
-        )
-    }
-
     internal func registerCurrentPushToken() {
         managedObjectContext.performGroupedBlock {
             self.sessionManager?.configurePushToken(session: self)
