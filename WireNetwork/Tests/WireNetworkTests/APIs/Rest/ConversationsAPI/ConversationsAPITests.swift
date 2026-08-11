@@ -2186,34 +2186,22 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testEmptyAccessRoles_OmitsAccessRoleV2_GivenV0_V2_V3_V8_V10() async throws {
+    func testCreateGroup_DoesNotEncodeEmptyAccessRolesInBody_GivenV0_V2_V3_V8_V10() async throws {
         // given
+        let apiVersions = [APIVersion.v0, .v2, .v3, .v8, .v10]
+        let apiService = MockAPIServiceProtocol.withResponses([])
 
-        let supportedVersions = [APIVersion.v0, .v2, .v3, .v8, .v10]
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
-            repeating: (.ok, "testCreateGroupConversation_givenV0AndSuccessResponse200"),
-            count: supportedVersions.count
-        )
-
-        let validateRequest: (URLRequest) -> Bool = { request in
-            guard let body = request.httpBody,
-                  let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any] else {
-                return false
-            }
-
-            // then
-            // when empty access roles are provided, the field should be omitted from the request body.
-            return json["access_role_v2"] == nil
-        }
-
-        let apiService = MockAPIServiceProtocol.withResponses(mocks, validateRequest: validateRequest)
-
-        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+        let suts = apiVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
-        XCTAssertEqual(suts.count, supportedVersions.count)
+        XCTAssertEqual(suts.count, apiVersions.count)
 
-        for sut in suts {
+        // then
+        try await apiSnapshotHelper.verifyRequest(
+            for: apiVersions,
+            apiService: apiService
+        ) { sut in
+            // when
             _ = try? await sut.createGroupConversation(
                 parameters: Scaffolding.createGroupConversationWithEmptyAccessRolesParameters
             )
