@@ -28,8 +28,8 @@ final class ScreenCurtainWindow: UIWindow {
 
     // MARK: - Life cycle
 
-    override init(frame: CGRect = UIScreen.main.bounds) {
-        super.init(frame: frame)
+    override init(windowScene: UIWindowScene) {
+        super.init(windowScene: windowScene)
 
         rootViewController = UIHostingController(rootView: ScreenCurtainView())
         backgroundColor = .clear
@@ -37,20 +37,6 @@ final class ScreenCurtainWindow: UIWindow {
         windowLevel = .statusBar - 1
         accessibilityIdentifier = "screen_curtain_window"
         accessibilityViewIsModal = true
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(applicationDidBecomeActive),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(applicationWillResignActive),
-            name: UIApplication.willResignActiveNotification,
-            object: nil
-        )
     }
 
     @available(*, unavailable)
@@ -58,16 +44,15 @@ final class ScreenCurtainWindow: UIWindow {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Events
+    // MARK: - Visibility
 
-    @objc
-    func applicationDidBecomeActive() {
-        isHidden = true
+    /// Show the curtain if the current user session requires it.
+    func showIfNeeded() {
+        isHidden = !(userSession?.requiresScreenCurtain ?? false)
     }
 
-    @objc
-    func applicationWillResignActive() {
-        let shouldShow = userSession?.requiresScreenCurtain ?? false
-        isHidden = !shouldShow
+    /// Hide the curtain. Called when the owning scene becomes active.
+    func hide() {
+        isHidden = true
     }
 }

@@ -17,12 +17,18 @@
 //
 
 import Foundation
+import UIKit
+import WireNetwork
 import WireSyncEngine
 
-extension UnauthenticatedSession {
+/// Top level dependencies needed app wide.
+///
+/// - warning: This is really only intended to be accessed by App delegates and scene delegates. In other places,
+/// dependencies should be injected.
+enum AppDependencies {
 
-    static var sharedSession: UnauthenticatedSession? {
-        SessionManager.shared?.unauthenticatedSession
-    }
+    static let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
+    static let pushTokenService = PushTokenService()
+    static let voIPPushManager = VoIPPushManager(application: UIApplication.shared, pushTokenService: pushTokenService)
 
 }
