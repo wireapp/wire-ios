@@ -29,8 +29,6 @@ public final class PushTokenService: PushTokenServiceInterface {
     }
 
     public var onTokenChange: ((PushToken?) -> Void)?
-    public var onRegistrationComplete: (() -> Void)?
-    public var onUnregistrationComplete: (() -> Void)?
 
     // MARK: - Life cycle
 
@@ -62,8 +60,6 @@ public final class PushTokenService: PushTokenServiceInterface {
             WireLogger.push.error("registering push token failed: \(error)")
             throw error
         }
-
-        onRegistrationComplete?()
     }
 
     public func unregisterRemoteTokens(
@@ -97,8 +93,6 @@ public final class PushTokenService: PushTokenServiceInterface {
             WireLogger.push.error("unregister remote tokens, failed: \(error)")
             throw error
         }
-
-        onUnregistrationComplete?()
     }
 
 }
@@ -110,8 +104,6 @@ public protocol PushTokenServiceInterface: AnyObject {
     var localToken: PushToken? { get }
 
     var onTokenChange: ((PushToken?) -> Void)? { get set }
-    var onRegistrationComplete: (() -> Void)? { get set }
-    var onUnregistrationComplete: (() -> Void)? { get set }
 
     func storeLocalToken(_ token: PushToken?)
 
