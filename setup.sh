@@ -126,6 +126,10 @@ echo "ℹ️ Overriding configuration if specified..."
 scripts/override-configuration_if_needed.sh "${REMAINING_ARGS[@]+"${REMAINING_ARGS[@]}"}"
 echo ""
 
+echo "ℹ️ [CodeGen] Generate developer flag defaults from Developer-Flags.xcconfig..."
+scripts/generate-developer-flag-defaults.sh
+echo ""
+
 if [[ "$TEST_ONLY" == "false" ]]; then
     echo "ℹ️ Generate Licenses"
     if [[ -n "${CI-}" ]]; then
