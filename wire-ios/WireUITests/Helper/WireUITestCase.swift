@@ -30,6 +30,7 @@ class WireUITestCase: XCTestCase {
     var ssoHelper: SSOHelper!
     let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
+    var callingManager: CallingManager!
     var uiTestConfig = UITestConfig()
     private var notificationPermissionMonitor: NSObjectProtocol?
 
@@ -39,6 +40,7 @@ class WireUITestCase: XCTestCase {
         XCUIApplication().dismissAllowIfPresent()
         XCUIApplication().terminate()
         callingServiceClient = try CallingServiceClient()
+        callingManager = CallingManager(client: callingServiceClient)
         registerNotificationPermissionMonitor()
         uiTestConfig.useTripleTapForShakeGesture = true
         uiTestConfig.useMockAudioRecorder = true
@@ -70,7 +72,7 @@ class WireUITestCase: XCTestCase {
         await callingServiceClient.destroyCreatedInstances()
         await testServicesClient.deleteInstances()
         await UserHelper.deleteCreatedUsers()
-        await ssoHelper.cleanUpOktaResources()
+        await ssoHelper.cleanUpSSOResources()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {

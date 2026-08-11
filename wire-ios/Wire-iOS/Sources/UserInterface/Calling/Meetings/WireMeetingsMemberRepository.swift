@@ -41,7 +41,15 @@ struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked
         )
         return (result.contacts + result.teamMembers).compactMap { result in
             guard let qualifiedID = result.qualifiedID(localDomain: nil) else { return MeetingMember?.none }
-            return MeetingMember(qualifiedID: .init(qualifiedID), name: result.name ?? "", handle: result.handle ?? "")
+            return MeetingMember(
+                qualifiedID: .init(qualifiedID),
+                name: result.name ?? "",
+                handle: result.handle ?? "",
+                isSelfUser: false,
+                initials: "",
+                accentColor: .default,
+                avatarImageData: nil
+            )
         }.sorted { $0.name < $1.name }
     }
 

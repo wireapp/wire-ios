@@ -40,6 +40,7 @@ class IncomingCallPage: PageModel {
 
     func acceptIncommingCall() throws -> OngoingCallPage {
         acceptButton.tap()
+        app.dismissAllowIfPresent()
         return try OngoingCallPage()
     }
 }

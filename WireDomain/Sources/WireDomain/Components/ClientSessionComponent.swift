@@ -707,9 +707,27 @@ public final class ClientSessionComponent {
         lockRepository: resetMLSConversationLockRepository
     )
 
+    private lazy var adminlessReminderEventProcessor = ConversationAdminlessReminderEventProcessor(
+        repository: conversationRepository
+    )
+
     public private(set) lazy var meetingRepository = MeetingRepository(
         meetingsAPI: meetingsAPI,
         localStore: MeetingLocalStore(context: syncContext)
+    )
+
+    private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
+        repository: meetingRepository,
+        conversationRepository: conversationRepository
+    )
+
+    private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
+        repository: meetingRepository
+    )
+
+    private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
+        repository: meetingRepository,
+        conversationRepository: conversationRepository
     )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
@@ -728,7 +746,8 @@ public final class ClientSessionComponent {
         renameEventProcessor: conversationRenameEventProcessor,
         typingEventProcessor: conversationTypingEventProcessor,
         addPermissionEventProcessor: addPermissionEventProcessor,
-        mlsResetEventProcessor: mlsResetEventProcessor
+        mlsResetEventProcessor: mlsResetEventProcessor,
+        adminlessReminderEventProcessor: adminlessReminderEventProcessor
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {
@@ -763,12 +782,19 @@ public final class ClientSessionComponent {
             createEventProcessor: teamCreateEventProcessor
         )
 
+        let meetingEventProcessor = MeetingEventProcessor(
+            createEventProcessor: meetingCreateEventProcessor,
+            deleteEventProcessor: meetingDeleteEventProcessor,
+            updateEventProcessor: meetingUpdateEventProcessor
+        )
+
         return UpdateEventProcessor(
             conversationEventProcessor: conversationEventProcessor,
             featureConfigEventProcessor: featureConfigEventProcessor,
             federationEventProcessor: federationEventProcessor,
             userEventProcessor: userEventProcessor,
-            teamEventProcessor: teamEventProcessor
+            teamEventProcessor: teamEventProcessor,
+            meetingEventProcessor: meetingEventProcessor
         )
     }()
 
@@ -814,6 +840,24 @@ public final class ClientSessionComponent {
             conversationID: conversationID,
             syncContext: syncContext
         )
+    }
+
+    /// Debug-only: simulates receiving a `conversation.adminless-reminder` backend event, routing it through
+    /// the same `conversationEventProcessor` a real incoming event would use, so it can be verified without
+    /// waiting on the backend to actually send one.
+    public func debugSimulateAdminlessReminderEvent(
+        conversationID: WireDataModel.QualifiedID,
+        scheduledDeletionDate: Date
+    ) async throws {
+        let event = ConversationAdminlessReminderEvent(
+            conversationID: WireNetwork.ConversationID(id: conversationID.uuid, domain: conversationID.domain),
+            senderID: WireNetwork.UserID(id: selfUserID, domain: backendMetadata.domain),
+            timestamp: Date(),
+            scheduledDeletionDate: scheduledDeletionDate
+        )
+
+        try await conversationEventProcessor.processEvent(.adminlessReminder(event))
+        try await databaseSaver.save()
     }
 
     // MARK: - Other

@@ -32,19 +32,24 @@
 "wireMeetings.list.header.tomorrow" = "Завтра";
 "wireMeetings.list.header.yesterday" = "Вчера";
 "wireMeetings.list.header.ongoing" = "В настоящее время";
+"wireMeetings.list.attending" = "Участвует";
 "wireMeetings.list.actions.edit" = "Изменить встречу";
 "wireMeetings.list.actions.delete" = "Удалить встречу для всех";
 "wireMeetings.list.delete.alert.title" = "Удалить встречу для всех";
 "wireMeetings.list.delete.alert.subtitle" = "Встреча будет удалена для вас и всех остальных. Все участники будут уведомлены.";
 "wireMeetings.list.delete.alert.delete.button" = "Удалить";
 "wireMeetings.list.delete.alert.cancel.button" = "Отмена";
+"wireMeetings.list.delete.error.alert.title" = "Что-то пошло не так";
+"wireMeetings.list.delete.error.alert.ok" = "OK";
 
 // MARK: - Schedule a meeting
 
 "wireMeetings.schedule.now.title" = "Встречи сейчас";
 "wireMeetings.schedule.future.title" = "Новая встреча";
+"wireMeetings.schedule.edit.title" = "Изменить встречу";
 "wireMeetings.schedule.cancel.button" = "Отмена";
 "wireMeetings.schedule.schedule.button" = "Расписание";
+"wireMeetings.schedule.save.button" = "Подтвердить";
 "wireMeetings.schedule.select.button" = "Выбрать";
 "wireMeetings.schedule.start.button" = "Начать";
 "wireMeetings.schedule.setupTitle.header" = "Название";
@@ -63,6 +68,7 @@
 "wireMeetings.schedule.time.daily" = "Ежедневно";
 "wireMeetings.schedule.time.weekly" = "Еженедельно";
 "wireMeetings.schedule.time.everyTwoWeeks" = "Каждые 2 недели";
+"wireMeetings.schedule.time.everyFourWeeks" = "Каждые 4 недели";
 "wireMeetings.schedule.time.monthly" = "Ежемесячно";
 "wireMeetings.schedule.time.yearly" = "Ежегодно";
 "wireMeetings.schedule.members.title" = "Участники";

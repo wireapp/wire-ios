@@ -82,15 +82,62 @@ final class ZCallingTests: WireUITestCase {
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
         let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
-        XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
+        let conversationTitle = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS[c] %@", groupName)
+        ).firstMatch
+        XCTAssertTrue(conversationTitle.waitForExistence(timeout: 10), "Conversation title mismatch")
 
         return ongoingCallPage
+    }
+
+    private func tapIncomingCallNotification(conversationName: String) {
+        let incomingCallPredicate = NSPredicate(
+            format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@",
+            conversationName,
+            conversationName
+        )
+        let springboardNotification = springboard.descendants(matching: .any)
+            .matching(incomingCallPredicate)
+            .firstMatch
+
+        if springboardNotification.waitAndTap(timeout: 15) {
+            return
+        }
+
+        let appNotification = app.descendants(matching: .any)
+            .matching(incomingCallPredicate)
+            .firstMatch
+
+        XCTAssertTrue(
+            appNotification.waitAndTap(timeout: 3),
+            "Incoming call notification did not appear"
+        )
+    }
+
+    private func verifyOngoingCallBannerAndResume(
+        ongoingCallPage: OngoingCallPage,
+        conversationName: String
+    ) throws -> OngoingCallPage {
+        XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
+
+        let activeConversationPage = try ongoingCallPage.minimizeCallUI()
+
+        XCTAssertTrue(
+            activeConversationPage.openOngoingCallButton.waitForExistence(timeout: 5),
+            "Ongoing call banner did not appear"
+        )
+        XCTAssertTrue(
+            activeConversationPage.conversationTitleButton.label.contains(conversationName),
+            "Account did not switch to the expected call conversation"
+        )
+
+        return try activeConversationPage.resumeCallUI()
     }
 
     /// Team Owner creates group conversation and initiates a group call with members via calling service
     /// [critical]
     @MainActor
-    func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
+    func testMultipleUsersJoiningGroupCall_TC_8910_8880() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 
@@ -112,7 +159,7 @@ final class ZCallingTests: WireUITestCase {
         )
 
         let acceptingIds = instances.dropFirst().compactMap(\.id).filter { !$0.isEmpty }
-        let responses = try await callingServiceClient.acceptNextCalls(
+        let responses = try await callingManager.acceptNextCalls(
             instanceIds: acceptingIds,
             conversationId: teamAndGroupCallSetup.conversationId
         )
@@ -156,7 +203,7 @@ final class ZCallingTests: WireUITestCase {
 
         let acceptingIds = instances.dropFirst().compactMap(\.id).filter { !$0.isEmpty }
         if !acceptingIds.isEmpty {
-            _ = try await callingServiceClient.acceptNextCalls(
+            _ = try await callingManager.acceptNextCalls(
                 instanceIds: acceptingIds,
                 conversationId: teamAndGroupCallSetup.conversationId
             )
@@ -234,8 +281,184 @@ final class ZCallingTests: WireUITestCase {
             .resumeCallUI()
 
         // THEN
-        _ = try ongoingCallPage.hangUpOngoingCall()
-            .verifyNoCallOngoingAfterHangUp()
+        let activeConversationPage = try ongoingCallPage.hangUpOngoingCall()
+        XCTAssertTrue(
+            activeConversationPage.openOngoingCallButton.waitForNonExistence(timeout: 4),
+            "Ongoing call still visible after hanging up the call"
+        )
+    }
 
+    /// Call participant switches from audio call to video call and back
+    /// [critical]
+    @MainActor
+    func testSwitchBetweenAudioAndVideoCallAndShowsParticipantVideo_TC_8888_9497() async throws {
+
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        let conversationsPage = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let acceptingIds = instances.compactMap(\.id).filter { !$0.isEmpty }
+        XCTAssertEqual(acceptingIds.count, teamAndGroupCallSetup.callingServiceUsers.count)
+
+        async let acceptingResponses = callingManager.acceptNextCalls(
+            instanceIds: acceptingIds,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let ongoingCallPage = try conversationsPage
+            .openConversation()
+            .initiateCall()
+
+        let responses = try await acceptingResponses
+        XCTAssertEqual(responses.count, acceptingIds.count)
+
+        for instanceId in acceptingIds {
+            try await callingManager.waitForCurrentCallStatus(
+                instanceId: instanceId,
+                expectedStatuses: ["ACTIVE"],
+                timeout: 30
+            )
+        }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
+
+        try ongoingCallPage.turnOnVideo()
+
+        for instanceId in acceptingIds {
+            try await callingManager.switchVideoOn(instanceId: instanceId)
+        }
+
+        try await callingManager.verifyPeerConnections(
+            instanceIds: acceptingIds,
+            expectedCount: 1,
+            timeout: 30
+        )
+
+        XCTAssertTrue(
+            ongoingCallPage.turnOffCameraButton.waitForExistence(timeout: 10),
+            "Camera did not switch on"
+        )
+
+        for callingServiceUser in teamAndGroupCallSetup.callingServiceUsers {
+            _ = ongoingCallPage.isOtherParticipantVideoTileVisible(for: callingServiceUser.name)
+        }
+
+        try ongoingCallPage.turnOffVideo()
+        XCTAssertTrue(
+            ongoingCallPage.turnOnCameraButton.waitForExistence(timeout: 10),
+            "Camera did not switch off"
+        )
+    }
+
+    /// [critical]
+    @MainActor
+    func testParticipantCanSeeSharedScreen_TC_8891() async throws {
+        // GIVEN
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        _ = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let ownerInstanceId = try requireOwnerInstanceId(from: instances)
+
+        // WHEN
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
+        try await callingManager.waitForCurrentCallStatus(
+            instanceId: ownerInstanceId,
+            expectedStatuses: ["ACTIVE"],
+            timeout: 30
+        )
+        _ = try await callingManager.switchScreenSharingOn(instanceId: ownerInstanceId)
+
+        // THEN
+        ongoingCallPage
+            .isOtherParticipantScreenSharingVisible(for: teamAndGroupCallSetup.teamOwner.name)
+            .verifyScreenSharingQRCodes(
+                for: teamAndGroupCallSetup.teamOwner.name,
+                // Calling service screen-share test image uses the same QR marker payloads as zautomation.
+                expectedContentInQRCode: [
+                    "http://screen-right",
+                    "http://screen-bottom"
+                ]
+            )
+    }
+
+    @MainActor
+    func testJoinCallForInactiveAndActiveAccountWhenAppInForeground_TC_8900_8897() async throws {
+        // GIVEN
+        let user1InactiveAccountSetup = try await makeTeamAndGroupCallSetup(
+            memberCount: 1,
+            groupName: "InactiveUserGroup"
+        )
+        let user2ActiveAccountSetup = try await makeTeamAndGroupCallSetup(
+            memberCount: 1,
+            groupName: "ActiveUserGroup"
+        )
+
+        _ = try app.loginUser(
+            email: user1InactiveAccountSetup.appUserReceivingCall.email,
+            password: user1InactiveAccountSetup.appUserReceivingCall.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: user2ActiveAccountSetup.appUserReceivingCall.email,
+            password: user2ActiveAccountSetup.appUserReceivingCall.password
+        )
+        .acceptPopup()
+
+        let user1InactiveOwnerInstances = try await createCallingServiceInstances(
+            users: [user1InactiveAccountSetup.teamOwner]
+        )
+        let user1InactiveOwnerInstanceId = try requireOwnerInstanceId(from: user1InactiveOwnerInstances)
+
+        // WHEN - inactive account receives a call while app is in foreground.
+        _ = try await callingServiceClient.startCall(
+            instanceId: user1InactiveOwnerInstanceId,
+            conversationId: user1InactiveAccountSetup.conversationId
+        )
+
+        // Tapping the incoming call notification switches from active account to inactive account while joining the
+        // call.
+        tapIncomingCallNotification(conversationName: user1InactiveAccountSetup.groupName)
+        let ongoingCallPage = try acceptIncomingCall(groupName: user1InactiveAccountSetup.groupName)
+
+        // THEN
+        XCTAssertTrue(ongoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
+
+        ongoingCallPage.endCallButton.tapAndWait()
+        XCTAssertTrue(ongoingCallPage.timeLabel.waitForNonExistence(timeout: 5), "Call timer still visible")
+        try await callingManager.stopCurrentCall(instanceId: user1InactiveOwnerInstanceId)
+
+        // WHEN - same account receives a call while active and app is in foreground.
+        _ = try await callingServiceClient.startCall(
+            instanceId: user1InactiveOwnerInstanceId,
+            conversationId: user1InactiveAccountSetup.conversationId
+        )
+
+        let activeAccountOngoingCallPage = try acceptIncomingCall(groupName: user1InactiveAccountSetup.groupName)
+
+        // THEN
+        XCTAssertTrue(activeAccountOngoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
     }
 }
