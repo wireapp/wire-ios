@@ -391,10 +391,18 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private func generateNotificationsUseCase(eventID: UUID) -> GenerateNotificationUseCase {
         GenerateNotificationUseCase(
             conversationEventBuilder: conversationEventBuilder,
-            meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
+            meetingEventBuilder: meetingEventNotificationBuilder,
             userEventBuilder: userEventNotificationBuilder,
             eventID: eventID
         )
+    }
+
+    private var meetingEventNotificationBuilder: MeetingEventNotificationBuilder {
+        shared {
+            MeetingEventNotificationBuilder(
+                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder
+            )
+        }
     }
 
     private var meetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuilder {

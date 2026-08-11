@@ -32,19 +32,19 @@ protocol GenerateNotificationUseCaseProtocol {
 struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
     private let conversationEventBuilder: any ConversationEventNotificationBuilderProtocol
-    private let meetingDeleteEventBuilder: any MeetingDeleteEventNotificationBuilderProtocol
+    private let meetingEventBuilder: any MeetingEventNotificationBuilderProtocol
     private let userEventBuilder: any UserEventNotificationBuilderProtocol
     private let eventID: UUID
     private let logger = WireLogger.notifications
 
     init(
         conversationEventBuilder: any ConversationEventNotificationBuilderProtocol,
-        meetingDeleteEventBuilder: any MeetingDeleteEventNotificationBuilderProtocol,
+        meetingEventBuilder: any MeetingEventNotificationBuilderProtocol,
         userEventBuilder: any UserEventNotificationBuilderProtocol,
         eventID: UUID
     ) {
         self.conversationEventBuilder = conversationEventBuilder
-        self.meetingDeleteEventBuilder = meetingDeleteEventBuilder
+        self.meetingEventBuilder = meetingEventBuilder
         self.userEventBuilder = userEventBuilder
         self.eventID = eventID
     }
@@ -110,9 +110,9 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             )
             return notification.flatMap { [$0] }
 
-        case let .meeting(.delete(meetingDeleteEvent)):
-            let notification = await meetingDeleteEventBuilder.buildContent(
-                event: meetingDeleteEvent
+        case let .meeting(meetingEvent):
+            let notification = await meetingEventBuilder.buildContent(
+                event: meetingEvent
             )
             return notification.flatMap { [$0] }
 

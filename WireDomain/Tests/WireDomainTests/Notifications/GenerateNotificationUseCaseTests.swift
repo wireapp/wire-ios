@@ -38,7 +38,9 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
 
         sut = GenerateNotificationUseCase(
             conversationEventBuilder: conversationEventBuilder,
-            meetingDeleteEventBuilder: meetingDeleteEventBuilder,
+            meetingEventBuilder: MeetingEventNotificationBuilder(
+                meetingDeleteEventBuilder: meetingDeleteEventBuilder
+            ),
             userEventBuilder: userEventBuilder,
             eventID: .mockID1
         )
