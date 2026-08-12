@@ -45,6 +45,9 @@ public final class PushTokenService: PushTokenServiceInterface {
         if DeveloperFlag.noAPNSTokenCache.isOn {
             inMemoryToken = token
             onTokenChange?(token)
+
+            // Avoid stale cache in the case where the user later disables the developer flag.
+            PushTokenStorage.pushToken = nil
             return
         }
 
