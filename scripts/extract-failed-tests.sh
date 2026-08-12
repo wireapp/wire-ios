@@ -65,8 +65,16 @@ extract_failed_cases_from_path() {
       def test_runs:
         [(.children // [])[] | select(.nodeType? == "Repetition" or .nodeType? == "Test Case Run")];
 
+      def normalize_result:
+        ((. // "") | ascii_downcase) as $result
+        | if $result == "success" or $result == "passed" then "passed"
+          elif $result == "failure" or $result == "failed" or $result == "error" then "failed"
+          elif $result == "skipped" or $result == "expected failure" then "skipped"
+          else $result
+          end;
+
       def final_result:
-        ((test_runs | if length > 0 then .[-1].result? else .result? end) // "" | ascii_downcase);
+        (test_runs | if length > 0 then .[-1].result? else .result? end) | normalize_result;
 
       def testiny_ids_from_text:
         (tostring | gsub("[^A-Za-z0-9_]"; "_")) as $text
