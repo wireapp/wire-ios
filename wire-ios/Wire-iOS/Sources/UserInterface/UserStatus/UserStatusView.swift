@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 /// A title view subclass that displays the availability of the user.
@@ -112,6 +113,7 @@ final class UserStatusView: TitleView {
             showInteractiveIcon: showInteractiveIcon
         )
 
+        accessibilityIdentifier = Locators.UserProfilePage.status.rawValue
         accessibilityValue = availability != .none ? availability.localizedName : ""
         if options.contains(.allowSettingStatus) {
             accessibilityTraits = .button

@@ -123,9 +123,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             let callerName = payload["callerName"] as? String,
             let hasVideo = payload["hasVideo"] as? Bool
         else {
-            Self.logger.critical("error: processing NSE push: invalid payload - \(payload)")
-            completion()
-            return
+            fatalError("error: processing NSE push: invalid payload - \(payload)")
         }
 
         backgroundActivityFactory.resume()

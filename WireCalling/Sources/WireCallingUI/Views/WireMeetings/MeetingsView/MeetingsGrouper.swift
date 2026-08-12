@@ -19,7 +19,7 @@
 package import Foundation
 package import WireCallingDomain
 
-package typealias GroupedMeetings = [(day: Date, meetings: [Meeting])]
+package typealias GroupedMeetings = [(day: Date, meetings: [MeetingOccurrence])]
 
 package struct MeetingsGrouper {
 
@@ -28,9 +28,9 @@ package struct MeetingsGrouper {
     package init() {}
 
     package func group(
-        _ meetings: [Meeting]
+        _ meetings: [MeetingOccurrence]
     ) -> GroupedMeetings {
-        let sortMeetings: ([Meeting]) -> [Meeting] = { meetings in
+        let sortMeetings: ([MeetingOccurrence]) -> [MeetingOccurrence] = { meetings in
             meetings.sorted {
                 if $0.start != $1.start {
                     $0.start < $1.start

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class MLSAPIV16: MLSAPIV15 {
+class MLSAPIV16: MLSAPIV15 {
 
     override var apiVersion: APIVersion {
         .v16

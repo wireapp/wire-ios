@@ -42,6 +42,10 @@ public enum UpdateEvent: Equatable, Sendable {
 
     case team(TeamEvent)
 
+    /// A meeting event.
+
+    case meeting(MeetingEvent)
+
     /// An event that is not known by the client.
 
     case unknown(eventType: String)

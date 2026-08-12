@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           lfs: 'true'
           token: ${{ secrets.SUBMODULE_PAT }}
@@ -62,8 +62,9 @@ jobs:
         env:
           LTS_RELEASE: ${{ vars.LTS_RELEASE }}
           GOV_RELEASE: ${{ vars.GOV_RELEASE }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          scripts/determine-cherry-pick-target.py "${{ github.event.pull_request.base.ref }}"
+          scripts/determine-cherry-pick-target.py "$BASE_REF"
 
       - name: Cherry pick to target branch
         uses: wireapp/action-auto-cherry-pick@a4a732fe8b79e3fae70362e6271b8982be5b1bc1 # v1.0.2
