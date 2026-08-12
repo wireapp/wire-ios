@@ -40,9 +40,7 @@ extension SessionManager {
     public func configurePushToken(session: ZMUserSession) {
         if DeveloperFlag.noAPNSTokenCache.isOn {
             WireLogger.push.info("configurePushToken: requesting fresh token from iOS")
-            session.managedObjectContext.performGroupedBlock {
-                self.application.registerForRemoteNotifications()
-            }
+            application.registerForRemoteNotifications()
             return
         }
 
