@@ -50,6 +50,28 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         super.tearDown()
     }
 
+    // MARK: Push token
+
+    func testThatItClearsCachedPushTokenBeforeRequestingARefresh() {
+        // Given
+        let previousPushToken = PushTokenStorage.pushToken
+        defer { PushTokenStorage.pushToken = previousPushToken }
+
+        PushTokenStorage.pushToken = PushToken(
+            deviceToken: Data(repeating: 0x41, count: 10),
+            appIdentifier: "com.wire",
+            transportType: "APNS"
+        )
+        mockSessionManager.updatePushTokenCalled = false
+
+        // When
+        sut.refreshPushToken()
+
+        // Then
+        XCTAssertNil(PushTokenStorage.pushToken)
+        XCTAssertTrue(mockSessionManager.updatePushTokenCalled)
+    }
+
     // MARK: Tests
 
     func testThatItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {

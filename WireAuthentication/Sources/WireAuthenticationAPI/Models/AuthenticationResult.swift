@@ -51,6 +51,10 @@ public struct AuthenticationResult: Equatable, Hashable, Sendable {
 
     public let proxyCredentials: ProxyCredentials?
 
+    /// The identity provider selected by multi-ingress email discovery, if applicable.
+
+    public package(set) var multiIngressIdentityProviderID: UUID?
+
     public init(
         userID: UUID,
         cookies: [HTTPCookie],
