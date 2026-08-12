@@ -95,7 +95,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     func processPayload() async throws {
         // Pull pending update events.
         let eventStream: AsyncStream<[UpdateEvent]>
-        let notifications: [UserNotification]
         let publicKeys = try earService.fetchPublicKeys()
 
         if dependency.journal[.isConsumableNotificationsEnabled] {
@@ -126,17 +125,17 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                         "syncing events via websocket: \(String(describing: error))",
                         attributes: .incrementalSyncV3, .newNSE
                     )
+                    await pushChannelState.markAsClosed()
                 }
             }
 
-            let (pushChannelClosedStream, pushChannelClosedContinuation) = AsyncStream<Void>.makeStream()
-            let monitoringTask = Task<Void, Never> { [pushChannelCoordinator] in
+            let monitoringTask = Task<Void, any Error> { [pushChannelCoordinator] in
                 let request = await pushChannelCoordinator.listenForYieldRequests()
-                guard !Task.isCancelled else { return }
-
+                if Task.isCancelled {
+                    return
+                }
                 WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
                 currentTask.cancel()
-                for await _ in pushChannelClosedStream {}
                 request.acknowledge()
                 WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
             }
@@ -147,36 +146,22 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 currentTask.cancel()
             }
 
-            do {
-                notifications = try await generateNotificationsUseCase(
-                    eventID: eventID
-                ).invoke(
-                    updateEvents: eventStream
-                )
-            } catch {
-                await pushChannelState.markAsClosed()
-                pushChannelClosedContinuation.finish()
-                monitoringTask.cancel()
-                await monitoringTask.value
-                throw error
-            }
-
             WireLogger.sync.debug("closing push channel")
             await pushChannelState.markAsClosed()
-            pushChannelClosedContinuation.finish()
 
             // no need to monitor anymore let's cancel
             monitoringTask.cancel()
-            await monitoringTask.value
 
         } else {
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
-            notifications = try await generateNotificationsUseCase(
-                eventID: eventID
-            ).invoke(
-                updateEvents: eventStream
-            )
         }
+
+        // Generate notifications from events.
+        let notifications = try await generateNotificationsUseCase(
+            eventID: eventID
+        ).invoke(
+            updateEvents: eventStream
+        )
 
         // Show notifications.
         try await showNotificationsUseCase(

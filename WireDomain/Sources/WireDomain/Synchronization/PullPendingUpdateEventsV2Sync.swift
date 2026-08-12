@@ -70,7 +70,6 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     }
 
     public func pull() async throws {
-        defer { continuation.finish() }
         let syncMarker = syncMarkerGenerator()
 
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
