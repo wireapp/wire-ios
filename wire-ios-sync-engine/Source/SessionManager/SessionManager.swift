@@ -436,7 +436,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
@@ -547,7 +547,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         proxyCredentials: WireTransport.ProxyCredentials?,
@@ -636,7 +636,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         pushTokenService.onTokenChange = { [weak self] _ in
             guard
                 let self,
-                let session = activeUserSession
+                let session = activeUserSession ?? backgroundUserSessions.values.first
             else {
                 return
             }
