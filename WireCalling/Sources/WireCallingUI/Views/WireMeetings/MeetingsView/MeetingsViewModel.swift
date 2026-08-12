@@ -28,8 +28,6 @@ package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    private static let currentDateRefreshInterval: Duration = .seconds(60)
-
     private(set) var loadedOccurrences: [MeetingOccurrence] = []
     private(set) var hasMore: Bool = false
     var hasDeleteError = false
@@ -122,7 +120,7 @@ package final class MeetingsViewModel {
             refreshCurrentDate()
 
             do {
-                try await Task.sleep(for: Self.currentDateRefreshInterval)
+                try await Task.sleep(for: durationUntilNextMinute())
             } catch {
                 return
             }
@@ -131,6 +129,14 @@ package final class MeetingsViewModel {
 
     func refreshCurrentDate() {
         currentDate = currentDateProvider.now
+    }
+
+    /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
+    /// minute boundary rather than a fixed interval from when the screen appeared.
+    func durationUntilNextMinute() -> Duration {
+        let secondsIntoMinute = currentDateProvider.now.timeIntervalSince1970
+            .truncatingRemainder(dividingBy: 60)
+        return .seconds(60 - secondsIntoMinute)
     }
 
     /// Whether the self user is currently attending (joined the call of) the given meeting.

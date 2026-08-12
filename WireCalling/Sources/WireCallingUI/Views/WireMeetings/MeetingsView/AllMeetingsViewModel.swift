@@ -39,7 +39,7 @@ package final class AllMeetingsViewModel {
     var presentedFormMode: MeetingFormViewModel.Mode?
     var hasJoinError = false
 
-    private let joinMeetingCallUseCase: (any JoinMeetingCallUseCaseProtocol)?
+    private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
 
     package init(
         currentDateProvider: any CurrentDateProviding,
@@ -48,7 +48,7 @@ package final class AllMeetingsViewModel {
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
-        joinMeetingCallUseCase: (any JoinMeetingCallUseCaseProtocol)? = nil,
+        joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
         makeFormViewModel: @escaping @MainActor (
             _ mode: MeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting) -> Void
@@ -80,16 +80,12 @@ package final class AllMeetingsViewModel {
         presentedFormMode = .edit(meeting)
     }
 
-    func joinMeetingTapped(_ occurrence: MeetingOccurrence) {
-        guard let joinMeetingCallUseCase else { return }
-
-        Task {
-            do {
-                try await joinMeetingCallUseCase.invoke(conversationID: occurrence.conversationID)
-            } catch {
-                hasJoinError = true
-                WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
-            }
+    func joinMeetingTapped(_ occurrence: MeetingOccurrence) async {
+        do {
+            try await joinMeetingCallUseCase.invoke(conversationID: occurrence.conversationID)
+        } catch {
+            hasJoinError = true
+            WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
         }
     }
 
