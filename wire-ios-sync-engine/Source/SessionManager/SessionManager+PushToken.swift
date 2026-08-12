@@ -102,7 +102,7 @@ extension SessionManager {
             }
 
             do {
-                try await pushTokenService.syncLocalTokenWithRemote(
+                try await syncLocalTokenWithRemote(
                     clientID: clientID,
                     in: session.notificationContext
                 )
@@ -117,6 +117,11 @@ extension SessionManager {
                 )
             }
         }
+    }
+
+    @concurrent
+    private func syncLocalTokenWithRemote(clientID: String, in context: NotificationContext) async throws {
+        try await pushTokenService.syncLocalTokenWithRemote(clientID: clientID, in: context)
     }
 
 }

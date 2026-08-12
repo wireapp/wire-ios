@@ -168,7 +168,7 @@ extension EntityAction {
     ///
     /// - Parameters:
     ///   - context the notification context in which to send the action's notification.
-    ///   - resultHandler a closure to recieve the action's result.
+    ///   - resultHandler a closure to receive the action's result.
 
     @available(*, renamed: "perform(in:)")
     mutating func perform(
