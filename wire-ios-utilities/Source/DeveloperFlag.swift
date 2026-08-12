@@ -87,7 +87,7 @@ public enum DeveloperFlag: String, CaseIterable {
             "Turn on to use the new registration flow"
 
         case .noAPNSTokenCache:
-            "Turn on to always request the APNS token from iOS on session configure instead of reading a cached one"
+            "Turn on to always request the APNS token from the system instead of reading a cached one"
 
         case .preventAdminlessGroups:
             "Turn on to prevent last admins from leaving groups without promoting someone else"
