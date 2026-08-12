@@ -70,9 +70,9 @@ struct PushTokenMetadata {
 
 // MARK: - Register current push token
 
-public extension ZMUserSession {
+extension ZMUserSession {
 
-    internal func registerCurrentPushToken() {
+    func registerCurrentPushToken() {
         managedObjectContext.performGroupedBlock {
             self.sessionManager?.configurePushToken(session: self)
         }
