@@ -67,6 +67,7 @@ public final class PushTokenService: PushTokenServiceInterface {
 
         do {
             try await action.perform(in: context)
+            WireLogger.push.info("Did register push token: \(clientID)")
         } catch let error as RegisterPushTokenAction.Failure {
             WireLogger.push.error("registering push token failed: \(error)")
             throw error
