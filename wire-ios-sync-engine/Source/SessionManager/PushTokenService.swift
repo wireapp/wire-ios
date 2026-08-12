@@ -25,10 +25,15 @@ public final class PushTokenService: PushTokenServiceInterface {
     // MARK: - Properties
 
     public var localToken: PushToken? {
-        PushTokenStorage.pushToken
+        if DeveloperFlag.noAPNSTokenCache.isOn {
+            return inMemoryToken
+        }
+        return PushTokenStorage.pushToken
     }
 
     public var onTokenChange: ((PushToken?) -> Void)?
+
+    private var inMemoryToken: PushToken?
 
     // MARK: - Life cycle
 
@@ -37,6 +42,12 @@ public final class PushTokenService: PushTokenServiceInterface {
     // MARK: - Methods
 
     public func storeLocalToken(_ token: PushToken?) {
+        if DeveloperFlag.noAPNSTokenCache.isOn {
+            inMemoryToken = token
+            onTokenChange?(token)
+            return
+        }
+
         if PushTokenStorage.pushToken != nil, token != PushTokenStorage.pushToken {
             WireLogger.push.info("updating token \(token == nil ? "to nil" : "")", attributes: .safePublic)
         }

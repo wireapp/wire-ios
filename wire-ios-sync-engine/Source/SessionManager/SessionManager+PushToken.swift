@@ -38,6 +38,14 @@ extension SessionManager {
     // MARK: - Token registration
 
     public func configurePushToken(session: ZMUserSession) {
+        if DeveloperFlag.noAPNSTokenCache.isOn {
+            WireLogger.push.info("configurePushToken: requesting fresh token from iOS")
+            session.managedObjectContext.performGroupedBlock {
+                self.application.registerForRemoteNotifications()
+            }
+            return
+        }
+
         guard let localToken = pushTokenService.localToken else {
             WireLogger.push.info("no local token, will generate one")
             generateLocalToken(session: session)
