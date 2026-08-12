@@ -25,7 +25,7 @@ on:
           - collaboration
           - integration
       rerun_failed_from_previous:
-        description: "Rerun failed Testiny cases from previous run on this branch (ignored if ui_test_cases is set)"
+        description: "Rerun failed UITests from previous run on this branch"
         required: false
         default: false
         type: boolean
