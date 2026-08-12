@@ -590,13 +590,16 @@ public final class MLSService: MLSServiceInterface {
             var fatalFailure: Error?
 
             while nextUserIndex < min(maxConcurrentKeyPackageClaims, users.count) {
-                addKeyPackageClaimTask(
-                    for: users[nextUserIndex],
-                    at: nextUserIndex,
+                let task = KeyPackageClaimTask(
+                    index: nextUserIndex,
+                    user: users[nextUserIndex],
                     ciphersuite: ciphersuite,
-                    notificationContext: notificationContext,
-                    to: &group
+                    actionsProvider: actionsProvider,
+                    notificationContext: notificationContext
                 )
+                group.addTask {
+                    await task.execute()
+                }
                 nextUserIndex += 1
             }
 
@@ -611,13 +614,16 @@ public final class MLSService: MLSServiceInterface {
                 }
 
                 if fatalFailure == nil, !Task.isCancelled, nextUserIndex < users.count {
-                    addKeyPackageClaimTask(
-                        for: users[nextUserIndex],
-                        at: nextUserIndex,
+                    let task = KeyPackageClaimTask(
+                        index: nextUserIndex,
+                        user: users[nextUserIndex],
                         ciphersuite: ciphersuite,
-                        notificationContext: notificationContext,
-                        to: &group
+                        actionsProvider: actionsProvider,
+                        notificationContext: notificationContext
                     )
+                    group.addTask {
+                        await task.execute()
+                    }
                     nextUserIndex += 1
                 }
             }
@@ -655,25 +661,6 @@ public final class MLSService: MLSServiceInterface {
         }
 
         return keyPackages
-    }
-
-    private func addKeyPackageClaimTask(
-        for user: MLSUser,
-        at index: Int,
-        ciphersuite: MLSCipherSuite,
-        notificationContext: NotificationContext,
-        to group: inout TaskGroup<KeyPackageClaim>
-    ) {
-        let task = KeyPackageClaimTask(
-            index: index,
-            user: user,
-            ciphersuite: ciphersuite,
-            actionsProvider: actionsProvider,
-            notificationContext: notificationContext
-        )
-        group.addTask {
-            await task.execute()
-        }
     }
 
     private static func isFatalKeyPackageClaimFailure(_ error: Error) -> Bool {
