@@ -25,7 +25,7 @@ extension ZMUserSession {
     var updateProteusToMLSMigrationStatusAction: RecurringAction {
         .init(
             id: #function,
-            shouldRunOncePerLaunch: true,
+            shouldRunEveryLaunch: true,
             interval: .oneDay
         ) { [weak self] in
             guard
@@ -49,7 +49,7 @@ extension ZMUserSession {
     var refreshUsersMissingMetadataAction: RecurringAction {
         .init(
             id: #function,
-            shouldRunOncePerLaunch: false,
+            shouldRunEveryLaunch: false,
             interval: 3 * .oneHour
         ) { [weak self] in
             guard let context = self?.syncContext else {
@@ -72,7 +72,7 @@ extension ZMUserSession {
     var refreshConversationsMissingMetadataAction: RecurringAction {
         .init(
             id: #function,
-            shouldRunOncePerLaunch: false,
+            shouldRunEveryLaunch: false,
             interval: 3 * .oneHour
         ) { [weak self] in
             guard let context = self?.syncContext else {
@@ -96,7 +96,7 @@ extension ZMUserSession {
     var refreshTeamMetadataAction: RecurringAction {
         .init(
             id: #function,
-            shouldRunOncePerLaunch: false,
+            shouldRunEveryLaunch: false,
             interval: .oneDay
         ) { [weak self] in
             guard let context = self?.syncContext else {
@@ -115,7 +115,7 @@ extension ZMUserSession {
     var refreshFederationCertificatesAction: RecurringAction {
         .init(
             id: #function,
-            shouldRunOncePerLaunch: false,
+            shouldRunEveryLaunch: false,
             interval: .oneDay
         ) { [weak self] in
             do {

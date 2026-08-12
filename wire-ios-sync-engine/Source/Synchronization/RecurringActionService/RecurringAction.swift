@@ -21,7 +21,7 @@ import Foundation
 struct RecurringAction {
 
     let id: String
-    let shouldRunOncePerLaunch: Bool
+    let shouldRunEveryLaunch: Bool
     let interval: TimeInterval
     let perform: () async -> Void
 

@@ -56,7 +56,7 @@ final class RecurringActionServiceTests: XCTestCase {
         sut.registerAction(
             .init(
                 id: .randomAlphanumerical(length: 5),
-                shouldRunOncePerLaunch: false,
+                shouldRunEveryLaunch: false,
                 interval: 1,
                 perform: { actionPerformed = true }
             )
@@ -75,7 +75,7 @@ final class RecurringActionServiceTests: XCTestCase {
         sut.registerAction(
             .init(
                 id: .randomAlphanumerical(length: 5),
-                shouldRunOncePerLaunch: false,
+                shouldRunEveryLaunch: false,
                 interval: 3,
                 perform: { actionPerformed = true }
             )
@@ -100,7 +100,7 @@ final class RecurringActionServiceTests: XCTestCase {
         sut.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: false,
+                shouldRunEveryLaunch: false,
                 interval: 100,
                 perform: { actionPerformed = true }
             )
@@ -121,7 +121,7 @@ final class RecurringActionServiceTests: XCTestCase {
         sut.registerAction(
             .init(
                 id: .randomAlphanumerical(length: 5),
-                shouldRunOncePerLaunch: false,
+                shouldRunEveryLaunch: false,
                 interval: 3,
                 perform: { actionPerformed = true }
             )
@@ -137,15 +137,15 @@ final class RecurringActionServiceTests: XCTestCase {
         XCTAssertTrue(actionPerformed)
     }
 
-    // MARK: - Once Per Launch Tests
+    // MARK: - Run Every Launch Tests
 
-    func testThatItPerformsOncePerLaunchActionImmediately() async {
+    func testThatItPerformsRunEveryLaunchActionImmediately() async {
         // Given
         var actionPerformed = false
         sut.registerAction(
             .init(
                 id: .randomAlphanumerical(length: 5),
-                shouldRunOncePerLaunch: true,
+                shouldRunEveryLaunch: true,
                 interval: .oneDay,
                 perform: { actionPerformed = true }
             )
@@ -158,14 +158,14 @@ final class RecurringActionServiceTests: XCTestCase {
         XCTAssertTrue(actionPerformed)
     }
 
-    func testThatItPerformsOncePerLaunchActionOnlyOnceUntilIntervalPasses() async {
+    func testThatItPerformsRunEveryLaunchActionOnlyOnceUntilIntervalPasses() async {
         // Given
         var actionPerformedCount = 0
         let actionID = String.randomAlphanumerical(length: 5)
         sut.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: true,
+                shouldRunEveryLaunch: true,
                 interval: .oneDay,
                 perform: { actionPerformedCount += 1 }
             )
@@ -198,14 +198,14 @@ final class RecurringActionServiceTests: XCTestCase {
         XCTAssertEqual(actionPerformedCount, 2)
     }
 
-    func testThatOncePerLaunchActionRunsAgainAfterReinitialization() async {
+    func testThatRunEveryLaunchActionRunsAgainAfterReinitialization() async {
         // Given
         var actionPerformedCount = 0
         let actionID = String.randomAlphanumerical(length: 5)
         sut.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: true,
+                shouldRunEveryLaunch: true,
                 interval: .oneDay,
                 perform: { actionPerformedCount += 1 }
             )
@@ -226,7 +226,7 @@ final class RecurringActionServiceTests: XCTestCase {
         newSut.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: true,
+                shouldRunEveryLaunch: true,
                 interval: .oneDay,
                 perform: { actionPerformedCount += 1 }
             )
@@ -261,7 +261,7 @@ final class RecurringActionServiceTests: XCTestCase {
         service1.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: false,
+                shouldRunEveryLaunch: false,
                 interval: .oneDay,
                 perform: { user1ActionPerformedCount += 1 }
             )
@@ -269,7 +269,7 @@ final class RecurringActionServiceTests: XCTestCase {
         service2.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: false,
+                shouldRunEveryLaunch: false,
                 interval: .oneDay,
                 perform: { user2ActionPerformedCount += 1 }
             )
@@ -343,7 +343,7 @@ final class RecurringActionServiceTests: XCTestCase {
         service1.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: true,
+                shouldRunEveryLaunch: true,
                 interval: .oneDay,
                 perform: { user1ActionPerformedCount += 1 }
             )
@@ -351,7 +351,7 @@ final class RecurringActionServiceTests: XCTestCase {
         service2.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: true,
+                shouldRunEveryLaunch: true,
                 interval: .oneDay,
                 perform: { user2ActionPerformedCount += 1 }
             )
@@ -388,7 +388,7 @@ final class RecurringActionServiceTests: XCTestCase {
         newService1.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: true,
+                shouldRunEveryLaunch: true,
                 interval: .oneDay,
                 perform: { user1ActionPerformedCount += 1 }
             )
@@ -396,7 +396,7 @@ final class RecurringActionServiceTests: XCTestCase {
         newService2.registerAction(
             .init(
                 id: actionID,
-                shouldRunOncePerLaunch: true,
+                shouldRunEveryLaunch: true,
                 interval: .oneDay,
                 perform: { user2ActionPerformedCount += 1 }
             )

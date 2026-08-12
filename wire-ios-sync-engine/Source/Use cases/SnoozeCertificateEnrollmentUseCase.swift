@@ -70,7 +70,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
         let recurringAction = RecurringAction(
             id: actionId,
-            shouldRunOncePerLaunch: false,
+            shouldRunEveryLaunch: false,
             interval: interval
         ) {
             if isUpdateMode {

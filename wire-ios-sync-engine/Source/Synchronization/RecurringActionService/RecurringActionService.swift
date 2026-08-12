@@ -52,7 +52,7 @@ final class RecurringActionService: RecurringActionServiceInterface {
     public func registerAction(_ action: RecurringAction) {
         actionsByID[action.id] = action
 
-        if action.shouldRunOncePerLaunch {
+        if action.shouldRunEveryLaunch {
             clearLastCheckDate(for: action.id)
         }
     }
