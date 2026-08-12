@@ -33,33 +33,6 @@ final class ZCallingTests: WireUITestCase {
         let callingServiceUsers: [UserInfo]
     }
 
-    private func tempMarkerURL(named name: String) -> URL {
-        let runID = ProcessInfo.processInfo.environment["GITHUB_RUN_ID"] ?? "local"
-        return FileManager.default.temporaryDirectory
-            .appendingPathComponent("wire-calling-temp-\(name)-\(runID)")
-    }
-
-    private func tempFailFirstAttemptThenPass() throws {
-        let marker = tempMarkerURL(named: "pass-on-retry")
-
-        if FileManager.default.fileExists(atPath: marker.path) {
-            return
-        }
-
-        try "seen".write(to: marker, atomically: true, encoding: .utf8)
-        XCTFail("Temporary expected failure. This should pass on scan retry.")
-    }
-
-    private func tempRequirePreviousFailedRerun(testinyIDs: Set<String>) {
-        let previousFailedCases = ProcessInfo.processInfo.environment["PREVIOUS_FAILED_UI_TEST_CASES"] ?? ""
-        let resolvedIDs = Set(previousFailedCases.split { !$0.isNumber }.map(String.init))
-
-        XCTAssertFalse(
-            resolvedIDs.isDisjoint(with: testinyIDs),
-            "Temporary expected failure. Rerun failed checkbox should pass this test."
-        )
-    }
-
     private func makeTeamAndGroupCallSetup(
         memberCount: Int,
         groupName: String? = nil
@@ -209,8 +182,6 @@ final class ZCallingTests: WireUITestCase {
 
     @MainActor
     func testGroupCallParticipantNameOrInitialsVisible_TC_8887() async throws {
-        try tempFailFirstAttemptThenPass()
-
         // GIVEN
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 2)
@@ -253,8 +224,6 @@ final class ZCallingTests: WireUITestCase {
 
     @MainActor
     func testGroupCallToggleMicrophoneCameraAndSpeaker_TC_8881_8882_8883() async throws {
-        tempRequirePreviousFailedRerun(testinyIDs: ["8881", "8882", "8883"])
-
         // GIVEN
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
 
