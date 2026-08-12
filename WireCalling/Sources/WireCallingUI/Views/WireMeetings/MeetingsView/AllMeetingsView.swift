@@ -33,7 +33,9 @@ package struct AllMeetingsView: View {
         MeetingsView(
             viewModel: viewModel.meetingsViewModel,
             onEditMeeting: { viewModel.editMeetingTapped($0) },
-            onJoinMeeting: { viewModel.joinMeetingTapped($0) }
+            onJoinMeeting: { occurrence in
+                Task { await viewModel.joinMeetingTapped(occurrence) }
+            }
         )
         .navigationTitle(L10n.Localizable.WireMeetings.List.title)
         .navigationBarTitleDisplayMode(.inline)

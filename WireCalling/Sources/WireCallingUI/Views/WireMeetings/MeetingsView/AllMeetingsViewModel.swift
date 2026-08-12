@@ -80,14 +80,12 @@ package final class AllMeetingsViewModel {
         presentedFormMode = .edit(meeting)
     }
 
-    func joinMeetingTapped(_ occurrence: MeetingOccurrence) {
-        Task {
-            do {
-                try await joinMeetingCallUseCase.invoke(conversationID: occurrence.conversationID)
-            } catch {
-                hasJoinError = true
-                WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
-            }
+    func joinMeetingTapped(_ occurrence: MeetingOccurrence) async {
+        do {
+            try await joinMeetingCallUseCase.invoke(conversationID: occurrence.conversationID)
+        } catch {
+            hasJoinError = true
+            WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
         }
     }
 
