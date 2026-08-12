@@ -7,13 +7,14 @@ on:
         description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
         type: string
+
       run_uitests:
         description: "Run Critical UITests only"
         required: false
         default: true
         type: boolean
       ui_test_scope:
-        description: "UI test scope"
+        description: "Specific scope"
         required: false
         default: ""
         type: choice
@@ -23,15 +24,15 @@ on:
           - core-messenger
           - collaboration
           - integration
-      ui_test_cases:
-        description: "Testiny case IDs to run, separated by comma/space/newline"
-        required: false
-        type: string
       rerun_failed_from_previous:
-        description: "Rerun failed Testiny cases from previous run on this branch"
+        description: "Rerun failed Testiny cases from previous run on this branch (ignored if ui_test_cases is set)"
         required: false
         default: false
         type: boolean
+      ui_test_cases:
+        description: "Want to run specific Test? Pass Testiny case ID(s), comma separated"
+        required: false
+        type: string
   push:
     branches:
       - 'develop'
