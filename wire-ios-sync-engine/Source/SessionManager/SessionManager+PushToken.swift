@@ -91,4 +91,32 @@ extension SessionManager {
         }
     }
 
+    @MainActor
+    func uploadPushToken(sessions: [ZMUserSession]) async {
+        WireLogger.push.info("uploadPushToken: uploading for \(sessions.count) sessions", attributes: .safePublic)
+
+        for (index, session) in sessions.enumerated() {
+            guard let clientID = session.selfUserClient?.remoteIdentifier else {
+                WireLogger.push.warn("uploadPushToken: session \(index) has no client id", attributes: .safePublic)
+                continue
+            }
+
+            do {
+                try await pushTokenService.syncLocalTokenWithRemote(
+                    clientID: clientID,
+                    in: session.notificationContext
+                )
+
+                WireLogger.push.info("uploadPushToken: success for session \(index)", attributes: .safePublic)
+            } catch {
+                let error = error as NSError
+
+                WireLogger.push.error(
+                    "uploadPushToken: failed for session \(index): \(error.safeForLoggingDescription)",
+                    attributes: .safePublic
+                )
+            }
+        }
+    }
+
 }

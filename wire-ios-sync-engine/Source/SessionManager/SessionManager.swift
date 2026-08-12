@@ -634,14 +634,17 @@ public final class SessionManager: NSObject, SessionManagerType {
         updateCallNotificationStyle()
 
         pushTokenService.onTokenChange = { [weak self] _ in
-            guard
-                let self,
-                let session = activeUserSession ?? backgroundUserSessions.values.first
-            else {
+            guard let self else { return }
+
+            if DeveloperFlag.noAPNSTokenCache.isOn {
+                // Upload push token for all loaded sessions. Correct behavior would be to upload it for all accounts
+                // but we don't yet have a means to do that without loading all sessions into memory.
+                Task { await self.uploadPushToken(sessions: Array(self.backgroundUserSessions.values)) }
                 return
             }
 
-            syncLocalTokenWithRemote(session: session)
+            guard let activeUserSession else { return }
+            syncLocalTokenWithRemote(session: activeUserSession)
         }
 
         self.deleteAccountToken = AccountDeletedNotification.addObserver(observer: self, queue: groupQueue)
