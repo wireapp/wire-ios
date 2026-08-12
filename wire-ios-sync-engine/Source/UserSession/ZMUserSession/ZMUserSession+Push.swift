@@ -116,7 +116,7 @@ extension ZMUserSession {
         let isActive = await MainActor.run { [application] in
             application.applicationState == .active
         }
-        guard isActive || journal[.isConsumableNotificationsEnabled] else { return }
+        guard isActive else { return }
 
         localNotificationDispatcher?.scheduleLocalNotification(content: content)
     }
