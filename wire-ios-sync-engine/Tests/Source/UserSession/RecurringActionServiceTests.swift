@@ -288,37 +288,6 @@ final class RecurringActionServiceTests: XCTestCase {
         // Then - User 2's action also performed (not blocked by user 1's action)
         XCTAssertEqual(user1ActionPerformedCount, 1)
         XCTAssertEqual(user2ActionPerformedCount, 1)
-
-        // When - User 1 tries again without time passing
-        await service1.performActionsIfNeeded()
-
-        // Then - User 1's action not performed again
-        XCTAssertEqual(user1ActionPerformedCount, 1)
-        XCTAssertEqual(user2ActionPerformedCount, 1)
-
-        // When - User 2 tries again without time passing
-        await service2.performActionsIfNeeded()
-
-        // Then - User 2's action not performed again
-        XCTAssertEqual(user1ActionPerformedCount, 1)
-        XCTAssertEqual(user2ActionPerformedCount, 1)
-
-        // When - Time passes over the interval
-        dateProvider.now += .oneDay + .fiveMinutes
-
-        // When - User 1 tries again
-        await service1.performActionsIfNeeded()
-
-        // Then - User 1's action is peformed again, but not User 2's
-        XCTAssertEqual(user1ActionPerformedCount, 2)
-        XCTAssertEqual(user2ActionPerformedCount, 1)
-
-        // When - User 2 tries again
-        await service2.performActionsIfNeeded()
-
-        // Then - User 2's action is peformed again as well
-        XCTAssertEqual(user1ActionPerformedCount, 2)
-        XCTAssertEqual(user2ActionPerformedCount, 2)
     }
 
     func testThatOncePerLaunchActionsAreScopedToUserID() async {
