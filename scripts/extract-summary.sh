@@ -26,6 +26,7 @@ write_empty_outputs() {
     echo "skipped=0"
     echo "total=0"
     echo "failed_details=None"
+    echo "retried_details=None"
     echo "report_message="
   } >> "$GITHUB_OUTPUT"
 }
@@ -79,6 +80,15 @@ for XCRESULT in "${XCRESULTS[@]}"; do
       def failed_test_cases:
         test_cases | map(select(final_result == "failed"));
 
+      def retried_test_cases:
+        test_cases | map(select((test_runs | length) > 1));
+
+      def failed_repetition:
+        test_runs | map(select((.result? // "" | ascii_downcase) == "failed")) | first;
+
+      def passed_on_retry_cases:
+        retried_test_cases | map(select(final_result == "passed"));
+
       def testiny_ids_from_text:
         (tostring | gsub("[^A-Za-z0-9_]"; "_")) as $text
         | ($text | (capture("_TC_+(?<chain>.*)$"; "i")? // {}).chain? // "") as $chain
@@ -105,11 +115,16 @@ for XCRESULT in "${XCRESULTS[@]}"; do
         | add
         | unique;
 
+      def direct_failure_message:
+        (.children // [])
+        | map(select(.nodeType? == "Failure Message") | .name?)
+        | map(select(. != null and . != ""))
+        | first;
+
       def failure_message:
-        ((.children // [])
-          | map(select(.nodeType? == "Failure Message") | .name?)
-          | map(select(. != null and . != ""))
-          | first) // "No failure message available";
+        direct_failure_message
+        // (test_runs | map(select((.result? // "" | ascii_downcase) == "failed")) | last | direct_failure_message)
+        // "No failure message available";
 
       def test_title:
         (.name? // "") as $testName
@@ -144,6 +159,11 @@ for XCRESULT in "${XCRESULTS[@]}"; do
         failed_details: (
           failed_test_cases
           | map("  ❌ " + test_title + ": " + (failure_message | normalize))
+          | unique
+        ),
+        retried_details: (
+          passed_on_retry_cases
+          | map(test_title as $t | (failed_repetition | failure_message) as $msg | "  ⚠️ " + $t + " (passed on retry): " + ($msg | normalize))
           | unique
         )
       }
@@ -192,7 +212,8 @@ for XCRESULT in "${XCRESULTS[@]}"; do
         failures
         | map("  ❌ " + failure_title + ": " + ((.failureText? // "No failure message available") | normalize))
         | unique
-      )
+      ),
+      retried_details: []
     }
   ' "$RESULT_JSON" >> "$SUMMARY_FILE" || echo "[WARN] Could not parse test summary from $XCRESULT"
 done
@@ -217,7 +238,8 @@ SUMMARY="$(jq -s -c '
     testiny_passed: ($testiny_passed_only | length),
     testiny_failed: ($testiny_failed | length),
     testiny_skipped: ($testiny_skipped_only | length),
-    failed_details: ([.[].failed_details[]] | unique | .[:20])
+    failed_details: ([.[].failed_details[]] | unique | .[:20]),
+    retried_details: ([.[].retried_details[]] | unique | .[:20])
   }
 ' "$SUMMARY_FILE")"
 
@@ -230,6 +252,7 @@ TESTINY_PASSED="$(jq -r '.testiny_passed' <<< "$SUMMARY")"
 TESTINY_FAILED="$(jq -r '.testiny_failed' <<< "$SUMMARY")"
 TESTINY_SKIPPED="$(jq -r '.testiny_skipped' <<< "$SUMMARY")"
 FAILED_DETAILS="$(jq -r '.failed_details | if length == 0 then "None" else join("\n") end' <<< "$SUMMARY")"
+RETRIED_DETAILS="$(jq -r '.retried_details | if length == 0 then "None" else join("\n") end' <<< "$SUMMARY")"
 
 if [ "$TESTINY_TOTAL" -gt 0 ]; then
   REPORT_MESSAGE="**XCTest Methods:** Total ${TOTAL} | Passed ${PASSED} | Failed ${FAILED} | Skipped ${SKIPPED}
@@ -247,6 +270,13 @@ else
 --------------------------------------"
 fi
 
+if [ "$RETRIED_DETAILS" != "None" ]; then
+  REPORT_MESSAGE="${REPORT_MESSAGE}
+
+⚠️ **Passed on Retry:**
+${RETRIED_DETAILS}"
+fi
+
 if [ "$FAILED" -gt 0 ] && [ "$FAILED_DETAILS" != "None" ]; then
   REPORT_MESSAGE="${REPORT_MESSAGE}
 
@@ -262,6 +292,9 @@ echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
   echo "failed_details<<__TEST_FAILED_DETAILS__"
   echo "$FAILED_DETAILS"
   echo "__TEST_FAILED_DETAILS__"
+  echo "retried_details<<__TEST_RETRIED_DETAILS__"
+  echo "$RETRIED_DETAILS"
+  echo "__TEST_RETRIED_DETAILS__"
   echo "report_message<<__TEST_REPORT_MESSAGE__"
   echo "$REPORT_MESSAGE"
   echo "__TEST_REPORT_MESSAGE__"

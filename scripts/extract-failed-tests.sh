@@ -19,9 +19,9 @@ set -Eeuo pipefail
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 
-SEARCH_LIMIT="${SEARCH_LIMIT:-20}"
 ARTIFACT_PATTERN="${ARTIFACT_PATTERN:-XCResults for *}"
 CURRENT_RUN_ID="${GITHUB_RUN_ID:-}"
+WORKFLOW_FILE="${WORKFLOW_FILE:-critical_flows.yaml}"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "[ERROR] jq is not available" >&2
@@ -108,7 +108,7 @@ extract_failed_cases_from_path() {
 
 extract_failed_cases_from_github_runs() {
   local branch="$1"
-  local run_filter run_ids tmp_dir run_id run_dir failed_cases
+  local run_filter run_id tmp_dir failed_cases
 
   if ! command -v gh >/dev/null 2>&1; then
     echo "[ERROR] gh is not available" >&2
@@ -126,43 +126,40 @@ extract_failed_cases_from_github_runs() {
     run_filter=".workflow_runs[].id"
   fi
 
-  run_ids="$(gh api \
+  # Scoped to this workflow only: other workflows (nightly "Run develop tests",
+  # manual "Run all tests") also produce an "XCResults for <branch> (...)" artifact
+  # on the same branch, and would otherwise get picked up here by mistake.
+  run_id="$(gh api \
     --method GET \
-    "repos/${GITHUB_REPOSITORY}/actions/runs" \
+    "repos/${GITHUB_REPOSITORY}/actions/workflows/${WORKFLOW_FILE}/runs" \
     -f branch="$branch" \
     -f status=completed \
-    -f per_page="$SEARCH_LIMIT" \
-    --jq "$run_filter")"
+    -f per_page=5 \
+    --jq "$run_filter" | head -n 1)"
 
-  if [ -z "$run_ids" ]; then
-    echo "[ERROR] No previous completed workflow run found for branch '$branch'" >&2
+  if [ -z "$run_id" ]; then
+    echo "[ERROR] No previous completed '$WORKFLOW_FILE' run found for branch '$branch'" >&2
     exit 1
   fi
+
+  echo "[INFO] Looking for failed UI Testiny cases in previous run $run_id" >&2
 
   tmp_dir="$(mktemp -d)"
   trap 'rm -rf "$tmp_dir"' EXIT
 
-  for run_id in $run_ids; do
-    echo "[INFO] Looking for failed UI Testiny cases in run $run_id" >&2
-    run_dir="$tmp_dir/run-$run_id"
+  if ! gh run download "$run_id" --pattern "$ARTIFACT_PATTERN" --dir "$tmp_dir" >/dev/null 2>&1; then
+    echo "[ERROR] No XCResult artifact found in run $run_id" >&2
+    exit 1
+  fi
 
-    if ! gh run download "$run_id" --pattern "$ARTIFACT_PATTERN" --dir "$run_dir" >/dev/null 2>&1; then
-      echo "[INFO] No XCResult artifact found in run $run_id" >&2
-      continue
-    fi
+  failed_cases="$(extract_failed_cases_from_path "$tmp_dir" || true)"
+  if [ -z "$failed_cases" ]; then
+    echo "[ERROR] Previous run $run_id had no failed Testiny cases to rerun" >&2
+    exit 1
+  fi
 
-    failed_cases="$(extract_failed_cases_from_path "$run_dir" || true)"
-    if [ -n "$failed_cases" ]; then
-      echo "[INFO] Failed Testiny cases from run $run_id: $failed_cases" >&2
-      echo "$failed_cases"
-      exit 0
-    fi
-
-    echo "[INFO] Run $run_id had no failed UI Testiny cases" >&2
-  done
-
-  echo "[ERROR] No previous failed UI Testiny cases found for branch '$branch'" >&2
-  exit 1
+  echo "[INFO] Failed Testiny cases from run $run_id: $failed_cases" >&2
+  echo "$failed_cases"
 }
 
 case "${1:-}" in
