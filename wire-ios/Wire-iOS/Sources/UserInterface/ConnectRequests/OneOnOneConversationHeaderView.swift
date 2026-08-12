@@ -37,8 +37,6 @@ final class OneOnOneConversationHeaderView: UIView, Copyable {
     private let labelContainer = UIStackView(axis: .vertical)
     private let userImageView: BadgeUserImageView = {
         let view = BadgeUserImageView()
-        // Match the conversation list: show the full-colour image (or the blocked badge) rather
-        // than a desaturated avatar for a blocked user.
         view.shouldDesaturate = false
         view.badgeIconSize = .custom(130)
         return view
