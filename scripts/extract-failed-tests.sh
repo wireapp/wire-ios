@@ -1,0 +1,175 @@
+#!/bin/bash
+set -Eeuo pipefail
+
+#
+# Wire
+# Copyright (C) 2026 Wire Swiss GmbH
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see http://www.gnu.org/licenses/.
+#
+
+SEARCH_LIMIT="${SEARCH_LIMIT:-20}"
+ARTIFACT_PATTERN="${ARTIFACT_PATTERN:-XCResults for *}"
+CURRENT_RUN_ID="${GITHUB_RUN_ID:-}"
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "[ERROR] jq is not available" >&2
+  exit 1
+fi
+
+if ! xcrun --find xcresulttool >/dev/null 2>&1; then
+  echo "[ERROR] xcresulttool is not available" >&2
+  exit 1
+fi
+
+extract_failed_cases_from_path() {
+  local search_path="$1"
+  local tmp_dir ids_file xcresult tests_json
+  local xcresults=()
+
+  while IFS= read -r -d '' xcresult; do
+    xcresults+=("$xcresult")
+  done < <(find "$search_path" -type d -name '*.xcresult' -print0 2>/dev/null || true)
+
+  if [ "${#xcresults[@]}" -eq 0 ]; then
+    echo "[ERROR] No .xcresult found under $search_path" >&2
+    return 1
+  fi
+
+  tmp_dir="$(mktemp -d)"
+  ids_file="$tmp_dir/failed-testiny-ids.txt"
+  : > "$ids_file"
+
+  for xcresult in "${xcresults[@]}"; do
+    tests_json="$tmp_dir/tests-$(basename "$xcresult").json"
+    if ! xcrun xcresulttool get test-results tests --path "$xcresult" --compact > "$tests_json" 2>/dev/null; then
+      echo "[WARN] Could not read test tree from $xcresult" >&2
+      continue
+    fi
+
+    jq -r '
+      def test_cases:
+        [.. | objects | select(.nodeType? == "Test Case")];
+
+      def test_runs:
+        [(.children // [])[] | select(.nodeType? == "Repetition" or .nodeType? == "Test Case Run")];
+
+      def final_result:
+        ((test_runs | if length > 0 then .[-1].result? else .result? end) // "" | ascii_downcase);
+
+      def testiny_ids_from_text:
+        (tostring | gsub("[^A-Za-z0-9_]"; "_")) as $text
+        | ($text | (capture("_TC_+(?<chain>.*)$"; "i")? // {}).chain? // "") as $chain
+        | if $chain == "" then []
+          else
+            (
+              reduce ($chain | split("_")[]) as $part (
+                {active: true, ids: []};
+                if .active == false then .
+                elif ($part | ascii_downcase) == "tc" then .
+                elif ($part | test("^\\d+$")) then .ids += [$part]
+                elif $part == "" then .
+                else .active = false
+                end
+              )
+              | .ids
+              | unique
+            )
+          end;
+
+      def testiny_ids:
+        [(.name? // ""), (.nodeIdentifier? // ""), (.nodeIdentifierURL? // "")]
+        | map(testiny_ids_from_text)
+        | add
+        | unique;
+
+      test_cases
+      | map(select(final_result == "failed") | testiny_ids)
+      | add // []
+      | unique
+      | .[]
+    ' "$tests_json" >> "$ids_file"
+  done
+
+  sort -u "$ids_file" | paste -sd, -
+  rm -rf "$tmp_dir"
+}
+
+extract_failed_cases_from_github_runs() {
+  local branch="$1"
+  local run_filter run_ids tmp_dir run_id run_dir failed_cases
+
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "[ERROR] gh is not available" >&2
+    exit 1
+  fi
+
+  if [ -z "${GITHUB_REPOSITORY:-}" ]; then
+    echo "[ERROR] GITHUB_REPOSITORY is not set" >&2
+    exit 1
+  fi
+
+  if [ -n "$CURRENT_RUN_ID" ]; then
+    run_filter=".workflow_runs[] | select(.id != ${CURRENT_RUN_ID}) | .id"
+  else
+    run_filter=".workflow_runs[].id"
+  fi
+
+  run_ids="$(gh api \
+    --method GET \
+    "repos/${GITHUB_REPOSITORY}/actions/runs" \
+    -f branch="$branch" \
+    -f status=completed \
+    -f per_page="$SEARCH_LIMIT" \
+    --jq "$run_filter")"
+
+  if [ -z "$run_ids" ]; then
+    echo "[ERROR] No previous completed workflow run found for branch '$branch'" >&2
+    exit 1
+  fi
+
+  tmp_dir="$(mktemp -d)"
+  trap 'rm -rf "$tmp_dir"' EXIT
+
+  for run_id in $run_ids; do
+    echo "[INFO] Looking for failed UI Testiny cases in run $run_id" >&2
+    run_dir="$tmp_dir/run-$run_id"
+
+    if ! gh run download "$run_id" --pattern "$ARTIFACT_PATTERN" --dir "$run_dir" >/dev/null 2>&1; then
+      echo "[INFO] No XCResult artifact found in run $run_id" >&2
+      continue
+    fi
+
+    failed_cases="$(extract_failed_cases_from_path "$run_dir" || true)"
+    if [ -n "$failed_cases" ]; then
+      echo "[INFO] Failed Testiny cases from run $run_id: $failed_cases" >&2
+      echo "$failed_cases"
+      exit 0
+    fi
+
+    echo "[INFO] Run $run_id had no failed UI Testiny cases" >&2
+  done
+
+  echo "[ERROR] No previous failed UI Testiny cases found for branch '$branch'" >&2
+  exit 1
+}
+
+case "${1:-}" in
+  --branch)
+    extract_failed_cases_from_github_runs "${2:?Pass branch after --branch}"
+    ;;
+  *)
+    extract_failed_cases_from_path "${1:-artifacts}"
+    ;;
+esac

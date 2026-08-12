@@ -129,31 +129,7 @@ jobs:
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi
 
-          PREVIOUS_RUN_ID="$(gh api \
-            --method GET \
-            "repos/${GITHUB_REPOSITORY}/actions/workflows/critical_flows.yaml/runs" \
-            -f branch="$BRANCH" \
-            -f status=completed \
-            -f per_page=20 \
-            --jq ".workflow_runs[] | select(.id != ${GITHUB_RUN_ID}) | .id" \
-            | head -n 1)"
-
-          if [ -z "$PREVIOUS_RUN_ID" ]; then
-            echo "[ERROR] No previous completed Critical Flows run found for branch '$BRANCH'"
-            exit 1
-          fi
-
-          echo "[INFO] Downloading XCResult artifacts from run $PREVIOUS_RUN_ID"
-          rm -rf previous-xcresults
-          gh run download "$PREVIOUS_RUN_ID" --pattern "XCResults for *" --dir previous-xcresults
-
-          FAILED_CASES="$(scripts/extract-failed-testiny-cases.sh previous-xcresults)"
-          if [ -z "$FAILED_CASES" ]; then
-            echo "[ERROR] Previous run had no failed Testiny cases to rerun"
-            exit 1
-          fi
-
-          echo "[INFO] Failed Testiny cases from previous run: $FAILED_CASES"
+          FAILED_CASES="$(scripts/extract-failed-tests.sh --branch "$BRANCH")"
           echo "ui_test_cases=$FAILED_CASES" >> "$GITHUB_OUTPUT"
 
       - name: Restore Carthage Cache
