@@ -44,7 +44,7 @@ extension SessionManager {
             return
         }
 
-        guard let localToken = pushTokenService.localToken else {
+        guard pushTokenService.localToken != nil else {
             WireLogger.push.info("no local token, will generate one")
             generateLocalToken(session: session)
             return
