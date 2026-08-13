@@ -38,4 +38,4 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      NOTIFICATION_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}

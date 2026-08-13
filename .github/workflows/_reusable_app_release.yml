@@ -78,7 +78,7 @@ on:
         required: true
       JIRA_TOKEN:
         required: false
-      SLACK_WEBHOOK_URL:
+      NOTIFICATION_WEBHOOK_URL:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -129,7 +129,7 @@ jobs:
       COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
       COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
       ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}

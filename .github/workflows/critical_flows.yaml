@@ -50,7 +50,7 @@ jobs:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_QA_WEBHOOK }}
+      NOTIFICATION_WEBHOOK_URL: ${{ secrets.WIRE_IOS_QA_WEBHOOK }}
 
   critical_flows_manual:
     # Manual runs keep tag selection configurable for targeted reruns or full UI runs.
@@ -73,4 +73,4 @@ jobs:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_QA_WEBHOOK }}
+      NOTIFICATION_WEBHOOK_URL: ${{ secrets.WIRE_IOS_QA_WEBHOOK }}
