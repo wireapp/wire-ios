@@ -108,6 +108,12 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     finaliseRegardlessAfter: config.finaliseRegardlessAfter
                 )
             )
+        case let .meetings(config):
+            .meetings(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status)
+                )
+            )
         case let .selfDeletingMessages(config):
             .selfDeletingMessages(
                 StorableSelfDeletingMessagesFeatureConfig(
@@ -257,6 +263,12 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     finaliseRegardlessAfter: config.finaliseRegardlessAfter
                 )
             )
+        case let .meetings(config):
+            .meetings(
+                MeetingsFeatureConfig(
+                    status: config.status.toAPIModel()
+                )
+            )
         case let .selfDeletingMessages(config):
             .selfDeletingMessages(
                 .init(
@@ -338,6 +350,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case fileSharing(StorableBasicFeatureConfig)
     case mls(StorableMLSFeatureConfig)
     case mlsMigration(StorableMLSMigrationFeatureConfig)
+    case meetings(StorableBasicFeatureConfig)
     case selfDeletingMessages(StorableSelfDeletingMessagesFeatureConfig)
     case channels(StorableChannelsFeatureConfig)
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)

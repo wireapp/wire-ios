@@ -16,20 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
+import WireNetwork
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingRepository: any MeetingRepositoryProtocol,
-        memberRepository: any MeetingMemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol,
-        callRepository: any MeetingCallRepositoryProtocol,
-        accentColorState: WireMeetingsAccentColorState
-    ) -> UIViewController
+protocol MeetingEventNotificationBuilderProtocol {
+
+    func buildContent(event: MeetingEvent) async -> UserNotification?
+
 }
 
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}
+struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol {
+
+    let meetingDeleteEventBuilder: any MeetingDeleteEventNotificationBuilderProtocol
+
+    func buildContent(event: MeetingEvent) async -> UserNotification? {
+        switch event {
+        case let .delete(event):
+            await meetingDeleteEventBuilder.buildContent(event: event)
+        default:
+            nil
+        }
+    }
+
+}

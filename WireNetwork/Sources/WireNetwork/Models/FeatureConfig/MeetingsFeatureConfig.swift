@@ -16,20 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCallingAssembly
-import WireCallingDomain
+/// A configuration for enabling the meetings feature.
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(
-        meetingRepository: any MeetingRepositoryProtocol,
-        memberRepository: any MeetingMemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol,
-        callRepository: any MeetingCallRepositoryProtocol,
-        accentColorState: WireMeetingsAccentColorState
-    ) -> UIViewController
+public struct MeetingsFeatureConfig: Equatable, Sendable, Hashable {
+
+    /// The feature's status.
+
+    public let status: FeatureConfigStatus
+
+    public init(status: FeatureConfigStatus) {
+        self.status = status
+    }
+
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}
