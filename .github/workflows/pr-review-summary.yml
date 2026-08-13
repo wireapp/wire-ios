@@ -13,8 +13,6 @@ on:
 jobs:
     pr-review-summary:
         runs-on: ubuntu-24.04
-        env:
-            SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
         steps:
             # Needed so the local ./.github/actions/notify-wire composite action is available.
             # Only .github is required, and no LFS objects.
@@ -159,6 +157,8 @@ jobs:
             -   name: Post to Wire
                 continue-on-error: true
                 uses: ./.github/actions/notify-wire
+                env:
+                    SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
                 with:
                     notify: custom
                     text: ${{ steps.build-summary.outputs.summary }}
