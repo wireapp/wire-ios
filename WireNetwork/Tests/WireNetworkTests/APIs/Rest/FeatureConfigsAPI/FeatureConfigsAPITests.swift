@@ -60,7 +60,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             (.ok, "GetFeatureConfigsSuccessResponseV12"),
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
-            (.ok, "GetFeatureConfigsSuccessResponseV14"),
+            (.ok, "GetFeatureConfigsSuccessResponseV16"),
             (.ok, "GetFeatureConfigsSuccessResponseV17")
         ])
 
@@ -292,9 +292,11 @@ final class FeatureConfigsAPITests: XCTestCase {
     func testGetFeatureConfigs_SuccessResponse_200_V14_To_V16_Then_Verify_Requests() async throws {
         // Given
         let supportedVersions = [APIVersion.v14, .v15, .v16]
-        let apiService = MockAPIServiceProtocol.withResponses(
-            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV14"), count: supportedVersions.count)
-        )
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV14"),
+            (.ok, "GetFeatureConfigsSuccessResponseV14"),
+            (.ok, "GetFeatureConfigsSuccessResponseV16")
+        ])
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
@@ -302,7 +304,11 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Scaffolding.featureConfigsV14
+            let expectedSet = if sut is FeatureConfigsAPIV16 {
+                Scaffolding.featureConfigsV16
+            } else {
+                Scaffolding.featureConfigsV14
+            }
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -728,7 +734,11 @@ extension FeatureConfigsAPITests {
             .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!))
         ])
 
-        static let featureConfigsV17: Set<FeatureConfig> = featureConfigsV14.union([
+        static let featureConfigsV16: Set<FeatureConfig> = featureConfigsV14.union([
+            .meetings(.init(status: .enabled))
+        ])
+
+        static let featureConfigsV17: Set<FeatureConfig> = featureConfigsV16.union([
             .preventAdminlessGroups(.init(
                 status: .enabled,
                 promotionStrategy: "alphabetical",
