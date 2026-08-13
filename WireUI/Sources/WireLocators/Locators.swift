@@ -284,6 +284,12 @@ public enum Locators {
         case status
     }
 
+    public enum UserProfileQRCodePage: AutoPrefixedEnum {
+        case qrCodeImage
+        case shareProfileLinkButton
+        case shareQRCodeButton
+    }
+
     public enum UserProfileStatusPicker: String {
         case none
         case available
@@ -663,6 +669,10 @@ public enum Locators {
 
         public enum MeetingDetails: String {
             case attendingLabel = "Attending Label"
+        }
+
+        public enum MeetingRow: String {
+            case joinButton = "Join Button"
         }
 
     }

@@ -55,6 +55,7 @@ struct FeatureConfigsResponseAPIV17: Decodable, ToAPIModelConvertible {
     let mls: FeatureWithConfig<FeatureConfigResponse.MLSV4>
     let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>
     let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>
+    let meetings: FeatureWithoutConfig
     let channels: FeatureWithConfig<FeatureConfigResponse.ChannelsV8>
     let cells: FeatureWithoutConfig
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
@@ -117,6 +118,9 @@ struct FeatureConfigsResponseAPIV17: Decodable, ToAPIModelConvertible {
         )
 
         featureConfigs.append(.mlsMigration(mlsMigrationConfig))
+
+        let meetingsFeatureConfig = MeetingsFeatureConfig(status: meetings.status.toAPIModel())
+        featureConfigs.append(.meetings(meetingsFeatureConfig))
 
         let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
             status: mlsE2EId.status.toAPIModel(),

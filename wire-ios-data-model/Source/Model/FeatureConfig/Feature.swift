@@ -47,6 +47,7 @@ public class Feature: ZMManagedObject {
         case fileSharing
         case mls
         case mlsMigration
+        case meetings
         case selfDeletingMessages
         case preventAdminlessGroups
 
@@ -245,6 +246,7 @@ public class Feature: ZMManagedObject {
              .fileSharing,
              .mls,
              .mlsMigration,
+             .meetings,
              .preventAdminlessGroups:
             break
         }

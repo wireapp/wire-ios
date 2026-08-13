@@ -3126,6 +3126,17 @@
         }
       }
     },
+    "push.notification.body.senderCanceledMeeting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ canceled this meeting"
+          }
+        }
+      }
+    },
     "push.notification.body.senderCreatedConversation" : {
       "extractionState" : "manual",
       "localizations" : {
