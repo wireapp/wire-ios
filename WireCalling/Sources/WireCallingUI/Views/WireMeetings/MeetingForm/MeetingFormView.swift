@@ -330,7 +330,7 @@ private extension MeetingRepeatOption {
         case .every2Weeks:
             Strings.everyTwoWeeks
         case .monthly:
-            Strings.monthly
+            Strings.everyFourWeeks
         case .yearly:
             Strings.yearly
         }

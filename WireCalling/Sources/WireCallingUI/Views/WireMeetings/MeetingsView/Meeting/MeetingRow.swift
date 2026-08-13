@@ -186,7 +186,7 @@ private extension MeetingRecurrence {
         case (.weekly, 2): Strings.everyTwoWeeks
         case (.weekly, 4): Strings.everyFourWeeks
         case (.weekly, _): Strings.weekly
-        case (.monthly, _): Strings.monthly
+        case (.monthly, _): Strings.everyFourWeeks
         case (.yearly, _): Strings.yearly
         }
     }
