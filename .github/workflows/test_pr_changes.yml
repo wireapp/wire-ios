@@ -146,7 +146,11 @@ jobs:
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
       run_critical_flows: false # separate workflow
       notify: failure
-    secrets: inherit
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      WIRE_IOS_CI_WEBHOOK: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
   # ── Parallel ────────────────────────────────────────────────────────────────
   trigger_tests_pr_parallel:

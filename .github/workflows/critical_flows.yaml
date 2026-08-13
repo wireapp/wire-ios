@@ -47,7 +47,11 @@ jobs:
       ui_test_tags: critical
       notify: always
       timeout_minutes: 90
-    secrets: inherit
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      WIRE_IOS_QA_WEBHOOK: ${{ secrets.WIRE_IOS_QA_WEBHOOK }}
 
   critical_flows_manual:
     # Manual runs keep tag selection configurable for targeted reruns or full UI runs.
@@ -67,4 +71,8 @@ jobs:
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
       timeout_minutes: 150
-    secrets: inherit
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      WIRE_IOS_QA_WEBHOOK: ${{ secrets.WIRE_IOS_QA_WEBHOOK }}

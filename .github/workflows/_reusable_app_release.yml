@@ -55,6 +55,10 @@ on:
         required: true
       C1_S3_SUBFOLDER_PRODUCTION:
         required: true
+      C2_S3_SUBFOLDER_RESTRICTED:
+        required: true
+      C2_S3_SUBFOLDER_PRODUCTION:
+        required: true
       C3_S3_SUBFOLDER_RESTRICTED:
         required: true
       C3_S3_SUBFOLDER_PRODUCTION:
@@ -68,10 +72,19 @@ on:
       COUNTLY_PRODUCTION_KEY:
         required: true
       COUNTLY_INTERNAL_KEY:
-        required: true  
+        required: true
+      CLIENT_NAME_C1_C2_C3:
+        required: true
+      CLIENT_ID_C1_C2_C3:
+        required: true
       SUBMODULE_PAT:
         required: true
       JIRA_TOKEN:
+        required: false
+      # Webhook secret named by inputs.notify_secret and looked up dynamically
+      # via ${{ secrets[inputs.notify_secret] }}. Callers must pass the specific
+      # webhook they name; declared as not required because the lookup is dynamic.
+      WIRE_IOS_BUILD_WEBHOOK:
         required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/

@@ -43,6 +43,15 @@ on:
         required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
+      # Webhook secrets named by inputs.notify_secret and looked up dynamically
+      # via ${{ secrets[inputs.notify_secret] }}. Callers must pass the specific
+      # webhook they name; declared as not required because the lookup is dynamic.
+      WIRE_IOS_CI_WEBHOOK:
+        required: false
+      WIRE_IOS_NIGHTLY_WEBHOOK:
+        required: false
+      WIRE_IOS_QA_WEBHOOK:
+        required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
