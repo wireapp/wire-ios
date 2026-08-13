@@ -103,37 +103,15 @@ jobs:
     needs: changelog
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     env:
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
-      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
-      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
       S3_BUCKET: "z-lohika"
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-      DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-      DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
-      DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
-      ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
-      GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
-      C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
-      C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
-      C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
-      C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
-      C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
-      C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
-      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
-      EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
-      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
-      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
-      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
-      ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
-      SLACK_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
-      SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
-      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+      # Non-secret feature flags — read by fastlane's before_all AND
+      # referenced in downstream notification texts.
+      ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
+      ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
+      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
+      SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
 
     steps:
@@ -187,6 +165,29 @@ jobs:
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
           FASTLANE_ACTION: ${{ inputs.fastlane_action }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
+          WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
+          DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
+          GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
+          C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
+          C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
+          C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
+          C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
+          C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
+          C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
+          BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
+          EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
+          PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
+          COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
+          COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
         run: bundle exec fastlane "$FASTLANE_ACTION"
       - name: Check for duplicate symbol implementations
         if: always()
@@ -221,6 +222,8 @@ jobs:
       - name: Notify on Wire if succeeded
         if: success()
         continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
         uses: ./.github/actions/notify-wire
         with:
           notify: custom
@@ -239,6 +242,8 @@ jobs:
       - name: Notify on Wire if failed
         if: failure()
         continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
         uses: ./.github/actions/notify-wire
         with:
           notify: custom

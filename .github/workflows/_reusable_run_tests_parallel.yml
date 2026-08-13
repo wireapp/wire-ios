@@ -107,7 +107,6 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      SLACK_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
 
     steps:
       - name: Checkout
@@ -188,8 +187,6 @@ jobs:
     needs: test-framework
     if: always()
     runs-on: ubuntu-24.04
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
     steps:
       - name: Sanitize branch name
         shell: bash
@@ -212,6 +209,8 @@ jobs:
 
       - name: Notify on Wire
         uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
         with:
           notify: ${{ inputs.notify }}
           status: ${{ needs.test-framework.result }}
