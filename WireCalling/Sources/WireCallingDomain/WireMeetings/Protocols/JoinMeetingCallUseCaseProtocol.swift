@@ -16,15 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Reports which conversations the self user is currently in a call in.
-public protocol MeetingCallStateRepositoryProtocol: Sendable {
+import Foundation
 
-    /// Emits the set of conversation ids the self user is currently in a call in.
-    ///
-    /// The stream emits the current value immediately and then a new value
-    /// whenever call state changes, so a meeting is considered "attending" while
-    /// its `conversationID` is contained in the latest emitted set.
-    func observeAttendedConversations() -> AsyncStream<Set<QualifiedID>>
+// sourcery: AutoMockable
+package protocol JoinMeetingCallUseCaseProtocol: Sendable {
+
+    /// Enters the call of the meeting's conversation.
+
+    func invoke(conversationID: QualifiedID) async throws
 
 }

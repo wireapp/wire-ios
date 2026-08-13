@@ -671,5 +671,9 @@ public enum Locators {
             case attendingLabel = "Attending Label"
         }
 
+        public enum MeetingRow: String {
+            case joinButton = "Join Button"
+        }
+
     }
 }

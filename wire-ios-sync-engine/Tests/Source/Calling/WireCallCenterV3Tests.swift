@@ -1106,6 +1106,24 @@ final class WireCallCenterV3Tests: MessagingTest {
             // then
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.conference)
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.isMeeting, false)
+        }
+    }
+
+    func testThatItStartsACall_conference_meeting() throws {
+        // given
+        groupConversation.groupType = .meeting
+
+        try checkThatItPostsNotification(
+            expectedCallState: .outgoing(isVideo: false, degraded: false),
+            expectedCallerId: selfUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            // when
+            try sut.startCall(in: groupConversation, isVideo: false)
+
+            // then
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.isMeeting, true)
         }
     }
 
@@ -1350,12 +1368,13 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         // then
         XCTAssertEqual((sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.count, 1)
-        if let (event, conversationType) = (sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.last {
+        if let (event, conversationType, isMeeting) = (sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.last {
             XCTAssertEqual(event.conversationId, oneOnOneConversationID)
             XCTAssertEqual(event.userId, userId)
             XCTAssertEqual(event.clientId, clientId)
             XCTAssertEqual(event.data, data)
             XCTAssertEqual(conversationType, .oneToOne)
+            XCTAssertFalse(isMeeting)
         }
     }
 
