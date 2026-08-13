@@ -31,13 +31,16 @@ struct MeetingsView: View {
     /// Called when the user chooses "Edit meeting" in a meeting's menu.
     /// Presenting the edit UI is up to the owner of this view.
     private let onEditMeeting: (Meeting) -> Void
+    private let onJoinMeeting: (MeetingOccurrence) -> Void
 
     init(
         viewModel: MeetingsViewModel,
-        onEditMeeting: @escaping (Meeting) -> Void = { _ in }
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in },
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in }
     ) {
         self.viewModel = viewModel
         self.onEditMeeting = onEditMeeting
+        self.onJoinMeeting = onJoinMeeting
     }
 
     var body: some View {
@@ -84,11 +87,12 @@ struct MeetingsView: View {
             GroupedSections(
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTimeRange: viewModel.formatTimeRange(for:),
+                formatTime: viewModel.formatTime(for:),
                 isAttending: viewModel.isAttending(_:),
                 isHappeningNow: viewModel.isHappeningNow(_:),
                 onEdit: { onEditMeeting($0) },
-                onDelete: { viewModel.meetingToDelete = $0 }
+                onDelete: { viewModel.meetingToDelete = $0 },
+                onJoin: { onJoinMeeting($0) }
             )
 
             if viewModel.hasMore {
@@ -134,11 +138,12 @@ private func SectionTitle(_ text: String) -> some View {
 private struct GroupedSections: View {
     let groups: [(day: Date, meetings: [MeetingOccurrence])]
     let formatDay: (Date) -> String
-    let formatTimeRange: (MeetingOccurrence) -> String
+    let formatTime: (MeetingOccurrence) -> String
     let isAttending: (MeetingOccurrence) -> Bool
     let isHappeningNow: (MeetingOccurrence) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
+    let onJoin: (MeetingOccurrence) -> Void
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -146,15 +151,19 @@ private struct GroupedSections: View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
                 ForEach(dayGroup.meetings, id: \.id) { occurrence in
+                    let isLive = isHappeningNow(occurrence)
+
                     MeetingRow(
                         occurrence: occurrence,
-                        formatTimeRange: formatTimeRange,
+                        formatTime: formatTime,
                         isAttending: isAttending(occurrence),
+                        isLive: isLive,
                         onEdit: { onEdit(occurrence.meeting) },
-                        onDelete: { onDelete(occurrence.meeting) }
+                        onDelete: { onDelete(occurrence.meeting) },
+                        onJoin: { onJoin(occurrence) }
                     )
                     .listRowBackground(
-                        isHappeningNow(occurrence) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
+                        isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear
                     )
                 }
             } header: {

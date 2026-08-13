@@ -21,6 +21,7 @@ package import WireFoundation
 
 import SwiftUI
 import WireCallingDomainSupport
+import WireLogging
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
@@ -36,6 +37,9 @@ package final class AllMeetingsViewModel {
     package let meetingsViewModel: MeetingsViewModel
 
     var presentedFormMode: MeetingFormViewModel.Mode?
+    var hasJoinError = false
+
+    private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
 
     package init(
         currentDateProvider: any CurrentDateProviding,
@@ -44,6 +48,7 @@ package final class AllMeetingsViewModel {
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
+        joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
         makeFormViewModel: @escaping @MainActor (
             _ mode: MeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting) -> Void
@@ -57,6 +62,7 @@ package final class AllMeetingsViewModel {
             deleteMeetingUseCase: deleteMeetingUseCase,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
+        self.joinMeetingCallUseCase = joinMeetingCallUseCase
         self.makeFormViewModel = makeFormViewModel
     }
 
@@ -72,6 +78,15 @@ package final class AllMeetingsViewModel {
 
     func editMeetingTapped(_ meeting: Meeting) {
         presentedFormMode = .edit(meeting)
+    }
+
+    func joinMeetingTapped(_ occurrence: MeetingOccurrence) async {
+        do {
+            try await joinMeetingCallUseCase.invoke(conversationID: occurrence.conversationID)
+        } catch {
+            hasJoinError = true
+            WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
+        }
     }
 
     func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {
