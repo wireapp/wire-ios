@@ -87,6 +87,7 @@ public final class MLSService: MLSServiceInterface {
     let actionsProvider: MLSActionsProviderProtocol
 
     private let subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+    private let maxConcurrentKeyPackageClaims: Int
 
     var lastKeyMaterialUpdateCheck = Date.distantPast
     var keyMaterialUpdateCheckTimer: Timer?
@@ -145,8 +146,11 @@ public final class MLSService: MLSServiceInterface {
         featureRepository: LegacyFeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface =
             SubconversationGroupIDRepository(),
+        maxConcurrentKeyPackageClaims: Int = 4,
         localDomain: String
     ) {
+        precondition(maxConcurrentKeyPackageClaims > 0, "maxConcurrentKeyPackageClaims must be greater than zero")
+
         self.context = context
         self.notificationContext = notificationContext
         self.coreCryptoProvider = coreCryptoProvider
@@ -160,6 +164,7 @@ public final class MLSService: MLSServiceInterface {
         self.userDefaults = PrivateUserDefaults(userID: userID, storage: userDefaults)
         self.delegate = delegate
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
+        self.maxConcurrentKeyPackageClaims = maxConcurrentKeyPackageClaims
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(
             coreCryptoProvider: coreCryptoProvider
@@ -492,6 +497,52 @@ public final class MLSService: MLSServiceInterface {
         case invalidCiphersuite
     }
 
+    private struct KeyPackageClaim {
+        let index: Int
+        let user: MLSUser
+        let result: Result<[KeyPackage], Error>
+
+        var fatalFailure: Error? {
+            guard case let .failure(error) = result,
+                  MLSService.isFatalKeyPackageClaimFailure(error) else {
+                return nil
+            }
+
+            return error
+        }
+    }
+
+    /// Values passed to a key-package claim child task.
+    ///
+    /// `MLSActionsProvider` is stateless and the notification context is backed by a thread-safe
+    /// `NSPersistentStoreCoordinator` or `Account`, so both can be used by concurrent claim tasks.
+    private struct KeyPackageClaimTask: @unchecked Sendable {
+        let index: Int
+        let user: MLSUser
+        let ciphersuite: MLSCipherSuite
+        let actionsProvider: MLSActionsProviderProtocol
+        let notificationContext: NotificationContext
+
+        func execute() async -> KeyPackageClaim {
+            guard !Task.isCancelled else {
+                return KeyPackageClaim(index: index, user: user, result: .failure(CancellationError()))
+            }
+
+            do {
+                let keyPackages = try await actionsProvider.claimKeyPackages(
+                    userID: user.id,
+                    domain: user.domain,
+                    ciphersuite: ciphersuite,
+                    excludedSelfClientID: user.selfClientID,
+                    in: notificationContext
+                )
+                return KeyPackageClaim(index: index, user: user, result: .success(keyPackages))
+            } catch {
+                return KeyPackageClaim(index: index, user: user, result: .failure(error))
+            }
+        }
+    }
+
     public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
         try await commitPendingProposals(in: groupID)
         try await retryOnCommitFailure(for: groupID) { [weak self] in
@@ -539,22 +590,78 @@ public final class MLSService: MLSServiceInterface {
             return []
         }
 
-        var result = [KeyPackage]()
+        try Task.checkCancellation()
+
+        let notificationContext = context.notificationContext
+        let (claims, fatalFailure) = await withTaskGroup(of: KeyPackageClaim.self) { group in
+            var claims = [KeyPackageClaim]()
+            var nextUserIndex = 0
+            var fatalFailure: Error?
+
+            while nextUserIndex < min(maxConcurrentKeyPackageClaims, users.count) {
+                let task = KeyPackageClaimTask(
+                    index: nextUserIndex,
+                    user: users[nextUserIndex],
+                    ciphersuite: ciphersuite,
+                    actionsProvider: actionsProvider,
+                    notificationContext: notificationContext
+                )
+                group.addTask {
+                    await task.execute()
+                }
+                nextUserIndex += 1
+            }
+
+            while let claim = await group.next() {
+                claims.append(claim)
+
+                if fatalFailure == nil, let claimFailure = claim.fatalFailure {
+                    fatalFailure = claimFailure
+                    group.cancelAll()
+                } else if Task.isCancelled {
+                    group.cancelAll()
+                }
+
+                if fatalFailure == nil, !Task.isCancelled, nextUserIndex < users.count {
+                    let task = KeyPackageClaimTask(
+                        index: nextUserIndex,
+                        user: users[nextUserIndex],
+                        ciphersuite: ciphersuite,
+                        actionsProvider: actionsProvider,
+                        notificationContext: notificationContext
+                    )
+                    group.addTask {
+                        await task.execute()
+                    }
+                    nextUserIndex += 1
+                }
+            }
+
+            return (claims, fatalFailure)
+        }
+
+        try Task.checkCancellation()
+
+        if let fatalFailure {
+            throw fatalFailure
+        }
+
+        var keyPackages = [KeyPackage]()
         var failedUsers = [MLSUser]()
 
-        for user in users {
-            do {
-                let keyPackages = try await actionsProvider.claimKeyPackages(
-                    userID: user.id,
-                    domain: user.domain,
-                    ciphersuite: ciphersuite,
-                    excludedSelfClientID: user.selfClientID,
-                    in: context.notificationContext
+        for claim in claims.sorted(by: { $0.index < $1.index }) {
+            switch claim.result {
+            case let .success(claimedKeyPackages):
+                keyPackages.append(contentsOf: claimedKeyPackages)
+            case let .failure(error):
+                if let fatalFailure = claim.fatalFailure {
+                    throw fatalFailure
+                }
+
+                failedUsers.append(claim.user)
+                logger.warn(
+                    "failed to claim key packages for user (\(claim.user.id)): \(String(describing: error))"
                 )
-                result.append(contentsOf: keyPackages)
-            } catch {
-                failedUsers.append(user)
-                logger.warn("failed to claim key packages for user (\(user.id)): \(String(describing: error))")
             }
         }
 
@@ -562,7 +669,43 @@ public final class MLSService: MLSServiceInterface {
             throw MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
         }
 
-        return result
+        return keyPackages
+    }
+
+    private static func isFatalKeyPackageClaimFailure(_ error: Error) -> Bool {
+        switch error {
+        case is CancellationError:
+            true
+
+        case let actionFailure as ClaimMLSKeyPackageAction.Failure:
+            // The legacy action layer represents transport failures with status 0
+            // and proxy authentication failures with HTTP status 407.
+            switch actionFailure {
+            case let .unknown(status) where status == 0 || status == 407:
+                true
+            default:
+                false
+            }
+
+        case let urlError as URLError:
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost:
+                true
+            default:
+                false
+            }
+
+        case let networkStackError as NetworkStackError:
+            switch networkStackError {
+            case .proxyCredentialsRequired:
+                true
+            default:
+                false
+            }
+
+        default:
+            false
+        }
     }
 
     // MARK: - Remove participants from mls group

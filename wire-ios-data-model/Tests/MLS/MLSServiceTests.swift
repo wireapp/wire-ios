@@ -98,7 +98,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         createSut()
     }
 
-    private func createSut() {
+    private func createSut(maxConcurrentKeyPackageClaims: Int = 4) {
         sut = MLSService(
             context: uiMOC,
             notificationContext: uiMOC.notificationContext,
@@ -113,6 +113,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             userID: userIdentifier,
             featureRepository: mockLegacyFeatureRepository,
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository,
+            maxConcurrentKeyPackageClaims: maxConcurrentKeyPackageClaims,
             localDomain: localDomain
         )
         sut.setResetBrokenMLSConversationDelegate(resetMLSConversationDelegate)
@@ -883,21 +884,361 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
 
-        // Mock claiming a key package. Works for user1, throws for user2 and user3
-        mockActionsProvider
-            .claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { userID, _, _, _, _ in
-                if userID == userID1 {
-                    return [keyPackage]
-                } else {
-                    throw ClaimMLSKeyPackageAction.Failure.emptyKeyPackages
-                }
-            }
+        // Mock claiming a key package. Works for user1, throws for user2 and user3.
+        let controller = KeyPackageClaimController(outcomes: [
+            user1.id: .success([keyPackage]),
+            user2.id: .failure(ClaimMLSKeyPackageAction.Failure.emptyKeyPackages),
+            user3.id: .failure(ClaimMLSKeyPackageAction.Failure.emptyKeyPackages)
+        ])
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut()
 
         // Then
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [user2, user3])) {
             // When
             try await sut.addMembersToConversation(with: [user1, user2, user3], for: groupID)
         }
+    }
+
+    func test_ClaimingKeyPackages_NeverExceedsConfiguredConcurrencyLimit() async throws {
+        // Given
+        let users = (0 ..< 6).map { _ in MLSUser(id: .create(), domain: localDomain) }
+        let outcomes: [UUID: KeyPackageClaimController.Outcome] = Dictionary(uniqueKeysWithValues: users.map {
+            ($0.id, KeyPackageClaimController.Outcome.success([createKeyPackage(userID: $0.id, domain: $0.domain)]))
+        })
+        let controller = KeyPackageClaimController(outcomes: outcomes, suspendsClaims: true)
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut(maxConcurrentKeyPackageClaims: 2)
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        mockMLSActionExecutor.mockAddMembers = { _, _ in }
+
+        let operation = Task {
+            try await self.sut.addMembersToConversation(with: users, for: self.groupID)
+        }
+        await controller.waitUntilStarted(count: 2)
+        for _ in 0 ..< 10 {
+            await Task.yield()
+        }
+
+        // Then
+        var snapshot = await controller.snapshot()
+        XCTAssertEqual(snapshot.startedUserIDs.count, 2)
+        XCTAssertEqual(snapshot.activeCount, 2)
+        XCTAssertEqual(snapshot.maximumActiveCount, 2)
+
+        await controller.finishAllClaims()
+        try await operation.value
+
+        snapshot = await controller.snapshot()
+        XCTAssertEqual(snapshot.finishedUserIDs.count, users.count)
+        XCTAssertEqual(snapshot.maximumActiveCount, 2)
+    }
+
+    func test_ClaimingKeyPackages_StartsNextWaitingClaimAsSoonAsOneFinishes() async throws {
+        // Given
+        let users = (0 ..< 3).map { _ in MLSUser(id: .create(), domain: localDomain) }
+        let outcomes: [UUID: KeyPackageClaimController.Outcome] = Dictionary(uniqueKeysWithValues: users.map {
+            ($0.id, KeyPackageClaimController.Outcome.success([createKeyPackage(userID: $0.id, domain: $0.domain)]))
+        })
+        let controller = KeyPackageClaimController(outcomes: outcomes, suspendsClaims: true)
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut(maxConcurrentKeyPackageClaims: 2)
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        mockMLSActionExecutor.mockAddMembers = { _, _ in }
+
+        let operation = Task {
+            try await self.sut.addMembersToConversation(with: users, for: self.groupID)
+        }
+        await controller.waitUntilStarted(count: 2)
+        let initiallyStarted = await controller.snapshot().startedUserIDs
+        await controller.release(userID: initiallyStarted[0])
+        await controller.waitUntilStarted(count: 3)
+
+        // Then
+        let snapshot = await controller.snapshot()
+        XCTAssertEqual(snapshot.startedUserIDs.count, 3)
+        XCTAssertEqual(snapshot.activeCount, 2)
+        XCTAssertFalse(snapshot.finishedUserIDs.contains(initiallyStarted[1]))
+
+        await controller.finishAllClaims()
+        try await operation.value
+    }
+
+    func test_NoNetworkKeyPackageClaimFailure_StopsWaitingClaims() async {
+        // Given
+        let failingUser = MLSUser(id: .create(), domain: localDomain)
+        let waitingUser = MLSUser(id: .create(), domain: localDomain)
+        // The legacy claim action represents a no-network transport failure with status 0.
+        let controller = KeyPackageClaimController(
+            outcomes: [
+                failingUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 0)),
+                waitingUser.id: .success([createKeyPackage(userID: waitingUser.id, domain: waitingUser.domain)])
+            ],
+            suspendsClaims: true
+        )
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut(maxConcurrentKeyPackageClaims: 1)
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+
+        let operation = Task { () -> Error? in
+            do {
+                try await self.sut.addMembersToConversation(with: [failingUser, waitingUser], for: self.groupID)
+                return nil
+            } catch {
+                return error
+            }
+        }
+        await controller.waitUntilStarted(count: 1)
+        await controller.release(userID: failingUser.id)
+        let error = await operation.value
+
+        // Then
+        let snapshot = await controller.snapshot()
+        XCTAssertFalse(snapshot.startedUserIDs.contains(waitingUser.id))
+        XCTAssertEqual(
+            error as? ClaimMLSKeyPackageAction.Failure,
+            ClaimMLSKeyPackageAction.Failure.unknown(status: 0)
+        )
+    }
+
+    func test_NoNetworkKeyPackageClaimFailure_CancelsActiveClaimsBeforeReturning() async {
+        // Given
+        let failingUser = MLSUser(id: .create(), domain: localDomain)
+        let activeUser = MLSUser(id: .create(), domain: localDomain)
+        // The legacy claim action represents a no-network transport failure with status 0.
+        let controller = KeyPackageClaimController(
+            outcomes: [
+                failingUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 0)),
+                activeUser.id: .success([createKeyPackage(userID: activeUser.id, domain: activeUser.domain)])
+            ],
+            suspendsClaims: true
+        )
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut(maxConcurrentKeyPackageClaims: 2)
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+
+        let operation = Task { () -> Error? in
+            do {
+                try await self.sut.addMembersToConversation(with: [failingUser, activeUser], for: self.groupID)
+                return nil
+            } catch {
+                return error
+            }
+        }
+        await controller.waitUntilStarted(count: 2)
+        await controller.release(userID: failingUser.id)
+        let error = await operation.value
+
+        // Then
+        let snapshot = await controller.snapshot()
+        XCTAssertTrue(snapshot.finishedUserIDs.contains(activeUser.id))
+        XCTAssertEqual(
+            error as? ClaimMLSKeyPackageAction.Failure,
+            ClaimMLSKeyPackageAction.Failure.unknown(status: 0)
+        )
+    }
+
+    func test_ProxyFailure_AbortsKeyPackageClaimsAndDoesNotStartWaitingClaim() async {
+        // Given
+        let failingUser = MLSUser(id: .create(), domain: localDomain)
+        let waitingUser = MLSUser(id: .create(), domain: localDomain)
+        let controller = KeyPackageClaimController(
+            outcomes: [
+                failingUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 407)),
+                waitingUser.id: .success([createKeyPackage(userID: waitingUser.id, domain: waitingUser.domain)])
+            ]
+        )
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut(maxConcurrentKeyPackageClaims: 1)
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+
+        // When
+        do {
+            try await sut.addMembersToConversation(with: [failingUser, waitingUser], for: groupID)
+            XCTFail("expected proxy failure")
+        } catch let error as ClaimMLSKeyPackageAction.Failure {
+            XCTAssertEqual(error, .unknown(status: 407))
+        } catch {
+            XCTFail("unexpected error: \(error)")
+        }
+
+        // Then
+        let snapshot = await controller.snapshot()
+        XCTAssertEqual(snapshot.startedUserIDs, [failingUser.id])
+    }
+
+    func test_ConcurrencyLevelsOneAndFour_ProduceEquivalentAggregateResults() async throws {
+        // Given
+        let firstUser = MLSUser(id: .create(), domain: localDomain)
+        let secondUser = MLSUser(id: .create(), domain: localDomain)
+        let successfulUsers = [firstUser, secondUser]
+        let firstUserKeyPackages = [
+            createKeyPackage(userID: firstUser.id, domain: firstUser.domain),
+            createKeyPackage(userID: firstUser.id, domain: firstUser.domain)
+        ]
+        let secondUserKeyPackage = createKeyPackage(userID: secondUser.id, domain: secondUser.domain)
+
+        func successfulAggregate(maxConcurrentClaims: Int) async throws -> [WireDataModel.KeyPackage] {
+            let controller = KeyPackageClaimController(outcomes: [
+                firstUser.id: .success(firstUserKeyPackages),
+                secondUser.id: .success([secondUserKeyPackage])
+            ], suspendsClaims: maxConcurrentClaims > 1)
+            mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+            createSut(maxConcurrentKeyPackageClaims: maxConcurrentClaims)
+            mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+
+            let recorder = KeyPackageRecorder()
+            mockMLSActionExecutor.mockAddMembers = { keyPackages, _ in
+                await recorder.record(keyPackages)
+            }
+
+            if maxConcurrentClaims > 1 {
+                let operation = Task {
+                    try await self.sut.addMembersToConversation(with: successfulUsers, for: self.groupID)
+                }
+                await controller.waitUntilStarted(count: 2)
+                await controller.release(userID: secondUser.id)
+                await controller.waitUntilFinished(count: 1)
+                await controller.release(userID: firstUser.id)
+                try await operation.value
+            } else {
+                try await sut.addMembersToConversation(with: successfulUsers, for: groupID)
+            }
+
+            return await recorder.keyPackages
+        }
+
+        let missingUser = MLSUser(id: .create(), domain: localDomain)
+        let federationFailedUser = MLSUser(id: .create(), domain: "federated.example.com")
+        let serverFailedUser = MLSUser(id: .create(), domain: localDomain)
+        let usersWithFailures = [firstUser, missingUser, federationFailedUser, serverFailedUser]
+
+        func failedUserAggregate(maxConcurrentClaims: Int) async -> [MLSUser] {
+            let controller = KeyPackageClaimController(outcomes: [
+                firstUser.id: .success(firstUserKeyPackages),
+                missingUser.id: .failure(ClaimMLSKeyPackageAction.Failure.emptyKeyPackages),
+                federationFailedUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 533)),
+                serverFailedUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 500))
+            ])
+            mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+            createSut(maxConcurrentKeyPackageClaims: maxConcurrentClaims)
+            mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+
+            do {
+                try await sut.addMembersToConversation(with: usersWithFailures, for: groupID)
+                XCTFail("expected failed key-package claims")
+                return []
+            } catch let error as MLSService.MLSAddMembersError {
+                guard case let .failedToClaimKeyPackages(users) = error else {
+                    XCTFail("unexpected MLS error: \(error)")
+                    return []
+                }
+                return users
+            } catch {
+                XCTFail("unexpected error: \(error)")
+                return []
+            }
+        }
+
+        // When
+        let sequentialKeyPackages = try await successfulAggregate(maxConcurrentClaims: 1)
+        let parallelKeyPackages = try await successfulAggregate(maxConcurrentClaims: 4)
+        let sequentialFailedUsers = await failedUserAggregate(maxConcurrentClaims: 1)
+        let parallelFailedUsers = await failedUserAggregate(maxConcurrentClaims: 4)
+
+        // Then
+        XCTAssertEqual(sequentialKeyPackages, parallelKeyPackages)
+        XCTAssertEqual(sequentialKeyPackages, firstUserKeyPackages + [secondUserKeyPackage])
+        XCTAssertEqual(sequentialFailedUsers, parallelFailedUsers)
+        XCTAssertEqual(sequentialFailedUsers, [missingUser, federationFailedUser, serverFailedUser])
+    }
+
+    func test_ClaimingKeyPackages_CollectsAllClientKeyPackagesForUser() async throws {
+        // Given
+        let user = MLSUser(id: .create(), domain: localDomain)
+        let keyPackages = [
+            createKeyPackage(userID: user.id, domain: user.domain),
+            createKeyPackage(userID: user.id, domain: user.domain)
+        ]
+        let controller = KeyPackageClaimController(outcomes: [user.id: .success(keyPackages)])
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut()
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+
+        var addedKeyPackages = [WireDataModel.KeyPackage]()
+        mockMLSActionExecutor.mockAddMembers = { claimedKeyPackages, _ in
+            addedKeyPackages = claimedKeyPackages
+        }
+
+        // When
+        try await sut.addMembersToConversation(with: [user], for: groupID)
+
+        // Then
+        XCTAssertEqual(addedKeyPackages, keyPackages)
+    }
+
+    func test_ClaimingKeyPackages_PreservesMissingFederationServerAndSelfUserBehavior() async {
+        // Given
+        let missingUser = MLSUser(id: .create(), domain: localDomain)
+        let federationFailedUser = MLSUser(id: .create(), domain: "federated.example.com")
+        let serverFailedUser = MLSUser(id: .create(), domain: localDomain)
+        let selfUser = await uiMOC.perform {
+            MLSUser(from: ZMUser.selfUser(in: self.uiMOC), localDomain: self.localDomain)
+        }
+        let users = [missingUser, federationFailedUser, selfUser, serverFailedUser]
+        let controller = KeyPackageClaimController(outcomes: [
+            missingUser.id: .failure(ClaimMLSKeyPackageAction.Failure.emptyKeyPackages),
+            federationFailedUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 533)),
+            selfUser.id: .success([]),
+            serverFailedUser.id: .failure(ClaimMLSKeyPackageAction.Failure.unknown(status: 500))
+        ])
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut()
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+
+        // When / Then
+        await assertItThrows(
+            error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(
+                users: [missingUser, federationFailedUser, serverFailedUser]
+            )
+        ) {
+            try await sut.addMembersToConversation(with: users, for: groupID)
+        }
+    }
+
+    func test_CancellingKeyPackageClaims_StopsWaitingClaimsAndThrowsCancellation() async {
+        // Given
+        let users = (0 ..< 3).map { _ in MLSUser(id: .create(), domain: localDomain) }
+        let outcomes: [UUID: KeyPackageClaimController.Outcome] = Dictionary(uniqueKeysWithValues: users.map {
+            ($0.id, KeyPackageClaimController.Outcome.success([createKeyPackage(userID: $0.id, domain: $0.domain)]))
+        })
+        let controller = KeyPackageClaimController(outcomes: outcomes, suspendsClaims: true)
+        mockActionsProvider = ControlledMLSActionsProvider(controller: controller)
+        createSut(maxConcurrentKeyPackageClaims: 1)
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        mockMLSActionExecutor.mockAddMembers = { _, _ in }
+
+        let operation = Task {
+            try await self.sut.addMembersToConversation(with: users, for: self.groupID)
+        }
+        await controller.waitUntilStarted(count: 1)
+
+        // When
+        operation.cancel()
+        await controller.finishAllClaims()
+
+        // Then
+        do {
+            try await operation.value
+            XCTFail("expected cancellation")
+        } catch is CancellationError {
+            // Expected.
+        } catch {
+            XCTFail("unexpected error: \(error)")
+        }
+
+        let snapshot = await controller.snapshot()
+        XCTAssertEqual(snapshot.startedUserIDs.count, 1)
     }
 
     func test_AddingMembersToConversation_ExecutorFails() async {
@@ -3245,6 +3586,180 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             timeout: 0.5,
             enforceOrder: true
         )
+    }
+}
+
+private final class ControlledMLSActionsProvider: MockMLSActionsProviderProtocol {
+
+    private let controller: KeyPackageClaimController
+
+    init(controller: KeyPackageClaimController) {
+        self.controller = controller
+    }
+
+    override func claimKeyPackages(
+        userID: UUID,
+        domain: String?,
+        ciphersuite: WireDataModel.MLSCipherSuite,
+        excludedSelfClientID: String?,
+        in context: NotificationContext
+    ) async throws -> [WireDataModel.KeyPackage] {
+        try await controller.claimKeyPackages(for: userID)
+    }
+}
+
+private actor KeyPackageClaimController {
+
+    enum Outcome {
+        case success([WireDataModel.KeyPackage])
+        case failure(Error)
+    }
+
+    struct Snapshot {
+        let startedUserIDs: [UUID]
+        let finishedUserIDs: [UUID]
+        let activeCount: Int
+        let maximumActiveCount: Int
+    }
+
+    private struct Waiter {
+        let count: Int
+        let continuation: CheckedContinuation<Void, Never>
+    }
+
+    private let outcomes: [UUID: Outcome]
+    private var suspendsClaims: Bool
+    private var blockedClaims = [UUID: CheckedContinuation<Void, Never>]()
+    private var startWaiters = [Waiter]()
+    private var finishWaiters = [Waiter]()
+    private var startedUserIDs = [UUID]()
+    private var finishedUserIDs = [UUID]()
+    private var activeCount = 0
+    private var maximumActiveCount = 0
+
+    init(
+        outcomes: [UUID: Outcome],
+        suspendsClaims: Bool = false
+    ) {
+        self.outcomes = outcomes
+        self.suspendsClaims = suspendsClaims
+    }
+
+    func claimKeyPackages(for userID: UUID) async throws -> [WireDataModel.KeyPackage] {
+        activeCount += 1
+        maximumActiveCount = max(maximumActiveCount, activeCount)
+        startedUserIDs.append(userID)
+        resumeStartWaiters()
+        defer {
+            activeCount -= 1
+            finishedUserIDs.append(userID)
+            resumeFinishWaiters()
+        }
+
+        if suspendsClaims {
+            await withTaskCancellationHandler {
+                await withCheckedContinuation { continuation in
+                    if Task.isCancelled {
+                        continuation.resume()
+                    } else {
+                        blockedClaims[userID] = continuation
+                    }
+                }
+            } onCancel: {
+                Task {
+                    await self.cancelClaim(for: userID)
+                }
+            }
+        }
+
+        try Task.checkCancellation()
+
+        guard let outcome = outcomes[userID] else {
+            return []
+        }
+
+        switch outcome {
+        case let .success(keyPackages):
+            return keyPackages
+        case let .failure(error):
+            throw error
+        }
+    }
+
+    func waitUntilStarted(count: Int) async {
+        guard startedUserIDs.count < count else { return }
+
+        await withCheckedContinuation { continuation in
+            startWaiters.append(Waiter(count: count, continuation: continuation))
+        }
+    }
+
+    func waitUntilFinished(count: Int) async {
+        guard finishedUserIDs.count < count else { return }
+
+        await withCheckedContinuation { continuation in
+            finishWaiters.append(Waiter(count: count, continuation: continuation))
+        }
+    }
+
+    func release(userID: UUID) {
+        blockedClaims.removeValue(forKey: userID)?.resume()
+    }
+
+    func finishAllClaims() {
+        suspendsClaims = false
+        let continuations = Array(blockedClaims.values)
+        blockedClaims.removeAll()
+        continuations.forEach { $0.resume() }
+    }
+
+    func snapshot() -> Snapshot {
+        Snapshot(
+            startedUserIDs: startedUserIDs,
+            finishedUserIDs: finishedUserIDs,
+            activeCount: activeCount,
+            maximumActiveCount: maximumActiveCount
+        )
+    }
+
+    private func cancelClaim(for userID: UUID) {
+        blockedClaims.removeValue(forKey: userID)?.resume()
+    }
+
+    private func resumeStartWaiters() {
+        var pendingWaiters = [Waiter]()
+
+        for waiter in startWaiters {
+            if startedUserIDs.count >= waiter.count {
+                waiter.continuation.resume()
+            } else {
+                pendingWaiters.append(waiter)
+            }
+        }
+
+        startWaiters = pendingWaiters
+    }
+
+    private func resumeFinishWaiters() {
+        var pendingWaiters = [Waiter]()
+
+        for waiter in finishWaiters {
+            if finishedUserIDs.count >= waiter.count {
+                waiter.continuation.resume()
+            } else {
+                pendingWaiters.append(waiter)
+            }
+        }
+
+        finishWaiters = pendingWaiters
+    }
+}
+
+private actor KeyPackageRecorder {
+    private(set) var keyPackages = [WireDataModel.KeyPackage]()
+
+    func record(_ keyPackages: [WireDataModel.KeyPackage]) {
+        self.keyPackages = keyPackages
     }
 }
 
