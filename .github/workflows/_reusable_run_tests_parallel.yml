@@ -29,8 +29,8 @@ on:
         required: true
       # Slack webhook this run should post to. Callers resolve which
       # environment-specific webhook to pass, e.g.
-      # `NOTIFICATION_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}`.
-      NOTIFICATION_WEBHOOK_URL:
+      # `SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}`.
+      SLACK_WEBHOOK_URL:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -210,7 +210,7 @@ jobs:
       - name: Notify on Wire
         uses: ./.github/actions/notify-wire
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           notify: ${{ inputs.notify }}
           status: ${{ needs.test-framework.result }}
