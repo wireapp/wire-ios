@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "deaktiviert";
 
 "conversation.status.secutity_alert.default" = "Neue Sicherheitswarnung";
+"conversation.status.scheduled_for_deletion" = "Wird bald gelöscht";
 
 "conversation.status.typing" = "Schreibt eine Nachricht…";
 "conversation.status.typing.group" = "%@: schreibt eine Nachricht…";
@@ -643,7 +644,7 @@
 "content.system.file_collaboration.enabled.editor_access" = "Sie haben Bearbeitungsrechte. Personen außerhalb Ihres Teams haben lediglich Leserechte.";
 "content.system.file_collaboration.enabled.viewer_access" = "Sie können Dateien lesen, aber nicht hochladen, bearbeiten oder verwalten.";
 "content.system.file_collaboration.enabled.learn_more" = "Mehr erfahren";
-"content.system.file_collaboration.drive_viewer_access.title" = "People outside your team can join this conversation as viewers.";
+"content.system.file_collaboration.drive_viewer_access.title" = "Personen außerhalb Ihres Teams können an dieser Unterhaltung als Betrachter beitreten.";
 
 // read receipt
 
@@ -668,6 +669,11 @@
 "content.system.message_legal_hold.disabled" = "Die gesetzliche Aufbewahrung wurde für diese Unterhaltung deaktiviert";
 
 "content.system.message_legal_hold.learn_more" = "Mehr erfahren";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
 
 //
 "content.system.is_verified" = "Alle Fingerabdrücke sind überprüft";
@@ -1002,7 +1008,7 @@
 "last_admin_leave.delete_group" = "Gruppe löschen";
 "last_admin_leave.promote_only_message" = "Sie sind der einzige Admin.\nErnennen Sie einen anderen Teilnehmer, bevor Sie gehen.";
 "last_admin_leave.cannot_leave_title" = "Cannot leave \"%@\".";
-"last_admin_leave.cannot_leave_message" = "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.";
+"last_admin_leave.cannot_leave_message" = "Es gibt keine berechtigten Admins in dieser Gruppe und Sie können die Gruppe nicht löschen. Fügen Sie eine andere Person aus dem Team hinzu und ernennen Sie diese zum Admin.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ hat begonnen, ein neues Gerät zu nutzen.";
@@ -1673,6 +1679,10 @@
 "login.sso.backend_switch.title" = "Weiterleitung...";
 "login.sso.backend_switch.subtitle" = "Sie werden zu Ihrem speziellen Unternehmensservice weitergeleitet.";
 "login.sso.backend_switch.information" = "Geben Sie Ihre Zugangsdaten nur dann an, wenn Sie sicher sind, dass dies das Login Ihrer Organisation ist.";
+
+"sso_identity_changed.title" = "Different identity provider detected";
+"sso_identity_changed.message" = "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "Sie haben Wire auf diesem Gerät bereits verwendet.";
 "registration.no_history.logged_out.subtitle" = "Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";

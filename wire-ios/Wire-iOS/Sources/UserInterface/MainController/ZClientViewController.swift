@@ -214,6 +214,7 @@ final class ZClientViewController: UIViewController {
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
     private let wireMeetingsFactory: any WireMeetingsFactoryProtocol
+    private let meetingsAccentColorState: WireMeetingsAccentColorState
     let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
@@ -242,6 +243,9 @@ final class ZClientViewController: UIViewController {
         self.colorSchemeController = .init(userSession: userSession)
 
         self.wireMeetingsFactory = wireMeetingsFactory
+        self.meetingsAccentColorState = WireMeetingsAccentColorState(
+            wireAccentColor: userSession.selfUser.wireAccentColor
+        )
         self.wireMessagingFactory = wireMessagingFactory
         self.proximityMonitorManager = ProximityMonitorManager(userSession: userSession)
 
@@ -258,8 +262,6 @@ final class ZClientViewController: UIViewController {
             _ = sharedContainerURL.appendingPathComponent("AccountData", isDirectory: true)
                 .appendingPathComponent(remoteIdentifier.uuidString, isDirectory: true)
         }
-
-        NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
 
         let featureToken = NotificationCenter.default
             .addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
@@ -431,8 +433,17 @@ final class ZClientViewController: UIViewController {
             memberRepository: memberRepository,
             conversationRepository: MeetingConversationRepositoryBridge(
                 conversationRepository: conversationRepository,
-                contextProvider: userSession.contextProvider
-            )
+                contextProvider: userSession.contextProvider,
+                participantsService: ConversationParticipantsService(
+                    context: userSession.contextProvider.syncContext,
+                    localDomain: userSession.selfUser.domain
+                )
+            ),
+            callRepository: MeetingCallRepositoryBridge(
+                userSession: userSession,
+                alertPresenter: self
+            ),
+            accentColorState: meetingsAccentColorState
         )
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
@@ -536,7 +547,7 @@ final class ZClientViewController: UIViewController {
 
     @available(*, deprecated, message: "Please don't access this property, it will be deleted.")
     static var shared: ZClientViewController? {
-        (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter?.zClientViewController
+        UIApplication.shared.sceneDelegates.first?.appRootRouter?.zClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
@@ -972,6 +983,7 @@ extension ZClientViewController: UserObserving {
 
             if changeInfo.accentColorValueChanged {
                 sidebarUpdateNeeded = true
+                meetingsAccentColorState.wireAccentColor = userSession.selfUser.wireAccentColor
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate
                 appDelegate.mainWindow?.tintColor = UIColor.accent()
             }

@@ -27,6 +27,7 @@ struct UpdateEventProcessor: UpdateEventProcessorProtocol {
     let federationEventProcessor: any FederationEventProcessorProtocol
     let userEventProcessor: any UserEventProcessorProtocol
     let teamEventProcessor: any TeamEventProcessorProtocol
+    let meetingEventProcessor: any MeetingEventProcessorProtocol
 
     func processEvent(_ event: UpdateEvent) async throws {
         WireLogger.eventProcessing.info("process event", attributes: [.eventType: event.name], .safePublic)
@@ -46,6 +47,9 @@ struct UpdateEventProcessor: UpdateEventProcessorProtocol {
 
         case let .team(event):
             try await teamEventProcessor.processEvent(event)
+
+        case let .meeting(event):
+            try await meetingEventProcessor.processEvent(event)
 
         case let .unknown(event):
             WireLogger.eventProcessing.warn("can not process unknown event: \(event)")

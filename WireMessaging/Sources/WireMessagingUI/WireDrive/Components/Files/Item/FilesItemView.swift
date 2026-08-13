@@ -383,7 +383,7 @@ struct FilesItemView: View {
     ) -> some View {
         if viewModel.menuActions.contains(itemAction) {
             menuItem(itemAction)
-                .accessibilityLabel(itemAction.accessibilityLabel)
+                .accessibilityLabel(viewModel.accessibilitylabel(for: itemAction))
                 .accessibilityIdentifier("fileMenu.\(itemAction)")
         }
     }

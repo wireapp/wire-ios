@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import UserNotifications
 import WireCallingData
 import WireCoreCrypto
 import WireDataModel
@@ -30,17 +31,20 @@ public final class ClientSessionComponent {
     /// Provides callbacks for other modules.
     public struct CompletionHandlers {
         let onProcessedCallEvent: (CallEventInfo) -> Void
+        let onMeetingCancellation: (UNNotificationContent) async -> Void
         let onSelfClientInvalidated: () async -> Void
         let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
         let onAuthenticationFailure: @Sendable () -> Void
 
         public init(
             onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
+            onMeetingCancellation: @escaping (UNNotificationContent) async -> Void = { _ in },
             onSelfClientInvalidated: @escaping () async -> Void,
             onAuthenticationFailure: @escaping @Sendable () -> Void,
             onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void,
         ) {
             self.onProcessedCallEvent = onProcessedCallEvent
+            self.onMeetingCancellation = onMeetingCancellation
             self.onSelfClientInvalidated = onSelfClientInvalidated
             self.onProcessedTypingUsers = onProcessedTypingUsers
             self.onAuthenticationFailure = onAuthenticationFailure
@@ -425,7 +429,10 @@ public final class ClientSessionComponent {
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent,
         earService: earService,
-        backgroundTaskExecuter: backgroundTaskExecuter
+        backgroundTaskExecuter: backgroundTaskExecuter,
+        beforeProcessingLiveEvent: { [weak self] event in
+            await self?.handleBeforeProcessingLiveEvent(event)
+        }
     )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
@@ -447,6 +454,9 @@ public final class ClientSessionComponent {
             backgroundTaskExecuter: backgroundTaskExecuter,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+            },
+            beforeProcessingLiveEvent: { [weak self] event in
+                await self?.handleBeforeProcessingLiveEvent(event)
             }
         )
     } else {
@@ -707,10 +717,45 @@ public final class ClientSessionComponent {
         lockRepository: resetMLSConversationLockRepository
     )
 
+    private lazy var adminlessReminderEventProcessor = ConversationAdminlessReminderEventProcessor(
+        repository: conversationRepository
+    )
+
     public private(set) lazy var meetingRepository = MeetingRepository(
         meetingsAPI: meetingsAPI,
         localStore: MeetingLocalStore(context: syncContext)
     )
+
+    private lazy var meetingDeleteEventNotificationBuilder = MeetingDeleteEventNotificationBuilder(
+        meetingLocalStore: MeetingLocalStore(context: syncContext),
+        userLocalStore: userLocalStore,
+        developerFlagStorage: sharedUserDefaults,
+        featureConfigLocalStore: featureConfigsLocalStore,
+        accountID: selfUserID
+    )
+
+    private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
+        repository: meetingRepository,
+        conversationRepository: conversationRepository
+    )
+
+    private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
+        repository: meetingRepository
+    )
+
+    private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
+        repository: meetingRepository,
+        conversationRepository: conversationRepository
+    )
+
+    private func handleBeforeProcessingLiveEvent(_ event: UpdateEvent) async {
+        guard case let .meeting(.delete(event)) = event else { return }
+        guard case let .text(content)? = await meetingDeleteEventNotificationBuilder.buildContent(event: event) else {
+            return
+        }
+
+        await completionHandlers.onMeetingCancellation(content)
+    }
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
@@ -728,7 +773,8 @@ public final class ClientSessionComponent {
         renameEventProcessor: conversationRenameEventProcessor,
         typingEventProcessor: conversationTypingEventProcessor,
         addPermissionEventProcessor: addPermissionEventProcessor,
-        mlsResetEventProcessor: mlsResetEventProcessor
+        mlsResetEventProcessor: mlsResetEventProcessor,
+        adminlessReminderEventProcessor: adminlessReminderEventProcessor
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {
@@ -763,12 +809,19 @@ public final class ClientSessionComponent {
             createEventProcessor: teamCreateEventProcessor
         )
 
+        let meetingEventProcessor = MeetingEventProcessor(
+            createEventProcessor: meetingCreateEventProcessor,
+            deleteEventProcessor: meetingDeleteEventProcessor,
+            updateEventProcessor: meetingUpdateEventProcessor
+        )
+
         return UpdateEventProcessor(
             conversationEventProcessor: conversationEventProcessor,
             featureConfigEventProcessor: featureConfigEventProcessor,
             federationEventProcessor: federationEventProcessor,
             userEventProcessor: userEventProcessor,
-            teamEventProcessor: teamEventProcessor
+            teamEventProcessor: teamEventProcessor,
+            meetingEventProcessor: meetingEventProcessor
         )
     }()
 
@@ -814,6 +867,24 @@ public final class ClientSessionComponent {
             conversationID: conversationID,
             syncContext: syncContext
         )
+    }
+
+    /// Debug-only: simulates receiving a `conversation.adminless-reminder` backend event, routing it through
+    /// the same `conversationEventProcessor` a real incoming event would use, so it can be verified without
+    /// waiting on the backend to actually send one.
+    public func debugSimulateAdminlessReminderEvent(
+        conversationID: WireDataModel.QualifiedID,
+        scheduledDeletionDate: Date
+    ) async throws {
+        let event = ConversationAdminlessReminderEvent(
+            conversationID: WireNetwork.ConversationID(id: conversationID.uuid, domain: conversationID.domain),
+            senderID: WireNetwork.UserID(id: selfUserID, domain: backendMetadata.domain),
+            timestamp: Date(),
+            scheduledDeletionDate: scheduledDeletionDate
+        )
+
+        try await conversationEventProcessor.processEvent(.adminlessReminder(event))
+        try await databaseSaver.save()
     }
 
     // MARK: - Other

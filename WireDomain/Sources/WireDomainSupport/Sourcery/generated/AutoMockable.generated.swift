@@ -1110,6 +1110,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - isMeetingConversation
+
+    public var isMeetingConversation_Invocations: [ZMConversation] = []
+    public var isMeetingConversation_MockMethod: ((ZMConversation) async -> Bool)?
+    public var isMeetingConversation_MockValue: Bool?
+
+    public func isMeetingConversation(_ conversation: ZMConversation) async -> Bool {
+        isMeetingConversation_Invocations.append(conversation)
+
+        if let mock = isMeetingConversation_MockMethod {
+            return await mock(conversation)
+        } else if let mock = isMeetingConversation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMeetingConversation`")
+        }
+    }
+
     // MARK: - isSelfConversation
 
     public var isSelfConversation_Invocations: [ZMConversation] = []
@@ -1297,6 +1315,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
 
         await mock(newName, conversation)
+    }
+
+    // MARK: - storeConversation
+
+    public var storeConversationScheduledDeletionDateConversation_Invocations: [(scheduledDeletionDate: Date, conversation: ZMConversation)] = []
+    public var storeConversationScheduledDeletionDateConversation_MockMethod: ((Date, ZMConversation) async -> Void)?
+
+    public func storeConversation(scheduledDeletionDate: Date, conversation: ZMConversation) async {
+        storeConversationScheduledDeletionDateConversation_Invocations.append((scheduledDeletionDate: scheduledDeletionDate, conversation: conversation))
+
+        guard let mock = storeConversationScheduledDeletionDateConversation_MockMethod else {
+            fatalError("no mock for `storeConversationScheduledDeletionDateConversation`")
+        }
+
+        await mock(scheduledDeletionDate, conversation)
     }
 
     // MARK: - updateOrCreateMLSGroup
@@ -2004,6 +2037,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
         }
 
         await mock(newName, conversationID, conversationDomain, senderID, senderDomain, date)
+    }
+
+    // MARK: - updateConversationScheduledDeletion
+
+    public var updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_Invocations: [(scheduledDeletionDate: Date, conversationID: UUID, conversationDomain: String?, date: Date)] = []
+    public var updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_MockMethod: ((Date, UUID, String?, Date) async -> Void)?
+
+    public func updateConversationScheduledDeletion(scheduledDeletionDate: Date, conversationID: UUID, conversationDomain: String?, date: Date) async {
+        updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_Invocations.append((scheduledDeletionDate: scheduledDeletionDate, conversationID: conversationID, conversationDomain: conversationDomain, date: date))
+
+        guard let mock = updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate_MockMethod else {
+            fatalError("no mock for `updateConversationScheduledDeletionScheduledDeletionDateConversationIDConversationDomainDate`")
+        }
+
+        await mock(scheduledDeletionDate, conversationID, conversationDomain, date)
     }
 
     // MARK: - fetchConversationGuestLink

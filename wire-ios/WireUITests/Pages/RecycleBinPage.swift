@@ -75,11 +75,11 @@ class RecycleBinPage: PageModel {
     }
 
     var deletePermanentlyOnMenuContext: XCUIElement {
-        app.buttons[Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue]
+        app.buttons[Locators.WireDrive.FileMenu.deletePermanently.identifier]
     }
 
     var deletePermanentlyOptionOnBottomSheet: XCUIElement {
-        app.buttons[Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue].firstMatch
+        app.buttons[Locators.WireDrive.FilesItemPage.confirmDeleteButton.rawValue].firstMatch
     }
 
     func deleteFilePermanently() -> Self {

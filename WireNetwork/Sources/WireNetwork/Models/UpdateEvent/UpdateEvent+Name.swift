@@ -58,6 +58,8 @@ public extension UpdateEvent {
                 "conversation.add-permission-update"
             case .mlsReset:
                 "conversation.mls-reset"
+            case .adminlessReminder:
+                "conversation.adminless-reminder"
             }
         case let .featureConfig(event):
             switch event {
@@ -108,6 +110,15 @@ public extension UpdateEvent {
                 "team.memberUpdate"
             case .create:
                 "team.create"
+            }
+        case let .meeting(event):
+            switch event {
+            case .create:
+                "meeting.create"
+            case .delete:
+                "meeting.delete"
+            case .update:
+                "meeting.update"
             }
         case let .unknown(eventType):
             "unknown.\(eventType)"

@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -33,7 +34,8 @@ final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
     let item: FilesViewItem
-    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    private let observeAssetUseCase: WireDriveObserveAssetUseCase
+    private let getAssetUseCase: WireDriveGetAssetUseCase
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
@@ -50,17 +52,6 @@ final class FilesItemViewModel: ObservableObject {
         case deletePermanently
         case makeAvailableOffline
         case removeAvailableOffline
-
-        var accessibilityLabel: String {
-            switch self {
-            case .makeAvailableOffline:
-                Accessibility.Files.ViewerAccess.makeAvailableOffline
-            case .shareLink:
-                Accessibility.Files.ViewerAccess.shareLink
-            default:
-                "\(self)"
-            }
-        }
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -80,7 +71,6 @@ final class FilesItemViewModel: ObservableObject {
     let fileName: String
     let subtitle: String?
     let icon: WireDriveFileType
-
     let isBrowsing: Bool
     let isInRecycleBin: Bool
 
@@ -107,7 +97,8 @@ final class FilesItemViewModel: ObservableObject {
         item: FilesViewItem,
         selectedSortingKey: FilesSortingViewModel.SortingKey?,
         conversationName: String?,
-        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        observeAssetUseCase: WireDriveObserveAssetUseCase,
+        getAssetUseCase: WireDriveGetAssetUseCase,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
@@ -131,7 +122,8 @@ final class FilesItemViewModel: ObservableObject {
             timeZone: timeZone
         )
         self.icon = item.icon
-        self.localAssetRepository = localAssetRepository
+        self.observeAssetUseCase = observeAssetUseCase
+        self.getAssetUseCase = getAssetUseCase
 
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
@@ -142,7 +134,7 @@ final class FilesItemViewModel: ObservableObject {
             self?.performAction(.primaryAction)
         }
 
-        localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
+        observeAssetUseCase.invoke(nodeID: nodeID).sink { [weak self] asset in
             guard let self else { return }
             self.asset = asset
             if let asset {
@@ -194,6 +186,19 @@ final class FilesItemViewModel: ObservableObject {
             isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
         default:
             false
+        }
+    }
+
+    func accessibilitylabel(for action: ItemAction) -> String {
+        switch action {
+        case .makeAvailableOffline where showReadOnlyIcon:
+            Accessibility.Files.ViewerAccess.makeAvailableOffline
+        case .shareLink where showReadOnlyIcon:
+            Accessibility.Files.ViewerAccess.shareLink
+        case .deletePermanently:
+            Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
+        default:
+            "\(action)"
         }
     }
 
@@ -253,16 +258,6 @@ final class FilesItemViewModel: ObservableObject {
     func confirmRestore() async {
         await onItemAction(.restore, item)
     }
-
-    #if DEBUG
-        func deleteAsset() {
-            Task {
-                do {
-                    try await localAssetRepository.deleteAsset(nodeID: nodeID)
-                } catch {}
-            }
-        }
-    #endif
 
     var isOffline: Bool {
         networkMonitor.currentStatus == .disconnected
@@ -358,7 +353,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isAvailableOffline: Bool {
-        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isAvailableOffline = (try? getAssetUseCase.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
         let isDownloaded = switch fileTracker.state {
         case .loaded:
             true

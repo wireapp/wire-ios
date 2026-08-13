@@ -764,6 +764,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func isMeetingConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.isMeeting
+        }
+    }
+
     public func isSelfConversation(_ conversation: ZMConversation) async -> Bool {
         await context.perform {
             conversation.conversationType == .self
@@ -943,6 +951,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         await context.perform {
             conversation.userDefinedName = newName
+        }
+    }
+
+    public func storeConversation(
+        scheduledDeletionDate: Date,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.scheduledDeletionDate = scheduledDeletionDate
         }
     }
 

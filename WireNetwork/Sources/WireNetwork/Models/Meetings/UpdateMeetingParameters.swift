@@ -54,6 +54,9 @@ public struct UpdateMeetingParameters: Encodable, Sendable {
         if let endTime {
             try container.encode(ISO8601DateFormatter.internetDateTime.string(from: endTime), forKey: .endTime)
         }
+        // A `nil` recurrence is omitted rather than encoded as `null`:
+        // the backend's Recurrence parser rejects explicit `null` with a
+        // 400 bad-request (verified 2026-07-22).
         try container.encodeIfPresent(recurrence, forKey: .recurrence)
     }
 }

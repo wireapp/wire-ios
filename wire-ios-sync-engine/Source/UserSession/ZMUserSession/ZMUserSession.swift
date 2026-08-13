@@ -622,6 +622,7 @@ public final class ZMUserSession: NSObject {
             clientID: clientID,
             completionHandlers: .init(
                 onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
+                onMeetingCancellation: { [weak self] in await self?.handleMeetingCancellationNotification($0) },
                 onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
                 onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
                 onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }
@@ -1334,6 +1335,11 @@ extension ZMUserSession: SyncAgentDelegate {
 
             // always check if need to upload key packages if needed
             await mlsService.uploadKeyPackagesIfNeeded()
+            while mlsFeature.isEnabled,
+                  isBackendMLSEnabled,
+                  await MainActor.run(body: { [application] in application.applicationState == .active }) {
+                guard await mlsService.recoverPendingConversationBatchIfNeeded() else { break }
+            }
             await resolveOneOnOneConversationsIfNeeded()
             await recurringActionService.performActionsIfNeeded()
         }

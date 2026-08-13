@@ -53,7 +53,8 @@ private final class MockConversation: MockStableRandomParticipantsConversation,
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
     }
 
@@ -171,7 +172,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -195,11 +197,39 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: true,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
         otherUser.isConnected = false
+
+        // THEN
+        verify(otherUserConversation)
+    }
+
+    func testThatItRendersScheduledForDeletionConversation() {
+        // GIVEN
+        DeveloperFlag.preventAdminlessGroups.enable(true)
+        defer { DeveloperFlag.preventAdminlessGroups.enable(false) }
+
+        // WHEN
+        let status = ConversationStatus(
+            isGroup: true,
+            hasMessages: false,
+            hasUnsentMessages: false,
+            messagesRequiringAttention: [],
+            messagesRequiringAttentionByType: [:],
+            isTyping: false,
+            mutedMessageTypes: [],
+            isOngoingCall: false,
+            isBlocked: false,
+            isSelfAnActiveMember: true,
+            hasSelfMention: false,
+            hasSelfReply: false,
+            isScheduledForDeletion: true
+        )
+        otherUserConversation.status = status
 
         // THEN
         verify(otherUserConversation)
@@ -222,7 +252,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -251,7 +282,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -283,7 +315,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: true,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -310,7 +343,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: true,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -334,7 +368,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: true
+            hasSelfReply: true,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -370,7 +405,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: true,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -401,7 +437,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: true,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -434,7 +471,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: true,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -457,7 +495,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -479,7 +518,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
 
@@ -532,7 +572,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: false,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         otherUserConversation.status = status
         // THEN
@@ -591,7 +632,8 @@ final class ConversationListCellTests: XCTestCase {
             isBlocked: false,
             isSelfAnActiveMember: true,
             hasSelfMention: false,
-            hasSelfReply: false
+            hasSelfReply: false,
+            isScheduledForDeletion: false
         )
         conversation.status = status
 

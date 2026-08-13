@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "вимкнене";
 
 "conversation.status.secutity_alert.default" = "Нове сповіщення про безпеку";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "Набирається повідомлення…";
 "conversation.status.typing.group" = "%@: набирає повідомлення…";
@@ -668,6 +669,11 @@
 "content.system.message_legal_hold.disabled" = "Для даної розмови правовий захист деактивовано";
 
 "content.system.message_legal_hold.learn_more" = "Дізнатися більше";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
 
 //
 "content.system.is_verified" = "Всі ідентифікатори були верифіковані";
@@ -1673,6 +1679,10 @@
 "login.sso.backend_switch.title" = "Перенаправлення...";
 "login.sso.backend_switch.subtitle" = "Вас буде перенаправлено до виділеного корпоративного сервісу.";
 "login.sso.backend_switch.information" = "Надайте ваші дані тільки якщо ви впевнені, що це сторінка входу вашої організації.";
+
+"sso_identity_changed.title" = "Different identity provider detected";
+"sso_identity_changed.message" = "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "Ви уже використовували Wire на цьому пристрої раніше.";
 "registration.no_history.logged_out.subtitle" = "Повідомлення, надіслані в той час, коли ви вийшли з Wire, не відображатимуться.";

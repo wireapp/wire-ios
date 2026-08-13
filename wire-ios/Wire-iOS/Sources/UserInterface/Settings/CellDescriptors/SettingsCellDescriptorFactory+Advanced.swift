@@ -55,7 +55,7 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: { [weak userSession] () -> (UIViewController?) in
-                (userSession as? ZMUserSession)?.validatePushToken()
+                (userSession as? ZMUserSession)?.refreshPushToken()
                 return self.pushButtonAlertController
             }
         )

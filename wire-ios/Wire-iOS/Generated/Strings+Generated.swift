@@ -339,8 +339,12 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "conversation.bulletListButton.description", fallback: "Use bullet list")
       }
       internal enum CameraButton {
+        /// Take or select a photo
+        internal static let description = L10n.tr("Accessibility", "conversation.cameraButton.description", fallback: "Take or select a photo")
+      }
+      internal enum CameraButtonDisabled {
         /// Take or select a photo, disabled in viewer access
-        internal static let description = L10n.tr("Accessibility", "conversation.cameraButton.description", fallback: "Take or select a photo, disabled in viewer access")
+        internal static let description = L10n.tr("Accessibility", "conversation.cameraButtonDisabled.description", fallback: "Take or select a photo, disabled in viewer access")
       }
       internal enum CodeButton {
         /// Use code format
@@ -429,8 +433,12 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "conversation.sendButton.description", fallback: "Send this message")
       }
       internal enum SketchButton {
+        /// Open sketch to draw or write
+        internal static let description = L10n.tr("Accessibility", "conversation.sketchButton.description", fallback: "Open sketch to draw or write")
+      }
+      internal enum SketchButtonDisabled {
         /// Open sketch to draw or write, disabled in viewer access
-        internal static let description = L10n.tr("Accessibility", "conversation.sketchButton.description", fallback: "Open sketch to draw or write, disabled in viewer access")
+        internal static let description = L10n.tr("Accessibility", "conversation.sketchButtonDisabled.description", fallback: "Open sketch to draw or write, disabled in viewer access")
       }
       internal enum TimerButton {
         /// Set a timer for self-deleting messages
@@ -481,16 +489,24 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "conversation.titleViewForOneToOne.hint", fallback: "Double tap to open profile")
       }
       internal enum UploadFileButton {
+        /// Share a file
+        internal static let description = L10n.tr("Accessibility", "conversation.uploadFileButton.description", fallback: "Share a file")
+      }
+      internal enum UploadFileButtonDisabled {
         /// Share a file, disabled in viewer access
-        internal static let description = L10n.tr("Accessibility", "conversation.uploadFileButton.description", fallback: "Share a file, disabled in viewer access")
+        internal static let description = L10n.tr("Accessibility", "conversation.uploadFileButtonDisabled.description", fallback: "Share a file, disabled in viewer access")
       }
       internal enum VerifiedIcon {
         /// Verified
         internal static let description = L10n.tr("Accessibility", "conversation.verifiedIcon.description", fallback: "Verified")
       }
       internal enum VideoButton {
+        /// Record a video
+        internal static let description = L10n.tr("Accessibility", "conversation.videoButton.description", fallback: "Record a video")
+      }
+      internal enum VideoButtonDisabled {
         /// Record a video, disabled in viewer access
-        internal static let description = L10n.tr("Accessibility", "conversation.videoButton.description", fallback: "Record a video, disabled in viewer access")
+        internal static let description = L10n.tr("Accessibility", "conversation.videoButtonDisabled.description", fallback: "Record a video, disabled in viewer access")
       }
     }
     internal enum ConversationAnnouncement {
@@ -2415,6 +2431,16 @@ internal enum L10n {
             internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.sharedDriveState.enabled", fallback: "on")
           }
         }
+        internal enum MessageConversationScheduledForDeletion {
+          /// This group will be automatically deleted on %@, as there are no eligible group admins.
+          internal static func text(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.text", String(describing: p1), fallback: "This group will be automatically deleted on %@, as there are no eligible group admins.")
+          }
+          internal enum ReadMore {
+            /// Read more
+            internal static let text = L10n.tr("Localizable", "content.system.message_conversation_scheduled_for_deletion.read_more.text", fallback: "Read more")
+          }
+        }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")
@@ -2976,6 +3002,8 @@ internal enum L10n {
         }
         /// Poor connection
         internal static let poorConnection = L10n.tr("Localizable", "conversation.status.poor_connection", fallback: "Poor connection")
+        /// Will be deleted soon
+        internal static let scheduledForDeletion = L10n.tr("Localizable", "conversation.status.scheduled_for_deletion", fallback: "Will be deleted soon")
         /// Muted
         internal static let silenced = L10n.tr("Localizable", "conversation.status.silenced", fallback: "Muted")
         /// Someone
@@ -6404,6 +6432,14 @@ internal enum L10n {
     internal enum Sketchpad {
       /// Tap colors to change brush size
       internal static let initialHint = L10n.tr("Localizable", "sketchpad.initial_hint", fallback: "Tap colors to change brush size")
+    }
+    internal enum SsoIdentityChanged {
+      /// Delete data and continue
+      internal static let deleteDataAndContinue = L10n.tr("Localizable", "sso_identity_changed.delete_data_and_continue", fallback: "Delete data and continue")
+      /// This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.
+      internal static let message = L10n.tr("Localizable", "sso_identity_changed.message", fallback: "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.")
+      /// Different identity provider detected
+      internal static let title = L10n.tr("Localizable", "sso_identity_changed.title", fallback: "Different identity provider detected")
     }
     internal enum SystemStatusBar {
       internal enum NoInternet {
