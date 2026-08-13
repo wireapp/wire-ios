@@ -35,7 +35,6 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -64,7 +63,7 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      WIRE_IOS_BUILD_WEBHOOK: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
 
 
   column_2_production:
@@ -75,7 +74,6 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -104,7 +102,7 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      WIRE_IOS_BUILD_WEBHOOK: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
   
   column_3_production:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
@@ -114,7 +112,6 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -143,4 +140,4 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      WIRE_IOS_BUILD_WEBHOOK: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}

@@ -23,7 +23,6 @@ jobs:
       is_cloud_build: true
       produce_changelog: false
       distribute_externals: true # automatically deliver to Wire Employees
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
@@ -51,4 +50,4 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      WIRE_IOS_BUILD_WEBHOOK: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}

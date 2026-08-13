@@ -43,7 +43,6 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
       distribute_externals: ${{ inputs.distribute_externals }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -72,7 +71,7 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      WIRE_IOS_BUILD_WEBHOOK: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
 
   column_2_restricted:
     if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
@@ -83,7 +82,6 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
       distribute_externals: ${{ inputs.distribute_externals }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -112,7 +110,7 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      WIRE_IOS_BUILD_WEBHOOK: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
 
   column_3_restricted:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
@@ -123,7 +121,6 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
       distribute_externals: ${{ inputs.distribute_externals }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -152,4 +149,4 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      WIRE_IOS_BUILD_WEBHOOK: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
