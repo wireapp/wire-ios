@@ -25,6 +25,7 @@
 "wireMeetings.list.actions.scheduleMeeting" = "Schedule a Meeting";
 "wireMeetings.list.actions.showAll" = "Show All";
 "wireMeetings.list.actions.join" = "Join";
+"wireMeetings.list.actions.joinNow" = "Join now";
 "wireMeetings.list.emptyState.next.title" = "No upcoming meetings yet";
 "wireMeetings.list.emptyState.next.subtitle" = "Start a meeting with team members";
 "wireMeetings.list.emptyState.past.title" = "No past meetings yet";

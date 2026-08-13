@@ -68,6 +68,17 @@ struct MeetingRow: View {
 
                     Menu {
                         Button {
+                            onJoin()
+                        } label: {
+                            Label {
+                                Text(Strings.Actions.joinNow)
+                            } icon: {
+                                Image(.videoCall)
+                                    .renderingMode(.template)
+                            }
+                        }
+
+                        Button {
                             onEdit()
                         } label: {
                             Label(Strings.Actions.edit, systemImage: "pencil")
@@ -82,14 +93,11 @@ struct MeetingRow: View {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-                            // The design's padding is 12/8; the extra 12pt of vertical
-                            // padding grows the tap target to ~44pt and is cancelled
-                            // out by the negative padding below, so the layout keeps
-                            // the design's spacing.
                             .padding(.horizontal, 12)
                             .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
+                    .menuOrder(.fixed)
                     .padding(.vertical, -12)
                 }
 
