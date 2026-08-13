@@ -26,7 +26,6 @@ write_empty_outputs() {
     echo "skipped=0"
     echo "total=0"
     echo "failed_details=None"
-    echo "retried_details=None"
     echo "report_message="
   } >> "$GITHUB_OUTPUT"
 }
@@ -64,7 +63,12 @@ for XCRESULT in "${XCRESULTS[@]}"; do
   # If this subcommand is unavailable or fails for an older xcresult format, fall back
   # to the summary endpoint below instead of treating the whole bundle as unreadable.
   if xcrun xcresulttool get test-results tests --path "$XCRESULT" --compact > "$TESTS_JSON" 2>/dev/null; then
-    jq -c '
+    RESULT_JSON="$TMP_DIR/result-$(basename "$XCRESULT").json"
+    if ! xcrun xcresulttool get test-results summary --path "$XCRESULT" --compact > "$RESULT_JSON" 2>/dev/null; then
+      echo "{}" > "$RESULT_JSON"
+    fi
+
+    jq -c --slurpfile summary "$RESULT_JSON" '
       def normalize:
         tostring | gsub("[[:space:]]+"; " ") | .[0:240];
 
@@ -83,19 +87,9 @@ for XCRESULT in "${XCRESULTS[@]}"; do
           end;
 
       def final_result:
-        (test_runs | if length > 0 then .[-1].result? else .result? end) | normalize_result;
-
-      def failed_test_cases:
-        test_cases | map(select(final_result == "failed"));
-
-      def retried_test_cases:
-        test_cases | map(select((test_runs | length) > 1));
-
-      def failed_repetition:
-        test_runs | map(select((.result? // "" | ascii_downcase) == "failed")) | first;
-
-      def passed_on_retry_cases:
-        retried_test_cases | map(select(final_result == "passed"));
+        . as $test_case
+        | (($test_case | test_runs) as $runs | if ($runs | length) > 0 then $runs[-1].result? else $test_case.result? end)
+        | normalize_result;
 
       def testiny_ids_from_text:
         (tostring | gsub("[^A-Za-z0-9_]"; "_")) as $text
@@ -122,6 +116,9 @@ for XCRESULT in "${XCRESULTS[@]}"; do
         | map(testiny_ids_from_text)
         | add
         | unique;
+
+      def testiny_key:
+        testiny_ids | join(",");
 
       def direct_failure_message:
         (.children // [])
@@ -156,22 +153,36 @@ for XCRESULT in "${XCRESULTS[@]}"; do
           ) as $test
         | ($parents + [$test] | map(select(. != null and . != "")) | join(" > "));
 
+      def method_test_cases:
+        test_cases
+        | sort_by(test_title)
+        | group_by(test_title)
+        | map(sort_by(test_runs | length) | .[-1]);
+
+      def failed_test_cases:
+        method_test_cases | map(select(final_result == "failed"));
+
+      def testiny_test_cases:
+        test_cases
+        | map(select((testiny_ids | length) > 0))
+        | sort_by(testiny_key)
+        | group_by(testiny_key)
+        | map(sort_by(test_runs | length) | .[-1]);
+
+      def summary_count($key; $fallback):
+        ($summary[0][$key] // $fallback);
+
       {
-        total: (test_cases | length),
-        passed: (test_cases | map(select(final_result == "passed")) | length),
-        failed: (failed_test_cases | length),
-        skipped: (test_cases | map(select(final_result | test("skipped|expected"))) | length),
-        testiny_passed_ids: (test_cases | map(select(final_result == "passed") | testiny_ids) | add // [] | unique),
-        testiny_failed_ids: (failed_test_cases | map(testiny_ids) | add // [] | unique),
-        testiny_skipped_ids: (test_cases | map(select(final_result | test("skipped|expected")) | testiny_ids) | add // [] | unique),
+        total: summary_count("totalTestCount"; (method_test_cases | length)),
+        passed: summary_count("passedTests"; (method_test_cases | map(select(final_result == "passed")) | length)),
+        failed: summary_count("failedTests"; (failed_test_cases | length)),
+        skipped: (summary_count("skippedTests"; 0) + summary_count("expectedFailures"; 0)),
+        testiny_passed_ids: (testiny_test_cases | map(select(final_result == "passed") | testiny_ids) | add // [] | unique),
+        testiny_failed_ids: (testiny_test_cases | map(select(final_result == "failed") | testiny_ids) | add // [] | unique),
+        testiny_skipped_ids: (testiny_test_cases | map(select(final_result == "skipped") | testiny_ids) | add // [] | unique),
         failed_details: (
           failed_test_cases
           | map("  ❌ " + test_title + ": " + (failure_message | normalize))
-          | unique
-        ),
-        retried_details: (
-          passed_on_retry_cases
-          | map(test_title as $t | (failed_repetition | failure_message) as $msg | "  ⚠️ " + $t + " (passed on retry): " + ($msg | normalize))
           | unique
         )
       }
@@ -220,8 +231,7 @@ for XCRESULT in "${XCRESULTS[@]}"; do
         failures
         | map("  ❌ " + failure_title + ": " + ((.failureText? // "No failure message available") | normalize))
         | unique
-      ),
-      retried_details: []
+      )
     }
   ' "$RESULT_JSON" >> "$SUMMARY_FILE" || echo "[WARN] Could not parse test summary from $XCRESULT"
 done
@@ -246,8 +256,7 @@ SUMMARY="$(jq -s -c '
     testiny_passed: ($testiny_passed_only | length),
     testiny_failed: ($testiny_failed | length),
     testiny_skipped: ($testiny_skipped_only | length),
-    failed_details: ([.[].failed_details[]] | unique | .[:20]),
-    retried_details: ([.[].retried_details[]] | unique | .[:20])
+    failed_details: ([.[].failed_details[]] | unique | .[:20])
   }
 ' "$SUMMARY_FILE")"
 
@@ -260,7 +269,6 @@ TESTINY_PASSED="$(jq -r '.testiny_passed' <<< "$SUMMARY")"
 TESTINY_FAILED="$(jq -r '.testiny_failed' <<< "$SUMMARY")"
 TESTINY_SKIPPED="$(jq -r '.testiny_skipped' <<< "$SUMMARY")"
 FAILED_DETAILS="$(jq -r '.failed_details | if length == 0 then "None" else join("\n") end' <<< "$SUMMARY")"
-RETRIED_DETAILS="$(jq -r '.retried_details | if length == 0 then "None" else join("\n") end' <<< "$SUMMARY")"
 
 if [ "$TESTINY_TOTAL" -gt 0 ]; then
   REPORT_MESSAGE="**XCTest Methods:** Total ${TOTAL} | Passed ${PASSED} | Failed ${FAILED} | Skipped ${SKIPPED}
@@ -278,13 +286,6 @@ else
 --------------------------------------"
 fi
 
-if [ "$RETRIED_DETAILS" != "None" ]; then
-  REPORT_MESSAGE="${REPORT_MESSAGE}
-
-⚠️ **Passed on Retry:**
-${RETRIED_DETAILS}"
-fi
-
 if [ "$FAILED" -gt 0 ] && [ "$FAILED_DETAILS" != "None" ]; then
   REPORT_MESSAGE="${REPORT_MESSAGE}
 
@@ -300,9 +301,6 @@ echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
   echo "failed_details<<__TEST_FAILED_DETAILS__"
   echo "$FAILED_DETAILS"
   echo "__TEST_FAILED_DETAILS__"
-  echo "retried_details<<__TEST_RETRIED_DETAILS__"
-  echo "$RETRIED_DETAILS"
-  echo "__TEST_RETRIED_DETAILS__"
   echo "report_message<<__TEST_REPORT_MESSAGE__"
   echo "$REPORT_MESSAGE"
   echo "__TEST_REPORT_MESSAGE__"

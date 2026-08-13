@@ -74,7 +74,9 @@ extract_failed_cases_from_path() {
           end;
 
       def final_result:
-        (test_runs | if length > 0 then .[-1].result? else .result? end) | normalize_result;
+        . as $test_case
+        | (($test_case | test_runs) as $runs | if ($runs | length) > 0 then $runs[-1].result? else $test_case.result? end)
+        | normalize_result;
 
       def testiny_ids_from_text:
         (tostring | gsub("[^A-Za-z0-9_]"; "_")) as $text
@@ -102,7 +104,14 @@ extract_failed_cases_from_path() {
         | add
         | unique;
 
-      test_cases
+      def testiny_test_cases:
+        test_cases
+        | map(select((testiny_ids | length) > 0))
+        | sort_by(testiny_ids | join(","))
+        | group_by(testiny_ids | join(","))
+        | map(sort_by(test_runs | length) | .[-1]);
+
+      testiny_test_cases
       | map(select(final_result == "failed") | testiny_ids)
       | add // []
       | unique
