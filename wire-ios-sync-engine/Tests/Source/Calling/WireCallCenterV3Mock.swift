@@ -29,7 +29,8 @@ public class MockAVSWrapper: AVSWrapperType {
         uuid: AVSIdentifier,
         callType: AVSCallType,
         conversationType: AVSConversationType,
-        useCBR: Bool
+        useCBR: Bool,
+        isMeeting: Bool
     )?
     public var answerCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, useCBR: Bool)?
     public var setVideoStateArguments: (uuid: AVSIdentifier, videoState: VideoState)?
@@ -44,7 +45,7 @@ public class MockAVSWrapper: AVSWrapperType {
     public var hasOngoingCall = false
     public var mockMembers: [AVSCallMember] = []
 
-    var receivedCallEvents: [(CallEvent, AVSConversationType)] = []
+    var receivedCallEvents: [(CallEvent, AVSConversationType, Bool)] = []
 
     public required init(
         userId: AVSIdentifier,
@@ -59,9 +60,10 @@ public class MockAVSWrapper: AVSWrapperType {
         conversationId: AVSIdentifier,
         callType: AVSCallType,
         conversationType: AVSConversationType,
-        useCBR: Bool
+        useCBR: Bool,
+        isMeeting: Bool
     ) -> Bool {
-        startCallArguments = (conversationId, callType, conversationType, useCBR)
+        startCallArguments = (conversationId, callType, conversationType, useCBR, isMeeting)
         return !startCallShouldFail
     }
 
@@ -86,8 +88,12 @@ public class MockAVSWrapper: AVSWrapperType {
         setVideoStateArguments = (conversationId, videoState)
     }
 
-    public func received(callEvent: CallEvent, conversationType: AVSConversationType) -> CallError? {
-        receivedCallEvents.append((callEvent, conversationType))
+    public func received(
+        callEvent: CallEvent,
+        conversationType: AVSConversationType,
+        isMeeting: Bool
+    ) -> CallError? {
+        receivedCallEvents.append((callEvent, conversationType, isMeeting))
         return callError
     }
 

@@ -628,6 +628,8 @@ public extension WireCallCenterV3 {
             isConferenceCall: conversationType.isConference
         )
 
+        let isMeeting = conversation.isMeeting
+
         if conversationType.isConference, !canStartConferenceCalls {
             if let context = uiMOC {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
@@ -666,7 +668,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callType: callType,
                 conversationType: conversationType,
-                useCBR: useConstantBitRateAudio
+                useCBR: useConstantBitRateAudio,
+                isMeeting: isMeeting
             )
 
             guard started else {
@@ -1094,7 +1097,7 @@ extension WireCallCenterV3 {
 
         guard
             let context = uiMOC,
-            let conversationType = conversationType(from: callEvent)
+            let conversation = conversationInfo(from: callEvent.conversationId)
         else {
             Self.logger.warn("can't handle call event: unable to determine conversation type")
             return
@@ -1102,7 +1105,8 @@ extension WireCallCenterV3 {
 
         let result = avsWrapper.received(
             callEvent: callEvent,
-            conversationType: conversationType
+            conversationType: conversation.type,
+            isMeeting: conversation.isMeeting
         )
 
         if let error = result {
@@ -1114,26 +1118,34 @@ extension WireCallCenterV3 {
         }
     }
 
-    private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
-        conversationType(from: callEvent.conversationId)
+    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
+        conversationInfo(from: conversationId)?.type
     }
 
-    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
+    /// The AVS-relevant properties of the conversation.
+    private func conversationInfo(
+        from conversationId: AVSIdentifier
+    ) -> (type: AVSConversationType, isMeeting: Bool)? {
         guard let context = uiMOC else { return nil }
 
-        var conversationType: AVSConversationType?
+        var info: (type: AVSConversationType, isMeeting: Bool)?
 
         context.performAndWait {
-            if let conversation = ZMConversation.fetch(
-                with: conversationId.identifier,
-                domain: conversationId.domain,
-                in: context
-            ) {
-                conversationType = getAVSConversationType(for: conversation)
+            guard
+                let conversation = ZMConversation.fetch(
+                    with: conversationId.identifier,
+                    domain: conversationId.domain,
+                    in: context
+                ),
+                let conversationType = getAVSConversationType(for: conversation)
+            else {
+                return
             }
+
+            info = (conversationType, conversation.isMeeting)
         }
 
-        return conversationType
+        return info
     }
 
     /// Handles a change in calling state.
