@@ -40,9 +40,6 @@ on:
         required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
-      # Slack webhook this run should post to. Callers resolve which
-      # environment-specific webhook to pass, e.g.
-      # `SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}`.
       SLACK_WEBHOOK_URL:
         required: true
 

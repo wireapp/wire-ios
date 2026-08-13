@@ -106,8 +106,6 @@ jobs:
       S3_BUCKET: "z-lohika"
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
-      # Non-secret feature flags — read by fastlane's before_all AND
-      # referenced in downstream notification texts.
       ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
       ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}

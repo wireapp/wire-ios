@@ -36,10 +36,6 @@ jobs:
       # Optional: full branch name of an additionally tracked release (e.g. release/cycle-4.20).
       # When set, and the Jira version isn't yet released, an extra GOV section is appended to the report.
       GOV_RELEASE: ${{ vars.GOV_RELEASE }}
-      # Boolean flag used by the Post-to-Wire step `if:` guards below. The
-      # secret itself lives only on the steps that consume it — `secrets`
-      # is not available in step-level `if:` conditionals, so we resolve
-      # the presence check once at job scope where `secrets` IS available.
       HAS_SLACK_WEBHOOK: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' }}
     steps:
       # Needed so the local ./.github/actions/notify-wire composite action is available.
