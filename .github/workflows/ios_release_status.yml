@@ -36,6 +36,11 @@ jobs:
       # Optional: full branch name of an additionally tracked release (e.g. release/cycle-4.20).
       # When set, and the Jira version isn't yet released, an extra GOV section is appended to the report.
       GOV_RELEASE: ${{ vars.GOV_RELEASE }}
+      # Boolean flag used by the Post-to-Wire step `if:` guards below. The
+      # secret itself lives only on the steps that consume it — `secrets`
+      # is not available in step-level `if:` conditionals, so we resolve
+      # the presence check once at job scope where `secrets` IS available.
+      HAS_SLACK_WEBHOOK: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' }}
     steps:
       # Needed so the local ./.github/actions/notify-wire composite action is available.
       # Only .github is required, and no LFS objects.
@@ -387,7 +392,7 @@ jobs:
               .write();
 
       - name: Post Edge to Wire
-        if: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' }}
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
@@ -396,7 +401,7 @@ jobs:
           text: ${{ steps.build.outputs.edge }}
 
       - name: Post Beta to Wire
-        if: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' }}
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
@@ -405,7 +410,7 @@ jobs:
           text: ${{ steps.build.outputs.beta }}
 
       - name: Post Prod to Wire
-        if: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' }}
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
@@ -414,7 +419,7 @@ jobs:
           text: ${{ steps.build.outputs.prod }}
 
       - name: Post LTS to Wire
-        if: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' && steps.build.outputs.lts != '' }}
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' && steps.build.outputs.lts != '' }}
         uses: ./.github/actions/notify-wire
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
@@ -423,7 +428,7 @@ jobs:
           text: ${{ steps.build.outputs.lts }}
 
       - name: Post GOV to Wire
-        if: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' && steps.build.outputs.gov != '' }}
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' && steps.build.outputs.gov != '' }}
         uses: ./.github/actions/notify-wire
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
