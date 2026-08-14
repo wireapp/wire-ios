@@ -27,7 +27,11 @@ public import Foundation
 public protocol MeetingRepositoryProtocol: Sendable {
 
     /// Returns a stream that emits whenever meetings are created, updated or deleted,
-    /// e.g. by processed sync events.
+    /// e.g. by processed sync events, or whenever the participants of a meeting change.
+    ///
+    /// A meeting's participants are those of its conversation, so they can change without
+    /// the meeting itself being touched, e.g. when a `conversation.member-join` event is
+    /// processed after the meeting was created.
     ///
     /// The backend refresh performed by `fetchMeetings(in:offset:limit:)` does not emit,
     /// so observers can safely re-fetch in response to an emission without causing a loop.

@@ -53,3 +53,19 @@ public extension StoredMeeting {
     }
 
 }
+
+public extension ZMConversation {
+
+    /// The meetings taking place in this conversation.
+    ///
+    /// The inverse of ``StoredMeeting/conversation``.
+
+    @NSManaged var meetings: Set<StoredMeeting>
+
+    /// Whether at least one meeting takes place in this conversation.
+
+    var hostsMeetings: Bool {
+        !meetings.isEmpty
+    }
+
+}

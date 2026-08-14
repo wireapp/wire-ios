@@ -267,6 +267,51 @@ final class MeetingLocalStoreTests: XCTestCase {
         }
     }
 
+    // MARK: - observeMeetingConversationChanges
+
+    func testObserveMeetingConversationChanges_It_Emits_When_A_Participant_Joins() async throws {
+        // Given
+
+        await context.perform { [modelHelper, context] in
+            _ = modelHelper!.createUser(
+                id: Scaffolding.creatorID.id,
+                domain: Scaffolding.creatorID.domain,
+                in: context
+            )
+            _ = modelHelper!.createGroupConversation(
+                id: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+        }
+
+        await sut.storeMeeting(Scaffolding.meeting)
+
+        var changes = sut.observeMeetingConversationChanges().makeAsyncIterator()
+
+        // When
+
+        await context.perform { [modelHelper, context] in
+            let conversation = ZMConversation.fetch(
+                with: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+            let member = modelHelper!.createUser(
+                id: Scaffolding.memberAliceID.id,
+                domain: Scaffolding.memberAliceID.domain,
+                in: context
+            )
+            conversation?.addParticipantAndUpdateConversationState(user: member, role: nil)
+            context.processPendingChanges()
+        }
+
+        // Then — the yielded event is buffered by the stream
+
+        let change = await changes.next()
+        XCTAssertNotNil(change)
+    }
+
     private enum Scaffolding {
 
         static let meetingID = WireNetwork.QualifiedID(

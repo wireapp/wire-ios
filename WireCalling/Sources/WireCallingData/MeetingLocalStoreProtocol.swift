@@ -58,4 +58,16 @@ public protocol MeetingLocalStoreProtocol: Sendable {
 
     func deleteMeeting(id: QualifiedID) async
 
+    /// Returns a stream that emits whenever the participants of a conversation
+    /// linked to a stored meeting change.
+    ///
+    /// Meetings don't store their participants: they are resolved from the linked
+    /// conversation, the source of truth, whenever a meeting is read. A conversation
+    /// gaining or losing a member therefore changes the stored meetings too, without
+    /// any meeting being written.
+    ///
+    /// - Returns: A stream emitting a signal per change.
+
+    func observeMeetingConversationChanges() -> AsyncStream<Void>
+
 }

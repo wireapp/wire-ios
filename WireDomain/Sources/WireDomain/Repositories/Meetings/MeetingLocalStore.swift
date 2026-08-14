@@ -88,7 +88,54 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         }
     }
 
+    func observeMeetingConversationChanges() -> AsyncStream<Void> {
+        AsyncStream(bufferingPolicy: .bufferingNewest(1)) { [context] continuation in
+            // The notification is posted on the context's queue, so the changed
+            // objects can be inspected directly in the handler.
+            let observer = NotificationCenter.default.addObserver(
+                forName: .NSManagedObjectContextObjectsDidChange,
+                object: context,
+                queue: nil
+            ) { notification in
+                guard Self.changesMeetingParticipants(notification) else { return }
+                continuation.yield()
+            }
+
+            continuation.onTermination = { _ in
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
+    }
+
     // MARK: - Private
+
+    /// Whether the changes contain a participant change of a conversation hosting a meeting.
+    ///
+    /// The changes are inspected before they are saved, so a deleted participant role still
+    /// has its conversation, and an updated conversation still reports its changed keys.
+    private static func changesMeetingParticipants(_ notification: Notification) -> Bool {
+        let userInfo = notification.userInfo ?? [:]
+        let changedObjects = [NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey]
+            .flatMap { (userInfo[$0] as? Set<NSManagedObject>) ?? [] }
+
+        return changedObjects.contains { object in
+            switch object {
+            case let participantRole as ParticipantRole:
+                // A user joining or leaving inserts or deletes a participant role.
+                participantRole.conversation?.hostsMeetings == true
+
+            case let conversation as ZMConversation:
+                // Catches role changes which only show up on the conversation, e.g. a role
+                // whose own relationship to the conversation was already cleared.
+                // `participantRoles` is internal to WireDataModel, hence the literal key.
+                conversation.changedValues().keys.contains("participantRoles")
+                    && conversation.hostsMeetings
+
+            default:
+                false
+            }
+        }
+    }
 
     private static func upsert(_ meeting: Meeting, in context: NSManagedObjectContext) {
         let storedMeeting = fetchOrCreateStoredMeeting(

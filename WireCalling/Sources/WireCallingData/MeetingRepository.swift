@@ -48,7 +48,33 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     public func observeMeetingChanges() -> AsyncStream<Void> {
         // The stream is only a change signal, so a burst of broadcasts
         // can coalesce into a single element for a slow consumer.
-        changeBroadcaster.makeStream(bufferingPolicy: .bufferingNewest(1))
+        let meetingChanges = changeBroadcaster.makeStream(bufferingPolicy: .bufferingNewest(1))
+
+        // A meeting's participants are those of its conversation, so a member joining
+        // or leaving changes the meeting without any meeting being written.
+        let participantChanges = localStore.observeMeetingConversationChanges()
+
+        return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { continuation in
+            let task = Task {
+                await withTaskGroup(of: Void.self) { group in
+                    group.addTask {
+                        for await _ in meetingChanges {
+                            continuation.yield()
+                        }
+                    }
+                    group.addTask {
+                        for await _ in participantChanges {
+                            continuation.yield()
+                        }
+                    }
+                }
+                continuation.finish()
+            }
+
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
     }
 
     public func createMeeting(

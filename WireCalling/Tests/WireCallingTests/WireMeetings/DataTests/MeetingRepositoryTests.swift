@@ -34,6 +34,10 @@ struct MeetingRepositoryTests {
     private let sut: MeetingRepository
 
     init() {
+        // Participant changes are covered by their own test, everywhere else
+        // the stream must only not emit.
+        localStore.observeMeetingConversationChangesAsyncStreamVoidReturnValue = AsyncStream { $0.finish() }
+
         self.sut = MeetingRepository(
             meetingsAPI: meetingsAPI,
             localStore: localStore
@@ -269,6 +273,23 @@ struct MeetingRepositoryTests {
         // When
 
         try await sut.deleteMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(await changes.next() != nil)
+    }
+
+    @Test
+    func participantChangeBroadcastsMeetingChange() async throws {
+        // Mock
+
+        let (participantChanges, participantContinuation) = AsyncStream<Void>.makeStream()
+        localStore.observeMeetingConversationChangesAsyncStreamVoidReturnValue = participantChanges
+        var changes = sut.observeMeetingChanges().makeAsyncIterator()
+
+        // When — a member joins the conversation of a stored meeting
+
+        participantContinuation.yield()
 
         // Then
 
