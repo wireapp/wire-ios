@@ -52,26 +52,28 @@ on:
       GOV_SUBFOLDER_PRODUCTION:
         required: true
       C1_S3_SUBFOLDER_RESTRICTED:
-        required: true
+        required: false
       C1_S3_SUBFOLDER_PRODUCTION:
-        required: true
+        required: false
       C3_S3_SUBFOLDER_RESTRICTED:
-        required: true
+        required: false
       C3_S3_SUBFOLDER_PRODUCTION:
-        required: true
+        required: false
       PLAYGROUND_TESTFLIGHT_LINK:
-        required: true
+        required: false
       BETA_TESTFLIGHT_LINK:
-        required: true
+        required: false
       EDGE_TESTFLIGHT_LINK:
-        required: true
+        required: false
       COUNTLY_PRODUCTION_KEY:
-        required: true
+        required: false
       COUNTLY_INTERNAL_KEY:
-        required: true  
+        required: false
       SUBMODULE_PAT:
         required: true
       JIRA_TOKEN:
+        required: false
+      WIRE_IOS_BUILD_WEBHOOK:
         required: false
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
