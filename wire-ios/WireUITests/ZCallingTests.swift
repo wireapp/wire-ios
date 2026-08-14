@@ -492,14 +492,20 @@ final class ZCallingTests: WireUITestCase {
             "Join call button did not show up after declining the call"
         )
 
+        // WHEN
         let joinedCallPage = try conversationsPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
+
+        // THEN
         joinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
             groupName: teamAndGroupCallSetup.groupName
         )
 
         let conversationListPage = try joinedCallPage.endOngoingCall()
 
+        // WHEN
         let rejoinedCallPage = try conversationListPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
+
+        // THEN
         rejoinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
             groupName: teamAndGroupCallSetup.groupName
         )
