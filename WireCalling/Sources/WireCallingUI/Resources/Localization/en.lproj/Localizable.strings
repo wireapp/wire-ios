@@ -73,7 +73,7 @@
 "wireMeetings.schedule.time.daily" = "Daily";
 "wireMeetings.schedule.time.weekly" = "Weekly";
 "wireMeetings.schedule.time.everyTwoWeeks" = "Every 2 weeks";
-"wireMeetings.schedule.time.everyFourWeeks" = "Every four weeks";
+"wireMeetings.schedule.time.everyFourWeeks" = "Every 4 weeks";
 "wireMeetings.schedule.time.monthly" = "Monthly";
 "wireMeetings.schedule.time.yearly" = "Yearly";
 "wireMeetings.schedule.members.title" = "Participants";
