@@ -672,7 +672,8 @@
 
 // automatic conversation deletion
 
-"content.system.message_conversation_scheduled_for_deletion.text" = "Diese Gruppe wird am %@ automatisch gelöscht, da es keine berechtigten Gruppen-Admins gibt. [Mehr erfahren](%@)";
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
 
 //
 "content.system.is_verified" = "Alle Fingerabdrücke sind überprüft";
@@ -1000,14 +1001,14 @@
 "admin_selection.promotion_error" = "Failed to promote user to admin.";
 
 // Last admin leave flow
-"last_admin_leave.title" = "\"%@\" verlassen?";
+"last_admin_leave.title" = "\"%s\" verlassen?";
 "last_admin_leave.promote_or_delete_message" = "Sie sind der einzige Admin.\nErnennen Sie vor dem Verlassen der Gruppe einen anderen Teilnehmer zum Admin oder löschen Sie die Gruppe, wenn sie nicht mehr benötigt wird.";
 "last_admin_leave.promote_new_admin" = "Neuen Admin ernennen";
 "last_admin_leave.no_eligible_candidates_message" = "Sie sind der einzige Admin. Die anderen Teilnehmer können keine Admins sein.\nFügen Sie mindestens ein Team-Mitglied hinzu und ernennen Sie es zum Admin, bevor Sie gehen. Alternativ löschen Sie die Gruppe, wenn sie nicht mehr benötigt wird.";
 "last_admin_leave.delete_group" = "Gruppe löschen";
 "last_admin_leave.promote_only_message" = "Sie sind der einzige Admin.\nErnennen Sie einen anderen Teilnehmer, bevor Sie gehen.";
 "last_admin_leave.cannot_leave_title" = "Cannot leave \"%@\".";
-"last_admin_leave.cannot_leave_message" = "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.";
+"last_admin_leave.cannot_leave_message" = "Es gibt keine berechtigten Admins in dieser Gruppe und Sie können die Gruppe nicht löschen. Fügen Sie eine andere Person aus dem Team hinzu und ernennen Sie diese zum Admin.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ hat begonnen, ein neues Gerät zu nutzen.";
@@ -1678,6 +1679,10 @@
 "login.sso.backend_switch.title" = "Weiterleitung...";
 "login.sso.backend_switch.subtitle" = "Sie werden zu Ihrem speziellen Unternehmensservice weitergeleitet.";
 "login.sso.backend_switch.information" = "Geben Sie Ihre Zugangsdaten nur dann an, wenn Sie sicher sind, dass dies das Login Ihrer Organisation ist.";
+
+"sso_identity_changed.title" = "Different identity provider detected";
+"sso_identity_changed.message" = "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "Sie haben Wire auf diesem Gerät bereits verwendet.";
 "registration.no_history.logged_out.subtitle" = "Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";

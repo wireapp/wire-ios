@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import UserNotifications
 import WireCallingData
 import WireCoreCrypto
 import WireDataModel
@@ -30,17 +31,20 @@ public final class ClientSessionComponent {
     /// Provides callbacks for other modules.
     public struct CompletionHandlers {
         let onProcessedCallEvent: (CallEventInfo) -> Void
+        let onMeetingCancellation: (UNNotificationContent) async -> Void
         let onSelfClientInvalidated: () async -> Void
         let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
         let onAuthenticationFailure: @Sendable () -> Void
 
         public init(
             onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
+            onMeetingCancellation: @escaping (UNNotificationContent) async -> Void = { _ in },
             onSelfClientInvalidated: @escaping () async -> Void,
             onAuthenticationFailure: @escaping @Sendable () -> Void,
             onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void,
         ) {
             self.onProcessedCallEvent = onProcessedCallEvent
+            self.onMeetingCancellation = onMeetingCancellation
             self.onSelfClientInvalidated = onSelfClientInvalidated
             self.onProcessedTypingUsers = onProcessedTypingUsers
             self.onAuthenticationFailure = onAuthenticationFailure
@@ -425,7 +429,10 @@ public final class ClientSessionComponent {
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent,
         earService: earService,
-        backgroundTaskExecuter: backgroundTaskExecuter
+        backgroundTaskExecuter: backgroundTaskExecuter,
+        beforeProcessingLiveEvent: { [weak self] event in
+            await self?.handleBeforeProcessingLiveEvent(event)
+        }
     )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
@@ -447,6 +454,9 @@ public final class ClientSessionComponent {
             backgroundTaskExecuter: backgroundTaskExecuter,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+            },
+            beforeProcessingLiveEvent: { [weak self] event in
+                await self?.handleBeforeProcessingLiveEvent(event)
             }
         )
     } else {
@@ -716,6 +726,14 @@ public final class ClientSessionComponent {
         localStore: MeetingLocalStore(context: syncContext)
     )
 
+    private lazy var meetingDeleteEventNotificationBuilder = MeetingDeleteEventNotificationBuilder(
+        meetingLocalStore: MeetingLocalStore(context: syncContext),
+        userLocalStore: userLocalStore,
+        developerFlagStorage: sharedUserDefaults,
+        featureConfigLocalStore: featureConfigsLocalStore,
+        accountID: selfUserID
+    )
+
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,
         conversationRepository: conversationRepository
@@ -729,6 +747,15 @@ public final class ClientSessionComponent {
         repository: meetingRepository,
         conversationRepository: conversationRepository
     )
+
+    private func handleBeforeProcessingLiveEvent(_ event: UpdateEvent) async {
+        guard case let .meeting(.delete(event)) = event else { return }
+        guard case let .text(content)? = await meetingDeleteEventNotificationBuilder.buildContent(event: event) else {
+            return
+        }
+
+        await completionHandlers.onMeetingCancellation(content)
+    }
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,

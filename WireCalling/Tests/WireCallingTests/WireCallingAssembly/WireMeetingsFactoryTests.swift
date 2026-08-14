@@ -37,7 +37,7 @@ struct WireMeetingsFactoryTests {
             meetingRepository: MeetingRepositoryProtocolMock(),
             memberRepository: MeetingMemberRepositoryProtocolMock(),
             conversationRepository: MeetingConversationRepositoryProtocolMock(),
-            callStateRepository: MeetingCallStateRepositoryProtocolMock(),
+            callRepository: MeetingCallRepositoryProtocolMock(),
             accentColorState: WireMeetingsAccentColorState(wireAccentColor: .purple)
         )
 

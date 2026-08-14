@@ -53,6 +53,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
     private let backgroundTaskExecuter: any BackgroundTaskExecuter
+    private let beforeProcessingLiveEvent: (UpdateEvent) async -> Void
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -73,6 +74,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         earService: EARServiceInterface,
         backgroundTaskExecuter: any BackgroundTaskExecuter,
         createPushChannelState: @escaping CreatePushChannelStateClosure,
+        beforeProcessingLiveEvent: @escaping (UpdateEvent) async -> Void = { _ in },
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
@@ -92,6 +94,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.backgroundTaskExecuter = backgroundTaskExecuter
         self.syncMarkerGenerator = syncMarkerGenerator
         self.createPushChannelState = createPushChannelState
+        self.beforeProcessingLiveEvent = beforeProcessingLiveEvent
     }
 
     private var logAttributes: WireLogging.LogAttributes {
@@ -467,6 +470,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 "processing live event: \(event.name)",
                 attributes: [.eventEnvelopeID: envelope.id]
             )
+            await beforeProcessingLiveEvent(event)
             try await processor.processEvent(event)
         }
     }
