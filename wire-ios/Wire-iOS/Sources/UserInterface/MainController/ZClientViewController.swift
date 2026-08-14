@@ -365,15 +365,18 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupMeetingsTab() {
-        guard userSession.isMeetingsEnabled else { return }
+        let isEnabled = userSession.isMeetingsEnabled
 
         if UIDevice.current.userInterfaceIdiom == .pad {
-            guard !sidebarViewController.showMeetings else { return }
-            sidebarViewController.showMeetings = true
-            mainTabBarController.meetingsUI = makeMeetingsUI()
-        } else {
+            sidebarViewController.showMeetings = isEnabled
+        }
+
+        if isEnabled {
             guard mainTabBarController.meetingsUI == nil else { return }
             mainTabBarController.meetingsUI = makeMeetingsUI()
+        } else {
+            guard mainTabBarController.meetingsUI != nil else { return }
+            mainTabBarController.meetingsUI = nil
         }
     }
 
