@@ -27,6 +27,7 @@ final class ShareExtensionTests: WireUITestCase {
     private let filesAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.DocumentsApp")
     private let testFileName = "testFile.pdf"
     private let testVideoName = "testVideo.mp4"
+    private let shareExtensionMessage = "shared via share-ext"
     private let appLaunchTimeout: TimeInterval = 5
     private let timeout: TimeInterval = 2
 
@@ -51,6 +52,7 @@ final class ShareExtensionTests: WireUITestCase {
         try photosApp
             .selectImageFromPhotos()
             .shareImageToWire()
+            .addMessage(shareExtensionMessage)
             .chooseConversationAndSend(name: conversationName)
 
         try await switchBackToWireApp()
@@ -63,6 +65,7 @@ final class ShareExtensionTests: WireUITestCase {
         let filesApp = try FilesAppPage(filesApp: filesAppBundleId)
         try filesApp
             .selectAndShareFileToWire(named: fileName)
+            .addMessage(shareExtensionMessage)
             .chooseConversationAndSend(name: conversationName)
 
         try await switchBackToWireApp()
@@ -182,6 +185,7 @@ final class ShareExtensionTests: WireUITestCase {
             activeConversationPage.imageCell.waitForExistence(timeout: timeout),
             "No Image cell found"
         )
+        activeConversationPage.verifyMessageContaining(shareExtensionMessage)
     }
 
     private func assertVideoShared(on activeConversationPage: ActiveConversationPage) {
@@ -193,6 +197,7 @@ final class ShareExtensionTests: WireUITestCase {
             activeConversationPage.videoPlayButton.waitForExistence(timeout: timeout),
             "No Video play button found"
         )
+        activeConversationPage.verifyMessageContaining(shareExtensionMessage)
     }
 
     @MainActor
@@ -284,22 +289,26 @@ final class ShareExtensionTests: WireUITestCase {
             conversationName: conversationName
         )
 
-        try openConversation(
+        let senderConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is sent
-        .verifySharedFile(name: "TESTFILE", type: "PDF")
-        .goBackToConversationPage()
-        .openUserProfilePage()
-        .switchUserAccountForUser(withName: member.name)
+        try senderConversationPage
+            .verifyMessageContaining(shareExtensionMessage)
+            .verifySharedFile(name: "TESTFILE", type: "PDF")
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: member.name)
 
-        try openConversation(
+        let receiverConversationPage = try openConversation(
             named: teamOwner.name,
             on: try ConversationsPage()
         )
         // THEN - file is received
-        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        receiverConversationPage
+            .verifyMessageContaining(shareExtensionMessage)
+            .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
     /// [critical]
@@ -363,22 +372,26 @@ final class ShareExtensionTests: WireUITestCase {
             conversationName: conversationName
         )
 
-        try openConversation(
+        let senderConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is sent
-        .verifySharedFile(name: "TESTFILE", type: "PDF")
-        .goBackToConversationPage()
-        .openUserProfilePage()
-        .switchUserAccountForUser(withName: member.name)
+        try senderConversationPage
+            .verifyMessageContaining(shareExtensionMessage)
+            .verifySharedFile(name: "TESTFILE", type: "PDF")
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: member.name)
 
-        try openConversation(
+        let receiverConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is received
-        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        receiverConversationPage
+            .verifyMessageContaining(shareExtensionMessage)
+            .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 
     @MainActor
@@ -446,21 +459,25 @@ final class ShareExtensionTests: WireUITestCase {
             conversationName: conversationName
         )
 
-        try openConversation(
+        let senderConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is sent
-        .verifySharedFile(name: "TESTFILE", type: "PDF")
-        .goBackToConversationPage()
-        .openUserProfilePage()
-        .switchUserAccountForUser(withName: member.name)
+        try senderConversationPage
+            .verifyMessageContaining(shareExtensionMessage)
+            .verifySharedFile(name: "TESTFILE", type: "PDF")
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: member.name)
 
-        try openConversation(
+        let receiverConversationPage = try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is received
-        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        receiverConversationPage
+            .verifyMessageContaining(shareExtensionMessage)
+            .verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 }

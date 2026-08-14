@@ -519,6 +519,17 @@ class ActiveConversationPage: PageModel {
     }
 
     @discardableResult
+    func verifyMessageContaining(
+        _ message: String,
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            messageLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", message)).firstMatch
+                .waitForExistence(timeout: 5),
+        )
+        return self
+    }
+
+    @discardableResult
     func verifySharedFile(
         name: String,
         type: String,

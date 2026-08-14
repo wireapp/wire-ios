@@ -460,6 +460,7 @@ public enum Locators {
     public enum ShareExtensionPage: String {
 
         case sendButtonOnShareExtension
+        case messageField
         case wire = "Wire"
         case chooseConversations = "Choose"
     }

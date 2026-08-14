@@ -58,6 +58,15 @@ class PhotosAppPage: PageModel {
         photosApp.buttons[Locators.ShareExtensionPage.sendButtonOnShareExtension.rawValue].firstMatch
     }
 
+    var messageField: XCUIElement {
+        let textView = photosApp.textViews[Locators.ShareExtensionPage.messageField.rawValue].firstMatch
+        if textView.exists {
+            return textView
+        }
+
+        return photosApp.textViews.firstMatch
+    }
+
     var shareExtensionSearchField: XCUIElement {
         photosApp.searchFields.allElementsBoundByIndex.first(where: \.isHittable)
             ?? photosApp.searchFields.firstMatch
@@ -132,6 +141,16 @@ class PhotosAppPage: PageModel {
         shareButton.waitAndTap()
         XCTAssertTrue(shareToWireApp.waitForExistence(timeout: timeout))
         shareToWireApp.tap()
+        return self
+    }
+
+    @discardableResult
+    func addMessage(_ message: String) throws -> PhotosAppPage {
+        XCTAssertTrue(
+            messageField.waitForExistence(timeout: timeout),
+            "Share extension message field didn't show up"
+        )
+        try messageField.tapIfKeyboardNotFocused().typeText(message)
         return self
     }
 
