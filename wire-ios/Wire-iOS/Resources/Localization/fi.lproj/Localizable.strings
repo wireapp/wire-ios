@@ -1680,8 +1680,8 @@
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
 
-"sso_identity_changed.title" = "Different identity provider detected";
-"sso_identity_changed.message" = "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.";
+"sso_identity_changed.title" = "Identity provider changed";
+"sso_identity_changed.message" = "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.";
 "sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "Olet käyttänyt Wireä tällä laitteella aiemmin.";
