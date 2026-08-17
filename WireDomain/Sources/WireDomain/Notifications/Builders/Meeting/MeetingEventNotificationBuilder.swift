@@ -16,5 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"wireMeetings.videoButton.description" = "Начните или запланируйте встречу";
-"wireMeetings.joinButton.description" = "Присоединиться к встрече";
+import WireNetwork
+
+protocol MeetingEventNotificationBuilderProtocol {
+
+    func buildContent(event: MeetingEvent) async -> UserNotification?
+
+}
+
+struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol {
+
+    let meetingDeleteEventBuilder: any MeetingDeleteEventNotificationBuilderProtocol
+
+    func buildContent(event: MeetingEvent) async -> UserNotification? {
+        switch event {
+        case let .delete(event):
+            await meetingDeleteEventBuilder.buildContent(event: event)
+        default:
+            nil
+        }
+    }
+
+}

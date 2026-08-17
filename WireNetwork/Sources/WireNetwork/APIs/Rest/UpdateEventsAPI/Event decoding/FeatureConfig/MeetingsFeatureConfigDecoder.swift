@@ -16,5 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"wireMeetings.videoButton.description" = "Начните или запланируйте встречу";
-"wireMeetings.joinButton.description" = "Присоединиться к встрече";
+import Foundation
+
+struct MeetingsFeatureConfigDecoder {
+
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> MeetingsFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithoutConfig.self,
+            forKey: .payload
+        )
+
+        return MeetingsFeatureConfig(status: payload.status.toAPIModel())
+    }
+
+}

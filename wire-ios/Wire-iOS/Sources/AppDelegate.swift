@@ -151,6 +151,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppDependencies.pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
     }
 
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
+        let errorDescription = (error as NSError).safeForLoggingDescription
+        WireLogger.push.error(
+            "application did fail to register for remote notifications with error: \(errorDescription)",
+            attributes: .safePublic
+        )
+    }
+
     func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],

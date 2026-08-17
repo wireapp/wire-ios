@@ -598,7 +598,6 @@ public final class ZMUserSession: NSObject {
         setupCertificateRevocationLists()
 
         registerForCalculateBadgeCountNotification()
-        registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
 
         enableBackgroundFetch()
@@ -622,6 +621,7 @@ public final class ZMUserSession: NSObject {
             clientID: clientID,
             completionHandlers: .init(
                 onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
+                onMeetingCancellation: { [weak self] in await self?.handleMeetingCancellationNotification($0) },
                 onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
                 onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
                 onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }

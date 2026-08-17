@@ -65,7 +65,7 @@ extension SettingsCellDescriptorFactory {
             header: SelfSettingsAdvancedLocale.Troubleshooting.title,
             footer: SelfSettingsAdvancedLocale.ResetPushToken.subtitle,
             visibilityAction: { _ in
-                true
+                !DeveloperFlag.noAPNSTokenCache.isOn
             }
         )
     }

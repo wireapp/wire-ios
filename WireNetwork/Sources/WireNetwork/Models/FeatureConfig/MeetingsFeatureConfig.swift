@@ -16,5 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"wireMeetings.videoButton.description" = "Начните или запланируйте встречу";
-"wireMeetings.joinButton.description" = "Присоединиться к встрече";
+/// A configuration for enabling the meetings feature.
+
+public struct MeetingsFeatureConfig: Equatable, Sendable, Hashable {
+
+    /// The feature's status.
+
+    public let status: FeatureConfigStatus
+
+    public init(status: FeatureConfigStatus) {
+        self.status = status
+    }
+
+}
