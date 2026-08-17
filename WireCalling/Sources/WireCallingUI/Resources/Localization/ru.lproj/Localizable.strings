@@ -24,10 +24,13 @@
 "wireMeetings.list.actions.meetNow" = "Встречи сейчас";
 "wireMeetings.list.actions.scheduleMeeting" = "Запланировать встречу";
 "wireMeetings.list.actions.showAll" = "Показать все";
+"wireMeetings.list.actions.join" = "Присоединиться";
+"wireMeetings.list.actions.joinNow" = "Присоединиться";
 "wireMeetings.list.emptyState.next.title" = "Предстоящих встреч пока нет";
 "wireMeetings.list.emptyState.next.subtitle" = "Начать встречу с членами команды";
 "wireMeetings.list.emptyState.past.title" = "Прошлых встреч пока нет";
 "wireMeetings.list.emptyState.past.subtitle" = "Здесь вы найдете все предыдущие встречи.";
+"wireMeetings.list.startedAt" = "Начиная с %@";
 "wireMeetings.list.header.today" = "Сегодня";
 "wireMeetings.list.header.tomorrow" = "Завтра";
 "wireMeetings.list.header.yesterday" = "Вчера";
@@ -39,6 +42,8 @@
 "wireMeetings.list.delete.alert.subtitle" = "Встреча будет удалена для вас и всех остальных. Все участники будут уведомлены.";
 "wireMeetings.list.delete.alert.delete.button" = "Удалить";
 "wireMeetings.list.delete.alert.cancel.button" = "Отмена";
+"wireMeetings.list.join.error.alert.title" = "Не удалось присоединиться к встрече";
+"wireMeetings.list.join.error.alert.ok" = "OK";
 "wireMeetings.list.delete.error.alert.title" = "Что-то пошло не так";
 "wireMeetings.list.delete.error.alert.ok" = "OK";
 

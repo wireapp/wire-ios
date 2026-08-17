@@ -1110,6 +1110,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - isMeetingConversation
+
+    public var isMeetingConversation_Invocations: [ZMConversation] = []
+    public var isMeetingConversation_MockMethod: ((ZMConversation) async -> Bool)?
+    public var isMeetingConversation_MockValue: Bool?
+
+    public func isMeetingConversation(_ conversation: ZMConversation) async -> Bool {
+        isMeetingConversation_Invocations.append(conversation)
+
+        if let mock = isMeetingConversation_MockMethod {
+            return await mock(conversation)
+        } else if let mock = isMeetingConversation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMeetingConversation`")
+        }
+    }
+
     // MARK: - isSelfConversation
 
     public var isSelfConversation_Invocations: [ZMConversation] = []

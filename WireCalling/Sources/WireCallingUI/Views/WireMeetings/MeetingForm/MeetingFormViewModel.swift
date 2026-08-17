@@ -110,12 +110,9 @@ package final class MeetingFormViewModel {
 
     var repeatOption: MeetingRepeatOption = .never
     var availableRepeatOptions: [MeetingRepeatOption] {
-        // We don't want to show the Yearly option, however, if a meeting exists with yearly, we want to be able to
-        // display it properly and allow changing the option.
-        if repeatOption == .yearly {
-            MeetingRepeatOption.allCases
-        } else {
-            MeetingRepeatOption.allCases.filter { $0 != .yearly }
+        // Monthly and Yearly are only shown when editing meetings that already use them.
+        MeetingRepeatOption.allCases.filter {
+            ($0 != .monthly && $0 != .yearly) || $0 == repeatOption
         }
     }
 
@@ -324,13 +321,14 @@ private extension MeetingRepeatOption {
 
     /// Inverse of `toRecurrence()`, for pre-filling the repeat picker when
     /// editing. Recurrences the picker can't represent (e.g. an interval
-    /// other than 1, or 2 for weekly) collapse to the option with the same
-    /// frequency, so saving may normalize an exotic recurrence.
+    /// other than 1, 2, or 4 for weekly) collapse to the option with the
+    /// same frequency, so saving may normalize an exotic recurrence.
     init(recurrence: MeetingRecurrence?) {
         self = switch (recurrence?.frequency, recurrence?.interval) {
         case (nil, _): .never
         case (.daily, _): .daily
-        case (.weekly, 2): .every2Weeks
+        case (.weekly, 2): .everyTwoWeeks
+        case (.weekly, 4): .everyFourWeeks
         case (.weekly, _): .weekly
         case (.monthly, _): .monthly
         case (.yearly, _): .yearly
@@ -342,7 +340,8 @@ private extension MeetingRepeatOption {
         case .never: nil
         case .daily: MeetingRecurrence(frequency: .daily, interval: 1)
         case .weekly: MeetingRecurrence(frequency: .weekly, interval: 1)
-        case .every2Weeks: MeetingRecurrence(frequency: .weekly, interval: 2)
+        case .everyTwoWeeks: MeetingRecurrence(frequency: .weekly, interval: 2)
+        case .everyFourWeeks: MeetingRecurrence(frequency: .weekly, interval: 4)
         case .monthly: MeetingRecurrence(frequency: .monthly, interval: 1)
         case .yearly: MeetingRecurrence(frequency: .yearly, interval: 1)
         }

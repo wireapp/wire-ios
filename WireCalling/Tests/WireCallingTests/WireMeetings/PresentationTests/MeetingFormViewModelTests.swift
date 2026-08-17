@@ -304,13 +304,23 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.hasError == false)
     }
 
-    @Test("submit in scheduled mode creates a meeting with the form values")
-    func submit_ScheduledMode_Success() async {
+    @Test(
+        "submit in scheduled mode creates a meeting with the form values",
+        arguments: [
+            (MeetingRepeatOption.weekly, MeetingRecurrence(frequency: .weekly, interval: 1)),
+            (MeetingRepeatOption.everyFourWeeks, MeetingRecurrence(frequency: .weekly, interval: 4)),
+            (MeetingRepeatOption.monthly, MeetingRecurrence(frequency: .monthly, interval: 1))
+        ] as [(MeetingRepeatOption, MeetingRecurrence)]
+    )
+    func submit_ScheduledMode_Success(
+        repeatOption: MeetingRepeatOption,
+        expectedRecurrence: MeetingRecurrence
+    ) async {
         // Given
         var receivedMeeting: Meeting?
         let viewModel = makeViewModel(mode: .scheduled) { receivedMeeting = $0 }
         viewModel.meetingTitle = "Planning"
-        viewModel.repeatOption = .weekly
+        viewModel.repeatOption = repeatOption
         viewModel.selectedMembers = [member]
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
@@ -330,7 +340,7 @@ struct MeetingFormViewModelTests {
         #expect(arguments?.title == "Planning")
         #expect(arguments?.startTime == viewModel.startDate)
         #expect(arguments?.endTime == viewModel.endDate)
-        #expect(arguments?.recurrence == MeetingRecurrence(frequency: .weekly, interval: 1))
+        #expect(arguments?.recurrence == expectedRecurrence)
         #expect(arguments?.participants == [member])
         #expect(receivedMeeting == meeting)
         #expect(viewModel.isLoading == false)
@@ -358,19 +368,23 @@ struct MeetingFormViewModelTests {
     // MARK: - Edit Mode Tests
 
     @Test(
-        "availableRepeatOptions hides yearly unless yearly is selected",
+        "availableRepeatOptions hides monthly and yearly unless selected",
         arguments: [
             (
                 MeetingRepeatOption.never,
-                [.never, .daily, .weekly, .every2Weeks, .monthly]
+                [.never, .daily, .weekly, .everyTwoWeeks, .everyFourWeeks]
+            ),
+            (
+                MeetingRepeatOption.monthly,
+                [.never, .daily, .weekly, .everyTwoWeeks, .everyFourWeeks, .monthly]
             ),
             (
                 MeetingRepeatOption.yearly,
-                [.never, .daily, .weekly, .every2Weeks, .monthly, .yearly]
+                [.never, .daily, .weekly, .everyTwoWeeks, .everyFourWeeks, .yearly]
             )
         ] as [(MeetingRepeatOption, [MeetingRepeatOption])]
     )
-    func availableRepeatOptions_HidesYearlyUnlessSelected(
+    func availableRepeatOptions_HidesLegacyOptionsUnlessSelected(
         repeatOption: MeetingRepeatOption,
         expectedOptions: [MeetingRepeatOption]
     ) {
@@ -394,7 +408,7 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.meetingTitle == meeting.title)
         #expect(viewModel.startDate == meeting.start)
         #expect(viewModel.endDate == meeting.end)
-        #expect(viewModel.repeatOption == .every2Weeks)
+        #expect(viewModel.repeatOption == .everyTwoWeeks)
         #expect(viewModel.selectedMembers == [member])
     }
 
@@ -404,7 +418,8 @@ struct MeetingFormViewModelTests {
             (nil, MeetingRepeatOption.never),
             (MeetingRecurrence(frequency: .daily, interval: 1), .daily),
             (MeetingRecurrence(frequency: .weekly, interval: 1), .weekly),
-            (MeetingRecurrence(frequency: .weekly, interval: 2), .every2Weeks),
+            (MeetingRecurrence(frequency: .weekly, interval: 2), .everyTwoWeeks),
+            (MeetingRecurrence(frequency: .weekly, interval: 4), .everyFourWeeks),
             (MeetingRecurrence(frequency: .monthly, interval: 1), .monthly),
             (MeetingRecurrence(frequency: .yearly, interval: 1), .yearly)
         ] as [(MeetingRecurrence?, MeetingRepeatOption)]

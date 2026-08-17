@@ -461,4 +461,53 @@ final class ZCallingTests: WireUITestCase {
         // THEN
         XCTAssertTrue(activeAccountOngoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
     }
+
+    @MainActor
+    func testUserCanDeclineAndRejoinOngoingGroupCall_TC_9493_9503_8886() async throws {
+        // GIVEN
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        _ = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let ownerInstanceId = try requireOwnerInstanceId(from: instances)
+
+        // WHEN
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let incomingCallPage = try IncomingCallPage()
+        XCTAssertTrue(incomingCallPage.declineButton.exists, "Decline button did not show up")
+
+        // THEN
+        let conversationsPage = try incomingCallPage.declineIncomingCall()
+        XCTAssertTrue(
+            conversationsPage.joinCallButton.waitForExistence(timeout: 10),
+            "Join call button did not show up after declining the call"
+        )
+
+        // WHEN
+        let joinedCallPage = try conversationsPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
+
+        // THEN
+        joinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
+            groupName: teamAndGroupCallSetup.groupName
+        )
+
+        let conversationListPage = try joinedCallPage.endOngoingCall()
+
+        // WHEN
+        let rejoinedCallPage = try conversationListPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
+
+        // THEN
+        rejoinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
+            groupName: teamAndGroupCallSetup.groupName
+        )
+    }
 }

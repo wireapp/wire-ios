@@ -65,8 +65,9 @@ public enum Locators {
         case conversationSearchBar
         case conversationSearchClearButton = "Clear text"
         case conversationCell
-        case blockOptionOnContextMenu
         case unblockOptionOnContextMenu
+        case joinCallButton = "Join"
+        case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
         case leaveButtonOnBottomSheet
@@ -285,6 +286,12 @@ public enum Locators {
         case status
     }
 
+    public enum UserProfileQRCodePage: AutoPrefixedEnum {
+        case qrCodeImage
+        case shareProfileLinkButton
+        case shareQRCodeButton
+    }
+
     public enum UserProfileStatusPicker: String {
         case none
         case available
@@ -471,6 +478,7 @@ public enum Locators {
     public enum IncomingCallPage: String {
 
         case acceptCall = "Accept"
+        case declineCall
         case turnOffMicrophone = "Microphone"
     }
 
@@ -664,6 +672,10 @@ public enum Locators {
 
         public enum MeetingDetails: String {
             case attendingLabel = "Attending Label"
+        }
+
+        public enum MeetingRow: String {
+            case joinButton = "Join Button"
         }
 
     }

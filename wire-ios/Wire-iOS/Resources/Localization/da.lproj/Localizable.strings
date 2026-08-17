@@ -673,7 +673,8 @@
 
 // automatic conversation deletion
 
-"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
 
 //
 "content.system.is_verified" = "Alle fingeraftryk er bekræftet";
@@ -1679,6 +1680,10 @@
 "login.sso.backend_switch.title" = "Redirecting...";
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
+
+"sso_identity_changed.title" = "Identity provider changed";
+"sso_identity_changed.message" = "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "Du har brugt Wire på denne enhed før.";
 "registration.no_history.logged_out.subtitle" = "Beskeder sendt i mellemtiden vises ikke.";
