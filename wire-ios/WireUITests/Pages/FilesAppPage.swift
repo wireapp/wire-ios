@@ -158,7 +158,7 @@ class FilesAppPage: PageModel {
         return self
     }
 
-    func chooseConversationAndSend(name: String) throws {
+    func chooseConversationAndSend(name: String, message: String) throws {
         XCTAssertTrue(
             chooseConversation.waitForExistence(timeout: timeout),
             "chooseConversation, didn't show up"
@@ -172,6 +172,7 @@ class FilesAppPage: PageModel {
         )
         conversationToSend.waitAndTap()
 
+        try addMessage(message)
         XCTAssertTrue(sendButton.waitForExistence(timeout: timeout), "Send button didn't show up")
         sendButton.waitAndTap()
         XCTAssertFalse(

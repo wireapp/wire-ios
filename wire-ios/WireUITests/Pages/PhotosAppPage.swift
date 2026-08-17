@@ -154,7 +154,7 @@ class PhotosAppPage: PageModel {
         return self
     }
 
-    func chooseConversationAndSend(name: String) throws {
+    func chooseConversationAndSend(name: String, message: String) throws {
 
         XCTAssertTrue(
             chooseConversation.waitForExistence(timeout: timeout),
@@ -168,6 +168,7 @@ class PhotosAppPage: PageModel {
             "Tap to chooseConversation, didn't pass"
         )
         conversationToSend.waitAndTap()
+        try addMessage(message)
         sendButton.waitAndTap()
 
         XCTAssertFalse(
