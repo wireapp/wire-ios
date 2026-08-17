@@ -606,7 +606,6 @@ public final class ZMUserSession: NSObject {
         setupCertificateRevocationLists()
 
         registerForCalculateBadgeCountNotification()
-        registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
 
         enableBackgroundFetch()
