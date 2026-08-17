@@ -159,7 +159,11 @@ class FilesAppPage: PageModel {
     }
 
     func chooseConversationAndSend(name: String) throws {
-        chooseConversation.waitAndTap()
+        XCTAssertTrue(
+            chooseConversation.waitForExistence(timeout: timeout),
+            "chooseConversation, didn't show up"
+        )
+        chooseConversation.tap()
 
         let conversationToSend = selectConversation(name: name)
         XCTAssertTrue(
