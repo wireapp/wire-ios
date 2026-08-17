@@ -16,5 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 4.21.0
+=======
+WIRE_SHORT_VERSION = 4.16.5
+>>>>>>> 60a74c37c2 (fix: mls migration doesn't start after relaunch - WPB-27049 🍒 (#5118))
 MAJOR_VERSION = 4
