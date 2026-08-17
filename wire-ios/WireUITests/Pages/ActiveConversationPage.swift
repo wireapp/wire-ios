@@ -505,6 +505,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
     func verifyMessageSent(
         _ message: String,
         file: StaticString = #filePath,
@@ -514,17 +515,6 @@ class ActiveConversationPage: PageModel {
             app.textViews.matching(NSPredicate(format: "label == %@", message)).firstMatch.waitForExistence(timeout: 5),
             file: file,
             line: line
-        )
-        return self
-    }
-
-    @discardableResult
-    func verifyMessageContaining(
-        _ message: String,
-    ) -> ActiveConversationPage {
-        XCTAssertTrue(
-            messageLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", message)).firstMatch
-                .waitForExistence(timeout: 5),
         )
         return self
     }

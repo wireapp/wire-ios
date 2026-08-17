@@ -182,7 +182,6 @@ final class ShareExtensionTests: WireUITestCase {
             activeConversationPage.imageCell.waitForExistence(timeout: timeout),
             "No Image cell found"
         )
-        activeConversationPage.verifyMessageContaining(shareExtensionMessage)
     }
 
     private func assertVideoShared(on activeConversationPage: ActiveConversationPage) {
@@ -194,7 +193,6 @@ final class ShareExtensionTests: WireUITestCase {
             activeConversationPage.videoPlayButton.waitForExistence(timeout: timeout),
             "No Video play button found"
         )
-        activeConversationPage.verifyMessageContaining(shareExtensionMessage)
     }
 
     @MainActor
@@ -235,6 +233,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertImageShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -259,6 +258,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertVideoShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -286,26 +286,24 @@ final class ShareExtensionTests: WireUITestCase {
             conversationName: conversationName
         )
 
-        let senderConversationPage = try openConversation(
+        try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is sent
-        try senderConversationPage
-            .verifyMessageContaining(shareExtensionMessage)
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
-            .goBackToConversationPage()
-            .openUserProfilePage()
-            .switchUserAccountForUser(withName: member.name)
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
+        .goBackToConversationPage()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: member.name)
 
-        let receiverConversationPage = try openConversation(
+        try openConversation(
             named: teamOwner.name,
             on: try ConversationsPage()
         )
         // THEN - file is received
-        receiverConversationPage
-            .verifyMessageContaining(shareExtensionMessage)
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
     }
 
     /// [critical]
@@ -325,6 +323,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertImageShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -346,6 +345,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertVideoShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -369,26 +369,24 @@ final class ShareExtensionTests: WireUITestCase {
             conversationName: conversationName
         )
 
-        let senderConversationPage = try openConversation(
+        try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is sent
-        try senderConversationPage
-            .verifyMessageContaining(shareExtensionMessage)
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
-            .goBackToConversationPage()
-            .openUserProfilePage()
-            .switchUserAccountForUser(withName: member.name)
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
+        .goBackToConversationPage()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: member.name)
 
-        let receiverConversationPage = try openConversation(
+        try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is received
-        receiverConversationPage
-            .verifyMessageContaining(shareExtensionMessage)
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -407,6 +405,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertImageShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -428,6 +427,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertVideoShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -456,25 +456,23 @@ final class ShareExtensionTests: WireUITestCase {
             conversationName: conversationName
         )
 
-        let senderConversationPage = try openConversation(
+        try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is sent
-        try senderConversationPage
-            .verifyMessageContaining(shareExtensionMessage)
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
-            .goBackToConversationPage()
-            .openUserProfilePage()
-            .switchUserAccountForUser(withName: member.name)
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
+        .goBackToConversationPage()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: member.name)
 
-        let receiverConversationPage = try openConversation(
+        try openConversation(
             named: conversationName,
             on: try ConversationsPage()
         )
         // THEN - file is received
-        receiverConversationPage
-            .verifyMessageContaining(shareExtensionMessage)
-            .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
     }
 }
