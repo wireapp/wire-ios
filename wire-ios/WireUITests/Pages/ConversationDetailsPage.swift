@@ -176,7 +176,8 @@ class ConversationDetailsPage: PageModel {
     @discardableResult
     func leaveAndClearConversation() throws -> ConversationDetailsPage {
         leaveAndClearConversationButtonOnBottomSheet.waitAndTap()
-        return try ConversationDetailsPage()
+        leaveAndClearConversationButtonOnBottomSheet.waitToDisappear(andThenWaitFor: navigationTitleView)
+        return self
     }
 
     var clearButtonOnBottomSheet: XCUIElement {

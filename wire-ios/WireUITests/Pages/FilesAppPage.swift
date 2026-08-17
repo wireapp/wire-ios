@@ -61,6 +61,15 @@ class FilesAppPage: PageModel {
         filesApp.buttons[Locators.ShareExtensionPage.sendButtonOnShareExtension.rawValue].firstMatch
     }
 
+    var messageField: XCUIElement {
+        let textView = filesApp.textViews[Locators.ShareExtensionPage.messageField.rawValue].firstMatch
+        if textView.exists {
+            return textView
+        }
+
+        return filesApp.textViews.firstMatch
+    }
+
     private func displayedFileName(from fileName: String) -> String {
         (fileName as NSString).deletingPathExtension
     }
@@ -139,7 +148,17 @@ class FilesAppPage: PageModel {
         return self
     }
 
-    func chooseConversationAndSend(name: String) throws {
+    @discardableResult
+    func addMessage(_ message: String) throws -> Self {
+        XCTAssertTrue(
+            messageField.waitForExistence(timeout: timeout),
+            "Share extension message field didn't show up"
+        )
+        try messageField.tapIfKeyboardNotFocused().typeText(message)
+        return self
+    }
+
+    func chooseConversationAndSend(name: String, message: String) throws {
         XCTAssertTrue(
             chooseConversation.waitForExistence(timeout: timeout),
             "chooseConversation, didn't show up"
@@ -153,6 +172,7 @@ class FilesAppPage: PageModel {
         )
         conversationToSend.waitAndTap()
 
+        try addMessage(message)
         XCTAssertTrue(sendButton.waitForExistence(timeout: timeout), "Send button didn't show up")
         sendButton.waitAndTap()
         XCTAssertFalse(
