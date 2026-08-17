@@ -1,6 +1,8 @@
 name: Critical Flows
 
 on:
+  issue_comment:
+    types: [created]
   workflow_dispatch:
     inputs:
       testiny_run_name:
@@ -40,11 +42,167 @@ on:
   
 # This is what will cancel the workflow
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.issue.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'issue_comment' || github.event.comment.user.type != 'Bot' }}
 
 
 jobs:
+  parse_pr_comment:
+    name: Parse PR comment
+    if: ${{ github.event_name == 'issue_comment' && github.event.issue.pull_request && github.event.comment.user.type != 'Bot' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    outputs:
+      should_run: ${{ steps.parse.outputs.should_run }}
+      branch: ${{ steps.parse.outputs.branch }}
+      ui_test_tags: ${{ steps.parse.outputs.ui_test_tags }}
+      ui_test_cases: ${{ steps.parse.outputs.ui_test_cases }}
+      rerun_failed_from_previous: ${{ steps.parse.outputs.rerun_failed_from_previous }}
+      timeout_minutes: ${{ steps.parse.outputs.timeout_minutes }}
+    steps:
+      - name: Parse UI test command
+        id: parse
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          AUTHOR_ASSOCIATION: ${{ github.event.comment.author_association }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+
+          {
+            echo "should_run=false"
+            echo "branch="
+            echo "ui_test_tags="
+            echo "ui_test_cases="
+            echo "rerun_failed_from_previous=false"
+            echo "timeout_minutes=150"
+          } >> "$GITHUB_OUTPUT"
+
+          case "$AUTHOR_ASSOCIATION" in
+            OWNER|MEMBER|COLLABORATOR) ;;
+            *)
+              echo "Ignoring UI test command from $AUTHOR_ASSOCIATION"
+              exit 0
+              ;;
+          esac
+
+          command="$(
+            printf '%s' "$COMMENT_BODY" \
+              | sed -n '1p' \
+              | tr '[:upper:]' '[:lower:]' \
+              | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/[[:space:]]+/ /g'
+          )"
+
+          case "$command" in
+            "run uitests"*)
+              args="${command#run uitests}"
+              args="$(printf '%s' "$args" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
+              ;;
+            *)
+              exit 0
+              ;;
+          esac
+
+          rerun_failed_from_previous=false
+          if [[ "$args" == *" rerun" ]]; then
+            rerun_failed_from_previous=true
+            args="${args% rerun}"
+            args="$(printf '%s' "$args" | sed -E 's/[[:space:]]+$//')"
+          fi
+
+          usage="$(printf '%s\n' \
+            "Unsupported UI test command: \`$command\`" \
+            "" \
+            "Supported (append \` rerun\` to rerun failed from previous run):" \
+            "- \`run uitests\` or \`run uitests critical\`" \
+            "- \`run uitests critical <scope>\`" \
+            "- \`run uitests <scope>\`" \
+            "- \`run uitests all tests\`" \
+            "- \`run uitests <testiny ids>\` (comma or space separated)" \
+            "" \
+            "Scopes: calling, core-messenger, collaboration, integration")"
+
+          post_usage_and_fail() {
+            echo "$usage"
+            gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$usage" || true
+            exit 1
+          }
+
+          is_known_scope() {
+            case "$1" in
+              calling|core-messenger|collaboration|integration) return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          ui_test_tags=""
+          ui_test_cases=""
+          timeout_minutes=90
+          case "$args" in
+            "all tests")
+              ui_test_tags=""
+              timeout_minutes=150
+              ;;
+            "")
+              ui_test_tags="critical"
+              ;;
+            *)
+              if [[ "$args" =~ ^[0-9][0-9,[:space:]]*$ ]]; then
+                ui_test_cases="$(printf '%s' "$args" | tr ' ' ',' | sed -E 's/,+/,/g; s/^,+//; s/,+$//')"
+              else
+                word1="${args%% *}"
+                rest="${args#"$word1"}"
+                rest="$(printf '%s' "$rest" | sed -E 's/^[[:space:]]+//')"
+                if [ "$word1" = "critical" ]; then
+                  if [ -z "$rest" ]; then
+                    ui_test_tags="critical"
+                  elif is_known_scope "$rest"; then
+                    ui_test_tags="critical,$rest"
+                  else
+                    post_usage_and_fail
+                  fi
+                elif is_known_scope "$args"; then
+                  ui_test_tags="$args"
+                else
+                  post_usage_and_fail
+                fi
+              fi
+              ;;
+          esac
+
+          pr_json="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
+          head_repo="$(jq -r '.head.repo.full_name' <<< "$pr_json")"
+          base_repo="$(jq -r '.base.repo.full_name' <<< "$pr_json")"
+          branch="$(jq -r '.head.ref' <<< "$pr_json")"
+
+          if [ "$head_repo" != "$base_repo" ]; then
+            echo "Ignoring UI test command for fork PR: $head_repo"
+            exit 0
+          fi
+
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/comments/${COMMENT_ID}/reactions" -f content='+1' >/dev/null 2>&1 || true
+
+          run_url="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          run_summary="Started UI tests"
+          [ -n "$ui_test_tags" ] && run_summary="$run_summary (tags: $ui_test_tags)"
+          [ -n "$ui_test_cases" ] && run_summary="$run_summary (cases: $ui_test_cases)"
+          [ "$rerun_failed_from_previous" = "true" ] && run_summary="$run_summary [rerun]"
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$run_summary: $run_url" || true
+
+          {
+            echo "should_run=true"
+            echo "branch=$branch"
+            echo "ui_test_tags=$ui_test_tags"
+            echo "ui_test_cases=$ui_test_cases"
+            echo "rerun_failed_from_previous=$rerun_failed_from_previous"
+            echo "timeout_minutes=$timeout_minutes"
+          } >> "$GITHUB_OUTPUT"
+
   critical_flows:
     # Push runs come from PR merges to develop/release branches and must always run critical UI tests.
     if: ${{ github.event_name == 'push' }}
@@ -79,4 +237,21 @@ jobs:
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
       timeout_minutes: 150
+    secrets: inherit
+
+  critical_flows_comment:
+    if: ${{ github.event_name == 'issue_comment' && needs.parse_pr_comment.outputs.should_run == 'true' }}
+    needs: parse_pr_comment
+    uses: ./.github/workflows/_reusable_run_tests.yml
+    with:
+      branch: ${{ needs.parse_pr_comment.outputs.branch }}
+      all: false
+      notify_secret: WIRE_IOS_QA_WEBHOOK
+      test_dependencies: false
+      run_critical_flows: true
+      ui_test_tags: ${{ needs.parse_pr_comment.outputs.ui_test_tags }}
+      ui_test_cases: ${{ needs.parse_pr_comment.outputs.ui_test_cases }}
+      rerun_failed_from_previous: ${{ fromJSON(needs.parse_pr_comment.outputs.rerun_failed_from_previous) }}
+      notify: always
+      timeout_minutes: ${{ fromJSON(needs.parse_pr_comment.outputs.timeout_minutes) }}
     secrets: inherit
