@@ -310,7 +310,20 @@ private struct MinuteIntervalTimePicker: UIViewRepresentable {
         @MainActor
         @objc
         func valueChanged(_ datePicker: UIDatePicker) {
-            selection.wrappedValue = datePicker.date
+            let previousSelection = selection.wrappedValue
+            let selectedDate = datePicker.date
+            selection.wrappedValue = selectedDate
+
+            let calendar = datePicker.calendar ?? .current
+            guard !calendar.isDate(previousSelection, equalTo: selectedDate, toGranularity: .hour) else { return }
+
+            let minimumDate = datePicker.minimumDate
+            let maximumDate = datePicker.maximumDate
+            datePicker.minimumDate = nil
+            datePicker.maximumDate = nil
+            datePicker.minimumDate = minimumDate
+            datePicker.maximumDate = maximumDate
+            datePicker.setDate(selectedDate, animated: false)
         }
     }
 }
