@@ -226,6 +226,8 @@ public protocol UserSession: AnyObject {
 
     var isWireDriveEnabled: Bool { get }
 
+    var isMeetingsEnabled: Bool { get }
+
     var wireDriveBackendURL: URL? { get }
 
     var isEnterpriseUser: Bool { get }
