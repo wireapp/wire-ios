@@ -166,6 +166,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             attachments = sortedAttachments
         }
 
+        textView.accessibilityIdentifier = Locators.ShareExtensionPage.messageField.rawValue
+
         Task { @MainActor in
             await updateAccount(currentAccount)
         }
