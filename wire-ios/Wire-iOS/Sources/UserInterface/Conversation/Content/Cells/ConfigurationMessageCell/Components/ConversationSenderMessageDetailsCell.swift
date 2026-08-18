@@ -56,9 +56,10 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     var isSelected: Bool = false
 
     private lazy var avatar: UserImageView = {
-        let view = UserImageView()
+        let view = BadgeUserImageView()
         view.initialsFont = .avatarInitial
         view.size = .badge
+        view.shouldDesaturate = false
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnAvatar)))
         view.accessibilityElementsHidden = false

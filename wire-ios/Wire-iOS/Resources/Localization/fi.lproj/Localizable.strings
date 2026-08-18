@@ -319,6 +319,7 @@
 "conversation.input_bar.verified" = "Vahvistettu";
 "conversation.input_bar.placeholder" = "Kirjoita viesti";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Pyyhkäise ylös lähettääksesi";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Napauta lähettääksesi";
