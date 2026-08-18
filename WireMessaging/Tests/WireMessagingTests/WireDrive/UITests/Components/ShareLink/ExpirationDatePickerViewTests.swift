@@ -63,8 +63,8 @@ final class ExpirationDatePickerViewTests: XCTestCase {
         snapshotHelper.verify(matching: view, variants: .colorSchemes)
     }
 
-     @MainActor
-     func testHasExpirationDatePickerView() async {
+    @MainActor
+    func testHasExpirationDatePickerView() async {
         var calendar = Calendar(identifier: .gregorian)
         calendar.locale = Locale(identifier: "en_US_POSIX")
         calendar.timeZone = .gmt
@@ -76,12 +76,12 @@ final class ExpirationDatePickerViewTests: XCTestCase {
             didSave: { _ in },
             updatePublicLinkExpiration: updatePublicLinkExpiration
         )
-    
+
         let view = ExpirationDatePickerView(viewModel: viewModel)
             .frame(width: 375, height: 667)
-    
+
         snapshotHelper.verify(matching: view, variants: .colorSchemes)
-     }
+    }
 
     @MainActor
     private func makeView() -> some View {
