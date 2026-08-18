@@ -619,8 +619,17 @@ final class ConversationInputBarViewController: UIViewController,
         updateButtonStates()
     }
 
+    /// Hides the input bar when the self user has blocked the other user, so it can be replaced by
+    /// the "You blocked this user" bar. See `ConversationViewController`.
+    var isHiddenForBlockedUser = false {
+        didSet {
+            guard isHiddenForBlockedUser != oldValue else { return }
+            updateInputBarVisibility()
+        }
+    }
+
     func updateInputBarVisibility() {
-        view.isHidden = conversation.isReadOnly
+        view.isHidden = conversation.isReadOnly || isHiddenForBlockedUser
     }
 
     @objc

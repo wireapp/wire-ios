@@ -88,13 +88,15 @@ package final class MeetingFormViewModel {
         }
     }
 
-    /// Meetings can't be scheduled on a past day, but any time
-    /// of the current day is allowed. When editing a meeting whose
-    /// start lies in the past, its original day stays selectable unless
-    /// it is recurring; recurring meetings are moved to their next editable
-    /// occurrence so the backend receives a non-past start date.
+    /// Scheduled meetings start at the next available picker interval.
+    /// When editing a meeting whose start lies in the past, its original day
+    /// stays selectable unless it is recurring; recurring meetings are moved
+    /// to their next editable occurrence so the backend receives a non-past start date.
     var startDateRange: PartialRangeFrom<Date> {
         var earliest = currentDateProvider.now
+        if case .scheduled = mode {
+            return Self.nextSelectableStartDate(after: earliest)...
+        }
         if case let .edit(meeting) = mode, meeting.recurrence == nil {
             earliest = min(earliest, meeting.start)
         }
@@ -152,7 +154,7 @@ package final class MeetingFormViewModel {
 
         switch mode {
         case .instant, .scheduled:
-            let startDate = currentDateProvider.now.roundedUpToNextMinuteInterval(Self.timePickerMinuteInterval)
+            let startDate = Self.nextSelectableStartDate(after: currentDateProvider.now)
             self.startDate = startDate
             self.endDate = Self.adjustedEndDate(
                 startDate.addingTimeInterval(TimeInterval.oneHour),
@@ -253,6 +255,11 @@ package final class MeetingFormViewModel {
         }
 
         return (nextOccurrence.start, nextOccurrence.end)
+    }
+
+    private static func nextSelectableStartDate(after date: Date) -> Date {
+        let rounded = date.roundedUpToNextMinuteInterval(timePickerMinuteInterval)
+        return rounded > date ? rounded : rounded.addingTimeInterval(minimumDuration)
     }
 
     private static func adjustedEndDate(

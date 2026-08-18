@@ -319,6 +319,7 @@
 "conversation.input_bar.verified" = "Верифікований";
 "conversation.input_bar.placeholder" = "Напишіть повідомлення";
 "conversation.input_bar.placeholder_ephemeral" = "Тимчасове повідомленя";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Проведіть вгору для надсилання";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Торкніться для надсилання";

@@ -165,9 +165,19 @@ struct MeetingFormViewModelTests {
 
     // MARK: - Date Validation Tests
 
-    @Test("startDateRange starts at the beginning of the current day")
-    func startDateRange_StartsAtBeginningOfCurrentDay() {
-        #expect(viewModel.startDateRange.lowerBound == Calendar.current.startOfDay(for: dateProviderMock.now))
+    @Test("scheduled startDateRange begins at the first future quarter-hour")
+    func startDateRange_ScheduledModeStartsAtFirstFutureQuarterHour() throws {
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 18)
+        let viewModel = makeViewModel(mode: .scheduled)
+        let nextQuarterHour = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 30)
+        #expect(viewModel.startDateRange.lowerBound == nextQuarterHour)
+
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        let startOfNextDay = try makeDate(year: 2026, month: 7, day: 7, hour: 0, minute: 0)
+        #expect(viewModel.startDateRange.lowerBound == startOfNextDay)
+
+        let exactBoundaryViewModel = makeViewModel(mode: .scheduled)
+        #expect(exactBoundaryViewModel.startDate == startOfNextDay)
     }
 
     @Test("scheduled mode starts at the next quarter-hour boundary")
