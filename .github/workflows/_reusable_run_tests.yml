@@ -136,6 +136,8 @@ jobs:
 
       - name: Generate env file
         if: ${{ inputs.run_critical_flows }}
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           bundle exec fastlane generate_env
 
