@@ -35,14 +35,16 @@ final class ZCallingTests: WireUITestCase {
 
     private func makeTeamAndGroupCallSetup(
         memberCount: Int,
-        groupName: String? = nil
+        groupName: String? = nil,
+        preferredNames: [String] = []
     ) async throws -> GroupCallScenario {
         let groupName = groupName ?? UserGenerator.generateRandomConversationName()
 
         let (teamOwner, teamMembers, _, conversationId) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: memberCount,
-                conversation: .group(groupName)
+                conversation: .group(groupName),
+                names: preferredNames
             )
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil").uuidString.lowercased()
@@ -518,9 +520,12 @@ final class ZCallingTests: WireUITestCase {
     }
 
     @MainActor
-    func testCallParticipantTilesShownInOrder_TC_9462() async throws {
+    func testCallParticipantTilesShownInAlphabeticalOrder_TC_9462() async throws {
         // GIVEN
-        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(
+            memberCount: 3,
+            preferredNames: ["A", "B", "C", "D"]
+        )
 
         let firstTimePage = try app.loginUser(
             email: teamAndGroupCallSetup.appUserReceivingCall.email,
@@ -547,6 +552,7 @@ final class ZCallingTests: WireUITestCase {
         let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
 
         // THEN
+        // Self user should be shown first, then other participants should be shown in alphabetical order.
         let expectedAudioOrder = [teamAndGroupCallSetup.appUserReceivingCall.name] +
             sortedByName(teamAndGroupCallSetup.callingServiceUsers).map(\.name)
         ongoingCallPage.verifyParticipantsShownInOrder(expectedAudioOrder)
@@ -561,17 +567,22 @@ final class ZCallingTests: WireUITestCase {
             expectedStatuses: ["ACTIVE"],
             timeout: 30
         )
+        // WHEN - switched video on
         try await callingManager.switchVideoOn(instanceId: videoFirstInstanceId)
         XCTAssertTrue(
             ongoingCallPage.videoView(for: videoFirstUser.name).waitForExistence(timeout: 20),
             "Video tile did not appear for \(videoFirstUser.name)"
         )
 
+        // When a participant enables video, self user stays first, video participant shows next,
+        // and remaining participants stay in alphabetical order.
         let expectedVideoOrder = [
             teamAndGroupCallSetup.appUserReceivingCall.name,
             videoFirstUser.name
         ] + sortedByName(teamAndGroupCallSetup.callingServiceUsers.filter { $0.email != videoFirstUser.email })
             .map(\.name)
+
+        // THEN
         ongoingCallPage.verifyParticipantsShownInOrder(expectedVideoOrder)
     }
 }
