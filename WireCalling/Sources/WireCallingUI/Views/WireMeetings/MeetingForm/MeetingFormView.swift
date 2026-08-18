@@ -228,6 +228,7 @@ struct MeetingFormView: View {
             maximumDate: maximumDate,
             minuteInterval: Self.timePickerMinuteInterval
         )
+        .id(Calendar.current.isDate(date.wrappedValue, equalTo: range.lowerBound, toGranularity: .hour))
     }
 
     private func pill(
@@ -310,20 +311,7 @@ private struct MinuteIntervalTimePicker: UIViewRepresentable {
         @MainActor
         @objc
         func valueChanged(_ datePicker: UIDatePicker) {
-            let previousSelection = selection.wrappedValue
-            let selectedDate = datePicker.date
-            selection.wrappedValue = selectedDate
-
-            let calendar = datePicker.calendar ?? .current
-            guard !calendar.isDate(previousSelection, equalTo: selectedDate, toGranularity: .hour) else { return }
-
-            let minimumDate = datePicker.minimumDate
-            let maximumDate = datePicker.maximumDate
-            datePicker.minimumDate = nil
-            datePicker.maximumDate = nil
-            datePicker.minimumDate = minimumDate
-            datePicker.maximumDate = maximumDate
-            datePicker.setDate(selectedDate, animated: false)
+            selection.wrappedValue = datePicker.date
         }
     }
 }
