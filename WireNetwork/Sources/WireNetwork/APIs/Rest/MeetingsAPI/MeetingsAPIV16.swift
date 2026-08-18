@@ -43,6 +43,26 @@ class MeetingsAPIV16: MeetingsAPIV15 {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Get meeting
+
+    override func getMeeting(id: QualifiedID) async throws -> MeetingResponse {
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: MeetingResponseV16.self)
+            .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
     // MARK: - Create meeting
 
     override func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
