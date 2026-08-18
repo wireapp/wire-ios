@@ -63,22 +63,25 @@ final class ExpirationDatePickerViewTests: XCTestCase {
         snapshotHelper.verify(matching: view, variants: .colorSchemes)
     }
 
-    // TODO: [WPB-25202] - fix snapshot test currently failing on the CI
-    // @MainActor
-    // func testHasExpirationDatePickerView() async {
-    //    let viewModel = ExpirationDatePickerView.ViewModel(
-    //        linkID: "test",
-    //        calendar: Calendar(identifier: .gregorian),
-    //        expirationDate: .distantFuture,
-    //        didSave: { _ in },
-    //        updatePublicLinkExpiration: updatePublicLinkExpiration
-    //    )
-    //
-    //    let view = ExpirationDatePickerView(viewModel: viewModel)
-    //        .frame(width: 375, height: 667)
-    //
-    //    snapshotHelper.verify(matching: view, variants: .colorSchemes)
-    // }
+     @MainActor
+     func testHasExpirationDatePickerView() async {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US_POSIX")
+        calendar.timeZone = .gmt
+
+        let viewModel = ExpirationDatePickerView.ViewModel(
+            linkID: "test",
+            calendar: calendar,
+            expirationDate: .distantFuture,
+            didSave: { _ in },
+            updatePublicLinkExpiration: updatePublicLinkExpiration
+        )
+    
+        let view = ExpirationDatePickerView(viewModel: viewModel)
+            .frame(width: 375, height: 667)
+    
+        snapshotHelper.verify(matching: view, variants: .colorSchemes)
+     }
 
     @MainActor
     private func makeView() -> some View {
