@@ -173,6 +173,14 @@ public final class ZMUserSession: NSObject {
         return isFeatureEnabled && hasBackendURL
     }
 
+    public var isMeetingsEnabled: Bool {
+        // TODO: [WPB-28001] Remove developer flag before release
+        guard DeveloperFlag.wireMeetings.isOn else { return false }
+
+        let feature = Feature.fetch(name: .meetings, context: coreDataStack.viewContext)
+        return feature?.status == .enabled
+    }
+
     public var conferenceCallingFeature: Feature.ConferenceCalling {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchConferenceCalling()
@@ -1658,6 +1666,9 @@ extension ZMUserSession {
                 coreCryptoProvider: coreCryptoProvider
             ),
             AppVersionMigration_4_18_0(
+                coreDataStack: coreDataStack
+            ),
+            AppVersionMigration_4_26_0(
                 coreDataStack: coreDataStack
             )
         ]

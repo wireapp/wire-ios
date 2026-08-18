@@ -34,6 +34,7 @@ struct UpdateConversationItemTests {
         self.repository = MockConversationRepositoryProtocol()
         self.conversationID = .init(id: UUID(), domain: String.randomDomain())
         self.sut = UpdateConversationItem(repository: repository, conversationID: conversationID)
+        repository.isGroupConversationIdDomain_MockValue = true
     }
 
     @Test("It calls repository pull conversation")
@@ -59,6 +60,19 @@ struct UpdateConversationItemTests {
         // Then
         let invocation = repository.deleteConversationIdDomain_Invocations.first
         #expect(invocation?.domain == conversationID.domain && invocation?.id == conversationID.id)
+    }
+
+    @Test("It does not delete 1:1 conversation if not found")
+    func startDoesNotDeleteOneOnOneConversationIfNotFound() async throws {
+        // Given
+        repository.isGroupConversationIdDomain_MockValue = false
+        repository.pullConversationIdDomain_MockError = ConversationRepositoryError.conversationNotFound
+        repository.deleteConversationIdDomain_MockMethod = { _, _ in }
+        // When
+        try await sut.start()
+
+        // Then
+        #expect(repository.deleteConversationIdDomain_Invocations.isEmpty)
     }
 
     @Test("It throws an error in case of non supported error")
