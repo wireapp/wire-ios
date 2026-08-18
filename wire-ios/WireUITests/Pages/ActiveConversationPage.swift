@@ -505,6 +505,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
     func verifyMessageSent(
         _ message: String,
         file: StaticString = #filePath,

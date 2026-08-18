@@ -102,9 +102,18 @@ extension ConversationLocalStore {
         }
 
         guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
-            localConversation.isForcedReadOnly = true
-            if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
-                localConversation.mlsStatus = .invalid
+            // The other participant is absent from the synced member list. This is exactly what the
+            // backend returns to the party that was *blocked*: the blocker is omitted from the 1:1
+            // member list. That side is never notified of the block and must keep its conversation
+            // usable, so we must not tear down an established 1:1 — forcing it read-only and marking
+            // the MLS group invalid (which wipes it and drops the user back to the read-only Proteus
+            // conversation). Only do so when there is genuinely no user behind the conversation
+            // (e.g. a malformed/empty 1:1 that was never linked). [WPB-24403]
+            if localConversation.oneOnOneUser == nil {
+                localConversation.isForcedReadOnly = true
+                if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
+                    localConversation.mlsStatus = .invalid
+                }
             }
             return
         }
