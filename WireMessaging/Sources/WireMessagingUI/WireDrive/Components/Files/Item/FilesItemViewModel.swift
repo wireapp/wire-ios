@@ -400,8 +400,8 @@ private extension FilesItemViewModel {
                     primary = Strings.AllFiles.Item.subtitle(ownedBy, conversationName)
                 }
             case .size:
-                if let conversationName,
-                   let size = formattedFileSize(size: size) {
+                if let conversationName {
+                    let size = formattedFileSize(size: size)
                     primary = Strings.AllFiles.Item.subtitle(size, conversationName)
                 }
             default:
@@ -424,7 +424,8 @@ private extension FilesItemViewModel {
                     primary = Strings.Files.Item.subtitle(Strings.Sorting.Key.date, ownedBy)
                 }
             case .size:
-                if let size = formattedFileSize(size: size), let ownedBy {
+                if let ownedBy {
+                    let size = formattedFileSize(size: size)
                     primary = Strings.Files.Item.subtitle(size, ownedBy)
                 }
             default:
@@ -441,12 +442,12 @@ private extension FilesItemViewModel {
         }
     }
 
-    private static func formattedFileSize(size: UInt64?) -> String? {
-        guard let size else { return nil }
+    private static func formattedFileSize(size: UInt64?) -> String {
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
         formatter.countStyle = .file
-        return formatter.string(fromByteCount: Int64(size))
+        formatter.allowsNonnumericFormatting = false
+        return formatter.string(fromByteCount: Int64(size ?? 0))
     }
 
     private static func formattedDate(
