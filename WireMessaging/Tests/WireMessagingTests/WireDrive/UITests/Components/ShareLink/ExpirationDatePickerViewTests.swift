@@ -79,6 +79,9 @@ final class ExpirationDatePickerViewTests: XCTestCase {
 
         let view = ExpirationDatePickerView(viewModel: viewModel)
             .frame(width: 375, height: 667)
+            .environment(\.locale, calendar.locale!)
+            .environment(\.timeZone, calendar.timeZone)
+            .environment(\.calendar, calendar)
 
         snapshotHelper.verify(matching: view, variants: .colorSchemes)
     }
