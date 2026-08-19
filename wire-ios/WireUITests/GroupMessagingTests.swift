@@ -346,10 +346,9 @@ final class GroupMessagingTests: WireUITestCase {
 
         // GIVEN
         let groupTeam = try await registerGroupTeam()
-        // Random location
         XCUIDevice.shared.location = XCUILocation(location: CLLocation(
-            latitude: 37.78825,
-            longitude: -122.4324
+            latitude: 52.5200,
+            longitude: 13.4050
         ))
 
         let activeConversationPage = try login(user: groupTeam.teamOwner)
@@ -364,14 +363,14 @@ final class GroupMessagingTests: WireUITestCase {
             user: groupTeam.teamMember,
             conversationId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain,
-            latitude: 37.78825,
-            longitude: -122.4324,
-            locationName: "San Francisco"
+            latitude: 52.5200,
+            longitude: 13.4050,
+            locationName: "Berlin"
         )
 
         // THEN
         activeConversationPage.verifyLocationShared()
-        activeConversationPage.openLocationInDefaultMapsApp(locationName: "San Francisco")
+        activeConversationPage.openLocationInDefaultMapsApp(locationName: "Berlin")
     }
 
     private func verifyMessageReceivedAndSenderInfo(
