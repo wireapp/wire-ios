@@ -177,6 +177,10 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.sendLocation.rawValue].firstMatch
     }
 
+    var selectedAddress: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.selectedAddress.rawValue].firstMatch
+    }
+
     var locationCell: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.locationCell.rawValue].firstMatch
     }
@@ -518,10 +522,14 @@ class ActiveConversationPage: PageModel {
     }
 
     @discardableResult
-    func sendLocation() -> ActiveConversationPage {
+    func selectAndSendLocation() -> ActiveConversationPage {
         showOtherRowButton.waitAndTap()
         locationButton.waitAndTap()
         app.dismissAllowIfPresent()
+        XCTAssertTrue(
+            selectedAddress.waitForExistence(timeout: 5),
+            "Selected address did not appear"
+        )
         sendLocationButton.waitAndTap()
         return self
     }

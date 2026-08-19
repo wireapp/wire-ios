@@ -361,7 +361,6 @@ class TestServicesClient {
         latitude: Double,
         longitude: Double,
         locationName: String,
-        zoom: Int = 15,
         timeoutMillis: Int = 0
     ) async throws {
 
@@ -382,8 +381,7 @@ class TestServicesClient {
             "conversationDomain": domain,
             "latitude": latitude,
             "longitude": longitude,
-            "locationName": locationName,
-            "zoom": zoom
+            "locationName": locationName
         ]
 
         if timeoutMillis > 0 {

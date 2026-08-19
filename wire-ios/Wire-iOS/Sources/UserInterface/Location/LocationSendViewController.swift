@@ -84,7 +84,7 @@ final class LocationSendViewController: UIViewController {
     }
 
     private func setupAddressLabel() {
-        addressLabel.accessibilityIdentifier = "selectedAddress"
+        addressLabel.accessibilityIdentifier = Locators.ActiveConversationPage.selectedAddress.rawValue
         addressLabel.accessibilityTraits = .staticText
         updateAddressLabelAccessibility()
     }

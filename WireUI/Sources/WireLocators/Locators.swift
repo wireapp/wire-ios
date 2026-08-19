@@ -205,6 +205,7 @@ public enum Locators {
         case open = "Open"
         case allowFullAccess = "Allow Full Access"
         case sendLocation
+        case selectedAddress
         case locationCell
         case locationMap
         case ok = "OK"

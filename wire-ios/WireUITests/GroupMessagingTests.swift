@@ -347,8 +347,8 @@ final class GroupMessagingTests: WireUITestCase {
         // GIVEN
         let groupTeam = try await registerGroupTeam()
         XCUIDevice.shared.location = XCUILocation(location: CLLocation(
-            latitude: 52.5200,
-            longitude: 13.4050
+            latitude: 52.52419,
+            longitude: 13.40221
         ))
 
         let activeConversationPage = try login(user: groupTeam.teamOwner)
@@ -356,19 +356,19 @@ final class GroupMessagingTests: WireUITestCase {
 
         // WHEN
         activeConversationPage
-            .sendLocation()
+            .selectAndSendLocation()
             .verifyLocationShared()
 
         try await testServicesClient.sendLocation(
             user: groupTeam.teamMember,
             conversationId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain,
-            latitude: 52.5200,
-            longitude: 13.4050,
+            latitude: 52.52419,
+            longitude: 13.40221,
             locationName: "Berlin"
         )
 
-        // THEN
+        // THEN - Verify received location and able to open
         activeConversationPage.verifyLocationShared()
         activeConversationPage.openLocationInDefaultMapsApp(locationName: "Berlin")
     }
