@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 // MARK: - LocationSendViewControllerDelegate
 
@@ -79,7 +80,7 @@ final class LocationSendViewController: UIViewController {
             self?.sendButtonTapped()
         }
         sendButton.addAction(action, for: .touchUpInside)
-        sendButton.accessibilityIdentifier = "sendLocation"
+        sendButton.accessibilityIdentifier = Locators.ActiveConversationPage.sendLocation.rawValue
     }
 
     private func setupAddressLabel() {

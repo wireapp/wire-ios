@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreLocation
 import WireFoundation
 import XCTest
 
@@ -338,6 +339,39 @@ final class GroupMessagingTests: WireUITestCase {
                 .waitForExistence(timeout: 2),
             "Expected ping message from \(groupTeam.teamMember.name) not found"
         )
+    }
+
+    @MainActor
+    func testSendLocationAndOpenReceivedLocationInDefaultMapsApp_TC_11734() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+        // Random location
+        XCUIDevice.shared.location = XCUILocation(location: CLLocation(
+            latitude: 37.78825,
+            longitude: -122.4324
+        ))
+
+        let activeConversationPage = try login(user: groupTeam.teamOwner)
+            .openConversation()
+
+        // WHEN
+        activeConversationPage
+            .sendLocation()
+            .verifyLocationShared()
+
+        try await testServicesClient.sendLocation(
+            user: groupTeam.teamMember,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain,
+            latitude: 37.78825,
+            longitude: -122.4324,
+            locationName: "San Francisco"
+        )
+
+        // THEN
+        activeConversationPage.verifyLocationShared()
+        activeConversationPage.openLocationInDefaultMapsApp(locationName: "San Francisco")
     }
 
     private func verifyMessageReceivedAndSenderInfo(
