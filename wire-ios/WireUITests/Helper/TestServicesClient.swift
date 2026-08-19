@@ -358,8 +358,8 @@ class TestServicesClient {
         user: UserInfo,
         conversationId: UUID,
         domain: String,
-        latitude: Float,
-        longitude: Float,
+        latitude: Double,
+        longitude: Double,
         locationName: String,
         zoom: Int = 15,
         timeoutMillis: Int = 0
