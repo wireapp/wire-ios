@@ -420,8 +420,13 @@ private extension FilesItemViewModel {
         } else {
             switch selectedSortingKey {
             case .date:
-                if let ownedBy {
-                    primary = Strings.Files.Item.subtitle(Strings.Sorting.Key.date, ownedBy)
+                if let ownedBy, let date = formattedDate(
+                    modifiedAt: modifiedAt,
+                    locale: locale,
+                    calendar: calendar,
+                    timeZone: timeZone
+                ) {
+                    primary = Strings.Files.Item.subtitle(date, ownedBy)
                 }
             case .size:
                 if let size = formattedFileSize(size: size), let ownedBy {
