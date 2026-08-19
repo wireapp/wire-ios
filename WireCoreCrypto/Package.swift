@@ -21,15 +21,15 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "WireCoreCrypto",
-            url: "https://github.com/wireapp/core-crypto/releases/download/v10.3.0/WireCoreCrypto.xcframework.zip",
-            checksum: "cfc792b36b52054952d26c180205e366b2aa814e48a79a0b45c862c41dbe46ec"
+            url: "https://github.com/wireapp/core-crypto/releases/download/v10.4.0/WireCoreCrypto.xcframework.zip",
+            checksum: "1dba6e0579dc2ec03cee335fbc6a1f0f85cc928339aee215d7afbf45eb874291"
         ),
         // this is an internal dependency to WireCoreCrypto but currently needs to explicitly
         // added as a dependency due to limitations of Swift packages.
         .binaryTarget(
             name: "WireCoreCryptoUniffi",
-            url: "https://github.com/wireapp/core-crypto/releases/download/v10.3.0/WireCoreCryptoUniffi.xcframework.zip",
-            checksum: "8b5e0c194fb94a35f2757be36b3fbd12ba02bc603a3b42cd64791fe15fd0475e"
+            url: "https://github.com/wireapp/core-crypto/releases/download/v10.4.0/WireCoreCryptoUniffi.xcframework.zip",
+            checksum: "04230e60596473955aab52de8ae03789bc5ea63a0f044a963ce6ee100bc887a6"
         )
     ]
 )
