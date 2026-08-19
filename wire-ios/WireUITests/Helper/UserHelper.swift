@@ -274,9 +274,12 @@ final class UserHelper {
     /// Register a team owner with a provided team name.
     /// - Parameter teamName: team name to create.
     /// - Returns: qualifiedId of the owner and ownerInfo
-    func registerUserAsTeamOwner(teamName: String) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+    func registerUserAsTeamOwner(
+        teamName: String,
+        preferredName: String? = nil
+    ) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
 
-        let teamOwner = UserGenerator.generateUniqueUserInfo()
+        let teamOwner = UserGenerator.generateUniqueUserInfo(preferredName: preferredName)
         teamOwner.teamName = teamName
 
         let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
@@ -399,10 +402,11 @@ final class UserHelper {
 
     func registerUsersAsTeamMemberWithUserHandleSet(
         ownerAccessToken: String,
-        teamID: UUID
+        teamID: UUID,
+        preferredName: String? = nil
     ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
 
-        let teamMember = UserGenerator.generateUniqueUserInfo()
+        let teamMember = UserGenerator.generateUniqueUserInfo(preferredName: preferredName)
 
         let invitationID = try await teamsAPI.inviteMemberToTeam(
             access_token: ownerAccessToken,
@@ -584,11 +588,16 @@ final class UserHelper {
     func registerTeam(
         withMemberCount memberCount: Int,
         conversation: CreateConversationOption? = nil,
-        driveEnabled: Bool = false
+        driveEnabled: Bool = false,
+        names: [String] = []
     ) async throws
         -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
 
-        let (_, teamOwner) = try await registerUserAsTeamOwner()
+        let generated = UserGenerator.generateUniqueUserInfo()
+        let (_, teamOwner) = try await registerUserAsTeamOwner(
+            teamName: generated.teamName,
+            preferredName: names.first
+        )
         guard let teamID = teamOwner.teamID else {
             throw RuntimeError("registerTeam: teamOwner.teamID is nil")
         }
@@ -608,10 +617,11 @@ final class UserHelper {
         var teamMembers: [UserInfo] = []
         teamMembers.reserveCapacity(memberCount)
 
-        for _ in 0 ..< memberCount {
+        for index in 0 ..< memberCount {
             let (qualifiedId, teamMember) = try await registerUsersAsTeamMemberWithUserHandleSet(
                 ownerAccessToken: ownerAccessToken.token,
-                teamID: teamID
+                teamID: teamID,
+                preferredName: names.indices.contains(index + 1) ? names[index + 1] : nil
             )
             qualifiedIDs.append(qualifiedId)
             teamMembers.append(teamMember)
