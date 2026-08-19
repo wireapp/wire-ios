@@ -1,0 +1,19 @@
+{
+    "conversation": "19da8559-6054-431a-8a7d-d4bbd8007194",
+    "from": "8c74a470-5383-4800-9a7d-a77fb9f1a46c",
+    "qualified_conversation": {
+        "domain": "example.com",
+        "id": "19da8559-6054-431a-8a7d-d4bbd8007194"
+    },
+    "qualified_from": {
+        "domain": "example.com",
+        "id": "8c74a470-5383-4800-9a7d-a77fb9f1a46c"
+    },
+    "qualified_id": {
+        "domain": "example.com",
+        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+    },
+    "time": "2015-08-19T15:32:28.975Z",
+    "type": "meeting.member-add",
+    "via": "user"
+}
