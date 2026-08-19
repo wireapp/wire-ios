@@ -123,7 +123,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
     private func handleAuthenticationResult(_ result: AppLockModule.AuthenticationResult) {
         DispatchQueue.main.async(group: dispatchGroup) { [weak self] in
-            guard let self else { return }
+            guard let self, let presenter else { return }
 
             switch result {
             case .granted:
