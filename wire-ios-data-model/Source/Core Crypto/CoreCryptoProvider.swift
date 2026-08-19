@@ -316,8 +316,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             allowKeyCreation: allowCreation
         )
 
-        WireLogger.coreCrypto.debug(
-            "creating Core Crypto",
+        WireLogger.coreCrypto.info(
+            "initializing Core Crypto \(WireCoreCryptoUniffiVersionNumber)",
             attributes: .safePublic
         )
 
