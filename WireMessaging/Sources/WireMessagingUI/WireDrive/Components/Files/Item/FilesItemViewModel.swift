@@ -57,6 +57,7 @@ final class FilesItemViewModel: ObservableObject {
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
     @Published private var asset: WireDriveLocalAsset?
+    @Published var thumbnailURL: URL?
     @Published var fileTracker: WireDriveFileUITracker
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
@@ -141,6 +142,8 @@ final class FilesItemViewModel: ObservableObject {
                 fileTracker.handleDownloadState(fromAsset: asset)
             }
         }.store(in: &cancellables)
+
+        setThumbnailURL()
     }
 
     var nameOfTopmostFolderInRecycleBin: String {
@@ -178,6 +181,25 @@ final class FilesItemViewModel: ObservableObject {
 
     var isEditable: Bool {
         item.isEditable
+    }
+
+    private func setThumbnailURL() {
+        Task {
+            thumbnailURL = switch item.icon {
+            case .video, .image:
+                if isOffline {
+                    // use full asset
+                    try? await getAssetUseCase.invoke(
+                        nodeID: nodeID,
+                        eTag: item.eTag
+                    )
+                } else {
+                    item.thumbnailURL
+                }
+            default:
+                nil
+            }
+        }
     }
 
     func isActionDisabled(_ action: ItemAction) -> Bool {
