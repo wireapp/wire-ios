@@ -41,8 +41,6 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         _ participants: [MeetingMember],
         to conversationID: WireCallingDomain.QualifiedID
     ) async throws {
-        guard !participants.isEmpty else { return }
-
         guard let conversation = await conversationRepository.fetchConversation(
             id: conversationID.id,
             domain: conversationID.domain
@@ -62,12 +60,18 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         guard let mlsGroupID else { return }
 
         if isGroupEstablished {
+            guard !participants.isEmpty else { return }
             // The group already exists (the meeting is being edited), so the
             // participants are added with a regular add-members commit.
             try await updateParticipants(participants, in: objectID, syncContext: syncContext) {
                 try await participantsService.addParticipants($0, to: $1)
             }
         } else {
+            // The group must be established even with no extra participants
+            // (a solo "Meet Now" instant meeting): without this, the
+            // conversation's MLS group never gets created, and starting the
+            // call later fails silently when it tries to set up the
+            // conference against a non-existent parent group.
             try await addMLSParticipants(
                 participants,
                 to: mlsGroupID,
