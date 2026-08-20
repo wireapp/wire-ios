@@ -17,9 +17,9 @@
 //
 
 package import WireCallingDomain
+package import Foundation
 package import WireFoundation
 
-import Foundation
 import WireLogging
 
 @Observable
@@ -49,11 +49,24 @@ package final class MeetingsViewModel {
         set { if !newValue { meetingToDelete = nil } }
     }
 
+    private var isDeletingForSelf: Bool {
+        meetingToDelete.map { !isOrganizer($0) } ?? false
+    }
+
+    var deleteConfirmationTitle: String {
+        isDeletingForSelf ? Strings.DeleteForMe.Alert.title : Strings.Delete.Alert.title
+    }
+
+    var deleteConfirmationMessage: String {
+        isDeletingForSelf ? Strings.DeleteForMe.Alert.subtitle : Strings.Delete.Alert.subtitle
+    }
+
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
     private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+    private let selfUserID: UUID
     private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
 
     private var futureOffset: Int = 0
@@ -69,6 +82,7 @@ package final class MeetingsViewModel {
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
     ) {
         self.currentDateProvider = currentDateProvider
@@ -76,6 +90,7 @@ package final class MeetingsViewModel {
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
         self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
         self.deleteMeetingUseCase = deleteMeetingUseCase
+        self.selfUserID = selfUserID
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
         self.currentDate = currentDateProvider.now
     }
@@ -148,6 +163,10 @@ package final class MeetingsViewModel {
         attendingConversationIDs.contains(occurrence.conversationID) && isHappeningNow(occurrence)
     }
 
+    func isOrganizer(_ meeting: Meeting) -> Bool {
+        meeting.creatorID.id == selfUserID
+    }
+
     /// Whether the meeting's scheduled time range contains the current time.
     func isHappeningNow(_ meeting: Meeting) -> Bool {
         meeting.start <= currentDate && currentDate < meeting.end
@@ -186,7 +205,7 @@ package final class MeetingsViewModel {
 
     func deleteMeeting(_ meeting: Meeting) async {
         do {
-            try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
+            try await deleteMeetingUseCase.invoke(meeting: meeting)
             loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
         } catch {
             hasDeleteError = true

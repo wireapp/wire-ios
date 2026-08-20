@@ -676,6 +676,7 @@ public enum Locators {
         }
 
         public enum MeetingRow: String {
+            case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
         }
 

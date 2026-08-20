@@ -100,6 +100,38 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         }
     }
 
+    func leaveConversation(id conversationID: WireCallingDomain.QualifiedID) async throws {
+        let syncContext = contextProvider.syncContext
+        let resolved = await syncContext.perform {
+            let conversation = ZMConversation.fetch(
+                with: conversationID.id,
+                domain: conversationID.domain,
+                in: syncContext
+            )
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            return (
+                conversation: conversation,
+                selfUser: selfUser,
+                isMeeting: conversation?.isMeeting == true,
+                hasSelfUserID: selfUser.qualifiedID != nil
+            )
+        }
+
+        guard
+            let conversation = resolved.conversation,
+            resolved.isMeeting,
+            resolved.hasSelfUserID
+        else {
+            throw ConversationRemoveParticipantError.invalidOperation
+        }
+
+        do {
+            try await participantsService.removeParticipant(resolved.selfUser, from: conversation)
+        } catch ConversationRemoveParticipantError.conversationNotFound {
+            // The current user already left, so the requested state exists.
+        }
+    }
+
     func setConversationName(
         _ name: String,
         for conversationID: WireCallingDomain.QualifiedID

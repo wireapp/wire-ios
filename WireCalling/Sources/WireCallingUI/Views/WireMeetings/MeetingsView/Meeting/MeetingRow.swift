@@ -27,6 +27,7 @@ struct MeetingRow: View {
 
     let occurrence: MeetingOccurrence
     let formatTime: (MeetingOccurrence) -> String
+    let isOrganizer: Bool
     var isAttending: Bool = false
     var isLive: Bool = false
     let onEdit: () -> Void
@@ -78,16 +79,25 @@ struct MeetingRow: View {
                             }
                         }
 
-                        Button {
-                            onEdit()
-                        } label: {
-                            Label(Strings.Actions.edit, systemImage: "pencil")
-                        }
+                        if isOrganizer {
+                            Button {
+                                onEdit()
+                            } label: {
+                                Label(Strings.Actions.edit, systemImage: "pencil")
+                            }
 
-                        Button(role: .destructive) {
-                            onDelete()
-                        } label: {
-                            Label(Strings.Actions.delete, systemImage: "trash")
+                            Button(role: .destructive) {
+                                onDelete()
+                            } label: {
+                                Label(Strings.Actions.delete, systemImage: "trash")
+                            }
+                        } else {
+                            Button(role: .destructive) {
+                                onDelete()
+                            } label: {
+                                Label(Strings.Actions.deleteForMe, systemImage: "trash")
+                            }
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.deleteForMeButton)
                         }
                     } label: {
                         Image(systemName: "ellipsis")
@@ -232,6 +242,7 @@ private extension MeetingRecurrence {
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
             formatTime: { formatter.startedAt($0.start) },
+            isOrganizer: true,
             isLive: true,
             onEdit: {},
             onDelete: {},
@@ -241,6 +252,7 @@ private extension MeetingRecurrence {
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
             formatTime: { formatter.startedAt($0.start) },
+            isOrganizer: true,
             isAttending: true,
             isLive: true,
             onEdit: {},
@@ -250,6 +262,7 @@ private extension MeetingRecurrence {
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
             formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
+            isOrganizer: true,
             onEdit: {},
             onDelete: {}
         )
