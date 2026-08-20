@@ -417,7 +417,7 @@ package final class FilesViewModel: ObservableObject {
     // MARK: search
 
     var showSearchBar: Bool {
-        guard !isOffline else {
+        guard !isOffline, !isRecycleBin else {
             return false
         }
 
@@ -430,6 +430,10 @@ package final class FilesViewModel: ObservableObject {
     }
 
     // MARK: filters
+
+    var showFiltersBar: Bool {
+        !isOffline && !isRecycleBin
+    }
 
     func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
         guard filters != filtersSelection else { return }
@@ -454,6 +458,10 @@ package final class FilesViewModel: ObservableObject {
 
     var shouldShowOfflineBar: Bool {
         isOffline && !state.items.isEmpty
+    }
+
+    var shouldShowOfflineBarHint: Bool {
+        isBrowsing || (selfUserRole == .editor && !isRecycleBin)
     }
 
     func makeAssetAvailableOffline(item: FilesViewItem) {
