@@ -167,6 +167,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .noAPNSTokenCache:
+            "NoAPNSTokenCacheEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
         default:

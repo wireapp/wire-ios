@@ -102,7 +102,10 @@ extension SettingsCellDescriptorFactory {
         )
 
         // Section
-        return SettingsSectionDescriptor(cellDescriptors: [debuggingToolsGroup])
+        return SettingsSectionDescriptor(
+            cellDescriptors: [debuggingToolsGroup],
+            header: DeveloperFlag.noAPNSTokenCache.isOn ? SelfSettingsAdvancedLocale.Troubleshooting.title : nil
+        )
     }
 
     // MARK: - Helpers
