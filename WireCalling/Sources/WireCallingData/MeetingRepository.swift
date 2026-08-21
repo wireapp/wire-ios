@@ -103,21 +103,14 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     @discardableResult
     public func pullMeeting(id: QualifiedID) async throws -> Meeting? {
-        // There is no endpoint to fetch a single meeting,
-        // so refetch the list to get the details.
-        let meetings = try await meetingsAPI.listMeetings()
-
-        let meeting = meetings.first(where: { $0.id == id })?.toDomainMeeting()
-        if let meeting {
-            await localStore.storeMeeting(meeting)
-        } else {
-            // The meeting no longer exists on the backend.
-            await localStore.deleteMeeting(id: id)
+        do {
+            let meeting = try await meetingsAPI.getMeeting(id: id).toDomainMeeting()
+            await storeMeeting(meeting)
+            return await localStore.storedMeeting(id: meeting.id) ?? meeting
+        } catch MeetingsAPIError.meetingNotFound {
+            await deleteLocalMeeting(id: id)
+            return nil
         }
-        changeBroadcaster.broadcast()
-        guard let meeting else { return nil }
-        // The stored copy has its members populated from the conversation.
-        return await localStore.storedMeeting(id: meeting.id) ?? meeting
     }
 
     public func pullMeetings() async throws {

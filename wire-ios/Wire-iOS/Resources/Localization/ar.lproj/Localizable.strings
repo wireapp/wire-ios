@@ -319,6 +319,7 @@
 "conversation.input_bar.verified" = "تم التحقق";
 "conversation.input_bar.placeholder" = "اكتب رسالة";
 "conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "اسحب لأعلى للإرسال";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "اُنقُر للإرسال";

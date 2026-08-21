@@ -76,6 +76,68 @@ final class ConversationTests: WireUITestCase {
     }
 
     @MainActor
+    func testBlockAndUnblockUser_TC_8868() async throws {
+        let userA = try await UserHelper.default.createPersonalUser()
+        let userB = try await UserHelper.default.createPersonalUser()
+        let messageFromUserB = "Hello from \(userB.name)"
+
+        // userA sends a connection request to userB
+        let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapSearchBox()
+            .searchUserByUserHandle(userB.username)
+            .tapSearchedUserCell()
+
+        _ = try userDetailsPage.sendConnectionRequest()
+            .closeProfilePage()
+            .closeNewConversationPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        // userB logs in, accepts and replies
+        var conversationsPage = try app.loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
+            .openPendingRequest()
+            .acceptConnectionRequest()
+            .sendMessage(messageFromUserB)
+            .goBackToConversationPage()
+
+        // switch back to userA
+        conversationsPage = try conversationsPage.openUserProfilePage()
+            .switchUserAccountForUser(withName: userA.name)
+
+        // WHEN userA blocks userB
+        try conversationsPage
+            .longPressForMoreOptionOnConversation()
+            .blockUser()
+
+        // THEN the conversation for userB stays in the list with a "Blocked" status
+        let blockedCell = conversationsPage.conversationCell(named: userB.name)
+        XCTAssertTrue(
+            blockedCell.waitForExistence(timeout: 5),
+            "Blocked user conversation cell is missing from the list"
+        )
+        let blockedValue = try XCTUnwrap(blockedCell.value as? String, "Conversation cell has no accessibility value")
+        XCTAssertTrue(
+            blockedValue.contains("Blocked"),
+            "Conversation cell should show 'Blocked' status, was: \(blockedValue)"
+        )
+
+        // WHEN userA unblocks userB via long-press on the conversation item
+        try conversationsPage
+            .longPressForMoreOptionOnConversation()
+            .unblockUser()
+
+        // THEN userB is still in the conversation list
+        let unblockedCell = conversationsPage.conversationCell(named: userB.name)
+        XCTAssertTrue(
+            unblockedCell.waitForExistence(timeout: 5),
+            "Unblocked user conversation cell is missing from the list"
+        )
+    }
+
+    @MainActor
     func testLeaveAndClearGroup_TC_10525() async throws {
         // GIVEN
         let (_, members, _, _) = try await UserHelper.default.registerTeam(
