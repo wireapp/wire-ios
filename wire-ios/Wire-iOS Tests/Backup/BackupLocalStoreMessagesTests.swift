@@ -378,7 +378,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
     func test_AddMessages_AdvancesLastReadServerTimeStampToLatestRestoredMessage() async throws {
         // GIVEN: a freshly-synced conversation whose lastReadServerTimeStamp
         // was seeded from an old conversation.lastEventTime (or .distantPast)
-        let oldLastRead = Date(timeIntervalSince1970: 1_000)
+        let oldLastRead = Date(timeIntervalSince1970: 1000)
         try await context.perform { [context, conversationID] in
             let conversation = try XCTUnwrap(ZMConversation.fetch(
                 with: conversationID!.id,
