@@ -354,6 +354,54 @@ class TestServicesClient {
         }
     }
 
+    func sendLocation(
+        user: UserInfo,
+        conversationId: UUID,
+        domain: String,
+        latitude: Double,
+        longitude: Double,
+        locationName: String,
+        timeoutMillis: Int? = nil
+    ) async throws {
+
+        let instanceId = try await getInstanceId(
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            verificationCode: nil
+        )
+
+        let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendLocation")
+        guard let requestUrl = url else {
+            throw RuntimeError("Invalid URL")
+        }
+
+        var body: [String: Any] = [
+            "conversationId": conversationId.uuidString.lowercased(),
+            "conversationDomain": domain,
+            "latitude": latitude,
+            "longitude": longitude,
+            "locationName": locationName
+        ]
+
+        if let timeoutMillis {
+            body["messageTimer"] = timeoutMillis
+        }
+
+        let (_, response) = try await sendHttpRequest(
+            url: requestUrl.absoluteString,
+            body: body,
+            requestType: "POST"
+        )
+
+        guard let pureResponse = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid response")
+        }
+        if pureResponse.statusCode != 200 {
+            throw RuntimeError("Error \(pureResponse.description)")
+        }
+    }
+
     func getMyMessages(
         user: UserInfo,
         convoId: UUID,

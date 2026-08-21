@@ -1233,7 +1233,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         uploadFileButton.accessibilityIdentifier = "uploadFileButton"
         sketchButton.accessibilityIdentifier = Locators.ActiveConversationPage.sketchButton.rawValue
         pingButton.accessibilityIdentifier = Locators.ActiveConversationPage.pingButton.rawValue
-        locationButton.accessibilityIdentifier = "locationButton"
+        locationButton.accessibilityIdentifier = Locators.ActiveConversationPage.locationButton.rawValue
         gifButton.accessibilityIdentifier = "gifButton"
         mentionButton.accessibilityIdentifier = Locators.ActiveConversationPage.mentionButton.rawValue
         markdownButton.accessibilityIdentifier = "markdownButton"
