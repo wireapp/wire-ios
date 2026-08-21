@@ -73,6 +73,8 @@ public struct SelfUserAPIBuilder {
             SelfUserAPIV15(apiService: apiService)
         case .v16:
             SelfUserAPIV16(apiService: apiService)
+        case .v17:
+            SelfUserAPIV17(apiService: apiService)
         }
     }
 

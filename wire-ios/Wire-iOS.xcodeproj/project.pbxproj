@@ -108,9 +108,9 @@
 		59CB3F212F6AEB6D003616C7 /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = 59CB3F202F6AEB6D003616C7 /* WireData */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
+		76AA88912F00000100000002 /* ZXingCpp in Frameworks */ = {isa = PBXBuildFile; productRef = 76AA88912F00000100000003 /* ZXingCpp */; };
 		76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */; };
 		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
-		76E40EDF2FA365DB005B3080 /* OktaSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 76E40EDE2FA365DB005B3080 /* OktaSdk */; };
 		76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 76ED41EB2E053E3200A286F4 /* WireNetwork */; };
 		76EF748C2E9E6012006A1579 /* WireLocators in Frameworks */ = {isa = PBXBuildFile; productRef = 76EF748B2E9E6012006A1579 /* WireLocators */; };
 		76EF748E2E9E6366006A1579 /* WireLocators in Frameworks */ = {isa = PBXBuildFile; productRef = 76EF748D2E9E6366006A1579 /* WireLocators */; };
@@ -911,10 +911,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76E40EDF2FA365DB005B3080 /* OktaSdk in Frameworks */,
 				76EF748C2E9E6012006A1579 /* WireLocators in Frameworks */,
 				D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */,
 				76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */,
+				76AA88912F00000100000002 /* ZXingCpp in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1288,7 +1288,7 @@
 				D0E258142DDC864100959FB9 /* WireFoundation */,
 				76ED41EB2E053E3200A286F4 /* WireNetwork */,
 				76EF748B2E9E6012006A1579 /* WireLocators */,
-				76E40EDE2FA365DB005B3080 /* OktaSdk */,
+				76AA88912F00000100000003 /* ZXingCpp */,
 			);
 			productName = WireUITests;
 			productReference = 01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */;
@@ -1628,7 +1628,7 @@
 				E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
 				CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */,
 				59703B262DD4A42000B45773 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
-				76E40EDD2FA3659C005B3080 /* XCRemoteSwiftPackageReference "okta-sdk-swift" */,
+				76AA88912F00000100000004 /* XCRemoteSwiftPackageReference "zxing-cpp" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
@@ -2807,12 +2807,12 @@
 				minimumVersion = 0.9.0;
 			};
 		};
-		76E40EDD2FA3659C005B3080 /* XCRemoteSwiftPackageReference "okta-sdk-swift" */ = {
+		76AA88912F00000100000004 /* XCRemoteSwiftPackageReference "zxing-cpp" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/okta/okta-sdk-swift.git";
+			repositoryURL = "https://github.com/zxing-cpp/zxing-cpp";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
 			};
 		};
 		CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */ = {
@@ -3035,6 +3035,11 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireMainNavigationUI;
 		};
+		76AA88912F00000100000003 /* ZXingCpp */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76AA88912F00000100000004 /* XCRemoteSwiftPackageReference "zxing-cpp" */;
+			productName = ZXingCpp;
+		};
 		76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireViewsDebugUI;
@@ -3042,10 +3047,6 @@
 		76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireIndividualToTeamMigrationUI;
-		};
-		76E40EDE2FA365DB005B3080 /* OktaSdk */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = OktaSdk;
 		};
 		76ED41EB2E053E3200A286F4 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;

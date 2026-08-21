@@ -21,9 +21,6 @@ on:
       produce_changelog:
         type: boolean
         default: true
-      notify_secret:
-        type: string
-        required: true
       produce_debug_builds:
         type: boolean
         default: false
@@ -55,6 +52,10 @@ on:
         required: true
       C1_S3_SUBFOLDER_PRODUCTION:
         required: true
+      C2_S3_SUBFOLDER_RESTRICTED:
+        required: true
+      C2_S3_SUBFOLDER_PRODUCTION:
+        required: true
       C3_S3_SUBFOLDER_RESTRICTED:
         required: true
       C3_S3_SUBFOLDER_PRODUCTION:
@@ -68,11 +69,17 @@ on:
       COUNTLY_PRODUCTION_KEY:
         required: true
       COUNTLY_INTERNAL_KEY:
-        required: true  
+        required: true
+      CLIENT_NAME_C1_C2_C3:
+        required: true
+      CLIENT_ID_C1_C2_C3:
+        required: true
       SUBMODULE_PAT:
         required: true
       JIRA_TOKEN:
         required: false
+      SLACK_WEBHOOK_URL:
+        required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -96,37 +103,13 @@ jobs:
     needs: changelog
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     env:
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
-      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
-      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
       S3_BUCKET: "z-lohika"
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-      DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-      DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
-      DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
-      ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
-      GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
-      C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
-      C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
-      C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
-      C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
-      C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
-      C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
-      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
-      EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
-      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
-      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
-      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
-      ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
-      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
-      SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
-      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+      ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
+      ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
+      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
+      SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
 
     steps:
@@ -134,25 +117,21 @@ jobs:
         run: |
             echo "::add-mask::${{ secrets.CLIENT_NAME_C1_C2_C3 }}"
             echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           lfs: 'false'
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
       - name: Download changelog     
         id: download_changelog
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ needs.changelog.outputs.changelog-name }}    
-      - name: Retrieve Xcode version
-        run: |
-          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+      - name: Setup Xcode
         id: xcode-version
-      - uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd # v1.6.0
-        with:
-          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+        uses: ./.github/actions/setup-xcode
       - name: Restore Carthage Cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-carthage
         with:
           path: Carthage
@@ -181,15 +160,39 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: Trigger build
-        run: bundle exec fastlane ${{ inputs.fastlane_action }}
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
+          FASTLANE_ACTION: ${{ inputs.fastlane_action }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
+          WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
+          DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
+          GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
+          C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
+          C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
+          C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
+          C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
+          C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
+          C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
+          BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
+          EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
+          PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
+          COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
+          COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
+        run: bundle exec fastlane "$FASTLANE_ACTION"
       - name: Check for duplicate symbol implementations
         if: always()
         continue-on-error: true
         run: ./scripts/check_duplicate_classes.sh .
       - name: Archiving Logs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
           name: build-logs (${{ github.run_id }} - ${{ github.run_attempt}})
@@ -200,7 +203,7 @@ jobs:
 
       - name: Archiving env variables
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: post-build-env-${{ inputs.fastlane_action }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
@@ -217,6 +220,8 @@ jobs:
       - name: Notify on Wire if succeeded
         if: success()
         continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         uses: ./.github/actions/notify-wire
         with:
           notify: custom
@@ -235,6 +240,8 @@ jobs:
       - name: Notify on Wire if failed
         if: failure()
         continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         uses: ./.github/actions/notify-wire
         with:
           notify: custom

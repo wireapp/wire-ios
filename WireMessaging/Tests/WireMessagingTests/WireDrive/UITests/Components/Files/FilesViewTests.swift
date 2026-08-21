@@ -33,7 +33,7 @@ final class FilesViewTests: XCTestCase {
     private let modifiedAt = try! Date("2023-10-01T12:00:00Z", strategy: .iso8601)
     private var snapshotHelper: SnapshotHelper!
     private var nodesRepository: MockWireDriveNodesRepositoryProtocol!
-    private var fetchNodesUseCase: WireDriveFetchNodesPageUseCase!
+    private var fetchNodesPageUseCase: WireDriveFetchNodesPageUseCase!
     private var deleteNodeUseCase: WireDriveDeleteNodesUseCase!
     private var restoreNodeUseCase: WireDriveRestoreNodesUseCase!
     private var renameNodeUseCase: WireDriveRenameNodeUseCase!
@@ -49,6 +49,9 @@ final class FilesViewTests: XCTestCase {
     private var makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase!
     private var removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase!
     private var fetchOfflineAvailableAssetsUseCase: WireDriveFetchOfflineAvailableAssetsUseCase!
+    private var fetchNodesUseCase: WireDriveFetchNodesUseCase!
+    private var observeAssetUseCase: WireDriveObserveAssetUseCase!
+    private var moveNodeUseCase: WireDriveMoveNodeUseCase!
     private var networkMonitor: NetworkMonitor!
 
     private let record: Bool? = nil
@@ -66,8 +69,11 @@ final class FilesViewTests: XCTestCase {
 
         let localAssetsRepository = MockWireDriveLocalAssetRepositoryProtocol()
 
-        fetchNodesUseCase = WireDriveFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1)),
+        fetchNodesPageUseCase = WireDriveFetchNodesPageUseCase(
+            repository: nodesRepository
+        )
+        fetchNodesUseCase = WireDriveFetchNodesUseCase(
+            state: WireDriveNodesCollection(),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireDriveDeleteNodesUseCase(
@@ -115,6 +121,12 @@ final class FilesViewTests: XCTestCase {
             localAssetRepository: localAssetsRepository
         )
 
+        observeAssetUseCase = WireDriveObserveAssetUseCase(localAssetRepository: localAssetsRepository)
+        moveNodeUseCase = WireDriveMoveNodeUseCase(
+            nodesRepository: nodesRepository,
+            localAssetRepository: localAssetsRepository
+        )
+
         networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
         networkMonitor.currentStatus = .connected
     }
@@ -123,6 +135,7 @@ final class FilesViewTests: XCTestCase {
     override func tearDown() async throws {
         snapshotHelper = nil
         nodesRepository = nil
+        fetchNodesPageUseCase = nil
         fetchNodesUseCase = nil
         renameNodeUseCase = nil
         updateTagsUseCase = nil
@@ -134,6 +147,8 @@ final class FilesViewTests: XCTestCase {
         updatePublicLinkExpiration = nil
         updatePublicLinkPassword = nil
         driveConversationsUseCase = nil
+        observeAssetUseCase = nil
+        moveNodeUseCase = nil
         networkMonitor = nil
     }
 
@@ -400,7 +415,8 @@ final class FilesViewTests: XCTestCase {
             publicLinkID: nil,
             conversationName: "Conversation 1",
             isReadOnly: readOnly,
-            size: nil
+            size: nil,
+            thumbnailURL: nil
         )
     }
 
@@ -412,6 +428,7 @@ final class FilesViewTests: XCTestCase {
     ) async -> some View {
         let filesViewModel = FilesViewModel(
             useCases: .init(
+                fetchNodesPage: fetchNodesPageUseCase,
                 fetchNodes: fetchNodesUseCase,
                 deleteNodes: deleteNodeUseCase,
                 restoreNodes: restoreNodeUseCase,
@@ -443,11 +460,11 @@ final class FilesViewTests: XCTestCase {
                 ),
                 makeAssetAvailableOffline: makeAssetAvailableOfflineUseCase,
                 removeAssetAvailableOffline: removeAssetAvailableOfflineUseCase,
-                getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase
+                getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase,
+                observeAsset: observeAssetUseCase,
+                moveNode: moveNodeUseCase
             ),
             isCellsStatePending: false,
-            localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
-            nodesRepository: nodesRepository,
             isBrowsing: isBrowsing,
             networkMonitor: networkMonitor
         )
@@ -484,7 +501,11 @@ private extension FilesItemViewModel {
             item: item,
             selectedSortingKey: .date,
             conversationName: "Conversation 1",
-            localAssetRepository: localAssetRepository,
+            observeAssetUseCase: WireDriveObserveAssetUseCase(localAssetRepository: localAssetRepository),
+            getAssetUseCase: WireDriveGetAssetUseCase(
+                localAssetRepository: localAssetRepository,
+                fileCache: MockFileCache()
+            ),
             onItemAction: { _, _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),

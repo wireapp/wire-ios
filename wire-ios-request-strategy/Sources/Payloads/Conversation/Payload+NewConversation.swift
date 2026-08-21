@@ -102,7 +102,11 @@ extension Payload {
             self.name = action.name
             self.access = action.accessMode?.stringValue
             self.legacyAccessRole = action.legacyAccessRole?.rawValue
-            self.accessRoles = action.accessRoles.map(\.rawValue)
+            self.accessRoles = if action.accessRoles.isEmpty {
+                nil
+            } else {
+                action.accessRoles.map(\.rawValue)
+            }
             self.conversationRole = ZMConversation.defaultMemberRoleName
             self.team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
             self.readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
@@ -128,7 +132,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15, .v16:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15, .v16, .v17:
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
                 self.legacyAccessRole = nil
             }
@@ -136,7 +140,7 @@ extension Payload {
             switch apiVersion {
             case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
                 self.skipCreator = nil
-            case .v10, .v11, .v12, .v13, .v14, .v15, .v16:
+            case .v10, .v11, .v12, .v13, .v14, .v15, .v16, .v17:
                 self.skipCreator = try container.decodeIfPresent(Bool.self, forKey: .skipCreator)
             }
         }
@@ -159,14 +163,14 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15, .v16:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15, .v16, .v17:
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             }
 
             switch apiVersion {
             case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
                 break
-            case .v10, .v11, .v12, .v13, .v14, .v15, .v16:
+            case .v10, .v11, .v12, .v13, .v14, .v15, .v16, .v17:
                 try container.encodeIfPresent(skipCreator, forKey: .skipCreator)
             }
         }

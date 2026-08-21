@@ -26,8 +26,40 @@ class UserProfilePage: PageModel {
         userProfilePicture
     }
 
+    enum UserAvailabilityStatus: String {
+        case none = "None"
+        case available = "Available"
+        case busy = "Busy"
+        case away = "Away"
+
+        var identifier: String {
+            switch self {
+            case .none:
+                Locators.UserProfileStatusPicker.none.rawValue
+            case .available:
+                Locators.UserProfileStatusPicker.available.rawValue
+            case .busy:
+                Locators.UserProfileStatusPicker.busy.rawValue
+            case .away:
+                Locators.UserProfileStatusPicker.away.rawValue
+            }
+        }
+
+        var expectedValue: String {
+            self == .none ? "" : rawValue
+        }
+    }
+
     var qrCodeButton: XCUIElement {
         app.buttons[Locators.UserProfilePage.qrCodeButton.rawValue]
+    }
+
+    var nameInfo: XCUIElement {
+        app.descendants(matching: .any)[Locators.UserProfilePage.name.rawValue].firstMatch
+    }
+
+    var usernameInfo: XCUIElement {
+        app.descendants(matching: .any)[Locators.UserProfilePage.username.rawValue].firstMatch
     }
 
     var userProfilePicture: XCUIElement {
@@ -54,6 +86,26 @@ class UserProfilePage: PageModel {
         app.descendants(matching: .button)[Locators.UserProfilePage.addAccountOrTeamButton.rawValue].firstMatch
     }
 
+    var statusButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.UserProfilePage.status.rawValue].firstMatch
+    }
+
+    var profileQRCodeImage: XCUIElement {
+        app.images[Locators.UserProfileQRCodePage.qrCodeImage.rawValue].firstMatch
+    }
+
+    var shareProfileLinkButton: XCUIElement {
+        app.buttons[Locators.UserProfileQRCodePage.shareProfileLinkButton.rawValue].firstMatch
+    }
+
+    var shareQRCodeButton: XCUIElement {
+        app.buttons[Locators.UserProfileQRCodePage.shareQRCodeButton.rawValue].firstMatch
+    }
+
+    var okButton: XCUIElement {
+        app.buttons[Locators.UserProfileStatusPicker.okButton.rawValue].firstMatch
+    }
+
     func tapCreateTeamButton() throws -> TeamSetupStepsPage {
         createTeamButton.tap()
         return try TeamSetupStepsPage()
@@ -66,6 +118,90 @@ class UserProfilePage: PageModel {
 
     func getTeamName() -> String? {
         teamNameOnAccountPage.value as? String
+    }
+
+    @discardableResult
+    func verifyName(
+        _ name: String,
+    ) -> UserProfilePage {
+
+        XCTAssertEqual(
+            nameInfo.value as? String ?? nameInfo.label,
+            name,
+            "Name did not match \(name)",
+
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyUsername(
+        _ username: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        let expectedUsername = "@\(username)"
+
+        XCTAssertEqual(
+            usernameInfo.value as? String ?? usernameInfo.label,
+            expectedUsername,
+            "Username did not match \(expectedUsername)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyAddedAccountInfo(
+        for name: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        let predicate = NSPredicate(format: "label BEGINSWITH %@", name)
+        let accountButton = app.buttons.containing(predicate).firstMatch
+
+        XCTAssertTrue(
+            accountButton.waitForExistence(timeout: 5),
+            "Added account info did not appear for \(name)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyProfileQRCode(
+        username: String,
+    ) -> UserProfilePage {
+        let expectedUsername = "@\(username)"
+
+        XCTAssertTrue(
+            qrCodeButton.waitAndTap(),
+            "Profile QR code button is not showing",
+        )
+
+        XCTAssertTrue(
+            profileQRCodeImage.waitForExistence(timeout: 5),
+            "Profile QR code is not showing",
+        )
+
+        XCTAssertTrue(
+            app.staticTexts[expectedUsername].firstMatch.waitForExistence(timeout: 5),
+            "Profile QR code username did not match \(expectedUsername)",
+        )
+
+        XCTAssertTrue(
+            shareProfileLinkButton.waitForExistence(timeout: 3),
+            "Share profile link button is not showing",
+        )
+
+        XCTAssertTrue(
+            shareQRCodeButton.waitForExistence(timeout: 3),
+            "Share QR code button is not showing",
+        )
+
+        return self
     }
 
     @discardableResult
@@ -83,6 +219,55 @@ class UserProfilePage: PageModel {
             file: file,
             line: line
         )
+        return self
+    }
+
+    @discardableResult
+    func setUserStatus(
+        _ status: UserAvailabilityStatus,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        XCTAssertTrue(
+            statusButton.waitAndTap(),
+            "Status button did not appear",
+            file: file,
+            line: line
+        )
+
+        let statusOption = app.buttons[status.identifier].firstMatch
+        XCTAssertTrue(
+            statusOption.waitAndTap(),
+            "\(status.rawValue) option did not appear",
+            file: file,
+            line: line
+        )
+
+        return dismissStatusConfirmationPopup(for: status)
+    }
+
+    @discardableResult
+    func verifyUserStatus(
+        _ status: UserAvailabilityStatus,
+    ) -> UserProfilePage {
+        XCTAssertEqual(
+            statusButton.value as? String ?? "",
+            status.expectedValue,
+            "Selected status did not match \(status.rawValue)",
+        )
+
+        return self
+    }
+
+    @discardableResult
+    private func dismissStatusConfirmationPopup(for status: UserAvailabilityStatus) -> UserProfilePage {
+        let confirmationPopup = app.alerts.firstMatch
+        XCTAssertTrue(confirmationPopup.waitForExistence(timeout: 3), "Status confirmation popup did not appear")
+        XCTAssertTrue(
+            okButton.waitAndTap(),
+            "Could not dismiss \(status.rawValue) popup"
+        )
+
         return self
     }
 

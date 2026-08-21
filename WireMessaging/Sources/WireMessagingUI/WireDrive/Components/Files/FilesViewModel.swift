@@ -66,8 +66,6 @@ package final class FilesViewModel: ObservableObject {
     private var selfUserID: String? { selfUser?.id }
 
     let cellName: String? // nil when browsing all files
-    let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
-    let nodesRepository: any WireDriveNodesRepositoryProtocol
     let navigationPath: [FilesViewItem]
     var sortingSelection: FilesSortingViewModel.SortingSelection = .default
     let useCases: UseCases
@@ -127,8 +125,6 @@ package final class FilesViewModel: ObservableObject {
         navigationPath: [FilesViewItem] = [],
         setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
         isCellsStatePending: Bool,
-        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
-        nodesRepository: any WireDriveNodesRepositoryProtocol,
         cellName: String? = nil,
         isBrowsing: Bool,
         isRecycleBin: Bool = false,
@@ -139,8 +135,6 @@ package final class FilesViewModel: ObservableObject {
         self.title = title
         self.navigationPath = navigationPath
         self.setNavigation = setNavigation
-        self.localAssetRepository = localAssetRepository
-        self.nodesRepository = nodesRepository
         self.cellName = cellName
         self.isBrowsing = isBrowsing
         self.isRecycleBin = isRecycleBin
@@ -163,7 +157,21 @@ package final class FilesViewModel: ObservableObject {
         filesController.onFetchOnlineFiles = { [weak self] offset in
             guard let self else { return (items: [], isLastPage: true) }
 
-            let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
+            let configuration: WireDriveGetNodesRequest.Configuration
+
+            if isBrowsing {
+                configuration = .filesBrowserView
+            } else {
+                let root = (navigationPath.last?.filePath ?? cellName) ?? ""
+                if isRecycleBin {
+                    configuration = .recycleBinView(root: .path(root))
+                } else {
+                    configuration = .conversationFileView(root: .path(root))
+                }
+            }
+
+            let (nodes, isLastPage) = try await useCases.fetchNodesPage.invoke(
+                configuration: configuration,
                 searchTerm: searchText.isEmpty ? nil : searchText,
                 metafilter: filtersSelection.toDomainModel(selfUserID: selfUserID),
                 sortField: sortingSelection.sortingKey?.sortField,
@@ -409,7 +417,7 @@ package final class FilesViewModel: ObservableObject {
     // MARK: search
 
     var showSearchBar: Bool {
-        guard !isOffline else {
+        guard !isOffline, !isRecycleBin else {
             return false
         }
 
@@ -422,6 +430,10 @@ package final class FilesViewModel: ObservableObject {
     }
 
     // MARK: filters
+
+    var showFiltersBar: Bool {
+        !isOffline && !isRecycleBin
+    }
 
     func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
         guard filters != filtersSelection else { return }
@@ -446,6 +458,10 @@ package final class FilesViewModel: ObservableObject {
 
     var shouldShowOfflineBar: Bool {
         isOffline && !state.items.isEmpty
+    }
+
+    var shouldShowOfflineBarHint: Bool {
+        isBrowsing || (selfUserRole == .editor && !isRecycleBin)
     }
 
     func makeAssetAvailableOffline(item: FilesViewItem) {

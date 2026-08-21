@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class MeetingsAPIV16: MeetingsAPIV15 {
+class MeetingsAPIV16: MeetingsAPIV15 {
 
     override var apiVersion: APIVersion {
         .v16
@@ -40,6 +40,26 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
 
         return try ResponseParser()
             .success(code: .ok, type: MeetingListResponseV16.self)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    // MARK: - Get meeting
+
+    override func getMeeting(id: QualifiedID) async throws -> MeetingResponse {
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: MeetingResponseV16.self)
+            .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
             .parse(code: response.statusCode, data: data)
     }
 
@@ -69,11 +89,11 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
     // MARK: - Update meeting
 
     override func updateMeeting(
-        meetingID: QualifiedID,
+        id: QualifiedID,
         parameters: UpdateMeetingParameters
     ) async throws -> MeetingResponse {
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let path = "\(pathPrefix)/meetings/\(meetingID.domain)/\(meetingID.id.uuidString.lowercased())"
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.put)
@@ -95,8 +115,8 @@ final class MeetingsAPIV16: MeetingsAPIV15 {
 
     // MARK: - Delete meeting
 
-    override func deleteMeeting(meetingID: QualifiedID) async throws {
-        let path = "\(pathPrefix)/meetings/\(meetingID.domain)/\(meetingID.id.uuidString.lowercased())"
+    override func deleteMeeting(id: QualifiedID) async throws {
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.delete)

@@ -68,7 +68,7 @@ extension ZMOTRMessage {
             return expectsReadConfirmation && readReceiptsEnabled
 
         } else if conversation.conversationType == .group {
-            return expectsReadConfirmation
+            return conversation.messageProtocol != .mls && expectsReadConfirmation
         }
 
         return false

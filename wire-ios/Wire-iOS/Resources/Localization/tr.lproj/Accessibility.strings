@@ -38,12 +38,12 @@
 "conversation.hideFormattingButton.description" = "Biçimlendirme seçeneklerini gizle";
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
 "conversation.mentionButton.description" = "Birinden bahset";
-"conversation.cameraButton.description" = "Fotoğraf çekin veya seçin";
+"conversation.cameraButton.description" = "Take or select a photo";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "GIF seç";
 "conversation.audioButton.description" = "Sesli mesaj kaydet";
 "conversation.pingButton.description" = "Ping gönder";
-"conversation.uploadFileButton.description" = "Bir dosya paylaş";
+"conversation.uploadFileButton.description" = "Share a file";
 "conversation.locationButton.description" = "Konumunu paylaş";
 "conversation.videoButton.description" = "Bir video kaydet";
 "conversation.moreButton.description" = "Diğer mesajlaşma seçeneklerini aç";
@@ -54,6 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ gün";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ hafta";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ hafta";
+"conversation.cameraButtonDisabled.description" = "Take or select a photo, disabled in viewer access";
+"conversation.sketchButtonDisabled.description" = "Open sketch to draw or write, disabled in viewer access";
+"conversation.uploadFileButtonDisabled.description" = "Share a file, disabled in viewer access";
+"conversation.videoButtonDisabled.description" = "Record a video, disabled in viewer access";
 
 "conversation.headerButton.description" = "Başlık kullan";
 "conversation.boldButton.description" = "Kalın yazı kullan";

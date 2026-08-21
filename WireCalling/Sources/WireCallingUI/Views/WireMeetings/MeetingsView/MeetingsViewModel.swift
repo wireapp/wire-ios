@@ -28,17 +28,37 @@ package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    private(set) var loadedMeetings: [Meeting] = []
+    private(set) var loadedOccurrences: [MeetingOccurrence] = []
     private(set) var hasMore: Bool = false
+    var hasDeleteError = false
+
+    package var loadedMeetings: [Meeting] {
+        loadedOccurrences.map(\.meeting)
+    }
+
+    private(set) var currentDate: Date
+
+    /// Conversation ids of the meetings the self user is currently attending (joined a call in).
+    private(set) var attendingConversationIDs: Set<QualifiedID> = []
+
+    /// The meeting awaiting delete confirmation, or `nil` if no confirmation is in progress.
+    var meetingToDelete: Meeting?
+
+    var isDeleteConfirmationPresented: Bool {
+        get { meetingToDelete != nil }
+        set { if !newValue { meetingToDelete = nil } }
+    }
 
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
+    private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+    private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
 
     private var futureOffset: Int = 0
-    private let initialPageSize: Int = 10
-    private let pageSize: Int = 5
+    private let initialPageSize: Int = 20
+    private let pageSize: Int = 20
     private var isLoading: Bool = false
 
     private let grouper = MeetingsGrouper()
@@ -47,23 +67,28 @@ package final class MeetingsViewModel {
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
         self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
+        self.deleteMeetingUseCase = deleteMeetingUseCase
+        self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
+        self.currentDate = currentDateProvider.now
     }
 
     // MARK: - Public Interface
 
     var groupedUpcomingMeetings: GroupedMeetings {
-        grouper.group(loadedMeetings)
+        grouper.group(loadedOccurrences)
     }
 
     func loadInitialData() async {
         futureOffset = 0
-        loadedMeetings = []
+        loadedOccurrences = []
         hasMore = false
         await load(pageSize: initialPageSize)
     }
@@ -81,12 +106,92 @@ package final class MeetingsViewModel {
         }
     }
 
+    func observeAttendedMeetings() async {
+        guard let observeAttendedMeetingsUseCase else { return }
+        for await ids in observeAttendedMeetingsUseCase.invoke() {
+            attendingConversationIDs = ids
+        }
+    }
+
+    /// Periodically refreshes the observable current date so time-based meeting state
+    /// updates while the meetings list remains on screen.
+    func observeCurrentDate() async {
+        while !Task.isCancelled {
+            refreshCurrentDate()
+
+            do {
+                try await Task.sleep(for: durationUntilNextMinute())
+            } catch {
+                return
+            }
+        }
+    }
+
+    func refreshCurrentDate() {
+        currentDate = currentDateProvider.now
+    }
+
+    /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
+    /// minute boundary rather than a fixed interval from when the screen appeared.
+    func durationUntilNextMinute() -> Duration {
+        let secondsIntoMinute = currentDateProvider.now.timeIntervalSince1970
+            .truncatingRemainder(dividingBy: 60)
+        return .seconds(60 - secondsIntoMinute)
+    }
+
+    /// Whether the self user is currently attending (joined the call of) the given meeting.
+    func isAttending(_ meeting: Meeting) -> Bool {
+        attendingConversationIDs.contains(meeting.conversationID)
+    }
+
+    func isAttending(_ occurrence: MeetingOccurrence) -> Bool {
+        attendingConversationIDs.contains(occurrence.conversationID) && isHappeningNow(occurrence)
+    }
+
+    /// Whether the meeting's scheduled time range contains the current time.
+    func isHappeningNow(_ meeting: Meeting) -> Bool {
+        meeting.start <= currentDate && currentDate < meeting.end
+    }
+
+    /// Whether the occurrence's scheduled time range contains the current time.
+    func isHappeningNow(_ occurrence: MeetingOccurrence) -> Bool {
+        occurrence.start <= currentDate && currentDate < occurrence.end
+    }
+
     func formatDay(_ date: Date) -> String {
-        formatter.dayHeader(for: date, now: currentDateProvider.now)
+        formatter.dayHeader(for: date, now: currentDate)
     }
 
     func formatTimeRange(for meeting: Meeting) -> String {
         formatter.timeRange(from: meeting.start, to: meeting.end)
+    }
+
+    func formatTime(for occurrence: MeetingOccurrence) -> String {
+        if isHappeningNow(occurrence) {
+            formatter.startedAt(occurrence.start)
+        } else {
+            formatter.timeRange(from: occurrence.start, to: occurrence.end)
+        }
+    }
+
+    /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture
+    /// `meetingToDelete` before the alert dismissal clears it via `isDeleteConfirmationPresented`.
+    func confirmDelete() {
+        guard let meeting = meetingToDelete else { return }
+        meetingToDelete = nil
+        Task {
+            await deleteMeeting(meeting)
+        }
+    }
+
+    func deleteMeeting(_ meeting: Meeting) async {
+        do {
+            try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
+            loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
+        } catch {
+            hasDeleteError = true
+            WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
+        }
     }
 
     // MARK: - Private Methods
@@ -95,7 +200,7 @@ package final class MeetingsViewModel {
     /// change can insert or remove meetings anywhere in the loaded range.
     private func reloadLoadedMeetings() async {
         guard !isLoading else { return }
-        let reloadSize = max(loadedMeetings.count, initialPageSize)
+        let reloadSize = max(loadedOccurrences.count, initialPageSize)
         futureOffset = 0
         await load(pageSize: reloadSize)
     }
@@ -107,9 +212,9 @@ package final class MeetingsViewModel {
         do {
             let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
             if futureOffset == 0 {
-                loadedMeetings = result.meetings
+                loadedOccurrences = result.occurrences
             } else {
-                loadedMeetings += result.meetings
+                loadedOccurrences += result.occurrences
             }
 
             futureOffset = result.nextOffset

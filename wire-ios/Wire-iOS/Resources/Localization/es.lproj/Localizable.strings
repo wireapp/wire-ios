@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "deshabilitado";
 
 "conversation.status.secutity_alert.default" = "Nueva alerta de seguridad";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "Escribiendo ...";
 "conversation.status.typing.group" = "%@: Escribiendo ...";
@@ -318,6 +319,7 @@
 "conversation.input_bar.verified" = "Verificado";
 "conversation.input_bar.placeholder" = "Escribe un mensaje";
 "conversation.input_bar.placeholder_ephemeral" = "Mensajes con auto-borrado";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Desliza hacia arriba para enviar";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Pulsa para enviar";
@@ -643,7 +645,7 @@
 "content.system.file_collaboration.enabled.editor_access" = "You have editor access. People outside your team only have viewer access.";
 "content.system.file_collaboration.enabled.viewer_access" = "You can view, but you can’t upload, edit, or manage files.";
 "content.system.file_collaboration.enabled.learn_more" = "Más información";
-"content.system.file_collaboration.drive_viewer_access.title" = "Guests have view-only access to files in this conversation.";
+"content.system.file_collaboration.drive_viewer_access.title" = "People outside your team can join this conversation as viewers.";
 
 // read receipt
 
@@ -668,6 +670,11 @@
 "content.system.message_legal_hold.disabled" = "La protección juridica está desactivada para esta conversación";
 
 "content.system.message_legal_hold.learn_more" = "Más información";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
 
 //
 "content.system.is_verified" = "Se han verificado todas la huellas digitales";
@@ -1000,6 +1007,9 @@
 "last_admin_leave.promote_new_admin" = "Promote new admin";
 "last_admin_leave.no_eligible_candidates_message" = "You're the only admin. The other participants can't be admins.\nAdd at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.";
 "last_admin_leave.delete_group" = "Delete group";
+"last_admin_leave.promote_only_message" = "You're the only admin.\nPromote another participant before leaving.";
+"last_admin_leave.cannot_leave_title" = "Cannot leave \"%@\".";
+"last_admin_leave.cannot_leave_message" = "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ comenzó a utilizar un dispositivo nuevo.";
@@ -1670,6 +1680,10 @@
 "login.sso.backend_switch.title" = "Redirigiendo...";
 "login.sso.backend_switch.subtitle" = "Está siendo redirigido al servidor de su organización.";
 "login.sso.backend_switch.information" = "Proporcione credenciales solo si está seguro de que esta es la conexión de su organización.";
+
+"sso_identity_changed.title" = "Identity provider changed";
+"sso_identity_changed.message" = "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "Ya has utilizado Wire en este dispositivo antes.";
 "registration.no_history.logged_out.subtitle" = "Los mensajes enviados durante el intervalo de inactividad no aparecerán.";

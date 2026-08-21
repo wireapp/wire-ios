@@ -218,6 +218,46 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     }
 
+    public func isGroupConversation(id: UUID, domain: String?) async -> Bool {
+        guard let conversation = await fetchConversation(id: id, domain: domain) else {
+            return false
+        }
+        return await conversationsLocalStore.isGroupConversation(conversation)
+    }
+
+    public func updateConversationScheduledDeletion(
+        scheduledDeletionDate: Date,
+        conversationID: UUID,
+        conversationDomain: String?,
+        date: Date
+    ) async {
+
+        guard let conversation = await fetchConversation(
+            id: conversationID,
+            domain: conversationDomain
+        ) else {
+            return WireLogger.conversation.warn(
+                "Cannot set scheduled deletion date on a conversation that doesn't exist locally: \(conversationID.safeForLoggingDescription)"
+            )
+        }
+
+        let messageType = SystemMessageType.conversationScheduledForDeletion(
+            scheduledDeletionDate: scheduledDeletionDate,
+            date: date
+        )
+
+        await messageRepository.addSystemMessage(
+            messageType: messageType,
+            conversationID: conversationID,
+            conversationDomain: conversationDomain
+        )
+
+        await conversationsLocalStore.storeConversation(
+            scheduledDeletionDate: scheduledDeletionDate,
+            conversation: conversation
+        )
+    }
+
     public func deleteConversation(
         id: UUID,
         domain: String?

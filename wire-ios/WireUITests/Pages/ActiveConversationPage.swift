@@ -115,7 +115,10 @@ class ActiveConversationPage: PageModel {
     }
 
     var labelSharedDriveIsOn: XCUIElement {
-        app.links[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
+        app.links.containing(NSPredicate(
+            format: "value CONTAINS[c] %@",
+            Locators.ActiveConversationPage.labelSharedDriveON.rawValue
+        )).firstMatch
     }
 
     var sharedDriveButton: XCUIElement {
@@ -314,6 +317,7 @@ class ActiveConversationPage: PageModel {
     func waitToUploadToFinishAndSend() {
         XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
         sendButton.waitAndTap()
+        XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
     }
 
     func openSharedDrive() throws -> SharedDriveFilesPage {
@@ -428,6 +432,10 @@ class ActiveConversationPage: PageModel {
         uploadFileButton.waitAndTap()
         browseFileOption.waitAndTap()
 
+        if browseFileOption.waitForExistence(timeout: 3), !browseFileOption.isSelected {
+            browseFileOption.tap()
+        }
+
         XCTAssertTrue(
             fileCell(named: fileName).waitForExistence(timeout: 5),
             "Seeded file '\(fileName)' didn't show up"
@@ -497,6 +505,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
     func verifyMessageSent(
         _ message: String,
         file: StaticString = #filePath,
@@ -528,12 +537,31 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
+    func verifyReadReceiptsSystemMessage(
+        enabled: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        let identifier = enabled
+            ? Locators.ActiveConversationPage.readReceiptsEnabledSystemMessage.rawValue
+            : Locators.ActiveConversationPage.readReceiptsDisabledSystemMessage.rawValue
+        XCTAssertTrue(
+            app.descendants(matching: .any)[identifier].firstMatch.waitForExistence(timeout: 10),
+            "Expected read-receipts system message with identifier '\(identifier)' not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
     func verifyLinkPreviewCell(
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> ActiveConversationPage {
         XCTAssertTrue(
             linkPreviewCell.waitForExistence(timeout: 10),
+            "Link preview cell did not appear",
             file: file,
             line: line
         )

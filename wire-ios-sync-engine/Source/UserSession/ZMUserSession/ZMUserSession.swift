@@ -173,6 +173,14 @@ public final class ZMUserSession: NSObject {
         return isFeatureEnabled && hasBackendURL
     }
 
+    public var isMeetingsEnabled: Bool {
+        // TODO: [WPB-28001] Remove developer flag before release
+        guard DeveloperFlag.wireMeetings.isOn else { return false }
+
+        let feature = Feature.fetch(name: .meetings, context: coreDataStack.viewContext)
+        return feature?.status == .enabled
+    }
+
     public var conferenceCallingFeature: Feature.ConferenceCalling {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchConferenceCalling()
@@ -598,7 +606,6 @@ public final class ZMUserSession: NSObject {
         setupCertificateRevocationLists()
 
         registerForCalculateBadgeCountNotification()
-        registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
 
         enableBackgroundFetch()
@@ -622,6 +629,7 @@ public final class ZMUserSession: NSObject {
             clientID: clientID,
             completionHandlers: .init(
                 onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
+                onMeetingCancellation: { [weak self] in await self?.handleMeetingCancellationNotification($0) },
                 onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
                 onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
                 onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }
@@ -1334,6 +1342,11 @@ extension ZMUserSession: SyncAgentDelegate {
 
             // always check if need to upload key packages if needed
             await mlsService.uploadKeyPackagesIfNeeded()
+            while mlsFeature.isEnabled,
+                  isBackendMLSEnabled,
+                  await MainActor.run(body: { [application] in application.applicationState == .active }) {
+                guard await mlsService.recoverPendingConversationBatchIfNeeded() else { break }
+            }
             await resolveOneOnOneConversationsIfNeeded()
             await recurringActionService.performActionsIfNeeded()
         }
@@ -1653,6 +1666,9 @@ extension ZMUserSession {
                 coreCryptoProvider: coreCryptoProvider
             ),
             AppVersionMigration_4_18_0(
+                coreDataStack: coreDataStack
+            ),
+            AppVersionMigration_4_26_0(
                 coreDataStack: coreDataStack
             )
         ]

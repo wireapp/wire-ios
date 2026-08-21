@@ -52,7 +52,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         switch apiVersion {
         case .v0:
             nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15, .v16:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15, .v16, .v17:
             federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -129,6 +129,18 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
 
         case 204:
             action.notifyResult(.success(()))
+
+        case 403:
+            let payload = response.payload
+            let dictionary = payload?.asDictionary()
+            let eligibleMembers = (dictionary?["eligible_members"] as? [[AnyHashable: Any]])?
+                .compactMap(ConversationRemoveParticipantError.EligibleMember.init(payload:))
+
+            guard let eligibleMembers, !eligibleMembers.isEmpty else {
+                fallthrough
+            }
+
+            action.notifyResult(.failure(ConversationRemoveParticipantError.requiresAdmin(eligibleMembers)))
 
         default:
             action.notifyResult(.failure(ConversationRemoveParticipantError(response: response) ?? .unknown))

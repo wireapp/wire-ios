@@ -90,6 +90,17 @@ public protocol ConversationRepositoryProtocol: Sendable {
         groupID: String
     ) async -> ZMConversation?
 
+    /// Whether a conversation stored locally is a group.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: `true` if a local conversation with this id exists and is of type `.group`.
+
+    func isGroupConversation(
+        id: UUID,
+        domain: String?
+    ) async -> Bool
+
     /// Deletes a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.
@@ -181,6 +192,20 @@ public protocol ConversationRepositoryProtocol: Sendable {
         conversationDomain: String?,
         senderID: UUID,
         senderDomain: String?,
+        date: Date
+    ) async
+
+    /// Updates the conversation's scheduled deletion date and inserts a system message about it.
+    /// - Parameters:
+    ///     - scheduledDeletionDate: The date at which the backend will automatically delete the conversation.
+    ///     - conversationID: The conversation ID.
+    ///     - conversationDomain: The conversation domain.
+    ///     - date: The date the reminder was sent.
+
+    func updateConversationScheduledDeletion(
+        scheduledDeletionDate: Date,
+        conversationID: UUID,
+        conversationDomain: String?,
         date: Date
     ) async
 

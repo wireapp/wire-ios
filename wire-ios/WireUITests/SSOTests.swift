@@ -44,11 +44,7 @@ final class SSOTests: WireUITestCase {
 
     /// [critical]
     @MainActor
-    func testSSOLoginWithSSOCodeAndNoResetPassword_TC_8966_TC_10850() async throws {
-        // Skipped: Okta license removed, so the SSO IdP backing this test is no longer available.
-        // Re-enable once a replacement SSO provider is configured.
-        throw XCTSkip("Okta license removed - SSO IdP unavailable")
-
+    func testSSOLoginWithSSOCodeAndNoResetPassword_TC_8966_10850() async throws {
         // GIVEN
         let ssoUser = try await createSSOUser()
         let ssoCode = try ssoHelper.getSSOCode()
@@ -74,10 +70,6 @@ final class SSOTests: WireUITestCase {
     /// [critical]
     @MainActor
     func testReloginSSO_TC_8970() async throws {
-        // Skipped: Okta license removed, so the SSO IdP backing this test is no longer available.
-        // Re-enable once a replacement SSO provider is configured.
-        throw XCTSkip("Okta license removed - SSO IdP unavailable")
-
         // GIVEN
         let ssoUser = try await createSSOUser()
         let ssoCode = try ssoHelper.getSSOCode()
@@ -111,10 +103,6 @@ final class SSOTests: WireUITestCase {
 
     @MainActor
     func testSCIMManagedUserCannotChangeAccountFields_TC_10851() async throws {
-        // Skipped: Okta license removed, so the SSO IdP backing this test is no longer available.
-        // Re-enable once a replacement SSO provider is configured.
-        throw XCTSkip("Okta license removed - SSO IdP unavailable")
-
         // GIVEN
         let teamOwner = try await registerTeamOwnerWithSSOEnabled()
         let scimUser = try await ssoHelper.createSCIMManagedSSOUser(
@@ -162,7 +150,7 @@ final class SSOTests: WireUITestCase {
             .acceptFirstTimeAlert()
 
         // THEN
-        let conversationsPage = try ManagedDevicesPage().removeDeviceAndContinueIfShown()
+        let conversationsPage = try ManagedDevicesPage.removeDeviceAndContinueIfShown(app: app)
 
         XCTAssertTrue(
             conversationsPage.pageMainElement.waitForExistence(timeout: 2),
