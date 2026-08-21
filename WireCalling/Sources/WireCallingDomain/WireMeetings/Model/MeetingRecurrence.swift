@@ -18,7 +18,7 @@
 
 public import Foundation
 
-public struct MeetingRecurrence: Equatable, Sendable {
+public struct MeetingRecurrence: Hashable, Sendable {
 
     public let frequency: Frequency
     public let interval: Int

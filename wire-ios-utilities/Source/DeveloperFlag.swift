@@ -33,6 +33,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
+    case noAPNSTokenCache
     case preventAdminlessGroups
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
@@ -44,6 +45,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case shakeToReport
     case showNSEErrors
     case simulateMainAppRequiredError
+    case simulateUnestablishedMLSGroup
     // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     case enableDrivePermissions
     case unSafeLogsForPublic
@@ -84,6 +86,9 @@ public enum DeveloperFlag: String, CaseIterable {
         case .newRegistration:
             "Turn on to use the new registration flow"
 
+        case .noAPNSTokenCache:
+            "Turn on to always request the APNS token from the system instead of reading a cached one"
+
         case .preventAdminlessGroups:
             "Turn on to prevent last admins from leaving groups without promoting someone else"
 
@@ -116,6 +121,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .simulateMainAppRequiredError:
             "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
+
+        case .simulateUnestablishedMLSGroup:
+            "Turn on to leave the next locally created MLS group unestablished at epoch 0"
 
         case .enableDrivePermissions:
             "Turn on to enable drive permissions"
@@ -159,6 +167,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .noAPNSTokenCache:
+            "NoAPNSTokenCacheEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
         default:

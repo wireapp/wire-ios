@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 struct MeetingsView: View {
 
@@ -27,8 +28,19 @@ struct MeetingsView: View {
 
     @State private var viewModel: MeetingsViewModel
 
-    init(viewModel: MeetingsViewModel) {
+    /// Called when the user chooses "Edit meeting" in a meeting's menu.
+    /// Presenting the edit UI is up to the owner of this view.
+    private let onEditMeeting: (Meeting) -> Void
+    private let onJoinMeeting: (MeetingOccurrence) -> Void
+
+    init(
+        viewModel: MeetingsViewModel,
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in },
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in }
+    ) {
         self.viewModel = viewModel
+        self.onEditMeeting = onEditMeeting
+        self.onJoinMeeting = onJoinMeeting
     }
 
     var body: some View {
@@ -50,6 +62,12 @@ struct MeetingsView: View {
             // Never returns on its own; the task is cancelled by SwiftUI when the view disappears.
             await viewModel.observeMeetingChanges()
         }
+        .task {
+            await viewModel.observeAttendedMeetings()
+        }
+        .task {
+            await viewModel.observeCurrentDate()
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -69,11 +87,12 @@ struct MeetingsView: View {
             GroupedSections(
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTimeRange: viewModel.formatTimeRange(for:),
-                onEdit: { _ in
-                    // TODO: [WPB-25501] Implement UI
-                },
-                onDelete: { viewModel.meetingToDelete = $0 }
+                formatTime: viewModel.formatTime(for:),
+                isAttending: viewModel.isAttending(_:),
+                isHappeningNow: viewModel.isHappeningNow(_:),
+                onEdit: { onEditMeeting($0) },
+                onDelete: { viewModel.meetingToDelete = $0 },
+                onJoin: { onJoinMeeting($0) }
             )
 
             if viewModel.hasMore {
@@ -117,21 +136,34 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
-    let groups: [(day: Date, meetings: [Meeting])]
+    let groups: [(day: Date, meetings: [MeetingOccurrence])]
     let formatDay: (Date) -> String
-    let formatTimeRange: (Meeting) -> String
+    let formatTime: (MeetingOccurrence) -> String
+    let isAttending: (MeetingOccurrence) -> Bool
+    let isHappeningNow: (MeetingOccurrence) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
+    let onJoin: (MeetingOccurrence) -> Void
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
-                ForEach(dayGroup.meetings, id: \.id) { meeting in
+                ForEach(dayGroup.meetings, id: \.id) { occurrence in
+                    let isLive = isHappeningNow(occurrence)
+
                     MeetingRow(
-                        meeting: meeting,
-                        formatTimeRange: formatTimeRange,
-                        onEdit: { onEdit(meeting) },
-                        onDelete: { onDelete(meeting) }
+                        occurrence: occurrence,
+                        formatTime: formatTime,
+                        isAttending: isAttending(occurrence),
+                        isLive: isLive,
+                        onEdit: { onEdit(occurrence.meeting) },
+                        onDelete: { onDelete(occurrence.meeting) },
+                        onJoin: { onJoin(occurrence) }
+                    )
+                    .listRowBackground(
+                        isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear
                     )
                 }
             } header: {
@@ -203,21 +235,33 @@ private func previewMeetings() -> [Meeting] {
     }
 
     func member(_ name: String) -> MeetingMember {
-        MeetingMember(
+        let initials = name
+            .split(separator: " ")
+            .compactMap(\.first)
+            .prefix(2)
+            .map(String.init)
+            .joined()
+        let colors = WireAccentColor.allCases
+        let accentColor = colors[abs(name.hashValue) % colors.count]
+        return MeetingMember(
             qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
-            handle: name.lowercased().replacingOccurrences(of: " ", with: "")
+            handle: name.lowercased().replacingOccurrences(of: " ", with: ""),
+            isSelfUser: false,
+            initials: initials.uppercased(),
+            accentColor: accentColor,
+            avatarImageData: nil
         )
     }
 
-    func meeting(_ title: String, start: Date, end: Date, members: [MeetingMember]) -> Meeting {
+    func meeting(_ title: String, start: Date, end: Date, members: [MeetingMember] = []) -> Meeting {
         Meeting(
             id: QualifiedID(id: UUID(), domain: ""),
             title: title,
             start: start,
             end: end,
             recurrence: nil,
-            members: members,
+            conversation: MeetingConversation(participants: Set(members)),
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         )
@@ -228,26 +272,25 @@ private func previewMeetings() -> [Meeting] {
         meeting(
             "Standup",
             start: day(0, hour: 7),
-            end: day(0, hour: 7, minute: 30),
-            members: []
+            end: day(0, hour: 7, minute: 30)
         ),
         meeting(
             "iOS team update",
             start: day(0, hour: 7),
             end: day(0, hour: 7, minute: 20),
-            members: [member("User1")]
+            members: [member("Alice Smith")]
         ),
         meeting(
             "Candidate interview",
             start: day(0, hour: 16),
             end: day(0, hour: 16, minute: 45),
-            members: [member("User1")]
+            members: [member("Bob Jones")]
         ),
         meeting(
             "Design review",
             start: day(0, hour: 17),
             end: day(0, hour: 18),
-            members: [member("User1")]
+            members: [member("Carla Diaz")]
         ),
 
         // TOMORROW
@@ -255,27 +298,31 @@ private func previewMeetings() -> [Meeting] {
             "Sprint planning",
             start: day(1, hour: 7),
             end: day(1, hour: 8),
-            members: [member("User1")]
+            members: [member("Dan Ford")]
         ),
         meeting(
             "Daily sync",
             start: day(1, hour: 7),
             end: day(1, hour: 7, minute: 20),
-            members: [member("User1"), member("User2")]
+            members: [member("Eve North"), member("Finn Ray")]
         ),
         meeting(
             "Architecture Forum",
             start: day(1, hour: 13),
             end: day(1, hour: 14),
-            members: [member("User1"), member("User2"), member("User3")]
+            members: [member("Grace Kim"), member("Hugo Vela"), member("Ivan Cole")]
         ),
 
-        // NEXT WEEK
+        // NEXT WEEK — many members to exercise the "+N" overflow
         meeting(
             "Sprint Review (all teams)",
             start: day(7, hour: 16),
             end: day(7, hour: 16, minute: 30),
-            members: [member("User1")]
+            members: [
+                member("Alice Smith"), member("Bob Jones"), member("Carla Diaz"),
+                member("Dan Ford"), member("Eve North"), member("Finn Ray"),
+                member("Grace Kim")
+            ]
         )
     ]
 }

@@ -117,6 +117,7 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypePromotedToGroupAdmin,
     /// Failed to add participants because their MLS key packages could not be claimed (e.g. no MLS client).
     ZMSystemMessageTypeFailedToAddParticipantsMLS
+    ZMSystemMessageTypeConversationScheduledForDeletion
 };
 
 typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {
@@ -161,6 +162,9 @@ typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {
 @property (nonatomic, readonly) BOOL userIsTheSender;
 @property (nonatomic, nullable) NSNumber *messageTimer;
 @property (nonatomic, nullable) NSArray<NSString *> *domains;
+
+/// Only filled for .conversationScheduledForDeletion
+@property (nonatomic, nullable) NSDate *conversationScheduledDeletionDate;
 
 @end
 

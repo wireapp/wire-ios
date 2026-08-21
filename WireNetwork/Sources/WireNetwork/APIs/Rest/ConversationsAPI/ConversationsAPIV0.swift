@@ -244,9 +244,65 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     }
 
+    func updateRole(
+        _ role: String,
+        userID: UserID,
+        conversationID: ConversationID
+    ) async throws {
+        let parameters = ConversationUpdateRoleV0(role: role)
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)\(basePath)/\(conversationID.id)/members/\(userID.id)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
+            .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.insufficientAuthorization)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    func removeParticipant(
+        userID: UserID,
+        conversationID: ConversationID
+    ) async throws {
+        let path = "\(pathPrefix)\(basePath)/\(conversationID.id)/members/\(userID.id)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.delete)
+            .build()
+
+        let (_, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        guard response.statusCode == HTTPStatusCode.ok.rawValue else {
+            throw ConversationsAPIError.invalidBody
+        }
+    }
+
 }
 
 // MARK: Encodables
+
+struct ConversationUpdateRoleV0: Encodable {
+    let role: String
+
+    enum CodingKeys: String, CodingKey {
+        case role = "conversation_role"
+    }
+
+}
 
 struct CreateGroupConversationParametersV0: Encodable {
     let users: [UUID]?
@@ -281,7 +337,11 @@ struct CreateGroupConversationParametersV0: Encodable {
             .map { $0.toNetworkModel() } : nil
         self.access = parameters.accessMode.map { $0.toNetworkModel().rawValue }
         self.legacyAccessRole = parameters.legacyAccessRole?.toNetworkModel().rawValue
-        self.accessRoles = parameters.accessRoles.map { $0.toNetworkModel().rawValue }
+        self.accessRoles = if parameters.accessRoles.isEmpty {
+            nil
+        } else {
+            parameters.accessRoles.map { $0.toNetworkModel().rawValue }
+        }
         self.name = parameters.name
         self.team = parameters.teamID.map { .init(teamID: $0) }
         self.messageTimer = nil

@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "отключено";
 
 "conversation.status.secutity_alert.default" = "Новое оповещение безопасности";
+"conversation.status.scheduled_for_deletion" = "Будет удалена в ближайшее время";
 
 "conversation.status.typing" = "Печатает сообщение…";
 "conversation.status.typing.group" = "%@: печатает сообщение…";
@@ -318,6 +319,7 @@
 "conversation.input_bar.verified" = "Верифицировано";
 "conversation.input_bar.placeholder" = "Введите сообщение";
 "conversation.input_bar.placeholder_ephemeral" = "Самоудаляющееся сообщение";
+"conversation.input_bar.blocked_user" = "Вы заблокировали этого пользователя";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Проведите вверх для отправки";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Нажмите для отправки";
@@ -643,7 +645,7 @@
 "content.system.file_collaboration.enabled.editor_access" = "У вас есть права редактора. У пользователей, не входящих в вашу команду, есть только права просмотра.";
 "content.system.file_collaboration.enabled.viewer_access" = "Вы можете просматривать файлы, но не можете загружать, редактировать или управлять ими.";
 "content.system.file_collaboration.enabled.learn_more" = "Подробнее";
-"content.system.file_collaboration.drive_viewer_access.title" = "Гости имеют доступ к файлам в этом чате только для просмотра.";
+"content.system.file_collaboration.drive_viewer_access.title" = "Пользователи не из вашей команды могут присоединиться к этой беседе в качестве наблюдателей.";
 
 // read receipt
 
@@ -668,6 +670,11 @@
 "content.system.message_legal_hold.disabled" = "Для этой беседы деактивированы юридические ограничения";
 
 "content.system.message_legal_hold.learn_more" = "Подробнее";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "Эта группа будет автоматически удалена %@, так как в ней нет подходящих администраторов.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Подробнее";
 
 //
 "content.system.is_verified" = "Все отпечатки верифицированы";
@@ -1622,7 +1629,7 @@
 
 "apps_options.allow_apps.title" = "Разрешить приложения";
 "apps_options.allow_apps.subtitle" = "Открыть эту беседу для приложений.";
-"apps_options.remove_apps.message" = "Все приложения будут удалены из разговора. Новые приложения допущены не будут.";
+"apps_options.remove_apps.message" = "Все приложения будут удалены из беседы. Новые приложения допущены не будут.";
 "apps_options.remove_apps.action" = "Удалить";
 
 
@@ -1673,6 +1680,10 @@
 "login.sso.backend_switch.title" = "Перенаправление...";
 "login.sso.backend_switch.subtitle" = "Вы будете перенаправлены на специализированное обслуживание вашей организации.";
 "login.sso.backend_switch.information" = "Указывайте учетные данные, только если уверены, что это страница авторизации вашей организации.";
+
+"sso_identity_changed.title" = "Identity provider changed";
+"sso_identity_changed.message" = "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Удалить данные и продолжить";
 
 "registration.no_history.logged_out.hero" = "Вы уже использовали Wire на этом устройстве.";
 "registration.no_history.logged_out.subtitle" = "Сообщения, отправленные пока устройствоне использовалось, отображаться не будут.";
@@ -1899,7 +1910,7 @@
 
 // End-to-end identity revoked certificate
 "revoked_certificate.alert.title" = "Сертификат сквозной идентификации отозван";
-"revoked_certificate.alert.message" = "Для снижения рисков безопасности следует осуществить выход. После авторизации получите новый сертификат и сбросьте пароль. Если вы продолжите использование этого устройства, ваши разговоры больше не будут являться верифицированными.";
+"revoked_certificate.alert.message" = "Для снижения рисков безопасности следует осуществить выход. После авторизации получите новый сертификат и сбросьте пароль. Если вы продолжите использование этого устройства, ваши беседы больше не будут являться верифицированными.";
 "revoked_certificate.alert.log_out" = "Выйти";
 "revoked_certificate.alert.continue" = "Продолжить использование этого устройства";
 

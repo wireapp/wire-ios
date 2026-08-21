@@ -46,7 +46,7 @@ final class MultiBackendSupportTests: WireUITestCase {
 
     /// [critical]
     @MainActor
-    func testAddMultiBackendAccounts_TC_8940() async throws {
+    func testAddMultiBackendAccounts_TC_8940_8814() async throws {
 
         var (accountPageBackend1, userBackend1) = try await testLoginToBackend(.staging)
 
@@ -64,6 +64,7 @@ final class MultiBackendSupportTests: WireUITestCase {
             .backToSettings()
             .switchToConversationsTab()
             .openUserProfilePage()
+            .verifyAddedAccountInfo(for: userBackend1.name)
             .switchUserAccountForUser(withName: userBackend1.name)
             .openSettings()
             .openAccountSettings()

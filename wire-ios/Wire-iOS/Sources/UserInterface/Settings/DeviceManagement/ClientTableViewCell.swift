@@ -58,6 +58,7 @@ final class ClientTableViewCell: UITableViewCell {
             if viewModel?.isProteusVerified ?? false {
                 statusStackView.addArrangedSubview(UIImageView(image: verifiedImage))
             }
+            setupAccessibility()
         }
     }
 
@@ -99,6 +100,31 @@ final class ClientTableViewCell: UITableViewCell {
         backgroundColor = SemanticColors.View.backgroundUserCell
 
         addBorder(for: .bottom)
+    }
+
+    private func setupAccessibility() {
+        guard let viewModel else {
+            isAccessibilityElement = false
+            accessibilityLabel = nil
+            return
+        }
+
+        isAccessibilityElement = true
+        var components = [viewModel.title]
+
+        if let e2eIdentityStatus = viewModel.e2eIdentityStatus {
+            components.append(L10n.Localizable.Device.Details.Section.E2ei.title)
+            components.append(e2eIdentityStatus.title)
+        }
+        if viewModel.isProteusVerified {
+            components.append(L10n.Accessibility.DeviceDetails.Verified.description)
+        }
+        components.append(contentsOf: [
+            viewModel.mlsThumbprintLabelText,
+            viewModel.proteusLabelText
+        ].filter { !$0.isEmpty })
+
+        accessibilityLabel = components.joined(separator: ", ")
     }
 
     private func createConstraints() {

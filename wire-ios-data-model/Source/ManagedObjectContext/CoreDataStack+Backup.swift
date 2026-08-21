@@ -110,7 +110,7 @@ public extension CoreDataStack {
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
 
         let task = Task.detached {
-            let model = CoreDataStack.loadMessagingModel()
+            let model = CoreDataStack.messagingModel
             let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
             // Create target directory
@@ -211,7 +211,7 @@ public extension CoreDataStack {
             } catch {
                 throw BackupImportError.failedToCopy(error)
             }
-            let currentModel = CoreDataStack.loadMessagingModel()
+            let currentModel = CoreDataStack.messagingModel
 
             guard let backupModel = managedObjectModel(for: metadata.modelVersion) else {
                 throw BackupImportError.missingModelVersion(metadata.modelVersion)

@@ -30,35 +30,47 @@ package struct AllMeetingsView: View {
     }
 
     package var body: some View {
-        MeetingsView(viewModel: viewModel.meetingsViewModel)
-            .navigationTitle(L10n.Localizable.WireMeetings.List.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button {
-                            viewModel.createInstantMeetingTapped()
-                        } label: {
-                            Label(Strings.meetNow, systemImage: "chevron.forward")
-                        }
-
-                        Button {
-                            viewModel.scheduleMeetingTapped()
-                        } label: {
-                            Label(Strings.scheduleMeeting, systemImage: "chevron.forward")
-                        }
+        MeetingsView(
+            viewModel: viewModel.meetingsViewModel,
+            onEditMeeting: { viewModel.editMeetingTapped($0) },
+            onJoinMeeting: { occurrence in
+                Task { await viewModel.joinMeetingTapped(occurrence) }
+            }
+        )
+        .navigationTitle(L10n.Localizable.WireMeetings.List.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        viewModel.createInstantMeetingTapped()
                     } label: {
-                        Image(.videoCall)
-                            .renderingMode(.template)
+                        Label(Strings.meetNow, systemImage: "chevron.forward")
                     }
-                    .accessibilityIdentifier("scheduleMeetingBarButton")
-                    .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.VideoButton.description))
+
+                    Button {
+                        viewModel.scheduleMeetingTapped()
+                    } label: {
+                        Label(Strings.scheduleMeeting, systemImage: "chevron.forward")
+                    }
+                } label: {
+                    Image(.videoCall)
+                        .renderingMode(.template)
                 }
+                .accessibilityIdentifier("scheduleMeetingBarButton")
+                .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.VideoButton.description))
             }
-            .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .sheet(item: $viewModel.presentedFormMode) { mode in
-                CreateMeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
-            }
+        }
+        .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .sheet(item: $viewModel.presentedFormMode) { mode in
+            MeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
+        }
+        .alert(
+            L10n.Localizable.WireMeetings.List.Join.Error.Alert.title,
+            isPresented: $viewModel.hasJoinError
+        ) {
+            Button(L10n.Localizable.WireMeetings.List.Join.Error.Alert.ok, role: .cancel) {}
+        }
     }
 }

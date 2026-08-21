@@ -286,6 +286,14 @@ public protocol ConversationLocalStoreProtocol {
         _ conversation: ZMConversation
     ) async -> Bool
 
+    /// Whether the conversation is the underlying conversation of a meeting.
+    /// - parameter conversation: The given conversation.
+    /// - returns: A flag indicating whether the conversation belongs to a meeting.
+
+    func isMeetingConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
     func isSelfConversation(
         _ conversation: ZMConversation
     ) async -> Bool
@@ -389,6 +397,16 @@ public protocol ConversationLocalStoreProtocol {
 
     func storeConversation(
         newName: String,
+        conversation: ZMConversation
+    ) async
+
+    /// Updates the conversation's scheduled deletion date.
+    /// - Parameters:
+    ///     - scheduledDeletionDate: The date at which the backend will automatically delete the conversation.
+    ///     - conversation: The conversation to update.
+
+    func storeConversation(
+        scheduledDeletionDate: Date,
         conversation: ZMConversation
     ) async
 

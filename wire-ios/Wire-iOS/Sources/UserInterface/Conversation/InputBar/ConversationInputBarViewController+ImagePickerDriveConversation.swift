@@ -73,11 +73,13 @@ extension ConversationInputBarViewController: PHPickerViewControllerDelegate {
     }
 
     private func processWireDriveVideo(provider: NSItemProvider, localIdentifier: String?) {
+        cameraKeyboardViewController?.showActivityIndicator(true)
         let filename = String.filename(for: userSession.selfUser)
         let fileLengthLimit = Int64(userSession.maxUploadFileSize)
 
         provider.loadFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { url, error in
             guard let url, error == nil else {
+                self.cameraKeyboardViewController?.showActivityIndicator(false)
                 return WireLogger.wireDrive.error("Could not load video: \(String(describing: error))")
             }
 
@@ -88,10 +90,12 @@ extension ConversationInputBarViewController: PHPickerViewControllerDelegate {
             do {
                 try FileManager.default.removeTmpIfNeededAndCopy(fileURL: url, tmpURL: videoTempURL)
             } catch {
+                self.cameraKeyboardViewController?.showActivityIndicator(false)
                 return WireLogger.wireDrive.error("Cannot copy video from \(url) to \(videoTempURL): \(error)")
             }
 
             AVURLAsset.convertVideoToUploadFormat(at: videoTempURL, fileLengthLimit: fileLengthLimit) { url, _, error in
+                self.cameraKeyboardViewController?.showActivityIndicator(false)
                 guard error == nil, let url else { return }
                 self.uploadVideoFile(.init(url: url, localIdentifier: localIdentifier))
             }

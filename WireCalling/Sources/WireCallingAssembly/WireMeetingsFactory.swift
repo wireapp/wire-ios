@@ -32,9 +32,15 @@ public struct WireMeetingsFactory {
     public func makeMeetingsView(
         meetingRepository: any MeetingRepositoryProtocol,
         memberRepository: any MeetingMemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
+        conversationRepository: any MeetingConversationRepositoryProtocol,
+        callRepository: any MeetingCallRepositoryProtocol,
+        accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
         let createMeetingUseCase = CreateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
+        let updateMeetingUseCase = UpdateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
@@ -44,23 +50,35 @@ public struct WireMeetingsFactory {
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
         let deleteMeetingUseCase = DeleteMeetingUseCase(repository: meetingRepository)
+        let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callRepository)
+        let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            joinMeetingCallUseCase: joinMeetingCallUseCase,
             makeFormViewModel: { mode, onSuccess in
-                CreateMeetingFormViewModel(
+                MeetingFormViewModel(
                     mode: mode,
                     searchMembersUseCase: searchMembersUseCase,
                     createMeetingUseCase: createMeetingUseCase,
+                    updateMeetingUseCase: updateMeetingUseCase,
                     currentDateProvider: .system,
                     onSuccess: onSuccess
                 )
             }
         )
-        return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
+        return UIHostingController(
+            rootView: AnyView(
+                WireMeetingsRootView(
+                    viewModel: meetingsViewModel,
+                    accentColorState: accentColorState
+                )
+            )
+        )
     }
 
 }

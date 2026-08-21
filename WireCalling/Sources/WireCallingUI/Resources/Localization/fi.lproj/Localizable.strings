@@ -24,20 +24,26 @@
 "wireMeetings.list.actions.meetNow" = "Meet Now";
 "wireMeetings.list.actions.scheduleMeeting" = "Schedule a Meeting";
 "wireMeetings.list.actions.showAll" = "Show All";
+"wireMeetings.list.actions.join" = "Liity";
+"wireMeetings.list.actions.joinNow" = "Join now";
 "wireMeetings.list.emptyState.next.title" = "No upcoming meetings yet";
 "wireMeetings.list.emptyState.next.subtitle" = "Start a meeting with team members";
 "wireMeetings.list.emptyState.past.title" = "No past meetings yet";
 "wireMeetings.list.emptyState.past.subtitle" = "You'll find all previous meetings here.";
+"wireMeetings.list.startedAt" = "Started at %@";
 "wireMeetings.list.header.today" = "Today";
 "wireMeetings.list.header.tomorrow" = "Tomorrow";
 "wireMeetings.list.header.yesterday" = "Yesterday";
 "wireMeetings.list.header.ongoing" = "Ongoing";
+"wireMeetings.list.attending" = "Attending";
 "wireMeetings.list.actions.edit" = "Edit meeting";
 "wireMeetings.list.actions.delete" = "Delete meeting for all";
 "wireMeetings.list.delete.alert.title" = "Delete meeting for all";
 "wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
 "wireMeetings.list.delete.alert.delete.button" = "Poista";
 "wireMeetings.list.delete.alert.cancel.button" = "Peruuta";
+"wireMeetings.list.join.error.alert.title" = "Could not join the meeting";
+"wireMeetings.list.join.error.alert.ok" = "OK";
 "wireMeetings.list.delete.error.alert.title" = "Jokin meni pieleen";
 "wireMeetings.list.delete.error.alert.ok" = "OK";
 
@@ -45,8 +51,10 @@
 
 "wireMeetings.schedule.now.title" = "Meet now";
 "wireMeetings.schedule.future.title" = "New meeting";
+"wireMeetings.schedule.edit.title" = "Edit Meeting";
 "wireMeetings.schedule.cancel.button" = "Peruuta";
 "wireMeetings.schedule.schedule.button" = "Schedule";
+"wireMeetings.schedule.save.button" = "Vahvista";
 "wireMeetings.schedule.select.button" = "Select";
 "wireMeetings.schedule.start.button" = "Start";
 "wireMeetings.schedule.setupTitle.header" = "Title";
@@ -65,6 +73,7 @@
 "wireMeetings.schedule.time.daily" = "Daily";
 "wireMeetings.schedule.time.weekly" = "Weekly";
 "wireMeetings.schedule.time.everyTwoWeeks" = "Every 2 weeks";
+"wireMeetings.schedule.time.everyFourWeeks" = "Every 4 weeks";
 "wireMeetings.schedule.time.monthly" = "Monthly";
 "wireMeetings.schedule.time.yearly" = "Yearly";
 "wireMeetings.schedule.members.title" = "Participants";

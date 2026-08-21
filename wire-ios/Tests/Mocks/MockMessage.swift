@@ -70,6 +70,7 @@ final class MockTextMessageData: NSObject, TextMessageData {
 }
 
 final class MockSystemMessageData: NSObject, ZMSystemMessageData {
+    var conversationScheduledDeletionDate: Date?
     var messageTimer: NSNumber?
     var systemMessageType: ZMSystemMessageType = .invalid
     var users: Set<ZMUser> {

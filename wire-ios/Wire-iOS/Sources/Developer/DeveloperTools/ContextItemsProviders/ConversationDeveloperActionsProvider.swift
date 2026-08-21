@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireLogging
+import WireSyncEngine
 import WireUtilities
 
 struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider {
@@ -47,6 +48,10 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
 
         if let toggleReadButton = makeToggleReadItem() {
             items.append(toggleReadButton)
+        }
+
+        if let simulateAdminlessReminderItem = makeSimulateAdminlessReminderItem() {
+            items.append(simulateAdminlessReminderItem)
         }
 
         return items
@@ -101,6 +106,33 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         }
 
         return nil
+    }
+
+    private func makeSimulateAdminlessReminderItem() -> DeveloperToolsViewModel.Item? {
+        guard let conversationID = conversation.qualifiedID else {
+            return nil
+        }
+
+        return .button(ButtonItem(
+            title: "Simulate adminless reminder event",
+            action: { Task { await simulateAdminlessReminderEvent(conversationID: conversationID) } }
+        ))
+    }
+
+    @MainActor
+    private func simulateAdminlessReminderEvent(conversationID: WireDataModel.QualifiedID) async {
+        guard let clientSessionComponent = ZMUserSession.shared()?.clientSessionComponent else {
+            return
+        }
+
+        do {
+            try await clientSessionComponent.debugSimulateAdminlessReminderEvent(
+                conversationID: conversationID,
+                scheduledDeletionDate: Date().addingTimeInterval(.oneWeek)
+            )
+        } catch {
+            WireLogger.conversation.warn("failed to simulate adminless reminder event: \(error)")
+        }
     }
 
     @MainActor

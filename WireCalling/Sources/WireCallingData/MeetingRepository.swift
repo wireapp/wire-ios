@@ -67,7 +67,33 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         )
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
-        return meeting
+        // The stored copy has its members populated from the conversation.
+        // Right after creation the conversation is not pulled yet, so the
+        // store can't provide the meeting and the mapped one is returned;
+        // its empty member list is accurate at this point.
+        return await localStore.storedMeeting(id: meeting.id) ?? meeting
+    }
+
+    public func updateMeeting(
+        id: QualifiedID,
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        recurrence: WireCallingDomain.MeetingRecurrence?
+    ) async throws -> Meeting {
+        let response = try await meetingsAPI.updateMeeting(
+            id: id,
+            parameters: UpdateMeetingParameters(
+                title: title,
+                startTime: startTime,
+                endTime: endTime,
+                recurrence: recurrence?.toNetworkRecurrence()
+            )
+        )
+        let meeting = response.toDomainMeeting()
+        await storeMeeting(meeting)
+        // The stored copy has its members populated from the conversation.
+        return await localStore.storedMeeting(id: meeting.id) ?? meeting
     }
 
     public func storeMeeting(_ meeting: Meeting) async {
@@ -75,18 +101,16 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.broadcast()
     }
 
-    public func pullMeeting(id: QualifiedID) async throws {
-        // There is no endpoint to fetch a single meeting,
-        // so refetch the list to get the details.
-        let meetings = try await meetingsAPI.listMeetings()
-
-        if let meeting = meetings.first(where: { $0.id == id }) {
-            await localStore.storeMeeting(meeting.toDomainMeeting())
-        } else {
-            // The meeting no longer exists on the backend.
-            await localStore.deleteMeeting(id: id)
+    @discardableResult
+    public func pullMeeting(id: QualifiedID) async throws -> Meeting? {
+        do {
+            let meeting = try await meetingsAPI.getMeeting(id: id).toDomainMeeting()
+            await storeMeeting(meeting)
+            return await localStore.storedMeeting(id: meeting.id) ?? meeting
+        } catch MeetingsAPIError.meetingNotFound {
+            await deleteLocalMeeting(id: id)
+            return nil
         }
-        changeBroadcaster.broadcast()
     }
 
     public func pullMeetings() async throws {
@@ -162,6 +186,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
 private extension MeetingResponse {
 
+    /// The backend's meeting responses carry no participant data, so
+    /// `conversation` stays `nil` here. The local store resolves it from the
+    /// linked conversation, the source of truth, whenever a meeting is read.
     func toDomainMeeting() -> Meeting {
         Meeting(
             id: id,
@@ -169,7 +196,6 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
-            members: [],
             conversationID: conversationID,
             creatorID: creatorID
         )

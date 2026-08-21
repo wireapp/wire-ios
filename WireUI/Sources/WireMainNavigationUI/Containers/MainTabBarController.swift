@@ -196,23 +196,7 @@ public final class MainTabBarController<
                 archiveNavigationController.tabBarItem = tabBarItem
 
             case .meetings:
-                let tabBarItem = UITabBarItem(
-                    title: String(localized: "tabBar.meetings.title", bundle: .module),
-                    image: .init(resource: .videoCall),
-                    selectedImage: .init(resource: .videoCallFilled)
-                )
-                tabBarItem.accessibilityIdentifier = "bottomBarMeetingsButton"
-                tabBarItem.accessibilityLabel = String(
-                    localized: "tabBar.meetings.description",
-                    table: "Accessibility",
-                    bundle: .module
-                )
-                tabBarItem.accessibilityHint = String(
-                    localized: "tabBar.meetings.hint",
-                    table: "Accessibility",
-                    bundle: .module
-                )
-                meetingsNavigationController?.tabBarItem = tabBarItem
+                setupMeetingsTabBarItem()
 
             case .settings:
                 let tabBarItem = UITabBarItem(
@@ -280,17 +264,39 @@ public final class MainTabBarController<
     }
 
     private func setMeetingsUI(_ meetingsUI: MeetingsUI?, animated: Bool) {
-        guard
-            showMeetings,
-            let meetingsNavigationController
-        else {
-            return
+        if meetingsNavigationController == nil, meetingsUI != nil {
+            let meetingsNavigationController = UINavigationController()
+            meetingsNavigationController.navigationBar.isTranslucent = false
+            self.meetingsNavigationController = meetingsNavigationController
+            viewControllers?.insert(meetingsNavigationController, at: 2)
+            setupMeetingsTabBarItem()
         }
+
         _meetingsUI = meetingsUI
 
         let viewControllers = [meetingsUI].compactMap(\.self)
-        meetingsNavigationController.setViewControllers(viewControllers, animated: animated)
-        meetingsNavigationController.view.layoutIfNeeded()
+        meetingsNavigationController?.setViewControllers(viewControllers, animated: animated)
+        meetingsNavigationController?.view.layoutIfNeeded()
+    }
+
+    private func setupMeetingsTabBarItem() {
+        let tabBarItem = UITabBarItem(
+            title: String(localized: "tabBar.meetings.title", bundle: .module),
+            image: .init(resource: .videoCall),
+            selectedImage: .init(resource: .videoCallFilled)
+        )
+        tabBarItem.accessibilityIdentifier = "bottomBarMeetingsButton"
+        tabBarItem.accessibilityLabel = String(
+            localized: "tabBar.meetings.description",
+            table: "Accessibility",
+            bundle: .module
+        )
+        tabBarItem.accessibilityHint = String(
+            localized: "tabBar.meetings.hint",
+            table: "Accessibility",
+            bundle: .module
+        )
+        meetingsNavigationController?.tabBarItem = tabBarItem
     }
 
     private func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {

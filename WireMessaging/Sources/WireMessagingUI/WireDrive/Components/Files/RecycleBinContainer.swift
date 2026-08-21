@@ -69,58 +69,15 @@ package struct RecycleBinContainer: View {
 
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
-            useCases: .init(
-                fetchNodes: WireDriveFetchNodesPageUseCase(
-                    configuration: .recycleBinView(
-                        root: path.last.map { .id($0.id) } ?? .path(cellName),
-                    ),
-                    repository: nodesRepository
-                ),
-                deleteNodes: WireDriveDeleteNodesUseCase(
-                    repository: nodesRepository,
-                    fileCache: fileCache,
-                    localAssetStore: localAssetStore
-                ),
-                restoreNodes: WireDriveRestoreNodesUseCase(
-                    repository: nodesRepository,
-                    fileCache: fileCache,
-                    localAssetStore: localAssetStore
-                ),
-                renameNode: WireDriveRenameNodeUseCase(
+            useCases: FilesViewModel.makeUseCases(
+                dependencies: .init(
+                    nodesAPI: nodesAPI,
                     nodesRepository: nodesRepository,
-                    localAssetsRepository: localAssetRepository,
-                    nodeCache: nodeCache,
-                    nodeRenameNotifier: nodeRenameNotifier
-                ),
-                updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
-                getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFile: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
-                fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
-                restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
-                    repository: nodesRepository,
-                    localAssetsRepository: localAssetRepository,
-                    nodeCache: nodeCache
-                ),
-                getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                getAsset: WireDriveGetAssetUseCase(
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore,
                     localAssetRepository: localAssetRepository,
-                    fileCache: fileCache
-                ),
-                getPublicLinkData: WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
-                createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: nodesAPI),
-                deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
-                getFileTemplates: WireDriveFetchFileTemplatesUseCase(repository: nodesRepository),
-                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
-                    localAssetRepository: localAssetRepository
-                ),
-                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
-                    localAssetRepository: localAssetRepository
-                ),
-                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
-                    localAssetRepository: localAssetRepository
+                    nodeRenameNotifier: nodeRenameNotifier,
+                    nodeCache: nodeCache
                 )
             ),
             title: path.last?.name,
@@ -129,8 +86,6 @@ package struct RecycleBinContainer: View {
                 path = items
             },
             isCellsStatePending: isCellsStatePending,
-            localAssetRepository: localAssetRepository,
-            nodesRepository: nodesRepository,
             cellName: cellName,
             isBrowsing: false,
             isRecycleBin: true

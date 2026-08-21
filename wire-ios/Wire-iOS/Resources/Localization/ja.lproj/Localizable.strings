@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "無効";
 
 "conversation.status.secutity_alert.default" = "新規セキュリティアラート";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "メッセージを入力中";
 "conversation.status.typing.group" = "%@: メッセージの入力中";
@@ -318,6 +319,7 @@
 "conversation.input_bar.verified" = "検証する";
 "conversation.input_bar.placeholder" = "メッセージを入力します";
 "conversation.input_bar.placeholder_ephemeral" = "自動削除メッセージ";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "上にスワイプして送信";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "タップして送信";
@@ -643,7 +645,7 @@
 "content.system.file_collaboration.enabled.editor_access" = "You have editor access. People outside your team only have viewer access.";
 "content.system.file_collaboration.enabled.viewer_access" = "You can view, but you can’t upload, edit, or manage files.";
 "content.system.file_collaboration.enabled.learn_more" = "もっと知る";
-"content.system.file_collaboration.drive_viewer_access.title" = "Guests have view-only access to files in this conversation.";
+"content.system.file_collaboration.drive_viewer_access.title" = "People outside your team can join this conversation as viewers.";
 
 // read receipt
 
@@ -668,6 +670,11 @@
 "content.system.message_legal_hold.disabled" = "この会話は法的所有権による制限から解除されました。";
 
 "content.system.message_legal_hold.learn_more" = "もっと知る";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
 
 //
 "content.system.is_verified" = "すべてのフィンガープリントは確認済みです";
@@ -1673,6 +1680,10 @@
 "login.sso.backend_switch.title" = "リダイレクト中...";
 "login.sso.backend_switch.subtitle" = "専用のエンタープライズサービスへリダイレクトされます。";
 "login.sso.backend_switch.information" = "あなたの組織へのログインであると確信できる場合に限り、認証情報を提供してください。";
+
+"sso_identity_changed.title" = "Identity provider changed";
+"sso_identity_changed.message" = "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "以前にこのデバイスでワイヤーを使用しました。";
 "registration.no_history.logged_out.subtitle" = "同時に送信されたメッセージは表示されません。";

@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireLogging
+import WireUtilities
 
 // sourcery: AutoMockable
 public protocol ConversationServiceInterface {
@@ -399,6 +400,12 @@ public final class ConversationService: ConversationServiceInterface {
             syncConversation.mlsStatus = .ready
             syncConversation.ciphersuite = ciphersuite
             syncContext.saveOrRollback()
+        }
+
+        if DeveloperFlag.simulateUnestablishedMLSGroup.isOn {
+            DeveloperFlag.simulateUnestablishedMLSGroup.enable(false)
+            createGroupFlow.checkpoint(description: "simulating an unestablished MLS group")
+            return
         }
 
         let participantsService = participantsServiceBuilder(syncContext)

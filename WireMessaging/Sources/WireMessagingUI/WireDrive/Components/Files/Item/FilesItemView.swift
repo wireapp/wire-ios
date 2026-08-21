@@ -34,7 +34,6 @@ struct FilesItemView: View {
     @ScaledMetric private var iconSpaceHeight: CGFloat = 28
     @ScaledMetric private var iconHorizontalPadding: CGFloat = 7
     @ScaledMetric private var scale: CGFloat = 1
-
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
@@ -44,7 +43,11 @@ struct FilesItemView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                icon().accessibilitySortPriority(3)
+                AsyncImage(url: viewModel.thumbnailURL, scale: UIScreen.main.scale) { thumbnail in
+                    icon(thumbnail: thumbnail)
+                } placeholder: {
+                    icon()
+                }.accessibilitySortPriority(3)
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
@@ -60,7 +63,13 @@ struct FilesItemView: View {
                 Spacer()
 
                 Menu {
-                    menuContent()
+                    if viewModel.showReadOnlyIcon {
+                        Section(Strings.Files.ViewerAccess.navigationSubtitle) {
+                            menuContent()
+                        }
+                    } else {
+                        menuContent()
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
@@ -122,13 +131,13 @@ struct FilesItemView: View {
     }
 
     @ViewBuilder
-    private func icon() -> some View {
+    private func icon(thumbnail: Image? = nil) -> some View {
         switch viewModel.fileTracker.state {
         case .notLoaded,
              .loaded(showReadyToOpen: false),
              .loaded(showReadyToOpen: true) where viewModel.isAvailableOffline,
              .failed:
-            fileTypeIcon()
+            fileTypeIcon(thumbnail: thumbnail)
         case .loaded(showReadyToOpen: true):
             progressIcon(progress: 1, readyToOpen: true)
         case let .loading(progress: progress, _):
@@ -137,21 +146,32 @@ struct FilesItemView: View {
     }
 
     @ViewBuilder
-    private func fileTypeIcon() -> some View {
-        Image(viewModel.icon.imageResource)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .overlay(alignment: .bottomTrailing) {
-                if viewModel.showReadOnlyIcon {
-                    FileIconBadge(iconName: "eye", for: viewModel.item.icon)
-                } else if viewModel.item.publicLinkID != nil {
-                    FileIconBadge(iconName: "link", for: viewModel.item.icon)
-                }
+    private func fileTypeIcon(thumbnail: Image? = nil) -> some View {
+        Group {
+            if let thumbnail {
+                thumbnail
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: iconSpaceHeight, height: iconSpaceHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            } else {
+                Image(viewModel.icon.imageResource)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: iconSpaceHeight, height: iconSpaceHeight)
             }
-            .padding(.horizontal, iconHorizontalPadding)
-            .frame(minWidth: iconSpaceWidth)
-            .frame(height: iconSpaceHeight)
-            .accessibilityLabel(viewModel.icon.accessibilityIconLabel)
+        }
+        .overlay(alignment: .bottomTrailing) {
+            if viewModel.showReadOnlyIcon {
+                FileIconBadge(iconName: "eye", for: viewModel.item.icon)
+            } else if viewModel.item.publicLinkID != nil {
+                FileIconBadge(iconName: "link", for: viewModel.item.icon)
+            }
+        }
+        .padding(.horizontal, iconHorizontalPadding)
+        .frame(minWidth: iconSpaceWidth)
+        .frame(height: iconSpaceHeight)
+        .accessibilityLabel(viewModel.icon.accessibilityIconLabel)
     }
 
     @ViewBuilder
@@ -377,6 +397,7 @@ struct FilesItemView: View {
     ) -> some View {
         if viewModel.menuActions.contains(itemAction) {
             menuItem(itemAction)
+                .accessibilityLabel(viewModel.accessibilitylabel(for: itemAction))
                 .accessibilityIdentifier("fileMenu.\(itemAction)")
         }
     }
