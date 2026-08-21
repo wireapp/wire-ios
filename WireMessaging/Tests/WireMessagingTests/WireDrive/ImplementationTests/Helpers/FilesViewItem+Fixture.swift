@@ -52,7 +52,8 @@ extension FilesViewItem {
             publicLinkID: publicLinkID,
             conversationName: conversationName,
             isReadOnly: isReadOnly,
-            size: nil
+            size: nil,
+            thumbnailURL: nil
         )
     }
 

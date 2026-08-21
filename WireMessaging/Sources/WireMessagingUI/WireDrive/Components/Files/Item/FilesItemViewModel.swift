@@ -57,6 +57,7 @@ final class FilesItemViewModel: ObservableObject {
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
     @Published private var asset: WireDriveLocalAsset?
+    @Published var thumbnailURL: URL?
     @Published var fileTracker: WireDriveFileUITracker
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
@@ -141,6 +142,8 @@ final class FilesItemViewModel: ObservableObject {
                 fileTracker.handleDownloadState(fromAsset: asset)
             }
         }.store(in: &cancellables)
+
+        setThumbnailURL()
     }
 
     var nameOfTopmostFolderInRecycleBin: String {
@@ -178,6 +181,25 @@ final class FilesItemViewModel: ObservableObject {
 
     var isEditable: Bool {
         item.isEditable
+    }
+
+    private func setThumbnailURL() {
+        Task {
+            thumbnailURL = switch item.icon {
+            case .video, .image:
+                if isOffline {
+                    // use full asset
+                    try? await getAssetUseCase.invoke(
+                        nodeID: nodeID,
+                        eTag: item.eTag
+                    )
+                } else {
+                    item.thumbnailURL
+                }
+            default:
+                nil
+            }
+        }
     }
 
     func isActionDisabled(_ action: ItemAction) -> Bool {
@@ -400,8 +422,8 @@ private extension FilesItemViewModel {
                     primary = Strings.AllFiles.Item.subtitle(ownedBy, conversationName)
                 }
             case .size:
-                if let conversationName,
-                   let size = formattedFileSize(size: size) {
+                if let conversationName {
+                    let size = formattedFileSize(size: size)
                     primary = Strings.AllFiles.Item.subtitle(size, conversationName)
                 }
             default:
@@ -429,7 +451,8 @@ private extension FilesItemViewModel {
                     primary = Strings.Files.Item.subtitle(date, ownedBy)
                 }
             case .size:
-                if let size = formattedFileSize(size: size), let ownedBy {
+                if let ownedBy {
+                    let size = formattedFileSize(size: size)
                     primary = Strings.Files.Item.subtitle(size, ownedBy)
                 }
             default:
@@ -446,12 +469,12 @@ private extension FilesItemViewModel {
         }
     }
 
-    private static func formattedFileSize(size: UInt64?) -> String? {
-        guard let size else { return nil }
+    private static func formattedFileSize(size: UInt64?) -> String {
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
         formatter.countStyle = .file
-        return formatter.string(fromByteCount: Int64(size))
+        formatter.allowsNonnumericFormatting = false
+        return formatter.string(fromByteCount: Int64(size ?? 0))
     }
 
     private static func formattedDate(
