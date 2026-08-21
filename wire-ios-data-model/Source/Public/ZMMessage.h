@@ -116,7 +116,7 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeUnknownMessageContentTypeReceived,
     ZMSystemMessageTypePromotedToGroupAdmin,
     /// Failed to add participants because their MLS key packages could not be claimed (e.g. no MLS client).
-    ZMSystemMessageTypeFailedToAddParticipantsMLS
+    ZMSystemMessageTypeFailedToAddParticipantsMLS,
     ZMSystemMessageTypeConversationScheduledForDeletion
 };
 
