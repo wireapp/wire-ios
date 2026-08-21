@@ -157,8 +157,12 @@ extension XCUIApplication {
         let alert = springboard.alerts.firstMatch
         guard alert.waitForExistence(timeout: timeout) else { return }
 
-        if alert.buttons["Allow"].exists {
-            alert.buttons["Allow"].tap()
+        let allowButtons = ["Allow While Using App", "Allow"]
+        guard let button = allowButtons
+            .map({ alert.buttons[$0] })
+            .first(where: { $0.exists }) else {
+            return
         }
+        button.waitAndTap()
     }
 }
