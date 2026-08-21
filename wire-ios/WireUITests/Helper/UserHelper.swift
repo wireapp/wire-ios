@@ -509,8 +509,7 @@ final class UserHelper {
         )
         authenticationManager.accessToken = accessToken
 
-        let conversation = try await conversationsAPI.createGroupConversation(parameters: params)
-        print(conversation)
+        _ = try await conversationsAPI.createGroupConversation(parameters: params)
     }
 
     /// Create channel conversation
