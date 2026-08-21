@@ -169,6 +169,22 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.uploadFileButton.rawValue].firstMatch
     }
 
+    var locationButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.locationButton.rawValue].firstMatch
+    }
+
+    var sendLocationButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.sendLocation.rawValue].firstMatch
+    }
+
+    var selectedAddress: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.selectedAddress.rawValue].firstMatch
+    }
+
+    var locationCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.locationCell.rawValue].firstMatch
+    }
+
     var browseFileOption: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.browse.rawValue].firstMatch
     }
@@ -505,6 +521,47 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
+    func selectAndSendLocation() -> ActiveConversationPage {
+        showOtherRowButton.waitAndTap()
+        locationButton.waitAndTap()
+        app.dismissAllowIfPresent()
+        XCTAssertTrue(
+            selectedAddress.waitForExistence(timeout: 5),
+            "Selected address did not appear"
+        )
+        sendLocationButton.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func verifyLocationShared() -> ActiveConversationPage {
+        XCTAssertTrue(
+            locationCell.waitForExistence(timeout: 10),
+            "Expected location message not found"
+        )
+        return self
+    }
+
+    func openLocationInDefaultMapsApp(locationName: String) {
+        let locationMap = app.descendants(matching: .any)
+            .matching(identifier: Locators.ActiveConversationPage.locationMap.rawValue)
+            .matching(NSPredicate(format: "label CONTAINS[c] %@", locationName))
+            .firstMatch
+
+        XCTAssertTrue(
+            locationMap.waitAndTap(),
+            "Location \(locationName) could not be opened"
+        )
+
+        let mapsApp = XCUIApplication(bundleIdentifier: "com.apple.Maps")
+        XCTAssertTrue(
+            mapsApp.wait(for: .runningForeground, timeout: 5),
+            "Expected location to open in Maps"
+        )
+    }
+
+    @discardableResult
     func verifyMessageSent(
         _ message: String,
         file: StaticString = #filePath,

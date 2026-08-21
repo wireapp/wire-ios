@@ -32,8 +32,6 @@ import WireRequestStrategy
 import WireTransport
 import WireUtilities
 
-public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
-
 public extension Bundle {
     @objc var appGroupIdentifier: String? {
         bundleIdentifier.map { "group." + $0 }
@@ -438,7 +436,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
@@ -549,7 +547,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         proxyCredentials: WireTransport.ProxyCredentials?,
@@ -636,14 +634,17 @@ public final class SessionManager: NSObject, SessionManagerType {
         updateCallNotificationStyle()
 
         pushTokenService.onTokenChange = { [weak self] _ in
-            guard
-                let self,
-                let session = activeUserSession
-            else {
+            guard let self else { return }
+
+            if DeveloperFlag.noAPNSTokenCache.isOn {
+                // Upload push token for all loaded sessions. Correct behavior would be to upload it for all accounts
+                // but we don't yet have a means to do that without loading all sessions into memory.
+                Task { await self.uploadPushToken(sessions: Array(self.backgroundUserSessions.values)) }
                 return
             }
 
-            syncLocalTokenWithRemote(session: session)
+            guard let activeUserSession else { return }
+            syncLocalTokenWithRemote(session: activeUserSession)
         }
 
         self.deleteAccountToken = AccountDeletedNotification.addObserver(observer: self, queue: groupQueue)
@@ -653,9 +654,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @MainActor
-    public func start(launchOptions: LaunchOptions) async {
+    public func start(connectionOptions: UIScene.ConnectionOptions) async {
         if
-            let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL,
+            let url = connectionOptions.urlContexts.first?.url, // Currently we only support one URL
             let urlAction = try? URLAction(url: url),
             urlAction.causesLogout {
             // If a logout is coming, then no need to start.
@@ -670,7 +671,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         if let account = accountManager.selectedAccount {
             if let session = await loadSession(for: account) {
                 updateCurrentAccount(in: session.managedObjectContext)
-                session.application(application, didFinishLaunching: launchOptions)
+                session.startEphemeralTimers()
             } else {
                 WireLogger.sessionManager.critical("Failed to load session for selected account")
             }

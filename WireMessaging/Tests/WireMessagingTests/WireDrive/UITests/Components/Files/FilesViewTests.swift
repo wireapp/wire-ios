@@ -415,7 +415,8 @@ final class FilesViewTests: XCTestCase {
             publicLinkID: nil,
             conversationName: "Conversation 1",
             isReadOnly: readOnly,
-            size: nil
+            size: nil,
+            thumbnailURL: nil
         )
     }
 

@@ -228,6 +228,7 @@ struct MeetingFormView: View {
             maximumDate: maximumDate,
             minuteInterval: Self.timePickerMinuteInterval
         )
+        .id(Calendar.current.isDate(date.wrappedValue, equalTo: range.lowerBound, toGranularity: .hour))
     }
 
     private func pill(
@@ -327,8 +328,10 @@ private extension MeetingRepeatOption {
             Strings.daily
         case .weekly:
             Strings.weekly
-        case .every2Weeks:
+        case .everyTwoWeeks:
             Strings.everyTwoWeeks
+        case .everyFourWeeks:
+            Strings.everyFourWeeks
         case .monthly:
             Strings.monthly
         case .yearly:

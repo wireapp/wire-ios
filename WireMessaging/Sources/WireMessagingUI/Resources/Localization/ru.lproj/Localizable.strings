@@ -105,7 +105,7 @@
 "conversation.channelHistory.picker.custom" = "Пользовательская";
 "conversation.channelHistory.customPicker.days" = "Дн.";
 "conversation.channelHistory.customPicker.weeks" = "Нед.";
-"conversation.channelHistory.share.sectionFootnote" = "Вы можете поделиться историей переписки с новыми участниками канала. Таким образом, они также смогут просматривать старые сообщения и файлы.\\Если вы отключите эту функцию, участники канала не будут видеть историю переписки.";
+"conversation.channelHistory.share.sectionFootnote" = "Вы можете поделиться историей беседы с новыми участниками канала. Таким образом, они также смогут просматривать старые сообщения и файлы.\\Если вы отключите эту функцию, участники канала не будут видеть историю.";
 "conversation.channelHistory.navigationTitle" = "История беседы";
 "conversation.creationForm.channelHistory.sectionFootnote" = "Выберите период. Когда участники присоединяются к этому каналу, они могут просматривать историю за этот период времени.";
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "Произошла ошибка при получении параметров глубины истории канала.";

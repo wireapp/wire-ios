@@ -33,6 +33,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
+    case noAPNSTokenCache
     case preventAdminlessGroups
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
@@ -84,6 +85,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .newRegistration:
             "Turn on to use the new registration flow"
+
+        case .noAPNSTokenCache:
+            "Turn on to always request the APNS token from the system instead of reading a cached one"
 
         case .preventAdminlessGroups:
             "Turn on to prevent last admins from leaving groups without promoting someone else"
@@ -163,6 +167,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .noAPNSTokenCache:
+            "NoAPNSTokenCacheEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
         default:

@@ -16,15 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Reports which conversations the self user is currently in a call in.
-public protocol MeetingCallStateRepositoryProtocol: Sendable {
+import Foundation
+import UIKit
+import WireNetwork
+import WireSyncEngine
 
-    /// Emits the set of conversation ids the self user is currently in a call in.
-    ///
-    /// The stream emits the current value immediately and then a new value
-    /// whenever call state changes, so a meeting is considered "attending" while
-    /// its `conversationID` is contained in the latest emitted set.
-    func observeAttendedConversations() -> AsyncStream<Set<QualifiedID>>
+/// Top level dependencies needed app wide.
+///
+/// - warning: This is really only intended to be accessed by App delegates and scene delegates. In other places,
+/// dependencies should be injected.
+enum AppDependencies {
+
+    static let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
+    static let pushTokenService = PushTokenService()
+    static let voIPPushManager = VoIPPushManager(application: UIApplication.shared)
 
 }

@@ -10,9 +10,6 @@ on:
       branch:
         type: string
         required: false
-      notify_secret:
-        type: string
-        required: true
       test_dependencies:
         type: boolean
         default: false
@@ -43,6 +40,8 @@ on:
         required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
+      SLACK_WEBHOOK_URL:
+        required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -67,8 +66,6 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
-      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -139,6 +136,8 @@ jobs:
 
       - name: Generate env file
         if: ${{ inputs.run_critical_flows }}
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           bundle exec fastlane generate_env
 
@@ -168,6 +167,7 @@ jobs:
         shell: bash
         env:
           TESTINY_RUN_NAME: ${{ inputs.testiny_run_name }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           set -euo pipefail
           TESTINY_API_KEY="$(op read 'op://Test Automation/TESTINY_API_KEY_IOS/password')"
@@ -356,6 +356,8 @@ jobs:
         uses: ./.github/actions/notify-wire
         continue-on-error: true
         if: ${{ inputs.notify == 'always' && always() }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           notify: custom
           text: |
@@ -374,6 +376,8 @@ jobs:
         uses: ./.github/actions/notify-wire
         continue-on-error: true
         if: ${{ inputs.notify == 'failure' && failure() }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           notify: custom
           text: |

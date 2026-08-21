@@ -41,8 +41,6 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         _ participants: [MeetingMember],
         to conversationID: WireCallingDomain.QualifiedID
     ) async throws {
-        guard !participants.isEmpty else { return }
-
         guard let conversation = await conversationRepository.fetchConversation(
             id: conversationID.id,
             domain: conversationID.domain
@@ -62,12 +60,18 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         guard let mlsGroupID else { return }
 
         if isGroupEstablished {
+            guard !participants.isEmpty else { return }
             // The group already exists (the meeting is being edited), so the
             // participants are added with a regular add-members commit.
             try await updateParticipants(participants, in: objectID, syncContext: syncContext) {
                 try await participantsService.addParticipants($0, to: $1)
             }
         } else {
+            // The group must be established even with no extra participants
+            // (a solo "Meet Now" instant meeting): without this, the
+            // conversation's MLS group never gets created, and starting the
+            // call later fails silently when it tries to set up the
+            // conference against a non-existent parent group.
             try await addMLSParticipants(
                 participants,
                 to: mlsGroupID,
@@ -97,6 +101,38 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             for user in users {
                 try await participantsService.removeParticipant(user, from: conversation)
             }
+        }
+    }
+
+    func leaveConversation(id conversationID: WireCallingDomain.QualifiedID) async throws {
+        let syncContext = contextProvider.syncContext
+        let resolved = await syncContext.perform {
+            let conversation = ZMConversation.fetch(
+                with: conversationID.id,
+                domain: conversationID.domain,
+                in: syncContext
+            )
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            return (
+                conversation: conversation,
+                selfUser: selfUser,
+                isMeeting: conversation?.isMeeting == true,
+                hasSelfUserID: selfUser.qualifiedID != nil
+            )
+        }
+
+        guard
+            let conversation = resolved.conversation,
+            resolved.isMeeting,
+            resolved.hasSelfUserID
+        else {
+            throw ConversationRemoveParticipantError.invalidOperation
+        }
+
+        do {
+            try await participantsService.removeParticipant(resolved.selfUser, from: conversation)
+        } catch ConversationRemoveParticipantError.conversationNotFound {
+            // The current user already left, so the requested state exists.
         }
     }
 

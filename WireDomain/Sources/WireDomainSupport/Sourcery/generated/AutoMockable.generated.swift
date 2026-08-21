@@ -1110,6 +1110,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - isMeetingConversation
+
+    public var isMeetingConversation_Invocations: [ZMConversation] = []
+    public var isMeetingConversation_MockMethod: ((ZMConversation) async -> Bool)?
+    public var isMeetingConversation_MockValue: Bool?
+
+    public func isMeetingConversation(_ conversation: ZMConversation) async -> Bool {
+        isMeetingConversation_Invocations.append(conversation)
+
+        if let mock = isMeetingConversation_MockMethod {
+            return await mock(conversation)
+        } else if let mock = isMeetingConversation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMeetingConversation`")
+        }
+    }
+
     // MARK: - isSelfConversation
 
     public var isSelfConversation_Invocations: [ZMConversation] = []
@@ -1908,6 +1926,24 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
             return mock
         } else {
             fatalError("no mock for `fetchMLSConversationGroupID`")
+        }
+    }
+
+    // MARK: - isGroupConversation
+
+    public var isGroupConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var isGroupConversationIdDomain_MockMethod: ((UUID, String?) async -> Bool)?
+    public var isGroupConversationIdDomain_MockValue: Bool?
+
+    public func isGroupConversation(id: UUID, domain: String?) async -> Bool {
+        isGroupConversationIdDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = isGroupConversationIdDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = isGroupConversationIdDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isGroupConversationIdDomain`")
         }
     }
 

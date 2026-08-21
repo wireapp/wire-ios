@@ -17,9 +17,9 @@
 //
 
 package import WireCallingDomain
+package import Foundation
 package import WireFoundation
 
-import Foundation
 import WireLogging
 
 @Observable
@@ -27,8 +27,6 @@ import WireLogging
 package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
-
-    private static let currentDateRefreshInterval: Duration = .seconds(20)
 
     private(set) var loadedOccurrences: [MeetingOccurrence] = []
     private(set) var hasMore: Bool = false
@@ -51,11 +49,24 @@ package final class MeetingsViewModel {
         set { if !newValue { meetingToDelete = nil } }
     }
 
+    private var isDeletingForSelf: Bool {
+        meetingToDelete.map { !isOrganizer($0) } ?? false
+    }
+
+    var deleteConfirmationTitle: String {
+        isDeletingForSelf ? Strings.DeleteForMe.Alert.title : Strings.Delete.Alert.title
+    }
+
+    var deleteConfirmationMessage: String {
+        isDeletingForSelf ? Strings.DeleteForMe.Alert.subtitle : Strings.Delete.Alert.subtitle
+    }
+
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
     private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+    private let selfUserID: UUID
     private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
 
     private var futureOffset: Int = 0
@@ -71,6 +82,7 @@ package final class MeetingsViewModel {
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
     ) {
         self.currentDateProvider = currentDateProvider
@@ -78,6 +90,7 @@ package final class MeetingsViewModel {
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
         self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
         self.deleteMeetingUseCase = deleteMeetingUseCase
+        self.selfUserID = selfUserID
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
         self.currentDate = currentDateProvider.now
     }
@@ -122,7 +135,7 @@ package final class MeetingsViewModel {
             refreshCurrentDate()
 
             do {
-                try await Task.sleep(for: Self.currentDateRefreshInterval)
+                try await Task.sleep(for: durationUntilNextMinute())
             } catch {
                 return
             }
@@ -133,6 +146,14 @@ package final class MeetingsViewModel {
         currentDate = currentDateProvider.now
     }
 
+    /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
+    /// minute boundary rather than a fixed interval from when the screen appeared.
+    func durationUntilNextMinute() -> Duration {
+        let secondsIntoMinute = currentDateProvider.now.timeIntervalSince1970
+            .truncatingRemainder(dividingBy: 60)
+        return .seconds(60 - secondsIntoMinute)
+    }
+
     /// Whether the self user is currently attending (joined the call of) the given meeting.
     func isAttending(_ meeting: Meeting) -> Bool {
         attendingConversationIDs.contains(meeting.conversationID)
@@ -140,6 +161,10 @@ package final class MeetingsViewModel {
 
     func isAttending(_ occurrence: MeetingOccurrence) -> Bool {
         attendingConversationIDs.contains(occurrence.conversationID) && isHappeningNow(occurrence)
+    }
+
+    func isOrganizer(_ meeting: Meeting) -> Bool {
+        meeting.creatorID.id == selfUserID
     }
 
     /// Whether the meeting's scheduled time range contains the current time.
@@ -160,8 +185,12 @@ package final class MeetingsViewModel {
         formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
-    func formatTimeRange(for occurrence: MeetingOccurrence) -> String {
-        formatter.timeRange(from: occurrence.start, to: occurrence.end)
+    func formatTime(for occurrence: MeetingOccurrence) -> String {
+        if isHappeningNow(occurrence) {
+            formatter.startedAt(occurrence.start)
+        } else {
+            formatter.timeRange(from: occurrence.start, to: occurrence.end)
+        }
     }
 
     /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture
@@ -176,7 +205,7 @@ package final class MeetingsViewModel {
 
     func deleteMeeting(_ meeting: Meeting) async {
         do {
-            try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
+            try await deleteMeetingUseCase.invoke(meeting: meeting)
             loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
         } catch {
             hasDeleteError = true

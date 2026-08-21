@@ -17,8 +17,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "WireAVS",
-            url: "https://github.com/wireapp/wire-avs/releases/download/10.4.30/avs.xcframework.zip",
-            checksum: "6cd1897701716a719547288f9b2263c4ae5c004aa9409d6aadb9a2ade26a31a8"
+            url: "https://github.com/wireapp/wire-avs/releases/download/10.5.10/avs.xcframework.zip",
+            checksum: "67ebe389b81a66aaf95fa3cb151c2863728ec4c08b0c6879822ef21aa7fcd1fb"
         )
     ]
 )

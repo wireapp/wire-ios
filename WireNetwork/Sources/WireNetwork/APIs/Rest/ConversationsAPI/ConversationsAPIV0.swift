@@ -337,7 +337,11 @@ struct CreateGroupConversationParametersV0: Encodable {
             .map { $0.toNetworkModel() } : nil
         self.access = parameters.accessMode.map { $0.toNetworkModel().rawValue }
         self.legacyAccessRole = parameters.legacyAccessRole?.toNetworkModel().rawValue
-        self.accessRoles = parameters.accessRoles.map { $0.toNetworkModel().rawValue }
+        self.accessRoles = if parameters.accessRoles.isEmpty {
+            nil
+        } else {
+            parameters.accessRoles.map { $0.toNetworkModel().rawValue }
+        }
         self.name = parameters.name
         self.team = parameters.teamID.map { .init(teamID: $0) }
         self.messageTimer = nil

@@ -327,7 +327,7 @@ final class WireDriveTests: WireUITestCase {
 
         searchTextField.typeText(positiveSearchTerm)
         XCTAssertTrue(
-            sharedDrivePage.fileIcon.waitForExistence(timeout: 2)
+            sharedDrivePage.fileIcon.waitForExistence(timeout: 5)
         )
         let positiveSearchResults = sharedDrivePage.numberOfFilesInList
 

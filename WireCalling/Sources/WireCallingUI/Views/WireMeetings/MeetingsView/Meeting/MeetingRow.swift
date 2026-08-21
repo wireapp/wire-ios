@@ -26,10 +26,13 @@ struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     let occurrence: MeetingOccurrence
-    let formatTimeRange: (MeetingOccurrence) -> String
+    let formatTime: (MeetingOccurrence) -> String
+    let isOrganizer: Bool
     var isAttending: Bool = false
+    var isLive: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
+    var onJoin: () -> Void = {}
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -66,33 +69,50 @@ struct MeetingRow: View {
 
                     Menu {
                         Button {
-                            onEdit()
+                            onJoin()
                         } label: {
-                            Label(Strings.Actions.edit, systemImage: "pencil")
+                            Label {
+                                Text(Strings.Actions.joinNow)
+                            } icon: {
+                                Image(.videoCall)
+                                    .renderingMode(.template)
+                            }
                         }
 
-                        Button(role: .destructive) {
-                            onDelete()
-                        } label: {
-                            Label(Strings.Actions.delete, systemImage: "trash")
+                        if isOrganizer {
+                            Button {
+                                onEdit()
+                            } label: {
+                                Label(Strings.Actions.edit, systemImage: "pencil")
+                            }
+
+                            Button(role: .destructive) {
+                                onDelete()
+                            } label: {
+                                Label(Strings.Actions.delete, systemImage: "trash")
+                            }
+                        } else {
+                            Button(role: .destructive) {
+                                onDelete()
+                            } label: {
+                                Label(Strings.Actions.deleteForMe, systemImage: "trash")
+                            }
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.deleteForMeButton)
                         }
                     } label: {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-                            // The design's padding is 12/8; the extra 12pt of vertical
-                            // padding grows the tap target to ~44pt and is cancelled
-                            // out by the negative padding below, so the layout keeps
-                            // the design's spacing.
                             .padding(.horizontal, 12)
                             .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
+                    .menuOrder(.fixed)
                     .padding(.vertical, -12)
                 }
 
                 HStack(spacing: 8) {
-                    Text(formatTimeRange(occurrence))
+                    Text(formatTime(occurrence))
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
@@ -108,9 +128,32 @@ struct MeetingRow: View {
                 if isAttending {
                     attendingLabel
                         .padding(.top, 10)
+                } else if isLive {
+                    joinButton
+                        .padding(.top, 10)
                 }
             }
         }
+    }
+
+    private var joinButton: some View {
+        Button(action: onJoin) {
+            HStack(spacing: 8) {
+                Image(.videoCall)
+                    .renderingMode(.template)
+                    .accessibilityHidden(true)
+
+                Text(Strings.Actions.join)
+            }
+            .font(for: .buttonSmall)
+            .foregroundStyle(ColorTheme.Base.onPrimary.color)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 10)
+            .background(ColorTheme.Base.primary(wireAccentColor).color, in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.joinButton)
+        .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.JoinButton.description))
     }
 
     private var attendingLabel: some View {
@@ -193,11 +236,36 @@ private extension MeetingRecurrence {
         creatorID: QualifiedID(id: UUID(), domain: "")
     )
 
-    MeetingRow(
-        occurrence: MeetingOccurrence(meeting: meeting),
-        formatTimeRange: { _ in "Today" },
-        isAttending: true,
-        onEdit: {},
-        onDelete: {}
-    )
+    let formatter = MeetingsFormatter()
+
+    VStack(alignment: .leading, spacing: 24) {
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTime: { formatter.startedAt($0.start) },
+            isOrganizer: true,
+            isLive: true,
+            onEdit: {},
+            onDelete: {},
+            onJoin: {}
+        )
+
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTime: { formatter.startedAt($0.start) },
+            isOrganizer: true,
+            isAttending: true,
+            isLive: true,
+            onEdit: {},
+            onDelete: {}
+        )
+
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
+            isOrganizer: true,
+            onEdit: {},
+            onDelete: {}
+        )
+    }
+    .padding()
 }

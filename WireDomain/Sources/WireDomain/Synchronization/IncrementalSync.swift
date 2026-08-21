@@ -46,6 +46,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
     private let backgroundTaskExecuter: any BackgroundTaskExecuter
+    private let beforeProcessingLiveEvent: (UpdateEvent) async -> Void
 
     public init(
         selfClientID: String,
@@ -61,7 +62,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
         earService: EARServiceInterface,
-        backgroundTaskExecuter: any BackgroundTaskExecuter
+        backgroundTaskExecuter: any BackgroundTaskExecuter,
+        beforeProcessingLiveEvent: @escaping (UpdateEvent) async -> Void = { _ in }
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -77,6 +79,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.earService = earService
         self.backgroundTaskExecuter = backgroundTaskExecuter
+        self.beforeProcessingLiveEvent = beforeProcessingLiveEvent
     }
 
     public func perform() async throws -> Token {
@@ -313,6 +316,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     "processing live event: \(event.name)",
                     attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
                 )
+                await beforeProcessingLiveEvent(event)
                 try await processor.processEvent(event)
             } catch {
                 logger.error(

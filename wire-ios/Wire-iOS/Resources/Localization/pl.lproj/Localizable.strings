@@ -319,6 +319,7 @@
 "conversation.input_bar.verified" = "Zweryfikowano";
 "conversation.input_bar.placeholder" = "Wpisz wiadomość";
 "conversation.input_bar.placeholder_ephemeral" = "Samoniszczące się wiadomości";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Przesuń palcem w górę aby wysyłać";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Dotknij, aby wysłać";
@@ -672,7 +673,8 @@
 
 // automatic conversation deletion
 
-"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins. [Read more](%@)";
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
 
 //
 "content.system.is_verified" = "Wszystkie odciski palców są zweryfikowane";
@@ -1678,6 +1680,10 @@
 "login.sso.backend_switch.title" = "Przekierowuje...";
 "login.sso.backend_switch.subtitle" = "Zostałeś przekierowany do dedykowanej usługi przedsiębiorstwa.";
 "login.sso.backend_switch.information" = "Podaj dane logowania tylko wtedy, gdy jesteś pewien, że jest to logowanie Twojej organizacji.";
+
+"sso_identity_changed.title" = "Identity provider changed";
+"sso_identity_changed.message" = "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "Używałeś wcześniej Wire na tym urządzeniu.";
 "registration.no_history.logged_out.subtitle" = "Wiadomości wysłane w międzyczasie nie pojawią się.";

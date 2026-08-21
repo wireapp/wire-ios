@@ -25,12 +25,15 @@ public final class PushTokenService: PushTokenServiceInterface {
     // MARK: - Properties
 
     public var localToken: PushToken? {
-        PushTokenStorage.pushToken
+        if DeveloperFlag.noAPNSTokenCache.isOn {
+            return inMemoryToken
+        }
+        return PushTokenStorage.pushToken
     }
 
     public var onTokenChange: ((PushToken?) -> Void)?
-    public var onRegistrationComplete: (() -> Void)?
-    public var onUnregistrationComplete: (() -> Void)?
+
+    private var inMemoryToken: PushToken?
 
     // MARK: - Life cycle
 
@@ -39,6 +42,15 @@ public final class PushTokenService: PushTokenServiceInterface {
     // MARK: - Methods
 
     public func storeLocalToken(_ token: PushToken?) {
+        if DeveloperFlag.noAPNSTokenCache.isOn {
+            inMemoryToken = token
+            onTokenChange?(token)
+
+            // Avoid stale cache in the case where the user later disables the developer flag.
+            PushTokenStorage.pushToken = nil
+            return
+        }
+
         if PushTokenStorage.pushToken != nil, token != PushTokenStorage.pushToken {
             WireLogger.push.info("updating token \(token == nil ? "to nil" : "")", attributes: .safePublic)
         }
@@ -58,12 +70,11 @@ public final class PushTokenService: PushTokenServiceInterface {
 
         do {
             try await action.perform(in: context)
+            WireLogger.push.info("Did register push token: \(clientID)")
         } catch let error as RegisterPushTokenAction.Failure {
             WireLogger.push.error("registering push token failed: \(error)")
             throw error
         }
-
-        onRegistrationComplete?()
     }
 
     public func unregisterRemoteTokens(
@@ -97,8 +108,6 @@ public final class PushTokenService: PushTokenServiceInterface {
             WireLogger.push.error("unregister remote tokens, failed: \(error)")
             throw error
         }
-
-        onUnregistrationComplete?()
     }
 
 }
@@ -110,8 +119,6 @@ public protocol PushTokenServiceInterface: AnyObject {
     var localToken: PushToken? { get }
 
     var onTokenChange: ((PushToken?) -> Void)? { get set }
-    var onRegistrationComplete: (() -> Void)? { get set }
-    var onUnregistrationComplete: (() -> Void)? { get set }
 
     func storeLocalToken(_ token: PushToken?)
 
@@ -161,7 +168,7 @@ extension EntityAction {
     ///
     /// - Parameters:
     ///   - context the notification context in which to send the action's notification.
-    ///   - resultHandler a closure to recieve the action's result.
+    ///   - resultHandler a closure to receive the action's result.
 
     @available(*, renamed: "perform(in:)")
     mutating func perform(

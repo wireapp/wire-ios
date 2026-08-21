@@ -24,10 +24,13 @@
 "wireMeetings.list.actions.meetNow" = "Meeting starten";
 "wireMeetings.list.actions.scheduleMeeting" = "Meeting planen";
 "wireMeetings.list.actions.showAll" = "Alle anzeigen";
+"wireMeetings.list.actions.join" = "Beitreten";
+"wireMeetings.list.actions.joinNow" = "Join now";
 "wireMeetings.list.emptyState.next.title" = "Noch keine bevorstehenden Meetings";
 "wireMeetings.list.emptyState.next.subtitle" = "Ein Meeting mit Team-Mitgliedern starten";
 "wireMeetings.list.emptyState.past.title" = "Noch keine vergangenen Meetings";
 "wireMeetings.list.emptyState.past.subtitle" = "Alle bisherigen Meetings finden Sie hier.";
+"wireMeetings.list.startedAt" = "Started at %@";
 "wireMeetings.list.header.today" = "Heute";
 "wireMeetings.list.header.tomorrow" = "Morgen";
 "wireMeetings.list.header.yesterday" = "Gestern";
@@ -39,6 +42,8 @@
 "wireMeetings.list.delete.alert.subtitle" = "Das Meeting wird für Sie und alle anderen gelöscht. Alle Teilnehmer werden darüber informiert.";
 "wireMeetings.list.delete.alert.delete.button" = "Löschen";
 "wireMeetings.list.delete.alert.cancel.button" = "Abbrechen";
+"wireMeetings.list.join.error.alert.title" = "Could not join the meeting";
+"wireMeetings.list.join.error.alert.ok" = "OK";
 "wireMeetings.list.delete.error.alert.title" = "Ein Fehler ist aufgetreten";
 "wireMeetings.list.delete.error.alert.ok" = "OK";
 
@@ -46,7 +51,7 @@
 
 "wireMeetings.schedule.now.title" = "Meeting starten";
 "wireMeetings.schedule.future.title" = "Neues Meeting";
-"wireMeetings.schedule.edit.title" = "Edit Meeting";
+"wireMeetings.schedule.edit.title" = "Meeting bearbeiten";
 "wireMeetings.schedule.cancel.button" = "Abbrechen";
 "wireMeetings.schedule.schedule.button" = "Planen";
 "wireMeetings.schedule.save.button" = "Bestätigen";
