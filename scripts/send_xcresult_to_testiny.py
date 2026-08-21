@@ -132,13 +132,14 @@ def execute_xcresulttool(*args: str) -> dict:
     return json.loads(r.stdout)
 
 def final_test_result(node: dict) -> str:
+    raw = node.get("result", "unknown")
     runs = [
         child for child in node.get("children", [])
         if child.get("nodeType") in ("Repetition", "Test Case Run")
     ]
     if runs:
-        return runs[-1].get("result", node.get("result", "unknown"))
-    return node.get("result", "unknown")
+        raw = runs[-1].get("result", raw)
+    return raw.strip().title() if isinstance(raw, str) else str(raw)
 
 def collect_test_nodes_new_api(root: dict, tests: list):
     stack = [root]

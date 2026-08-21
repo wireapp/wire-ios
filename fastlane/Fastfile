@@ -113,7 +113,11 @@ platform :ios do
         options[:testplan] = "UITests"
         options[:number_of_retries] = 1
         options[:output_remove_retry_attempts] = true
-        requested_testiny_cases = normalize_testiny_case_ids(options[:testiny_cases])
+        raw_testiny_cases = options[:testiny_cases].to_s.strip
+        requested_testiny_cases = normalize_testiny_case_ids(raw_testiny_cases)
+        if raw_testiny_cases != "" && requested_testiny_cases.empty?
+            UI.user_error!("No valid Testiny case id(s) provided: #{raw_testiny_cases}")
+        end
         explicit_tests = ui_test_identifiers_matching_testiny_cases(requested_testiny_cases)
         UI.user_error!("No UI tests matched Testiny case id(s): #{requested_testiny_cases.join(',')}") if requested_testiny_cases.any? && explicit_tests.empty?
         explicit_tests = normalize_test_identifiers(options[:only_testing]) if explicit_tests.empty?

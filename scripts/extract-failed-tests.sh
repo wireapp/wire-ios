@@ -19,6 +19,9 @@ set -Eeuo pipefail
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 
+# Finds failed UI Testiny cases from local xcresult bundles, or from the last
+# completed Critical Flows run on the same branch via the GH API.
+
 ARTIFACT_PATTERN="${ARTIFACT_PATTERN:-XCResults for *}"
 CURRENT_RUN_ID="${GITHUB_RUN_ID:-}"
 WORKFLOW_FILE="${WORKFLOW_FILE:-critical_flows.yaml}"
@@ -58,7 +61,7 @@ extract_failed_cases_from_path() {
       continue
     fi
 
-    jq -r '
+    if ! jq -r '
       def test_cases:
         [.. | objects | select(.nodeType? == "Test Case")];
 
@@ -116,7 +119,10 @@ extract_failed_cases_from_path() {
       | add // []
       | unique
       | .[]
-    ' "$tests_json" >> "$ids_file"
+    ' "$tests_json" >> "$ids_file"; then
+      echo "[WARN] Could not parse test tree from $xcresult" >&2
+      continue
+    fi
   done
 
   sort -u "$ids_file" | paste -sd, -
