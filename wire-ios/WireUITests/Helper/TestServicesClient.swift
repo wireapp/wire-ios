@@ -361,7 +361,7 @@ class TestServicesClient {
         latitude: Double,
         longitude: Double,
         locationName: String,
-        timeoutMillis: Int = 0
+        timeoutMillis: Int? = nil
     ) async throws {
 
         let instanceId = try await getInstanceId(
@@ -384,7 +384,7 @@ class TestServicesClient {
             "locationName": locationName
         ]
 
-        if timeoutMillis > 0 {
+        if let timeoutMillis {
             body["messageTimer"] = timeoutMillis
         }
 
