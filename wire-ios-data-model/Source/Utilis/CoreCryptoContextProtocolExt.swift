@@ -250,4 +250,17 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
 
     /// Destroys the local state of the given conversation; it can no longer be used locally after this call.
     func wipeConversation(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
+
+    ///
+    /// Encrypts a plaintext message for one member of the given conversation.
+    ///
+    /// Any feature using a targeted, transient or transient targeted message MUST specify why the lower security
+    /// guarantees (compared to MLS application messages) are acceptable and/or how they are mitigated.
+    ///
+    func encryptTargetedMessage(
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        recipient: WireCoreCryptoUniffi.ClientId,
+        policy: WireCoreCryptoUniffi.TargetedMessagePolicy,
+        message: Data
+    ) async throws -> Data
 }

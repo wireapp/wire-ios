@@ -3692,29 +3692,6 @@ private actor KeyPackageRecorder {
     }
 }
 
-extension ConversationConfiguration: @retroactive Equatable {
-    public static func == (
-        lhs: ConversationConfiguration,
-        rhs: ConversationConfiguration
-    ) -> Bool {
-        lhs.ciphersuite == rhs.ciphersuite &&
-            lhs.externalSenders == rhs.externalSenders &&
-            lhs.custom == rhs.custom
-    }
-}
-
-extension ExternalSenderKey: @retroactive Equatable {
-    public static func == (lhs: ExternalSenderKey, rhs: ExternalSenderKey) -> Bool {
-        lhs.copyBytes() == rhs.copyBytes()
-    }
-}
-
-extension ClientId: @retroactive Equatable {
-    public static func == (lhs: ClientId, rhs: ClientId) -> Bool {
-        lhs.copyBytes() == rhs.copyBytes()
-    }
-}
-
 private extension MLSAPIError {
 
     func encodeAsString() throws -> String {
