@@ -67,7 +67,7 @@ package final class FilesViewModel: ObservableObject {
 
     let cellName: String? // nil when browsing all files
     let navigationPath: [FilesViewItem]
-    var sortingSelection: FilesSortingViewModel.SortingSelection = .default
+    var sortingSelection: FilesSortingViewModel.SortingSelection
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
@@ -131,6 +131,7 @@ package final class FilesViewModel: ObservableObject {
         triggerReload: PassthroughSubject<Void, Never> = .init(),
         networkMonitor: NetworkMonitor = .shared
     ) {
+        self.sortingSelection = isBrowsing ? .defaultDrive : .defaultSharedDrive
         self.useCases = useCases
         self.title = title
         self.navigationPath = navigationPath
@@ -443,7 +444,7 @@ package final class FilesViewModel: ObservableObject {
 
     func resetFilters() {
         filtersSelection = .empty
-        sortingSelection = .default
+        sortingSelection = isBrowsing ? .defaultDrive : .defaultSharedDrive
     }
 
     // MARK: offline mode
