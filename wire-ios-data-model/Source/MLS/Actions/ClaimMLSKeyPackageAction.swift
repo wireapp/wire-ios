@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCryptoUniffi
+import WireLogging
 
 public class ClaimMLSKeyPackageAction: EntityAction {
 
@@ -119,6 +120,16 @@ extension KeyPackage {
         guard let decodedData = keyPackage.base64DecodedData else {
             return nil
         }
-        return try? .init(bytes: decodedData)
+
+        do {
+            return try .init(bytes: decodedData)
+        } catch {
+            WireLogger.mls.error(
+                "failed to decode key package into WireCoreCryptoUniffi.KeyPackage",
+                attributes: .safePublic
+            )
+            return nil
+        }
+
     }
 }
