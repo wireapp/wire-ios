@@ -72,7 +72,11 @@ public final class PKIEnvironmentTransport: WireCoreCrypto.PkiEnvironmentHooks {
         }
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        let httpResponse = response as! HTTPURLResponse
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+
         let headers = httpResponse.allHeaderFields.compactMap { (key: AnyHashable, value: Any) in
             if let name = key as? String, let value = value as? String {
                 HttpHeader(name: name, value: value)
