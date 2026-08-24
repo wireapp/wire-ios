@@ -130,7 +130,7 @@ extension CreateMLSGroupUseCase {
         ciphersuite: MLSCipherSuite
     ) async throws -> MLSCipherSuite {
         do {
-            let externalSender = try externalSenders.first
+            let externalSender = externalSenders.first
 
             try await coreCrypto.transaction {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite.coreCryptoCipherSuite)
