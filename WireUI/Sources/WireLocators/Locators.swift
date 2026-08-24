@@ -253,11 +253,18 @@ public enum Locators {
         case title
         case addParticipantsButton
         case moreOptionsButton
+        case notificationOptionsCell
         case userCellName
         case adminCell
         case memberCell
         case close
         case readReceiptsSwitch
+    }
+
+    public enum ConversationNotificationOptionsPage: String {
+        case everythingOption = "Everything"
+        case mentionsAndRepliesOption = "Mentions and Replies"
+        case nothingOption = "Nothing"
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {

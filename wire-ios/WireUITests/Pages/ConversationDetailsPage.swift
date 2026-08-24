@@ -149,9 +149,36 @@ class ConversationDetailsPage: PageModel {
         app.switches[Locators.ConversationDetailsPage.readReceiptsSwitch.rawValue].firstMatch
     }
 
+    var notificationOptionsCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.notificationOptionsCell.rawValue].firstMatch
+    }
+
     @discardableResult
     func toggleGroupReadReceipts() -> ConversationDetailsPage {
         readReceiptsSwitch.waitAndTap()
+        return self
+    }
+
+    func openNotificationOptions() throws -> ConversationNotificationOptionsPage {
+        XCTAssertTrue(
+            notificationOptionsCell.waitAndTap(),
+            "Notification options cell did not appear"
+        )
+        return try ConversationNotificationOptionsPage()
+    }
+
+    @discardableResult
+    func assertNotificationStatus(
+        _ mode: ConversationNotificationOptionsPage.NotificationMode,
+    ) -> Self {
+        XCTAssertTrue(
+            notificationOptionsCell.waitForExistence(timeout: 2),
+            "Notification options cell did not appear",
+        )
+        XCTAssertTrue(
+            notificationOptionsCell.label.contains(mode.title),
+            "Notification options cell did not show \(mode.title)",
+        )
         return self
     }
 
@@ -190,5 +217,111 @@ class ConversationDetailsPage: PageModel {
 
     var leaveAndClearConversationButtonOnBottomSheet: XCUIElement {
         app.buttons[Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue].firstMatch
+    }
+}
+
+class ConversationNotificationOptionsPage: PageModel {
+
+    enum NotificationMode {
+        case everything
+        case mentionsAndReplies
+        case nothing
+
+        var locator: Locators.ConversationNotificationOptionsPage {
+            switch self {
+            case .everything:
+                .everythingOption
+            case .mentionsAndReplies:
+                .mentionsAndRepliesOption
+            case .nothing:
+                .nothingOption
+            }
+        }
+
+        var title: String {
+            switch self {
+            case .everything:
+                "Everything"
+            case .mentionsAndReplies:
+                "Mentions and Replies"
+            case .nothing:
+                "Nothing"
+            }
+        }
+    }
+
+    override var pageMainElement: XCUIElement {
+        everythingOption
+    }
+
+    var everythingOption: XCUIElement {
+        option(.everything)
+    }
+
+    var mentionsAndRepliesOption: XCUIElement {
+        option(.mentionsAndReplies)
+    }
+
+    var nothingOption: XCUIElement {
+        option(.nothing)
+    }
+
+    private var backButton: XCUIElement {
+        let predicate = NSPredicate(format: "identifier == %@ AND label == %@", "BackButton", "Back")
+        return app.buttons.matching(predicate).firstMatch
+    }
+
+    @discardableResult
+    func select(_ mode: NotificationMode) -> Self {
+        XCTAssertTrue(
+            option(mode).waitAndTap(),
+            "Notification option did not appear"
+        )
+        return self
+    }
+
+    @discardableResult
+    func assertSelected(
+        _ mode: NotificationMode,
+    ) -> Self {
+        let option = option(mode)
+        XCTAssertTrue(
+            option.waitForExistence(timeout: 2),
+            "Notification option did not appear",
+        )
+        XCTAssertTrue(
+            waitUntilSelected(option),
+            "Notification option is not selected",
+        )
+        return self
+    }
+
+    func goBackToConversationDetails() throws -> ConversationDetailsPage {
+        XCTAssertTrue(
+            backButton.waitAndTap(),
+            "Notification options back button did not appear"
+        )
+        return try ConversationDetailsPage()
+    }
+
+    private func option(_ mode: NotificationMode) -> XCUIElement {
+        app.descendants(matching: .any)[mode.locator.rawValue].firstMatch
+    }
+
+    private func selectedValue(for option: XCUIElement) -> String {
+        (option.value as? String) ?? ""
+    }
+
+    private func waitUntilSelected(_ option: XCUIElement, timeout: TimeInterval = 3) -> Bool {
+        let end = Date().addingTimeInterval(timeout)
+
+        while Date() < end {
+            if !selectedValue(for: option).isEmpty {
+                return true
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+
+        return !selectedValue(for: option).isEmpty
     }
 }

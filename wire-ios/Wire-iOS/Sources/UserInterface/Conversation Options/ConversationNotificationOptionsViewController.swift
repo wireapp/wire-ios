@@ -127,6 +127,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         cell.title = item.localizationKey
         cell.showCheckmark = item == conversation.mutedMessageTypes
         cell.showSeparator = indexPath.row < (items.count - 1)
+        cell.accessibilityIdentifier = item.localizationKey
 
         return cell
     }
