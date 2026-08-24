@@ -20,6 +20,14 @@ on:
         type: string
         required: false
         default: ''
+      ui_test_cases:
+        type: string
+        required: false
+        default: ''
+      rerun_failed_from_previous:
+        type: boolean
+        required: false
+        default: false
       testiny_run_name:
         type: string
         required: false
@@ -59,6 +67,7 @@ jobs:
     timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
       contents: read
+      actions: read
       pull-requests: write
       checks: write
     outputs:
@@ -97,6 +106,28 @@ jobs:
         uses: xom9ikk/dotenv@d0a56edc74279820eabbe34477511327e710d0de # v2.4.0
         with:
           path: fastlane/
+
+      - name: Resolve failed UI tests from previous run
+        id: previous-failed-ui-tests
+        if: ${{ inputs.run_critical_flows && inputs.rerun_failed_from_previous && inputs.ui_test_cases == '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_BRANCH: ${{ inputs.branch }}
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$GH_HEAD_REF"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+
+          FAILED_CASES="$(scripts/extract-failed-tests.sh --branch "$BRANCH")"
+          echo "ui_test_cases=$FAILED_CASES" >> "$GITHUB_OUTPUT"
 
       - name: Restore Carthage Cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -149,8 +180,14 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         env:
           UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
+          UI_TEST_CASES: ${{ inputs.ui_test_cases }}
+          PREVIOUS_FAILED_UI_TEST_CASES: ${{ steps.previous-failed-ui-tests.outputs.ui_test_cases }}
         run: |
-          if [ -n "$UI_TEST_TAGS" ]; then
+          if [ -n "$UI_TEST_CASES" ]; then
+            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES"
+          elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
+            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES"
+          elif [ -n "$UI_TEST_TAGS" ]; then
             bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS"
           else
             bundle exec fastlane run_uitests
