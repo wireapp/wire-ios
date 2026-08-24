@@ -229,7 +229,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         case let .text(plaintext, senderClientID, _):
             let cliendID = try senderClientId(from: senderClientID).clientID
             return [.message(plaintext, cliendID)]
-        case let .commit(isActive, bufferedMessages, identity):
+        case let .commit(_, bufferedMessages, _):
             if let bufferedMessages {
                 return try bufferedMessages.compactMap { try decryptResult(from: $0) }
             } else {
