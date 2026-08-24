@@ -200,9 +200,14 @@ public enum Locators {
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
         case uploadFileButton
+        case locationButton
         case browse = "Browse"
         case open = "Open"
         case allowFullAccess = "Allow Full Access"
+        case sendLocation
+        case selectedAddress
+        case locationCell
+        case locationMap
         case ok = "OK"
         case audioButton
         case startRecording
@@ -676,6 +681,7 @@ public enum Locators {
         }
 
         public enum MeetingRow: String {
+            case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
         }
 
