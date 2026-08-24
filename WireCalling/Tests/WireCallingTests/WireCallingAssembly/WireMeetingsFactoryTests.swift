@@ -30,7 +30,7 @@ struct WireMeetingsFactoryTests {
     @Test("makeMeetingsView returns a hosting controller for the meetings view")
     func makeMeetingsView() {
         // Given
-        let factory = WireMeetingsFactory()
+        let factory = WireMeetingsFactory(selfUserID: UUID())
 
         // When
         let viewController = factory.makeMeetingsView(

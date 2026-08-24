@@ -17,6 +17,7 @@
 //
 
 package import WireCallingDomain
+package import Foundation
 package import WireFoundation
 
 import SwiftUI
@@ -47,6 +48,7 @@ package final class AllMeetingsViewModel {
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
         joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
         makeFormViewModel: @escaping @MainActor (
@@ -60,6 +62,7 @@ package final class AllMeetingsViewModel {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
         self.joinMeetingCallUseCase = joinMeetingCallUseCase
