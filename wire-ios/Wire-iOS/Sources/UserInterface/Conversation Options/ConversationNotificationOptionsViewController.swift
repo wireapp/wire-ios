@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class ConversationNotificationOptionsViewController: UIViewController {
@@ -127,7 +128,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         cell.title = item.localizationKey
         cell.showCheckmark = item == conversation.mutedMessageTypes
         cell.showSeparator = indexPath.row < (items.count - 1)
-        cell.accessibilityIdentifier = item.localizationKey
+        cell.accessibilityIdentifier = item.accessibilityIdentifier
 
         return cell
     }
@@ -218,6 +219,15 @@ extension MutedMessageTypes {
         case .regular:      L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
         case .all:          L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
         default:            nil
+        }
+    }
+
+    var accessibilityIdentifier: String? {
+        switch self {
+        case .none:    Locators.ConversationNotificationOptionsPage.everythingOption.rawValue
+        case .regular: Locators.ConversationNotificationOptionsPage.mentionsAndRepliesOption.rawValue
+        case .all:     Locators.ConversationNotificationOptionsPage.nothingOption.rawValue
+        default:       nil
         }
     }
 }

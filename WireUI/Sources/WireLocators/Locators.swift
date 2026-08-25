@@ -261,10 +261,10 @@ public enum Locators {
         case readReceiptsSwitch
     }
 
-    public enum ConversationNotificationOptionsPage: String {
-        case everythingOption = "Everything"
-        case mentionsAndRepliesOption = "Mentions and Replies"
-        case nothingOption = "Nothing"
+    public enum ConversationNotificationOptionsPage: AutoPrefixedEnum {
+        case everythingOption
+        case mentionsAndRepliesOption
+        case nothingOption
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
