@@ -389,10 +389,8 @@ final class GroupMessagingTests: WireUITestCase {
         // THEN
         try notificationOptionsPage
             .assertSelected(.everything)
-            .select(.mentionsAndReplies)
-            .assertSelected(.mentionsAndReplies)
-            .select(.nothing)
-            .assertSelected(.nothing)
+            .selectAndVerify(.mentionsAndReplies)
+            .selectAndVerify(.nothing)
             .goBackToConversationDetails()
             .assertNotificationStatus(.nothing)
             .openNotificationOptions()
