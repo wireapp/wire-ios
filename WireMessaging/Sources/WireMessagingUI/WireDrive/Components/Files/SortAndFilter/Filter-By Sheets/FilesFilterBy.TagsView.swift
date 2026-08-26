@@ -103,12 +103,10 @@ private extension FilesFilterBy.TagsView {
     var tagsView: some View {
         VStack(alignment: .leading, spacing: tagsViewSpacing) {
             if viewModel.presentedTags.isEmpty {
-                Spacer()
-
                 Text(viewModel.searchText.isEmpty ? Strings.Filter.Tags.emptyTitle : Strings.Filter.Tags
                     .notFoundBySearch)
                     .font(for: .h4)
-                    .padding([.top, .bottom])
+                    .padding(.bottom)
 
                 Spacer()
             }
