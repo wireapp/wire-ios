@@ -105,13 +105,13 @@ extension CreateMLSGroupUseCase {
         ciphersuite: MLSCipherSuite
     ) async throws -> MLSCipherSuite {
 
-        let externalSenders: [ExternalSenderKey]
+        let externalSenders: [ExternalSender]
 
         do {
             if let removalKeys {
-                externalSenders = removalKeys.externalSenderKey(for: ciphersuite)
+                externalSenders = try removalKeys.externalSenderKey(for: ciphersuite)
             } else if let backendPublicKeys = await fetchBackendPublicKeys() {
-                externalSenders = backendPublicKeys.externalSenderKey(for: ciphersuite)
+                externalSenders = try backendPublicKeys.externalSenderKey(for: ciphersuite)
             } else {
                 throw MLSService.MLSGroupCreationError.failedToGetExternalSenders
             }
@@ -126,22 +126,29 @@ extension CreateMLSGroupUseCase {
 
     private func createGroup(
         for groupID: MLSGroupID,
-        externalSenders: [ExternalSenderKey],
+        externalSenders: [ExternalSender],
         ciphersuite: MLSCipherSuite
     ) async throws -> MLSCipherSuite {
         do {
-            let config = ConversationConfiguration(
-                ciphersuite: ciphersuite.coreCryptoCipherSuite,
-                externalSenders: externalSenders,
-                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
-            )
+            let externalSender = externalSenders.first
 
             try await coreCrypto.transaction {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite.coreCryptoCipherSuite)
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite.coreCryptoCipherSuite)
+
+                guard let credentialRef = try await coreCrypto.coreCrypto.findCredentials(
+                    clientId: nil,
+                    publicKey: nil,
+                    cipherSuite: ciphersuite.coreCryptoCipherSuite,
+                    credentialType: e2eiIsEnabled ? .x509 : .basic,
+                    earliestValidity: nil
+                ).first else {
+                    throw MLSService.MLSGroupCreationError.invalidCiphersuite
+                }
+
                 try await $0.createConversation(
                     conversationId: groupID.conversationId,
-                    creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
-                    config: config
+                    credentialRef: credentialRef,
+                    externalSender: externalSender
                 )
             }
         } catch {

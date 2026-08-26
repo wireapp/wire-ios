@@ -7,13 +7,14 @@ on:
         description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
         type: string
+
       run_uitests:
         description: "Run Critical UITests only"
         required: false
         default: true
         type: boolean
       ui_test_scope:
-        description: "UI test scope"
+        description: "Specific scope"
         required: false
         default: ""
         type: choice
@@ -23,6 +24,15 @@ on:
           - core-messenger
           - collaboration
           - integration
+      rerun_failed_from_previous:
+        description: "Rerun failed UITests from previous run on this branch"
+        required: false
+        default: false
+        type: boolean
+      ui_test_cases:
+        description: "Want to run specific Test? Pass Testiny case ID(s), comma separated"
+        required: false
+        type: string
   push:
     branches:
       - 'develop'
@@ -66,6 +76,8 @@ jobs:
       # - scope only       => <scope>
       # - neither          => all tests (empty tag filter)
       ui_test_tags: ${{ inputs.run_uitests && inputs.ui_test_scope != '' && format('critical,{0}', inputs.ui_test_scope) || inputs.run_uitests && 'critical' || inputs.ui_test_scope }}
+      ui_test_cases: ${{ inputs.ui_test_cases }}
+      rerun_failed_from_previous: ${{ inputs.rerun_failed_from_previous }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
       timeout_minutes: 150

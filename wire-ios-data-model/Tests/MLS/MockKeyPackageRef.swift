@@ -16,20 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireCoreCrypto
 
-public struct CRLsDistributionPoints: Equatable {
+final class MockKeyPackageRef: WireCoreCrypto.KeyPackageRef, @unchecked Sendable {
 
-    public let urls: Set<URL>
+    let _cipherSuite: CipherSuite
 
-    public init?(from stringArray: [String]?) {
-        let urls = stringArray?.compactMap { URL(string: $0) }
+    init(cipherSuite: CipherSuite) {
+        self._cipherSuite = cipherSuite
 
-        guard let urls, !urls.isEmpty else {
-            return nil
-        }
-
-        self.urls = Set(urls)
+        super.init(noPointer: .init())
     }
 
+    @_documentation(visibility: private)
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        fatalError("init(unsafeFromRawPointer:) has not been implemented")
+    }
+
+    override func cipherSuite() -> CipherSuite {
+        _cipherSuite
+    }
 }
