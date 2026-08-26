@@ -28,7 +28,7 @@ final class WireDriveNodeUploadManagerTests {
     private let nodesAPI = MockNodesAPIProtocol()
     private lazy var sut = WireDriveNodeUploadManager(nodesAPI: nodesAPI)
 
-    private let assetPath = URL(fileURLWithPath: "/tmp/some-file.txt")
+    private let assetPath = URL(fileURLWithPath: "/tmp/\(UUID())/some-file.txt")
 
     init() {
         nodesAPI.preCheckNodePathFindAvailablePath_MockValue = .success
