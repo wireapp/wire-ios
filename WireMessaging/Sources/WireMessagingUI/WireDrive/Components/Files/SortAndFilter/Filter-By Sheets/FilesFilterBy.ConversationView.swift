@@ -80,7 +80,7 @@ extension FilesFilterBy {
             .toolbar { toolbarContent }
             .navigationTitle(Strings.Filter.Conversation.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $viewModel.searchText)
+            .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always))
         }
 
         @ViewBuilder

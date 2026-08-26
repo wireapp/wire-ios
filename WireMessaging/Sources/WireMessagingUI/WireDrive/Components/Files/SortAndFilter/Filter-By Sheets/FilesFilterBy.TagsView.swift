@@ -84,7 +84,11 @@ extension FilesFilterBy {
                 Button(L10n.Localizable.General.confirm, role: .cancel) {}
             }
             .overlay { if viewModel.isLoading { ProgressView() } }
-            .searchable(text: $viewModel.searchText, prompt: Strings.Filter.Tags.searchPrompt)
+            .searchable(
+                text: $viewModel.searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: Strings.Filter.Tags.searchPrompt
+            )
         }
     }
 }
