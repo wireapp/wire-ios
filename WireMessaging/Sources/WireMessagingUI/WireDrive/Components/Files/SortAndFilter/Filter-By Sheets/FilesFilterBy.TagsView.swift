@@ -86,7 +86,7 @@ extension FilesFilterBy {
             .overlay { if viewModel.isLoading { ProgressView() } }
             .searchable(
                 text: $viewModel.searchText,
-                placement: .navigationBarDrawer(displayMode: .always),
+                placement: .navigationBarDrawer(displayMode: .automatic),
                 prompt: Strings.Filter.Tags.searchPrompt
             )
         }
