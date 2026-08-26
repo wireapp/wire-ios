@@ -56,17 +56,13 @@ final class AccountStoreTests {
     func itCanStoreAndRetrieveAnAccount() throws {
         // Given
         let sut = try AccountStore(directory: url)
-        let identityProviderID = UUID()
         let account = Account(userName: "Alice", userIdentifier: UUID())
-        account.lastSSOIdentityProviderID = identityProviderID
 
         // When
         #expect(sut.storeAccount(account) == true)
 
         // Then
         #expect(sut.fetchAllAccounts() == [account])
-        let storedAccount = try #require(sut.fetchAccount(with: account.userIdentifier))
-        #expect(storedAccount.lastSSOIdentityProviderID == identityProviderID)
     }
 
     @Test("It can remove an account")
@@ -336,7 +332,6 @@ final class AccountStoreTests {
             loginCredentials: nil
         )
         #expect(account == expectedAccount)
-        #expect(account?.lastSSOIdentityProviderID == nil)
     }
 
     @Test("It decodes account on disk with login credentials")
