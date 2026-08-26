@@ -586,7 +586,7 @@ final class UserHelper {
     ///   - driveEnabled: whether Drive should be unlocked and enabled for for group
     /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if conversation created
     func registerTeam(
-        withMemberCount memberCount: Int,
+        withMemberCount memberCount: Int = 0,
         conversation: CreateConversationOption? = nil,
         driveEnabled: Bool = false,
         names: [String] = []
