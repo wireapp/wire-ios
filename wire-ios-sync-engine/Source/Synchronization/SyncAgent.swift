@@ -252,12 +252,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     // ignore error, don't retry
                     // this can happen if receiving a call
                 } catch IncrementalSyncV2.Failure.nsePushChannelAlreadyOpened {
-                    WireLogger.sync.debug(
+                    WireLogger.sync.info(
                         "push channel opened, waiting until closed",
                         attributes: .incrementalSyncV3
                     )
                     await pushChannelCoordinator.signalToExtensionsToYieldPushChannel()
-                    WireLogger.sync.debug(
+                    WireLogger.sync.info(
                         "retry sync after NSE push channel closed",
                         attributes: .incrementalSyncV3
                     )

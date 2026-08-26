@@ -134,10 +134,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 if Task.isCancelled {
                     return
                 }
-                WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
+                WireLogger.sync.info("requested to cancel sync", attributes: .incrementalSync, .newNSE)
                 currentTask.cancel()
                 request.acknowledge()
-                WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
+                WireLogger.sync.info("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
             }
 
             try await withTaskCancellationHandler {

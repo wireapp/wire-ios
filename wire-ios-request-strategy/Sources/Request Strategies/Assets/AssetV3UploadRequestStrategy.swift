@@ -207,7 +207,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             )
         }
 
-        WireLogger.assets.debug(
+        WireLogger.assets.info(
             "sending request for asset",
             attributes: logAttributes
         )

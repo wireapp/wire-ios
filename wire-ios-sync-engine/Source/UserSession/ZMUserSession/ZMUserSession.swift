@@ -1301,7 +1301,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didStartIncrementalSync() {
-        WireLogger.sync.debug("did start incremental sync", attributes: .incrementalSync)
+        WireLogger.sync.info("did start incremental sync", attributes: .incrementalSync)
         Task {
             await showSyncBar(true)
         }
@@ -1315,7 +1315,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishIncrementalSync(isRecovering: Bool) {
-        WireLogger.sync.debug(
+        WireLogger.sync.info(
             "did finish incremental sync (isRecovering: \(isRecovering))",
             attributes: .incrementalSync
         )
@@ -1405,7 +1405,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents(only onlyCallEvents: Bool) async {
-        WireLogger.sync.debug(
+        WireLogger.sync.info(
             "process pending call events (onlyCallEvents: \(onlyCallEvents)",
             attributes: .incrementalSync
         )
