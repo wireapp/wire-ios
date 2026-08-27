@@ -83,6 +83,10 @@ class ConversationDetailsPage: PageModel {
             .firstMatch
     }
 
+    func guestIcon(forUserNamed name: String) -> XCUIElement {
+        memberCell(named: name).images["img.guest"]
+    }
+
     func openUserDetailsPage(byName name: String) throws -> UserDetailsPage {
         let predicate = NSPredicate(format: "label == %@", name)
         userCells.matching(predicate).firstMatch.tap()
