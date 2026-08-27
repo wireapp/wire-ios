@@ -1405,10 +1405,10 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents(only onlyCallEvents: Bool) async {
-        WireLogger.sync.info(
-            "process pending call events (onlyCallEvents: \(onlyCallEvents)",
-            attributes: .incrementalSync
-        )
+WireLogger.sync.info(
+    "process pending call events (onlyCallEvents: \(onlyCallEvents))",
+    attributes: .incrementalSync
+)
 
         syncAgent?.resume(callEventsOnly: true)
     }
