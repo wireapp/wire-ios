@@ -178,13 +178,20 @@ final class ConversationInputBarViewController: UIViewController,
             .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
     }
 
+    private var shouldShowDriveViewerBanner: Bool {
+        showDriveViewerBanner &&
+            !ConversationViewerAccessBannerDismissalStore.shared
+            .isDismissed(forCellName: conversation.wireDriveCellName)
+    }
+
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
         let inputBar = InputBar(
             buttons: inputBarButtons,
             isWireDriveEnabled: conversation.isWireDriveEnabled,
-            showDriveViewerBanner: showDriveViewerBanner
+            showDriveViewerBanner: shouldShowDriveViewerBanner,
+            cellName: conversation.isWireDriveEnabled ? conversation.wireDriveCellName : nil
         )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
@@ -504,6 +511,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        inputBar.hideDriveViewerBannerIfDismissed()
         updateButtonStates()
         inputBar.updateReturnKey()
         inputBar.updateEphemeralState()

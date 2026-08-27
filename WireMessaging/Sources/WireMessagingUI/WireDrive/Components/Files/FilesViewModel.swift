@@ -273,7 +273,19 @@ package final class FilesViewModel: ObservableObject {
         selfUser = conversations.flatMap(\.participants).first(where: \.isSelfUser)
 
         if let selfUser {
-            showReadOnlyBanner = !isBrowsing && selfUser.role == .viewer && isDrivePermissionsFlagEnabled
+            let isDismissed = cellName
+                .map(ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName:)) ?? false
+            let isViewer = selfUser.role == .viewer
+            showReadOnlyBanner = isDrivePermissionsFlagEnabled && !isBrowsing && isViewer && !isDismissed &&
+                !isRecycleBin
+        }
+    }
+
+    func dismissReadOnlyBanner() {
+        showReadOnlyBanner = false
+
+        if let cellName {
+            ConversationViewerAccessBannerDismissalStore.shared.markDismissed(forCellName: cellName)
         }
     }
 
