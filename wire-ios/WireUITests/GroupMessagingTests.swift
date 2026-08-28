@@ -373,6 +373,30 @@ final class GroupMessagingTests: WireUITestCase {
         activeConversationPage.openLocationInDefaultMapsApp(locationName: "Berlin")
     }
 
+    @MainActor
+    func testUserAbleToChangeConversationNotificationSettings_TC_8871() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+        let activeConversationPage = try login(user: groupTeam.teamOwner)
+            .openConversation()
+
+        // WHEN
+        let notificationOptionsPage = try activeConversationPage
+            .openConversationDetails()
+            .openNotificationOptions()
+
+        // THEN
+        try notificationOptionsPage
+            .assertSelected(.everything)
+            .selectAndVerify(.mentionsAndReplies)
+            .selectAndVerify(.nothing)
+            .goBackToConversationDetails()
+            .assertNotificationStatus(.nothing)
+            .openNotificationOptions()
+            .assertSelected(.nothing)
+    }
+
     private func verifyMessageReceivedAndSenderInfo(
         attachment: XCUIElement,
         on activeConversationPage: ActiveConversationPage,

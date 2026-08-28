@@ -46,7 +46,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
             do {
                 let ssoCode = try await authenticationAPI.getSSOCode(forEmail: email)
-                return .loginViaSSO(code: ssoCode, multiIngressIdentityProviderID: ssoCode)
+                return .loginViaSSO(code: ssoCode)
             } catch AuthenticationAPIError.unsupportedEndpointForAPIVersion, AuthenticationAPIError.ssoCodeNotFound {
                 // back to default behaviour - no default sso code
                 return try await determineAuthMethod(email: email, domain: domain)

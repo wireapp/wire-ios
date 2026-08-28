@@ -124,15 +124,15 @@ final class UserHelper {
             }
             return auth
 
-        case .anta:
-            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_ANTA"] else {
-                fatalError("Missing BASIC_AUTH_ANTA environment variable")
+        case .qaFederationA:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FEDERATION_A"] else {
+                fatalError("Missing BASIC_AUTH_QA_FEDERATION_A environment variable")
             }
             return auth
 
-        case .bella:
-            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_BELLA"] else {
-                fatalError("Missing BASIC_AUTH_BELLA environment variable")
+        case .qaFederationB:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FEDERATION_B"] else {
+                fatalError("Missing BASIC_AUTH_QA_FEDERATION_B environment variable")
             }
             return auth
         }
@@ -586,7 +586,7 @@ final class UserHelper {
     ///   - driveEnabled: whether Drive should be unlocked and enabled for for group
     /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if conversation created
     func registerTeam(
-        withMemberCount memberCount: Int,
+        withMemberCount memberCount: Int = 0,
         conversation: CreateConversationOption? = nil,
         driveEnabled: Bool = false,
         names: [String] = []
@@ -864,8 +864,8 @@ final class UserHelper {
 
 extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
-    static let backendURLAnta = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"]!)"
-    static let backendURLBella = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"]!)"
+    static let backendURLQAFederationA = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_A"]!)"
+    static let backendURLQAFederationB = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_B"]!)"
 
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
@@ -875,18 +875,18 @@ extension BackendEnvironment {
         proxySettings: nil
     )
 
-    static let anta = BackendEnvironment(
-        url: URL(string: backendURLAnta)!,
-        webSocketURL: URL(string: backendURLAnta)!,
-        blacklistURL: URL(string: backendURLAnta)!,
+    static let qaFederationA = BackendEnvironment(
+        url: URL(string: backendURLQAFederationA)!,
+        webSocketURL: URL(string: backendURLQAFederationA)!,
+        blacklistURL: URL(string: backendURLQAFederationA)!,
         pinnedKeys: [],
         proxySettings: nil
     )
 
-    static let bella = BackendEnvironment(
-        url: URL(string: backendURLBella)!,
-        webSocketURL: URL(string: backendURLBella)!,
-        blacklistURL: URL(string: backendURLBella)!,
+    static let qaFederationB = BackendEnvironment(
+        url: URL(string: backendURLQAFederationB)!,
+        webSocketURL: URL(string: backendURLQAFederationB)!,
+        blacklistURL: URL(string: backendURLQAFederationB)!,
         pinnedKeys: [],
         proxySettings: nil
     )
@@ -897,10 +897,10 @@ extension BackendTarget {
         switch self {
         case .staging:
             .staging
-        case .anta:
-            .anta
-        case .bella:
-            .bella
+        case .qaFederationA:
+            .qaFederationA
+        case .qaFederationB:
+            .qaFederationB
         }
     }
 }

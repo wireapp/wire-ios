@@ -673,8 +673,8 @@
 
 // automatic conversation deletion
 
-"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
-"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
+"content.system.message_conversation_scheduled_for_deletion.text" = "Diese Gruppe wird am %@ automatisch gelöscht, da es keine berechtigten Gruppen-Admins gibt.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Mehr erfahren";
 
 //
 "content.system.is_verified" = "Alle Fingerabdrücke sind überprüft";
@@ -1681,8 +1681,8 @@
 "login.sso.backend_switch.subtitle" = "Sie werden zu Ihrem speziellen Unternehmensservice weitergeleitet.";
 "login.sso.backend_switch.information" = "Geben Sie Ihre Zugangsdaten nur dann an, wenn Sie sicher sind, dass dies das Login Ihrer Organisation ist.";
 
-"sso_identity_changed.title" = "Identity Provider geändert";
-"sso_identity_changed.message" = "Dieses Benutzerkonto wurde mit einem anderen Identity Provider verwendet. Wenn Sie fortfahren, werden alle Unterhaltungen von diesem Gerät gelöscht.\nUm Ihre Daten zu behalten, wählen Sie „Abbrechen“ und melden Sie sich anschließend mit Ihrem bisherigen Identity Provider an.";
+"sso_identity_changed.title" = "Identitätsanbieter geändert";
+"sso_identity_changed.message" = "Dieses Benutzerkonto wurde mit einem anderen Identitätsanbieter verwendet. Wenn Sie fortfahren, werden alle Unterhaltungen von diesem Gerät gelöscht.\nUm Ihre Daten zu behalten, wählen Sie „Abbrechen“ und melden Sie sich anschließend mit Ihrem bisherigen Identitätsanbieter an.";
 "sso_identity_changed.delete_data_and_continue" = "Daten löschen und fortfahren";
 
 "registration.no_history.logged_out.hero" = "Sie haben Wire auf diesem Gerät bereits verwendet.";
