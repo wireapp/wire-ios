@@ -38,8 +38,11 @@
 "wireMeetings.list.attending" = "Участвует";
 "wireMeetings.list.actions.edit" = "Изменить встречу";
 "wireMeetings.list.actions.delete" = "Удалить встречу для всех";
+"wireMeetings.list.actions.deleteForMe" = "Удалить встречу для меня";
 "wireMeetings.list.delete.alert.title" = "Удалить встречу для всех";
 "wireMeetings.list.delete.alert.subtitle" = "Встреча будет удалена для вас и всех остальных. Все участники будут уведомлены.";
+"wireMeetings.list.deleteForMe.alert.title" = "Удалить встречу для меня";
+"wireMeetings.list.deleteForMe.alert.subtitle" = "Встреча будет удалена из календаря. Это не повлияет на других участников.";
 "wireMeetings.list.delete.alert.delete.button" = "Удалить";
 "wireMeetings.list.delete.alert.cancel.button" = "Отмена";
 "wireMeetings.list.join.error.alert.title" = "Не удалось присоединиться к встрече";
