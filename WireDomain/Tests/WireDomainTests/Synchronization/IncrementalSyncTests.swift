@@ -87,13 +87,13 @@ final class IncrementalSyncTests: XCTestCase {
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
             backgroundTaskExecuter: PassthroughTaskExecuter(),
-            beforeProcessingLiveEvent: { event in
-                self.liveEventsObservedBeforeProcessing.append(event)
+            beforeProcessingLiveEvent: { [weak self] event in
+                self?.liveEventsObservedBeforeProcessing.append(event)
             }
         )
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         journal = nil
         pushChannelAPI = nil
@@ -402,10 +402,12 @@ final class IncrementalSyncTests: XCTestCase {
         let task = Task {
             try await sut.perform()
         }
+        task.cancel()
 
         // Then
         do {
             _ = try await task.value
+            XCTFail("Expected CancellationError to be thrown")
         } catch {
             XCTAssertEqual(pushChannel.close_Invocations.count, 1)
             XCTAssertTrue(error is CancellationError)
