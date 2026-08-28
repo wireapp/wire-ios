@@ -74,6 +74,54 @@ final class OneOnOneMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testSendAndReceiveVideoInOneOnOneConversation_TC_8822_8829() async throws {
+
+        // GIVEN
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
+        let member = try XCTUnwrap(teamMembers.first)
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let activeConversationPage = try app.loginUser(email: member.email, password: member.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .openUserDetailsInContactList()
+            .tapStartConversationButton()
+
+        // WHEN
+        let sentConversationPage = try activeConversationPage
+            .openPhotosAndGrantPermission()
+            .selectVideoAndSend(at: 1)
+
+        // THEN - video is sent
+        XCTAssertTrue(
+            sentConversationPage.videoCell.waitForExistence(timeout: 2), "No Video cell found"
+        )
+        XCTAssertTrue(
+            sentConversationPage.videoPlayButton.waitForExistence(timeout: 2), "No Video play button found"
+        )
+
+        let receivedConversationPage = try sentConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
+
+        // THEN - video is received
+        XCTAssertTrue(
+            receivedConversationPage.videoCell.waitForExistence(timeout: 5),
+            "No Video cell found after receiving"
+        )
+        XCTAssertTrue(
+            receivedConversationPage.videoPlayButton.waitForExistence(timeout: 2),
+            "No Video play button found after receiving"
+        )
+    }
+
+    @MainActor
     func testReceiveTextAndAudioInOneOnOneConversation_TC_8826_8828() async throws {
 
         // GIVEN
