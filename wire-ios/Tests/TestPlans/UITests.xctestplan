@@ -42,20 +42,36 @@
             "value" : "$(KEYCLOAK_ADMIN_PASSWORD)"
           },
           {
-            "key" : "BELLA_INBUCKET_URL",
-            "value" : "$(BELLA_INBUCKET_URL)"
+            "key" : "QA_FEDERATION_A_DEEPLINK_URL",
+            "value" : "$(QA_FEDERATION_A_DEEPLINK_URL)"
           },
           {
-            "key" : "BELLA_DEEPLINK_URL",
-            "value" : "$(BELLA_DEEPLINK_URL)"
+            "key" : "QA_FEDERATION_A_INBUCKET_URL",
+            "value" : "$(QA_FEDERATION_A_INBUCKET_URL)"
           },
           {
-            "key" : "ANTA_INBUCKET_URL",
-            "value" : "$(ANTA_INBUCKET_URL)"
+            "key" : "BASIC_AUTH_QA_FEDERATION_A",
+            "value" : "$(BASIC_AUTH_QA_FEDERATION_A)"
           },
           {
-            "key" : "BACKEND_URL_ANTA",
-            "value" : "$(BACKEND_URL_ANTA)"
+            "key" : "BACKEND_URL_QA_FEDERATION_A",
+            "value" : "$(BACKEND_URL_QA_FEDERATION_A)"
+          },
+          {
+            "key" : "QA_FEDERATION_B_DEEPLINK_URL",
+            "value" : "$(QA_FEDERATION_B_DEEPLINK_URL)"
+          },
+          {
+            "key" : "QA_FEDERATION_B_INBUCKET_URL",
+            "value" : "$(QA_FEDERATION_B_INBUCKET_URL)"
+          },
+          {
+            "key" : "BASIC_AUTH_QA_FEDERATION_B",
+            "value" : "$(BASIC_AUTH_QA_FEDERATION_B)"
+          },
+          {
+            "key" : "BACKEND_URL_QA_FEDERATION_B",
+            "value" : "$(BACKEND_URL_QA_FEDERATION_B)"
           },
           {
             "key" : "PREDEFINED_BACKEND",
@@ -96,22 +112,6 @@
           {
             "key" : "INBUCKET_PASSWORD",
             "value" : "$(INBUCKET_PASSWORD)"
-          },
-          {
-            "key" : "ANTA_DEEPLINK_URL",
-            "value" : "$(ANTA_DEEPLINK_URL)"
-          },
-          {
-            "key" : "BASIC_AUTH_ANTA",
-            "value" : "$(BASIC_AUTH_ANTA)"
-          },
-          {
-            "key" : "BACKEND_URL_BELLA",
-            "value" : "$(BACKEND_URL_BELLA)"
-          },
-          {
-            "key" : "BASIC_AUTH_BELLA",
-            "value" : "$(BASIC_AUTH_BELLA)"
           }
         ],
         "targetForVariableExpansion" : {

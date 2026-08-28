@@ -274,7 +274,7 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
         guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else {
             return
         }
-        WireLogger.localStorage.debug("run preMigration step \(step.destinationVersion)", attributes: .safePublic)
+        WireLogger.localStorage.info("run preMigration step \(step.destinationVersion)", attributes: .safePublic)
         try action.perform(
             on: storeURL,
             with: step.sourceModel
@@ -286,7 +286,7 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
         guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion)
         else { return }
 
-        WireLogger.localStorage.debug("run postMigration step \(step.destinationVersion)", attributes: .safePublic)
+        WireLogger.localStorage.info("run postMigration step \(step.destinationVersion)", attributes: .safePublic)
         try action.perform(
             on: storeURL,
             with: step.destinationModel

@@ -25,16 +25,16 @@ final class FederationTests: WireUITestCase {
     @MainActor
     func testConnectFederatedUsers_TC_9459() async throws {
 
-        try switchBackend(target: .bella)
-        let bellaTeam = try await UserHelper.instance(backend: .bella).registerTeam(withMemberCount: 0)
-        _ = try await loginToBackend(user: bellaTeam.teamOwner)
+        try switchBackend(target: .qaFederationB)
+        let federationBTeam = try await UserHelper.instance(backend: .qaFederationB).registerTeam(withMemberCount: 0)
+        _ = try await loginToBackend(user: federationBTeam.teamOwner)
 
-        try switchBackend(target: .anta)
-        let antaTeam = try await UserHelper.instance(backend: .anta).registerTeam(withMemberCount: 0)
-        let conversationsPage = try await loginToBackend(user: antaTeam.teamOwner)
+        try switchBackend(target: .qaFederationA)
+        let federationATeam = try await UserHelper.instance(backend: .qaFederationA).registerTeam(withMemberCount: 0)
+        let conversationsPage = try await loginToBackend(user: federationATeam.teamOwner)
 
         // WHEN
-        let federatedHandle = "@\(bellaTeam.teamOwner.username)@\(BackendTarget.bella.domainInfo)"
+        let federatedHandle = "@\(federationBTeam.teamOwner.username)@\(BackendTarget.qaFederationB.domainInfo)"
         let activeConversationPage = try conversationsPage
             .tapPlusButtonToCreateGroup()
             .searchUserByUserHandle(federatedHandle)
@@ -43,7 +43,7 @@ final class FederationTests: WireUITestCase {
             .closeProfilePage()
             .closeNewConversationPage()
             .openUserProfilePage()
-            .switchUserAccountForUser(withName: bellaTeam.teamOwner.name)
+            .switchUserAccountForUser(withName: federationBTeam.teamOwner.name)
             .tapConnectionRequestsCell()
             .acceptConnectionRequest()
 
@@ -53,7 +53,7 @@ final class FederationTests: WireUITestCase {
 
         XCTAssertTrue(conversationsPage.conversationCell.exists)
         let conversationName = try XCTUnwrap(conversationsPage.getNameLabel())
-        XCTAssertEqual(conversationName, antaTeam.teamOwner.name, "name didn't match \(conversationName)")
+        XCTAssertEqual(conversationName, federationATeam.teamOwner.name, "name didn't match \(conversationName)")
     }
 
 }
