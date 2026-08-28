@@ -153,9 +153,36 @@ class ConversationDetailsPage: PageModel {
         app.switches[Locators.ConversationDetailsPage.readReceiptsSwitch.rawValue].firstMatch
     }
 
+    var notificationOptionsCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.notificationOptionsCell.rawValue].firstMatch
+    }
+
     @discardableResult
     func toggleGroupReadReceipts() -> ConversationDetailsPage {
         readReceiptsSwitch.waitAndTap()
+        return self
+    }
+
+    func openNotificationOptions() throws -> ConversationNotificationOptionsPage {
+        XCTAssertTrue(
+            notificationOptionsCell.waitAndTap(),
+            "Notification options cell did not appear"
+        )
+        return try ConversationNotificationOptionsPage()
+    }
+
+    @discardableResult
+    func assertNotificationStatus(
+        _ notificationMode: ConversationNotificationOptionsPage.NotificationMode,
+    ) -> Self {
+        XCTAssertTrue(
+            notificationOptionsCell.waitForExistence(timeout: 2),
+            "Notification options cell did not appear",
+        )
+        XCTAssertTrue(
+            notificationOptionsCell.label.contains(notificationMode.title),
+            "Notification options cell did not show \(notificationMode.title)",
+        )
         return self
     }
 
