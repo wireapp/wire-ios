@@ -596,6 +596,54 @@ class ActiveConversationPage: PageModel {
     }
 
     @discardableResult
+    func verifyGIFReceived(
+    ) throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            imageCell.waitForExistence(timeout: 5),
+            "Expected GIF image not found",
+        )
+
+        XCTAssertTrue(
+            waitForChangingFrame(in: imageCell),
+            "Expected GIF image to animate",
+        )
+
+        return self
+    }
+
+    private func waitForChangingFrame(
+        in element: XCUIElement,
+        timeout: TimeInterval = 5
+    ) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+
+        repeat {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.5))
+            if isChangingFrame(in: element) {
+                return true
+            }
+        } while Date() < deadline
+
+        return false
+    }
+
+    private func isChangingFrame(
+        in element: XCUIElement,
+        frameCount: Int = 6,
+        delay: TimeInterval = 0.2
+    ) -> Bool {
+        var screenshots = Set<Data>()
+
+        for index in 0 ..< frameCount {
+            screenshots.insert(element.screenshot().pngRepresentation)
+            guard index < frameCount - 1 else { continue }
+            RunLoop.current.run(until: Date().addingTimeInterval(delay))
+        }
+
+        return screenshots.count > 1
+    }
+
+    @discardableResult
     func verifyReadReceiptsSystemMessage(
         enabled: Bool,
         file: StaticString = #filePath,

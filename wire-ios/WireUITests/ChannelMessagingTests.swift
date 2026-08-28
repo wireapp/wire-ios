@@ -221,6 +221,46 @@ final class ChannelMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testReceiveGIFInChannelConversation_TC_8860() async throws {
+
+        // GIVEN
+        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+
+        _ = try login(user: teamWithChannelConversation.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: teamWithChannelConversation.teamMember.email,
+            password: teamWithChannelConversation.teamMember.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
+
+        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+
+        // WHEN
+        try await testServicesClient.sendImage(
+            user: teamWithChannelConversation.teamMember,
+            fileURL: mediaURLs.gifURL,
+            type: mediaURLs.gifType,
+            conversationId: teamWithChannelConversation.conversationId,
+            domain: teamWithChannelConversation.conversationDomain
+        )
+
+        // THEN
+        try activeConversationPage.verifyGIFReceived()
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            teamWithChannelConversation.teamMember.name,
+            "Sender info didn't match expected value \(teamWithChannelConversation.teamMember.name)"
+        )
+    }
+
+    @MainActor
     func testSendAndReceiveFileInChannelConversation_TC_8851_8858() async throws {
 
         // GIVEN

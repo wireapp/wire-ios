@@ -272,6 +272,40 @@ final class GroupMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testReceiveGIFInGroupConversation_TC_8846() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+        let conversationsPage = try login(user: groupTeam.teamOwner)
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+
+        // WHEN
+        try await testServicesClient.sendImage(
+            user: groupTeam.teamMember,
+            fileURL: mediaURLs.gifURL,
+            type: mediaURLs.gifType,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
+        )
+
+        XCTAssertTrue(
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
+            "Unread messages count element did not appear"
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        // THEN
+        try activeConversationPage.verifyGIFReceived()
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            groupTeam.teamMember.name,
+            "Sender info didn't match expected value \(groupTeam.teamMember.name)"
+        )
+    }
+
+    @MainActor
     func testSendAndReceiveFileInGroupConversation_TC_8837_8844() async throws {
 
         // GIVEN
