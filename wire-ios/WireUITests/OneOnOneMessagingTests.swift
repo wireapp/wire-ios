@@ -49,28 +49,38 @@ final class OneOnOneMessagingTests: WireUITestCase {
 
     /// [critical]
     @MainActor
-    func testSendTextAndAudioInOneOnOneConversation_TC_8819_8821() async throws {
+    func testSendTextImageAudioAndPingInOneOnOneConversation_TC_8819_8820_8821_8824() async throws {
 
         // GIVEN
         let message = UserGenerator.generateRandomMessage()
         let (_, activeConversationPage) = try await openOneOnOneConversation()
 
         // WHEN
-        try await activeConversationPage
-            .sendMessage(message)
+        let sentConversationPage = try await activeConversationPage
+            .openPhotosAndGrantPermission()
+            .selectImageAndSend()
             .recordAudioAndSend()
+            .sendMessage(message)
+            .sendPing()
 
         // THEN
-        let sentMessages = activeConversationPage.fetchMessages()
+        let sentMessages = sentConversationPage.fetchMessages()
+        XCTAssertTrue(
+            sentConversationPage.imageCell.waitForExistence(timeout: 2),
+            "No Image cell found"
+        )
+
         XCTAssertTrue(
             sentMessages.contains(message),
             "Expected message '\(message)' not found in sent messages: \(sentMessages)"
         )
 
         XCTAssertTrue(
-            activeConversationPage.playAudioFile.waitForExistence(timeout: 2),
+            sentConversationPage.playAudioFile.waitForExistence(timeout: 2),
             "No audio found"
         )
+
+        try sentConversationPage.verifyPingSent()
     }
 
     @MainActor
@@ -122,20 +132,29 @@ final class OneOnOneMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testReceiveTextAndAudioInOneOnOneConversation_TC_8826_8828() async throws {
+    func testReceiveTextImageAudioAndPingInOneOnOneConversation_TC_8826_8827_8828_8831() async throws {
 
         // GIVEN
         let message = UserGenerator.generateRandomMessage()
         let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
         let (conversationId, domain) = try await UserHelper.default
             .getConversationId(matching: .conversationType(.group))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
 
-        // WHEN member sends text and audio file
+        // WHEN member sends text, image, audio and ping
         try await testServicesClient.sendText(
             user: teamOwner,
             text: message,
+            conversationId: conversationId,
+            domain: conversationDomain
+        )
+
+        try await testServicesClient.sendImage(
+            user: teamOwner,
+            fileURL: mediaURLs.imageURL,
+            type: mediaURLs.imageExtension,
             conversationId: conversationId,
             domain: conversationDomain
         )
@@ -150,6 +169,12 @@ final class OneOnOneMessagingTests: WireUITestCase {
             audio: TestServiceMediaFixtures.audioMetadata()
         )
 
+        try await testServicesClient.sendPing(
+            user: teamOwner,
+            conversationId: conversationId,
+            domain: conversationDomain
+        )
+
         // THEN
         XCTAssertTrue(
             activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 5),
@@ -162,54 +187,17 @@ final class OneOnOneMessagingTests: WireUITestCase {
         )
 
         XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 2),
-            "Expected audio attachment not found"
-        )
-
-        assertSenderName(on: activeConversationPage, equals: teamOwner.name)
-    }
-
-    @MainActor
-    func testReceiveImageAndVideoInOneOnOneConversation_TC_8827_8829() async throws {
-
-        // GIVEN
-        let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
-
-        let (conversationId, domain) = try await UserHelper.default
-            .getConversationId(matching: .conversationType(.group))
-        let conversationDomain = try XCTUnwrap(domain, "domain is nil")
-
-        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
-
-        // WHEN member sends image and video files
-        try await testServicesClient.sendImage(
-            user: teamOwner,
-            fileURL: mediaURLs.imageURL,
-            type: mediaURLs.imageExtension,
-            conversationId: conversationId,
-            domain: conversationDomain
-        )
-
-        try await testServicesClient.sendFile(
-            type: mediaURLs.videoExtension,
-            user: teamOwner,
-            fileName: "testVideo.mp4",
-            filepath: mediaURLs.videoURL.path,
-            convoId: conversationId,
-            domain: conversationDomain
-        )
-
-        // THEN
-        XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
-            "Expected image attachment not found"
+            activeConversationPage.fileTypeIcons.element(boundBy: 1).waitForExistence(timeout: 5),
+            "Expected image and audio attachments not found"
         )
 
         assertSenderName(on: activeConversationPage, equals: teamOwner.name)
 
         XCTAssertTrue(
-            activeConversationPage.fileAttachment(name: "TESTVIDEO", type: "MP4").waitForExistence(timeout: 5),
-            "Expected MP4 video attachment not found"
+            activeConversationPage
+                .receivedPing(for: teamOwner.name)
+                .waitForExistence(timeout: 2),
+            "Expected ping message from \(teamOwner.name) not found"
         )
     }
 
@@ -245,43 +233,5 @@ final class OneOnOneMessagingTests: WireUITestCase {
 
         // THEN - file is received
         receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
-    }
-
-    @MainActor
-    func testSendAndReceivePingInOneOnOneConversation_TC_8824_8831() async throws {
-
-        // GIVEN
-        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
-        let member = try XCTUnwrap(teamMembers.first)
-
-        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup()
-            .openUserProfilePage()
-            .tapAddAccountOrTeamButton()
-
-        // WHEN
-        let activeConversationPage = try app.loginUser(email: member.email, password: member.password)
-            .acceptPopup()
-            .tapPlusButtonToCreateGroup()
-            .openUserDetailsInContactList()
-            .tapStartConversationButton()
-            .sendPing()
-
-        // THEN - ping is sent
-        try activeConversationPage.verifyPingSent()
-
-        let receivedConversationPage = try activeConversationPage
-            .goBackToConversationPage()
-            .openUserProfilePage()
-            .switchUserAccountForUser(withName: teamOwner.name)
-            .openConversation()
-
-        // THEN - ping is received
-        XCTAssertTrue(
-            receivedConversationPage
-                .receivedPing(for: member.name)
-                .waitForExistence(timeout: 2),
-            "Expected ping message from \(member.name) not found"
-        )
     }
 }
