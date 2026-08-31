@@ -359,6 +359,9 @@ final class SearchResultsViewController: UIViewController {
         var filteredContacts = searchResult.contacts
         var filteredTeamContacts = searchResult.teamMembers
         var filteredApps = searchResult.apps
+        // Human team collaborators (resolved from `/teams/:tid/collaborators`) are rendered like regular
+        // contacts/team members, never through the apps-specific section controller.
+        var filteredCollaborators = searchResult.collaborators
 
         if let filteredParticipants = filterConversation?.localParticipants {
             filteredContacts = filteredContacts.filter {
@@ -376,26 +379,25 @@ final class SearchResultsViewController: UIViewController {
             filteredApps = filteredApps
                 .compactMap { $0 as? ZMUser }
                 .filter { !filteredParticipants.contains($0) }
+            filteredCollaborators = filteredCollaborators.filter {
+                guard let user = $0.user else {
+                    return true
+                }
+                return !filteredParticipants.contains(user)
+            }
         }
 
         contactsSection.contacts = filteredContacts
 
-        // Access mode is not set, or the guests are allowed.
-        if shouldIncludeGuests {
-            teamMemberAndContactsSection.contacts = Set(filteredTeamContacts + filteredContacts).sorted {
-                let name0 = $0.name ?? ""
-                let name1 = $1.name ?? ""
+        // Collaborators are team-scoped (fetched per-team, like team members), so they're always included
+        // alongside team members regardless of whether personal (non-team) contacts are shown.
+        let teamMembersAndCollaborators = filteredTeamContacts + filteredCollaborators
 
-                if name0 == name1 {
-                    let pseudo0 = $0.handle ?? ""
-                    let pseudo1 = $1.handle ?? ""
-                    return pseudo0.compare(pseudo1) == .orderedAscending
-                }
-                return name0.compare(name1) == .orderedAscending
-            }
-        } else {
-            teamMemberAndContactsSection.contacts = filteredTeamContacts
-        }
+        // Access mode is not set, or the guests are allowed.
+        let combinedContacts = shouldIncludeGuests ?
+            teamMembersAndCollaborators + filteredContacts :
+            teamMembersAndCollaborators
+        teamMemberAndContactsSection.contacts = sorted(byNameThenHandle: Set(combinedContacts))
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
@@ -404,6 +406,21 @@ final class SearchResultsViewController: UIViewController {
         federationSection.users = searchResult.directory.filter(\.isFederated)
 
         sectionController.collectionView?.reloadData()
+    }
+
+    /// Sorts search users by name, falling back to handle for users sharing the same name.
+    private func sorted(byNameThenHandle users: some Sequence<ZMSearchUser>) -> [ZMSearchUser] {
+        users.sorted {
+            let name0 = $0.name ?? ""
+            let name1 = $1.name ?? ""
+
+            if name0 == name1 {
+                let pseudo0 = $0.handle ?? ""
+                let pseudo1 = $1.handle ?? ""
+                return pseudo0.compare(pseudo1) == .orderedAscending
+            }
+            return name0.compare(name1) == .orderedAscending
+        }
     }
 
     func sectionFor(controller: CollectionViewSectionController) -> SearchResultsViewControllerSection {

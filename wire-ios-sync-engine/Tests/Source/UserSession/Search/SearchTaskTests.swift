@@ -1121,6 +1121,26 @@ final class SearchTaskTests: DatabaseTest {
             supportedProtocols: [.mls],
             legalholdStatus: .noConsent
         )
+        // A collaborator whose resolved profile is NOT app-typed (a human with team permissions). It must never
+        // surface via the apps result - only via the (separate) collaborators result, see
+        // testThatItListsCollaboratorsForContactsAndTeamMembersSearch below.
+        let qualifiedID2 = QualifiedID(uuid: UUID(), domain: "")
+        let humanCollaboratorResult = User(
+            id: UserID(qualifiedID2),
+            name: "human collaborator",
+            handle: "hc",
+            teamID: otherTeamID,
+            type: .regular,
+            accentID: 3,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: nil,
+            service: nil,
+            supportedProtocols: [.mls],
+            legalholdStatus: .noConsent
+        )
 
         let expectation = XCTestExpectation()
         expectation.expectedFulfillmentCount = 3
@@ -1139,13 +1159,18 @@ final class SearchTaskTests: DatabaseTest {
                     userID: qualifiedID1.uuid,
                     teamID: otherTeamID,
                     permissions: [.createTeamConversation]
+                ),
+                CollaboratorInfo(
+                    userID: qualifiedID2.uuid,
+                    teamID: otherTeamID,
+                    permissions: [.createTeamConversation]
                 )
             ]
         }
         usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
-            XCTAssertEqual(userIDs, [UserID(qualifiedID1)])
+            XCTAssertEqual(userIDs, [UserID(qualifiedID1), UserID(qualifiedID2)])
             expectation.fulfill()
-            return UserList(found: [collaboratorAppResult], failed: [])
+            return UserList(found: [collaboratorAppResult, humanCollaboratorResult], failed: [])
         }
 
         // when
@@ -1153,6 +1178,8 @@ final class SearchTaskTests: DatabaseTest {
 
         // then
         await fulfillment(of: [expectation], timeout: 1)
+        // Only the two app-typed profiles (team-owned app + collaborator app) surface as apps; the human
+        // collaborator is dropped from this bucket entirely, since this request only asked for `.apps`.
         XCTAssertEqual(result.apps.count, 2)
         XCTAssertEqual(result.apps.first?.qualifiedID(localDomain: "-"), qualifiedID0)
         XCTAssertEqual(result.apps.first?.name, "app")
@@ -1164,6 +1191,135 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.apps.last?.handle, "ca")
         XCTAssertEqual(result.apps.last?.teamIdentifier, otherTeamID)
         XCTAssertEqual(result.apps.last?.zmAccentColor?.rawValue, 1)
+        // The human collaborator isn't surfaced anywhere for an `.apps`-only request either, since it doesn't
+        // request `.contacts`/`.teamMembers`.
+        XCTAssertTrue(result.collaborators.isEmpty)
+    }
+
+    func testThatItListsCollaboratorsForContactsAndTeamMembersSearch() async throws {
+        // given
+        let request = SearchRequest(
+            query: "",
+            searchDomain: "wire.com",
+            searchOptions: [.contacts, .teamMembers]
+        )
+        let task = makeSearchTask(request: request, apiVersion: .v15)
+
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: "wire.com")
+        let humanCollaboratorResult = User(
+            id: UserID(qualifiedID),
+            name: "human collaborator",
+            handle: "hc",
+            teamID: teamIdentifier,
+            type: .regular,
+            accentID: 3,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: nil,
+            service: nil,
+            supportedProtocols: [.mls],
+            legalholdStatus: .noConsent
+        )
+
+        teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
+        teamsAPIMock.getCollaboratorsFor_MockMethod = { [teamIdentifier] teamID in
+            XCTAssertEqual(teamID, teamIdentifier)
+            return [
+                CollaboratorInfo(
+                    userID: qualifiedID.uuid,
+                    teamID: teamIdentifier,
+                    permissions: [.createTeamConversation]
+                )
+            ]
+        }
+        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+            XCTAssertEqual(userIDs, [UserID(qualifiedID)])
+            return UserList(found: [humanCollaboratorResult], failed: [])
+        }
+
+        // when
+        var result = SearchResult()
+        let resultAggregator = try await task.listAppsAndCollaborators()
+        resultAggregator(&result)
+
+        // then
+        XCTAssertTrue(result.apps.isEmpty)
+        XCTAssertEqual(result.collaborators.count, 1)
+        XCTAssertEqual(result.collaborators.first?.name, "human collaborator")
+        XCTAssertEqual(result.collaborators.first?.handle, "hc")
+        XCTAssertEqual(result.collaborators.first?.remoteIdentifier, qualifiedID.uuid)
+    }
+
+    func testThatItDeduplicatesCollaboratorsAgainstExistingTeamMembers() async throws {
+        // given
+        let request = SearchRequest(
+            query: "",
+            searchDomain: "wire.com",
+            searchOptions: [.contacts, .teamMembers]
+        )
+        let task = makeSearchTask(request: request, apiVersion: .v15)
+
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: "wire.com")
+        let humanCollaboratorResult = User(
+            id: UserID(qualifiedID),
+            name: "human collaborator",
+            handle: "hc",
+            teamID: teamIdentifier,
+            type: .regular,
+            accentID: 3,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: nil,
+            service: nil,
+            supportedProtocols: [.mls],
+            legalholdStatus: .noConsent
+        )
+
+        teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
+        teamsAPIMock.getCollaboratorsFor_MockMethod = { [teamIdentifier] _ in
+            [
+                CollaboratorInfo(
+                    userID: qualifiedID.uuid,
+                    teamID: teamIdentifier,
+                    permissions: [.createTeamConversation]
+                )
+            ]
+        }
+        usersAPIMock.getUsersUserIDs_MockMethod = { _ in
+            UserList(found: [humanCollaboratorResult], failed: [])
+        }
+
+        // A team member already present in the accumulated result under the same remote identifier - e.g. because
+        // the local team-members search resolved first. The collaborator must not be added a second time.
+        let existingTeamMember = await uiMOC.perform { [uiMOC] in
+            ZMSearchUser(
+                viewContext: uiMOC,
+                name: "human collaborator",
+                handle: "hc",
+                accentColor: nil,
+                remoteIdentifier: qualifiedID.uuid,
+                domain: qualifiedID.domain,
+                teamIdentifier: self.teamIdentifier,
+                providerIdentifier: nil,
+                user: nil,
+                searchUsersCache: nil,
+                type: .regular
+            )
+        }
+        var result = SearchResult()
+        result.teamMembers = [existingTeamMember]
+
+        // when
+        let resultAggregator = try await task.listAppsAndCollaborators()
+        resultAggregator(&result)
+
+        // then
+        XCTAssertEqual(result.teamMembers.count, 1)
+        XCTAssertTrue(result.collaborators.isEmpty)
     }
 
     func testThatItSendsASearchAppsRequest() async throws {

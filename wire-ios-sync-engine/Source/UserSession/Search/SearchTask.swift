@@ -140,7 +140,7 @@ public final class SearchTask {
             }
             taskGroup.addTask {
                 do {
-                    return try await self.listAllAppsAndCollaboratorApps()
+                    return try await self.listAppsAndCollaborators()
                 } catch {
                     let errorType = Swift.type(of: error)
                     WireLogger.search
@@ -495,18 +495,28 @@ public final class SearchTask {
 
     /// If no search query is provided we cannot use the search API.
     /// This func basically serves two purposes:
-    /// - Apps added to the team don't trigger events, so this allows apps being added right now (while the iOS client
-    /// is running) to be displayed in the search results.
-    /// - In large teams apps might not be discovered without this code (2000 members cap).
-    private func listAllAppsAndCollaboratorApps() async throws -> SearchResultAggregator {
+    /// - Apps/collaborators added to the team don't trigger events, so this allows apps/collaborators being added
+    /// right now (while the iOS client is running) to be displayed in the search results.
+    /// - In large teams apps/collaborators might not be discovered without this code (2000 members cap).
+    ///
+    /// Team-owned apps come from `GET /teams/:tid/apps`. Team collaborators come from
+    /// `GET /teams/:tid/collaborators`, which only returns a bare `{user, team, permissions}` shape with no
+    /// human/app discriminator, so each collaborator's user ID is resolved into a full profile via
+    /// `usersAPI.getUsers` to determine whether it's an app or a human. App-typed collaborator profiles are folded
+    /// into the same apps bucket as the team-owned apps (deduplicated). Non-app-typed (human) collaborator profiles
+    /// are surfaced separately so they can be displayed like regular contacts, never through the apps-specific UI.
+    func listAppsAndCollaborators() async throws -> SearchResultAggregator {
         guard
             let apiVersion,
             apiVersion >= .v10, // collaborators: v10, apps: v15
             case let .search(searchRequest) = type,
             searchRequest.query.string.isEmpty,
             !searchRequest.searchOptions.contains(.localResultsOnly),
-            searchRequest.searchOptions.contains(.apps)
+            !searchRequest.searchOptions.isDisjoint(with: [.apps, .contacts, .teamMembers])
         else { return { _ in } }
+
+        let includeApps = searchRequest.searchOptions.contains(.apps)
+        let includeCollaborators = !searchRequest.searchOptions.isDisjoint(with: [.contacts, .teamMembers])
 
         let searchContext = contextProvider.newBackgroundContext()
         let (teamID, selfUserDomain) = await searchContext.perform {
@@ -551,18 +561,18 @@ public final class SearchTask {
 
         try Task.checkCancellation()
 
-        let collaborators = try await usersAPI.getUsers(userIDs: collaboratorIDs)
-        if !collaborators.failed.isEmpty {
+        let collaboratorProfiles = try await usersAPI.getUsers(userIDs: collaboratorIDs)
+        if !collaboratorProfiles.failed.isEmpty {
             WireLogger.network.warn("at least one collaborator's info couldn't be fetched", attributes: .safePublic)
         }
 
         try Task.checkCancellation()
 
         let viewContext = contextProvider.viewContext
-        let searchUsers = await viewContext.perform { [searchUsersCache] in
-            var searchUsers = [ZMSearchUser]()
-            for app in apps + collaborators.found {
-                guard app.type == .app else { continue }
+        let (appSearchUsers, collaboratorSearchUsers) = await viewContext.perform { [searchUsersCache] in
+            var appSearchUsers = [ZMSearchUser]()
+            var collaboratorSearchUsers = [ZMSearchUser]()
+            for app in apps + collaboratorProfiles.found {
                 let localUser = ZMUser.fetch(with: app.id.id, domain: app.id.domain, in: viewContext)
                 let searchUser: ZMSearchUser
                 if let cachedSearchUser = searchUsersCache?.object(forKey: app.id.id as NSUUID) {
@@ -576,9 +586,13 @@ public final class SearchTask {
                         searchUsersCache: searchUsersCache
                     )
                 }
-                searchUsers += [searchUser]
+                if app.type == .app {
+                    appSearchUsers += [searchUser]
+                } else {
+                    collaboratorSearchUsers += [searchUser]
+                }
             }
-            return searchUsers
+            return (appSearchUsers, collaboratorSearchUsers)
         }
         let partialResult = SearchResult(
             context: viewContext,
@@ -586,12 +600,16 @@ public final class SearchTask {
             teamMembers: [],
             directory: [],
             conversations: [],
-            apps: searchUsers,
+            apps: includeApps ? appSearchUsers : [],
+            collaborators: includeCollaborators ? collaboratorSearchUsers : [],
             bots: [],
             searchUsersCache: searchUsersCache
         )
 
-        return { $0 = $0.union(withAppsResult: partialResult) }
+        return { result in
+            result = result.union(withAppsResult: partialResult)
+            result = result.union(withCollaboratorsResult: partialResult)
+        }
     }
 
     // MARK: -
