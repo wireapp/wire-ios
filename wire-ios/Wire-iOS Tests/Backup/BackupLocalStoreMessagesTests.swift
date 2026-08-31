@@ -39,7 +39,10 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        try await setUpSUT(isFederationEnabled: true)
+    }
 
+    private func setUpSUT(isFederationEnabled: Bool) async throws {
         // Create Core Data stack with temporary SQLite store
         let account = Account(userName: "", userIdentifier: UUID())
         let tempDirectory = FileManager.default.temporaryDirectory
@@ -52,26 +55,33 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
             applicationContainer: tempDirectory,
             inMemoryStore: false,
             localDomain: "wire.com",
-            isFederationEnabled: true
+            isFederationEnabled: isFederationEnabled
         )
         try await coreDataStack.load()
 
         sut = BackupLocalStore(contextProvider: coreDataStack)
-        context = sut.backupContext
+        context = coreDataStack.syncContext
 
         // Create test fixtures
         conversationID = QualifiedID(id: UUID(), domain: "wire.com")
         senderID = QualifiedID(id: UUID(), domain: "wire.com")
 
         try await context.perform { [context, senderID, conversationID] in
-            let sender = ZMUser.insertNewObject(in: context!)
-            sender.remoteIdentifier = senderID?.id
-            sender.domain = senderID?.domain
+            let selfUser = ZMUser.selfUser(in: context!)
+            selfUser.domain = "wire.com"
+
+            let sender = ZMUser.fetchOrCreate(
+                with: senderID!.id,
+                domain: senderID!.domain,
+                in: context!
+            )
             sender.name = "Bob"
 
-            let conversation = ZMConversation.insertNewObject(in: context!)
-            conversation.remoteIdentifier = conversationID?.id
-            conversation.domain = conversationID?.domain
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID!.id,
+                domain: conversationID!.domain,
+                in: context!
+            )
             conversation.conversationType = .group
 
             try context!.save()
@@ -223,6 +233,34 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
         try await context.perform { [fetchMessages] in
             let fetchedMessages = try fetchMessages()
             XCTAssertEqual(fetchedMessages.count, 3)
+        }
+    }
+
+    // MARK: - Federation disabled
+
+    func test_AddMessages_ImportsMessages_WhenFederationDisabled() async throws {
+        // GIVEN
+        try await setUpSUT(isFederationEnabled: false)
+
+        let messages = [
+            makeValidTextMessage(
+                conversationID: conversationID,
+                senderID: senderID
+            )
+        ]
+
+        // WHEN
+        let result = try await sut.addMessages(messages)
+
+        // THEN
+        XCTAssertEqual(result.validationCount.successCount, 1)
+        XCTAssertEqual(result.insertionCount.successCount, 1)
+        XCTAssertEqual(result.rehydrationCount.successCount, 1)
+
+        // Verify that all messages are in database
+        try await context.perform { [fetchMessages] in
+            let fetchedMessages = try fetchMessages()
+            XCTAssertEqual(fetchedMessages.count, 1)
         }
     }
 

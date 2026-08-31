@@ -282,12 +282,12 @@ extension BackupLocalStore {
             return try await context.perform {
                 let fetchRequest = T.fetchRequest()
 
-                let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                    NSPredicate(format: "%K IN %@", T.remoteIdentifierDataKey(), uuidsData),
-                    NSPredicate(format: "%K IN %@", T.domainKey(), domains)
-                ])
-
-                fetchRequest.predicate = predicate
+                var subpredicates = [NSPredicate(format: "%K IN %@", T.remoteIdentifierDataKey(), uuidsData)]
+                // If federation is not enabled, Users & Conversations may not have domains set.
+                if context.isFederationEnabled {
+                    subpredicates.append(NSPredicate(format: "%K IN %@", T.domainKey(), domains))
+                }
+                fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
 
                 let fetchResult = try context.fetch(fetchRequest) as! [T]
 
