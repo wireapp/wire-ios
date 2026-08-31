@@ -25,6 +25,7 @@
 # 7. If any conflicts arise during the cherry-pick, they are committed.
 # 8. The branch with the cherry-picked changes is pushed.
 # 9. A new pull request is created against the target branch with the cherry-picked changes.
+# 10. The created PR's title is normalized to collapse any stray whitespace before the 🍒 suffix.
 
 name: "Cherry-pick from release to next release or develop"
 
@@ -64,10 +65,23 @@ jobs:
           scripts/determine-cherry-pick-target.py "$BASE_REF"
 
       - name: Cherry pick to target branch
+        id: cherry-pick
         uses: wireapp/action-auto-cherry-pick@a4a732fe8b79e3fae70362e6271b8982be5b1bc1 # v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         with:
           target-branch: ${{ steps.target-branch.outputs.target }}
+          pr-creator-token: ${{ secrets.SUBMODULE_PAT }}
           pr-labels: 'cherry-pick'
           pr-title-suffix: '🍒'
+
+      - name: Normalize cherry-pick PR title
+        if: ${{ success() && steps.cherry-pick.outputs.pr-number != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.SUBMODULE_PAT }}
+          PR_NUMBER: ${{ steps.cherry-pick.outputs.pr-number }}
+        run: |
+          title="$(gh pr view "$PR_NUMBER" --json title --jq '.title')"
+          normalized_title="$(printf '%s' "$title" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' | sed -E 's/[[:space:]]+🍒$/ 🍒/')"
+
+          if [ "$title" != "$normalized_title" ]; then
+            gh pr edit "$PR_NUMBER" --title "$normalized_title"
+          fi
