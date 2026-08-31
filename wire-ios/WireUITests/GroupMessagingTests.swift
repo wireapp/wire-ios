@@ -302,6 +302,7 @@ final class GroupMessagingTests: WireUITestCase {
         // THEN - file is received
         receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
     }
+
     @MainActor
     func testSendLocationAndOpenReceivedLocationInDefaultMapsApp_TC_11734() async throws {
 
