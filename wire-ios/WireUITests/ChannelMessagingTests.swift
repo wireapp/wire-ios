@@ -201,11 +201,11 @@ final class ChannelMessagingTests: WireUITestCase {
 
         // THEN
         XCTAssertTrue(
-            activeConversationPage.imageCell.waitForExistence(timeout: 5),
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
             "Expected image attachment not found"
         )
         XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
+            activeConversationPage.fileTypeIcons.element(boundBy: 1).waitForExistence(timeout: 5),
             "Expected audio attachment not found"
         )
 

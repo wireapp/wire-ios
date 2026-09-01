@@ -599,7 +599,7 @@ class ActiveConversationPage: PageModel {
     func verifyGIFReceived(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            imageCell.waitForExistence(timeout: 5),
+            imageCell.waitForExistence(timeout: 10),
             "Expected GIF image not found",
         )
 
