@@ -200,12 +200,14 @@ class ActiveConversationPage: PageModel {
         return app.cells["\(displayedFileName), \(fileExtension)"].firstMatch
     }
 
-    var imageToChoose: XCUIElement {
-        app.images.element(boundBy: 1).firstMatch
+    /// Photos grid sorts newest-first; 3 seeded videos always occupy indices 0-2,
+    /// so the first real image sits at index 3.
+    func imageToChoose(at index: Int = 3) -> XCUIElement {
+        app.images.element(boundBy: index).firstMatch
     }
 
-    var videoToChoose: XCUIElement {
-        app.images.element(boundBy: 0).firstMatch
+    func videoToChoose(at index: Int = 0) -> XCUIElement {
+        app.images.element(boundBy: index).firstMatch
     }
 
     var okToSend: XCUIElement {
@@ -411,11 +413,11 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func selectImageAndSend() throws -> ActiveConversationPage {
-        if !imageToChoose.waitForExistence(timeout: 2) {
+    func selectImageAndSend(at index: Int = 3) throws -> ActiveConversationPage {
+        if !imageToChoose(at: index).waitForExistence(timeout: 2) {
             photoButton.waitAndTap()
         }
-        imageToChoose.waitAndTap()
+        imageToChoose(at: index).waitAndTap()
 
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
@@ -425,11 +427,11 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func selectVideoAndSend() throws -> ActiveConversationPage {
-        if !videoToChoose.waitForExistence(timeout: 2) {
+    func selectVideoAndSend(at index: Int = 0) throws -> ActiveConversationPage {
+        if !videoToChoose(at: index).waitForExistence(timeout: 2) {
             photoButton.waitAndTap()
         }
-        videoToChoose.waitAndTap()
+        videoToChoose(at: index).waitAndTap()
 
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
