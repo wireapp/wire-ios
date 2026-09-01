@@ -49,19 +49,13 @@ extension FilesFilterBy {
 
         var body: some View {
             NavigationStack {
-                content()
-                    .background {
-                        ColorTheme.Backgrounds.background.color
-                            .ignoresSafeArea(.all)
-                    }
-                    .toolbar { toolbarContent }
-                    .navigationTitle(Strings.Filter.Tags.navigationTitle)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
-                        Button(L10n.Localizable.General.confirm, role: .cancel) {}
-                    }
-                    .overlay { if viewModel.isLoading { ProgressView() } }
-                    .searchable(text: $viewModel.searchText, prompt: Strings.Filter.Tags.searchPrompt)
+                if #available(iOS 17.1, *) {
+                    content()
+                        .searchPresentationToolbarBehavior(.avoidHidingContent)
+                } else {
+                    content()
+                        .background(SearchControllerNavigationBarVisibility())
+                }
             }
         }
 
@@ -79,6 +73,22 @@ extension FilesFilterBy {
                 .padding(10)
                 .disabled(viewModel.selectedTags.isEmpty)
             }
+            .background {
+                ColorTheme.Backgrounds.background.color
+                    .ignoresSafeArea(.all)
+            }
+            .toolbar { toolbarContent }
+            .navigationTitle(Strings.Filter.Tags.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
+                Button(L10n.Localizable.General.confirm, role: .cancel) {}
+            }
+            .overlay { if viewModel.isLoading { ProgressView() } }
+            .searchable(
+                text: $viewModel.searchText,
+                placement: .navigationBarDrawer(displayMode: .automatic),
+                prompt: Strings.Filter.Tags.searchPrompt
+            )
         }
     }
 }
@@ -93,12 +103,10 @@ private extension FilesFilterBy.TagsView {
     var tagsView: some View {
         VStack(alignment: .leading, spacing: tagsViewSpacing) {
             if viewModel.presentedTags.isEmpty {
-                Spacer()
-
                 Text(viewModel.searchText.isEmpty ? Strings.Filter.Tags.emptyTitle : Strings.Filter.Tags
                     .notFoundBySearch)
                     .font(for: .h4)
-                    .padding([.top, .bottom])
+                    .padding(.bottom)
 
                 Spacer()
             }

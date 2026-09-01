@@ -49,15 +49,13 @@ extension FilesFilterBy {
 
         var body: some View {
             NavigationStack {
-                content()
-                    .background {
-                        ColorTheme.Backgrounds.background.color
-                            .ignoresSafeArea(.all)
-                    }
-                    .toolbar { toolbarContent }
-                    .navigationTitle(Strings.Filter.Owner.navigationTitle)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .searchable(text: $viewModel.searchText)
+                if #available(iOS 17.1, *) {
+                    content()
+                        .searchPresentationToolbarBehavior(.avoidHidingContent)
+                } else {
+                    content()
+                        .background(SearchControllerNavigationBarVisibility())
+                }
             }
         }
 
@@ -76,6 +74,14 @@ extension FilesFilterBy {
                 .padding(10)
                 .disabled(viewModel.selectedItems.isEmpty)
             }
+            .background {
+                ColorTheme.Backgrounds.background.color
+                    .ignoresSafeArea(.all)
+            }
+            .toolbar { toolbarContent }
+            .navigationTitle(Strings.Filter.Owner.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .automatic))
         }
 
         @ViewBuilder
