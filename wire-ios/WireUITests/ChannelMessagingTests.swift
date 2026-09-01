@@ -221,6 +221,42 @@ final class ChannelMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testSendAndReceiveFileInChannelConversation_TC_8851_8858() async throws {
+
+        // GIVEN
+        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
+
+        _ = try login(user: teamWithChannelConversation.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: teamWithChannelConversation.teamMember.email,
+            password: teamWithChannelConversation.teamMember.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
+
+        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+
+        // WHEN
+        activeConversationPage.uploadFile()
+
+        // THEN - file is sent
+        activeConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+
+        let receivedConversationPage = try activeConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamWithChannelConversation.teamMember.name)
+            .openConversation()
+
+        // THEN - file is received
+        receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+    }
+
+    @MainActor
     func testReceiveGIFInChannelConversation_TC_8860() async throws {
 
         // GIVEN
@@ -258,41 +294,5 @@ final class ChannelMessagingTests: WireUITestCase {
             teamWithChannelConversation.teamMember.name,
             "Sender info didn't match expected value \(teamWithChannelConversation.teamMember.name)"
         )
-    }
-
-    @MainActor
-    func testSendAndReceiveFileInChannelConversation_TC_8851_8858() async throws {
-
-        // GIVEN
-        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
-
-        _ = try login(user: teamWithChannelConversation.teamOwner)
-            .openUserProfilePage()
-            .tapAddAccountOrTeamButton()
-
-        _ = try app.loginUser(
-            email: teamWithChannelConversation.teamMember.email,
-            password: teamWithChannelConversation.teamMember.password
-        )
-        .acceptPopup()
-        .openUserProfilePage()
-        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
-
-        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
-
-        // WHEN
-        activeConversationPage.uploadFile()
-
-        // THEN - file is sent
-        activeConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
-
-        let receivedConversationPage = try activeConversationPage
-            .goBackToConversationPage()
-            .openUserProfilePage()
-            .switchUserAccountForUser(withName: teamWithChannelConversation.teamMember.name)
-            .openConversation()
-
-        // THEN - file is received
-        receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
     }
 }

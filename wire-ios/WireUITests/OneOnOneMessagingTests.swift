@@ -202,30 +202,6 @@ final class OneOnOneMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testReceiveGIFInOneOnOneConversation_TC_8832() async throws {
-
-        // GIVEN
-        let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
-        let (conversationId, domain) = try await UserHelper.default
-            .getConversationId(matching: .conversationType(.group))
-        let conversationDomain = try XCTUnwrap(domain, "domain is nil")
-        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
-
-        // WHEN
-        try await testServicesClient.sendImage(
-            user: teamOwner,
-            fileURL: mediaURLs.gifURL,
-            type: mediaURLs.gifType,
-            conversationId: conversationId,
-            domain: conversationDomain
-        )
-
-        // THEN
-        try activeConversationPage.verifyGIFReceived()
-        assertSenderName(on: activeConversationPage, equals: teamOwner.name)
-    }
-
-    @MainActor
     func testSendAndReceiveFileInOneOnOneConversation_TC_8823_8830() async throws {
 
         // GIVEN
@@ -257,5 +233,29 @@ final class OneOnOneMessagingTests: WireUITestCase {
 
         // THEN - file is received
         receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+    }
+
+    @MainActor
+    func testReceiveGIFInOneOnOneConversation_TC_8832() async throws {
+
+        // GIVEN
+        let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
+        let (conversationId, domain) = try await UserHelper.default
+            .getConversationId(matching: .conversationType(.group))
+        let conversationDomain = try XCTUnwrap(domain, "domain is nil")
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+
+        // WHEN
+        try await testServicesClient.sendImage(
+            user: teamOwner,
+            fileURL: mediaURLs.gifURL,
+            type: mediaURLs.gifType,
+            conversationId: conversationId,
+            domain: conversationDomain
+        )
+
+        // THEN
+        try activeConversationPage.verifyGIFReceived()
+        assertSenderName(on: activeConversationPage, equals: teamOwner.name)
     }
 }
