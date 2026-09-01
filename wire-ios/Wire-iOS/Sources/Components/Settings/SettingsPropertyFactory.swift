@@ -57,6 +57,7 @@ protocol SettingsPropertyFactoryDelegate: AnyObject {
 
 final class SettingsPropertyFactory {
     let userDefaults: UserDefaults
+    let sharedUserDefaults: UserDefaults
     var trackingManager: TrackingInterface?
     var mediaManager: AVSMediaManagerInterface?
     weak var userSession: UserSession?
@@ -85,6 +86,7 @@ final class SettingsPropertyFactory {
     ) {
         self.init(
             userDefaults: UserDefaults.standard,
+            sharedUserDefaults: .applicationGroup,
             mediaManager: AVSMediaManager.sharedInstance(),
             userSession: userSession,
             selfUser: selfUser,
@@ -94,12 +96,14 @@ final class SettingsPropertyFactory {
 
     init(
         userDefaults: UserDefaults,
+        sharedUserDefaults: UserDefaults? = nil,
         mediaManager: AVSMediaManagerInterface?,
         userSession: UserSession?,
         selfUser: SettingsSelfUser?,
         trackingManager: TrackingInterface?
     ) {
         self.userDefaults = userDefaults
+        self.sharedUserDefaults = sharedUserDefaults ?? userDefaults
         self.trackingManager = trackingManager
         self.mediaManager = mediaManager
         self.userSession = userSession
@@ -299,6 +303,25 @@ final class SettingsPropertyFactory {
             }
 
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
+
+        case .notificationSound:
+            return SettingsBlockProperty(
+                propertyName: propertyName,
+                getAction: { [unowned self] _ in
+                    SettingsPropertyValue.string(
+                        value: NotificationSoundPreference.stored(in: sharedUserDefaults).rawValue
+                    )
+                },
+                setAction: { [unowned self] _, value, _ in
+                    guard case let .string(rawValue) = value,
+                          let preference = NotificationSoundPreference(rawValue: rawValue) else {
+                        throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
+                    }
+
+                    preference.store(in: sharedUserDefaults)
+                    preference.store(in: userDefaults)
+                }
+            )
 
         case .disableSendButton:
             return SettingsBlockProperty(
