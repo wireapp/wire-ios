@@ -349,18 +349,24 @@ class TestServicesClient {
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendImage")
         guard let requestUrl = url else { fatalError("Invalid URL") }
         let imageData = try Data(contentsOf: fileURL)
-        let imageDimensions = try imageDimensions(from: imageData)
+        let mimeType = imageMimeType(for: type)
 
         var body: [String: Any] = [
             "conversationId": conversationId.uuidString.lowercased(),
             "data": imageData.base64EncodedString(),
-            "height": imageDimensions.height,
-            "type": imageMimeType(for: type),
-            "width": imageDimensions.width
+            "conversationDomain": domain,
+            "type": type
         ]
 
-        if domain != BackendTarget.staging.domainInfo {
-            body["conversationDomain"] = domain
+        if mimeType == "image/gif" {
+            let imageDimensions = try imageDimensions(from: imageData)
+            body["height"] = imageDimensions.height
+            body["type"] = mimeType
+            body["width"] = imageDimensions.width
+
+            if domain == BackendTarget.staging.domainInfo {
+                body.removeValue(forKey: "conversationDomain")
+            }
         }
 
         let (_, response) = try await sendHttpRequest(

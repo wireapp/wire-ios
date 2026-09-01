@@ -143,11 +143,15 @@ final class GroupMessagingTests: WireUITestCase {
             "Expected message '\(message)' not found in sent messages: \(receivedMessages)"
         )
 
+        XCTAssertTrue(
+            activeConversationPage.imageCell.waitForExistence(timeout: 5),
+            "Expected image attachment not found"
+        )
         verifyMessageReceivedAndSenderInfo(
-            attachment: activeConversationPage.fileTypeIcons.element(boundBy: 1),
+            attachment: activeConversationPage.fileTypeIcons.firstMatch,
             on: activeConversationPage,
             expectedSenderName: groupTeam.teamMember.name,
-            failureMessage: "Expected image and audio attachments not found"
+            failureMessage: "Expected audio attachment not found"
         )
 
         XCTAssertTrue(

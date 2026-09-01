@@ -187,8 +187,12 @@ final class OneOnOneMessagingTests: WireUITestCase {
         )
 
         XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.element(boundBy: 1).waitForExistence(timeout: 5),
-            "Expected image and audio attachments not found"
+            activeConversationPage.imageCell.waitForExistence(timeout: 5),
+            "Expected image attachment not found"
+        )
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
+            "Expected audio attachment not found"
         )
 
         assertSenderName(on: activeConversationPage, equals: teamOwner.name)
