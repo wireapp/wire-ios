@@ -21,7 +21,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
-VIDEO_PATH="$REPO_ROOT/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
+VIDEO_DIR="$REPO_ROOT/wire-ios/WireUITests/TestServicesData/Video"
+VIDEO_PATH="$VIDEO_DIR/testVideo.mp4"
+VIDEO_PATH_2="$VIDEO_DIR/testVideo2.mp4"
+VIDEO_PATH_3="$VIDEO_DIR/testVideo3.mp4"
 FILE_PATH="$REPO_ROOT/wire-ios/WireUITests/TestServicesData/File/testFile.pdf"
 
 if [ -z "${IOS_SIM_ID:-}" ]; then
@@ -29,7 +32,7 @@ if [ -z "${IOS_SIM_ID:-}" ]; then
   exit 0
 fi
 
-for FIXTURE_PATH in "$VIDEO_PATH" "$FILE_PATH"; do
+for FIXTURE_PATH in "$VIDEO_PATH" "$VIDEO_PATH_2" "$VIDEO_PATH_3" "$FILE_PATH"; do
   if [[ ! -f "$FIXTURE_PATH" ]]; then
     echo "::error::Missing simulator media fixture: $FIXTURE_PATH" >&2
     exit 1
@@ -45,10 +48,10 @@ if ! echo "$BOOTED_SIMULATORS" | grep -q "$IOS_SIM_ID"; then
 fi
 
 echo "Seeding simulator media"
-if xcrun simctl addmedia "$IOS_SIM_ID" "$VIDEO_PATH"; then
+if xcrun simctl addmedia "$IOS_SIM_ID" "$VIDEO_PATH" "$VIDEO_PATH_2" "$VIDEO_PATH_3"; then
   echo "Simulator media seeded successfully"
 else
-  echo "::error::Failed to seed simulator media with $VIDEO_PATH" >&2
+  echo "::error::Failed to seed simulator media with $VIDEO_PATH, $VIDEO_PATH_2, $VIDEO_PATH_3" >&2
   exit 1
 fi
 

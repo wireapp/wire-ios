@@ -104,6 +104,56 @@ final class ChannelMessagingTests: WireUITestCase {
     }
 
     @MainActor
+    func testSendAndReceiveVideoInChannelConversation_TC_8850_8857() async throws {
+
+        // GIVEN
+        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
+
+        _ = try login(user: teamWithChannelConversation.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: teamWithChannelConversation.teamMember.email,
+            password: teamWithChannelConversation.teamMember.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
+
+        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+
+        // WHEN
+        let sentConversationPage = try activeConversationPage
+            .openPhotosAndGrantPermission()
+            .selectVideoAndSend(at: 2)
+
+        // THEN - video is sent
+        XCTAssertTrue(
+            sentConversationPage.videoCell.waitForExistence(timeout: 2), "No Video cell found"
+        )
+        XCTAssertTrue(
+            sentConversationPage.videoPlayButton.waitForExistence(timeout: 2), "No Video play button found"
+        )
+
+        let receivedConversationPage = try sentConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamWithChannelConversation.teamMember.name)
+            .openConversation()
+
+        // THEN - video is received
+        XCTAssertTrue(
+            receivedConversationPage.videoCell.waitForExistence(timeout: 5),
+            "No Video cell found after receiving"
+        )
+        XCTAssertTrue(
+            receivedConversationPage.videoPlayButton.waitForExistence(timeout: 2),
+            "No Video play button found after receiving"
+        )
+    }
+
+    @MainActor
     func testReceiveImageAudioAndPingInChannelConversation_TC_8855_8856_8859() async throws {
 
         // GIVEN
