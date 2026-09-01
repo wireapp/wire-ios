@@ -411,19 +411,147 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
         }
     }
 
+    // MARK: - lastReadServerTimeStamp
+
+    func test_AddMessages_AdvancesLastReadServerTimeStampToLatestRestoredMessage() async throws {
+        // GIVEN: a freshly-synced conversation whose lastReadServerTimeStamp
+        // was seeded from an old conversation.lastEventTime (or .distantPast)
+        let oldLastRead = Date(timeIntervalSince1970: 1000)
+        try await context.perform { [context, conversationID] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: conversationID!.id,
+                domain: conversationID!.domain,
+                in: context!
+            ))
+            conversation.lastReadServerTimeStamp = oldLastRead
+            try context!.save()
+        }
+
+        let latestMessageDate = Date(timeIntervalSince1970: 2_000_000)
+        let messages = [
+            makeValidTextMessage(
+                conversationID: conversationID,
+                senderID: senderID,
+                creationDate: Date(timeIntervalSince1970: 1_000_000)
+            ),
+            makeValidTextMessage(
+                conversationID: conversationID,
+                senderID: senderID,
+                creationDate: latestMessageDate
+            )
+        ]
+
+        // WHEN
+        _ = try await sut.addMessages(messages)
+
+        // THEN
+        try await context.perform { [context, conversationID] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: conversationID!.id,
+                domain: conversationID!.domain,
+                in: context!
+            ))
+            XCTAssertEqual(conversation.lastReadServerTimeStamp, latestMessageDate)
+            // The advance must not mark the key as locally modified,
+            // otherwise ConversationStatusStrategy would broadcast it via
+            // the self-conversation sync.
+            XCTAssertFalse(conversation.hasLocalModifications(forKey: ZMConversationLastReadServerTimeStampKey))
+        }
+    }
+
+    func test_AddMessages_AdvancesLastReadServerTimeStampToLatestEvenWithIntermediateLastRead() async throws {
+        // GIVEN: lastReadServerTimeStamp sits between two imported timestamps.
+        let middleLastRead = Date(timeIntervalSince1970: 1_500_000)
+        try await context.perform { [context, conversationID] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: conversationID!.id,
+                domain: conversationID!.domain,
+                in: context!
+            ))
+            conversation.lastReadServerTimeStamp = middleLastRead
+            try context!.save()
+        }
+
+        let latestMessageDate = Date(timeIntervalSince1970: 2_000_000)
+        let messages = [
+            makeValidTextMessage(
+                conversationID: conversationID,
+                senderID: senderID,
+                creationDate: Date(timeIntervalSince1970: 1_000_000)
+            ),
+            makeValidTextMessage(
+                conversationID: conversationID,
+                senderID: senderID,
+                creationDate: latestMessageDate
+            )
+        ]
+
+        // WHEN
+        _ = try await sut.addMessages(messages)
+
+        // THEN: advances to the newest imported, not the middle marker.
+        try await context.perform { [context, conversationID] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: conversationID!.id,
+                domain: conversationID!.domain,
+                in: context!
+            ))
+            XCTAssertEqual(conversation.lastReadServerTimeStamp, latestMessageDate)
+            XCTAssertFalse(conversation.hasLocalModifications(forKey: ZMConversationLastReadServerTimeStampKey))
+        }
+    }
+
+    func test_AddMessages_DoesNotMoveLastReadServerTimeStampBackward() async throws {
+        // GIVEN: lastReadServerTimeStamp already ahead of restored history
+        // (e.g. self-conversation sync brought a fresher value from another device).
+        let futureLastRead = Date(timeIntervalSince1970: 5_000_000)
+        try await context.perform { [context, conversationID] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: conversationID!.id,
+                domain: conversationID!.domain,
+                in: context!
+            ))
+            conversation.lastReadServerTimeStamp = futureLastRead
+            try context!.save()
+        }
+
+        let messages = [
+            makeValidTextMessage(
+                conversationID: conversationID,
+                senderID: senderID,
+                creationDate: Date(timeIntervalSince1970: 1_000_000)
+            )
+        ]
+
+        // WHEN
+        _ = try await sut.addMessages(messages)
+
+        // THEN
+        try await context.perform { [context, conversationID] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: conversationID!.id,
+                domain: conversationID!.domain,
+                in: context!
+            ))
+            XCTAssertEqual(conversation.lastReadServerTimeStamp, futureLastRead)
+            XCTAssertFalse(conversation.hasLocalModifications(forKey: ZMConversationLastReadServerTimeStampKey))
+        }
+    }
+
     // MARK: - Helper Methods
 
     private func makeValidTextMessage(
         conversationID: QualifiedID,
         senderID: QualifiedID,
-        senderClientID: String? = "client-id"
+        senderClientID: String? = "client-id",
+        creationDate: Date = Date()
     ) -> MessageBackupModel {
         MessageBackupModel(
             id: UUID().uuidString.lowercased(),
             conversationID: conversationID,
             senderUserID: senderID,
             senderClientID: senderClientID,
-            creationDate: Date(),
+            creationDate: creationDate,
             content: .text("Test message \(UUID().uuidString)")
         )
     }
