@@ -195,6 +195,16 @@ final class ConversationInputBarViewController: UIViewController,
         return inputBar
     }()
 
+    override var preferredFocusEnvironments: [any UIFocusEnvironment] {
+        guard isViewLoaded, inputBar.textView.isFirstResponder else {
+            return super.preferredFocusEnvironments
+        }
+
+        return ([sendButton, ephemeralIndicatorButton] + inputBar.buttonsView.buttons)
+            .filter { !$0.isHidden && $0.isEnabled && $0.isUserInteractionEnabled && $0.alpha > 0 }
+            + super.preferredFocusEnvironments
+    }
+
     lazy var typingIndicatorView: TypingIndicatorView = {
         let view = TypingIndicatorView()
         view.accessibilityIdentifier = "typingIndicator"

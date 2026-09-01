@@ -19,6 +19,20 @@
 import UIKit
 
 extension ConversationListViewController: UISearchBarDelegate {
+    func searchBar(
+        _ searchBar: UISearchBar,
+        shouldChangeTextIn range: NSRange,
+        replacementText text: String
+    ) -> Bool {
+        guard text == "\t" else { return true }
+
+        let focusEnvironment = navigationController ?? self
+        focusEnvironment.setNeedsFocusUpdate()
+        focusEnvironment.updateFocusIfNeeded()
+        searchBar.searchTextField.resignFirstResponder()
+        return false
+    }
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         applySearchText()
