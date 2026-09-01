@@ -255,7 +255,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         )
 
         // THEN
-        try activeConversationPage.verifyGIFReceived()
+        activeConversationPage.verifyGIFReceived()
         assertSenderName(on: activeConversationPage, equals: teamOwner.name)
     }
 }

@@ -287,7 +287,7 @@ final class ChannelMessagingTests: WireUITestCase {
         )
 
         // THEN
-        try activeConversationPage.verifyGIFReceived()
+        activeConversationPage.verifyGIFReceived()
         let senderName = activeConversationPage.getSenderName()
         XCTAssertEqual(
             senderName,

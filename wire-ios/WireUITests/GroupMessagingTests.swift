@@ -384,7 +384,7 @@ final class GroupMessagingTests: WireUITestCase {
         let activeConversationPage = try conversationsPage.openConversation()
 
         // THEN
-        try activeConversationPage.verifyGIFReceived()
+        activeConversationPage.verifyGIFReceived()
         let senderName = activeConversationPage.getSenderName()
         XCTAssertEqual(
             senderName,
