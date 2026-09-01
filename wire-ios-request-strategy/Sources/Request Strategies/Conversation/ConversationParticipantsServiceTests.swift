@@ -220,7 +220,8 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         // It inserts a system message for the users that failed key package claim
         await assertSystemMessageWasInserted(
             forUsers: Set([failedUser1, failedUser2]),
-            in: conversation
+            in: conversation,
+            type: .failedToAddParticipantsMLS
         )
     }
 
@@ -396,6 +397,7 @@ private extension ConversationParticipantsServiceTests {
     func assertSystemMessageWasInserted(
         forUsers users: Set<ZMUser>,
         in conversation: ZMConversation,
+        type: ZMSystemMessageType = .failedToAddParticipants,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async {
@@ -404,7 +406,7 @@ private extension ConversationParticipantsServiceTests {
                 return XCTFail("expected system message", file: file, line: line)
             }
 
-            XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants, file: file, line: line)
+            XCTAssertEqual(systemMessage.systemMessageType, type, file: file, line: line)
             XCTAssertEqual(systemMessage.userTypes, users, file: file, line: line)
         }
     }
