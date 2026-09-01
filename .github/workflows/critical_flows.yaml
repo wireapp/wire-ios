@@ -30,7 +30,7 @@ on:
         default: false
         type: boolean
       ui_test_cases:
-        description: "Want to run specific Test? Pass Testiny case ID(s), comma separated"
+        description: "Want to run specific Test? Pass Testiny case ID(s), class(es), or function(s), comma separated"
         required: false
         type: string
   push:
