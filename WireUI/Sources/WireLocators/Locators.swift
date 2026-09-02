@@ -184,6 +184,8 @@ public enum Locators {
         case imageCell
         case videoCell
         case videoPlayButton
+        case imagePreview
+        case videoPreview
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"

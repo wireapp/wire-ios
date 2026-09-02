@@ -84,6 +84,14 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPlayButton.rawValue].firstMatch
     }
 
+    var imagePreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.imagePreview.rawValue].firstMatch
+    }
+
+    var videoPreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPreview.rawValue].firstMatch
+    }
+
     var userRemovedSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.userRemovedSystemMessage.rawValue]
     }
@@ -338,6 +346,34 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
     }
 
+    @discardableResult
+    func sendDriveImageAttachment(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become available for image attachment",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func sendDriveVideoAttachment(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become available for video attachment",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
     func openSharedDrive() throws -> SharedDriveFilesPage {
         conversationTitleButton.waitAndTap()
         sharedDriveButton.tap()
@@ -589,6 +625,46 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(
             attachment.waitForExistence(timeout: 5),
             "Expected \(type) attachment '\(name)' not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyImagePreviewIsVisible(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            imageCell.waitForExistence(timeout: 5),
+            "No Image cell found",
+            file: file,
+            line: line
+        )
+        XCTAssertTrue(
+            imagePreview.waitForExistence(timeout: 5),
+            "Image preview did not appear",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyVideoPreviewIsVisible(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            videoCell.waitForExistence(timeout: 10),
+            "No Video cell found",
+            file: file,
+            line: line
+        )
+        XCTAssertTrue(
+            videoPreview.waitForExistence(timeout: 10),
+            "Video preview did not appear",
             file: file,
             line: line
         )
