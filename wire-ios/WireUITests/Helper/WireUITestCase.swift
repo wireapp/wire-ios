@@ -69,10 +69,10 @@ class WireUITestCase: XCTestCase {
     override func tearDown() async throws {
         app?.terminate()
         app = nil
-        await callingServiceClient.destroyCreatedInstances()
+        await callingServiceClient?.destroyCreatedInstances()
         await testServicesClient.deleteInstances()
         await UserHelper.deleteCreatedUsers()
-        await ssoHelper.cleanUpSSOResources()
+        await ssoHelper?.cleanUpSSOResources()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
