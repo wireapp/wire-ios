@@ -362,6 +362,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
         let firstSyncStarted = expectation(description: "first sync started")
         let secondSyncStarted = expectation(description: "second sync started")
+        let cancellationStarted = expectation(description: "cancellation started")
         let invocationCounter = InvocationCounter()
         let gate = TestGate()
 
@@ -371,7 +372,13 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             let task: Task<Void, Never>
             switch invocation {
             case 1:
-                task = Task { await gate.wait() }
+                task = Task {
+                    await withTaskCancellationHandler {
+                        await gate.wait()
+                    } onCancel: {
+                        cancellationStarted.fulfill()
+                    }
+                }
                 firstSyncStarted.fulfill()
             case 2:
                 task = Task {}
@@ -391,6 +398,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         let suspensionTask = Task { [sut] in
             await sut?.suspend()
         }
+        await fulfillment(of: [cancellationStarted], timeout: 2)
 
         sut.resume()
 
