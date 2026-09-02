@@ -143,11 +143,15 @@ final class GroupMessagingTests: WireUITestCase {
             "Expected message '\(message)' not found in sent messages: \(receivedMessages)"
         )
 
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
+            "Expected image attachment not found"
+        )
         verifyMessageReceivedAndSenderInfo(
             attachment: activeConversationPage.fileTypeIcons.element(boundBy: 1),
             on: activeConversationPage,
             expectedSenderName: groupTeam.teamMember.name,
-            failureMessage: "Expected image and audio attachments not found"
+            failureMessage: "Expected audio attachment not found"
         )
 
         XCTAssertTrue(
@@ -357,6 +361,40 @@ final class GroupMessagingTests: WireUITestCase {
             .assertNotificationStatus(.nothing)
             .openNotificationOptions()
             .assertSelected(.nothing)
+    }
+
+    @MainActor
+    func testReceiveGIFInGroupConversation_TC_8846() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+        let conversationsPage = try login(user: groupTeam.teamOwner)
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+
+        // WHEN
+        try await testServicesClient.sendImage(
+            user: groupTeam.teamMember,
+            fileURL: mediaURLs.gifURL,
+            type: mediaURLs.gifType,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
+        )
+
+        XCTAssertTrue(
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
+            "Unread messages count element did not appear"
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        // THEN
+        activeConversationPage.verifyGIFReceived()
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            groupTeam.teamMember.name,
+            "Sender info didn't match expected value \(groupTeam.teamMember.name)"
+        )
     }
 
     private func verifyMessageReceivedAndSenderInfo(
