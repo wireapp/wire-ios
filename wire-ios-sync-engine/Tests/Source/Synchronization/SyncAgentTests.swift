@@ -355,6 +355,57 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         await fulfillment(of: [pushChannelClosed, suspended], timeout: 2)
     }
 
+    func test_Resume_DuringSuspensionStartsNewSyncAfterSuspensionCompletes() async throws {
+        // Given an existing incremental sync
+        journal[.isSyncV2Enabled] = true
+        sut.delegate = self
+
+        let firstSyncStarted = expectation(description: "first sync started")
+        let secondSyncStarted = expectation(description: "second sync started")
+        let invocationCounter = InvocationCounter()
+        let gate = TestGate()
+
+        incrementalSync.perform_MockMethod = {
+            let invocation = await invocationCounter.increment()
+
+            let task: Task<Void, Never>
+            switch invocation {
+            case 1:
+                task = Task { await gate.wait() }
+                firstSyncStarted.fulfill()
+            case 2:
+                task = Task {}
+                secondSyncStarted.fulfill()
+            default:
+                task = Task {}
+                XCTFail("Unexpected invocation count: \(invocation)")
+            }
+
+            return IncrementalSync.Token(task: task, closePushChannel: {})
+        }
+
+        sut.resume()
+        await fulfillment(of: [firstSyncStarted], timeout: 2)
+
+        // When the sync is suspended and resumed before the suspension completes
+        let suspensionTask = Task { [sut] in
+            await sut?.suspend()
+        }
+
+        sut.resume()
+
+        let invocationsBeforeSuspensionCompleted = await invocationCounter.value
+        XCTAssertEqual(invocationsBeforeSuspensionCompleted, 1)
+
+        await gate.open()
+        await suspensionTask.value
+
+        // Then a new resume starts after the suspension completes
+        await fulfillment(of: [secondSyncStarted], timeout: 2)
+        let invocationsAfterSuspensionCompleted = await invocationCounter.value
+        XCTAssertEqual(invocationsAfterSuspensionCompleted, 2)
+    }
+
     func testPerformIncrementalSync_V3() async throws {
         // Given
         featureConfigRepository.isFeatureEnabled_MockValue = true
@@ -409,4 +460,35 @@ extension SyncAgentTests: SyncAgentDelegate {
 
     func syncAgentDidFailSyncing(_ syncAgent: WireSyncEngine.SyncAgent, error: any Error) {}
 
+}
+
+private actor InvocationCounter {
+
+    private(set) var value = 0
+
+    func increment() -> Int {
+        value += 1
+        return value
+    }
+}
+
+private actor TestGate {
+
+    private var isOpen = false
+    private var continuations: [CheckedContinuation<Void, Never>] = []
+
+    func wait() async {
+        if isOpen { return }
+        await withCheckedContinuation { continuations.append($0) }
+    }
+
+    func open() {
+        guard !isOpen else { return }
+        isOpen = true
+        let toResume = continuations
+        continuations = []
+        for continuation in toResume {
+            continuation.resume()
+        }
+    }
 }
