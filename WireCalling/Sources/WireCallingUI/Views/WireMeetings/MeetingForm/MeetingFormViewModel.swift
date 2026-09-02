@@ -63,6 +63,9 @@ package final class MeetingFormViewModel {
     private let onSuccess: (Meeting) -> Void
 
     private static let timePickerMinuteInterval = 15
+    // Match the limits enforced by SimpleTextFieldValidator for conversation names.
+    private static let maximumConversationNameLength = 64
+    private static let maximumConversationNameByteLength = 256
 
     /// The smallest selectable interval between start and end time.
     private static let minimumDuration = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
@@ -125,6 +128,10 @@ package final class MeetingFormViewModel {
     /// logged; the view shows a generic alert.
     var hasError = false
 
+    /// Set when the meeting was saved but its dedicated conversation could not be renamed.
+    var hasConversationNameUpdateError = false
+    private var meetingPendingConversationNameUpdate: Meeting?
+
     var selectedMembersSummary: String {
         selectedMembers
             .map(\.name)
@@ -132,7 +139,12 @@ package final class MeetingFormViewModel {
     }
 
     var isNextButtonEnabled: Bool {
-        !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isMeetingTitleTooLong
+    }
+
+    var isMeetingTitleTooLong: Bool {
+        meetingTitle.count > Self.maximumConversationNameLength ||
+            meetingTitle.utf8.count > Self.maximumConversationNameByteLength
     }
 
     // MARK: - Public Interface
@@ -196,14 +208,36 @@ package final class MeetingFormViewModel {
         guard !isLoading else { return }
         isLoading = true
         hasError = false
+        hasConversationNameUpdateError = false
+        meetingPendingConversationNameUpdate = nil
         defer { isLoading = false }
         do {
             let meeting = try await saveMeeting()
             onSuccess(meeting)
+        } catch let UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting) {
+            meetingPendingConversationNameUpdate = updatedMeeting
+            hasConversationNameUpdateError = true
         } catch {
             let errorType = Swift.type(of: error)
             WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
             hasError = true
+        }
+    }
+
+    func retryConversationNameUpdate() async {
+        guard !isLoading, let meeting = meetingPendingConversationNameUpdate else { return }
+        isLoading = true
+        hasConversationNameUpdateError = false
+        defer { isLoading = false }
+
+        do {
+            try await updateMeetingUseCase.updateConversationName(for: meeting)
+            meetingPendingConversationNameUpdate = nil
+            onSuccess(meeting)
+        } catch {
+            let errorType = Swift.type(of: error)
+            WireLogger.search.error("failed to update conversation name: \(String(describing: errorType))")
+            hasConversationNameUpdateError = true
         }
     }
 

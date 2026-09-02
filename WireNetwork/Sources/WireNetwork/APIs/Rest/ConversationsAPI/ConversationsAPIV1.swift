@@ -51,6 +51,42 @@ class ConversationsAPIV1: ConversationsAPIV0 {
         }
     }
 
+    override func updateConversationName(
+        _ name: String,
+        for conversationID: QualifiedID
+    ) async throws -> ConversationRenameEvent? {
+        let parameters = UpdateConversationNameParametersV1(name: name)
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)\(basePath)/\(conversationID.domain)/\(conversationID.id)/name"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        guard response.statusCode != HTTPStatusCode.noContent.rawValue else {
+            return nil
+        }
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationRenameResponseV1.self)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+            .failure(
+                code: .forbidden,
+                label: "action-denied",
+                error: ConversationsAPIError.insufficientAuthorization
+            )
+            .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
     override func removeParticipant(
         userID: UserID,
         conversationID: ConversationID
@@ -92,5 +128,30 @@ private struct PaginatedConversationIDsV1: Decodable, ToAPIModelConvertible {
             hasMore: hasMore,
             nextStart: pagingState
         )
+    }
+}
+
+private struct UpdateConversationNameParametersV1: Encodable {
+    let name: String
+}
+
+private struct ConversationRenameResponseV1: Decodable, ToAPIModelConvertible {
+
+    let event: ConversationRenameEvent
+
+    init(from decoder: any Decoder) throws {
+        let updateEvent = try UpdateEventDecodingProxy(from: decoder).updateEvent
+
+        guard case let .conversation(.rename(event)) = updateEvent else {
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: decoder.codingPath, debugDescription: "Expected a conversation rename event")
+            )
+        }
+
+        self.event = event
+    }
+
+    func toAPIModel() -> ConversationRenameEvent {
+        event
     }
 }
