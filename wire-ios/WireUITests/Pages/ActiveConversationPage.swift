@@ -319,7 +319,7 @@ class ActiveConversationPage: PageModel {
     func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
-        sendButton.tap()
+        sendButton.tapAndWait()
         return self
     }
 
