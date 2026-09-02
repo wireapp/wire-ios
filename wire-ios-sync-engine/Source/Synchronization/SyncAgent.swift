@@ -40,6 +40,10 @@ protocol SyncAgentProtocol {
 
 final class SyncAgent: NSObject, SyncAgentProtocol {
 
+    private struct PendingResume {
+        let callEventsOnly: Bool
+    }
+
     var isSyncV2Enabled: Bool {
         journal[.isSyncV2Enabled]
     }
@@ -68,6 +72,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = .init()
+    private var isSuspendingSync = false
+    private var pendingResume: PendingResume?
 
     var syncRunning: Bool {
         ongoingSyncTask != nil || incrementalSyncToken != nil
@@ -123,6 +129,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// - Parameter callEventsOnly: if the sync should be resumed only for calling events
 
     func resume(callEventsOnly: Bool = false) {
+        guard !isSuspendingSync else {
+            setNeedsResume(callEventsOnly: callEventsOnly)
+            return
+        }
+
         syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
@@ -152,9 +163,21 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         }
     }
 
+    private func setNeedsResume(callEventsOnly: Bool) {
+        if let pendingResume {
+            // full resume wins over call events only resume
+            self.pendingResume = PendingResume(callEventsOnly: pendingResume.callEventsOnly && callEventsOnly)
+        } else {
+            pendingResume = PendingResume(callEventsOnly: callEventsOnly)
+        }
+    }
+
     /// Suspend any ongoing sync tasks.
 
     func suspend() async {
+        pendingResume = nil
+        isSuspendingSync = true
+
         let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
             name: "suspending sync"
         )
@@ -180,6 +203,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             BackgroundActivityFactory.shared.endBackgroundActivity(
                 backgroundActivity
             )
+        }
+
+        isSuspendingSync = false
+
+        if let pendingResume {
+            resume(callEventsOnly: pendingResume.callEventsOnly)
         }
     }
 
