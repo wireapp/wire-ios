@@ -187,8 +187,12 @@ final class OneOnOneMessagingTests: WireUITestCase {
         )
 
         XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
+            "Expected image attachment not found"
+        )
+        XCTAssertTrue(
             activeConversationPage.fileTypeIcons.element(boundBy: 1).waitForExistence(timeout: 5),
-            "Expected image and audio attachments not found"
+            "Expected audio attachment not found"
         )
 
         assertSenderName(on: activeConversationPage, equals: teamOwner.name)
@@ -233,5 +237,29 @@ final class OneOnOneMessagingTests: WireUITestCase {
 
         // THEN - file is received
         receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+    }
+
+    @MainActor
+    func testReceiveGIFInOneOnOneConversation_TC_8832() async throws {
+
+        // GIVEN
+        let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
+        let (conversationId, domain) = try await UserHelper.default
+            .getConversationId(matching: .conversationType(.group))
+        let conversationDomain = try XCTUnwrap(domain, "domain is nil")
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+
+        // WHEN
+        try await testServicesClient.sendImage(
+            user: teamOwner,
+            fileURL: mediaURLs.gifURL,
+            type: mediaURLs.gifType,
+            conversationId: conversationId,
+            domain: conversationDomain
+        )
+
+        // THEN
+        activeConversationPage.verifyGIFReceived()
+        assertSenderName(on: activeConversationPage, equals: teamOwner.name)
     }
 }
