@@ -67,7 +67,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let initialSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
-    private var ongoingSuspendTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = .init()
 
     var syncRunning: Bool {
@@ -124,16 +123,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// - Parameter callEventsOnly: if the sync should be resumed only for calling events
 
     func resume(callEventsOnly: Bool = false) {
-        let pendingSuspend = ongoingSuspendTask
+        syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
-            // Wait for any in-flight suspend to finish before starting sync,
-            // otherwise suspend will clobber ongoingSyncTask and re-send
-            // .suspended after we've begun.
-            await pendingSuspend?.value
-
-            syncStateSubject.send(.idle)
-
             WireLogger.sync.debug("resuming sync")
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
@@ -163,42 +155,31 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Suspend any ongoing sync tasks.
 
     func suspend() async {
-        let task = Task { [self] in
-            let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
-                name: "suspending sync"
-            )
+        let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
+            name: "suspending sync"
+        )
 
-            WireLogger.sync.debug(
-                "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
-            )
+        WireLogger.sync.debug(
+            "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
+        )
 
-            let taskToCancel = ongoingSyncTask
-            if let taskToCancel {
-                taskToCancel.cancel()
-                await taskToCancel.value
-                // Only clear if a concurrent resume hasn't already replaced it.
-                if ongoingSyncTask == taskToCancel {
-                    ongoingSyncTask = nil
-                }
-            }
-
-            if let incrementalSyncToken {
-                await incrementalSyncToken.suspend()
-                self.incrementalSyncToken = nil
-            }
-
-            syncStateSubject.send(.suspended)
-
-            if let backgroundActivity {
-                BackgroundActivityFactory.shared.endBackgroundActivity(
-                    backgroundActivity
-                )
-            }
+        if let ongoingSyncTask {
+            ongoingSyncTask.cancel()
+            await ongoingSyncTask.value
+            self.ongoingSyncTask = nil
         }
-        ongoingSuspendTask = task
-        await task.value
-        if ongoingSuspendTask == task {
-            ongoingSuspendTask = nil
+
+        if let incrementalSyncToken {
+            await incrementalSyncToken.suspend()
+            self.incrementalSyncToken = nil
+        }
+
+        syncStateSubject.send(.suspended)
+
+        if let backgroundActivity {
+            BackgroundActivityFactory.shared.endBackgroundActivity(
+                backgroundActivity
+            )
         }
     }
 
