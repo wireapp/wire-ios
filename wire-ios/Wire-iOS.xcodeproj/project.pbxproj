@@ -634,6 +634,7 @@
 				ConversationMessageCell/CompleteReactionPickerViewControllerTests.swift,
 				ConversationMessageCell/ConversationAudioMessageCellTests.swift,
 				ConversationMessageCell/ConversationCollapsedMessageCellSnapshotTests.swift,
+				ConversationMessageCell/ConversationFailedToAddParticipantsSystemMessageCellDescriptionTests.swift,
 				ConversationMessageCell/ConversationFileMessageCellTests.swift,
 				ConversationMessageCell/ConversationImageMessageTests.swift,
 				ConversationMessageCell/ConversationLinkAttachmentMessageCellTests.swift,

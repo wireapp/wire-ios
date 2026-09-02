@@ -43,12 +43,12 @@ enum FederationError: Error, Equatable {
 enum ConversationParticipantsError: Error, Equatable {
     case invalidOperation
     case missingMLSParticipantsService
-    case failedToAddSomeUsers(users: Set<ZMUser>)
+    case failedToAddSomeUsers(users: Set<ZMUser>, type: ZMSystemMessageType = .failedToAddParticipants)
 }
 
 extension Error {
     var isFailedToAddSomeUsersError: Bool {
-        if case ConversationParticipantsError.failedToAddSomeUsers(_)? = (self as? ConversationParticipantsError) {
+        if case ConversationParticipantsError.failedToAddSomeUsers(_, _)? = (self as? ConversationParticipantsError) {
             return true
         }
         if case ConversationAddParticipantsError.failedToAddMLSMembers? = (self as? ConversationAddParticipantsError) {
@@ -107,7 +107,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 users: users,
                 conversation: conversation
             )
-        } catch let ConversationParticipantsError.failedToAddSomeUsers(users: failedUsers) {
+        } catch let ConversationParticipantsError.failedToAddSomeUsers(users: failedUsers, type: type) {
             let failedUserIds = await context.perform { failedUsers.map { $0.remoteIdentifier.transportString() } }
             Flow.addParticipants
                 .checkpoint(
@@ -116,7 +116,8 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
             await appendFailedToAddUsersMessage(
                 in: conversation,
-                users: failedUsers
+                users: failedUsers,
+                type: type
             )
         }
     }
@@ -181,7 +182,10 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 Flow.addParticipants.checkpoint(description: "retrying failedUsers end")
             }
 
-            throw ConversationParticipantsError.failedToAddSomeUsers(users: failedUsers)
+            throw ConversationParticipantsError.failedToAddSomeUsers(
+                users: failedUsers,
+                type: .failedToAddParticipantsMLS
+            )
         }
     }
 
@@ -256,13 +260,15 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
     private func appendFailedToAddUsersMessage(
         in conversation: ZMConversation,
-        users: Set<ZMUser>
+        users: Set<ZMUser>,
+        type: ZMSystemMessageType = .failedToAddParticipants
     ) async {
         await context.perform {
             conversation.appendFailedToAddUsersSystemMessage(
                 users: users,
                 sender: conversation.creator,
-                at: conversation.lastServerTimeStamp ?? Date()
+                at: conversation.lastServerTimeStamp ?? Date(),
+                type: type
             )
             self.context.enqueueDelayedSave()
         }
