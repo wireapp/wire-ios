@@ -341,4 +341,29 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertEqual(positiveSearchResults, 1)
         XCTAssertEqual(negativeSearchResults, 0)
     }
+
+    @MainActor
+    func testVideoAndImagePreviewShown_TC_11684_11685() async throws {
+
+        // GIVEN
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        // WHEN
+        let activeConversationPage = try loginAndOpenConversation(for: teamOwner)
+            .openPhotosAndGrantPermission()
+            .selectImageAndSendInDriveEnabledConversation()
+
+        // THEN - image preview is shown after sending
+        activeConversationPage.verifyImagePreviewIsVisible()
+
+        // WHEN
+        try activeConversationPage
+            .selectVideoFromCameraRoll()
+            .sendAttachments()
+
+        // THEN - image and video preview shown together
+        activeConversationPage.verifyVideoPreviewIsVisible()
+    }
 }
