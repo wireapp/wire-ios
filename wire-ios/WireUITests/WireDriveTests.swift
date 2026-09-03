@@ -353,18 +353,17 @@ final class WireDriveTests: WireUITestCase {
         // WHEN
         let activeConversationPage = try loginAndOpenConversation(for: teamOwner)
             .openPhotosAndGrantPermission()
-            .selectImageAndSend()
-            .sendDriveImageAttachment()
+            .selectImageAndSendInDriveEnabledConversation()
 
         // THEN - image preview is shown after sending
         activeConversationPage.verifyImagePreviewIsVisible()
 
         // WHEN
-        activeConversationPage
-            .uploadFile(named: "testVideo.mp4")
-            .sendDriveVideoAttachment()
+        try activeConversationPage
+            .selectVideoFromCameraRoll()
+            .sendAttachments()
 
-        // THEN - video preview is shown after sending
+        // THEN - image and video preview shown together
         activeConversationPage.verifyVideoPreviewIsVisible()
     }
 }
