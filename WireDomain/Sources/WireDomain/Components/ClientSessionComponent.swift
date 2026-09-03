@@ -729,7 +729,6 @@ public final class ClientSessionComponent {
     private lazy var meetingDeleteEventNotificationBuilder = MeetingDeleteEventNotificationBuilder(
         meetingLocalStore: MeetingLocalStore(context: syncContext),
         userLocalStore: userLocalStore,
-        developerFlagStorage: sharedUserDefaults,
         featureConfigLocalStore: featureConfigsLocalStore,
         accountID: selfUserID
     )
