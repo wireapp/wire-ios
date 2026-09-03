@@ -455,7 +455,7 @@ class ActiveConversationPage: PageModel {
         okToSend.waitAndTap()
         return self
     }
-    
+
     func selectImageAndSendInDriveEnabledConversation(at index: Int = 3) throws -> ActiveConversationPage {
         if !imageToChoose(at: index).waitForExistence(timeout: 2) {
             photoButton.waitAndTap()
