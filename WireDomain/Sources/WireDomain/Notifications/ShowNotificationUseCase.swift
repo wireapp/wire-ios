@@ -67,7 +67,9 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
                         attributes: .newNSE, .safePublic
                     )
 
-                    try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
+                    if !DeveloperFlag.enableNSEHelper.isOn {
+                        try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
+                    }
                 } catch {
                     WireLogger.calling.error(
                         "failed to wake up main app: \(String(describing: error))",

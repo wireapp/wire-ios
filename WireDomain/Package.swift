@@ -16,7 +16,8 @@ let package = Package(
         .package(path: "../WireNetwork"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
-        .package(path: "../WirePlugins")
+        .package(path: "../WirePlugins"),
+        .package(path: "../WireAVS")
     ],
     targets: [
         .target(
@@ -24,7 +25,8 @@ let package = Package(
             dependencies: [
                 "WireNetwork",
                 "WireLogging",
-                "WireFoundation"
+                "WireFoundation",
+                "WireAVS"
             ]
         ),
         .target(
