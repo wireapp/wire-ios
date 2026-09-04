@@ -94,8 +94,6 @@ public final class MainTabBarController<
     private weak var _settingsUI: SettingsUI?
     private weak var _conversationUI: ConversationUI?
     private weak var _settingsContentUI: UIViewController?
-    /// We should use DeveloperFlag 'wireMeetings' after moving it to WireFoundation:
-    /// https://wearezeta.atlassian.net/browse/WPB-19065
     private var showMeetings: Bool
     private var showFiles: Bool
 
