@@ -1385,7 +1385,7 @@
 
 // By popular demand
 "self.settings.popular_demand.title" = "Auf allgemeinen Wunsch";
-"self.settings.popular_demand.send_button.title" = "Senden Taste";
+"self.settings.popular_demand.send_button.title" = "Senden-Taste";
 "self.settings.popular_demand.send_button.footer" = "Deaktivieren, um Nachrichten mit der Enter-Taste zu senden.";
 "self.settings.popular_demand.dark_mode.footer" = "Zwischen dunklem und hellem Hintergrund wechseln.";
 
@@ -1805,7 +1805,7 @@
 "error.user.network_error" = "Es gibt ein Problem mit Ihrem Netzwerk. Bitte versuchen Sie es später noch einmal.";
 "error.user.email_is_taken" = "Die verwendete E-Mail-Adresse wurde bereits registriert. Bitte versuchen Sie es mit einer anderen.";
 "error.user.verification_code_invalid" = "Bitte geben Sie einen gültigen Bestätigungscode ein.";
-"error.user.verification_code_too_many" = "Wir haben Ihnen bereits einen Code geschickt. Tippe nach 10 Minuten auf \"Erneut senden\" um einen neuen Code zu erhalten.";
+"error.user.verification_code_too_many" = "Wir haben Ihnen bereits einen Code geschickt. Tippen Sie nach 10 Minuten auf \"Erneut senden\" um einen neuen Code zu erhalten.";
 "error.user.registration_unknown_error" = "Ein Fehler ist aufgetreten, bitte erneut versuchen.";
 "error.user.device_deleted_remotely" = "Sie wurden von einem anderen Gerät abgemeldet.";
 "error.user.last_identity_cant_be_deleted" = "Eine E-Mail-Adresse ist erforderlich.";
