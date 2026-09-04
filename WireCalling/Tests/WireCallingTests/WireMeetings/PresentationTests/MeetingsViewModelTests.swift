@@ -553,6 +553,21 @@ struct MeetingsViewModelTests {
         #expect(viewModel.formatTimeRange(for: meeting) == formatter.timeRange(from: meeting.start, to: meeting.end))
     }
 
+    @Test("formatTime returns the full range for an ongoing occurrence")
+    func formatTime_ongoingOccurrence() {
+        let meeting = Meeting.fixture(
+            title: "Ongoing",
+            start: mockDateProvider.now.addingTimeInterval(-60),
+            duration: 3600
+        )
+        let occurrence = MeetingOccurrence(meeting: meeting)
+
+        #expect(viewModel.isHappeningNow(occurrence))
+        #expect(
+            viewModel.formatTime(for: occurrence) == formatter.timeRange(from: occurrence.start, to: occurrence.end)
+        )
+    }
+
     @Test("formatDay delegates to the formatter")
     func formatDay() {
         let day = mockDateProvider.now
