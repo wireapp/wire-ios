@@ -237,7 +237,8 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
                 throw LoginViaSSOUseCaseError.invalidCallbackURL
             }
 
-            // Use the SSO URL as the cookie context. iOS 27 rejects Secure cookies when parsed against the custom callback URL.
+            // Use the SSO URL as the cookie context. iOS 27 rejects Secure cookies when parsed against the custom
+            // callback URL.
             let cookies = HTTPCookie.cookies(
                 withResponseHeaderFields: ["Set-Cookie": cookieString],
                 for: ssoURL
