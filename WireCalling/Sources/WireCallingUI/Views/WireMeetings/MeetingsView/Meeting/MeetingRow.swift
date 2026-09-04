@@ -241,7 +241,7 @@ private extension MeetingRecurrence {
     VStack(alignment: .leading, spacing: 24) {
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTime: { formatter.startedAt($0.start) },
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
             isOrganizer: true,
             isLive: true,
             onEdit: {},
@@ -251,7 +251,7 @@ private extension MeetingRecurrence {
 
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTime: { formatter.startedAt($0.start) },
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
             isOrganizer: true,
             isAttending: true,
             isLive: true,
