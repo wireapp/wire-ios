@@ -205,4 +205,50 @@ final class ConversationTests: WireUITestCase {
         XCTAssertFalse(activeConversationPage.userLeftSystemMessage.exists, "the system message has not been removed")
     }
 
+    @MainActor
+    func testOpenConversationOpensCorrectOne_TC_8818() async throws {
+        // GIVEN a team with several group and channel conversations
+        let (owner, _, qualifiedIDs, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
+        let member = try XCTUnwrap(qualifiedIDs.first)
+
+        var conversationNames: [String] = []
+
+        for _ in 0 ..< 3 {
+            let groupName = UserGenerator.generateRandomConversationName()
+            try await UserHelper.default.createGroupConversations(
+                qualifiedIds: [member],
+                owner: owner,
+                groupName: groupName
+            )
+            conversationNames.append(groupName)
+        }
+
+        guard let teamID = owner.teamID else {
+            throw XCTSkip("owner.teamID is nil")
+        }
+        try await UserHelper.default.unlockAndEnableChannelFeature(teamID: teamID)
+
+        for _ in 0 ..< 3 {
+            let channelName = UserGenerator.generateRandomConversationName()
+            try await UserHelper.default.createChannelConversations(
+                qualifiedIds: [member],
+                owner: owner,
+                channelName: channelName
+            )
+            conversationNames.append(channelName)
+        }
+
+        let targetName = try XCTUnwrap(conversationNames.last)
+
+        // WHEN opening one of the created conversations from the list
+        let conversationsPage = try await loginToBackend(user: owner)
+        let activeConversationPage = try conversationsPage.openConversation(named: targetName)
+
+        // THEN the header shows the conversation that was actually opened.
+        let conversationNameLabel = activeConversationPage.conversationTitle(named: targetName)
+        XCTAssertTrue(
+            conversationNameLabel.waitForExistence(timeout: 5),
+            "wrong conversation opened, expected header '\(targetName)' not found"
+        )
+    }
 }

@@ -175,6 +175,7 @@ public enum Locators {
         case inputField
         case sendButton
         case authorName
+        case conversationTitleLabel
         case conversationTitleButton
         case conversationDetailsButton
         case sharedDriveButton
