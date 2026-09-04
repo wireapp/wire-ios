@@ -113,6 +113,7 @@ final class InputBar: UIView {
     private let inputBarVerticalInset: CGFloat = 34
     private let isWireDriveEnabled: Bool
     private let showDriveViewerBanner: Bool
+    private let cellName: String? // nil for non-Drive conversations.
     static let rightIconSize: CGFloat = 32
     private let textViewFont = FontSpec.normalRegularFont.font!
 
@@ -239,7 +240,12 @@ final class InputBar: UIView {
         textView.isScrollEnabled = true
     }
 
-    required init(buttons: [UIButton], isWireDriveEnabled: Bool, showDriveViewerBanner: Bool) {
+    required init(
+        buttons: [UIButton],
+        isWireDriveEnabled: Bool,
+        showDriveViewerBanner: Bool,
+        cellName: String?
+    ) {
         self.buttonsView = InputBarButtonsView(buttons: buttons)
         self.secondaryButtonsView = InputBarSecondaryButtonsView(
             editBarView: editingView,
@@ -247,6 +253,7 @@ final class InputBar: UIView {
         )
         self.isWireDriveEnabled = isWireDriveEnabled
         self.showDriveViewerBanner = showDriveViewerBanner
+        self.cellName = cellName
 
         super.init(frame: CGRect.zero)
 
@@ -710,12 +717,23 @@ final class InputBar: UIView {
     }
 
     private func onDriveViewerAccessBannerClosed() {
+        guard let cellName else { return }
+        ConversationViewerAccessBannerDismissalStore.shared.markDismissed(forCellName: cellName)
         inputContainer.removeArrangedSubview(driveViewerAccessBanner)
         driveViewerAccessBanner.removeFromSuperview()
         addBorder(for: .top)
         layer.cornerRadius = 0
         layer.maskedCorners = []
         clipsToBounds = false
+    }
+
+    /// Hides the drive viewer access banner if it was dismissed elsewhere (e.g. from the Shared
+    /// Drive screen) while this `InputBar` instance was already alive and showing it.
+    func hideDriveViewerBannerIfDismissed() {
+        guard driveViewerAccessBanner.superview != nil,
+              let cellName,
+              ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName: cellName) else { return }
+        onDriveViewerAccessBannerClosed()
     }
 }
 
