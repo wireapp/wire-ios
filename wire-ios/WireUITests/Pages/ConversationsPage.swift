@@ -248,6 +248,21 @@ class ConversationsPage: PageModel {
     }
 
     @discardableResult
+    func openConversation(named name: String) throws -> ActiveConversationPage {
+        try letTheSyncFinish()
+        let targetConversation = conversationCell(named: name)
+        XCTAssertTrue(
+            targetConversation.waitForExistence(timeout: 10),
+            "Conversation cell '\(name)' did not appear"
+        )
+        XCTAssertTrue(
+            targetConversation.waitAndTap(timeout: 5),
+            "Conversation cell '\(name)' was not tappable"
+        )
+        return try ActiveConversationPage()
+    }
+
+    @discardableResult
     func openConversationWithGuest(groupName: String) throws -> ActiveConversationPage {
         try letTheSyncFinish()
         let groupConversationWithGuestCell = app.buttons
