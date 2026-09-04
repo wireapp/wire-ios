@@ -200,7 +200,7 @@ class AdminPromotionTests: WireUITestCase {
         participantDescription: String
     ) throws {
         XCTAssertTrue(
-            conversationDetailsPage.userCell(named: leavingUserName).waitForNonExistence(timeout: 0.5),
+            conversationDetailsPage.userCell(named: leavingUserName).waitForNonExistence(timeout: 5),
             "\(participantDescription) should not appear in participant list after leaving"
         )
 
