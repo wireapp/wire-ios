@@ -206,7 +206,7 @@ final class ConversationTests: WireUITestCase {
     }
 
     @MainActor
-    func testOpenConversationOpensCorrectOne_TC_8818() async throws {
+    func testOpeningConversationOpensCorrectOne_TC_8818() async throws {
         // GIVEN a team with several group and channel conversations
         let (owner, _, qualifiedIDs, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
         let member = try XCTUnwrap(qualifiedIDs.first)
