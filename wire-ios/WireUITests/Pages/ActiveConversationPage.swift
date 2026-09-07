@@ -84,6 +84,14 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPlayButton.rawValue].firstMatch
     }
 
+    var imagePreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.imagePreview.rawValue].firstMatch
+    }
+
+    var videoPreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPreview.rawValue].firstMatch
+    }
+
     var userRemovedSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.userRemovedSystemMessage.rawValue]
     }
@@ -145,6 +153,10 @@ class ActiveConversationPage: PageModel {
         app.images[Locators.ActiveConversationPage.attachmentImagePreview.rawValue]
     }
 
+    var attachmentVideoPreview: XCUIElement {
+        app.images[Locators.ActiveConversationPage.attachmentVideoPreview.rawValue]
+    }
+
     var classifiedBanner: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
@@ -165,8 +177,16 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
     }
 
+    var cameraRollButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.cameraRollButton.rawValue]
+    }
+
     var uploadFileButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.uploadFileButton.rawValue].firstMatch
+    }
+
+    var addButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.add.rawValue].firstMatch
     }
 
     var locationButton: XCUIElement {
@@ -338,6 +358,15 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
     }
 
+    @discardableResult
+    func sendAttachments() -> ActiveConversationPage {
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+        return self
+    }
+
     func openSharedDrive() throws -> SharedDriveFilesPage {
         conversationTitleButton.waitAndTap()
         sharedDriveButton.tap()
@@ -424,6 +453,56 @@ class ActiveConversationPage: PageModel {
             "OK button did not appear after selecting media"
         )
         okToSend.waitAndTap()
+        return self
+    }
+
+    func selectImageAndSendInDriveEnabledConversation(at index: Int = 3) throws -> ActiveConversationPage {
+        if !imageToChoose(at: index).waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+        imageToChoose(at: index).waitAndTap()
+
+        XCTAssertTrue(
+            attachmentImagePreview.waitForExistence(timeout: 5),
+            "Image attachment preview did not appear"
+        )
+
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+        return self
+    }
+
+    func selectVideoFromCameraRoll() throws -> ActiveConversationPage {
+        if !cameraRollButton.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+
+        XCTAssertTrue(
+            cameraRollButton.waitAndTap(),
+            "cameraRollButton did not show up"
+        )
+
+        // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
+
+        let video = app.images.matching(NSPredicate(
+            format: "identifier == %@ AND label BEGINSWITH %@",
+            Locators.PhotosAppPage.imageTile.rawValue,
+            "Video"
+        )).firstMatch
+        XCTAssertTrue(video.waitForExistence(timeout: 8), "No video found in camera roll")
+        video.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+
+        XCTAssertTrue(
+            addButton.waitAndTap(),
+            "Not able to add media after selecting"
+        )
+
+        XCTAssertTrue(
+            attachmentVideoPreview.waitForExistence(timeout: 5),
+            "Video attachment preview did not appear"
+        )
         return self
     }
 
@@ -591,6 +670,26 @@ class ActiveConversationPage: PageModel {
             "Expected \(type) attachment '\(name)' not found",
             file: file,
             line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyImagePreviewIsVisible(
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            imagePreview.waitForExistence(timeout: 5),
+            "Image preview did not appear"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyVideoPreviewIsVisible(
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            videoPreview.waitForExistence(timeout: 5),
+            "Video preview did not appear"
         )
         return self
     }

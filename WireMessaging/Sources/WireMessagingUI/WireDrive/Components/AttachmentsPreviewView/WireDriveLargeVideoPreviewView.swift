@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -77,6 +78,7 @@ struct WireDriveLargeVideoPreviewView: View {
                 image
                     .resizable()
                     .aspectRatio(imageAspectRatio, contentMode: .fit)
+                    .accessibilityIdentifier(Locators.ActiveConversationPage.videoPreview.rawValue)
                     .overlay {
                         switch state {
                         case .notLoaded, .loaded:
