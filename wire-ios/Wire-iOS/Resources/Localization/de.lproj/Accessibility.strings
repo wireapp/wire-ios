@@ -54,10 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ Tag";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ Woche";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ Wochen";
-"conversation.cameraButtonDisabled.description" = "Take or select a photo, disabled in viewer access";
-"conversation.sketchButtonDisabled.description" = "Open sketch to draw or write, disabled in viewer access";
-"conversation.uploadFileButtonDisabled.description" = "Share a file, disabled in viewer access";
-"conversation.videoButtonDisabled.description" = "Record a video, disabled in viewer access";
+"conversation.cameraButtonDisabled.description" = "Foto aufnehmen oder auswählen, deaktiviert für Betrachter";
+"conversation.sketchButtonDisabled.description" = " Skizze zum Zeichnen oder Schreiben öffnen, deaktiviert für Betrachter";
+"conversation.uploadFileButtonDisabled.description" = "Datei teilen, deaktiviert für Betrachter";
+"conversation.videoButtonDisabled.description" = "Video aufnehmen, deaktiviert für Betrachter";
 
 "conversation.headerButton.description" = "Überschrift benutzen";
 "conversation.boldButton.description" = "Fettdruck benutzen";

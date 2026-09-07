@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireLocators
 
 struct QRCodeCard: View {
 
@@ -36,6 +37,7 @@ struct QRCodeCard: View {
                 .padding(.top, 24)
                 .padding(.horizontal, 24)
                 .accessibilityLabel(L10n.Accessibility.ShareProfile.QrCode.description)
+                .accessibilityIdentifier(Locators.UserProfileQRCodePage.qrCodeImage.rawValue)
 
             VStack(alignment: .center) {
                 Text(handle)

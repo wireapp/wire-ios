@@ -40,8 +40,13 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
     }
 
     package func timeRange(from start: Date, to end: Date) -> String {
-        let startString = DateFormatter.meetingStartTime.string(from: start)
-        let endString = DateFormatter.meetingEndTime.string(from: end)
+        let calendar = Calendar.current
+        let startPeriod = calendar.component(.hour, from: start) / 12
+        let endPeriod = calendar.component(.hour, from: end) / 12
+        let isSamePeriod = startPeriod == endPeriod
+        let startFormatter = isSamePeriod ? DateFormatter.meetingTimeWithoutPeriod : DateFormatter.meetingTime
+        let startString = startFormatter.string(from: start)
+        let endString = DateFormatter.meetingTime.string(from: end)
         return "\(startString) - \(endString)"
     }
 
@@ -62,17 +67,17 @@ private extension DateFormatter {
 
 private extension DateFormatter {
 
-    static let meetingStartTime: DateFormatter = {
+    static let meetingTimeWithoutPeriod: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = .current
-        formatter.dateFormat = "h:mm"
+        formatter.dateFormat = "hh:mm"
         return formatter
     }()
 
-    static let meetingEndTime: DateFormatter = {
+    static let meetingTime: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = .current
-        formatter.dateFormat = "h:mm a"
+        formatter.dateFormat = "hh:mm a"
         return formatter
     }()
 

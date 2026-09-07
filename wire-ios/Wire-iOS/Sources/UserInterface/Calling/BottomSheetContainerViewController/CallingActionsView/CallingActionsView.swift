@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 protocol CallingActionsViewDelegate: AnyObject {
@@ -185,6 +186,8 @@ final class CallingActionsView: UIView {
     }
 
     private func addIncomingCallControllButtons() {
+        largeHangUpButton.accessibilityIdentifier = Locators.IncomingCallPage.declineCall.rawValue
+
         [
             largeHangUpButton,
             largePickUpButton

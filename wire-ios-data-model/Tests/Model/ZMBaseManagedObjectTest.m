@@ -219,7 +219,7 @@
     selfUser = [ZMUser selfUserInContext:moc];
     selfUser.remoteIdentifier = selfUser.remoteIdentifier ?: [NSUUID createUUID];
     UserClient *selfClient = [UserClient insertNewObjectInManagedObjectContext:moc];
-    selfClient.remoteIdentifier = [NSString randomRemoteIdentifier];
+    selfClient.remoteIdentifier = [NSString randomClientIdentifier];
     selfClient.user = selfUser;
     
     [moc setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];

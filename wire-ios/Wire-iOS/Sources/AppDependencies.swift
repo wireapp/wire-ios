@@ -17,37 +17,18 @@
 //
 
 import Foundation
+import UIKit
+import WireNetwork
+import WireSyncEngine
 
-struct AcmeDirectoriesResponse: Codable, Equatable {
+/// Top level dependencies needed app wide.
+///
+/// - warning: This is really only intended to be accessed by App delegates and scene delegates. In other places,
+/// dependencies should be injected.
+enum AppDependencies {
 
-    var newNonce: String
-    var newAccount: String
-    var newOrder: String
-    var revokeCert: String
-    var keyChange: String
-
-}
-
-public struct ACMEResponse: Equatable {
-
-    var nonce: String
-    var location: String
-    var response: Data
-
-}
-
-public struct ACMEAuthorizationResponse: Equatable {
-
-    var nonce: String
-    var location: String
-    var response: Data
-    var challengeType: AuthorizationChallengeType
-
-}
-
-enum AuthorizationChallengeType: String, Decodable {
-
-    case DPoP = "wire-dpop-01"
-    case OIDC = "wire-oidc-01"
+    static let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
+    static let pushTokenService = PushTokenService()
+    static let voIPPushManager = VoIPPushManager(application: UIApplication.shared)
 
 }

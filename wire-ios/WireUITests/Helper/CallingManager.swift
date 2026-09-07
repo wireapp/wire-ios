@@ -99,6 +99,11 @@ final class CallingManager {
         try await client.switchScreenSharingOff(instanceId: instanceId, callId: callId)
     }
 
+    func stopCurrentCall(instanceId: String) async throws {
+        let callId = try await requireCurrentCallId(instanceId: instanceId)
+        try await client.stopCall(instanceId: instanceId, callId: callId)
+    }
+
     func verifyPeerConnections(
         instanceIds: [String],
         expectedCount: Int,

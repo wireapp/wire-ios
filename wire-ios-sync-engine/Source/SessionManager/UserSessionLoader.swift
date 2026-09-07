@@ -489,6 +489,7 @@ final class UserSessionLoader {
             apiVersion: WireTransport.APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
         )
         let recurringActionService = RecurringActionService(
+            userID: accountID,
             storage: sharedUserDefaults,
             dateProvider: .system
         )

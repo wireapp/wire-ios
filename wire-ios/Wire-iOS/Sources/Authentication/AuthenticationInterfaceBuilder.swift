@@ -348,10 +348,8 @@ final class AuthenticationInterfaceBuilder {
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
             registrationAnalyticsTracker: registrationAnalyticsTracker,
-            isAccountAlreadyLoggedIn: { result in
-                guard let sessionManager = SessionManager.shared,
-                      let account = sessionManager.accountManager.account(with: result.userID) else { return false }
-                return result.multiIngressIdentityProviderID == nil || sessionManager.isAccountActive(account)
+            isAccountAlreadyLoggedIn: { userID in
+                SessionManager.shared?.accountManager.accounts.contains { $0.userIdentifier == userID } ?? false
             },
             overrideAllowEmailLoginOnly: featureProvider.allowOnlyEmailLogin
         )

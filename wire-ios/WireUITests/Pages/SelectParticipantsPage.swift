@@ -33,8 +33,18 @@ class SelectParticipantsPage: PageModel {
         app.descendants(matching: .any)[Locators.SelectParticipantsPage.done.rawValue].firstMatch
     }
 
+    var skipButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.SelectParticipantsPage.skip.rawValue].firstMatch
+    }
+
     var addParticipantsButton: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationDetailsPage.addParticipantsButton.rawValue].firstMatch
+    }
+
+    @discardableResult
+    func searchUserByNameOrUsername(_ nameOrUsername: String) throws -> SelectParticipantsPage {
+        try searchByName.tapIfKeyboardNotFocused().typeText(nameOrUsername)
+        return self
     }
 
     func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {
@@ -47,6 +57,11 @@ class SelectParticipantsPage: PageModel {
 
     func doneSelectingMembers() throws -> ActiveConversationPage {
         doneButton.tap()
+        return try ActiveConversationPage()
+    }
+
+    func skipSelectingMembers() throws -> ActiveConversationPage {
+        skipButton.tap()
         return try ActiveConversationPage()
     }
 

@@ -46,7 +46,7 @@ final class MultiBackendSupportTests: WireUITestCase {
 
     /// [critical]
     @MainActor
-    func testAddMultiBackendAccounts_TC_8940() async throws {
+    func testAddMultiBackendAccounts_TC_8940_8814() async throws {
 
         var (accountPageBackend1, userBackend1) = try await testLoginToBackend(.staging)
 
@@ -56,14 +56,15 @@ final class MultiBackendSupportTests: WireUITestCase {
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        try switchBackend(target: .anta)
+        try switchBackend(target: .qaFederationA)
 
-        let (accountPageBackend2, _) = try await testLoginToBackend(.anta)
+        let (accountPageBackend2, _) = try await testLoginToBackend(.qaFederationA)
 
         accountPageBackend1 = try accountPageBackend2
             .backToSettings()
             .switchToConversationsTab()
             .openUserProfilePage()
+            .verifyAddedAccountInfo(for: userBackend1.name)
             .switchUserAccountForUser(withName: userBackend1.name)
             .openSettings()
             .openAccountSettings()
@@ -89,10 +90,10 @@ final class MultiBackendSupportTests: WireUITestCase {
         let conversationB = "Conversation B"
         try await UserHelper.default.createGroupConversations(qualifiedIds: [], owner: userB, groupName: conversationB)
 
-        // Create user C on anta with a single conversation
-        let userC = try await UserHelper.instance(backend: .anta).createPersonalUser()
+        // Create user C on qa-federation-a with a single conversation
+        let userC = try await UserHelper.instance(backend: .qaFederationA).createPersonalUser()
         let conversationC = "Conversation C"
-        try await UserHelper.instance(backend: .anta).createGroupConversations(
+        try await UserHelper.instance(backend: .qaFederationA).createGroupConversations(
             qualifiedIds: [],
             owner: userC,
             groupName: conversationC
@@ -117,7 +118,7 @@ final class MultiBackendSupportTests: WireUITestCase {
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        try switchBackend(target: .anta)
+        try switchBackend(target: .qaFederationA)
 
         _ = try app
             .loginUser(email: userC.email, password: userC.password)
@@ -153,15 +154,15 @@ final class MultiBackendSupportTests: WireUITestCase {
             .loginUser(email: userA.email, password: userA.password)
             .acceptPopup()
 
-        // Go to Anta login
+        // Go to qa-federation-a login
         _ = try ConversationsPage()
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        try switchBackend(target: .anta)
+        try switchBackend(target: .qaFederationA)
 
         // Login to account B
-        let userB = try await UserHelper.instance(backend: .anta).createPersonalUser()
+        let userB = try await UserHelper.instance(backend: .qaFederationA).createPersonalUser()
         _ = try app
             .loginUser(email: userB.email, password: userB.password)
             .acceptPopup()
@@ -183,12 +184,12 @@ final class MultiBackendSupportTests: WireUITestCase {
             .logout()
             .enterPassword(userB.password, expectWelcomePage: false)
 
-        // Go to Anta login
+        // Go to qa-federation-a login
         _ = try ConversationsPage()
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        try switchBackend(target: .anta)
+        try switchBackend(target: .qaFederationA)
 
         // Re-login to account B
         _ = try app
@@ -202,7 +203,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         try verifySwitchingAccount(
             accountPage: accountSettingsPage,
             expectedUser: userB,
-            expectedDomain: BackendTarget.anta.domainInfo
+            expectedDomain: BackendTarget.qaFederationA.domainInfo
         )
     }
 

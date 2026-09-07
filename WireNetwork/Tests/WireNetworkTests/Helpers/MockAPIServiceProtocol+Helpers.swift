@@ -32,10 +32,11 @@ extension MockAPIServiceProtocol {
     /// - Mock a series or responses for repeated requests
     /// - Mock a single response
     ///
-    /// - Parameter responses: The responses to return, one per request received.
     /// - Returns: A mock api service.
 
-    static func withResponses(_ responses: [Response]) -> MockAPIServiceProtocol {
+    static func withResponses(
+        _ responses: [Response]
+    ) -> MockAPIServiceProtocol {
         let apiService = MockAPIServiceProtocol()
         var responses = responses
 

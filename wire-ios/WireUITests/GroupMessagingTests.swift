@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreLocation
 import WireFoundation
 import XCTest
 
@@ -53,7 +54,7 @@ final class GroupMessagingTests: WireUITestCase {
 
     /// [critical]
     @MainActor
-    func testSendTextAndAudioInGroupConversation_TC_8833_8835() async throws {
+    func testSendTextImageAudioAndPingInGroupConversation_TC_8833_8834_8835_8838() async throws {
 
         // GIVEN
         let message = UserGenerator.generateRandomMessage()
@@ -62,11 +63,19 @@ final class GroupMessagingTests: WireUITestCase {
         // WHEN
         let activeConversationPage = try await login(user: groupTeam.teamOwner)
             .openConversation()
-            .sendMessage(message)
+            .openPhotosAndGrantPermission()
+            .selectImageAndSend()
             .recordAudioAndSend()
+            .sendMessage(message)
+            .sendPing()
 
         // THEN
         let sentMessage = activeConversationPage.fetchMessages()
+        XCTAssertTrue(
+            activeConversationPage.imageCell.waitForExistence(timeout: 2),
+            "No Image cell found"
+        )
+
         XCTAssertTrue(
             sentMessage.contains(message),
             "Expected message '\(message)' not found in sent messages: \(sentMessage)"
@@ -75,20 +84,31 @@ final class GroupMessagingTests: WireUITestCase {
         XCTAssertTrue(
             activeConversationPage.playAudioFile.waitForExistence(timeout: 2), "No audio found"
         )
+
+        try activeConversationPage.verifyPingSent()
     }
 
     @MainActor
-    func testReceiveTextAndAudioInGroupConversation_TC_8840_8842() async throws {
+    func testReceiveTextImageAudioAndPingInGroupConversation_TC_8840_8841_8842_8845() async throws {
 
         // GIVEN
         let message = UserGenerator.generateRandomMessage()
         let groupTeam = try await registerGroupTeam()
         let conversationsPage = try login(user: groupTeam.teamOwner)
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
-        // WHEN member sends text and audio file
+        // WHEN member sends text, image, audio and ping
         try await testServicesClient.sendText(
             user: groupTeam.teamMember,
             text: message,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
+        )
+
+        try await testServicesClient.sendImage(
+            user: groupTeam.teamMember,
+            fileURL: mediaURLs.imageURL,
+            type: mediaURLs.imageExtension,
             conversationId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain
         )
@@ -101,6 +121,12 @@ final class GroupMessagingTests: WireUITestCase {
             convoId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain,
             audio: TestServiceMediaFixtures.audioMetadata()
+        )
+
+        try await testServicesClient.sendPing(
+            user: groupTeam.teamMember,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
         )
 
         XCTAssertTrue(
@@ -117,11 +143,22 @@ final class GroupMessagingTests: WireUITestCase {
             "Expected message '\(message)' not found in sent messages: \(receivedMessages)"
         )
 
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
+            "Expected image attachment not found"
+        )
         verifyMessageReceivedAndSenderInfo(
-            attachment: activeConversationPage.fileTypeIcons.firstMatch,
+            attachment: activeConversationPage.fileTypeIcons.element(boundBy: 1),
             on: activeConversationPage,
             expectedSenderName: groupTeam.teamMember.name,
             failureMessage: "Expected audio attachment not found"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage
+                .receivedPing(for: groupTeam.teamMember.name)
+                .waitForExistence(timeout: 2),
+            "Expected ping message from \(groupTeam.teamMember.name) not found"
         )
     }
 
@@ -194,80 +231,47 @@ final class GroupMessagingTests: WireUITestCase {
 
     /// [critical]
     @MainActor
-    func testSendImageAndVideoInGroupConversation_TC_8834_8836() async throws {
+    func testSendAndReceiveVideoInGroupConversation_TC_8836_8843() async throws {
 
         // GIVEN
         let groupTeam = try await registerGroupTeam()
 
+        _ = try login(user: groupTeam.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
         // WHEN
-        let activeConversationPage = try login(user: groupTeam.teamMember)
+        let sentConversationPage = try app.loginUser(
+            email: groupTeam.teamMember.email,
+            password: groupTeam.teamMember.password
+        )
+        .acceptPopup()
+        .openConversation()
+        .openPhotosAndGrantPermission()
+        .selectVideoAndSend()
+
+        // THEN - video is sent
+        XCTAssertTrue(
+            sentConversationPage.videoCell.waitForExistence(timeout: 2), "No Video cell found"
+        )
+        XCTAssertTrue(
+            sentConversationPage.videoPlayButton.waitForExistence(timeout: 2), "No Video play button found"
+        )
+
+        let receivedConversationPage = try sentConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: groupTeam.teamOwner.name)
             .openConversation()
-            .openPhotosAndGrantPermission()
-            .selectImageAndSend()
-            .openPhotos()
-            .selectVideoAndSend()
 
-        // THEN
+        // THEN - video is received
         XCTAssertTrue(
-            activeConversationPage.imageCell.waitForExistence(timeout: 2), "No Image cell found"
+            receivedConversationPage.videoCell.waitForExistence(timeout: 5),
+            "No Video cell found after receiving"
         )
-
         XCTAssertTrue(
-            activeConversationPage.videoCell.waitForExistence(timeout: 2), "No Video cell found"
-        )
-
-        XCTAssertTrue(
-            activeConversationPage.videoPlayButton.waitForExistence(timeout: 2), "No Video play button found"
-        )
-    }
-
-    @MainActor
-    func testReceiveImageAndVideoInGroupConversation_TC_8841_8843() async throws {
-
-        // GIVEN
-        let groupTeam = try await registerGroupTeam()
-        let conversationsPage = try login(user: groupTeam.teamOwner)
-        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
-
-        // WHEN
-        try await testServicesClient.sendImage(
-            user: groupTeam.teamMember,
-            fileURL: mediaURLs.imageURL,
-            type: mediaURLs.imageExtension,
-            conversationId: groupTeam.conversationId,
-            domain: groupTeam.conversationDomain
-        )
-
-        try await testServicesClient.sendFile(
-            type: mediaURLs.videoExtension,
-            user: groupTeam.teamMember,
-            fileName: "testVideo.mp4",
-            filepath: mediaURLs.videoURL.path,
-            convoId: groupTeam.conversationId,
-            domain: groupTeam.conversationDomain
-        )
-
-        XCTAssertTrue(
-            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
-            "Unread messages count element did not appear"
-        )
-
-        let activeConversationPage = try conversationsPage.openConversation()
-
-        // THEN
-
-        // Image verification
-        XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
-            "Expected image attachment not found"
-        )
-
-        // Video verification
-        verifyMessageReceivedAndSenderInfo(
-            attachment: activeConversationPage.fileAttachment(name: "TESTVIDEO", type: "MP4"),
-            on: activeConversationPage,
-            expectedSenderName: groupTeam.teamMember.name,
-            failureMessage: "Expected MP4 video attachment not found"
+            receivedConversationPage.videoPlayButton.waitForExistence(timeout: 2),
+            "No Video play button found after receiving"
         )
     }
 
@@ -304,39 +308,92 @@ final class GroupMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testSendAndReceivePingInGroupConversation_TC_8838_8845() async throws {
+    func testSendLocationAndOpenReceivedLocationInDefaultMapsApp_TC_11734() async throws {
 
         // GIVEN
         let groupTeam = try await registerGroupTeam()
+        XCUIDevice.shared.location = XCUILocation(location: CLLocation(
+            latitude: 52.52419,
+            longitude: 13.40221
+        ))
 
-        _ = try login(user: groupTeam.teamOwner)
-            .openUserProfilePage()
-            .tapAddAccountOrTeamButton()
-
-        // WHEN
-        let activeConversationPage = try app.loginUser(
-            email: groupTeam.teamMember.email,
-            password: groupTeam.teamMember.password
-        )
-        .acceptPopup()
-        .openConversation()
-        .sendPing()
-
-        // THEN - ping is sent
-        try activeConversationPage.verifyPingSent()
-
-        let receivedConversationPage = try activeConversationPage
-            .goBackToConversationPage()
-            .openUserProfilePage()
-            .switchUserAccountForUser(withName: groupTeam.teamOwner.name)
+        let activeConversationPage = try login(user: groupTeam.teamOwner)
             .openConversation()
 
-        // THEN - ping is received
+        // WHEN
+        activeConversationPage
+            .selectAndSendLocation()
+            .verifyLocationShared()
+
+        try await testServicesClient.sendLocation(
+            user: groupTeam.teamMember,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain,
+            latitude: 52.52419,
+            longitude: 13.40221,
+            locationName: "Berlin"
+        )
+
+        // THEN - Verify received location and able to open
+        activeConversationPage.verifyLocationShared()
+        activeConversationPage.openLocationInDefaultMapsApp(locationName: "Berlin")
+    }
+
+    @MainActor
+    func testUserAbleToChangeConversationNotificationSettings_TC_8871() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+        let activeConversationPage = try login(user: groupTeam.teamOwner)
+            .openConversation()
+
+        // WHEN
+        let notificationOptionsPage = try activeConversationPage
+            .openConversationDetails()
+            .openNotificationOptions()
+
+        // THEN
+        try notificationOptionsPage
+            .assertSelected(.everything)
+            .selectAndVerify(.mentionsAndReplies)
+            .selectAndVerify(.nothing)
+            .goBackToConversationDetails()
+            .assertNotificationStatus(.nothing)
+            .openNotificationOptions()
+            .assertSelected(.nothing)
+    }
+
+    @MainActor
+    func testReceiveGIFInGroupConversation_TC_8846() async throws {
+
+        // GIVEN
+        let groupTeam = try await registerGroupTeam()
+        let conversationsPage = try login(user: groupTeam.teamOwner)
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+
+        // WHEN
+        try await testServicesClient.sendImage(
+            user: groupTeam.teamMember,
+            fileURL: mediaURLs.gifURL,
+            type: mediaURLs.gifType,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
+        )
+
         XCTAssertTrue(
-            receivedConversationPage
-                .receivedPing(for: groupTeam.teamMember.name)
-                .waitForExistence(timeout: 2),
-            "Expected ping message from \(groupTeam.teamMember.name) not found"
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
+            "Unread messages count element did not appear"
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        // THEN
+        activeConversationPage.verifyGIFReceived()
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            groupTeam.teamMember.name,
+            "Sender info didn't match expected value \(groupTeam.teamMember.name)"
         )
     }
 

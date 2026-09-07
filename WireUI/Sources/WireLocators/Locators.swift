@@ -65,6 +65,8 @@ public enum Locators {
         case conversationSearchBar
         case conversationSearchClearButton = "Clear text"
         case conversationCell
+        case unblockOptionOnContextMenu
+        case joinCallButton = "Join"
         case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
@@ -182,6 +184,8 @@ public enum Locators {
         case imageCell
         case videoCell
         case videoPlayButton
+        case imagePreview
+        case videoPreview
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
@@ -197,10 +201,17 @@ public enum Locators {
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
+        case cameraRollButton
         case uploadFileButton
+        case locationButton
+        case add = "Add"
         case browse = "Browse"
         case open = "Open"
         case allowFullAccess = "Allow Full Access"
+        case sendLocation
+        case selectedAddress
+        case locationCell
+        case locationMap
         case ok = "OK"
         case audioButton
         case startRecording
@@ -246,11 +257,18 @@ public enum Locators {
         case title
         case addParticipantsButton
         case moreOptionsButton
+        case notificationOptionsCell
         case userCellName
         case adminCell
         case memberCell
         case close
         case readReceiptsSwitch
+    }
+
+    public enum ConversationNotificationOptionsPage: AutoPrefixedEnum {
+        case everythingOption
+        case mentionsAndRepliesOption
+        case nothingOption
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
@@ -282,6 +300,12 @@ public enum Locators {
         case userProfilePicture
         case close
         case status
+    }
+
+    public enum UserProfileQRCodePage: AutoPrefixedEnum {
+        case qrCodeImage
+        case shareProfileLinkButton
+        case shareQRCodeButton
     }
 
     public enum UserProfileStatusPicker: String {
@@ -454,6 +478,7 @@ public enum Locators {
     public enum ShareExtensionPage: String {
 
         case sendButtonOnShareExtension
+        case messageField
         case wire = "Wire"
         case chooseConversations = "Choose"
     }
@@ -470,6 +495,7 @@ public enum Locators {
     public enum IncomingCallPage: String {
 
         case acceptCall = "Accept"
+        case declineCall
         case turnOffMicrophone = "Microphone"
     }
 
@@ -663,6 +689,11 @@ public enum Locators {
 
         public enum MeetingDetails: String {
             case attendingLabel = "Attending Label"
+        }
+
+        public enum MeetingRow: String {
+            case deleteForMeButton = "Delete Meeting for Me Button"
+            case joinButton = "Join Button"
         }
 
     }

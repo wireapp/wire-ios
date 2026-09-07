@@ -176,13 +176,11 @@ final class AccountManagerTests {
         // Given
         let sut = try makeSUT()
         let accountID = UUID()
-        let updatedIdentityProviderID = UUID()
         sut.addAndSelect(Account(userName: "Alice", userIdentifier: accountID))
         let account = try #require(sut.selectedAccount)
 
         // When
         let updatedAccount = Account(userName: "Bob", userIdentifier: accountID, teamName: "Wire")
-        updatedAccount.lastSSOIdentityProviderID = updatedIdentityProviderID
         sut.addAndSelect(updatedAccount)
 
         // Then
@@ -190,7 +188,6 @@ final class AccountManagerTests {
         #expect(account.userIdentifier == accountID)
         #expect(account.userName == "Bob")
         #expect(account.teamName == "Wire")
-        #expect(account.lastSSOIdentityProviderID == updatedIdentityProviderID)
     }
 
     @Test("It sorts accounts without team before accounts with team")

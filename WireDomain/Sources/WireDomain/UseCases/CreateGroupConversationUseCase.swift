@@ -460,7 +460,8 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
 
         await appendFailedToAddUsersMessage(
             in: conversation,
-            users: failedUsers
+            users: failedUsers,
+            type: .failedToAddParticipantsMLS
         )
     }
 
@@ -526,13 +527,15 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
 
     private func appendFailedToAddUsersMessage(
         in conversation: ZMConversation,
-        users: Set<ZMUser>
+        users: Set<ZMUser>,
+        type: ZMSystemMessageType = .failedToAddParticipants
     ) async {
         await context.perform {
             conversation.appendFailedToAddUsersSystemMessage(
                 users: users,
                 sender: conversation.creator,
-                at: conversation.lastServerTimeStamp ?? Date()
+                at: conversation.lastServerTimeStamp ?? Date(),
+                type: type
             )
             context.enqueueDelayedSave()
         }

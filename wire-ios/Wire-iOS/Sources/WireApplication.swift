@@ -65,11 +65,8 @@ final class WireApplication: UIApplication {
     }
 
     private func presentDeveloperTools() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
         developerToolsPresenter.presentIfNotDisplayed(
-            with: appDelegate.appRootRouter,
+            with: UIApplication.shared.sceneDelegates.first?.appRootRouter,
             from: self.topmostViewController(onlyFullScreen: false)
         )
     }

@@ -46,7 +46,7 @@ struct MeetingRepositoryTests {
     func pullMeetingStoresMeetingContainedInBackendResponse() async throws {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        meetingsAPI.getMeetingId_MockValue = Scaffolding.meetingResponse
 
         // When
 
@@ -55,6 +55,7 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(meeting?.id == Scaffolding.meetingID)
+        #expect(meetingsAPI.getMeetingId_Invocations == [Scaffolding.meetingID])
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
         #expect(
@@ -72,7 +73,7 @@ struct MeetingRepositoryTests {
     func pullMeetingDeletesMeetingMissingFromBackendResponse() async throws {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = []
+        meetingsAPI.getMeetingId_MockError = MeetingsAPIError.meetingNotFound
 
         // When
 
@@ -86,14 +87,14 @@ struct MeetingRepositoryTests {
     }
 
     @Test
-    func pullMeetingThrowsWhenListingMeetingsFails() async {
+    func pullMeetingThrowsWhenFetchingMeetingFails() async {
         // Mock
 
-        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        meetingsAPI.getMeetingId_MockError = MeetingsAPIError.accessDenied
 
         // When / Then
 
-        await #expect(throws: (any Error).self) {
+        await #expect(throws: MeetingsAPIError.accessDenied) {
             try await sut.pullMeeting(id: Scaffolding.meetingID)
         }
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
@@ -232,7 +233,7 @@ struct MeetingRepositoryTests {
     func pullMeetingBroadcastsMeetingChange() async throws {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        meetingsAPI.getMeetingId_MockValue = Scaffolding.meetingResponse
         var changes = sut.observeMeetingChanges().makeAsyncIterator()
 
         // When
@@ -459,7 +460,7 @@ struct MeetingRepositoryTests {
     func pullMeetingReturnsStoredCopy() async throws {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        meetingsAPI.getMeetingId_MockValue = Scaffolding.meetingResponse
         localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
 
         // When

@@ -31,13 +31,14 @@ public protocol AVSWrapperType {
         conversationId: AVSIdentifier,
         callType: AVSCallType,
         conversationType: AVSConversationType,
-        useCBR: Bool
+        useCBR: Bool,
+        isMeeting: Bool
     ) -> Bool
     func answerCall(conversationId: AVSIdentifier, callType: AVSCallType, useCBR: Bool) -> Bool
     func endCall(conversationId: AVSIdentifier)
     func rejectCall(conversationId: AVSIdentifier)
     func close()
-    func received(callEvent: CallEvent, conversationType: AVSConversationType) -> CallError?
+    func received(callEvent: CallEvent, conversationType: AVSConversationType, isMeeting: Bool) -> CallError?
     func setVideoState(conversationId: AVSIdentifier, videoState: VideoState)
     func handleResponse(httpStatus: Int, reason: String, context: WireCallMessageToken)
     func handleSFTResponse(data: Data?, context: WireCallMessageToken)
@@ -142,10 +143,9 @@ public final class AVSWrapper: AVSWrapperType {
         conversationId: AVSIdentifier,
         callType: AVSCallType,
         conversationType: AVSConversationType,
-        useCBR: Bool
+        useCBR: Bool,
+        isMeeting: Bool
     ) -> Bool {
-        // TODO: [WPB-18511] This is currently just a hardcoded value and will be replaced when we start working on the Meetings.
-        let isMeeting = false
         let didStart = wcall_start(
             handle,
             conversationId.serialized,
@@ -218,15 +218,17 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     /// Notifies AVS that we received a remote event.
-    public func received(callEvent: CallEvent, conversationType: AVSConversationType) -> CallError? {
+    public func received(
+        callEvent: CallEvent,
+        conversationType: AVSConversationType,
+        isMeeting: Bool
+    ) -> CallError? {
         var result: CallError?
 
         callEvent.data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
             guard let bytes = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return }
             let currentTime = UInt32(callEvent.currentTimestamp.timeIntervalSince1970)
             let serverTime = UInt32(callEvent.serverTimestamp.timeIntervalSince1970)
-            // TODO: [WPB-18511] This is currently just a hardcoded value and will be replaced when we start working on the Meetings.
-            let isMeeting = false
             zmLog.debug("wcall_recv_msg: currentTime = \(currentTime), serverTime = \(serverTime)")
             // An OTR call-type message has been received,
             // curr_time is the timestamp (synced as close as possible)

@@ -41,7 +41,7 @@ final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponent
     private let existsAnotherAccount: Bool
     private let allowsMultipleBackends: Bool
     private let existingBackendHosts: Set<String>
-    private let isAccountAlreadyLoggedIn: (AuthenticationResult) -> Bool
+    private let isAccountAlreadyLoggedIn: (UUID) -> Bool
 
     init(
         parent: any Scope,
@@ -49,7 +49,7 @@ final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponent
         existsAnotherAccount: Bool,
         allowsMultipleBackends: Bool,
         existingBackendHosts: Set<String>,
-        isAccountAlreadyLoggedIn: @escaping (AuthenticationResult) -> Bool
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool
     ) {
         self.networkStack = networkStack
         self.existsAnotherAccount = existsAnotherAccount

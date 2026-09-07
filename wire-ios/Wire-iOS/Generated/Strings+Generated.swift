@@ -2821,6 +2821,8 @@ internal enum L10n {
         }
       }
       internal enum InputBar {
+        /// You blocked this user
+        internal static let blockedUser = L10n.tr("Localizable", "conversation.input_bar.blocked_user", fallback: "You blocked this user")
         /// Cancel reply
         internal static let closeReply = L10n.tr("Localizable", "conversation.input_bar.close_reply", fallback: "Cancel reply")
         /// Type a message
@@ -6406,10 +6408,11 @@ internal enum L10n {
     internal enum SsoIdentityChanged {
       /// Delete data and continue
       internal static let deleteDataAndContinue = L10n.tr("Localizable", "sso_identity_changed.delete_data_and_continue", fallback: "Delete data and continue")
-      /// This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.
-      internal static let message = L10n.tr("Localizable", "sso_identity_changed.message", fallback: "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.")
-      /// Different identity provider detected
-      internal static let title = L10n.tr("Localizable", "sso_identity_changed.title", fallback: "Different identity provider detected")
+      /// This account was used with a different identity provider. Continuing will delete all conversations from this device.
+      /// To keep your data, select Cancel, then log in with your previous identity provider.
+      internal static let message = L10n.tr("Localizable", "sso_identity_changed.message", fallback: "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.")
+      /// Identity provider changed
+      internal static let title = L10n.tr("Localizable", "sso_identity_changed.title", fallback: "Identity provider changed")
     }
     internal enum SystemStatusBar {
       internal enum NoInternet {

@@ -66,13 +66,9 @@ class CallQualityController: NSObject {
 
     var canPresentCallQualitySurvey: Bool {
         #if DISABLE_CALL_QUALITY_SURVEY
-            return false
+            false
         #else
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-                return false
-            }
-            return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-                && appDelegate.launchType != .unknown
+            !AutomationHelper.sharedHelper.disableCallQualitySurvey && UIApplication.shared.applicationState == .active
         #endif
     }
 

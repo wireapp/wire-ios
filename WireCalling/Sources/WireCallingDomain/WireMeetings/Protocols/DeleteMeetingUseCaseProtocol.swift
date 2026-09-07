@@ -19,9 +19,9 @@
 import Foundation
 
 // sourcery: AutoMockable
-/// Deletes a meeting by its ID.
+/// Deletes a meeting for the current user.
 package protocol DeleteMeetingUseCaseProtocol: Sendable {
 
-    func invoke(meetingID: QualifiedID) async throws
+    func invoke(meeting: Meeting) async throws
 
 }

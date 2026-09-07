@@ -30,14 +30,13 @@ jobs:
     env:
       JIRA_BASE_URL: https://wearezeta.atlassian.net
       JIRA_PROJECT: WPB
-      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
       # Optional: full branch name of the current LTS C-build release (e.g. release/cycle-4.18).
       # When set, an extra LTS section is appended to the report.
       LTS_RELEASE: ${{ vars.LTS_RELEASE }}
       # Optional: full branch name of an additionally tracked release (e.g. release/cycle-4.20).
       # When set, and the Jira version isn't yet released, an extra GOV section is appended to the report.
       GOV_RELEASE: ${{ vars.GOV_RELEASE }}
+      HAS_SLACK_WEBHOOK: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' }}
     steps:
       # Needed so the local ./.github/actions/notify-wire composite action is available.
       # Only .github is required, and no LFS objects.
@@ -50,6 +49,8 @@ jobs:
       - name: Build release report
         id: build
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        env:
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
         with:
           script: |
             const VERSION_FILE = 'wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig';
@@ -387,36 +388,46 @@ jobs:
               .write();
 
       - name: Post Edge to Wire
-        if: env.SLACK_WEBHOOK_URL != ''
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.edge }}
 
       - name: Post Beta to Wire
-        if: env.SLACK_WEBHOOK_URL != ''
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.beta }}
 
       - name: Post Prod to Wire
-        if: env.SLACK_WEBHOOK_URL != ''
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.prod }}
 
       - name: Post LTS to Wire
-        if: env.SLACK_WEBHOOK_URL != '' && steps.build.outputs.lts != ''
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' && steps.build.outputs.lts != '' }}
         uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.lts }}
 
       - name: Post GOV to Wire
-        if: env.SLACK_WEBHOOK_URL != '' && steps.build.outputs.gov != ''
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' && steps.build.outputs.gov != '' }}
         uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.gov }}

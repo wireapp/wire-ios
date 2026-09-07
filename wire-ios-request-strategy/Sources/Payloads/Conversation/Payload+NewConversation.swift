@@ -102,7 +102,11 @@ extension Payload {
             self.name = action.name
             self.access = action.accessMode?.stringValue
             self.legacyAccessRole = action.legacyAccessRole?.rawValue
-            self.accessRoles = action.accessRoles.map(\.rawValue)
+            self.accessRoles = if action.accessRoles.isEmpty {
+                nil
+            } else {
+                action.accessRoles.map(\.rawValue)
+            }
             self.conversationRole = ZMConversation.defaultMemberRoleName
             self.team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
             self.readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0

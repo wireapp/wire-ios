@@ -154,6 +154,11 @@
         "status": "enabled",
         "ttl": "unlimited"
     },
+    "meetings": {
+        "lockStatus": "unlocked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    },
     "outlookCalIntegration": {
         "lockStatus": "locked",
         "status": "enabled",

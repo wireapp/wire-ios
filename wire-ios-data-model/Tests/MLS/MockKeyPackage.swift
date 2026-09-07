@@ -16,15 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Reports which conversations the self user is currently in a call in.
-public protocol MeetingCallStateRepositoryProtocol: Sendable {
+import WireCoreCrypto
 
-    /// Emits the set of conversation ids the self user is currently in a call in.
-    ///
-    /// The stream emits the current value immediately and then a new value
-    /// whenever call state changes, so a meeting is considered "attending" while
-    /// its `conversationID` is contained in the latest emitted set.
-    func observeAttendedConversations() -> AsyncStream<Set<QualifiedID>>
+final class MockKeyPackage: WireCoreCrypto.KeyPackage, @unchecked Sendable {
 
+    let data: Data
+
+    init(data: Data = .random()) {
+        self.data = data
+
+        super.init(noPointer: .init())
+    }
+
+    @_documentation(visibility: private)
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        fatalError("init(unsafeFromRawPointer:) has not been implemented")
+    }
+
+    override func serialize() throws -> Data {
+        data
+    }
 }

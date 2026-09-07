@@ -40,9 +40,6 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event.pull_request.merged == true
 
-    env:
-      GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -68,6 +65,8 @@ jobs:
 
       - name: Cherry pick to target branch
         uses: wireapp/action-auto-cherry-pick@a4a732fe8b79e3fae70362e6271b8982be5b1bc1 # v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         with:
           target-branch: ${{ steps.target-branch.outputs.target }}
           pr-labels: 'cherry-pick'

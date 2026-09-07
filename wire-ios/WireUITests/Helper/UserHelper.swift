@@ -124,15 +124,15 @@ final class UserHelper {
             }
             return auth
 
-        case .anta:
-            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_ANTA"] else {
-                fatalError("Missing BASIC_AUTH_ANTA environment variable")
+        case .qaFederationA:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FEDERATION_A"] else {
+                fatalError("Missing BASIC_AUTH_QA_FEDERATION_A environment variable")
             }
             return auth
 
-        case .bella:
-            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_BELLA"] else {
-                fatalError("Missing BASIC_AUTH_BELLA environment variable")
+        case .qaFederationB:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FEDERATION_B"] else {
+                fatalError("Missing BASIC_AUTH_QA_FEDERATION_B environment variable")
             }
             return auth
         }
@@ -274,9 +274,12 @@ final class UserHelper {
     /// Register a team owner with a provided team name.
     /// - Parameter teamName: team name to create.
     /// - Returns: qualifiedId of the owner and ownerInfo
-    func registerUserAsTeamOwner(teamName: String) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+    func registerUserAsTeamOwner(
+        teamName: String,
+        preferredName: String? = nil
+    ) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
 
-        let teamOwner = UserGenerator.generateUniqueUserInfo()
+        let teamOwner = UserGenerator.generateUniqueUserInfo(preferredName: preferredName)
         teamOwner.teamName = teamName
 
         let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
@@ -399,10 +402,11 @@ final class UserHelper {
 
     func registerUsersAsTeamMemberWithUserHandleSet(
         ownerAccessToken: String,
-        teamID: UUID
+        teamID: UUID,
+        preferredName: String? = nil
     ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
 
-        let teamMember = UserGenerator.generateUniqueUserInfo()
+        let teamMember = UserGenerator.generateUniqueUserInfo(preferredName: preferredName)
 
         let invitationID = try await teamsAPI.inviteMemberToTeam(
             access_token: ownerAccessToken,
@@ -582,13 +586,18 @@ final class UserHelper {
     ///   - driveEnabled: whether Drive should be unlocked and enabled for for group
     /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if conversation created
     func registerTeam(
-        withMemberCount memberCount: Int,
+        withMemberCount memberCount: Int = 0,
         conversation: CreateConversationOption? = nil,
-        driveEnabled: Bool = false
+        driveEnabled: Bool = false,
+        names: [String] = []
     ) async throws
         -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
 
-        let (_, teamOwner) = try await registerUserAsTeamOwner()
+        let generated = UserGenerator.generateUniqueUserInfo()
+        let (_, teamOwner) = try await registerUserAsTeamOwner(
+            teamName: generated.teamName,
+            preferredName: names.first
+        )
         guard let teamID = teamOwner.teamID else {
             throw RuntimeError("registerTeam: teamOwner.teamID is nil")
         }
@@ -608,10 +617,11 @@ final class UserHelper {
         var teamMembers: [UserInfo] = []
         teamMembers.reserveCapacity(memberCount)
 
-        for _ in 0 ..< memberCount {
+        for index in 0 ..< memberCount {
             let (qualifiedId, teamMember) = try await registerUsersAsTeamMemberWithUserHandleSet(
                 ownerAccessToken: ownerAccessToken.token,
-                teamID: teamID
+                teamID: teamID,
+                preferredName: names.indices.contains(index + 1) ? names[index + 1] : nil
             )
             qualifiedIDs.append(qualifiedId)
             teamMembers.append(teamMember)
@@ -854,8 +864,8 @@ final class UserHelper {
 
 extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
-    static let backendURLAnta = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"]!)"
-    static let backendURLBella = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"]!)"
+    static let backendURLQAFederationA = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_A"]!)"
+    static let backendURLQAFederationB = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_B"]!)"
 
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
@@ -865,18 +875,18 @@ extension BackendEnvironment {
         proxySettings: nil
     )
 
-    static let anta = BackendEnvironment(
-        url: URL(string: backendURLAnta)!,
-        webSocketURL: URL(string: backendURLAnta)!,
-        blacklistURL: URL(string: backendURLAnta)!,
+    static let qaFederationA = BackendEnvironment(
+        url: URL(string: backendURLQAFederationA)!,
+        webSocketURL: URL(string: backendURLQAFederationA)!,
+        blacklistURL: URL(string: backendURLQAFederationA)!,
         pinnedKeys: [],
         proxySettings: nil
     )
 
-    static let bella = BackendEnvironment(
-        url: URL(string: backendURLBella)!,
-        webSocketURL: URL(string: backendURLBella)!,
-        blacklistURL: URL(string: backendURLBella)!,
+    static let qaFederationB = BackendEnvironment(
+        url: URL(string: backendURLQAFederationB)!,
+        webSocketURL: URL(string: backendURLQAFederationB)!,
+        blacklistURL: URL(string: backendURLQAFederationB)!,
         pinnedKeys: [],
         proxySettings: nil
     )
@@ -887,10 +897,10 @@ extension BackendTarget {
         switch self {
         case .staging:
             .staging
-        case .anta:
-            .anta
-        case .bella:
-            .bella
+        case .qaFederationA:
+            .qaFederationA
+        case .qaFederationB:
+            .qaFederationB
         }
     }
 }

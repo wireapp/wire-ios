@@ -145,7 +145,7 @@ struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
     let endTime: UTCTime
     let qualifiedConversation: QualifiedIDV0
     let invitedEmails: [String]
-    let trial: Bool
+    let trial: Bool?
     let createdAt: UTCTime
     let updatedAt: UTCTime
     let recurrence: MeetingRecurrenceV16?
@@ -173,7 +173,7 @@ struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
             endTime: endTime.date,
             conversationID: qualifiedConversation.toAPIModel(),
             invitedEmails: invitedEmails,
-            isTrial: trial,
+            isTrial: trial ?? false,
             createdAt: createdAt.date,
             updatedAt: updatedAt.date,
             recurrence: recurrence?.toMeetingRecurrence()

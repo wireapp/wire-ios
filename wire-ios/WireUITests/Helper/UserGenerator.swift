@@ -20,7 +20,7 @@ import XCTest
 
 enum UserGenerator {
 
-    static func generateUniqueUserInfo() -> UserInfo {
+    static func generateUniqueUserInfo(preferredName: String? = nil) -> UserInfo {
         let password = generateRandomPassword()
 
         let time = Int(Date().timeIntervalSince1970 * 1000)
@@ -28,7 +28,7 @@ enum UserGenerator {
 
         let username = "smoketester\(time)\(random)"
         let domain = "wire.engineering"
-        let name = "Smoke Tester \(time)\(random)"
+        let name = "\(preferredName ?? "Smoke Tester") \(time)\(random)"
         let teamName = "Team-Smoke \(time)\(random)"
         return UserInfo(
             name: name,

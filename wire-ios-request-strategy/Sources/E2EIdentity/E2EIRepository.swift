@@ -17,20 +17,17 @@
 //
 
 import Combine
+import CoreData
 import Foundation
 import WireCoreCrypto
 import WireLogging
+import WireTransport
 
 public protocol E2EIRepositoryInterface {
 
     func fetchTrustAnchor() async throws
 
     func fetchFederationCertificates() async throws
-
-    func createEnrollment(
-        context: NSManagedObjectContext,
-        expirySec: UInt32?
-    ) async throws -> E2EIEnrollmentInterface
 
 }
 
@@ -40,115 +37,45 @@ public final class E2EIRepository: E2EIRepositoryInterface {
 
     enum Error: Swift.Error {
         case failedToGetSelfUserInfo
+        case missingSelfClientID
+        case missingE2eIAPI
     }
 
     // MARK: - Properties
 
     private let acmeApi: AcmeAPIInterface
-    private let apiProvider: APIProviderInterface
-    private let e2eiSetupService: E2EISetupServiceInterface
-    private let keyRotator: E2EIKeyPackageRotating
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let logger: WireLogger = .e2ei
-    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
-    private let apiVersion: WireTransport.APIVersion?
-    private let localDomain: String?
 
     // MARK: - Life cycle
 
     public init(
         acmeApi: AcmeAPIInterface,
-        apiProvider: APIProviderInterface,
-        e2eiSetupService: E2EISetupServiceInterface,
-        keyRotator: E2EIKeyPackageRotating,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
-        apiVersion: WireTransport.APIVersion?,
-        localDomain: String?
     ) {
         self.acmeApi = acmeApi
-        self.apiProvider = apiProvider
-        self.e2eiSetupService = e2eiSetupService
-        self.keyRotator = keyRotator
         self.coreCryptoProvider = coreCryptoProvider
-        self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
-        self.apiVersion = apiVersion
-        self.localDomain = localDomain
     }
 
     // MARK: - Interface
 
     public func fetchTrustAnchor() async throws {
-        guard try await !e2eiSetupService.isTrustAnchorRegistered() else {
-            logger.info("Trust anchor is already registered, skipping.")
-            return
+        guard let pkiEnvironment = await coreCryptoProvider.pkiEnvironment() else {
+            throw Error.missingE2eIAPI
         }
+
         let trustAnchor = try await acmeApi.getTrustAnchor()
-        try await e2eiSetupService.registerTrustAnchor(trustAnchor)
+        try await pkiEnvironment.addTrustAnchor(certPem: trustAnchor)
     }
 
     public func fetchFederationCertificates() async throws {
-        let federationCertificates = try await acmeApi.getFederationCertificates()
-        for certificate in federationCertificates {
-            do {
-                try await e2eiSetupService.registerFederationCertificate(certificate)
-            } catch {
-                logger
-                    .warn(
-                        "failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))"
-                    )
-            }
-        }
-    }
-
-    public func createEnrollment(
-        context: NSManagedObjectContext,
-        expirySec: UInt32?
-    ) async throws -> E2EIEnrollmentInterface {
-        let (userName, userHandle, teamId, clientID, isUpgradingClient) = try await context.perform {
-            let selfUser = ZMUser.selfUser(in: context)
-            let isUpgradingClient = selfUser.selfClient()?.hasRegisteredMLSClient ?? false
-            guard let userName = selfUser.name,
-                  let userHandle = selfUser.handle,
-                  let teamId = selfUser.teamIdentifier,
-                  let clientID = E2EIClientID(user: selfUser, localDomain: self.localDomain) else {
-                throw Error.failedToGetSelfUserInfo
-            }
-            return (userName, userHandle, teamId, clientID, isUpgradingClient)
+        guard let pkiEnvironment = await coreCryptoProvider.pkiEnvironment() else {
+            throw Error.missingE2eIAPI
         }
 
-        let e2eIdentity = try await e2eiSetupService.setupEnrollment(
-            clientID: clientID,
-            userName: userName,
-            handle: userHandle,
-            teamId: teamId,
-            isUpgradingClient: isUpgradingClient,
-            expirySec: expirySec
-        )
-
-        let e2eiService = E2EIService(
-            e2eIdentity: e2eIdentity,
-            coreCryptoProvider: coreCryptoProvider,
-            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
-        )
-
-        let acmeDirectory = try await loadACMEDirectory(e2eiService: e2eiService)
-
-        return E2EIEnrollment(
-            acmeApi: acmeApi,
-            apiProvider: apiProvider,
-            e2eiService: e2eiService,
-            acmeDirectory: acmeDirectory,
-            keyRotator: keyRotator,
-            apiVersion: apiVersion
-        )
-    }
-
-    // MARK: - Helpers
-
-    private func loadACMEDirectory(e2eiService: E2EIService) async throws -> AcmeDirectory {
-        let acmeDirectoryData = try await acmeApi.getACMEDirectory()
-        return try await e2eiService.getDirectoryResponse(directoryData: acmeDirectoryData)
+        for intermediate in try await acmeApi.getFederationCertificates() {
+            try await pkiEnvironment.addIntermediateCert(certPem: intermediate)
+        }
     }
 
 }

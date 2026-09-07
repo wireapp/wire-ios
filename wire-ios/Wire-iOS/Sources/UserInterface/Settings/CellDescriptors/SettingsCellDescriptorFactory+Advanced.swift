@@ -55,7 +55,7 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: { [weak userSession] () -> (UIViewController?) in
-                (userSession as? ZMUserSession)?.validatePushToken()
+                (userSession as? ZMUserSession)?.refreshPushToken()
                 return self.pushButtonAlertController
             }
         )
@@ -65,7 +65,7 @@ extension SettingsCellDescriptorFactory {
             header: SelfSettingsAdvancedLocale.Troubleshooting.title,
             footer: SelfSettingsAdvancedLocale.ResetPushToken.subtitle,
             visibilityAction: { _ in
-                true
+                !DeveloperFlag.noAPNSTokenCache.isOn
             }
         )
     }
@@ -102,7 +102,10 @@ extension SettingsCellDescriptorFactory {
         )
 
         // Section
-        return SettingsSectionDescriptor(cellDescriptors: [debuggingToolsGroup])
+        return SettingsSectionDescriptor(
+            cellDescriptors: [debuggingToolsGroup],
+            header: DeveloperFlag.noAPNSTokenCache.isOn ? SelfSettingsAdvancedLocale.Troubleshooting.title : nil
+        )
     }
 
     // MARK: - Helpers

@@ -21,11 +21,14 @@ import WireDesign
 
 struct FilesOfflineBarView: View {
     @ScaledMetric private var scale: CGFloat = 1
+    let showHint: Bool
 
     var body: some View {
         VStack(spacing: 8) {
             bar()
-            hint()
+            if showHint {
+                hint()
+            }
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 4)
@@ -59,7 +62,7 @@ struct FilesOfflineBarView: View {
 
         Divider()
 
-        FilesOfflineBarView()
+        FilesOfflineBarView(showHint: true)
 
         Divider()
 

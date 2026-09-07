@@ -31,13 +31,16 @@ struct MeetingsView: View {
     /// Called when the user chooses "Edit meeting" in a meeting's menu.
     /// Presenting the edit UI is up to the owner of this view.
     private let onEditMeeting: (Meeting) -> Void
+    private let onJoinMeeting: (MeetingOccurrence) -> Void
 
     init(
         viewModel: MeetingsViewModel,
-        onEditMeeting: @escaping (Meeting) -> Void = { _ in }
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in },
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in }
     ) {
         self.viewModel = viewModel
         self.onEditMeeting = onEditMeeting
+        self.onJoinMeeting = onJoinMeeting
     }
 
     var body: some View {
@@ -84,11 +87,13 @@ struct MeetingsView: View {
             GroupedSections(
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTimeRange: viewModel.formatTimeRange(for:),
+                formatTime: viewModel.formatTime(for:),
                 isAttending: viewModel.isAttending(_:),
                 isHappeningNow: viewModel.isHappeningNow(_:),
+                isOrganizer: viewModel.isOrganizer(_:),
                 onEdit: { onEditMeeting($0) },
-                onDelete: { viewModel.meetingToDelete = $0 }
+                onDelete: { viewModel.meetingToDelete = $0 },
+                onJoin: { onJoinMeeting($0) }
             )
 
             if viewModel.hasMore {
@@ -108,7 +113,7 @@ struct MeetingsView: View {
             await viewModel.loadInitialData()
         }
         .alert(
-            Strings.Delete.Alert.title,
+            viewModel.deleteConfirmationTitle,
             isPresented: $viewModel.isDeleteConfirmationPresented
         ) {
             Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
@@ -116,7 +121,7 @@ struct MeetingsView: View {
             }
             Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
         } message: {
-            Text(Strings.Delete.Alert.subtitle)
+            Text(viewModel.deleteConfirmationMessage)
         }
     }
 
@@ -134,11 +139,13 @@ private func SectionTitle(_ text: String) -> some View {
 private struct GroupedSections: View {
     let groups: [(day: Date, meetings: [MeetingOccurrence])]
     let formatDay: (Date) -> String
-    let formatTimeRange: (MeetingOccurrence) -> String
+    let formatTime: (MeetingOccurrence) -> String
     let isAttending: (MeetingOccurrence) -> Bool
     let isHappeningNow: (MeetingOccurrence) -> Bool
+    let isOrganizer: (Meeting) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
+    let onJoin: (MeetingOccurrence) -> Void
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -146,15 +153,20 @@ private struct GroupedSections: View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
                 ForEach(dayGroup.meetings, id: \.id) { occurrence in
+                    let isLive = isHappeningNow(occurrence)
+
                     MeetingRow(
                         occurrence: occurrence,
-                        formatTimeRange: formatTimeRange,
+                        formatTime: formatTime,
+                        isOrganizer: isOrganizer(occurrence.meeting),
                         isAttending: isAttending(occurrence),
+                        isLive: isLive,
                         onEdit: { onEdit(occurrence.meeting) },
-                        onDelete: { onDelete(occurrence.meeting) }
+                        onDelete: { onDelete(occurrence.meeting) },
+                        onJoin: { onJoin(occurrence) }
                     )
                     .listRowBackground(
-                        isHappeningNow(occurrence) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
+                        isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear
                     )
                 }
             } header: {
@@ -171,7 +183,8 @@ private struct GroupedSections: View {
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
             observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
-            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase(),
+            selfUserID: previewSelfUserID
         )
     )
 }
@@ -183,7 +196,8 @@ private struct GroupedSections: View {
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(meetings: previewMeetings()),
             observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
-            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase(),
+            selfUserID: previewSelfUserID
         )
     )
 }
@@ -208,9 +222,11 @@ private struct PreviewObserveMeetingChangesUseCase: ObserveMeetingChangesUseCase
 
 private struct PreviewDeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
-    func invoke(meetingID: QualifiedID) async throws {}
+    func invoke(meeting: Meeting) async throws {}
 
 }
+
+private let previewSelfUserID = UUID()
 
 private func previewMeetings() -> [Meeting] {
     let calendar = Calendar.current
@@ -254,7 +270,7 @@ private func previewMeetings() -> [Meeting] {
             recurrence: nil,
             conversation: MeetingConversation(participants: Set(members)),
             conversationID: QualifiedID(id: UUID(), domain: ""),
-            creatorID: QualifiedID(id: UUID(), domain: "")
+            creatorID: QualifiedID(id: previewSelfUserID, domain: "")
         )
     }
 

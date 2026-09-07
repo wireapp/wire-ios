@@ -26,11 +26,12 @@ public enum NotificationCategory: String, CaseIterable {
     case incomingCall
     case missedCall
     case incomingConnectionRequest
+    case meetingCancellation
 
     /// Available actions for each category
     private var actions: [NotificationAction] {
         switch self {
-        case .nonActionable:
+        case .nonActionable, .meetingCancellation:
             []
         case .unmutedConversation:
             [.muteConversation]

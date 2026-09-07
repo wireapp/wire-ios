@@ -181,6 +181,34 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
     }
 
+    public func renameConversation(
+        _ conversationID: WireDataModel.QualifiedID,
+        to newName: String
+    ) async throws {
+        let event = try await conversationsAPI.updateConversationName(
+            newName,
+            for: WireNetwork.QualifiedID(conversationID)
+        )
+
+        if let event {
+            await updateConversationName(
+                newName: event.newName,
+                conversationID: event.conversationID.id,
+                conversationDomain: event.conversationID.domain,
+                senderID: event.senderID.id,
+                senderDomain: event.senderID.domain,
+                date: event.timestamp
+            )
+        }
+
+        await conversationsLocalStore.execute(conversationID: conversationID) { conversation, context in
+            if event == nil {
+                conversation?.userDefinedName = newName
+            }
+            context.saveOrRollback()
+        }
+    }
+
     public func updateConversationName(
         newName: String,
         conversationID: UUID,
@@ -218,6 +246,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     }
 
+    public func isGroupConversation(id: UUID, domain: String?) async -> Bool {
+        guard let conversation = await fetchConversation(id: id, domain: domain) else {
+            return false
+        }
+        return await conversationsLocalStore.isGroupConversation(conversation)
+    }
+
     public func updateConversationScheduledDeletion(
         scheduledDeletionDate: Date,
         conversationID: UUID,
@@ -249,7 +284,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             scheduledDeletionDate: scheduledDeletionDate,
             conversation: conversation
         )
-
     }
 
     public func deleteConversation(

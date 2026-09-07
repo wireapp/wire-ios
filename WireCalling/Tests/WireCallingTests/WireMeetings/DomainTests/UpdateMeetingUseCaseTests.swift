@@ -80,6 +80,19 @@ struct UpdateMeetingUseCaseTests {
         )
     }
 
+    private func makeMeeting(title: String) -> Meeting {
+        Meeting(
+            id: meeting.id,
+            title: title,
+            start: meeting.start,
+            end: meeting.end,
+            recurrence: meeting.recurrence,
+            conversation: meeting.conversation,
+            conversationID: meeting.conversationID,
+            creatorID: meeting.creatorID
+        )
+    }
+
     @Test("invoke updates the meeting via the repository and returns it")
     func invokeUpdatesMeeting() async throws {
         // Given
@@ -112,9 +125,10 @@ struct UpdateMeetingUseCaseTests {
     @Test("invoke renames the underlying conversation when the title changed")
     func invokeRenamesConversation() async throws {
         // Given
+        let updatedMeeting = makeMeeting(title: "Saved Standup")
         meetingRepository
             .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
-            meeting
+            updatedMeeting
 
         // When
         _ = try await useCase.invoke(
@@ -128,8 +142,8 @@ struct UpdateMeetingUseCaseTests {
 
         // Then
         let nameArguments = conversationRepository
-            .setConversationNameNameStringForConversationIDQualifiedIDVoidReceivedArguments
-        #expect(nameArguments?.name == "Renamed Standup")
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidReceivedArguments
+        #expect(nameArguments?.name == updatedMeeting.title)
         #expect(nameArguments?.conversationID == meeting.conversationID)
     }
 
@@ -152,7 +166,7 @@ struct UpdateMeetingUseCaseTests {
 
         // Then
         #expect(conversationRepository
-            .setConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
     }
 
     @Test("invoke adds newly selected members and removes deselected ones")
@@ -228,7 +242,7 @@ struct UpdateMeetingUseCaseTests {
             )
         }
         #expect(conversationRepository
-            .setConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(conversationRepository
             .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(conversationRepository
@@ -309,6 +323,45 @@ struct UpdateMeetingUseCaseTests {
         let removeArguments = conversationRepository
             .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments
         #expect(removeArguments?.participants.isEmpty == true)
+    }
+
+    @Test("a failed conversation rename can be retried without updating the meeting again")
+    func invokeWithFailedConversationRenameRetriesOnlyRename() async throws {
+        // Given
+        let updatedMeeting = makeMeeting(title: "Saved Standup")
+        meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
+            updatedMeeting
+        conversationRepository
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidThrowableError =
+            URLError(.badServerResponse)
+
+        // When
+        await #expect(throws: UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting: updatedMeeting)) {
+            _ = try await useCase.invoke(
+                meeting: meeting,
+                title: "Submitted Standup",
+                startTime: meeting.start,
+                endTime: meeting.end,
+                recurrence: nil,
+                participants: [Self.keptMember, Self.addedMember]
+            )
+        }
+        conversationRepository.updateConversationNameNameStringForConversationIDQualifiedIDVoidThrowableError = nil
+        try await useCase.updateConversationName(for: updatedMeeting)
+
+        // Then
+        #expect(meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount ==
+            1)
+        let renameInvocations = conversationRepository
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidReceivedInvocations
+        #expect(renameInvocations.map(\.name) == [updatedMeeting.title, updatedMeeting.title])
+        #expect(renameInvocations.map(\.conversationID) == [meeting.conversationID, meeting.conversationID])
+        #expect(conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 1)
+        #expect(conversationRepository
+            .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidCallsCount == 1)
     }
 
 }

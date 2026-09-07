@@ -54,6 +54,14 @@ class UserProfilePage: PageModel {
         app.buttons[Locators.UserProfilePage.qrCodeButton.rawValue]
     }
 
+    var nameInfo: XCUIElement {
+        app.descendants(matching: .any)[Locators.UserProfilePage.name.rawValue].firstMatch
+    }
+
+    var usernameInfo: XCUIElement {
+        app.descendants(matching: .any)[Locators.UserProfilePage.username.rawValue].firstMatch
+    }
+
     var userProfilePicture: XCUIElement {
         app.buttons[Locators.UserProfilePage.userProfilePicture.rawValue]
     }
@@ -82,6 +90,18 @@ class UserProfilePage: PageModel {
         app.descendants(matching: .any)[Locators.UserProfilePage.status.rawValue].firstMatch
     }
 
+    var profileQRCodeImage: XCUIElement {
+        app.images[Locators.UserProfileQRCodePage.qrCodeImage.rawValue].firstMatch
+    }
+
+    var shareProfileLinkButton: XCUIElement {
+        app.buttons[Locators.UserProfileQRCodePage.shareProfileLinkButton.rawValue].firstMatch
+    }
+
+    var shareQRCodeButton: XCUIElement {
+        app.buttons[Locators.UserProfileQRCodePage.shareQRCodeButton.rawValue].firstMatch
+    }
+
     var okButton: XCUIElement {
         app.buttons[Locators.UserProfileStatusPicker.okButton.rawValue].firstMatch
     }
@@ -98,6 +118,90 @@ class UserProfilePage: PageModel {
 
     func getTeamName() -> String? {
         teamNameOnAccountPage.value as? String
+    }
+
+    @discardableResult
+    func verifyName(
+        _ name: String,
+    ) -> UserProfilePage {
+
+        XCTAssertEqual(
+            nameInfo.value as? String ?? nameInfo.label,
+            name,
+            "Name did not match \(name)",
+
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyUsername(
+        _ username: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        let expectedUsername = "@\(username)"
+
+        XCTAssertEqual(
+            usernameInfo.value as? String ?? usernameInfo.label,
+            expectedUsername,
+            "Username did not match \(expectedUsername)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyAddedAccountInfo(
+        for name: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> UserProfilePage {
+        let predicate = NSPredicate(format: "label BEGINSWITH %@", name)
+        let accountButton = app.buttons.containing(predicate).firstMatch
+
+        XCTAssertTrue(
+            accountButton.waitForExistence(timeout: 5),
+            "Added account info did not appear for \(name)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyProfileQRCode(
+        username: String,
+    ) -> UserProfilePage {
+        let expectedUsername = "@\(username)"
+
+        XCTAssertTrue(
+            qrCodeButton.waitAndTap(),
+            "Profile QR code button is not showing",
+        )
+
+        XCTAssertTrue(
+            profileQRCodeImage.waitForExistence(timeout: 5),
+            "Profile QR code is not showing",
+        )
+
+        XCTAssertTrue(
+            app.staticTexts[expectedUsername].firstMatch.waitForExistence(timeout: 5),
+            "Profile QR code username did not match \(expectedUsername)",
+        )
+
+        XCTAssertTrue(
+            shareProfileLinkButton.waitForExistence(timeout: 3),
+            "Share profile link button is not showing",
+        )
+
+        XCTAssertTrue(
+            shareQRCodeButton.waitForExistence(timeout: 3),
+            "Share QR code button is not showing",
+        )
+
+        return self
     }
 
     @discardableResult
@@ -145,21 +249,11 @@ class UserProfilePage: PageModel {
     @discardableResult
     func verifyUserStatus(
         _ status: UserAvailabilityStatus,
-        file: StaticString = #filePath,
-        line: UInt = #line
     ) -> UserProfilePage {
-        XCTAssertTrue(
-            statusButton.waitForExistence(timeout: 5),
-            "Status button did not appear",
-            file: file,
-            line: line
-        )
         XCTAssertEqual(
             statusButton.value as? String ?? "",
             status.expectedValue,
             "Selected status did not match \(status.rawValue)",
-            file: file,
-            line: line
         )
 
         return self

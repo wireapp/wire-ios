@@ -77,6 +77,20 @@ public class LocalNotificationDispatcher: NSObject {
         }
     }
 
+    func scheduleLocalNotification(content: UNNotificationContent) {
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: content,
+            trigger: nil
+        )
+
+        notificationCenter.add(request) { error in
+            if let error {
+                WireLogger.notifications.error("Scheduling local notification error: \(error)")
+            }
+        }
+    }
+
     /// Determines if the notification content should be hidden as reflected in the store
     /// metatdata for the given managed object context.
     ///

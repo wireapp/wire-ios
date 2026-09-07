@@ -49,7 +49,7 @@ struct RepairFaultyMLSRemovalKeysWorkItem: WorkItem {
     func start() async throws {
         // Check if repair is needed
         guard journal[.isRepairFaultyMLSRemovalKeysRequired] else {
-            WireLogger.mls.debug(
+            WireLogger.mls.info(
                 "faulty MLS removal keys repair not needed, skipping",
                 attributes: .safePublic
             )

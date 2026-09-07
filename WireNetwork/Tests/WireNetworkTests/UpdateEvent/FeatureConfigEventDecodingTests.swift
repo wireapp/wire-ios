@@ -96,6 +96,13 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingFeatureConfigUpdateMeetingsEvent() throws {
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateMeetings",
+            featureConfigUpdateEvent: Scaffolding.meetingsUpdateEvent
+        )
+    }
+
     func testDecodingFeatureConfigUpdateSelfDeletingMessagesEvent() throws {
         expectEqualDecoding(
             mockJSONFile: "FeatureConfigUpdateSelfDeletingMessages",
@@ -254,6 +261,12 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                     startTime: date(from: "2024-06-04T15:03:07Z"),
                     finaliseRegardlessAfter: date(from: "2025-06-04T15:03:07Z")
                 )
+            )
+        )
+
+        static let meetingsUpdateEvent = FeatureConfigUpdateEvent(
+            featureConfig: .meetings(
+                MeetingsFeatureConfig(status: .enabled)
             )
         )
 

@@ -20,12 +20,13 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCell {
 
     override func setUp() {
         super.setUp()
-        accessibilityIdentifier = "cell.groupdetails.notificationsoptions"
+        accessibilityIdentifier = Locators.ConversationDetailsPage.notificationOptionsCell.rawValue
         title = L10n.Localizable.GroupDetails.NotificationOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 

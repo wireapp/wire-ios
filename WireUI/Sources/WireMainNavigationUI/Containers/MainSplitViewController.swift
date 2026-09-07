@@ -143,6 +143,11 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         with coordinator: any UIViewControllerTransitionCoordinator
     ) {
         super.viewWillTransition(to: size, with: coordinator)
+
+        // On iPhone the split view must never tile into two columns, even during a
+        // transient size change from a rotation attempt that gets reverted (the phone
+        // is locked to portrait elsewhere). Skip the width-based recalculation there.
+        guard traitCollection.userInterfaceIdiom == .pad else { return }
         setPreferredSplitBehaviorAndDisplayMode(basedOn: size.width)
     }
 

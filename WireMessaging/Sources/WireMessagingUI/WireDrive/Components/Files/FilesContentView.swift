@@ -47,8 +47,8 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 .ignoresSafeArea(.all)
 
             VStack {
-                if !viewModel.isOffline {
-                    VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
+                    if viewModel.showFiltersBar {
                         FilesFilteringView(
                             useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
                             filtersSelection: viewModel.filtersSelection,
@@ -60,20 +60,22 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                         .opacity(isFilterBarPresented ? 1 : 0)
                         .frame(height: isFilterBarPresented ? nil : 0)
                         .padding(.bottom, isFilterBarPresented ? 15 : 0)
+                    }
 
-                        if viewModel.showReadOnlyBanner {
-                            ConversationViewerAccessBanner(backgroundColor: ColorTheme.Buttons.Secondary
-                                .disabledOutline) {
-                                    viewModel.showReadOnlyBanner = false
-                                }.padding(.bottom, 15)
-                        }
+                    if viewModel.showReadOnlyBanner {
+                        ConversationViewerAccessBanner(backgroundColor: ColorTheme.Buttons.Secondary
+                            .disabledOutline) {
+                                viewModel.showReadOnlyBanner = false
+                            }.padding(.bottom, viewModel.isOffline ? 0 : 15)
+                    }
 
+                    if viewModel.showFiltersBar {
                         FilesSortingView(viewModel: viewModel.filesSortingViewModel())
                     }
-                    .padding(.top, 4)
-
-                    Spacer()
                 }
+                .padding(.top, 4)
+
+                Spacer()
 
                 switch viewModel.state {
                 case .loading:
@@ -190,7 +192,7 @@ private extension FilesContentView {
         case let .received(items) where items.isEmpty:
             VStack(spacing: 0) {
                 if viewModel.isOffline {
-                    FilesOfflineBarView()
+                    FilesOfflineBarView(showHint: viewModel.shouldShowOfflineBarHint)
                 }
 
                 Spacer()
@@ -265,7 +267,7 @@ private extension FilesContentView {
 private extension FilesContentView {
 
     var offlineBar: some View {
-        FilesOfflineBarView()
+        FilesOfflineBarView(showHint: viewModel.shouldShowOfflineBarHint)
             .background(backgroundColor)
             .transition(
                 .move(edge: .top)

@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireLocators
 
 struct QRCodeView: View {
 
@@ -79,6 +80,7 @@ struct QRCodeView: View {
             }
             .font(for: .buttonBig)
             .buttonStyle(SecondaryButtonStyle())
+            .accessibilityIdentifier(Locators.UserProfileQRCodePage.shareProfileLinkButton.rawValue)
             .sheet(isPresented: $isShareTextSheetPresented) {
                 ShareSheet(activityItems: [viewModel.profileLink])
             }
@@ -89,6 +91,7 @@ struct QRCodeView: View {
             }
             .font(for: .buttonBig)
             .buttonStyle(SecondaryButtonStyle())
+            .accessibilityIdentifier(Locators.UserProfileQRCodePage.shareQRCodeButton.rawValue)
             .sheet(isPresented: $isShareImageSheetPresented) {
                 if let image = capturedImage {
                     ShareSheet(activityItems: [image])

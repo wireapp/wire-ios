@@ -248,6 +248,13 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
         fatalError("not implemented")
     }
 
+    func updateConversationName(
+        _ name: String,
+        for conversationID: WireNetwork.QualifiedID
+    ) async throws -> WireNetwork.ConversationRenameEvent? {
+        fatalError("not implemented")
+    }
+
     func createGroupConversation(
         parameters: WireNetwork.CreateGroupConversationParameters
     ) async throws -> WireNetwork.Conversation {
