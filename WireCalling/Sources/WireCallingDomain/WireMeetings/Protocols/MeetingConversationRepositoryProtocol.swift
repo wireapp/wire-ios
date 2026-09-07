@@ -37,4 +37,7 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     /// Set the name of the underlying conversation.
     func setConversationName(_ name: String, for conversationID: QualifiedID) async throws
 
+    /// Update the name of the underlying conversation and await the backend response.
+    func updateConversationName(_ name: String, for conversationID: QualifiedID) async throws
+
 }
