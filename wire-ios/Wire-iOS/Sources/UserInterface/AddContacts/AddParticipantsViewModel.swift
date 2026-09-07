@@ -65,8 +65,8 @@ struct AddParticipantsViewModel {
 
     func title(with users: UserSet) -> String {
         users.isEmpty
-            ? L10n.Localizable.Peoplepicker.Group.Title.singular.capitalized
-            : L10n.Localizable.Peoplepicker.Group.Title.plural(users.count).capitalized
+            ? L10n.Localizable.Peoplepicker.Group.Title.singular
+        : L10n.Localizable.Peoplepicker.Group.Title.plural(users.count)
     }
 
     var filterConversation: ZMConversation? {
