@@ -186,11 +186,7 @@ package final class MeetingsViewModel {
     }
 
     func formatTime(for occurrence: MeetingOccurrence) -> String {
-        if isHappeningNow(occurrence) {
-            formatter.startedAt(occurrence.start)
-        } else {
-            formatter.timeRange(from: occurrence.start, to: occurrence.end)
-        }
+        formatter.timeRange(from: occurrence.start, to: occurrence.end)
     }
 
     /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture

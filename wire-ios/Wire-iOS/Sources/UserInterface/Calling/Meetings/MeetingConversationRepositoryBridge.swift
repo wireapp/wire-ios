@@ -23,13 +23,13 @@ import WireDomain
 import WireFoundation
 import WireSyncEngine
 
-/// Bridges `WireDomain`'s `ConversationRepositoryProtocol` into `WireCallingDomain`'s
+/// Bridges `WireDomain`'s `ConversationRepository` into `WireCallingDomain`'s
 /// `MeetingConversationRepositoryProtocol`, so the meetings feature can pull meeting
 /// conversations and add or remove participants (including MLS group establishment)
 /// without depending on `WireDomain` directly.
 struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtocol, @unchecked Sendable {
 
-    let conversationRepository: any ConversationRepositoryProtocol
+    let conversationRepository: ConversationRepository
     let contextProvider: any ContextProvider
     let participantsService: any ConversationParticipantsServiceInterface
 
@@ -161,6 +161,30 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             conv.userDefinedName = name
             _ = viewContext.saveOrRollback()
         }
+    }
+
+    func updateConversationName(
+        _ name: String,
+        for conversationID: WireCallingDomain.QualifiedID
+    ) async throws {
+        let syncContext = contextProvider.syncContext
+        let isMeeting = try await syncContext.perform {
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID.id,
+                domain: conversationID.domain,
+                in: syncContext
+            ) else {
+                throw ConversationRemoveParticipantError.conversationNotFound
+            }
+            return conversation.isMeeting
+        }
+
+        guard isMeeting else { return }
+
+        try await conversationRepository.renameConversation(
+            WireDataModel.QualifiedID(uuid: conversationID.id, domain: conversationID.domain),
+            to: name
+        )
     }
 
     /// Resolves the meeting members and the conversation into their managed

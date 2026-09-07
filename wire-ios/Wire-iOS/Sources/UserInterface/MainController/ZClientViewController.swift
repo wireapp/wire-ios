@@ -285,7 +285,6 @@ final class ZClientViewController: UIViewController {
             .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
                 // Update sidebar's showUnreadFilters when developer flag changes
                 self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
-                self?.sidebarViewController.showMeetings = self?.userSession.isMeetingsEnabled ?? false
             }
 
         observeFeatureConfigChanges()

@@ -59,12 +59,6 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             recurrence: recurrence
         )
 
-        // Mirror the new title onto the underlying conversation, which the
-        // backend doesn't rename on a meeting update.
-        if title != meeting.title {
-            try await conversationRepository.setConversationName(title, for: meeting.conversationID)
-        }
-
         // The creator is implicit in the form's participant selection, so it
         // is excluded from the baseline too — otherwise every update would
         // try to remove the creator from the conversation.
@@ -79,15 +73,33 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
         try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
 
+        if title != meeting.title {
+            do {
+                try await updateConversationName(for: updatedMeeting)
+            } catch {
+                throw UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting: updatedMeeting)
+            }
+        }
+
         return updatedMeeting
+    }
+
+    package func updateConversationName(for meeting: Meeting) async throws {
+        try await conversationRepository.updateConversationName(
+            meeting.title,
+            for: meeting.conversationID
+        )
     }
 
 }
 
-package enum UpdateMeetingUseCaseError: Error {
+package enum UpdateMeetingUseCaseError: Error, Equatable {
 
     /// The meeting's conversation has not been resolved from the local store,
     /// so there is no baseline to diff the selected participants against.
     case conversationNotResolved
+
+    /// The meeting update succeeded, but its dedicated conversation could not be renamed.
+    case conversationNameUpdateFailed(updatedMeeting: Meeting)
 
 }

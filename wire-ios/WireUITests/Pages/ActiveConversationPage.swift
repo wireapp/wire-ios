@@ -339,7 +339,7 @@ class ActiveConversationPage: PageModel {
     func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
-        sendButton.tap()
+        sendButton.tapAndWait()
         return self
     }
 
@@ -761,15 +761,25 @@ class ActiveConversationPage: PageModel {
     }
 
     func verifyLinkPreviewCell(
+        shouldExist: Bool = true,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> ActiveConversationPage {
-        XCTAssertTrue(
-            linkPreviewCell.waitForExistence(timeout: 10),
-            "Link preview cell did not appear",
-            file: file,
-            line: line
-        )
+        if shouldExist {
+            XCTAssertTrue(
+                linkPreviewCell.waitForExistence(timeout: 10),
+                "Link preview cell did not appear",
+                file: file,
+                line: line
+            )
+        } else {
+            XCTAssertFalse(
+                linkPreviewCell.waitForExistence(timeout: 3),
+                "Link preview cell should not appear",
+                file: file,
+                line: line
+            )
+        }
         return self
     }
 
