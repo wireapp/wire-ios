@@ -396,7 +396,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
         // When the sync is suspended and resumed before the suspension completes
         let suspensionTask = Task { [sut] in
-            await sut?.suspend()
+            await sut.suspend()
         }
         await fulfillment(of: [cancellationStarted], timeout: 2)
 
