@@ -154,9 +154,10 @@ final class ChannelMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testReceiveImageAudioAndPingInChannelConversation_TC_8855_8856_8859() async throws {
+    func testReceiveTextImageAudioAndPingInChannelConversation_TC_8854_8855_8856_8859() async throws {
 
         // GIVEN
+        let message = UserGenerator.generateRandomMessage()
         let teamWithChannelConversation = try await registerTeamWithChannelConversation()
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
@@ -174,7 +175,14 @@ final class ChannelMessagingTests: WireUITestCase {
 
         let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
 
-        // WHEN
+        // WHEN member sends text, image, audio and ping
+        try await testServicesClient.sendText(
+            user: teamWithChannelConversation.teamMember,
+            text: message,
+            conversationId: teamWithChannelConversation.conversationId,
+            domain: teamWithChannelConversation.conversationDomain
+        )
+
         try await testServicesClient.sendImage(
             user: teamWithChannelConversation.teamMember,
             fileURL: mediaURLs.imageURL,
@@ -200,6 +208,16 @@ final class ChannelMessagingTests: WireUITestCase {
         )
 
         // THEN
+        XCTAssertTrue(
+            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 5),
+            "Expected at least one message to appear, but no message labels were found"
+        )
+        let receivedMessages = activeConversationPage.fetchMessages()
+        XCTAssertTrue(
+            receivedMessages.contains(message),
+            "Expected message '\(message)' not found in received messages: \(receivedMessages)"
+        )
+
         XCTAssertTrue(
             activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
             "Expected image attachment not found"
