@@ -87,6 +87,7 @@ final class MeetingLocalStoreTests: XCTestCase {
             XCTAssertEqual(storedMeeting.title, Scaffolding.meeting.title)
             XCTAssertEqual(storedMeeting.start, Scaffolding.meeting.start)
             XCTAssertEqual(storedMeeting.end, Scaffolding.meeting.end)
+            XCTAssertEqual(storedMeeting.timeZoneIdentifier, Scaffolding.meeting.timeZoneIdentifier)
             XCTAssertEqual(storedMeeting.recurrenceFrequency, .weekly)
             XCTAssertEqual(storedMeeting.recurrenceInterval, 2)
             XCTAssertEqual(storedMeeting.recurrenceUntil, Scaffolding.recurrenceUntil)
@@ -106,6 +107,7 @@ final class MeetingLocalStoreTests: XCTestCase {
             start: Scaffolding.meeting.start,
             end: Scaffolding.meeting.end,
             recurrence: nil,
+            timeZoneIdentifier: "Europe/Berlin",
             conversationID: Scaffolding.conversationID,
             creatorID: Scaffolding.creatorID
         )
@@ -122,6 +124,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
             let storedMeeting = try XCTUnwrap(storedMeetings.first)
             XCTAssertEqual(storedMeeting.title, "Renamed Meeting")
+            XCTAssertEqual(storedMeeting.timeZoneIdentifier, "Europe/Berlin")
             XCTAssertNil(storedMeeting.recurrenceFrequency)
         }
     }
@@ -173,6 +176,7 @@ final class MeetingLocalStoreTests: XCTestCase {
         let meeting = try XCTUnwrap(meetings.first)
         let conversation = try XCTUnwrap(meeting.conversation)
         XCTAssertEqual(meeting.conversationID, Scaffolding.conversationID)
+        XCTAssertEqual(meeting.timeZoneIdentifier, Scaffolding.meeting.timeZoneIdentifier)
         XCTAssertEqual(conversation.participants.count, 3, "all local participants, including the self user")
         let alice = try XCTUnwrap(conversation.participants.first { $0.qualifiedID == Scaffolding.memberAliceID })
         XCTAssertEqual(alice.name, "Alice Archer")
@@ -306,6 +310,7 @@ final class MeetingLocalStoreTests: XCTestCase {
                 interval: 2,
                 until: recurrenceUntil
             ),
+            timeZoneIdentifier: "America/New_York",
             conversationID: conversationID,
             creatorID: creatorID
         )
