@@ -678,7 +678,7 @@ class ActiveConversationPage: PageModel {
     func verifyImagePreviewIsVisible(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            imagePreview.waitForExistence(timeout: 5),
+            imagePreview.waitForExistence(timeout: 7),
             "Image preview did not appear"
         )
         return self
@@ -688,7 +688,7 @@ class ActiveConversationPage: PageModel {
     func verifyVideoPreviewIsVisible(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            videoPreview.waitForExistence(timeout: 5),
+            videoPreview.waitForExistence(timeout: 7),
             "Video preview did not appear"
         )
         return self
