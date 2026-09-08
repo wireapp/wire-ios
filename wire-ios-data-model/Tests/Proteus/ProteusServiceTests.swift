@@ -330,7 +330,6 @@ class ProteusServiceTests: XCTestCase {
         XCTAssertEqual(mockCoreCryptoContext.proteusNewPrekeyAuto_Invocations.count, 1)
     }
 
-
     func test_GeneratePrekey_Failure() async throws {
         // Mock
         mockCoreCryptoContext.proteusNewPrekeyAuto_MockMethod = {
