@@ -288,20 +288,14 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToGetLastPrekey
     }
 
-    public func generatePrekey(id: UInt16) async throws -> String {
+    public func generatePrekey() async throws -> IdPrekeyTuple {
         do {
             return try await coreCrypto.transaction {
-                try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString()
+                let newPrekey = try await $0.proteusNewPrekeyAuto()
+                return (newPrekey.id, newPrekey.pkb.base64EncodedString())
             }
         } catch {
-            // TODO: [WPB-28571] Temporary workaround until fixed on CC side
-            do {
-                return try await coreCrypto.transaction {
-                    try await $0.proteusNewPrekeyAuto().pkb.base64EncodedString()
-                }
-            } catch {
-                throw PrekeyError.failedToGeneratePrekey
-            }
+            throw PrekeyError.failedToGeneratePrekey
         }
     }
 
@@ -341,9 +335,8 @@ public final class ProteusService: ProteusServiceInterface {
 
     private func generatePrekeys(_ range: CountableRange<UInt16>) async throws -> [IdPrekeyTuple] {
         var prekeys = [IdPrekeyTuple]()
-        for id in range {
-            let prekey = try await generatePrekey(id: id)
-            prekeys.append((id: id, prekey: prekey))
+        for _ in range {
+            prekeys.append(try await generatePrekey())
         }
         return prekeys
     }
