@@ -193,12 +193,14 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
         return try parseCallbackURL(
             callbackURL,
+            ssoURL: url,
             verificationToken: verificationToken
         )
     }
 
     private func parseCallbackURL(
         _ url: URL,
+        ssoURL: URL,
         verificationToken: SSOLoginVerificationToken
     ) throws -> (UUID, [HTTPCookie]) {
         guard
@@ -235,9 +237,11 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
                 throw LoginViaSSOUseCaseError.invalidCallbackURL
             }
 
+            // Use the SSO URL as the cookie context. iOS 27 rejects Secure cookies when parsed against the custom
+            // callback URL.
             let cookies = HTTPCookie.cookies(
                 withResponseHeaderFields: ["Set-Cookie": cookieString],
-                for: url
+                for: ssoURL
             )
 
             guard !cookies.isEmpty else {
