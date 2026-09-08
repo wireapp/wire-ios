@@ -20,17 +20,17 @@ import Foundation
 
 public enum BackendTarget {
     case staging
-    case anta
-    case bella
+    case qaFederationA
+    case qaFederationB
 
     var domainInfo: String {
         switch self {
         case .staging:
             "staging.zinfra.io"
-        case .anta:
-            "anta.wire.link"
-        case .bella:
-            "bella.wire.link"
+        case .qaFederationA:
+            "qa-federation-a.wire.link"
+        case .qaFederationB:
+            "qa-federation-b.wire.link"
         }
     }
 }

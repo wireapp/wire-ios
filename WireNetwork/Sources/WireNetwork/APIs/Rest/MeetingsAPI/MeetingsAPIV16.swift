@@ -43,10 +43,30 @@ class MeetingsAPIV16: MeetingsAPIV15 {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Get meeting
+
+    override func getMeeting(id: QualifiedID) async throws -> MeetingResponse {
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: MeetingResponseV16.self)
+            .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
     // MARK: - Create meeting
 
     override func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
-        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let body = try JSONEncoder.defaultEncoder.encode(CreateMeetingParametersV16(parameters: parameters))
         let path = "\(pathPrefix)/meetings"
 
         let request = try URLRequestBuilder(path: path)
@@ -114,4 +134,18 @@ class MeetingsAPIV16: MeetingsAPIV15 {
             .parse(code: response.statusCode, data: data)
     }
 
+}
+
+private struct CreateMeetingParametersV16: Encodable {
+    let parameters: CreateMeetingParameters
+
+    func encode(to encoder: any Encoder) throws {
+        let dateFormatter = ISO8601DateFormatter.internetDateTime
+        var container = encoder.container(keyedBy: CreateMeetingParameters.CodingKeys.self)
+        try container.encode(parameters.title, forKey: .title)
+        try container.encode(dateFormatter.string(from: parameters.startTime), forKey: .startTime)
+        try container.encode(dateFormatter.string(from: parameters.endTime), forKey: .endTime)
+        try container.encodeIfPresent(parameters.invitedEmails, forKey: .invitedEmails)
+        try container.encodeIfPresent(parameters.recurrence, forKey: .recurrence)
+    }
 }

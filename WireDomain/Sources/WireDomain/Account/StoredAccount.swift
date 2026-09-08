@@ -29,7 +29,6 @@ struct StoredAccount: Codable {
     var teamImage: Data?
     var backendName: String?
     var loginCredentials: StoredLoginCredentials?
-    var lastSSOIdentityProviderID: UUID?
     var unreadConversationCount: Int
 
     init(_ account: Account) {
@@ -43,7 +42,6 @@ struct StoredAccount: Codable {
         self.loginCredentials = account.loginCredentials.map {
             StoredLoginCredentials($0)
         }
-        self.lastSSOIdentityProviderID = account.lastSSOIdentityProviderID
         self.unreadConversationCount = account.unreadConversationCount
     }
 
@@ -77,7 +75,6 @@ extension Account {
                 LoginCredentials($0)
             }
         )
-        lastSSOIdentityProviderID = storedAccount.lastSSOIdentityProviderID
     }
 
 }

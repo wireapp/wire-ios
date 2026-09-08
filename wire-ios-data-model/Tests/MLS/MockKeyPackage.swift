@@ -16,38 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireCoreCrypto
 
-struct AcmeDirectoriesResponse: Codable, Equatable {
+final class MockKeyPackage: WireCoreCrypto.KeyPackage, @unchecked Sendable {
 
-    var newNonce: String
-    var newAccount: String
-    var newOrder: String
-    var revokeCert: String
-    var keyChange: String
+    let data: Data
 
-}
+    init(data: Data = .random()) {
+        self.data = data
 
-public struct ACMEResponse: Equatable {
+        super.init(noPointer: .init())
+    }
 
-    var nonce: String
-    var location: String
-    var response: Data
+    @_documentation(visibility: private)
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        fatalError("init(unsafeFromRawPointer:) has not been implemented")
+    }
 
-}
-
-public struct ACMEAuthorizationResponse: Equatable {
-
-    var nonce: String
-    var location: String
-    var response: Data
-    var challengeType: AuthorizationChallengeType
-
-}
-
-enum AuthorizationChallengeType: String, Decodable {
-
-    case DPoP = "wire-dpop-01"
-    case OIDC = "wire-oidc-01"
-
+    override func serialize() throws -> Data {
+        data
+    }
 }

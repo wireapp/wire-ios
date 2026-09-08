@@ -69,10 +69,10 @@ class WireUITestCase: XCTestCase {
     override func tearDown() async throws {
         app?.terminate()
         app = nil
-        await callingServiceClient.destroyCreatedInstances()
+        await callingServiceClient?.destroyCreatedInstances()
         await testServicesClient.deleteInstances()
         await UserHelper.deleteCreatedUsers()
-        await ssoHelper.cleanUpSSOResources()
+        await ssoHelper?.cleanUpSSOResources()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
@@ -157,8 +157,12 @@ extension XCUIApplication {
         let alert = springboard.alerts.firstMatch
         guard alert.waitForExistence(timeout: timeout) else { return }
 
-        if alert.buttons["Allow"].exists {
-            alert.buttons["Allow"].tap()
+        let allowButtons = ["Allow While Using App", "Allow"]
+        guard let button = allowButtons
+            .map({ alert.buttons[$0] })
+            .first(where: { $0.exists }) else {
+            return
         }
+        button.waitAndTap()
     }
 }

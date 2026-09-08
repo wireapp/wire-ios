@@ -17,6 +17,7 @@
 //
 
 package import WireCallingDomain
+package import Foundation
 package import WireFoundation
 
 import SwiftUI
@@ -47,6 +48,7 @@ package final class AllMeetingsViewModel {
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
         joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
         makeFormViewModel: @escaping @MainActor (
@@ -60,6 +62,7 @@ package final class AllMeetingsViewModel {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
         self.joinMeetingCallUseCase = joinMeetingCallUseCase
@@ -81,17 +84,27 @@ package final class AllMeetingsViewModel {
     }
 
     func joinMeetingTapped(_ occurrence: MeetingOccurrence) async {
-        do {
-            try await joinMeetingCallUseCase.invoke(conversationID: occurrence.conversationID)
-        } catch {
-            hasJoinError = true
-            WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
-        }
+        await joinCall(conversationID: occurrence.conversationID)
     }
 
     func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {
-        makeFormViewModel(mode) { [weak self] _ in
-            self?.presentedFormMode = nil
+        makeFormViewModel(mode) { [weak self] meeting in
+            guard let self else { return }
+            presentedFormMode = nil
+            if case .instant = mode {
+                Task { await self.joinCall(conversationID: meeting.conversationID) }
+            }
+        }
+    }
+
+    // MARK: - Private Helpers
+
+    private func joinCall(conversationID: QualifiedID) async {
+        do {
+            try await joinMeetingCallUseCase.invoke(conversationID: conversationID)
+        } catch {
+            hasJoinError = true
+            WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
         }
     }
 

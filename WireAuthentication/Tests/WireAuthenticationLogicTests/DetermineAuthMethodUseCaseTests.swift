@@ -80,7 +80,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         let authMethod = try await sut.invoke(emailOrSSOCode: email)
 
         // then
-        XCTAssertEqual(authMethod, .loginViaSSO(code: ssoCode, multiIngressIdentityProviderID: ssoCode))
+        XCTAssertEqual(authMethod, .loginViaSSO(code: ssoCode))
         XCTAssertEqual(mockAuthenticationAPI.getSSOCodeForEmail_Invocations, [email])
         XCTAssertEqual(mockAuthenticationAPI.getDomainRegistrationForEmail_Invocations.count, 0)
     }

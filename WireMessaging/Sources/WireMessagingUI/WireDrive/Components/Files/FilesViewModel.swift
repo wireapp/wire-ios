@@ -67,7 +67,7 @@ package final class FilesViewModel: ObservableObject {
 
     let cellName: String? // nil when browsing all files
     let navigationPath: [FilesViewItem]
-    var sortingSelection: FilesSortingViewModel.SortingSelection = .default
+    var sortingSelection: FilesSortingViewModel.SortingSelection
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
@@ -131,6 +131,7 @@ package final class FilesViewModel: ObservableObject {
         triggerReload: PassthroughSubject<Void, Never> = .init(),
         networkMonitor: NetworkMonitor = .shared
     ) {
+        self.sortingSelection = isBrowsing ? .defaultDrive : .defaultSharedDrive
         self.useCases = useCases
         self.title = title
         self.navigationPath = navigationPath
@@ -417,7 +418,7 @@ package final class FilesViewModel: ObservableObject {
     // MARK: search
 
     var showSearchBar: Bool {
-        guard !isOffline else {
+        guard !isOffline, !isRecycleBin else {
             return false
         }
 
@@ -431,6 +432,10 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: filters
 
+    var showFiltersBar: Bool {
+        !isOffline && !isRecycleBin
+    }
+
     func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
         guard filters != filtersSelection else { return }
         filtersSelection = filters
@@ -439,7 +444,7 @@ package final class FilesViewModel: ObservableObject {
 
     func resetFilters() {
         filtersSelection = .empty
-        sortingSelection = .default
+        sortingSelection = isBrowsing ? .defaultDrive : .defaultSharedDrive
     }
 
     // MARK: offline mode
@@ -454,6 +459,10 @@ package final class FilesViewModel: ObservableObject {
 
     var shouldShowOfflineBar: Bool {
         isOffline && !state.items.isEmpty
+    }
+
+    var shouldShowOfflineBarHint: Bool {
+        isBrowsing || (selfUserRole == .editor && !isRecycleBin)
     }
 
     func makeAssetAvailableOffline(item: FilesViewItem) {

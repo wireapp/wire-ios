@@ -115,7 +115,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             syncStateSubject.send(.incrementalSyncing(.createPushChannel))
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
-            logger.debug("opening push channel", attributes: .incrementalSyncV2)
+            logger.info("opening push channel", attributes: .incrementalSyncV2)
             syncStateSubject.send(.incrementalSyncing(.openPushChannel))
 
             let liveEventStream = try await pushChannel.open()
@@ -186,14 +186,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     }
                 } catch {
                     // if we expire, close everything
-                    WireLogger.sync.debug(
+                    WireLogger.sync.info(
                         "Error while processing live stream, close push channel",
                         attributes: .incrementalSyncV2
                     )
                     await pushChannel.close()
                 }
 
-                logger.debug("live event stream did finish", attributes: .incrementalSyncV2)
+                logger.info("live event stream did finish", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.liveSyncing(.finished))
             }
 
@@ -366,7 +366,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 break
             }
 
-            logger.debug(
+            logger.info(
                 "fetched \(envelopes.count) stored envelopes for processing",
                 attributes: .incrementalSyncV2
             )
@@ -482,11 +482,11 @@ extension IncrementalSyncV1: SyncMigratorProtocol {
             throw Failure.databaseLocked
         }
 
-        logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
+        logger.info("pulling pending update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
         try await updateEventsSync.pull(publicKeys: try earService.fetchPublicKeys())
 
-        logger.debug("processing stored update events", attributes: .incrementalSyncV2)
+        logger.info("processing stored update events", attributes: .incrementalSyncV2)
         let privateKeys = try earService.fetchPrivateKeys(includingPrimary: true)
         _ = try await processStoredEvents(
             privateKeys: privateKeys,

@@ -50,23 +50,28 @@ struct ResolveBackendMetadataUseCaseTests {
 
     // MARK: - Resolve for production
 
-    @Test("Resolves to max production version")
-    func resolvesToMaxProductionVersion() async throws {
+    @Test("Resolves to max production version", arguments: [APIVersion.v15, .v16, .v17])
+    func resolvesToMaxProductionVersion(maxBackendVersion: APIVersion) async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
-            clientProductionVersions: [.v6, .v7],
+            clientProductionVersions: APIVersion.productionVersions,
             preferredAPIVersion: nil
         )
 
         // Mock
-        api.getBackendMetadata_MockValue = Scaffolding.backendMetadata
+        api.getBackendMetadata_MockValue = BackendMetadata(
+            domain: "wire.com",
+            isFederationEnabled: true,
+            supportedVersions: Set(APIVersion.allCases.filter { $0 <= maxBackendVersion }),
+            developmentVersions: Set(APIVersion.allCases.filter { $0 > maxBackendVersion })
+        )
 
         // When
         let backendMetadata = try await sut.invoke()
 
         // Then
-        #expect(backendMetadata.apiVersion == .v7)
+        #expect(backendMetadata.apiVersion == maxBackendVersion)
         #expect(backendMetadata.domain == "wire.com")
         #expect(backendMetadata.isFederationEnabled == true)
     }

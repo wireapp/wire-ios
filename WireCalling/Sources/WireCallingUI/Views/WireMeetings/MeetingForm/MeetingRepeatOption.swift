@@ -21,7 +21,8 @@ enum MeetingRepeatOption: Int, CaseIterable, Sendable {
     case never
     case daily
     case weekly
-    case every2Weeks
+    case everyTwoWeeks
+    case everyFourWeeks
     case monthly
     case yearly
 

@@ -53,7 +53,7 @@ public struct WireAuthenticationAssembly {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        isAccountAlreadyLoggedIn: @escaping (AuthenticationResult) -> Bool = { _ in false },
+        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false },
         overrideAllowEmailLoginOnly: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(

@@ -51,6 +51,7 @@ struct MeetingsViewModelTests {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
     }
@@ -313,7 +314,8 @@ struct MeetingsViewModelTests {
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
-            deleteMeetingUseCase: deleteMeetingUseCase
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID
         )
 
         // When
@@ -372,8 +374,8 @@ struct MeetingsViewModelTests {
         await viewModel.deleteMeeting(meeting)
 
         // Then
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 1)
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 1)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
         #expect(viewModel.loadedMeetings.isEmpty)
     }
 
@@ -407,7 +409,7 @@ struct MeetingsViewModelTests {
         await viewModel.deleteMeeting(meeting)
 
         // Then
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
         #expect(viewModel.loadedOccurrences.isEmpty)
     }
 
@@ -421,7 +423,7 @@ struct MeetingsViewModelTests {
         await viewModel.loadInitialData()
 
         struct DeleteError: Error {}
-        deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidThrowableError = DeleteError()
+        deleteMeetingUseCase.invokeMeetingMeetingVoidThrowableError = DeleteError()
 
         // When
         await viewModel.deleteMeeting(meeting)
@@ -443,7 +445,27 @@ struct MeetingsViewModelTests {
 
         // Then
         #expect(viewModel.isDeleteConfirmationPresented == true)
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 0)
+    }
+
+    @Test("a participant confirmation uses the exact self-only copy")
+    func meetingToDelete_participantUsesSelfOnlyCopy() {
+        // Given
+        let meeting = Meeting.fixture(
+            title: "To delete",
+            start: mockDateProvider.now,
+            isOrganizer: false
+        )
+
+        // When
+        viewModel.meetingToDelete = meeting
+
+        // Then
+        #expect(viewModel.deleteConfirmationTitle == "Delete meeting for me")
+        #expect(
+            viewModel.deleteConfirmationMessage
+                == "The meeting will be deleted from your calendar. This will not affect other participants."
+        )
     }
 
     @Test("confirmDelete deletes the pending meeting and dismisses the confirmation")
@@ -454,13 +476,13 @@ struct MeetingsViewModelTests {
 
         // When — confirmDelete deletes in a fire-and-forget task, so wait for the use case call
         await withCheckedContinuation { continuation in
-            deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidClosure = { _ in continuation.resume() }
+            deleteMeetingUseCase.invokeMeetingMeetingVoidClosure = { _ in continuation.resume() }
             viewModel.confirmDelete()
         }
 
         // Then
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 1)
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 1)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
         #expect(viewModel.meetingToDelete == nil)
         #expect(viewModel.isDeleteConfirmationPresented == false)
     }
@@ -471,7 +493,7 @@ struct MeetingsViewModelTests {
         viewModel.confirmDelete()
 
         // Then
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 0)
     }
 
     @Test("dismissing the confirmation clears the pending meeting without deleting it")
@@ -485,7 +507,7 @@ struct MeetingsViewModelTests {
 
         // Then
         #expect(viewModel.meetingToDelete == nil)
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 0)
     }
 
     // MARK: - Meeting State
@@ -531,6 +553,21 @@ struct MeetingsViewModelTests {
         #expect(viewModel.formatTimeRange(for: meeting) == formatter.timeRange(from: meeting.start, to: meeting.end))
     }
 
+    @Test("formatTime returns the full range for an ongoing occurrence")
+    func formatTime_ongoingOccurrence() {
+        let meeting = Meeting.fixture(
+            title: "Ongoing",
+            start: mockDateProvider.now.addingTimeInterval(-60),
+            duration: 3600
+        )
+        let occurrence = MeetingOccurrence(meeting: meeting)
+
+        #expect(viewModel.isHappeningNow(occurrence))
+        #expect(
+            viewModel.formatTime(for: occurrence) == formatter.timeRange(from: occurrence.start, to: occurrence.end)
+        )
+    }
+
     @Test("formatDay delegates to the formatter")
     func formatDay() {
         let day = mockDateProvider.now
@@ -546,7 +583,8 @@ private extension Meeting {
         title: String,
         start: Date,
         duration: TimeInterval = 3600,
-        recurrence: MeetingRecurrence? = nil
+        recurrence: MeetingRecurrence? = nil,
+        isOrganizer: Bool = true
     ) -> Meeting {
         Meeting(
             id: id,
@@ -555,8 +593,15 @@ private extension Meeting {
             end: start.addingTimeInterval(duration),
             recurrence: recurrence,
             conversationID: QualifiedID(id: UUID(), domain: ""),
-            creatorID: QualifiedID(id: UUID(), domain: "")
+            creatorID: QualifiedID(
+                id: isOrganizer ? Scaffolding.selfUserID : UUID(),
+                domain: ""
+            )
         )
     }
 
+}
+
+private enum Scaffolding {
+    static let selfUserID = UUID()
 }

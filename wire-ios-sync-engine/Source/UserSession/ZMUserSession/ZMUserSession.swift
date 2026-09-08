@@ -173,6 +173,11 @@ public final class ZMUserSession: NSObject {
         return isFeatureEnabled && hasBackendURL
     }
 
+    public var isMeetingsEnabled: Bool {
+        let feature = Feature.fetch(name: .meetings, context: coreDataStack.viewContext)
+        return feature?.status == .enabled
+    }
+
     public var conferenceCallingFeature: Feature.ConferenceCalling {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchConferenceCalling()
@@ -216,7 +221,6 @@ public final class ZMUserSession: NSObject {
         )
 
     var cRLsChecker: CertificateRevocationListsChecker?
-    var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
 
     // swiftlint:disable:next todo_requires_jira_link
     public var managedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
@@ -307,51 +311,40 @@ public final class ZMUserSession: NSObject {
     lazy var e2eiRepository: E2EIRepositoryInterface = {
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl ?? ""
         let acmeApi = AcmeAPI(acmeDiscoveryPath: acmeDiscoveryPath)
+
+        return E2EIRepository(
+            acmeApi: acmeApi,
+            coreCryptoProvider: coreCryptoProvider,
+        )
+    }()
+
+    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext
         )
-
         let apiProvider = APIProvider(httpClient: httpClient)
-        let e2eiSetupService = E2EISetupService(
-            coreCryptoProvider: coreCryptoProvider,
-            featureRepository: featureRepository
-        )
-        let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
-
         let keyRotator = E2EIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
             context: syncContext,
-            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
             featureRepository: featureRepository
         )
 
-        let e2eiRepository = E2EIRepository(
-            acmeApi: acmeApi,
+        return EnrollE2EICertificateUseCase(
+            e2eiRepository: e2eiRepository,
+            apiVersion: resolvedBackendMetadata.apiVersion,
             apiProvider: apiProvider,
-            e2eiSetupService: e2eiSetupService,
+            crlURLBuilder: CRLURLBuilder(
+                shouldUseProxy: e2eiFeature.config.useProxyOnMobile ?? false,
+                proxyURLString: e2eiFeature.config.crlProxy
+            ),
+            featureRepository: featureRepository,
             keyRotator: keyRotator,
             coreCryptoProvider: coreCryptoProvider,
-            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
-            apiVersion: resolvedBackendMetadata.apiVersion,
-            localDomain: resolvedBackendMetadata.domain
+            localDomain: resolvedBackendMetadata.domain,
+            context: syncContext
         )
-
-        assert(
-            cRLsDistributionPointsObserver != nil,
-            "requires to execute 'setupCertificateRevocationLists' first. this is a workaround and should be refactored."
-        )
-        cRLsDistributionPointsObserver?.startObservingNewCRLsDistributionPoints(
-            from: onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
-        )
-
-        return e2eiRepository
     }()
-
-    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = EnrollE2EICertificateUseCase(
-        e2eiRepository: e2eiRepository,
-        context: syncContext
-    )
 
     public private(set) var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
@@ -598,7 +591,6 @@ public final class ZMUserSession: NSObject {
         setupCertificateRevocationLists()
 
         registerForCalculateBadgeCountNotification()
-        registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
 
         enableBackgroundFetch()
@@ -633,6 +625,32 @@ public final class ZMUserSession: NSObject {
 
         if let syncStateSubject = self.clientSessionComponent?.syncStateSubject {
             observeSyncStateForAVS(syncStateSubject: syncStateSubject)
+        }
+
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+        let apiProvider = APIProvider(httpClient: httpClient)
+
+        if let apiVersion = resolvedBackendMetadata.apiVersion,
+           let e2eiAPI = apiProvider.e2eIAPI(apiVersion: apiVersion) {
+
+            let e2eiConfig = coreDataStack.viewContext.performAndWait {
+                e2eiFeature.config
+            }
+
+            let hooks = PKIEnvironmentTransport(
+                selfClientId: clientID,
+                e2eiApi: e2eiAPI,
+                crlURLbuilder: CRLURLBuilder(
+                    shouldUseProxy: e2eiConfig.useProxyOnMobile ?? false,
+                    proxyURLString: e2eiConfig.crlProxy
+                ),
+                oauthAuthenticate: nil
+            )
+
+            coreCryptoProvider.registerPkiEnvironmentHooks(hooks)
         }
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
@@ -1280,7 +1298,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didStartIncrementalSync() {
-        WireLogger.sync.debug("did start incremental sync", attributes: .incrementalSync)
+        WireLogger.sync.info("did start incremental sync", attributes: .incrementalSync)
         Task {
             await showSyncBar(true)
         }
@@ -1294,7 +1312,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishIncrementalSync(isRecovering: Bool) {
-        WireLogger.sync.debug(
+        WireLogger.sync.info(
             "did finish incremental sync (isRecovering: \(isRecovering))",
             attributes: .incrementalSync
         )
@@ -1384,8 +1402,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents(only onlyCallEvents: Bool) async {
-        WireLogger.sync.debug(
-            "process pending call events (onlyCallEvents: \(onlyCallEvents)",
+        WireLogger.sync.info(
+            "process pending call events (onlyCallEvents: \(onlyCallEvents))",
             attributes: .incrementalSync
         )
 
@@ -1659,6 +1677,9 @@ extension ZMUserSession {
                 coreCryptoProvider: coreCryptoProvider
             ),
             AppVersionMigration_4_18_0(
+                coreDataStack: coreDataStack
+            ),
+            AppVersionMigration_4_26_0(
                 coreDataStack: coreDataStack
             )
         ]

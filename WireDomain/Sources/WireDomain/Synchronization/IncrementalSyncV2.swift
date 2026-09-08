@@ -102,7 +102,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     }
 
     public func perform() async throws -> IncrementalSync.Token {
-        logger.debug("performing live sync", attributes: logAttributes)
+        logger.info("performing live sync", attributes: logAttributes)
         try Task.checkCancellation()
 
         try await pullServerTimeSync.pull()
@@ -135,7 +135,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             throw error
         }
 
-        logger.debug("creating push channel with marker \(syncMarker)", attributes: logAttributes)
+        logger.info("creating push channel with marker \(syncMarker)", attributes: logAttributes)
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
 
         let liveEventStream: PushChannelV2.Stream
@@ -146,7 +146,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             throw error
         }
 
-        logger.debug("processing stored update events", attributes: logAttributes)
+        logger.info("processing stored update events", attributes: logAttributes)
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         do {
             try await processStoredEvents()
@@ -159,7 +159,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         await mlsGroupRepairAgent.repairConversations()
 
         let task = Task { @Sendable [self] in
-            logger.debug("handling live event stream", attributes: logAttributes)
+            logger.info("handling live event stream", attributes: logAttributes)
             syncStateSubject.send(.liveSyncing(.ongoing))
 
             do {
@@ -175,13 +175,13 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         syncMarker: syncMarker
                     )
 
-                    WireLogger.sync.debug("Live stream ended, close push channel", attributes: logAttributes)
+                    WireLogger.sync.info("Live stream ended, close push channel", attributes: logAttributes)
                     await pushChannel.close()
                     await pushChannelState.markAsClosed()
                 }
             } catch {
                 // if we expire, close everything
-                WireLogger.sync.debug(
+                WireLogger.sync.info(
                     "Error while processing live stream, close push channel",
                     attributes: logAttributes
                 )
@@ -217,7 +217,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 break
             }
 
-            logger.debug(
+            logger.info(
                 "fetched \(envelopes.count) stored envelopes for processing",
                 attributes: logAttributes
             )
@@ -275,7 +275,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         pushChannel: PushChannelV2Protocol,
         syncMarker: String
     ) async {
-        logger.debug("handling live event stream", attributes: logAttributes)
+        logger.info("handling live event stream", attributes: logAttributes)
         syncStateSubject.send(.incrementalSyncing(.receivingLiveEvents))
 
         do {
@@ -449,7 +449,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     ) async {
         do {
             if let deliveryTag = envelope.deliveryTag {
-                logger.debug(
+                logger.info(
                     "ack event envelope",
                     attributes: [.eventEnvelopeID: envelope.id, .ackMultipleEventsCount: batchSize] +
                         logAttributes

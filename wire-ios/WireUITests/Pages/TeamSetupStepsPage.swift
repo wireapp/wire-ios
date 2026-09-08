@@ -68,7 +68,7 @@ class TeamSetupStepsPage: PageModel {
     }
 
     func tapBackToWireButton() throws -> ConversationsPage {
-        backToWireButton.tap()
+        backToWireButton.waitAndTap()
         return try ConversationsPage()
     }
 }

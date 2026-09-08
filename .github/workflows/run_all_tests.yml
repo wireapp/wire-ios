@@ -18,7 +18,10 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
-      notify_secret: WIRE_IOS_CI_WEBHOOK
       run_critical_flows: ${{ inputs.run_critical_flows }}
       notify: always
-    secrets: inherit
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}

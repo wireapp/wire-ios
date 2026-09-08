@@ -215,6 +215,10 @@ extension ZMConversation.Action {
         case .clearContent: Locators.ConversationDetailsActions.clearContent.rawValue
         case .leave: Locators.ConversationDetailsActions.leaveConversation.rawValue
         case .migrateToMLS: Locators.ConversationDetailsActions.migrateToMLS.rawValue
+        case let .block(isBlocked):
+            isBlocked
+                ? Locators.ConversationsPage.unblockOptionOnContextMenu.rawValue
+                : Locators.ConversationsPage.blockOptionOnContextMenu.rawValue
         default: nil
         }
     }

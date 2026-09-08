@@ -276,8 +276,8 @@
         "repositoryURL": "https://github.com/zxing-cpp/zxing-cpp",
         "state": {
           "branch": null,
-          "revision": "885baaf0840335153c1a487fa65f9c1388702c81",
-          "version": "3.1.0"
+          "revision": "287c85df6f961c8efbfb5ffd736cd9457b8b890e",
+          "version": "3.1.1"
         }
       }
     ]

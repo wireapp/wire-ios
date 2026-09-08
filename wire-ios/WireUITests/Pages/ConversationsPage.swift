@@ -48,6 +48,10 @@ class ConversationsPage: PageModel {
         app.buttons.matching(identifier: Locators.ConversationsPage.conversationCell.rawValue)
     }
 
+    var joinCallButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.joinCallButton.rawValue]
+    }
+
     var conversationSearchBar: XCUIElement {
         app.searchFields[Locators.ConversationsPage.conversationSearchBar.rawValue].firstMatch
     }
@@ -84,6 +88,10 @@ class ConversationsPage: PageModel {
 
     var blockButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
+    }
+
+    var unblockButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.unblockOptionOnContextMenu.rawValue]
     }
 
     var clearButtonOnMoreOptions: XCUIElement {
@@ -239,6 +247,30 @@ class ConversationsPage: PageModel {
         return try ActiveConversationPage()
     }
 
+    /// Opens the conversation whose name matches `name`.
+    @discardableResult
+    func openConversation(named name: String) throws -> ActiveConversationPage {
+        try letTheSyncFinish()
+        let cell = conversationCell(named: name)
+        XCTAssertTrue(
+            cell.waitForExistence(timeout: 10),
+            "Conversation '\(name)' did not appear in the list"
+        )
+        cell.waitAndTap()
+        return try ActiveConversationPage()
+    }
+
+    /// Names of the conversation cells, ordered top-to-bottom as displayed in the list.
+    func conversationNamesInOrder() throws -> [String] {
+        try letTheSyncFinish()
+        XCTAssertTrue(conversationCell.waitForExistence(timeout: 10), "No conversation cells appeared in the list")
+        return app.buttons
+            .matching(identifier: Locators.ConversationsPage.conversationCell.rawValue)
+            .allElementsBoundByIndex
+            .sorted { $0.frame.minY < $1.frame.minY }
+            .map(\.label)
+    }
+
     @discardableResult
     func openConversationWithGuest(groupName: String) throws -> ActiveConversationPage {
         try letTheSyncFinish()
@@ -270,6 +302,11 @@ class ConversationsPage: PageModel {
         return try ActiveConversationPage()
     }
 
+    func joinOngoingCall(groupName: String) throws -> OngoingCallPage {
+        joinCallButton.waitAndTap()
+        return try OngoingCallPage()
+    }
+
     @discardableResult
     func longPressForMoreOptionOnConversation(named name: String? = nil) throws -> ConversationsPage {
         let targetConversation = name.map { conversationCell(named: $0) } ?? conversationCell
@@ -277,8 +314,16 @@ class ConversationsPage: PageModel {
         return try ConversationsPage()
     }
 
+    @discardableResult
     func blockUser() throws -> ConversationsPage {
         blockButtonOnMoreOptions.tap()
+        blockButtonOnBottomSheet.tap()
+        return self
+    }
+
+    @discardableResult
+    func unblockUser() throws -> ConversationsPage {
+        unblockButtonOnMoreOptions.tap()
         blockButtonOnBottomSheet.tap()
         return self
     }

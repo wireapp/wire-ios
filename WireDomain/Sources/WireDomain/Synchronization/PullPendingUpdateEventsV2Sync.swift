@@ -76,7 +76,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
 
         let liveEventStream = try await pushChannel.open()
 
-        logger.debug("handling live event stream", attributes: logAttributes)
+        logger.info("handling live event stream", attributes: logAttributes)
         do {
             streamLoop: for try await element in liveEventStream {
                 try Task.checkCancellation()
