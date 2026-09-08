@@ -82,6 +82,15 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
             isGroup: isGroup,
             isTeam: isTeam
         )
+
+        let meetingEvent = ConversationCreateEvent(
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID,
+            timestamp: .now,
+            conversation: .init(groupType: .meeting)
+        )
+        let meetingNotification = await sut.buildContent(event: meetingEvent)
+        XCTAssertNil(meetingNotification)
     }
 
     func testGenerateConversationCreateEventNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {

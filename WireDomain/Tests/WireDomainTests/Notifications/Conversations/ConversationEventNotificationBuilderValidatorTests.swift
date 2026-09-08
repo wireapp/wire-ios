@@ -119,6 +119,14 @@ final class ConversationEventNotificationBuilderValidatorTests: XCTestCase {
 
         // Then
         XCTAssertTrue(result)
+
+        conversationLocalStore.isMeetingConversation_MockValue = true
+        let meetingResult = await sut.validate(
+            conversationID: Scaffolding.qualifiedID,
+            senderID: Scaffolding.qualifiedID,
+            time: Date()
+        )
+        XCTAssertFalse(meetingResult)
     }
 
     func test_validate_AcceptsOtherUserEventsInSelfConversation() async {
@@ -269,6 +277,7 @@ final class ConversationEventNotificationBuilderValidatorTests: XCTestCase {
             modelHelper.createSelfUser(in: context)
         }
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationLocalStore.isMeetingConversation_MockValue = false
         conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockMethod = { _ in
             isConversationMuted ? .all : .none
         }
