@@ -98,6 +98,7 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         storedMeeting.title = meeting.title
         storedMeeting.start = meeting.start
         storedMeeting.end = meeting.end
+        storedMeeting.timeZoneIdentifier = meeting.timeZoneIdentifier
         storedMeeting.recurrenceFrequency = meeting.recurrence?.frequency.toStoredFrequency()
         storedMeeting.recurrenceInterval = Int64(meeting.recurrence?.interval ?? 0)
         storedMeeting.recurrenceUntil = meeting.recurrence?.until
@@ -169,6 +170,7 @@ private extension StoredMeeting {
             start: start,
             end: end,
             recurrence: toDomainRecurrence(),
+            timeZoneIdentifier: timeZoneIdentifier,
             conversation: MeetingConversation(
                 participants: conversation.toMeetingMembers()
             ),
