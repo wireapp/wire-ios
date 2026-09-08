@@ -64,6 +64,16 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue].firstMatch
     }
 
+    func conversationTitle(named name: String) -> XCUIElement {
+        app.staticTexts.matching(
+            NSPredicate(
+                format: "identifier == %@ AND label == %@",
+                Locators.ActiveConversationPage.conversationTitleLabel.rawValue,
+                name
+            )
+        ).firstMatch
+    }
+
     var conversationDetailsButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
     }
