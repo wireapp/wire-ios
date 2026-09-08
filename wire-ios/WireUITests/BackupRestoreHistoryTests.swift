@@ -22,17 +22,6 @@ import XCTest
 /// [core-messenger]
 final class BackupRestoreHistoryTests: WireUITestCase {
 
-    private typealias Backup = (
-        owner: UserInfo,
-        teamMember: UserInfo,
-        conversationName: String,
-        conversationNames: [String],
-        conversationId: UUID,
-        domain: String,
-        messages: [String],
-        fileName: String
-    )
-
     /// [critical]
     @MainActor
     func testCreateBackupAndRestoreHistoryWithPassword_TC_8928_8930_8805() async throws {
@@ -154,52 +143,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
     }
 
     @MainActor
-    private func loginAndVerifyPreviousMessageIsNotShown(
-        email: String,
-        password: String,
-        conversationName: String,
-        messages: [String]
-    ) throws -> ActiveConversationPage {
-        let conversationsPage = try app.loginUser(
-            email: email,
-            password: password
-        )
-        .acceptPopup()
-        let activeConversationPage = try openConversation(named: conversationName, from: conversationsPage)
-
-        verifyMessagesAreNotVisible(messages, in: activeConversationPage)
-
-        return activeConversationPage
-    }
-
-    @MainActor
     func testRestoringBackupKeepsConversationOrderAndMessagesAsRead_TC_11583() async throws {
-        let backup = try await createBackupWithReadIncomingMessages()
-
-        let activeConversationPage = try loginAndVerifyPreviousMessageIsNotShown(
-            email: backup.owner.email,
-            password: backup.owner.password,
-            conversationName: backup.conversationName,
-            messages: backup.messages
-        )
-
-        let conversationsPage = try restoreBackupWithoutPassword(
-            from: activeConversationPage.goBackToConversationPage(),
-            fileName: backup.fileName
-        )
-        verifyRestoredConversationOrder(backup.conversationNames, in: conversationsPage)
-
-        try await sendMessages(
-            [UserGenerator.generateRandomMessage()],
-            from: backup.teamMember,
-            conversationId: backup.conversationId,
-            domain: backup.domain
-        )
-        try verifyUnreadCount(in: conversationsPage)
-    }
-
-    @MainActor
-    private func createBackupWithReadIncomingMessages() async throws -> Backup {
         let oldestGroupName = UserGenerator.generateRandomConversationName()
         let middleChannelName = UserGenerator.generateRandomConversationName()
         let latestGroupName = UserGenerator.generateRandomConversationName()
@@ -229,7 +173,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             matching: .conversationName(latestGroupName)
         )
 
-        let conversationsPage = try await loginToBackend(user: owner)
+        var conversationsPage = try await loginToBackend(user: owner)
 
         try await sendMessages(
             [UserGenerator.generateRandomMessage()],
@@ -247,22 +191,40 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         let activeConversationPage = try openConversation(named: latestGroupName, from: conversationsPage)
         verifyMessages(messagesForLatestGroup, in: activeConversationPage)
 
-        let conversationsPageBeforeBackup = try activeConversationPage.goBackToConversationPage()
-        let conversationNames = firstConversationNames(limit: 3, in: conversationsPageBeforeBackup)
+        conversationsPage = try activeConversationPage.goBackToConversationPage()
+        let conversationNames = firstConversationNames(limit: 3, in: conversationsPage)
 
-        let (fileName, accountSettingsPage) = try createBackupWithoutPassword(from: conversationsPageBeforeBackup)
+        let (fileName, accountSettingsPage) = try createBackupWithoutPassword(from: conversationsPage)
         _ = try accountSettingsPage.logout().enterPassword(owner.password)
 
-        return (
-            owner: owner,
-            teamMember: teamMember,
-            conversationName: latestGroupName,
-            conversationNames: conversationNames,
-            conversationId: latestGroupId,
-            domain: domain,
-            messages: messagesForLatestGroup,
+        let loggedInConversationPage = try app.loginUser(
+            email: owner.email,
+            password: owner.password
+        )
+        .acceptPopup()
+        let activeConversationPageAfterLogin = try openConversation(
+            named: latestGroupName,
+            from: loggedInConversationPage
+        )
+        verifyMessagesAreNotVisible(messagesForLatestGroup, in: activeConversationPageAfterLogin)
+
+        conversationsPage = try restoreBackupWithoutPassword(
+            from: activeConversationPageAfterLogin.goBackToConversationPage(),
             fileName: fileName
         )
+        XCTAssertEqual(
+            firstConversationNames(limit: conversationNames.count, in: conversationsPage),
+            conversationNames,
+            "Restored conversation order changed"
+        )
+
+        try await sendMessages(
+            [UserGenerator.generateRandomMessage()],
+            from: teamMember,
+            conversationId: latestGroupId,
+            domain: domain
+        )
+        try verifyUnreadCount(in: conversationsPage)
     }
 
     @MainActor
@@ -378,17 +340,6 @@ final class BackupRestoreHistoryTests: WireUITestCase {
                 "Message '\(message)' should not be visible yet: \(actualMessages)"
             )
         }
-    }
-
-    private func verifyRestoredConversationOrder(
-        _ expectedNames: [String],
-        in conversationsPage: ConversationsPage
-    ) {
-        XCTAssertEqual(
-            firstConversationNames(limit: expectedNames.count, in: conversationsPage),
-            expectedNames,
-            "Restored conversation order changed"
-        )
     }
 
     private func firstConversationNames(
