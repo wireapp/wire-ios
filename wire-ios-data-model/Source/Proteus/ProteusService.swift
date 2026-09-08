@@ -294,7 +294,13 @@ public final class ProteusService: ProteusServiceInterface {
                 try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString()
             }
         } catch {
-            throw PrekeyError.failedToGeneratePrekey
+            do {
+                return try await coreCrypto.transaction {
+                    try await $0.proteusNewPrekeyAuto().pkb.base64EncodedString()
+                }
+            } catch {
+                throw PrekeyError.failedToGeneratePrekey
+            }
         }
     }
 

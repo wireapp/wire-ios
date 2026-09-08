@@ -309,6 +309,67 @@ class ProteusServiceTests: XCTestCase {
         XCTAssertEqual(encryptCalls, 1)
     }
 
+    // MARK: - Prekey generation
+
+    func test_GeneratePrekey_Success() async throws {
+        // Given
+        let prekeyID: UInt16 = 42
+        let prekeyData = Data([1, 2, 3])
+
+        // Mock
+        mockCoreCryptoContext.proteusNewPrekeyPrekeyId_MockMethod = { id in
+            XCTAssertEqual(id, prekeyID)
+            return prekeyData
+        }
+
+        // When
+        let prekey = try await sut.generatePrekey(id: prekeyID)
+
+        // Then
+        XCTAssertEqual(prekey, prekeyData.base64EncodedString())
+        XCTAssertEqual(mockCoreCryptoContext.proteusNewPrekeyAuto_Invocations.count, 0)
+    }
+
+    func test_GeneratePrekey_FallsBackToAutoPrekey_WhenProteusNewPrekeyFails() async throws {
+        // Given
+        let prekeyID: UInt16 = 42
+        let autoPrekey = ProteusAutoPrekeyBundle(id: prekeyID, pkb: Data([4, 5, 6]))
+
+        // Mock
+        mockCoreCryptoContext.proteusNewPrekeyPrekeyId_MockMethod = { _ in
+            throw MockError()
+        }
+        mockCoreCryptoContext.proteusNewPrekeyAuto_MockMethod = {
+            autoPrekey
+        }
+
+        // When
+        let prekey = try await sut.generatePrekey(id: prekeyID)
+
+        // Then
+        XCTAssertEqual(prekey, autoPrekey.pkb.base64EncodedString())
+        XCTAssertEqual(mockCoreCryptoContext.proteusNewPrekeyAuto_Invocations.count, 1)
+    }
+
+    func test_GeneratePrekey_Failure_WhenBothProteusNewPrekeyAndAutoPrekeyFail() async throws {
+        // Given
+        let prekeyID: UInt16 = 42
+
+        // Mock
+        mockCoreCryptoContext.proteusNewPrekeyPrekeyId_MockMethod = { _ in
+            throw MockError()
+        }
+        mockCoreCryptoContext.proteusNewPrekeyAuto_MockMethod = {
+            throw MockError()
+        }
+
+        // Then
+        await assertItThrows(error: ProteusService.PrekeyError.failedToGeneratePrekey) {
+            // When
+            _ = try await sut.generatePrekey(id: prekeyID)
+        }
+    }
+
     // MARK: - Session deletion
 
     func test_DeleteSession_Success() async throws {
