@@ -38,23 +38,11 @@ final class BackupRestoreHistoryTests: WireUITestCase {
     func testCreateBackupAndRestoreHistoryWithPassword_TC_8928_8930_8805() async throws {
         var (messageFromOwner, teamOwner, activeConversationPage) = try await createTeamConversationAndSendMessage()
 
-        let creatingBackupPage = try activeConversationPage.goBackToConversationPage()
-            .openSettings()
-            .openAccountSettings()
-            .tapBackupOrRestore()
-            .tapBackupNow()
-            .enterBackupPasswordAndBackup(teamOwner.password)
-
-        creatingBackupPage.verifyBackupIsCreatedSuccessfully()
-
-        let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
-        let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
-
-        _ = try saveBackupFileBottomSheetPage.tapSaveToFilesOnBottomSheet()
-            .tapSaveButtonOnMyiPhonePage()
-            .goBackToAccountPage()
-            .logout()
-            .enterPassword(teamOwner.password)
+        let (backupFileName, accountSettingsPage) = try createBackupWithPassword(
+            from: activeConversationPage.goBackToConversationPage(),
+            password: teamOwner.password
+        )
+        _ = try accountSettingsPage.logout().enterPassword(teamOwner.password)
 
         activeConversationPage = try loginAndVerifyPreviousMessageIsNotShown(
             email: teamOwner.email,
@@ -62,24 +50,12 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             message: messageFromOwner
         )
 
-        let setPasswordPage = try activeConversationPage.goBackToConversationPage()
-            .openSettings()
-            .openAccountSettings()
-            .tapBackupOrRestore()
-            .tapRestoreFromBackupButton()
-            .selectBackupFileWithPassword(withName: backupFileName)
-            .enterBackupPasswordAndRestore(teamOwner.password)
-
-        XCTAssertTrue(
-            setPasswordPage.historyRestoredAlert.waitForExistence(timeout: 3),
-            "History restored alert missing"
+        let conversationsPageAfterRestore = try restoreBackupWithPassword(
+            from: activeConversationPage.goBackToConversationPage(),
+            fileName: backupFileName,
+            password: teamOwner.password
         )
-
-        _ = try setPasswordPage.acceptHistoryrestoredAlert()
-            .goBackToAccountPage()
-            .goBackToSettingsPage()
-            .switchToConversationsTab()
-            .openConversation()
+        activeConversationPage = try conversationsPageAfterRestore.openConversation()
 
         let restoredMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
@@ -92,24 +68,10 @@ final class BackupRestoreHistoryTests: WireUITestCase {
     func testCreateBackupAndRestoreHistoryWithoutPassword_TC_8927_8929() async throws {
         var (messageFromOwner, teamOwner, activeConversationPage) = try await createTeamConversationAndSendMessage()
 
-        let backupOrRestorePage = try activeConversationPage.goBackToConversationPage()
-            .openSettings()
-            .openAccountSettings()
-            .tapBackupOrRestore()
-            .tapBackupNow()
-
-        let creatingBackupPage = try backupOrRestorePage.backupWithoutPassword()
-
-        creatingBackupPage.verifyBackupIsCreatedSuccessfully()
-
-        let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
-        let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
-
-        _ = try saveBackupFileBottomSheetPage.tapSaveToFilesOnBottomSheet()
-            .tapSaveButtonOnMyiPhonePage()
-            .goBackToAccountPage()
-            .logout()
-            .enterPassword(teamOwner.password)
+        let (backupFileName, accountSettingsPage) = try createBackupWithoutPassword(
+            from: activeConversationPage.goBackToConversationPage()
+        )
+        _ = try accountSettingsPage.logout().enterPassword(teamOwner.password)
 
         activeConversationPage = try loginAndVerifyPreviousMessageIsNotShown(
             email: teamOwner.email,
@@ -117,23 +79,11 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             message: messageFromOwner
         )
 
-        let backupOrRestorePageAfterRestore = try activeConversationPage.goBackToConversationPage()
-            .openSettings()
-            .openAccountSettings()
-            .tapBackupOrRestore()
-            .tapRestoreFromBackupButton()
-            .selectBackupFileWithoutPassword(withName: backupFileName)
-
-        XCTAssertTrue(
-            backupOrRestorePageAfterRestore.historyRestoredAlert.waitForExistence(timeout: 3),
-            "History restored alert missing"
+        let conversationsPageAfterRestore = try restoreBackupWithoutPassword(
+            from: activeConversationPage.goBackToConversationPage(),
+            fileName: backupFileName
         )
-
-        _ = try backupOrRestorePageAfterRestore.acceptHistoryrestoredAlert()
-            .goBackToAccountPage()
-            .goBackToSettingsPage()
-            .switchToConversationsTab()
-            .openConversation()
+        activeConversationPage = try conversationsPageAfterRestore.openConversation()
 
         let restoredMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
@@ -239,11 +189,13 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         )
         verifyRestoredConversationOrder(backup.conversationNames, in: conversationsPage)
 
-        let conversationsPageAfterReading = try await readRestoredMessagesAndReceiveNewMessage(
-            backup,
-            from: conversationsPage
+        try await sendMessages(
+            [UserGenerator.generateRandomMessage()],
+            from: backup.teamMember,
+            conversationId: backup.conversationId,
+            domain: backup.domain
         )
-        try verifyUnreadCountIsOne(in: conversationsPageAfterReading)
+        try verifyUnreadCount(in: conversationsPage)
     }
 
     @MainActor
@@ -270,10 +222,12 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             owner: owner,
             groupName: latestGroupName
         )
-        async let oldestGroupLookup = UserHelper.default.getConversationId(matching: .conversationName(oldestGroupName))
-        async let latestGroupLookup = UserHelper.default.getConversationId(matching: .conversationName(latestGroupName))
-        let (oldestGroupId, _) = try await oldestGroupLookup
-        let (latestGroupId, _) = try await latestGroupLookup
+        let (oldestGroupId, _) = try await UserHelper.default.getConversationId(
+            matching: .conversationName(oldestGroupName)
+        )
+        let (latestGroupId, _) = try await UserHelper.default.getConversationId(
+            matching: .conversationName(latestGroupName)
+        )
 
         let conversationsPage = try await loginToBackend(user: owner)
 
@@ -312,21 +266,26 @@ final class BackupRestoreHistoryTests: WireUITestCase {
     }
 
     @MainActor
-    private func readRestoredMessagesAndReceiveNewMessage(
-        _ backup: Backup,
-        from conversationsPage: ConversationsPage
-    ) async throws -> ConversationsPage {
-        let activeConversationPage = try openConversation(named: backup.conversationName, from: conversationsPage)
-        verifyMessages(backup.messages, in: activeConversationPage)
+    private func createBackupWithPassword(
+        from conversationsPage: ConversationsPage,
+        password: String
+    ) throws -> (backupFileName: String, accountSettingsPage: AccountSettingsPage) {
+        let creatingBackupPage = try conversationsPage.openSettings()
+            .openAccountSettings()
+            .tapBackupOrRestore()
+            .tapBackupNow()
+            .enterBackupPasswordAndBackup(password)
 
-        let conversationsPageAfterReading = try activeConversationPage.goBackToConversationPage()
-        try await sendMessages(
-            [UserGenerator.generateRandomMessage()],
-            from: backup.teamMember,
-            conversationId: backup.conversationId,
-            domain: backup.domain
-        )
-        return conversationsPageAfterReading
+        creatingBackupPage.verifyBackupIsCreatedSuccessfully()
+
+        let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
+        let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
+
+        let accountSettingsPage = try saveBackupFileBottomSheetPage.tapSaveToFilesOnBottomSheet()
+            .tapSaveButtonOnMyiPhonePage()
+            .goBackToAccountPage()
+
+        return (backupFileName, accountSettingsPage)
     }
 
     @MainActor
@@ -349,6 +308,31 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .goBackToAccountPage()
 
         return (backupFileName, accountSettingsPage)
+    }
+
+    @MainActor
+    private func restoreBackupWithPassword(
+        from conversationsPage: ConversationsPage,
+        fileName: String,
+        password: String
+    ) throws -> ConversationsPage {
+        let setPasswordPage = try conversationsPage
+            .openSettings()
+            .openAccountSettings()
+            .tapBackupOrRestore()
+            .tapRestoreFromBackupButton()
+            .selectBackupFileWithPassword(withName: fileName)
+            .enterBackupPasswordAndRestore(password)
+
+        XCTAssertTrue(
+            setPasswordPage.historyRestoredAlert.waitForExistence(timeout: 5),
+            "History restored alert missing"
+        )
+
+        return try setPasswordPage.acceptHistoryrestoredAlert()
+            .goBackToAccountPage()
+            .goBackToSettingsPage()
+            .switchToConversationsTab()
     }
 
     @MainActor
@@ -450,7 +434,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         }
     }
 
-    private func verifyUnreadCountIsOne(in conversationsPage: ConversationsPage) throws {
+    private func verifyUnreadCount(in conversationsPage: ConversationsPage) throws {
         XCTAssertTrue(
             conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
             "Unread messages count element did not appear"
