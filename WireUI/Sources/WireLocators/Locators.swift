@@ -175,6 +175,7 @@ public enum Locators {
         case inputField
         case sendButton
         case authorName
+        case conversationTitleLabel
         case conversationTitleButton
         case conversationDetailsButton
         case sharedDriveButton
@@ -184,6 +185,8 @@ public enum Locators {
         case imageCell
         case videoCell
         case videoPlayButton
+        case imagePreview
+        case videoPreview
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
@@ -199,8 +202,10 @@ public enum Locators {
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
+        case cameraRollButton
         case uploadFileButton
         case locationButton
+        case add = "Add"
         case browse = "Browse"
         case open = "Open"
         case allowFullAccess = "Allow Full Access"

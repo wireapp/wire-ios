@@ -64,6 +64,16 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue].firstMatch
     }
 
+    func conversationTitle(named name: String) -> XCUIElement {
+        app.staticTexts.matching(
+            NSPredicate(
+                format: "identifier == %@ AND label == %@",
+                Locators.ActiveConversationPage.conversationTitleLabel.rawValue,
+                name
+            )
+        ).firstMatch
+    }
+
     var conversationDetailsButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
     }
@@ -82,6 +92,14 @@ class ActiveConversationPage: PageModel {
 
     var videoPlayButton: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPlayButton.rawValue].firstMatch
+    }
+
+    var imagePreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.imagePreview.rawValue].firstMatch
+    }
+
+    var videoPreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPreview.rawValue].firstMatch
     }
 
     var userRemovedSystemMessage: XCUIElement {
@@ -145,6 +163,10 @@ class ActiveConversationPage: PageModel {
         app.images[Locators.ActiveConversationPage.attachmentImagePreview.rawValue]
     }
 
+    var attachmentVideoPreview: XCUIElement {
+        app.images[Locators.ActiveConversationPage.attachmentVideoPreview.rawValue]
+    }
+
     var classifiedBanner: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
@@ -165,8 +187,16 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
     }
 
+    var cameraRollButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.cameraRollButton.rawValue]
+    }
+
     var uploadFileButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.uploadFileButton.rawValue].firstMatch
+    }
+
+    var addButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.add.rawValue].firstMatch
     }
 
     var locationButton: XCUIElement {
@@ -319,7 +349,7 @@ class ActiveConversationPage: PageModel {
     func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
-        sendButton.tap()
+        sendButton.tapAndWait()
         return self
     }
 
@@ -336,6 +366,15 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
         sendButton.waitAndTap()
         XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
+    }
+
+    @discardableResult
+    func sendAttachments() -> ActiveConversationPage {
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+        return self
     }
 
     func openSharedDrive() throws -> SharedDriveFilesPage {
@@ -424,6 +463,56 @@ class ActiveConversationPage: PageModel {
             "OK button did not appear after selecting media"
         )
         okToSend.waitAndTap()
+        return self
+    }
+
+    func selectImageAndSendInDriveEnabledConversation(at index: Int = 3) throws -> ActiveConversationPage {
+        if !imageToChoose(at: index).waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+        imageToChoose(at: index).waitAndTap()
+
+        XCTAssertTrue(
+            attachmentImagePreview.waitForExistence(timeout: 5),
+            "Image attachment preview did not appear"
+        )
+
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+        return self
+    }
+
+    func selectVideoFromCameraRoll() throws -> ActiveConversationPage {
+        if !cameraRollButton.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+
+        XCTAssertTrue(
+            cameraRollButton.waitAndTap(),
+            "cameraRollButton did not show up"
+        )
+
+        // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
+
+        let video = app.images.matching(NSPredicate(
+            format: "identifier == %@ AND label BEGINSWITH %@",
+            Locators.PhotosAppPage.imageTile.rawValue,
+            "Video"
+        )).firstMatch
+        XCTAssertTrue(video.waitForExistence(timeout: 8), "No video found in camera roll")
+        video.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+
+        XCTAssertTrue(
+            addButton.waitAndTap(),
+            "Not able to add media after selecting"
+        )
+
+        XCTAssertTrue(
+            attachmentVideoPreview.waitForExistence(timeout: 5),
+            "Video attachment preview did not appear"
+        )
         return self
     }
 
@@ -596,6 +685,26 @@ class ActiveConversationPage: PageModel {
     }
 
     @discardableResult
+    func verifyImagePreviewIsVisible(
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            imagePreview.waitForExistence(timeout: 7),
+            "Image preview did not appear"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyVideoPreviewIsVisible(
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            videoPreview.waitForExistence(timeout: 7),
+            "Video preview did not appear"
+        )
+        return self
+    }
+
+    @discardableResult
     func verifyGIFReceived(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
@@ -662,15 +771,25 @@ class ActiveConversationPage: PageModel {
     }
 
     func verifyLinkPreviewCell(
+        shouldExist: Bool = true,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> ActiveConversationPage {
-        XCTAssertTrue(
-            linkPreviewCell.waitForExistence(timeout: 10),
-            "Link preview cell did not appear",
-            file: file,
-            line: line
-        )
+        if shouldExist {
+            XCTAssertTrue(
+                linkPreviewCell.waitForExistence(timeout: 10),
+                "Link preview cell did not appear",
+                file: file,
+                line: line
+            )
+        } else {
+            XCTAssertFalse(
+                linkPreviewCell.waitForExistence(timeout: 3),
+                "Link preview cell should not appear",
+                file: file,
+                line: line
+            )
+        }
         return self
     }
 

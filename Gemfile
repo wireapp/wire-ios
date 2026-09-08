@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby file: ".ruby-version"
 
 gem 'abbrev'
-gem 'fastlane', '2.237.0'
+gem 'fastlane', '2.238.0'
 gem 'git'
 gem 'httparty'
 gem 'mutex_m'

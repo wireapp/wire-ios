@@ -62,10 +62,14 @@
 "wireMeetings.schedule.start.button" = "Start";
 "wireMeetings.schedule.setupTitle.header" = "Title";
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
+"wireMeetings.schedule.setupTitle.error.tooLong" = "Too many characters";
 "wireMeetings.schedule.setupParticipants.header" = "Participants";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Add participants";
 "wireMeetings.schedule.error.alert.title" = "Something went wrong";
 "wireMeetings.schedule.error.alert.ok" = "OK";
+"wireMeetings.schedule.error.conversationName.title" = "Could not update call name";
+"wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the name shown in the call could not be updated. Please try again.";
+"wireMeetings.schedule.error.conversationName.retry" = "Try again";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Cancel";

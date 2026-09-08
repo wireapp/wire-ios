@@ -39,7 +39,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireMeetings
     case lowKeyPackageCount
     case enabledCCDebugLogs
     case shakeToReport
@@ -103,9 +102,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
-
-        case .wireMeetings:
-            "Turn on to enable Wire meetings"
 
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"

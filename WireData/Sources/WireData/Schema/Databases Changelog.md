@@ -10,6 +10,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.141.0
+
+* added optional `Meeting.timeZoneIdentifier` for recurring meetings.
+
 ### 2.140.0
 
 * changed relationship `Conversation`-`Meeting` to 1:n, renamed `Conversation.parentMeeting` to `Conversation.meetings`

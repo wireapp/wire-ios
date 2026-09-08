@@ -62,6 +62,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
+                timeZoneIdentifier: TimeZone.current.identifier,
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
@@ -196,6 +197,7 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
+            timeZoneIdentifier: timeZoneIdentifier,
             conversationID: conversationID,
             creatorID: creatorID
         )

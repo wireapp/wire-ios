@@ -77,6 +77,16 @@ struct MeetingFormView: View {
                     dismissButton: .default(Text(Strings.Error.Alert.ok))
                 )
             }
+            .alert(
+                Strings.Error.ConversationName.title,
+                isPresented: $viewModel.hasConversationNameUpdateError
+            ) {
+                Button(Strings.Error.ConversationName.retry) {
+                    Task { await viewModel.retryConversationNameUpdate() }
+                }
+            } message: {
+                Text(Strings.Error.ConversationName.message)
+            }
         }
     }
 
@@ -103,7 +113,7 @@ struct MeetingFormView: View {
     }
 
     private var titleSection: some View {
-        Section(Strings.SetupTitle.header) {
+        Section {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
                     .focused($isTitleFieldFocused)
@@ -114,6 +124,13 @@ struct MeetingFormView: View {
                             viewModel.clearTitle()
                         }
                 }
+            }
+        } header: {
+            Text(Strings.SetupTitle.header)
+        } footer: {
+            if viewModel.isMeetingTitleTooLong {
+                Text(Strings.SetupTitle.Error.tooLong)
+                    .foregroundStyle(ColorTheme.Base.error.color)
             }
         }
         .textCase(nil)
