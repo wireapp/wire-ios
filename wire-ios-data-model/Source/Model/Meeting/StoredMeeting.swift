@@ -35,6 +35,7 @@ public final class StoredMeeting: ZMManagedObject, Identifiable {
     @NSManaged public var remoteIdentifier: UUID?
     @NSManaged public var domain: String?
     @NSManaged public var title: String?
+    @NSManaged public var timeZoneIdentifier: String?
     @NSManaged public var start: Date?
     @NSManaged public var end: Date?
     @NSManaged var recurrenceFrequencyRawValue: Int16

@@ -55,6 +55,7 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(meeting?.id == Scaffolding.meetingID)
+        #expect(meeting?.timeZoneIdentifier == Scaffolding.meetingResponse.timeZoneIdentifier)
         #expect(meetingsAPI.getMeetingId_Invocations == [Scaffolding.meetingID])
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
@@ -406,6 +407,9 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(meetingsAPI.createMeetingParameters_Invocations.count == 1)
+        #expect(
+            meetingsAPI.createMeetingParameters_Invocations.first?.timeZoneIdentifier == TimeZone.current.identifier
+        )
         #expect(meeting.id == Scaffolding.meetingID)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
@@ -493,7 +497,8 @@ struct MeetingRepositoryTests {
             invitedEmails: [],
             isTrial: false,
             createdAt: Date(timeIntervalSince1970: 900_000),
-            updatedAt: Date(timeIntervalSince1970: 900_000)
+            updatedAt: Date(timeIntervalSince1970: 900_000),
+            timeZoneIdentifier: "Asia/Tokyo"
         )
 
         static let member = MeetingMember(
@@ -514,6 +519,7 @@ struct MeetingRepositoryTests {
             start: meetingResponse.startTime,
             end: meetingResponse.endTime,
             recurrence: nil,
+            timeZoneIdentifier: meetingResponse.timeZoneIdentifier,
             conversation: MeetingConversation(participants: [member]),
             conversationID: meetingResponse.conversationID,
             creatorID: meetingResponse.creatorID
