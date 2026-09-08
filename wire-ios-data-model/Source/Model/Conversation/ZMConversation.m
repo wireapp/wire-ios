@@ -463,6 +463,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     // local participant roles, so check its count first to avoid unncessary iterations.
 
     if (conversationType == ZMConversationTypeGroup &&
+        self.groupType != ConversationGroupTypeMeeting &&
         self.team != nil &&
         self.userDefinedName.length == 0 &&
         self.localParticipantRoles.count == 2 &&
