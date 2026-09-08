@@ -35,17 +35,19 @@ extension ConversationActionController {
                 style: .destructive,
                 accessibilityIdentifier: Locators.ConversationDetailsActions.migrateToMLS.rawValue
             ) { [weak self] _ in
-                self?.migrateConversationToMLS(conversation)
+                Task {
+                    await self?.migrateConversationToMLS(conversation)
+                }
             }
         )
         present(controller)
     }
 
-    private func migrateConversationToMLS(_ conversation: ZMConversation) {
+    private func migrateConversationToMLS(_ conversation: ZMConversation) async {
         guard let conversationID = conversation.qualifiedID,
               let syncContext = conversation.managedObjectContext?.zm_sync
         else {
-            presentMLSMigrationFailure(
+            await presentMLSMigrationFailure(
                 MigrateConversationToMLSUseCase.Failure.conversationNotFound
             )
             return
@@ -53,19 +55,20 @@ extension ConversationActionController {
 
         let useCase = MigrateConversationToMLSUseCase()
 
-        Task { [weak self] in
-            do {
-                try await useCase.invoke(
-                    conversationID: conversationID,
-                    syncContext: syncContext
-                )
-                await MainActor.run { self?.presentMLSMigrationSuccess() }
-            } catch {
-                await MainActor.run { self?.presentMLSMigrationFailure(error) }
-            }
+        
+        do {
+            try await useCase.invoke(
+                conversationID: conversationID,
+                syncContext: syncContext
+            )
+            await presentMLSMigrationSuccess()
+        } catch {
+            await presentMLSMigrationFailure(error)
         }
+        
     }
 
+    @MainActor
     private func presentMLSMigrationSuccess() {
         let controller = UIAlertController(
             title: L10n.Localizable.Meta.Menu.MlsMigration.Success.title,
@@ -76,6 +79,7 @@ extension ConversationActionController {
         present(controller)
     }
 
+    @MainActor
     private func presentMLSMigrationFailure(_ error: Error) {
         let controller = UIAlertController(
             title: L10n.Localizable.Meta.Menu.MlsMigration.Failure.title,
