@@ -3,13 +3,16 @@
 Determine the target branch for cherry-picking from a release branch.
 
 This script:
-1. If the input branch is one of the tracked release branches (LTS_RELEASE or
-   GOV_RELEASE env vars, e.g. release/cycle-4.16), targets 'develop' directly,
-   skipping future release branches
-2. Gets all release branches matching release/cycle-* pattern
-3. Sorts them by version number (major.minor)
-4. Finds the position of the input branch in the sorted list
-5. Selects the next branch in the sorted list, or 'develop' if no next branch exists
+1. If the input branch is the tracked GOV_RELEASE branch (env var, e.g.
+   release/cycle-4.16), targets the LTS_RELEASE branch (env var) so the fix
+   flows through LTS before reaching develop; falls back to 'develop' if
+   LTS_RELEASE isn't set
+2. If the input branch is the tracked LTS_RELEASE branch, targets 'develop'
+   directly, skipping future release branches
+3. Gets all release branches matching release/cycle-* pattern
+4. Sorts them by version number (major.minor)
+5. Finds the position of the input branch in the sorted list
+6. Selects the next branch in the sorted list, or 'develop' if no next branch exists
 
 Usage:
     python3 scripts/determine-cherry-pick-target.py <base_branch>
@@ -61,13 +64,22 @@ def determine_target_branch(base_branch):
         print(f"Base branch {base_branch} doesn't match release/cycle-* pattern, using develop")
         return "develop"
 
-    # If the base branch is one of the tracked release branches (LTS or GOV),
-    # skip future release branches and cherry-pick straight to develop.
-    for env_var in ("LTS_RELEASE", "GOV_RELEASE"):
-        tracked_release = os.environ.get(env_var, "").strip()
-        if tracked_release and base_branch == tracked_release:
-            print(f"Base branch {base_branch} is the {env_var} release branch, using develop")
-            return "develop"
+    lts_release = os.environ.get("LTS_RELEASE", "").strip()
+    gov_release = os.environ.get("GOV_RELEASE", "").strip()
+
+    # GOV_RELEASE fixes go to LTS_RELEASE first (if tracked), which will then
+    # be cherry-picked onward to develop when that PR merges.
+    if gov_release and base_branch == gov_release:
+        if lts_release:
+            print(f"Base branch {base_branch} is the GOV_RELEASE branch, using LTS_RELEASE branch {lts_release}")
+            return lts_release
+        print(f"Base branch {base_branch} is the GOV_RELEASE branch, no LTS_RELEASE set, using develop")
+        return "develop"
+
+    # LTS_RELEASE skips future release branches and cherry-picks straight to develop.
+    if lts_release and base_branch == lts_release:
+        print(f"Base branch {base_branch} is the LTS_RELEASE branch, using develop")
+        return "develop"
     
     # Get all release branches
     branches = get_release_branches()
