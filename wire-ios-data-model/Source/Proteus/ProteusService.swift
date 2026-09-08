@@ -294,6 +294,7 @@ public final class ProteusService: ProteusServiceInterface {
                 try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString()
             }
         } catch {
+            // TODO: [WPB-28571] Temporary workaround until fixed on CC side
             do {
                 return try await coreCrypto.transaction {
                     try await $0.proteusNewPrekeyAuto().pkb.base64EncodedString()
