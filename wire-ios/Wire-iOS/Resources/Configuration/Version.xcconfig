@@ -16,9 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<< HEAD
 WIRE_SHORT_VERSION = 4.27.0
-=======
-WIRE_SHORT_VERSION = 4.26.1
->>>>>>> 6068d93f6d (fix: use SSO URL as cookie parsing context - WPB-28508 (#5186))
 MAJOR_VERSION = 4
