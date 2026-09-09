@@ -264,12 +264,7 @@ class ConversationsPage: PageModel {
     func conversationNamesInOrder() throws -> [String] {
         try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 10), "No conversation cells appeared in the list")
-<<<<<<< HEAD
-        return app.buttons
-            .matching(identifier: Locators.ConversationsPage.conversationCell.rawValue)
-=======
         return conversationCells
->>>>>>> 93c75943a1 (fix: restoring backup shows unread conversations - WPB-23380 (#5188))
             .allElementsBoundByIndex
             .sorted { $0.frame.minY < $1.frame.minY }
             .map(\.label)
