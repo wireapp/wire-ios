@@ -166,9 +166,16 @@ final class BackupRestoreConversationListTests: WireUITestCase {
             .tapBackupOrRestore()
             .tapBackupNow()
             .enterBackupPasswordAndBackup(user.password)
+<<<<<<< HEAD
 
         XCTAssertTrue(creatingBackupPage.backupSuccessfullyCreatedLabel.exists, "Backup was not created")
 
+=======
+        XCTAssertTrue(
+            creatingBackupPage.backupSuccessfullyCreatedLabel.waitForExistence(timeout: 30),
+            "Backup was not created"
+        )
+>>>>>>> 8f2b293462 (fix: build failing due to missing code, added back - WPB-28583 (#5204))
         let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
         let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
 
