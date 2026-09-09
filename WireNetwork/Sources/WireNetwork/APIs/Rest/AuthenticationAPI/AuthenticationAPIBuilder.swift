@@ -73,6 +73,8 @@ public struct AuthenticationAPIBuilder {
             AuthenticationAPIV16(networkService: networkService)
         case .v17:
             AuthenticationAPIV17(networkService: networkService)
+        case .v18:
+            AuthenticationAPIV18(networkService: networkService)
         }
     }
 }
