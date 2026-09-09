@@ -24,6 +24,7 @@ on:
         type: string
         required: false
         default: ''
+        description: 'Testiny case ID(s), class(es), or function(s), comma separated'
       rerun_failed_from_previous:
         type: boolean
         required: false

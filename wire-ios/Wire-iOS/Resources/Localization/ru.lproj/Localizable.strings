@@ -1681,8 +1681,8 @@
 "login.sso.backend_switch.subtitle" = "Вы будете перенаправлены на специализированное обслуживание вашей организации.";
 "login.sso.backend_switch.information" = "Указывайте учетные данные, только если уверены, что это страница авторизации вашей организации.";
 
-"sso_identity_changed.title" = "Identity provider changed";
-"sso_identity_changed.message" = "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.";
+"sso_identity_changed.title" = "Провайдер идентификации изменен";
+"sso_identity_changed.message" = "Этот аккаунт использовался с другим провайдером услуг аутентификации. Если вы продолжите, все беседы с этого устройства будут удалены.\nЧтобы сохранить свои данные, нажмите Отмена, а затем авторизуйтесь с помощью прежнего провайдера услуг аутентификации.";
 "sso_identity_changed.delete_data_and_continue" = "Удалить данные и продолжить";
 
 "registration.no_history.logged_out.hero" = "Вы уже использовали Wire на этом устройстве.";

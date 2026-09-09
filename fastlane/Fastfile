@@ -114,12 +114,12 @@ platform :ios do
         options[:number_of_retries] = 1
         options[:output_remove_retry_attempts] = true
         raw_testiny_cases = options[:testiny_cases].to_s.strip
-        requested_testiny_cases = normalize_testiny_case_ids(raw_testiny_cases)
-        if raw_testiny_cases != "" && requested_testiny_cases.empty?
-            UI.user_error!("No valid Testiny case id(s) provided: #{raw_testiny_cases}")
+        explicit_tests = ui_test_identifiers_matching_selectors(raw_testiny_cases)
+        if raw_testiny_cases != "" && explicit_tests.empty?
+            UI.user_error!(
+                "No UI tests matched Testiny case id(s), class(es), or function(s): #{raw_testiny_cases}"
+            )
         end
-        explicit_tests = ui_test_identifiers_matching_testiny_cases(requested_testiny_cases)
-        UI.user_error!("No UI tests matched Testiny case id(s): #{requested_testiny_cases.join(',')}") if requested_testiny_cases.any? && explicit_tests.empty?
         explicit_tests = normalize_test_identifiers(options[:only_testing]) if explicit_tests.empty?
         if explicit_tests.any?
             UI.message("Running #{explicit_tests.count} explicit UI test(s)")
@@ -701,6 +701,49 @@ platform :ios do
         UI.message("Ignoring unmatched Testiny case id(s): #{missing_ids.join(',')}") if missing_ids.any?
 
         matching_tests.map { |test| test[:identifier] }.uniq
+    end
+
+    def ui_test_identifiers_matching_selectors(value)
+        tokens = normalize_test_identifiers(value)
+        return [] if tokens.empty?
+
+        tests = ui_test_metadata
+        matching_tests = []
+        missing_tokens = []
+
+        tokens.each do |token|
+            token_matches = ui_test_tests_matching_token(token, tests)
+            if token_matches.empty?
+                missing_tokens << token
+            else
+                matching_tests.concat(token_matches)
+            end
+        end
+
+        UI.message("Ignoring unmatched UI test selector(s): #{missing_tokens.join(',')}") if missing_tokens.any?
+        matching_tests.map { |test| test[:identifier] }.uniq
+    end
+
+    def ui_test_tests_matching_token(token, tests)
+        requested_ids = normalize_testiny_case_ids(token)
+        return tests.select { |test|
+            (requested_ids & testiny_ids_from_test_identifier(test[:identifier])).any?
+        } if requested_ids.any?
+
+        test_identifier = token.delete_prefix("WireUITests/")
+        parts = test_identifier.split("/")
+
+        tests.select do |test|
+            _, class_name, method_name = test[:identifier].split("/")
+            case parts.length
+            when 1
+                parts[0].start_with?("test") ? method_name == parts[0] : class_name == parts[0]
+            when 2
+                class_name == parts[0] && method_name == parts[1]
+            else
+                test[:identifier] == token
+            end
+        end
     end
 
     def ui_test_filter_options(options)

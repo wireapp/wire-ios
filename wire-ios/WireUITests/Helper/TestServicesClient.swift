@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import ImageIO
 
 class TestServicesClient {
 
@@ -255,6 +256,21 @@ class TestServicesClient {
         return fileData.base64EncodedString()
     }
 
+    private func imageDimensions(from data: Data) throws -> (width: Int, height: Int) {
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [String: Any],
+              let width = properties[kCGImagePropertyPixelWidth as String] as? NSNumber,
+              let height = properties[kCGImagePropertyPixelHeight as String] as? NSNumber else {
+            throw RuntimeError("Could not read image dimensions")
+        }
+
+        return (width.intValue, height.intValue)
+    }
+
+    private func imageMimeType(for type: String) -> String {
+        type.contains("/") ? type : "image/\(type)"
+    }
+
     func sendFile(
         type: String,
         user: UserInfo,
@@ -332,13 +348,26 @@ class TestServicesClient {
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendImage")
         guard let requestUrl = url else { fatalError("Invalid URL") }
+        let imageData = try Data(contentsOf: fileURL)
+        let mimeType = imageMimeType(for: type)
 
-        let body: [String: Any] = [
+        var body: [String: Any] = [
             "conversationId": conversationId.uuidString.lowercased(),
-            "data": try fileToBase64String(fileURL: fileURL),
+            "data": imageData.base64EncodedString(),
             "conversationDomain": domain,
             "type": type
         ]
+
+        if mimeType == "image/gif" {
+            let imageDimensions = try imageDimensions(from: imageData)
+            body["height"] = imageDimensions.height
+            body["type"] = mimeType
+            body["width"] = imageDimensions.width
+
+            if domain == BackendTarget.staging.domainInfo {
+                body.removeValue(forKey: "conversationDomain")
+            }
+        }
 
         let (_, response) = try await sendHttpRequest(
             url: requestUrl.absoluteString,

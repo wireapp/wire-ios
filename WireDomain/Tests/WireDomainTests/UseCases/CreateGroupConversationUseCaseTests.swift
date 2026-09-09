@@ -454,7 +454,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 conversation.allMessages.compactMap { $0 as? ZMSystemMessage }.first
             )
 
-            XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants)
+            XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipantsMLS)
             XCTAssertEqual(systemMessage.users, [participant1])
         }
     }

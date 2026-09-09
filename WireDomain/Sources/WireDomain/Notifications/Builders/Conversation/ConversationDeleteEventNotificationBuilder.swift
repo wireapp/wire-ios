@@ -175,7 +175,8 @@ extension ConversationDeleteEventNotificationBuilder {
                 domain: conversationID.domain
             )
 
-            return await conversationLocalStore.isGroupConversation(conversation)
+            guard await conversationLocalStore.isGroupConversation(conversation) else { return false }
+            return await !conversationLocalStore.isMeetingConversation(conversation)
         }
     }
 

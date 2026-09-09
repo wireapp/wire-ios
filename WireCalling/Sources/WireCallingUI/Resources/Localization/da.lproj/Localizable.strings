@@ -38,8 +38,11 @@
 "wireMeetings.list.attending" = "Attending";
 "wireMeetings.list.actions.edit" = "Edit meeting";
 "wireMeetings.list.actions.delete" = "Delete meeting for all";
+"wireMeetings.list.actions.deleteForMe" = "Delete meeting for me";
 "wireMeetings.list.delete.alert.title" = "Delete meeting for all";
 "wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
+"wireMeetings.list.deleteForMe.alert.title" = "Delete meeting for me";
+"wireMeetings.list.deleteForMe.alert.subtitle" = "The meeting will be deleted from your calendar. This will not affect other participants.";
 "wireMeetings.list.delete.alert.delete.button" = "Slet";
 "wireMeetings.list.delete.alert.cancel.button" = "Annuller";
 "wireMeetings.list.join.error.alert.title" = "Could not join the meeting";

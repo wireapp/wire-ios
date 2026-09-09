@@ -3143,8 +3143,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ canceled this meeting"
+            "state" : "translated",
+            "value" : "%@ hat dieses Meeting abgesagt"
           }
         },
         "en" : {
