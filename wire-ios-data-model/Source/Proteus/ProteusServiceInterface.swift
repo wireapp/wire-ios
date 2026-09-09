@@ -52,7 +52,7 @@ public protocol ProteusServiceInterface {
         context: CoreCryptoContextProtocol?
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data)
 
-    func generatePrekey(id: UInt16) async throws -> String
+    func generatePrekey() async throws -> IdPrekeyTuple
     func lastPrekey() async throws -> String
     var lastPrekeyID: UInt16 { get async }
     func generatePrekeys(start: UInt16, count: UInt16) async throws -> [IdPrekeyTuple]
