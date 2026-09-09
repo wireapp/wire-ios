@@ -119,8 +119,12 @@ final class ConversationEventNotificationBuilderValidatorTests: XCTestCase {
 
         // Then
         XCTAssertTrue(result)
+    }
 
+    func test_validate_RejectsMeetingConversation() async {
+        await setupMocks(lastReadTimestamp: nil)
         conversationLocalStore.isMeetingConversation_MockValue = true
+
         let meetingResult = await sut.validate(
             conversationID: Scaffolding.qualifiedID,
             senderID: Scaffolding.qualifiedID,

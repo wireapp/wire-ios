@@ -82,6 +82,18 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
             isGroup: isGroup,
             isTeam: isTeam
         )
+    }
+
+    func testGenerateConversationCreateEventNotification_Is_Meeting_Conversation() async {
+        await setupMock(isGroup: true, isTeam: true)
+
+        sut = ConversationCreateEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
+        )
 
         let meetingEvent = ConversationCreateEvent(
             conversationID: Scaffolding.conversationID,
