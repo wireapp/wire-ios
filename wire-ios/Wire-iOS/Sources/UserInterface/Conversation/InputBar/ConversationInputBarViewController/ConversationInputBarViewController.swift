@@ -187,11 +187,14 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
+        let driveConfiguration: InputBar.DriveConfiguration? = if conversation.isWireDriveEnabled {
+            .init(cellName: conversation.wireDriveCellName, showBanner: showDriveViewerBanner)
+        } else {
+            nil
+        }
         let inputBar = InputBar(
             buttons: inputBarButtons,
-            isWireDriveEnabled: conversation.isWireDriveEnabled,
-            showDriveViewerBanner: shouldShowDriveViewerBanner,
-            cellName: conversation.isWireDriveEnabled ? conversation.wireDriveCellName : nil
+            driveConfiguration: driveConfiguration
         )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no

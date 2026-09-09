@@ -110,10 +110,13 @@ final class InputBar: UIView {
 
     typealias ConversationInputBar = L10n.Localizable.Conversation.InputBar
 
+    struct DriveConfiguration {
+        let cellName: String
+        let showBanner: Bool
+    }
+
     private let inputBarVerticalInset: CGFloat = 34
-    private let isWireDriveEnabled: Bool
-    private let showDriveViewerBanner: Bool
-    private let cellName: String? // nil for non-Drive conversations.
+    private let driveConfiguration: DriveConfiguration?
     static let rightIconSize: CGFloat = 32
     private let textViewFont = FontSpec.normalRegularFont.font!
 
@@ -242,18 +245,14 @@ final class InputBar: UIView {
 
     required init(
         buttons: [UIButton],
-        isWireDriveEnabled: Bool,
-        showDriveViewerBanner: Bool,
-        cellName: String?
+        driveConfiguration: DriveConfiguration?
     ) {
         self.buttonsView = InputBarButtonsView(buttons: buttons)
         self.secondaryButtonsView = InputBarSecondaryButtonsView(
             editBarView: editingView,
             markdownBarView: markdownView
         )
-        self.isWireDriveEnabled = isWireDriveEnabled
-        self.showDriveViewerBanner = showDriveViewerBanner
-        self.cellName = cellName
+        self.driveConfiguration = driveConfiguration
 
         super.init(frame: CGRect.zero)
 
@@ -266,7 +265,7 @@ final class InputBar: UIView {
         addSubview(inputContainer)
 
         // Viewer access banner
-        if showDriveViewerBanner {
+        if let driveConfiguration, driveConfiguration.showBanner {
             inputContainer.addArrangedSubview(driveViewerAccessBanner)
             [driveViewerAccessBanner, self].forEach {
                 $0.layer.cornerRadius = 12
@@ -279,7 +278,7 @@ final class InputBar: UIView {
         inputContainer.addArrangedSubview(upperContainer)
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
 
-        if isWireDriveEnabled {
+        if driveConfiguration != nil {
             inputContainer.addArrangedSubview(attachmentsContainer)
         }
 
@@ -373,7 +372,7 @@ final class InputBar: UIView {
         textView.backgroundColor = .clear
 
         markdownView.delegate = textView
-        if !showDriveViewerBanner {
+        if let driveConfiguration, !driveConfiguration.showBanner  {
             addBorder(for: .top)
         }
         updateReturnKey()
@@ -397,7 +396,7 @@ final class InputBar: UIView {
             buttonInnerContainer
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        if isWireDriveEnabled {
+        if driveConfiguration != nil {
             NSLayoutConstraint.activate([
                 attachmentsContainer.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
                 attachmentsContainer.heightAnchor.constraint(equalToConstant: 82)
@@ -464,7 +463,7 @@ final class InputBar: UIView {
             rowTopInsetConstraint
         ])
 
-        if showDriveViewerBanner {
+        if let driveConfiguration, driveConfiguration.showBanner {
             driveViewerAccessBanner.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 driveViewerAccessBanner.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor),
@@ -717,8 +716,8 @@ final class InputBar: UIView {
     }
 
     private func onDriveViewerAccessBannerClosed() {
-        guard let cellName else { return }
-        ConversationViewerAccessBannerDismissalStore.shared.markDismissed(forCellName: cellName)
+        guard let driveConfiguration  else { return }
+        ConversationViewerAccessBannerDismissalStore.shared.markDismissed(forCellName: driveConfiguration.cellName)
         inputContainer.removeArrangedSubview(driveViewerAccessBanner)
         driveViewerAccessBanner.removeFromSuperview()
         addBorder(for: .top)
@@ -731,8 +730,9 @@ final class InputBar: UIView {
     /// Drive screen) while this `InputBar` instance was already alive and showing it.
     func hideDriveViewerBannerIfDismissed() {
         guard driveViewerAccessBanner.superview != nil,
-              let cellName,
-              ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName: cellName) else { return }
+              let driveConfiguration,
+              ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName: driveConfiguration.cellName)
+        else { return }
         onDriveViewerAccessBannerClosed()
     }
 }
