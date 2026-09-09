@@ -209,6 +209,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             )
         }
 
+        resumeAfterSuspendIfNeeded()
+    }
+
+    private func resumeAfterSuspendIfNeeded() {
         let pending = suspendStateLock.withLock { () -> PendingResume? in
             isSuspendingSync = false
             let pending = pendingResume
