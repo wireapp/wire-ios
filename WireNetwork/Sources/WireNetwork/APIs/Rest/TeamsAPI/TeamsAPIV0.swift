@@ -192,6 +192,12 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 
+    // MARK: - Get `preventAdminlessGroups` feature config
+
+    func getPreventAdminlessGroupsFeatureConfig(teamID: Team.ID) async throws -> PreventAdminlessGroupsFeatureConfig {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }
 
 struct TeamResponseV0: Decodable, ToAPIModelConvertible {

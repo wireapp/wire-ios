@@ -133,7 +133,7 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
 
 }
 
-extension FeatureWithConfig<FeatureConfigResponse.AppLockV0>: ToAPIModelConvertible {
+extension FeatureWithConfig<FeatureConfigResponse.AppLockV0> {
 
     func toAPIModel() -> AppLockFeatureConfig {
         AppLockFeatureConfig(
