@@ -130,17 +130,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// - Parameter callEventsOnly: if the sync should be resumed only for calling events
 
     func resume(callEventsOnly: Bool = false) {
-        let shouldDeferResume = suspendStateLock.withLock { () -> Bool in
-            guard isSuspendingSync else { return false }
-            if let pendingResume {
-                // full resume wins over call events only resume
-                self.pendingResume = PendingResume(callEventsOnly: pendingResume.callEventsOnly && callEventsOnly)
-            } else {
-                pendingResume = PendingResume(callEventsOnly: callEventsOnly)
-            }
-            return true
-        }
-        if shouldDeferResume { return }
+        if deferResumeIfNeeded(callEventsOnly: callEventsOnly) { return }
 
         syncStateSubject.send(.idle)
 
@@ -168,6 +158,19 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 )
             }
 
+        }
+    }
+
+    private func deferResumeIfNeeded(callEventsOnly: Bool) -> Bool {
+        suspendStateLock.withLock {
+            guard isSuspendingSync else { return false }
+            if let pendingResume {
+                // full resume wins over call events only resume
+                self.pendingResume = PendingResume(callEventsOnly: pendingResume.callEventsOnly && callEventsOnly)
+            } else {
+                pendingResume = PendingResume(callEventsOnly: callEventsOnly)
+            }
+            return true
         }
     }
 
