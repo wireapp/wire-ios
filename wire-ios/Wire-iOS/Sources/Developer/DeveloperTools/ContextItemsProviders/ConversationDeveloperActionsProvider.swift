@@ -53,7 +53,7 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         if let simulateAdminlessReminderItem = makeSimulateAdminlessReminderItem() {
             items.append(simulateAdminlessReminderItem)
         }
-    
+
         if canTriggerManualMLSMigration {
             items.append(migrateToMLSItem)
         }
@@ -67,25 +67,24 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
             action: { Task { await migrateConversationToMLS() } }
         ))
     }
-    
+
     private var canTriggerManualMLSMigration: Bool {
         guard conversation.messageProtocol.isOne(of: .proteus, .mixed) else {
             return false
         }
-        
+
         guard let managedObjectContext = conversation.managedObjectContext else {
             return false
         }
-        
+
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         guard selfUser.isGroupAdmin(in: conversation) else {
             return false
         }
-        
+
         return true
     }
 
-    
     private func makeConversationIdItem() -> DeveloperToolsViewModel.Item {
         .text(DeveloperToolsViewModel.TextItem(
             title: "Conversation ID",
@@ -147,7 +146,7 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
             action: { Task { await simulateAdminlessReminderEvent(conversationID: conversationID) } }
         ))
     }
-    
+
     @MainActor
     private func migrateConversationToMLS() {
         requestMLSMigration()
@@ -230,10 +229,13 @@ extension ConversationDeveloperActionsProvider: @MainActor MLSMigrationPresenter
     var conversationToMigrate: ZMConversation? {
         conversation
     }
-    
+
     func presentController(_ controller: UIViewController) {
-        UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(controller, animated: true, completion: nil)
+        UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(
+            controller,
+            animated: true,
+            completion: nil
+        )
     }
-    
-    
+
 }

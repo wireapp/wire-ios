@@ -74,7 +74,7 @@ final class WireApplication: UIApplication {
     private func presentDebugShareSheet() {
         shareDebugPresenter.present(from: topmostViewController(onlyFullScreen: false))
     }
-    
+
     @objc
     private func handleTripleTapGestureAction() {
         guard UITestConfig.environment?.useTripleTapForShakeGesture == true else {

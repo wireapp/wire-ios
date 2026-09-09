@@ -22,14 +22,14 @@ import WireLocators
 
 protocol MLSMigrationPresenter {
     func requestMLSMigration()
-    
+
     var conversationToMigrate: ZMConversation? { get }
-    
+
     func presentController(_ controller: UIViewController)
 }
 
 extension MLSMigrationPresenter {
-    
+
     @MainActor
     func requestMLSMigration() {
         guard let conversation = conversationToMigrate else { return }
@@ -99,7 +99,7 @@ extension MLSMigrationPresenter {
             preferredStyle: .alert
         )
         controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
-        
+
     }
 
     private func localizedDescription(for error: Error) -> String {
@@ -125,7 +125,7 @@ extension MessageProtocolSectionController: @MainActor MLSMigrationPresenter {
     var conversationToMigrate: ZMConversation? {
         conversation
     }
-    
+
     @MainActor
     func presentController(_ controller: UIViewController) {
         presentingViewController?.present(controller, animated: true)

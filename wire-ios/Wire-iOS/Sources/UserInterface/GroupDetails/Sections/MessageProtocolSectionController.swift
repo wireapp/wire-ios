@@ -158,7 +158,10 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
             now.timeIntervalSince($0) <= Self.manualMigrationTapWindow
         }
         protocolRowTapTimestamps.append(now)
-        Self.logger.debug("protocol row tapped (\(protocolRowTapTimestamps.count)/\(Self.manualMigrationTapThreshold) in window)")
+        Self.logger
+            .debug(
+                "protocol row tapped (\(protocolRowTapTimestamps.count)/\(Self.manualMigrationTapThreshold) in window)"
+            )
 
         guard protocolRowTapTimestamps.count >= Self.manualMigrationTapThreshold else { return }
         protocolRowTapTimestamps.removeAll()
@@ -175,7 +178,8 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     private var canTriggerManualMLSMigration: Bool {
         get async {
             guard messageProtocol == .proteus || messageProtocol == .mixed else {
-                Self.logger.debug("manual MLS migration denied: message protocol is \(String(describing: messageProtocol))")
+                Self.logger
+                    .debug("manual MLS migration denied: message protocol is \(String(describing: messageProtocol))")
                 return false
             }
 
