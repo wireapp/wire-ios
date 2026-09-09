@@ -4689,8 +4689,6 @@ internal enum L10n {
         internal static let markRead = L10n.tr("Localizable", "meta.menu.mark_read", fallback: "Mark as Read")
         /// Mark as Unread
         internal static let markUnread = L10n.tr("Localizable", "meta.menu.mark_unread", fallback: "Mark as Unread")
-        /// Migrate to MLS
-        internal static let migrateToMls = L10n.tr("Localizable", "meta.menu.migrate_to_mls", fallback: "Migrate to MLS")
         /// Move to…
         internal static let moveToFolder = L10n.tr("Localizable", "meta.menu.move_to_folder", fallback: "Move to…")
         /// Open Profile
@@ -4731,12 +4729,12 @@ internal enum L10n {
         }
         internal enum MlsMigration {
           internal enum Confirmation {
-            /// Migrate
-            internal static let button = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.button", fallback: "Migrate")
-            /// This internal action bypasses the normal MLS rollout conditions and immediately migrates this conversation.
-            internal static let message = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.message", fallback: "This internal action bypasses the normal MLS rollout conditions and immediately migrates this conversation.")
-            /// Migrate conversation to MLS?
-            internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.title", fallback: "Migrate conversation to MLS?")
+            /// Change Protocol
+            internal static let button = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.button", fallback: "Change Protocol")
+            /// The standard messaging protocol will change from Proteus to Messaging Layer Security (MLS).
+            internal static let message = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.message", fallback: "The standard messaging protocol will change from Proteus to Messaging Layer Security (MLS).")
+            /// Change protocol to MLS?
+            internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.title", fallback: "Change protocol to MLS?")
           }
           internal enum Failure {
             /// The conversation could not be found.

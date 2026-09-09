@@ -131,8 +131,6 @@ final class ConversationActionController {
             enqueue {
                 conversation.isFavorite = !isFavorite
             }
-        case .migrateToMLS:
-            requestMLSMigration(for: conversation)
         case .remove: fatalError()
         }
     }

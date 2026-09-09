@@ -17,7 +17,10 @@
 //
 
 import Foundation
+import UIKit
 import WireDataModel
+import WireLogging
+import WireSyncEngine
 
 final class MessageProtocolSectionController: GroupDetailsSectionController {
 
@@ -25,16 +28,37 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
 
     // MARK: - Properties
 
+    let conversation: ZMConversation?
     private let messageProtocol: MessageProtocol
     private let ciphersuite: MLSCipherSuite?
     private let groupID: MLSGroupID?
+    private let userSession: UserSession
+    weak var presentingViewController: UIViewController?
+
+    /// Timestamps of the most recent taps on the protocol row, used to detect the
+    /// 5-taps-in-5-seconds gesture that reveals the manual MLS migration debug action.
+    private var protocolRowTapTimestamps: [Date] = []
+
+    private static let manualMigrationTapThreshold = 5
+    private static let manualMigrationTapWindow: TimeInterval = 5
+    private static let logger = WireLogger(tag: "MLSMigrationDebugTrigger")
 
     // MARK: - Life cycle
 
-    init(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil, ciphersuite: MLSCipherSuite? = nil) {
+    init(
+        conversation: ZMConversation?,
+        messageProtocol: MessageProtocol,
+        groupID: MLSGroupID? = nil,
+        ciphersuite: MLSCipherSuite? = nil,
+        userSession: UserSession,
+        presentingViewController: UIViewController?
+    ) {
+        self.conversation = conversation
         self.messageProtocol = messageProtocol
         self.groupID = groupID
         self.ciphersuite = ciphersuite
+        self.userSession = userSession
+        self.presentingViewController = presentingViewController
         super.init()
     }
 
@@ -86,7 +110,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
             cell.title = L10n.Localizable.GroupDetails.MessageProtocol.title
             cell.status = messageProtocol.name
 
-        case (.mls, 1):
+        case (.mls, 1), (.mixed, 1):
             cell.accessibilityIdentifier = "cell.groupdetails.cipher_suite"
             cell.title = L10n.Localizable.GroupDetails.MessageProtocol.cipherSuite
             cell.status = ciphersuite?.description ?? ""
@@ -121,7 +145,61 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     override func collectionView(
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
-    ) {}
+    ) {
+        guard indexPath.row == 0 else { return }
+        registerProtocolRowTap()
+    }
+
+    // MARK: - Manual MLS migration debug trigger
+
+    private func registerProtocolRowTap() {
+        let now = Date()
+        protocolRowTapTimestamps = protocolRowTapTimestamps.filter {
+            now.timeIntervalSince($0) <= Self.manualMigrationTapWindow
+        }
+        protocolRowTapTimestamps.append(now)
+        Self.logger.debug("protocol row tapped (\(protocolRowTapTimestamps.count)/\(Self.manualMigrationTapThreshold) in window)")
+
+        guard protocolRowTapTimestamps.count >= Self.manualMigrationTapThreshold else { return }
+        protocolRowTapTimestamps.removeAll()
+
+        Task { @MainActor in
+            guard await canTriggerManualMLSMigration else {
+                Self.logger.debug("manual MLS migration trigger denied, eligibility checks failed")
+                return
+            }
+            requestMLSMigration()
+        }
+    }
+
+    private var canTriggerManualMLSMigration: Bool {
+        get async {
+            guard messageProtocol == .proteus || messageProtocol == .mixed else {
+                Self.logger.debug("manual MLS migration denied: message protocol is \(String(describing: messageProtocol))")
+                return false
+            }
+
+            guard let conversation, let managedObjectContext = conversation.managedObjectContext else {
+                Self.logger.debug("manual MLS migration denied: no conversation/context")
+                return false
+            }
+
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+            guard selfUser.isGroupAdmin(in: conversation) else {
+                Self.logger.debug("manual MLS migration denied: self user is not group admin")
+                return false
+            }
+
+            let isMLSMigrationFeatureEnabled = await userSession.clientSessionComponent?
+                .featureConfigRepository.isFeatureEnabled(.mlsMigration) ?? false
+
+            if !isMLSMigrationFeatureEnabled {
+                Self.logger.debug("manual MLS migration denied: mlsMigration feature is not enabled")
+            }
+
+            return isMLSMigrationFeatureEnabled
+        }
+    }
 
 }
 

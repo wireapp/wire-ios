@@ -37,15 +37,14 @@ extension ZMConversation {
         case markUnread
         case remove
         case favorite(isFavorite: Bool)
-        case migrateToMLS
     }
 
     var listActions: [Action] {
-        addingMLSMigrationActionIfNeeded(to: actions.filter { $0 != .delete })
+        actions.filter { $0 != .delete }
     }
 
     var detailActions: [Action] {
-        addingMLSMigrationActionIfNeeded(to: actions.filter { $0 != .configureNotifications })
+        actions.filter { $0 != .configureNotifications }
     }
 
     private var actions: [Action] {
@@ -137,27 +136,6 @@ extension ZMConversation {
         }
         return nil
     }
-
-    private var canMigrateToMLSFromDeveloperMenu: Bool {
-        guard Bundle.developerModeEnabled,
-              conversationType == .group,
-              messageProtocol != .mls,
-              let teamRemoteIdentifier,
-              let managedObjectContext
-        else {
-            return false
-        }
-
-        return teamRemoteIdentifier == ZMUser.selfUser(in: managedObjectContext).teamIdentifier
-    }
-
-    private func addingMLSMigrationActionIfNeeded(to actions: [Action]) -> [Action] {
-        guard canMigrateToMLSFromDeveloperMenu else {
-            return actions
-        }
-
-        return actions + [.migrateToMLS]
-    }
 }
 
 extension ZMConversation.Action {
@@ -204,8 +182,6 @@ extension ZMConversation.Action {
             return blocked ? ProfileLocale.unblockButtonTitle : ProfileLocale.blockButtonTitle
         case let .favorite(isFavorite: favorited):
             return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
-        case .migrateToMLS:
-            return MetaMenuLocale.migrateToMls
         }
     }
 
@@ -214,7 +190,6 @@ extension ZMConversation.Action {
         case .archive: Locators.ConversationDetailsActions.archive.rawValue
         case .clearContent: Locators.ConversationDetailsActions.clearContent.rawValue
         case .leave: Locators.ConversationDetailsActions.leaveConversation.rawValue
-        case .migrateToMLS: Locators.ConversationDetailsActions.migrateToMLS.rawValue
         case let .block(isBlocked):
             isBlocked
                 ? Locators.ConversationsPage.unblockOptionOnContextMenu.rawValue

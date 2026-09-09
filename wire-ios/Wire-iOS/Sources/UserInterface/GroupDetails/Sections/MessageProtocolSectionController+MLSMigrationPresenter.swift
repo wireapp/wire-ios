@@ -20,9 +20,20 @@ import UIKit
 import WireDataModel
 import WireLocators
 
-extension ConversationActionController {
+protocol MLSMigrationPresenter {
+    func requestMLSMigration()
+    
+    var conversationToMigrate: ZMConversation? { get }
+    
+    func presentController(_ controller: UIViewController)
+}
 
-    func requestMLSMigration(for conversation: ZMConversation) {
+extension MLSMigrationPresenter {
+    
+    @MainActor
+    func requestMLSMigration() {
+        guard let conversation = conversationToMigrate else { return }
+
         let controller = UIAlertController(
             title: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.title,
             message: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.message,
@@ -32,40 +43,40 @@ extension ConversationActionController {
         controller.addAction(
             UIAlertAction(
                 title: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.button,
-                style: .destructive,
+                style: .default,
                 accessibilityIdentifier: Locators.ConversationDetailsActions.migrateToMLS.rawValue
-            ) { [weak self] _ in
-                Task {
-                    await self?.migrateConversationToMLS(conversation)
-                }
+            ) { _ in
+                migrateConversationToMLS(conversation)
             }
         )
-        present(controller)
+        presentController(controller)
     }
 
-    private func migrateConversationToMLS(_ conversation: ZMConversation) async {
+    private func migrateConversationToMLS(_ conversation: ZMConversation) {
         guard let conversationID = conversation.qualifiedID,
               let syncContext = conversation.managedObjectContext?.zm_sync
         else {
-            await presentMLSMigrationFailure(
-                MigrateConversationToMLSUseCase.Failure.conversationNotFound
-            )
+            Task {
+                await presentMLSMigrationFailure(
+                    MigrateConversationToMLSUseCase.Failure.conversationNotFound
+                )
+            }
             return
         }
 
         let useCase = MigrateConversationToMLSUseCase()
 
-        
-        do {
-            try await useCase.invoke(
-                conversationID: conversationID,
-                syncContext: syncContext
-            )
-            await presentMLSMigrationSuccess()
-        } catch {
-            await presentMLSMigrationFailure(error)
+        Task {
+            do {
+                try await useCase.invoke(
+                    conversationID: conversationID,
+                    syncContext: syncContext
+                )
+                await presentMLSMigrationSuccess()
+            } catch {
+                await presentMLSMigrationFailure(error)
+            }
         }
-        
     }
 
     @MainActor
@@ -76,7 +87,8 @@ extension ConversationActionController {
             preferredStyle: .alert
         )
         controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
-        present(controller)
+
+        presentController(controller)
     }
 
     @MainActor
@@ -87,7 +99,7 @@ extension ConversationActionController {
             preferredStyle: .alert
         )
         controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
-        present(controller)
+        
     }
 
     private func localizedDescription(for error: Error) -> String {
@@ -107,4 +119,15 @@ extension ConversationActionController {
         }
     }
 
+}
+
+extension MessageProtocolSectionController: @MainActor MLSMigrationPresenter {
+    var conversationToMigrate: ZMConversation? {
+        conversation
+    }
+    
+    @MainActor
+    func presentController(_ controller: UIViewController) {
+        presentingViewController?.present(controller, animated: true)
+    }
 }
