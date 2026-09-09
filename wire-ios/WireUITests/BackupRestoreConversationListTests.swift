@@ -165,6 +165,7 @@ final class BackupRestoreConversationListTests: WireUITestCase {
             .openAccountSettings()
             .tapBackupOrRestore()
             .tapBackupNow()
+            .enterBackupPasswordAndBackup(user.password)
         XCTAssertTrue(
             creatingBackupPage.backupSuccessfullyCreatedLabel.waitForExistence(timeout: 30),
             "Backup was not created"
