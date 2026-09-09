@@ -165,17 +165,13 @@ final class BackupRestoreConversationListTests: WireUITestCase {
             .openAccountSettings()
             .tapBackupOrRestore()
             .tapBackupNow()
-<<<<<<< HEAD
             .enterBackupPasswordAndBackup(user.password)
 
-        XCTAssertTrue(creatingBackupPage.backupSuccessfullyCreatedLabel.exists, "Backup was not created")
-
-=======
         XCTAssertTrue(
             creatingBackupPage.backupSuccessfullyCreatedLabel.waitForExistence(timeout: 30),
             "Backup was not created"
         )
->>>>>>> 93c75943a1 (fix: restoring backup shows unread conversations - WPB-23380 (#5188))
+
         let saveBackupFileBottomSheetPage = try creatingBackupPage.tapSaveFile()
         let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
 
