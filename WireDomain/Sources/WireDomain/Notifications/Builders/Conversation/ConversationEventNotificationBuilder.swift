@@ -120,6 +120,9 @@ extension ConversationEventNotificationBuilder {
                 domain: conversationID.domain
             )
 
+            let isMeetingConversation = await conversationLocalStore.isMeetingConversation(conversation)
+            guard !isMeetingConversation else { return false }
+
             let conversationMutedMessages = await conversationLocalStore
                 .conversationMutedMessageTypesIncludingAvailability(
                     conversation
