@@ -79,8 +79,15 @@ extension ConversationActionController {
     func requestLeave(for conversation: ZMConversation) {
         let session = userSession
         Task { @MainActor in
+            guard let conversationTeamID = conversation.teamRemoteIdentifier else {
+                self.request(LeaveResult.self) { result in
+                    self.handleLeaveResult(result, for: conversation)
+                }
+                return
+            }
+            
             let isPreventAdminlessGroupsEnabled: Bool = await session.clientSessionComponent?
-                .featureConfigRepository.isFeatureEnabled(.preventAdminlessGroups) ?? false
+                .teamRepository.isPreventAdminlessGroupsEnabled(teamID: conversationTeamID) ?? false
 
             guard isPreventAdminlessGroupsEnabled, self.isLastAdmin(in: conversation) else {
                 self.request(LeaveResult.self) { result in

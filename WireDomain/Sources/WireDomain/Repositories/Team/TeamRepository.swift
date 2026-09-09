@@ -175,6 +175,15 @@ public class TeamRepository: TeamRepositoryProtocol {
             iconKey: iconKey
         )
     }
+    
+    public func isPreventAdminlessGroupsEnabled(teamID: UUID) async -> Bool {
+        do {
+            let config = try await teamsAPI.getPreventAdminlessGroupsFeatureConfig(teamID: teamID)
+            return config.status == .enabled
+        } catch {
+            return false
+        }
+    }
 
     // MARK: - Private
 

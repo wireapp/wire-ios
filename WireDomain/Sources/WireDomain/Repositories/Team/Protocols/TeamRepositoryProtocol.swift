@@ -81,5 +81,9 @@ public protocol TeamRepositoryProtocol {
     /// Pulls and stores legalhold info locally.
 
     func pullSelfLegalholdInfo() async throws
+    
+    /// Whether `preventAdminlessGroups` feature is enabled for a given team.
+
+    func isPreventAdminlessGroupsEnabled(teamID: UUID) async -> Bool
 
 }
