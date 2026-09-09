@@ -92,16 +92,14 @@ package final class MeetingFormViewModel {
     }
 
     /// Scheduled meetings start at the next available picker interval.
-    /// When editing a meeting whose start lies in the past, its original day
-    /// stays selectable unless it is recurring; recurring meetings are moved
-    /// to their next editable occurrence so the backend receives a non-past start date.
+    /// Edited meetings may start up to 24 hours in the past, as allowed by the backend.
     var startDateRange: PartialRangeFrom<Date> {
-        var earliest = currentDateProvider.now
+        let earliest = currentDateProvider.now
         if case .scheduled = mode {
             return Self.nextSelectableStartDate(after: earliest)...
         }
-        if case let .edit(meeting) = mode, meeting.recurrence == nil {
-            earliest = min(earliest, meeting.start)
+        if case .edit = mode {
+            return earliest.addingTimeInterval(-TimeInterval.oneDay)...
         }
         return Calendar.current.startOfDay(for: earliest)...
     }
@@ -278,12 +276,13 @@ package final class MeetingFormViewModel {
     }
 
     private static func editableTimeRange(for meeting: Meeting, now: Date) -> (start: Date, end: Date) {
-        guard meeting.recurrence != nil, meeting.start < now else {
+        let earliestStart = now.addingTimeInterval(-TimeInterval.oneDay)
+        guard meeting.recurrence != nil, meeting.start < earliestStart else {
             return (meeting.start, meeting.end)
         }
 
         guard let nextOccurrence = MeetingOccurrencePaginator()
-            .occurrences(for: [meeting], startingAt: now, offset: 0, limit: 1)
+            .occurrences(for: [meeting], startingAt: earliestStart, offset: 0, limit: 1)
             .first else {
             return (meeting.start, meeting.end)
         }
