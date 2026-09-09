@@ -213,15 +213,15 @@ package final class MeetingFormViewModel {
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
         guard !isLoading else { return }
+        hasError = false
+        hasConversationNameUpdateError = false
+        meetingPendingConversationNameUpdate = nil
         hasExpiredStartDateError = false
         if mode.isEdit, startDate < currentDateProvider.now.addingTimeInterval(-TimeInterval.oneDay) {
             hasExpiredStartDateError = true
             return
         }
         isLoading = true
-        hasError = false
-        hasConversationNameUpdateError = false
-        meetingPendingConversationNameUpdate = nil
         defer { isLoading = false }
         do {
             let meeting = try await saveMeeting()

@@ -477,6 +477,36 @@ struct MeetingFormViewModelTests {
         #expect(rejectedArguments == nil)
     }
 
+    @Test("expired submission clears previous save errors", arguments: [false, true])
+    func submit_ExpiredStartClearsPreviousError(conversationNameFailed: Bool) async {
+        let original = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-86_400))
+        let viewModel = makeViewModel(mode: .edit(original))
+        let error: any Error
+        if conversationNameFailed {
+            error = UpdateMeetingUseCaseError.conversationNameUpdateFailed(original)
+        } else {
+            error = URLError(.badServerResponse)
+        }
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingThrowableError =
+            error
+
+        await viewModel.submit()
+        #expect(viewModel.hasError == !conversationNameFailed)
+        #expect(viewModel.hasConversationNameUpdateError == conversationNameFailed)
+
+        dateProviderMock.now = dateProviderMock.now.addingTimeInterval(1)
+        await viewModel.submit()
+
+        #expect(viewModel.hasExpiredStartDateError)
+        #expect(!viewModel.hasError)
+        #expect(!viewModel.hasConversationNameUpdateError)
+        #expect(!viewModel.isLoading)
+        let callsCount = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount
+        #expect(callsCount == 1)
+    }
+
     @Test("saving rechecks the current window and allows retry after correcting the start time")
     func submit_EditModeStartDateExpiresWhileEditing() async {
         let original = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-86_400))
