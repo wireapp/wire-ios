@@ -78,6 +78,16 @@ struct MeetingFormView: View {
                 )
             }
             .alert(
+                Strings.Error.ExpiredStartDate.title,
+                isPresented: $viewModel.hasExpiredStartDateError
+            ) {
+                Button(Strings.Error.Alert.ok) {
+                    expandedField = .startDate
+                }
+            } message: {
+                Text(Strings.Error.ExpiredStartDate.message)
+            }
+            .alert(
                 Strings.Error.ConversationName.title,
                 isPresented: $viewModel.hasConversationNameUpdateError
             ) {
@@ -141,7 +151,7 @@ struct MeetingFormView: View {
             dateTimeRow(
                 label: Strings.Time.starts,
                 date: $viewModel.startDate,
-                range: viewModel.startDateRange,
+                range: viewModel.startDatePickerRange,
                 maximumDate: nil,
                 dateField: .startDate,
                 timeField: .startTime

@@ -104,6 +104,13 @@ package final class MeetingFormViewModel {
         return Calendar.current.startOfDay(for: earliest)...
     }
 
+    /// Keep the current selection representable even if it expires while the form is open.
+    /// Submission validates against the backend's current window, not this display range.
+    var startDatePickerRange: PartialRangeFrom<Date> {
+        guard mode.isEdit else { return startDateRange }
+        return min(startDate, startDateRange.lowerBound)...
+    }
+
     /// Acceptance: the end picker must stay on the start date, with 23:45 as the latest available time.
     var endDateRange: ClosedRange<Date> {
         let latestEndDate = Self.latestEndDate(for: startDate)
@@ -125,6 +132,8 @@ package final class MeetingFormViewModel {
     /// Set when creating a meeting fails. The caught error itself is only
     /// logged; the view shows a generic alert.
     var hasError = false
+
+    var hasExpiredStartDateError = false
 
     /// Set when the meeting was saved but its dedicated conversation could not be renamed.
     var hasConversationNameUpdateError = false
@@ -204,6 +213,11 @@ package final class MeetingFormViewModel {
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
         guard !isLoading else { return }
+        hasExpiredStartDateError = false
+        if mode.isEdit, startDate < currentDateProvider.now.addingTimeInterval(-TimeInterval.oneDay) {
+            hasExpiredStartDateError = true
+            return
+        }
         isLoading = true
         hasError = false
         hasConversationNameUpdateError = false

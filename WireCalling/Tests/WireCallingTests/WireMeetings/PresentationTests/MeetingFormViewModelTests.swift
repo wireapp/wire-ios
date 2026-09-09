@@ -457,6 +457,52 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.startDateRange.lowerBound == dateProviderMock.now.addingTimeInterval(-86_400))
     }
 
+    @Test("editing an expired non-recurring meeting preserves its dates but prevents submission")
+    func editMode_ExpiredNonRecurringMeeting() async {
+        let original = makeEditableMeeting(
+            start: dateProviderMock.now.addingTimeInterval(-3 * 86_400),
+            recurrence: nil
+        )
+        let viewModel = makeViewModel(mode: .edit(original))
+
+        #expect(viewModel.startDate == original.start)
+        #expect(viewModel.startDatePickerRange.contains(viewModel.startDate))
+
+        await viewModel.submit()
+
+        #expect(viewModel.hasExpiredStartDateError)
+        #expect(!viewModel.isLoading)
+        let rejectedArguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+        #expect(rejectedArguments == nil)
+    }
+
+    @Test("saving rechecks the current window and allows retry after correcting the start time")
+    func submit_EditModeStartDateExpiresWhileEditing() async {
+        let original = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-86_400))
+        let viewModel = makeViewModel(mode: .edit(original))
+        dateProviderMock.now = dateProviderMock.now.addingTimeInterval(1)
+
+        #expect(viewModel.startDatePickerRange.contains(viewModel.startDate))
+        await viewModel.submit()
+
+        #expect(viewModel.hasExpiredStartDateError)
+        let rejectedArguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+        #expect(rejectedArguments == nil)
+
+        viewModel.startDate = dateProviderMock.now
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
+            meeting
+        await viewModel.submit()
+
+        #expect(!viewModel.hasExpiredStartDateError)
+        let savedArguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+        #expect(savedArguments?.startTime == dateProviderMock.now)
+    }
+
     @Test("editing preserves and submits recurring start times within 24 hours", arguments: [0.0, 3600.0, 86_400.0])
     func editMode_RecentRecurringMeetingPreservesDates(secondsAgo: TimeInterval) async throws {
         let original = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-secondsAgo))
