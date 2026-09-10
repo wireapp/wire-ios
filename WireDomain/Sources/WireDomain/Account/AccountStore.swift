@@ -120,10 +120,13 @@ struct AccountStore {
         do {
             try fileManager.removeItem(at: url(for: account.userIdentifier))
             return true
-        } catch {
-            let accountDescription = account.safeForLoggingDescription
-            let errorDescription = error.safeForLoggingDescription
-            log.error("Unable to delete account \(accountDescription), error: \(errorDescription)")
+        } catch let error as NSError {
+            // Already deleted, nothing to do, and no need to log a spurious error.
+            if error.domain != NSCocoaErrorDomain || error.code != NSFileNoSuchFileError {
+                let accountDescription = account.safeForLoggingDescription
+                let errorDescription = error.safeForLoggingDescription
+                log.error("Unable to delete account \(accountDescription), error: \(errorDescription)")
+            }
             return false
         }
     }

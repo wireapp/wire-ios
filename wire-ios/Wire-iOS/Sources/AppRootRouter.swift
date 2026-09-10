@@ -591,46 +591,62 @@ extension AppRootRouter {
     }
 
     private func presentAlertForDeletedAccountIfNeeded(_ error: NSError?) {
-        guard
-            error?.userSessionErrorCode == .accountDeleted,
-            let reason = error?.userInfo[ZMAccountDeletedReasonKey] as? ZMAccountDeletedReason
-        else {
-            return
-        }
+        switch error?.userSessionErrorCode {
+        case .accountDeleted:
+            guard let reason = error?.userInfo[ZMAccountDeletedReasonKey] as? ZMAccountDeletedReason else {
+                return
+            }
 
-        switch reason {
-        case .sessionExpired:
-            let alert = UIAlertController(
-                title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
-                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            ))
-            rootViewController.present(alert, animated: true)
+            switch reason {
+            case .sessionExpired:
+                presentSessionExpiredAlert()
 
-        case .biometricPasscodeNotAvailable:
-            let alert = UIAlertController(
-                title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
-                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            ))
-            rootViewController.present(alert, animated: true)
+            case .biometricPasscodeNotAvailable:
+                let alert = UIAlertController(
+                    title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
+                    message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.Localizable.General.ok,
+                    style: .cancel
+                ))
+                UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
 
-        case .databaseWiped:
-            let wipeCompletionViewController = WipeCompletionViewController()
-            wipeCompletionViewController.modalPresentationStyle = .fullScreen
-            rootViewController.present(wipeCompletionViewController, animated: true)
+            case .databaseWiped:
+                let wipeCompletionViewController = WipeCompletionViewController()
+                wipeCompletionViewController.modalPresentationStyle = .fullScreen
+                UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(
+                    wipeCompletionViewController,
+                    animated: true
+                )
+
+            default:
+                break
+            }
+
+        case .accessTokenExpired:
+            // Reached e.g. when the self user is removed from the team: the backend
+            // revokes the access token before (or instead of) the account-deleted
+            // event ever gets processed, so this case needs its own alert too.
+            presentSessionExpiredAlert()
 
         default:
             break
         }
+    }
+
+    private func presentSessionExpiredAlert() {
+        let alert = UIAlertController(
+            title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
+            message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+        UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
     }
 }
 

@@ -95,6 +95,21 @@ public protocol TeamsAPI {
         ) async throws -> UUID
     #endif
 
+    /// Remove a member from a team.
+    /// - Parameters:
+    ///   - access_token: access token of the user performing the removal (e.g. the team owner).
+    ///   - teamID: the id of the team.
+    ///   - userID: the id of the member to remove.
+    ///   - password: password of the user performing the removal.
+    #if DEBUG
+        func removeMemberFromTeam(
+            access_token: String,
+            teamID: UUID,
+            userID: UUID,
+            password: String
+        ) async throws
+    #endif
+
     func getWhitelistedBots(
         for teamID: Team.ID,
         with prefix: String

@@ -164,6 +164,38 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
+    /// [WPB-24825] Bug: no alert shown when the self user is removed from the team
+    /// TC-6091, TC-6258
+    @MainActor
+    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert() async throws {
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+
+        let (memberQualifiedID, teamMember) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID
+        )
+
+        let firstTimePage = try app.loginUser(email: teamMember.email, password: teamMember.password)
+        _ = try firstTimePage
+            .acceptPopupOnTeamMemberSetup(with: self)
+            .setUsername(teamMember.username)
+
+        try await userHelper.removeTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            ownerPassword: teamOwner.password,
+            teamID: teamID,
+            userID: memberQualifiedID.id
+        )
+
+        _ = try SessionExpiredPage().confirm()
+    }
+
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     /// testiny: https://app.testiny.io/IOS/testcases/tc/8563
     @MainActor
