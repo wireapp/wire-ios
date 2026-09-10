@@ -509,7 +509,7 @@ public final class ClientSessionComponent {
         localStore: messageLocalStore
     )
 
-    public lazy var teamRepository = TeamRepository(
+    private lazy var teamRepository = TeamRepository(
         userRepository: userRepository,
         teamLocalStore: teamLocalStore,
         teamsAPI: teamsAPI

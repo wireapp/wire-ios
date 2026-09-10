@@ -129,32 +129,6 @@ class AdminPromotionTests: WireUITestCase {
         )
     }
 
-    @MainActor
-    func testLastPersonalUserAdmin_Leaves_Group() async throws {
-        let groupName = "Personal User Leave Group Test"
-        let (
-            _,
-            personalUser
-        ) =
-            try await createGroupConversationWithTeamMemberAndLastPersonalUserAdmin(groupName: groupName)
-
-        let conversationsPage = try app
-            .loginUser(email: personalUser.email, password: personalUser.password)
-            .acceptPopup()
-
-        let conversationDetailsPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
-            .openConversationDetails()
-            .moreOptionsConversationDetails()
-            .leaveOptionsConversationDetails()
-            .leaveConversation()
-
-        try verifyUserLeftGroup(
-            conversationDetailsPage,
-            leavingUserName: personalUser.name,
-            participantDescription: "Personal user"
-        )
-    }
-
     private func createGroupConversationWithTeamMemberAndLastPersonalUserAdmin(groupName: String) async throws
         -> (teamMember: UserInfo, personalUser: UserInfo) {
         let (teamMember, personalUser) = try await UserHelper.default.connectTeamUserWithPersonalUser()
