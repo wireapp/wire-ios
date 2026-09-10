@@ -188,7 +188,10 @@ extension ConversationActionController {
                     throw CancellationError()
                 }
                 do {
-                    try await performAdminPromotion(user: user, in: conversation) { [weak self] removeParticipantResult in
+                    try await performAdminPromotion(
+                        user: user,
+                        in: conversation
+                    ) { [weak self] removeParticipantResult in
                         self?.handleRemoveParticipantResult(removeParticipantResult, conversation: conversation)
                     }
                 } catch {
@@ -201,7 +204,7 @@ extension ConversationActionController {
         let hostingController = UIHostingController(rootView: AdminSelectionView(viewModel: viewModel))
         present(hostingController)
     }
-    
+
     @MainActor
     private func handleRemoveParticipantResult(_ result: Result<Void, any Error>, conversation: ZMConversation) {
         switch result {
@@ -220,7 +223,7 @@ extension ConversationActionController {
                     }
                 }
 
-            self.presentAdminSelection(
+            presentAdminSelection(
                 for: conversation,
                 candidates: newEligibleCandidates,
                 showAlert: true
