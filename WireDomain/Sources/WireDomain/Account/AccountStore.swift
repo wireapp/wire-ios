@@ -117,8 +117,14 @@ struct AccountStore {
 
     @discardableResult
     func deleteAccount(_ account: Account) -> Bool {
+        let url = url(for: account.userIdentifier)
+        guard fileManager.fileExists(atPath: url.path(percentEncoded: false)) else {
+            // Already deleted, nothing to do.
+            return true
+        }
+
         do {
-            try fileManager.removeItem(at: url(for: account.userIdentifier))
+            try fileManager.removeItem(at: url)
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription

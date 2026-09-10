@@ -115,6 +115,38 @@ class TeamsAPIV5: TeamsAPIV4 {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Remove member from Team
+
+    override func removeMemberFromTeam(
+        access_token: String,
+        teamID: UUID,
+        userID: UUID,
+        password: String
+    ) async throws {
+        let path = "\(basePath(for: teamID))/members/\(userID.transportString())"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            RemoveTeamMemberBodyV5(password: password)
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.delete)
+            .withBody(body, contentType: .json)
+            .withAcceptType(.json)
+            .addingHeader(field: "Authorization", value: "Bearer \(access_token)")
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: false)
+
+        try ResponseParser()
+            .success(code: .ok)
+            .success(code: .accepted)
+            .failure(code: .forbidden, error: TeamsAPIError.selfUserIsNotTeamMember)
+            .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
+            .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
     // MARK: - Get whitelisted bots
 
     override func getWhitelistedBots(
@@ -156,6 +188,10 @@ class TeamsAPIV5: TeamsAPIV4 {
         }
     }
 
+}
+
+private struct RemoveTeamMemberBodyV5: Encodable {
+    var password: String
 }
 
 private struct PaginatedWhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible {
