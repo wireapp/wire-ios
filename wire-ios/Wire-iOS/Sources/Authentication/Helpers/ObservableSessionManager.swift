@@ -53,6 +53,8 @@ protocol ObservableSessionManager: SessionManagerType {
     /// Deletes the selected account.
     func delete(account: Account, eraseData: Bool)
 
+    func purgeRetainedAccountData(for userID: UUID) throws
+
     /// Add a new account.
     func addAccount(userInfo: [String: Any]?, completion: (() -> Void)?)
 }

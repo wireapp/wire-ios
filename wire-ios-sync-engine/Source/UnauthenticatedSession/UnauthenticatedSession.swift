@@ -179,9 +179,11 @@ extension UnauthenticatedSession: UserInfoParser {
 
     public func upgradeToAuthenticatedSession(
         with userInfo: UserInfo,
-        newEnvironment: NewEnvironment
+        newEnvironment: NewEnvironment,
+        multiIngressIdentityProviderID: UUID? = nil
     ) {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
+        account.lastSSOIdentityProviderID = multiIngressIdentityProviderID
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
         do {
             try cookieStorage.storeCookies(userInfo.cookies)

@@ -37,7 +37,7 @@ public enum AuthenticationMethod: Sendable, Hashable {
 
     /// Cloud SSO login
 
-    case loginViaSSO(code: UUID)
+    case loginViaSSO(code: UUID, multiIngressIdentityProviderID: UUID? = nil)
 
     /// On-prem login, either via email or SSO
 
