@@ -3505,6 +3505,12 @@
       "comment" : "Meeting invitation: inviter name, date, start time and end time in the recipient's local time.",
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hat dich zu einem Meeting am %2$@ eingeladen · %3$@ bis %4$@"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
