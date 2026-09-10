@@ -743,58 +743,6 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
-    // MARK: - V18
-
-    func testGetPreventAdminlessGroupsFeatureConfig_givenV0_To_V17_AndFailure_Unsupported_Endpoint_For_API_Version(
-    ) async throws {
-
-        // Given
-        let unsupportedVersions = APIVersion.allCasesUpTo(.v18)
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
-        let suts = unsupportedVersions.map { apiVersion in
-            TeamsAPIBuilder(apiService: apiService)
-                .makeAPI(for: apiVersion)
-        }
-
-        // When & Then
-        XCTAssertEqual(suts.count, unsupportedVersions.count)
-        for sut in suts {
-            await XCTAssertThrowsErrorAsync(TeamsAPIError.unsupportedEndpointForAPIVersion) {
-                try await sut.getPreventAdminlessGroupsFeatureConfig(teamID: Scaffolding.teamID)
-            }
-        }
-
-    }
-
-    func testGetPreventAdminlessGroupsFeatureConfig_givenV18AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
-
-        for apiVersion in APIVersion.v18.andNextVersions {
-
-            // Given
-            let apiService = MockAPIServiceProtocol.withResponses([
-                (.ok, "GetPreventAdminlessGroupsFeatureConfigSuccessResponseV18")
-            ])
-
-            // When
-            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
-                let result = try await sut.getPreventAdminlessGroupsFeatureConfig(teamID: Scaffolding.teamID)
-
-                // Then
-                XCTAssertEqual(
-                    result,
-                    PreventAdminlessGroupsFeatureConfig(
-                        status: .enabled,
-                        promotionStrategy: "alphabetical",
-                        deletionTimeout: 7,
-                        reminderTimeouts: [2, 4, 6]
-                    ),
-                    "failed for apiVersion \(apiVersion)"
-                )
-            }
-        }
-
-    }
-
     // MARK: -
 
     private enum Scaffolding {

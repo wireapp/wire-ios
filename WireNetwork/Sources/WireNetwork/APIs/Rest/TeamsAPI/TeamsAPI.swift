@@ -114,10 +114,4 @@ public protocol TeamsAPI {
         with prefix: String
     ) throws -> PayloadPager<[WhitelistedBotProfile]>
 
-    /// Fetches team's `preventAdminlessGroups` feature config
-
-    func getPreventAdminlessGroupsFeatureConfig(
-        teamID: Team.ID
-    ) async throws -> PreventAdminlessGroupsFeatureConfig
-
 }
