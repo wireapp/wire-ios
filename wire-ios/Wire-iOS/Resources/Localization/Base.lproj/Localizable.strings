@@ -1240,6 +1240,9 @@
 "self.settings.add_account.error.title" = "Three accounts active";
 "self.settings.add_account.error.message" = "You can only be logged in with three accounts at once. Log out from one to add another.";
 
+"self.settings.add_account.two_active_accounts.error.title" = "Two accounts active";
+"self.settings.add_account.two_active_accounts.error.message" = "You can only be logged in with two accounts at once. Log out from one to add another.";
+
 "self.settings.switch_account.message" = "A call is active in this account.\nSwitching accounts will hang up the current call.";
 "self.settings.switch_account.action" = "Switch anyway";
 

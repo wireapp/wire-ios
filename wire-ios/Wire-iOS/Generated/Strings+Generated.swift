@@ -5892,6 +5892,14 @@ internal enum L10n {
             /// Three accounts active
             internal static let title = L10n.tr("Localizable", "self.settings.add_account.error.title", fallback: "Three accounts active")
           }
+          internal enum TwoActiveAccounts {
+            internal enum Error {
+              /// You can only be logged in with two accounts at once. Log out from one to add another.
+              internal static let message = L10n.tr("Localizable", "self.settings.add_account.two_active_accounts.error.message", fallback: "You can only be logged in with two accounts at once. Log out from one to add another.")
+              /// Two accounts active
+              internal static let title = L10n.tr("Localizable", "self.settings.add_account.two_active_accounts.error.title", fallback: "Two accounts active")
+            }
+          }
         }
         internal enum AddAccountOrTeam {
           /// Add Account or Team

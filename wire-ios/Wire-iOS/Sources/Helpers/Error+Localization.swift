@@ -22,18 +22,19 @@ import WireSyncEngine
 extension SessionManager.AccountError: LocalizedError {
 
     typealias SettingsAddAccountLocale = L10n.Localizable.Self.Settings.AddAccount.Error
+    typealias SettingsAddAccountTwoActiveAccountsLocale = L10n.Localizable.Self.Settings.AddAccount.TwoActiveAccounts.Error
 
     public var errorDescription: String? {
         switch self {
-        case .accountLimitReached:
-            SettingsAddAccountLocale.title
+        case let .accountLimitReached(maxNumberAccounts):
+            maxNumberAccounts == 2 ? SettingsAddAccountTwoActiveAccountsLocale.title : SettingsAddAccountLocale.title
         }
     }
 
     public var failureReason: String? {
         switch self {
-        case .accountLimitReached:
-            SettingsAddAccountLocale.message
+        case let .accountLimitReached(maxNumberAccounts):
+            maxNumberAccounts == 2 ? SettingsAddAccountTwoActiveAccountsLocale.message : SettingsAddAccountLocale.message
         }
     }
 
@@ -59,8 +60,10 @@ extension SessionManager.SwitchBackendError: LocalizedError {
         switch self {
         case .invalidBackend:
             return UrlActionSwitchBackendErrorLocale.invalidBackend
-        case .maxNumberAccountsReached:
-            return L10n.Localizable.Self.Settings.AddAccount.Error.message
+        case let .maxNumberAccountsReached(maxNumberAccounts):
+            return maxNumberAccounts == 2
+                ? L10n.Localizable.Self.Settings.AddAccount.TwoActiveAccounts.Error.message
+                : L10n.Localizable.Self.Settings.AddAccount.Error.message
         }
     }
 }

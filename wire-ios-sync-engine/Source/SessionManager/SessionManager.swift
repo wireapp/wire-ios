@@ -257,8 +257,8 @@ public protocol ForegroundNotificationResponder: AnyObject {
 @objcMembers
 public final class SessionManager: NSObject, SessionManagerType {
 
-    public enum AccountError: Error {
-        case accountLimitReached
+    public enum AccountError: Error, Equatable {
+        case accountLimitReached(maxNumberAccounts: Int)
     }
 
     /// Maximum number of accounts which can be logged in simultanously
@@ -1540,6 +1540,12 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         _ session: UnauthenticatedSession
     ) -> Bool {
         accountManager.numberOfAccounts < maxNumberAccounts
+    }
+
+    public func sessionMaxNumberAccounts(
+        _ session: UnauthenticatedSession
+    ) -> Int {
+        maxNumberAccounts
     }
 
     public func session(

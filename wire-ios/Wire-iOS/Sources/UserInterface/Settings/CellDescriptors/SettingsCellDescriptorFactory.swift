@@ -87,9 +87,19 @@ struct SettingsCellDescriptorFactory {
                 sessionManager?.addAccount()
             } else {
                 if let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) {
+                    let title: String
+                    let message: String
+                    if sessionManager?.maxNumberAccounts == 2 {
+                        title = L10n.Localizable.Self.Settings.AddAccount.TwoActiveAccounts.Error.title
+                        message = L10n.Localizable.Self.Settings.AddAccount.TwoActiveAccounts.Error.message
+                    } else {
+                        title = L10n.Localizable.Self.Settings.AddAccount.Error.title
+                        message = L10n.Localizable.Self.Settings.AddAccount.Error.message
+                    }
+
                     let alert = UIAlertController(
-                        title: L10n.Localizable.Self.Settings.AddAccount.Error.title,
-                        message: L10n.Localizable.Self.Settings.AddAccount.Error.message,
+                        title: title,
+                        message: message,
                         preferredStyle: .alert
                     )
                     alert.addAction(UIAlertAction(
