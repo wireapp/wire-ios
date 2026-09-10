@@ -265,12 +265,13 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         )
 
         // then
+        XCTAssertNil(mockSessionManager.lastRequestToShowMeetings)
         XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
         XCTAssertNil(mockSessionManager.lastRequestToShowConversationsList)
         XCTAssertNil(mockSessionManager.lastRequestToShowMessage)
     }
 
-    func testThatDefaultTapOnMeetingInvitationDoesNotNavigate() {
+    func testThatDefaultTapOnMeetingInvitationShowsMeetingsForItsSession() {
         // when
         handle(
             action: UNNotificationDefaultActionIdentifier,
@@ -279,6 +280,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         )
 
         // then
+        XCTAssertEqual(mockSessionManager.lastRequestToShowMeetings, sut)
         XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
         XCTAssertNil(mockSessionManager.lastRequestToShowConversationsList)
         XCTAssertNil(mockSessionManager.lastRequestToShowMessage)

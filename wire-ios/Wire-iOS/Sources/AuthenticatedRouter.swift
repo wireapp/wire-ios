@@ -28,6 +28,7 @@ enum NavigationDestination {
     case userProfile(WireDataModel.UserType)
     case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
+    case meetings
 }
 
 protocol AuthenticatedRouterProtocol: AnyObject {
@@ -186,6 +187,10 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
             _zClientViewController?.showConnectionRequest(qualifiedID: qualifiedID)
         case .conversationList:
             _zClientViewController?.showConversationList()
+        case .meetings:
+            Task { @MainActor in
+                await zClientViewController.mainCoordinator.showMeetings()
+            }
         case let .userProfile(user):
             Task { @MainActor in
                 await _zClientViewController?.showUserProfile(user: user)

@@ -40,6 +40,7 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     var lastRequestToShowMessage: (ZMUserSession, ZMConversation, ZMConversationMessage)?
     var lastRequestToShowConversation: (ZMUserSession, ZMConversation)?
     var lastRequestToShowConversationsList: ZMUserSession?
+    var lastRequestToShowMeetings: ZMUserSession?
     var lastRequestToShowUserProfile: UserType?
     var lastRequestToShowConnectionRequest: UUID?
 
@@ -57,6 +58,10 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
 
     func showConversationList(in session: ZMUserSession) {
         lastRequestToShowConversationsList = session
+    }
+
+    func showMeetings(in session: ZMUserSession) {
+        lastRequestToShowMeetings = session
     }
 
     var lastRequestToActivateAccount: ZMUserSession?
