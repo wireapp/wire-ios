@@ -101,6 +101,38 @@ Code generation: Sourcery generates mocks (`AutoMockable`), SwiftGen generates s
 - Code review uses [conventional comments](https://conventionalcomments.org/)
 - Cherry-picked commits are marked with 🍒
 - All colors in UI code must come from `WireDesign.ColorTheme` or `WireDesign.BaseColorPalette`
-- New UI elements require `accessibilityLabel` for VoiceOver / `accessibilityIdentifier` for UI tests
-- UI elements that display text must use the API that supports dynamic type / large fonts
 - Push notifications only work with the App Store-signed build (Apple security restriction)
+
+## Accessibility
+
+Every new screen or UI element must pass the following checklist before merging:
+
+### Identifiers and labels
+- Set `accessibilityIdentifier` on every new element — **never remove existing ones** (QA automation depends on them)
+- Set `accessibilityLabel` for VoiceOver on every interactive or informative element
+- Set `accessibilityHint` to describe the result of an action (e.g. "Double tap to open profile"); omit it when the label already makes the outcome obvious
+- Set `accessibilityValue` for elements with dynamic state (e.g. a text field's current content)
+- VoiceOver reads in order: **label → value → trait → hint**
+- Put all VoiceOver strings in `Accessibility.strings`, not `Localizable.strings`
+
+### Traits
+- Assign the correct trait to every custom element (all native elements already have traits): `.button`, `.header`, `.staticText`, `.link`, `.selected`, etc.
+- Combine traits when needed (e.g. `.button` + `.selected` for a selected toggleable button)
+
+### Hiding elements
+- Hide purely decorative elements with `accessibilityHidden(true)` / `isAccessibilityElement = false`
+- When a container element expresses the full meaning, hide its children and set the label/trait/hint on the container (use `.accessibilityElement(children: .ignore)` in SwiftUI)
+
+### Navigation bar
+- All navigation bar buttons must have alternative text
+- Back buttons must describe the destination (e.g. "Go back to Settings", not just "Back") in the accessibilityLabel (no button's title visible)
+
+### Dynamic content
+- When content changes dynamically (list updates, search results, state transitions), post a UIAccessibility notification:
+  - `.layoutChanged` — an element appeared or disappeared
+  - `.screenChanged` — the major portion of the screen changed
+  - `.announcement` — a brief status message (e.g. "Loading…")
+
+### Dynamic type
+- UI elements that display text must use the API that supports dynamic type / large fonts
+- Test with the largest accessibility font size (Settings → Accessibility → Larger Text)
