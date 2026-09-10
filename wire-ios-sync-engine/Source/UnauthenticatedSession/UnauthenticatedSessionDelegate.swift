@@ -42,7 +42,7 @@ public protocol UnauthenticatedSessionDelegate: AnyObject {
         _ session: UnauthenticatedSession
     ) -> Bool
 
-    /// The maximum number of accounts which can be logged in simultanously.
+    /// The maximum number of accounts which can be logged in simultaneously.
     func sessionMaxNumberAccounts(
         _ session: UnauthenticatedSession
     ) -> Int
