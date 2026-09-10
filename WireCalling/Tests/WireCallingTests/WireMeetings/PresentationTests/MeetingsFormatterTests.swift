@@ -24,60 +24,65 @@ import WireCallingUI
 struct MeetingsFormatterTests {
 
     let formatter = MeetingsFormatter()
-    let calendar = Calendar.current
+    let calendar = Calendar(identifier: .gregorian)
 
     // MARK: - Day Header Tests
 
     @Test("dayHeader returns 'Today' for current date")
-    func testDayHeaderForToday() {
-        let now = Date()
+    func testDayHeaderForToday() throws {
+        let now = try makeDate(hour: 9, minute: 0)
         let result = formatter.dayHeader(for: now, now: now)
 
-        #expect(result.contains("Today"))
+        #expect(result == "Today (08.09.2026)")
     }
 
-    @Test("dayHeader returns formatted date for other days")
-    func testDayHeaderForOtherDays() {
-        let now = Date()
-        guard let futureDate = calendar.date(byAdding: .day, value: 5, to: now) else {
-            Issue.record("Failed to create future date")
-            return
-        }
+    @Test("dayHeader uses a numeric calendar date", arguments: [
+        (2026, 9, 13, "13.09.2026"),
+        (2026, 12, 31, "31.12.2026")
+    ])
+    func testDayHeaderForOtherDays(year: Int, month: Int, day: Int, expected: String) throws {
+        let now = try makeDate(hour: 9, minute: 0)
+        let date = try #require(calendar.date(from: DateComponents(year: year, month: month, day: day)))
 
-        let result = formatter.dayHeader(for: futureDate, now: now)
-
-        #expect(!result.contains("Today"))
-        #expect(!result.isEmpty)
+        #expect(formatter.dayHeader(for: date, now: now) == expected)
     }
 
     // MARK: - Time Range Tests
 
-    @Test("timeRange places the period once for a morning range")
+    @Test("timeRange zero-pads morning hours without a period")
     func timeRange_sameMorningPeriod() throws {
         let start = try makeDate(hour: 7, minute: 30)
         let end = try makeDate(hour: 7, minute: 40)
 
-        #expect(formatter.timeRange(from: start, to: end) == "07:30 - 07:40 AM")
+        #expect(formatter.timeRange(from: start, to: end) == "07:30 - 07:40")
     }
 
-    @Test("timeRange places the period once for an afternoon range")
+    @Test("timeRange uses 24-hour afternoon hours")
     func timeRange_sameAfternoonPeriod() throws {
         let start = try makeDate(hour: 14, minute: 0)
         let end = try makeDate(hour: 15, minute: 15)
 
-        #expect(formatter.timeRange(from: start, to: end) == "02:00 - 03:15 PM")
+        #expect(formatter.timeRange(from: start, to: end) == "14:00 - 15:15")
     }
 
-    @Test("timeRange places the period on both times when crossing from morning to afternoon")
+    @Test("timeRange uses the same format across noon")
     func timeRange_crossesPeriod() throws {
         let start = try makeDate(hour: 11, minute: 30)
         let end = try makeDate(hour: 13, minute: 15)
 
-        #expect(formatter.timeRange(from: start, to: end) == "11:30 AM - 01:15 PM")
+        #expect(formatter.timeRange(from: start, to: end) == "11:30 - 13:15")
+    }
+
+    @Test("timeRange formats midnight as zero and noon as twelve")
+    func timeRange_midnightAndNoon() throws {
+        let start = try makeDate(hour: 0, minute: 0)
+        let end = try makeDate(hour: 12, minute: 0)
+
+        #expect(formatter.timeRange(from: start, to: end) == "00:00 - 12:00")
     }
 
     private func makeDate(hour: Int, minute: Int) throws -> Date {
-        try #require(calendar.date(from: DateComponents(year: 2026, month: 6, day: 15, hour: hour, minute: minute)))
+        try #require(calendar.date(from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)))
     }
 
 }
