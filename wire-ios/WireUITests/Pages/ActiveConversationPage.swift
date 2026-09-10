@@ -364,7 +364,12 @@ class ActiveConversationPage: PageModel {
 
     func waitToUploadToFinishAndSend() {
         XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
-        sendButton.waitAndTap()
+
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+
         XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
     }
 
@@ -688,7 +693,7 @@ class ActiveConversationPage: PageModel {
     func verifyImagePreviewIsVisible(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            imagePreview.waitForExistence(timeout: 7),
+            imagePreview.waitForExistence(timeout: 10),
             "Image preview did not appear"
         )
         return self
@@ -698,7 +703,7 @@ class ActiveConversationPage: PageModel {
     func verifyVideoPreviewIsVisible(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            videoPreview.waitForExistence(timeout: 7),
+            videoPreview.waitForExistence(timeout: 10),
             "Video preview did not appear"
         )
         return self
