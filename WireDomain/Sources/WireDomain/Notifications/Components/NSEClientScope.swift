@@ -456,6 +456,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         let validator = ConversationCallingEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
             conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             userDefaults: dependency.sharedUserDefaults
         )
 
