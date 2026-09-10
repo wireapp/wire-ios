@@ -104,11 +104,14 @@ package final class MeetingFormViewModel {
         return Calendar.current.startOfDay(for: earliest)...
     }
 
-    /// Keep the current selection representable even if it expires while the form is open.
-    /// Submission validates against the backend's current window, not this display range.
-    var startDatePickerRange: PartialRangeFrom<Date> {
-        guard mode.isEdit else { return startDateRange }
-        return min(startDate, startDateRange.lowerBound)...
+    /// Present a valid picker selection without changing the meeting merely by opening the picker.
+    /// The form displays `startDate`; only a valid picker change updates it.
+    var startDatePickerSelection: Date {
+        get { max(startDate, startDateRange.lowerBound) }
+        set {
+            guard startDateRange.contains(newValue) else { return }
+            startDate = newValue
+        }
     }
 
     /// Acceptance: the end picker must stay on the start date, with 23:45 as the latest available time.

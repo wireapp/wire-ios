@@ -466,7 +466,8 @@ struct MeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .edit(original))
 
         #expect(viewModel.startDate == original.start)
-        #expect(viewModel.startDatePickerRange.contains(viewModel.startDate))
+        #expect(viewModel.startDateRange.contains(viewModel.startDatePickerSelection))
+        #expect(viewModel.startDate == original.start)
 
         await viewModel.submit()
 
@@ -475,6 +476,44 @@ struct MeetingFormViewModelTests {
         let rejectedArguments = updateMeetingUseCaseMock
             .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
         #expect(rejectedArguments == nil)
+    }
+
+    @Test("the start picker preserves expired dates for display and only accepts allowed dates")
+    func startDatePickerSelection_ExpiredMeeting() {
+        let original = makeEditableMeeting(
+            start: dateProviderMock.now.addingTimeInterval(-3 * 86_400),
+            recurrence: nil
+        )
+        let viewModel = makeViewModel(mode: .edit(original))
+        let cutoff = dateProviderMock.now.addingTimeInterval(-86_400)
+
+        #expect(viewModel.startDateRange.lowerBound == cutoff)
+        #expect(viewModel.startDatePickerSelection == cutoff)
+        #expect(viewModel.startDate == original.start)
+        #expect(viewModel.endDate == original.end)
+
+        viewModel.startDatePickerSelection = cutoff.addingTimeInterval(-1)
+        #expect(viewModel.startDate == original.start)
+        #expect(viewModel.endDate == original.end)
+
+        viewModel.startDatePickerSelection = cutoff
+        #expect(viewModel.startDate == cutoff)
+        #expect(viewModel.endDate == cutoff.addingTimeInterval(TimeInterval.oneHour))
+    }
+
+    @Test("the start picker retains valid selections and rejects values that expire before selection")
+    func startDatePickerSelection_RechecksWindow() {
+        let original = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-3600))
+        let viewModel = makeViewModel(mode: .edit(original))
+        #expect(viewModel.startDatePickerSelection == original.start)
+
+        let oldCutoff = viewModel.startDateRange.lowerBound
+        dateProviderMock.now = dateProviderMock.now.addingTimeInterval(1)
+        viewModel.startDatePickerSelection = oldCutoff
+        #expect(viewModel.startDate == original.start)
+
+        viewModel.startDatePickerSelection = dateProviderMock.now
+        #expect(viewModel.startDate == dateProviderMock.now)
     }
 
     @Test("expired submission clears previous save errors", arguments: [false, true])
@@ -513,7 +552,8 @@ struct MeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .edit(original))
         dateProviderMock.now = dateProviderMock.now.addingTimeInterval(1)
 
-        #expect(viewModel.startDatePickerRange.contains(viewModel.startDate))
+        #expect(viewModel.startDateRange.contains(viewModel.startDatePickerSelection))
+        #expect(viewModel.startDate == original.start)
         await viewModel.submit()
 
         #expect(viewModel.hasExpiredStartDateError)
