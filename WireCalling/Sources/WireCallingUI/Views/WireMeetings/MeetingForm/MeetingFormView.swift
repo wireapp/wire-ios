@@ -223,7 +223,7 @@ struct MeetingFormView: View {
             Text(label)
             Spacer()
             pill(
-                text: date.wrappedValue.formatted(.dateTime.day().month(.abbreviated).year()),
+                text: DateFormatter.meetingDate.string(from: date.wrappedValue),
                 isSelected: expandedField == dateField
             ) {
                 toggleExpansion(dateField)
@@ -232,7 +232,7 @@ struct MeetingFormView: View {
             .disabled(!isDateFieldEnabled)
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
-                text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
+                text: DateFormatter.meetingTime.string(from: date.wrappedValue),
                 isSelected: expandedField == timeField
             ) {
                 toggleExpansion(timeField)
@@ -303,6 +303,8 @@ private struct MinuteIntervalTimePicker: UIViewRepresentable {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .time
         datePicker.preferredDatePickerStyle = .wheels
+        // Keep 24-hour wheels even when the device uses a 12-hour clock.
+        datePicker.locale = Locale(identifier: "en_US_POSIX@hours=h23")
         datePicker.minuteInterval = minuteInterval
         datePicker.minimumDate = range.lowerBound
         datePicker.maximumDate = maximumDate
