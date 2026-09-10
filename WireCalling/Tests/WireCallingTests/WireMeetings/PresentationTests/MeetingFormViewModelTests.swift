@@ -520,11 +520,10 @@ struct MeetingFormViewModelTests {
     func submit_ExpiredStartClearsPreviousError(conversationNameFailed: Bool) async {
         let original = makeEditableMeeting(start: dateProviderMock.now.addingTimeInterval(-86_400))
         let viewModel = makeViewModel(mode: .edit(original))
-        let error: any Error
-        if conversationNameFailed {
-            error = UpdateMeetingUseCaseError.conversationNameUpdateFailed(original)
+        let error: any Error = if conversationNameFailed {
+            UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting: original)
         } else {
-            error = URLError(.badServerResponse)
+            URLError(.badServerResponse)
         }
         updateMeetingUseCaseMock
             .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingThrowableError =
