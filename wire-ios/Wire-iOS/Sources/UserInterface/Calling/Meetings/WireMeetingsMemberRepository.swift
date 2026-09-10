@@ -36,10 +36,10 @@ struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked
 
         let result = await searchUsersUseCase.invoke(
             query: query,
-            options: [.contacts, .teamMembers], // in large teams find team members which are not yet known to us
+            options: [.teamMembers], // in large teams find team members which are not yet known to us
             messageProtocol: .mls // meetings are always mls
         )
-        return (result.contacts + result.teamMembers).compactMap { result in
+        return result.teamMembers.compactMap { result in
             guard let qualifiedID = result.qualifiedID(localDomain: nil) else { return MeetingMember?.none }
             return MeetingMember(
                 qualifiedID: .init(qualifiedID),
