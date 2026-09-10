@@ -405,10 +405,16 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
-    func test_itUploadKeyPackagesIfNeeded_AfterQuickSync() async throws {
+    func test_itRecoversPendingConversationsAfterQuickSyncWhileActive() async throws {
         // GIVEN
+        sut.journal[.isBackendMLSEnabled] = true
+        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
+        mockMLSService.recoverPendingConversationBatchIfNeeded_MockMethod = {
+            self.mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count == 1
+        }
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         await syncMOC.perform { [self, syncMOC] in
+            LegacyFeatureRepository(context: syncMOC).storeMLS(.init(status: .enabled))
             let domain = "anta.com"
             ZMUser.selfUser(in: syncMOC).domain = domain
             let selfUserClient = createSelfClient()
@@ -428,6 +434,17 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // THEN
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 2)
+
+        // When
+        application.applicationState = .background
+        await syncMOC.perform {
+            self.sut.didFinishIncrementalSync(isRecovering: false)
+        }
+
+        // Then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 2)
     }
 
     func test_OnSelfClientInvalidated() async throws {
