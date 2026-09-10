@@ -364,7 +364,12 @@ class ActiveConversationPage: PageModel {
 
     func waitToUploadToFinishAndSend() {
         XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
-        sendButton.waitAndTap()
+
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+
         XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
     }
 
