@@ -391,12 +391,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         shared {
             MeetingEventNotificationBuilder(
                 meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
-                meetingMemberAddEventBuilder: MeetingMemberAddEventNotificationBuilder(
-                    meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
-                    usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
-                    featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
-                    accountID: dependency.accountID
-                )
+                meetingMemberAddEventBuilder: meetingMemberAddEventNotificationBuilder
             )
         }
     }
@@ -406,6 +401,17 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             MeetingDeleteEventNotificationBuilder(
                 meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
                 userLocalStore: userLocalStore,
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificationBuilder {
+        shared {
+            MeetingMemberAddEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
                 accountID: dependency.accountID
             )
