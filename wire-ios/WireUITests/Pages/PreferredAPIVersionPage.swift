@@ -18,24 +18,23 @@
 
 import XCTest
 
-class DeveloperToolsPage: PageModel {
+class PreferredAPIVersionPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        app.navigationBars["Developer tools"]
+        app.navigationBars["Preferred API version"]
     }
 
-    func hide() {
-        app.buttons["Close"].firstMatch.tap()
-    }
+    /// Selecting a version force-quits the app, so this intentionally does not return a page.
+    func selectVersion(_ version: String, maxScrollAttempts: Int = 10) {
+        let versionText = app.staticTexts[version].firstMatch
 
-    var preferredAPIVersionButton: XCUIElement {
-        app.buttons["Preferred API version"].firstMatch
-    }
+        var attempts = 0
+        while !versionText.isHittable, attempts < maxScrollAttempts {
+            app.swipeUp()
+            attempts += 1
+        }
 
-    @discardableResult
-    func openPreferredAPIVersion() throws -> PreferredAPIVersionPage {
-        preferredAPIVersionButton.tap()
-        return try PreferredAPIVersionPage()
+        versionText.tap()
     }
 
 }

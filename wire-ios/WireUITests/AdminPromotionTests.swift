@@ -21,7 +21,7 @@ import WireUtilities
 import XCTest
 
 class AdminPromotionTests: WireUITestCase {
-    
+
     private let userHelper = UserHelper.instance(apiVersion: .v18)
 
     @MainActor
@@ -35,6 +35,9 @@ class AdminPromotionTests: WireUITestCase {
         let member = try XCTUnwrap(teamMembers.first)
         let teamID = try XCTUnwrap(owner.teamID)
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        // TODO: [WPB-28649] - Remove when v18 is PROD ready.
+        try switchToPreferredAPIVersion("18")
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -71,6 +74,8 @@ class AdminPromotionTests: WireUITestCase {
         let teamID = try XCTUnwrap(owner.teamID)
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
 
+        try switchToPreferredAPIVersion("18")
+
         let conversationsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
             .openConversation()
@@ -104,6 +109,8 @@ class AdminPromotionTests: WireUITestCase {
         let teamID = try XCTUnwrap(owner.teamID)
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
 
+        try switchToPreferredAPIVersion("18")
+
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
             .openConversation()
@@ -123,16 +130,81 @@ class AdminPromotionTests: WireUITestCase {
     }
 
     @MainActor
+    func testLastPersonalUserAdmin_Leaves_Group() async throws {
+        let groupName = "Personal User Leave Group Test"
+        let (
+            _,
+            personalUser
+        ) =
+            try await createGroupConversationWithTeamMemberAndLastPersonalUserAdmin(groupName: groupName)
+
+        let conversationsPage = try app
+            .loginUser(email: personalUser.email, password: personalUser.password)
+            .acceptPopup()
+
+        let conversationDetailsPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .leaveConversation()
+
+        try verifyUserLeftGroup(
+            conversationDetailsPage,
+            leavingUserName: personalUser.name,
+            participantDescription: "Personal user"
+        )
+    }
+
+    private func createGroupConversationWithTeamMemberAndLastPersonalUserAdmin(groupName: String) async throws
+        -> (teamMember: UserInfo, personalUser: UserInfo) {
+        let (teamMember, personalUser) = try await UserHelper.default.connectTeamUserWithPersonalUser()
+
+        let domain = BackendTarget.staging.domainInfo
+        let teamMemberQualifiedID = WireFoundation.QualifiedID(
+            id: try XCTUnwrap(UUID(uuidString: teamMember.id)),
+            domain: domain
+        )
+        let personalUserQualifiedID = WireFoundation.QualifiedID(
+            id: try XCTUnwrap(UUID(uuidString: personalUser.id)),
+            domain: domain
+        )
+
+        let conversation = try await UserHelper.default.createGroupConversations(
+            qualifiedIds: [personalUserQualifiedID],
+            owner: teamMember,
+            groupName: groupName,
+            driveEnabled: true
+        )
+
+        let conversationQualifiedID = try XCTUnwrap(conversation.qualifiedID)
+
+        try await UserHelper.default.updateRole(
+            "wire_admin",
+            userID: personalUserQualifiedID,
+            conversationID: conversationQualifiedID
+        )
+
+        try await UserHelper.default.removeParticipant(
+            userID: teamMemberQualifiedID,
+            conversationID: conversationQualifiedID
+        )
+
+        return (teamMember, personalUser)
+    }
+
+    @MainActor
     func testLastGuestUserAdmin_CannotLeaveGroup_PromotesNewAdmin_ThenLeaveGroupSuccessfully_TC_11577() async throws {
         let groupName = "Guest User Leave Group Test"
         let (
             owner,
-            personalUser
+            guestUser
         ) =
             try await createGroupConversationWithTeamMemberAndLastGuestUserAdmin(groupName: groupName)
 
+        try switchToPreferredAPIVersion("18")
+
         let conversationsPage = try app
-            .loginUser(email: personalUser.email, password: personalUser.password)
+            .loginUser(email: guestUser.email, password: guestUser.password)
             .acceptPopup()
 
         let conversationDetailsPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
@@ -157,8 +229,8 @@ class AdminPromotionTests: WireUITestCase {
 
         try verifyUserLeftGroup(
             conversationDetailsPage,
-            leavingUserName: personalUser.name,
-            participantDescription: "Personal user"
+            leavingUserName: guestUser.name,
+            participantDescription: "Guest user"
         )
     }
 
@@ -240,6 +312,8 @@ class AdminPromotionTests: WireUITestCase {
 
         let teamID = try XCTUnwrap(owner.teamID)
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        try switchToPreferredAPIVersion("18")
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
