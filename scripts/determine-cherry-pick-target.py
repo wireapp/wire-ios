@@ -70,10 +70,13 @@ def determine_target_branch(base_branch):
     # GOV_RELEASE fixes go to LTS_RELEASE first (if tracked), which will then
     # be cherry-picked onward to develop when that PR merges.
     if gov_release and base_branch == gov_release:
-        if lts_release:
+        if lts_release and lts_release != gov_release:
             print(f"Base branch {base_branch} is the GOV_RELEASE branch, using LTS_RELEASE branch {lts_release}")
             return lts_release
-        print(f"Base branch {base_branch} is the GOV_RELEASE branch, no LTS_RELEASE set, using develop")
+        if lts_release == gov_release:
+            print(f"Base branch {base_branch} is the GOV_RELEASE branch, but LTS_RELEASE is the same branch; using develop")
+        else:
+            print(f"Base branch {base_branch} is the GOV_RELEASE branch, no LTS_RELEASE set, using develop")
         return "develop"
 
     # LTS_RELEASE skips future release branches and cherry-picks straight to develop.
