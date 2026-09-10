@@ -390,7 +390,13 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var meetingEventNotificationBuilder: MeetingEventNotificationBuilder {
         shared {
             MeetingEventNotificationBuilder(
-                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder
+                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
+                meetingMemberAddEventBuilder: MeetingMemberAddEventNotificationBuilder(
+                    meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                    usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                    featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                    accountID: dependency.accountID
+                )
             )
         }
     }

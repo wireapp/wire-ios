@@ -3501,6 +3501,18 @@
         }
       }
     },
+    "push.notification.body.senderInvitedToMeeting" : {
+      "comment" : "Meeting invitation: inviter name, date, start time and end time in the recipient's local time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ invited you to a meeting on %2$@ · %3$@ to %4$@"
+          }
+        }
+      }
+    },
     "push.notification.body.senderPingedYou" : {
       "extractionState" : "manual",
       "localizations" : {

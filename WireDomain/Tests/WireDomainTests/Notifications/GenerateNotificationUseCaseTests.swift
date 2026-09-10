@@ -39,7 +39,8 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
         sut = GenerateNotificationUseCase(
             conversationEventBuilder: conversationEventBuilder,
             meetingEventBuilder: MeetingEventNotificationBuilder(
-                meetingDeleteEventBuilder: meetingDeleteEventBuilder
+                meetingDeleteEventBuilder: meetingDeleteEventBuilder,
+                meetingMemberAddEventBuilder: MockMeetingMemberAddEventNotificationBuilder()
             ),
             userEventBuilder: userEventBuilder,
             eventID: .mockID1
@@ -180,4 +181,10 @@ private final class MockMeetingDeleteEventNotificationBuilder: MeetingDeleteEven
         return buildContentMockValue
     }
 
+}
+
+private struct MockMeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificationBuilderProtocol {
+    func buildContent(event: MeetingMemberAddEvent) async -> UserNotification? {
+        nil
+    }
 }

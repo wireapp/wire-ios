@@ -100,7 +100,7 @@ public extension ZMUserSession {
 // The `SessionManager` forwards `UNUserNotificationCenterDelegate` calls to a suitable `ZMUserSession` instance.
 extension ZMUserSession {
 
-    func handleMeetingCancellationNotification(_ content: UNNotificationContent) async {
+    func handleMeetingNotification(_ content: UNNotificationContent) async {
         let isActive = await MainActor.run { [application] in
             application.applicationState == .active
         }
@@ -214,7 +214,8 @@ extension ZMUserSession {
             sessionManager?.activateAccount(of: self)
             completionHandler()
         case UNNotificationDefaultActionIdentifier
-            where categoryIdentifier == WireDomain.NotificationCategory.meetingCancellation.rawValue:
+            where categoryIdentifier == WireDomain.NotificationCategory.meetingCancellation.rawValue
+            || categoryIdentifier == WireDomain.NotificationCategory.meetingInvitation.rawValue:
             completionHandler()
         default:
             showContent(for: userInfo)

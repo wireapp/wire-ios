@@ -81,7 +81,13 @@ final class MeetingEventDecodingTests: XCTestCase {
         // Then
         XCTAssertEqual(
             decodedEvent,
-            .meeting(.update(MeetingUpdateEvent(meetingID: Scaffolding.meetingID)))
+            .meeting(.memberAdd(MeetingMemberAddEvent(
+                meetingID: Scaffolding.meetingID,
+                senderID: QualifiedID(
+                    id: UUID(uuidString: "8c74a470-5383-4800-9a7d-a77fb9f1a46c")!,
+                    domain: "example.com"
+                )
+            )))
         )
     }
 

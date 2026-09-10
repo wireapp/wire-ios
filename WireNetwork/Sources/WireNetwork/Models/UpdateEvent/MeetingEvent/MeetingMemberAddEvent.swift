@@ -16,10 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum MeetingEventCodingKeys: String, CodingKey {
+/// An event delivered to the user who was invited to a meeting.
+public struct MeetingMemberAddEvent: Equatable, Sendable {
 
-    case qualifiedID = "qualified_id"
-    case qualifiedFrom = "qualified_from"
-    case time
+    public let meetingID: QualifiedID
+    public let senderID: QualifiedID
+
+    public init(meetingID: QualifiedID, senderID: QualifiedID) {
+        self.meetingID = meetingID
+        self.senderID = senderID
+    }
 
 }

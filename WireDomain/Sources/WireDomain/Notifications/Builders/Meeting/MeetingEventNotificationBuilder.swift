@@ -28,10 +28,14 @@ struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol 
 
     let meetingDeleteEventBuilder: any MeetingDeleteEventNotificationBuilderProtocol
 
+    let meetingMemberAddEventBuilder: any MeetingMemberAddEventNotificationBuilderProtocol
+
     func buildContent(event: MeetingEvent) async -> UserNotification? {
         switch event {
         case let .delete(event):
             await meetingDeleteEventBuilder.buildContent(event: event)
+        case let .memberAdd(event):
+            await meetingMemberAddEventBuilder.buildContent(event: event)
         default:
             nil
         }
