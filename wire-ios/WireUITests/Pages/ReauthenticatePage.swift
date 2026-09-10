@@ -19,24 +19,15 @@
 import WireLocators
 import XCTest
 
-/// Alert shown when the self user's session becomes invalid while logged in,
-/// e.g. after being removed from the team.
-class SessionExpiredPage: PageModel {
+/// Shown when the app asks the self user to log back in with an already-known
+/// (prefilled) email, e.g. after the session-expired alert is dismissed.
+class ReauthenticatePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        alert
+        passwordField
     }
 
-    var alert: XCUIElement {
-        app.alerts[Locators.SessionExpiredPage.alertTitle.rawValue]
-    }
-
-    var okButton: XCUIElement {
-        alert.buttons[Locators.SessionExpiredPage.okButton.rawValue]
-    }
-
-    func confirm() throws -> ReauthenticatePage {
-        okButton.tap()
-        return try ReauthenticatePage()
+    var passwordField: XCUIElement {
+        app.secureTextFields[Locators.LoginPage.passwordSecureTextField.rawValue]
     }
 }

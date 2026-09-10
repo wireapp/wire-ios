@@ -117,19 +117,16 @@ struct AccountStore {
 
     @discardableResult
     func deleteAccount(_ account: Account) -> Bool {
-        let url = url(for: account.userIdentifier)
-        guard fileManager.fileExists(atPath: url.path(percentEncoded: false)) else {
-            // Already deleted, nothing to do.
-            return true
-        }
-
         do {
-            try fileManager.removeItem(at: url)
+            try fileManager.removeItem(at: url(for: account.userIdentifier))
             return true
-        } catch {
-            let accountDescription = account.safeForLoggingDescription
-            let errorDescription = error.safeForLoggingDescription
-            log.error("Unable to delete account \(accountDescription), error: \(errorDescription)")
+        } catch let error as NSError {
+            // Already deleted, nothing to do, and no need to log a spurious error.
+            if error.domain != NSCocoaErrorDomain || error.code != NSFileNoSuchFileError {
+                let accountDescription = account.safeForLoggingDescription
+                let errorDescription = error.safeForLoggingDescription
+                log.error("Unable to delete account \(accountDescription), error: \(errorDescription)")
+            }
             return false
         }
     }
