@@ -30,9 +30,8 @@ extension SettingsCellDescriptorFactory {
     var optionsGroup: any SettingsCellDescriptorType {
         let descriptors = [
             notificationVisibleSection,
-            notificationSoundSection,
             chatHeadsSection,
-            soundAlertSection,
+            soundSection,
             callKitSection,
             muteCallSection,
             SecurityFlags.forceConstantBitRateCalls.isEnabled ? nil : VBRSection,
@@ -75,13 +74,6 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    private var notificationSoundSection: SettingsSectionDescriptorType {
-        SettingsSectionDescriptor(
-            cellDescriptors: [notificationSoundGroup],
-            footer: L10n.Localizable.Self.Settings.Notifications.Sound.footer
-        )
-    }
-
     private var chatHeadsSection: SettingsSectionDescriptorType {
         let chatHeadsToggle = SettingsPropertyToggleCellDescriptor(
             settingsProperty: settingsPropertyFactory.property(.chatHeadsDisabled),
@@ -95,8 +87,11 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    private var soundAlertSection: SettingsSectionDescriptorType {
-        SettingsSectionDescriptor(cellDescriptors: [soundAlertGroup])
+    private var soundSection: SettingsSectionDescriptorType {
+        SettingsSectionDescriptor(
+            cellDescriptors: [soundAlertGroup, notificationSoundGroup],
+            footer: L10n.Localizable.Self.Settings.Notifications.Sound.footer
+        )
     }
 
     private var callKitSection: SettingsSectionDescriptorType {
