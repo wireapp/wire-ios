@@ -17,13 +17,19 @@
 //
 
 import Foundation
+import UserNotifications
+import WireUtilities
 
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
 
+    // These values are persisted by ExtensionSettings in the shared app-group defaults.
+    private static let messageNotificationSoundPreferenceKey = "messageNotificationSound"
+    private static let systemDefaultPreferenceValue = "systemDefault"
+
     /// Storage of the user's preferred notification sounds.
 
-    public static var storage: UserDefaults = .standard
+    public static var storage: UserDefaults = .shared()
 
     case call
     case ping
@@ -33,6 +39,18 @@ public enum NotificationSound {
     /// The name of the song.
     public var name: String {
         defaultFileName
+    }
+
+    /// The sound to use when displaying the notification.
+    public var userNotificationSound: UNNotificationSound {
+        switch self {
+        case .default:
+            .default
+        case .newMessage where usesSystemDefaultForNewMessages:
+            .default
+        default:
+            UNNotificationSound(named: .init(defaultFileName))
+        }
     }
 
     // MARK: - Utilities
@@ -46,13 +64,7 @@ public enum NotificationSound {
         }
     }
 
-    // Unused - leaving this here in case we need to support custom sounds again in the future.
-    private var preferenceKey: String? {
-        switch self {
-        case .call: "ZMCallSoundName"
-        case .ping: "ZMPingSoundName"
-        case .default: nil
-        case .newMessage: "ZMMessageSoundName"
-        }
+    private var usesSystemDefaultForNewMessages: Bool {
+        Self.storage.string(forKey: Self.messageNotificationSoundPreferenceKey) == Self.systemDefaultPreferenceValue
     }
 }

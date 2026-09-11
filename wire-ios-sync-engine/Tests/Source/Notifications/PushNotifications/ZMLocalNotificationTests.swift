@@ -17,6 +17,7 @@
 //
 
 import GenericMessageProtocol
+import UserNotifications
 import XCTest
 
 @testable import WireSyncEngine
@@ -102,6 +103,21 @@ class ZMLocalNotificationTests: MessagingTest {
 
     func testMessageNotificationSoundFileName() {
         XCTAssertEqual(NotificationSound.newMessage.name, "new_message.caf")
+    }
+
+    func testMessageNotificationUsesSystemDefaultWhenSelected() {
+        let previousStorage = NotificationSound.storage
+        let suiteName = UUID().uuidString
+        let storage = UserDefaults(suiteName: suiteName)!
+        NotificationSound.storage = storage
+        defer {
+            NotificationSound.storage = previousStorage
+            storage.removePersistentDomain(forName: suiteName)
+        }
+
+        storage.set("systemDefault", forKey: "messageNotificationSound")
+
+        XCTAssertEqual(NotificationSound.newMessage.userNotificationSound, UNNotificationSound.default)
     }
 
     // MARK: - Helpers
