@@ -302,10 +302,13 @@ public final class MainTabBarController<
         if meetingsNavigationController == nil, meetingsUI != nil {
             let meetingsNavigationController = UINavigationController()
             meetingsNavigationController.navigationBar.isTranslucent = false
+            // Compute the insertion index BEFORE the property assignment:
+            // `insertionIndex` reads `orderedContents`, which reflects the
+            // installed nav controllers, so assigning first would include
+            // `.meetings` in the search and land it one slot too far right.
+            let insertIndex = insertionIndex(for: .meetings)
             self.meetingsNavigationController = meetingsNavigationController
-            // Insertion index derived from the canonical order; independent of
-            // whether earlier optional tabs (e.g. files) are installed.
-            viewControllers?.insert(meetingsNavigationController, at: insertionIndex(for: .meetings))
+            viewControllers?.insert(meetingsNavigationController, at: insertIndex)
             setupMeetingsTabBarItem()
         }
 
@@ -382,10 +385,13 @@ public final class MainTabBarController<
         if filesNavigationController == nil {
             let filesNavigationController = UINavigationController()
             filesNavigationController.navigationBar.isTranslucent = false
+            // Compute the insertion index BEFORE the property assignment:
+            // `insertionIndex` reads `orderedContents`, which reflects the
+            // installed nav controllers, so assigning first would include
+            // `.files` in the search and land it one slot too far right.
+            let insertIndex = insertionIndex(for: .files)
             self.filesNavigationController = filesNavigationController
-            // Insertion index derived from the canonical order; independent of
-            // whether other optional tabs (e.g. meetings) are already installed.
-            viewControllers?.insert(filesNavigationController, at: insertionIndex(for: .files))
+            viewControllers?.insert(filesNavigationController, at: insertIndex)
             setupFilesTabBarItem()
         }
 
