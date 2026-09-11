@@ -21,6 +21,7 @@ public import WireLogging
 
 import CryptoKit
 import DatadogCore
+import DatadogCrashReporting
 import DatadogLogs
 import DatadogTrace
 import UIKit
@@ -64,6 +65,8 @@ public final class WireDatadog {
             with: configuration,
             trackingConsent: .granted
         )
+
+        CrashReporting.enable()
 
         let logsConfiguration = Logs.Configuration()
         Logs.enable(with: logsConfiguration)
