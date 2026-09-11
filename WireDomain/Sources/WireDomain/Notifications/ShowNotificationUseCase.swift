@@ -95,6 +95,9 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
             notification = UNMutableNotificationContent()
             let body = NotificationBody.bundled(messagesCount: notifications.count)
             notification.body = body.make()
+            notification.sound = notifications.first {
+                $0.sound == NotificationSound.newMessage.userNotificationSound
+            }?.sound
         }
 
         notification.interruptionLevel = .timeSensitive
