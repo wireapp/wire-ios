@@ -51,4 +51,16 @@ final class ExtensionSettingsTests: XCTestCase {
         settings.disableLinkPreviews = false
         XCTAssertFalse(settings.disableLinkPreviews)
     }
+
+    func testThatItUsesWireMessageNotificationSoundByDefault() {
+        XCTAssertEqual(settings.messageNotificationSound, .wire)
+    }
+
+    func testThatItPersistsMessageNotificationSound() {
+        settings.messageNotificationSound = .systemDefault
+
+        let restoredSettings = ExtensionSettings(defaults: defaults)
+
+        XCTAssertEqual(restoredSettings.messageNotificationSound, .systemDefault)
+    }
 }
