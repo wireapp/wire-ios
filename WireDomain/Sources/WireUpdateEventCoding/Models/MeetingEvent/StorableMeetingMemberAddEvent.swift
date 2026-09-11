@@ -16,10 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum MeetingEventCodingKeys: String, CodingKey {
+import WireNetwork
 
-    case qualifiedID = "qualified_id"
-    case qualifiedFrom = "qualified_from"
-    case time
+struct StorableMeetingMemberAddEvent: Equatable, Codable, Sendable {
+
+    private let meetingID: StorableQualifiedID
+    private let senderID: StorableQualifiedID
+
+    init(_ value: WireNetwork.MeetingMemberAddEvent) {
+        self.meetingID = StorableQualifiedID(value.meetingID)
+        self.senderID = StorableQualifiedID(value.senderID)
+    }
+
+    func toAPIModel() -> WireNetwork.MeetingMemberAddEvent {
+        .init(meetingID: meetingID.toAPIModel(), senderID: senderID.toAPIModel())
+    }
 
 }

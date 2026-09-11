@@ -31,20 +31,23 @@ public final class ClientSessionComponent {
     /// Provides callbacks for other modules.
     public struct CompletionHandlers {
         let onProcessedCallEvent: (CallEventInfo) -> Void
-        let onMeetingCancellation: (UNNotificationContent) async -> Void
+        let onMeetingNotification: (UNNotificationContent) async -> Void
+        let isApplicationActive: @Sendable () async -> Bool
         let onSelfClientInvalidated: () async -> Void
         let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
         let onAuthenticationFailure: @Sendable () -> Void
 
         public init(
             onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
-            onMeetingCancellation: @escaping (UNNotificationContent) async -> Void = { _ in },
+            onMeetingNotification: @escaping (UNNotificationContent) async -> Void = { _ in },
+            isApplicationActive: @escaping @Sendable () async -> Bool,
             onSelfClientInvalidated: @escaping () async -> Void,
             onAuthenticationFailure: @escaping @Sendable () -> Void,
             onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void,
         ) {
             self.onProcessedCallEvent = onProcessedCallEvent
-            self.onMeetingCancellation = onMeetingCancellation
+            self.onMeetingNotification = onMeetingNotification
+            self.isApplicationActive = isApplicationActive
             self.onSelfClientInvalidated = onSelfClientInvalidated
             self.onProcessedTypingUsers = onProcessedTypingUsers
             self.onAuthenticationFailure = onAuthenticationFailure
@@ -733,6 +736,20 @@ public final class ClientSessionComponent {
         accountID: selfUserID
     )
 
+    private lazy var meetingMemberAddEventNotificationBuilder = MeetingMemberAddEventNotificationBuilder(
+        meetingsAPI: meetingsAPI,
+        usersAPI: usersAPI,
+        featureConfigLocalStore: featureConfigsLocalStore,
+        accountID: selfUserID
+    )
+
+    private lazy var meetingUpdateEventNotificationBuilder = MeetingUpdateEventNotificationBuilder(
+        meetingsAPI: meetingsAPI,
+        usersAPI: usersAPI,
+        featureConfigLocalStore: featureConfigsLocalStore,
+        accountID: selfUserID
+    )
+
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,
         conversationRepository: conversationRepository
@@ -748,12 +765,24 @@ public final class ClientSessionComponent {
     )
 
     private func handleBeforeProcessingLiveEvent(_ event: UpdateEvent) async {
-        guard case let .meeting(.delete(event)) = event else { return }
-        guard case let .text(content)? = await meetingDeleteEventNotificationBuilder.buildContent(event: event) else {
+        // Meeting notifications are only shown while the app is foregrounded.
+        // Bail before the builders' REST calls so live-event processing isn't
+        // blocked on network work whose result would be discarded anyway.
+        guard case .meeting = event, await completionHandlers.isApplicationActive() else { return }
+
+        let notification: UserNotification?
+        switch event {
+        case let .meeting(.delete(event)):
+            notification = await meetingDeleteEventNotificationBuilder.buildContent(event: event)
+        case let .meeting(.memberAdd(event)):
+            notification = await meetingMemberAddEventNotificationBuilder.buildContent(event: event)
+        case let .meeting(.update(event)):
+            notification = await meetingUpdateEventNotificationBuilder.buildContent(event: event)
+        default:
             return
         }
-
-        await completionHandlers.onMeetingCancellation(content)
+        guard case let .text(content)? = notification else { return }
+        await completionHandlers.onMeetingNotification(content)
     }
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
