@@ -78,6 +78,16 @@ struct MeetingFormView: View {
                 )
             }
             .alert(
+                Strings.Error.ExpiredStartDate.title,
+                isPresented: $viewModel.hasExpiredStartDateError
+            ) {
+                Button(Strings.Error.Alert.ok) {
+                    expandedField = .startDate
+                }
+            } message: {
+                Text(Strings.Error.ExpiredStartDate.message)
+            }
+            .alert(
                 Strings.Error.ConversationName.title,
                 isPresented: $viewModel.hasConversationNameUpdateError
             ) {
@@ -141,6 +151,7 @@ struct MeetingFormView: View {
             dateTimeRow(
                 label: Strings.Time.starts,
                 date: $viewModel.startDate,
+                pickerDate: $viewModel.startDatePickerSelection,
                 range: viewModel.startDateRange,
                 maximumDate: nil,
                 dateField: .startDate,
@@ -200,6 +211,7 @@ struct MeetingFormView: View {
     private func dateTimeRow(
         label: String,
         date: Binding<Date>,
+        pickerDate: Binding<Date>? = nil,
         range: PartialRangeFrom<Date>,
         maximumDate: Date?,
         dateField: ExpandedField,
@@ -228,12 +240,12 @@ struct MeetingFormView: View {
         }
 
         if expandedField == dateField {
-            DatePicker("", selection: date, in: range, displayedComponents: .date)
+            DatePicker("", selection: pickerDate ?? date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
         }
         if expandedField == timeField {
-            timePicker(date: date, range: range, maximumDate: maximumDate)
+            timePicker(date: pickerDate ?? date, range: range, maximumDate: maximumDate)
         }
     }
 
