@@ -92,18 +92,26 @@ package final class MeetingFormViewModel {
     }
 
     /// Scheduled meetings start at the next available picker interval.
-    /// When editing a meeting whose start lies in the past, its original day
-    /// stays selectable unless it is recurring; recurring meetings are moved
-    /// to their next editable occurrence so the backend receives a non-past start date.
+    /// Edited meetings may start up to 24 hours in the past, as allowed by the backend.
     var startDateRange: PartialRangeFrom<Date> {
-        var earliest = currentDateProvider.now
+        let earliest = currentDateProvider.now
         if case .scheduled = mode {
             return Self.nextSelectableStartDate(after: earliest)...
         }
-        if case let .edit(meeting) = mode, meeting.recurrence == nil {
-            earliest = min(earliest, meeting.start)
+        if case .edit = mode {
+            return earliest.addingTimeInterval(-TimeInterval.oneDay)...
         }
         return Calendar.current.startOfDay(for: earliest)...
+    }
+
+    /// Present a valid picker selection without changing the meeting merely by opening the picker.
+    /// The form displays `startDate`; only a valid picker change updates it.
+    var startDatePickerSelection: Date {
+        get { max(startDate, startDateRange.lowerBound) }
+        set {
+            guard startDateRange.contains(newValue) else { return }
+            startDate = newValue
+        }
     }
 
     /// Acceptance: the end picker must stay on the start date, with 23:45 as the latest available time.
@@ -127,6 +135,8 @@ package final class MeetingFormViewModel {
     /// Set when creating a meeting fails. The caught error itself is only
     /// logged; the view shows a generic alert.
     var hasError = false
+
+    var hasExpiredStartDateError = false
 
     /// Set when the meeting was saved but its dedicated conversation could not be renamed.
     var hasConversationNameUpdateError = false
@@ -206,10 +216,15 @@ package final class MeetingFormViewModel {
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
         guard !isLoading else { return }
-        isLoading = true
         hasError = false
         hasConversationNameUpdateError = false
         meetingPendingConversationNameUpdate = nil
+        hasExpiredStartDateError = false
+        if mode.isEdit, startDate < currentDateProvider.now.addingTimeInterval(-TimeInterval.oneDay) {
+            hasExpiredStartDateError = true
+            return
+        }
+        isLoading = true
         defer { isLoading = false }
         do {
             let meeting = try await saveMeeting()
@@ -278,12 +293,13 @@ package final class MeetingFormViewModel {
     }
 
     private static func editableTimeRange(for meeting: Meeting, now: Date) -> (start: Date, end: Date) {
-        guard meeting.recurrence != nil, meeting.start < now else {
+        let earliestStart = now.addingTimeInterval(-TimeInterval.oneDay)
+        guard meeting.recurrence != nil, meeting.start < earliestStart else {
             return (meeting.start, meeting.end)
         }
 
         guard let nextOccurrence = MeetingOccurrencePaginator()
-            .occurrences(for: [meeting], startingAt: now, offset: 0, limit: 1)
+            .occurrences(for: [meeting], startingAt: earliestStart, offset: 0, limit: 1)
             .first else {
             return (meeting.start, meeting.end)
         }
