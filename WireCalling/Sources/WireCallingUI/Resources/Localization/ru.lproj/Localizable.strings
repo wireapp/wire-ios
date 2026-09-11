@@ -94,3 +94,6 @@
 "wireMeetings.schedule.members.retry.button" = "Повторить";
 "wireMeetings.schedule.members.selected.title" = "Выбрано";
 "wireMeetings.schedule.members.contacts.title" = "Контакты";
+
+"wireMeetings.schedule.error.expiredStartDate.title" = "Выберите более позднее время начала";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Время начала встречи можно изменить только на период не более чем за 24 часа до текущего момента. Выберите более позднее время начала и сохраните изменения заново.";

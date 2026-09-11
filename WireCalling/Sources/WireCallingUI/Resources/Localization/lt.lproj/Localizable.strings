@@ -94,3 +94,6 @@
 "wireMeetings.schedule.members.retry.button" = "Retry";
 "wireMeetings.schedule.members.selected.title" = "Selected";
 "wireMeetings.schedule.members.contacts.title" = "Kontaktai";
+
+"wireMeetings.schedule.error.expiredStartDate.title" = "Choose a later start time";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Meetings can only be updated with a start time up to 24 hours in the past. Choose a later start time and save again.";
