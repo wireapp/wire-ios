@@ -102,6 +102,18 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPreview.rawValue].firstMatch
     }
 
+    var replyMenuButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.replyOptionOnMessage.rawValue].firstMatch
+    }
+
+    var replyPreviewView: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.replyPreviewView.rawValue].firstMatch
+    }
+
+    var cancelReplyButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.cancelReplyButton.rawValue]
+    }
+
     var userRemovedSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.userRemovedSystemMessage.rawValue]
     }
@@ -322,6 +334,60 @@ class ActiveConversationPage: PageModel {
     func sendMessage(_ message: String) throws -> ActiveConversationPage {
         try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
         sendButton.tap()
+        return self
+    }
+
+    /// Locates a text/link message bubble by its exact content, for long-pressing to reply to it.
+    func message(withText text: String) -> XCUIElement {
+        messageLabels.matching(NSPredicate(format: "value == %@", text)).firstMatch
+    }
+
+    /// Long-presses the given message element, taps "Reply" in the action menu, then types
+    /// and sends the reply text. Works for text, audio, image and link message cells alike,
+    /// since the reply action is presented the same way regardless of content type.
+    @discardableResult
+    func replyToMessage(_ element: XCUIElement, withText replyText: String) throws -> ActiveConversationPage {
+        XCTAssertTrue(element.waitForExistence(timeout: 5), "Message to reply to was not found")
+        element.press(forDuration: 1.0)
+        replyMenuButton.waitAndTap()
+        XCTAssertTrue(replyPreviewView.waitForExistence(timeout: 3), "Reply preview did not appear in input bar")
+        try inputMessageField.tapIfKeyboardNotFocused().typeText(replyText)
+        sendButton.tap()
+        return self
+    }
+
+    /// Quoted-original preview shown inside a sent reply bubble, identified by content type
+    /// ("text", "audio", "image", "video", "file", per `ConversationQuoteCell.typeString`).
+    func quotedContent(ofType type: String) -> XCUIElement {
+        app.descendants(matching: .any)["quote.type.\(type)"].firstMatch
+    }
+
+    var quotedOriginalSender: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.originalSender.rawValue].firstMatch
+    }
+
+    @discardableResult
+    func verifyReplySent(
+        replyText: String,
+        quotedContentType: String,
+        quotedSenderName: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            quotedContent(ofType: quotedContentType).waitForExistence(timeout: 5),
+            "Quoted content of type '\(quotedContentType)' not found in reply",
+            file: file,
+            line: line
+        )
+        XCTAssertEqual(
+            quotedOriginalSender.label,
+            quotedSenderName,
+            "Quoted message sender didn't match expected value \(quotedSenderName)",
+            file: file,
+            line: line
+        )
+        verifyMessageSent(replyText, file: file, line: line)
         return self
     }
 
