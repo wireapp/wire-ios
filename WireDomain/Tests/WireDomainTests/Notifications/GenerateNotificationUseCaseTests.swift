@@ -40,7 +40,8 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
             conversationEventBuilder: conversationEventBuilder,
             meetingEventBuilder: MeetingEventNotificationBuilder(
                 meetingDeleteEventBuilder: meetingDeleteEventBuilder,
-                meetingMemberAddEventBuilder: MockMeetingMemberAddEventNotificationBuilder()
+                meetingMemberAddEventBuilder: MockMeetingMemberAddEventNotificationBuilder(),
+                meetingUpdateEventBuilder: MockMeetingUpdateEventNotificationBuilder()
             ),
             userEventBuilder: userEventBuilder,
             eventID: .mockID1
@@ -185,6 +186,12 @@ private final class MockMeetingDeleteEventNotificationBuilder: MeetingDeleteEven
 
 private struct MockMeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificationBuilderProtocol {
     func buildContent(event: MeetingMemberAddEvent) async -> UserNotification? {
+        nil
+    }
+}
+
+private struct MockMeetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuilderProtocol {
+    func buildContent(event: MeetingUpdateEvent) async -> UserNotification? {
         nil
     }
 }

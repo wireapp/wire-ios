@@ -7,8 +7,6 @@ gem 'fastlane', '2.238.0'
 gem 'git'
 gem 'httparty'
 gem 'mutex_m'
-gem 'danger'
-gem 'danger-xcode_summary'
 gem "nkf"
 gem 'rexml', '>=3.3.2'
 

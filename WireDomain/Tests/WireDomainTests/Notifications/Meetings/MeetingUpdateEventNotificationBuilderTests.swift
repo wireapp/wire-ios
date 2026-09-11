@@ -21,26 +21,25 @@ import UserNotifications
 import WireDataModel
 import WireDataModelSupport
 import WireNetwork
-import WireUpdateEventCoding
 import XCTest
 
 @testable import WireDomain
 
-final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
+final class MeetingUpdateEventNotificationBuilderTests: XCTestCase {
 
     private var stackHelper: CoreDataStackHelper!
     private var stack: CoreDataStack!
-    private var meetingsAPI: InvitationMeetingsAPI!
-    private var usersAPI: InvitationUsersAPI!
+    private var meetingsAPI: UpdateMeetingsAPI!
+    private var usersAPI: UpdateUsersAPI!
     private var featureStore: MockFeatureConfigLocalStoreProtocol!
-    private var sut: MeetingMemberAddEventNotificationBuilder!
+    private var sut: MeetingUpdateEventNotificationBuilder!
 
     override func setUp() async throws {
         try await super.setUp()
         stackHelper = CoreDataStackHelper()
         stack = try await stackHelper.createStack()
-        meetingsAPI = InvitationMeetingsAPI()
-        usersAPI = InvitationUsersAPI()
+        meetingsAPI = UpdateMeetingsAPI()
+        usersAPI = UpdateUsersAPI()
         featureStore = MockFeatureConfigLocalStoreProtocol()
         let context = stack.syncContext
         featureStore.fetchFeatureName_MockValue = await context.perform {
@@ -48,7 +47,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
             return Feature.fetch(name: .meetings, context: context)
         }
         featureStore.isFeatureEnabled_ReturnValue = true
-        sut = MeetingMemberAddEventNotificationBuilder(
+        sut = MeetingUpdateEventNotificationBuilder(
             meetingsAPI: meetingsAPI,
             usersAPI: usersAPI,
             featureConfigLocalStore: featureStore,
@@ -69,28 +68,27 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         try await super.tearDown()
     }
 
-    func testInvitationFetchesDetailsAndUsesInviterRatherThanCreator() async throws {
+    func testUpdateFetchesMeetingAndHostAndBuildsNotification() async throws {
         let result = await sut.buildContent(event: Scaffolding.event)
         guard case let .text(content) = try XCTUnwrap(result) else {
-            return XCTFail("Expected an invitation notification")
+            return XCTFail("Expected an update notification")
         }
         XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
-        XCTAssertEqual(usersAPI.requestedIDs, [Scaffolding.senderID])
-        XCTAssertNotEqual(Scaffolding.meeting.creatorID, Scaffolding.senderID)
-        XCTAssertEqual(content.title, "Planning")
-        XCTAssertEqual(content.body, "Federico invited you to a meeting on 10 Oct 2026 · 14:00 to 15:00")
-        XCTAssertEqual(content.categoryIdentifier, NotificationCategory.meetingInvitation.rawValue)
+        XCTAssertEqual(usersAPI.requestedIDs, [Scaffolding.meeting.creatorID])
+        XCTAssertEqual(content.title, "Update: Planning")
+        XCTAssertEqual(content.body, "Alice updated this meeting to 10 Oct 2026 · 14:00 to 15:00")
+        XCTAssertEqual(content.categoryIdentifier, NotificationCategory.meetingUpdate.rawValue)
         XCTAssertEqual(content.sound, .default)
         XCTAssertEqual(content.userInfo[NotificationUserInfoKey.selfUserID] as? String, sut.accountID.uuidString)
     }
 
-    func testInvitationUsesRecipientTimeZone() async throws {
+    func testUpdateUsesRecipientTimeZone() async throws {
         sut.timeZone = TimeZone(secondsFromGMT: 7200)!
         let result = await sut.buildContent(event: Scaffolding.event)
         guard case let .text(content) = try XCTUnwrap(result) else {
-            return XCTFail("Expected an invitation notification")
+            return XCTFail("Expected an update notification")
         }
-        XCTAssertEqual(content.body, "Federico invited you to a meeting on 10 Oct 2026 · 16:00 to 17:00")
+        XCTAssertEqual(content.body, "Alice updated this meeting to 10 Oct 2026 · 16:00 to 17:00")
     }
 
     func testDisabledMeetingsDoNotFetchOrNotify() async {
@@ -108,60 +106,47 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertTrue(usersAPI.requestedIDs.isEmpty)
     }
 
-    func testMissingInviterDoesNotNotify() async {
+    func testSelfAuthoredUpdateDoesNotNotify() async {
+        sut = MeetingUpdateEventNotificationBuilder(
+            meetingsAPI: meetingsAPI,
+            usersAPI: usersAPI,
+            featureConfigLocalStore: featureStore,
+            accountID: Scaffolding.meeting.creatorID.id,
+            locale: Locale(identifier: "en_GB"),
+            timeZone: TimeZone(secondsFromGMT: 0)!
+        )
+        let result = await sut.buildContent(event: Scaffolding.event)
+        XCTAssertNil(result)
+        XCTAssertTrue(usersAPI.requestedIDs.isEmpty)
+    }
+
+    func testMissingHostDoesNotNotify() async {
         usersAPI.shouldFail = true
         let result = await sut.buildContent(event: Scaffolding.event)
         XCTAssertNil(result)
     }
 
-    func testGenericMeetingUpdateDoesNotNotify() async {
-        let builder = MeetingEventNotificationBuilder(
-            meetingDeleteEventBuilder: UnusedMeetingDeleteBuilder(),
-            meetingMemberAddEventBuilder: sut,
-            meetingUpdateEventBuilder: UnusedMeetingUpdateBuilder()
-        )
-        let result = await builder.buildContent(event: .update(.init(meetingID: Scaffolding.meetingID)))
+    func testEmptyHostNameDoesNotNotify() async {
+        usersAPI.overrideName = ""
+        let result = await sut.buildContent(event: Scaffolding.event)
         XCTAssertNil(result)
-        XCTAssertTrue(meetingsAPI.requestedIDs.isEmpty)
     }
 
-    func testMemberAddIsRoutedToInvitationBuilder() async {
+    func testUpdateIsRoutedToUpdateBuilder() async {
         let builder = MeetingEventNotificationBuilder(
-            meetingDeleteEventBuilder: UnusedMeetingDeleteBuilder(),
-            meetingMemberAddEventBuilder: sut,
-            meetingUpdateEventBuilder: UnusedMeetingUpdateBuilder()
+            meetingDeleteEventBuilder: UnusedDeleteBuilder(),
+            meetingMemberAddEventBuilder: UnusedMemberAddBuilder(),
+            meetingUpdateEventBuilder: sut
         )
-        let result = await builder.buildContent(event: .memberAdd(Scaffolding.event))
+        let result = await builder.buildContent(event: .update(Scaffolding.event))
         XCTAssertNotNil(result)
         XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
-    }
-
-    func testMemberAddStillRefreshesMeetingThroughUpdateProcessor() async throws {
-        let processors = InvitationEventProcessors()
-        let processor = MeetingEventProcessor(
-            createEventProcessor: processors,
-            deleteEventProcessor: processors,
-            updateEventProcessor: processors
-        )
-        try await processor.processEvent(.memberAdd(Scaffolding.event))
-        XCTAssertEqual(processors.updates, [MeetingUpdateEvent(meetingID: Scaffolding.meetingID)])
-    }
-
-    func testStoredInvitationPreservesEventTypeAndInviter() throws {
-        let envelope = UpdateEventEnvelope(
-            id: UUID(),
-            events: [.meeting(.memberAdd(Scaffolding.event))],
-            isTransient: false
-        )
-        let coder = StorableUpdateEventCoder()
-        XCTAssertEqual(try coder.decode(coder.encode(envelope)), envelope)
     }
 }
 
 private enum Scaffolding {
     static let meetingID = WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
-    static let senderID = WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
-    static let event = MeetingMemberAddEvent(meetingID: meetingID, senderID: senderID)
+    static let event = MeetingUpdateEvent(meetingID: meetingID)
     static let startTime = ISO8601DateFormatter().date(from: "2026-10-10T14:00:00Z")!
     static let meeting = MeetingResponse(
         id: meetingID,
@@ -177,45 +162,46 @@ private enum Scaffolding {
     )
 }
 
-private enum InvitationTestError: Error {
+private enum UpdateTestError: Error {
     case unavailable
 }
 
-private final class InvitationMeetingsAPI: MeetingsAPI, @unchecked Sendable {
+private final class UpdateMeetingsAPI: MeetingsAPI, @unchecked Sendable {
     var requestedIDs: [WireNetwork.QualifiedID] = []
     var shouldFail = false
 
     func getMeeting(id: WireNetwork.QualifiedID) async throws -> MeetingResponse {
         requestedIDs.append(id)
-        if shouldFail { throw InvitationTestError.unavailable }
+        if shouldFail { throw UpdateTestError.unavailable }
         return Scaffolding.meeting
     }
 
-    func listMeetings() async throws -> [MeetingResponse] { throw InvitationTestError.unavailable }
+    func listMeetings() async throws -> [MeetingResponse] { throw UpdateTestError.unavailable }
     func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
-        throw InvitationTestError.unavailable
+        throw UpdateTestError.unavailable
     }
 
     func updateMeeting(
         id: WireNetwork.QualifiedID,
         parameters: UpdateMeetingParameters
     ) async throws -> MeetingResponse {
-        throw InvitationTestError.unavailable
+        throw UpdateTestError.unavailable
     }
 
-    func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw InvitationTestError.unavailable }
+    func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw UpdateTestError.unavailable }
 }
 
-private final class InvitationUsersAPI: UsersAPI {
+private final class UpdateUsersAPI: UsersAPI {
     var requestedIDs: [UserID] = []
     var shouldFail = false
+    var overrideName: String?
 
     func getUser(for userID: UserID) async throws -> WireNetwork.User {
         requestedIDs.append(userID)
-        if shouldFail { throw InvitationTestError.unavailable }
+        if shouldFail { throw UpdateTestError.unavailable }
         return WireNetwork.User(
             id: userID,
-            name: "Federico",
+            name: overrideName ?? "Alice",
             handle: nil,
             teamID: nil,
             type: nil,
@@ -231,22 +217,13 @@ private final class InvitationUsersAPI: UsersAPI {
         )
     }
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList { throw InvitationTestError.unavailable }
+    func getUsers(userIDs: [UserID]) async throws -> UserList { throw UpdateTestError.unavailable }
 }
 
-private struct UnusedMeetingDeleteBuilder: MeetingDeleteEventNotificationBuilderProtocol {
+private struct UnusedDeleteBuilder: MeetingDeleteEventNotificationBuilderProtocol {
     func buildContent(event: MeetingDeleteEvent) async -> UserNotification? { nil }
 }
 
-private struct UnusedMeetingUpdateBuilder: MeetingUpdateEventNotificationBuilderProtocol {
-    func buildContent(event: MeetingUpdateEvent) async -> UserNotification? { nil }
-}
-
-private final class InvitationEventProcessors: MeetingCreateEventProcessorProtocol,
-    MeetingDeleteEventProcessorProtocol, MeetingUpdateEventProcessorProtocol {
-    var updates: [MeetingUpdateEvent] = []
-
-    func processEvent(_ event: MeetingCreateEvent) async throws { XCTFail("Unexpected create") }
-    func processEvent(_ event: MeetingDeleteEvent) async { XCTFail("Unexpected delete") }
-    func processEvent(_ event: MeetingUpdateEvent) async throws { updates.append(event) }
+private struct UnusedMemberAddBuilder: MeetingMemberAddEventNotificationBuilderProtocol {
+    func buildContent(event: MeetingMemberAddEvent) async -> UserNotification? { nil }
 }
