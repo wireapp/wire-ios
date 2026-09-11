@@ -150,7 +150,9 @@ extension ConversationActionController {
             }
             await MainActor.run {
                 userSession.enqueue {
-                    conversation.removeOrShowError(participant: user)
+                    conversation.removeOrShowError(participant: user) { [weak self] result in
+                        self?.handleRemoveParticipantResult(result, conversation: conversation)
+                    }
                 }
             }
         }
@@ -186,33 +188,11 @@ extension ConversationActionController {
                     throw CancellationError()
                 }
                 do {
-                    try await performAdminPromotion(user: user, in: conversation) { removeParticipantResult in
-                        switch removeParticipantResult {
-                        case .success:
-                            break
-
-                        case let .failure(ConversationRemoveParticipantError.requiresAdmin(eligibleMembers)):
-                            let newEligibleCandidates: [UserType] = conversation.localParticipantsExcludingSelf
-                                .filter { participant in
-                                    guard let id = participant.qualifiedID else {
-                                        return false
-                                    }
-
-                                    return eligibleMembers.contains {
-                                        $0.id == id.uuid && $0.domain == id.domain
-                                    }
-                                }
-
-                            self.presentAdminSelection(
-                                for: conversation,
-                                candidates: newEligibleCandidates,
-                                showAlert: true
-                            )
-
-                        case let .failure(error):
-                            // error alert displayed within `removeOrShowError` method, see `showAlertForRemoval`.
-                            WireLogger.conversation.warn("remove participant failed: \(error)")
-                        }
+                    try await performAdminPromotion(
+                        user: user,
+                        in: conversation
+                    ) { [weak self] removeParticipantResult in
+                        self?.handleRemoveParticipantResult(removeParticipantResult, conversation: conversation)
                     }
                 } catch {
                     WireLogger.conversation.warn("admin promotion failed: \(error)")
@@ -223,6 +203,36 @@ extension ConversationActionController {
         )
         let hostingController = UIHostingController(rootView: AdminSelectionView(viewModel: viewModel))
         present(hostingController)
+    }
+
+    @MainActor
+    private func handleRemoveParticipantResult(_ result: Result<Void, any Error>, conversation: ZMConversation) {
+        switch result {
+        case .success:
+            break
+
+        case let .failure(ConversationRemoveParticipantError.requiresAdmin(eligibleMembers)):
+            let newEligibleCandidates: [UserType] = conversation.localParticipantsExcludingSelf
+                .filter { participant in
+                    guard let id = participant.qualifiedID else {
+                        return false
+                    }
+
+                    return eligibleMembers.contains {
+                        $0.id == id.uuid && $0.domain == id.domain
+                    }
+                }
+
+            presentAdminSelection(
+                for: conversation,
+                candidates: newEligibleCandidates,
+                showAlert: true
+            )
+
+        case let .failure(error):
+            // error alert displayed within `removeOrShowError` method, see `showAlertForRemoval`.
+            WireLogger.conversation.warn("remove participant failed: \(error)")
+        }
     }
 
     private typealias RemoveParticipantResultHandler = (Result<Void, Error>) -> Void
