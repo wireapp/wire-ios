@@ -94,11 +94,15 @@ public final class MainTabBarController<
 
     // MARK: - Private Properties
 
-    private weak var conversationListNavigationController: UINavigationController!
-    private weak var archiveNavigationController: UINavigationController!
-    private weak var meetingsNavigationController: UINavigationController?
-    private weak var settingsNavigationController: UINavigationController!
-    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire drive is
+    // Strongly held (not `weak`) so newly-created nav controllers survive from
+    // their assignment in `setupTabs` / `setMeetingsUI` / `setFilesUI` until the
+    // tab bar controller adopts them via `setViewControllers`. `viewControllers`
+    // remains the source of truth for the actual tab list.
+    private var conversationListNavigationController: UINavigationController!
+    private var archiveNavigationController: UINavigationController!
+    private var meetingsNavigationController: UINavigationController?
+    private var settingsNavigationController: UINavigationController!
+    private var filesNavigationController: UINavigationController? // shown conditionally - when wire drive is
     // enabled.
 
     private weak var _conversationListUI: ConversationListUI?
