@@ -147,12 +147,15 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         didSelectItemAt indexPath: IndexPath
     ) {
         guard indexPath.row == 0 else { return }
-        registerProtocolRowTap()
+        Task {
+            await registerProtocolRowTap()
+        }
     }
 
     // MARK: - Manual MLS migration debug trigger
 
-    private func registerProtocolRowTap() {
+    @MainActor
+    private func registerProtocolRowTap() async {
         let now = Date()
         protocolRowTapTimestamps = protocolRowTapTimestamps.filter {
             now.timeIntervalSince($0) <= Self.manualMigrationTapWindow
@@ -166,13 +169,11 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         guard protocolRowTapTimestamps.count >= Self.manualMigrationTapThreshold else { return }
         protocolRowTapTimestamps.removeAll()
 
-        Task { @MainActor in
-            guard await canTriggerManualMLSMigration else {
-                Self.logger.debug("manual MLS migration trigger denied, eligibility checks failed")
-                return
-            }
-            requestMLSMigration()
+        guard await canTriggerManualMLSMigration else {
+            Self.logger.debug("manual MLS migration trigger denied, eligibility checks failed")
+            return
         }
+        requestMLSMigration()
     }
 
     private var canTriggerManualMLSMigration: Bool {
