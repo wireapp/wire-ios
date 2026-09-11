@@ -376,9 +376,12 @@ final class SearchResultsViewController: UIViewController {
                 }
                 return !filteredParticipants.contains(user)
             }
-            filteredApps = filteredApps
-                .compactMap { $0 as? ZMUser }
-                .filter { !filteredParticipants.contains($0) }
+            filteredApps = filteredApps.filter { app in
+                guard let user = (app as? ZMUser) ?? (app as? ZMSearchUser)?.user else {
+                    return true
+                }
+                return !filteredParticipants.contains(user)
+            }
             filteredCollaborators = filteredCollaborators.filter {
                 guard let user = $0.user else {
                     return true
@@ -454,17 +457,17 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
         didSelectUser user: UserType,
         at indexPath: IndexPath
     ) {
-        if let user = user as? ZMUser, user.type == .regular {
+        if user.isApp {
+            delegate?.searchResultsViewController(self, didTapOnApp: user)
+        } else if user.isBot {
+            delegate?.searchResultsViewController(self, didTapOnBot: user)
+        } else if let user = user as? ZMUser {
             delegate?.searchResultsViewController(
                 self,
                 didTapOnUser: user,
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else if let user = user as? ZMUser, user.type == .app {
-            delegate?.searchResultsViewController(self, didTapOnApp: user)
-        } else if user.isAppOrBot {
-            delegate?.searchResultsViewController(self, didTapOnBot: user)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(
                 self,

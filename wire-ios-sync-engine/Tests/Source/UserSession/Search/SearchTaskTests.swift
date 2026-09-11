@@ -425,6 +425,36 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [user])
     }
 
+    func testThatItDoesNotListAppsFromLocalTeamMembers() async throws {
+        let task = await uiMOC.perform { [self] in
+            // given
+            let team = Team.insertNewObject(in: uiMOC)
+            let appUser = ZMUser.insertNewObject(in: uiMOC)
+            let member = Member.insertNewObject(in: uiMOC)
+
+            appUser.name = "Some App"
+            appUser.type = .app
+
+            member.team = team
+            member.user = appUser
+
+            uiMOC.saveOrRollback()
+
+            let request = SearchRequest(query: "", searchOptions: [.apps], team: team)
+            return makeSearchTask(request: request)
+        }
+
+        // when
+        var result = SearchResult()
+        let resultAggregator = await task.performLocalSearch()
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
+
+        // then
+        XCTAssertTrue(result.apps.isEmpty)
+    }
+
     func testThatItCanExcludeNonActiveTeamMembersLocally() async throws {
         let (userA, task) = await uiMOC.perform { [self] in
             // given
@@ -1094,7 +1124,10 @@ final class SearchTaskTests: DatabaseTest {
             teamID: teamIdentifier,
             type: .app,
             accentID: 2,
-            assets: [],
+            assets: [
+                UserAsset(key: "app-preview-key", size: .preview, type: .image),
+                UserAsset(key: "app-complete-key", size: .complete, type: .image)
+            ],
             deleted: nil,
             email: nil,
             expiresAt: nil,
@@ -1112,7 +1145,9 @@ final class SearchTaskTests: DatabaseTest {
             teamID: otherTeamID,
             type: .app,
             accentID: 1,
-            assets: [],
+            assets: [
+                UserAsset(key: "collaborator-app-complete-key", size: .complete, type: .image)
+            ],
             deleted: nil,
             email: nil,
             expiresAt: nil,
@@ -1186,13 +1221,81 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.apps.first?.handle, "a")
         XCTAssertEqual(result.apps.first?.teamIdentifier, teamIdentifier)
         XCTAssertEqual(result.apps.first?.zmAccentColor?.rawValue, 2)
+        // Profile picture asset keys must be populated straight away from the `/teams/:tid/apps` /
+        // `/teams/:tid/collaborators` response, not left empty until some later detail-screen visit or
+        // remote search happens to enrich the same cached ZMSearchUser.
+        let firstApp = try XCTUnwrap(result.apps.first as? ZMSearchUser)
+        XCTAssertEqual(firstApp.assetKeys?.preview, "app-preview-key")
+        XCTAssertEqual(firstApp.assetKeys?.complete, "app-complete-key")
         XCTAssertEqual(result.apps.last?.qualifiedID(localDomain: "-"), qualifiedID1)
         XCTAssertEqual(result.apps.last?.name, "collaborator app")
         XCTAssertEqual(result.apps.last?.handle, "ca")
         XCTAssertEqual(result.apps.last?.teamIdentifier, otherTeamID)
         XCTAssertEqual(result.apps.last?.zmAccentColor?.rawValue, 1)
+        let lastApp = try XCTUnwrap(result.apps.last as? ZMSearchUser)
+        XCTAssertNil(lastApp.assetKeys?.preview)
+        XCTAssertEqual(lastApp.assetKeys?.complete, "collaborator-app-complete-key")
         // The human collaborator isn't surfaced anywhere for an `.apps`-only request either, since it doesn't
         // request `.contacts`/`.teamMembers`.
+        XCTAssertTrue(result.collaborators.isEmpty)
+    }
+
+    func testThatItListsBotTypedCollaboratorsAsApps() async throws {
+        // given
+        let request = SearchRequest(
+            query: "",
+            searchDomain: "wire.com",
+            searchOptions: [.apps]
+        )
+        let task = makeSearchTask(request: request, apiVersion: .v15)
+
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: "")
+        let otherTeamID = UUID()
+        // A legacy (Proteus) bot shared in as a collaborator. It must surface via the apps result, alongside
+        // real apps, never via the human collaborators result.
+        let collaboratorBotResult = User(
+            id: UserID(qualifiedID),
+            name: "collaborator bot",
+            handle: "cb",
+            teamID: otherTeamID,
+            type: .bot,
+            accentID: 4,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            app: nil,
+            service: nil,
+            supportedProtocols: [.proteus],
+            legalholdStatus: .noConsent
+        )
+
+        teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
+        teamsAPIMock.getCollaboratorsFor_MockMethod = { [teamIdentifier] teamID in
+            XCTAssertEqual(teamID, teamIdentifier)
+            return [
+                CollaboratorInfo(
+                    userID: qualifiedID.uuid,
+                    teamID: otherTeamID,
+                    permissions: [.createTeamConversation]
+                )
+            ]
+        }
+        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+            XCTAssertEqual(userIDs, [UserID(qualifiedID)])
+            return UserList(found: [collaboratorBotResult], failed: [])
+        }
+
+        // when
+        var result = SearchResult()
+        let resultAggregator = try await task.listAppsAndCollaborators()
+        resultAggregator(&result)
+
+        // then
+        XCTAssertEqual(result.apps.count, 1)
+        let app = try XCTUnwrap(result.apps.first)
+        XCTAssertEqual(app.name, "collaborator bot")
+        XCTAssertEqual(app.remoteIdentifier, qualifiedID.uuid)
         XCTAssertTrue(result.collaborators.isEmpty)
     }
 
@@ -1205,7 +1308,9 @@ final class SearchTaskTests: DatabaseTest {
         )
         let task = makeSearchTask(request: request, apiVersion: .v15)
 
-        let qualifiedID = QualifiedID(uuid: UUID(), domain: "wire.com")
+        // The resolved collaborator's QualifiedID sent to `usersAPI.getUsers` is built from the self user's
+        // domain (not the collaborator's own), and the self user has no domain set in this fixture, hence "".
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: "")
         let humanCollaboratorResult = User(
             id: UserID(qualifiedID),
             name: "human collaborator",
@@ -1229,7 +1334,7 @@ final class SearchTaskTests: DatabaseTest {
             return [
                 CollaboratorInfo(
                     userID: qualifiedID.uuid,
-                    teamID: teamIdentifier,
+                    teamID: teamIdentifier!,
                     permissions: [.createTeamConversation]
                 )
             ]
@@ -1284,7 +1389,7 @@ final class SearchTaskTests: DatabaseTest {
             [
                 CollaboratorInfo(
                     userID: qualifiedID.uuid,
-                    teamID: teamIdentifier,
+                    teamID: teamIdentifier!,
                     permissions: [.createTeamConversation]
                 )
             ]

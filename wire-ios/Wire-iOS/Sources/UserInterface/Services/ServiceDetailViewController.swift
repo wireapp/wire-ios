@@ -275,7 +275,7 @@ final class ServiceDetailViewController: UIViewController {
         contextProvider: some ContextProvider,
         completion: @escaping (AddBotResult) -> Void
     ) {
-        guard let user = service.user as? ZMUser else {
+        guard let user = service.user.materialize(in: contextProvider.viewContext) else {
             return completion(.failure(error: .general))
         }
 

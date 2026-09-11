@@ -239,7 +239,7 @@ public final class SearchTask {
         }
 
         let searchContext = contextProvider.newBackgroundContext()
-        let (connectedUserIDs, teamMemberIDs, appIDs, conversationIDs) = await searchContext.perform { [self] in
+        let (connectedUserIDs, teamMemberIDs, conversationIDs) = await searchContext.perform { [self] in
 
             var team: WireDataModel.Team?
             if let teamObjectID = request.team?.objectID {
@@ -259,10 +259,6 @@ public final class SearchTask {
                 searchOptions: request.searchOptions,
                 in: searchContext
             ) : []
-            let apps = request.searchOptions.contains(.apps) ? apps(
-                in: team,
-                matching: request.normalizedQuery
-            ) : []
 
             let conversations = request.searchOptions.contains(.conversations) ? conversations(
                 matchingQuery: request.query,
@@ -273,7 +269,6 @@ public final class SearchTask {
             return (
                 connectedUsers.map(\.objectID),
                 teamMembers.map(\.objectID),
-                apps.map(\.objectID),
                 conversations.map(\.objectID)
             )
 
@@ -285,8 +280,6 @@ public final class SearchTask {
             let copiedConversations = conversationIDs
                 .compactMap { viewContext.object(with: $0) as? ZMConversation }
             let copiedConnectedUsers = connectedUserIDs
-                .compactMap { viewContext.object(with: $0) as? ZMUser }
-            let copiedApps = appIDs
                 .compactMap { viewContext.object(with: $0) as? ZMUser }
             let searchConnectedUsers = copiedConnectedUsers
                 .map {
@@ -317,7 +310,7 @@ public final class SearchTask {
                 teamMembers: searchTeamMembers,
                 directory: [],
                 conversations: copiedConversations,
-                apps: copiedApps,
+                apps: [],
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
@@ -376,16 +369,6 @@ public final class SearchTask {
         }
 
         return partialResult
-    }
-
-    private func apps(
-        in team: WireDataModel.Team?,
-        matching query: String
-    ) -> [ZMUser] {
-        team?.members(
-            matchingQuery: query,
-            filteredBy: .app
-        ).compactMap(\.user) ?? []
     }
 
     private func connectedUsers(
@@ -501,10 +484,11 @@ public final class SearchTask {
     ///
     /// Team-owned apps come from `GET /teams/:tid/apps`. Team collaborators come from
     /// `GET /teams/:tid/collaborators`, which only returns a bare `{user, team, permissions}` shape with no
-    /// human/app discriminator, so each collaborator's user ID is resolved into a full profile via
-    /// `usersAPI.getUsers` to determine whether it's an app or a human. App-typed collaborator profiles are folded
-    /// into the same apps bucket as the team-owned apps (deduplicated). Non-app-typed (human) collaborator profiles
-    /// are surfaced separately so they can be displayed like regular contacts, never through the apps-specific UI.
+    /// type discriminator, so each collaborator's user ID is resolved into a full profile via
+    /// `usersAPI.getUsers` to determine whether it's an app, a (legacy) bot, or a human. App- and bot-typed
+    /// collaborator profiles are folded into the same apps bucket as the team-owned apps (deduplicated).
+    /// Regular (human) collaborator profiles are surfaced separately so they can be displayed like regular
+    /// contacts, never through the apps-specific UI.
     func listAppsAndCollaborators() async throws -> SearchResultAggregator {
         guard
             let apiVersion,
@@ -586,9 +570,13 @@ public final class SearchTask {
                         searchUsersCache: searchUsersCache
                     )
                 }
-                if app.type == .app {
+                if searchUser.assetKeys == nil, let assetKeys = SearchUserAssetKeys(app.assets) {
+                    searchUser.assetKeys = assetKeys
+                }
+                switch app.type {
+                case .app, .bot:
                     appSearchUsers += [searchUser]
-                } else {
+                case .regular, nil:
                     collaboratorSearchUsers += [searchUser]
                 }
             }
