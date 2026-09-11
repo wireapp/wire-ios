@@ -1237,9 +1237,6 @@
 "self.settings.manage_team.title" = "Manage Team";
 "self.settings.add_account.title" = "Add an account";
 
-"self.settings.add_account.error.title" = "Three accounts active";
-"self.settings.add_account.error.message" = "You can only be logged in with three accounts at once. Log out from one to add another.";
-
 "self.settings.switch_account.message" = "A call is active in this account.\nSwitching accounts will hang up the current call.";
 "self.settings.switch_account.action" = "Switch anyway";
 
@@ -1810,7 +1807,6 @@
 "error.user.device_deleted_remotely" = "You have been logged out from another device.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "This account is no longer authorized to log in.";
-"error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Too many people to call";
