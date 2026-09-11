@@ -25,9 +25,9 @@ import Foundation
 @MainActor
 public final class ConversationViewerAccessBannerDismissalStore {
     public static let shared = ConversationViewerAccessBannerDismissalStore()
-    typealias CellName = String
+    private typealias CellName = String
 
-    private var dismissedCellNames: Set<String> = []
+    private var dismissedCellNames: Set<CellName> = []
 
     private init() {}
 
