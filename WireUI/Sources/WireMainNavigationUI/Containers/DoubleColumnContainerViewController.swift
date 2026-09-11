@@ -32,6 +32,17 @@ final class DoubleColumnContainerViewController: UIViewController {
         didSet { primaryColumnWidthConstraint?.constant = primaryColumnWidth }
     }
 
+    /// When true, the primary column fills the entire container and the
+    /// secondary column and border are hidden. Use for full-bleed content
+    /// (e.g. files, meetings) instead of inflating `primaryColumnWidth`,
+    /// which is orientation-fragile.
+    var isSecondaryHidden: Bool = false {
+        didSet {
+            guard isSecondaryHidden != oldValue else { return }
+            updateColumnConstraints()
+        }
+    }
+
     var borderColor: UIColor = .gray {
         didSet { borderView.backgroundColor = borderColor }
     }
@@ -45,6 +56,8 @@ final class DoubleColumnContainerViewController: UIViewController {
     private let borderView = UIView()
     private var borderWidthConstraint: NSLayoutConstraint?
     private var primaryColumnWidthConstraint: NSLayoutConstraint?
+    private var primaryTrailingToBorderConstraint: NSLayoutConstraint?
+    private var primaryTrailingToContainerConstraint: NSLayoutConstraint?
 
     // MARK: -
 
@@ -71,8 +84,12 @@ final class DoubleColumnContainerViewController: UIViewController {
         borderWidthConstraint = borderView.widthAnchor.constraint(equalToConstant: borderWidth)
         primaryColumnWidthConstraint = primaryNavigationController.view.widthAnchor
             .constraint(equalToConstant: primaryColumnWidth)
+        primaryTrailingToBorderConstraint = borderView.leadingAnchor
+            .constraint(equalTo: primaryNavigationController.view.trailingAnchor)
+        primaryTrailingToContainerConstraint = primaryNavigationController.view.trailingAnchor
+            .constraint(equalTo: view.trailingAnchor)
+
         NSLayoutConstraint.activate([
-            borderView.leadingAnchor.constraint(equalTo: primaryNavigationController.view.trailingAnchor),
             borderView.topAnchor.constraint(equalTo: view.topAnchor),
             borderWidthConstraint!,
             view.bottomAnchor.constraint(equalTo: borderView.bottomAnchor),
@@ -80,13 +97,22 @@ final class DoubleColumnContainerViewController: UIViewController {
             primaryNavigationController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             primaryNavigationController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.bottomAnchor.constraint(equalTo: primaryNavigationController.view.bottomAnchor),
-            primaryColumnWidthConstraint!,
 
             secondaryNavigationController.view.leadingAnchor.constraint(equalTo: borderView.trailingAnchor),
             secondaryNavigationController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: secondaryNavigationController.view.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: secondaryNavigationController.view.bottomAnchor)
         ])
+        updateColumnConstraints()
+    }
+
+    private func updateColumnConstraints() {
+        primaryColumnWidthConstraint?.isActive = !isSecondaryHidden
+        primaryTrailingToBorderConstraint?.isActive = !isSecondaryHidden
+        primaryTrailingToContainerConstraint?.isActive = isSecondaryHidden
+        borderView.isHidden = isSecondaryHidden
+        secondaryNavigationController.view.isHidden = isSecondaryHidden
+        view.layoutIfNeeded()
     }
 }
 
