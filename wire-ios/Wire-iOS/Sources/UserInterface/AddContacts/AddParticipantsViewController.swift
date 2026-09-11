@@ -420,7 +420,7 @@ final class AddParticipantsViewController: UIViewController {
 
         guard let title else { return }
 
-        setupNavigationBarTitle(title.capitalized)
+        setupNavigationBarTitle(title)
     }
 
     private func rightNavigationItemTapped() -> UIAction {
