@@ -78,6 +78,16 @@ struct MeetingFormView: View {
                 )
             }
             .alert(
+                Strings.Error.ExpiredStartDate.title,
+                isPresented: $viewModel.hasExpiredStartDateError
+            ) {
+                Button(Strings.Error.Alert.ok) {
+                    expandedField = .startDate
+                }
+            } message: {
+                Text(Strings.Error.ExpiredStartDate.message)
+            }
+            .alert(
                 Strings.Error.ConversationName.title,
                 isPresented: $viewModel.hasConversationNameUpdateError
             ) {
@@ -141,6 +151,7 @@ struct MeetingFormView: View {
             dateTimeRow(
                 label: Strings.Time.starts,
                 date: $viewModel.startDate,
+                pickerDate: $viewModel.startDatePickerSelection,
                 range: viewModel.startDateRange,
                 maximumDate: nil,
                 dateField: .startDate,
@@ -200,6 +211,7 @@ struct MeetingFormView: View {
     private func dateTimeRow(
         label: String,
         date: Binding<Date>,
+        pickerDate: Binding<Date>? = nil,
         range: PartialRangeFrom<Date>,
         maximumDate: Date?,
         dateField: ExpandedField,
@@ -211,7 +223,7 @@ struct MeetingFormView: View {
             Text(label)
             Spacer()
             pill(
-                text: date.wrappedValue.formatted(.dateTime.day().month(.abbreviated).year()),
+                text: DateFormatter.meetingDate.string(from: date.wrappedValue),
                 isSelected: expandedField == dateField
             ) {
                 toggleExpansion(dateField)
@@ -220,7 +232,7 @@ struct MeetingFormView: View {
             .disabled(!isDateFieldEnabled)
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
-                text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
+                text: DateFormatter.meetingTime.string(from: date.wrappedValue),
                 isSelected: expandedField == timeField
             ) {
                 toggleExpansion(timeField)
@@ -228,12 +240,12 @@ struct MeetingFormView: View {
         }
 
         if expandedField == dateField {
-            DatePicker("", selection: date, in: range, displayedComponents: .date)
+            DatePicker("", selection: pickerDate ?? date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
         }
         if expandedField == timeField {
-            timePicker(date: date, range: range, maximumDate: maximumDate)
+            timePicker(date: pickerDate ?? date, range: range, maximumDate: maximumDate)
         }
     }
 
@@ -291,6 +303,8 @@ private struct MinuteIntervalTimePicker: UIViewRepresentable {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .time
         datePicker.preferredDatePickerStyle = .wheels
+        // Keep 24-hour wheels even when the device uses a 12-hour clock.
+        datePicker.locale = Locale(identifier: "en_US_POSIX@hours=h23")
         datePicker.minuteInterval = minuteInterval
         datePicker.minimumDate = range.lowerBound
         datePicker.maximumDate = maximumDate
