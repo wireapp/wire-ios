@@ -615,6 +615,10 @@ public final class ZMUserSession: NSObject {
             completionHandlers: .init(
                 onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
                 onMeetingNotification: { [weak self] in await self?.handleMeetingNotification($0) },
+                isApplicationActive: { [weak self] in
+                    guard let application = self?.application else { return false }
+                    return await MainActor.run { application.applicationState == .active }
+                },
                 onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
                 onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
                 onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }

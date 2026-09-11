@@ -32,6 +32,7 @@ public final class ClientSessionComponent {
     public struct CompletionHandlers {
         let onProcessedCallEvent: (CallEventInfo) -> Void
         let onMeetingNotification: (UNNotificationContent) async -> Void
+        let isApplicationActive: @Sendable () async -> Bool
         let onSelfClientInvalidated: () async -> Void
         let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
         let onAuthenticationFailure: @Sendable () -> Void
@@ -39,12 +40,14 @@ public final class ClientSessionComponent {
         public init(
             onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
             onMeetingNotification: @escaping (UNNotificationContent) async -> Void = { _ in },
+            isApplicationActive: @escaping @Sendable () async -> Bool,
             onSelfClientInvalidated: @escaping () async -> Void,
             onAuthenticationFailure: @escaping @Sendable () -> Void,
             onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void,
         ) {
             self.onProcessedCallEvent = onProcessedCallEvent
             self.onMeetingNotification = onMeetingNotification
+            self.isApplicationActive = isApplicationActive
             self.onSelfClientInvalidated = onSelfClientInvalidated
             self.onProcessedTypingUsers = onProcessedTypingUsers
             self.onAuthenticationFailure = onAuthenticationFailure
@@ -762,6 +765,11 @@ public final class ClientSessionComponent {
     )
 
     private func handleBeforeProcessingLiveEvent(_ event: UpdateEvent) async {
+        // Meeting notifications are only shown while the app is foregrounded.
+        // Bail before the builders' REST calls so live-event processing isn't
+        // blocked on network work whose result would be discarded anyway.
+        guard case .meeting = event, await completionHandlers.isApplicationActive() else { return }
+
         let notification: UserNotification?
         switch event {
         case let .meeting(.delete(event)):
