@@ -150,6 +150,30 @@ struct CreateMeetingUseCaseTests {
         #expect(conversationRepository.pullConversationIdUUIDDomainStringVoidCallsCount == 1)
     }
 
+    @Test("invoke stores the created meeting before reporting participants who could not be added")
+    func invokeStoresMeetingWhenParticipantsCouldNotBeAdded() async {
+        meetingRepository
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
+        conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidThrowableError =
+            MeetingParticipantsError.failedToAddParticipants([participant])
+
+        await #expect(throws: CreateMeetingUseCaseError.participantsNotAdded(
+            meeting: meeting,
+            participants: [participant]
+        )) {
+            _ = try await useCase.invoke(
+                title: meeting.title,
+                startTime: meeting.start,
+                endTime: meeting.end,
+                recurrence: nil,
+                participants: [participant]
+            )
+        }
+
+        #expect(meetingRepository.storeMeetingMeetingMeetingVoidReceivedInvocations == [meeting])
+    }
+
     @Test("invoke does not touch the conversation when creating the meeting fails")
     func invokeFailsWhenCreatingMeetingFails() async {
         // Given

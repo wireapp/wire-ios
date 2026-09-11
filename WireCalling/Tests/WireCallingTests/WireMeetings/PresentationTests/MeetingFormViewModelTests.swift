@@ -356,6 +356,36 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.isLoading == false)
     }
 
+    @Test("missing participants are acknowledged without creating another meeting", arguments: [
+        MeetingFormViewModel.Mode.instant, .scheduled
+    ])
+    func submit_ParticipantsNotAdded_ContinuesWithCreatedMeeting(mode: MeetingFormViewModel.Mode) async {
+        var completedMeetings: [Meeting] = []
+        let viewModel = makeViewModel(mode: mode) { completedMeetings.append($0) }
+        createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingThrowableError =
+            CreateMeetingUseCaseError.participantsNotAdded(meeting: meeting, participants: [member])
+
+        await viewModel.submit()
+
+        #expect(viewModel.hasParticipantsNotAddedAlert)
+        #expect(viewModel.participantsNotAdded == [member])
+        #expect(!viewModel.hasError)
+        #expect(!viewModel.isLoading)
+        #expect(completedMeetings.isEmpty)
+
+        await viewModel.submit()
+        viewModel.acknowledgeParticipantsNotAdded()
+        await viewModel.submit()
+        viewModel.acknowledgeParticipantsNotAdded()
+
+        #expect(!viewModel.hasParticipantsNotAddedAlert)
+        #expect(completedMeetings == [meeting])
+        #expect(createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+            1)
+    }
+
     @Test("submit sets the error flag and does not call onSuccess when the use case fails")
     func submit_Failure_SetsError() async {
         // Given
