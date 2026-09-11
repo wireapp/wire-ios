@@ -129,43 +129,6 @@ class AdminPromotionTests: WireUITestCase {
         )
     }
 
-    private func createGroupConversationWithTeamMemberAndLastPersonalUserAdmin(groupName: String) async throws
-        -> (teamMember: UserInfo, personalUser: UserInfo) {
-        let (teamMember, personalUser) = try await UserHelper.default.connectTeamUserWithPersonalUser()
-
-        let domain = BackendTarget.staging.domainInfo
-        let teamMemberQualifiedID = WireFoundation.QualifiedID(
-            id: try XCTUnwrap(UUID(uuidString: teamMember.id)),
-            domain: domain
-        )
-        let personalUserQualifiedID = WireFoundation.QualifiedID(
-            id: try XCTUnwrap(UUID(uuidString: personalUser.id)),
-            domain: domain
-        )
-
-        let conversation = try await UserHelper.default.createGroupConversations(
-            qualifiedIds: [personalUserQualifiedID],
-            owner: teamMember,
-            groupName: groupName,
-            driveEnabled: true
-        )
-
-        let conversationQualifiedID = try XCTUnwrap(conversation.qualifiedID)
-
-        try await UserHelper.default.updateRole(
-            "wire_admin",
-            userID: personalUserQualifiedID,
-            conversationID: conversationQualifiedID
-        )
-
-        try await UserHelper.default.removeParticipant(
-            userID: teamMemberQualifiedID,
-            conversationID: conversationQualifiedID
-        )
-
-        return (teamMember, personalUser)
-    }
-
     @MainActor
     func testLastGuestUserAdmin_CannotLeaveGroup_PromotesNewAdmin_ThenLeaveGroupSuccessfully_TC_11577() async throws {
         let groupName = "Guest User Leave Group Test"
