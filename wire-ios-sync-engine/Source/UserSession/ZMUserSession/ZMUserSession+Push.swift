@@ -215,7 +215,8 @@ extension ZMUserSession {
             completionHandler()
         case UNNotificationDefaultActionIdentifier
             where categoryIdentifier == WireDomain.NotificationCategory.meetingCancellation.rawValue
-            || categoryIdentifier == WireDomain.NotificationCategory.meetingInvitation.rawValue:
+            || categoryIdentifier == WireDomain.NotificationCategory.meetingInvitation.rawValue
+            || categoryIdentifier == WireDomain.NotificationCategory.meetingUpdate.rawValue:
             completionHandler()
         default:
             showContent(for: userInfo)

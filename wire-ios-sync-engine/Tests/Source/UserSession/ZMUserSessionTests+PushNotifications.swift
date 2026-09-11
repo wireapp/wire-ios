@@ -284,6 +284,20 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertNil(mockSessionManager.lastRequestToShowMessage)
     }
 
+    func testThatDefaultTapOnMeetingUpdateDoesNotNavigate() {
+        // when
+        handle(
+            action: UNNotificationDefaultActionIdentifier,
+            category: WireDomain.NotificationCategory.meetingUpdate.rawValue,
+            userInfo: NotificationUserInfo()
+        )
+
+        // then
+        XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
+        XCTAssertNil(mockSessionManager.lastRequestToShowConversationsList)
+        XCTAssertNil(mockSessionManager.lastRequestToShowMessage)
+    }
+
     func testThatItCallsShowConversationButDoesNotCallBack_ForPushNotificationCategoryMissedCallWithCallBackAction() {
         // given
         syncMOC.performAndWait {

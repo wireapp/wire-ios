@@ -740,6 +740,13 @@ public final class ClientSessionComponent {
         accountID: selfUserID
     )
 
+    private lazy var meetingUpdateEventNotificationBuilder = MeetingUpdateEventNotificationBuilder(
+        meetingsAPI: meetingsAPI,
+        usersAPI: usersAPI,
+        featureConfigLocalStore: featureConfigsLocalStore,
+        accountID: selfUserID
+    )
+
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,
         conversationRepository: conversationRepository
@@ -761,6 +768,8 @@ public final class ClientSessionComponent {
             notification = await meetingDeleteEventNotificationBuilder.buildContent(event: event)
         case let .meeting(.memberAdd(event)):
             notification = await meetingMemberAddEventNotificationBuilder.buildContent(event: event)
+        case let .meeting(.update(event)):
+            notification = await meetingUpdateEventNotificationBuilder.buildContent(event: event)
         default:
             return
         }
