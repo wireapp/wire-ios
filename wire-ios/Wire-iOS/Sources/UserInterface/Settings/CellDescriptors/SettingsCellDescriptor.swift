@@ -294,6 +294,8 @@ extension SettingsPropertyName {
         // AVS
         case .soundAlerts:
             return SoundMenu.title
+        case .notificationSound:
+            return Notifications.Sound.title
         case .messageSoundName:
             return SoundMenu.Message.title
         case .callSoundName:

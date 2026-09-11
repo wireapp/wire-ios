@@ -30,6 +30,7 @@ extension SettingsCellDescriptorFactory {
     var optionsGroup: any SettingsCellDescriptorType {
         let descriptors = [
             notificationVisibleSection,
+            notificationSoundSection,
             chatHeadsSection,
             soundAlertSection,
             callKitSection,
@@ -71,6 +72,13 @@ extension SettingsCellDescriptorFactory {
             cellDescriptors: [notificationToggle],
             header: L10n.Localizable.Self.Settings.Notifications.PushNotification.title,
             footer: L10n.Localizable.Self.Settings.Notifications.PushNotification.footer
+        )
+    }
+
+    private var notificationSoundSection: SettingsSectionDescriptorType {
+        SettingsSectionDescriptor(
+            cellDescriptors: [notificationSoundGroup],
+            footer: L10n.Localizable.Self.Settings.Notifications.Sound.footer
         )
     }
 

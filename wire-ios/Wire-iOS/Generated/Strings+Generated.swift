@@ -6044,6 +6044,16 @@ internal enum L10n {
             /// Message Previews
             internal static let toogle = L10n.tr("Localizable", "self.settings.notifications.push_notification.toogle", fallback: "Message Previews")
           }
+          internal enum Sound {
+            /// System Default uses the alert sound provided by iOS. Apple does not make its other built-in alert tones available to apps.
+            internal static let footer = L10n.tr("Localizable", "self.settings.notifications.sound.footer", fallback: "System Default uses the alert sound provided by iOS. Apple does not make its other built-in alert tones available to apps.")
+            /// System Default
+            internal static let systemDefault = L10n.tr("Localizable", "self.settings.notifications.sound.system_default", fallback: "System Default")
+            /// Notification Sound
+            internal static let title = L10n.tr("Localizable", "self.settings.notifications.sound.title", fallback: "Notification Sound")
+            /// Wire
+            internal static let wire = L10n.tr("Localizable", "self.settings.notifications.sound.wire", fallback: "Wire")
+          }
         }
         internal enum OptionsMenu {
           /// Options

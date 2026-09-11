@@ -56,6 +56,7 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case callingConstantBitRate = "constantBitRate"
 
     // Sounds
+    case notificationSound = "NotificationSound"
     case messageSoundName = "MessageSoundName"
     case callSoundName = "CallSoundName"
     case pingSoundName = "PingSoundName"
