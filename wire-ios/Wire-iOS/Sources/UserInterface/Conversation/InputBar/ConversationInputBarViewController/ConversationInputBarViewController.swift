@@ -186,9 +186,8 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: subviews
 
-    lazy var inputBar: InputBar = {
         let driveConfiguration: InputBar.DriveConfiguration? = if conversation.isWireDriveEnabled {
-            .init(cellName: conversation.wireDriveCellName, showBanner: showDriveViewerBanner)
+            .init(cellName: conversation.wireDriveCellName, showBanner: shouldShowDriveViewerBanner)
         } else {
             nil
         }
