@@ -91,4 +91,140 @@ jobs:
             --base "$BASE_BRANCH" \
             --head "$HEAD_BRANCH" \
             --title "$TITLE" \
-            --body "$BODY" \
+            --body "$BODY"
+
+      - name: Collect German string changes
+        id: de-strings
+        env:
+          GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
+        run: |
+          set -euo pipefail
+
+          command -v jq >/dev/null 2>&1 || apt-get install -y -qq jq
+
+          BASE_BRANCH=${GITHUB_REF#refs/heads/}
+          HEAD_BRANCH="chore/update-localization"
+
+          git fetch origin "$BASE_BRANCH" "$HEAD_BRANCH" 2>/dev/null || true
+
+          PR_NUMBER=$(gh pr list \
+            --base "$BASE_BRANCH" \
+            --head "$HEAD_BRANCH" \
+            --state open \
+            --json number \
+            --jq '.[0].number')
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR found, skipping."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+          BASE_SHA=$(git merge-base "origin/$BASE_BRANCH" "origin/$HEAD_BRANCH")
+          HEAD_SHA=$(git rev-parse "origin/$HEAD_BRANCH")
+
+          DE_ENTRIES=""
+
+          # .strings files — glob pathspec handles paths with spaces
+          STRINGS_DIFF=$(git diff "$BASE_SHA" "$HEAD_SHA" \
+            -- '**/de.lproj/*.strings' \
+            ':(exclude)vendor/**' ':(exclude)Carthage/**' \
+            | grep '^+' | grep -v '^+++' \
+            | grep -E '^\+"[^"]+" *= *"' \
+            | sed 's/^+"\([^"]*\)" *= *"\(.*\)";.*/`\1` = "\2"/' || true)
+          DE_ENTRIES="$STRINGS_DIFF"
+
+          # .xcstrings files — compare de locale values with jq
+          XCSTRINGS_DIFF=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
+            -- '**/*.xcstrings' \
+            ':(exclude)vendor/**' ':(exclude)Carthage/**' \
+            | while IFS= read -r file; do
+                git show "$BASE_SHA:$file" 2>/dev/null > /tmp/base_xcstrings.json \
+                  || echo '{"strings":{}}' > /tmp/base_xcstrings.json
+                git show "$HEAD_SHA:$file" 2>/dev/null | jq -r \
+                  --slurpfile base /tmp/base_xcstrings.json '
+                  .strings | to_entries[] |
+                  select(.value.localizations.de.stringUnit.value != null) |
+                  select(
+                    .value.localizations.de.stringUnit.value !=
+                    ($base[0].strings[.key].localizations.de.stringUnit.value // "")
+                  ) |
+                  "`\(.key)` = \"\(.value.localizations.de.stringUnit.value)\""
+                ' 2>/dev/null || true
+              done || true)
+
+          if [ -n "$DE_ENTRIES" ] && [ -n "$XCSTRINGS_DIFF" ]; then
+            DE_ENTRIES="$DE_ENTRIES
+$XCSTRINGS_DIFF"
+          elif [ -n "$XCSTRINGS_DIFF" ]; then
+            DE_ENTRIES="$XCSTRINGS_DIFF"
+          fi
+
+          if [ -n "$DE_ENTRIES" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            {
+              echo 'de_entries<<EOF'
+              echo "$DE_ENTRIES"
+              echo EOF
+            } >> "$GITHUB_OUTPUT"
+            BULLET_LIST=$(echo "$DE_ENTRIES" | sed 's/^/- /')
+            DE_ENTRIES_JSON=$(printf 'New DE localizations to review\n\n%s' "$BULLET_LIST" | jq -Rs .)
+            echo "de_entries_json=$DE_ENTRIES_JSON" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post German strings review comment
+        if: steps.de-strings.outputs.has_changes == 'true'
+        env:
+          PR_NUMBER: ${{ steps.de-strings.outputs.pr_number }}
+          DE_ENTRIES: ${{ steps.de-strings.outputs.de_entries }}
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ secrets.SUBMODULE_PAT }}
+          script: |
+            const MARKER = '<!-- de-localization-review -->'
+            const prNumber = parseInt(process.env.PR_NUMBER)
+            const entries = process.env.DE_ENTRIES.split('\n').filter(Boolean)
+            const bulletList = entries.map(e => `- ${e}`).join('\n')
+            const body = [
+              MARKER,
+              'Make sure all these strings are correctly translated.',
+              '',
+              '**Changed German strings:**',
+              bulletList,
+            ].join('\n')
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            })
+
+            const existing = comments.find(c => c.body.includes(MARKER))
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              })
+            }
+
+      - name: Send Wire notification
+        if: steps.de-strings.outputs.has_changes == 'true'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_LOCALIZATIONS }}
+        uses: ./.github/actions/notify-wire
+        with:
+          notify: custom
+          text: ${{ steps.de-strings.outputs.de_entries_json }}
