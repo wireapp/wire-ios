@@ -372,7 +372,7 @@ final class InputBar: UIView {
         textView.backgroundColor = .clear
 
         markdownView.delegate = textView
-        if let driveConfiguration, !driveConfiguration.showBanner {
+        if driveConfiguration?.showBanner != true {
             addBorder(for: .top)
         }
         updateReturnKey()
