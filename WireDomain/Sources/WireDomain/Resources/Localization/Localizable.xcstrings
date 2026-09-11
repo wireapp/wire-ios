@@ -4644,6 +4644,18 @@
         }
       }
     },
+    "push.notification.body.senderUpdatedMeeting" : {
+      "comment" : "Meeting update: host name, date, start time and end time in the recipient's local time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ updated this meeting to %2$@ · %3$@ to %4$@"
+          }
+        }
+      }
+    },
     "push.notification.body.sentWithUnknownSender" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6515,6 +6527,18 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%@ in %@"
+          }
+        }
+      }
+    },
+    "push.notification.title.updatedMeeting" : {
+      "comment" : "Meeting update notification title: the meeting's title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update: %@"
           }
         }
       }
