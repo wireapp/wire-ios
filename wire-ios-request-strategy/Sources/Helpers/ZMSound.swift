@@ -69,10 +69,12 @@ public enum ZMSound: String, CustomStringConvertible {
         switch self {
         case .None:
             return nil
-        case .WireText, .WirePing, .WireCall:
+        case .WireText:
+            return Bundle.main.url(forResource: rawValue, withExtension: "caf")
+        case .WirePing, .WireCall:
             guard let path = Bundle.main.path(
                 forResource: rawValue,
-                ofType: type(of: self).fileExtension,
+                ofType: "m4a",
                 inDirectory: "audio-notifications"
             ) else {
                 return nil
@@ -81,10 +83,9 @@ public enum ZMSound: String, CustomStringConvertible {
         }
     }
 
-    fileprivate static let fileExtension = "m4a"
-
     public func filename() -> String {
-        (rawValue as NSString).appendingPathExtension(type(of: self).fileExtension)!
+        let fileExtension = self == .WireText ? "caf" : "m4a"
+        return (rawValue as NSString).appendingPathExtension(fileExtension)!
     }
 
     public var description: String {

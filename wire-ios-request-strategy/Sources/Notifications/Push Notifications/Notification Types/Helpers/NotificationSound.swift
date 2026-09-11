@@ -27,6 +27,7 @@ public enum NotificationSound {
 
     case call
     case ping
+    case `default`
     case newMessage
 
     /// The name of the song.
@@ -40,15 +41,17 @@ public enum NotificationSound {
         switch self {
         case .call: "ringing_from_them_long.caf"
         case .ping: "ping_from_them.caf"
-        case .newMessage: "default"
+        case .default: "default"
+        case .newMessage: "new_message.caf"
         }
     }
 
     // Unused - leaving this here in case we need to support custom sounds again in the future.
-    private var preferenceKey: String {
+    private var preferenceKey: String? {
         switch self {
         case .call: "ZMCallSoundName"
         case .ping: "ZMPingSoundName"
+        case .default: nil
         case .newMessage: "ZMMessageSoundName"
         }
     }
