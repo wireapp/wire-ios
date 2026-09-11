@@ -100,6 +100,10 @@ class ZMLocalNotificationTests: MessagingTest {
         super.tearDown()
     }
 
+    func testMessageNotificationSoundFileName() {
+        XCTAssertEqual(NotificationSound.newMessage.name, "new_message.caf")
+    }
+
     // MARK: - Helpers
 
     func insertUser(with remoteID: UUID, name: String?) -> ZMUser {

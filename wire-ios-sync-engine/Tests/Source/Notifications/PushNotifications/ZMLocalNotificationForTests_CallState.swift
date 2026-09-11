@@ -181,7 +181,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             XCTAssertEqual(note.title, "Callie")
             XCTAssertEqual(note.body, "called")
             XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.conversationWithMute)
-            XCTAssertEqual(note.sound, .newMessage)
+            XCTAssertEqual(note.sound, .default)
         }
     }
 
@@ -214,7 +214,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             XCTAssertEqual(note.title, "Callie")
             XCTAssertEqual(note.body, "called")
             XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.missedCall)
-            XCTAssertEqual(note.sound, .newMessage)
+            XCTAssertEqual(note.sound, .default)
         }
     }
 
@@ -238,7 +238,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             XCTAssertEqual(note.title, "Callie")
             XCTAssertEqual(note.body, "called")
             XCTAssertEqual(note.category, WireSyncEngine.PushNotificationCategory.missedCall)
-            XCTAssertEqual(note.sound, .newMessage)
+            XCTAssertEqual(note.sound, .default)
         }
     }
 

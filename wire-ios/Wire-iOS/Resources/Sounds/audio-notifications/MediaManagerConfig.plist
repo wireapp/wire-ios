@@ -154,42 +154,12 @@
 			<key>intensity</key>
 			<integer>0</integer>
 		</dict>
-		<key>new_message_apns</key>
-		<dict>
-			<key>path</key>
-			<string>new_message_apns</string>
-			<key>format</key>
-			<string>m4a</string>
-			<key>loopAllowed</key>
-			<integer>0</integer>
-			<key>mixingAllowed</key>
-			<integer>1</integer>
-			<key>incallAllowed</key>
-			<integer>0</integer>
-			<key>intensity</key>
-			<integer>100</integer>
-		</dict>
-		<key>first_message_apns</key>
-		<dict>
-			<key>path</key>
-			<string>first_message_apns</string>
-			<key>format</key>
-			<string>m4a</string>
-			<key>loopAllowed</key>
-			<integer>0</integer>
-			<key>mixingAllowed</key>
-			<integer>1</integer>
-			<key>incallAllowed</key>
-			<integer>0</integer>
-			<key>intensity</key>
-			<integer>50</integer>
-		</dict>
 		<key>new_message</key>
 		<dict>
 			<key>path</key>
 			<string>new_message</string>
 			<key>format</key>
-			<string>m4a</string>
+			<string>caf</string>
 			<key>loopAllowed</key>
 			<integer>0</integer>
 			<key>mixingAllowed</key>
@@ -198,21 +168,6 @@
 			<integer>0</integer>
 			<key>intensity</key>
 			<integer>100</integer>
-		</dict>
-		<key>first_message</key>
-		<dict>
-			<key>path</key>
-			<string>first_message</string>
-			<key>format</key>
-			<string>m4a</string>
-			<key>loopAllowed</key>
-			<integer>0</integer>
-			<key>mixingAllowed</key>
-			<integer>1</integer>
-			<key>incallAllowed</key>
-			<integer>0</integer>
-			<key>intensity</key>
-			<integer>50</integer>
 		</dict>
 		<key>ping_from_me</key>
 		<dict>

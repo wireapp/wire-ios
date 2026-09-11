@@ -27,7 +27,6 @@ enum MediaManagerSound: String {
     case outgoingKnockSound = "ping_from_me"
     case incomingKnockSound = "ping_from_them"
     case messageReceivedSound = "new_message"
-    case firstMessageReceivedSound = "first_message"
     case someoneJoinsVoiceChannelSound = "talk"
     case transferVoiceToHereSound = "pull_voice"
     case ringingFromThemSound = "ringing_from_them"
@@ -77,7 +76,6 @@ extension AVSMediaManager {
 
         // Unregister all previous custom sounds
         let sounds: [MediaManagerSound] = [
-            .firstMessageReceivedSound,
             .messageReceivedSound,
             .ringingFromThemInCallSound,
             .ringingFromThemSound,
@@ -89,6 +87,9 @@ extension AVSMediaManager {
         }
 
         mediaManager.registerMedia(fromConfiguration: AVSMediaManager.MediaManagerSoundConfig, inDirectory: audioDir)
+
+        let messageSoundURL = Bundle.main.url(forResource: "new_message", withExtension: "caf")
+        mediaManager.register(messageSoundURL, forMedia: MediaManagerSound.messageReceivedSound.rawValue)
     }
 
     func unregisterCallRingingSounds() {
@@ -153,7 +154,6 @@ extension AVSMediaManager {
 
         switch propertyName {
         case SettingsPropertyName.messageSoundName.rawValue:
-            register(soundValue?.fileURL(), forMedia: MediaManagerSound.firstMessageReceivedSound.rawValue)
             register(soundValue?.fileURL(), forMedia: MediaManagerSound.messageReceivedSound.rawValue)
 
         case SettingsPropertyName.callSoundName.rawValue:
