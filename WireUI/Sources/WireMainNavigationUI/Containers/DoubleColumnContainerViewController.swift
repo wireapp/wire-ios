@@ -32,6 +32,23 @@ final class DoubleColumnContainerViewController: UIViewController {
         didSet { primaryColumnWidthConstraint?.constant = primaryColumnWidth }
     }
 
+    /// When true, the primary column fills the entire container and the secondary
+    /// column and border are hidden. Use for full-bleed content (e.g. files,
+    /// meetings) instead of inflating `primaryColumnWidth`.
+    ///
+    /// Why: previously full-bleed screens set `primaryColumnWidth` to the current
+    /// screen width, which is captured once at install time. On rotation the
+    /// container grew but the primary constraint didn't, exposing a strip of the
+    /// secondary column (i.e. whatever conversation was last displayed). Toggling
+    /// the layout instead of the width sidesteps that entirely — no captured
+    /// value can become stale on rotation.
+    var isSecondaryHidden: Bool = false {
+        didSet {
+            guard isSecondaryHidden != oldValue else { return }
+            updateColumnConstraints()
+        }
+    }
+
     var borderColor: UIColor = .gray {
         didSet { borderView.backgroundColor = borderColor }
     }
@@ -45,6 +62,12 @@ final class DoubleColumnContainerViewController: UIViewController {
     private let borderView = UIView()
     private var borderWidthConstraint: NSLayoutConstraint?
     private var primaryColumnWidthConstraint: NSLayoutConstraint?
+    // Two-column layout: primary has a fixed width and the secondary fills the rest,
+    // pinned to primary's trailing edge via the border.
+    private var primaryTrailingToBorderConstraint: NSLayoutConstraint?
+    // Single-column layout: primary stretches to the container's trailing edge,
+    // leaving no room for the border or the secondary (both are also hidden).
+    private var primaryTrailingToContainerConstraint: NSLayoutConstraint?
 
     // MARK: -
 
@@ -71,8 +94,12 @@ final class DoubleColumnContainerViewController: UIViewController {
         borderWidthConstraint = borderView.widthAnchor.constraint(equalToConstant: borderWidth)
         primaryColumnWidthConstraint = primaryNavigationController.view.widthAnchor
             .constraint(equalToConstant: primaryColumnWidth)
+        primaryTrailingToBorderConstraint = borderView.leadingAnchor
+            .constraint(equalTo: primaryNavigationController.view.trailingAnchor)
+        primaryTrailingToContainerConstraint = primaryNavigationController.view.trailingAnchor
+            .constraint(equalTo: view.trailingAnchor)
+
         NSLayoutConstraint.activate([
-            borderView.leadingAnchor.constraint(equalTo: primaryNavigationController.view.trailingAnchor),
             borderView.topAnchor.constraint(equalTo: view.topAnchor),
             borderWidthConstraint!,
             view.bottomAnchor.constraint(equalTo: borderView.bottomAnchor),
@@ -80,13 +107,26 @@ final class DoubleColumnContainerViewController: UIViewController {
             primaryNavigationController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             primaryNavigationController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.bottomAnchor.constraint(equalTo: primaryNavigationController.view.bottomAnchor),
-            primaryColumnWidthConstraint!,
 
             secondaryNavigationController.view.leadingAnchor.constraint(equalTo: borderView.trailingAnchor),
             secondaryNavigationController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: secondaryNavigationController.view.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: secondaryNavigationController.view.bottomAnchor)
         ])
+        updateColumnConstraints()
+    }
+
+    /// Switches between the two- and single-column layouts by activating one of
+    /// the two mutually exclusive trailing constraints on the primary column,
+    /// then hiding (rather than removing) the secondary column and border so
+    /// their state is preserved across the toggle.
+    private func updateColumnConstraints() {
+        primaryColumnWidthConstraint?.isActive = !isSecondaryHidden
+        primaryTrailingToBorderConstraint?.isActive = !isSecondaryHidden
+        primaryTrailingToContainerConstraint?.isActive = isSecondaryHidden
+        borderView.isHidden = isSecondaryHidden
+        secondaryNavigationController.view.isHidden = isSecondaryHidden
+        view.layoutIfNeeded()
     }
 }
 
