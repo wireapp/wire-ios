@@ -18,10 +18,15 @@
 
 /// The type of tabs of the main tab bar controller shows.
 /// Since UIKit has a type `UITab` this type has been suffixed with "Content".
+///
+/// Cases are ordered by their canonical visual position in the tab bar.
+/// `allCases` walks them in that order and each case's `rawValue` reflects it,
+/// so both are usable for sorting when only a subset is installed at runtime.
+/// If you add or reorder cases here, keep them in visual order.
 public enum MainTabBarControllerContent: Int, CaseIterable {
     case conversations
     case files
+    case meetings
     case archive
     case settings
-    case meetings
 }

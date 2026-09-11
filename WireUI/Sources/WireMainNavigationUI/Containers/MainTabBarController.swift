@@ -75,11 +75,11 @@ public final class MainTabBarController<
 
     /// The currently selected tab's content identity.
     ///
-    /// Backed by ``orderedContents`` rather than `MainTabBarControllerContent`'s
-    /// `rawValue`: the enum's raw values are fixed, but which tabs are actually
-    /// installed depends on feature flags (files, meetings), so the physical
-    /// index of a content drifts from its raw value. Setting a content that is
-    /// not currently installed no-ops rather than selecting the wrong tab.
+    /// Backed by ``orderedContents`` rather than the enum's `rawValue` directly:
+    /// which tabs are installed depends on feature flags (files, meetings), so
+    /// the physical index of a content drifts from its raw value whenever one of
+    /// them is off. Setting a content that isn't currently installed no-ops
+    /// rather than selecting the wrong tab.
     public var selectedContent: MainTabBarControllerContent {
         get {
             orderedContents.indices.contains(selectedIndex)
@@ -111,10 +111,32 @@ public final class MainTabBarController<
     private var showMeetings: Bool
     private var showFiles: Bool
 
-    /// Mirrors `viewControllers` by tab content. Every mutation of the tab
-    /// array (`setupTabs`, `setFilesUI`, `setMeetingsUI`) must update this
-    /// array in lockstep so ``selectedContent`` can translate between the two.
-    private var orderedContents: [MainTabBarControllerContent] = []
+    /// Contents whose nav controller is currently installed, in canonical
+    /// visual order. Derived from `MainTabBarControllerContent.allCases` (which
+    /// is declared in visual order) filtered by which nav-controller refs are
+    /// non-nil, so there is nothing to keep in sync when tabs are added.
+    private var orderedContents: [MainTabBarControllerContent] {
+        MainTabBarControllerContent.allCases.filter { navController(for: $0) != nil }
+    }
+
+    /// The nav controller backing a given tab content, if installed.
+    private func navController(for content: MainTabBarControllerContent) -> UINavigationController? {
+        switch content {
+        case .conversations: conversationListNavigationController
+        case .files: filesNavigationController
+        case .meetings: meetingsNavigationController
+        case .archive: archiveNavigationController
+        case .settings: settingsNavigationController
+        }
+    }
+
+    /// The index at which a newly-installed tab should be inserted into
+    /// `viewControllers`, computed from the canonical order. Assumes `content`
+    /// is not already installed.
+    private func insertionIndex(for content: MainTabBarControllerContent) -> Int {
+        orderedContents.firstIndex(where: { $0.rawValue > content.rawValue })
+            ?? orderedContents.endIndex
+    }
 
     // MARK: - Life Cycle
 
@@ -150,30 +172,18 @@ public final class MainTabBarController<
         settingsNavigationController.navigationBar.isTranslucent = false
         self.settingsNavigationController = settingsNavigationController
 
-        var tabs: [UIViewController] = [
-            conversationListNavigationController,
-            archiveNavigationController,
-            settingsNavigationController
-        ]
-        var contents: [MainTabBarControllerContent] = [.conversations, .archive, .settings]
-
-        if showFiles, let filesNavigationController {
-            tabs.insert(filesNavigationController, at: 1)
-            contents.insert(.files, at: 1)
-        }
-
         if showMeetings {
             let meetingsNavigationController = UINavigationController()
             meetingsNavigationController.navigationBar.isTranslucent = false
             self.meetingsNavigationController = meetingsNavigationController
-
-            tabs.insert(meetingsNavigationController, at: 2)
-            contents.insert(.meetings, at: 2)
         } else {
             meetingsNavigationController = nil
         }
-        setViewControllers(tabs, animated: false)
-        orderedContents = contents
+
+        // Assemble the tab array in canonical visual order (as declared on the
+        // enum). `orderedContents` reads back the same way, so index ↔ content
+        // translation in `selectedContent` stays consistent.
+        setViewControllers(orderedContents.compactMap { navController(for: $0) }, animated: false)
 
         for content in MainTabBarControllerContent.allCases {
             switch content {
@@ -289,8 +299,9 @@ public final class MainTabBarController<
             let meetingsNavigationController = UINavigationController()
             meetingsNavigationController.navigationBar.isTranslucent = false
             self.meetingsNavigationController = meetingsNavigationController
-            viewControllers?.insert(meetingsNavigationController, at: 2)
-            orderedContents.insert(.meetings, at: 2)
+            // Insertion index derived from the canonical order; independent of
+            // whether earlier optional tabs (e.g. files) are installed.
+            viewControllers?.insert(meetingsNavigationController, at: insertionIndex(for: .meetings))
             setupMeetingsTabBarItem()
         }
 
@@ -368,8 +379,9 @@ public final class MainTabBarController<
             let filesNavigationController = UINavigationController()
             filesNavigationController.navigationBar.isTranslucent = false
             self.filesNavigationController = filesNavigationController
-            viewControllers?.insert(filesNavigationController, at: 1)
-            orderedContents.insert(.files, at: 1)
+            // Insertion index derived from the canonical order; independent of
+            // whether other optional tabs (e.g. meetings) are already installed.
+            viewControllers?.insert(filesNavigationController, at: insertionIndex(for: .files))
             setupFilesTabBarItem()
         }
 
