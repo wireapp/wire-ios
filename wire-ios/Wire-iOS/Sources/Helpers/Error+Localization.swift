@@ -19,22 +19,45 @@
 import Foundation
 import WireSyncEngine
 
-extension SessionManager.AccountError: LocalizedError {
+/// Localized copy for the "you've reached the maximum number of active accounts" alert,
+/// spelling out the actual limit (e.g. "Two", "Three") so the same stringsdict entry works for any configured limit.
+enum AccountLimitAlertLocalization {
 
-    typealias SettingsAddAccountLocale = L10n.Localizable.Self.Settings.AddAccount.Error
-    typealias SettingsAddAccountTwoActiveAccountsLocale = L10n.Localizable.Self.Settings.AddAccount.TwoActiveAccounts.Error
+    static func title(maxNumberAccounts: Int) -> String {
+        "self.settings.add_account.error.title".localized(
+            args: maxNumberAccounts,
+            spelledOutNumber(maxNumberAccounts).capitalized
+        )
+    }
+
+    static func message(maxNumberAccounts: Int) -> String {
+        "self.settings.add_account.error.message".localized(
+            args: maxNumberAccounts,
+            spelledOutNumber(maxNumberAccounts)
+        )
+    }
+
+    private static func spelledOutNumber(_ number: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .spellOut
+        return formatter.string(from: number as NSNumber) ?? String(number)
+    }
+
+}
+
+extension SessionManager.AccountError: LocalizedError {
 
     public var errorDescription: String? {
         switch self {
         case let .accountLimitReached(maxNumberAccounts):
-            maxNumberAccounts == 2 ? SettingsAddAccountTwoActiveAccountsLocale.title : SettingsAddAccountLocale.title
+            AccountLimitAlertLocalization.title(maxNumberAccounts: maxNumberAccounts)
         }
     }
 
     public var failureReason: String? {
         switch self {
         case let .accountLimitReached(maxNumberAccounts):
-            maxNumberAccounts == 2 ? SettingsAddAccountTwoActiveAccountsLocale.message : SettingsAddAccountLocale.message
+            AccountLimitAlertLocalization.message(maxNumberAccounts: maxNumberAccounts)
         }
     }
 
@@ -61,9 +84,7 @@ extension SessionManager.SwitchBackendError: LocalizedError {
         case .invalidBackend:
             return UrlActionSwitchBackendErrorLocale.invalidBackend
         case let .maxNumberAccountsReached(maxNumberAccounts):
-            return maxNumberAccounts == 2
-                ? L10n.Localizable.Self.Settings.AddAccount.TwoActiveAccounts.Error.message
-                : L10n.Localizable.Self.Settings.AddAccount.Error.message
+            return AccountLimitAlertLocalization.message(maxNumberAccounts: maxNumberAccounts)
         }
     }
 }

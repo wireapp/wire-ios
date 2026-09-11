@@ -1810,7 +1810,6 @@
 "error.user.device_deleted_remotely" = "Ви вийшли на іншому пристрої.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Даний акаунт був заблокований.";
-"error.user.account_limit_reached" = "Ви не можете додати більше трьох акаунтів.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Забагато учасників для здійснення дзвінка";

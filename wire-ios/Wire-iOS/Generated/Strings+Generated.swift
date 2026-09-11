@@ -3664,8 +3664,6 @@ internal enum L10n {
         }
       }
       internal enum User {
-        /// You can’t add more than 3 accounts.
-        internal static let accountLimitReached = L10n.tr("Localizable", "error.user.account_limit_reached", fallback: "You can’t add more than 3 accounts.")
         /// The account you are trying access is pending activation. Please verify your details.
         internal static let accountPendingActivation = L10n.tr("Localizable", "error.user.account_pending_activation", fallback: "The account you are trying access is pending activation. Please verify your details.")
         /// This account is no longer authorized to log in.
@@ -5886,20 +5884,6 @@ internal enum L10n {
         internal enum AddAccount {
           /// Add an account
           internal static let title = L10n.tr("Localizable", "self.settings.add_account.title", fallback: "Add an account")
-          internal enum Error {
-            /// You can only be logged in with three accounts at once. Log out from one to add another.
-            internal static let message = L10n.tr("Localizable", "self.settings.add_account.error.message", fallback: "You can only be logged in with three accounts at once. Log out from one to add another.")
-            /// Three accounts active
-            internal static let title = L10n.tr("Localizable", "self.settings.add_account.error.title", fallback: "Three accounts active")
-          }
-          internal enum TwoActiveAccounts {
-            internal enum Error {
-              /// You can only be logged in with two accounts at once. Log out from one to add another.
-              internal static let message = L10n.tr("Localizable", "self.settings.add_account.two_active_accounts.error.message", fallback: "You can only be logged in with two accounts at once. Log out from one to add another.")
-              /// Two accounts active
-              internal static let title = L10n.tr("Localizable", "self.settings.add_account.two_active_accounts.error.title", fallback: "Two accounts active")
-            }
-          }
         }
         internal enum AddAccountOrTeam {
           /// Add Account or Team

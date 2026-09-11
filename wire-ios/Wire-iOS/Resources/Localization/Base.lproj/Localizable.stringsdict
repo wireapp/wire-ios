@@ -439,5 +439,37 @@
 			<string>%d attached files</string>
 		</dict>
 	</dict>
+	<key>self.settings.add_account.error.title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@number_of_accounts@</string>
+		<key>number_of_accounts</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%2$@ account active</string>
+			<key>other</key>
+			<string>%2$@ accounts active</string>
+		</dict>
+	</dict>
+	<key>self.settings.add_account.error.message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@number_of_accounts@</string>
+		<key>number_of_accounts</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>You can only be logged in with %2$@ account at once. Log out from one to add another.</string>
+			<key>other</key>
+			<string>You can only be logged in with %2$@ accounts at once. Log out from one to add another.</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

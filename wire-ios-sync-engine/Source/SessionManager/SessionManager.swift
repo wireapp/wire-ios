@@ -1573,7 +1573,10 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         guard
             numberOfExistingAccounts < maxNumberAccounts || createdAccountIsKnown
         else {
-            let error = NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil)
+            let error = NSError(
+                userSessionErrorCode: .accountLimitReached,
+                userInfo: [ZMAccountLimitReachedMaxNumberAccountsKey: maxNumberAccounts]
+            )
             loginDelegate?.authenticationDidFail(error)
             return
         }

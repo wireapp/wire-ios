@@ -1810,7 +1810,6 @@
 "error.user.device_deleted_remotely" = "別のデバイスからログアウトしました。";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "このアカウントは、もはやログイン権限はありません";
-"error.user.account_limit_reached" = "３アカウント以上は追加できません。";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "呼び出す人が多すぎます";

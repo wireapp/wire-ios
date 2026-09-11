@@ -83,4 +83,23 @@ class StartLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSessionStat
         )
     }
 
+    func testThatStartLoginActionFails_WithConfiguredMaxNumberAccounts_WhenAccountLimitIsReached() {
+        // given
+        isAllowedToCreateNewAccount = false
+        maxNumberAccounts = 2
+        let action: URLAction = .startLogin
+        let presentationDelegate = MockPresentationDelegate()
+
+        // when
+        sut.process(urlAction: action, delegate: presentationDelegate)
+
+        // then
+        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
+        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError,
+            .accountLimitReached(maxNumberAccounts: 2)
+        )
+    }
+
 }
