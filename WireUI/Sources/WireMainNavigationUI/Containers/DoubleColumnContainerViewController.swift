@@ -32,10 +32,16 @@ final class DoubleColumnContainerViewController: UIViewController {
         didSet { primaryColumnWidthConstraint?.constant = primaryColumnWidth }
     }
 
-    /// When true, the primary column fills the entire container and the
-    /// secondary column and border are hidden. Use for full-bleed content
-    /// (e.g. files, meetings) instead of inflating `primaryColumnWidth`,
-    /// which is orientation-fragile.
+    /// When true, the primary column fills the entire container and the secondary
+    /// column and border are hidden. Use for full-bleed content (e.g. files,
+    /// meetings) instead of inflating `primaryColumnWidth`.
+    ///
+    /// Why: previously full-bleed screens set `primaryColumnWidth` to the current
+    /// screen width, which is captured once at install time. On rotation the
+    /// container grew but the primary constraint didn't, exposing a strip of the
+    /// secondary column (i.e. whatever conversation was last displayed). Toggling
+    /// the layout instead of the width sidesteps that entirely — no captured
+    /// value can become stale on rotation.
     var isSecondaryHidden: Bool = false {
         didSet {
             guard isSecondaryHidden != oldValue else { return }
@@ -56,7 +62,11 @@ final class DoubleColumnContainerViewController: UIViewController {
     private let borderView = UIView()
     private var borderWidthConstraint: NSLayoutConstraint?
     private var primaryColumnWidthConstraint: NSLayoutConstraint?
+    // Two-column layout: primary has a fixed width and the secondary fills the rest,
+    // pinned to primary's trailing edge via the border.
     private var primaryTrailingToBorderConstraint: NSLayoutConstraint?
+    // Single-column layout: primary stretches to the container's trailing edge,
+    // leaving no room for the border or the secondary (both are also hidden).
     private var primaryTrailingToContainerConstraint: NSLayoutConstraint?
 
     // MARK: -
@@ -106,6 +116,10 @@ final class DoubleColumnContainerViewController: UIViewController {
         updateColumnConstraints()
     }
 
+    /// Switches between the two- and single-column layouts by activating one of
+    /// the two mutually exclusive trailing constraints on the primary column,
+    /// then hiding (rather than removing) the secondary column and border so
+    /// their state is preserved across the toggle.
     private func updateColumnConstraints() {
         primaryColumnWidthConstraint?.isActive = !isSecondaryHidden
         primaryTrailingToBorderConstraint?.isActive = !isSecondaryHidden

@@ -184,6 +184,8 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
 
         let viewControllers = [filesUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        // Files takes the full container width. See `isSecondaryHidden` for why
+        // this is a layout toggle instead of a `primaryColumnWidth` override.
         splitLayoutContainer.isSecondaryHidden = filesUI != nil
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
@@ -201,6 +203,8 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
 
         let viewControllers = [meetingsUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        // Meetings takes the full container width. See `isSecondaryHidden` for why
+        // this is a layout toggle instead of a `primaryColumnWidth` override.
         splitLayoutContainer.isSecondaryHidden = meetingsUI != nil
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
