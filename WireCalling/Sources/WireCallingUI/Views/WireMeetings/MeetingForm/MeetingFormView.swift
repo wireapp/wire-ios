@@ -78,6 +78,15 @@ struct MeetingFormView: View {
                 )
             }
             .alert(
+                Strings.ParticipantsNotAdded.title,
+                isPresented: $viewModel.hasParticipantsNotAddedAlert
+            ) {
+                Button(Strings.Error.Alert.ok, action: viewModel.acknowledgeParticipantsNotAdded)
+            } message: {
+                Text(Strings.ParticipantsNotAdded
+                    .message(viewModel.participantsNotAdded.map(\.name).joined(separator: ", ")))
+            }
+            .alert(
                 Strings.Error.ExpiredStartDate.title,
                 isPresented: $viewModel.hasExpiredStartDateError
             ) {

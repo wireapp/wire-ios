@@ -67,11 +67,17 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             .sorted { $0.name < $1.name }
         let previousIDs = Set(previousMembers.map(\.qualifiedID))
         let selectedIDs = Set(participants.map(\.qualifiedID))
-        let membersToAdd = participants.filter { !previousIDs.contains($0.qualifiedID) }
-        let membersToRemove = previousMembers.filter { !selectedIDs.contains($0.qualifiedID) }
+        let currentIDs = Set((updatedMeeting.conversation ?? conversation).participants.map(\.qualifiedID))
+        let membersToAdd = participants.filter {
+            !previousIDs.contains($0.qualifiedID) && !currentIDs.contains($0.qualifiedID)
+        }
+        let membersToRemove = previousMembers.filter {
+            !selectedIDs.contains($0.qualifiedID) && currentIDs.contains($0.qualifiedID)
+        }
 
         try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
         try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
+        await meetingRepository.storeMeeting(updatedMeeting)
 
         if title != meeting.title {
             do {

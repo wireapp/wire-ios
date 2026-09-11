@@ -41,3 +41,10 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     func updateConversationName(_ name: String, for conversationID: QualifiedID) async throws
 
 }
+
+public enum MeetingParticipantsError: Error, Equatable {
+
+    /// The group is ready, but these participants could not be added.
+    case failedToAddParticipants([MeetingMember])
+
+}

@@ -80,14 +80,14 @@ struct UpdateMeetingUseCaseTests {
         )
     }
 
-    private func makeMeeting(title: String) -> Meeting {
+    private func makeMeeting(title: String, participants: Set<MeetingMember>? = nil) -> Meeting {
         Meeting(
             id: meeting.id,
             title: title,
             start: meeting.start,
             end: meeting.end,
             recurrence: meeting.recurrence,
-            conversation: meeting.conversation,
+            conversation: participants.map { MeetingConversation(participants: $0) } ?? meeting.conversation,
             conversationID: meeting.conversationID,
             creatorID: meeting.creatorID
         )
@@ -175,6 +175,12 @@ struct UpdateMeetingUseCaseTests {
         meetingRepository
             .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
             meeting
+        meetingRepository.storeMeetingMeetingMeetingVoidClosure = { _ in
+            #expect(conversationRepository
+                .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 1)
+            #expect(conversationRepository
+                .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidCallsCount == 1)
+        }
 
         // When
         _ = try await useCase.invoke(
@@ -195,6 +201,36 @@ struct UpdateMeetingUseCaseTests {
             .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments
         #expect(removeArguments?.participants == [Self.removedMember])
         #expect(removeArguments?.conversationID == meeting.conversationID)
+        #expect(meetingRepository.storeMeetingMeetingMeetingVoidReceivedInvocations == [meeting])
+    }
+
+    @Test("invoke skips completed participant changes without undoing changes from another device", arguments: [
+        [keptMember, addedMember],
+        [keptMember, removedMember]
+    ])
+    func invokePreservesParticipantChanges(selectedMembers: [MeetingMember]) async throws {
+        // Given a newer membership snapshot than the one the form was opened with.
+        meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
+            makeMeeting(title: meeting.title, participants: [Self.keptMember, Self.addedMember])
+
+        // When
+        _ = try await useCase.invoke(
+            meeting: meeting,
+            title: meeting.title,
+            startTime: meeting.start,
+            endTime: meeting.end,
+            recurrence: nil,
+            participants: selectedMembers
+        )
+
+        // Then
+        #expect(conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidReceivedArguments?.participants
+            .isEmpty == true)
+        #expect(conversationRepository
+            .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments?.participants
+            .isEmpty == true)
     }
 
     @Test("invoke leaves the participants unchanged when the selection matches the members")

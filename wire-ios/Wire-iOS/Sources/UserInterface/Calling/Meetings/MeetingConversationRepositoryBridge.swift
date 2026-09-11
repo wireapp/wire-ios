@@ -233,17 +233,40 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             MLSUser(id: member.qualifiedID.id, domain: member.qualifiedID.domain)
         }
 
-        let ciphersuite = try await mlsService.establishGroup(
-            for: mlsGroupID,
-            with: mlsUsers,
-            removalKeys: nil
-        )
+        let ciphersuite: MLSCipherSuite
+        var failedParticipants: [MeetingMember] = []
+        do {
+            ciphersuite = try await mlsService.establishGroup(
+                for: mlsGroupID,
+                with: mlsUsers,
+                removalKeys: nil
+            )
+        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedUsers) {
+            guard !failedUsers.isEmpty, failedUsers.allSatisfy({ mlsUsers.contains($0) }) else {
+                throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
+            }
 
-        await syncContext.perform {
-            guard let conv = ZMConversation.existingObject(for: objectID, in: syncContext) else { return }
+            // Failed establishment wipes the group, so recreate it with the eligible invitees and host devices.
+            ciphersuite = try await mlsService.establishGroup(
+                for: mlsGroupID,
+                with: mlsUsers.filter { !failedUsers.contains($0) },
+                removalKeys: nil
+            )
+            failedParticipants = zip(participants, mlsUsers).compactMap { participant, user in
+                failedUsers.contains(user) ? participant : nil
+            }
+        }
+
+        let isGroupReady = await syncContext.perform {
+            guard let conv = ZMConversation.existingObject(for: objectID, in: syncContext) else { return false }
             conv.mlsStatus = .ready
             conv.ciphersuite = ciphersuite
-            _ = syncContext.saveOrRollback()
+            return syncContext.saveOrRollback()
+        }
+
+        if !failedParticipants.isEmpty {
+            guard isGroupReady else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
+            throw MeetingParticipantsError.failedToAddParticipants(failedParticipants)
         }
     }
 
