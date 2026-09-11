@@ -73,9 +73,23 @@ public final class MainTabBarController<
         set { setFilesUI(newValue, animated: false) }
     }
 
+    /// The currently selected tab's content identity.
+    ///
+    /// Backed by ``orderedContents`` rather than `MainTabBarControllerContent`'s
+    /// `rawValue`: the enum's raw values are fixed, but which tabs are actually
+    /// installed depends on feature flags (files, meetings), so the physical
+    /// index of a content drifts from its raw value. Setting a content that is
+    /// not currently installed no-ops rather than selecting the wrong tab.
     public var selectedContent: MainTabBarControllerContent {
-        get { .init(rawValue: selectedIndex) ?? .conversations }
-        set { selectedIndex = newValue.rawValue }
+        get {
+            orderedContents.indices.contains(selectedIndex)
+                ? orderedContents[selectedIndex]
+                : .conversations
+        }
+        set {
+            guard let index = orderedContents.firstIndex(of: newValue) else { return }
+            selectedIndex = index
+        }
     }
 
     // MARK: - Private Properties
@@ -96,6 +110,11 @@ public final class MainTabBarController<
     private weak var _settingsContentUI: UIViewController?
     private var showMeetings: Bool
     private var showFiles: Bool
+
+    /// Mirrors `viewControllers` by tab content. Every mutation of the tab
+    /// array (`setupTabs`, `setFilesUI`, `setMeetingsUI`) must update this
+    /// array in lockstep so ``selectedContent`` can translate between the two.
+    private var orderedContents: [MainTabBarControllerContent] = []
 
     // MARK: - Life Cycle
 
@@ -136,9 +155,11 @@ public final class MainTabBarController<
             archiveNavigationController,
             settingsNavigationController
         ]
+        var contents: [MainTabBarControllerContent] = [.conversations, .archive, .settings]
 
         if showFiles, let filesNavigationController {
             tabs.insert(filesNavigationController, at: 1)
+            contents.insert(.files, at: 1)
         }
 
         if showMeetings {
@@ -147,10 +168,12 @@ public final class MainTabBarController<
             self.meetingsNavigationController = meetingsNavigationController
 
             tabs.insert(meetingsNavigationController, at: 2)
+            contents.insert(.meetings, at: 2)
         } else {
             meetingsNavigationController = nil
         }
         setViewControllers(tabs, animated: false)
+        orderedContents = contents
 
         for content in MainTabBarControllerContent.allCases {
             switch content {
@@ -267,6 +290,7 @@ public final class MainTabBarController<
             meetingsNavigationController.navigationBar.isTranslucent = false
             self.meetingsNavigationController = meetingsNavigationController
             viewControllers?.insert(meetingsNavigationController, at: 2)
+            orderedContents.insert(.meetings, at: 2)
             setupMeetingsTabBarItem()
         }
 
@@ -345,6 +369,7 @@ public final class MainTabBarController<
             filesNavigationController.navigationBar.isTranslucent = false
             self.filesNavigationController = filesNavigationController
             viewControllers?.insert(filesNavigationController, at: 1)
+            orderedContents.insert(.files, at: 1)
             setupFilesTabBarItem()
         }
 
