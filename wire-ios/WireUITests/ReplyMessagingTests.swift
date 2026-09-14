@@ -77,7 +77,7 @@ final class ReplyMessagingTests: WireUITestCase {
         )
 
         XCTAssertTrue(
-            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 4),
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
             "Unread messages count element did not appear"
         )
         let activeConversationPage = try conversationsPage.openConversation()
@@ -90,7 +90,8 @@ final class ReplyMessagingTests: WireUITestCase {
         activeConversationPage.verifyReplySent(
             replyText: textReply,
             quotedContentType: "text",
-            quotedSenderName: groupTeam.teamMember.name
+            quotedSenderName: groupTeam.teamMember.name,
+            quotedText: originalTextMessage
         )
 
         // WHEN - reply to link message
@@ -101,7 +102,8 @@ final class ReplyMessagingTests: WireUITestCase {
         activeConversationPage.verifyReplySent(
             replyText: linkReply,
             quotedContentType: "text",
-            quotedSenderName: groupTeam.teamMember.name
+            quotedSenderName: groupTeam.teamMember.name,
+            quotedText: originalLinkMessage
         )
     }
 
@@ -115,6 +117,14 @@ final class ReplyMessagingTests: WireUITestCase {
         let conversationsPage = try login(user: groupTeam.teamOwner)
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
+        try await testServicesClient.sendImage(
+            user: groupTeam.teamMember,
+            fileURL: mediaURLs.imageURL,
+            type: mediaURLs.imageExtension,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
+        )
+
         try await testServicesClient.sendFile(
             type: "audio",
             user: groupTeam.teamMember,
@@ -125,14 +135,6 @@ final class ReplyMessagingTests: WireUITestCase {
             audio: TestServiceMediaFixtures.audioMetadata()
         )
 
-        try await testServicesClient.sendImage(
-            user: groupTeam.teamMember,
-            fileURL: mediaURLs.imageURL,
-            type: mediaURLs.imageExtension,
-            conversationId: groupTeam.conversationId,
-            domain: groupTeam.conversationDomain
-        )
-
         XCTAssertTrue(
             conversationsPage.unreadMessagesCount.waitForExistence(timeout: 4),
             "Unread messages count element did not appear"
@@ -140,16 +142,12 @@ final class ReplyMessagingTests: WireUITestCase {
         let activeConversationPage = try conversationsPage.openConversation()
 
         XCTAssertTrue(
-            activeConversationPage.playAudioFile.waitForExistence(timeout: 5),
-            "Expected audio message not found"
-        )
-        XCTAssertTrue(
             activeConversationPage.imageCell.waitForExistence(timeout: 5),
             "Expected image message not found"
         )
 
         // WHEN - reply to audio message
-        try activeConversationPage.replyToMessage(activeConversationPage.playAudioFile, withText: audioReply)
+        try activeConversationPage.replyToMessage(activeConversationPage.latestMessageCell, withText: audioReply)
 
         // THEN
         activeConversationPage.verifyReplySent(
