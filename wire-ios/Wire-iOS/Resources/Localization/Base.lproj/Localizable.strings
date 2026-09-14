@@ -1360,8 +1360,7 @@
 
 "self.settings.notifications.sound.title" = "Notification Sound";
 "self.settings.notifications.sound.wire" = "Wire";
-"self.settings.notifications.sound.system_default" = "System Default";
-"self.settings.notifications.sound.footer" = "System Default uses the alert sound provided by iOS. Apple does not make its other built-in alert tones available to apps.";
+"self.settings.notifications.sound.wire_old" = "Wire old (click)";
 
 "self.settings.notifications.chat_alerts.toggle" = "Message Banners";
 "self.settings.notifications.chat_alerts.footer" = "New messages in other conversations.";

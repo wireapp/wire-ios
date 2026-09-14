@@ -64,8 +64,8 @@ private extension MessageNotificationSound {
         switch self {
         case .wire:
             L10n.Localizable.Self.Settings.Notifications.Sound.wire
-        case .systemDefault:
-            L10n.Localizable.Self.Settings.Notifications.Sound.systemDefault
+        case .wireOld:
+            L10n.Localizable.Self.Settings.Notifications.Sound.wireOld
         }
     }
 
@@ -73,8 +73,8 @@ private extension MessageNotificationSound {
         switch self {
         case .wire:
             Locators.NotificationSoundSettingsPage.wireOption.rawValue
-        case .systemDefault:
-            Locators.NotificationSoundSettingsPage.systemDefaultOption.rawValue
+        case .wireOld:
+            Locators.NotificationSoundSettingsPage.wireOldOption.rawValue
         }
     }
 }

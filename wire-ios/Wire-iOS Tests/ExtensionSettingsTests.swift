@@ -57,10 +57,10 @@ final class ExtensionSettingsTests: XCTestCase {
     }
 
     func testThatItPersistsMessageNotificationSound() {
-        settings.messageNotificationSound = .systemDefault
+        settings.messageNotificationSound = .wireOld
 
         let restoredSettings = ExtensionSettings(defaults: defaults)
 
-        XCTAssertEqual(restoredSettings.messageNotificationSound, .systemDefault)
+        XCTAssertEqual(restoredSettings.messageNotificationSound, .wireOld)
     }
 }

@@ -25,7 +25,7 @@ public enum NotificationSound {
 
     // These values are persisted by ExtensionSettings in the shared app-group defaults.
     private static let messageNotificationSoundPreferenceKey = "messageNotificationSound"
-    private static let systemDefaultPreferenceValue = "systemDefault"
+    private static let wireOldPreferenceValue = "wireOld"
 
     /// Storage of the user's preferred notification sounds.
 
@@ -46,8 +46,8 @@ public enum NotificationSound {
         switch self {
         case .default:
             .default
-        case .newMessage where usesSystemDefaultForNewMessages:
-            .default
+        case .newMessage where usesWireOldForNewMessages:
+            UNNotificationSound(named: .init("new_message_legacy.caf"))
         default:
             UNNotificationSound(named: .init(defaultFileName))
         }
@@ -64,7 +64,7 @@ public enum NotificationSound {
         }
     }
 
-    private var usesSystemDefaultForNewMessages: Bool {
-        Self.storage.string(forKey: Self.messageNotificationSoundPreferenceKey) == Self.systemDefaultPreferenceValue
+    private var usesWireOldForNewMessages: Bool {
+        Self.storage.string(forKey: Self.messageNotificationSoundPreferenceKey) == Self.wireOldPreferenceValue
     }
 }

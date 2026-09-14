@@ -158,12 +158,12 @@ final class NotificationService: UNNotificationServiceExtension {
             attributes: .safePublic
         )
 
-        let messageNotificationSound: UNNotificationSound = switch ExtensionSettings(defaults: sharedUserDefaults)
+        let messageNotificationSound = switch ExtensionSettings(defaults: sharedUserDefaults)
             .messageNotificationSound {
         case .wire:
             UNNotificationSound(named: .init("new_message.caf"))
-        case .systemDefault:
-            .default
+        case .wireOld:
+            UNNotificationSound(named: .init("new_message_legacy.caf"))
         }
 
         return NotificationServiceExtension(
