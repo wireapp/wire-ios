@@ -233,8 +233,7 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .conversationScheduledForDeletion:
-            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate,
-                  DeveloperFlag.preventAdminlessGroups.isOn else {
+            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate else {
                 break
             }
             let cell = ConversationScheduledForDeletionCellDescription(deletionDate: deletionDate)

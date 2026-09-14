@@ -390,7 +390,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var meetingEventNotificationBuilder: MeetingEventNotificationBuilder {
         shared {
             MeetingEventNotificationBuilder(
-                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder
+                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
+                meetingMemberAddEventBuilder: meetingMemberAddEventNotificationBuilder,
+                meetingUpdateEventBuilder: meetingUpdateEventNotificationBuilder
             )
         }
     }
@@ -400,6 +402,28 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             MeetingDeleteEventNotificationBuilder(
                 meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
                 userLocalStore: userLocalStore,
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificationBuilder {
+        shared {
+            MeetingMemberAddEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuilder {
+        shared {
+            MeetingUpdateEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
                 accountID: dependency.accountID
             )
@@ -456,6 +480,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         let validator = ConversationCallingEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
             conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             userDefaults: dependency.sharedUserDefaults
         )
 

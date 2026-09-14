@@ -22,19 +22,22 @@ import XCTest
 
 class AdminPromotionTests: WireUITestCase {
 
-    override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
-        [.preventAdminlessGroups: true]
-    }
+    private let userHelper = UserHelper.instance(apiVersion: .v18)
 
     @MainActor
     func testLastAdmin_promotesNewAdmin_andLeavesGroup_TC_11032() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (owner, teamMembers, _, _) = try await UserHelper.default.registerTeam(
+        let (owner, teamMembers, _, _) = try await userHelper.registerTeam(
             withMemberCount: 1,
             conversation: .group(groupName)
         )
         let member = try XCTUnwrap(teamMembers.first)
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        // TODO: [WPB-28649] - Remove when v18 is PROD ready.
+        try switchToPreferredAPIVersion("18")
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -63,10 +66,15 @@ class AdminPromotionTests: WireUITestCase {
     func testLastAdmin_deletesGroup_insteadOfPromoting_TC_11033() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (owner, _, _, _) = try await UserHelper.default.registerTeam(
+        let (owner, _, _, _) = try await userHelper.registerTeam(
             withMemberCount: 1,
             conversation: .group(groupName)
         )
+
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        try switchToPreferredAPIVersion("18")
 
         let conversationsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -93,10 +101,15 @@ class AdminPromotionTests: WireUITestCase {
     func testLastAdmin_onlySeesDeleteGroupOption_whenNoEligibleMembers_TC_11034() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (owner, _, _, _) = try await UserHelper.default.registerTeam(
+        let (owner, _, _, _) = try await userHelper.registerTeam(
             withMemberCount: 0,
             conversation: .group(groupName)
         )
+
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        try switchToPreferredAPIVersion("18")
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -117,16 +130,18 @@ class AdminPromotionTests: WireUITestCase {
     }
 
     @MainActor
-    func testLastPersonalUserAdmin_CannotLeaveGroup_PromotesNewAdmin_ThenLeaveGroupSuccessfully_TC_11577() async throws {
-        let groupName = "Personal User Leave Group Test"
+    func testLastGuestUserAdmin_CannotLeaveGroup_PromotesNewAdmin_ThenLeaveGroupSuccessfully_TC_11577() async throws {
+        let groupName = "Guest User Leave Group Test"
         let (
             owner,
-            personalUser
+            guestUser
         ) =
-            try await createGroupConversationWithTeamMemberAndLastPersonalUserAdmin(groupName: groupName)
+            try await createGroupConversationWithTeamMemberAndLastGuestUserAdmin(groupName: groupName)
+
+        try switchToPreferredAPIVersion("18")
 
         let conversationsPage = try app
-            .loginUser(email: personalUser.email, password: personalUser.password)
+            .loginUser(email: guestUser.email, password: guestUser.password)
             .acceptPopup()
 
         let conversationDetailsPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
@@ -151,27 +166,32 @@ class AdminPromotionTests: WireUITestCase {
 
         try verifyUserLeftGroup(
             conversationDetailsPage,
-            leavingUserName: personalUser.name,
-            participantDescription: "Personal user"
+            leavingUserName: guestUser.name,
+            participantDescription: "Guest user"
         )
     }
 
-    private func createGroupConversationWithTeamMemberAndLastPersonalUserAdmin(groupName: String) async throws
+    private func createGroupConversationWithTeamMemberAndLastGuestUserAdmin(groupName: String) async throws
         -> (teamMember: UserInfo, personalUser: UserInfo) {
-        let (teamMember, personalUser) = try await UserHelper.default.connectTeamUserWithPersonalUser()
+        let (teamMember, guestUser) = try await userHelper.connectDriveEnabledTeamUserWithGuestUser()
 
         let domain = BackendTarget.staging.domainInfo
         let teamMemberQualifiedID = WireFoundation.QualifiedID(
             id: try XCTUnwrap(UUID(uuidString: teamMember.id)),
             domain: domain
         )
-        let personalUserQualifiedID = WireFoundation.QualifiedID(
-            id: try XCTUnwrap(UUID(uuidString: personalUser.id)),
+        let guestUserQualifiedID = WireFoundation.QualifiedID(
+            id: try XCTUnwrap(UUID(uuidString: guestUser.id)),
             domain: domain
         )
 
-        let conversation = try await UserHelper.default.createGroupConversations(
-            qualifiedIds: [personalUserQualifiedID],
+        try await userHelper
+            .unlockAndEnablePreventAdminlessGroupsFeature(teamID: try XCTUnwrap(teamMember.teamID))
+        try await userHelper
+            .unlockAndEnablePreventAdminlessGroupsFeature(teamID: try XCTUnwrap(guestUser.teamID))
+
+        let conversation = try await userHelper.createGroupConversations(
+            qualifiedIds: [guestUserQualifiedID],
             owner: teamMember,
             groupName: groupName,
             driveEnabled: true
@@ -179,18 +199,18 @@ class AdminPromotionTests: WireUITestCase {
 
         let conversationQualifiedID = try XCTUnwrap(conversation.qualifiedID)
 
-        try await UserHelper.default.updateRole(
+        try await userHelper.updateRole(
             "wire_admin",
-            userID: personalUserQualifiedID,
+            userID: guestUserQualifiedID,
             conversationID: conversationQualifiedID
         )
 
-        try await UserHelper.default.removeParticipant(
+        try await userHelper.removeParticipant(
             userID: teamMemberQualifiedID,
             conversationID: conversationQualifiedID
         )
 
-        return (teamMember, personalUser)
+        return (teamMember, guestUser)
     }
 
     @MainActor
@@ -220,12 +240,17 @@ class AdminPromotionTests: WireUITestCase {
     func testAdmin_notLastAdmin_leavesGroupWithoutAdminSelectionModal_TC_11031() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (owner, _, _, _) = try await UserHelper.default.createGroupConversationWithAdminsAndMembers(
+        let (owner, _, _, _) = try await userHelper.createGroupConversationWithAdminsAndMembers(
             groupName: groupName,
             memberCount: 2,
             groupAdminCount: 2,
             preventAdminlessGroupsEnabled: true
         )
+
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        try switchToPreferredAPIVersion("18")
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
