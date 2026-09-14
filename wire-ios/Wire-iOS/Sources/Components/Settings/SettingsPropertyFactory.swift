@@ -68,9 +68,6 @@ final class SettingsPropertyFactory {
     static let userDefaultsPropertiesToKeys: [SettingsPropertyName: SettingKey] = [
         SettingsPropertyName.disableMarkdown: .disableMarkdown,
         SettingsPropertyName.chatHeadsDisabled: .chatHeadsDisabled,
-        SettingsPropertyName.messageSoundName: .messageSoundName,
-        SettingsPropertyName.callSoundName: .callSoundName,
-        SettingsPropertyName.pingSoundName: .pingSoundName,
         SettingsPropertyName.disableSendButton: .sendButtonDisabled,
         SettingsPropertyName.mapsOpeningOption: .mapsOpeningRawValue,
         SettingsPropertyName.browserOpeningOption: .browserOpeningRawValue,

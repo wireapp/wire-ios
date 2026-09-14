@@ -1361,13 +1361,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "訊息橫幅";
 "self.settings.notifications.chat_alerts.footer" = "接收來自其他對話的新訊息。";
 
-"self.settings.sound_menu.sounds.title" = "音效";
-"self.settings.sound_menu.ringtone.title" = "鈴聲";
-"self.settings.sound_menu.message.title" = "訊息音效";
-"self.settings.sound_menu.ping.title" = "招呼";
-"self.settings.sound_menu.ringtones.title" = "鈴聲";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "無";
 
 "self.settings.callkit.title" = "通話";
 "self.settings.callkit.caption" = "與iOS系統共用";
@@ -1379,9 +1372,6 @@
 "self.settings.vbr.title" = "可變位元率編碼";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire 鈴聲";
-"self.settings.sound_menu.sounds.wire_message" = "Wire 訊息";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire 招呼";
 
 // By popular demand
 "self.settings.popular_demand.title" = "推薦選項";

@@ -20,8 +20,6 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireLogging
-import WireSyncEngine
-import WireSystem
 
 enum MediaManagerSound: String {
     case outgoingKnockSound = "ping_from_me"
@@ -99,7 +97,6 @@ extension AVSMediaManager {
 
     func configureSounds() {
         configureDefaultSounds()
-        configureCustomSounds()
         configureMessageNotificationSound()
     }
 
@@ -122,77 +119,12 @@ extension AVSMediaManager {
             name: NSNotification.Name(rawValue: SettingsPropertyName.notificationSound.changeNotificationName),
             object: .none
         )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
-            name: NSNotification.Name(rawValue: SettingsPropertyName.messageSoundName.changeNotificationName),
-            object: .none
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
-            name: NSNotification.Name(rawValue: SettingsPropertyName.callSoundName.changeNotificationName),
-            object: .none
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
-            name: NSNotification.Name(rawValue: SettingsPropertyName.pingSoundName.changeNotificationName),
-            object: .none
-        )
-    }
-
-    private func configureCustomSounds() {
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: nil, selfUser: nil, trackingManager: nil)
-
-        let messageSoundProperty = settingsPropertyFactory.property(.messageSoundName)
-        updateCustomSoundForProperty(messageSoundProperty)
-
-        let callSoundProperty = settingsPropertyFactory.property(.callSoundName)
-        updateCustomSoundForProperty(callSoundProperty)
-
-        let pingSoundProperty = settingsPropertyFactory.property(.pingSoundName)
-        updateCustomSoundForProperty(pingSoundProperty)
-    }
-
-    func updateCustomSoundForProperty(_ property: SettingsProperty) {
-        let name = property.propertyName.rawValue
-        let value = property.rawValue()
-        if let stringValue = value as? String {
-            updateCustomSoundForName(name, propertyValue: stringValue)
-        }
-    }
-
-    func updateCustomSoundForName(_ propertyName: String, propertyValue: String?) {
-        let value = propertyValue
-
-        let soundValue = value == .none ? .none : ZMSound(rawValue: value!)
-
-        switch propertyName {
-        case SettingsPropertyName.messageSoundName.rawValue:
-            register(soundValue?.fileURL(), forMedia: MediaManagerSound.messageReceivedSound.rawValue)
-
-        case SettingsPropertyName.callSoundName.rawValue:
-            register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemInCallSound.rawValue)
-            register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemSound.rawValue)
-
-        case SettingsPropertyName.pingSoundName.rawValue:
-            register(soundValue?.fileURL(), forMedia: MediaManagerSound.outgoingKnockSound.rawValue)
-            register(soundValue?.fileURL(), forMedia: MediaManagerSound.incomingKnockSound.rawValue)
-
-        default:
-            fatalError("\(propertyName) is not a sound property")
-        }
     }
 
     // MARK: - Notifications
 
     @objc
-    func didUpdateSound(_ notification: NSNotification?) {
+    func didUpdateSound(_: NSNotification?) {
         configureSounds()
-
-        if notification?.name.rawValue == SettingsPropertyName.callSoundName.changeNotificationName {
-            SessionManager.shared?.updateCallKitConfiguration()
-        }
     }
 }

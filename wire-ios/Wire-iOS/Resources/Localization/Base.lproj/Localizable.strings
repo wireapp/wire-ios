@@ -1365,13 +1365,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Message Banners";
 "self.settings.notifications.chat_alerts.footer" = "New messages in other conversations.";
 
-"self.settings.sound_menu.sounds.title" = "Sounds";
-"self.settings.sound_menu.ringtone.title" = "Ringtone";
-"self.settings.sound_menu.message.title" = "Text Tone";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Ringtones";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "None";
 
 "self.settings.callkit.title" = "Calls";
 "self.settings.callkit.caption" = "Share with iOS";
@@ -1383,9 +1376,6 @@
 "self.settings.vbr.title" = "Variable Bit Rate Encoding";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire Call";
-"self.settings.sound_menu.sounds.wire_message" = "Wire Message";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire Ping";
 
 // By popular demand
 "self.settings.popular_demand.title" = "By popular demand";

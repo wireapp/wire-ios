@@ -1361,13 +1361,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Žinutės informacija";
 "self.settings.notifications.chat_alerts.footer" = "Nauji pranešimai kituose susirašinėjimuose.";
 
-"self.settings.sound_menu.sounds.title" = "Garsai";
-"self.settings.sound_menu.ringtone.title" = "Skambučio melodija";
-"self.settings.sound_menu.message.title" = "Pranešimo garsas";
-"self.settings.sound_menu.ping.title" = "Ryšio patikrinimas";
-"self.settings.sound_menu.ringtones.title" = "Melodijos";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Jokių";
 
 "self.settings.callkit.title" = "Skambučiai";
 "self.settings.callkit.caption" = "Dalintis su „iOS“";
@@ -1379,9 +1372,6 @@
 "self.settings.vbr.title" = "Kodavimas kintama sparta (bitais)";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "„Wire“ skambutis";
-"self.settings.sound_menu.sounds.wire_message" = "„Wire“ žinutė";
-"self.settings.sound_menu.sounds.wire_ping" = "„Wire“ skambtelėjimas";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Pagal populiarius pageidavimus";

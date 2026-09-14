@@ -1361,13 +1361,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Bannières";
 "self.settings.notifications.chat_alerts.footer" = "Nouveaux messages dans les autres conversations.";
 
-"self.settings.sound_menu.sounds.title" = "Sons";
-"self.settings.sound_menu.ringtone.title" = "Sonnerie";
-"self.settings.sound_menu.message.title" = "Son d'alertes";
-"self.settings.sound_menu.ping.title" = "Signe";
-"self.settings.sound_menu.ringtones.title" = "Sonneries";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Aucun";
 
 "self.settings.callkit.title" = "Appels";
 "self.settings.callkit.caption" = "Partager avec iOS";
@@ -1379,9 +1372,6 @@
 "self.settings.vbr.title" = "Échantillonnage variable (VBR)";
 "self.settings.vbr.description" = "Cela permet aux appels audio d'utiliser moins de données et de mieux fonctionner sur les réseaux plus lents. Désactivez pour utiliser l'encodage en débit constant (CBR). Ce paramètre n'affecte que les appels 1:1; les appels de conférence utilisent toujours l'encodage CBR.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Appel Wire";
-"self.settings.sound_menu.sounds.wire_message" = "Message Wire";
-"self.settings.sound_menu.sounds.wire_ping" = "Signe Wire";
 
 // By popular demand
 "self.settings.popular_demand.title" = "À la demande générale";
