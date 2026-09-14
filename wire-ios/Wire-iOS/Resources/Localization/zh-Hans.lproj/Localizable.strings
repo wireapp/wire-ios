@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "消息栏";
 "self.settings.notifications.chat_alerts.footer" = "来自其他对话的新信息。";
 
-"self.settings.sound_menu.sounds.title" = "音效";
-"self.settings.sound_menu.ringtone.title" = "铃声";
-"self.settings.sound_menu.message.title" = "消息音效";
-"self.settings.sound_menu.ping.title" = "打招呼";
-"self.settings.sound_menu.ringtones.title" = "铃声";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "无";
 
 "self.settings.callkit.title" = "通话";
 "self.settings.callkit.caption" = "与iOS系统共用";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "可变码率编码";
 "self.settings.vbr.description" = "这会使音频通话使用更少的数据，并且在较慢的网络上也能更好地工作。关闭以使用恒定比特率编码 (CBR)。此设置仅影响 1:1 通话；电话会议始终使用 CBR 编码。";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire 通话";
-"self.settings.sound_menu.sounds.wire_message" = "Wire 信息";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire 打招呼";
 
 // By popular demand
 "self.settings.popular_demand.title" = "推荐选项";

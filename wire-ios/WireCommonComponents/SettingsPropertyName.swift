@@ -57,9 +57,6 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
 
     // Sounds
     case notificationSound = "NotificationSound"
-    case messageSoundName = "MessageSoundName"
-    case callSoundName = "CallSoundName"
-    case pingSoundName = "PingSoundName"
 
     // Open In
     case mapsOpeningOption = "MapsOpeningOption"
