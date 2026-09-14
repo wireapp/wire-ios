@@ -142,6 +142,11 @@ package final class MeetingFormViewModel {
     var hasConversationNameUpdateError = false
     private var meetingPendingConversationNameUpdate: Meeting?
 
+    var hasParticipantsNotAddedAlert = false
+    private(set) var participantsNotAdded: [MeetingMember] = []
+    private var meetingWithParticipantsNotAdded: Meeting?
+    private var didAcknowledgeParticipantsNotAdded = false
+
     var selectedMembersSummary: String {
         selectedMembers
             .map(\.name)
@@ -215,7 +220,7 @@ package final class MeetingFormViewModel {
         // corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
-        guard !isLoading else { return }
+        guard !isLoading, meetingWithParticipantsNotAdded == nil else { return }
         hasError = false
         hasConversationNameUpdateError = false
         meetingPendingConversationNameUpdate = nil
@@ -229,6 +234,10 @@ package final class MeetingFormViewModel {
         do {
             let meeting = try await saveMeeting()
             onSuccess(meeting)
+        } catch let CreateMeetingUseCaseError.participantsNotAdded(meeting, participants) {
+            meetingWithParticipantsNotAdded = meeting
+            participantsNotAdded = participants
+            hasParticipantsNotAddedAlert = true
         } catch let UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting) {
             meetingPendingConversationNameUpdate = updatedMeeting
             hasConversationNameUpdateError = true
@@ -237,6 +246,13 @@ package final class MeetingFormViewModel {
             WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
             hasError = true
         }
+    }
+
+    func acknowledgeParticipantsNotAdded() {
+        guard !didAcknowledgeParticipantsNotAdded, let meeting = meetingWithParticipantsNotAdded else { return }
+        didAcknowledgeParticipantsNotAdded = true
+        hasParticipantsNotAddedAlert = false
+        onSuccess(meeting)
     }
 
     func retryConversationNameUpdate() async {
