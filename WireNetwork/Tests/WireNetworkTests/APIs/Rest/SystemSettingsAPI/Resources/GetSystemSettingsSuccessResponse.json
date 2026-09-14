@@ -1,0 +1,6 @@
+{
+    "nomadProfiles": true,
+    "setEnableMls": true,
+    "setRestrictUserCreation": false,
+    "ssoIdpChangeDetectionEnabled": true
+}
