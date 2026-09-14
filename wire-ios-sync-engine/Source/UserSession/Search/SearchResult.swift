@@ -42,9 +42,7 @@ public struct SearchResult {
 
     public var apps: [any UserType]
 
-    /// Team collaborators (resolved from `/teams/:tid/collaborators`) whose profile is not app-typed,
-    /// i.e. human users with team permissions who aren't full team members. These should be surfaced
-    /// like regular contacts, never through the apps-specific UI.
+    /// Team collaborators who are not apps.
 
     public var collaborators: [ZMSearchUser] = []
 
@@ -189,8 +187,6 @@ extension SearchResult {
         )
     }
 
-    /// Merges in newly resolved human collaborators (non-app team collaborators), deduplicating by
-    /// `remoteIdentifier` against collaborators, contacts and team members already present in `self`.
     func union(withCollaboratorsResult result: SearchResult) -> SearchResult {
         let existingUsers = contacts + teamMembers + collaborators
         return SearchResult(

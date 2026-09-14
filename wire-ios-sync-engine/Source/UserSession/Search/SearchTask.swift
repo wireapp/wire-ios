@@ -477,18 +477,16 @@ public final class SearchTask {
     }
 
     /// If no search query is provided we cannot use the search API.
-    /// This func basically serves two purposes:
-    /// - Apps/collaborators added to the team don't trigger events, so this allows apps/collaborators being added
+    /// Apps/collaborators added to the team don't trigger events, so this allows apps/collaborators being added
     /// right now (while the iOS client is running) to be displayed in the search results.
-    /// - In large teams apps/collaborators might not be discovered without this code (2000 members cap).
     ///
     /// Team-owned apps come from `GET /teams/:tid/apps`. Team collaborators come from
     /// `GET /teams/:tid/collaborators`, which only returns a bare `{user, team, permissions}` shape with no
     /// type discriminator, so each collaborator's user ID is resolved into a full profile via
     /// `usersAPI.getUsers` to determine whether it's an app, a (legacy) bot, or a human. App- and bot-typed
-    /// collaborator profiles are folded into the same apps bucket as the team-owned apps (deduplicated).
+    /// collaborator profiles are folded into the same apps bucket as the team-owned apps.
     /// Regular (human) collaborator profiles are surfaced separately so they can be displayed like regular
-    /// contacts, never through the apps-specific UI.
+    /// contacts.
     func listAppsAndCollaborators() async throws -> SearchResultAggregator {
         guard
             let apiVersion,

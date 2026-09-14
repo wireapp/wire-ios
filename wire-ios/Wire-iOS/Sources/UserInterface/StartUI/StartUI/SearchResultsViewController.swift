@@ -359,8 +359,7 @@ final class SearchResultsViewController: UIViewController {
         var filteredContacts = searchResult.contacts
         var filteredTeamContacts = searchResult.teamMembers
         var filteredApps = searchResult.apps
-        // Human team collaborators (resolved from `/teams/:tid/collaborators`) are rendered like regular
-        // contacts/team members, never through the apps-specific section controller.
+        // Human collaborators are rendered like regular team members (apps and bots are filtered out).
         var filteredCollaborators = searchResult.collaborators
 
         if let filteredParticipants = filterConversation?.localParticipants {
@@ -392,8 +391,6 @@ final class SearchResultsViewController: UIViewController {
 
         contactsSection.contacts = filteredContacts
 
-        // Collaborators are team-scoped (fetched per-team, like team members), so they're always included
-        // alongside team members regardless of whether personal (non-team) contacts are shown.
         let teamMembersAndCollaborators = filteredTeamContacts + filteredCollaborators
 
         // Access mode is not set, or the guests are allowed.
@@ -411,7 +408,6 @@ final class SearchResultsViewController: UIViewController {
         sectionController.collectionView?.reloadData()
     }
 
-    /// Sorts search users by name, falling back to handle for users sharing the same name.
     private func sorted(byNameThenHandle users: some Sequence<ZMSearchUser>) -> [ZMSearchUser] {
         users.sorted {
             let name0 = $0.name ?? ""
