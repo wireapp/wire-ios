@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import WireCommonComponents
 import WireLocators
 
@@ -23,13 +24,17 @@ extension SettingsCellDescriptorFactory {
 
     var notificationSoundGroup: any SettingsCellDescriptorType {
         let property = settingsPropertyFactory.property(.notificationSound)
+        let previewPlayer = SoundPreviewPlayer(mediaManager: AVSMediaManager.sharedInstance())
 
         let cells = MessageNotificationSound.allCases.map { option in
             SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: .string(value: option.rawValue),
                 title: option.title,
-                identifier: option.accessibilityIdentifier
+                identifier: option.accessibilityIdentifier,
+                selectAction: { _ in
+                    previewPlayer.playPreview(.messageReceivedSound)
+                }
             )
         }
 
