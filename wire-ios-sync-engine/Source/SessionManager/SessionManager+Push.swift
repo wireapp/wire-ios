@@ -163,6 +163,12 @@ public extension SessionManager {
         }
     }
 
+    func showMeetings(in session: ZMUserSession) {
+        activateAccount(for: session) {
+            self.presentationDelegate?.showMeetings()
+        }
+    }
+
     func activateAccount(of session: ZMUserSession) {
         activateAccount(for: session) {}
     }
