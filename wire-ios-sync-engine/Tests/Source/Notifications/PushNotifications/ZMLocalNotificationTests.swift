@@ -105,7 +105,7 @@ class ZMLocalNotificationTests: MessagingTest {
         XCTAssertEqual(NotificationSound.newMessage.name, "new_message.caf")
     }
 
-    func testMessageNotificationUsesSystemDefaultWhenSelected() {
+    func testMessageNotificationUsesWireOldWhenSelected() {
         let previousStorage = NotificationSound.storage
         let suiteName = UUID().uuidString
         let storage = UserDefaults(suiteName: suiteName)!
@@ -115,9 +115,12 @@ class ZMLocalNotificationTests: MessagingTest {
             storage.removePersistentDomain(forName: suiteName)
         }
 
-        storage.set("systemDefault", forKey: "messageNotificationSound")
+        storage.set("wireOld", forKey: "messageNotificationSound")
 
-        XCTAssertEqual(NotificationSound.newMessage.userNotificationSound, UNNotificationSound.default)
+        XCTAssertEqual(
+            NotificationSound.newMessage.userNotificationSound,
+            UNNotificationSound(named: .init("new_message_legacy.caf"))
+        )
     }
 
     // MARK: - Helpers

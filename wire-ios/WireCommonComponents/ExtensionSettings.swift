@@ -42,7 +42,7 @@ private enum ExtensionSettingsKey: String, CaseIterable {
 
 public enum MessageNotificationSound: String, CaseIterable {
     case wire
-    case systemDefault
+    case wireOld
 }
 
 public final class ExtensionSettings: NSObject {

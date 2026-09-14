@@ -437,7 +437,7 @@ public enum Locators {
     public enum NotificationSoundSettingsPage: AutoPrefixedEnum {
 
         case wireOption
-        case systemDefaultOption
+        case wireOldOption
     }
 
     public enum SaveBackupFileBottomSheetPage: String {

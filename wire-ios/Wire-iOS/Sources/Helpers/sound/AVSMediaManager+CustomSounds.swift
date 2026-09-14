@@ -87,9 +87,6 @@ extension AVSMediaManager {
         }
 
         mediaManager.registerMedia(fromConfiguration: AVSMediaManager.MediaManagerSoundConfig, inDirectory: audioDir)
-
-        let messageSoundURL = Bundle.main.url(forResource: "new_message", withExtension: "caf")
-        mediaManager.register(messageSoundURL, forMedia: MediaManagerSound.messageReceivedSound.rawValue)
     }
 
     func unregisterCallRingingSounds() {
@@ -103,9 +100,28 @@ extension AVSMediaManager {
     func configureSounds() {
         configureDefaultSounds()
         configureCustomSounds()
+        configureMessageNotificationSound()
+    }
+
+    private func configureMessageNotificationSound() {
+        let resourceName = switch ExtensionSettings.shared.messageNotificationSound {
+        case .wire:
+            "new_message"
+        case .wireOld:
+            "new_message_legacy"
+        }
+
+        let soundURL = Bundle.main.url(forResource: resourceName, withExtension: "caf")
+        register(soundURL, forMedia: MediaManagerSound.messageReceivedSound.rawValue)
     }
 
     func observeSoundConfigurationChanges() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
+            name: NSNotification.Name(rawValue: SettingsPropertyName.notificationSound.changeNotificationName),
+            object: .none
+        )
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(AVSMediaManager.didUpdateSound(_:)),

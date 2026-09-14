@@ -89,8 +89,7 @@ extension SettingsCellDescriptorFactory {
 
     private var soundSection: SettingsSectionDescriptorType {
         SettingsSectionDescriptor(
-            cellDescriptors: [soundAlertGroup, notificationSoundGroup],
-            footer: L10n.Localizable.Self.Settings.Notifications.Sound.footer
+            cellDescriptors: [soundAlertGroup, notificationSoundGroup]
         )
     }
 
