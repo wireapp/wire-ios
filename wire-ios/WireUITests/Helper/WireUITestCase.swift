@@ -149,6 +149,17 @@ class WireUITestCase: XCTestCase {
     func simulateShakeGesture() {
         app.tap(withNumberOfTaps: 3, numberOfTouches: 1)
     }
+
+    /// Manually switches the preferred API version via the developer tools menu (accessible by
+    /// shaking the device). Selecting a version force-quits the app, so it is relaunched afterwards.
+    @MainActor
+    func switchToPreferredAPIVersion(_ version: String) throws {
+        simulateShakeGesture()
+        try DeveloperToolsPage()
+            .openPreferredAPIVersion()
+            .selectVersion(version)
+        app.launch()
+    }
 }
 
 extension XCUIApplication {

@@ -32,6 +32,9 @@ struct MeetingEventProcessor: MeetingEventProcessorProtocol {
         case let .delete(event):
             await deleteEventProcessor.processEvent(event)
 
+        case let .memberAdd(event):
+            try await updateEventProcessor.processEvent(MeetingUpdateEvent(meetingID: event.meetingID))
+
         case let .update(event):
             try await updateEventProcessor.processEvent(event)
         }

@@ -67,6 +67,8 @@
 "wireMeetings.schedule.setupParticipants.placeholder" = "Add participants";
 "wireMeetings.schedule.error.alert.title" = "Something went wrong";
 "wireMeetings.schedule.error.alert.ok" = "OK";
+"wireMeetings.schedule.participantsNotAdded.title" = "Meeting created";
+"wireMeetings.schedule.participantsNotAdded.message" = "The meeting was created, but these users could not be added:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Could not update call name";
 "wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the name shown in the call could not be updated. Please try again.";
 "wireMeetings.schedule.error.conversationName.retry" = "Try again";

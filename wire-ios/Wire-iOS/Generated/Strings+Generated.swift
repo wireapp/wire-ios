@@ -4342,11 +4342,11 @@ internal enum L10n {
       }
     }
     internal enum LastAdminLeave {
-      /// There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.
-      internal static let cannotLeaveMessage = L10n.tr("Localizable", "last_admin_leave.cannot_leave_message", fallback: "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.")
-      /// Cannot leave "%@".
+      /// Add at least one team member from the team that created this group and select them as an admin before you leave.
+      internal static let cannotLeaveMessage = L10n.tr("Localizable", "last_admin_leave.cannot_leave_message", fallback: "Add at least one team member from the team that created this group and select them as an admin before you leave.")
+      /// Leave "%@"?
       internal static func cannotLeaveTitle(_ p1: Any) -> String {
-        return L10n.tr("Localizable", "last_admin_leave.cannot_leave_title", String(describing: p1), fallback: "Cannot leave \"%@\".")
+        return L10n.tr("Localizable", "last_admin_leave.cannot_leave_title", String(describing: p1), fallback: "Leave \"%@\"?")
       }
       /// Delete group
       internal static let deleteGroup = L10n.tr("Localizable", "last_admin_leave.delete_group", fallback: "Delete group")
