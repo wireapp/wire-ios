@@ -1359,8 +1359,15 @@ extension ZMUserSession: SyncAgentDelegate {
             await mlsService.uploadKeyPackagesIfNeeded()
             while mlsFeature.isEnabled,
                   isBackendMLSEnabled,
+<<<<<<< HEAD
                   await MainActor.run(body: { [application] in application.applicationState == .active }) {
                 guard await mlsService.recoverPendingConversationBatchIfNeeded() else { break }
+=======
+                  application.applicationState == .active {
+                guard await mlsService.recoverPendingConversationBatchIfNeeded() else {
+                    break
+                }
+>>>>>>> 51fd001f38 (fix: recover MLS conversations after key-package exhaustion - WPB-27395 (#5216))
             }
             await resolveOneOnOneConversationsIfNeeded()
             await recurringActionService.performActionsIfNeeded()

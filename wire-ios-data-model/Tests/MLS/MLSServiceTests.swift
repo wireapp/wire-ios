@@ -2069,11 +2069,17 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
         privateUserDefaults.set(Date(), forKey: .keyPackageQueriedTime)
+<<<<<<< HEAD
 
         mockCoreCryptoContext.getKeyPackages_MockValue = createKeyPackagesRefs(
             amount: sut.targetUnclaimedKeyPackageCount
         )
 
+=======
+        mockCoreCryptoContext.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
+            UInt64(self.sut.targetUnclaimedKeyPackageCount)
+        }
+>>>>>>> 51fd001f38 (fix: recover MLS conversations after key-package exhaustion - WPB-27395 (#5216))
         mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockValue =
             sut.targetUnclaimedKeyPackageCount
 
