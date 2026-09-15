@@ -41,6 +41,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var modalDestination: DetermineAuthMethodSheet?
     @Published var existsAnotherAccount: Bool
 
+    /// Action to run once `modalDestination`'s dismissal transition has actually completed.
+    /// See `confirmBackendSwitch(didConfirm:email:environment:)`.
+    private var pendingModalDismissAction: (() -> Void)?
+
     var isNextButtonEnabled: Bool {
         if overrideAllowEmailLoginOnly {
             isValidEmail
@@ -171,6 +175,25 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     func exitFlow() {
         bridge.sendOutboundEvent(.exitFlowRequested)
+    }
+
+    /// Records the user's choice on `modalDestination` and dismisses it. The corresponding
+    /// action (if any) only runs once `onModalDismissed()` fires, which SwiftUI guarantees
+    /// happens after the dismissal transition has actually finished. Triggering it any earlier
+    /// (e.g. from the confirmation button itself) can race the dismissal of the `fullScreenCover`
+    /// hosting it against a new presentation - such as the SSO web authentication sheet - and has
+    /// the OS silently drop the new presentation ("Attempted to present SFAuthenticationViewController
+    /// from a view controller that is being dismissed").
+    func confirmBackendSwitch(didConfirm: Bool, email: String?, environment: BackendEnvironment2) {
+        pendingModalDismissAction = didConfirm ? { [weak self] in
+            Task { await self?.switchBackend(email: email, environment: environment) }
+        } : nil
+        modalDestination = nil
+    }
+
+    func onModalDismissed() {
+        pendingModalDismissAction?()
+        pendingModalDismissAction = nil
     }
 
     // MARK: - Private
