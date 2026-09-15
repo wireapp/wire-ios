@@ -18,6 +18,12 @@
 
 // MARK: - Meetings List
 
+"meetings.list.loadError" = "Could not load meetings. Please try again.";
+"meetings.deleteModal.error.deleteFailedTitle" = "Could not delete meeting";
+"meetings.deleteModal.error.deleteFailed" = "Something went wrong while deleting the meeting. Please try again.";
+"meetings.deleteModal.error.leaveConversationFailedTitle" = "Could not leave meeting";
+"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting conversation. Please try again.";
+"wireMeetings.retry" = "Retry";
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Past";
 "wireMeetings.list.tabs.next" = "Next";
@@ -52,6 +58,12 @@
 
 // MARK: - Schedule a meeting
 
+"meetings.scheduleModal.error.createFailedTitle" = "Could not schedule meeting";
+"meetings.scheduleModal.error.createFailed" = "Something went wrong while scheduling the meeting. Please try again.";
+"meetings.meetNowModal.error.createFailedTitle" = "Could not start meeting";
+"meetings.meetNowModal.error.createFailed" = "Something went wrong while starting the meeting. Please try again.";
+"meetings.scheduleModal.error.updateFailedTitle" = "Could not update meeting";
+"meetings.scheduleModal.error.updateFailed" = "Something went wrong while updating the meeting. Please try again.";
 "wireMeetings.schedule.now.title" = "Meet now";
 "wireMeetings.schedule.future.title" = "New meeting";
 "wireMeetings.schedule.edit.title" = "Edit Meeting";
