@@ -61,13 +61,17 @@ struct EnvironmentVariables {
     private let stagingBackendURL: URL
     private let qaFederationABackendURL: URL
     private let qaFederationBBackendURL: URL
+    private let qaFixedSSOBackendURL: URL
 
     private let stagingInbucketURL: URL
     private let qaFederationAInbucketURL: URL
     private let qaFederationBInbucketURL: URL
+    private let qaFixedSSOInbucketURL: URL
 
     let qaFederationADeepLinkURL: URL
     let qaFederationBDeepLinkURL: URL
+    let qaFixedSSODeepLinkURL: URL
+    let qaFixedSSOWebAppURL: URL
 
     let inbucketUsername: String
     let inbucketPassword: String
@@ -207,6 +211,22 @@ struct EnvironmentVariables {
         self.qaFederationBDeepLinkURL = URL(string: "https://\(qaFederationBDeeplinkURL)")!
         self.qaFederationBInbucketURL = URL(string: "https://\(qaFederationBInbucketURL)")!
         self.qaFederationBBackendURL = URL(string: "https://\(backendURLQAFederationBString)")!
+        self.qaFixedSSOBackendURL = Self.url(
+            from: "BACKEND_URL_QA_FIXED_SSO",
+            defaultValue: "https://nginz-https.qa-fixed-sso-wire.wire.link"
+        )
+        self.qaFixedSSODeepLinkURL = Self.url(
+            from: "QA_FIXED_SSO_DEEPLINK_URL",
+            defaultValue: "https://nginz-https.qa-fixed-sso-wire.wire.link/deeplink.json"
+        )
+        self.qaFixedSSOWebAppURL = Self.url(
+            from: "QA_FIXED_SSO_WEBAPP_URL",
+            defaultValue: "https://webapp.qa-fixed-sso-wire.wire.link/"
+        )
+        self.qaFixedSSOInbucketURL = Self.url(
+            from: "QA_FIXED_SSO_INBUCKET_URL",
+            defaultValue: "https://inbucket.qa-fixed-sso-wire.wire.link"
+        )
         self.callingServiceURL = callingServiceEnvironment.url
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
@@ -255,6 +275,20 @@ struct EnvironmentVariables {
         }
     }
 
+    private static func url(from key: String, defaultValue: String) -> URL {
+        let value = ProcessInfo.processInfo.environment[key]
+
+        guard let value, !value.isEmpty else {
+            return URL(string: defaultValue)!
+        }
+
+        if value.contains("://") {
+            return URL(string: value)!
+        } else {
+            return URL(string: "https://\(value)")!
+        }
+    }
+
     func inbucketURL(for target: BackendTarget) -> URL {
         switch target {
         case .qaFederationA:
@@ -263,6 +297,8 @@ struct EnvironmentVariables {
             stagingInbucketURL
         case .qaFederationB:
             qaFederationBInbucketURL
+        case .qaFixedSSO:
+            qaFixedSSOInbucketURL
         }
     }
 
@@ -274,6 +310,8 @@ struct EnvironmentVariables {
             stagingBackendURL
         case .qaFederationB:
             qaFederationBBackendURL
+        case .qaFixedSSO:
+            qaFixedSSOBackendURL
         }
     }
 
@@ -283,6 +321,8 @@ struct EnvironmentVariables {
             qaFederationADeepLinkURL
         case .qaFederationB:
             qaFederationBDeepLinkURL
+        case .qaFixedSSO:
+            qaFixedSSODeepLinkURL
         case .staging:
             fatalError("Not implemented yet")
         }

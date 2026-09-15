@@ -22,6 +22,7 @@ public enum BackendTarget {
     case staging
     case qaFederationA
     case qaFederationB
+    case qaFixedSSO
 
     var domainInfo: String {
         switch self {
@@ -31,6 +32,8 @@ public enum BackendTarget {
             "qa-federation-a.wire.link"
         case .qaFederationB:
             "qa-federation-b.wire.link"
+        case .qaFixedSSO:
+            "qa-fixed-sso-wire.wire.link"
         }
     }
 }

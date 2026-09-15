@@ -53,6 +53,120 @@ final class BackOffice {
         )
     }
 
+    private func basicAuthHeader(_ basicAuth: String) -> String {
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        return if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+    }
+
+    func addCustomBackendDomain(
+        _ domain: String,
+        configURL: URL,
+        webappURL: URL,
+        basicAuth: String
+    ) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("custom-backend")
+            .appendingPathComponent("by-domain")
+            .appendingPathComponent(domain)
+
+        let payload = [
+            "config_json_url": configURL.absoluteString,
+            "webapp_welcome_url": webappURL.absoluteString
+        ]
+        let json = try JSONSerialization.data(withJSONObject: payload, options: [])
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: json,
+            basicAuth: basicAuthHeader(basicAuth)
+        )
+
+        guard code.statusCode == 201 else {
+            throw RuntimeError(
+                "addCustomBackendDomain failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func deleteCustomBackendDomain(
+        _ domain: String,
+        basicAuth: String
+    ) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("custom-backend")
+            .appendingPathComponent("by-domain")
+            .appendingPathComponent(domain)
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .delete,
+            body: Data("{}".utf8),
+            basicAuth: basicAuthHeader(basicAuth)
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "deleteCustomBackendDomain failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func getDefaultSSOCode(basicAuth: String) async throws -> String? {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("sso")
+            .appendingPathComponent("settings")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .get,
+            body: Data(),
+            basicAuth: basicAuthHeader(basicAuth)
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "getDefaultSSOCode failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        return try JSONDecoder().decode(DefaultSSOSettings.self, from: data).defaultSSOCode
+    }
+
+    func setDefaultSSOCode(_ ssoCode: String?, basicAuth: String) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("sso")
+            .appendingPathComponent("settings")
+
+        let payload: [String: Any]
+        if let ssoCode {
+            payload = ["default_sso_code": ssoCode]
+        } else {
+            payload = ["default_sso_code": NSNull()]
+        }
+        let json = try JSONSerialization.data(withJSONObject: payload, options: [])
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: json,
+            basicAuth: basicAuthHeader(basicAuth)
+        )
+
+        guard code.statusCode == 200 || code.statusCode == 204 else {
+            throw RuntimeError(
+                "setDefaultSSOCode failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
     func unlockConferenceCallingFeature(teamId: String, basicAuth: String) async throws {
 
         let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -432,6 +546,14 @@ final class BackOffice {
     }
 
     // MARK: - models - Cells Feature
+
+    private struct DefaultSSOSettings: Decodable {
+        let defaultSSOCode: String?
+
+        enum CodingKeys: String, CodingKey {
+            case defaultSSOCode = "default_sso_code"
+        }
+    }
 
     private struct CellsFeaturePayload: Codable {
         let config: CellsConfig

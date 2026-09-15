@@ -5912,6 +5912,16 @@ internal enum L10n {
         internal enum AddAccount {
           /// Add an account
           internal static let title = L10n.tr("Localizable", "self.settings.add_account.title", fallback: "Add an account")
+          internal enum Error {
+            /// Plural format key: "%#@number_of_accounts@"
+            internal static func message(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "self.settings.add_account.error.message", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
+            }
+            /// Plural format key: "%#@number_of_accounts@"
+            internal static func title(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "self.settings.add_account.error.title", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
+            }
+          }
         }
         internal enum AddAccountOrTeam {
           /// Add Account or Team
