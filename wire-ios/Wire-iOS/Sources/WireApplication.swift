@@ -77,10 +77,12 @@ final class WireApplication: UIApplication {
 
     @objc
     private func handleTripleTapGestureAction() {
+#if DEBUG
         guard UITestConfig.environment?.useTripleTapForShakeGesture == true else {
             return
         }
         handleShakeAction()
+#endif
     }
 
     // MARK: - UITest support
